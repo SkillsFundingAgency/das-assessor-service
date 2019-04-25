@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -18,6 +21,7 @@ using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.StartupConfiguration;
 using StructureMap;
+using StackExchange.Redis;
 
 namespace SFA.DAS.AssessorService.Web
 {
@@ -45,35 +49,47 @@ namespace SFA.DAS.AssessorService.Web
             //services.AddApplicationInsightsTelemetry();
 
             services.AddLocalization(opts => { opts.ResourcesPath = "Resources"; });
-            services.AddAndConfigureAuthentication(Configuration, _logger);
+            services.AddAndConfigureAuthentication(Configuration, _logger, _env);
             services.Configure<RequestLocalizationOptions>(options =>
             {
                 options.DefaultRequestCulture = new Microsoft.AspNetCore.Localization.RequestCulture("en-GB");
                 options.SupportedCultures = new List<CultureInfo> { new CultureInfo("en-GB") };
                 options.RequestCultureProviders.Clear();
             });
-            services.AddMvc(options => { options.Filters.Add<CheckSessionFilter>(); })
+            services.AddMvc(options => { options.Filters.Add<CheckSessionFilter>();})
                 .AddControllersAsServices()
                 .AddSessionStateTempDataProvider()
                 .AddViewLocalization(opts => { opts.ResourcesPath = "Resources"; })
                 .AddFluentValidation(fvc => fvc.RegisterValidatorsFromAssemblyContaining<Startup>())
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
-
             services.AddAntiforgery(options => options.Cookie = new CookieBuilder() { Name = ".Assessors.AntiForgery", HttpOnly = true });
 
+
+            var keysPath = Path.Join(Environment.SpecialFolder.Personal.ToString(), "keys");
+            
+            
             if (_env.IsDevelopment())
             {
+                services.AddDataProtection()
+                    .PersistKeysToFileSystem(new DirectoryInfo(Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "keys")))
+                    .SetApplicationName("AssessorApply");
+
                 services.AddDistributedMemoryCache();
-                
             }
             else
             {
                 try
                 {
+                    var redis = ConnectionMultiplexer.Connect($"{Configuration.SessionRedisConnectionString},DefaultDatabase=1");
+            
+                    services.AddDataProtection()
+                        .PersistKeysToStackExchangeRedis(redis, "AssessorApply-DataProtectionKeys")
+                        .SetApplicationName("AssessorApply");
+                    
                     services.AddDistributedRedisCache(options =>
                     {
-                        options.Configuration = Configuration.SessionRedisConnectionString;
+                        options.Configuration = $"{Configuration.SessionRedisConnectionString},DefaultDatabase=0";
                     });
                 }
                 catch (Exception e)
@@ -102,11 +118,23 @@ namespace SFA.DAS.AssessorService.Web
 
                 //config.For<ICache>().Use<SessionCache>();
                 config.For<ITokenService>().Use<TokenService>();
+                config.For<ITokenService>().Add<ApplyTokenService>().Named("applyTokenService");
+
+                config.For<IOrganisationsApplyApiClient>().Use<OrganisationsApplyApiClient>()
+                    .Ctor<ITokenService>("applyTokenService").Is(c=> c.GetInstance<ITokenService>("applyTokenService"));
+                config.For<IContactApplyClient>().Use<ContactApplyClient>()
+                    .Ctor<ITokenService>("applyTokenService").Is(c=> c.GetInstance<ITokenService>("applyTokenService")); 
+                
                 config.For<IWebConfiguration>().Use(Configuration);
                 config.For<ISessionService>().Use<SessionService>().Ctor<string>().Is(_env.EnvironmentName);
                 config.For<IOrganisationsApiClient>().Use<OrganisationsApiClient>().Ctor<string>().Is(Configuration.ClientApiAuthentication.ApiBaseAddress);
+                config.For<IOrganisationsApplyApiClient>().Use<OrganisationsApplyApiClient>().Ctor<string>().Is(Configuration.ApplyApiAuthentication.ApiBaseAddress);
+                config.For<IContactApplyClient>().Use<ContactApplyClient>().Ctor<string>().Is(Configuration.ApplyApiAuthentication.ApiBaseAddress);
+                config.For<IStandardsApiClient>().Use<StandardsApiClient>().Ctor<string>().Is(Configuration.ClientApiAuthentication.ApiBaseAddress);
+                config.For<IDashboardApiClient>().Use<DashboardApiClient>().Ctor<string>().Is(Configuration.ClientApiAuthentication.ApiBaseAddress);
                 config.For<IContactsApiClient>().Use<ContactsApiClient>().Ctor<string>().Is(Configuration.ClientApiAuthentication.ApiBaseAddress);
                 config.For<ISearchApiClient>().Use<SearchApiClient>().Ctor<string>().Is(Configuration.ClientApiAuthentication.ApiBaseAddress);
+                config.For<IEmailApiClient>().Use<EmailApiClient>().Ctor<string>().Is(Configuration.ClientApiAuthentication.ApiBaseAddress);
                 config.For<ICertificateApiClient>().Use<CertificateApiClient>().Ctor<string>().Is(Configuration.ClientApiAuthentication.ApiBaseAddress);
                 config.For<IAssessmentOrgsApiClient>().Use(() => new AssessmentOrgsApiClient(Configuration.AssessmentOrgsApiClientBaseUrl));
                 config.For<IIfaStandardsApiClient>().Use(() => new IfaStandardsApiClient(Configuration.AssessmentOrgsApiClientBaseUrl));
@@ -114,6 +142,8 @@ namespace SFA.DAS.AssessorService.Web
 
                 config.For<IAzureTokenService>().Use<AzureTokenService>();
                 config.For<IAzureApiClient>().Use<AzureApiClient>().Ctor<string>().Is(Configuration.AzureApiAuthentication.ApiBaseAddress);
+
+                config.For<IStandardServiceClient>().Use<StandardServiceClient>().Ctor<string>().Is(Configuration.ClientApiAuthentication.ApiBaseAddress);
 
                 config.Populate(services);
             });

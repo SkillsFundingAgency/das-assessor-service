@@ -1,0 +1,130 @@
+@using SFA.DAS.AssessorService.ApplyTypes
+@using SFA.DAS.AssessorService.Web.Staff.Helpers;
+@using SFA.DAS.AssessorService.Domain.Extensions
+
+@model SFA.DAS.AssessorService.Web.Staff.ViewModels.Apply.Applications.ApplicationSequenceViewModel
+
+@{
+    ViewBag.Title = "Application overview";
+    var BackAction = ApplicationReviewHelpers.ApplicationBacklinkAction(Model.Sequence?.Status, Model.SequenceId);
+}
+
+<div class="grid-row">
+    <div class="column-full">
+        <a class="link-back" asp-controller="Application" asp-action="@BackAction">Back</a>
+        @if (Model.Sequence == null)
+        {
+            <h1 class="heading-xlarge">Sequence not active</h1>
+        }
+        else
+        {
+            <h1 class="heading-xlarge">Application overview</h1>
+
+            <table class="table-spaced">
+                @if (!string.IsNullOrWhiteSpace(Model.ApplicationReference))
+                {
+                    <tr>
+                        <td class="bold-small">Application reference</td>
+                        <td>@Model.ApplicationReference</td>
+                    </tr>
+                }
+                @if (!string.IsNullOrWhiteSpace(Model.Standard) && Model.SequenceId == 2)
+                {
+                    <tr>
+                        <td class="bold-small">Standard</td>
+                        <td>@Model.Standard</td>
+                    </tr>
+                }
+                @if (!string.IsNullOrWhiteSpace(Model.LegalName))
+                {
+                    <tr>
+                        <td class="bold-small">Registered name</td>
+                        <td>@Model.LegalName</td>
+                    </tr>
+                }
+                @if (!string.IsNullOrWhiteSpace(Model.TradingName) || !string.IsNullOrWhiteSpace(Model.ProviderName))
+                {
+                    <tr>
+                        <td class="bold-small">Trading name</td>
+                        <td>@(Model.TradingName ?? Model.ProviderName)</td>
+                    </tr>
+                }
+                @if (Model.Ukprn.HasValue)
+                {
+                    <tr>
+                        <td class="bold-small">Ukprn</td>
+                        <td>@Model.Ukprn</td>
+                    </tr>
+                }
+                @if (Model.FinancialDueDate.HasValue)
+                {
+                    <tr>
+                        <td class="bold-small">Financial due date</td>
+                        <td>@Model.FinancialDueDate.ToSfaShortDateString()</td>
+                    </tr>
+                }
+            </table>
+
+            @if (!string.IsNullOrWhiteSpace(Model.CompanyNumber))
+            {
+                <div class="form-group">
+                    <a target="_blank" href="@string.Format("https://beta.companieshouse.gov.uk/company/{0}", Model.CompanyNumber)">View companies house information</a>
+                </div>
+                <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+            }
+
+            <ul class="govuk-list">
+                @foreach (var applicationSection in Model.Sequence.Sections.OrderBy(s => s.SectionId))
+                {
+                    if (applicationSection.SequenceId == 1 && applicationSection.SectionId == 3 && !(applicationSection.Status == ApplicationSectionStatus.Graded || applicationSection.Status == ApplicationSectionStatus.Evaluated))
+                    {
+                        // NOTE: FHA Section should only be shown if it has been Graded or Completed. See ON-1277
+                        continue;
+                    }
+                    <li>
+                        <h2 class="heading-medium heading-medium--small-margin-bottom">
+                            <a href="@Url.Action("Section", "Application", new {applicationSection.ApplicationId, applicationSection.SequenceId, applicationSection.SectionId})">
+                                @applicationSection.LinkTitle
+                            </a>
+                        </h2>
+                        <span class="form-hint form-hint--margin-bottom">
+                            @applicationSection.PagesComplete of @applicationSection.PagesActive questions completed
+                        </span>
+                        @if (applicationSection.HasNewPageFeedback)
+                        {
+                            <div class="govuk-tag">
+                                Feedback added
+                            </div>
+                        }
+                        @*@if (applicationSection.HasCompletedPageFeedback)
+                            {
+                            <div class="govuk-tag">
+                                Answer updated
+                            </div>
+                            }*@
+                        @if (applicationSection.Status == ApplicationSectionStatus.Evaluated)
+                        {
+                            <div class="govuk-tag">
+                                Evaluated
+                            </div>
+                        }
+                        <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+                    </li>
+                }
+            </ul>
+
+            @if (Model.Sequence.Sections.All(s => s.Status == ApplicationSectionStatus.Evaluated))
+            {
+                <div class="form-group">
+                    <form class="js-disable-on-submit" asp-controller="Application" asp-action="Assessment" asp-route-applicationId="@Model.ApplicationId" asp-route-sequenceId="@Model.SequenceId" method="get">
+                        <button class="button" type="submit">Complete review</button>
+                    </form>
+                </div>
+            }
+        }
+
+        <div class="form-group">
+            <a class="govuk-button" asp-controller="Application" asp-action="@BackAction">Return to applications</a>
+        </div>
+    </div>
+</div>

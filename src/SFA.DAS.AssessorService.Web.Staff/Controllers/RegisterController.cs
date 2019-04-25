@@ -10,12 +10,13 @@ using OfficeOpenXml.FormulaParsing.Excel.Functions.DateTime;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
+using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
+using SFA.DAS.AssessorService.ExternalApis.Services;
 using SFA.DAS.AssessorService.Web.Staff.Domain;
 using SFA.DAS.AssessorService.Web.Staff.Infrastructure;
 using SFA.DAS.AssessorService.Web.Staff.Models;
-using SFA.DAS.AssessorService.Web.Staff.Services;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Controllers
 {
@@ -23,14 +24,13 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
     public class RegisterController: Controller
     {
         private readonly ApiClient _apiClient;
-        private readonly IStandardService _standardService;
-        private readonly IAssessmentOrgsApiClient _assessmentOrgsApiClient;
+        private readonly IStandardServiceClient _standardServiceClient;
         private readonly IHostingEnvironment _env;
-        public RegisterController(ApiClient apiClient, IStandardService standardService, IAssessmentOrgsApiClient assessmentOrgsApiClient, IHostingEnvironment env)
+
+        public RegisterController(ApiClient apiClient, IStandardServiceClient standardServiceClient,  IHostingEnvironment env)
         {
             _apiClient = apiClient;
-            _standardService = standardService;
-            _assessmentOrgsApiClient = assessmentOrgsApiClient;
+            _standardServiceClient = standardServiceClient;
             _env = env;
         }
 
@@ -64,7 +64,6 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         }
 
 
-
         [Authorize(Roles = Roles.CertificationTeam + "," + Roles.AssessmentDeliveryTeam)]
         [HttpGet("register/edit-organisation/{organisationId}")]
         public async Task<IActionResult> EditOrganisation(string organisationId)
@@ -93,6 +92,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
                 Ukprn = viewModel.Ukprn,
                 OrganisationTypeId = viewModel.OrganisationTypeId,
                 LegalName = viewModel.LegalName,
+                TradingName = viewModel.TradingName,
                 WebsiteLink = viewModel.WebsiteLink,
                 Address1 = viewModel.Address1,
                 Address2 = viewModel.Address2,
@@ -102,7 +102,9 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
                 Status = viewModel.Status,
                 ActionChoice = viewModel.ActionChoice,
                 CompanyNumber = viewModel.CompanyNumber,
-                CharityNumber = viewModel.CharityNumber
+                CharityNumber = viewModel.CharityNumber,
+                FinancialDueDate = viewModel.FinancialDueDate,
+                FinancialExempt = viewModel.FinancialExempt
             };
          
             await _apiClient.UpdateEpaOrganisation(updateOrganisationRequest);
@@ -202,9 +204,6 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
                 ContactId = viewModel.ContactId.ToString(),
                 DeliveryAreas = viewModel.DeliveryAreas,
                 Comments = viewModel.Comments,
-                OrganisationStatus = viewModel.OrganisationStatus,
-                OrganisationStandardStatus = viewModel.Status,
-                ActionChoice = viewModel.ActionChoice,
                 DeliveryAreasComments = viewModel.DeliveryAreasComments
             };
 
@@ -328,6 +327,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
                 Ukprn = viewModel.Ukprn,
                 OrganisationTypeId = viewModel.OrganisationTypeId,
                 LegalName = viewModel.LegalName,
+                TradingName = viewModel.TradingName,
                 WebsiteLink = viewModel.WebsiteLink,
                 Address1 = viewModel.Address1,
                 Address2 = viewModel.Address2,
@@ -393,7 +393,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         private async Task<RegisterAddOrganisationStandardViewModel> ConstructOrganisationAndStandardDetails(RegisterAddOrganisationStandardViewModel vm)
         {
             var organisation = await _apiClient.GetEpaOrganisation(vm.OrganisationId);
-            var standard = await _assessmentOrgsApiClient.GetStandard(vm.StandardId);
+            var standard = await _standardServiceClient.GetStandard(vm.StandardId);
             var availableDeliveryAreas = await _apiClient.GetDeliveryAreas();
 
             vm.Contacts = await _apiClient.GetEpaOrganisationContacts(vm.OrganisationId);
@@ -439,7 +439,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         {
             var organisationStandards = _apiClient.GetEpaOrganisationStandards(viewAndEditModel.OrganisationId).Result;
 
-            var allStandards = _standardService.GetAllStandardSummaries().Result;
+            var allStandards = _standardServiceClient.GetAllStandardSummaries().Result;
 
             foreach (var organisationStandard in organisationStandards)
             {
@@ -494,6 +494,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
                 OrganisationTypeId = organisation.OrganisationTypeId,
                 OrganisationType = notSetDescription,
                 LegalName = organisation.OrganisationData?.LegalName,
+                TradingName = organisation.OrganisationData?.TradingName,
                 WebsiteLink = organisation.OrganisationData?.WebsiteLink,
                 Address1 = organisation.OrganisationData?.Address1,
                 Address2 = organisation.OrganisationData?.Address2,
@@ -501,10 +502,12 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
                 Address4 = organisation.OrganisationData?.Address4,
                 Postcode = organisation.OrganisationData?.Postcode,
                 PrimaryContact = organisation.PrimaryContact,
-                PrimaryContactName = notSetDescription,
+                PrimaryContactName = organisation.PrimaryContactName ?? notSetDescription,
                 CharityNumber = organisation.OrganisationData?.CharityNumber,
                 CompanyNumber =  organisation.OrganisationData?.CompanyNumber,
-                Status = organisation.Status
+                Status = organisation.Status,
+                FinancialDueDate = organisation.OrganisationData?.FHADetails?.FinancialDueDate,
+                FinancialExempt = organisation.OrganisationData?.FHADetails?.FinancialExempt
             };
 
             viewModel.OrganisationTypes = _apiClient.GetOrganisationTypes().Result;

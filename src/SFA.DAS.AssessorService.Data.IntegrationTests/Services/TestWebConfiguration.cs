@@ -3,7 +3,7 @@ using SFA.DAS.AssessorService.Settings;
 
 namespace SFA.DAS.AssessorService.Data.IntegrationTests.Services
 {
-    
+
     public class TestWebConfiguration : IWebConfiguration
     {
         public AuthSettings Authentication { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
@@ -20,6 +20,11 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Services
         public string SpecflowDBTestConnectionString { get; set; }
         public string SessionRedisConnectionString { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public AuthSettings StaffAuthentication { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public ClientApiAuthentication ApplyApiAuthentication { get; set; }
+        public string ApplyBaseAddress { get; set; }
+        public string ServiceLink { get; set; }
+        public DfeSignInConfig DfeSignIn { get; set; }
+        public string RoatpApiClientBaseUrl { get; set; }
+        public ClientApiAuthentication RoatpApiAuthentication { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
     }
-
 }

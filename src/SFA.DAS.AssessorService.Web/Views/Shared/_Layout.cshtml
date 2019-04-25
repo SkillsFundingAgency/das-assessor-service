@@ -112,7 +112,7 @@
             <div class="header-proposition">
                 <div class="content">
                     <nav id="proposition-menu">
-                        <a id="proposition-name" href="/">Record apprentice end-point assessment grades</a>
+                        <a id="proposition-name" href="/">Apprenticeship assessment service</a>
                     </nav>
                 </div>
             </div>
@@ -139,9 +139,9 @@
                 <div class="column-one-half">
                     <nav id="user-nav" class="js-hidden-mobile">
                         <ul>
-                            <li>
+                            @*<li>
                                 <a sfa-show-for-policy="@Policies.ExternalApiAccess" asp-controller="ExternalApi" asp-action="Index">External API keys</a>
-                            </li>
+                            </li>*@
                             <li>
                                 <a asp-controller="Home" asp-action="ContactUs">Contact us</a>
                             </li>
@@ -160,8 +160,7 @@
         <div class="phase-banner">
             <p>
                 <strong class="phase-tag">BETA</strong>
-                <span>This is a new service – your
-                    <a href="https://www.surveymonkey.co.uk/r/P8YBH9J">feedback</a> will help us to improve it.</span>
+                <span>This is a new service</span>
             </p>
         </div>
         @RenderBody()
@@ -180,6 +179,9 @@
                         </li>
                         <li>
                             <a asp-controller="Home" asp-action="Privacy">Privacy</a>
+                        </li>
+                        <li>
+                            <a asp-controller="Home" asp-action="ContactUs">Contact us</a>
                         </li>
                     </ul>
 

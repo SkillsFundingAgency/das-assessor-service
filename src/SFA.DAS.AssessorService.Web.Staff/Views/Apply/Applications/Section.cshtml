@@ -1,0 +1,225 @@
+@using SFA.DAS.AssessorService.ApplyTypes
+@model SFA.DAS.AssessorService.Web.Staff.ViewModels.Apply.Applications.ApplicationSectionViewModel
+
+@{
+    ViewBag.Title = @Model.Title ?? "Section not active";
+    Layout = "_Layout";
+}
+
+<div class="grid-row">
+    <div class="column-full">
+        <a href="@Url.Action("Application", "Application", new {applicationId = Model.ApplicationId})" class="link-back">Back</a>
+        @if (Model.Section == null)
+        {
+            <h1 class="heading-xlarge">Section not active</h1>
+        }
+        else
+        {
+            if (!ViewData.ModelState.IsValid)
+            {
+                <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+                    <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+                        There is a problem
+                    </h2>
+                    <ul class="error-summary-list">
+                        <li><a sfa-validation-for="IsSectionComplete"></a></li>
+                    </ul>
+                </div>
+            }
+
+            <h1 class="heading-xlarge">@Model.Title</h1>
+
+            @if (Model.SequenceId == 1 && Model.SectionId == 1)
+            {
+                <table class="table-spaced">
+                    @if (!string.IsNullOrWhiteSpace(Model.ApplicationReference))
+                    {
+                        <tr>
+                            <td class="bold-small">Application reference</td>
+                            <td>@Model.ApplicationReference</td>
+                        </tr>
+                    }
+                    @if (!string.IsNullOrWhiteSpace(Model.LegalName))
+                    {
+                        <tr>
+                            <td class="bold-small">Registered name</td>
+                            <td>@Model.LegalName</td>
+                        </tr>
+                    }
+                    @if (!string.IsNullOrWhiteSpace(Model.TradingName) || !string.IsNullOrWhiteSpace(Model.ProviderName))
+                    {
+                        <tr>
+                            <td class="bold-small">Trading name</td>
+                            <td>@(Model.TradingName ?? Model.ProviderName)</td>
+                        </tr>
+                    }
+                    @if (Model.Ukprn.HasValue)
+                    {
+                        <tr>
+                            <td class="bold-small">Ukprn</td>
+                            <td>@Model.Ukprn</td>
+                        </tr>
+                    }
+                </table>
+
+                @if (!string.IsNullOrWhiteSpace(Model.CompanyNumber))
+                {
+                    <div class="form-group">
+                        <a target="_blank" href="@string.Format("https://beta.companieshouse.gov.uk/company/{0}", Model.CompanyNumber)">View companies house information</a>
+                    </div>
+                    <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+                }
+            }
+
+            if (Model.SequenceId == 1 && Model.SectionId == 3)
+            {
+                // NOTE: The FHA Section has a read only view. See ON-1277
+                var financialApplication = Model.Section.QnAData?.FinancialApplicationGrade;
+                var financialApplicationComments = financialApplication.InadequateMoreInformation;
+
+                <div class="form-group">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Grade</th>
+                                <th>Date reviewed</th>
+                                <th>Comments</th>
+                                <th>Reviewer</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>@financialApplication.SelectedGrade</td>
+                                <td>@financialApplication.GradedDateTime.ToShortDateString()</td>
+                                <td>@financialApplicationComments</td>
+                                <td>@financialApplication.GradedBy</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            }
+
+            {
+                <dl class="govuk-check-your-answers cya-questions-short form-group">
+                    @foreach (var pg in Model.Section.QnAData.Pages.Where(p => !p.NotRequired && p.Active))
+                    {
+                        <div class="govuk-check-your-answers__contents">
+                            <dt class="cya-question heading-medium">
+                                @pg.LinkTitle
+                            </dt>
+
+                            <dd class="cya-answer">
+                                @foreach (var answerPage in pg.DisplayAnswerPages)
+                                {
+                                    foreach (var answer in answerPage.DisplayAnswers)
+                                    {
+                                        <h3 class="heading-small">@answer.Label</h3>
+                                        var question = pg.Questions.SingleOrDefault(q => q.QuestionId == answer.QuestionId);
+
+                                        if (question != null && !string.IsNullOrWhiteSpace(question.QuestionBodyText))
+                                        {
+                                            <div class="form-group">
+                                                <details>
+                                                    <summary><span class="summary">View question details</span></summary>
+                                                    <div class="panel panel-border-narrow" id="question-text">
+                                                        @Html.Raw(question.QuestionBodyText)
+                                                    </div>
+                                                </details>
+                                            </div>
+                                        }
+
+                                        if (answer is FileUploadDisplayAnswer)
+                                        {
+                                            var fuAnswer = answer as FileUploadDisplayAnswer;
+                                            <p>
+                                                <a href="@Url.Action("Download", "Application",
+                                                             new
+                                                             {
+                                                                 applicationId = Model.ApplicationId,
+                                                                 sequenceId = fuAnswer.SequenceId,
+                                                                 sectionId = fuAnswer.SectionId,
+                                                                 pageId = fuAnswer.PageId,
+                                                                 questionId = fuAnswer.QuestionId,
+                                                                 filename = fuAnswer.FileName
+                                                             })">@fuAnswer.FileName</a></p>
+                                        }
+                                        else
+                                        {
+                                            <p>@answer.Answer()</p>
+                                        }
+                                    }
+                                }
+                            </dd>
+
+                            <dd class="cya-change das-cya-change--responsive">
+                                @if (pg.HasNewFeedback)
+                                {
+                                    <div class="govuk-tag form-group">
+                                        Feedback added
+                                    </div>
+                                }
+                                @if (pg.HasCompletedFeedback)
+                                {
+                                    <div class="govuk-tag form-group">
+                                        Answer updated
+                                    </div>
+                                }
+
+                                <p>
+                                    <a class="nowrap" href="@Url.Action("Page", "Application", new {applicationId = Model.ApplicationId, sequenceId = Model.SequenceId, sectionId = Model.SectionId, pageId = pg.PageId})">
+                                        @if (pg.HasNewFeedback)
+                                        {
+                                            <text>View or amend feedback</text>
+                                        }
+                                        else
+                                        {
+                                            <text>Add feedback</text>
+                                        }
+                                    </a>
+                                </p>
+                            </dd>
+
+                        </div>
+                    }
+                </dl>
+            }
+
+            <form class="js-disable-on-submit" asp-action="EvaluateSection" asp-controller="Application" asp-route-applicationId="@Model.ApplicationId" asp-route-sequenceId="@Model.SequenceId" asp-route-sectionId="@Model.SectionId">
+                <div class="form-group">
+                    <fieldset class="after-error-summary inline">
+                        <legend id="IsSectionComplete">
+                            <h1 class="heading-large">
+                                Is this section complete?
+                            </h1>
+                            <div sfa-anyvalidationerror-class="form-group-error">
+                                <span class="error-message" asp-validation-for="IsSectionComplete"></span>
+                            </div>
+                        </legend>
+                        <div sfa-anyvalidationerror-class="form-group-error">
+                            <div class="multiple-choice">
+                                <input asp-for="IsSectionComplete" id="options_yes" type="radio" value="True" sfa-validation-for="IsSectionComplete" sfa-validationerror-class="form-control-error" />
+                                <label for="options_yes">
+                                    Yes
+                                </label>
+                            </div>
+                            <div class="multiple-choice">
+                                <input asp-for="IsSectionComplete" id="options_no" type="radio" value="False" sfa-validation-for="IsSectionComplete" sfa-validationerror-class="form-control-error" />
+                                <label for="options_no">
+                                    No
+                                </label>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+                <div class="form-group">
+                    <button class="button" type="submit">Save</button>
+                </div>
+            </form>
+
+        }
+
+        <div class="form-group">
+            <a href="@Url.Action("Application", "Application", new { applicationId = Model.ApplicationId })" class="govuk-button">Return to application overview</a>
+        </div>
+    </div>
+</div>

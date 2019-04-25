@@ -41,7 +41,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
                 _requestNoIssues = BuildRequest(_organisationId, 123321, new List<int> { 1 });
                 _expectedOrganisationStandardNoIssues = BuildOrganisationStandard(_requestNoIssues, _requestNoIssuesId);
 
-                _registerRepository.Setup(r => r.UpdateEpaOrganisationStandard(It.IsAny<EpaOrganisationStandard>(), new List<int>{1}, It.IsAny<string>()))
+                _registerRepository.Setup(r => r.UpdateEpaOrganisationStandard(It.IsAny<EpaOrganisationStandard>(), new List<int>{1}))
                     .Returns(Task.FromResult(_expectedOrganisationStandardNoIssues.Id.ToString()));
 
                 _validator.Setup(v => v.ValidatorUpdateEpaOrganisationStandardRequest(_requestNoIssues)).Returns(new ValidationResponse());
@@ -56,7 +56,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
             public void UpdateOrganisationStandardDetailsRepoIsCalledWhenHandlerInvoked()
             {
                 var res = _updateEpaOrganisationStandardHandler.Handle(_requestNoIssues, new CancellationToken()).Result;
-                _registerRepository.Verify(r => r.UpdateEpaOrganisationStandard(It.IsAny<EpaOrganisationStandard>(), It.IsAny<List<int>>(), It.IsAny<string>()));
+                _registerRepository.Verify(r => r.UpdateEpaOrganisationStandard(It.IsAny<EpaOrganisationStandard>(), It.IsAny<List<int>>()));
             }
 
             [Test]
@@ -82,7 +82,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
                 _validator.Setup(v => v.ValidatorUpdateEpaOrganisationStandardRequest(requestNoOrgId)).Returns(errorResponse);
                   var ex = Assert.ThrowsAsync<BadRequestException>(() => _updateEpaOrganisationStandardHandler.Handle(requestNoOrgId, new CancellationToken()));
                 Assert.AreEqual(errorMessage + "; ", ex.Message);
-                _registerRepository.Verify(r => r.UpdateEpaOrganisationStandard(It.IsAny<EpaOrganisationStandard>(), new List<int>(), "Save"), Times.Never);
+                _registerRepository.Verify(r => r.UpdateEpaOrganisationStandard(It.IsAny<EpaOrganisationStandard>(), new List<int>()), Times.Never);
                 _validator.Verify(v => v.ValidatorUpdateEpaOrganisationStandardRequest(requestNoOrgId));
             }
 

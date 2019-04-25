@@ -60,6 +60,7 @@
     <Folder Include="Properties" />
     <Folder Include="Tables" />
     <Folder Include="StoredProcedures" />
+    <Folder Include="DataToImport" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Tables\CertificateLogs.sql" />
@@ -91,17 +92,29 @@
     <Build Include="StoredProcedures\StaffReports_WeeklySummary.sql" />
     <Build Include="Tables\StandardCollation.sql" />
     <Build Include="Tables\IlrsCopy.sql" />
+    <Build Include="Tables\EPASummary.sql" />
     <Build Include="StoredProcedures\EPAO_Register_register_organisation.sql" />
     <Build Include="StoredProcedures\EPAO_Register_register_standards.sql" />
     <Build Include="StoredProcedures\EPAO_Register_register_delivery_areas.sql" />
     <Build Include="StoredProcedures\EPAO_Register_Data_Definitions.sql" />
     <Build Include="StoredProcedures\EPAO_Register_list_of_organisations.sql" />
     <Build Include="StoredProcedures\EPAO_Register_list_of_standards.sql" />
+    <Build Include="StoredProcedures\EPAO_Standards_Count.sql" />
+    <Build Include="StoredProcedures\GetEPAO_Pipelines.sql" />
+    <Build Include="StoredProcedures\EPAO_Registered_Standards.sql" />
+    <Build Include="Tables\ContactsPrivileges.sql" />
+    <Build Include="Tables\Privileges.sql" />
+    <Build Include="Tables\ContactRoles.sql" />
+    <Build Include="StoredProcedures\GetEPAO_DashboardCounts.sql" />
+    <Build Include="StoredProcedures\GetEPAO_Pipelines_Extract.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="SFA.DAS.AssessorService.Database.refactorlog" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Script.PostDeployment1.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="DataToImport\assessmentorgs.xlsx" />
   </ItemGroup>
 </Project>

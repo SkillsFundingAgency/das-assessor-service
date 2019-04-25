@@ -14,9 +14,9 @@ c.Email as Contact_email,
 Convert(nvarchar,os.DateStandardApprovedOnRegister,23) as 'Date standard Approved on the Register',
 os.Comments as Comments
  from organisationStandard os 
-inner join organisations o on os.EndPointAssessorOrganisationId = o.EndPointAssessorOrganisationId and o.EndPointAssessorOrganisationId<> 'EPA0000'
+inner join organisations o on os.EndPointAssessorOrganisationId = o.EndPointAssessorOrganisationId and o.EndPointAssessorOrganisationId<> 'EPA0000' and o.Status <> 'Deleted'
 left outer join StandardCollation sc on os.StandardCode = sc.StandardId
 left outer join contacts c on os.ContactId = c.Id
-where os.status = 'Live'
+where os.status IN ('Live', 'New')
 order by os.EndPointAssessorOrganisationId, os.StandardCode
 

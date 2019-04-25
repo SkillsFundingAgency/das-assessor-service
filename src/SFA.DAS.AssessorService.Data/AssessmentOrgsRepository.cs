@@ -3,15 +3,16 @@ using System.Data;
 using System.Data.SqlClient;
 using Dapper;
 using System.Collections.Generic;
-using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
-using System.Transactions;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Domain.Entities.AssessmentOrganisations;
+using SFA.DAS.AssessorService.Domain.Entities;
+using OrganisationData = SFA.DAS.AssessorService.Domain.Entities.AssessmentOrganisations.OrganisationData;
 
 namespace SFA.DAS.AssessorService.Data
 {
@@ -35,7 +36,6 @@ namespace SFA.DAS.AssessorService.Data
             {
                 var connectionString = LocalConnectionString();
                 var obfConnectionString = connectionString.Substring(0,60);
-                //connectionString = connectionString.Replace("MultipleActiveResultSets=True", "MultipleActiveResultSets=False");
                 if (obfConnectionString.ToLower().Contains("password"))
                     obfConnectionString = "obfuscation full";
 
@@ -54,6 +54,8 @@ namespace SFA.DAS.AssessorService.Data
                     connection.Execute("DELETE FROM [OrganisationStandardDeliveryArea]");
                     LogProgress(progressStatus, "Teardown: DELETING all items in [OrganisationStandard]; ");
                     connection.Execute("DELETE FROM [OrganisationStandard]");
+                    LogProgress(progressStatus, "Teardown: DELETING all items in [options]; ");
+                    connection.Execute("DELETE FROM [Options]");
                 }
             }
             catch (Exception e)
@@ -68,6 +70,48 @@ namespace SFA.DAS.AssessorService.Data
             _logger.LogInformation($"Progress status: {progressStatus}");
 
             return progressStatus.ToString();
+        }
+
+        public void WriteOptions(List<Option> options)
+        {
+            var connectionString = LocalConnectionString();
+            using (var connection = new SqlConnection(connectionString))
+            {
+                if (connection.State != ConnectionState.Open)
+                    connection.Open();
+
+                var optionsToInsert = new List<Option>();
+
+                foreach (var option in options)
+                {
+                    var currentCount = connection
+                        .ExecuteScalar(
+                            "select count(0) from [options] where StdCode = @stdCode and OptionName = @optionName", new {option.StdCode, option.OptionName})
+                        .ToString();
+
+                    if (currentCount == "0")
+                    {
+                        optionsToInsert.Add(option);
+                    }
+                   
+                }
+
+                var sql = new StringBuilder();
+
+                foreach (var opt in optionsToInsert)
+                {          
+                    var sqlToAppend =
+                        $"INSERT INTO Options (StdCode, OptionName) VALUES ({opt.StdCode},'{opt.OptionName}'); ";
+                    sql.Append(sqlToAppend);
+
+                }
+
+                if (sql.ToString()!=string.Empty)
+                    connection.Execute(sql.ToString());
+
+                connection.Close();
+            }
+
         }
 
         public void WriteDeliveryAreas(List<DeliveryArea> deliveryAreas)
@@ -155,6 +199,7 @@ namespace SFA.DAS.AssessorService.Data
                     {
                         WebsiteLink = MakeStringSuitableForJson(organisation.OrganisationData?.WebsiteLink),
                         LegalName = MakeStringSuitableForJson(organisation.OrganisationData?.LegalName),
+                        TradingName = MakeStringSuitableForJson(organisation.OrganisationData?.TradingName),
                         Address1 = MakeStringSuitableForJson(organisation.OrganisationData?.Address1),
                         Address2 = MakeStringSuitableForJson(organisation.OrganisationData?.Address2),
                         Address3 = MakeStringSuitableForJson(organisation.OrganisationData?.Address3),
@@ -180,36 +225,39 @@ namespace SFA.DAS.AssessorService.Data
 
                 foreach (var org in organisationsToInsert)
                 {
+                    var organisationTypeIdValue = org.OrganisationTypeId != 0 ? (int?)org.OrganisationTypeId : null;
                     var id = ConvertStringToSqlValueString(org.Id.ToString());
                     var organisationData = JsonConvert.SerializeObject(org.OrganisationData);
                     var ukprn = ConvertIntToSqlValueString(org.EndPointAssessorUkprn);
                     var endPointAssessorName = ConvertStringToSqlValueString(org.EndPointAssessorName);
-
+                    var organisationTypeId = ConvertIntToSqlValueString(organisationTypeIdValue);
                     var sqlToAppend =
                         "INSERT INTO [Organisations] ([Id],[CreatedAt],[DeletedAt],[EndPointAssessorName],[EndPointAssessorOrganisationId], " +
                         "[EndPointAssessorUkprn],[Status],[UpdatedAt],[OrganisationTypeId],[PrimaryContact],[OrganisationData]) VALUES (" +
                         $@" {id}, getutcdate(), null, {endPointAssessorName}, '{org.EndPointAssessorOrganisationId}'," +
-                        $@"{ukprn}, '{org.Status}', null,  {org.OrganisationTypeId}, null, '{organisationData}' ); ";
+                        $@"{ukprn}, '{org.Status}', null,  {organisationTypeId}, null, '{organisationData}' ); ";
                     sql.Append(sqlToAppend);
+                    
                 }
 
                 foreach (var org in organisationsToUpdate)
-                {      
+                {
+                    var organisationTypeIdValue = org.OrganisationTypeId != 0 ? (int?)org.OrganisationTypeId : null;
                     var organisationData = JsonConvert.SerializeObject(org.OrganisationData);
-                
+                    var organisationTypeId = ConvertIntToSqlValueString(organisationTypeIdValue);
                     var sqlToAppendWhereStatusIsNotDeleted =
-                        $@"UPDATE [Organisations] SET [OrganisationTypeId] = {org.OrganisationTypeId}," +
+                        $@"UPDATE [Organisations] SET [OrganisationTypeId] = {organisationTypeId}," +
                         $@"[OrganisationData] = '{organisationData}', Status = 'Live' "+
                         $@"WHERE EndPointAssessorOrganisationId = '{org.EndPointAssessorOrganisationId}' and Status !='Deleted'; ";
 
                     var sqlToAppendWhereStatusIsDeleted =
-                        $@"UPDATE [Organisations] SET [OrganisationTypeId] = {org.OrganisationTypeId}," +
+                        $@"UPDATE [Organisations] SET [OrganisationTypeId] = {organisationTypeId}," +
                         $@"[OrganisationData] = '{organisationData}', PrimaryContact = '{org.PrimaryContact}' " +
                         $@"WHERE EndPointAssessorOrganisationId = '{org.EndPointAssessorOrganisationId}' and Status = 'Deleted'; ";
 
                     sql.Append(sqlToAppendWhereStatusIsNotDeleted);
                     sql.Append(sqlToAppendWhereStatusIsDeleted);
-                }
+            }
                 connection.Execute(sql.ToString());                           
                 connection.Close();
             }
@@ -304,6 +352,21 @@ namespace SFA.DAS.AssessorService.Data
 
                 }
                 connection.Execute(sql.ToString());
+                connection.Close();
+            }
+        }
+
+        public void RunPostBuildScript()
+        {
+            var connectionString = LocalConnectionString();
+
+            using (var connection = new SqlConnection(connectionString))
+            {
+                if (connection.State != ConnectionState.Open)
+                    connection.Open();
+                var script = File.ReadAllText(@"..\\SFA.DAS.AssessorService.Data\\Scripts\\PostBuildScript.sql");
+
+                connection.Execute(script);
                 connection.Close();
             }
         }
@@ -431,6 +494,6 @@ namespace SFA.DAS.AssessorService.Data
             return dateToProcess.Value < new DateTime(1980,1,1) 
                 ? "null" 
                 : $"'{dateToProcess.Value:yyyy-MM-dd}'";
-        }   
+        }
     }
 }

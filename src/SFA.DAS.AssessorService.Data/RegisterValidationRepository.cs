@@ -30,6 +30,60 @@ namespace SFA.DAS.AssessorService.Data
             }
         }
 
+        public async Task<bool> EpaOrganisationExistsWithCompanyNumber(string organisationIdToExclude, string companyNumber)
+        {
+            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            {
+                if (connection.State != ConnectionState.Open)
+                    await connection.OpenAsync();
+                var sqlToCheckExists =
+                    "select CASE count(0) WHEN 0 THEN 0 else 1 end result FROM [Organisations] " +
+                    "WHERE JSON_VALUE(OrganisationData, '$.CompanyNumber') = @companyNumber " +
+                    "AND EndPointAssessorOrganisationId != @organisationIdToExclude";
+                return await connection.ExecuteScalarAsync<bool>(sqlToCheckExists, new { organisationIdToExclude, companyNumber });
+            }
+        }
+
+        public async Task<bool> EpaOrganisationExistsWithCompanyNumber(string companyNumber)
+        {
+            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            {
+                if (connection.State != ConnectionState.Open)
+                    await connection.OpenAsync();
+                var sqlToCheckExists =
+                    "select CASE count(0) WHEN 0 THEN 0 else 1 end result FROM [Organisations] " +
+                    "WHERE JSON_VALUE(OrganisationData, '$.CompanyNumber') = @companyNumber";
+                return await connection.ExecuteScalarAsync<bool>(sqlToCheckExists, new { companyNumber });
+            }
+        }
+
+        public async Task<bool> EpaOrganisationExistsWithCharityNumber(string organisationIdToExclude, string charityNumber)
+        {
+            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            {
+                if (connection.State != ConnectionState.Open)
+                    await connection.OpenAsync();
+                var sqlToCheckExists =
+                    "select CASE count(0) WHEN 0 THEN 0 else 1 end result FROM [Organisations] " +
+                    "WHERE JSON_VALUE(OrganisationData, '$.CharityNumber') = @charityNumber " +
+                    "AND EndPointAssessorOrganisationId != @organisationIdToExclude";
+                return await connection.ExecuteScalarAsync<bool>(sqlToCheckExists, new { organisationIdToExclude, charityNumber });
+            }
+        }
+
+        public async Task<bool> EpaOrganisationExistsWithCharityNumber(string charityNumber)
+        {
+            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            {
+                if (connection.State != ConnectionState.Open)
+                    await connection.OpenAsync();
+                var sqlToCheckExists =
+                    "select CASE count(0) WHEN 0 THEN 0 else 1 end result FROM [Organisations] " +
+                    "WHERE JSON_VALUE(OrganisationData, '$.CharityNumber') = @charityNumber";
+                return await connection.ExecuteScalarAsync<bool>(sqlToCheckExists, new { charityNumber });
+            }
+        }
+
         public async Task<bool> EpaOrganisationExistsWithUkprn(long ukprn)
         {
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))
@@ -191,5 +245,19 @@ namespace SFA.DAS.AssessorService.Data
                 return await connection.ExecuteScalarAsync<bool>(sqlToCheckExists, new { contactId, displayName, email, phone });
             }
         }
+
+        public async Task<bool> EmailAlreadyPresent(string email)
+        {
+            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            {
+                if (connection.State != ConnectionState.Open)
+                    await connection.OpenAsync();
+                const string sqlToCheckExists =
+                    "select CASE count(0) WHEN 0 THEN 0 else 1 end result FROM [Contacts] " +
+                    "WHERE email  = @email";
+                return await connection.ExecuteScalarAsync<bool>(sqlToCheckExists, new { email });
+            }
+        }
+        
     }
 }

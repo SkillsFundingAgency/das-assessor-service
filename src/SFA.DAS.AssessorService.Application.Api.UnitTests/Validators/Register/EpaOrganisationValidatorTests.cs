@@ -9,6 +9,7 @@ using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.Application.Api.Consts;
 using SFA.DAS.AssessorService.Application.Api.Validators;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.ExternalApis.Services;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register
@@ -21,6 +22,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register
         private Mock<IStringLocalizer<EpaOrganisationValidator>> _localizer;
         private Mock<ISpecialCharacterCleanserService> _cleanserService;
         private Mock<IRegisterQueryRepository> _registerQueryRepository;
+        private Mock<IStandardService> _standardService;
 
         [SetUp]
         public void Setup()
@@ -29,58 +31,81 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register
             _registerQueryRepository = new Mock<IRegisterQueryRepository>();
             _localizer = new Mock<IStringLocalizer<EpaOrganisationValidator>>();
             _cleanserService = new Mock<ISpecialCharacterCleanserService>();
-            _cleanserService.Setup(c => c.CleanseStringForSpecialCharacters(It.IsAny<string>())).Returns((string s) => s);
-            
-            _validator = new EpaOrganisationValidator(_registerRepository.Object, _registerQueryRepository.Object, _cleanserService.Object,_localizer.Object);
+            _cleanserService.Setup(c => c.CleanseStringForSpecialCharacters(It.IsAny<string>()))
+                .Returns((string s) => s);
+
+            _standardService = new Mock<IStandardService>();
+            _validator = new EpaOrganisationValidator(_registerRepository.Object, _registerQueryRepository.Object,
+                _cleanserService.Object, _localizer.Object, _standardService.Object);
 
             _localizer.Setup(l => l[EpaOrganisationValidatorMessageName.OrganisationTypeIsInvalid])
-                .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.OrganisationTypeIsInvalid, "fail"));          
+                .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.OrganisationTypeIsInvalid, "fail"));
             _localizer.Setup(l => l[EpaOrganisationValidatorMessageName.OrganisationIdAlreadyUsed])
-                .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.OrganisationIdAlreadyUsed, "fail"));          
+                .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.OrganisationIdAlreadyUsed, "fail"));
             _localizer.Setup(l => l[EpaOrganisationValidatorMessageName.NoOrganisationId])
-                .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.NoOrganisationId, "fail"));           
+                .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.NoOrganisationId, "fail"));
             _localizer.Setup(l => l[EpaOrganisationValidatorMessageName.OrganisationNotFound])
                 .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.OrganisationNotFound, "fail"));
             _localizer.Setup(l => l[EpaOrganisationValidatorMessageName.OrganisationIdTooLong])
                 .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.OrganisationIdTooLong, "fail"));
             _localizer.Setup(l => l[EpaOrganisationValidatorMessageName.OrganisationNameEmpty])
-                .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.OrganisationNameEmpty, "fail"));         
+                .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.OrganisationNameEmpty, "fail"));
             _localizer.Setup(l => l[EpaOrganisationValidatorMessageName.UkprnAlreadyUsed])
                 .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.UkprnAlreadyUsed, "fail"));
             _localizer.Setup(l => l[EpaOrganisationValidatorMessageName.AnotherOrganisationUsingTheUkprn])
-                .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.AnotherOrganisationUsingTheUkprn, "fail"));
+                .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.AnotherOrganisationUsingTheUkprn,
+                    "fail"));
             _localizer.Setup(l => l[EpaOrganisationValidatorMessageName.UkprnIsInvalid])
                 .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.UkprnIsInvalid, "fail"));
             _localizer.Setup(l => l[EpaOrganisationValidatorMessageName.ContactIdInvalidForOrganisationId])
-                .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.ContactIdInvalidForOrganisationId, "fail"));
+                .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.ContactIdInvalidForOrganisationId,
+                    "fail"));
             _localizer.Setup(l => l[EpaOrganisationValidatorMessageName.OrganisationStandardAlreadyExists])
-                .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.OrganisationStandardAlreadyExists, "fail"));
+                .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.OrganisationStandardAlreadyExists,
+                    "fail"));
             _localizer.Setup(l => l[EpaOrganisationValidatorMessageName.StandardNotFound])
                 .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.StandardNotFound, "fail"));
             _localizer.Setup(l => l[EpaOrganisationValidatorMessageName.OrganisationStandardDoesNotExist])
-                .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.OrganisationStandardDoesNotExist, "fail"));
+                .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.OrganisationStandardDoesNotExist,
+                    "fail"));
             _localizer.Setup(l => l[EpaOrganisationValidatorMessageName.EmailIsIncorrectFormat])
                 .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.EmailIsIncorrectFormat, "fail"));
             _localizer.Setup(l => l[EpaOrganisationValidatorMessageName.ErrorMessageOrganisationNameAlreadyPresent])
-                .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.ErrorMessageOrganisationNameAlreadyPresent, "fail")); 
+                .Returns(new LocalizedString(
+                    EpaOrganisationValidatorMessageName.ErrorMessageOrganisationNameAlreadyPresent, "fail"));
             _localizer.Setup(l => l[EpaOrganisationValidatorMessageName.EmailIsMissing])
-                .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.EmailIsIncorrectFormat, "fail")); 
+                .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.EmailIsIncorrectFormat, "fail"));
             _localizer.Setup(l => l[EpaOrganisationValidatorMessageName.ContactIdDoesntExist])
-                .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.ContactIdDoesntExist, "fail")); 
+                .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.ContactIdDoesntExist, "fail"));
             _localizer.Setup(l => l[EpaOrganisationValidatorMessageName.DisplayNameIsMissing])
-                .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.DisplayNameIsMissing, "DisplayNameIsMissing")); 
+                .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.DisplayNameIsMissing,
+                    "DisplayNameIsMissing"));
             _localizer.Setup(l => l[EpaOrganisationValidatorMessageName.DisplayNameTooShort])
-                .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.DisplayNameTooShort, "DisplayNameTooShort"));
+                .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.DisplayNameTooShort,
+                    "DisplayNameTooShort"));
             _localizer.Setup(l => l[EpaOrganisationValidatorMessageName.EmailIsMissing])
                 .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.EmailIsMissing, "fail"));
             _localizer.Setup(l => l[EpaOrganisationValidatorMessageName.EmailAlreadyPresentInAnotherOrganisation])
-                .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.EmailAlreadyPresentInAnotherOrganisation, "fail"));            
+                .Returns(new LocalizedString(
+                    EpaOrganisationValidatorMessageName.EmailAlreadyPresentInAnotherOrganisation, "fail"));
             _localizer.Setup(l => l[EpaOrganisationValidatorMessageName.ContactIdIsRequired])
-                .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.ContactIdIsRequired, "fail")); 
+                .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.ContactIdIsRequired, "fail"));
             _localizer.Setup(l => l[EpaOrganisationValidatorMessageName.NoDeliveryAreasPresent])
-                .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.NoDeliveryAreasPresent, "fail")); 
+                .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.NoDeliveryAreasPresent, "fail"));
             _localizer.Setup(l => l[EpaOrganisationValidatorMessageName.DeliveryAreaNotValid])
-                .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.DeliveryAreaNotValid, "fail")); 
+                .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.DeliveryAreaNotValid, "fail"));
+            _localizer.Setup(l => l[EpaOrganisationValidatorMessageName.OrganisationCompanyNumberNotValid])
+                .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.OrganisationCompanyNumberNotValid,
+                    "fail"));
+            _localizer.Setup(l => l[EpaOrganisationValidatorMessageName.OrganisationCharityNumberNotValid])
+                .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.OrganisationCharityNumberNotValid,
+                    "fail"));
+            _localizer.Setup(l => l[EpaOrganisationValidatorMessageName.OrganisationCompanyNumberAlreadyUsed])
+                .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.OrganisationCompanyNumberAlreadyUsed,
+                    "fail"));
+            _localizer.Setup(l => l[EpaOrganisationValidatorMessageName.OrganisationCharityNumberAlreadyUsed])
+                .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.OrganisationCharityNumberAlreadyUsed,
+                    "fail"));
         }
 
         [TestCase("EPA000", true)]
@@ -114,7 +139,80 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register
             var noMessageReturned = _validator.CheckIfEmailIsMissing(name).Length == 0;
             Assert.AreEqual(isAcceptable, noMessageReturned);
         }
-        
+
+        [TestCase("", true)]
+        [TestCase("01234567", true)]
+        [TestCase("RC123456", true)]
+        [TestCase("rc123456", true)]
+        [TestCase("1234567", false)]
+        [TestCase("ABC12345", false)]
+        [TestCase("1000$!&*^%", false)]
+        [TestCase("!£$%^&*()", false)]
+        public void CheckCompanyNumberIsValid(string companyNumber, bool isAcceptable)
+        {
+            var noMessageReturned = _validator.CheckCompanyNumberIsValid(companyNumber).Length == 0;
+            Assert.AreEqual(isAcceptable, noMessageReturned);
+        }
+
+        [TestCase("ORG-1", "12345678")]
+        public void CheckCompanyNumberIsRejectedIfValidButAlreadyInUse(string organisationId, string companyNumber)
+        {
+            _registerRepository.Setup(x => x.EpaOrganisationExistsWithCompanyNumber(organisationId, companyNumber))
+                .Returns(Task.FromResult<bool>(true));
+
+            string validationErrorMessage = _validator.CheckIfOrganisationCompanyNumberExists(organisationId, companyNumber);
+
+            Assert.IsNotEmpty(validationErrorMessage);
+        }
+
+        [TestCase("ORG-1", "12345678")]
+        public void CheckCompanyNumberIsAcceptedIfValidAndNotAlreadyInUse(string organisationId, string companyNumber)
+        {
+            _registerRepository.Setup(x => x.EpaOrganisationExistsWithCompanyNumber(organisationId, companyNumber))
+                .Returns(Task.FromResult<bool>(false));
+
+            string validationErrorMessage = _validator.CheckIfOrganisationCompanyNumberExists(organisationId, companyNumber);
+
+            Assert.IsEmpty(validationErrorMessage);
+        }
+
+        [TestCase("ORG-1", "12345678")]
+        public void CheckCharityNumberIsRejectedIfValidButAlreadyInUse(string organisationId, string charityNumber)
+        {
+            _registerRepository.Setup(x => x.EpaOrganisationExistsWithCharityNumber(organisationId, charityNumber))
+                .Returns(Task.FromResult<bool>(true));
+
+            string validationErrorMessage = _validator.CheckIfOrganisationCharityNumberExists(organisationId, charityNumber);
+
+            Assert.IsNotEmpty(validationErrorMessage);
+        }
+
+        [TestCase("ORG-1", "12345678")]
+        public void CheckCharityNumberIsAcceptedIfValidAndNotAlreadyInUse(string organisationId, string charityNumber)
+        {
+            _registerRepository.Setup(x => x.EpaOrganisationExistsWithCharityNumber(organisationId, charityNumber))
+                .Returns(Task.FromResult<bool>(false));
+
+            string validationErrorMessage = _validator.CheckIfOrganisationCharityNumberExists(organisationId, charityNumber);
+
+            Assert.IsEmpty(validationErrorMessage);
+        }
+
+        [TestCase("", true)]
+        [TestCase("01234567", true)]
+        [TestCase("1234567", true)]
+        [TestCase("A123456", true)]
+        [TestCase("ABC12345", true)]
+        [TestCase("12345679-1", true)]
+        [TestCase("1000$!&*^%", false)]
+        [TestCase("!£$%^&*()", false)]
+        [TestCase("010101888-1££££''''", false)]
+        public void CheckCharityNumberIsValid(string charityNumber, bool isAcceptable)
+        {
+            var noMessageReturned = _validator.CheckCharityNumberIsValid(charityNumber).Length == 0;
+            Assert.AreEqual(isAcceptable, noMessageReturned);
+        }
+
         [TestCase(null, true)]
         [TestCase(10000000, true)]
         [TestCase(99999999, true)]

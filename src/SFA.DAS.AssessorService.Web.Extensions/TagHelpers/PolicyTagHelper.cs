@@ -17,7 +17,7 @@ namespace SFA.DAS.AssessorService.Web.Extensions.TagHelpers
             _authorizationService = authorizationService;
         }
 
-        private const string PolicyTagHelperAttributeName = "sfa-show-for-policy";
+        private const string PolicyTagHelperAttributeName = "sfa-policy-exists-show";
 
         [HtmlAttributeName(PolicyTagHelperAttributeName)]
         public string PolicyName { get; set; }

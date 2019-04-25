@@ -1,0 +1,123 @@
+﻿@model SFA.DAS.AssessorService.Web.ViewModels.Dashboard.DashboardViewModel
+@using SFA.DAS.AssessorService.Settings
+@using SFA.DAS.AssessorService.Web.Infrastructure
+@using SFA.DAS.AssessorService.Web.StartupConfiguration
+@inject ISessionService SessionService
+@{
+    ViewData["Title"] = "Home";
+    Layout = "_DashboardLayout";
+}
+
+<div>
+    <div class="grid-row">
+        <div class="column-one-third">
+            <div class="dashboard-box__green">
+                <div class="data-background__green">
+                    <div class="data data-stats">
+                        <span class="data-item bold-xxlarge">@Model.StandardsCount</span>
+                        <span class="data-item bold-medium">Standards</span>
+                    </div>
+                </div>
+                <div class="dashboard-box-content">
+                    <ul class="dashboard__link-list">
+                        <li class="dashboard__link">
+                            <a asp-controller="OrganisationStandards" asp-action="Index">Standards approved to assess</a>
+                        </li>
+                        <li class="dashboard__link">
+                            <a asp-controller="ApplyToAccessStandard" asp-action="Index">Apply to assess a new standard</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="column-one-third">
+            <div class="dashboard-box__lightblue">
+                <div class="data-background__lightblue">
+                    <div class="data data-stats">
+                        <span class="data-item bold-xxlarge">@Model.PipelinesCount</span>
+                        <span class="data-item bold-medium ">Pipeline</span>
+                    </div>
+                </div>
+                <div class="dashboard-box-content">
+                    <ul class="dashboard__link-list">
+                        <li class="dashboard__link ">
+                            <a asp-controller="OrganisationStandards" asp-action="Pipeline">View pipeline</a>
+                        </li>
+                        <li class="dashboard__link">
+                            <a asp-controller="Search" asp-action="Index">Record a grade</a>
+                        </li>
+                    </ul>
+
+                </div>
+            </div>
+        </div>
+        <div class="column-one-third">
+            <div class="dashboard-box__darkblue">
+                <div class="data-background__darkblue">
+                    <div class="data data-stats">
+                        <span class="data-item bold-xxlarge">@Model.AssessmentsCount</span>
+                        <span class="data-item bold-medium">Completed Assessments</span>
+                    </div>
+                </div>
+                <div class="dashboard-box-content">
+                    <ul class="dashboard__link-list">
+                        <li class="dashboard__link">
+                            <a asp-controller="CertificateHistory" asp-action="Index">Show completed assessments</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="grid-row">
+        <div class="column-full">
+            <div class="dashboard-box">
+                <div class="dashboard-box-content">
+                    <div class="data data-custom">
+                        <span class="data-item bold-medium">Organisation</span>
+                    </div>
+                    <div>
+                        <ul class="dashboard__link-list">
+                            <li class="dashboard__link ">
+                                <a asp-controller="Organisation" asp-action="OrganisationDetails">View organisation details</a>
+                            </li>
+                            <li class="dashboard__link ">
+                                <a sfa-policy-exists-show="@Policies.SuperUserPolicy" asp-controller="ManageUsers" asp-action="Index">Manage users</a>
+                            </li>
+                            <li class="dashboard__link">
+                                 <a sfa-policy-exists-show="@Policies.ExternalApiAccess" asp-controller="ExternalApi" asp-action="Index">External API keys</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @*<div class="column-one-half">
+            <div class="dashboard-box">
+                <div class="dashboard-box-content">
+                    <div class="data data-custom">
+                        <span class="data-item bold-medium">Use the API</span>
+                    </div>
+                    <div sfa-policy-exists-show="@Policies.ExternalApiAccess">
+                        <div class="data">
+                            <span class="data-item-custom font-small">Connect your organisations own systems directly with the register for end point assessments.</span>
+                        </div>
+                        <div>
+                            <ul class="dashboard__link-list">
+                                <li class="dashboard__link">
+                                    <a asp-controller="ExternalApi" asp-action="Index">External API keys</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div sfa-policy-not-exists-show="@Policies.ExternalApiAccess">
+                        <div class="data">
+                            <span class="data-item-custom font-small">Currently you lack privileges to connect your organisations own systems directly with the register for end point assessments.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>*@
+    </div>
+</div>
+

@@ -8,6 +8,7 @@ namespace SFA.DAS.AssessorService.EpaoDataSync.Domain
 {
     public interface IIlrsRefresherService
     {
-       Task<long> UpdateIlRsTable(string tableName);
+       Task UpdateIlRsTable(string sinceTime);
+       Task UpdateIlRsTable();
     }
 }

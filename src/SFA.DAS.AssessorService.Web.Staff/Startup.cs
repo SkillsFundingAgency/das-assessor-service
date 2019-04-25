@@ -17,7 +17,10 @@ using Polly.Extensions.Http;
 using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Application.Api.Client.Azure;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
+using SFA.DAS.AssessorService.Application.Api.Services;
+using SFA.DAS.AssessorService.Application.Api.Services.Validation;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Application.Interfaces.Validation;
 using SFA.DAS.AssessorService.Data;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
 using SFA.DAS.AssessorService.ExternalApis.IFAStandards;
@@ -26,7 +29,6 @@ using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.Staff.Helpers;
 using SFA.DAS.AssessorService.Web.Staff.Infrastructure;
-using SFA.DAS.AssessorService.Web.Staff.Services;
 using SFA.DAS.AssessorService.Web.Staff.Validators;
 using StructureMap;
 using CheckSessionFilter = SFA.DAS.AssessorService.Web.Staff.Infrastructure.CheckSessionFilter;
@@ -65,6 +67,16 @@ namespace SFA.DAS.AssessorService.Web.Staff
             })
                 .SetHandlerLifetime(TimeSpan.FromMinutes(5))  //Set lifetime to five minutes
                 .AddPolicyHandler(GetRetryPolicy());
+            
+            services.AddHttpClient<ApplyApiClient>("ApplyApiClient", config =>
+                {
+                    config.BaseAddress = new Uri(ApplicationConfiguration.ApplyApiAuthentication.ApiBaseAddress);
+                    config.DefaultRequestHeaders.Add("Accept", "Application/json");
+                })
+                .SetHandlerLifetime(TimeSpan.FromMinutes(5))  //Set lifetime to five minutes
+                .AddPolicyHandler(GetRetryPolicy());
+            
+            
             AddAuthentication(services);
             services.Configure<RequestLocalizationOptions>(options =>
             {
@@ -104,6 +116,19 @@ namespace SFA.DAS.AssessorService.Web.Staff
                 config.For<CertificateDateViewModelValidator>().Use<CertificateDateViewModelValidator>();
                 config.For<IOrganisationsApiClient>().Use<OrganisationsApiClient>().Ctor<string>().Is(ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress);
                 config.For<IContactsApiClient>().Use<ContactsApiClient>().Ctor<string>().Is(ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress);
+                config.For<IApplyApiClient>().Use<ApplyApiClient>().Ctor<string>().Is(ApplicationConfiguration.ApplyApiAuthentication.ApiBaseAddress);
+                config.For<IContactApplyClient>().Use<ContactApplyClient>().Ctor<string>().Is(ApplicationConfiguration.ApplyApiAuthentication.ApiBaseAddress);
+
+                config.For<IRegisterQueryRepository>().Use<RegisterQueryRepository>();
+                config.For<IRegisterRepository>().Use<RegisterRepository>();
+
+                config.For<IValidationService>().Use<ValidationService>();
+                config.For<IAssessorValidationService>().Use<AssessorValidationService>();
+                config.For<IRegisterValidationRepository>().Use<RegisterValidationRepository>();
+                config.For<IEpaOrganisationIdGenerator>().Use<EpaOrganisationIdGenerator>();
+                config.For<ISpecialCharacterCleanserService>().Use<SpecialCharacterCleanserService>();
+
+                
                 config.For<IAssessmentOrgsApiClient>().Use(() => new AssessmentOrgsApiClient(ApplicationConfiguration.AssessmentOrgsApiClientBaseUrl));
                 config.For<IIfaStandardsApiClient>().Use(() => new IfaStandardsApiClient(ApplicationConfiguration.IfaApiClientBaseUrl));
                 config.For<IAzureTokenService>().Use<AzureTokenService>();
@@ -113,7 +138,9 @@ namespace SFA.DAS.AssessorService.Web.Staff
                     .Use<CertificateLearnerStartDateViewModelValidator>();
                 config.For<IRegisterValidator>().Use<RegisterValidator>();
 
-                config.For<IStandardService>().Use<StandardService>();
+                config.For<IStandardServiceClient>().Use<StandardServiceClient>().Ctor<string>().Is(ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress);
+                config.For<ISessionService>().Use<SessionService>().Ctor<string>("environment")
+                    .Is(Configuration["EnvironmentName"]);
                 config.Populate(services);
             });
             return container.GetInstance<IServiceProvider>();

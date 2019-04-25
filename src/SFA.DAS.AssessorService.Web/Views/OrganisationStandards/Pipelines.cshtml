@@ -1,0 +1,131 @@
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+@using Microsoft.AspNetCore.Mvc.Localization
+@using SFA.DAS.AssessorService.Domain.Paging
+@model SFA.DAS.AssessorService.Web.ViewModels.OrganisationStandards.OrderedListResultViewModel
+@{
+    ViewBag.Title = "Pipeline";
+    Layout = "_DashboardLayout";
+}
+
+<div>
+    <div class="grid-row">
+        <div class="column-two-thirds">
+            <h1 class="heading-large">Pipeline</h1>
+        </div>
+        @if (Model.Response.Items.Any())
+        {
+            <div class="column-two-thirds">
+                <div class="panel panel-border-wide">
+                    <p>
+                        Assessment numbers may vary because of data changes on the individualised learner record (ILR) and certification service.
+                    </p>
+                </div>
+            </div>
+            <div class="column-one-third">
+                <div class="form-group align-button-right">
+                    <form asp-controller="OrganisationStandards" asp-action="ExportEpaPipelineAsCsv" method="get">
+                        <button type="submit" class="button">Download as csv</button>
+                    </form>
+                </div>
+            </div>
+            <div class="column-full">
+                <table id="pipeline" class="table responsive table-font-xsmall striped">
+                    <thead>
+                    <tr>
+                        <th>
+                            @Localizer["Standard"]
+                        </th>
+                        <th class="numeric">
+                            @Localizer["Apprentices"]
+                        </th>
+                        @if (Model.Response.Items.Any())
+                        {
+                            <th class="numeric" aria-sort="@(Model.OrderDirection)">
+                                <a asp-controller="OrganisationStandards"
+                                   asp-action="OrderPipeline"
+                                   asp-route-pageIndex="@(Model.Response.PageIndex)"
+                                   asp-route-orderBy="EstimateDate"
+                                   asp-route-orderDirection="@(Model.OrderDirection)">
+                                    @Localizer["Estimated EPA date"]
+                                </a>
+                            </th>
+                        }
+                        else
+                        {
+                            <th class="numeric" aria-sort="@(Model.OrderDirection)">
+                                @Localizer["Estimated Gateway"]
+                            </th>
+                        }
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var item in Model.Response.Items)
+                    {
+                        <tr>
+                            <td data-label="@Localizer["StandardName"]" class="nowrap">
+                                @Html.DisplayFor(modelItem => item.StandardName)
+                            </td>
+                            <td data-label="@Localizer["Apprenticeds"]" class="numeric">
+                                @Html.DisplayFor(modelItem => item.Pipeline)
+                            </td>
+                            <td data-label="@Localizer["EstimatedDate"]" class="numeric nowrap bold" data-sort-value="@Localizer["EstimatedDate"]">
+                                @Html.DisplayFor(modelItem => item.EstimatedDate)
+                            </td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="column-full">
+                <div class="panel panel-border-wide">
+                    <p>
+                        Assessment numbers may vary because of data changes on the individualised learner record (ILR) and certification service.
+                    </p>
+                </div>
+            </div>
+            <div class="column-full">
+                <div class="info-summary">
+                    <h3 class="heading-medium">Your pipeline is empty.</h3>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+@if (Model.Response.HasPreviousPage || Model.Response.HasNextPage)
+{
+    <div class="grid-row">
+        <div class="column-full">
+            <div class="page-navigation">
+
+                @if (Model.Response.HasPreviousPage)
+                {
+                    <a asp-action="Pipeline"
+                       asp-controller="OrganisationStandards"
+                       asp-route-pageIndex="@(Model.Response.PageIndex - 1)"
+                       class="previous">
+                        <i class="arrow-button icon-left-open">&#xe800;</i>
+                        <span class="description">Previous <span class="hide-mob">page</span></span>
+                        <span class="counter">Page <span class="prevPage">@(Model.Response.PageIndex - 1)</span> of <span class="totalPage">@(Model.Response.TotalPages)</span></span>
+                    </a>
+                }
+
+                @if (Model.Response.HasNextPage)
+                {
+                    <a asp-controller="OrganisationStandards"
+                       asp-action="Pipeline"
+                       asp-route-pageIndex="@(Model.Response.PageIndex + 1)"
+                       class="next">
+                        <i class="arrow-button icon-right-open">&#xe801;</i>
+                        <span class="description">Next <span class="hide-mob">page</span></span>
+                        <span class="counter">Page <span class="nextPage">@(Model.Response.PageIndex + 1)</span> of <span class="totalPage">@(Model.Response.TotalPages)</span></span>
+                    </a>
+                }
+
+            </div>
+        </div>
+    </div>
+}

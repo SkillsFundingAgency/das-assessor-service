@@ -16,6 +16,7 @@ using SFA.DAS.AssessorService.Domain.Paging;
 using SFA.DAS.AssessorService.Web.Staff.Models;
 using SFA.DAS.AssessorService.Web.Staff.ViewModels.Private;
 using SFA.DAS.Apprenticeships.Api.Types;
+using OrganisationType = SFA.DAS.AssessorService.Api.Types.Models.AO.OrganisationType;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
 {
@@ -162,7 +163,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
         public async Task<string> CreateEpaOrganisationStandard(CreateEpaOrganisationStandardRequest request)
         {
             var result =
-                await Post<CreateEpaOrganisationStandardRequest, EpaOrganisationStandardResponse>("api/ao/assessment-organisations/standards",
+                await Post<CreateEpaOrganisationStandardRequest, EpaoStandardResponse>("api/ao/assessment-organisations/standards",
                     request);
             return result.Details;
         }
@@ -170,7 +171,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
         public async Task<string> UpdateEpaOrganisationStandard(UpdateEpaOrganisationStandardRequest request)
         {
             var result =
-                await Put<UpdateEpaOrganisationStandardRequest, EpaOrganisationStandardResponse>("api/ao/assessment-organisations/standards",
+                await Put<UpdateEpaOrganisationStandardRequest, EpaoStandardResponse>("api/ao/assessment-organisations/standards",
                     request);
             return result.Details;
         }
@@ -323,5 +324,10 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
             return await Get<IEnumerable<IDictionary<string, object>>>($"api/v1/staffreports/report-content/{storedProcedure}");
         }
         #endregion
+
+        public async Task UpdateFinancials(UpdateFinancialsRequest updateFinancialsRequest)
+        {
+            await Post("api/ao/assessment-organisations/update-financials", updateFinancialsRequest);
+        }
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using SFA.DAS.Apprenticeships.Api.Types;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
+using System;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Models
 {
@@ -12,6 +13,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Models
         public long? Ukprn { get; set; }
         public int? OrganisationTypeId { get; set; }
         public string LegalName { get; set; }
+        public string TradingName { get; set; }
         public string WebsiteLink { get; set; }
         public string Address { get; set; }
         public string Address1 { get; set; }
@@ -32,5 +34,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.Models
         public string CharityNumber { get; set; }
 
         public string ActionChoice { get; set; }
+
+        public DateTime? FinancialDueDate { get; set; }
+        public bool? FinancialExempt { get; set; }
     }
 }

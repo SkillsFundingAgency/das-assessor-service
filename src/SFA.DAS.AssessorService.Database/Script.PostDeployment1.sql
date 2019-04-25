@@ -1,206 +1,181 @@
-﻿/*
-Post-Deployment Script Template							
+/*
+Post-Deployment Script Template                            
 --------------------------------------------------------------------------------------
- This file contains SQL statements that will be appended to the build script.		
- Use SQLCMD syntax to include a file in the post-deployment script.			
- Example:      :r .\myfile.sql								
- Use SQLCMD syntax to reference a variable in the post-deployment script.		
- Example:      :setvar TableName MyTable							
-               SELECT * FROM [$(TableName)]					
+ This file contains SQL statements that will be appended to the build script.        
+ Use SQLCMD syntax to include a file in the post-deployment script.            
+ Example:      :r .\myfile.sql                                
+ Use SQLCMD syntax to reference a variable in the post-deployment script.        
+ Example:      :setvar TableName MyTable                            
+               SELECT * FROM [$(TableName)]                    
 --------------------------------------------------------------------------------------
 */
 
--- Amend Organisations Type to have description
+-- backup ILRS before data synch
+/* DONE
+DELETE FROM IlrsCopy
 
-IF NOT EXISTS 
-(
-    SELECT * 
-    FROM INFORMATION_SCHEMA.COLUMNS 
-    WHERE table_name = 'OrganisationType'
-    AND column_name = 'TypeDescription'
-)
+INSERT INTO IlrsCopy SELECT * FROM Ilrs
+*/
+
+/* DONE
+update deliveryarea set Ordering=1 where Area='North East'
+update deliveryarea set Ordering=2 where Area='North West'
+update deliveryarea set Ordering=3 where Area='Yorkshire and the Humber'
+update deliveryarea set Ordering=4 where Area='East Midlands'
+update deliveryarea set Ordering=5 where Area='West Midlands'
+update deliveryarea set Ordering=6 where Area='East of England'
+update deliveryarea set Ordering=7 where Area='London'
+update deliveryarea set Ordering=8 where Area='South East'
+update deliveryarea set Ordering=9 where Area='South West'*/
+
+-- ON-1374 update any new organisation standards to 'Live' if minimum acceptance criteria for live is available
+UPDATE organisationStandard 
+    SET Status='Live', 
+    DateStandardApprovedOnRegister = ISNULL(DateStandardApprovedOnRegister, CONVERT(DATE, GETDATE()))
+    WHERE Id IN (SELECT organisationStandardId FROM  OrganisationStandardDeliveryArea)
+    AND contactId IS NOT NULL
+    AND Status='New'
+
+/* DONE
+-- ON-1058 update FHA details STORY 
+:r UpdateFHADetails.sql
+*/
+
+/* DONE
+-- load December 2018 report DATABASE
+:r setDec18EPAReport.sql
+*/
+
+-- patch FundingModel, where this was not set by data sync
+UPDATE Ilrs SET FundingModel = 36 WHERE FundingModel IS NULL
+
+-- DONE
+-- fix options
+--UPDATE [Certificates]
+--SET [CertificateData] = JSON_MODIFY([CertificateData], '$.CourseOption','Alcoholic Beverage Service') 
+--WHERE json_value(certificatedata,'$.CourseOption') = 'Alcholic beverage service'
+
+--UPDATE [Options] 
+--SET [OptionName] = 'Alcoholic Beverage Service'
+--WHERE [OptionName] = 'Alcholic beverage service'
+
+
+-- ON-613 Patch Certificates with STxxxx StandardReference, where it is not yet included. 
+-- AB 11/03/19 Keep this active for new deployments, for now
+-- ****************************************************************************
+MERGE INTO certificates ma1
+USING (
+SELECT ce1.[Id],JSON_MODIFY([CertificateData],'$.StandardReference',st1.ReferenceNumber) newData
+  FROM [Certificates] ce1 
+  JOIN [StandardCollation] st1 ON ce1.StandardCode = st1.StandardId
+  WHERE st1.ReferenceNumber IS NOT NULL 
+  AND JSON_VALUE([CertificateData],'$.StandardReference') IS NULL) up1
+ON (ma1.id = up1.id)
+WHEN MATCHED THEN UPDATE SET ma1.[CertificateData] = up1.[newData];
+
+/* DONE 
+IF NOT EXISTS (SELECT * FROM EMailTemplates WHERE TemplateName = N'EPAOUserApproveConfirm')
 BEGIN
-    ALTER TABLE [OrganisationType] ADD [TypeDescription] nvarchar(500);
-END
-GO
-
-UPDATE [OrganisationType] SET [Type] =  'Awarding Organisations', [TypeDescription] = 'Awarding organisations' WHERE id = 1;
-UPDATE [OrganisationType] SET [Type] =  'Assessment Organisations', [TypeDescription] = 'Assessment organisations' WHERE id = 2;
-UPDATE [OrganisationType] SET [Type] =  'Trade Body', [TypeDescription] = 'Trade body' WHERE id = 3;
-UPDATE [OrganisationType] SET [Type] =  'Professional Body', [TypeDescription] = 'Professional body - approved by the relevant council' WHERE id = 4;
-UPDATE [OrganisationType] SET [Type] =  'HEI', [TypeDescription] = 'Higher education institute (HEI) monitored and supported by the Office for Students (OfS)' WHERE id = 5;
-UPDATE [OrganisationType] SET [Type] =  'NSA or SSC', [TypeDescription] = 'National skills academy or sector skills council' WHERE id = 6;
-UPDATE [OrganisationType] SET [Type] =  'Training Provider', [TypeDescription] = 'Training Provider - including HEI not in England' WHERE id = 7;
-UPDATE [OrganisationType] SET [Status] =  'Deleted' WHERE id = 8;
-UPDATE [OrganisationType] SET [Type] =  'Public Sector', [TypeDescription] = 'Incorporated as a public sector body' WHERE id = 9;
-
--- 'College'
-IF NOT EXISTS(SELECT * FROM OrganisationType WHERE id = 10)
-BEGIN
-	SET identity_insert OrganisationType ON
-	INSERT INTO [OrganisationType] (ID,[Type],[Status], [TypeDescription]) VALUES (10,'College','Live','General further education (GFE) college currently receiving funding from the ESFA, 6th form or further education (FE) college');
-	SET identity_insert OrganisationType OFF
-END
-ELSE
-BEGIN
-	UPDATE [OrganisationType] SET [Type] =  'College', [TypeDescription] = 'General further education (GFE) college currently receiving funding from the ESFA, 6th form or further education (FE) college' WHERE id = 10;
-END
-
--- 'Academy or Free School'
-IF NOT EXISTS(SELECT * FROM OrganisationType WHERE id = 11)
-BEGIN
-	SET identity_insert OrganisationType ON
-	INSERT INTO [OrganisationType] (ID,[Type],[Status], [TypeDescription]) VALUES (11,'Academy or Free School','Live','Academy or free school registered with the ESFA');
-	SET identity_insert OrganisationType OFF
-END
-ELSE
-BEGIN
-	UPDATE [OrganisationType] SET [Type] =  'Academy or Free School', [TypeDescription] = 'Academy or free school registered with the ESFA' WHERE id = 11;
-END
-
-IF NOT EXISTS(SELECT * FROM StaffReports)
-	BEGIN
-		INSERT INTO StaffReports (ReportName, StoredProcedure, DisplayOrder, ReportType) VALUES ('Monthly detailed extract', 'StaffReports_DetailedExtract', 1,'ViewOnScreen')
-		INSERT INTO StaffReports (ReportName, StoredProcedure, DisplayOrder, ReportType) VALUES ('Monthly summary', 'StaffReports_MonthlySummary', 2,'ViewOnScreen')
-		INSERT INTO StaffReports (ReportName, StoredProcedure, DisplayOrder, ReportType) VALUES ('Weekly summary', 'StaffReports_WeeklySummary', 3,'ViewOnScreen')
-		INSERT INTO StaffReports (ReportName, StoredProcedure, DisplayOrder, ReportType) VALUES ('Batch', 'StaffReports_ByBatch', 4,'ViewOnScreen')
-		INSERT INTO StaffReports (ReportName, StoredProcedure, DisplayOrder, ReportType) VALUES ('EPAO', 'StaffReports_ByEpao', 5,'ViewOnScreen')
-		INSERT INTO StaffReports (ReportName, StoredProcedure, DisplayOrder, ReportType) VALUES ('EPAO, standard and grade', 'StaffReports_ByEpaoAndStandardAndGrade', 6,'ViewOnScreen')
-		INSERT INTO StaffReports (ReportName, StoredProcedure, DisplayOrder, ReportType) VALUES ('Provider', 'StaffReports_ByProvider', 7,'ViewOnScreen')
-		INSERT INTO StaffReports (ReportName, StoredProcedure, DisplayOrder, ReportType) VALUES ('Provider and grade', 'StaffReports_ByProviderAndGrade', 8,'ViewOnScreen')
-		INSERT INTO StaffReports (ReportName, StoredProcedure, DisplayOrder, ReportType) VALUES ('Standard', 'StaffReports_ByStandard', 9,'ViewOnScreen')
-		INSERT INTO StaffReports (ReportName, StoredProcedure, DisplayOrder, ReportType) VALUES ('Certificate count', 'StaffReports_CertificateCount', 10,'ViewOnScreen')
-	END
-
-UPDATE StaffReports SET ReportType = 'ViewOnScreen' WHERE ReportType IS NULL
-
-IF NOT EXISTS (SELECT * FROM StaffReports WHERE ReportName = 'EPAO Register')
-BEGIN
-	INSERT INTO StaffReports (ReportName, StoredProcedure, DisplayOrder, ReportType) VALUES ('EPAO Register', '', 11, 'Download')
-END
-
-UPDATE StaffReports SET ReportDetails ='{"Name":"EPAO Register","Worksheets": [
-  {
-  "worksheet":"Register - Organisations",
-  "order": 1,
-  "StoredProcedure":"EPAO_Register_register_organisation"
-  },
-  {
-  "worksheet":"Register - Standards",
-  "order": 2,
-  "StoredProcedure":"EPAO_Register_register_standards"
-  },
-  {
-  "worksheet":"Register - Delivery areas",
-  "order": 3,
-  "StoredProcedure":"EPAO_Register_register_delivery_areas"
-  },
-  {
-  "worksheet":"Data Definitions",
-  "order": 4,
-  "StoredProcedure":"EPAO_Register_Data_Definitions"
-  }
-  ]}' WHERE ReportName = 'EPAO Register'
-
-
-
-IF NOT EXISTS (SELECT * FROM StaffReports WHERE ReportName = 'Register List of Organisations')
-BEGIN
-	INSERT INTO StaffReports (ReportName, StoredProcedure, DisplayOrder, ReportType) VALUES ('Register List of Organisations', '', 12, 'Download')
+INSERT EMailTemplates ([Id],[TemplateName],[TemplateId],[Recipients],[CreatedAt]) 
+VALUES (NEWID(), N'EPAOUserApproveConfirm', N'539204f8-e99a-4efa-9d1f-d0e58b26dd7b', NULL, GETDATE())
 END
 
-UPDATE StaffReports SET ReportDetails = '{"Name":"Register List Of Organisations","Worksheets": [
-	  {
-	  "worksheet":"Register List of Organisations",
-	  "order": 1,
-	  "StoredProcedure":"EPAO_Register_list_of_organisations"
-	  }
-	]}'  WHERE ReportName = 'Register List of Organisations'
-
-
-IF NOT EXISTS (SELECT * FROM StaffReports WHERE ReportName = 'Register List of Standards')
+IF NOT EXISTS (SELECT * FROM EMailTemplates WHERE TemplateName = N'EPAOUserApproveRequest')
 BEGIN
-	INSERT INTO StaffReports (ReportName, StoredProcedure, DisplayOrder, ReportType) VALUES ('Register List of Standards', '', 13, 'Download')
+INSERT EMailTemplates ([Id],[TemplateName],[TemplateId],[Recipients],[CreatedAt]) 
+VALUES (NEWID(), N'EPAOUserApproveRequest', N'5bb920f4-06ec-43c7-b00a-8fad33ce8066', NULL, GETDATE())
+END
+*/
+
+/* DONE 
+-- setup Privileges
+IF NOT EXISTS (SELECT * FROM [Privileges] WHERE [UserPrivilege] = N'Manage users')
+BEGIN
+INSERT [Privileges] ([Id],[UserPrivilege]) VALUES (NEWID(), N'Manage users')
 END
 
-UPDATE StaffReports SET ReportDetails = '{"Name":"Register List Of Standards","Worksheets": [
-	  {
-	  "worksheet":"Register List of Standards",
-	  "order": 1,
-	  "StoredProcedure":"EPAO_Register_list_of_standards"
-	  }
-	]}'  WHERE ReportName = 'Register List of Standards'
-
-
--- -'Academy or Free School'
-IF NOT EXISTS(SELECT * FROM OrganisationType WHERE id = 11)
+IF NOT EXISTS (SELECT * FROM [Privileges] WHERE [UserPrivilege] =  N'Record grades and issue certificates')
 BEGIN
-	SET identity_insert OrganisationType ON
-	INSERT INTO [OrganisationType] (ID,[Type],[Status], [TypeDescription]) VALUES (11,'Academy or Free School','Live','Academy or Free school registered with the ESFA');
-	SET identity_insert OrganisationType OFF
-END
-ELSE
-BEGIN
-	UPDATE [OrganisationType] SET [Type] =  'Academy or Free School', [TypeDescription] = 'Academy or Free school registered with the ESFA' WHERE id = 11;
+INSERT [Privileges] ([Id],[UserPrivilege]) VALUES (NEWID(), N'Record grades and issue certificates')
 END
 
-
-UPDATE [Organisations] SET [OrganisationTypeId] = 3 WHERE [EndPointAssessorOrganisationId] = 'EPA0027';
-UPDATE [Organisations] SET [OrganisationTypeId] = 9 WHERE [EndPointAssessorOrganisationId] = 'EPA0035';
-UPDATE [Organisations] SET [OrganisationTypeId] = 4 WHERE [EndPointAssessorOrganisationId] = 'EPA0049';
-UPDATE [Organisations] SET [OrganisationTypeId] = 6 WHERE [EndPointAssessorOrganisationId] = 'EPA0051';
-UPDATE [Organisations] SET [OrganisationTypeId] = 9 WHERE [EndPointAssessorOrganisationId] = 'EPA0085';
-UPDATE [Organisations] SET [OrganisationTypeId] = 6 WHERE [EndPointAssessorOrganisationId] = 'EPA0104';
-UPDATE [Organisations] SET [OrganisationTypeId] = 9 WHERE [EndPointAssessorOrganisationId] = 'EPA0141';
-UPDATE [Organisations] SET [OrganisationTypeId] = 10 WHERE [EndPointAssessorOrganisationId] = 'EPA0159';
-UPDATE [Organisations] SET [OrganisationTypeId] = 7 WHERE [EndPointAssessorOrganisationId] = 'EPA0173';
-
-
-IF NOT EXISTS (SELECT * FROM sys.tables t 
-    INNER JOIN sys.partitions p ON t.object_id = p.object_id 
-    WHERE t.name = 'IlrsCopy' AND p.rows > 0)
-	BEGIN
-	INSERT INTO [dbo].[IlrsCopy] ([Id]
-			,[Uln]
-			,[GivenNames]
-			,[FamilyName]
-			,[UkPrn]
-			,[StdCode]
-			,[LearnStartDate]
-			,[EpaOrgId]
-			,[FundingModel]
-			,[ApprenticeshipId]
-			,[EmployerAccountId]
-			,[Source]
-			,[CreatedAt]
-			,[UpdatedAt]
-			,[LearnRefNumber]
-			,[CompletionStatus]) 
-			SELECT * FROM [dbo].[Ilrs]
-	END
-	GO
-        
-UPDATE CERTIFICATES
-set IsPrivatelyFunded = 0
-WHERE IsPrivatelyFunded IS NULL 
-
-
---- FIXES FOR BAD DATA IN SPREADSHEET IMPORT
-
-if not exists(select * from OrganisationStandardDeliveryArea where organisationStandardId in (select id from organisationStandard where EndPointAssessorOrganisationId='EPA0048' and StandardCode=320))
+IF NOT EXISTS (SELECT * FROM [Privileges] WHERE [UserPrivilege] =  N'View standards')
 BEGIN
-insert into OrganisationStandardDeliveryArea (OrganisationStandardId, DeliveryAreaId, Status)
-		select 
-			(select id from organisationStandard where EndPointAssessorOrganisationId='EPA0048' and StandardCode=320) as osid, id, 'Live' from deliveryArea
+INSERT [Privileges] ([Id],[UserPrivilege]) VALUES (NEWID(), N'View standards')
 END
 
-
-if not exists(select * from OrganisationStandardDeliveryArea where organisationStandardId in (select id from organisationStandard where EndPointAssessorOrganisationId='EPA0057' and StandardCode=318))
+IF NOT EXISTS (SELECT * FROM [Privileges] WHERE [UserPrivilege] =  N'Apply for standards')
 BEGIN
-insert into OrganisationStandardDeliveryArea (OrganisationStandardId, DeliveryAreaId, Status)
-		select 
-			(select id from organisationStandard where EndPointAssessorOrganisationId='EPA0057' and StandardCode=318) as osid, id, 'Live' from deliveryArea
+INSERT [Privileges] ([Id],[UserPrivilege]) VALUES (NEWID(), N'Apply for standards')
 END
+
+-- Setup ContactsPrivileges
+delete from [ContactsPrivileges]
+
+insert into [ContactsPrivileges]
+select co1.id, pr1.id 
+from Contacts co1 
+cross  join [Privileges] pr1
+where co1.status = 'Live'  and co1.username not like 'unknown%' and co1.username != 'manual'
+
+--Setup contact roles
+INSERT INTO [ContactRoles]
+SELECT ab1.*, co1.id contactid FROM (
+SELECT newid() Id,'SuperUser' Rolename ) ab1
+CROSS JOIN [Contacts] co1
+WHERE co1.[Status] = 'Live'
+AND co1.username not like 'unknown%'
+AND EXISTS ( SELECT NULL FROM Organisations og1 WHERE og1.id = co1.OrganisationId AND og1.[Status] != 'Deleted')
+AND NOT EXISTS (SELECT NULL FROM [ContactRoles] co2 WHERE co2.ContactId = co1.Id)
+
+*/
+
+/* DONE
+-- DisplayName fix
+MERGE INTO [Contacts] co1
+USING (
+SELECT T.id,
+    T.DisplayName, T.Email,
+	TRIM(CASE WHEN SecondSpace.j = 0 OR SUBSTRING(T.DisplayName,1,FirstSpace.i) = 'null' THEN '' ELSE SUBSTRING(T.DisplayName,1,FirstSpace.i) END) Title,
+    ISNULL(TRIM(GivenNames.g),'') "GivenNames", ISNULL(TRIM(FamilyName.f),'') "FamilyName"
+FROM (
+SELECT 
+CASE WHEN [Id] = '9A60D39C-19D8-48E2-AE10-08D5D52AA3F6' THEN 'null Agnes Varadi'
+     WHEN [Id] = 'A671441F-A6C9-458E-A68C-08D64A4EB5A1' THEN 'null Emma Tune'
+     WHEN [Id] = 'A8B2F30B-EE5B-438E-F621-08D5DB4F0956' THEN 'null Mark Thomas'
+     WHEN [Id] = 'BACEFA56-4D83-4EFF-2B8F-08D6773CA7E6' THEN 'null Julian Rhodes' 
+     WHEN [Id] = 'F68C8654-DFC2-4660-BB96-B82F25AFEC46' THEN 'null Jeremy Hay Campbell'
+     WHEN [Id] = '686E8E82-810C-4D99-85FB-CCF2625E7792' THEN 'null Jessica Button'
+     WHEN [Id] IN ( '19D57EAC-7626-4F63-996D-ED9E2602F6E7' , 'B8764FF2-4883-43A6-84FB-7FB6C85A77E6' , 'E85A99EC-323A-41B5-A328-E12036966407') THEN 'null ' + TRIM(DisplayName)
+     ELSE TRIM(DisplayName) END DisplayName, Id, Email
+ FROM [Contacts] co1 WHERE TRIM(DisplayName) IS NOT NULL
+ ) t
+    CROSS APPLY (SELECT CHARINDEX(' ', T.DisplayName, 1)) AS FirstSpace(i)
+    CROSS APPLY (SELECT CHARINDEX(' ', T.DisplayName, FirstSpace.i + 1)) AS SecondSpace(j)
+    CROSS APPLY (SELECT CHARINDEX(' ', T.DisplayName, SecondSpace.j + 1)) AS ThirdSpace(k)
+    CROSS APPLY (SELECT CASE WHEN FirstSpace.i = 0 THEN LEN(T.DisplayName) ELSE FirstSpace.i - 1 END) LenOne(n)
+    CROSS APPLY (SELECT CASE WHEN FirstSpace.i = 0 THEN 0
+                             WHEN SecondSpace.j = 0 THEN LEN(T.DisplayName) - FirstSpace.i - 1 
+                             ELSE SecondSpace.j - FirstSpace.i - 1 END ) LenTwo(l)
+    CROSS APPLY (SELECT CASE WHEN FirstSpace.i = 0 THEN 0
+                             WHEN SecondSpace.j = 0 THEN 0 
+                             ELSE LEN(T.DisplayName) - SecondSpace.j END) LenThree(m)
+    CROSS APPLY (SELECT CASE WHEN FirstSpace.i = 0 THEN T.DisplayName 
+                             WHEN SecondSpace.j = 0 THEN SUBSTRING(T.Displayname, FirstSpace.i + 1, LEN(T.DisplayName) - FirstSpace.i) 
+                             ELSE SUBSTRING(T.Displayname, SecondSpace.j + 1, LEN(T.DisplayName) - SecondSpace.j) END) FamilyName(f)
+    CROSS APPLY (SELECT CASE WHEN FirstSpace.i = 0 THEN NULL
+                             WHEN SecondSpace.j = 0 THEN SUBSTRING(T.Displayname, 1, FirstSpace.i) 
+                             ELSE SUBSTRING(T.Displayname, FirstSpace.i + 1, SecondSpace.j - FirstSpace.i) END ) GivenNames(g)
+) up1
+ON (co1.Id = up1.Id)
+WHEN MATCHED THEN UPDATE 
+SET Title = up1.Title,
+GivenNames = up1.GivenNames,
+FamilyName = up1.FamilyName,
+DisplayName = TRIM(up1.Title + (CASE WHEN up1.Title = '' THEN '' ELSE + ' ' END) + up1.GivenNames  + (CASE WHEN up1.GivenNames = '' THEN '' ELSE + ' ' END) + up1.FamilyName);
+
+*/
+
 
 IF EXISTS(SELECT 1 FROM sys.columns
          WHERE Name = N'WasRejected'
@@ -208,3 +183,6 @@ IF EXISTS(SELECT 1 FROM sys.columns
 BEGIN
     ALTER TABLE [CertificateLogs] DROP COLUMN [WasRejected]
 END
+/* DONE
+UPDATE [OrganisationType] SET [Type] =  'Training Provider', [TypeDescription] = 'Training provider - including HEI not in England' WHERE id = 7;
+*/

@@ -43,11 +43,13 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
                 OrganisationId = _organisationIdCreated,
                 Ukprn = _ukprnCreated,
                 PrimaryContact = null,
+                PrimaryContactName = null,
                 Status = OrganisationStatus.New,
                 OrganisationTypeId = _organisationTypeId,
                 OrganisationData = new OrganisationData
                 {
                     LegalName = " legal name",
+                    TradingName = "trading name",
                     Address1 = "address 1",
                     Address2 = "address 2",
                     Address3 = "address 3",

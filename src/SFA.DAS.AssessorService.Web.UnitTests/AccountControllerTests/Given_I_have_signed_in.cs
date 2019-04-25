@@ -9,9 +9,12 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Application.Api.Client.Clients;
+using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Web.Controllers;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.Orchestrators.Login;
+using SFA.DAS.AssessorService.Web.Validators;
 
 namespace SFA.DAS.AssessorService.Web.UnitTests.AccountControllerTests
 {
@@ -21,14 +24,19 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.AccountControllerTests
         private Mock<IHttpContextAccessor> _contextAccessor;
         private AccountController _accountController;
         private Mock<ILoginOrchestrator> _loginOrchestrator;
+        private Mock<IWebConfiguration> _webConfigurationMock;
+        private Mock<CreateAccountValidator> _validatorMock;
+        private Mock<IContactsApiClient> _contactsApiClientMock;
 
         [SetUp]
         public void Arrange()
         {
             _contextAccessor = new Mock<IHttpContextAccessor>();
-
+            _webConfigurationMock = new Mock<IWebConfiguration>();
+            _validatorMock = new Mock<CreateAccountValidator>();
             _contextAccessor.Setup(a => a.HttpContext.User.FindFirst("http://schemas.portal.com/ukprn"))
                 .Returns(new Claim("http://schemas.portal.com/ukprn", "12345"));
+            _contactsApiClientMock = new Mock<IContactsApiClient>();
 
             var mockSession = new Mock<ISession>();
 
@@ -36,7 +44,9 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.AccountControllerTests
 
             _loginOrchestrator = new Mock<ILoginOrchestrator>();
 
-            _accountController = new AccountController(new Mock<ILogger<AccountController>>().Object, _loginOrchestrator.Object, new Mock<ISessionService>().Object);
+            _accountController = new AccountController(new Mock<ILogger<AccountController>>().Object,
+                _loginOrchestrator.Object, new Mock<ISessionService>().Object, _webConfigurationMock.Object, _contactsApiClientMock.Object,
+                _validatorMock.Object);
         }
 
         [Test]
@@ -55,7 +65,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.AccountControllerTests
         }
 
         [Test]
-        public void And_I_am_not_registered_Then_redirect_to_NotRegistered_page()
+        public void And_I_am_not_registered_Then_redirect_to_Organisation_Search_page()
         {
             _loginOrchestrator.Setup(o => o.Login())
                 .ReturnsAsync(new LoginResponse() { Result = LoginResult.NotRegistered });
@@ -65,8 +75,8 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.AccountControllerTests
             result.Should().BeOfType<RedirectToActionResult>();
 
             var redirectResult = result as RedirectToActionResult;
-            redirectResult.ControllerName.Should().Be("Home");
-            redirectResult.ActionName.Should().Be("NotRegistered");
+            redirectResult.ControllerName.Should().Be("OrganisationSearch");
+            redirectResult.ActionName.Should().Be("Index");
         }
 
         [Test]
@@ -80,7 +90,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.AccountControllerTests
             result.Should().BeOfType<RedirectToActionResult>();
 
             var redirectResult = result as RedirectToActionResult;
-            redirectResult.ControllerName.Should().Be("Search");
+            redirectResult.ControllerName.Should().Be("Dashboard");
             redirectResult.ActionName.Should().Be("Index");
         }
     }

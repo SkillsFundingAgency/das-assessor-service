@@ -15,9 +15,20 @@
     [CreatedAt] DATETIME2 NOT NULL, 
     [UpdatedAt] DATETIME2 NULL,
 	[LearnRefNumber] NVARCHAR(12) NULL,
-	[CompletionStatus] [int] NULL
+	[CompletionStatus] [int] NULL,
+	[EventId] BIGINT NULL, 
+    [PlannedEndDate] DATETIME2 NULL
 )
 
 GO
 
-CREATE INDEX [IX_Ilrs_Uln_FamilyName_StdCode] ON [dbo].[Ilrs] ([Uln], [FamilyName], [StdCode])
+CREATE UNIQUE INDEX [IXU_Ilrs_Uln_StdCode] ON [Ilrs] ([Uln], [StdCode]) INCLUDE ([FamilyName])
+GO
+
+CREATE NONCLUSTERED INDEX [IX_Ilrs_EpaOrgId_StdCode_CompletionStatus] ON [Ilrs] ([EpaOrgId], [StdCode], [CompletionStatus]) INCLUDE ([LearnStartDate], [PlannedEndDate], [Uln])
+GO
+
+CREATE NONCLUSTERED INDEX [IX_Ilrs_EpaOrgId_StdCode_Uln] ON [Ilrs] ([EpaOrgId], [StdCode], [Uln]) INCLUDE ([LearnStartDate], [PlannedEndDate], [CompletionStatus])
+GO
+
+

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -23,6 +24,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
         private string _returnedOrganisationId;
         private Mock<ISpecialCharacterCleanserService> _cleanserService;
         private Mock<ILogger<UpdateEpaOrganisationHandler>> _logger;
+        private Mock<IEpaOrganisationValidator> _validator;
         private UpdateEpaOrganisationRequest _requestNoIssues;
         private EpaOrganisation _expectedOrganisationNoIssues;
         private string _organisationId;
@@ -32,6 +34,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
         {
             _registerRepository = new Mock<IRegisterRepository>();
             _cleanserService = new Mock<ISpecialCharacterCleanserService>();
+            _validator = new Mock<IEpaOrganisationValidator>();
             _logger = new Mock<ILogger<UpdateEpaOrganisationHandler>>();
             _organisationId = "EPA999";
 
@@ -44,12 +47,17 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
             _cleanserService.Setup(c => c.CleanseStringForSpecialCharacters(It.IsAny<string>()))
                 .Returns((string s) => s);
             
-            _updateEpaOrganisationHandler = new UpdateEpaOrganisationHandler(_registerRepository.Object, _logger.Object, _cleanserService.Object);
+            _updateEpaOrganisationHandler = new UpdateEpaOrganisationHandler(_registerRepository.Object, _logger.Object, _cleanserService.Object, _validator.Object);
         }
 
         [Test]
         public void GetOrganisationDetailsRepoIsCalledWhenHandlerInvoked()
         {
+            var validationResponse = new ValidationResponse();
+
+            _validator.Setup(x => x.ValidatorUpdateEpaOrganisationRequest(It.IsAny<UpdateEpaOrganisationRequest>()))
+                .Returns(validationResponse);
+
             var res = _updateEpaOrganisationHandler.Handle(_requestNoIssues, new CancellationToken()).Result;
             _registerRepository.Verify(r => r.UpdateEpaOrganisation(It.IsAny<EpaOrganisation>()));
         }
@@ -57,8 +65,30 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
         [Test]
         public void GetOrganisationDetailsWhenOrganisationUpdated()
         {
+            var validationResponse = new ValidationResponse();
+
+            _validator.Setup(x => x.ValidatorUpdateEpaOrganisationRequest(It.IsAny<UpdateEpaOrganisationRequest>()))
+                .Returns(validationResponse);
+
             _returnedOrganisationId = _updateEpaOrganisationHandler.Handle(_requestNoIssues, new CancellationToken()).Result;
             _returnedOrganisationId.Should().BeEquivalentTo(_expectedOrganisationNoIssues.OrganisationId);
+        }
+
+        [Test]
+        public void UpdateOrganisationFailsValidation()
+        {
+            UpdateEpaOrganisationRequest request = BuildRequest("Name", "OrgId", 10001122);
+
+            var validationResponse = BuildErrorResponse("Message", ValidationStatusCode.BadRequest);
+
+            _validator.Setup(x => x.ValidatorUpdateEpaOrganisationRequest(It.IsAny<UpdateEpaOrganisationRequest>()))
+                .Returns(validationResponse);
+
+            Task<string> updateOperation = _updateEpaOrganisationHandler.Handle(request, new CancellationToken());
+            string message;
+            _registerRepository.Verify(r => r.UpdateEpaOrganisation(It.IsAny<EpaOrganisation>()), Times.Never);
+
+            Assert.Throws<AggregateException>(() => message = updateOperation.Result);
         }
 
         private ValidationResponse BuildErrorResponse(string errorMessage, ValidationStatusCode statusCode)
@@ -83,8 +113,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
                 Address3 = "address 3",
                 Address4 = "address 4",
                 Postcode = "postcode",
-                CompanyNumber = "company number",
-                CharityNumber = "charity number"
+                CompanyNumber = "12345678",
+                CharityNumber = "1234567"
             };
         }
 
@@ -98,6 +128,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
                 OrganisationId = request.OrganisationId,
                 Ukprn = request.Ukprn,
                 PrimaryContact = null,
+                PrimaryContactName = null,
                 Status = OrganisationStatus.New,
                 OrganisationTypeId = request.OrganisationTypeId,
                 OrganisationData = new OrganisationData

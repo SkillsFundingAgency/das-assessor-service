@@ -109,7 +109,7 @@
             <div class="header-proposition">
                 <div class="content">
                     <nav id="proposition-menu">
-                        <a id="proposition-name" href="/">Manage EPAO services</a>
+                        <a id="proposition-name" href="/">ESFA admin services</a>
                     </nav>
                 </div>
             </div>
@@ -128,7 +128,6 @@
                 <div id="header-user--nav" class="grid-row">
                     <div class="column-two-thirds">
                         <p class="heading-small">
-                            
                             <span class="heading-secondary">
                                 <span class="visuallyhidden">Logged in as </span>
                                 @(User.Claims.First(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname").Value.Trim() 
@@ -158,10 +157,7 @@
         <div class="phase-banner">
             <p>
                 <strong class="phase-tag">BETA</strong>
-                <span>
-                    This is a new service – your
-                    <a href="https://www.surveymonkey.co.uk/r/P8YBH9J">feedback</a> will help us to improve it.
-                </span>
+                <span>This is a new service</span>
             </p>
         </div>
         @RenderBody()

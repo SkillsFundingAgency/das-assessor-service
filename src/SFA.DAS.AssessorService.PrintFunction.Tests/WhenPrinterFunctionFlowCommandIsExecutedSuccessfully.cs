@@ -14,6 +14,7 @@ using SFA.DAS.AssessorService.EpaoImporter.Interfaces;
 using SFA.DAS.AssessorService.EpaoImporter.Logger;
 using SFA.DAS.AssessorService.EpaoImporter.Notification;
 using SFA.DAS.AssessorService.EpaoImporter.Sftp;
+using SFA.DAS.AssessorService.Settings;
 
 namespace SFA.DAS.AssessorService.PrintFunction.Tests
 {
@@ -25,22 +26,51 @@ namespace SFA.DAS.AssessorService.PrintFunction.Tests
         private Mock<IAssessorServiceApi> _assessorServiceApi;
         private Mock<INotificationService> _notificationService;
         private Mock<IFileTransferClient> _fileTransferClient;
+        private Mock<IPrintingJsonCreator> _printingJsonCreator;
+        private Mock<IConfigurationWrapper> _configurationWrapper;
 
         [SetUp]
         public void Arrange()
         {
             _aggregateLogger = new Mock<IAggregateLogger>();
+            _printingJsonCreator = new Mock<IPrintingJsonCreator>();
             _printingSpreadsheetCreator = new Mock<IPrintingSpreadsheetCreator>();
             _assessorServiceApi = new Mock<IAssessorServiceApi>();
             _notificationService = new Mock<INotificationService>();
             _fileTransferClient = new Mock<IFileTransferClient>();
+            _configurationWrapper = new Mock<IConfigurationWrapper>();
+
+            _configurationWrapper.Setup(x => x.GetConfiguration()).Returns(new WebConfiguration()
+            {
+                ApiAuthentication = new ApiAuthentication(),
+                ApplyBaseAddress = "SomeAddress",
+                ApplyApiAuthentication = new ClientApiAuthentication(),
+                AzureApiAuthentication = new AzureApiAuthentication(),
+                AssessmentOrgsApiClientBaseUrl = "SomeAddress",
+                Authentication = new AuthSettings(),
+                CertificateDetails =  new CertificateDetails(),
+                ClientApiAuthentication = new ClientApiAuthentication(),
+                IfaApiClientBaseUrl = "SomeUrl",
+                IFATemplateStorageConnectionString = "SomeConnectionString",
+                NotificationsApiClientConfiguration = new NotificationsApiClientConfiguration(),
+                ServiceLink = "SomeLink",
+                SessionRedisConnectionString = "SomeString",
+                Sftp = new SftpSettings(),
+                SpecflowDBTestConnectionString = "SomeConnection",
+                SqlConnectionString = "SomeConnection",
+                StaffAuthentication = new AuthSettings()
+            });
+
+            _fileTransferClient.Setup(x => x.GetListOfDownloadedFiles()).ReturnsAsync(new List<string> { "filename" });
 
             _printProcessCommand = new PrintProcessCommand(
                 _aggregateLogger.Object,
+                _printingJsonCreator.Object,
                 _printingSpreadsheetCreator.Object,
                 _assessorServiceApi.Object,
                 _notificationService.Object,
-                _fileTransferClient.Object
+                _fileTransferClient.Object,
+                _configurationWrapper.Object
                 );
 
             var certificateResponses = Builder<CertificateResponse>.CreateListOfSize(10).Build();
@@ -71,6 +101,9 @@ namespace SFA.DAS.AssessorService.PrintFunction.Tests
             _assessorServiceApi.Setup(api => api.GetSchedule(ScheduleType.PrintRun))
                 .ReturnsAsync(new ScheduleRun() { Id = Guid.NewGuid() });
 
+            _fileTransferClient.Setup(client => client.GetListOfDownloadedFiles())
+                .ReturnsAsync(new List<string>());
+
             _printProcessCommand.Execute().GetAwaiter().GetResult();
         }
 
@@ -91,7 +124,7 @@ namespace SFA.DAS.AssessorService.PrintFunction.Tests
         public void ItShouldSendANotification()
         {
             _notificationService.Verify(q =>
-                q.Send(It.IsAny<int>(), It.IsAny<List<CertificateResponse>>()), Times.Once());
+                q.Send(It.IsAny<int>(), It.IsAny<List<CertificateResponse>>(), It.IsAny<string>()), Times.Once());
         }
 
 

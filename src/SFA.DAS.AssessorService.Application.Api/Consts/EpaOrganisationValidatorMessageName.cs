@@ -9,6 +9,10 @@
         public const string OrganisationNameTooShort = "OrganisationNameTooShort";
         public const string OrganisationIdAlreadyUsed = "OrganisationIdAlreadyUsed";
         public const string UkprnAlreadyUsed = "UkprnAlreadyUsed";
+        public const string OrganisationCompanyNumberNotValid = "OrganisationCompanyNumberNotValid";
+        public const string OrganisationCharityNumberNotValid = "OrganisationCharityNumberNotValid";
+        public const string OrganisationCompanyNumberAlreadyUsed = "OrganisationCompanyNumberAlreadyUsed";
+        public const string OrganisationCharityNumberAlreadyUsed = "OrganisationCharityNumberAlreadyUsed";
         public const string OrganisationTypeIsInvalid = "OrganisationTypeIsInvalid";
         public const string AnotherOrganisationUsingTheUkprn = "AnotherOrganisationUsingTheUkprn";
         public const string UkprnIsInvalid = "UkprnIsInvalid";
@@ -39,6 +43,7 @@
         public const string OrganisationStandardCannotBeUpdatedBecauseOrganisationNotLive = "OrganisationStandardCannotBeUpdatedBecauseOrganisationNotLive";
         public const string OrganisationStandardCannotBeMadeLiveBecauseEffectiveFromNotSet = "OrganisationStandardCannotBeMadeLiveBecauseEffectiveFromNotSet";
         public const string OrganisationStandardCannotBeUpdatedBecauseEffectiveFromNotSet = "OrganisationStandardCannotBeUpdatedBecauseEffectiveFromNotSet";
+        public const string OrganisationStandardCannotBeAddedBecauseEffectiveFromNotSet = "OrganisationStandardCannotBeAddedBecauseEffectiveFromNotSet";
         public const string OrganisationTypeIsRequired = "OrganisationTypeIsRequired";
         public const string AddressIsNotEntered = "AddressIsNotEntered";
         public const string PostcodeIsNotEntered = "PostcodeIsNotEntered";

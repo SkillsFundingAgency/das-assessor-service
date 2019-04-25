@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
@@ -18,34 +19,43 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
     {
         private readonly ICertificateRepository _certificateRepository;
         private readonly IAssessmentOrgsApiClient _assessmentOrgsApiClient;
+        private readonly IContactQueryRepository _contactQueryRepository;
         private readonly ILogger<GetCertificatesHistoryHandler> _logger;
 
         public GetCertificatesHistoryHandler(ICertificateRepository certificateRepository,
             IAssessmentOrgsApiClient assessmentOrgsApiClient,
+            IContactQueryRepository contactQueryRepository,
             ILogger<GetCertificatesHistoryHandler> logger)
         {
             _certificateRepository = certificateRepository;
             _assessmentOrgsApiClient = assessmentOrgsApiClient;
+            _contactQueryRepository = contactQueryRepository;
             _logger = logger;
         }
 
         public async Task<PaginatedList<CertificateSummaryResponse>> Handle(GetCertificateHistoryRequest request, CancellationToken cancellationToken)
         {
             const int pageSize = 10;
+            var statuses = new List<string>
+            {
+                Domain.Consts.CertificateStatus.Submitted,
+                Domain.Consts.CertificateStatus.Printed,
+                Domain.Consts.CertificateStatus.Reprint
+            };
 
             var certificates = await _certificateRepository.GetCertificateHistory(
                 request.Username,
                 request.PageIndex ?? 1,
-                pageSize);
+                pageSize, statuses);
 
             // Please Note:- Cannot seem to automap this with custom value/type converters
             // so dealing with it manually for now.
             var certificateHistoryResponses = MapCertificates(certificates);
 
-            return certificateHistoryResponses;
+            return await certificateHistoryResponses;
         }
 
-        private PaginatedList<CertificateSummaryResponse> MapCertificates(PaginatedList<Certificate> certificates)
+        private async Task<PaginatedList<CertificateSummaryResponse>> MapCertificates(PaginatedList<Certificate> certificates)
         {
             var trainingProviderName = string.Empty;
             var recordedBy = string.Empty;
@@ -104,6 +114,11 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
                 });
 
             var responses = certificateResponses.ToList();
+            foreach (var response in responses)
+            {
+                response.RecordedBy = (await _contactQueryRepository.GetContact(response.RecordedBy))?.DisplayName;
+            }
+
             var paginatedList = new PaginatedList<CertificateSummaryResponse>(responses,
                     certificates.TotalRecordCount,
                     certificates.PageIndex,

@@ -1,0 +1,151 @@
+@using Microsoft.EntityFrameworkCore.Internal
+
+@model SFA.DAS.AssessorService.Web.Staff.ViewModels.Apply.Financial.FinancialApplicationViewModel
+
+@{
+    ViewBag.Title = "Financial health evaluation";
+    Layout = "_Layout";
+}
+
+<div class="grid-row">
+    <div class="column-two-thirds">
+        <a asp-action="RejectedApplications" asp-controller="Financial" class="link-back">Back</a>
+
+        <h1 class="heading-xlarge">Financial health evaluation</h1>
+        <h2 class="heading-medium">Organisation details</h2>
+
+        <table class="table-spaced">
+            @if (!string.IsNullOrWhiteSpace(Model.ApplicationReference))
+            {
+                <tr>
+                    <td class="bold-small">Application reference</td>
+                    <td>@Model.ApplicationReference</td>
+                </tr>
+            }
+            @if (!string.IsNullOrWhiteSpace(Model.LegalName))
+            {
+                <tr>
+                    <td class="bold-small">Registered name</td>
+                    <td>@Model.LegalName</td>
+                </tr>
+            }
+            @if (!string.IsNullOrWhiteSpace(Model.TradingName) || !string.IsNullOrWhiteSpace(Model.ProviderName))
+            {
+                <tr>
+                    <td class="bold-small">Trading name</td>
+                    <td>@(Model.TradingName ?? Model.ProviderName)</td>
+                </tr>
+            }
+            @if (Model.Ukprn.HasValue)
+            {
+                <tr>
+                    <td class="bold-small">Ukprn</td>
+                    <td>@Model.Ukprn</td>
+                </tr>
+            }
+        </table>
+
+        @if (!string.IsNullOrWhiteSpace(Model.CompanyNumber))
+        {
+            <div class="form-group">
+                <a target="_blank" href="@string.Format("https://beta.companieshouse.gov.uk/company/{0}", Model.CompanyNumber)">View companies house information</a>
+            </div>
+        }
+    </div>
+</div>
+
+@*
+    Switched axis - leaving in as we may move to this.
+    <div class="grid-row">
+        <div class="column-full">
+            <table class="table-spaced">
+                <caption class="heading-small">Application details</caption>
+                <tbody>
+                    <tr>
+                        <td class="bold-small">Grade</td>
+                        <td>@Model.Grade.SelectedGrade</td>
+                    </tr>
+                    <tr>
+                        <td class="bold-small">Date reviewed</td>
+                        <td>@Model.Grade.GradedDateTime.ToShortDateString()</td>
+                    </tr>
+                    <tr>
+                        <td class="bold-small">Comments</td>
+                        <td>@(Model.Grade.InadequateMoreInformation ?? Model.Grade.SatisfactoryMoreInformation ?? "")</td>
+                    </tr>
+                    <tr>
+                        <td class="bold-small">Reviewer</td>
+                        <td>@Model.Grade.GradedBy</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+*@
+
+<div class="grid-row">
+    <div class="column-full">
+        <table class="table-spaced">
+            <thead>
+                <tr>
+                    <th>Grade</th>
+                    <th>Date reviewed</th>
+                    <th>Comments</th>
+                    <th>Reviewer</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>@Model.Grade.SelectedGrade</td>
+                    <td>@Model.Grade.GradedDateTime.ToShortDateString()</td>
+                    <td>@(Model.Grade.InadequateMoreInformation ?? "")</td>
+                    <td>@Model.Grade.GradedBy</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="grid-row">
+    <div class="column-two-thirds">
+        @if (Model.Section.PagesContainingUploadQuestions.Any())
+        {
+            <div class="form-group">
+                <a href="@Url.Action("Download", "Financial", new { Model.Section.ApplicationId })">Download financial statements</a>
+                @* Download @uploadQuestion.Label</a> *@
+            </div>
+        }
+    </div>
+</div>
+
+@if (Model.Section.QnAData.Pages.SelectMany(p => p.Questions).Any(q => q.Input.Type != "FileUpload"))
+{
+    <div class="grid-row">
+        <div class="column-two-thirds">
+            <table>
+                <thead>
+                    <tr>
+                        <th>
+                            Questions
+                        </th>
+                        <th>
+                            Answers
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var pg in Model.Section.QnAData.Pages)
+                    {
+                        foreach (var question in pg.Questions.Where(q => q.Input.Type != "FileUpload"))
+                        {
+                            <tr>
+                                <td>@question.Label</td>
+                                <td>@pg.PageOfAnswers.SelectMany(poa => poa.Answers).SingleOrDefault(a => a.QuestionId == question.QuestionId)?.Value</td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}

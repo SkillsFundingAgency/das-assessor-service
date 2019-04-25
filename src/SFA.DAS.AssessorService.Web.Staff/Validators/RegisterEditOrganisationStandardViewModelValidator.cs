@@ -20,6 +20,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Validators
         {
             _apiClient = apiClient;
             _registerValidator = registerValidator;
+            var errorInEffectiveFrom = false;
 
             RuleFor(vm => vm).Custom((vm, context) =>
             {
@@ -28,6 +29,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Validators
                     vm.EffectiveFromYear, "EffectiveFromDay",
                     "EffectiveFromMonth", "EffectiveFromYear", "EffectiveFrom", "Effective From");
 
+                errorInEffectiveFrom = validationResultEffectiveFrom.Errors.Count > 0;
 
                 var validationResultEffectiveTo = registerValidator.CheckDateIsEmptyOrValid(vm.EffectiveToDay,
                     vm.EffectiveToMonth,
@@ -47,7 +49,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.Validators
                 if (validationResultExternals.IsValid) return;
                 foreach (var error in validationResultExternals.Errors)
                 {
-                    context.AddFailure(error.Field, error.ErrorMessage);
+                    if (errorInEffectiveFrom == false || error.Field != "EffectiveFrom")
+                        context.AddFailure(error.Field, error.ErrorMessage);
                 }
 
             });

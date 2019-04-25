@@ -50,11 +50,13 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
                 OrganisationId = _organisationIdCreated,
                 Ukprn = _ukprnBefore,
                 PrimaryContact = null,
+                PrimaryContactName = null,
                 Status = OrganisationStatus.New,
                 OrganisationTypeId = _organisationTypeIdBefore,
                 OrganisationData = new OrganisationData
                 {
                     LegalName = " legal name",
+                    TradingName = "trading name",
                     Address1 = "address 1",
                     Address2 = "address 2",
                     Address3 = "address 3",
@@ -66,6 +68,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
             _updatedOrgData = new OrganisationData
             {
                 LegalName = " legal name 2",
+                TradingName = "trading name 2",
                 Address1 = "address 1b",
                 Address2 = "address 2b",
                 Address3 = "address 3b",
@@ -81,6 +84,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
                 OrganisationId = _organisationIdCreated,
                 Ukprn = _ukprnAfter,
                 PrimaryContact = null,
+                PrimaryContactName = null,
                 Status = OrganisationStatus.New,
                 UpdatedAt = _updatedAt,
                 OrganisationTypeId = _organisationTypeIdAfter,

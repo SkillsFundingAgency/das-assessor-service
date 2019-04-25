@@ -12,6 +12,7 @@ using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Application.Logging;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
+using SFA.DAS.AssessorService.ExternalApis.Services;
 using Organisation = SFA.DAS.AssessorService.Domain.Entities.Organisation;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Search
@@ -24,10 +25,11 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
         private readonly ICertificateRepository _certificateRepository;
         private readonly ILogger<SearchHandler> _logger;
         private readonly IContactQueryRepository _contactRepository;
+        private readonly IStandardService _standardService;
         private Dictionary<char, char[]> _alternates;
 
         public SearchHandler(IAssessmentOrgsApiClient assessmentOrgsApiClient, IOrganisationQueryRepository organisationRepository, 
-            IIlrRepository ilrRepository, ICertificateRepository certificateRepository, ILogger<SearchHandler> logger, IContactQueryRepository contactRepository)
+            IIlrRepository ilrRepository, ICertificateRepository certificateRepository, ILogger<SearchHandler> logger, IContactQueryRepository contactRepository, IStandardService standardService)
         {
             _assessmentOrgsApiClient = assessmentOrgsApiClient;
             _organisationRepository = organisationRepository;
@@ -35,6 +37,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
             _certificateRepository = certificateRepository;
             _logger = logger;
             _contactRepository = contactRepository;
+            _standardService = standardService;
 
             BuildAlternates();
 
@@ -55,9 +58,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
 
         public async Task<List<SearchResult>> Handle(SearchQuery request, CancellationToken cancellationToken)
         {
-            _logger.LogInformation($"Search for surname: {request.Surname} uln: {request.Uln} made by {request.UkPrn}");
+            _logger.LogInformation($"Search for surname: {request.Surname} uln: {request.Uln} made by {request.EpaOrgId}");
 
-            var thisEpao = await _organisationRepository.GetByUkPrn(request.UkPrn);
+            var thisEpao = await _organisationRepository.Get(request.EpaOrgId);
 
             if (thisEpao == null)
             {
@@ -83,7 +86,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
 
             var searchResults = Mapper.Map<List<SearchResult>>(ilrResults)
                 .MatchUpExistingCompletedStandards(request, _certificateRepository, _contactRepository, _logger)
-                .PopulateStandards(_assessmentOrgsApiClient, _logger);
+                .PopulateStandards(_standardService, _logger);
 
             await _ilrRepository.StoreSearchLog(new SearchLog()
             {

@@ -67,7 +67,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
         [Test]
         public void BadRequestResultsAreOfTypeEpaOrganisationStandardResponse()
         {
-            ((ConflictObjectResult)_result).Value.Should().BeOfType<EpaOrganisationStandardResponse>();
+            ((ConflictObjectResult)_result).Value.Should().BeOfType<EpaoStandardResponse>();
         }
     }
 }

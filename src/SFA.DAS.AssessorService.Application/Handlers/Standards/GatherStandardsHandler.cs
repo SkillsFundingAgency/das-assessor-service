@@ -6,7 +6,7 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Interfaces;
-using SFA.DAS.AssessorService.Web.Staff.Services;
+using SFA.DAS.AssessorService.ExternalApis.Services;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Standards
 {
@@ -25,7 +25,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Standards
 
         public async Task<string> Handle(GatherStandardsRequest request, CancellationToken cancellationToken)
         {
-            var minimumHoursBetweenCollations = 24;
+            var minimumHoursBetweenCollations = 23;
             var dateOfLastCollation = await _standardRepository.GetDateOfLastStandardCollation();
             if (dateOfLastCollation == null || dateOfLastCollation.Value.AddHours(minimumHoursBetweenCollations) < DateTime.Now)
             {

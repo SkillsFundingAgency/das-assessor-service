@@ -26,7 +26,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
 
         Task UpdatePrivatelyFundedCertificatesToBeApproved();
         Task<List<CertificateLog>> GetCertificateLogsFor(Guid certificateId);
-        Task<PaginatedList<Certificate>> GetCertificateHistory(string userName, int pageIndex, int pageSize);
+        Task<PaginatedList<Certificate>> GetCertificateHistory(string userName, int pageIndex, int pageSize, List<string> statuses);
         Task<string> GetPreviousProviderName(int providerUkPrn);
         Task<CertificateAddress> GetContactPreviousAddress(string userName, bool requestIsPrivatelyFunded);
         Task<List<Option>> GetOptions(int stdCode);

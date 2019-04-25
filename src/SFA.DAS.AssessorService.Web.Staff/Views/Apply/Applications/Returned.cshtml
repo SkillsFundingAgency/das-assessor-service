@@ -1,0 +1,45 @@
+@using SFA.DAS.AssessorService.Web.Staff.Helpers;
+
+@model SFA.DAS.AssessorService.Web.Staff.ViewModels.Apply.Applications.ApplicationReturnedViewModel
+
+@{
+    ViewBag.Title = "Feedback Sent";
+    var BackAction = ApplicationReviewHelpers.ApplicationBacklinkAction(null, Model?.SequenceId);
+}
+
+<div class="grid-row">
+    <div class="column-two-thirds">
+        <div class="govuk-box-highlight">
+            <h1 class="heading-xlarge">
+                Feedback sent
+            </h1>
+            <!--
+    <p class="font-medium">
+        @if (Model?.WarningMessages != null && Model.WarningMessages.Any())
+        {
+            <span>No organisation or contact was stored in the register about this application, because:</span>
+            <ul>
+                @foreach (var warning in Model.WarningMessages)
+                {
+                    <li>@warning</li>
+                }
+            </ul>
+        }
+    </p>
+        -->
+            <p class="font-medium">
+                An email has been sent to the applicant.
+            </p>
+        </div>
+        @*<p>You can view previous evaluations, including this one in the <a asp-action="PreviousApplications" asp-controller="Applications">previous assessments</a> area.</p>*@
+        <h3 class="heading-medium">What do you want to do next?</h3>
+        <ul class="list list-bullet">
+            <li>
+                <a asp-action="@BackAction" asp-controller="Application">Return to applications</a>
+            </li>
+            <li>
+                <a href="https://www.surveymonkey.co.uk/r/P8YBH9J">What did you think of this service?</a> (takes 30 seconds)
+            </li>
+        </ul>
+    </div>
+</div>

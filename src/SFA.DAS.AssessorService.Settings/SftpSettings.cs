@@ -16,5 +16,7 @@ namespace SFA.DAS.AssessorService.Settings
         public string UploadDirectory { get; set; }
         [JsonRequired]
         public string ProofDirectory { get; set; }
+        [JsonRequired]
+        public bool UseJson { get; set; }
     }
 }
