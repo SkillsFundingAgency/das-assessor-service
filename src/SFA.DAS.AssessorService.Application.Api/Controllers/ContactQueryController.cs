@@ -130,7 +130,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             return Ok(Mapper.Map<ContactResponse>(contact));
         }
         
-
         [HttpGet("signInId/{signInId}", Name = "GetContactBySignInId")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(ContactResponse))]
         [SwaggerResponse((int)HttpStatusCode.NotFound)]
