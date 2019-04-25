@@ -66,6 +66,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
+        public async Task<ContactBoolResponse> DoesContactHavePrivileges(string userId)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/contacts/user/{userId}/haveprivileges"))
+            {
+                return await RequestAndDeserialiseAsync<ContactBoolResponse>(request, $"Could not find contact with {userId}");
+            }
+        }
+
         public async Task<ContactResponse> GetContactBySignInId(string signInId)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/contacts/signInId/{signInId}"))
@@ -173,6 +181,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         Task<ContactResponse> Update(UpdateContactRequest updateContactRequest);
 
         Task<List<ContactsWithPrivilegesResponse>> GetContactsWithPrivileges(string endPointAssessorOrganisationId);
+
+        Task<ContactBoolResponse> DoesContactHavePrivileges(string userId);
 
         Task<ContactResponse> UpdateStatus(UpdateContactStatusRequest updateContactStatusRequest);
 
