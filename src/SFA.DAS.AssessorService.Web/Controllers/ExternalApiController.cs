@@ -14,7 +14,8 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Web.Controllers
 {
-  //  [Authorize(Policy = Policies.ExternalApiAccess)]
+    //  [Authorize(Policy = Policies.ExternalApiAccess)]
+    [Authorize]
     public class ExternalApiController : Controller
     {
         private readonly ILogger<ExternalApiController> _logger;
