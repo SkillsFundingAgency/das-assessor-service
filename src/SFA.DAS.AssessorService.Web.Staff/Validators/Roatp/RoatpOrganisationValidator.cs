@@ -1,4 +1,6 @@
-﻿namespace SFA.DAS.AssessorService.Web.Staff.Validators.Roatp
+﻿using SFA.DAS.AssessorService.Application.Api.Services;
+
+namespace SFA.DAS.AssessorService.Web.Staff.Validators.Roatp
 {
     using System;
     using System.Collections.Generic;
@@ -16,16 +18,19 @@
         {
             var errorMessages = new List<ValidationErrorDetail>();
 
+            legalName = HtmlTagRemover.StripOutTags(legalName);
+
             if (String.IsNullOrWhiteSpace(legalName))
             {
                 errorMessages.Add(new ValidationErrorDetail("LegalName", RoatpOrganisationValidation.LegalNameMandatory));
                 return errorMessages;
             }
 
-            if (legalName.Length > 200)
+              if (legalName.Length > 200)
             {
                 errorMessages.Add(new ValidationErrorDetail("LegalName", RoatpOrganisationValidation.LegalNameMaxLength));
             }
+         
 
             if (legalName.Length < 2)
             {
@@ -63,6 +68,8 @@
 
         public List<ValidationErrorDetail> IsValidTradingName(string tradingName)
         {
+            tradingName = HtmlTagRemover.StripOutTags(tradingName);
+
             var errorMessages = new List<ValidationErrorDetail>();
 
             if (String.IsNullOrWhiteSpace(tradingName))
