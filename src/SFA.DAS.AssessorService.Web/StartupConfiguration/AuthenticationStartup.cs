@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
@@ -11,6 +12,7 @@ using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Application.Api.Client.Exceptions;
+using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Settings;
 
@@ -178,7 +180,7 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
                                                      GivenNames = applyContact.GivenNames,
                                                      OrganisationId = assessorOrg.Id,
                                                      EndPointAssessorOrganisationId = assessorOrg.EndPointAssessorOrganisationId,
-                                                     Status = "Live"
+                                                     Status = ContactStatus.Live
                                                  };
 
                                                  user = await CreateANewContact(newContact, contactClient, logger, signInId);
@@ -205,12 +207,36 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
                                              GivenNames = givenName,
                                              OrganisationId = null,
                                              EndPointAssessorOrganisationId = null,
-                                             Status = applyContact != null?"Applying":"New"
+                                             Status = applyContact != null?ContactStatus.Applying: ContactStatus.New
                                          };
 
                                          user = await CreateANewContact(newContact, contactClient, logger, signInId);
                                      }
+                                 }
+                                 else if(user.EndPointAssessorOrganisationId != null && user.Status == ContactStatus.Live)
+                                 {
+                                     var havePrivileges = await contactClient.DoesContactHavePrivileges(user.Id.ToString());
 
+                                     if (!havePrivileges.Result)
+                                     {
+                                         var contact = new Contact
+                                         {
+                                             Id = user.Id,
+                                             DisplayName = user.DisplayName,
+                                             Email = user.Email,
+                                             SignInId = user.SignInId,
+                                             SignInType = user.SignInType,
+                                             Username = user.Username,
+                                             Title = user.Title,
+                                             FamilyName = user.FamilyName,
+                                             GivenNames = user.GivenNames,
+                                             OrganisationId = user.OrganisationId,
+                                             EndPointAssessorOrganisationId = user.EndPointAssessorOrganisationId,
+                                             Status = user.Status
+                                         };
+
+                                         await contactClient.AssociateDefaultRolesAndPrivileges(contact);
+                                     }                                     
                                  }
 
 

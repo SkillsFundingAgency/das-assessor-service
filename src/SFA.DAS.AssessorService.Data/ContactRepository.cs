@@ -51,11 +51,17 @@ namespace SFA.DAS.AssessorService.Data
             
             foreach (var privilege in privileges)
             {
-                _assessorDbContext.ContactsPrivileges.Add(new ContactsPrivilege
+                var contactPrivilegeEntity =
+                    await _assessorDbContext.ContactsPrivileges.FirstOrDefaultAsync(q =>
+                        q.ContactId == contactId && q.PrivilegeId == privilege.Id);
+                if (contactPrivilegeEntity == null)
                 {
-                    ContactId = contactId,
-                    PrivilegeId = privilege.Id
-                });
+                    _assessorDbContext.ContactsPrivileges.Add(new ContactsPrivilege
+                    {
+                        ContactId = contactId,
+                        PrivilegeId = privilege.Id
+                    });
+                }
             }
 
             await _assessorDbContext.SaveChangesAsync();
