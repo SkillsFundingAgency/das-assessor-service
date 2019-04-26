@@ -11,6 +11,8 @@ namespace SFA.DAS.AssessorService.Application.Interfaces.Validation
         Task<bool> IsCharityNumberTaken(string charityNumber);
 
         Task<bool> IsEmailTaken(string email);
-        Task<bool> CheckIfContactDetailsAlreadyPresentInSystem(string displayName, string email, string phone, Guid? contactId);
+
+        Task<bool> CheckIfContactDetailsAlreadyPresentInSystem(string firstName, string lastName, string email,
+            string phone, Guid? contactId);
     }
 }

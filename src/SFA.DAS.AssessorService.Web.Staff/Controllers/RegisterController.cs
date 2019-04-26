@@ -5,15 +5,10 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-using OfficeOpenXml.FormulaParsing.Excel.Functions.DateTime;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
-using SFA.DAS.AssessorService.Application.Interfaces;
-using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
-using SFA.DAS.AssessorService.ExternalApis.Services;
 using SFA.DAS.AssessorService.Web.Staff.Domain;
 using SFA.DAS.AssessorService.Web.Staff.Infrastructure;
 using SFA.DAS.AssessorService.Web.Staff.Models;
@@ -235,10 +230,10 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             var addContactRequest = new CreateEpaOrganisationContactRequest
             {
                 EndPointAssessorOrganisationId = viewModel.EndPointAssessorOrganisationId,
-                DisplayName =  viewModel.DisplayName,
+                FirstName = viewModel.FirstName,
+                LastName = viewModel.LastName,
                 Email = viewModel.Email,
                 PhoneNumber = viewModel.PhoneNumber
-                
             };
 
             var contactId = await _apiClient.CreateEpaContact(addContactRequest);
@@ -250,7 +245,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         [HttpGet("register/edit-contact/{contactId}")]
         public async Task<IActionResult> EditContact(string contactId)
         {
-            var contact = await _apiClient.GetEpaCntact(contactId);
+            var contact = await _apiClient.GetEpaContact(contactId);
             var organisation = await _apiClient.GetEpaOrganisation(contact.OrganisationId);
             var viewModel = MapContactModel(contact, organisation);
             return View(viewModel);
@@ -268,7 +263,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             var request = new UpdateEpaOrganisationContactRequest
             {
                 ContactId = viewAndEditModel.ContactId,
-                DisplayName =  viewAndEditModel.DisplayName,
+                FirstName = viewAndEditModel.FirstName,
+                LastName = viewAndEditModel.LastName,
                 Email = viewAndEditModel.Email,
                 PhoneNumber = viewAndEditModel.PhoneNumber,
                 ActionChoice = viewAndEditModel.ActionChoice
@@ -280,7 +276,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         [HttpGet("register/view-contact/{contactId}")]
         public async Task<IActionResult> ViewContact(string contactId)
         {
-            var contact = await _apiClient.GetEpaCntact(contactId);
+            var contact = await _apiClient.GetEpaContact(contactId);
             var organisation = await _apiClient.GetEpaOrganisation(contact.OrganisationId);
             var viewModel = MapContactModel(contact, organisation);
             return View(viewModel);
@@ -457,7 +453,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
                 Email = contact.Email,
                 ContactId = contact.Id.ToString(),
                 PhoneNumber = contact.PhoneNumber,
-                DisplayName = contact.DisplayName,
+                FirstName = contact.FirstName,
+                LastName = contact.LastName,
                 OrganisationName = organisation.Name,
                 OrganisationId = organisation.OrganisationId,
                 IsPrimaryContact = contact.IsPrimaryContact
