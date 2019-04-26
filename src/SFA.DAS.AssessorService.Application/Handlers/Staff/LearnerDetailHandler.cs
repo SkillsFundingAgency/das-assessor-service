@@ -12,8 +12,6 @@ using SFA.DAS.AssessorService.Domain.DTOs.Staff;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Extensions;
 using SFA.DAS.AssessorService.Domain.JsonData;
-using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
-using SFA.DAS.AssessorService.ExternalApis.Services;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Staff
 {
@@ -24,22 +22,22 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
         private readonly IStaffCertificateRepository _staffCertificateRepository;
         private readonly ILogger<LearnerDetailHandler> _logger;
         private readonly IOrganisationQueryRepository _organisationRepository;
-        private readonly IStandardService _standardService;
+        private readonly IStandardRepository _standardRepository;
 
         public LearnerDetailHandler(IIlrRepository ilrRepository, ICertificateRepository certificateRepository, 
-            IStaffCertificateRepository staffCertificateRepository, ILogger<LearnerDetailHandler> logger, IOrganisationQueryRepository organisationRepository, IStandardService standardService)
+            IStaffCertificateRepository staffCertificateRepository, ILogger<LearnerDetailHandler> logger, IOrganisationQueryRepository organisationRepository, IStandardRepository standardRepository)
         {
             _ilrRepository = ilrRepository;
             _certificateRepository = certificateRepository;
             _staffCertificateRepository = staffCertificateRepository;
             _logger = logger;
             _organisationRepository = organisationRepository;
-            _standardService = standardService;
+            _standardRepository = standardRepository;
         }
         public async Task<LearnerDetail> Handle(LearnerDetailRequest request, CancellationToken cancellationToken)
         {
             var learner = await _ilrRepository.Get(request.Uln, request.StdCode);
-            var standard = await _standardService.GetStandard(request.StdCode);
+            var standard = await _standardRepository.GetStandardCollationByStandardId(request.StdCode);
             var certificate = await _certificateRepository.GetCertificate(request.Uln, request.StdCode);
 
             var logs = new List<CertificateLogSummary>();
@@ -47,29 +45,27 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
             var epao = new Organisation();
             if (certificate != null)
             {
-                logs = await _staffCertificateRepository.GetCertificateLogsFor(certificate.Id,
-                    request.AllRecords);
+                logs = await _staffCertificateRepository.GetCertificateLogsFor(certificate.Id, request.AllRecords);
                 if (logs.Count() > 1)
                 {
                     CalculateDifferences(logs);
                 }
                 
-
-                certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
-                epao = await _organisationRepository.Get(certificate.OrganisationId);
+                certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData) ?? new CertificateData();
+                epao = await _organisationRepository.Get(certificate.OrganisationId) ?? new Organisation();
             }
             
             var learnerDetail = new LearnerDetail()
             {
                 Uln = request.Uln,
-                FamilyName = !string.IsNullOrEmpty(certificateData?.LearnerFamilyName) ?  certificateData.LearnerFamilyName : learner?.FamilyName,
-                GivenNames = !string.IsNullOrEmpty(certificateData?.LearnerGivenNames) ?  certificateData.LearnerGivenNames : learner?.GivenNames,
-                LearnStartDate = certificateData?.LearningStartDate != null ? certificateData?.LearningStartDate : learner?.LearnStartDate,
-                StandardCode = certificate.StandardCode,
-                Standard = !string.IsNullOrEmpty(certificateData?.StandardName) ? certificateData.StandardName : standard?.Title,
+                FamilyName = !string.IsNullOrEmpty(certificateData.LearnerFamilyName) ?  certificateData.LearnerFamilyName : learner?.FamilyName,
+                GivenNames = !string.IsNullOrEmpty(certificateData.LearnerGivenNames) ?  certificateData.LearnerGivenNames : learner?.GivenNames,
+                LearnStartDate = certificateData.LearningStartDate.HasValue ? certificateData.LearningStartDate : learner?.LearnStartDate,
+                StandardCode = (certificate?.StandardCode).HasValue ? certificate.StandardCode : standard?.StandardId ?? 0,
+                Standard = !string.IsNullOrEmpty(certificateData.StandardName) ? certificateData.StandardName : standard?.Title,
+                Level = certificateData.StandardLevel > 0 ? certificateData.StandardLevel : standard?.StandardData?.Level ?? 0,
                 CertificateReference = certificate?.CertificateReference, 
                 CertificateStatus = certificate?.Status, 
-                Level = standard.Level,
                 OverallGrade = certificateData.OverallGrade,
                 AchievementDate = certificateData.AchievementDate, //?.UtcToTimeZoneTime(),
                 Option = certificateData.CourseOption, 
