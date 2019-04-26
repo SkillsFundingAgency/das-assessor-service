@@ -42,19 +42,22 @@
         <h2 class="heading-medium"><a asp-controller="ExternalApi">External API</a></h2>
         <p>Manage user's access and generate API keys.</p>
     </div>
+    <div class="column-half" sfa-show-for-roles="@string.Join(",", Roles.OperationsTeam, Roles.CertificationTeam)">
+        <div class="grid-row">
+            <div class="column-half">
+                <h2 class="heading-medium"><a asp-controller="Financial" asp-action="OpenApplications">Financial</a></h2>
+                <p>Financial</p>
+            </div>
+            <div class="column-half">
+                <h2 class="heading-medium"><a asp-controller="Application" asp-action="MidpointApplications">Applications</a></h2>
+                <p>Review Applications</p>
+            </div>
+
+        </div>
+    </div>
 </div>
 <div class="grid-row">
-    <div class="column-one-third"  sfa-show-for-roles="@string.Join(",", Roles.AssessmentDeliveryTeam, Roles.CertificationTeam)">
-        <h2 class="heading-medium"><a asp-controller="Application" asp-action="MidpointApplications">Applications</a></h2>
-        <p>Review Applications</p>
-    </div>
-    <div class="column-one-third" sfa-show-for-roles="@string.Join(",", Roles.ProviderRiskAssuranceTeam, Roles.CertificationTeam)">
-        <h2 class="heading-medium"><a asp-controller="Financial" asp-action="OpenApplications">Financial</a></h2>
-        <p>Financial</p>
-    </div>
-</div>
-<div class="grid-row">
-    <div class="column-one-third" sfa-show-for-roles="@Roles.RoatpGatewayTeam">
+    <div class="column-half" sfa-show-for-roles="@Roles.RoatpGatewayTeam">
         <h2 class="heading-medium"><a asp-controller="RoatpHome" asp-action="Index">Register of Apprenticeship Training Providers</a></h2>
         <p>Search for add and edit Apprenticeship Training Providers</p>
     </div>
