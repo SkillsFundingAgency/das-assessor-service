@@ -101,6 +101,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
         [HttpGet("/Financial/Download/{applicationId}")]
         public async Task<IActionResult> Download(Guid applicationId)
         {
+            var org = await _apiClient.GetOrganisationForApplication(applicationId);
             var section = await _apiClient.GetSection(applicationId, 1, 3);
 
             using (var zipStream = new MemoryStream())
@@ -111,19 +112,20 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
                     {
                         foreach (var uploadQuestion in uploadPage.UploadQuestions)
                         {
-                            var answer = section.QnAData.Pages.SelectMany(p => p.PageOfAnswers).SelectMany(a => a.Answers).SingleOrDefault(a => a.QuestionId == uploadQuestion.QuestionId);
-
-                            if (answer == null || string.IsNullOrWhiteSpace(answer.Value)) continue;
-                            
-                            var fileDownloadName = answer.Value;
-
-                            var downloadedFile = await _apiClient.DownloadFile(applicationId, int.Parse(uploadPage.PageId), uploadQuestion.QuestionId, Guid.Empty, 1, 3, fileDownloadName);
-
-                            var zipEntry = zipArchive.CreateEntry(fileDownloadName);
-                            using (var entryStream = zipEntry.Open())
+                            foreach (var answer in section.QnAData.Pages.SelectMany(p => p.PageOfAnswers).SelectMany(a => a.Answers).Where(a => a.QuestionId == uploadQuestion.QuestionId))
                             {
-                                var fileStream = await downloadedFile.Content.ReadAsStreamAsync();
-                                fileStream.CopyTo(entryStream);
+                                if (string.IsNullOrWhiteSpace(answer.Value)) continue;
+
+                                var fileDownloadName = answer.Value;
+
+                                var downloadedFile = await _apiClient.DownloadFile(applicationId, int.Parse(uploadPage.PageId), uploadQuestion.QuestionId, Guid.Empty, 1, 3, fileDownloadName);
+
+                                var zipEntry = zipArchive.CreateEntry(fileDownloadName);
+                                using (var entryStream = zipEntry.Open())
+                                {
+                                    var fileStream = await downloadedFile.Content.ReadAsStreamAsync();
+                                    fileStream.CopyTo(entryStream);
+                                }
                             }
                         }
                     }
@@ -133,7 +135,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
 
                 var compressedBytes = zipStream.ToArray();
                 
-                return File(compressedBytes, "application/zip", "FinancialDocuments.zip");
+                return File(compressedBytes, "application/zip", $"FinancialDocuments_{org.Name}.zip");
             }
         }
 
