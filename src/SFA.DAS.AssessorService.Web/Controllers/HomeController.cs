@@ -32,6 +32,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         {
             return View();
         }
+        
+        public IActionResult AccessDenied()
+        {
+            return View();
+        }
 
         public IActionResult InvalidRole()
         {

@@ -213,6 +213,12 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
                                          user = await CreateANewContact(newContact, contactClient, logger, signInId);
                                      }
                                  }
+                                 else if (user.Status == ContactStatus.Deleted)
+                                 {
+                                     // Redirect to access denied page. 
+                                     context.Response.Redirect("/Home/AccessDenied");
+                                     context.HandleResponse();
+                                 }
                                  else if(user.EndPointAssessorOrganisationId != null && user.Status == ContactStatus.Live)
                                  {
                                      var havePrivileges = await contactClient.DoesContactHavePrivileges(user.Id.ToString());
