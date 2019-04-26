@@ -13,7 +13,6 @@ using SFA.DAS.AssessorService.Api.Types.Models.Staff;
 using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Paging;
-using SFA.DAS.AssessorService.Web.Staff.Models;
 using SFA.DAS.AssessorService.Web.Staff.ViewModels.Private;
 using SFA.DAS.Apprenticeships.Api.Types;
 using OrganisationType = SFA.DAS.AssessorService.Api.Types.Models.AO.OrganisationType;
@@ -137,7 +136,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
             return await Get<EpaOrganisation>($"api/ao/assessment-organisations/{organisationId}");
         }
         
-        public async Task<AssessmentOrganisationContact> GetEpaCntact(string contactId)
+        public async Task<AssessmentOrganisationContact> GetEpaContact(string contactId)
         {
             return await Get<AssessmentOrganisationContact>($"api/ao/assessment-organisations/contacts/{contactId}");
         }
