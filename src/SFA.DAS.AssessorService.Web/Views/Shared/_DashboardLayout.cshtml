@@ -120,7 +120,7 @@
 }
 
 <div class="govuk-width-container">
-    <div class="govuk-phase-banner">
+    <div class="govuk-phase-banner govuk-phase-banner--no-border">
         <p class="govuk-phase-banner__content">
             <strong class="govuk-tag govuk-phase-banner__content__tag ">
                 beta
@@ -135,34 +135,30 @@
 @if (User.Identity.IsAuthenticated)
 {
     var currentPage = SessionService.Get("CurrentPage");
-    <div class="govuk-width-container">
-        <div class="govuk-grid-row">
-            <div class="govuk-grid-column-full">
-                <nav class="app-navigation govuk-clearfix">
-                    <ul class="app-navigation__list">
-                        <li @(currentPage == Pages.Dashboard?"class=app-navigation--current-page":"")>
-                            <a id="Home" asp-controller="Dashboard" asp-action="Index">Home</a>
-                        </li>
-                        <li  @(currentPage == Pages.Pipeline?"class=app-navigation--current-page":"")>
-                            <a id="Pipeline" asp-controller="OrganisationStandards" asp-action="Pipeline">Pipeline</a>
-                        </li>
-                        <li  @(currentPage == Pages.RecordAGrade?"class=app-navigation--current-page":"")>
-                            <a id="Record a grade" asp-controller="Search" asp-action="Index">Record a grade</a>
-                        </li>
-                        <li  @(currentPage == Pages.Assessments?"class=app-navigation--current-page":"")>
-                            <a id="Completed assessments" asp-controller="CertificateHistory" asp-action="Index">Completed assessments</a>
-                        </li>
-                        <li  @(currentPage == Pages.Standards?"class=app-navigation--current-page":"")>
-                            <a id="Standards" asp-controller="OrganisationStandards" asp-action="Index">Standards</a>
-                        </li>
-                        <li @(currentPage == Pages.Organisations ? "class=app-navigation--current-page" : "")>
-                            <a id="Organisation details" asp-controller="Organisation" asp-action="OrganisationDetails">Organisation details</a>
-                        </li>
-                    </ul>
-                </nav>
-            </div>
-        </div>
+    <nav class="app-navigation">
+        <div class="govuk-width-container">
+            <ul class="app-navigation__list">
+                <li @(currentPage == Pages.Dashboard ? "class=app-navigation--current-page" : "")>
+                    <a id="Home" asp-controller="Dashboard" asp-action="Index">Home</a>
+                </li>
+                <li  @(currentPage == Pages.Pipeline ? "class=app-navigation--current-page" : "")>
+                    <a id="Pipeline" asp-controller="OrganisationStandards" asp-action="Pipeline">Pipeline</a>
+                </li>
+                <li  @(currentPage == Pages.RecordAGrade ? "class=app-navigation--current-page" : "")>
+                    <a id="Record a grade" asp-controller="Search" asp-action="Index">Record a grade</a>
+                </li>
+                <li  @(currentPage == Pages.Assessments ? "class=app-navigation--current-page" : "")>
+                    <a id="Completed assessments" asp-controller="CertificateHistory" asp-action="Index">Completed assessments</a>
+                </li>
+                <li  @(currentPage == Pages.Standards ? "class=app-navigation--current-page" : "")>
+                    <a id="Standards" asp-controller="OrganisationStandards" asp-action="Index">Standards</a>
+                </li>
+                <li @(currentPage == Pages.Organisations ? "class=app-navigation--current-page" : "")>
+                    <a id="Organisation details" asp-controller="Organisation" asp-action="OrganisationDetails">Organisation details</a>
+                </li>
+            </ul>
     </div>
+        </nav>
 }
 
 <div class="govuk-width-container">
