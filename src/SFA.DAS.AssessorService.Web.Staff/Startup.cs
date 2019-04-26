@@ -96,7 +96,10 @@ namespace SFA.DAS.AssessorService.Web.Staff
             services.AddDistributedRedisCache(options =>
             {
                 options.Configuration = ApplicationConfiguration.SessionRedisConnectionString;
-            });          
+            });
+
+            services.AddAntiforgery(options => options.Cookie = new CookieBuilder() { Name = ".Assessors.Staff.AntiForgery", HttpOnly = false });
+
             MappingStartup.AddMappings();
             return ConfigureIoC(services);
         }

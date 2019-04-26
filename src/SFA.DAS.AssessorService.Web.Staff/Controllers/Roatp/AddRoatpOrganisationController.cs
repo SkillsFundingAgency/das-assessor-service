@@ -18,6 +18,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
     using Resources;
 
     [Authorize]
+    [AutoValidateAntiforgeryToken]
     public class AddRoatpOrganisationController : Controller
     {
         private IRoatpApiClient _apiClient;

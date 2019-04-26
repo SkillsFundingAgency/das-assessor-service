@@ -7,9 +7,9 @@
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
     using SFA.DAS.AssessorService.Web.Staff.ViewModels.Roatp;
-
     
-    [Authorize] 
+    [Authorize]
+    [AutoValidateAntiforgeryToken]
     public class RoatpSearchController : RoatpSearchResultsControllerBase
     {
         private ILogger<RoatpSearchController> _logger;
