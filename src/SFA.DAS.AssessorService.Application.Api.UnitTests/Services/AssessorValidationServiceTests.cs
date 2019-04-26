@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Moq;
 using NUnit.Framework;
@@ -26,9 +24,9 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
         [TestCase(false)]
         public  void CheckContactDetailsAlreadyPresent(bool result)
         {
-            _registerValidationRepository.Setup(r => r.ContactDetailsAlreadyExist(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),It.IsAny<Guid?>()))
+            _registerValidationRepository.Setup(r => r.ContactDetailsAlreadyExist(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),It.IsAny<Guid?>()))
                 .Returns(Task.FromResult(result));
-            var checkResult = _assessorValidationService.CheckIfContactDetailsAlreadyPresentInSystem("a","b","c",null ).Result;
+            var checkResult = _assessorValidationService.CheckIfContactDetailsAlreadyPresentInSystem("a","b","c", "e",null ).Result;
             Assert.AreEqual(checkResult,result);
         }
 
