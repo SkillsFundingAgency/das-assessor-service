@@ -33,7 +33,8 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
                 _request = new UpdateEpaOrganisationContactRequest
                 {
                     ContactId = _contactId.ToString(),
-                    DisplayName = "name",
+                    FirstName = "name",
+                    LastName = "lastname",
                     Email = "testy@test.com",
                     PhoneNumber = "12344"
                 };

@@ -157,7 +157,7 @@ namespace SFA.DAS.AssessorService.Data
                     $@"INSERT INTO [dbo].[Contacts] ([Id],[CreatedAt],[DisplayName],[Email],[EndPointAssessorOrganisationId],[OrganisationId],[Status],[Username],[PhoneNumber], [GivenNames], [FamilyName], [SigninId], [SigninType]) " +
                     $@"VALUES (@id,getutcdate(), @displayName, @email, @endPointAssessorOrganisationId," +
                     $@"(select id from organisations where EndPointAssessorOrganisationId=@endPointAssessorOrganisationId), " +
-                    $@"'Live', @username, @PhoneNumber, @GivenNames, @FamilyName, @SigninId, @SigninType);",
+                    $@"'Live', @username, @PhoneNumber, @FirstName, @LastName, @SigninId, @SigninType);",
                     new
                     {
                         contact.Id,
@@ -166,8 +166,8 @@ namespace SFA.DAS.AssessorService.Data
                         contact.EndPointAssessorOrganisationId,
                         contact.Username,
                         contact.PhoneNumber,
-                        contact.GivenNames,
-                        contact.FamilyName,
+                        contact.FirstName,
+                        contact.LastName,
                         contact.SigninId,
                         contact.SigninType
                     });
@@ -234,9 +234,10 @@ namespace SFA.DAS.AssessorService.Data
 
                 connection.Execute(
                     "UPDATE [Contacts] SET [DisplayName] = @displayName, [Email] = @email, " +
+                    "[GivenNames] = @firstName, [FamilyName] = @lastName, " +
                     "[PhoneNumber] = @phoneNumber, [updatedAt] = getUtcDate() " +
                     "WHERE [Id] = @Id ",
-                    new { contact.DisplayName, contact.Email, contact.PhoneNumber, contact.Id});
+                    new { contact.DisplayName, contact.Email, contact.FirstName, contact.LastName, contact.PhoneNumber, contact.Id});
 
                 if (actionChoice == "MakePrimaryContact")
                     connection.Execute("update o set PrimaryContact = c.Username from organisations o " +
