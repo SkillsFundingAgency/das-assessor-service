@@ -31,7 +31,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
         Task<List<CertificateSummaryResponse>> GetCertificatesToBeApproved();
         Task<IEnumerable<IDictionary<string, object>>> GetDataFromStoredProcedure(string storedProcedure);
         Task<List<DeliveryArea>> GetDeliveryAreas();
-        Task<AssessmentOrganisationContact> GetEpaCntact(string contactId);
+        Task<AssessmentOrganisationContact> GetEpaContact(string contactId);
         Task<EpaOrganisation> GetEpaOrganisation(string organisationId);
         Task<List<ContactResponse>> GetEpaOrganisationContacts(string organisationId);
         Task<List<OrganisationStandardSummary>> GetEpaOrganisationStandards(string organisationId);
