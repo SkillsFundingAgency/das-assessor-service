@@ -262,9 +262,9 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
             var warningMessages = new List<string>();
             if (sequenceId == 2 && returnType == "Approve")
             {
-                var sequneceOne = await _applyApiClient.GetSequence(applicationId, 1);
+                var sequenceOne = await _applyApiClient.GetSequence(applicationId, 1);
 
-                if (sequneceOne?.NotRequired is true)
+                if (sequenceOne?.NotRequired is true)
                 {
                     var response = await AddOrganisationStandardIntoRegister(applicationId);
                     if (response.WarningMessages != null) warningMessages.AddRange(response.WarningMessages);
