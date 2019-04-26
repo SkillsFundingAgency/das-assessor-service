@@ -21,5 +21,6 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<Contact> GetContact(string email);
         Task AssociateRoleWithContact(string roleName, Contact newContact);
         Task AssociatePrivilegesWithContact(Guid contactId, IEnumerable<Privilege> privileges);
+        bool CheckIfAnyPrivelegesSet(Guid contactId);
     }
 }

@@ -24,7 +24,8 @@ namespace SFA.DAS.AssessorService.Data.TestData
                     EndPointAssessorName = "BCS, The Chartered Institute for IT",
                     EndPointAssessorOrganisationId = "EPA000011",
                     EndPointAssessorUkprn = 10022719,
-                    Status = OrganisationStatus.New
+                    Status = OrganisationStatus.New,
+                    OrganisationTypeId = 1
                 };
 
                 organisations.Add(firstOrganisation);
@@ -38,7 +39,8 @@ namespace SFA.DAS.AssessorService.Data.TestData
                     EndPointAssessorName = "BCS, The Chartered Institute for IT 1",
                     EndPointAssessorOrganisationId = "EPA000013",
                     EndPointAssessorUkprn = 10033672,
-                    Status = OrganisationStatus.New
+                    Status = OrganisationStatus.New,
+                    OrganisationTypeId = 1
                 };
 
                 organisations.Add(secondOrganisation);
@@ -51,7 +53,8 @@ namespace SFA.DAS.AssessorService.Data.TestData
                     EndPointAssessorName = "BCS, The Chartered Institute for IT 2",
                     EndPointAssessorOrganisationId = "EPA000014",
                     EndPointAssessorUkprn = 1003367,
-                    Status = OrganisationStatus.New
+                    Status = OrganisationStatus.New,
+                    OrganisationTypeId = 1
                 };
 
                 context.Organisations.Add(thirdOrganisation);
@@ -62,12 +65,17 @@ namespace SFA.DAS.AssessorService.Data.TestData
                 var firstContact = new Contact
                 {
                     Id = Guid.NewGuid(),
-                    Username = "fredjones",
-                    Email = "blah@blah.com",
-                    DisplayName = "Fred Jones",
+                    Username = "user1",
+                    Email = "davegouge+atuser1@gmail.com",
+                    DisplayName = "User One",
                     EndPointAssessorOrganisationId = firstOrganisation.EndPointAssessorOrganisationId,
                     Status = ContactStatus.Live,
-                    OrganisationId = firstOrganisation.Id
+                    OrganisationId = firstOrganisation.Id,
+                    Title = "Mr",
+                    FamilyName = "One",
+                    GivenNames = "User",
+                    SignInType = "ASLogin",
+                    SignInId = Guid.Parse("089b2f10-5280-4a46-b23e-fa940c06d35d")
                 };
 
                 context.Contacts.Add(firstContact);
@@ -75,38 +83,54 @@ namespace SFA.DAS.AssessorService.Data.TestData
                 var secondContact = new Contact
                 {
                     Id = Guid.NewGuid(),
-                    Username = "jcoxhead",
-                    Email = "jcoxhead@gmail.com",
-                    DisplayName = "John Coxhead",
+                    Username = "user2",
+                    Email = "davegouge+atuser2@gmail.com",
+                    DisplayName = "User Two",
                     EndPointAssessorOrganisationId = secondOrganisation.EndPointAssessorOrganisationId,
                     Status = ContactStatus.Live,
-                    OrganisationId = secondOrganisation.Id
+                    OrganisationId = secondOrganisation.Id,
+                    Title = "Mrs",
+                    FamilyName = "Two",
+                    GivenNames = "User",
+                    SignInType = "ASLogin",
+                    SignInId = Guid.Parse("d4360834-d84b-4181-bd7a-a03cc581d02c")
                 };
 
                 context.Contacts.Add(secondContact);
-                context.SaveChanges();
 
                 var thirdContact = new Contact
                 {
                     Id = Guid.NewGuid(),
-                    Username = "jcoxhead2",
-                    Email = "jcoxhead@gmail.com",
-                    DisplayName = "John Coxhead",
+                    Username = "user3",
+                    Email = "davegouge+atuser3@gmail.com",
+                    DisplayName = "User Three",
                     EndPointAssessorOrganisationId = thirdOrganisation.EndPointAssessorOrganisationId,
                     Status = ContactStatus.Live,
-                    OrganisationId = thirdOrganisation.Id
+                    OrganisationId = thirdOrganisation.Id,
+                    Title = "Miss",
+                    FamilyName = "Three",
+                    GivenNames = "User",
+                    SignInType = "ASLogin",
+                    SignInId = Guid.Parse("f205e897-0e0b-40fb-9175-8a9a44cd4ff6")
                 };
 
                 context.Contacts.Add(thirdContact);
                 context.SaveChanges();
 
+                
+                context.ContactRoles.AddRange(
+                    new ContactRole(){ContactId = firstContact.Id, Id = Guid.NewGuid(), RoleName = "SuperUser"}, 
+                    new ContactRole(){ContactId = secondContact.Id, Id = Guid.NewGuid(), RoleName = "SuperUser"},  
+                    new ContactRole(){ContactId = thirdContact.Id, Id = Guid.NewGuid(), RoleName = "SuperUser"});
+                
+                
                 // create 30 certificates which will not have any duplicate standard codes
                 for (int i = 0; i <=30; i++)
                 {
                     var certificateData = new CertificateData
                     {
                         AchievementDate = DateTime.Now.AddDays(-1),
-                        ContactName = "John Coxhead",
+                        ContactName = "Contact One",
                         ContactOrganisation = "1234" + i,
                         Department = "Human Resources",
                         ContactAddLine1 = "1 Alpha Drive",
@@ -135,7 +159,7 @@ namespace SFA.DAS.AssessorService.Data.TestData
                         OrganisationId = firstOrganisation.Id,
                         CertificateData = JsonConvert.SerializeObject(certificateData),
                         Status = CertificateStatus.Submitted,
-                        CreatedBy = "jcoxhead",
+                        CreatedBy = "user2",
                         CertificateReference = $"104123{i:00}",
                         Uln = 1111111111,
                         ProviderUkPrn = 12345678
@@ -224,7 +248,7 @@ namespace SFA.DAS.AssessorService.Data.TestData
                 var emailTemplate = new EMailTemplate
                 {
                     Id = Guid.NewGuid(),
-                    Recipients = "john.coxhead@digital.education.gov.uk",
+                    Recipients = "alan.burns@digital.education.gov.uk",
                     TemplateId = "5b171b91-d406-402a-a651-081cce820acb",
                     TemplateName = "PrintAssessorCoverLetters",
                 };
