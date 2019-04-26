@@ -420,8 +420,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
                 Id = string.IsNullOrEmpty(id) ? Guid.NewGuid() : Guid.Parse(id),
                 PhoneNumber = contactPhoneNumber,
                 Username = username,
-                GivenNames = givenNames,
-                FamilyName = familyName,
+                FirstName = givenNames,
+                LastName = familyName,
                 SigninId = signinId,
                 SigninType = signinType
             };

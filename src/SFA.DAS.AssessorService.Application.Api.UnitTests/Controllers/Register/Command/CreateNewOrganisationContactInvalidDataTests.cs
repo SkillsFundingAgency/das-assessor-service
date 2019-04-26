@@ -30,7 +30,8 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
             _request = new CreateEpaOrganisationContactRequest
             {
                 EndPointAssessorOrganisationId = "EPA0009",
-                DisplayName = "Tester McTestFace",
+                FirstName = "Tester",
+                LastName="McTestFace",
                 Email = "tester.mctestface@test.com",
                 PhoneNumber = "555 5555"
             };
