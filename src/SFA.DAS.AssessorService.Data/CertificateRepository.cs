@@ -252,6 +252,8 @@ namespace SFA.DAS.AssessorService.Data
             cert.Uln = certificate.Uln;
             cert.CertificateData = certificate.CertificateData;
             cert.Status = certificate.Status;
+            cert.ProviderUkPrn = certificate.ProviderUkPrn;
+            cert.StandardCode = certificate.StandardCode;
             cert.UpdatedBy = username;
             cert.UpdatedAt = DateTime.UtcNow;
 
