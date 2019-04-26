@@ -14,7 +14,6 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
     using System.Collections.Generic;
 
     [Authorize]
-    [AutoValidateAntiforgeryToken]
     public class UpdateRoatpOrganisationController : RoatpSearchResultsControllerBase
     {
         private ILogger<UpdateRoatpOrganisationController> _logger;
