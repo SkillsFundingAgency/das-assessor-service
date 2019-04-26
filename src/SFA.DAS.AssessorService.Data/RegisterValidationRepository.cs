@@ -225,7 +225,7 @@ namespace SFA.DAS.AssessorService.Data
             }
         }
 
-        public async Task<bool> ContactDetailsAlreadyExist(string displayName, string email, string phone, Guid? contactId)
+        public async Task<bool> ContactDetailsAlreadyExist(string firstName, string lastName, string email, string phone, Guid? contactId)
         {
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))
             {
@@ -233,7 +233,7 @@ namespace SFA.DAS.AssessorService.Data
                     await connection.OpenAsync();
                var sqlToCheckExists =
                     "select CASE count(0) WHEN 0 THEN 0 else 1 end result FROM [Contacts] " +
-                    "WHERE displayname = @displayName and email = @email";
+                    "WHERE GivenNames = @firstName and FamilyName = @lastName and email = @email";
 
                 sqlToCheckExists = !string.IsNullOrEmpty(phone)
                     ? sqlToCheckExists + " and phonenumber = @phone"
@@ -242,7 +242,7 @@ namespace SFA.DAS.AssessorService.Data
                 if (contactId != null)
                     sqlToCheckExists = sqlToCheckExists + " and id != @contactId ";
 
-                return await connection.ExecuteScalarAsync<bool>(sqlToCheckExists, new { contactId, displayName, email, phone });
+                return await connection.ExecuteScalarAsync<bool>(sqlToCheckExists, new { contactId, firstName, lastName, email, phone });
             }
         }
 
