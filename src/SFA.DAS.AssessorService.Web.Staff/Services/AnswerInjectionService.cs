@@ -8,7 +8,6 @@ using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Application.Interfaces.Validation;
-using SFA.DAS.AssessorService.Web.Staff.Infrastructure;
 using SFA.DAS.AssessorService.Web.Staff.Resources;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Services
@@ -302,8 +301,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
                 Id = string.IsNullOrEmpty(id) ? Guid.NewGuid() : Guid.Parse(id),
                 PhoneNumber = contactPhoneNumber,
                 Username = username,
-                GivenNames = givenNames,
-                FamilyName = familyName,
+                FirstName = givenNames,
+                LastName = familyName,
                 SigninId = signinId,
                 SigninType = signinType
             };
