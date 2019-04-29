@@ -16,6 +16,8 @@ namespace SFA.DAS.AssessorService.Api.Types.Models
 
     public class LoginResponse : IRequest
     {
+        public string EndPointAssessorName { get; set; }
+        public string EndPointAssessorOrganisationId { get; set; }
         public string OrganisationName { get; set; }
         public LoginResult Result { get; set; }
     }
@@ -24,6 +26,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models
     {
         Valid,
         NotRegistered,
+        NotActivated,
         InvalidRole,
         Rejected,
         InvitePending,
