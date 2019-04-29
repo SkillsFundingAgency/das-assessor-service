@@ -67,19 +67,23 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Azure
         public async Task<IEnumerable<AzureUser>> GetUserDetailsByUkprn(string ukprn, bool includeSubscriptions = false, bool includeGroups = false)
         {
             List<AzureUser> users = new List<AzureUser>();
-            using (var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"/users?api-version=2017-03-01&expandGroups={includeGroups}&$filter=contains(note,'ukprn') and contains(note,'{ukprn}')"))
+
+            if (!string.IsNullOrWhiteSpace(ukprn))
             {
-                var response = await RequestAndDeserialiseAsync<AzureUserResponse>(httpRequest, "Could not get Users");
-
-                foreach(var user in response.Users)
+                using (var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"/users?api-version=2017-03-01&expandGroups={includeGroups}&$filter=contains(note,'ukprn') and contains(note,'{ukprn}')"))
                 {
-                    if (user.AzureId != null && includeSubscriptions)
-                    {
-                        var subscriptions = await GetSubscriptionsForUser(user.Id);
-                        user.Subscriptions.AddRange(subscriptions);
-                    }
+                    var response = await RequestAndDeserialiseAsync<AzureUserResponse>(httpRequest, "Could not get Users");
 
-                    users.Add(user);
+                    foreach (var user in response.Users)
+                    {
+                        if (user.AzureId != null && includeSubscriptions)
+                        {
+                            var subscriptions = await GetSubscriptionsForUser(user.Id);
+                            user.Subscriptions.AddRange(subscriptions);
+                        }
+
+                        users.Add(user);
+                    }
                 }
             }
 
@@ -88,17 +92,21 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Azure
 
         public async Task<AzureUser> GetUserDetailsByEmail(string email, bool includeSubscriptions = false, bool includeGroups = false)
         {
-            AzureUser user;
-            using (var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"/users?api-version=2017-03-01&expandGroups={includeGroups}&$top=1&$filter=email eq '{email}'"))
-            {
-                var response = await RequestAndDeserialiseAsync<AzureUserResponse>(httpRequest, "Could not get User");
-                user = response.Users.FirstOrDefault();
-            }
+            AzureUser user = null;
 
-            if (user != null && user.AzureId != null && includeSubscriptions)
+            if (!string.IsNullOrWhiteSpace(email))
             {
-                var subscriptions = await GetSubscriptionsForUser(user.Id);
-                user.Subscriptions.AddRange(subscriptions);
+                using (var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"/users?api-version=2017-03-01&expandGroups={includeGroups}&$top=1&$filter=email eq '{email}'"))
+                {
+                    var response = await RequestAndDeserialiseAsync<AzureUserResponse>(httpRequest, "Could not get User");
+                    user = response.Users.FirstOrDefault();
+                }
+
+                if (user != null && user.AzureId != null && includeSubscriptions)
+                {
+                    var subscriptions = await GetSubscriptionsForUser(user.Id);
+                    user.Subscriptions.AddRange(subscriptions);
+                }
             }
 
             return user;
