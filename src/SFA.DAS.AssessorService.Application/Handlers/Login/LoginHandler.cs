@@ -120,7 +120,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Login
             response.OrganisationName = organisation.EndPointAssessorName;
 
             _logger.LogInformation(LoggingConstants.SignInSuccessful);
-            response.Result = LoginResult.Valid;
+            //response.Result = LoginResult.Valid;
             
             return response;
         }
