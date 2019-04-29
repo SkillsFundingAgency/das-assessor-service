@@ -141,10 +141,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 viewModel.Organisations = new List<OrganisationSearchResult> {organisationSearchResult};
                 viewModel.OrganisationTypes = await _organisationsApiClient.GetOrganisationTypes();
 
-                if (organisationSearchResult.OrganisationType == null)
-                {
-                    return View(nameof(Type), viewModel);
-                }
+                return View(nameof(Type), viewModel);
             }
             return View(nameof(Confirm),viewModel);
         }
