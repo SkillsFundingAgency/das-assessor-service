@@ -28,6 +28,8 @@ namespace SFA.DAS.AssessorService.Api.Types.Commands
         public string CharityNumber { get; set; }
         public string StandardWebsite { get; set; }
         public string CreatedBy { get; set; }
+        public DateTime? FinancialDueDate { get; set; }
+        public bool? IsFinancialExempt { get; set; }
 
         public string FamilyName { get; set; }
         public string GivenNames { get; set; }
@@ -40,7 +42,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Commands
             bool useTradingName, string contactName, string contactAddress1, string contactAddress2,
             string contactAddress3, string contactAddress4, string contactPostcode, string contactEmail,
             string contactPhoneNumber, string companyUkprn, string companyNumber, string charityNumber,
-            string standardWebsite, string createdBy, string familyName, string givenNames, Guid? signinId, string signinType, string userEmail)
+            string standardWebsite, string createdBy, string familyName, string givenNames, Guid? signinId, string signinType, string userEmail, DateTime? financialDueDate, bool? isFinancialExempt)
         {
             OrganisationName = organisationName;
             OrganisationType = organisationType;
@@ -62,6 +64,8 @@ namespace SFA.DAS.AssessorService.Api.Types.Commands
             CharityNumber = charityNumber;
             StandardWebsite = standardWebsite;
             CreatedBy = createdBy;
+            FinancialDueDate = financialDueDate;
+            IsFinancialExempt = isFinancialExempt;
             FamilyName = familyName;
             GivenNames = givenNames;
             SigninId = signinId;

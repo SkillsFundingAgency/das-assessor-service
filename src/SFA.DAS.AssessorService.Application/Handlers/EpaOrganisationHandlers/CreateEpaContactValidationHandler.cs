@@ -27,7 +27,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
             return _validator.ValidatorCreateEpaOrganisationContactRequest(new CreateEpaOrganisationContactRequest
             {
                 EndPointAssessorOrganisationId = request.OrganisationId,
-                DisplayName = request.Name,
+                FirstName = request.FirstName,
+                LastName = request.LastName,
                 Email = request.Email,
                 PhoneNumber = request.Phone
             } );   
