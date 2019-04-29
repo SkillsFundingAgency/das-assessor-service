@@ -612,10 +612,6 @@
     padding: 15px;
   }
 
-  .app-navigation__list > li:first-child a {
-    padding-left: 0;
-  }
-
   .app-navigation__list > li a:hover {
     border-bottom: 4px solid #2b8cc4;
     background-color: inherit;
