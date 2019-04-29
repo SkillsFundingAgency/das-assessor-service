@@ -26,7 +26,7 @@ using StackExchange.Redis;
 namespace SFA.DAS.AssessorService.Web
 {
     public class Startup
-    {
+    { 
         private readonly IConfiguration _config;
         private readonly ILogger<Startup> _logger;
         private readonly IHostingEnvironment _env;
