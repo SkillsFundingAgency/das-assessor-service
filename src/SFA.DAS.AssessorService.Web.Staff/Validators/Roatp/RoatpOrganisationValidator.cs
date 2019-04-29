@@ -18,7 +18,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Validators.Roatp
         {
             var errorMessages = new List<ValidationErrorDetail>();
 
-            legalName = HtmlTagRemover.StripOutTags(legalName);
+            legalName = TextSanitiser.SanitiseText(legalName);
 
             if (String.IsNullOrWhiteSpace(legalName))
             {
@@ -68,7 +68,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Validators.Roatp
 
         public List<ValidationErrorDetail> IsValidTradingName(string tradingName)
         {
-            tradingName = HtmlTagRemover.StripOutTags(tradingName);
+            tradingName = TextSanitiser.SanitiseText(tradingName);
 
             var errorMessages = new List<ValidationErrorDetail>();
 
