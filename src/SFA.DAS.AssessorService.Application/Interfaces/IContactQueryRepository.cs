@@ -19,6 +19,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<string> GetContactStatus(string endPointAssessorOrganisationId, Guid signInId);
         Task<Contact> GetBySignInId(Guid requestSignInId);
         Task<IList<ContactRole>> GetRolesFor(Guid contactId);
+        Task<IList<ContactsPrivilege>> GetPrivilegesFor(Guid contactId);
         Task<IEnumerable<Privilege>> GetAllPrivileges();
         Task<Contact> GetContactById(Guid id);
         Task<List<Contact>> GetUsersToMigrate();
