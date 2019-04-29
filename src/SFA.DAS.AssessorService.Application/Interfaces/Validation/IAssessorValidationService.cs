@@ -14,5 +14,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces.Validation
 
         Task<bool> CheckIfContactDetailsAlreadyPresentInSystem(string firstName, string lastName, string email,
             string phone, Guid? contactId);
+
+        Task<bool> IsOrganisationStandardTaken(string organisationId, int standardCode);
     }
 }

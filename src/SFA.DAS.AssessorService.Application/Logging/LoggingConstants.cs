@@ -6,7 +6,8 @@
         public const string SignInIncorrectRole = "SignIn_IncorrectRole";
         public const string SignInNotAnEpao = "SignIn_NotAnEpao";
         public const string SignInEpaoDeleted = "SignIn_EpaoDeleted";
-        
+        public const string SignInEpaoNew = "SignIn_EpaoNew";
+
         public const string SearchSuccess = "Search_Success";
         public const string SearchFailure = "Search_Failure";
         
