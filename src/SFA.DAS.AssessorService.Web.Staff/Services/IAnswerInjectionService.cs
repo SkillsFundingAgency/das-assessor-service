@@ -7,5 +7,6 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
     public interface IAnswerInjectionService
     {
         Task<CreateOrganisationAndContactFromApplyResponse> InjectApplyOrganisationAndContactDetailsIntoRegister(CreateOrganisationContactCommand command);
+        Task<CreateOrganisationStandardFromApplyResponse> InjectApplyOrganisationStandardDetailsIntoRegister(CreateOrganisationStandardCommand command);  
     }
 }
