@@ -35,7 +35,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         string CheckIfDeliveryAreasAreValid(List<int> DeliveryAreas);
 
         string CheckOrganisationStandardEffectiveFromIsEntered(DateTime? effectiveFrom);
-        string CheckIfContactDetailsAlreadyPresentInSystem(string displayName, string email, string phone,
+        string CheckIfContactDetailsAlreadyPresentInSystem(string firstName, string lastName, string email, string phone,
             string contactId);
 
         string CheckOrganisationStandardFromDateIsWithinStandardDateRanges(DateTime? effectiveFrom,

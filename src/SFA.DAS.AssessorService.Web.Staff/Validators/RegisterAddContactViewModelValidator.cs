@@ -16,7 +16,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Validators
           
             RuleFor(vm => vm).Custom((vm, context) =>
             {
-                var validationResult =  _apiClient.ValidateCreateContact(vm.DisplayName, vm.EndPointAssessorOrganisationId, vm.Email, vm.PhoneNumber).Result;
+                var validationResult =  _apiClient.ValidateCreateContact(vm.FirstName, vm.LastName, vm.EndPointAssessorOrganisationId, vm.Email, vm.PhoneNumber).Result;
                 if (validationResult.IsValid) return;
                 foreach (var error in validationResult.Errors)
                 {
