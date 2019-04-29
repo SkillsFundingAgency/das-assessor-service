@@ -5,9 +5,9 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NUnit.Framework;
-using SFA.DAS.AssessorService.Web.Staff.Controllers;
+using SFA.DAS.AssessorService.Application.Api.Controllers;
 
-namespace SFA.DAS.AssessorService.Web.Staff.Tests.Controllers
+namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers
 {
     [TestFixture]
     public class ControllerAuthorizeAttributeTests
@@ -15,13 +15,13 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Controllers
 
         private readonly List<string> _controllersThatDoNotRequireAuthorize = new List<string>()
         {
-            "AccountController", "ExcelAwareController", "HomeController"
+            "PingController"
         };
 
         [Test]
         public void ControllersShouldHaveAuthorizeAttribute()
         {
-            var webAssembly = typeof(HomeController).GetTypeInfo().Assembly;
+            var webAssembly = typeof(SearchController).GetTypeInfo().Assembly;
 
             var controllers = webAssembly.DefinedTypes.Where(c => c.BaseType == typeof(Controller)).ToList();
 
