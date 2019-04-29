@@ -21,7 +21,7 @@
         private const string AuditHistoryWorksheetName = "Provider history";
         private const string ExcelFileName = "_RegisterOfApprenticeshipTrainingProviders.xlsx";
         private const string FatFileName = "roatp {0}.xlsx";
-        private const string FatWorksheetName = "roatp";
+        private const string FatWorksheetName = "RoATP";
 
         public DownloadRoatpController(IRoatpApiClient apiClient, IDataTableHelper dataTableHelper,
             ILogger<DownloadRoatpController> logger)
