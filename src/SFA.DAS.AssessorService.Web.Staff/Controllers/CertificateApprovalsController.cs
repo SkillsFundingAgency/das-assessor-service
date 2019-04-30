@@ -248,12 +248,13 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         {
             var dataTable = new DataTable();
 
-            if (list != null || list.Any())
+            var enumerable = list?.ToList();
+            if (enumerable != null && enumerable.Any())
             {
-                var columnNames = list.SelectMany(dict => dict.Keys).Distinct();
+                var columnNames = enumerable.SelectMany(dict => dict.Keys).Distinct();
                 dataTable.Columns.AddRange(columnNames.Select(col => new DataColumn(col)).ToArray());
 
-                foreach (var item in list)
+                foreach (var item in enumerable)
                 {
                     var row = dataTable.NewRow();
                     foreach (var key in item.Keys)

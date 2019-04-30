@@ -80,9 +80,6 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Controllers.PrivateCertificate
             };
 
             MockStandardServiceClient.Setup(s => s.GetAllStandardSummaries()).Returns(Task.FromResult(standards.AsEnumerable()));
-
-
-
             MockAssessmentOrgsApiClient = MockedAssessmentOrgsApiClient.Setup(mockedApiClientLogger);
 
             CertificateData = JsonConvert.DeserializeObject<CertificateData>(Certificate.CertificateData);
