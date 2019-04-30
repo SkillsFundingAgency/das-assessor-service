@@ -51,5 +51,10 @@ namespace SFA.DAS.AssessorService.Application.Api.Services.Validation
         {
             return await _registerValidationRepository.EpaOrganisationExistsWithUkprn(ukprn);
         }
+
+        public async Task<bool> IsOrganisationStandardTaken(string organisationId, int standardCode)
+        {
+            return await _registerValidationRepository.EpaOrganisationStandardExists(organisationId, standardCode);
+        }
     }
 }
