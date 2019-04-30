@@ -173,7 +173,7 @@ namespace SFA.DAS.AssessorService.Data
         {
             if (status == null )
             {
-                var count = await _context.Certificates.CountAsync();
+                var count = await _context.Certificates.Where(x => x.IsPrivatelyFunded).CountAsync();
                 if (pageSize == 0)
                     pageSize = count == 0 ? 1 : count;
                 var certificates = await _context.Certificates
@@ -187,7 +187,7 @@ namespace SFA.DAS.AssessorService.Data
             }
             else
             {
-                var count = await _context.Certificates.Where(x => x.Status == status && x.PrivatelyFundedStatus == privatelyFundedStatus).CountAsync();
+                var count = await _context.Certificates.Where(x => x.Status == status && x.PrivatelyFundedStatus == privatelyFundedStatus).Where(x => x.IsPrivatelyFunded).CountAsync();
                 if (pageSize == 0)
                     pageSize = count == 0?1:count;
                 var certificates =  await _context.Certificates

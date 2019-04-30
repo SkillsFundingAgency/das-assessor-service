@@ -35,7 +35,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         public async Task<IActionResult> New(int? pageIndex)
         {
             var certificates = await ApiClient.GetCertificatesToBeApproved(0, pageIndex ?? 1, CertificateStatus.ToBeApproved,null);
-            var items = Mapper.Map<List<CertificateDetailApprovalViewModel>>(certificates.Items);
+            var items = Mapper.Map<List<CertificateDetailApprovalViewModel>>(certificates.Items.OrderByDescending(x => x.CreatedDay));
             var certificatesToBeApproved = new CertificateApprovalViewModel
             {
                 ToBeApprovedCertificates = new PaginatedList<CertificateDetailApprovalViewModel>(items,certificates.TotalRecordCount,certificates.PageIndex,certificates.PageSize)
@@ -47,8 +47,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         [HttpGet]
         public async Task<IActionResult> SentForApproval(int? pageIndex)
         {
-            var certificates = await ApiClient.GetCertificatesToBeApproved(0, pageIndex ?? 1, CertificateStatus.ToBeApproved, CertificateStatus.SentForApproval);
-            var items = Mapper.Map<List<CertificateDetailApprovalViewModel>>(certificates.Items);
+            var certificates = await ApiClient.GetCertificatesToBeApproved(PageSize, pageIndex ?? 1, CertificateStatus.ToBeApproved, CertificateStatus.SentForApproval);
+            var items = Mapper.Map<List<CertificateDetailApprovalViewModel>>(certificates.Items.OrderBy(x => x.UpdatedAt));
             var certificatesSentForApproval = new CertificateApprovalViewModel
             {
                 SentForApprovalCertificates = new PaginatedList<CertificateDetailApprovalViewModel>(items, certificates.TotalRecordCount, certificates.PageIndex, certificates.PageSize)
@@ -105,7 +105,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         [HttpGet]
         public async Task<FileContentResult> ExportSentForApproval()
         {
-            var certificates = await ApiClient.GetCertificatesToBeApproved(0,1, CertificateStatus.ToBeApproved, CertificateStatus.SentForApproval);
+            var certificates = await ApiClient.GetCertificatesToBeApproved(0,1, CertificateStatus.ToBeApproved, null);
             var data = certificates?.Items
                 .Select(x => ToDictionary<object>(x, ApprovalToExcelAttributeMappings()));
           
@@ -114,7 +114,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
                 var worksheet = package.Workbook.Worksheets.Add("Sheet1");
                 worksheet.Cells.LoadFromDataTable(ToDataTable(data), true);
 
-                return File(package.GetAsByteArray(), "application/excel", $"SentForApproval.xlsx");
+                return File(package.GetAsByteArray(), "application/excel", $"CerificatesToBeApproved-{DateTime.Now:dd-MM-yyyyTHH:mm:ss}.xlsx");
             }
         }
 

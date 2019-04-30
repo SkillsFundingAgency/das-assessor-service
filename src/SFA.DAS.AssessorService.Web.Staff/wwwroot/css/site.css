@@ -662,7 +662,7 @@ fieldset.after-error-summary {
 
 /*Custom Table Settings for TD which contain radios */
 table #td-with-radios {
-    width: 35%;
+    width: 32%;
     line-height: 1.75em;
 }
 
@@ -815,7 +815,7 @@ table.responsive tr.total {
         text-align: left;
         float: none;
         clear: none;
-        padding: 0.6em 0.8em 0.5em;
+        padding: 0.6em 0.7em 0.5em;
         border-bottom-style: solid;
         width: auto;
     }

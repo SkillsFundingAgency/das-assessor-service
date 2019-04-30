@@ -94,6 +94,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
                         CertificateReference = certificate.CertificateReference,
                         Uln = certificate.Uln,
                         CreatedAt = certificate.CreatedAt,
+                        CreatedDay = certificate.CreateDay,
+                        UpdatedAt = certificate.UpdatedAt,
                         ContactOrganisation = certificateData.ContactOrganisation,
                         ContactName = certificateData.ContactName,
                         TrainingProvider = trainingProviderName,

@@ -11,7 +11,8 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Certificates
         public string FullName { get; set; }
         public string TrainingProvider { get; set; }
         public DateTime CreatedAt { get; set; }
-
+        public DateTime CreatedDay { get; set; }
+        public DateTime? UpdatedAt { get; set; }
         public string StandardName { get; set; }
         public int Level { get; set; }
         public string OverallGrade { get; set; }

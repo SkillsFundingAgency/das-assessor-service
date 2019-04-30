@@ -62,15 +62,6 @@
                 Privately Funded Certificates - Sent For Approval
             </h1>
 
-
-            @if (@Model.SentForApprovalCertificates.Items.Any())
-            {
-                <div class="form-group">
-                    <form asp-action="ExportSentForApproval" method="get">
-                        <button type="submit" class="button">Export</button>
-                    </form>
-                </div>
-            }
             <form class="apprentice-approvals-form js-disable-on-submit" type="post" asp-controller="CertificateApprovals" asp-action="Approvals">
 
                 @{
