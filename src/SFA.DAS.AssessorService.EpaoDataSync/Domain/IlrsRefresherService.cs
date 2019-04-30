@@ -102,7 +102,7 @@ namespace SFA.DAS.AssessorService.EpaoDataSync.Domain
             var totalNumbersEffected = 0L;
             foreach (var uln in changedRecordsUlnCache)
             {
-                var ilrsResults = await _connection.QueryAsync<Ilr>($"Select Distinct MAX(EventId) as EventId from ILRS where Uln = @Uln", new { Uln = uln });
+                var ilrsResults = await _connection.QueryAsync<Ilr>($"Select MIN(EventId) From (Select MAX(EventId) as EventId, stdcode  from ILRS where Uln = @Uln group by stdcode) ab", new { Uln = uln });
                 var listOfIlrs = ilrsResults?.ToList();
                 if (listOfIlrs == null || !listOfIlrs.Any())
                     continue;
