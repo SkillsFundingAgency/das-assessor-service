@@ -15,7 +15,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Controllers.PrivateCertificate
         private CertificateApprovalViewModel _viewModelResponse;
         private CertificateApprovalsController certificateApprovalsController;
 
-        [SetUp]
+        [OneTimeSetUp]
         public void Arrange()
         {
             MappingStartup.AddMappings();
