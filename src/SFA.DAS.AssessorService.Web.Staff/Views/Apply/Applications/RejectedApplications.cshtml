@@ -17,8 +17,7 @@
 
 <div class="grid-row">
     <nav class="app-navigation govuk-clearfix">
-        <ul class="app-navigation__list">
-            <li class="app-navigation">
+        <ul class="app-navigation__list">            <li class="app-navigation">
                 <a asp-action="MidpointApplications" asp-controller="Application">Mid point assessments</a>
             </li>
             <li class="app-navigation">
@@ -62,9 +61,6 @@
                             <td data-label="Application type">
                                 @item.ApplicationType
                             </td>
-                            <td data-label="Date rejected">
-                                @item.FeedbackAddedDate.ToSfaShortDateString()
-                            </td>
                             <td data-label="Standard">
                                 @if (!string.IsNullOrWhiteSpace(item.Standard) && item.SequenceId == 2)
                                 {
@@ -74,6 +70,9 @@
                                 {
                                     <text>---</text>
                                 }
+                            </td>
+                            <td data-label="Date rejected">
+                                @item.FeedbackAddedDate.ToSfaShortDateString()
                             </td>
                             <td class="numeric" data-label="Current status">
                                 @{
