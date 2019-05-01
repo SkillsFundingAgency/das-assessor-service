@@ -1,6 +1,7 @@
 // Application javascript
 window.GOVUKFrontend.initAll();
 window.DASFrontend.addCookieMessage();
+window.DASFrontend.expandableTable.init();
 
 (function(global) {
   "use strict";

@@ -8,56 +8,61 @@
     Layout = "_DashboardLayout";
 }
 
-<div>
-    <div class="grid-row">
-        <div class="column-two-thirds">
-            <h1 class="heading-large">Pipeline</h1>
+<main class="govuk-main-wrapper " id="main-content" role="main">
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <h1 class="govuk-heading-xl">Pipeline</h1>
         </div>
-        @if (Model.Response.Items.Any())
-        {
-            <div class="column-two-thirds">
+    </div>
+    @if (Model.Response.Items.Any())
+    {
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
                 <div class="panel panel-border-wide">
-                    <p>
-                        Assessment numbers may vary because of data changes on the individualised learner record (ILR) and certification service.
+                    <p class="govuk-body">
+                        /* Assessment numbers may vary because of data changes on the individualised learner record (ILR) and certification service. */
                     </p>
                 </div>
             </div>
-            <div class="column-one-third">
+            <div class="govuk-grid-column-one-third">
                 <div class="form-group align-button-right">
                     <form asp-controller="OrganisationStandards" asp-action="ExportEpaPipelineAsCsv" method="get">
                         <button type="submit" class="button">Download as csv</button>
                     </form>
                 </div>
             </div>
-            <div class="column-full">
-                <table id="pipeline" class="table responsive table-font-xsmall striped">
-                    <thead>
-                    <tr>
-                        <th>
-                            @Localizer["Standard"]
+        </div>
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
+                <table id="pipeline" class="govuk-table govuk-table--small responsive striped">
+                    <thead class="govuk-table__head">
+                <tr class="govuk-table__row">
+                    <th class="govuk-table__header" scope="col">
+                        @Localizer["Standard"]
+                    </th>
+                    <th class="govuk-table__header govuk-table__header--numeric" scope="col">
+                        @Localizer["Apprentices"]
+                    </th>
+                    @if (Model.Response.Items.Any())
+                    {
+                        <th class="govuk-table__header govuk-table__header--numeric" aria-sort="@(Model.OrderDirection)">
+                            <a asp-controller="OrganisationStandards"
+                                asp-action="OrderPipeline"
+                                asp-route-pageIndex="@(Model.Response.PageIndex)"
+                                asp-route-orderBy="EstimateDate"
+                                asp-route-orderDirection="@(Model.OrderDirection)">
+                                @Localizer["Estimated EPA date"]
+                            </a>
                         </th>
-                        <th class="numeric">
-                            @Localizer["Apprentices"]
+                    }
+                    else
+                    {
+                        <th class="govuk-table__header govuk-table__header--numeric" aria-sort="@(Model.OrderDirection)">
+                            @Localizer["Estimated Gateway"]
                         </th>
-                        @if (Model.Response.Items.Any())
-                        {
-                            <th class="numeric" aria-sort="@(Model.OrderDirection)">
-                                <a asp-controller="OrganisationStandards"
-                                   asp-action="OrderPipeline"
-                                   asp-route-pageIndex="@(Model.Response.PageIndex)"
-                                   asp-route-orderBy="EstimateDate"
-                                   asp-route-orderDirection="@(Model.OrderDirection)">
-                                    @Localizer["Estimated EPA date"]
-                                </a>
-                            </th>
-                        }
-                        else
-                        {
-                            <th class="numeric" aria-sort="@(Model.OrderDirection)">
-                                @Localizer["Estimated Gateway"]
-                            </th>
-                        }
-                    </tr>
+                    }
+                </tr>
                     </thead>
                     <tbody>
                     @foreach (var item in Model.Response.Items)
@@ -77,19 +82,20 @@
                     </tbody>
                 </table>
             </div>
+        </div>
         }
         else
         {
             <div class="column-full">
                 <div class="panel panel-border-wide">
-                    <p>
+                    <p class="govuk-body">
                         Assessment numbers may vary because of data changes on the individualised learner record (ILR) and certification service.
                     </p>
                 </div>
             </div>
             <div class="column-full">
                 <div class="info-summary">
-                    <h3 class="heading-medium">Your pipeline is empty.</h3>
+                    <h3 class="govuk-heading-m">Your pipeline is empty.</h3>
                 </div>
             </div>
         }
@@ -129,3 +135,4 @@
         </div>
     </div>
 }
+</main>
