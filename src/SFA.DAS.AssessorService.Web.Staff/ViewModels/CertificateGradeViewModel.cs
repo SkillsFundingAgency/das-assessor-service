@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
+using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
 
@@ -16,7 +17,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.ViewModels
             new SelectListItem {Text = "Merit", Value = "Merit"},
             new SelectListItem {Text = "Distinction", Value = "Distinction"},
             new SelectListItem {Text = "Pass with excellence", Value = "Pass with excellence"},
-            new SelectListItem {Text = "No grade awarded", Value = "No grade awarded"}
+            new SelectListItem {Text = "No grade awarded", Value = "No grade awarded"},
+            new SelectListItem {Text = "Fail", Value = "Fail"}
         };
         public void FromCertificate(Certificate cert)
         {
@@ -28,6 +30,14 @@ namespace SFA.DAS.AssessorService.Web.Staff.ViewModels
         {
             data.OverallGrade = SelectedGrade;
             certificate.CertificateData = JsonConvert.SerializeObject(data);
+
+            // TODO: Not quite sure on this logic.
+            // Can amend Submitted in Staff App, but what does it mean if Fail when submitted
+            //if (SelectedGrade == "Fail")
+            //{
+            //    certificate.Status = CertificateStatus.Draft;
+            //}
+
             return certificate;
         }
     }

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
+using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.JsonData;
 
 namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
@@ -16,7 +17,8 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
             new SelectListItem {Text = "Merit", Value = "Merit"},
             new SelectListItem {Text = "Distinction", Value = "Distinction"},
             new SelectListItem {Text = "Pass with excellence", Value = "Pass with excellence"},
-            new SelectListItem {Text = "No grade awarded", Value = "No grade awarded"}
+            new SelectListItem {Text = "No grade awarded", Value = "No grade awarded"},
+            new SelectListItem {Text = "Fail", Value = "Fail"}
         };
         public void FromCertificate(Domain.Entities.Certificate cert)
         {
@@ -28,6 +30,13 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
         {
             data.OverallGrade = SelectedGrade;
             certificate.CertificateData = JsonConvert.SerializeObject(data);
+
+            // TODO: Not quite sure on this logic.
+            //if (SelectedGrade == "Fail")
+            //{
+            //    certificate.Status = CertificateStatus.Draft;
+            //}
+
             return certificate;
         }
     }
