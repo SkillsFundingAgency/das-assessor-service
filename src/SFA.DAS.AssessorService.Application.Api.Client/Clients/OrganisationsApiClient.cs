@@ -10,6 +10,7 @@ using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 {
     using AssessorService.Api.Types.Models;
+    using SFA.DAS.AssessorService.Api.Types.Models.Register;
     using System.Net;
 
     public class OrganisationsApiClient : ApiClientBase, IOrganisationsApiClient
@@ -60,61 +61,86 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task<ValidationResponse> ValidateCreateOrganisation(string name, string ukprn, string organisationTypeId, string companyNumber, string charityNumber)
+        public async Task<ValidationResponse> ValidateCreateOrganisation(string name, long? ukprn, int? organisationTypeId, string companyNumber, string charityNumber)
         {
-            var newName = SanitizeUrlParam(name);
-            using (var request = new HttpRequestMessage(HttpMethod.Get,
-                $"/api/ao/assessment-organisations/validate-new?name={newName}&ukprn={ukprn}&organisationTypeId={organisationTypeId}&companyNumber={companyNumber}&charityNumber={charityNumber}")
-            )
+            var validationRequest = new CreateEpaOrganisationValidationRequest
             {
-                return await RequestAndDeserialiseAsync<ValidationResponse>(request,
-                    $"Could not check the validation for organisation [{name}]");
+                Name = name,
+                Ukprn = ukprn,
+                OrganisationTypeId = organisationTypeId,
+                CompanyNumber = companyNumber,
+                CharityNumber = charityNumber
+            };
+
+            using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/ao/assessment-organisations/validate-new/"))
+            {
+                return await PostPutRequestWithResponse<CreateEpaOrganisationValidationRequest, ValidationResponse>(request,
+                    validationRequest);
             }
         }
 
-        public async Task<ValidationResponse> ValidateUpdateContact(string contactId, string displayName, string email,string phoneNumber)
+        public async Task<ValidationResponse> ValidateUpdateOrganisation(string organisationId, string name, long? ukprn, int? organisationTypeId, string address1, string address2, string address3, string address4, string postcode, string status, string actionChoice, string companyNumber, string charityNumber)
         {
-            var newName = SanitizeUrlParam(displayName);
-            var newEmail = SanitizeUrlParam(email);
-            using (var request = new HttpRequestMessage(HttpMethod.Get,
-                $"/api/ao/assessment-organisations/contacts/validate-existing?displayName={newName}&email={newEmail}&contactId={contactId}&phoneNumber={phoneNumber}"))
+            var validationRequest = new UpdateEpaOrganisationValidationRequest
             {
-                return await RequestAndDeserialiseAsync<ValidationResponse>(request,
-                    $"Could not check the validation for contact [{newName}] against contactId [{contactId}]");
+                OrganisationId = organisationId,
+                Name = name,
+                Ukprn = ukprn,
+                OrganisationTypeId = organisationTypeId,
+                Address1 = address1,
+                Address2 = address2,
+                Address3 = address3,
+                Address4 = address4,
+                Postcode = postcode,
+                Status = status,
+                ActionChoice = actionChoice,
+                CompanyNumber = companyNumber,
+                CharityNumber = charityNumber
+            };
+
+            using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/ao/assessment-organisations/validate-existing/"))
+            {
+                return await PostPutRequestWithResponse<UpdateEpaOrganisationValidationRequest, ValidationResponse>(request,
+                    validationRequest);
+            }
+        }
+
+        public async Task<ValidationResponse> ValidateCreateContact(string firstName, string lastName, string organisationId, string email, string phone)
+        {
+            var validationRequest = new CreateEpaContactValidationRequest
+            {
+                OrganisationId = organisationId,
+                FirstName = firstName,
+                LastName = lastName,
+                Email = email,
+                Phone = phone
+            };
+
+            using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/ao/assessment-organisations/contacts/validate-new/"))
+            {
+                return await PostPutRequestWithResponse<CreateEpaContactValidationRequest, ValidationResponse>(request,
+                    validationRequest);
+            }
+        }
+
+        public async Task<ValidationResponse> ValidateUpdateContact(string contactId,  string firstName, string lastName, string email,string phoneNumber)
+        {
+            var validationRequest = new UpdateEpaOrganisationContactValidationRequest
+            {
+                ContactId = contactId,
+                FirstName = firstName,
+                LastName = lastName,
+                Email = email,
+                PhoneNumber = phoneNumber
+            };
+
+            using (var request = new HttpRequestMessage(HttpMethod.Put, $"/api/ao/assessment-organisations/contacts/validate-existing/"))
+            {
+                return await PostPutRequestWithResponse<UpdateEpaOrganisationContactValidationRequest, ValidationResponse>(request,
+                    validationRequest);
             }
         }
         
-        public async Task<ValidationResponse> ValidateUpdateOrganisation(string organisationId, string name, string ukprn, string organisationTypeId, string address1, string address2, string address3, string address4, string postcode, string status, string actionChoice, string companyNumber, string charityNumber)
-        {
-            var newName = SanitizeUrlParam(name);
-            var newAddress1 = SanitizeUrlParam(address1);
-            var newAddress2 = SanitizeUrlParam(address2);
-            var newAddress3 = SanitizeUrlParam(address3);
-            var newAddress4 = SanitizeUrlParam(address4);
-            var newPostcode = SanitizeUrlParam(postcode);
-
-            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/ao/assessment-organisations/validate-existing?organisationId={organisationId}&name={newName}&ukprn={ukprn}" +
-                                                                        $"&organisationTypeId={organisationTypeId}&address1={newAddress1}&address2={newAddress2}&address3={newAddress3}&address4={newAddress4}" +
-                                                                        $"&postcode={newPostcode}&status={status}&actionChoice={actionChoice}&companyNumber={companyNumber}&charityNumber={charityNumber}"))
-            {
-                return await RequestAndDeserialiseAsync<ValidationResponse>(request, $"Could not check the validation for existing organisation [{organisationId}]");
-            }
-        }
-        
-        public async Task<ValidationResponse> ValidateCreateContact(string name, string organisationId,
-            string email, string phone)
-        {
-
-            var newName = SanitizeUrlParam(name);
-            var newEmail = SanitizeUrlParam(email);
-            using (var request = new HttpRequestMessage(HttpMethod.Get,
-                $"/api/ao/assessment-organisations/contacts/validate-new?name={newName}&organisationId={organisationId}&email={newEmail}&phone={phone}"))
-            {
-                return await RequestAndDeserialiseAsync<ValidationResponse>(request,
-                    $"Could not check the validation for contact [{name}] against organisation [{organisationId}]");
-            }
-        }
-
         public async Task<ValidationResponse> ValidateSearchStandards(string searchstring)
         {
            
@@ -129,33 +155,43 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         public async Task<ValidationResponse> ValidateCreateOrganisationStandard(string organisationId, int standardId, DateTime? effectiveFrom,
             DateTime? effectiveTo, Guid? contactId, List<int> deliveryAreas)
         {
-
-            var deliveryAreasString = deliveryAreas.Aggregate(string.Empty, (current, deliveryArea) => current + $"&DeliveryAreas={deliveryArea}");
-            var contactIdString = contactId == null ? string.Empty : $"&contactId={contactId.Value}";
-
-            var queryString =
-                $"/api/ao/assessment-organisations/standards/validate-new?OrganisationId={organisationId}&StandardCode={standardId}&EffectiveFrom={effectiveFrom?.ToString("yyyy-MM-dd")}" +
-                $"&EffectiveTo={effectiveTo?.ToString("yyyy-MM-dd")}{contactIdString}{deliveryAreasString}";
-            using (var request = new HttpRequestMessage(HttpMethod.Get, queryString))
+            var validationRequest = new CreateEpaOrganisationStandardValidationRequest
             {
-                return await RequestAndDeserialiseAsync<ValidationResponse>(request,
-                    "Could not check the validation for adding organisation standard using given details");
+                OrganisationId = organisationId,
+                StandardCode = standardId,
+                EffectiveFrom = effectiveFrom?.Date,
+                EffectiveTo = effectiveTo?.Date,
+                ContactId = contactId.HasValue ? contactId.Value.ToString() : string.Empty,
+                DeliveryAreas = deliveryAreas
+            };
+
+            using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/ao/assessment-organisations/standards/validate-new/"))
+            {
+                return await PostPutRequestWithResponse<CreateEpaOrganisationStandardValidationRequest, ValidationResponse>(request,
+                    validationRequest);
             }
         }
 
         public async Task<ValidationResponse> ValidateUpdateOrganisationStandard(string organisationId, int standardId, DateTime? effectiveFrom,
             DateTime? effectiveTo, Guid? contactId, List<int> deliveryAreas, string actionChoice, string organisationStandardStatus, string organisationStatus)
         {
-            var deliveryAreasString = deliveryAreas.Aggregate(string.Empty, (current, deliveryArea) => current + $"&DeliveryAreas={deliveryArea}");
-            var contactIdString = contactId == null ? string.Empty : $"&contactId={contactId.Value}";
-           
-            var queryString =
-                $"/api/ao/assessment-organisations/standards/validate-existing?OrganisationId={organisationId}&StandardCode={standardId}&EffectiveFrom={effectiveFrom?.ToString("yyyy-MM-dd")}" +
-                $"&EffectiveTo={effectiveTo?.ToString("yyyy-MM-dd")}&ActionChoice={actionChoice}&organisationStandardStatus={organisationStandardStatus}&organisationStatus={organisationStatus}{contactIdString}{deliveryAreasString}";
-            using (var request = new HttpRequestMessage(HttpMethod.Get, queryString))
+            var validationRequest = new UpdateEpaOrganisationStandardValidationRequest
             {
-                return await RequestAndDeserialiseAsync<ValidationResponse>(request,
-                    "Could not check the validation for adding organisation standard using given details");
+                OrganisationId = organisationId,
+                StandardCode = standardId,
+                EffectiveFrom = effectiveFrom?.Date,
+                EffectiveTo = effectiveTo?.Date,
+                ContactId = contactId.HasValue ? contactId.Value.ToString() : string.Empty,
+                DeliveryAreas = deliveryAreas,
+                ActionChoice = actionChoice,
+                OrganisationStandardStatus = organisationStandardStatus,
+                OrganisationStatus = organisationStatus
+            };
+          
+            using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/ao/assessment-organisations/standards/validate-new/"))
+            {
+                return await PostPutRequestWithResponse<UpdateEpaOrganisationStandardValidationRequest, ValidationResponse>(request,
+                    validationRequest);
             }
         }
 
@@ -205,32 +241,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
         
-
-        private string SanitizeUrlParam(string rawParam)
-        {
-            var result = rawParam;
-
-            result = result?.Replace("%", "");
-            result = result?.Replace("<", "");
-            result = result?.Replace(">", "");
-            result = result?.Replace("#", "");
-            result = result?.Replace("{", "");
-            result = result?.Replace("}", "");
-            result = result?.Replace("|", "");
-            result = result?.Replace("\\", "");
-            result = result?.Replace("^", "");
-            result = result?.Replace("~", "");
-            result = result?.Replace("[", "");
-            result = result?.Replace("]", "");
-            result = result?.Replace("`", "%60");
-            result = result?.Replace(";", "");
-            result = result?.Replace("/", "");
-            result = result?.Replace("?", "");
-            result = result?.Replace("=", "");
-            result = result?.Replace("&", "%26");
-            result = result?.Replace("$", "");
-            return result;
-        }
     }
 
     public interface IOrganisationsApiClient
@@ -240,10 +250,12 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         Task<OrganisationResponse> Create(CreateOrganisationRequest organisationCreateViewModel);
         Task Update(UpdateOrganisationRequest organisationUpdateViewModel);
         Task Delete(Guid id);
-        Task<ValidationResponse> ValidateCreateOrganisation(string name, string ukprn, string organisationTypeId, string companyNumber, string charityNumber);
-        Task<ValidationResponse> ValidateUpdateContact(string contactId, string displayName, string email, string phoneNumber);
-        Task<ValidationResponse> ValidateUpdateOrganisation(string organisationId, string name, string ukprn, string organisationTypeId, string address1, string address2, string address3, string address4, string postcode, string status, string actionChoice, string companyNumber, string charityNumber);
-        Task<ValidationResponse> ValidateCreateContact(string name, string organisationId, string email, string phone);
+
+        Task<ValidationResponse> ValidateCreateOrganisation(string name, long? ukprn, int? organisationTypeId, string companyNumber, string charityNumber);
+        Task<ValidationResponse> ValidateUpdateOrganisation(string organisationId, string name, long? ukprn, int? organisationTypeId, string address1, string address2, string address3, string address4, string postcode, string status, string actionChoice, string companyNumber, string charityNumber);
+
+        Task<ValidationResponse> ValidateCreateContact(string firstName, string lastName, string organisationId, string email, string phone);
+        Task<ValidationResponse> ValidateUpdateContact(string contactId, string firstName, string lastName, string email, string phoneNumber);
 
         Task<ValidationResponse> ValidateSearchStandards(string searchstring);
 
