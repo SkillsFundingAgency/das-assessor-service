@@ -93,5 +93,13 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         {
             return Ok(await _mediator.Send(new GetToBeApprovedCertificatesRequest()));
         }
+
+        [HttpGet("tobeprinted", Name = "GetCertificatesToBePrinted")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<CertificateResponse>))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> GetCertificatesToBePrinted()
+        {
+            return Ok(await _mediator.Send(new GetToBePrintedCertificatesRequest()));
+        }
     }
 }
