@@ -308,12 +308,11 @@ Standard_2,
     Standard_60
  from organisations o 
 left outer join #PrimaryOrFirstContact pofc on pofc.OrganisationId = o.EndPointAssessorOrganisationId
-left outer join contacts c1 on c1.EndPointAssessorOrganisationId = pofc.OrganisationId and c1.Id = pofc.ContactId
+left outer join contacts c1 on c1.EndPointAssessorOrganisationId = pofc.OrganisationId and c1.Id = pofc.ContactId and c1.DeletedAt is null
 left outer join #DeliveryAreaSummary das on o.EndPointAssessorOrganisationId = das.OrganisationId
 left outer join OrganisationType ot on o.OrganisationTypeId = ot.Id 
-left outer join #OrganisationStandardTableSummary osts on osts.OrganisationId = o.EndPointAssessorOrganisationId
+join #OrganisationStandardTableSummary osts on osts.OrganisationId = o.EndPointAssessorOrganisationId
 where o.deletedat is NULL AND o.EndPointAssessorOrganisationId<>'EPA0000'
-and c1.DeletedAt is null
 order by o.EndPointAssessorName
 
 drop table #DeliveryAreaSummary
