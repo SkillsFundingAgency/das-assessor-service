@@ -9,6 +9,7 @@ using SFA.DAS.Apprenticeships.Api.Types;
 using SFA.DAS.Apprenticeships.Api.Types.Providers;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Application.Handlers.Certificates;
+using SFA.DAS.AssessorService.Application.Handlers.Private;
 using SFA.DAS.AssessorService.Application.Handlers.Staff;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
@@ -17,60 +18,43 @@ using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
 using SFA.DAS.AssessorService.ExternalApis.Services;
 using Organisation = SFA.DAS.AssessorService.Domain.Entities.Organisation;
 
-namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.StartCertificateHandlerTests
+namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.StartPrivateCertificateHandlerTests
 {
     [TestFixture]
     public class When_called_and_no_existing_certificate
     {
         private Mock<ICertificateRepository> _certificateRepository;
-        private StartCertificateHandler _startCertificateHandler;
+        private StartPrivateCertificateHandler _startPrivateCertificateHandler;
         private Guid _organisationId;
+        private string _endPointAssessorOrganisationId;
         private Certificate _returnedCertificate;
 
         [SetUp]
         public void Arrange()
         {
+            _organisationId = Guid.NewGuid();
+            _endPointAssessorOrganisationId = "EPA0001";
+
             _certificateRepository = new Mock<ICertificateRepository>();
-            _certificateRepository.Setup(r => r.GetCertificate(1111111111, 30)).ReturnsAsync(default(Certificate));
+            _certificateRepository.Setup(r => r.GetPrivateCertificate(1111111111, _endPointAssessorOrganisationId, "Smith")).ReturnsAsync(default(Certificate));
 
-            _certificateRepository.Setup(r => r.New(It.IsAny<Certificate>()))
-                .ReturnsAsync(new Certificate() {CertificateReferenceId = 10000});
-
-            var ilrRepository = new Mock<IIlrRepository>();
-            ilrRepository.Setup(r => r.Get(1111111111, 30)).ReturnsAsync(new Ilr()
-            {
-                GivenNames = "Dave",
-                FamilyName = "Smith",
-                StdCode = 30,
-                LearnStartDate = new DateTime(2016, 01, 09),
-                UkPrn = 12345678
-            });
+            _certificateRepository.Setup(r => r.NewPrivate(It.IsAny<Certificate>(), _endPointAssessorOrganisationId))
+                .ReturnsAsync(new Certificate() {CertificateReferenceId = 10000, IsPrivatelyFunded = true});
 
             var organisationQueryRepository = new Mock<IOrganisationQueryRepository>();
 
-            _organisationId = Guid.NewGuid();
+            organisationQueryRepository.Setup(r => r.GetByUkPrn(88888888)).ReturnsAsync(new Organisation() { Id = _organisationId, EndPointAssessorOrganisationId = _endPointAssessorOrganisationId });
 
-            organisationQueryRepository.Setup(r => r.GetByUkPrn(88888888)).ReturnsAsync(new Organisation() { Id = _organisationId});
+            _startPrivateCertificateHandler = new StartPrivateCertificateHandler(_certificateRepository.Object, organisationQueryRepository.Object, new Mock<ILogger<StartCertificateHandler>>().Object);
 
-            var assessmentOrgsApiClient = new Mock<IAssessmentOrgsApiClient>();
-            var standardService = new Mock<IStandardService>();
-
-            standardService.Setup(c => c.GetStandard(30))
-                .ReturnsAsync(new Standard() {Title = "Standard Name", EffectiveFrom = new DateTime(2016,09,01)});
-            assessmentOrgsApiClient.Setup(c => c.GetProvider(It.IsAny<long>()))
-                .ReturnsAsync(new Provider {ProviderName = "A Provider"});
-
-            _startCertificateHandler = new StartCertificateHandler(_certificateRepository.Object,
-                ilrRepository.Object, assessmentOrgsApiClient.Object,
-                organisationQueryRepository.Object, new Mock<ILogger<StartCertificateHandler>>().Object, standardService.Object);
-
-            _returnedCertificate = _startCertificateHandler
+            _returnedCertificate = _startPrivateCertificateHandler
                 .Handle(
-                    new StartCertificateRequest()
+                    new StartCertificatePrivateRequest()
                     {
-                        StandardCode = 30,
                         UkPrn = 88888888,
                         Uln = 1111111111,
+                        LastName = "Smith",
+                        EndPointAssessorOrganisationId = "EPA0001",
                         Username = "user"
                     }, new CancellationToken()).Result;
         }
@@ -78,14 +62,18 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
         [Test]
         public void Then_a_new_certificate_is_created()
         {
-            _certificateRepository.Verify(r => r.New(It.Is<Certificate>(c =>
+            _certificateRepository.Verify(r => r.NewPrivate(It.Is<Certificate>(c =>
                 c.Uln == 1111111111 && 
-                c.StandardCode == 30 && 
-                c.ProviderUkPrn == 12345678 &&
                 c.OrganisationId == _organisationId && 
                 c.CreatedBy == "user" && 
                 c.Status == Domain.Consts.CertificateStatus.Draft &&
-                c.CertificateReference == "")));
+                c.CertificateReference == ""), _endPointAssessorOrganisationId));
+        }
+
+        [Test]
+        public void Then_the_certificate_has_IsPrivatelyFunded_flag_set_to_true()
+        {
+            _returnedCertificate.IsPrivatelyFunded.Should().BeTrue();
         }
 
         [Test]
