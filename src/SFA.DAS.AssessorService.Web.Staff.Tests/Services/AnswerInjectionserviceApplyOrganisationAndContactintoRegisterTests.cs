@@ -17,6 +17,7 @@ using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Services.Validation;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.ApplyTypes;
+using FHADetails = SFA.DAS.AssessorService.Api.Types.Models.AO.FHADetails;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Tests.Services
 {
@@ -84,7 +85,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Services
                 .Returns((string s) => s);
 
             _mockRegisterRepository.Setup(r => r.CreateEpaOrganisationContact(It.IsAny<EpaContact>()))
-                .Returns(Task.FromResult("unknown-9999"));
+                .Returns(Task.FromResult("00000000-0000-0000-0000-000000000000"));
 
         }
 
@@ -104,6 +105,11 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Services
                 .Returns(testCase.ExpectedResponse.OrganisationId);
             _mockRegisterRepository.Setup(r => r.CreateEpaOrganisation(It.IsAny<EpaOrganisation>()))
                 .Returns(Task.FromResult(testCase.ExpectedResponse.OrganisationId));
+
+            _mockRegisterQueryRepository.Setup(r => r.GetAssessmentOrganisationsByNameOrCharityNumberOrCompanyNumber(It.IsAny<string>()))
+                .ReturnsAsync(new List<AssessmentOrganisationSummary> { new AssessmentOrganisationSummary { Id = testCase.ExpectedResponse.EpaOrganisationId } });
+            _mockRegisterQueryRepository.Setup(r => r.GetEpaOrganisationByOrganisationId(It.IsAny<string>()))
+                .ReturnsAsync(new EpaOrganisation {Id = testCase.ExpectedResponse.ContactId, OrganisationData = new OrganisationData { FHADetails = new FHADetails() } });
             testCase.Command.CreatedBy = "00000000-0000-0000-0000-000000000000";
             var actualResponse = _answerInjectionService
                 .InjectApplyOrganisationAndContactDetailsIntoRegister(testCase.Command).Result;
@@ -113,24 +119,27 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Services
                 actualResponse.WarningMessages = testCase.ExpectedResponse.WarningMessages;
             }
 
-            //Commented out because warnings have been disabled
-            /*
             Assert.AreEqual(JsonConvert.SerializeObject(testCase.ExpectedResponse),
                JsonConvert.SerializeObject(actualResponse));
 
-            if (actualResponse.WarningMessages.Count > 0 || testCase.Command.IsEpaoApproved.Value ||
-                testCase.ExpectedResponse.ApplySourceIsEpao)
+            if (actualResponse.WarningMessages.Count > 0)
             {
                 _mockRegisterRepository.Verify(r => r.CreateEpaOrganisation(It.IsAny<EpaOrganisation>()), Times.Never);
-                _mockRegisterRepository.Verify(r => r.CreateEpaOrganisationContact(It.IsAny<EpaContact>()),
-                    Times.Never);
+                _mockRegisterRepository.Verify(r => r.CreateEpaOrganisationContact(It.IsAny<EpaContact>()), Times.Never);
+                _mockRegisterRepository.Verify(r => r.UpdateEpaOrganisation(It.IsAny<EpaOrganisation>()), Times.Never);
+            }
+            else if(testCase.Command.IsEpaoApproved.Value || testCase.ExpectedResponse.ApplySourceIsEpao)
+            {
+                _mockRegisterRepository.Verify(r => r.CreateEpaOrganisation(It.IsAny<EpaOrganisation>()), Times.Never);
+                _mockRegisterRepository.Verify(r => r.CreateEpaOrganisationContact(It.IsAny<EpaContact>()), Times.Never);
+                _mockRegisterRepository.Verify(r => r.UpdateEpaOrganisation(It.IsAny<EpaOrganisation>()), Times.Once);
             }
             else
             {
                 _mockRegisterRepository.Verify(r => r.CreateEpaOrganisation(It.IsAny<EpaOrganisation>()), Times.Once);
-                _mockRegisterRepository.Verify(r => r.CreateEpaOrganisationContact(It.IsAny<EpaContact>()),
-                    Times.Once);
-            }*/
+                _mockRegisterRepository.Verify(r => r.CreateEpaOrganisationContact(It.IsAny<EpaContact>()), Times.Once);
+                _mockRegisterRepository.Verify(r => r.UpdateEpaOrganisation(It.IsAny<EpaOrganisation>()), Times.Never);
+            }
         }
 
         protected static IEnumerable<InjectionTestCase> InjectionTestCasesHappyPath
@@ -138,51 +147,51 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Services
             get
             {
                 yield return new InjectionTestCase("RoEPAO", true, false, null, false, null, null, null, false, null,
-                    false, null, false, null, null, null, false, null,"00000000-0000-0000-0000-000000000000");
+                    false, null, false, null, null, null, false, null, "00000000-0000-0000-0000-000000000000");
                 yield return new InjectionTestCase("RoATP", false, true, null, false, null, null, null, false, null,
-                    false, null, false, null, null, null, false, null,"00000000-0000-0000-0000-000000000000");
+                    false, null, false, null, null, null, false, null, "00000000-0000-0000-0000-000000000000");
                 yield return new InjectionTestCase("RoATP", false, false, "org name", false, null, "TrainingProvider",
                     "12345678", false, "12345678", false, "1234", false, "EPA9999", "joe@cool.com", "Joe Cool", false,
-                    null,"00000000-0000-0000-0000-000000000000");
+                    null, "00000000-0000-0000-0000-000000000000");
                 yield return new InjectionTestCase("RoATP", false, false, null, false, "trading name 1",
                     "TrainingProvider", "12345678", false, "12345678", false, "1234", false, "EPA9999", "joe@cool.com",
-                    "Joe Cool", false, null,"00000000-0000-0000-0000-000000000000");
+                    "Joe Cool", false, null, "00000000-0000-0000-0000-000000000000");
                 yield return new InjectionTestCase("RoATP", false, false, null, false, null, "TrainingProvider",
                     "12345678", false, "12345678", false, "1234", false, null, "joe@cool.com", "Joe Cool", false,
-                    "organisation name not present","00000000-0000-0000-0000-000000000000");
+                    "organisation name not present", "00000000-0000-0000-0000-000000000000");
                 yield return new InjectionTestCase("RoATP", false, false, "a", false, null, "TrainingProvider",
                     "12345678", false, "12345678", false, "1234", false, null, "joe@cool.com", "Joe Cool", false,
-                    "organisation name too short","00000000-0000-0000-0000-000000000000");
+                    "organisation name too short", "00000000-0000-0000-0000-000000000000");
                 yield return new InjectionTestCase("RoATP", false, false, "aaa", true, null, "TrainingProvider",
                     "12345678", false, "12345678", false, "1234", false, null, "joe@cool.com", "Joe Cool", false,
-                    "organisation name already taken","00000000-0000-0000-0000-000000000000");
+                    "organisation name already taken", "00000000-0000-0000-0000-000000000000");
                 yield return new InjectionTestCase("RoATP", false, false, "org name", false, null, "TrainingProviderX",
                     "12345678", false, "12345678", false, "1234", false, null, "joe@cool.com", "Joe Cool", false,
-                    "organisation type not identified","00000000-0000-0000-0000-000000000000");
+                    "organisation type not identified", "00000000-0000-0000-0000-000000000000");
                 yield return new InjectionTestCase("RoATP", false, false, "org name", false, null, "TrainingProvider",
                     "1234578", true, "12345678", false, "1234", false, null, "joe@cool.com", "Joe Cool", false,
-                    "ukprn invalid","00000000-0000-0000-0000-000000000000");
+                    "ukprn invalid", "00000000-0000-0000-0000-000000000000");
                 yield return new InjectionTestCase("RoATP", false, false, "org name", false, null, "TrainingProvider",
                     "1234578", false, "ABC", false, "1234", false, null, "joe@cool.com", "Joe Cool", false,
-                    "company number invalid","00000000-0000-0000-0000-000000000000");
+                    "company number invalid", "00000000-0000-0000-0000-000000000000");
                 yield return new InjectionTestCase("RoATP", false, false, "org name", false, null, "TrainingProvider",
                     "1234578", false, "1234567", true, "1234", false, null, "joe@cool.com", "Joe Cool", false,
-                    "company number taken","00000000-0000-0000-0000-000000000000");
+                    "company number taken", "00000000-0000-0000-0000-000000000000");
                 yield return new InjectionTestCase("RoATP", false, false, "org name", false, null, "TrainingProvider",
                     "1234578", false, "1234567", false, "ABC", false, null, "joe@cool.com", "Joe Cool", false,
-                    "charity number invalid","00000000-0000-0000-0000-000000000000");
+                    "charity number invalid", "00000000-0000-0000-0000-000000000000");
                 yield return new InjectionTestCase("RoATP", false, false, "org name", false, null, "TrainingProvider",
                     "1234578", false, "1234567", false, "1234", true, null, "joe@cool.com", "Joe Cool", false,
-                    "charity number taken","00000000-0000-0000-0000-000000000000");
+                    "charity number taken", "00000000-0000-0000-0000-000000000000");
                 yield return new InjectionTestCase("RoATP", false, false, "org name", false, null, "TrainingProvider",
                     "1234578", false, "1234567", false, "1234", false, null, "joecool.com", "Joe Cool", false,
-                    "email invalid","00000000-0000-0000-0000-000000000000");
+                    "email invalid", "00000000-0000-0000-0000-000000000000");
                 yield return new InjectionTestCase("RoATP", false, false, "org name", false, null, "TrainingProvider",
                     "1234578", false, "1234567", false, "1234", false, null, "joe@cool.com", "Joe Cool", true,
-                    "email taken","00000000-0000-0000-0000-000000000000");
+                    "email taken", "00000000-0000-0000-0000-000000000000");
                 yield return new InjectionTestCase("RoATP", false, false, "org name", false, null, "TrainingProvider",
                     "1234578", false, "1234567", false, "1234", false, null, "joe@cool.com", "Jo", false,
-                    "contact name bad","00000000-0000-0000-0000-000000000000");
+                    "contact name bad", "00000000-0000-0000-0000-000000000000");
 
             }
         }
@@ -242,11 +251,13 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Services
                     OrganisationType = organisationType,
                     ContactEmail = email,
                     ContactName = contactName,
-                    ContactPhoneNumber = "11111111",
                     FamilyName = "",
                     GivenNames = "",
                     SigninType = "",
-                    SigninId = Guid.NewGuid()
+                    SigninId = Guid.NewGuid(),
+                    ContactPhoneNumber = "11111111",
+                    FinancialDueDate = DateTime.MaxValue,
+                    IsFinancialExempt = false
                 };
                 ExpectedResponse = response;
             }

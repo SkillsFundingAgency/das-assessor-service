@@ -24,7 +24,11 @@
         public const string EmailAlreadyPresentInAnotherOrganisation = "EmailAlreadyPresentInAnotherOrganisation";
         public const string ContactIdIsRequired = "ContactIdIsRequired";   
         public const string DisplayNameTooShort = "DisplayNameTooShort";
+        public const string FirstNameTooShort = "First Name Too Short";
+        public const string LastNameTooShort = "Last Name Is Too Short";
         public const string DisplayNameIsMissing = "DisplayNameIsMissing";
+        public const string LastNameIsMissing = "Last Name Is Missing";
+        public const string FirstNameIsMissing = "First Name Is Missing";
         public const string ContactIdDoesntExist = "ContactIdDoesntExist";
         public const string EmailIsIncorrectFormat = "EmailIsIncorrectFormat";
         public const string ErrorMessageOrganisationNameAlreadyPresent = "ErrorMessageOrganisationNameAlreadyPresent";

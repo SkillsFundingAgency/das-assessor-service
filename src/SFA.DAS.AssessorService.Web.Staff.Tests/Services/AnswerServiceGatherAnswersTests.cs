@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -11,6 +12,7 @@ using SFA.DAS.AssessorService.Web.Staff.Infrastructure;
 using SFA.DAS.AssessorService.Web.Staff.Services;
 using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.Api.Types.Commands;
+using SFA.DAS.AssessorService.Api.Types.Models.AO;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Tests.Services
 {
@@ -20,6 +22,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Services
 
         private AnswerService _answerService;
         private Mock<IApplyApiClient> _mockApplyApiClient;
+        private Mock<IApiClient> _mockAssessorApiClient;
 
         private Guid _applicationId;
 
@@ -29,8 +32,10 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Services
         {
             _applicationId = Guid.NewGuid();
             _mockApplyApiClient = new Mock<IApplyApiClient>();
+            _mockAssessorApiClient = new Mock<IApiClient>();
             _answerService = new AnswerService(
-                _mockApplyApiClient.Object
+                _mockApplyApiClient.Object,
+                _mockAssessorApiClient.Object
             );
         }
 
@@ -39,7 +44,6 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Services
         public void WhenGatheringAnswersForAnApplication(CommandTest commandTestSetup)
         {
             var signinId = Guid.NewGuid();
-            var createdBy = Guid.NewGuid().ToString();
 
             var expectedCommand = new CreateOrganisationContactCommand
             {
@@ -67,7 +71,9 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Services
                 UserEmail ="",
                 SigninType = "",
                 SigninId = signinId,
-                CreatedBy = createdBy
+                CreatedBy = null,
+                FinancialDueDate = commandTestSetup.FinancialDueDate,
+                IsFinancialExempt = commandTestSetup.IsFinancialExempt,
             };
 
             int? organisationUkprn = null;
@@ -81,12 +87,16 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Services
                 RoEPAOApproved = commandTestSetup.IsEpaoApproved != null && commandTestSetup.IsEpaoApproved.Value,
                 OrganisationType = commandTestSetup.OrganisationType,
                 OrganisationUkprn = organisationUkprn,
+                CreatedBy = commandTestSetup.CreatedBy,
                 OrganisationDetails = new OrganisationDetails
                 {
                     OrganisationReferenceType = commandTestSetup.OrganisationReferenceType,
-                },
-                CreatedBy = createdBy
-
+                    FHADetails = new ApplyTypes.FHADetails
+                    {
+                        FinancialDueDate = commandTestSetup.FinancialDueDate,
+                        FinancialExempt = commandTestSetup.IsFinancialExempt
+                    }
+                }
             };
 
             _mockApplyApiClient.Setup(x => x.GetAnswer(_applicationId, It.IsAny<string>()))
@@ -115,11 +125,12 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Services
         {
             get
             {
-                yield return new CommandTest("organisation name", "trading name 1", true, true, "true", "TrainingProvider","12343211", "RoEPAO", "Joe Contact", null, "address 1", "address 2", "address 3", "address 4", "CV1", "joe@cool.com", "43211234","11112222","RC333333","1221121","www.test.com");
-                yield return new CommandTest("organisation name", "trading name 1", true, true, "yes", "TrainingProvider", "12343211", "RoEPAO", "Joe Contact", null, "address 1", "address 2", "address 3", "address 4", "CV1", "joe@cool.com", "43211234", "11112222", "RC333333", "1221121", "www.test.com");
-                yield return new CommandTest("organisation name", "trading name 1", true, true, "1", "TrainingProvider", "12343211", "RoEPAO", "Joe Contact", null, "address 1", "address 2", "address 3", "address 4", "CV1", "joe@cool.com", "43211234", "11112222", "RC333333", "1221121", "www.test.com");
-                yield return new CommandTest("organisation name", "trading name 1", true, false, "false", "TrainingProvider", "12343211", "RoEPAO", "Joe Contact", null, "address 1", "address 2", "address 3", "address 4", "CV1", "joe@cool.com", "43211234", "11112222", "RC333333", "1221121", "www.test.com");
-                yield return new CommandTest("organisation name", "trading name 1", true, false, "0", "TrainingProvider", "12343211", "RoEPAO", "Joe Contact", "address line 1", "address 1", "address 2", "address 3", "address 4", "CV1", "joe@cool.com", "43211234", "11112222", "RC333333", "1221121", "www.test.com");
+                yield return new CommandTest("organisation name", "trading name 1", true, true, "true", "TrainingProvider","12343211", "RoEPAO", "Joe Contact", null, "address 1", "address 2", "address 3", "address 4", "CV1", "joe@cool.com", "43211234","11112222","RC333333","1221121","www.test.com", DateTime.MaxValue, false);
+                yield return new CommandTest("organisation name", "trading name 1", true, true, "true", "TrainingProvider", "12343211", "RoEPAO", "Joe Contact", null, "address 1", "address 2", "address 3", "address 4", "CV1", "joe@cool.com", "43211234", "11112222", "RC333333", "1221121", "www.test.com", null, true);
+                yield return new CommandTest("organisation name", "trading name 1", true, true, "yes", "TrainingProvider", "12343211", "RoEPAO", "Joe Contact", null, "address 1", "address 2", "address 3", "address 4", "CV1", "joe@cool.com", "43211234", "11112222", "RC333333", "1221121", "www.test.com", DateTime.MaxValue, false);
+                yield return new CommandTest("organisation name", "trading name 1", true, true, "1", "TrainingProvider", "12343211", "RoEPAO", "Joe Contact", null, "address 1", "address 2", "address 3", "address 4", "CV1", "joe@cool.com", "43211234", "11112222", "RC333333", "1221121", "www.test.com", DateTime.MaxValue, false);
+                yield return new CommandTest("organisation name", "trading name 1", true, false, "false", "TrainingProvider", "12343211", "RoEPAO", "Joe Contact", null, "address 1", "address 2", "address 3", "address 4", "CV1", "joe@cool.com", "43211234", "11112222", "RC333333", "1221121", "www.test.com", DateTime.MaxValue, false);
+                yield return new CommandTest("organisation name", "trading name 1", true, false, "0", "TrainingProvider", "12343211", "RoEPAO", "Joe Contact", "address line 1", "address 1", "address 2", "address 3", "address 4", "CV1", "joe@cool.com", "43211234", "11112222", "RC333333", "1221121", "www.test.com", DateTime.MaxValue, false);
             }
         }
 
@@ -148,9 +159,15 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Services
             public string CompanyNumber { get; set; }
             public string CharityNumber { get; set; }
             public string StandardWebsite { get; set; }
+
+            public DateTime? FinancialDueDate { get; set; }
+            public bool? IsFinancialExempt { get; set; }
+            public string CreatedBy { get; set; }
+
             public List<GetAnswerPair> AnswerPairs { get; set; }
             public CommandTest(string organisationName, string tradingName, bool isEpaoApproved, bool useTradingName, string useTradingNameString, string organisationType, string organisationUkprn 
-               , string organisationReferenceType, string contactName, string contactAddress, string contactAddress1, string contactAddress2, string contactAddress3, string contactAddress4, string contactPostcode, string contactEmail, string contactPhoneNumber, string companyUkprn, string companyNumber, string charityNumber, string standardWebsite)
+               , string organisationReferenceType, string contactName, string contactAddress, string contactAddress1, string contactAddress2, string contactAddress3, string contactAddress4, string contactPostcode
+               , string contactEmail, string contactPhoneNumber, string companyUkprn, string companyNumber, string charityNumber, string standardWebsite, DateTime? financialDueDate, bool? isFinancialExempt, string createdBy = null)
             {
                 OrganisationName = organisationName;
                 OrganisationType = organisationType;
@@ -173,6 +190,10 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Services
                 CompanyNumber = companyNumber;
                 CharityNumber = charityNumber;
                 StandardWebsite = standardWebsite;
+                FinancialDueDate = financialDueDate;
+                IsFinancialExempt = isFinancialExempt;
+                CreatedBy = createdBy;
+
                 AnswerPairs = new List<GetAnswerPair>
                 {
                     new GetAnswerPair("trading-name", tradingName),
@@ -203,6 +224,100 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Services
             {
                 QuestionTag = questionTag;
                 Answer = answer;
+            }
+        }
+
+
+        [Test, TestCaseSource(nameof(StandardCommandTestCases))]
+        public void WhenGatheringAnswersForAnOrganisationStandard(StandardCommandTest commandTestSetup)
+        {
+            var expectedCommand = new CreateOrganisationStandardCommand
+            { 
+                CreatedBy = commandTestSetup.CreatedBy,
+                OrganisationId = commandTestSetup.EndPointAssessorOrganisationId,
+                StandardCode = commandTestSetup.StandardCode,
+                EffectiveFrom = commandTestSetup.EffectiveFrom,
+                DeliveryAreas = commandTestSetup.DeliveryAreas
+            };
+
+            var organisationFromApplicationId = new ApplyTypes.Organisation
+            {
+                Name = commandTestSetup.OrganisationName
+            };
+
+            var applicationFromApplicationId = new ApplyTypes.Application
+            {
+                Id = _applicationId,
+                CreatedBy = commandTestSetup.CreatedBy,
+                ApplicationData = new ApplicationData
+                {
+                    StandardCode = commandTestSetup.StandardCode
+                }
+            };
+
+            _mockApplyApiClient.Setup(x => x.GetAnswer(_applicationId, It.IsAny<string>()))
+                .Returns(Task.FromResult(new GetAnswersResponse { Answer = null }));
+
+            foreach (var answerPair in commandTestSetup.AnswerPairs)
+            {
+                _mockApplyApiClient.Setup(x => x.GetAnswer(_applicationId, answerPair.QuestionTag))
+                    .Returns(Task.FromResult(new GetAnswersResponse { Answer = answerPair.Answer }));
+            }
+
+            _mockApplyApiClient.Setup(x => x.GetApplication(_applicationId))
+                .Returns(Task.FromResult(applicationFromApplicationId));
+
+            _mockApplyApiClient.Setup(x => x.GetOrganisationForApplication(_applicationId))
+                .Returns(Task.FromResult(organisationFromApplicationId));
+
+            var assesorOrganisation = new AssessmentOrganisationSummary
+            {
+                Name = commandTestSetup.OrganisationName,
+                Id = commandTestSetup.EndPointAssessorOrganisationId
+            };
+
+            _mockAssessorApiClient.Setup(x => x.SearchOrganisations(commandTestSetup.OrganisationName))
+                .ReturnsAsync(new List<AssessmentOrganisationSummary> { assesorOrganisation });
+
+            var actualCommand = _answerService.GatherAnswersForOrganisationStandardForApplication(_applicationId).Result;
+
+            Assert.AreEqual(JsonConvert.SerializeObject(expectedCommand), JsonConvert.SerializeObject(actualCommand));
+        }
+
+        public class StandardCommandTest
+        {
+            public string OrganisationName { get; set; }
+            public string CreatedBy { get; set; }
+            public string EndPointAssessorOrganisationId { get; set; }
+            public int StandardCode { get; set; }
+            public DateTime EffectiveFrom { get; set; }
+            public string DeliveryAreasString { get; set; }
+            public List<string> DeliveryAreas => DeliveryAreasString?.Split(",").ToList();
+
+            public List<GetAnswerPair> AnswerPairs { get; set; }
+            public StandardCommandTest(string organisationName, string createdBy
+               , string endPointAssessorOrganisationId, int standardCode, DateTime effectiveFrom, string deliveryAreasString)
+            {
+                OrganisationName = organisationName;
+                CreatedBy = createdBy;
+                EndPointAssessorOrganisationId = endPointAssessorOrganisationId;
+                StandardCode = standardCode;
+                EffectiveFrom = DateTime.Parse(effectiveFrom.ToString());
+                DeliveryAreasString = deliveryAreasString;
+
+                AnswerPairs = new List<GetAnswerPair>
+                {
+                    new GetAnswerPair("effective-from", effectiveFrom.ToString()),
+                    new GetAnswerPair("delivery-areas", deliveryAreasString)
+                };
+            }
+        }
+
+        protected static IEnumerable<StandardCommandTest> StandardCommandTestCases
+        {
+            get
+            {
+                yield return new StandardCommandTest("organisation name", Guid.NewGuid().ToString(), "EPA0001", 1, DateTime.UtcNow.Date, "East Midlands");
             }
         }
     }

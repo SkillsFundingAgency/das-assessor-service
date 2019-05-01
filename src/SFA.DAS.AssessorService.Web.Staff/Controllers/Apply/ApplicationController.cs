@@ -5,6 +5,8 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.Domain.Paging;
 using SFA.DAS.AssessorService.Web.Staff.Domain;
@@ -20,12 +22,14 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
         private readonly ApplyApiClient _applyApiClient;
         private readonly IAnswerService _answerService;
         private readonly IAnswerInjectionService _answerInjectionService;
+        private readonly ILogger<ApplicationController> _logger;
 
-        public ApplicationController(ApplyApiClient applyApiClient, IAnswerService answerService, IAnswerInjectionService answerInjectionService)
+        public ApplicationController(ApplyApiClient applyApiClient, IAnswerService answerService, IAnswerInjectionService answerInjectionService, ILogger<ApplicationController> logger)
         {
             _applyApiClient = applyApiClient;
             _answerService = answerService;
             _answerInjectionService = answerInjectionService;
+            _logger = logger;
         }
 
         [HttpGet("/Applications/Midpoint")]
@@ -258,18 +262,49 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
             var warningMessages = new List<string>();
             if (sequenceId == 2 && returnType == "Approve")
             {
-                var command = await _answerService.GatherAnswersForOrganisationAndContactForApplication(applicationId);
-                var response = await _answerInjectionService.InjectApplyOrganisationAndContactDetailsIntoRegister(command);
-                warningMessages = response.WarningMessages;
-                if (warningMessages.Count == 0 && !response.IsEpaoApproved)
+                var sequenceOne = await _applyApiClient.GetSequence(applicationId, 1);
+
+                if (sequenceOne?.NotRequired is true)
                 {
-                   await _applyApiClient.UpdateRoEpaoApprovedFlag(applicationId,response.ContactId,response.OrganisationId, true);
+                    var response = await AddOrganisationStandardIntoRegister(applicationId);
+                    if (response.WarningMessages != null) warningMessages.AddRange(response.WarningMessages);
+                }
+                else
+                {
+                    var response = await AddOrganisationAndContactIntoRegister(applicationId);
+
+                    if (response.WarningMessages != null) warningMessages.AddRange(response.WarningMessages);
+
+                    // only try to inject standard if no errors and initial application
+                    if (!warningMessages.Any() && !response.IsEpaoApproved && !response.ApplySourceIsEpao)
+                    {
+                        var response2 = await AddOrganisationStandardIntoRegister(applicationId);
+                        if (response2.WarningMessages != null) warningMessages.AddRange(response2.WarningMessages);
+                    }
+                    if (!warningMessages.Any() && !response.IsEpaoApproved)
+                    {
+                        await _applyApiClient.UpdateRoEpaoApprovedFlag(applicationId, response.ContactId, response.OrganisationId, true);
+                    }
                 }
             }
 
             await _applyApiClient.ReturnApplication(applicationId, sequenceId, returnType);
 
             return RedirectToAction("Returned", new { applicationId, sequenceId, warningMessages});
+        }
+
+        private async Task<CreateOrganisationAndContactFromApplyResponse> AddOrganisationAndContactIntoRegister(Guid applicationId)
+        {
+            _logger.LogInformation($"Attempting to inject organisation into register for application {applicationId}");
+            var command = await _answerService.GatherAnswersForOrganisationAndContactForApplication(applicationId);
+            return await _answerInjectionService.InjectApplyOrganisationAndContactDetailsIntoRegister(command);
+        }
+
+        private async Task<CreateOrganisationStandardFromApplyResponse> AddOrganisationStandardIntoRegister(Guid applicationId)
+        {
+            _logger.LogInformation($"Attempting to inject standard into register for application {applicationId}");
+            var command = await _answerService.GatherAnswersForOrganisationStandardForApplication(applicationId);
+            return await _answerInjectionService.InjectApplyOrganisationStandardDetailsIntoRegister(command);
         }
 
         [HttpGet("/Applications/Returned")]
