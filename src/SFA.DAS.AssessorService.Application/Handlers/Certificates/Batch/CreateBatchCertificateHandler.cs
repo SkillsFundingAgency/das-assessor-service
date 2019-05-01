@@ -16,7 +16,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using SFA.DAS.AssessorService.ExternalApis.Services;
-
+using System.Collections.Generic;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Certificates.Batch
 {
@@ -76,7 +76,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates.Batch
                         OrganisationId = organisation.Id,
                         CreatedBy = contact.Username,
                         CertificateData = JsonConvert.SerializeObject(certData),
-                        Status = CertificateStatus.Draft,
+                        Status = CertificateStatus.Draft, // NOTE: Web & Staff always creates Draft first
                         CertificateReference = "",
                         LearnRefNumber = ilr.LearnRefNumber
                     }); // As no Tracking???
@@ -89,6 +89,17 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates.Batch
                 certificate.Status = CertificateStatus.Draft;
                 certificate.CertificateData = JsonConvert.SerializeObject(certData);
             }
+
+            // need to update EPA Reference too
+            certData.EpaDetails.EpaReference = certificate.CertificateReference;
+            certificate.CertificateData = JsonConvert.SerializeObject(certData);
+
+            // TODO: Not quite sure on this logic.
+            // adjust Status appropriately
+            //if (certData.OverallGrade == "Fail")
+            //{
+            //    certificate.Status = CertificateStatus.Draft;
+            //}
 
             _logger.LogInformation("CreateNewCertificate Before Update Cert in db");
             await _certificateRepository.Update(certificate, contact.Username, null);
@@ -132,6 +143,20 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates.Batch
 
         private CertificateData CombineCertificateData(CertificateData data, Ilr ilr, Standard standard, Provider provider)
         {
+            var epaDetails = data.EpaDetails ?? new EpaDetails();
+            if (epaDetails.Epas is null) epaDetails.Epas = new List<EpaRecord>();
+
+            if (data.AchievementDate != null && !epaDetails.Epas.Any(rec => rec.EpaDate == data.AchievementDate.Value && rec.EpaOutcome == data.OverallGrade))
+            {
+                var epaOutcome = data.OverallGrade == "Fail" ? "fail" : "pass";
+                var record = new EpaRecord { EpaDate = data.AchievementDate.Value, EpaOutcome = epaOutcome };
+                epaDetails.Epas.Add(record);
+
+                var latestRecord = epaDetails.Epas.OrderByDescending(epa => epa.EpaDate).First();
+                epaDetails.LatestEpaDate = latestRecord.EpaDate;
+                epaDetails.LatestEpaOutcome = latestRecord.EpaOutcome;
+            }
+
             return new CertificateData()
             {
                 LearnerGivenNames = ilr.GivenNames,
@@ -154,7 +179,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates.Batch
                 Registration = data.Registration,
                 AchievementDate = data.AchievementDate,
                 CourseOption = data.CourseOption,
-                OverallGrade = data.OverallGrade                
+                OverallGrade = data.OverallGrade,
+
+                EpaDetails = epaDetails
             };
         }
 
@@ -167,7 +194,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates.Batch
             var certificateLogs = await _certificateRepository.GetCertificateLogsFor(cert.Id);
             certificateLogs = certificateLogs?.Where(l => l.ReasonForChange is null).ToList(); // this removes any admin changes done within staff app
 
-            var createdLogEntry = certificateLogs.FirstOrDefault(l => l.Status == CertificateStatus.Draft);
+            var createdLogEntry = certificateLogs?.FirstOrDefault(l => l.Status == CertificateStatus.Draft);
             if (createdLogEntry != null)
             {
                 var createdContact = await _contactQueryRepository.GetContact(createdLogEntry.Username);

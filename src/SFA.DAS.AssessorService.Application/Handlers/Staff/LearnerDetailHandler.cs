@@ -107,6 +107,10 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
             var thisData = JsonConvert.DeserializeObject<CertificateData>(thisLogCertificateData);
             var prevData = JsonConvert.DeserializeObject<CertificateData>(previousLogCertificateData);
 
+            //*** DO NOT Calculate differences in EpaDetails 
+            thisData.EpaDetails = null;
+            prevData.EpaDetails = null;
+
             foreach (var propertyInfo in thisData.GetType().GetProperties())
             {
                 var thisProperty = propertyInfo.GetValue(thisData)?.ToString();
