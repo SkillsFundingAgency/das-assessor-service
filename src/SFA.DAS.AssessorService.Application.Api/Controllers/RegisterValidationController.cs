@@ -32,7 +32,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(ApiResponse))]
         [SwaggerResponse((int)HttpStatusCode.Conflict, Type = typeof(ApiResponse))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> CreateOrganisationValidate(CreateEpaOrganisationValidationRequest request)
+        public async Task<IActionResult> CreateOrganisationValidate([FromBody] CreateEpaOrganisationValidationRequest request)
         {
             try
             {
@@ -52,7 +52,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [SwaggerResponse((int) HttpStatusCode.BadRequest, typeof(ApiResponse))]
         [SwaggerResponse((int) HttpStatusCode.Conflict, Type = typeof(ApiResponse))]
         [SwaggerResponse((int) HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> UpdateOrganisationValidate(UpdateEpaOrganisationValidationRequest request)
+        public async Task<IActionResult> UpdateOrganisationValidate([FromBody] UpdateEpaOrganisationValidationRequest request)
         {
             try
             {
@@ -110,7 +110,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [HttpPost("standards/validate-new", Name = "CreateEpaOrganisationStandardValidate")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(ValidationResponse))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> CreateOrganisationStandardValidation(CreateEpaOrganisationStandardValidationRequest request)
+        public async Task<IActionResult> CreateOrganisationStandardValidation([FromBody] CreateEpaOrganisationStandardValidationRequest request)
         {
             try
             {
@@ -128,7 +128,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [HttpPost("standards/validate-existing", Name = "UpdateEpaOrganisationStandardValidate")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(ValidationResponse))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> UpdateOrganisationStandardValidation(UpdateEpaOrganisationStandardValidationRequest request)
+        public async Task<IActionResult> UpdateOrganisationStandardValidation([FromBody] UpdateEpaOrganisationStandardValidationRequest request)
         {
             try
             {
