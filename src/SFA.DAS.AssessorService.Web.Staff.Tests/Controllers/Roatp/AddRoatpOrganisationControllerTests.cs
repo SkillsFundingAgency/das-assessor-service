@@ -15,6 +15,7 @@
     using System.Security.Claims;
     using Api.Types.Models.Validation;
     using Microsoft.AspNetCore.Http;
+    using SFA.DAS.AssessorService.Web.Staff.Resources;
 
     [TestFixture]
     public class AddRoatpOrganisationControllerTests
@@ -164,7 +165,10 @@
             var viewResult = result as ViewResult;
             var successModel = viewResult.Model as OrganisationSearchViewModel;
 
-            successModel.BannerMessage.Should().Be(model.LegalName.ToUpper());
+            var confirmationMessage = string.Format(RoatpConfirmationMessages.AddOrganisationConfirmation,
+                model.LegalName.ToUpper());
+
+            successModel.BannerMessage.Should().Be(confirmationMessage);
         }
 
         [Test]
@@ -180,6 +184,53 @@
 
             redirectToActionResult.Should().NotBeNull();
             redirectToActionResult.RouteValues["UKPRN"].Should().Be(temporaryModel.UKPRN);
+        }
+
+        [Test]
+        public void Provider_type_is_preserved_during_forward_and_backward_navigation()
+        {
+            var providerTypes = new List<ProviderType>
+            {
+                new ProviderType {Id = 1, Type = "Main provider"},
+                new ProviderType {Id = 2, Type = "Employer provider"}
+            };
+            _client.Setup(x => x.GetProviderTypes()).ReturnsAsync(providerTypes).Verifiable();
+
+            var organisationTypes = new List<OrganisationType>
+            {
+                new OrganisationType {Id = 1, Type = "Education"},
+                new OrganisationType {Id = 2, Type = "Public sector body"}
+            };
+            _client.Setup(x => x.GetOrganisationTypes(It.IsAny<int>())).ReturnsAsync(organisationTypes).Verifiable();
+
+            AddOrganisationViewModel nullModel = null;
+            _sessionService.Setup(x => x.GetAddOrganisationDetails()).Returns(nullModel);
+
+            var addOrganisationResult = _controller.AddOrganisation(null).GetAwaiter().GetResult();
+
+            var providerTypeModel = new AddOrganisationProviderTypeViewModel
+            {
+                ProviderTypeId = 3
+            };
+
+            _sessionService.Setup(x => x.SetAddOrganisationDetails(It.IsAny<AddOrganisationViewModel>()));
+
+            var addOrganisationDetailsResult =
+                _controller.AddOrganisationDetails(providerTypeModel).GetAwaiter().GetResult() as ViewResult;
+
+            var updatedModel = addOrganisationDetailsResult.Model as AddOrganisationViewModel;
+
+            updatedModel.ProviderTypeId.Should().Be(providerTypeModel.ProviderTypeId);
+
+            var backResult = _controller.Back("AddOrganisation", Guid.NewGuid());
+
+            _sessionService.Setup(x => x.GetAddOrganisationDetails()).Returns(updatedModel);
+            
+            var secondAddDetailsResult = _controller.AddOrganisation(providerTypeModel).GetAwaiter().GetResult() as ViewResult;
+
+            var secondAddDetailsModel = secondAddDetailsResult.Model as AddOrganisationProviderTypeViewModel;
+
+            secondAddDetailsModel.ProviderTypeId.Should().Be(providerTypeModel.ProviderTypeId);
         }
 
         private ClaimsPrincipal CreateTestUser()

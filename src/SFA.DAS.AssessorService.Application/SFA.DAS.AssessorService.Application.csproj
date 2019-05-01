@@ -9,7 +9,8 @@
     <PackageReference Include="EPPlus" Version="4.5.2.1" />
     <PackageReference Include="Mediatr" Version="4.0.1" />
     <PackageReference Include="AutoMapper" Version="6.2.2" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="2.1.1" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="2.2.0" />
+    <PackageReference Include="SFA.DAS.Notifications.Api.Client" Version="2.1.19" />
   </ItemGroup>
 
   <ItemGroup>

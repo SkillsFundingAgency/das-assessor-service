@@ -20,8 +20,11 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Contacts.
             ContactRequest = Builder<CreateContactRequest>
                 .CreateNew()
                 .With(q => q.Username = q.Username.PadLeft(40, 'x'))
-                .With(q => q.DisplayName =  q.DisplayName.PadLeft(140, 'x'))
                 .With(q => q.Email = q.Email.PadLeft(140, 'x'))
+                .With(q => q.EndPointAssessorOrganisationId = q.EndPointAssessorOrganisationId.PadLeft(140, 'x'))
+                .With(q => q.FamilyName = q.FamilyName.PadLeft(140, 'x'))
+                .With(q => q.GivenName = q.GivenName.PadLeft(140, 'x'))
+                .With(q => q.DisplayName = q.DisplayName.PadLeft(140, 'x'))
                 .Build();
 
             ContactQueryRepositoryMock.Setup(q => q.CheckContactExists(Moq.It.IsAny<string>()))

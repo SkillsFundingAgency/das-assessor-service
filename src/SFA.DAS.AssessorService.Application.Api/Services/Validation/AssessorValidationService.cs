@@ -5,7 +5,7 @@ using SFA.DAS.AssessorService.Application.Interfaces.Validation;
 
 namespace SFA.DAS.AssessorService.Application.Api.Services.Validation
 {
-    public class AssessorValidationService: IAssessorValidationService
+    public class AssessorValidationService: IAssessorValidationService 
     {
         private readonly IRegisterValidationRepository _registerValidationRepository;
 
@@ -14,9 +14,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Services.Validation
             _registerValidationRepository = registerValidationRepository;
         }
 
-        public async Task<bool> CheckIfContactDetailsAlreadyPresentInSystem(string displayName, string email, string phone, Guid? contactId)
+        public async Task<bool> CheckIfContactDetailsAlreadyPresentInSystem(string firstName, string lastName, string email, string phone, Guid? contactId)
         {
-            return await _registerValidationRepository.ContactDetailsAlreadyExist(displayName, email, phone, contactId);
+            return await _registerValidationRepository.ContactDetailsAlreadyExist(firstName,lastName, email, phone, contactId);
         }
 
         public async Task<bool> IsCharityNumberTaken(string charityNumber)
@@ -50,6 +50,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Services.Validation
         public async Task<bool> IsOrganisationUkprnTaken(long ukprn)
         {
             return await _registerValidationRepository.EpaOrganisationExistsWithUkprn(ukprn);
+        }
+
+        public async Task<bool> IsOrganisationStandardTaken(string organisationId, int standardCode)
+        {
+            return await _registerValidationRepository.EpaOrganisationStandardExists(organisationId, standardCode);
         }
     }
 }

@@ -25,14 +25,14 @@ namespace SFA.DAS.AssessorService.Web.Orchestrators.Search
 
         public async Task<SearchRequestViewModel> Search(SearchRequestViewModel vm)
         {
-            var ukprn = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/ukprn")?.Value;
+            var epaOrgId = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/epaoid")?.Value;
             var username = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
 
             var results = await _searchApiClient.Search(new SearchQuery()
             {
                 Surname = vm.Surname,
                 Uln = long.Parse(vm.Uln),
-                UkPrn = int.Parse(ukprn),
+                EpaOrgId = epaOrgId,
                 Username = username
             });
 

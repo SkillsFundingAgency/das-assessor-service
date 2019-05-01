@@ -16,6 +16,7 @@ using SFA.DAS.AssessorService.Application.Api.Validators;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Paging;
+using SFA.DAS.AssessorService.Settings;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Organisations.Query
 {
@@ -31,7 +32,10 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Organisa
         protected Mock<IStringLocalizer<OrganisationQueryController>> OrganisationControllerLocaliserMock;
 
         protected Mock<ILogger<OrganisationQueryController>> ControllerLoggerMock;
-      
+
+        protected Mock<IWebConfiguration> ConfigMock = new Mock<IWebConfiguration>();
+
+
         private MockStringLocaliserBuilder _mockStringLocaliserBuilder;
 
         protected  void Setup()
@@ -43,13 +47,10 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Organisa
             {
                 cfg.CreateMap<Organisation, OrganisationResponse>();
             });
-            EpaoStandardsCountResponse response = new EpaoStandardsCountResponse(1);
-         
-            Mediator.Setup(q => q.Send(Moq.It.IsAny<GetEpaoStandardsCountRequest>(), new CancellationToken()))
-                .Returns(Task.FromResult(response));
+
             SetupControllerMocks();
 
-            OrganisationQueryController = new OrganisationQueryController(ControllerLoggerMock.Object, OrganisationQueryRepositoryMock.Object, UkPrnValidator, OrganisationControllerLocaliserMock.Object, Mediator.Object);
+            OrganisationQueryController = new OrganisationQueryController(ControllerLoggerMock.Object, OrganisationQueryRepositoryMock.Object, UkPrnValidator, OrganisationControllerLocaliserMock.Object, ConfigMock.Object);
         }
 
         private void SetupControllerMocks()

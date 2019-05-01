@@ -13,6 +13,20 @@
             <h1 class="heading-xlarge">
                 Feedback sent
             </h1>
+            <!--
+    <p class="font-medium">
+        @if (Model?.WarningMessages != null && Model.WarningMessages.Any())
+        {
+            <span>No organisation or contact was stored in the register about this application, because:</span>
+            <ul>
+                @foreach (var warning in Model.WarningMessages)
+                {
+                    <li>@warning</li>
+                }
+            </ul>
+        }
+    </p>
+        -->
             <p class="font-medium">
                 An email has been sent to the applicant.
             </p>

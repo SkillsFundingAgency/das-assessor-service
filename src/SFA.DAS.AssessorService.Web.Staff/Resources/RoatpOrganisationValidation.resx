@@ -144,6 +144,9 @@
   <data name="LegalNameMaxLength" xml:space="preserve">
     <value>Enter a legal name using 200 characters or less</value>
   </data>
+  <data name="LegalNameMinLength" xml:space="preserve">
+    <value>Enter a legal name using 2 characters or more</value>
+  </data>
   <data name="TradingNameMaxLength" xml:space="preserve">
     <value>Enter a trading name using 200 characters or less</value>
   </data>

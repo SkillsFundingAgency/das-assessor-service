@@ -1,0 +1,13 @@
+﻿@model SFA.DAS.AssessorService.Web.ViewModels.Account.CreateAccountViewModel
+
+@{
+    ViewBag.Title = "Confirm your identity";
+}
+
+<a class="link-back" asp-controller="Account" asp-action="CreateAnAccount">Back</a>
+    <div class="grid-row">
+        <div class="column-two-thirds">
+            <h1 class="heading-xlarge">Confirm your identity</h1>
+            <p>We've sent an invite to @Model.Email. Use the link in the email to complete sign up.</p>
+        </div>
+    </div>

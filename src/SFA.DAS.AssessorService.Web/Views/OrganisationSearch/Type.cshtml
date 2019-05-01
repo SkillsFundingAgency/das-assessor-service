@@ -1,0 +1,96 @@
+﻿@model SFA.DAS.AssessorService.Web.ViewModels.Organisation.OrganisationSearchViewModel
+
+@{
+    ViewBag.Title = "Select organisation type";
+    Layout = "_Layout";
+
+    bool showErrors = TempData["ShowErrors"] as bool? ?? false;
+}
+
+<a asp-action="Results" asp-controller="OrganisationSearch" asp-route-searchString="@Model.SearchString" class="link-back">Back to search results</a>
+<div class="grid-row">
+    <div class="column-two-thirds">
+        <form method="post" asp-action="Confirm" asp-controller="OrganisationSearch" novalidate>
+            <input asp-for="SearchString" type="hidden" />
+            <input asp-for="Name" type="hidden" />
+            <input asp-for="Ukprn" type="hidden" />
+            <input asp-for="Postcode" type="hidden" />
+
+
+            @* hidden with css by default *@
+            <div class="js-error-summary error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+                <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+                    There's a problem
+                </h2>
+                <ul class="js-error-summary-list error-summary-list"></ul>
+            </div>
+
+            @if (!ViewData.ModelState.IsValid || showErrors)
+            {
+                var firstOrgType = "#" + Model.OrganisationTypes.First().Type.Replace(" ", "_");
+                <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+                    <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+                        There's a problem
+                    </h2>
+                    <ul class="error-summary-list">
+                        <li><a href="@firstOrgType" sfa-validation-for="OrganisationType"></a></li>
+                    </ul>
+                </div>
+            }
+
+            <h1 class="heading-xlarge">
+                <label for="OrganisationType">
+                    Select organisation type
+                </label>
+            </h1>
+
+
+            @if (Model.OrganisationTypes != null)
+            {
+                <div class="form-group" sfa-validation-for="OrganisationType" sfa-validationerror-class="govuk-form-group--error">
+                    <div>
+                        <span asp-validation-for="OrganisationType"></span>
+
+                        @foreach (var orgType in Model.OrganisationTypes)
+                        {
+                            <div class="multiple-choice">
+                                <input class="form-control" asp-for="OrganisationType" id="@orgType.Type.Replace(" ", "_")" type="radio" value="@orgType.Type" required />
+                                <label class="form-label" for="@orgType.Type.Replace(" ", "_")">@orgType.TypeDescription</label>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <details>
+                    <summary>
+                        <span class="summary">
+                            Which organisation types are 'incorporated as a public sector body'?
+                        </span>
+                    </summary>
+                    <div class="panel panel-border-narrow">
+                        <ul class="list list-bullet">
+                            <li>Local authorities including LEA schools</li>
+                            <li>Central government departments</li>
+                            <li>Executive agencies or non-departmental public bodies</li>
+                            <li>NHS trusts</li>
+                            <li>Fire authorities</li>
+                            <li>Police constabularies or police crime commissioners</li>
+                        </ul>
+                    </div>
+                </details>
+
+                <button type="submit" class="button">Save and continue</button>
+            }
+            else
+            {
+
+                <p class="govuk-body-anchor">We cannot get organisation types at this point in time</p>
+            }
+        </form>
+    </div>
+</div>
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}

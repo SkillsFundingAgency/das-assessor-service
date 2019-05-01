@@ -2,13 +2,16 @@
 using Microsoft.Extensions.Logging;
 using Moq;
 using SFA.DAS.AssessorService.Application.Api.Controllers;
+using SFA.DAS.AssessorService.Application.Interfaces;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Contacts.Command
 {
     public class ContactTestBase
     {               
         protected Mock<ILogger<ContactController>> ControllerLoggerMock;  
-        protected Mock<IMediator> Mediator;        
+        protected Mock<IMediator> Mediator;
+        protected Mock<IContactRepository> ContactRepository;
+        protected Mock<IContactQueryRepository> ContactQueryRepository;
         protected ContactController ContactController;
       
         protected void Setup()
@@ -17,7 +20,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Contacts
 
             SetupControllerMocks();
 
-            ContactController = new ContactController(ControllerLoggerMock.Object, Mediator.Object);           
+            ContactController = new ContactController(ControllerLoggerMock.Object, Mediator.Object, ContactRepository.Object, ContactQueryRepository.Object);           
         }
 
         private void SetupOrchestratorMocks()
@@ -28,6 +31,8 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Contacts
         private void SetupControllerMocks()
         {          
             ControllerLoggerMock = new Mock<ILogger<ContactController>>();
+            ContactRepository = new Mock<IContactRepository>();
+            ContactQueryRepository = new Mock<IContactQueryRepository>();
         }
     }
 }

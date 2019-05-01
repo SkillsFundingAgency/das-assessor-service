@@ -13,18 +13,18 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Controllers.PrivateCertificate
 {
     public class Given_I_post_the_standard_code_page_with_invalid_model : CertificatePostBase
     {
-        private ViewResult _result;        
+        private ViewResult _result;
 
         [SetUp]
         public void WhenInvalidModelContainsOneError()
         {
-             var distributedCacheMock = new Mock<IDistributedCache>();
+            var distributedCacheMock = new Mock<IDistributedCache>();
 
             var certificatePrivateStandardCodeController =
                 new CertificatePrivateStandardCodeController(MockLogger.Object,
                     MockHttpContextAccessor.Object,
                     MockAssessmentOrgsApiClient,
-                    new CacheService(distributedCacheMock.Object), 
+                    new CacheService(distributedCacheMock.Object),
                     MockApiClient,
                     MockStandardServiceClient.Object
                     );
@@ -36,7 +36,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Controllers.PrivateCertificate
                 SelectedStandardCode = "93",
                 IsPrivatelyFunded = true,
                 ReasonForChange = "Required reason for change"
-            };                     
+            };
 
             MockSession.Setup(q => q.Get("EndPointAsessorOrganisationId"))
                 .Returns("EPA00001");

@@ -34,8 +34,8 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.OrchestratorTests.LoginOrchestra
 
             OrganisationsApiClient = new Mock<IOrganisationsApiClient>();
             LoginApiClient = new Mock<ILoginApiClient>();
-            LoginOrchestrator = new Orchestrators.Login.LoginOrchestrator(new Mock<ILogger<Orchestrators.Login.LoginOrchestrator>>().Object, contextAccessor.Object,
-                LoginApiClient.Object);
+            //LoginOrchestrator = new Orchestrators.Login.LoginOrchestrator(new Mock<ILogger<Orchestrators.Login.LoginOrchestrator>>().Object, contextAccessor.Object,
+            //    LoginApiClient.Object);
         }
     }
 }

@@ -58,6 +58,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
                 OrganisationId = _organisationId,
                 Ukprn = _request.Ukprn,
                 PrimaryContact = null,
+                PrimaryContactName = null,
                 Status = OrganisationStatus.New,
                 OrganisationTypeId = _request.OrganisationTypeId,
                 OrganisationData = new OrganisationData

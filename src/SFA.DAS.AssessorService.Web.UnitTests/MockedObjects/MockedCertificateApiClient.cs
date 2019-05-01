@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using FizzWare.NBuilder;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Newtonsoft.Json;
@@ -8,6 +9,7 @@ using RichardSzalay.MockHttp;
 using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Web.ViewModels.Certificate.Private;
 
 namespace SFA.DAS.AssessorService.Web.UnitTests.MockedObjects
@@ -16,7 +18,12 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.MockedObjects
     {
         public static CertificateApiClient Setup(Certificate certificate, Mock<ILogger<CertificateApiClient>> apiClientLoggerMock)
         {
-            var tokenServiceMock = new Mock<ITokenService>();
+            var webConfigMock = new Mock<IWebConfiguration>();
+            var hostMock = new Mock<IHostingEnvironment>();
+            hostMock
+                .Setup(m => m.EnvironmentName)
+                .Returns(EnvironmentName.Development);
+            var tokenServiceMock = new TokenService(webConfigMock.Object,hostMock.Object);
 
             var options = Builder<Option>.CreateListOfSize(10)
                 .Build();
@@ -51,7 +58,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.MockedObjects
                 .When(System.Net.Http.HttpMethod.Put, "http://localhost:59022/api/v1/certificates/update")
                 .Respond(System.Net.HttpStatusCode.OK, "application/json", "{'status' : 'OK'}");
 
-            var apiClient = new CertificateApiClient(client, tokenServiceMock.Object, apiClientLoggerMock.Object);
+            var apiClient = new CertificateApiClient(client, tokenServiceMock, apiClientLoggerMock.Object);
 
             return apiClient;
         }

@@ -63,28 +63,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             }
         }
 
-
-        [HttpPost("organisation-and-contact", Name = "CreateOrganisationAndContact")]
-        [SwaggerResponse((int) HttpStatusCode.OK, Type = typeof(CreateOrganisationContactResponse))]
-        [SwaggerResponse((int) HttpStatusCode.BadRequest, typeof(ApiResponse))]
-        [SwaggerResponse((int) HttpStatusCode.Conflict, Type = typeof(ApiResponse))]
-        [SwaggerResponse((int) HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> CreateOrganisationAndContact([FromBody] CreateOrganisationContactRequest request)
-        {
-            _logger.LogInformation("Trying to create new Organisation and contact");
-            var response = await _mediator.Send(request);
-
-            if (response.OrganisationId == null)
-            {
-                var warnings = string.Join(';', response.WarningMessages);
-                _logger.LogWarning($"An organisation and contact was not added for the following reasons: [{warnings}]");
-                return Conflict(response);
-            }
-            _logger.LogInformation($"An organisation and contact was added, organisationId: [{response.OrganisationId}]");
-            return Ok(response);
-        }
-
-
         [HttpPut(Name = "UpdateEpaOrganisation")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(EpaOrganisationResponse))]
         [SwaggerResponse((int)HttpStatusCode.NotFound, typeof(ApiResponse))]

@@ -58,9 +58,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
 
         public async Task<List<SearchResult>> Handle(SearchQuery request, CancellationToken cancellationToken)
         {
-            _logger.LogInformation($"Search for surname: {request.Surname} uln: {request.Uln} made by {request.UkPrn}");
+            _logger.LogInformation($"Search for surname: {request.Surname} uln: {request.Uln} made by {request.EpaOrgId}");
 
-            var thisEpao = await _organisationRepository.GetByUkPrn(request.UkPrn);
+            var thisEpao = await _organisationRepository.Get(request.EpaOrgId);
 
             if (thisEpao == null)
             {

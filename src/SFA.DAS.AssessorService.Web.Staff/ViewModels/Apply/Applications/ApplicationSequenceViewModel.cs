@@ -1,16 +1,19 @@
 ﻿using SFA.DAS.AssessorService.ApplyTypes;
 using System;
+using System.Linq;
 
 namespace SFA.DAS.AssessorService.Web.Staff.ViewModels.Apply.Applications
 {
     public class ApplicationSequenceViewModel
     {
         public string ApplicationReference { get; }
+        public string Standard { get; }
         public string LegalName { get; }
         public string TradingName { get; }
         public string ProviderName { get; }
         public int? Ukprn { get; }
         public string CompanyNumber { get; }
+        public DateTime? FinancialDueDate { get; }
 
         public ApplicationSequence Sequence { get; }
 
@@ -38,6 +41,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.ViewModels.Apply.Applications
                 if (application.ApplicationData != null)
                 {
                     ApplicationReference = application.ApplicationData.ReferenceNumber;
+                    Standard = $"{application.ApplicationData.StandardName} ({application.ApplicationData.StandardCode})";
                 }
 
                 if (application.ApplyingOrganisation?.OrganisationDetails != null)
@@ -47,6 +51,11 @@ namespace SFA.DAS.AssessorService.Web.Staff.ViewModels.Apply.Applications
                     TradingName = application.ApplyingOrganisation.OrganisationDetails.TradingName;
                     ProviderName = application.ApplyingOrganisation.OrganisationDetails.ProviderName;
                     CompanyNumber = application.ApplyingOrganisation.OrganisationDetails.CompanyNumber;
+
+                    if (!sequence.Sections.All(s => s.SectionId != 3))
+                    {
+                        FinancialDueDate = application.ApplyingOrganisation.OrganisationDetails.FHADetails?.FinancialDueDate;
+                    }
                 }
             }
         }

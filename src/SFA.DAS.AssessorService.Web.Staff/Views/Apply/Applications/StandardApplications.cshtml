@@ -59,7 +59,14 @@
                                 <a asp-action="Application" asp-controller="Application" asp-route-applicationId="@item.ApplicationId">@item.OrganisationName</a>
                             </td>
                             <td data-label="Standard">
-                                @item.StandardName (@item.StandardCode)
+                                @if (!string.IsNullOrWhiteSpace(item.Standard))
+                                {
+                                    <text>@item.Standard</text>
+                                }
+                                else
+                                {
+                                    <text>---</text>
+                                }
                             </td>
                             <td data-label="Date submitted">
                                 @item.SubmittedDate.ToSfaShortDateString()

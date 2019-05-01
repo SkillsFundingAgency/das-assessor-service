@@ -43,7 +43,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.OrganisationControllerTests
             ApiClient = new Mock<IOrganisationsApiClient>();
             ApiClient.Setup(c => c.Get("12345")).ReturnsAsync(new OrganisationResponse() { });
 
-            OrganisationController = new OrganisationController(logger.Object, httpContext.Object, ApiClient.Object, SessionService.Object);
+            OrganisationController = new OrganisationController(logger.Object, httpContext.Object, ApiClient.Object);
         }
     }
 }

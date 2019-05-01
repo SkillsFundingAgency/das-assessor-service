@@ -6,12 +6,11 @@ namespace SFA.DAS.AssessorService.ApplyTypes
 {
     public class ApplicationSequence : ApplyTypeBase
     {
-        public Guid Id { get; set; }
         public Guid ApplicationId { get; set; }
         public int SequenceId { get; set; }
-        public string Status { get; set; }
         public bool IsActive { get; set; }
         public List<ApplicationSection> Sections { get; set; }
+        public bool NotRequired { get; set; }
     }
 
     public class ApplicationSequenceStatus

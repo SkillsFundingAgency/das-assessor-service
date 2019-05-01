@@ -4,6 +4,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Globalization;
 using System.IO;
+using System.Net.Http;
 using System.Threading.Tasks;
 using FluentValidation.AspNetCore;
 using JWT;
@@ -18,13 +19,18 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Extensions;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
+using SFA.DAS.AssessorService.Application.Api.Services;
 using SFA.DAS.AssessorService.Data;
 using SFA.DAS.AssessorService.Data.TestData;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
 using SFA.DAS.AssessorService.ExternalApis.IFAStandards;
 using SFA.DAS.AssessorService.Settings;
+using SFA.DAS.Http;
+using SFA.DAS.Http.TokenGenerators;
+using SFA.DAS.Notifications.Api.Client;
 using StructureMap;
 using Swashbuckle.AspNetCore.Swagger;
 
@@ -102,7 +108,7 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                 services.AddSwaggerGen(c =>
                 {
                     c.SwaggerDoc("v1", new Info { Title = "SFA.DAS.AssessorService.Application.Api", Version = "v1" });
-
+                    c.CustomSchemaIds(i => i.FullName);
                     if (_env.IsDevelopment())
                     {
                         var basePath = AppContext.BaseDirectory;
@@ -154,13 +160,19 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                 config.For<IIfaStandardsApiClient>().Use(() => new IfaStandardsApiClient(Configuration.IfaApiClientBaseUrl));
           
                 config.For<IDateTimeProvider>().Use<UtcDateTimeProvider>();
-
+                config.For<IDfeSignInService>().Use<DfeSignInService>();
                 var option = new DbContextOptionsBuilder<AssessorDbContext>();
                 option.UseSqlServer(Configuration.SqlConnectionString, options => options.EnableRetryOnFailure(3));
 
                 config.For<AssessorDbContext>().Use(c => new AssessorDbContext(option.Options));
                 config.For<IDbConnection>().Use(c => new SqlConnection(Configuration.SqlConnectionString));
               
+
+                config.For<INotificationsApi>().Use<NotificationsApi>().Ctor<HttpClient>().Is(string.IsNullOrWhiteSpace(NotificationConfiguration().ClientId)
+                    ? new HttpClientBuilder().WithBearerAuthorisationHeader(new JwtBearerTokenGenerator(NotificationConfiguration())).Build()
+                    : new HttpClientBuilder().WithBearerAuthorisationHeader(new AzureADBearerTokenGenerator(NotificationConfiguration())).Build());
+
+                config.For<Notifications.Api.Client.Configuration.INotificationsApiClientConfiguration>().Use(NotificationConfiguration());
                 config.Populate(services);
             });
 
@@ -196,5 +208,19 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
             }
 
         }
+
+        private Notifications.Api.Client.Configuration.INotificationsApiClientConfiguration NotificationConfiguration()
+        {
+            return new Notifications.Api.Client.Configuration.NotificationsApiClientConfiguration
+            {
+                ApiBaseUrl = Configuration.NotificationsApiClientConfiguration.ApiBaseUrl,
+                ClientToken = Configuration.NotificationsApiClientConfiguration.ClientToken,
+                ClientId = "",
+                ClientSecret = "",
+                IdentifierUri = "",
+                Tenant = ""
+            };
+        }
+    
     }
 }

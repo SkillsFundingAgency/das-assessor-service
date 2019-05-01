@@ -26,13 +26,13 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
         [HttpGet]
         [Route("/[controller]/")]
+        [TypeFilter(typeof(MenuFilter), Arguments = new object[] { Pages.RecordAGrade })]
         public IActionResult Index()
         {
             _sessionService.Remove("SearchResults");
             _sessionService.Remove("SelectedStandard");
             _sessionService.Remove("SearchResultsChooseStandard");
             _sessionService.Remove("EndPointAsessorOrganisationId");
-            _sessionService.Set("CurrentPage", Pages.RecordAGrade);
             return View("Index");
         }
 

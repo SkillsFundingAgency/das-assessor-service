@@ -10,8 +10,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
         public SearchQueryValidator(IStringLocalizer<SearchQueryValidator> localizer)
         {
             RuleFor(query => query.Surname).NotEmpty().WithMessage(localizer[ResourceMessageName.MustHaveSurname]);
-            RuleFor(query => query.UkPrn).InclusiveBetween(10000000, 99999999)
-                .WithMessage(localizer[ResourceMessageName.InvalidUkprn].Value);
             RuleFor(query => query.Uln).LessThanOrEqualTo(9999999999)
                 .WithMessage(localizer[ResourceMessageName.InvalidUln].Value);
             RuleFor(query => query.Username).NotEmpty()

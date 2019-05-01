@@ -130,7 +130,6 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<int> GetEpaoStandardsCount(string endPointAssessorOrganisationId)
         {
-
             var epaoId = new SqlParameter("@EPAOId", endPointAssessorOrganisationId);
             var count = new SqlParameter("@Count", SqlDbType.Int)
             {
@@ -139,23 +138,6 @@ namespace SFA.DAS.AssessorService.Data
 
             await _assessorDbContext.Database.ExecuteSqlCommandAsync("EXEC EPAO_Standards_Count @EPAOId, @Count out", epaoId, count);
             return (int)count.Value;
-        }
-
-        public async Task<int> GetEpaoPipelineCount(string endPointAssessorOrganisationId)
-        {
-            var result = await _connection.QueryAsync<EpaoPipelineStandard>("GetEPAO_Pipelines", new
-            {
-                EPAOId = endPointAssessorOrganisationId
-            },
-                commandType: CommandType.StoredProcedure);
-
-            var epaoPipelines = result?.ToList();
-            if (epaoPipelines != null && epaoPipelines.Any())
-            {
-                return epaoPipelines.Select(x => x.TotalRows).First();
-            }
-
-            return 0;
         }
 
         public async Task<EpoRegisteredStandardsResult> GetEpaoRegisteredStandards(string endPointAssessorOrganisationId, int pageSize, int? pageIndex)
@@ -227,6 +209,18 @@ namespace SFA.DAS.AssessorService.Data
 
             return epaoPipelineStandardsResult;
         }
+
+        public async Task<List<EpaoPipelineStandardExtract>> GetEpaoPipelineStandardsExtract(string endPointAssessorOrganisationId)
+        {
+            var result = await _connection.QueryAsync<EpaoPipelineStandardExtract>("GetEPAO_Pipelines_Extract", new
+            {
+                EPAOId = endPointAssessorOrganisationId
+            },
+            commandType: CommandType.StoredProcedure);
+
+            return result.ToList();
+        }
+
         private static void UpdateCurrentStandard(SqlConnection connection, StandardCollation standard, string standardData)
         {
             connection.Execute(

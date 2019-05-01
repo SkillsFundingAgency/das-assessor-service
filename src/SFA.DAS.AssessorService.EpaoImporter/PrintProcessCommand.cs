@@ -26,13 +26,15 @@ namespace SFA.DAS.AssessorService.EpaoImporter
         private readonly IAssessorServiceApi _assessorServiceApi;
         private readonly INotificationService _notificationService;
         private readonly IFileTransferClient _fileTransferClient;
+        private readonly IConfigurationWrapper _configurationWrapper;
 
         public PrintProcessCommand(IAggregateLogger aggregateLogger,
             IPrintingJsonCreator printingJsonCreator,
             IPrintingSpreadsheetCreator printingSpreadsheetCreator,
             IAssessorServiceApi assessorServiceApi,
             INotificationService notificationService,
-            IFileTransferClient fileTransferClient)
+            IFileTransferClient fileTransferClient,
+            IConfigurationWrapper configurationWrapper)
         {
             _aggregateLogger = aggregateLogger;
             _printingSpreadsheetCreator = printingSpreadsheetCreator;
@@ -40,6 +42,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter
             _notificationService = notificationService;
             _fileTransferClient = fileTransferClient;
             _printingJsonCreator = printingJsonCreator;
+            _configurationWrapper = configurationWrapper;
         }
 
         public async Task Execute()
@@ -154,7 +157,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter
                         CertificatesFileName = certificateFileName
                     };
 
-                    var configuration = ConfigurationHelper.GetConfiguration();
+                    var configuration = _configurationWrapper.GetConfiguration();
 
                     if (configuration.Sftp.UseJson)
                     {

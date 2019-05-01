@@ -29,7 +29,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
                 });
 
             SearchHandler
-                .Handle(new SearchQuery() {Surname = "smith", UkPrn = 99999, Uln = 12345, Username = "dave"},
+                .Handle(new SearchQuery() {Surname = "smith", EpaOrgId = "99999", Uln = 12345, Username = "dave"},
                     new CancellationToken()).Wait();
         }
     }

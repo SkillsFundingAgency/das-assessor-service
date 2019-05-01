@@ -16,6 +16,9 @@ details {
   position: inherit;
 */
 
+.govuk-margin-bottom-0 {
+  margin-bottom: 0;
+}
 
 .govuk-related-items {
   margin-top: 30px;
@@ -693,18 +696,38 @@ fieldset.after-error-summary {
   }
 }
 
+@media (max-width: 641px) {
+  .app-navigation__list > li {
+    content: "";
+    clear: both;
+    float: left;
+    width: 100%;
+  }
+
+  .app-navigation__list > li:hover {
+    background-color: #2b8cc4;
+  }
+
+  .app-navigation__list > li:hover a {
+    color: #ffffff !important;
+  }
+
+  .app-navigation__list > li.app-navigation--current-page > a {
+    background-color: #005ea5 !important;
+    color: #ffffff !important;
+  }
+
+  .app-navigation__list > li.app-navigation--current-page a:hover {
+    background-color: #2b8cc4;
+  }
+}
+
 @media print {
   .app-navigation {
     font-size: 14pt;
     line-height: 1.15;
   }
 }
-
-/* @media (max-width: 40.0525em) {
-  .app-navigation {
-    display: none;
-  }
-} */
 
 .app-navigation__list {
   margin: 0;
@@ -725,7 +748,6 @@ fieldset.after-error-summary {
     float: left;
   }
 }
-
 .app-navigation__list > li:hover {
   border-bottom: 4px solid #2b8cc4;
 }
@@ -792,8 +814,6 @@ table.responsive tr td {
   border-bottom: 1px dotted #bfc1c3;
 }
 
-
-
 table.responsive tr td:before {
   content: attr(data-label);
   float: left;
@@ -814,17 +834,28 @@ table.responsive tr.total {
 }
 
 table.responsive.striped tbody tr:nth-child(even) {
-    background-color: #FFFFFF;
+  background-color: #ffffff;
 }
 
 table.responsive.striped tbody tr:nth-child(odd) {
-    background-color: #F8F8F8;
+  background-color: #f8f8f8;
 }
 
 table.responsive tr td.bold {
-    font-weight: 700;
+  font-weight: 700;
 }
 
+table.responsive.user-content tbody tr > td {
+  vertical-align: top;
+}
+
+table.responsive.user-content tbody tr > td span {
+  color: #6f777b;
+}
+
+table.responsive.user-content tbody tr > td ul {
+  list-style: disc outside;
+}
 
 @media (min-width: 768px) {
   table.responsive thead {
@@ -851,10 +882,10 @@ table.responsive tr td.bold {
   table.responsive tr td:first-child {
     padding-left: 0;
   }
-    table.responsive tr th:last-child,
-    table.responsive tr td:last-child {
-        padding-right: 0;
-    }
+  table.responsive tr th:last-child,
+  table.responsive tr td:last-child {
+    padding-right: 0;
+  }
   table.responsive tr th:before,
   table.responsive tr td:before {
     display: none;
@@ -934,65 +965,65 @@ table.responsive tr td.bold {
   }
 }
 
-table.responsive [aria-sort] a, table.responsive 
-[aria-sort] a:hover {
-    background-color: transparent;
-    border-width: 0;
-    -webkit-box-shadow: 0 0 0 0;
-    -moz-box-shadow: 0 0 0 0;
-    box-shadow: 0 0 0 0;
-    color: #005ea5;
-    cursor: pointer;
-    font-family: inherit;
-    font-size: inherit;
-    font-weight: inherit;
-    padding: 0 10px 0 0;
-    position: relative;
-    text-align: inherit;
-    font-size: 1em;
-    text-decoration: none;
-    margin: 0;
+table.responsive [aria-sort] a,
+table.responsive [aria-sort] a:hover {
+  background-color: transparent;
+  border-width: 0;
+  -webkit-box-shadow: 0 0 0 0;
+  -moz-box-shadow: 0 0 0 0;
+  box-shadow: 0 0 0 0;
+  color: #005ea5;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  padding: 0 10px 0 0;
+  position: relative;
+  text-align: inherit;
+  font-size: 1em;
+  text-decoration: none;
+  margin: 0;
 }
 
 table.responsive [aria-sort]:first-child a {
-    right: auto;
+  right: auto;
 }
 
 table.responsive [aria-sort] a:before {
-    content: " \25bc";
-    position: absolute;
-    right: -2px;
-    top: 8px;
-    font-size: 0.5em;
+  content: " \25bc";
+  position: absolute;
+  right: -2px;
+  top: 8px;
+  font-size: 0.5em;
 }
 
 table.responsive [aria-sort] a:after {
-    content: " \25b2";
-    position: absolute;
-    right: -2px;
-    top: 1px;
-    font-size: 0.5em;
+  content: " \25b2";
+  position: absolute;
+  right: -2px;
+  top: 1px;
+  font-size: 0.5em;
 }
 
-table.responsive [aria-sort="ascending"] a:before, table.responsive
-[aria-sort="descending"] a:before {
-    content: none;
+table.responsive [aria-sort="ascending"] a:before,
+table.responsive [aria-sort="descending"] a:before {
+  content: none;
 }
 
 table.responsive [aria-sort="ascending"] a:after {
-    content: " \25b2";
-    font-size: .7em;
-    position: absolute;
-    right: -2px;
-    top: 2px;
+  content: " \25b2";
+  font-size: 0.7em;
+  position: absolute;
+  right: -2px;
+  top: 2px;
 }
 
 table.responsive [aria-sort="descending"] a:after {
-    content: " \25bc";
-    font-size: .7em;
-    position: absolute;
-    right: -2px;
-    top: 2px;
+  content: " \25bc";
+  font-size: 0.7em;
+  position: absolute;
+  right: -2px;
+  top: 2px;
 }
 
 .nowrap {
@@ -1000,10 +1031,10 @@ table.responsive [aria-sort="descending"] a:after {
 }
 
 @media (min-width: 641px) {
-    .align-button-right {
-        margin-top: 2.55em;
-        float: right
-    }
+  .align-button-right {
+    margin-top: 2.55em;
+    float: right;
+  }
 }
 
 /* Page navigation */
@@ -1297,129 +1328,171 @@ table.responsive [aria-sort="descending"] a:after {
 
 /*Dashboard*/
 
-.dashboard-body {
-    padding: 0;
-    -moz-box-sizing: border-box;
-    -webkit-box-sizing: border-box;
-    box-sizing: border-box;
-}
-
 .dashboard-box,
 .dashboard-box__green,
 .dashboard-box__lightblue,
-.dashboard-box__darkblue { 
-    margin-top: 1.5em;
-    padding: 0;
-    -moz-box-sizing: border-box;
-    -webkit-box-sizing: border-box;
-    box-sizing: border-box;
+.dashboard-box__darkblue {
+  margin-top: 1.5em;
+  padding: 0;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 .dashboard-box {
-    border: 1px solid #BFC1C3;
-    height: 9.5em;
-    background-color: #F8F8F8;
+  border: 1px solid #bfc1c3;
+  height: 9.5em;
+  background-color: #f8f8f8;
 }
 
 .dashboard-box__green {
-    height: 11.8em;
-    border: 1px solid #28A197;
+  height: 11.8em;
+  border: 1px solid #28a197;
 }
 
 .dashboard-box__lightblue {
-    height: 11.8em;
-    border: 1px solid #2B8CC4;
+  height: 11.8em;
+  border: 1px solid #2b8cc4;
 }
 
 .dashboard-box__darkblue {
-    height: 11.8em;
-    border: 1px solid #2b8cc4;
+  height: 11.8em;
+  border: 1px solid #2b8cc4;
 }
 
 .dashboard-box-content {
-    margin: 0.7em;
+  margin: 0.7em;
 }
 
 .dashboard__link-list {
-    padding: 0;
-    margin: 0;
-    list-style: none;
-    margin-bottom: 1.25em;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  margin-bottom: 1.25em;
 }
 
 .dashboard__link {
-    line-height: 1.5;
+  line-height: 1.5;
 }
 
 .dashboard__link a:visited {
-    color: #005ea5;
+  color: #005ea5;
 }
 
 .dashboard__link a:focus {
-    outline: 3px solid #ffbf47;
+  outline: 3px solid #ffbf47;
 }
 
 .dashboard__link a:hover {
-    color: #2b8cc4;
+  color: #2b8cc4;
 }
 
 .data-stats {
-    color: #FFFFFF;
-    padding: 0.7em;
-    margin-top: 0;
+  color: #ffffff;
+  padding: 0.7em;
+  margin-top: 0;
 }
 
 .data-custom {
-    color: #005EA5;
+  color: #005ea5;
 }
 
 .data-item-custom {
-    line-height: 1.5;
-    font-weight: 500;
+  line-height: 1.5;
+  font-weight: 500;
 }
 
 .data-background__green {
-    background-color:  #28A197;
+  background-color: #28a197;
 }
 
 .data-background__lightblue {
-    background-color: #2B8CC4;
+  background-color: #2b8cc4;
 }
 
 .data-background__darkblue {
-    background-color: #005EA5;
+  background-color: #005ea5;
 }
 
-@media  (max-width: 1020px) {
-    .dashboard-box__green, 
-    .dashboard-box__lightblue, 
-    .dashboard-box__darkblue {
-        height: 13.5em;
-    }
-    .dashboard-box {
-        height: 11.5em;
-    }
+@media (max-width: 1020px) {
+  .dashboard-box__green,
+  .dashboard-box__lightblue,
+  .dashboard-box__darkblue {
+    height: 13.5em;
+  }
+  .dashboard-box {
+    height: 11.5em;
+  }
 }
 
 @media (max-width: 769px) {
-    .dashboard-box__green,
-    .dashboard-box__lightblue,
-    .dashboard-box__darkblue {
-        height: 14.5em;
-    }
-    .dashboard-box {
-        height: 13.0em;
-    }
+  .dashboard-box__green,
+  .dashboard-box__lightblue,
+  .dashboard-box__darkblue {
+    height: 14.5em;
+  }
+  .dashboard-box {
+    height: 13em;
+  }
 }
 
-@media  (max-width: 641px) {
-    .dashboard-box__green,
-    .dashboard-box__lightblue,
-    .dashboard-box__darkblue {
-        height: 11.5em;
-    }
+@media (max-width: 641px) {
+  .dashboard-box__green,
+  .dashboard-box__lightblue,
+  .dashboard-box__darkblue {
+    height: 11.5em;
+  }
 
-    .dashboard-box {
-        height: 10.0em;
-    }
+  .dashboard-box {
+    height: 10em;
+  }
+}
+
+.button-looks-like-a-link {
+  display: block;
+  background: none !important;
+  color: #005ea5;
+  border: none;
+  margin: 0;
+  padding: 0 !important;
+  font: inherit;
+  font-weight: bold;
+  text-decoration: underline;
+  background: none;
+  box-shadow: none;
+  text-align: left;
+  cursor: pointer;
+}
+
+.button-looks-like-a-link:hover {
+  color: #2b8cc4;
+}
+
+.button-looks-like-a-link:focus {
+  background-color: #ffbf47 !important;
+}
+
+.govuk-body-anchor {
+  line-height: 2.5em;
+}
+
+.form-hint--margin-bottom {
+  margin-bottom: 15px;
+}
+
+@media (min-width: 641px) {
+  .heading-xlarge {
+    margin-bottom: 0.4em !important;
+  }
+}
+
+.das-inline-button-link {
+  display: inline-block;
+  padding: 0.6em 0.4em;
+  line-height: 1.25;
+}
+
+.das-standout-box {
+  background: #dee0e2;
+  padding: 15px;
 }

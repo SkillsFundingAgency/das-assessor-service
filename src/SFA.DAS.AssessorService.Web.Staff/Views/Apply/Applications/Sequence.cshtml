@@ -1,5 +1,6 @@
 @using SFA.DAS.AssessorService.ApplyTypes
 @using SFA.DAS.AssessorService.Web.Staff.Helpers;
+@using SFA.DAS.AssessorService.Domain.Extensions
 
 @model SFA.DAS.AssessorService.Web.Staff.ViewModels.Apply.Applications.ApplicationSequenceViewModel
 
@@ -27,6 +28,13 @@
                         <td>@Model.ApplicationReference</td>
                     </tr>
                 }
+                @if (!string.IsNullOrWhiteSpace(Model.Standard) && Model.SequenceId == 2)
+                {
+                    <tr>
+                        <td class="bold-small">Standard</td>
+                        <td>@Model.Standard</td>
+                    </tr>
+                }
                 @if (!string.IsNullOrWhiteSpace(Model.LegalName))
                 {
                     <tr>
@@ -46,6 +54,13 @@
                     <tr>
                         <td class="bold-small">Ukprn</td>
                         <td>@Model.Ukprn</td>
+                    </tr>
+                }
+                @if (Model.FinancialDueDate.HasValue)
+                {
+                    <tr>
+                        <td class="bold-small">Financial due date</td>
+                        <td>@Model.FinancialDueDate.ToSfaShortDateString()</td>
                     </tr>
                 }
             </table>
@@ -82,11 +97,11 @@
                             </div>
                         }
                         @*@if (applicationSection.HasCompletedPageFeedback)
-                        {
-                        <div class="govuk-tag">
-                            Answer updated
-                        </div>
-                        }*@
+                            {
+                            <div class="govuk-tag">
+                                Answer updated
+                            </div>
+                            }*@
                         @if (applicationSection.Status == ApplicationSectionStatus.Evaluated)
                         {
                             <div class="govuk-tag">
