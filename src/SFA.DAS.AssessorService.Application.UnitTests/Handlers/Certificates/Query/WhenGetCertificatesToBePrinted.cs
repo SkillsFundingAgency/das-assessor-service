@@ -32,7 +32,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Qu
             var certificates = Builder<Certificate>.CreateListOfSize(10)
                 .TheFirst(6).With(q => q.CertificateData = certificateData)
                 .TheNext(1).With(q => q.CertificateData = failedCertData)
-                .TheFirst(3).With(q => q.CertificateData = certificateData)
+                .TheNext(3).With(q => q.CertificateData = certificateData)
                 .Build().ToList();
 
             _certificateRepository = new Mock<ICertificateRepository>();
