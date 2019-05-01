@@ -171,35 +171,30 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<PaginatedList<Certificate>> GetCertificatesForApproval(int pageIndex, int pageSize,string status, string privatelyFundedStatus)
         {
+            int count;
+            var certificates = _context.Certificates.Include(q => q.Organisation)
+                .Include(q => q.CertificateLogs);
+            IQueryable<Certificate> queryable;
             if (status == null )
             {
-                var count = await _context.Certificates.Where(x => x.IsPrivatelyFunded).CountAsync();
-                if (pageSize == 0)
-                    pageSize = count == 0 ? 1 : count;
-                var certificates = await _context.Certificates
-                    .Include(q => q.Organisation)
-                    .Include(q => q.CertificateLogs)
-                    .Where(x => x.IsPrivatelyFunded)
-                    .OrderByDescending(q => q.UpdatedAt)
-                    .Skip((pageIndex - 1) * pageSize)
-                    .Take(pageSize).ToListAsync();
-                return new PaginatedList<Certificate>(certificates, count, pageIndex < 0 ? 1 : pageIndex, pageSize);
+                count = await _context.Certificates.Where(x => x.IsPrivatelyFunded).CountAsync();
+                queryable = certificates;
             }
             else
             {
-                var count = await _context.Certificates.Where(x => x.Status == status && x.PrivatelyFundedStatus == privatelyFundedStatus).Where(x => x.IsPrivatelyFunded).CountAsync();
-                if (pageSize == 0)
-                    pageSize = count == 0?1:count;
-                var certificates =  await _context.Certificates
-                    .Include(q => q.Organisation)
-                    .Include(q => q.CertificateLogs)
-                    .Where(x => x.IsPrivatelyFunded)
-                    .Where(x => x.Status == status && x.PrivatelyFundedStatus == privatelyFundedStatus)
-                    .OrderByDescending(q => q.UpdatedAt)
-                    .Skip((pageIndex - 1) * pageSize)
-                    .Take(pageSize).ToListAsync();
-                return new PaginatedList<Certificate>(certificates, count, pageIndex < 0 ? 1 : pageIndex, pageSize);
+               count = await _context.Certificates.Where(x => x.Status == status && x.PrivatelyFundedStatus == privatelyFundedStatus).Where(x => x.IsPrivatelyFunded).CountAsync();
+               queryable = certificates.Where(x => x.Status == status && x.PrivatelyFundedStatus == privatelyFundedStatus);
             }
+
+            if (pageSize == 0)
+                  pageSize = count == 0 ? 1 : count;
+            var  certificateResult = await queryable
+                .Where(x => x.IsPrivatelyFunded) 
+                .OrderByDescending(q => q.UpdatedAt)
+                .Skip((pageIndex - 1) * pageSize)
+                .Take(pageSize).ToListAsync();
+
+            return new PaginatedList<Certificate>(certificateResult, count, pageIndex < 0 ? 1 : pageIndex, pageSize);
         }
 
 

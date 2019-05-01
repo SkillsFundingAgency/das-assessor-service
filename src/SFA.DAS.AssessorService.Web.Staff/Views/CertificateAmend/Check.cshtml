@@ -11,7 +11,7 @@
 <div class="grid-row">
     <div class="column-two-thirds">
         
-        @if (Model.IsPrivatelyFunded & Model.PrivatelyFundedStatus == CertificateStatus.Rejected & Model.FromApproval)
+        @if (Model.BackToApprovals())
         {
             <a class="link-back" asp-controller="CertificateApprovals" asp-action="Rejected">Back to approvals</a>
         }

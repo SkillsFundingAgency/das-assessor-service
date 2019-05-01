@@ -176,13 +176,6 @@ DisplayName = TRIM(up1.Title + (CASE WHEN up1.Title = '' THEN '' ELSE + ' ' END)
 
 */
 
-
-IF EXISTS(SELECT 1 FROM sys.columns
-         WHERE Name = N'WasRejected'
-         AND Object_ID = OBJECT_ID(N'certificateLogs'))
-BEGIN
-    ALTER TABLE [CertificateLogs] DROP COLUMN [WasRejected]
-END
 /* DONE
 UPDATE [OrganisationType] SET [Type] =  'Training Provider', [TypeDescription] = 'Training provider - including HEI not in England' WHERE id = 7;
 */

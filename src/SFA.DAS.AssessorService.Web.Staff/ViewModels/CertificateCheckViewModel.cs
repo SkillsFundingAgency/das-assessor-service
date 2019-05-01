@@ -69,5 +69,10 @@ namespace SFA.DAS.AssessorService.Web.Staff.ViewModels
             certificate.CertificateData = JsonConvert.SerializeObject(data);
             return certificate;
         }
+
+        public bool BackToApprovals()
+        {
+            return IsPrivatelyFunded & PrivatelyFundedStatus == CertificateStatus.Rejected & FromApproval;
+        }
     }
 }

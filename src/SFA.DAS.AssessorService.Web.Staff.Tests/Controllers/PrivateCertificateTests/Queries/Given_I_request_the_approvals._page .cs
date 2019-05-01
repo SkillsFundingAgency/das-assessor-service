@@ -46,16 +46,11 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Controllers.PrivateCertificate
             };
 
             _result = certificateApprovalsController.Approvals(certificatePostApprovalViewModel).GetAwaiter().GetResult();
-
-            var result = _result as RedirectToActionResult;
-            Assert.IsNotNull(result);
-            result.ActionName.Should().Be("Approved");
+            _result.As<RedirectToActionResult>().ActionName.Should().Be("Approved");
             var returnResult = certificateApprovalsController.Approved(0).GetAwaiter().GetResult();
-            var viewResult = returnResult as ViewResult;
-            Assert.IsNotNull(viewResult);
-            var viewModelResponse = viewResult.Model as CertificateApprovalViewModel;
-            Assert.IsNotNull(viewModelResponse);
-            viewModelResponse.ApprovedCertificates.Items.Count().Should().Be(3);            
+            returnResult.As<ViewResult>().Model.As<CertificateApprovalViewModel>().ApprovedCertificates.Items.Count()
+                .Should().Be(3);
+            
         }
 
         [Test]
@@ -77,17 +72,10 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Controllers.PrivateCertificate
             };
 
             _result = certificateApprovalsController.Approvals(certificatePostApprovalViewModel).GetAwaiter().GetResult();
-
-            var result = _result as RedirectToActionResult;
-            Assert.IsNotNull(result);
-            result.ActionName.Should().Be("Rejected");
+            _result.As<RedirectToActionResult>().ActionName.Should().Be("Rejected");
             var returnResult = certificateApprovalsController.Rejected(0).GetAwaiter().GetResult();
-            var viewResult = returnResult as ViewResult;
-            Assert.IsNotNull(viewResult);
-            var viewModelResponse = viewResult.Model as CertificateApprovalViewModel;
-            Assert.IsNotNull(viewModelResponse);
-
-            viewModelResponse.RejectedCertificates.Items.Count.Should().Be(3);
+            returnResult.As<ViewResult>().Model.As<CertificateApprovalViewModel>().RejectedCertificates.Items.Count()
+                .Should().Be(3);
         }
 
         [Test]
@@ -109,16 +97,10 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Controllers.PrivateCertificate
             };
 
             _result = certificateApprovalsController.Approvals(certificatePostApprovalViewModel).GetAwaiter().GetResult();
-
-            var result = _result as RedirectToActionResult;
-            Assert.IsNotNull(result);
-            result.ActionName.Should().Be("SentForApproval");
+            _result.As<RedirectToActionResult>().ActionName.Should().Be("SentForApproval");
             var returnResult = certificateApprovalsController.SentForApproval(0).GetAwaiter().GetResult();
-            var viewResult = returnResult as ViewResult;
-            Assert.IsNotNull(viewResult);
-            var viewModelResponse = viewResult.Model as CertificateApprovalViewModel;
-            Assert.IsNotNull(viewModelResponse);
-            viewModelResponse.SentForApprovalCertificates.Items.Count().Should().Be(4);
+            returnResult.As<ViewResult>().Model.As<CertificateApprovalViewModel>().SentForApprovalCertificates.Items.Count()
+                .Should().Be(4);
         }
     }
 }
