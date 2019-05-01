@@ -142,11 +142,29 @@ namespace SFA.DAS.AssessorService.Application.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Organisation ID missing - no standard added.
+        /// </summary>
+        internal static string NoOrganisationId {
+            get {
+                return ResourceManager.GetString("NoOrganisationId", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Organisation name missing - no organisation or contact added.
         /// </summary>
         internal static string NoOrganisationName {
             get {
                 return ResourceManager.GetString("NoOrganisationName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Organisation ID is an invalid format - no standard added.
+        /// </summary>
+        internal static string OrganisationIdNotValid {
+            get {
+                return ResourceManager.GetString("OrganisationIdNotValid", resourceCulture);
             }
         }
         
@@ -174,6 +192,24 @@ namespace SFA.DAS.AssessorService.Application.Resources {
         internal static string OrganisationTypeNotIdentified {
             get {
                 return ResourceManager.GetString("OrganisationTypeNotIdentified", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Standard already added to this organisation in register.
+        /// </summary>
+        internal static string StandardAlreadyUsed {
+            get {
+                return ResourceManager.GetString("StandardAlreadyUsed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Standard code is an invalid format so not added to this organisation in register.
+        /// </summary>
+        internal static string StandardInvalid {
+            get {
+                return ResourceManager.GetString("StandardInvalid", resourceCulture);
             }
         }
         
