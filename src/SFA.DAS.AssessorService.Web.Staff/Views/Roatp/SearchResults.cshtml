@@ -23,7 +23,7 @@
 
     <main class="govuk-main-wrapper " id="main-content" role="main">
 
-        <h1 class="govuk-heading-xl govuk-!-width-two-thirds">@Html.Raw(Model.Title)</h1>
+        <h1 class="govuk-heading-xl govuk-!-width-two-thirds roatp-summary-list-long-text">@Html.Raw(Model.Title)</h1>
         <div class="govuk-body govuk-grid-row">
             <div id="searchResultsList" class="govuk-grid-column-one-third">
                 <ul class="govuk-list">
@@ -75,7 +75,7 @@
                         <dt class="govuk-summary-list__key">
                             Legal name
                         </dt>
-                        <dd class="govuk-summary-list__value">
+                        <dd class="govuk-summary-list__value roatp-summary-list-long-text">
                             @Html.Raw(Model.SelectedResult.LegalName)
                         </dd>
 
@@ -218,7 +218,7 @@
                             Trading name
                         </dt>
 
-                        <dd class="govuk-summary-list__value">
+                        <dd class="govuk-summary-list__value roatp-summary-list-long-text">
 
                             @if (!String.IsNullOrWhiteSpace(Model.SelectedResult.TradingName))
                             {
