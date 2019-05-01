@@ -13,7 +13,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
        Task<IEnumerable<IDictionary<string, object>>> GetCompleteRegister();
        Task<IEnumerable<IDictionary<string, object>>> GetAuditHistory();
        Task<IEnumerable<ProviderType>> GetProviderTypes();
-       Task<IEnumerable<OrganisationType>> GetOrganisationTypes(int providerTypeId);
+       Task<IEnumerable<OrganisationType>> GetOrganisationTypes(int? providerTypeId);
        Task<IEnumerable<OrganisationStatus>> GetOrganisationStatuses(int? providerTypeId);
        Task<IEnumerable<RemovedReason>> GetRemovedReasons();
        Task<bool> CreateOrganisation(CreateOrganisationRequest organisationRequest);
@@ -24,6 +24,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
        Task<bool> UpdateOrganisationLegalName(UpdateOrganisationLegalNameRequest request);
        Task<bool> UpdateOrganisationTradingName(UpdateOrganisationTradingNameRequest request);
        Task<bool> UpdateOrganisationStatus(UpdateOrganisationStatusRequest request);
+        Task<bool> UpdateOrganisationType(UpdateOrganisationTypeRequest request);
 
 
 
