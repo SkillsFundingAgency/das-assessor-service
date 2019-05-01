@@ -45,6 +45,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Resources\OrganisationAndContactMessages.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>OrganisationAndContactMessages.resx</DependentUpon>
+    </Compile>
     <Compile Update="Resources\RoatpConfirmationMessages.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -182,6 +187,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Update="Resources\OrganisationAndContactMessages.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>OrganisationAndContactMessages.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Update="Resources\RoatpConfirmationMessages.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>RoatpConfirmationMessages.Designer.cs</LastGenOutput>

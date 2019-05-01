@@ -11,6 +11,7 @@ using SFA.DAS.AssessorService.Web.Staff.Infrastructure;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Controllers
 {  
+    [Authorize]
     public class CommentController : Controller
     {
         private readonly ApiClient _apiClient;
