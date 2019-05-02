@@ -95,13 +95,28 @@
         <div class="govuk-width-container">
             <div class="das-user-panel__content">
                 <span class="govuk-body-s das-user-panel__item das-user-panel__item--grow">
-                    @*
-                    If we have access to the applying org. include it here
-                    <span class="govuk-!-font-weight-bold">Applying organisation</span>
-                    <span class="govuk-visually-hidden">Signed in as </span>
-                    *@
-                    <span>Signed in as </span>
-                    <span>@User.Identity.Name</span>
+
+                    <p class="govuk-!-margin-top-0 govuk-!-margin-bottom-0 das-no-wrap">
+                        <span class="govuk-visually-hidden">Signed in as </span>
+                        @SessionService.Get("LoggedInUser")
+                    </p>
+                    @if (@SessionService.Get("OrganisationName") != null)
+                    {
+                        <p class="govuk-!-font-weight-bold govuk-!-margin-top-0 govuk-!-margin-bottom-0">@SessionService.Get("OrganisationName")</p>
+                    }
+
+@*
+                    @if (SessionService.Get("OrganisationName") != null)
+                    {
+                        <span class="govuk-!-font-weight-bold">@SessionService.Get("OrganisationName")</span>
+                    }
+
+                    @if (User.Identity.Name != null)
+                    {
+                        <span class="govuk-visually-hidden">Signed in as </span>
+                        <span>@User.Identity.Name</span>
+                    }
+*@
                 </span>
                 <span class="govuk-body-s das-user-panel__item">
                     <a class="govuk-link govuk-link--white" asp-controller="Home" asp-action="ContactUs">Contact us</a>
