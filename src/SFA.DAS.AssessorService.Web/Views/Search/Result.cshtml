@@ -1,4 +1,5 @@
 ﻿@using Microsoft.AspNetCore.Mvc.Localization
+@using SFA.DAS.AssessorService.Domain.Consts
 @inject IViewLocalizer Localizer
 @model SFA.DAS.AssessorService.Web.ViewModels.Search.SelectedStandardViewModel
 
@@ -46,7 +47,7 @@
 
             <p><a asp-controller="Search" asp-action="Index">Search again</a> if this isn't the correct apprentice.</p>
         }
-        else if (Model.OverallGrade == "Fail")
+        else if (Model.OverallGrade == CertificateGrade.Fail)
         {
             <h1 class="heading-large">Confirm this is the correct apprentice</h1>
             <form class="apprentice-search-result-form js-disable-on-submit" asp-controller="Certificate" asp-action="Start" method="post">

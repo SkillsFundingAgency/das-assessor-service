@@ -13,6 +13,7 @@ using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using Microsoft.Extensions.Logging;
+using SFA.DAS.AssessorService.Domain.Consts;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Query
 {
@@ -26,8 +27,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Qu
         {
             MappingBootstrapper.Initialize();
 
-            var certificateData = JsonConvert.SerializeObject(Builder<CertificateData>.CreateNew().With(cd => cd.OverallGrade = "Pass").Build());
-            var failedCertData = JsonConvert.SerializeObject(Builder<CertificateData>.CreateNew().With(cd => cd.OverallGrade = "Fail").Build());
+            var certificateData = JsonConvert.SerializeObject(Builder<CertificateData>.CreateNew().With(cd => cd.OverallGrade = CertificateGrade.Pass).Build());
+            var failedCertData = JsonConvert.SerializeObject(Builder<CertificateData>.CreateNew().With(cd => cd.OverallGrade = CertificateGrade.Fail).Build());
 
             var certificates = Builder<Certificate>.CreateListOfSize(10)
                 .TheFirst(6).With(q => q.CertificateData = certificateData)
@@ -54,7 +55,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Qu
         [Test]
         public void then_no_failed_certificates_are_returned()
         {
-            _result.Select(r => r.CertificateData.OverallGrade).Should().NotContain("Fail");
+            _result.Select(r => r.CertificateData.OverallGrade).Should().NotContain(CertificateGrade.Fail);
         }
     }
 }

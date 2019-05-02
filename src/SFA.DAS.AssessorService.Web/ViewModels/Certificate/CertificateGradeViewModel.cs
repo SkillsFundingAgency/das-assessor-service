@@ -12,13 +12,13 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
 
         public List<SelectListItem> Grades = new List<SelectListItem>
         {
-            new SelectListItem {Text = "Pass", Value = "Pass"},
-            new SelectListItem {Text = "Credit", Value = "Credit"},
-            new SelectListItem {Text = "Merit", Value = "Merit"},
-            new SelectListItem {Text = "Distinction", Value = "Distinction"},
-            new SelectListItem {Text = "Pass with excellence", Value = "Pass with excellence"},
-            new SelectListItem {Text = "No grade awarded", Value = "No grade awarded"},
-            new SelectListItem {Text = "Fail", Value = "Fail"}
+            new SelectListItem {Text = CertificateGrade.Pass, Value = CertificateGrade.Pass},
+            new SelectListItem {Text = CertificateGrade.Credit, Value = CertificateGrade.Credit},
+            new SelectListItem {Text = CertificateGrade.Merit, Value = CertificateGrade.Merit},
+            new SelectListItem {Text = CertificateGrade.Distinction, Value = CertificateGrade.Distinction},
+            new SelectListItem {Text = CertificateGrade.PassWithExcellence, Value = CertificateGrade.PassWithExcellence},
+            new SelectListItem {Text = CertificateGrade.NoGradeAwarded, Value = CertificateGrade.NoGradeAwarded},
+            new SelectListItem {Text = CertificateGrade.Fail, Value = CertificateGrade.Fail}
         };
         public void FromCertificate(Domain.Entities.Certificate cert)
         {

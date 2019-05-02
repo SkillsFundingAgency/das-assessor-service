@@ -1,5 +1,6 @@
 ﻿using System;
 using Newtonsoft.Json;
+using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.JsonData;
 
 namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
@@ -17,7 +18,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
         public void FromCertificate(Domain.Entities.Certificate cert)
         {
             BaseFromCertificate(cert);
-            if (CertificateData.OverallGrade != "Fail")
+            if (CertificateData.OverallGrade != CertificateGrade.Fail)
             {
                 Day = CertificateData.AchievementDate?.Day.ToString();
                 Month = CertificateData.AchievementDate?.Month.ToString();

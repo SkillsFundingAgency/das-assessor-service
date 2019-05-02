@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Application.Logging;
+using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
 
@@ -42,7 +43,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
 
                 if (certData.AchievementDate != null && !epaDetails.Epas.Any(rec => rec.EpaDate == certData.AchievementDate.Value && rec.EpaOutcome == certData.OverallGrade))
                 {
-                    var epaOutcome = certData.OverallGrade == "Fail" ? "fail" : "pass";
+                    var epaOutcome = certData.OverallGrade == CertificateGrade.Fail ? "fail" : "pass";
                     var record = new EpaRecord { EpaDate = certData.AchievementDate.Value, EpaOutcome = certData.OverallGrade };
                     epaDetails.Epas.Add(record);
 

@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using System.Collections.Generic;
@@ -38,7 +39,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
             foreach(var cert in certificates)
             {
                 var certData = JsonConvert.DeserializeObject<CertificateData>(cert.CertificateData);
-                if (!string.IsNullOrEmpty(certData?.OverallGrade) && certData.OverallGrade != "Fail")
+                if (!string.IsNullOrEmpty(certData?.OverallGrade) && certData.OverallGrade != CertificateGrade.Fail)
                 {
                     certificatesWithoutFails.Add(cert);
                 }

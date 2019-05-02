@@ -14,6 +14,7 @@ using SFA.DAS.AssessorService.Application.Handlers.Certificates;
 using SFA.DAS.AssessorService.Application.Handlers.Private;
 using SFA.DAS.AssessorService.Application.Handlers.Staff;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
@@ -36,12 +37,12 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
         {
             _certificateId = Guid.NewGuid();
             _certificateReference = "00010000";
-            var existingCertData = Builder<CertificateData>.CreateNew().With(cd => cd.OverallGrade = "Fail").Build();
+            var existingCertData = Builder<CertificateData>.CreateNew().With(cd => cd.OverallGrade = CertificateGrade.Fail).Build();
             var existingCert = Builder<Certificate>.CreateNew().With(c => c.Id = _certificateId)
                                                                .With(c => c.CertificateReference = _certificateReference)
                                                                .With(c => c.CertificateData = JsonConvert.SerializeObject(existingCertData)).Build();
 
-            var updatedCertData = Builder<CertificateData>.CreateNew().With(cd => cd.OverallGrade = "Pass").With(cd => cd.AchievementDate = DateTime.Now).Build();
+            var updatedCertData = Builder<CertificateData>.CreateNew().With(cd => cd.OverallGrade = CertificateGrade.Pass).With(cd => cd.AchievementDate = DateTime.Now).Build();
             var epaoRecord = new EpaRecord { EpaDate = updatedCertData.AchievementDate.Value, EpaOutcome = "pass" };
             var epaoDetails = new EpaDetails
             {

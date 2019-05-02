@@ -1,6 +1,7 @@
 ﻿@using Microsoft.AspNetCore.Mvc.Localization
 @using SFA.DAS.AssessorService.Web.Utils
 @using SFA.DAS.AssessorService.Domain.Extensions
+@using SFA.DAS.AssessorService.Domain.Consts
 @inject IViewLocalizer Localizer
 @model SFA.DAS.AssessorService.Web.ViewModels.Search.ChooseStandardViewModel
 
@@ -70,12 +71,12 @@
                         }
                     }
 
-                    @if (Model.SearchResults.Any(sr => sr.CertificateReference != null && sr.OverallGrade == "Fail"))
+                    @if (Model.SearchResults.Any(sr => sr.CertificateReference != null && sr.OverallGrade == CertificateGrade.Fail))
                     {
                         <div class="form-block">
                             <span class="form-label-bold">Assessments with fail</span>
                         </div>
-                        foreach (var result in Model.SearchResults.Where(sr => sr.CertificateReference != null && sr.OverallGrade == "Fail"))
+                        foreach (var result in Model.SearchResults.Where(sr => sr.CertificateReference != null && sr.OverallGrade == CertificateGrade.Fail))
                         {
                             <div class="multiple-choice">
                                 <input id=@("standard_" + result.StdCode) type="radio" name="SelectedStandardCode" value="@result.StdCode">
@@ -87,12 +88,12 @@
                         }
                     }
 
-                    @if (Model.SearchResults.Any(sr => sr.CertificateReference != null && sr.OverallGrade != "Fail"))
+                    @if (Model.SearchResults.Any(sr => sr.CertificateReference != null && sr.OverallGrade != CertificateGrade.Fail))
                     {
                         <div class="form-block">
-                            <span class="form-label-bold">@Localizer.Pluralize("PreviouslyRecordedAssessments", Model.SearchResults.Count(sr => sr.CertificateReference != null && sr.OverallGrade != "Fail") > 1)</span>
+                            <span class="form-label-bold">@Localizer.Pluralize("PreviouslyRecordedAssessments", Model.SearchResults.Count(sr => sr.CertificateReference != null && sr.OverallGrade != CertificateGrade.Fail) > 1)</span>
                         </div>
-                        foreach (var result in Model.SearchResults.Where(sr => sr.CertificateReference != null && sr.OverallGrade != "Fail"))
+                        foreach (var result in Model.SearchResults.Where(sr => sr.CertificateReference != null && sr.OverallGrade != CertificateGrade.Fail))
                         {
                             <div class="multiple-choice">
                                 <input id=@("standard_" + result.StdCode) type="radio" name="SelectedStandardCode" value="@result.StdCode">
