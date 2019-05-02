@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -14,6 +15,7 @@ using SFA.DAS.AssessorService.Web.ViewModels.Certificate;
 namespace SFA.DAS.AssessorService.Web.Controllers
 {
     [CheckSession]
+    [Authorize]
     public class CertificateBaseController : Controller
     {
         protected readonly ILogger<CertificateController> Logger;

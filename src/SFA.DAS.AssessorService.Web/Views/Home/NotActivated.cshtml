@@ -1,0 +1,20 @@
+﻿@model SFA.DAS.AssessorService.Api.Types.Models.GetEpaoRegisteredStandardsResponse
+
+@{
+    ViewBag.Title = "Not activated";
+    Layout = "_Layout";
+}
+
+<div class="grid-row">
+    <div class="column-two-thirds">
+        @if (Model != null)
+        {
+            <h1 class="heading-large">Your application to assess @Model.StandardName has been approved.</h1>
+        }
+        else
+        {
+            <h1 class="heading-large">Your application has been approved.</h1>
+        }
+        <p>Before we can add your organisation to the Register, remember to sign and return the conditions of acceptance letter to <a href="mailto:apprentice.assessment@education.gov.uk">apprentice.assessment@education.gov.uk</a></p>
+    </div>
+</div>

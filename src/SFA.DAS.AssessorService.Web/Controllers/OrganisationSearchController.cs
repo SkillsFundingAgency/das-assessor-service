@@ -141,10 +141,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 viewModel.Organisations = new List<OrganisationSearchResult> {organisationSearchResult};
                 viewModel.OrganisationTypes = await _organisationsApiClient.GetOrganisationTypes();
 
-                if (organisationSearchResult.OrganisationType == null)
-                {
-                    return View(nameof(Type), viewModel);
-                }
+                return View(nameof(Type), viewModel);
             }
             return View(nameof(Confirm),viewModel);
         }
@@ -277,8 +274,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 sr.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase));
 
             // filter organisation type
-            searchResults = searchResults.Where(sr =>
-                sr.OrganisationType?.Equals(organisationType, StringComparison.InvariantCultureIgnoreCase) ?? true);
+            searchResults = searchResults.Where(sr => sr.RoATPApproved || 
+                (sr.OrganisationType?.Equals(organisationType, StringComparison.InvariantCultureIgnoreCase) ?? true));
 
             // filter postcode
             searchResults = searchResults.Where(sr =>
@@ -289,7 +286,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
             if (organisationSearchResult != null)
             {
-                if (organisationSearchResult.OrganisationType == null)
+                if (organisationSearchResult.RoATPApproved  || organisationSearchResult.OrganisationType == null)
                     organisationSearchResult.OrganisationType = organisationType;
             }
 

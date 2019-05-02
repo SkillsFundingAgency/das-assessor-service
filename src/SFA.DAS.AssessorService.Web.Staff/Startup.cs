@@ -84,7 +84,11 @@ namespace SFA.DAS.AssessorService.Web.Staff
                 options.SupportedCultures = new List<CultureInfo> { new CultureInfo("en-GB") };
                 options.RequestCultureProviders.Clear();
             });
-            services.AddMvc(options => { options.Filters.Add<CheckSessionFilter>(); })
+            services.AddMvc(options =>
+                {
+                    options.Filters.Add<CheckSessionFilter>();
+                    options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
+                })
                  .AddMvcOptions(m => m.ModelMetadataDetailsProviders.Add(new HumanizerMetadataProvider()))
                 .AddFluentValidation(fvc => fvc.RegisterValidatorsFromAssemblyContaining<Startup>())
                  .SetCompatibilityVersion(CompatibilityVersion.Version_2_1).AddJsonOptions(options =>
@@ -96,7 +100,10 @@ namespace SFA.DAS.AssessorService.Web.Staff
             services.AddDistributedRedisCache(options =>
             {
                 options.Configuration = ApplicationConfiguration.SessionRedisConnectionString;
-            });          
+            });
+
+            services.AddAntiforgery(options => options.Cookie = new CookieBuilder() { Name = ".Assessors.Staff.AntiForgery", HttpOnly = false });
+
             MappingStartup.AddMappings();
             return ConfigureIoC(services);
         }
@@ -117,6 +124,8 @@ namespace SFA.DAS.AssessorService.Web.Staff
                 config.For<IOrganisationsApiClient>().Use<OrganisationsApiClient>().Ctor<string>().Is(ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress);
                 config.For<IContactsApiClient>().Use<ContactsApiClient>().Ctor<string>().Is(ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress);
                 config.For<IApplyApiClient>().Use<ApplyApiClient>().Ctor<string>().Is(ApplicationConfiguration.ApplyApiAuthentication.ApiBaseAddress);
+                config.For<IApiClient>().Use<ApiClient>().Ctor<string>().Is(ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress);
+
                 config.For<IContactApplyClient>().Use<ContactApplyClient>().Ctor<string>().Is(ApplicationConfiguration.ApplyApiAuthentication.ApiBaseAddress);
 
                 config.For<IRegisterQueryRepository>().Use<RegisterQueryRepository>();
@@ -181,6 +190,7 @@ namespace SFA.DAS.AssessorService.Web.Staff
             app.UseAuthentication();
             app.UseSession();
             app.UseRequestLocalization();
+            app.UseStatusCodePagesWithReExecute("/ErrorPage/{0}");
             app.UseMvc(routes =>
             {
                 routes.MapRoute(

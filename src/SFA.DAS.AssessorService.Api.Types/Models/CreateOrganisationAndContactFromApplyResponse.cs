@@ -11,5 +11,6 @@ namespace SFA.DAS.AssessorService.Api.Types.Models
         public bool ApplySourceIsEpao { get; set; }
         public string OrganisationId { get; set; }
         public Guid ContactId { get; set; }
+        public string EpaOrganisationId { get; set; }
     }
 }

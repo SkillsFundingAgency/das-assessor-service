@@ -144,8 +144,14 @@
   <data name="EmailIsMissing" xml:space="preserve">
     <value>The email is missing</value>
   </data>
+  <data name="NoOrganisationId" xml:space="preserve">
+    <value>Organisation ID missing</value>
+  </data>
   <data name="NoOrganisationName" xml:space="preserve">
     <value>Organisation name is missing</value>
+  </data>
+  <data name="OrganisationIdNotValid" xml:space="preserve">
+    <value>Organisation ID is an invalid format</value>
   </data>
   <data name="OrganisationNameAlreadyUsed" xml:space="preserve">
     <value>Organisation name already used</value>
@@ -156,10 +162,16 @@
   <data name="OrganisationTypeNotIdentified" xml:space="preserve">
     <value>Organisation type not identified</value>
   </data>
+  <data name="StandardAlreadyUsed" xml:space="preserve">
+    <value>Standard already added to this organisation</value>
+  </data>
+  <data name="StandardInvalid" xml:space="preserve">
+    <value>Standard code is an invalid format</value>
+  </data>
   <data name="UkprnAlreadyUsed" xml:space="preserve">
     <value>The ukprn is already used by another organisation</value>
   </data>
   <data name="UkprnIsInvalidFormat" xml:space="preserve">
-    <value>Ukprn is an invalid forma</value>
+    <value>Ukprn is an invalid format</value>
   </data>
 </root>
