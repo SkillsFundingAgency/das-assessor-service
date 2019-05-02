@@ -96,39 +96,15 @@
         </div>
     </div>
 </div>
-@if (Model.ToBeApprovedCertificates.HasPreviousPage || Model.ToBeApprovedCertificates.HasNextPage)
-{
-    <div class="grid-row">
-        <div class="column-full">
-            <div class="page-navigation">
-
-                @if (Model.ToBeApprovedCertificates.HasPreviousPage)
-                {
-                    <a asp-action="New"
-                       asp-controller="CertificateApprovals"
-                       asp-route-pageIndex="@(Model.ToBeApprovedCertificates.PageIndex - 1)"
-                       class="previous">
-                        <i class="arrow-button icon-left-open">&#xe800;</i>
-                        <span class="description">Previous <span class="hide-mob">page</span></span>
-                        <span class="counter">Page <span class="prevPage">@(Model.ToBeApprovedCertificates.PageIndex - 1)</span> of <span class="totalPage">@(Model.ToBeApprovedCertificates.TotalPages - 1)</span></span>
-                    </a>
-                }
-
-                @if (Model.ToBeApprovedCertificates.HasNextPage)
-                {
-                    <a asp-action="New"
-                       asp-controller="CertificateApprovals"
-                       asp-route-pageIndex="@(Model.ToBeApprovedCertificates.PageIndex + 1)"
-                       class="next">
-                        <i class="arrow-button icon-right-open">&#xe801;</i>
-                        <span class="description">Next <span class="hide-mob">page</span></span>
-                        <span class="counter">Page <span class="nextPage">@(Model.ToBeApprovedCertificates.PageIndex + 1)</span> of <span class="totalPage">@(Model.ToBeApprovedCertificates.TotalPages - 1)</span></span>
-                    </a>
-                }
-
-            </div>
-        </div>
-    </div>
+@{
+    await Html.RenderPartialAsync("_ApprovalPaginationLinks", new ViewDataDictionary(ViewData)
+    {
+        {"PageIndex", Model.ToBeApprovedCertificates.PageIndex},
+        {"TotalPages", Model.ToBeApprovedCertificates.TotalPages },
+        {"HasPreviousPage", Model.ToBeApprovedCertificates.HasPreviousPage},
+        {"HasNextPage", Model.ToBeApprovedCertificates.HasNextPage},
+        {"Action","New" }
+    });
 }
 
 @section Scripts {

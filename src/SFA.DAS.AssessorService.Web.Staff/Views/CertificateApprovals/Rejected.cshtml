@@ -58,9 +58,9 @@
                     await Html.RenderPartialAsync("_ApprovalsDetailsPartial", @Model.RejectedCertificates,
                         new ViewDataDictionary(ViewData)
                         {
-                                    {"Increment", 0},
-                                    {"ApprovalResults",Model.RejectedResults()},
-                                    {"ActionHint","Approved" }
+                                        {"Increment", 0},
+                                        {"ApprovalResults",Model.RejectedResults()},
+                                        {"ActionHint","Approved" }
                         });
                 }
                 else
@@ -78,41 +78,16 @@
     </div>
 </div>
 
-@if (Model.RejectedCertificates.HasPreviousPage || Model.RejectedCertificates.HasNextPage)
-{
-    <div class="grid-row">
-        <div class="column-full">
-            <div class="page-navigation">
-
-                @if (Model.RejectedCertificates.HasPreviousPage)
-                {
-                    <a asp-action="Rejected"
-                       asp-controller="CertificateApprovals"
-                       asp-route-pageIndex="@(Model.RejectedCertificates.PageIndex - 1)"
-                       class="previous">
-                        <i class="arrow-button icon-left-open">&#xe800;</i>
-                        <span class="description">Previous <span class="hide-mob">page</span></span>
-                        <span class="counter">Page <span class="prevPage">@(Model.RejectedCertificates.PageIndex - 1)</span> of <span class="totalPage">@(Model.RejectedCertificates.TotalPages)</span></span>
-                    </a>
-                }
-
-                @if (Model.RejectedCertificates.HasNextPage)
-                {
-                    <a asp-action="Rejected"
-                       asp-controller="CertificateApprovals"
-                       asp-route-pageIndex="@(Model.RejectedCertificates.PageIndex + 1)"
-                       class="next">
-                        <i class="arrow-button icon-right-open">&#xe801;</i>
-                        <span class="description">Next <span class="hide-mob">page</span></span>
-                        <span class="counter">Page <span class="nextPage">@(Model.RejectedCertificates.PageIndex + 1)</span> of <span class="totalPage">@(Model.RejectedCertificates.TotalPages)</span></span>
-                    </a>
-                }
-
-            </div>
-        </div>
-    </div>
+@{
+    await Html.RenderPartialAsync("_ApprovalPaginationLinks", new ViewDataDictionary(ViewData)
+    {
+        {"PageIndex", Model.RejectedCertificates.PageIndex},
+        {"TotalPages", Model.RejectedCertificates.TotalPages},
+        {"HasPreviousPage", Model.RejectedCertificates.HasPreviousPage},
+        {"HasNextPage", Model.RejectedCertificates.HasNextPage},
+        {"Action", "Rejected"}
+    });
 }
-
 
 @section Scripts {
     @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
