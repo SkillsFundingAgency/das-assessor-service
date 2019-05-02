@@ -115,9 +115,9 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         }
 
         [HttpGet]
-        public async Task<FileContentResult> ExportSentForApproval()
+        public async Task<FileContentResult> ExportSentForApproval(string status)
         {
-            var certificates = await ApiClient.GetCertificatesToBeApproved(0, 1, CertificateStatus.ToBeApproved, null);
+            var certificates = await ApiClient.GetCertificatesToBeApproved(0, 1, status, null);
             var data = certificates?.Items.Select(x =>
                 x.ToDictionary(ApprovalToExcelAttributeMappings(), new[] {"LearningStartDate", "AchievementDate"}));
             using (var package = new ExcelPackage())

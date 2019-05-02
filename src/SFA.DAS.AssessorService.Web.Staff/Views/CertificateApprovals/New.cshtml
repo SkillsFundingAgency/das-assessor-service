@@ -64,7 +64,7 @@
             @if (@Model.ToBeApprovedCertificates.Items.Any())
             {
                 <div class="form-group">
-                    <form asp-action="ExportSentForApproval" method="get">
+                    <form asp-action="ExportSentForApproval"  asp-route-status="ToBeApproved" method="get">
                         <button type="submit" class="button">Export</button>
                     </form>
                 </div>
