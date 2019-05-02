@@ -189,6 +189,8 @@
             }
         </dl>
 
+        @if (Model.SelectedGrade != "Fail")
+        {
         <h2 class="heading-medium">
             We'll send the certificate to:
         </h2>
@@ -239,11 +241,11 @@
                 </dt>
                 <dd class="cya-answer">
                     @Model.AddressLine1<br />
-                    @if(@Model.AddressLine2 != null)
+                    @if (@Model.AddressLine2 != null)
                     {
                     @Model.AddressLine2<br />
                     }
-                    @if(@Model.AddressLine3 != null)
+                    @if (@Model.AddressLine3 != null)
                     {
                     @Model.AddressLine3<br />
                     }
@@ -257,6 +259,7 @@
                 </dd>
             </div>
         </dl>
+        }
 
         <form class="js-disable-on-submit" method="post" asp-controller="CertificateCheck">
             @Html.HiddenFor(c => c.Id)
