@@ -76,8 +76,8 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
                 PhoneNumber = "555 55555",
                 Status = OrganisationStatus.New,
                 SigninType = "",
-                GivenNames = "zzz",
-                FamilyName = "Ftagn"
+                FirstName = "zzz",
+                LastName = "Ftagn"
                
             };
         }

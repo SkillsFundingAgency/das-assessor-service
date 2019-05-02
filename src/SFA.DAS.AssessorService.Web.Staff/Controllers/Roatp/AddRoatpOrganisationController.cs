@@ -1,5 +1,6 @@
 ﻿
 using Microsoft.AspNetCore.Authorization;
+using SFA.DAS.AssessorService.Application.Api.Services;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
 {
@@ -55,7 +56,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
         [Route("enter-details")]
         public async Task<IActionResult> AddOrganisationDetails(AddOrganisationProviderTypeViewModel model)
         {
-            if (!ModelState.IsValid)
+            if (!IsRedirectFromConfirmationPage() && !ModelState.IsValid)
             {
                 model.ProviderTypes = await _apiClient.GetProviderTypes();
                 return View("~/Views/Roatp/AddOrganisation.cshtml", model);
@@ -70,8 +71,20 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
                     ProviderTypeId = model.ProviderTypeId
                 };
             }
+            else
+            {
+                if (model.OrganisationId != Guid.Empty)
+                {
+                    addOrganisationModel.OrganisationId = model.OrganisationId;
+                }
 
-            addOrganisationModel.OrganisationTypes = await _apiClient.GetOrganisationTypes(model.ProviderTypeId);
+                if (model.ProviderTypeId > 0)
+                {
+                    addOrganisationModel.ProviderTypeId = model.ProviderTypeId;
+                }
+            }
+
+            addOrganisationModel.OrganisationTypes = await _apiClient.GetOrganisationTypes(addOrganisationModel.ProviderTypeId);
             
             _sessionService.SetAddOrganisationDetails(addOrganisationModel);
 
@@ -85,7 +98,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
         {
             model.OrganisationTypes = await _apiClient.GetOrganisationTypes(model.ProviderTypeId);
             model.ProviderTypes = await _apiClient.GetProviderTypes();
-
+            model.LegalName = TextSanitiser.SanitiseText(model?.LegalName);
+            model.TradingName = TextSanitiser.SanitiseText(model?.TradingName);
             if (!ModelState.IsValid)
             {
                 model.ProviderTypes = await _apiClient.GetProviderTypes();
@@ -102,6 +116,9 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
         [Route("successfully-added")]
         public async Task<IActionResult> CreateOrganisation(AddOrganisationViewModel model)
         {
+            model.LegalName = TextSanitiser.SanitiseText(model?.LegalName);
+            model.TradingName = TextSanitiser.SanitiseText(model?.TradingName);
+
             var request = CreateAddOrganisationRequestFromModel(model);
 
             var success = await _apiClient.CreateOrganisation(request);
@@ -124,7 +141,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
         {
             var model = _sessionService.GetAddOrganisationDetails();
 
-            return RedirectToAction(action, model);
+            return RedirectToAction(action);
         }
 
         private CreateOrganisationRequest CreateAddOrganisationRequestFromModel(AddOrganisationViewModel model)
@@ -134,17 +151,34 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
                 CharityNumber = model.CharityNumber,
                 CompanyNumber = model.CompanyNumber,
                 FinancialTrackRecord = true,
-                LegalName = model.LegalName.ToUpper(),
+                LegalName = model?.LegalName?.ToUpper(),
                 NonLevyContract = false,
                 OrganisationTypeId = model.OrganisationTypeId,
                 ParentCompanyGuarantee = false,
                 ProviderTypeId = model.ProviderTypeId,
                 StatusDate = DateTime.Now,
                 Ukprn = model.UKPRN,
-                TradingName = model.TradingName,
+                TradingName = model?.TradingName,
                 Username = HttpContext.User.OperatorName()
             };
             return request;
+        }
+
+        private bool IsRedirectFromConfirmationPage()
+        {
+            var refererHeaders = ControllerContext.HttpContext.Request.Headers["Referer"];
+            if (refererHeaders.Count == 0)
+            {
+                return false;
+            }
+            var referer = refererHeaders[0];
+
+            if (referer.Contains("confirm-details"))
+            {
+                return true;
+            }
+
+            return false;
         }
     }
 }
