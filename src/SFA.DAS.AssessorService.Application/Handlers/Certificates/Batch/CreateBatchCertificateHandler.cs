@@ -94,13 +94,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates.Batch
             certData.EpaDetails.EpaReference = certificate.CertificateReference;
             certificate.CertificateData = JsonConvert.SerializeObject(certData);
 
-            // TODO: Not quite sure on this logic.
-            // adjust Status appropriately
-            //if (certData.OverallGrade == "Fail")
-            //{
-            //    certificate.Status = CertificateStatus.Draft;
-            //}
-
             _logger.LogInformation("CreateNewCertificate Before Update Cert in db");
             await _certificateRepository.Update(certificate, contact.Username, null);
 

@@ -31,13 +31,6 @@ namespace SFA.DAS.AssessorService.Web.Staff.ViewModels
             data.OverallGrade = SelectedGrade;
             certificate.CertificateData = JsonConvert.SerializeObject(data);
 
-            // TODO: Not quite sure on this logic.
-            // Can amend Submitted in Staff App, but what does it mean if Fail when submitted
-            //if (SelectedGrade == "Fail")
-            //{
-            //    certificate.Status = CertificateStatus.Draft;
-            //}
-
             return certificate;
         }
     }

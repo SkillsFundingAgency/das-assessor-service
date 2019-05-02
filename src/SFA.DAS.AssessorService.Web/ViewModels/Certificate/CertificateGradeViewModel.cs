@@ -31,12 +31,6 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
             data.OverallGrade = SelectedGrade;
             certificate.CertificateData = JsonConvert.SerializeObject(data);
 
-            // TODO: Not quite sure on this logic.
-            //if (SelectedGrade == "Fail")
-            //{
-            //    certificate.Status = CertificateStatus.Draft;
-            //}
-
             return certificate;
         }
     }

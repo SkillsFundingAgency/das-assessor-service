@@ -65,16 +65,6 @@ namespace SFA.DAS.AssessorService.Web.Staff.ViewModels
 
         public Certificate GetCertificateFromViewModel(Certificate certificate, CertificateData data)
         {
-            // TODO: Not quite sure on this logic
-            //if (data.OverallGrade == "Fail")
-            //{
-            //    certificate.Status = CertificateStatus.Draft;
-            //}
-            //else
-            //{
-            //    certificate.Status = certificate.IsPrivatelyFunded ? CertificateStatus.ToBeApproved : CertificateStatus.Submitted;
-            //}
-
             certificate.Status = certificate.IsPrivatelyFunded ? CertificateStatus.ToBeApproved : CertificateStatus.Submitted;
             certificate.CertificateData = JsonConvert.SerializeObject(data);
             return certificate;
