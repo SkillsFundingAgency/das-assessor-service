@@ -23,6 +23,7 @@
             <input type="hidden" name="fullDate" id="fullDate" class="date-input" />
             @Html.HiddenFor(c => c.Id)
             @Html.HiddenFor(m => m.StartDate)
+            @Html.HiddenFor(m => m.SelectedGrade)
             <input type="hidden" name="WarningShown" id="WarningShown" value="@Model.WarningShown" />
 
             @* hidden with css by default *@

@@ -6,6 +6,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
 {
     public class CertificateDateViewModel : CertificateBaseViewModel, ICertificateViewModel
     {
+        public string SelectedGrade { get; set; }
         public DateTime Date { get; set; }
         public string Day { get; set; }
         public string Month { get; set; }
@@ -16,10 +17,14 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
         public void FromCertificate(Domain.Entities.Certificate cert)
         {
             BaseFromCertificate(cert);
-            Day = CertificateData.AchievementDate?.Day.ToString();
-            Month = CertificateData.AchievementDate?.Month.ToString();
-            Year = CertificateData.AchievementDate?.Year.ToString();
+            if (CertificateData.OverallGrade != "Fail")
+            {
+                Day = CertificateData.AchievementDate?.Day.ToString();
+                Month = CertificateData.AchievementDate?.Month.ToString();
+                Year = CertificateData.AchievementDate?.Year.ToString();
+            }
             StartDate = CertificateData.LearningStartDate;
+            SelectedGrade = CertificateData.OverallGrade;
             WarningShown = "false";
         }
 
