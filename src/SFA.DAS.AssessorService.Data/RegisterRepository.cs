@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Dapper;
 using Newtonsoft.Json;
 using System.Linq;
+using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Data.DapperTypeHandlers;
 
 namespace SFA.DAS.AssessorService.Data
@@ -17,10 +18,12 @@ namespace SFA.DAS.AssessorService.Data
     {
 
         private readonly IWebConfiguration _configuration;
+        private readonly ILogger<RegisterRepository> _logger;
 
-        public RegisterRepository(IWebConfiguration configuration)
+        public RegisterRepository(IWebConfiguration configuration, ILogger<RegisterRepository> logger)
         {
             _configuration = configuration;
+            _logger = logger;
             SqlMapper.AddTypeHandler(typeof(OrganisationData), new OrganisationDataHandler());
             SqlMapper.AddTypeHandler(typeof(OrganisationStandardData), new OrganisationStandardDataHandler());
         }
@@ -61,6 +64,8 @@ namespace SFA.DAS.AssessorService.Data
                     "[OrganisationData] = @orgData, Status = @status WHERE [EndPointAssessorOrganisationId] = @organisationId",
                     new {org.Name, org.Ukprn, org.OrganisationTypeId, orgData, org.Status, org.OrganisationId});
        
+                _logger.LogInformation($"Updated EPAO Organisation {org.OrganisationId} with status = {org.Status}");
+                
                 return org.OrganisationId;
             }
         }
