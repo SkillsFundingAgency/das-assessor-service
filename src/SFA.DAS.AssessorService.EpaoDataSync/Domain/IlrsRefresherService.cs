@@ -92,7 +92,11 @@ namespace SFA.DAS.AssessorService.EpaoDataSync.Domain
                 $"Finished updating/inserting into Ilrs table from submissions. Number of updates {totalNumbersEffected}");
          
              await ProcessFromLearners(changedRecordsUlnCache);
-            
+
+             //Clean up records with null names
+             await CleanupAnyIlrsRecordsWithNullNames();
+
+
         }
 
         private async Task ProcessFromLearners(IEnumerable<long> changedRecordsUlnCache)
@@ -134,6 +138,27 @@ namespace SFA.DAS.AssessorService.EpaoDataSync.Domain
                 changedRecordsUlnCache.Add(submissionEvent.Uln);
             }
             return totalNumbersEffected;
+        }
+
+        private async Task CleanupAnyIlrsRecordsWithNullNames()
+        {
+            _aggregateLogger.LogInfo("Starting clean up of records with null names");
+
+            var totalNumbersEffected = 0L;
+            var ilrsResults = await _connection.QueryAsync<Ilr>(
+                "SELECT ULN, MIN(EventID) EventID FROM (select Uln, MAX(eventid) eventid, StdCode from Ilrs where (CompletionStatus is NULL or GivenNames is null or FamilyName is null) AND source != 'Testing' AND eventid IS NOT NULL GROUP BY Uln, StdCode ) ab1 GROUP BY Uln");
+            var listOfIlrs = ilrsResults?.ToList();
+            if (listOfIlrs != null && listOfIlrs.Any())
+            {
+                foreach (var listOfIlr in listOfIlrs)
+                {
+                    totalNumbersEffected +=
+                        await UpdateFromLearners(listOfIlr.Uln, listOfIlr.EventId.GetValueOrDefault());
+                }
+            }
+
+            _aggregateLogger.LogInfo(
+                $"Finished cleaning up  Ilrs table from null names. Number of updates {totalNumbersEffected}");
         }
 
         private async Task<long> UpdateFromSubmission(SubmissionEvent submissionEvent)
