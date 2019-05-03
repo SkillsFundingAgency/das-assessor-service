@@ -7,8 +7,7 @@
  [CertificateData] NVARCHAR(MAX) NOT NULL, 
     [Username] NVARCHAR(256) NOT NULL,
 	[BatchNumber] [int] NULL,
-    [ReasonForChange] NVARCHAR(MAX) NULL, 
-	[WasRejected] NVARCHAR(2) NULL, 
+    [ReasonForChange] NVARCHAR(MAX) NULL
     CONSTRAINT [PK_CertificateLogs] PRIMARY KEY CLUSTERED 
 (
 	[Id] ASC
