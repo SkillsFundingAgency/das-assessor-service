@@ -21,14 +21,17 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
     {
         private readonly ICertificateRepository _certificateRepository;
         private readonly IAssessmentOrgsApiClient _assessmentOrgsApiClient;
+        private readonly IContactQueryRepository _contactQueryRepository;
         private readonly ILogger<GetCertificatesToBeApprovedHandler> _logger;
 
         public GetCertificatesToBeApprovedHandler(ICertificateRepository certificateRepository,
             IAssessmentOrgsApiClient assessmentOrgsApiClient,
+            IContactQueryRepository contactQueryRepository,
             ILogger<GetCertificatesToBeApprovedHandler> logger)
         {
             _certificateRepository = certificateRepository;
             _assessmentOrgsApiClient = assessmentOrgsApiClient;
+            _contactQueryRepository = contactQueryRepository;
             _logger = logger;
         }
 
@@ -43,17 +46,17 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
             
             // Please Note:- Cannot seem to automap this with custom value/type converters
             // so dealing with it manually for now.
-            var approvals = MapCertificates(certificates);
+            var approvals = await MapCertificates(certificates);
             return approvals;
         }
 
-        private PaginatedList<CertificateSummaryResponse> MapCertificates(PaginatedList<Certificate> certificates)
+        private async Task<PaginatedList<CertificateSummaryResponse>> MapCertificates(PaginatedList<Certificate> certificates)
         {
             var trainingProviderName = string.Empty;
             var firstName = string.Empty;
             var lastName = string.Empty;
             var recordedBy = string.Empty;
-            var ReasonForChange = string.Empty;
+            var reasonForChange = string.Empty;
 
             var certificateResponses = certificates.Items.Select(
                 certificate =>
@@ -79,7 +82,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
 
                         firstName = certificateData.LearnerGivenNames;
                         lastName = certificateData.LearnerFamilyName;
-                        ReasonForChange = certificate.CertificateLogs
+                        reasonForChange = certificate.CertificateLogs
                             .OrderByDescending(q => q.EventTime)
                             .FirstOrDefault(certificateLog =>
                                 certificateLog.Status == Domain.Consts.CertificateStatus.Draft && certificateLog.Action == Domain.Consts.CertificateStatus.Rejected)?.ReasonForChange;
@@ -122,11 +125,15 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
                         EpaoId = certificate.Organisation?.EndPointAssessorOrganisationId,
                         EpaoName = certificate.Organisation?.EndPointAssessorName,
                         CertificateId = certificate.Id,
-                        ReasonForChange = ReasonForChange
+                        ReasonForChange = reasonForChange
                     };
                 });
 
             var responses = certificateResponses.ToList();
+            foreach (var response in responses)
+            {
+                response.RecordedBy = (await _contactQueryRepository.GetContact(response.RecordedBy))?.DisplayName;
+            }
             var paginatedList = new PaginatedList<CertificateSummaryResponse>(responses,
                 certificates.TotalRecordCount,
                 certificates.PageIndex,
