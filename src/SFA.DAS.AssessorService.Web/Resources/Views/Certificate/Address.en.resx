@@ -118,13 +118,13 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Address" xml:space="preserve">
-    <value>Street address</value>
+    <value>Building and street</value>
   </data>
   <data name="AddressLine2" xml:space="preserve">
-    <value>Address 2</value>
+    <value>Building and street line 2 of 3</value>
   </data>
   <data name="AddressLine3" xml:space="preserve">
-    <value>Address 3</value>
+    <value>Building and street line 3 of 3</value>
   </data>
   <data name="City" xml:space="preserve">
     <value>Town or city</value>

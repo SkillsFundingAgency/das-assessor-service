@@ -738,7 +738,8 @@
 .error-summary,
 .info-summary,
 .success-summary,
-.warning-summary {
+.warning-summary,
+.info-highlighted {
   border-width: 4px;
   border-style: solid;
   margin-top: 15px;
@@ -746,11 +747,12 @@
   padding: 15px 10px;
 }
 
-@media (min-width: 641px) {
+@media (min-width: 40.0625em) {
   .error-summary,
   .info-summary,
   .success-summary,
-  .warning-summary {
+  .warning-summary,
+  .info-highlighted {
     border-width: 5px;
     border-style: solid;
     margin-top: 30px;
@@ -776,6 +778,7 @@
   margin: 0;
 }
 
+/* :first-child:last-child === element has no siblings */
 .error-summary > *:last-child,
 .info-summary > *:last-child,
 .success-summary > *:last-child,
@@ -796,7 +799,14 @@
   border-color: #2b8cc4;
 }
 
-@media (min-width: 641px) {
+.info-highlighted {
+  max-width: 30em;
+  background: #eaebf3;
+  border: none;
+  border-left: solid 10px #2e358b;
+}
+
+@media (min-width: 40.0625em) {
   .info-summary {
     border-color: #2b8cc4;
   }
@@ -949,7 +959,7 @@ TODO: change to 'das-page-navigation' and BEM
   display: none;
 }
 
-@media (min-width: 641px) {
+@media (min-width: 40.0625em) {
   .arrow {
     display: inline-block;
   }
@@ -967,4 +977,18 @@ TODO: change to 'das-page-navigation' and BEM
   .govuk-table--small {
     font-size: 16px;
   }
+}
+
+/* .hidden {
+  display: none;
+  visibility: hidden;
+} */
+
+/* .js-enabled .js-hidden {
+  display: none;
+  visibility: hidden;
+} */
+
+.js-error-summary {
+  display: none;
 }
