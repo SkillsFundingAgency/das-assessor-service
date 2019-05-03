@@ -7,7 +7,7 @@ IF EXISTS(
     TABLE_NAME = 'CertificateLogs'
     AND COLUMN_NAME = 'WasRejected')
 BEGIN
-  ALTER TABLE CertificateLogs
-    DROP COLUMN WasRejected
+  ALTER TABLE [dbo].[CertificateLogs]
+    DROP COLUMN [WasRejected]
 END;
 GO
