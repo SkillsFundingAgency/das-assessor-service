@@ -57,7 +57,7 @@
                         </span>
                         <span class="error-message" asp-validation-for="SelectedStandardCode"></span>
                     </label>
-                    <select class="form-control" asp-for="SelectedStandardCode" sfa-validation-for="SelectedStandardCode" sfa-validationerror-class="form-control-error" asp-items="@(new SelectList(Model.StandardCodes,"Value","Text"))">
+                    <select class="form-control" asp-for="SelectedStandardCode" sfa-validation-for="SelectedStandardCode" sfa-validationerror-class="govuk-input--error" asp-items="@(new SelectList(Model.StandardCodes,"Value","Text"))">
                         <option value="">Please select one</option>
                     </select>
                 </div>

@@ -56,9 +56,7 @@
                 </dl>
 
                 <div class="govuk-form-group" sfa-validation-for="SelectedStandardCode" sfa-validationerror-class="govuk-form-group--error">
-                    <div class="error-message-container" sfa-validation-for="SelectedStandardCode">
-                        <span class="govuk-error-message" asp-validation-for="SelectedStandardCode"></span>
-                    </div>
+                    <span class="govuk-error-message" asp-validation-for="SelectedStandardCode"></span>
 
                     @if (Model.SearchResults.Any(sr => sr.CertificateReference == null))
                     {

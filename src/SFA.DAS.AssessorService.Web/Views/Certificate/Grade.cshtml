@@ -52,23 +52,26 @@ else
                     </div>
                 }
 
-                <h1 class="govuk-heading-xl">
-                    @Localizer["Heading"]
-                </h1>
-
                 <div class="govuk-form-group" sfa-validation-for="SelectedGrade" sfa-validationerror-class="govuk-form-group--error">
-                    <div class="error-message-container" sfa-validation-for="SelectedGrade">
-                        <span class="govuk-error-message" asp-validation-for="SelectedGrade"></span>
+                    <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
+                        <h1 class="govuk-fieldset__heading">
+                            @Localizer["Heading"]
+                        </h1>
+                    </legend>
+
+                    <span class="govuk-error-message" asp-validation-for="SelectedGrade"></span>
+
+                    <div class="govuk-radios">
+                        @foreach (var grade in Model.Grades)
+                        {
+                            <div class="govuk-radios__item">
+                                <input class="govuk-radios__input" asp-for="SelectedGrade" id="@grade.Text.Replace(" ", "_")" type="radio" value="@grade.Text" />
+                                <label class="govuk-label govuk-radios__label" for="@grade.Text.Replace(" ", "_")">
+                                    @grade.Text
+                                </label>
+                            </div>
+                        }
                     </div>
-                    @foreach (var grade in Model.Grades)
-                    {
-                        <div class="multiple-choice">
-                            <input asp-for="SelectedGrade" id="@grade.Text.Replace(" ", "_")" type="radio" value="@grade.Text" />
-                            <label for="@grade.Text.Replace(" ", "_")">
-                                @grade.Text
-                            </label>
-                        </div>
-                    }
                 </div>
 
                 <button type="submit" class="govuk-button">@Localizer["ContinueButton"]</button>

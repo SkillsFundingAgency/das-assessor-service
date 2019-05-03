@@ -46,7 +46,7 @@
         </label>
         <span id="Surname-hint" class="govuk-hint">@Localizer["LastnameHint"]</span>
         <span class="govuk-error-message" asp-validation-for="Surname"></span>
-        <input class="govuk-input govuk-!-width-two-thirds" name="Surname" autocomplete="off" sfa-validation-for="Surname" sfa-validationerror-class="form-control-error" asp-for="Surname" type="text" maxlength="100" />
+        <input class="govuk-input govuk-!-width-two-thirds" name="Surname" autocomplete="off" sfa-validation-for="Surname" sfa-validationerror-class="govuk-input--error" asp-for="Surname" type="text" maxlength="100" />
     </div>
 
      <div class="govuk-form-group" sfa-validation-for="Uln" sfa-validationerror-class="form-group-error">
@@ -55,7 +55,7 @@
         </label>
         <span id="Uln-hint" class="govuk-hint">@Localizer["UlnHint"]</span>
         <span class="govuk-error-message" asp-validation-for="Uln"></span>
-        <input class="govuk-input govuk-input--width-10 js-integers-only" name="Uln" autocomplete="off" asp-for="Uln" type="text" sfa-validation-for="Uln" sfa-validationerror-class="form-control-error" maxlength="10" />
+        <input class="govuk-input govuk-input--width-10 js-integers-only" name="Uln" autocomplete="off" asp-for="Uln" type="text" sfa-validation-for="Uln" sfa-validationerror-class="govuk-input--error" maxlength="10" />
     </div>
 
 
