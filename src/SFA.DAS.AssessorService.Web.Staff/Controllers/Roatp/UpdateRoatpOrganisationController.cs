@@ -346,11 +346,10 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
             model.UpdatedBy = HttpContext.User.OperatorName();
 
             var searchModel = _sessionService.GetSearchResults();
-            var previousProviderType = searchModel.SelectedResult.ProviderType.Id;
+            var previousProviderTypeId = searchModel.SelectedResult.ProviderType.Id;
+            var previousOrganisationTypeId = searchModel.SelectedResult.OrganisationType.Id;
 
-            var canChange = model.CanChangeOrganisationTypeForThisProvider(previousProviderType);
-
-            if (canChange)
+            if (model.CanChangeOrganisationTypeForThisProvider(previousProviderTypeId))
             {
                 switch (model.ProviderTypeId)
                 {
@@ -367,7 +366,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
             }
             else
             {
-                model.OrganisationTypeId = searchModel.SelectedResult.OrganisationType.Id;
+                model.OrganisationTypeId = previousOrganisationTypeId;
             }
 
             var request = Mapper.Map<UpdateOrganisationProviderTypeRequest>(model);
