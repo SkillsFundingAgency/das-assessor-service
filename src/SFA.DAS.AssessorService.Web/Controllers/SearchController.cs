@@ -45,14 +45,18 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 return View(vm);
             }
 
-            if (vm.IsPrivatelyFunded)
+            var result = await _searchOrchestrator.Search(vm);
+
+            if (vm.IsPrivatelyFunded && !result.SearchResults.Any())
             {
                 return RedirectToAction("Index", "CertificatePrivateDeclaration", vm);
             }
 
-            var result = await _searchOrchestrator.Search(vm);
-            if (!result.SearchResults.Any()) return View("Index", vm);
 
+            if (!result.SearchResults.Any())
+                return View("Index", vm);
+
+          
             _sessionService.Set("SearchResults", result);
             
             if (result.SearchResults.Count() > 1)
@@ -60,7 +64,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 GetChooseStandardViewModel(vm);
                 return RedirectToAction("ChooseStandard");
             }
-
+            
             GetSelectedStandardViewModel(result);
             return RedirectToAction("Result");
         }

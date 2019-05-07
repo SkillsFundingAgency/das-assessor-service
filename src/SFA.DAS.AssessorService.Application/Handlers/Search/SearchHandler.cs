@@ -72,16 +72,22 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
 
             var ilrResults = await _ilrRepository.SearchForLearnerByUln(request.Uln);
 
+            var likedSurname = request.Surname.Replace(" ", "");
+
             var enumerable = ilrResults?.ToList();
             if (request.IsPrivatelyFunded && (enumerable == null || (!enumerable.Any())))
             {
-
+                enumerable = new List<Ilr> { new Ilr { Uln = request.Uln, EpaOrgId = request.EpaOrgId, FamilyNameForSearch = request.Surname, FamilyName = request.Surname } };
+                likedSurname = DealWithSpecialCharactersAndSpaces(request, likedSurname, enumerable);
+                var privatefundedCertificate=
+                    await _certificateRepository.GetPrivateCertificate(request.Uln, request.EpaOrgId, likedSurname);
+                enumerable[0].StdCode = privatefundedCertificate?.StandardCode ?? 0;
+            }
+            else
+            {
+                likedSurname = DealWithSpecialCharactersAndSpaces(request, likedSurname, enumerable);
             }
 
-
-            var likedSurname = request.Surname.Replace(" ","");
-
-            likedSurname = DealWithSpecialCharactersAndSpaces(request, likedSurname, enumerable);
 
             ilrResults = enumerable?.Where(r =>(
                 r.EpaOrgId == thisEpao.EndPointAssessorOrganisationId ||
