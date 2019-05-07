@@ -114,8 +114,7 @@ namespace SFA.DAS.AssessorService.Data
         }
 
         public async Task<Certificate> GetPrivateCertificate(long uln,
-            string endpointOrganisationId,
-            string lastName)
+            string endpointOrganisationId)
         {
             var existingCert = await _context.Certificates
                 .Include(q => q.Organisation)
@@ -124,6 +123,36 @@ namespace SFA.DAS.AssessorService.Data
                     c.Organisation.EndPointAssessorOrganisationId == endpointOrganisationId &&
                     c.IsPrivatelyFunded);
             return existingCert;
+        }
+
+        public async Task<Certificate> GetCertificateByOrgIdLastname(long uln,
+            string endpointOrganisationId, string lastName)
+        {
+            var existingCert = await _context.Certificates
+                .Include(q => q.Organisation)
+                .FirstOrDefaultAsync(c =>
+                    c.Uln == uln &&
+                    c.Organisation.EndPointAssessorOrganisationId == endpointOrganisationId &&
+                    CheckCertificateData(c, lastName));
+            return existingCert;
+        }
+
+        public async Task<Certificate> GetCertificateByUlnLastname(long uln,
+            string lastName)
+        {
+            var existingCert = await _context.Certificates
+                .Include(q => q.Organisation)
+                .FirstOrDefaultAsync(c =>
+                    c.Uln == uln &&
+                    CheckCertificateData(c,lastName));
+
+            return existingCert;
+        }
+
+        private bool CheckCertificateData(Certificate certificate, string lastName)
+        {
+            var certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
+            return (certificateData.LearnerFamilyName == lastName);
         }
 
         public async Task<Certificate> GetCertificate(

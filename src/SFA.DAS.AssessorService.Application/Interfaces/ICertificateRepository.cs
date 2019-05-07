@@ -13,7 +13,12 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<Certificate> NewPrivate(Certificate certificate, string endpointOrganisationId);
         Task<Certificate> GetCertificate(Guid id);
         Task<Certificate> GetCertificate(long uln, int standardCode);
-        Task<Certificate> GetPrivateCertificate(long uln, string endpointOrganisationId, string lastName);
+        Task<Certificate> GetPrivateCertificate(long uln, string endpointOrganisationId);
+        Task<Certificate> GetCertificateByOrgIdLastname(long uln,
+            string endpointOrganisationId, string lastName);
+
+        Task<Certificate> GetCertificateByUlnLastname(long uln,
+            string lastName);
         Task<Certificate> GetCertificate(string certificateReference, string lastName, DateTime? achievementDate);
         Task<List<Certificate>> GetCompletedCertificatesFor(long uln);
         Task<List<Certificate>> GetCertificates(List<string> statuses);

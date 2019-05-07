@@ -79,9 +79,13 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
             {
                 enumerable = new List<Ilr> { new Ilr { Uln = request.Uln, EpaOrgId = request.EpaOrgId, FamilyNameForSearch = request.Surname, FamilyName = request.Surname } };
                 likedSurname = DealWithSpecialCharactersAndSpaces(request, likedSurname, enumerable);
-                var privatefundedCertificate=
-                    await _certificateRepository.GetPrivateCertificate(request.Uln, request.EpaOrgId, likedSurname);
-                enumerable[0].StdCode = privatefundedCertificate?.StandardCode ?? 0;
+                var certificate=
+                    await _certificateRepository.GetCertificateByOrgIdLastname(request.Uln, request.EpaOrgId, likedSurname) ??
+                    await _certificateRepository.GetCertificateByUlnLastname(request.Uln, likedSurname);
+                if(certificate == null)
+                    return new List<SearchResult>();
+
+                enumerable[0].StdCode = certificate.StandardCode;
             }
             else
             {
