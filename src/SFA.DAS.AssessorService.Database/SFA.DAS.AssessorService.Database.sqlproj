@@ -115,6 +115,9 @@
     <PostDeploy Include="Script.PostDeployment1.sql" />
   </ItemGroup>
   <ItemGroup>
+    <PreDeploy Include="Script.PreDeployment1.sql" />
+  </ItemGroup>  
+  <ItemGroup>
     <None Include="DataToImport\assessmentorgs.xlsx" />
   </ItemGroup>
 </Project>
