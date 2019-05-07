@@ -185,6 +185,8 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
             {
                 MappingStartup.AddMappings();
 
+                //app.UseSecurityHeaders();
+                
                 if (env.IsDevelopment())
                 {
                     app.UseDeveloperExceptionPage();
@@ -204,7 +206,6 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                 app.UseMiddleware(typeof(ErrorHandlingMiddleware));
                 
                 app.UseRequestLocalization();
-                app.UseSecurityHeaders();
                 app.UseMvc();
             }
             catch (Exception e)

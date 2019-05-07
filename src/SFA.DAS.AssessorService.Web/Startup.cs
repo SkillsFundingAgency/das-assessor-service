@@ -166,11 +166,11 @@ namespace SFA.DAS.AssessorService.Web
             }
 
             app.UseHttpsRedirection();
-            app.UseStaticFiles()
+            app.UseSecurityHeaders()
+                .UseStaticFiles()
                 .UseSession(new SessionOptions() { Cookie = new CookieBuilder() { Name = ".Assessors.Session", HttpOnly = true } })
                 .UseAuthentication()
                 .UseRequestLocalization()
-                .UseSecurityHeaders()
                 .UseMvc(routes =>
                 {
                     routes.MapRoute(
