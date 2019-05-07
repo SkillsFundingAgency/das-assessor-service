@@ -35,7 +35,6 @@
 }
 
 <div class="grid-row">
-    <div class="column-two-thirds">
         <h1 class="heading-xlarge roatp-heading">Change provider type for <span class="roatp-update-organisation-long-text">@Html.Raw(Model.LegalName)</span></h1>
     </div>
 </div>
@@ -73,24 +72,39 @@
                                         </label>
                                     </div>
                                     @if (Model.CanChangeOrganisationTypeForThisProvider(providerType.Id))
-                                     {
-                                         <div class="roatp-radios__conditional roatp-radios__conditional--hidden" id="route-@providerType.Id-conditional">
+                                    {
+                                        var typeName = "OrganisationTypeId";
+                                        switch (providerType.Id)
+                                        {
+                                            case 1:
+                                                typeName = "OrganisationTypeIdMain";
+                                                break;
+                                            case 2:
+                                                typeName = "OrganisationTypeIdEmployer";
+                                                break;
+                                            case 3:
+                                                typeName = "OrganisationTypeIdSupporting";
+                                                break;
+                                        }
+
+
+                                    <div class="roatp-radios__conditional roatp-radios__conditional--hidden" id="route-@providerType.Id-conditional">
 
                                              <div class="govuk-form-group">
-                                                 <label class="roatp-label" for="OrganisationTypeId">
+                                                 <label class="roatp-label" for="@typeName">
                                                      Type of organisation
                                                  </label>
-                                                 <select class="roatp-select govuk-!-width-full" id="OrganisationTypeId" name="OrganisationTypeId">
+                                                 <select class="roatp-select govuk-!-width-full" id="@typeName" name="@typeName">
                                                      @foreach (var organisationType in Model.OrganisationTypesByProviderType[providerType.Id])
-                                                     {
+                                                            {
                                                          <option value="@organisationType.Id">@organisationType.Type</option>
-                                                     }
+                                                             }
                                                  </select>
                                              </div>
 
                                          </div>
-                                     }                                   
-                                }
+                                                            }
+                                    }
                             </div>
                         </fieldset>
                     </div>
