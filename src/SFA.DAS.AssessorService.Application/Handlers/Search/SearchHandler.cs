@@ -72,17 +72,24 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
 
             var ilrResults = await _ilrRepository.SearchForLearnerByUln(request.Uln);
 
+            var enumerable = ilrResults?.ToList();
+            if (request.IsPrivatelyFunded && (enumerable == null || (!enumerable.Any())))
+            {
+
+            }
+
+
             var likedSurname = request.Surname.Replace(" ","");
 
-            likedSurname = DealWithSpecialCharactersAndSpaces(request, likedSurname, ilrResults);
+            likedSurname = DealWithSpecialCharactersAndSpaces(request, likedSurname, enumerable);
 
-            ilrResults = ilrResults.Where(r =>(
+            ilrResults = enumerable?.Where(r =>(
                 r.EpaOrgId == thisEpao.EndPointAssessorOrganisationId ||
                 (r.EpaOrgId != thisEpao.EndPointAssessorOrganisationId && intStandards.Contains(r.StdCode)))
             && string.Equals(r.FamilyNameForSearch.Trim(), likedSurname.Trim(), StringComparison.CurrentCultureIgnoreCase)).ToList();
             
 
-            _logger.LogInformation(ilrResults.Any() ? LoggingConstants.SearchSuccess : LoggingConstants.SearchFailure);
+            _logger.LogInformation((enumerable != null && enumerable.Any())? LoggingConstants.SearchSuccess : LoggingConstants.SearchFailure);
 
             var searchResults = Mapper.Map<List<SearchResult>>(ilrResults)
                 .MatchUpExistingCompletedStandards(request, _certificateRepository, _contactRepository, _logger)
