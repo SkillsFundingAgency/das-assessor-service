@@ -45,8 +45,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [SwaggerResponse((int) HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> GetCollatedStandards()
         {
-
-            await _mediator.Send(new GatherStandardsRequest());
             return Ok(await _mediator.Send(new GetCollatedStandardsRequest()));
         }
 
