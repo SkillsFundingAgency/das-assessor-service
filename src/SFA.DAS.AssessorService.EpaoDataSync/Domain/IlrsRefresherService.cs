@@ -58,6 +58,9 @@ namespace SFA.DAS.AssessorService.EpaoDataSync.Domain
                 $"Finished inserting into Ilrs table. Number of updates {totalNumbersEffected}");
 
             await ProcessFromLearners(changedRecordsUlnCache);
+
+            //Clean up records with null names
+            await CleanupAnyIlrsRecordsWithNullNames();
         }
 
       
