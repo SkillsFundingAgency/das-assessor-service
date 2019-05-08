@@ -74,26 +74,26 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
 
             var likedSurname = request.Surname.Replace(" ", "");
 
-            var enumerable = ilrResults?.ToList();
-            if (request.IsPrivatelyFunded && (enumerable == null || (!enumerable.Any())))
+            var listOfIlrResults = ilrResults?.ToList();
+            if (request.IsPrivatelyFunded && (listOfIlrResults == null || (!listOfIlrResults.Any())))
             {
-                enumerable = new List<Ilr> { new Ilr { Uln = request.Uln, EpaOrgId = request.EpaOrgId, FamilyNameForSearch = request.Surname, FamilyName = request.Surname } };
-                likedSurname = DealWithSpecialCharactersAndSpaces(request, likedSurname, enumerable);
+                listOfIlrResults = new List<Ilr> { new Ilr { Uln = request.Uln, EpaOrgId = request.EpaOrgId, FamilyNameForSearch = request.Surname, FamilyName = request.Surname } };
+                likedSurname = DealWithSpecialCharactersAndSpaces(request, likedSurname, listOfIlrResults);
                 var certificate=
                     await _certificateRepository.GetCertificateByOrgIdLastname(request.Uln, request.EpaOrgId, likedSurname) ??
                     await _certificateRepository.GetCertificateByUlnLastname(request.Uln, likedSurname);
                 if(certificate == null)
                     return new List<SearchResult>();
 
-                enumerable[0].StdCode = certificate.StandardCode;
+                listOfIlrResults[0].StdCode = certificate.StandardCode;
             }
             else
             {
-                likedSurname = DealWithSpecialCharactersAndSpaces(request, likedSurname, enumerable);
+                likedSurname = DealWithSpecialCharactersAndSpaces(request, likedSurname, listOfIlrResults);
             }
 
 
-            ilrResults = enumerable?.Where(r =>(
+            ilrResults = listOfIlrResults?.Where(r =>(
                 r.EpaOrgId == thisEpao.EndPointAssessorOrganisationId ||
                 (r.EpaOrgId != thisEpao.EndPointAssessorOrganisationId && intStandards.Contains(r.StdCode)))
             && string.Equals(r.FamilyNameForSearch.Trim(), likedSurname.Trim(), StringComparison.CurrentCultureIgnoreCase)).ToList();
