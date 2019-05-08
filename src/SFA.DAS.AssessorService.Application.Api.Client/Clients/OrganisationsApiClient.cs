@@ -188,7 +188,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                 OrganisationStatus = organisationStatus
             };
           
-            using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/ao/assessment-organisations/standards/validate-new/"))
+            using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/ao/assessment-organisations/standards/validate-existing/"))
             {
                 return await PostPutRequestWithResponse<UpdateEpaOrganisationStandardValidationRequest, ValidationResponse>(request,
                     validationRequest);

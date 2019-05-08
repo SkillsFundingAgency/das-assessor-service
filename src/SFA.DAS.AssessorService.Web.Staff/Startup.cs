@@ -26,6 +26,7 @@ using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
 using SFA.DAS.AssessorService.ExternalApis.IFAStandards;
 using SFA.DAS.AssessorService.ExternalApis.Services;
 using SFA.DAS.AssessorService.Settings;
+using SFA.DAS.AssessorService.Web.Extensions;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.Staff.Helpers;
 using SFA.DAS.AssessorService.Web.Staff.Infrastructure;
@@ -191,6 +192,7 @@ namespace SFA.DAS.AssessorService.Web.Staff
             app.UseSession();
             app.UseRequestLocalization();
             app.UseStatusCodePagesWithReExecute("/ErrorPage/{0}");
+            app.UseSecurityHeaders();
             app.UseMvc(routes =>
             {
                 routes.MapRoute(

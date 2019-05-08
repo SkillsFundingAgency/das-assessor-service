@@ -183,10 +183,18 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
         {
             try
             {
-
                 MappingStartup.AddMappings();
 
-                if (env.IsDevelopment()) app.UseDeveloperExceptionPage();
+                //app.UseSecurityHeaders();
+                
+                if (env.IsDevelopment())
+                {
+                    app.UseDeveloperExceptionPage();
+                }
+                else
+                {
+                    app.UseHsts();
+                }
 
                 app.UseSwagger()
                     .UseSwaggerUI(c =>
@@ -198,7 +206,6 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                 app.UseMiddleware(typeof(ErrorHandlingMiddleware));
                 
                 app.UseRequestLocalization();
-
                 app.UseMvc();
             }
             catch (Exception e)
