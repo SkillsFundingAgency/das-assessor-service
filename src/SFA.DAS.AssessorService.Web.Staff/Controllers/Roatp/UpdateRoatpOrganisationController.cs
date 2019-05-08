@@ -175,7 +175,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
                 return await RefreshSearchResults();
             }
 
-            return View("~/Views/Roatp/UpdateOrganisationUkprn.cshtml", model);
+            return View("~/Views/Roatp/UpdateOrganisationCompanyNumber.cshtml", model);
         }
 
         [HttpPost]
