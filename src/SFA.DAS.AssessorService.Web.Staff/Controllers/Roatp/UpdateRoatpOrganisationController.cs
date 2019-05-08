@@ -364,7 +364,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
 
 
         [Route("change-charity-number")]
-        public async Task<IActionResult> UpdateOrganisationCharityyNumber()
+        public async Task<IActionResult> UpdateOrganisationCharityNumber()
         {
             var searchModel = _sessionService.GetSearchResults();
 
@@ -379,7 +379,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
         }
 
         [HttpPost]
-        public async Task<IActionResult> UpdateCompanyNumber(UpdateOrganisationCharityNumberViewModel model)
+        public async Task<IActionResult> UpdateCharityNumber(UpdateOrganisationCharityNumberViewModel model)
         {
             if (!ModelState.IsValid)
             {
