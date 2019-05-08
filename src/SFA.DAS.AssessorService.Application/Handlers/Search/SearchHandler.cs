@@ -99,7 +99,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
             && string.Equals(r.FamilyNameForSearch.Trim(), likedSurname.Trim(), StringComparison.CurrentCultureIgnoreCase)).ToList();
             
 
-            _logger.LogInformation((enumerable != null && enumerable.Any())? LoggingConstants.SearchSuccess : LoggingConstants.SearchFailure);
+            _logger.LogInformation((ilrResults != null && ilrResults.Any())? LoggingConstants.SearchSuccess : LoggingConstants.SearchFailure);
 
             var searchResults = Mapper.Map<List<SearchResult>>(ilrResults)
                 .MatchUpExistingCompletedStandards(request, _certificateRepository, _contactRepository, _logger)
