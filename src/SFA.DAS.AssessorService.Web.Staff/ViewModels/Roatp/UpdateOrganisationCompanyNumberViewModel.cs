@@ -3,7 +3,7 @@ using System.Runtime.Serialization;
 
 namespace SFA.DAS.AssessorService.Web.Staff.ViewModels.Roatp
 {
-    public class UpdateOrganisationCompaniesHouseNumberViewModel
+    public class UpdateOrganisationCompanyNumberViewModel
     {
         [DataMember]
         public string CompanyNumber { get; set; }
