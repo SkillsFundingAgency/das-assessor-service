@@ -99,7 +99,15 @@ namespace SFA.DAS.AssessorService.Web
                 }
             }
 
-            services.AddSession(opt => { opt.IdleTimeout = TimeSpan.FromHours(1); });
+            services.AddSession(opt =>
+            {
+                opt.IdleTimeout = TimeSpan.FromHours(1);
+                opt.Cookie = new CookieBuilder()
+                {
+                    Name = ".Assessors.Session",
+                    HttpOnly = true
+                };
+            });
             
             return ConfigureIoc(services);
         }        
@@ -166,7 +174,7 @@ namespace SFA.DAS.AssessorService.Web
 
             app.UseHttpsRedirection();
             app.UseStaticFiles()
-                .UseSession(new SessionOptions() { Cookie = new CookieBuilder() { Name = ".Assessors.Session", HttpOnly = true } })
+                .UseSession()
                 .UseAuthentication()
                 .UseRequestLocalization()
                 .UseMvc(routes =>
