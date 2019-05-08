@@ -362,5 +362,42 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
             return View("~/Views/Roatp/UpdateOrganisationProviderType.cshtml", model);
         }
 
+
+        [Route("change-charity-number")]
+        public async Task<IActionResult> UpdateOrganisationCharityyNumber()
+        {
+            var searchModel = _sessionService.GetSearchResults();
+
+            var model = new UpdateOrganisationCharityNumberViewModel
+            {
+                CharityNumber = searchModel.SelectedResult?.OrganisationData?.CharityNumber,
+                LegalName = searchModel.SelectedResult.LegalName,
+                OrganisationId = searchModel.SelectedResult.Id
+            };
+
+            return View("~/Views/Roatp/UpdateOrganisationCharityNumber.cshtml", model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateCompanyNumber(UpdateOrganisationCharityNumberViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View("~/Views/Roatp/UpdateOrganisationCharityNumber.cshtml", model);
+            }
+
+            model.UpdatedBy = HttpContext.User.OperatorName();
+            var request = Mapper.Map<UpdateOrganisationCharityNumberRequest>(model);
+            var result = await _apiClient.UpdateOrganisationCharityNumber(request);
+
+            if (result)
+            {
+                return await RefreshSearchResults();
+            }
+
+            return View("~/Views/Roatp/UpdateOrganisationCharityNumber.cshtml", model);
+        }
+
+
     }
 }
