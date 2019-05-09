@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Mvc.Internal;
 
 namespace SFA.DAS.AssessorService.Web.Extensions
 {
@@ -17,7 +18,7 @@ namespace SFA.DAS.AssessorService.Web.Extensions
                 context.Response.Headers.Add("Pragma", "no-cache");
                 await next();
             });
-            
+
             return app;
         }
     }
