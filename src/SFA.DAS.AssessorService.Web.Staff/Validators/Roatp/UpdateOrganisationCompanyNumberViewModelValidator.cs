@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Linq;
 using FluentValidation;
 using SFA.DAS.AssessorService.Web.Staff.ViewModels.Roatp;
 
@@ -24,8 +21,6 @@ namespace SFA.DAS.AssessorService.Web.Staff.Validators.Roatp
                 {
                     context.AddFailure(error.Field, error.ErrorMessage);
                 }
-
-
             });
         }
     }

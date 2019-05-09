@@ -7,7 +7,6 @@ namespace SFA.DAS.AssessorService.Web.Staff.ViewModels.Roatp
     {
         [DataMember]
         public string CompanyNumber { get; set; }
-
         [DataMember]
         public Guid OrganisationId { get; set; }
         public string LegalName { get; set; }
