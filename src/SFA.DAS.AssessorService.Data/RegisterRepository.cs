@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Dapper;
 using Newtonsoft.Json;
 using System.Linq;
+using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Data.DapperTypeHandlers;
 
 namespace SFA.DAS.AssessorService.Data
@@ -17,10 +18,12 @@ namespace SFA.DAS.AssessorService.Data
     {
 
         private readonly IWebConfiguration _configuration;
+        private readonly ILogger<RegisterRepository> _logger;
 
-        public RegisterRepository(IWebConfiguration configuration)
+        public RegisterRepository(IWebConfiguration configuration, ILogger<RegisterRepository> logger)
         {
             _configuration = configuration;
+            _logger = logger;
             SqlMapper.AddTypeHandler(typeof(OrganisationData), new OrganisationDataHandler());
             SqlMapper.AddTypeHandler(typeof(OrganisationStandardData), new OrganisationStandardDataHandler());
         }
@@ -61,6 +64,8 @@ namespace SFA.DAS.AssessorService.Data
                     "[OrganisationData] = @orgData, Status = @status WHERE [EndPointAssessorOrganisationId] = @organisationId",
                     new {org.Name, org.Ukprn, org.OrganisationTypeId, orgData, org.Status, org.OrganisationId});
        
+                _logger.LogInformation($"Updated EPAO Organisation {org.OrganisationId} with status = {org.Status}");
+                
                 return org.OrganisationId;
             }
         }
@@ -157,7 +162,7 @@ namespace SFA.DAS.AssessorService.Data
                     $@"INSERT INTO [dbo].[Contacts] ([Id],[CreatedAt],[DisplayName],[Email],[EndPointAssessorOrganisationId],[OrganisationId],[Status],[Username],[PhoneNumber], [GivenNames], [FamilyName], [SigninId], [SigninType]) " +
                     $@"VALUES (@id,getutcdate(), @displayName, @email, @endPointAssessorOrganisationId," +
                     $@"(select id from organisations where EndPointAssessorOrganisationId=@endPointAssessorOrganisationId), " +
-                    $@"'Live', @username, @PhoneNumber, @GivenNames, @FamilyName, @SigninId, @SigninType);",
+                    $@"'Live', @username, @PhoneNumber, @FirstName, @LastName, @SigninId, @SigninType);",
                     new
                     {
                         contact.Id,
@@ -166,8 +171,8 @@ namespace SFA.DAS.AssessorService.Data
                         contact.EndPointAssessorOrganisationId,
                         contact.Username,
                         contact.PhoneNumber,
-                        contact.GivenNames,
-                        contact.FamilyName,
+                        contact.FirstName,
+                        contact.LastName,
                         contact.SigninId,
                         contact.SigninType
                     });
@@ -234,9 +239,10 @@ namespace SFA.DAS.AssessorService.Data
 
                 connection.Execute(
                     "UPDATE [Contacts] SET [DisplayName] = @displayName, [Email] = @email, " +
+                    "[GivenNames] = @firstName, [FamilyName] = @lastName, " +
                     "[PhoneNumber] = @phoneNumber, [updatedAt] = getUtcDate() " +
                     "WHERE [Id] = @Id ",
-                    new { contact.DisplayName, contact.Email, contact.PhoneNumber, contact.Id});
+                    new { contact.DisplayName, contact.Email, contact.FirstName, contact.LastName, contact.PhoneNumber, contact.Id});
 
                 if (actionChoice == "MakePrimaryContact")
                     connection.Execute("update o set PrimaryContact = c.Username from organisations o " +

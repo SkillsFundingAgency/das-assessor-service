@@ -1,4 +1,6 @@
 ﻿using System;
+using Microsoft.Extensions.Logging;
+using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Handlers;
@@ -28,7 +30,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         [OneTimeSetUp]
         public void SetUpOrganisationTests()
         {
-            _repository = new RegisterRepository(_databaseService.WebConfiguration);
+            _repository = new RegisterRepository(_databaseService.WebConfiguration, new Mock<ILogger<RegisterRepository>>().Object);
             _validationRepository = new RegisterValidationRepository(_databaseService.WebConfiguration);
             _organisationIdCreated = "EPA0987";
             _ukprnCreated = 123321;
@@ -76,8 +78,8 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
                 PhoneNumber = "555 55555",
                 Status = OrganisationStatus.New,
                 SigninType = "",
-                GivenNames = "zzz",
-                FamilyName = "Ftagn"
+                FirstName = "zzz",
+                LastName = "Ftagn"
                
             };
         }

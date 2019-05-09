@@ -12,6 +12,11 @@
         public Guid OrganisationId { get; set; }
         public int ProviderTypeId { get; set; }
         public int OrganisationTypeId { get; set; }
+
+        public int OrganisationTypeIdMain { get; set; }
+        public int OrganisationTypeIdEmployer { get; set; }
+        public int OrganisationTypeIdSupporting { get; set; }
+
         public string UpdatedBy { get; set; }
 
         public bool CanChangeOrganisationTypeForThisProvider(int comparisonProviderTypeId)

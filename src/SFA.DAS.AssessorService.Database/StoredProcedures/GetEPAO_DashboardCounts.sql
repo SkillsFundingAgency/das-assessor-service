@@ -11,6 +11,9 @@ FROM (
     -- The active records from ilr
     SELECT 0 Assessments, COUNT(*) Pipeline, 0 Standards
     FROM ilrs il
+	-- ignore standards that have been deleted or have expired
+    JOIN OrganisationStandard os ON il.EpaOrgId = os.EndPointAssessorOrganisationId AND il.StdCode = os.StandardCode AND 
+         os.[Status] <> 'Deleted' AND (os.[EffectiveTo] IS NULL OR os.[EffectiveTo] >= GETDATE())
     JOIN (SELECT standardid, title, CONVERT(numeric,JSON_VALUE([StandardData],'$.Duration')) Duration FROM [dbo].[StandardCollation]) std ON std.StandardId = il.StdCode
     -- ignore already created certificates (by uln and standardcode)
     LEFT JOIN (SELECT DISTINCT uln, StandardCode FROM [Certificates] c1 ) ce ON ce.uln = il.uln AND ce.StandardCode = il.StdCode
