@@ -1462,10 +1462,6 @@ table.responsive [aria-sort="descending"] a:after {
   background-color: #ffbf47 !important;
 }
 
-.govuk-body-anchor {
-  line-height: 2.5em;
-}
-
 .form-hint--margin-bottom {
   margin-bottom: 15px;
 }
