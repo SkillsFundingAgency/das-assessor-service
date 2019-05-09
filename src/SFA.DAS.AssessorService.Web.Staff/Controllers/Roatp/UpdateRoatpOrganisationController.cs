@@ -143,7 +143,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
         }
 
 
-        [Route("change-companies-number")]
+        [Route("change-company-number")]
         public async Task<IActionResult> UpdateOrganisationCompanyNumber()
         {
             var searchModel = _sessionService.GetSearchResults();
