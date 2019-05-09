@@ -107,6 +107,14 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
+            if(string.IsNullOrEmpty(viewModel.OrganisationType))
+            {
+                ModelState.AddModelError(nameof(viewModel.OrganisationType), "Select an organisation type");
+                TempData["ShowErrors"] = true;
+                viewModel.OrganisationTypes = await _organisationsApiClient.GetOrganisationTypes();
+                return View("Type", viewModel);
+            }
+
             var organisationSearchResult = await GetOrganisation(viewModel.SearchString, viewModel.Name,
                 viewModel.Ukprn, viewModel.OrganisationType, viewModel.Postcode);
 
@@ -141,7 +149,17 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 viewModel.Organisations = new List<OrganisationSearchResult> {organisationSearchResult};
                 viewModel.OrganisationTypes = await _organisationsApiClient.GetOrganisationTypes();
 
-                return View(nameof(Type), viewModel);
+                // ON-1818 do not pre-select OrganisationType
+                // NOTE: ModelState overrides viewModel
+                viewModel.OrganisationType = null;
+                var orgTypeModelState = ModelState[nameof(viewModel.OrganisationType)];
+                if (orgTypeModelState != null)
+                {
+                    orgTypeModelState.RawValue = viewModel.OrganisationType;
+                    orgTypeModelState.Errors.Clear();
+                }
+
+                return View("Type", viewModel);
             }
             return View(nameof(Confirm),viewModel);
         }
@@ -250,16 +268,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
 
             return View(viewModel);
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> Type(OrganisationSearchViewModel viewModel)
-        {
-
-            viewModel.OrganisationTypes = await _organisationsApiClient.GetOrganisationTypes();
-            return View(viewModel);
-        }
-        
+        }     
 
         private async Task<OrganisationSearchResult> GetOrganisation(string searchString, string name, int? ukprn,
             string organisationType, string postcode)
