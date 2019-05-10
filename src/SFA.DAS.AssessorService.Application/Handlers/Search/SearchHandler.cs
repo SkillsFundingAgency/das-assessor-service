@@ -72,17 +72,34 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
 
             var ilrResults = await _ilrRepository.SearchForLearnerByUln(request.Uln);
 
-            var likedSurname = request.Surname.Replace(" ","");
+            var likedSurname = request.Surname.Replace(" ", "");
 
-            likedSurname = DealWithSpecialCharactersAndSpaces(request, likedSurname, ilrResults);
+            var listOfIlrResults = ilrResults?.ToList();
+            if (request.IsPrivatelyFunded && (listOfIlrResults == null || (!listOfIlrResults.Any())))
+            {
+                listOfIlrResults = new List<Ilr> { new Ilr { Uln = request.Uln, EpaOrgId = request.EpaOrgId, FamilyNameForSearch = request.Surname, FamilyName = request.Surname } };
+                likedSurname = DealWithSpecialCharactersAndSpaces(request, likedSurname, listOfIlrResults);
+                var certificate=
+                    await _certificateRepository.GetCertificateByOrgIdLastname(request.Uln, request.EpaOrgId, likedSurname) ??
+                    await _certificateRepository.GetCertificateByUlnLastname(request.Uln, likedSurname);
+                if(certificate == null)
+                    return new List<SearchResult>();
 
-            ilrResults = ilrResults.Where(r =>(
+                listOfIlrResults[0].StdCode = certificate.StandardCode;
+            }
+            else
+            {
+                likedSurname = DealWithSpecialCharactersAndSpaces(request, likedSurname, listOfIlrResults);
+            }
+
+
+            ilrResults = listOfIlrResults?.Where(r =>(
                 r.EpaOrgId == thisEpao.EndPointAssessorOrganisationId ||
                 (r.EpaOrgId != thisEpao.EndPointAssessorOrganisationId && intStandards.Contains(r.StdCode)))
             && string.Equals(r.FamilyNameForSearch.Trim(), likedSurname.Trim(), StringComparison.CurrentCultureIgnoreCase)).ToList();
             
 
-            _logger.LogInformation(ilrResults.Any() ? LoggingConstants.SearchSuccess : LoggingConstants.SearchFailure);
+            _logger.LogInformation((ilrResults != null && ilrResults.Any())? LoggingConstants.SearchSuccess : LoggingConstants.SearchFailure);
 
             var searchResults = Mapper.Map<List<SearchResult>>(ilrResults)
                 .MatchUpExistingCompletedStandards(request, _certificateRepository, _contactRepository, _logger)

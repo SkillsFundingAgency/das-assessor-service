@@ -1,17 +1,18 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Text;
 using FizzWare.NBuilder;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
 {
-    public class WhenSystemGetsPrivateCertificates
+    public class WhenSystemsGetsCertificateByOrgIdUlnAndLastname
     {
         private CertificateRepository _certificateRepository;
         private Mock<AssessorDbContext> _mockDbContext;
@@ -22,9 +23,7 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
         public void Arrange()
         {
             MappingBootstrapper.Initialize();
-
-            var organisation = Builder<Certificate>.CreateNew().Build();
-
+            
             var mockSet = CreateCertificateMockDbSet();
             _mockDbContext = CreateMockDbContext(mockSet);
 
@@ -33,8 +32,8 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
             _certificateRepository = new CertificateRepository(_mockDbContext.Object,
                 _mockDbConnection.Object);
             _certificateRepository = new CertificateRepository(_mockDbContext.Object, new Mock<IDbConnection>().Object);
-        
-          _result = _certificateRepository.GetPrivateCertificate(1111111111, "EPA0001").Result;
+
+            _result = _certificateRepository.GetCertificateByOrgIdLastname(1111111111, "EPA0001", "Hawkins").Result;
         }
 
         [Test]
@@ -46,12 +45,17 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
         private Mock<DbSet<Certificate>> CreateCertificateMockDbSet()
         {
             var certificates = Builder<Certificate>.CreateListOfSize(10)
-                .All()
+                .TheFirst(1)
                 .With(x => x.Organisation = Builder<Organisation>.CreateNew().Build())
                 .With(x => x.Uln = 1111111111)
                 .With(x => x.Organisation.EndPointAssessorOrganisationId = "EPA0001")
-                .With(x => x.IsPrivatelyFunded = true)
-                .Build()                
+                .With(x => x.CertificateData = "{'LearnerFamilyName':'Hawkins'}")
+                .TheNext(9)
+                .With(x => x.Organisation = Builder<Organisation>.CreateNew().Build())
+                .With(x => x.Uln = 1111111111)
+                .With(x => x.Organisation.EndPointAssessorOrganisationId = "EPA0001")
+                .With(x => x.CertificateData = "{'LearnerFamilyName':'Hawkins'}")
+                .Build()
                 .AsQueryable();
 
             var mockSet = new Mock<DbSet<Certificate>>();
@@ -69,7 +73,7 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
             mockSet.As<IQueryable<Certificate>>().Setup(m => m.GetEnumerator()).Returns(() => certificates.GetEnumerator());
 
             return mockSet;
-        }        
+        }
 
         private Mock<AssessorDbContext> CreateMockDbContext(Mock<DbSet<Certificate>> certificateMockDbSet)
         {
@@ -79,4 +83,3 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
         }
     }
 }
-

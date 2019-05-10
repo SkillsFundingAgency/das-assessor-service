@@ -24,10 +24,17 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
                 var standard = allStandards.SingleOrDefault(s => s.StandardId == searchResult.StdCode.ToString());
                 if (standard == null)
                 {
-                    standard = standardService.GetStandard(searchResult.StdCode).Result;
+                    try
+                    {
+                        standard = standardService.GetStandard(searchResult.StdCode)?.Result;
+                    }
+                    catch (Exception e)
+                    {
+                        logger.LogInformation($"Failed to get standard for {searchResult.StdCode}, error message: {e.Message}");
+                    }
                 }
-                searchResult.Standard = standard.Title;
-                searchResult.Level = standard.Level;
+                searchResult.Standard = standard?.Title;
+                searchResult.Level = standard?.Level ?? 0;
             }
 
             return searchResults;
@@ -52,6 +59,14 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
                 logger.LogInformation("MatchUpExistingCompletedStandards After GetCertificateLogsFor");
                 var submittedLogEntry = certificateLogs.FirstOrDefault(l => l.Status == CertificateStatus.Submitted);
                 var createdLogEntry = certificateLogs.FirstOrDefault(l => l.Status == CertificateStatus.Draft);
+                if (request.IsPrivatelyFunded)
+                {
+                    var toBeApprovedLogEntry = certificateLogs.FirstOrDefault(l => l.Status == CertificateStatus.ToBeApproved);
+                    if (toBeApprovedLogEntry == null)
+                        continue;
+                    submittedLogEntry = toBeApprovedLogEntry;
+                }
+
                 if (submittedLogEntry == null) continue;
 
                 var submittingContact = contactRepository.GetContact(submittedLogEntry.Username).Result ?? contactRepository.GetContact(certificate.UpdatedBy).Result;
