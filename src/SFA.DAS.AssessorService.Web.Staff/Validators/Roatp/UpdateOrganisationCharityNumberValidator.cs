@@ -22,7 +22,6 @@ namespace SFA.DAS.AssessorService.Web.Staff.Validators.Roatp
         {
             var errorMessages = new List<ValidationErrorDetail>();
 
-
             var duplicateCheckResponse = _apiClient
                 .DuplicateCharityNumberCheck(viewModel.OrganisationId, viewModel.CharityNumber).Result;
 
@@ -31,7 +30,6 @@ namespace SFA.DAS.AssessorService.Web.Staff.Validators.Roatp
             var duplicateErrorMessage = string.Format(RoatpOrganisationValidation.CharityNumberDuplicateMatch,
                 duplicateCheckResponse.DuplicateOrganisationName);
             errorMessages.Add(new ValidationErrorDetail("CharityNumber", duplicateErrorMessage));
-
 
             return errorMessages;
         }

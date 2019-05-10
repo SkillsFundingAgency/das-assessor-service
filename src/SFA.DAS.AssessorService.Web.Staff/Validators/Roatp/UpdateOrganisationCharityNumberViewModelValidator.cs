@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Linq;
 using FluentValidation;
 using SFA.DAS.AssessorService.Web.Staff.ViewModels.Roatp;
 
@@ -9,8 +6,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.Validators.Roatp
 {
     public class UpdateOrganisationCharityNumberViewModelValidator : AbstractValidator<UpdateOrganisationCharityNumberViewModel>
     {
-        private IRoatpOrganisationValidator _validator;
-        private IUpdateOrganisationCharityNumberValidator _duplicateValidator;
+        private readonly IRoatpOrganisationValidator _validator;
+        private readonly IUpdateOrganisationCharityNumberValidator _duplicateValidator;
         public UpdateOrganisationCharityNumberViewModelValidator(IRoatpOrganisationValidator validator, IUpdateOrganisationCharityNumberValidator duplicateValidator)
         {
             _validator = validator;
@@ -29,8 +26,6 @@ namespace SFA.DAS.AssessorService.Web.Staff.Validators.Roatp
                 {
                     context.AddFailure(error.Field, error.ErrorMessage);
                 }
-
-
             });
         }
     }
