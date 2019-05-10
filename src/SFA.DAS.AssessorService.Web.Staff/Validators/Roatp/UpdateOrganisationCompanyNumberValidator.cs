@@ -24,9 +24,10 @@ namespace SFA.DAS.AssessorService.Web.Staff.Validators.Roatp
 
             if (duplicateCheckResponse == null || !duplicateCheckResponse.DuplicateFound) return errorMessages;
 
-            var duplicateErrorMessage =
-                $"This is an existing Company Number for '{duplicateCheckResponse.DuplicateOrganisationName}'";
+            var duplicateErrorMessage = string.Format(RoatpOrganisationValidation.CompanyNumberDuplicateMatch,
+                duplicateCheckResponse.DuplicateOrganisationName);
             errorMessages.Add(new ValidationErrorDetail("CompanyNumber", duplicateErrorMessage));
+          
 
             return errorMessages;
         }
