@@ -381,7 +381,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
         }
 
 
-        [Route("change-charity-number")]
+        [Route("change-charity-registration-number")]
         public async Task<IActionResult> UpdateOrganisationCharityNumber()
         {
             var searchModel = _sessionService.GetSearchResults();
