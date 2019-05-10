@@ -120,6 +120,16 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
             if (organisationSearchResult != null)
             {
+                if (organisationSearchResult.CompanyNumber != null)
+                {
+                    var isActivelyTrading = await _organisationsApplyApiClient.IsCompanyActivelyTrading(organisationSearchResult.CompanyNumber);
+
+                    if (!isActivelyTrading)
+                    {
+                        return View("~/Views/OrganisationSearch/CompanyNotActive.cshtml", viewModel);
+                    }
+                }
+
                 viewModel.Organisations = new List<OrganisationSearchResult> {organisationSearchResult};
                 viewModel.OrganisationTypes = await _organisationsApiClient.GetOrganisationTypes();
             }
@@ -179,6 +189,16 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 viewModel.Ukprn, viewModel.OrganisationType, viewModel.Postcode);
             if (organisationSearchResult != null)
             {
+                if (organisationSearchResult.CompanyNumber != null)
+                {
+                    var isActivelyTrading = await _organisationsApplyApiClient.IsCompanyActivelyTrading(organisationSearchResult.CompanyNumber);
+
+                    if (!isActivelyTrading)
+                    {
+                        return View("~/Views/OrganisationSearch/CompanyNotActive.cshtml", viewModel);
+                    }
+                }
+
                 var orgDetails = new OrganisationDetails
                 {
                     OrganisationReferenceType = organisationSearchResult.OrganisationReferenceType,
