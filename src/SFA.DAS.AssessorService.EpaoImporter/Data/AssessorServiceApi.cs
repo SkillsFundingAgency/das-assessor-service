@@ -156,7 +156,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Data
 
         public async Task GatherStandards()
         {
-            await _httpClient.GetAsync("/api/ao/assessment-organisations/collated-standards");
+            await _httpClient.PostAsJsonAsync("/api/ao/update-standards", new {});
         }
     }
 }
