@@ -1,0 +1,47 @@
+﻿@model SFA.DAS.AssessorService.Web.ViewModels.Organisation.OrganisationSearchViewModel
+
+@{
+    ViewBag.Title = "Confirm organisation";
+    Layout = "_Layout";
+}
+
+<a asp-action="Results" asp-controller="OrganisationSearch" asp-route-searchString="@Model.SearchString" class="link-back">Back to search results</a>
+
+<div class="grid-row">
+    @if (!string.IsNullOrEmpty(Model.Name))
+    {
+    <div class="column-full">
+        <div class="form-group">
+            <h1 class="heading-xlarge">This company is no longer active</h1>
+
+            <h2 class="heading-medium">@Model.Name</h2>
+
+            <p class="bold govuk-margin-bottom-0">You must select an active company.</p>
+        </div>
+
+        <p class="govuk-body-anchor">
+            <a class="link" asp-action="Results" asp-controller="OrganisationSearch" asp-route-searchString="@Model.SearchString">Choose a different organisation</a>
+        </p>
+    </div>
+    }
+    else
+    {
+    <div class="column-full">
+        <div class="form-group">
+            <h1 class="heading-large">We cannot find your organisation details</h1>
+            <p>Check the:</p>
+            <ul class="list list-bullet ">
+                <li>spelling of the name</li>
+                <li><abbr title="UK provider reference number">UKPRN</abbr> is correct</li>
+                <li><abbr title="End-point assessor organisation">EPAO ID</abbr> is correct</li>
+                <li>company number</li>
+                <li>charity number</li>
+            </ul>
+        </div>
+
+        <p class="govuk-body-anchor">
+            <a class="link" asp-action="Results" asp-controller="OrganisationSearch" asp-route-searchString="@Model.SearchString">Back to search results</a>
+        </p>
+    </div>
+    }
+</div>
