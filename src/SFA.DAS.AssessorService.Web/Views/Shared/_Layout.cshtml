@@ -132,7 +132,7 @@
                     <p class="heading-small">
                         <span class="heading-secondary">
                             <span class="visually-hidden">Signed in as </span>
-                            <span class="nowrap">@SessionService.Get("LoggedInUser")</span>
+                            <span class="nowrap">@User.Identity.Name</span>
                         </span>
                         @if (@SessionService.Get("OrganisationName") != null)
                         {
