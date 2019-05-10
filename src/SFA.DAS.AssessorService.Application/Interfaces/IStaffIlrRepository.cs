@@ -9,9 +9,10 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
     {
         Task<IEnumerable<Ilr>> SearchForLearnerByCertificateReference(string certRef);
         Task<IEnumerable<Ilr>> SearchForLearnerByName(string learnerName, int page, int pageSize);
-        Task<int> CountLearnersByName(string learnerName);
+        Task<int> SearchForLearnerByNameCount(string learnerName);
         Task<StaffReposSearchResult> SearchForLearnerByEpaOrgId(StaffSearchRequest searchRequest);
-        Task<IEnumerable<Ilr>> SearchForLearnerByUln(StaffSearchRequest searchRequest);
+        Task<IEnumerable<Ilr>> SearchForLearnerByUln(long uln, int page, int pageSize);
+        Task<int> SearchForLearnerByUlnCount(long uln);
     }
 
     public class StaffReposSearchResult
