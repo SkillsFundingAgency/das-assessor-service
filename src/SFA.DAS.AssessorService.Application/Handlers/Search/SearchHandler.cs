@@ -77,6 +77,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
             var listOfIlrResults = ilrResults?.ToList();
             if (request.IsPrivatelyFunded && (listOfIlrResults == null || (!listOfIlrResults.Any())))
             {
+                //Learner not in ILR so try to create a in memort record with details from found certificate and request information
                 listOfIlrResults = new List<Ilr> { new Ilr { Uln = request.Uln, EpaOrgId = request.EpaOrgId, FamilyNameForSearch = request.Surname, FamilyName = request.Surname } };
                 likedSurname = DealWithSpecialCharactersAndSpaces(request, likedSurname, listOfIlrResults);
                 var certificate=
@@ -84,8 +85,13 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
                     await _certificateRepository.GetCertificateByUlnLastname(request.Uln, likedSurname);
                 if(certificate == null)
                     return new List<SearchResult>();
-
-                listOfIlrResults[0].StdCode = certificate.StandardCode;
+                //Check if standard in certificate exists in standards registered by calling org
+                if(intStandards?.Contains(certificate.StandardCode)??false)
+                    listOfIlrResults[0].StdCode = certificate.StandardCode;
+                else
+                    if(certificate.Organisation.EndPointAssessorOrganisationId != thisEpao.EndPointAssessorOrganisationId)
+                        return new List<SearchResult> {new SearchResult()};
+                   
             }
             else
             {
@@ -104,6 +110,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
             var searchResults = Mapper.Map<List<SearchResult>>(ilrResults)
                 .MatchUpExistingCompletedStandards(request, _certificateRepository, _contactRepository, _logger)
                 .PopulateStandards(_standardService, _logger);
+
 
             await _ilrRepository.StoreSearchLog(new SearchLog()
             {

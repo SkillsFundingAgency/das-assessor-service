@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Web.Constants;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.Orchestrators.Search;
@@ -47,11 +49,22 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
             var result = await _searchOrchestrator.Search(vm);
 
-            if (vm.IsPrivatelyFunded && !result.SearchResults.Any())
+            if (result.IsPrivatelyFunded)
             {
-                return RedirectToAction("Index", "CertificatePrivateDeclaration", vm);
+                if (!result.SearchResults.Any())
+                {
+                    return RedirectToAction("Index", "CertificatePrivateDeclaration", vm);
+                }
+                if (result.SearchResults.Any(x => x.Uln == "0" && x.GivenNames == null))
+                {
+                    vm.SearchResults = new List<ResultViewModel>();
+                    return View("Index", vm);
+                }
+                if (result.SearchResults.Any(x => x.Standard == null))
+                {
+                    return RedirectToAction("Index", "CertificatePrivateDeclaration", vm);
+                }
             }
-
 
             if (!result.SearchResults.Any())
                 return View("Index", vm);
