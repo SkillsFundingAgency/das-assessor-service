@@ -39,6 +39,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             
         }
 
+        public async Task<bool> IsCompanyActivelyTrading(string companyNumber)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get,  $"/OrganisationSearch/{companyNumber}/isActivelyTrading"))
+            {
+                return await RequestAndDeserialiseAsync<bool>(request, $"Could not retrieve trading details for the organisation with an company number of {companyNumber}");
+            }
+        }
+
         public async Task<Organisation> ConfirmSearchedOrganisation(CreateOrganisationRequest createOrganisationRequest)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Post,
@@ -77,6 +85,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
     public interface IOrganisationsApplyApiClient
     {
         Task<IEnumerable<OrganisationSearchResult>> SearchForOrganisations(string searchTerm);
+        Task<bool> IsCompanyActivelyTrading(string companyNumber);
         Task<Organisation> ConfirmSearchedOrganisation(CreateOrganisationRequest createOrganisationRequest);
         Task<Organisation> CreateNewOrganisation(CreateOrganisationRequest createOrganisationRequest);
         Task<Organisation> DoesOrganisationExist(string name);
