@@ -84,7 +84,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                     failedResponse.Content.ReadAsStringAsync().Result));
         }
 
-        protected async Task<T> RequestAndDeserialiseAsync<T>(HttpRequestMessage request, string message = null) where T : class
+        protected async Task<T> RequestAndDeserialiseAsync<T>(HttpRequestMessage request, string message = null)
         {
             HttpRequestMessage clonedRequest = null;
 
@@ -100,6 +100,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 
             if (result.StatusCode == HttpStatusCode.OK)
             {
+                // NOTE: Struct values are valid JSON. For example: 'True'
                 var json = await result.Content.ReadAsStringAsync();
                 return await Task.Factory.StartNew<T>(() => JsonConvert.DeserializeObject<T>(json, JsonSettings));
             }
@@ -119,8 +120,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 
             RaiseResponseError(clonedRequest, result);
 
-            return null;
-
+            return default(T);
         }
 
         protected async Task<U> PostPutRequestWithResponse<T, U>(HttpRequestMessage requestMessage, T model)
