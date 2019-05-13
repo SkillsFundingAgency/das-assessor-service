@@ -105,18 +105,6 @@
                         <p class="govuk-!-font-weight-bold govuk-!-margin-top-0 govuk-!-margin-bottom-0">@SessionService.Get("OrganisationName")</p>
                     }
 
-@*
-                    @if (SessionService.Get("OrganisationName") != null)
-                    {
-                        <span class="govuk-!-font-weight-bold">@SessionService.Get("OrganisationName")</span>
-                    }
-
-                    @if (User.Identity.Name != null)
-                    {
-                        <span class="govuk-visually-hidden">Signed in as </span>
-                        <span>@User.Identity.Name</span>
-                    }
-*@
                 </span>
                 <span class="govuk-body-s das-user-panel__item">
                     <a class="govuk-link govuk-link--white" asp-controller="Home" asp-action="ContactUs">Contact us</a>
@@ -128,35 +116,6 @@
         </div>
     </div>
 
-    @*
-    <div class="header-user">
-        <div id="global-header-bar" class="global-header-bar--dark-blue"></div>
-        <div class="header-inner">
-            <div id="header-user--nav" class="grid-row">
-                <div class="column-one-half">
-                    <p class="heading-small">
-                        @SessionService.Get("OrganisationName")
-                        <span class="heading-secondary">
-                            <span class="visually-hidden">Logged in as </span>@User.Identity.Name
-                        </span>
-                    </p>
-                </div>
-                <div class="column-one-half">
-                    <nav id="user-nav" class="js-hidden-mobile">
-                        <ul>
-                            <li>
-                                <a asp-controller="Home" asp-action="ContactUs">Contact us</a>
-                            </li>
-                            <li>
-                                <a asp-controller="Account" asp-action="SignOut">Sign out</a>
-                            </li>
-                        </ul>
-                    </nav>
-                </div>
-            </div>
-        </div>
-    </div>
-    *@
 }
 
 <div class="govuk-width-container">
@@ -211,41 +170,6 @@
     </div>
 </footer>
 
-@*
-<footer class="group js-footer" id="footer" role="contentinfo">
-
-    <div class="footer-wrapper">
-        <div class="footer-meta">
-
-            <div class="footer-meta-inner">
-                <h2 class="visually-hidden">Support links</h2>
-                <ul>
-                    <li>
-                        <a asp-controller="Home" asp-action="Cookies">Cookies</a>
-                    </li>
-                    <li>
-                        <a asp-controller="Home" asp-action="Privacy">Privacy</a>
-                    </li>
-                </ul>
-
-                <div class="open-government-licence">
-                    <p class="logo">
-                        <a href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/" rel="license">Open Government Licence</a>
-                    </p>
-                    <p>All content is available under the
-                        <a href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/" rel="license">Open Government Licence v3.0</a>, except where otherwise stated</p>
-                </div>
-            </div>
-
-            <div class="copyright">
-                <a href="https://www.nationalarchives.gov.uk/information-management/re-using-public-sector-information/copyright-and-re-use/crown-copyright/">© Crown copyright</a>
-            </div>
-
-        </div>
-    </div>
-</footer>
-*@
-
 <div id="global-app-error" class="app-error hidden"></div>
 
 <script src="/javascripts/govuk-frontend-2.5.1.min.js"></script>
@@ -275,10 +199,6 @@
 *@
 
 @RenderSection("Scripts", required: false)
-
-@*
-<script>if (typeof window.GOVUK === 'undefined') document.body.className = document.body.className.replace('js-enabled', '');</script>
-*@
 
 </body>
 

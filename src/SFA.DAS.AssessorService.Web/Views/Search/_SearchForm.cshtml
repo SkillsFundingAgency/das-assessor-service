@@ -40,7 +40,7 @@
         <h3 class="govuk-heading-m">@Localizer["SearchInfoSummary"]</h3>
     </div>
 
-     <div class="govuk-form-group" sfa-validation-for="Surname" sfa-validationerror-class="form-group-error">
+     <div class="govuk-form-group" sfa-validation-for="Surname" sfa-validationerror-class="govuk-form-group--error">
         <label class="govuk-label govuk-label--m" for="Surname">
             @Localizer["Lastname"]
         </label>
@@ -49,7 +49,7 @@
         <input class="govuk-input govuk-!-width-two-thirds" name="Surname" autocomplete="off" sfa-validation-for="Surname" sfa-validationerror-class="govuk-input--error" asp-for="Surname" type="text" maxlength="100" />
     </div>
 
-     <div class="govuk-form-group" sfa-validation-for="Uln" sfa-validationerror-class="form-group-error">
+     <div class="govuk-form-group" sfa-validation-for="Uln" sfa-validationerror-class="govuk-form-group--error">
         <label class="govuk-label govuk-label--m" for="Uln">
             <span class="form-label-bold">Unique learner number (<abbr title="Unique learner number">ULN</abbr>)</span>
         </label>
@@ -57,23 +57,6 @@
         <span class="govuk-error-message" asp-validation-for="Uln"></span>
         <input class="govuk-input govuk-input--width-10 js-integers-only" name="Uln" autocomplete="off" asp-for="Uln" type="text" sfa-validation-for="Uln" sfa-validationerror-class="govuk-input--error" maxlength="10" />
     </div>
-
-
-    @*
-     <div class="govuk-form-group">
-        <div class="multiple-choice">
-            <input name="IsPrivatelyFunded" asp-for="IsPrivatelyFunded" type="checkbox" type="checkbox" />
-            <label for="IsPrivatelyFunded">@Localizer["PrivatelyFunded"]</label>
-        </div>
-    </div>
-    <details> 
-        <summary><span class="summary">How do I know if the apprenticeship is privately funded?</span></summary> 
-        <div class="panel panel-border-narrow" id="what-is-a-unique-learner-number"> 
-            <p>The training provider and employer will know if the apprenticeship is privately funded.</p> 
-            <p>A privately funded apprenticeship doesn't receive government funding and isn't subject to ESFA funding rules.</p> 
-        </div> 
-    </details>
-    *@
 
     <input class="govuk-button" id="button-search" type="submit" value="@Localizer["SearchButton"]">
 

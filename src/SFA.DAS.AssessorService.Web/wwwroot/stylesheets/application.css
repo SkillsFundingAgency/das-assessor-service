@@ -555,6 +555,7 @@
 
 .app-navigation__list > li a {
   display: block;
+  color: #005ea5;
   padding: 15px;
   border-bottom: 2px solid #fff;
   font-weight: 400;
@@ -582,6 +583,7 @@
 
 @media (min-width: 40.0625em) {
   .app-navigation__list > li a {
+    color: #005ea5;
     padding: 15px 30px;
   }
 }
@@ -991,4 +993,28 @@ TODO: change to 'das-page-navigation' and BEM
 
 .js-error-summary {
   display: none;
+}
+
+.das-code {
+  color: #0b0c0c;
+  background-color: #f8f8f8;
+  text-shadow: 0 1px #fff;
+  font-family: Consolas, Monaco, "Andale Mono", "Ubuntu Mono", monospace;
+  font-size: 14px;
+  direction: ltr;
+  text-align: left;
+  white-space: pre;
+  word-spacing: normal;
+  word-break: normal;
+  line-height: 1.5;
+  -moz-tab-size: 4;
+  -o-tab-size: 4;
+  tab-size: 4;
+  -webkit-hyphens: none;
+  -moz-hyphens: none;
+  -ms-hyphens: none;
+  hyphens: none;
+  border: 1px solid #bfc1c3;
+  padding: 4px 4px 2px;
+  margin-bottom: 30px;
 }
