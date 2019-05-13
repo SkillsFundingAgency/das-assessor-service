@@ -3,6 +3,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -30,22 +31,24 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
 
             services.AddAuthentication(options =>
                 {
-                    options.DefaultScheme = "Cookies";
-                    options.DefaultChallengeScheme = "oidc";
+                    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                    options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
                 })
-                .AddCookie(options =>
+                .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
                 {
                     options.Cookie.Name = ".Assessors.Cookies";
+                    options.Cookie.HttpOnly = true;
+
                     if (!env.IsDevelopment())
                     {
                         options.Cookie.Domain = ".apprenticeships.education.gov.uk";
                     }
-                    options.Cookie.HttpOnly = true;
+
                     options.SlidingExpiration = true;
-                    options.ExpireTimeSpan = TimeSpan.FromHours(1);
+                    options.ExpireTimeSpan = TimeSpan.FromHours(1); 
                 })
-                .AddOpenIdConnect("oidc", options =>
-                 {
+                .AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme, options =>
+                {
                      options.CorrelationCookie = new CookieBuilder()
                      {
                          Name = ".Assessors.Correlation.",
@@ -67,7 +70,7 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
 
                      options.DisableTelemetry = true;
                      options.Events = new OpenIdConnectEvents
-                     {
+                     {   
                          // Sometimes, problems in the OIDC provider (such as session timeouts)
                          // Redirect the user to the /auth/cb endpoint. ASP.NET Core middleware interprets this by default
                          // as a successful authentication and throws in surprise when it doesn't find an authorization code.

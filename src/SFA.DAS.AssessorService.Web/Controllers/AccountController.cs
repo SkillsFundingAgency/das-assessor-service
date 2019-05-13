@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -43,7 +44,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             var redirectUrl = Url.Action(nameof(PostSignIn), "Account");
             return Challenge(
                 new AuthenticationProperties {RedirectUri = redirectUrl},
-                "oidc");
+                OpenIdConnectDefaults.AuthenticationScheme);
         }
 
         [HttpGet]
@@ -86,7 +87,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             ResetCookies();
 
             return SignOut(
-                CookieAuthenticationDefaults.AuthenticationScheme, "oidc");
+                CookieAuthenticationDefaults.AuthenticationScheme, OpenIdConnectDefaults.AuthenticationScheme);
         }
 
         [HttpGet]
