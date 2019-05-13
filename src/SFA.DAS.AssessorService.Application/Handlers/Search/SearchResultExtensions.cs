@@ -44,6 +44,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
         {
             logger.LogInformation("MatchUpExistingCompletedStandards Before Get Certificates for uln from db");
             var completedCertificates = certificateRepository.GetCompletedCertificatesFor(request.Uln).Result;
+
             logger.LogInformation("MatchUpExistingCompletedStandards After Get Certificates for uln from db");
             foreach (var searchResult in searchResults.Where(r => completedCertificates.Select(s => s.StandardCode).Contains(r.StdCode)))
             {
@@ -113,6 +114,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
             }
 
             return searchResults;
-        }
+        
     }
-}
+}}
