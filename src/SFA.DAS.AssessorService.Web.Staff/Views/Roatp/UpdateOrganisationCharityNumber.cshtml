@@ -47,7 +47,7 @@
                 <form method="post" asp-action="UpdateCharityNumber" asp-controller="UpdateRoatpOrganisation">
                     @Html.HiddenFor(x => x.OrganisationId)
                     <div class="govuk-form-group" sfa-validation-for="CharityNumber" sfa-validationerror-class="form-group-error">
-                        <label for="CharityNumber" class="roatp-label">Charity Number</label>
+                        <label for="CharityNumber" class="roatp-label">Charity registration number</label>
                         <span class="error-message" asp-validation-for="CharityNumber"></span>
                         <input id="CharityNumber" name="CharityNumber" type="text" class="roatp-input" asp-for="CharityNumber"
                                sfa-validation-for="CharityNumber" sfa-validationerror-class="form-control-error" />
