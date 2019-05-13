@@ -77,7 +77,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
             var listOfIlrResults = ilrResults?.ToList();
             if (request.IsPrivatelyFunded && (listOfIlrResults == null || (!listOfIlrResults.Any())))
             {
-                //Learner not in ILR so try to create a in memort record with details from found certificate and request information
+                //Learner not in ILR so try to create a in memory record with details from found certificate and request information
                 listOfIlrResults = new List<Ilr> { new Ilr { Uln = request.Uln, EpaOrgId = request.EpaOrgId, FamilyNameForSearch = request.Surname, FamilyName = request.Surname } };
                 likedSurname = DealWithSpecialCharactersAndSpaces(request, likedSurname, listOfIlrResults);
                 var certificate=
