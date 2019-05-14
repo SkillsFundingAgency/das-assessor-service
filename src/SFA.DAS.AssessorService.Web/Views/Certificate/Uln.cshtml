@@ -15,7 +15,6 @@
             <form class="apprentice-uln-form js-disable-on-submit" method="post" asp-action="Uln" asp-controller="CertificatePrivateUln">
                 @Html.HiddenFor(c => c.Id)
 
-                @*
                 <div class="js-error-summary govuk-error-summary" role="alert" aria-labelledby="error-summary-title" tabindex="-1" data-module="error-summary">
                     <h2 class="govuk-error-summary__title" id="error-summary-title">
                         There is a problem
@@ -24,7 +23,6 @@
                         <ul class="js-error-summary-list govuk-list govuk-error-summary__list"></ul>
                     </div>
                 </div>
-                *@
 
                 @if (!ViewData.ModelState.IsValid)
                 {
