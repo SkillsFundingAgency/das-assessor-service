@@ -17,5 +17,6 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Search
         public DateTime? AchDate { get; set; }
         public DateTime? LearnStartDate { get; set; }
         public bool ShowExtraInfo { get; set; }
+        public bool UlnAlreadyExits { get; set; }
     }
 }

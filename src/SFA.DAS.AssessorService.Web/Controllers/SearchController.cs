@@ -55,15 +55,23 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 {
                     return RedirectToAction("Index", "CertificatePrivateDeclaration", vm);
                 }
+
+                if (result.SearchResults.Any(x => x.UlnAlreadyExits))
+                {
+                   // return RedirectToAction("Index", vm);
+                }
+
                 if (result.SearchResults.Any(x => x.Uln == "0" && x.GivenNames == null))
                 {
                     vm.SearchResults = new List<ResultViewModel>();
                     return View("Index", vm);
                 }
-                if (result.SearchResults.Any(x => x.Standard == null))
+                if (result.SearchResults.Any(x => x.Standard == null || x.CertificateReference == null))
                 {
                     return RedirectToAction("Index", "CertificatePrivateDeclaration", vm);
                 }
+
+              
             }
 
             if (!result.SearchResults.Any())

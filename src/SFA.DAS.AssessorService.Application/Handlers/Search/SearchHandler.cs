@@ -83,8 +83,18 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
                 var certificate=
                     await _certificateRepository.GetCertificateByOrgIdLastname(request.Uln, request.EpaOrgId, likedSurname) ??
                     await _certificateRepository.GetCertificateByUlnLastname(request.Uln, likedSurname);
-                if(certificate == null)
-                    return new List<SearchResult>();
+                if (certificate == null)
+                {
+                    //Check if there is a certificate that exist with the given uln and org
+                    certificate = await _certificateRepository.GetPrivateCertificate(request.Uln, request.EpaOrgId);
+                    if (certificate == null)
+                        return new List<SearchResult>();
+                    else
+                    {
+                        return new List<SearchResult> { new SearchResult{UlnAlreadyExits = true} };
+                    }
+                }
+
                 //Check if standard in certificate exists in standards registered by calling org
                 if(intStandards?.Contains(certificate.StandardCode)??false)
                     listOfIlrResults[0].StdCode = certificate.StandardCode;
