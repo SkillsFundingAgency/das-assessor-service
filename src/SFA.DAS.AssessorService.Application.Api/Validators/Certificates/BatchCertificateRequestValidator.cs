@@ -79,7 +79,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.Certificates
                 RuleFor(m => m.CertificateData.OverallGrade)
                     .Custom((overallGrade, context) =>
                     {
-                        var grades = new string[] { CertificateGrade.Pass, CertificateGrade.Merit, CertificateGrade.Distinction, CertificateGrade.PassWithExcellence, CertificateGrade.NoGradeAwarded, CertificateGrade.Fail };
+                        var grades = new string[] { CertificateGrade.Pass, CertificateGrade.Credit, CertificateGrade.Merit, CertificateGrade.Distinction, CertificateGrade.PassWithExcellence, CertificateGrade.NoGradeAwarded, CertificateGrade.Fail };
 
                         if (string.IsNullOrWhiteSpace(overallGrade))
                         {
