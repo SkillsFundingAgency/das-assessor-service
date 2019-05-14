@@ -84,17 +84,21 @@ else
                     </div>
 
                     <div class="info-highlighted js-address-panel hidden">
-                        <ul></ul>
+                        <ul class="govuk-list"></ul>
                     </div>
 
 
                     if (!String.IsNullOrEmpty(Model.PreviousAddress?.StringifiedAddress))
                     {
                         <div class="govuk-form-group js-select-previous-address">
-                            <span>@Localizer["UseLastAddress"]</span>
-                            <div class="multiple-choice">
-                                <input name="SelectPreviousAddress" asp-for="SelectPreviousAddress" type="checkbox"/>
-                                <label for="SelectPreviousAddress">@Model.PreviousAddress.StringifiedAddress</label>
+                            <p class="govuk-body govuk-!-margin-bottom-2">@Localizer["UseLastAddress"]</p>
+                            <div class="govuk-checkboxes">
+                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" name="SelectPreviousAddress" asp-for="SelectPreviousAddress" type="checkbox"/>
+                                    <label class="govuk-label govuk-checkboxes__label" for="SelectPreviousAddress">
+                                        @Model.PreviousAddress.StringifiedAddress
+                                    </label>
+                                </div>
                             </div>
                         </div>
                     }
