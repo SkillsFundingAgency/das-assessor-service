@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using FluentAssertions;
+using Microsoft.Extensions.Logging;
+using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Handlers;
@@ -30,7 +32,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         [OneTimeSetUp]
         public void SetUpOrganisationTests()
         {
-            _repository = new RegisterRepository(_databaseService.WebConfiguration);
+            _repository = new RegisterRepository(_databaseService.WebConfiguration, new Mock<ILogger<RegisterRepository>>().Object);
             _organisationIdCreated = "EPA987";
             _ukprnBefore = 123321;
             _ukprnAfter = 124421;
