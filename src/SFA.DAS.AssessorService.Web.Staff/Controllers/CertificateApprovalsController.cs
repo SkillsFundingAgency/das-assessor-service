@@ -37,7 +37,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         public async Task<IActionResult> New(int? pageIndex)
         {
             var certificates =
-                await ApiClient.GetCertificatesToBeApproved(0, pageIndex ?? 1, CertificateStatus.ToBeApproved, null);
+                await ApiClient.GetCertificatesToBeApproved(PageSize, pageIndex ?? 1, CertificateStatus.ToBeApproved, null);
             var items = Mapper.Map<List<CertificateDetailApprovalViewModel>>(
                 certificates.Items.OrderByDescending(x => x.CreatedDay));
             var certificatesToBeApproved = new CertificateApprovalViewModel
