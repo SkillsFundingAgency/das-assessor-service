@@ -6,11 +6,11 @@ namespace SFA.DAS.AssessorService.Api.Types.Models
 {
     public class EmailAllApprovedContactsRequest
     {
-        public EmailAllApprovedContactsRequest(string displayName, string organisationReferenceId, string serviceLibnk)
+        public EmailAllApprovedContactsRequest(string displayName, string organisationReferenceId, string serviceLink)
         {
             DisplayName = displayName;
             OrganisationReferenceId = organisationReferenceId;
-            ServiceLink = serviceLibnk;
+            ServiceLink = serviceLink;
         }
 
         public string DisplayName { get; }

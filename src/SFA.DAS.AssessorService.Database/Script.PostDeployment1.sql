@@ -87,6 +87,10 @@ VALUES (NEWID(), N'EPAOUserApproveRequest', N'5bb920f4-06ec-43c7-b00a-8fad33ce80
 END
 */
 
+UPDATE EMailTemplates
+SET [TemplateId] = 'f7ca95a9-54fb-4f5f-8a88-840445f98c8b'
+WHERE [TemplateName] = 'EPAOUserApproveRequest'
+
 /* DONE 
 -- setup Privileges
 IF NOT EXISTS (SELECT * FROM [Privileges] WHERE [UserPrivilege] = N'Manage users')

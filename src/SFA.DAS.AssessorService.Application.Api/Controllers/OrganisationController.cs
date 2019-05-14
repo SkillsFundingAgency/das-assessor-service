@@ -97,21 +97,26 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         public async Task<IActionResult> NotifyAllApprovedUsers([FromBody]EmailAllApprovedContactsRequest emailAllApprovedContactsRequest)
         {
             const string epaoUserApproveRequestTemplate = "EPAOUserApproveRequest";
+            const string serviceName = "Apprenticeship assessment service";
+            const string serviceTeam = "Apprenticeship assessment service team";
+
             _logger.LogInformation("Received request to Notify Organisation Users");
 
             try
             {
-               var emailTemplate = await _mediator.Send(new GetEMailTemplateRequest
-                       {TemplateName= epaoUserApproveRequestTemplate });
-               var contacts= await _mediator.Send(new GetContactsForOrganisationRequest(emailAllApprovedContactsRequest.OrganisationReferenceId));
-               foreach (var contact in contacts)
-               {
-                   await _mediator.Send(new SendEmailRequest(contact.Email, emailTemplate, new
-                   {
-                       username = $"{emailAllApprovedContactsRequest.DisplayName}",
-                       ServiceLink = $"{emailAllApprovedContactsRequest.ServiceLink}"
-                   }));
-               }
+                var emailTemplate = await _mediator.Send(new GetEMailTemplateRequest { TemplateName = epaoUserApproveRequestTemplate });
+                var contacts = await _mediator.Send(new GetContactsForOrganisationRequest(emailAllApprovedContactsRequest.OrganisationReferenceId));
+                foreach (var contact in contacts)
+                {
+                    await _mediator.Send(new SendEmailRequest(contact.Email, emailTemplate, new
+                    {
+                        Contact = contact.DisplayName,
+                        username = $"{emailAllApprovedContactsRequest.DisplayName}",
+                        LoginLink = $"{emailAllApprovedContactsRequest.ServiceLink}",
+                        ServiceName = serviceName,
+                        ServiceTeam = serviceTeam
+                    }));
+                }
             }
             catch (NotFound)
             {
@@ -120,6 +125,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
             return NoContent();
         }
-        
+
     }
 }
