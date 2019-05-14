@@ -11,6 +11,7 @@ using NUnit.Framework;
 using SFA.DAS.Apprenticeships.Api.Types;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
+using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Handlers.ao;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Data;
@@ -42,7 +43,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
         private int _id2;
         private int _id3;
         private List<int> _expectedDeliveryAreas;
-        private List<StandardSummary> _allStandardSummaries;
+        private List<StandardCollation> _allStandardSummaries;
         private string _expectedTitle1;
         private string _expectedTitle2;
 
@@ -73,12 +74,12 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
 
             _expectedDeliveryAreas = new List<int>{1,2};
 
-            _allStandardSummaries = new List<StandardSummary>
+            _allStandardSummaries = new List<StandardCollation>
             {
-                new StandardSummary {Id = _id1.ToString(), Title = _expectedTitle1},
-                new StandardSummary {Id = _id2.ToString(), Title = _expectedTitle2},
-                new StandardSummary {Id = _id3.ToString(), Title = "Standard 3"},
-                new StandardSummary{ Id = "534", Title = "Unmapped standard"}
+                new StandardCollation {StandardId = _id1, Title = _expectedTitle1},
+                new StandardCollation {StandardId = _id2, Title = _expectedTitle2},
+                new StandardCollation {StandardId = _id3, Title = "Standard 3"},
+                new StandardCollation {StandardId = 534, Title = "Unmapped standard"}
             };
             
             _request = new GetStandardsByOrganisationRequest { OrganisationId = _organisationId };
@@ -122,7 +123,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
             Assert.AreEqual(effectiveFrom1, standard.EffectiveFrom);
             Assert.AreEqual(null, standard.EffectiveTo);
             Assert.AreEqual(_expectedDeliveryAreas, standard.DeliveryAreas);
-            Assert.AreEqual(_expectedTitle1, standard.StandardSummary.Title);
+            Assert.AreEqual(_expectedTitle1, standard.StandardCollation.Title);
         }
 
         [Test]
@@ -132,7 +133,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
             var standard = standards.First(s => s.OrganisationId == _organisationId && s.StandardCode == _standardCode2);
             Assert.AreEqual(effectiveFrom2, standard.EffectiveFrom);
             Assert.AreEqual(effectiveTo2, standard.EffectiveTo);
-            Assert.AreEqual(_expectedTitle2, standard.StandardSummary.Title);
+            Assert.AreEqual(_expectedTitle2, standard.StandardCollation.Title);
         }
     }
 }

@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using SFA.DAS.Apprenticeships.Api.Types;
 using SFA.DAS.Apprenticeships.Api.Types.AssessmentOrgs;
+using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Handlers.Search;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
@@ -27,8 +28,9 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
             AssessmentOrgsApiClient = new Mock<IAssessmentOrgsApiClient>();
             StandardService = new Mock<IStandardService>();
 
-            StandardService.Setup(c => c.GetAllStandards())
-                .ReturnsAsync(new List<Standard> { new Standard{Title = "Standard Name 12", Level = 2}, new Standard{Title = "Standard Name 13", Level = 3} });
+            StandardService.Setup(c => c.GetAllStandardsV2())
+                .ReturnsAsync(new List<StandardCollation> { new StandardCollation{Title = "Standard Name 12", StandardData = new StandardData{Level = 2}}, 
+                    new StandardCollation{Title = "Standard Name 13", StandardData = new StandardData{Level = 3}} });
 
             AssessmentOrgsApiClient.Setup(c => c.FindAllStandardsByOrganisationIdAsync("EPA001"))
                 .ReturnsAsync(new List<StandardOrganisationSummary>
@@ -37,9 +39,9 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
                     new StandardOrganisationSummary {StandardCode = "13"}
                 });
                       StandardService.Setup(c => c.GetStandard(12))
-                .ReturnsAsync(new Standard { Title = "Standard Name 12", Level = 2 });
+                .ReturnsAsync(new StandardCollation { Title = "Standard Name 12", StandardData = new StandardData{Level = 2} });
             StandardService.Setup(c => c.GetStandard(13))
-                .ReturnsAsync(new Standard { Title = "Standard Name 13", Level = 3 });
+                .ReturnsAsync(new StandardCollation { Title = "Standard Name 13", StandardData = new StandardData{Level = 3}});
 
 
             var orgQueryRepo = new Mock<IOrganisationQueryRepository>();

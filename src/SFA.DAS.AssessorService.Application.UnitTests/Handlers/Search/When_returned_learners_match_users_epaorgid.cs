@@ -8,6 +8,7 @@ using NUnit.Framework;
 using SFA.DAS.Apprenticeships.Api.Types;
 using SFA.DAS.Apprenticeships.Api.Types.AssessmentOrgs;
 using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Handlers.Search;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
@@ -39,12 +40,12 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
 
             var assessmentOrgsApiClient = new Mock<IAssessmentOrgsApiClient>();
             var standardService = new Mock<IStandardService>();
-            standardService.Setup(c => c.GetAllStandards())
-                .ReturnsAsync(new List<Standard> { new Standard { Title = "Standard Title", Level = 2}});
+            standardService.Setup(c => c.GetAllStandardsV2())
+                .ReturnsAsync(new List<StandardCollation> { new StandardCollation { Title = "Standard Title", StandardData = new StandardData{ Level = 2}}});
             assessmentOrgsApiClient.Setup(c => c.FindAllStandardsByOrganisationIdAsync("EPA0001"))
                 .ReturnsAsync(new List<StandardOrganisationSummary>(){new StandardOrganisationSummary(){StandardCode = "5"}});
             standardService.Setup(c => c.GetStandard(It.IsAny<int>()))
-                .ReturnsAsync(new Standard() {Title = "Standard Title", Level = 2});
+                .ReturnsAsync(new StandardCollation {Title = "Standard Title", StandardData = new StandardData{ Level = 2}});
             
             
             var organisationRepository = new Mock<IOrganisationQueryRepository>();

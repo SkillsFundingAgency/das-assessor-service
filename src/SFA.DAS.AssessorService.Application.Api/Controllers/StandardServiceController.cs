@@ -22,13 +22,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
         public StandardServiceController(ILogger<StandardServiceController> logger, IStandardService standardService)
         {
-            /////////////////////////////////////////////////////////////////
-            ///  NOTE: THIS IS A WORKAROUND FOR ON-1500
-            ///  It is so we can continue using Standard Service
-            ///  In the future we will be using standard-collation
-            ///  (but that requires bit changes across everything!)
-            /////////////////////////////////////////////////////////////////
-
             _logger = logger;
             _standardService = standardService;
         }
@@ -40,7 +33,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         public async Task<IActionResult> StandardServiceGetAllStandardSummaries()
         {
             _logger.LogInformation($@"Get all StandardSummaries from Standard Service");
-            var standards = await _standardService.GetAllStandardSummaries();
+            var standards = await _standardService.GetAllStandardsV2();
             return Ok(standards);
         }
 

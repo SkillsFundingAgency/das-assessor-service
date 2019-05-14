@@ -14,26 +14,21 @@ using SFA.DAS.AssessorService.Application.Logging;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Extensions;
 using SFA.DAS.AssessorService.Domain.Paging;
-using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
-using SFA.DAS.AssessorService.ExternalApis.Services;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Staff
 {
     public class StaffSearchHandler : IRequestHandler<StaffSearchRequest, StaffSearchResult>
     {
-        private readonly IIlrRepository _ilrRepository;
         private readonly IStaffCertificateRepository _staffCertificateRepository;
         private readonly ILogger<SearchHandler> _logger;
         private readonly IStaffIlrRepository _staffIlrRepository;
         private readonly IStandardService _standardService;
 
-        public StaffSearchHandler(IIlrRepository ilrRepository,
-            IStaffCertificateRepository staffCertificateRepository,
+        public StaffSearchHandler(IStaffCertificateRepository staffCertificateRepository,
             ILogger<SearchHandler> logger,
             IStaffIlrRepository staffIlrRepository, 
             IStandardService staffService)
         {
-            _ilrRepository = ilrRepository;
             _staffCertificateRepository = staffCertificateRepository;
             _logger = logger;
             _staffIlrRepository = staffIlrRepository;
@@ -82,19 +77,15 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
 
         private async Task<StaffReposSearchResult> Search(StaffSearchRequest request)
         {
-            // Naive decision on what is being searched.
-
-            var regex = new Regex(@"\b(?i)(epa)[0-9]{4}\b");
-            if (regex.IsMatch(request.SearchQuery))
+            if (SearchStringIsAnEpaOrgId(request))
             {                
                 var sr = await _staffIlrRepository.SearchForLearnerByEpaOrgId(request);
                 sr.DisplayEpao = true;
                 return sr;
             }
 
-            if (request.SearchQuery.Length == 10 && long.TryParse(request.SearchQuery, out var uln))
+            if (SearchStringIsAUln(request))
             {
-                // Search string is a long of 10 length so must be a uln.
                 var sr = new StaffReposSearchResult
                 {
                     PageOfResults = await _staffIlrRepository.SearchForLearnerByUln(request)
@@ -103,7 +94,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
                 return sr;
             }
 
-            if (request.SearchQuery.Length == 8 && long.TryParse(request.SearchQuery, out var certRef))
+            if (SearchStringIsACertificateReference(request))
             {
                 var sr = new StaffReposSearchResult
                 {
@@ -115,6 +106,22 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
             }
 
             return new StaffReposSearchResult() { PageOfResults = new List<Ilr>(), TotalCount = 0 };
+        }
+
+        private static bool SearchStringIsAnEpaOrgId(StaffSearchRequest request)
+        {
+            var regex = new Regex(@"\b(?i)(epa)[0-9]{4}\b");
+            return regex.IsMatch(request.SearchQuery);
+        }
+
+        private static bool SearchStringIsACertificateReference(StaffSearchRequest request)
+        {
+            return request.SearchQuery.Length == 8 && long.TryParse(request.SearchQuery, out var certRef);
+        }
+
+        private static bool SearchStringIsAUln(StaffSearchRequest request)
+        {
+            return request.SearchQuery.Length == 10 && long.TryParse(request.SearchQuery, out var uln);
         }
 
 
@@ -146,11 +153,11 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
 
         private async Task<List<StaffSearchItems>> PopulateStandards(List<StaffSearchItems> searchResults, IStandardService standardService, ILogger<SearchHandler> logger)
         {
-            var allStandards = await standardService.GetAllStandards();
+            var allStandards = await standardService.GetAllStandardsV2();
 
             foreach (var searchResult in searchResults.Where(sr => string.IsNullOrEmpty(sr.Standard)))
             {
-                var standard = allStandards.SingleOrDefault(s => s.StandardId == searchResult.StandardCode.ToString()) ?? await standardService.GetStandard(searchResult.StandardCode);
+                var standard = allStandards.SingleOrDefault(s => s.StandardId == searchResult.StandardCode) ?? await standardService.GetStandard(searchResult.StandardCode);
 
                 if (standard != null)
                 {

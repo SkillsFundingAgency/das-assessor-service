@@ -435,14 +435,6 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         {
             var organisationStandards = _apiClient.GetEpaOrganisationStandards(viewAndEditModel.OrganisationId).Result;
 
-            var allStandards = _standardServiceClient.GetAllStandardSummaries().Result;
-
-            foreach (var organisationStandard in organisationStandards)
-            {
-                var std = allStandards.First(x => x.Id == organisationStandard.StandardCode.ToString());
-                organisationStandard.StandardSummary = std;
-            }
-
             viewAndEditModel.OrganisationStandards = organisationStandards;
         }
 

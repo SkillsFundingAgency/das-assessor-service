@@ -10,6 +10,7 @@ using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
 using SFA.DAS.AssessorService.ExternalApis.Services;
 using System;
 using System.Collections.Generic;
+using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using Organisation = SFA.DAS.AssessorService.Domain.Entities.Organisation;
 
 
@@ -67,8 +68,8 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Certifica
         private static Mock<IStandardService> SetupStandardServiceMock()
         {
             var standardServiceMock = new Mock<IStandardService>();
-            standardServiceMock.Setup(c => c.GetAllStandards())
-                .ReturnsAsync(new List<Standard>
+            standardServiceMock.Setup(c => c.GetAllStandardsV2())
+                .ReturnsAsync(new List<StandardCollation>
                 {
                     GenerateStandard(1),
                     GenerateStandard(98),
@@ -160,12 +161,11 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Certifica
                 .Build();
         }
 
-        private static Standard GenerateStandard(int standardCode)
+        private static StandardCollation GenerateStandard(int standardCode)
         {
-            return Builder<Standard>.CreateNew()
+            return Builder<StandardCollation>.CreateNew()
                 .With(i => i.Title = $"{standardCode}")
-                .With(i => i.Level = standardCode)
-                .Build();
+                .With(i => i.StandardData = new StandardData(){Level = standardCode}).Build();
         }
 
         private static StandardOrganisationSummary GenerateStandardOrganisationSummary(int standardCode)

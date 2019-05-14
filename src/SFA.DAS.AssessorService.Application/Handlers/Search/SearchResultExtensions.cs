@@ -17,17 +17,17 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
     {
         public static List<SearchResult> PopulateStandards(this List<SearchResult> searchResults, IStandardService standardService, ILogger<SearchHandler> logger)
         {
-            var allStandards = standardService.GetAllStandards().Result;
+            var allStandards = standardService.GetAllStandardsV2().Result;
 
             foreach (var searchResult in searchResults)
             {
-                var standard = allStandards.SingleOrDefault(s => s.StandardId == searchResult.StdCode.ToString());
+                var standard = allStandards.SingleOrDefault(s => s.ReferenceNumber == searchResult.StdCode.ToString());
                 if (standard == null)
                 {
                     standard = standardService.GetStandard(searchResult.StdCode).Result;
                 }
                 searchResult.Standard = standard.Title;
-                searchResult.Level = standard.Level;
+                searchResult.Level = standard.StandardData.Level.GetValueOrDefault();
             }
 
             return searchResults;

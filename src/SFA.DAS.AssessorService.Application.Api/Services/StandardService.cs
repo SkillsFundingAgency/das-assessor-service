@@ -30,77 +30,32 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
             _standardRepository = standardRepository;
         }
 
-        public async Task<IEnumerable<StandardSummary>> GetAllStandardsV2()
+        public async Task<IEnumerable<StandardCollation>> GetAllStandardsV2()
         {
-            var results = await _cacheService.RetrieveFromCache<IEnumerable<StandardSummary>>("StandardSummaries");
+            var results = await _cacheService.RetrieveFromCache<IEnumerable<StandardCollation>>("StandardCollations");
 
             if (results != null)
                 return results;
 
             var standardCollations = await _standardRepository.GetStandardCollations();
-            var standardSummaries = await _assessmentOrgsApiClient.GetAllStandardsV2();
 
-            foreach (var standard in standardSummaries)
-            {
-                var match = standardCollations.FirstOrDefault(x => x.StandardId?.ToString() == standard.Id && !string.Equals(x.Title, standard.Title, StringComparison.CurrentCultureIgnoreCase));
-                if (match != null)
-                    standard.Title = match.Title;
-            }
-
-            await _cacheService.SaveToCache("StandardSummaries", standardSummaries, 8);
-            return standardSummaries;
+            await _cacheService.SaveToCache("StandardCollations", standardCollations, 8);
+            return standardCollations;
         }
-
-        public async Task<IEnumerable<Standard>> GetAllStandards()
-        {
-            var standardCollations = await _standardRepository.GetStandardCollations();
-            var standards = await _assessmentOrgsApiClient.GetAllStandards();
-
-            foreach (var standard in standards)
-            {
-                var match = standardCollations.FirstOrDefault(x => x.StandardId?.ToString() == standard.StandardId && !string.Equals(x.Title, standard.Title, StringComparison.CurrentCultureIgnoreCase));
-                if (match != null)
-                    standard.Title = match.Title;
-            }
-            return standards;
-        }
-
-        public async Task<Standard> GetStandard(int standardId)
+        
+        public async Task<StandardCollation> GetStandard(int standardId)
         {
             var standardCollation = await _standardRepository.GetStandardCollationByStandardId(standardId);
-            var standard = await _assessmentOrgsApiClient.GetStandard(standardId);
-            if (standardCollation != null && standard != null && !string.Equals(standard.Title, standardCollation.Title, StringComparison.CurrentCultureIgnoreCase))
-                standard.Title = standardCollation.Title;
 
-            return standard;
+            return standardCollation;
         }
-
-        public async Task<Standard> GetStandard(string referenceNumber)
+        
+        public async Task<StandardCollation> GetStandard(string referenceNumber)
         {
             var standardCollation = await _standardRepository.GetStandardCollationByReferenceNumber(referenceNumber);
 
-            if (standardCollation?.StandardId is null)
-            {
-                return null;
-            }
-
-            return await GetStandard(standardCollation.StandardId.Value);
+            return standardCollation;
         }
-
-        public async Task<IEnumerable<StandardSummary>> GetAllStandardSummaries()
-        {
-            var standardCollations = await _standardRepository.GetStandardCollations();
-            var standardSummaries = await _assessmentOrgsApiClient.GetAllStandardSummaries();
-            foreach (var standard in standardSummaries)
-            {
-                var match = standardCollations.FirstOrDefault(x => x.StandardId?.ToString() == standard.Id && !string.Equals(x.Title, standard.Title, StringComparison.CurrentCultureIgnoreCase));
-                if (match != null)
-                    standard.Title = match.Title;
-            }
-
-            return standardSummaries;
-        }
-
 
         public async Task<IEnumerable<StandardCollation>> GatherAllStandardDetails()
         {
