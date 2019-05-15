@@ -67,12 +67,19 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
 
         public async Task<Standard> GetStandard(int standardId)
         {
-            var standardCollation = await _standardRepository.GetStandardCollationByStandardId(standardId);
-            var standard = await _assessmentOrgsApiClient.GetStandard(standardId);
-            if (standardCollation != null && standard != null && !string.Equals(standard.Title, standardCollation.Title, StringComparison.CurrentCultureIgnoreCase))
-                standard.Title = standardCollation.Title;
+            try
+            {
+                var standardCollation = await _standardRepository.GetStandardCollationByStandardId(standardId);
+                var standard = await _assessmentOrgsApiClient.GetStandard(standardId);
+                if (standardCollation != null && standard != null && !string.Equals(standard.Title, standardCollation.Title, StringComparison.CurrentCultureIgnoreCase))
+                    standard.Title = standardCollation.Title;
 
-            return standard;
+                return standard;
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         public async Task<Standard> GetStandard(string referenceNumber)
