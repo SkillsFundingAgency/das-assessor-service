@@ -396,9 +396,9 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             vm.OrganisationName = organisation.Name;
             vm.Ukprn = organisation.Ukprn;
             vm.StandardTitle = standard.Title;
-            vm.StandardEffectiveFrom = standard.EffectiveFrom;
-            vm.StandardEffectiveTo = standard.EffectiveTo;
-            vm.StandardLastDateForNewStarts = standard.LastDateForNewStarts;
+            vm.StandardEffectiveFrom = standard.StandardData.EffectiveFrom;
+            vm.StandardEffectiveTo = standard.StandardData.EffectiveTo;
+            vm.StandardLastDateForNewStarts = standard.StandardData.LastDateForNewStarts;
             vm.AvailableDeliveryAreas = availableDeliveryAreas;
             vm.DeliveryAreas = vm.DeliveryAreas ?? new List<int>();
             vm.OrganisationStatus = organisation.Status;

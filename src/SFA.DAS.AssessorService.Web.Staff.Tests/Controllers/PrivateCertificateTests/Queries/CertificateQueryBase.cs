@@ -10,6 +10,7 @@ using Microsoft.Extensions.Primitives;
 using Moq;
 using Newtonsoft.Json;
 using SFA.DAS.Apprenticeships.Api.Types;
+using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
@@ -45,38 +46,38 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Controllers.PrivateCertificate
             MockApiClient = MockedApiClient.Setup(Certificate, mockedApiClientLogger);
             MockStandardServiceClient = new Mock<IStandardServiceClient>();
 
-            var standards = new List<StandardSummary>
+            var standards = new List<StandardCollation>
             {
-                new StandardSummary
+                new StandardCollation
                 {
-                    Id = "91",
-                    Level = 2,
+                    StandardId = 91,
+                    StandardData = new StandardData{Level = 2},
                     Title = "Test Title 1"
                 },
-                new StandardSummary
+                new StandardCollation
                 {
-                    Id = "92",
-                    Level = 3,
+                    StandardId = 92,
+                    StandardData = new StandardData{Level = 3},
                     Title = "Test Title 2"
                 },
-                new StandardSummary
+                new StandardCollation
                 {
-                    Id = "93",
-                    Level = 5,
+                    StandardId = 93,
+                    StandardData = new StandardData{Level = 5},
                     Title = "Test Title 3"
                 },
-                new StandardSummary
+                new StandardCollation
                 {
-                    Id = "94",
-                    Level = 2,
+                    StandardId = 94,
+                    StandardData = new StandardData{Level = 2},
                     Title = "Test Title 4"
                 },
-                new StandardSummary
+                new StandardCollation
                 {
-                    Id = "95",
-                    Level = 2,
+                    StandardId = 95,
+                    StandardData = new StandardData{Level = 2},
                     Title = "Test Title 5"
-                },
+                }
             };
 
             MockStandardServiceClient.Setup(s => s.GetAllStandards()).Returns(Task.FromResult(standards.AsEnumerable()));

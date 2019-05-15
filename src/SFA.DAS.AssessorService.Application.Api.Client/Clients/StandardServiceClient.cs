@@ -3,6 +3,7 @@ using SFA.DAS.Apprenticeships.Api.Types;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
+using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 
 namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 {
@@ -16,27 +17,27 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         {
         }
 
-        public async Task<IEnumerable<StandardSummary>> GetAllStandards()
+        public async Task<IEnumerable<StandardCollation>> GetAllStandards()
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get, $"api/v1/standard-service/standards"))
             {
-                return await RequestAndDeserialiseAsync<IEnumerable<StandardSummary>>(request,
+                return await RequestAndDeserialiseAsync<IEnumerable<StandardCollation>>(request,
                     $"Could not get the list of standards");
             }
         }
 
-        public async Task<Standard> GetStandard(int standardCode)
+        public async Task<StandardCollation> GetStandard(int standardCode)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/standard-service/standards/{standardCode}"))
             {
-                return await RequestAndDeserialiseAsync<Standard>(request, $"Could not find the standard {standardCode}");
+                return await RequestAndDeserialiseAsync<StandardCollation>(request, $"Could not find the standard {standardCode}");
             }
         }
     }
 
     public interface IStandardServiceClient
     {
-        Task<IEnumerable<StandardSummary>> GetAllStandards();
-        Task<Standard> GetStandard(int standardCode);
+        Task<IEnumerable<StandardCollation>> GetAllStandards();
+        Task<StandardCollation> GetStandard(int standardCode);
     }
 }
