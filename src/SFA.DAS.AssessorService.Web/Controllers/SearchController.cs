@@ -57,7 +57,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                     return RedirectToAction("Index", "CertificatePrivateDeclaration", vm);
                 }
                 //When certificate found but ULN already being used and a different familyname used
-                if (result.SearchResults.Any(x => x.UlnAlreadyExits))
+                if (result.SearchResults.Any(x => x.UlnAlreadyExists))
                 {
                     GetSelectedStandardViewModel(result);
                     return RedirectToAction("Result");
@@ -119,7 +119,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 LearnerStartDate = resultViewModel.LearnStartDate.GetValueOrDefault().ToString("d MMMM yyyy"),
                 AchievementDate = resultViewModel.AchDate.GetValueOrDefault().ToString("d MMMM yyyy"),
                 ShowExtraInfo = resultViewModel.ShowExtraInfo,
-                UlnAlreadyExists = resultViewModel.UlnAlreadyExits
+                UlnAlreadyExists = resultViewModel.UlnAlreadyExists
                 
             };
 
