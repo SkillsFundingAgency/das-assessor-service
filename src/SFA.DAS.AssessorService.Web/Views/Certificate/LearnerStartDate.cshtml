@@ -52,7 +52,7 @@ else
                     </div>
                 }
 
-                <div class="govuk-form-group error-message-container" sfa-anyvalidationerror-class="govuk-form-group--error">
+                <div class="govuk-form-group" sfa-anyvalidationerror-class="govuk-form-group--error">
                     <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
                         <h1 class="govuk-fieldset__heading">
                             @Localizer["Heading"]
@@ -62,6 +62,8 @@ else
                     <span class="govuk-hint">
                         @Localizer["DateHint"]
                     </span>
+
+                    <div class="error-message-container"></div>
                     
                     <span class="govuk-error-message" asp-validation-for="Date"></span>
                     <span class="govuk-error-message" asp-validation-for="Day"></span>

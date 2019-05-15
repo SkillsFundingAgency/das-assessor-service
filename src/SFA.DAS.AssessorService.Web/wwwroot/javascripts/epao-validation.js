@@ -3,6 +3,7 @@ GOVUK.epaoValidate = function(formElement, validationRulesObject) {
   var validator = formElement
     .bind("invalid-form.validate", function() {
       $(document).attr("title", "Error: " + documentTitle);
+
       if ($(".js-error-summary").length) {
         $(".js-error-summary-list").empty();
         validator.errorList.forEach(function(error) {
@@ -14,6 +15,7 @@ GOVUK.epaoValidate = function(formElement, validationRulesObject) {
               "</a></li>"
           );
         });
+
         $(".js-error-summary")
           .show()
           .focus();
@@ -42,26 +44,28 @@ GOVUK.epaoValidate = function(formElement, validationRulesObject) {
       errorClass: "govuk-error-message",
       errorContainer: ".js-error-summary",
       highlight: function(element) {
-        if ($(element).hasClass("govuk-date-input")) {
+        if ($(element).hasClass("govuk-date-input__input")) {
           $(element).addClass("govuk-input--error");
+          $(".js-date-container").addClass("govuk-form-group--error");
           return false;
+        } else {
+          $(element)
+            .addClass("govuk-input--error")
+            .closest(".govuk-form-group")
+            .addClass("govuk-form-group--error");
         }
-
-        $(element)
-          .addClass("govuk-input--error")
-          .closest(".govuk-form-group")
-          .addClass("govuk-form-group--error");
       },
       unhighlight: function(element) {
-        if ($(element).hasClass("govuk-date-input")) {
+        if ($(element).hasClass("govuk-date-input__input")) {
           $(element).removeClass("govuk-input--error");
+          $(".js-date-container").removeClass("govuk-form-group--error");
           return false;
+        } else {
+          $(element)
+            .removeClass("govuk-input--error")
+            .closest(".govuk-form-group")
+            .removeClass("govuk-form-group--error");
         }
-
-        $(element)
-          .removeClass("govuk-input--error")
-          .closest(".govuk-form-group")
-          .removeClass("govuk-form-group--error");
       },
       rules: validationRulesObject.rules,
       groups: validationRulesObject.groups,
@@ -71,12 +75,10 @@ GOVUK.epaoValidate = function(formElement, validationRulesObject) {
           $(".error-message-container")
             .show()
             .append(error);
-        } else if (element.hasClass("govuk-date-input")) {
+        } else if (element.hasClass("govuk-date-input__input")) {
           $(".error-message-container")
-            .addClass("govuk-form-group--error")
             .show()
-            .find(".form-date")
-            .before(error);
+            .append(error);
         } else if (element.hasClass("autocomplete__input")) {
           return false;
         } else {
