@@ -77,7 +77,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
             var listOfIlrResults = ilrResults?.ToList();
             if (request.IsPrivatelyFunded && (listOfIlrResults == null || (!listOfIlrResults.Any())))
             {
-                //Learner not in ILR so try to create a in memory record with details from found certificate and request information
+                //Learner not in ILR so try to create an in memory record with details from found certificate and request information
                 listOfIlrResults = new List<Ilr> { new Ilr { Uln = request.Uln, EpaOrgId = request.EpaOrgId, FamilyNameForSearch = request.Surname, FamilyName = request.Surname } };
                 likedSurname = DealWithSpecialCharactersAndSpaces(request, likedSurname, listOfIlrResults);
                 var certificate=
@@ -87,12 +87,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
                 {
                     //Check if there is a certificate that exist with the given uln and org
                     certificate = await _certificateRepository.GetPrivateCertificate(request.Uln, request.EpaOrgId);
-                    if (certificate == null)
-                        return new List<SearchResult>();
-                    else
-                    {
-                        return new List<SearchResult> { new SearchResult{UlnAlreadyExits = true} };
-                    }
+                    return certificate == null ? new List<SearchResult>() : new List<SearchResult> { new SearchResult{UlnAlreadyExits = true, Uln = request.Uln } };
                 }
 
                 //Check if standard in certificate exists in standards registered by calling org

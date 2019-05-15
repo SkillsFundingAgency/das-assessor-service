@@ -51,27 +51,28 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
             if (result.IsPrivatelyFunded)
             {
+                //When there is no certficate found
                 if (!result.SearchResults.Any())
                 {
                     return RedirectToAction("Index", "CertificatePrivateDeclaration", vm);
                 }
-
+                //When certificate found but ULN already being used and a different familyname used
                 if (result.SearchResults.Any(x => x.UlnAlreadyExits))
                 {
-                   // return RedirectToAction("Index", vm);
+                    GetSelectedStandardViewModel(result);
+                    return RedirectToAction("Result");
                 }
-
+                //Certificate found but was for a uln assocaited with a user in another org
                 if (result.SearchResults.Any(x => x.Uln == "0" && x.GivenNames == null))
                 {
                     vm.SearchResults = new List<ResultViewModel>();
                     return View("Index", vm);
                 }
+                //Certifcate found but no standard set or a certificate reference not set, this could be a draft certificate
                 if (result.SearchResults.Any(x => x.Standard == null || x.CertificateReference == null))
                 {
                     return RedirectToAction("Index", "CertificatePrivateDeclaration", vm);
                 }
-
-              
             }
 
             if (!result.SearchResults.Any())
@@ -117,7 +118,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 SubmittedBy = resultViewModel.SubmittedBy,
                 LearnerStartDate = resultViewModel.LearnStartDate.GetValueOrDefault().ToString("d MMMM yyyy"),
                 AchievementDate = resultViewModel.AchDate.GetValueOrDefault().ToString("d MMMM yyyy"),
-                ShowExtraInfo = resultViewModel.ShowExtraInfo
+                ShowExtraInfo = resultViewModel.ShowExtraInfo,
+                UlnAlreadyExists = resultViewModel.UlnAlreadyExits
+                
             };
 
             _sessionService.Set("SelectedStandard", selectedStandardViewModel);

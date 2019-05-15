@@ -12,7 +12,7 @@
     <div class="column-two-thirds">
         <a class="link-back" asp-controller="Search" asp-action="ChooseStandard">Back</a>
 
-        @if (Model.CertificateReference == null)
+        @if (Model.CertificateReference == null && !Model.UlnAlreadyExists)
         {
 
             <h1 class="heading-large">Confirm this is the correct apprentice</h1>
@@ -46,6 +46,16 @@
             </form>
 
             <p><a asp-controller="Search" asp-action="Index">Search again</a> if this isn't the correct apprentice.</p>
+        }else if (Model.UlnAlreadyExists)
+        {
+            <h1 class="heading-large">An assessment has already been recorded against this ULN</h1>
+            <ul class="list">
+                <li>
+                    <p><span class="bold"><abbr title="Unique learner number">ULN</abbr>:</span> @Model.Uln</p>
+                </li>
+            </ul>
+
+            <p><a asp-controller="Search" asp-action="Index">Search again</a></p>
         }
         else
         {
