@@ -30,10 +30,10 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(IEnumerable<StandardSummary>))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> StandardServiceGetAllStandardSummaries()
+        public async Task<IActionResult> GetAllStandards()
         {
-            _logger.LogInformation($@"Get all StandardSummaries from Standard Service");
-            var standards = await _standardService.GetAllStandardsV2();
+            _logger.LogInformation($@"Get all standards from Standard Service");
+            var standards = await _standardService.GetAllStandards();
             return Ok(standards);
         }
 
@@ -41,7 +41,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(Standard))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> StandardServiceGetStandard(int standardCode)
+        public async Task<IActionResult> GetStandard(int standardCode)
         {
             _logger.LogInformation($@"Get Standard {standardCode} from Standard Service");
             var standard = await _standardService.GetStandard(standardCode);

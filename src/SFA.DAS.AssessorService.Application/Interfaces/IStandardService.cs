@@ -7,7 +7,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
 {
     public interface IStandardService
     {
-        Task<IEnumerable<StandardCollation>> GetAllStandardsV2();
+        Task<IEnumerable<StandardCollation>> GetAllStandards();
 
         Task<StandardCollation> GetStandard(int standardId);
         Task<StandardCollation> GetStandard(string referenceNumber);        

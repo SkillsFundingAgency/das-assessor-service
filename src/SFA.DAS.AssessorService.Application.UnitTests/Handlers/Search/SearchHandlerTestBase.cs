@@ -28,7 +28,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
             AssessmentOrgsApiClient = new Mock<IAssessmentOrgsApiClient>();
             StandardService = new Mock<IStandardService>();
 
-            StandardService.Setup(c => c.GetAllStandardsV2())
+            StandardService.Setup(c => c.GetAllStandards())
                 .ReturnsAsync(new List<StandardCollation> { new StandardCollation{Title = "Standard Name 12", StandardData = new StandardData{Level = 2}}, 
                     new StandardCollation{Title = "Standard Name 13", StandardData = new StandardData{Level = 3}} });
 

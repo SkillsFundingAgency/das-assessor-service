@@ -68,7 +68,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Certifica
         private static Mock<IStandardService> SetupStandardServiceMock()
         {
             var standardServiceMock = new Mock<IStandardService>();
-            standardServiceMock.Setup(c => c.GetAllStandardsV2())
+            standardServiceMock.Setup(c => c.GetAllStandards())
                 .ReturnsAsync(new List<StandardCollation>
                 {
                     GenerateStandard(1),

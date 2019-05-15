@@ -30,7 +30,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
             _standardRepository = standardRepository;
         }
 
-        public async Task<IEnumerable<StandardCollation>> GetAllStandardsV2()
+        public async Task<IEnumerable<StandardCollation>> GetAllStandards()
         {
             var results = await _cacheService.RetrieveFromCache<IEnumerable<StandardCollation>>("StandardCollations");
 

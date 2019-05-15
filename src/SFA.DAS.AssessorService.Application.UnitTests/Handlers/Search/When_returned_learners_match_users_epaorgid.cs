@@ -40,7 +40,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
 
             var assessmentOrgsApiClient = new Mock<IAssessmentOrgsApiClient>();
             var standardService = new Mock<IStandardService>();
-            standardService.Setup(c => c.GetAllStandardsV2())
+            standardService.Setup(c => c.GetAllStandards())
                 .ReturnsAsync(new List<StandardCollation> { new StandardCollation { Title = "Standard Title", StandardData = new StandardData{ Level = 2}}});
             assessmentOrgsApiClient.Setup(c => c.FindAllStandardsByOrganisationIdAsync("EPA0001"))
                 .ReturnsAsync(new List<StandardOrganisationSummary>(){new StandardOrganisationSummary(){StandardCode = "5"}});

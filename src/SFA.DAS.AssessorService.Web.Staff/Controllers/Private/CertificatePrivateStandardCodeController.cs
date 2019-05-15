@@ -113,7 +113,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Private
             var results = await _cacheHelper.RetrieveFromCache<IEnumerable<StandardSummary>>("Standards");
             if (results == null)
             {
-                var standards = await _standardServiceClient.GetAllStandardSummaries();
+                var standards = await _standardServiceClient.GetAllStandards();
                 await _cacheHelper.SaveToCache("Standards", standards, 1);
 
                 results = standards;

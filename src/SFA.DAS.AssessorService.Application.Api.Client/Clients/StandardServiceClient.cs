@@ -16,12 +16,12 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         {
         }
 
-        public async Task<IEnumerable<StandardSummary>> GetAllStandardSummaries()
+        public async Task<IEnumerable<StandardSummary>> GetAllStandards()
         {
-            using (var request = new HttpRequestMessage(HttpMethod.Get, $"api/v1/standard-service/standards/summaries"))
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"api/v1/standard-service/standards"))
             {
                 return await RequestAndDeserialiseAsync<IEnumerable<StandardSummary>>(request,
-                    $"Could not get the list of standard summaries");
+                    $"Could not get the list of standards");
             }
         }
 
@@ -36,7 +36,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 
     public interface IStandardServiceClient
     {
-        Task<IEnumerable<StandardSummary>> GetAllStandardSummaries();
+        Task<IEnumerable<StandardSummary>> GetAllStandards();
         Task<Standard> GetStandard(int standardCode);
     }
 }

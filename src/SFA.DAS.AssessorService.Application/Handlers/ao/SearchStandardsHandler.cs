@@ -51,7 +51,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ao
             
             var isAnInt = int.TryParse(searchstring, out var intSearchString);
            
-            var allStandards = await _standardService.GetAllStandardsV2();
+            var allStandards = await _standardService.GetAllStandards();
             return isAnInt 
                 ? allStandards.Where(x => x.StandardId == intSearchString).ToList() 
                 : allStandards.Where(x => 
