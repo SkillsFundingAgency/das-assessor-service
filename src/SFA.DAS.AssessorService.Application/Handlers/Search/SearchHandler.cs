@@ -108,7 +108,12 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
                 r.EpaOrgId == thisEpao.EndPointAssessorOrganisationId ||
                 (r.EpaOrgId != thisEpao.EndPointAssessorOrganisationId && intStandards.Contains(r.StdCode)))
             && string.Equals(r.FamilyNameForSearch.Trim(), likedSurname.Trim(), StringComparison.CurrentCultureIgnoreCase)).ToList();
-            
+
+            //If privatley funded and uln found in ilr but due to the above check the result was empty then set uln exist flag
+            if (request.IsPrivatelyFunded && ilrResults != null && !ilrResults.Any())
+            {
+              return  new List<SearchResult> { new SearchResult{UlnAlreadyExits = true, Uln = request.Uln }};
+            }
 
             _logger.LogInformation((ilrResults != null && ilrResults.Any())? LoggingConstants.SearchSuccess : LoggingConstants.SearchFailure);
 
