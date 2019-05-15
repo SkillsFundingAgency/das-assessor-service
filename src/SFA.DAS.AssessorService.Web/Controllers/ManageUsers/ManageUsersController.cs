@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -10,12 +8,11 @@ using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Application.Api.Client.Exceptions;
 using SFA.DAS.AssessorService.Domain.Consts;
-using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Web.Constants;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 
-namespace SFA.DAS.AssessorService.Web.Controllers
+namespace SFA.DAS.AssessorService.Web.Controllers.ManageUsers
 {
     [Authorize]
     [CheckSession]
@@ -83,6 +80,5 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             }
             return  RedirectToAction("Index");
         }
-            
     }
 }
