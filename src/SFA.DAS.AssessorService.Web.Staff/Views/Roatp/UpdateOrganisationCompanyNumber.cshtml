@@ -47,9 +47,9 @@
                 <form method="post" asp-action="UpdateCompanyNumber" asp-controller="UpdateRoatpOrganisation">
                     @Html.HiddenFor(x => x.OrganisationId)
                     <div class="govuk-form-group" sfa-validation-for="CompanyNumber" sfa-validationerror-class="form-group-error">
-                        <label for="LegalName" class="roatp-label">Company Number</label>
+                        <label for="CompanyNumber" class="roatp-label">Company Number</label>
                         <span class="error-message" asp-validation-for="CompanyNumber"></span>
-                        <input id="Ukprn" name="CompanyNumber" type="text" class="roatp-input" asp-for="CompanyNumber"
+                        <input id="CompanyNumber" name="CompanyNumber" type="text" class="roatp-input" asp-for="CompanyNumber"
                                sfa-validation-for="CompanyNumber" sfa-validationerror-class="form-control-error" />
                     </div>
                     @Html.HiddenFor(x => x.LegalName)
