@@ -270,9 +270,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                     }
 
 
-                    await _organisationsApiClient.SendEmailsToOrgApprovedUsers(new EmailAllApprovedContactsRequest(
-                        user.DisplayName, organisationSearchResult
-                            .OrganisationReferenceId, _config.ServiceLink));
+                    await _organisationsApiClient.SendEmailsToOrgApprovedUsers(new EmailAllApprovedContactsRequest(user.DisplayName, organisationSearchResult.OrganisationReferenceId));
                 }
                 else
                 {

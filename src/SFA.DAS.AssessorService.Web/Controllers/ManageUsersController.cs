@@ -77,7 +77,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                         emailTemplate, new
                         {
                             contactname = $"{contactResponse.DisplayName}",
-                            ServiceLink = _config.ServiceLink
+                            LoginLink = _config.ServiceLink,
+                            ServiceName = _config.ServiceName,
+                            ServiceTeam = _config.ServiceTeam
                         }));
                 }
             }

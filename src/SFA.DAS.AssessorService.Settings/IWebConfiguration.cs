@@ -19,6 +19,8 @@
         ClientApiAuthentication ApplyApiAuthentication { get; set; }
         string ApplyBaseAddress { get; set; }
         string ServiceLink { get; set; }
+        string ServiceName { get; set; }
+        string ServiceTeam { get; set; }
         DfeSignInConfig DfeSignIn { get; set; }
 
         string RoatpApiClientBaseUrl { get; set; }

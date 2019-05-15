@@ -23,6 +23,8 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Services
         public ClientApiAuthentication ApplyApiAuthentication { get; set; }
         public string ApplyBaseAddress { get; set; }
         public string ServiceLink { get; set; }
+        public string ServiceName { get; set; }
+        public string ServiceTeam { get; set; }
         public DfeSignInConfig DfeSignIn { get; set; }
         public string RoatpApiClientBaseUrl { get; set; }
         public ClientApiAuthentication RoatpApiAuthentication { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }

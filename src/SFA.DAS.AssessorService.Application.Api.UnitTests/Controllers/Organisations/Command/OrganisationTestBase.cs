@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using Moq;
 using SFA.DAS.AssessorService.Application.Api.Controllers;
+using SFA.DAS.AssessorService.Settings;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Organisations.Command
 {
@@ -17,7 +18,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Organisa
             SetupOrchestratorMocks();
             SetupControllerMocks();
             
-            OrganisationController = new OrganisationController(ControllerLoggerMock.Object, Mediator.Object);           
+            OrganisationController = new OrganisationController(ControllerLoggerMock.Object, Mediator.Object, Mock.Of<IWebConfiguration>());           
         }
 
         private void SetupOrchestratorMocks()

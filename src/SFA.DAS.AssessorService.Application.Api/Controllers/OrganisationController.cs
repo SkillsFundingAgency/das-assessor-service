@@ -9,6 +9,7 @@ using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
 using SFA.DAS.AssessorService.Application.Exceptions;
+using SFA.DAS.AssessorService.Settings;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using CreateOrganisationRequest = SFA.DAS.AssessorService.Api.Types.Models.CreateOrganisationRequest;
 using NotFound = SFA.DAS.AssessorService.Domain.Exceptions.NotFound;
@@ -21,14 +22,16 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
     {
         private readonly ILogger<OrganisationController> _logger;
         private readonly IMediator _mediator;
+        private readonly IWebConfiguration _config;
 
         public OrganisationController(
             ILogger<OrganisationController> logger,
-            IMediator mediator
+            IMediator mediator, IWebConfiguration config
         )
         {
             _logger = logger;
             _mediator = mediator;
+            _config = config;
         }
 
         [HttpPost(Name = "CreateOrganisation")]
@@ -97,9 +100,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         public async Task<IActionResult> NotifyAllApprovedUsers([FromBody]EmailAllApprovedContactsRequest emailAllApprovedContactsRequest)
         {
             const string epaoUserApproveRequestTemplate = "EPAOUserApproveRequest";
-            const string serviceName = "Apprenticeship assessment service";
-            const string serviceTeam = "Apprenticeship assessment service team";
-
             _logger.LogInformation("Received request to Notify Organisation Users");
 
             try
@@ -112,9 +112,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
                     {
                         Contact = contact.DisplayName,
                         username = $"{emailAllApprovedContactsRequest.DisplayName}",
-                        LoginLink = $"{emailAllApprovedContactsRequest.ServiceLink}",
-                        ServiceName = serviceName,
-                        ServiceTeam = serviceTeam
+                        LoginLink = _config.ServiceLink,
+                        ServiceName = _config.ServiceName,
+                        ServiceTeam = _config.ServiceTeam
                     }));
                 }
             }

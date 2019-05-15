@@ -33,6 +33,8 @@ namespace SFA.DAS.AssessorService.Settings
         [JsonRequired] public ClientApiAuthentication ApplyApiAuthentication { get; set; }
         [JsonRequired] public string ApplyBaseAddress { get; set; }
         [JsonRequired] public string ServiceLink { get; set; }
+        [JsonRequired] public string ServiceName { get; set; }
+        [JsonRequired] public string ServiceTeam { get; set; }
         [JsonRequired] public DfeSignInConfig DfeSignIn { get; set; }
 
         [JsonRequired] public string RoatpApiClientBaseUrl { get; set; }
