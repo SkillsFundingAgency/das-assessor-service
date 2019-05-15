@@ -56,6 +56,15 @@
         <input class="govuk-input govuk-input--width-10 js-integers-only" name="Uln" autocomplete="off" asp-for="Uln" type="text" sfa-validation-for="Uln" sfa-validationerror-class="govuk-input--error" maxlength="10" />
     </div>
 
+    <div class="govuk-form-group">
+        <div class="govuk-checkboxes">
+            <div class="govuk-checkboxes__item">
+                <input class="govuk-checkboxes__input" name="IsPrivatelyFunded" asp-for="IsPrivatelyFunded" type="checkbox" type="checkbox" />
+                <label class="govuk-label govuk-checkboxes__label" for="IsPrivatelyFunded">@Localizer["PrivatelyFunded"]</label>
+            </div>
+        </div>
+    </div>
+
     <input class="govuk-button" id="button-search" type="submit" value="@Localizer["SearchButton"]">
 
     <details class="govuk-details">
@@ -68,5 +77,6 @@
             The <abbr title="Unique learner number">ULN</abbr> is a 10-digit reference number. It's used to access the online Personal Learning Record (<abbr title="Personal Learning Record">PLR</abbr>) of anyone aged 14 and over in UK education or training, including apprenticeships.
         </div>
     </details>
+    
 
 </form>

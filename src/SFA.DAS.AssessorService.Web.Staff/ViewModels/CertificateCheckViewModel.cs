@@ -32,7 +32,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.ViewModels
 
         public string SearchString { get; set; }
         public int Page { get; set; }
-        
+
         public void FromCertificate(Certificate cert)
         {
             BaseFromCertificate(cert);
@@ -41,7 +41,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.ViewModels
             Ukprn = cert.ProviderUkPrn;
 
             Status = cert.Status;
-
+            PrivatelyFundedStatus = cert.PrivatelyFundedStatus;
             CertificateReference = cert.CertificateReference;
 
             Level = CertificateData.StandardLevel;
@@ -68,6 +68,11 @@ namespace SFA.DAS.AssessorService.Web.Staff.ViewModels
             certificate.Status = CertificateStatus.Submitted;
             certificate.CertificateData = JsonConvert.SerializeObject(data);
             return certificate;
+        }
+
+        public bool BackToApprovals()
+        {
+            return IsPrivatelyFunded & PrivatelyFundedStatus == CertificateStatus.Rejected & FromApproval;
         }
     }
 }

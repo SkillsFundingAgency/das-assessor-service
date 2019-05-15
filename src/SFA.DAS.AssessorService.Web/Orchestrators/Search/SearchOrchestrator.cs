@@ -33,7 +33,8 @@ namespace SFA.DAS.AssessorService.Web.Orchestrators.Search
                 Surname = vm.Surname,
                 Uln = long.Parse(vm.Uln),
                 EpaOrgId = epaOrgId,
-                Username = username
+                Username = username,
+                IsPrivatelyFunded = vm.IsPrivatelyFunded
             });
 
             vm.SearchResults = Mapper.Map<List<ResultViewModel>>(results);
