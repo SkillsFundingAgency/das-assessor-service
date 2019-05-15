@@ -35,7 +35,7 @@
                         {
                             <tr>
                                 <td data-label="@Localizer["User details"]" class="nowrap">
-                                    <a asp-controller="ManageUsers" asp-action="User" asp-route-userid="@contact.Contact.Id">@Html.DisplayFor(modelItem => contact.Contact.DisplayName)</a>
+                                    <a asp-controller="UserDetails" asp-action="User" asp-route-userid="@contact.Contact.Id">@Html.DisplayFor(modelItem => contact.Contact.DisplayName)</a>
                                     <br/>
                                     <span>@Html.DisplayFor(modelItem => contact.Contact.Email)</span>
                                 </td>
