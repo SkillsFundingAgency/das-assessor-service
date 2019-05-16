@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
 using FluentAssertions;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
@@ -17,12 +19,13 @@ using SFA.DAS.AssessorService.Web.ViewModels.Search;
 namespace SFA.DAS.AssessorService.Web.UnitTests.ManageUsersTests.ManagerUsersControllerTests
 {
     [TestFixture]
-    public class When_User_is_called
+    public class When_User_is_called_by_valid_user
     {
         private UserDetailsController _controller;
         private Guid _userId;
         private IActionResult _result;
         private Mock<IContactsApiClient> _contactsApiClient;
+        private Guid _callingUserId;
 
         [SetUp]
         public async Task SetUp()
@@ -51,8 +54,18 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ManageUsersTests.ManagerUsersCon
                 new ContactsPrivilege(),
                 new ContactsPrivilege()
             });
+
+            var httpContextAccessor = new Mock<IHttpContextAccessor>();
             
-            _controller = new UserDetailsController(_contactsApiClient.Object);
+            var context = new DefaultHttpContext();
+            var claimsPrincipal = new ClaimsPrincipal();
+            _callingUserId = Guid.NewGuid();
+            claimsPrincipal.AddIdentity(new ClaimsIdentity(new List<Claim>{new Claim("UserId", _callingUserId.ToString())}));
+            context.User = claimsPrincipal;
+
+            httpContextAccessor.Setup(a => a.HttpContext).Returns(context);
+            
+            _controller = new UserDetailsController(_contactsApiClient.Object, httpContextAccessor.Object);
             _result = await _controller.User(_userId);
         }
 

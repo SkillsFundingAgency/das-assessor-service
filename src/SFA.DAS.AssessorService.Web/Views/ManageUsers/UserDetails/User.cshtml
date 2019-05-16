@@ -7,6 +7,7 @@
 
 <a asp-controller="ManageUsers" asp-action="Index">Back</a>
 
+<span>User details</span>
 <div>
     <div class="grid-row">
         <div class="column-full">
@@ -51,14 +52,18 @@
             <div>
                 <label>What can they do?</label>
                 <ul>
-                @foreach (var privilege in Model.AssignedPrivileges)
-                {
-                    <li>
-                    @privilege.Privilege.UserPrivilege
-                    </li>
-                }
+                    @foreach (var privilege in Model.AssignedPrivileges)
+                    {
+                        <li>
+                            @privilege.Privilege.UserPrivilege
+                        </li>
+                    }
                 </ul>
             </div>
+            
+            <span>Options</span>
+            <a asp-controller="UserDetails" asp-action="EditPermissions" asp-route-userid="@Model.Id">Edit user permissions</a>
+            <a asp-controller="UserDetails" asp-action="Remove" asp-route-userid="@Model.Id">Remove this user</a>
         </div>
     </div>
 </div>
