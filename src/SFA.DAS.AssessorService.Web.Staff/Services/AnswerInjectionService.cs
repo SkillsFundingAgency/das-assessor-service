@@ -95,7 +95,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
 
             if (warningMessages.Count == 0) 
              {
-          
+                _logger.LogInformation($"Creating a new epa organisation {organisation?.Name}");
                 newOrganisationId = await _registerRepository.CreateEpaOrganisation(organisation);
               
                 var newOrganisation =
@@ -161,7 +161,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
             }
             else
             {
-                _logger.LogWarning("Source has invalid data. Cannot inject organisation details into register at this time");
+                _logger.LogWarning($"Source has invalid data. Cannot inject organisation details into register at this time. Warnings:  {string.Join(",", warningMessages)}");
             }
 
             response.WarningMessages = warningMessages;          
