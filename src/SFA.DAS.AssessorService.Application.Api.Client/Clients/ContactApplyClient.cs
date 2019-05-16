@@ -11,12 +11,12 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
    
     public class ContactApplyClient : ApiClientBase, IContactApplyClient
     {
-        public ContactApplyClient(string baseUri, ITokenService applyTokenService,
+        public ContactApplyClient(string baseUri, IApplyTokenService applyTokenService,
             ILogger<ContactApplyClient> logger) : base(baseUri, applyTokenService, logger)
         {
         }
 
-        public ContactApplyClient(HttpClient httpClient, ITokenService applyTokenService, ILogger<ApiClientBase> logger) : base(httpClient, applyTokenService, logger)
+        public ContactApplyClient(HttpClient httpClient, IApplyTokenService applyTokenService, ILogger<ApiClientBase> logger) : base(httpClient, applyTokenService, logger)
         {
         }
 

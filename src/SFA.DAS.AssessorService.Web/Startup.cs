@@ -129,12 +129,12 @@ namespace SFA.DAS.AssessorService.Web
 
                 //config.For<ICache>().Use<SessionCache>();
                 config.For<ITokenService>().Use<TokenService>();
-                config.For<ITokenService>().Add<ApplyTokenService>().Named("applyTokenService");
+                config.For<IApplyTokenService>().Add<ApplyTokenService>();//.Named("applyTokenService");
 
-                config.For<IOrganisationsApplyApiClient>().Use<OrganisationsApplyApiClient>()
-                    .Ctor<ITokenService>("applyTokenService").Is(c=> c.GetInstance<ITokenService>("applyTokenService"));
-                config.For<IContactApplyClient>().Use<ContactApplyClient>()
-                    .Ctor<ITokenService>("applyTokenService").Is(c=> c.GetInstance<ITokenService>("applyTokenService")); 
+//                config.For<IOrganisationsApplyApiClient>().Use<OrganisationsApplyApiClient>()
+//                    .Ctor<ITokenService>("applyTokenService").Is(c=> c.GetInstance<ITokenService>("applyTokenService"));
+//                config.For<IContactApplyClient>().Use<ContactApplyClient>()
+//                    .Ctor<ITokenService>("applyTokenService").Is(c=> c.GetInstance<ITokenService>("applyTokenService")); 
                 
                 config.For<IWebConfiguration>().Use(Configuration);
                 config.For<ISessionService>().Use<SessionService>().Ctor<string>().Is(_env.EnvironmentName);

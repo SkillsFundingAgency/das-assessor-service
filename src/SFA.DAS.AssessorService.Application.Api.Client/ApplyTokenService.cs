@@ -4,7 +4,7 @@ using SFA.DAS.AssessorService.Settings;
 
 namespace SFA.DAS.AssessorService.Application.Api.Client
 {
-    public class ApplyTokenService : ITokenService
+    public class ApplyTokenService : IApplyTokenService
     {
         private readonly IWebConfiguration _configuration;
         private readonly IHostingEnvironment _hostingEnvironment;
@@ -17,8 +17,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Client
 
         public string GetToken()
         {
-            if (_hostingEnvironment.IsDevelopment())
-                return string.Empty;
+//            if (_hostingEnvironment.IsDevelopment())
+//                return string.Empty;
 
             var tenantId = _configuration.ApplyApiAuthentication.TenantId;// 
             var clientId = _configuration.ApplyApiAuthentication.ClientId;// 
