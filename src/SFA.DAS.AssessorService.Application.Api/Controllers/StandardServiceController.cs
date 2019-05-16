@@ -9,6 +9,7 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
+using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers
 {
@@ -22,33 +23,26 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
         public StandardServiceController(ILogger<StandardServiceController> logger, IStandardService standardService)
         {
-            /////////////////////////////////////////////////////////////////
-            ///  NOTE: THIS IS A WORKAROUND FOR ON-1500
-            ///  It is so we can continue using Standard Service
-            ///  In the future we will be using standard-collation
-            ///  (but that requires bit changes across everything!)
-            /////////////////////////////////////////////////////////////////
-
             _logger = logger;
             _standardService = standardService;
         }
 
         [HttpGet("standards/summaries", Name = "StandardServiceGetAllStandardSummaries")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(IEnumerable<StandardSummary>))]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(IEnumerable<StandardCollation>))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> StandardServiceGetAllStandardSummaries()
+        public async Task<IActionResult> GetAllStandards()
         {
-            _logger.LogInformation($@"Get all StandardSummaries from Standard Service");
-            var standards = await _standardService.GetAllStandardSummaries();
+            _logger.LogInformation($@"Get all standards from Standard Service");
+            var standards = await _standardService.GetAllStandards();
             return Ok(standards);
         }
 
         [HttpGet("standards/{standardCode}", Name = "StandardServiceGetStandard")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(Standard))]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(StandardCollation))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> StandardServiceGetStandard(int standardCode)
+        public async Task<IActionResult> GetStandard(int standardCode)
         {
             _logger.LogInformation($@"Get Standard {standardCode} from Standard Service");
             var standard = await _standardService.GetStandard(standardCode);
