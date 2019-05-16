@@ -23,5 +23,6 @@
 
         string RoatpApiClientBaseUrl { get; set; }
         ClientApiAuthentication RoatpApiAuthentication { get; set; }
+        UkrlpApiAuthentication UkrlpApiAuthentication { get; set; }
     }
 }

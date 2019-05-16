@@ -3,6 +3,7 @@ using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
+using SFA.DAS.AssessorService.Application.Api.Automapper;
 using SFA.DAS.AssessorService.Application.Mapping.CustomResolvers;
 using SFA.DAS.AssessorService.Domain.Entities;
 using Contact = SFA.DAS.AssessorService.Domain.Entities.Contact;
@@ -44,6 +45,15 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                 cfg.CreateMap<UpdateEpaOrganisationRequest, EpaOrganisationResponse>();
                 cfg.CreateMap<CreateEpaOrganisationStandardRequest, EpaoStandardResponse>();
                 cfg.CreateMap<UpdateEpaOrganisationStandardRequest, EpaoStandardResponse>();
+
+
+
+                cfg.AddProfile<UkrlpVerificationDetailsProfile>();
+                cfg.AddProfile<UkrlpContactPersonalDetailsProfile>();
+                cfg.AddProfile<UkrlpContactAddressProfile>();
+                cfg.AddProfile<UkrlpProviderAliasProfile>();
+                cfg.AddProfile<UkrlpProviderContactProfile>();
+                cfg.AddProfile<UkrlpProviderDetailsProfile>();
             });
         }
     }

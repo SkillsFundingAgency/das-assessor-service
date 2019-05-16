@@ -137,8 +137,10 @@ namespace SFA.DAS.AssessorService.Web.Staff
                 config.For<IRegisterValidationRepository>().Use<RegisterValidationRepository>();
                 config.For<IEpaOrganisationIdGenerator>().Use<EpaOrganisationIdGenerator>();
                 config.For<ISpecialCharacterCleanserService>().Use<SpecialCharacterCleanserService>();
+                // MFCMFC whatever the client is, map here --- config.For<IUkrlpApiClient>().Use<UkrlpApiClient>();
+            
 
-                
+
                 config.For<IAssessmentOrgsApiClient>().Use(() => new AssessmentOrgsApiClient(ApplicationConfiguration.AssessmentOrgsApiClientBaseUrl));
                 config.For<IIfaStandardsApiClient>().Use(() => new IfaStandardsApiClient(ApplicationConfiguration.IfaApiClientBaseUrl));
                 config.For<IAzureTokenService>().Use<AzureTokenService>();

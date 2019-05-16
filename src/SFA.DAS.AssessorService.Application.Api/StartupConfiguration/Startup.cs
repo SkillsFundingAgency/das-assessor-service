@@ -20,6 +20,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Application.Api.Clients;
 using SFA.DAS.AssessorService.Application.Api.Extensions;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Services;
@@ -33,6 +34,7 @@ using SFA.DAS.Http.TokenGenerators;
 using SFA.DAS.Notifications.Api.Client;
 using StructureMap;
 using Swashbuckle.AspNetCore.Swagger;
+using UKRLP;
 
 namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
 {
@@ -166,8 +168,10 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
 
                 config.For<AssessorDbContext>().Use(c => new AssessorDbContext(option.Options));
                 config.For<IDbConnection>().Use(c => new SqlConnection(Configuration.SqlConnectionString));
-              
-
+                 config.For<ProviderQueryPortType>().Use<ProviderQueryPortTypeClient>()
+                    .Ctor<ProviderQueryPortTypeClient.EndpointConfiguration>("endpointConfiguration").Is(ProviderQueryPortTypeClient.EndpointConfiguration.ProviderQueryPort)
+                    .Ctor<string>("remoteAddress").Is(Configuration.UkrlpApiAuthentication.ApiBaseAddress);
+                config.For<IUkrlpApiClient>().Use<UkrlpApiClient>();
                 config.For<INotificationsApi>().Use<NotificationsApi>().Ctor<HttpClient>().Is(string.IsNullOrWhiteSpace(NotificationConfiguration().ClientId)
                     ? new HttpClientBuilder().WithBearerAuthorisationHeader(new JwtBearerTokenGenerator(NotificationConfiguration())).Build()
                     : new HttpClientBuilder().WithBearerAuthorisationHeader(new AzureADBearerTokenGenerator(NotificationConfiguration())).Build());
