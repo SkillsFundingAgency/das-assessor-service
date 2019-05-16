@@ -86,7 +86,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
             }
 
             var pageSize = 10;
-            if (SearchStringIsAUln(request))           
+            if (SearchStringIsAUln(request, out var uln))           
             {
                 var sr = new StaffReposSearchResult
                 {
@@ -121,9 +121,12 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
             return request.SearchQuery.Length == 8 && long.TryParse(request.SearchQuery, out var certRef);
         }
 
-        private static bool SearchStringIsAUln(StaffSearchRequest request)
+        private static bool SearchStringIsAUln(StaffSearchRequest request, out long returningUln)
         {
-            return request.SearchQuery.Length == 10 && long.TryParse(request.SearchQuery, out var uln);
+            long uln = 0;
+            var searchStringIsAUln = request.SearchQuery.Length == 10 && long.TryParse(request.SearchQuery, out uln);
+            returningUln = uln;
+            return searchStringIsAUln;
         }
 
 
