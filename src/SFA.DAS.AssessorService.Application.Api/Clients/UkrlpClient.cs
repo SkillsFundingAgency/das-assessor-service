@@ -8,15 +8,15 @@ using UKRLP;
 
 namespace SFA.DAS.AssessorService.Application.Api.Clients
 {
-    public class UkrlpApiClient : IUkrlpApiClient
+    public class UkrlpClient : IUkrlpClient
     {
         private readonly ProviderQueryPortType _client;
 
-        private readonly ILogger<UkrlpApiClient> _logger;
+        private readonly ILogger<UkrlpClient> _logger;
 
         private readonly IWebConfiguration _webConfiguration;
 
-        public UkrlpApiClient(ProviderQueryPortType client, ILogger<UkrlpApiClient> logger, IWebConfiguration webConfiguration)
+        public UkrlpClient(ProviderQueryPortType client, ILogger<UkrlpClient> logger, IWebConfiguration webConfiguration)
         {
             _client = client;
             _logger = logger;

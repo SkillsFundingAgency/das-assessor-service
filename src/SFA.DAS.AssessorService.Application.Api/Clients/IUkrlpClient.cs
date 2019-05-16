@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Api.Clients
 {
-    public interface IUkrlpApiClient
+    public interface IUkrlpClient
     {
         Task<List<ProviderDetails>> GetTrainingProviderByUkprn(long ukprn);
     }

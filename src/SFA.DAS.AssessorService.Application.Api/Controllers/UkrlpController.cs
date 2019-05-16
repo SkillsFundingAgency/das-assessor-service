@@ -23,10 +23,10 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
     public class UkrlpController :Controller
     { 
         private readonly ILogger<UkrlpController> _logger;
-        private readonly IUkrlpApiClient _client;
+        private readonly IUkrlpClient _client;
         private readonly IUkrlpProcessingService _ukrlpProcessingService;
 
-        public UkrlpController(ILogger<UkrlpController> logger,  IUkrlpApiClient client, IUkrlpProcessingService ukrlpProcessingService)
+        public UkrlpController(ILogger<UkrlpController> logger,  IUkrlpClient client, IUkrlpProcessingService ukrlpProcessingService)
         {
             _logger = logger;
             _client = client;

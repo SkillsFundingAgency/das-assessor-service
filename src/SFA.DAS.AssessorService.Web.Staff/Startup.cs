@@ -17,6 +17,7 @@ using Polly.Extensions.Http;
 using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Application.Api.Client.Azure;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
+using SFA.DAS.AssessorService.Application.Api.Clients;
 using SFA.DAS.AssessorService.Application.Api.Services;
 using SFA.DAS.AssessorService.Application.Api.Services.Validation;
 using SFA.DAS.AssessorService.Application.Interfaces;
@@ -137,8 +138,9 @@ namespace SFA.DAS.AssessorService.Web.Staff
                 config.For<IRegisterValidationRepository>().Use<RegisterValidationRepository>();
                 config.For<IEpaOrganisationIdGenerator>().Use<EpaOrganisationIdGenerator>();
                 config.For<ISpecialCharacterCleanserService>().Use<SpecialCharacterCleanserService>();
-                // MFCMFC whatever the client is, map here --- config.For<IUkrlpApiClient>().Use<UkrlpApiClient>();
-            
+                //config.For<IUkrlpApiClient>().Use<UkrlpApiClient>();
+                config.For<IUkrlpApiClient>().Use<UkrlpApiClient>().Ctor<string>().Is(ApplicationConfiguration.UkrlpApiAuthentication.ApiBaseAddress);
+
 
 
                 config.For<IAssessmentOrgsApiClient>().Use(() => new AssessmentOrgsApiClient(ApplicationConfiguration.AssessmentOrgsApiClientBaseUrl));
@@ -149,6 +151,8 @@ namespace SFA.DAS.AssessorService.Web.Staff
                 config.For<CertificateLearnerStartDateViewModelValidator>()
                     .Use<CertificateLearnerStartDateViewModelValidator>();
                 config.For<IRegisterValidator>().Use<RegisterValidator>();
+
+                //MFCMFC config.For<IUkrlpApiClient>().Use(() => new UkrlpApiClient(ApplicationConfiguration.UkrlpApiAuthentication.ApiBaseAddress));
 
                 config.For<IStandardServiceClient>().Use<StandardServiceClient>().Ctor<string>().Is(ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress);
                 config.For<ISessionService>().Use<SessionService>().Ctor<string>("environment")

@@ -171,7 +171,7 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                  config.For<ProviderQueryPortType>().Use<ProviderQueryPortTypeClient>()
                     .Ctor<ProviderQueryPortTypeClient.EndpointConfiguration>("endpointConfiguration").Is(ProviderQueryPortTypeClient.EndpointConfiguration.ProviderQueryPort)
                     .Ctor<string>("remoteAddress").Is(Configuration.UkrlpApiAuthentication.ApiBaseAddress);
-                config.For<IUkrlpApiClient>().Use<UkrlpApiClient>();
+                config.For<IUkrlpClient>().Use<UkrlpClient>();
                 config.For<INotificationsApi>().Use<NotificationsApi>().Ctor<HttpClient>().Is(string.IsNullOrWhiteSpace(NotificationConfiguration().ClientId)
                     ? new HttpClientBuilder().WithBearerAuthorisationHeader(new JwtBearerTokenGenerator(NotificationConfiguration())).Build()
                     : new HttpClientBuilder().WithBearerAuthorisationHeader(new AzureADBearerTokenGenerator(NotificationConfiguration())).Build());
