@@ -139,7 +139,7 @@ namespace SFA.DAS.AssessorService.Web.Staff
                 config.For<IEpaOrganisationIdGenerator>().Use<EpaOrganisationIdGenerator>();
                 config.For<ISpecialCharacterCleanserService>().Use<SpecialCharacterCleanserService>();
                 //config.For<IUkrlpApiClient>().Use<UkrlpApiClient>();
-                config.For<IUkrlpApiClient>().Use<UkrlpApiClient>().Ctor<string>().Is(ApplicationConfiguration.UkrlpApiAuthentication.ApiBaseAddress);
+                config.For<IUkrlpApiClient>().Use<UkrlpApiClient>().Ctor<string>().Is(ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress);
 
 
 

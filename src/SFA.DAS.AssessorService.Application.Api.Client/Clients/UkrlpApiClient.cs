@@ -26,6 +26,12 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                 return await RequestAndDeserialiseAsync<UkrlpProviderDetails>(request,
                     $"Could not find the provider details from the ukprn {ukprn}");
             }
+
+            //using (var request = new HttpRequestMessage(HttpMethod.Get, $"{WebUtility.UrlEncode(ukprn)}"))
+            //{
+            //    return await RequestAndDeserialiseAsync<UkrlpProviderDetails>(request,
+            //        $"Could not find the provider details from the ukprn {ukprn}");
+            //}
         }
     }
 }

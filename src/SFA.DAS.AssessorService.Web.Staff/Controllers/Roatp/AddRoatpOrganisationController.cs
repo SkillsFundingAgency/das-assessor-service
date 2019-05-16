@@ -16,6 +16,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
     using System;
     using System.Threading.Tasks;
     using Resources;
+    using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 
     [Authorize]
     public class AddRoatpOrganisationController : Controller
@@ -24,24 +25,26 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
         private ILogger<AddRoatpOrganisationController> _logger;
         private IAddOrganisationValidator _validator;
         private IRoatpSessionService _sessionService;
+        private IUkrlpApiClient _ukrlpClient;
 
         private const string CompleteRegisterWorksheetName = "Providers";
         private const string AuditHistoryWorksheetName = "Provider history";
         private const string ExcelFileName = "_RegisterOfApprenticeshipTrainingProviders.xlsx";
 
         public AddRoatpOrganisationController(IRoatpApiClient apiClient, ILogger<AddRoatpOrganisationController> logger, 
-            IAddOrganisationValidator validator, IRoatpSessionService sessionService)
+            IAddOrganisationValidator validator, IRoatpSessionService sessionService, IUkrlpApiClient ukrlpClient)
         {
             _apiClient = apiClient;
             _logger = logger;
             _validator = validator;
             _sessionService = sessionService;
+            _ukrlpClient = ukrlpClient;
         }
         
 
         [Route("add-ukprn")]
         public async Task<IActionResult> EnterUkprn()
-        {
+        { 
             //ModelState.Clear();
             var model = new EnterUkprnViewModel();
             return View("~/Views/Roatp/EnterUkprn.cshtml", model);
@@ -50,9 +53,20 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
         [Route("add-preview")]
         public async Task<IActionResult> EnterUkprnPreview(EnterUkprnViewModel model)
         {
-            
 
-            return View("~/Views/Roatp/EnterUkprnPreview.cshtml", model);
+            var details = await _ukrlpClient.Get(model.Ukprn);
+
+
+            var vm = new EnterUkprnOrganisationViewModel
+            {
+                Ukprn = model.Ukprn,
+                LegalName = details.LegalName,
+                TradingName = details.TradingName,
+                CompanyNumber = details.CompanyNumber,
+                CharityNumber = details.CharityNumber
+            };
+
+            return View("~/Views/Roatp/EnterUkprnOrganisationPreview.cshtml", vm);
         }
 
 

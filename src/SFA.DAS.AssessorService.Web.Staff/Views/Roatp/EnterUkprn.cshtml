@@ -8,7 +8,7 @@
     await Html.RenderPartialAsync("~/Views/Roatp/_StylesPartial.cshtml");
 }
 <div class="grid-row">
-    <form asp-controller="AddRoatpOrganisation" asp-action="Back" method="post" name="backForm">
+    <form asp-controller="RoatpHome" asp-action="Index" method="post" name="backForm">
         <div class="govuk-grid-column-one-half">
             <a href="JavaScript:document.backForm.submit();" class="govuk-back-link">Back</a>
         </div>
@@ -35,7 +35,7 @@
 
 <div class="grid-row">
     <div class="column-two-thirds">
-        <h1 class="heading-xlarge roatp-heading">Enter details</h1>
+        <h1 class="heading-xlarge roatp-heading">What is the organisation's UKPRN?</h1>
     </div>
 </div>
 <div class="govuk-width-container">
@@ -51,7 +51,7 @@
                         <input id="UKPRN" name="Ukprn" type="text" class="roatp-input govuk-!-width-one-third" asp-for="Ukprn"
                                sfa-validation-for="Ukprn" sfa-validationerror-class="form-control-error" />
                     </div>
-                    <input type="submit" class="roatp-button" value="Add" />
+                    <input type="submit" class="roatp-button" value="Continue" />
                 </form>
             </div>
         </div>
