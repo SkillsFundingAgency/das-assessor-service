@@ -38,6 +38,25 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
             _sessionService = sessionService;
         }
         
+
+        [Route("add-ukprn")]
+        public async Task<IActionResult> EnterUkprn()
+        {
+            //ModelState.Clear();
+            var model = new EnterUkprnViewModel();
+            return View("~/Views/Roatp/EnterUkprn.cshtml", model);
+        }
+
+        [Route("add-preview")]
+        public async Task<IActionResult> EnterUkprnPreview(EnterUkprnViewModel model)
+        {
+            
+
+            return View("~/Views/Roatp/EnterUkprnPreview.cshtml", model);
+        }
+
+
+        // MFCMFC this may be decommissioned
         [Route("new-training-provider")]
         public async Task<IActionResult> AddOrganisation(AddOrganisationProviderTypeViewModel model)
         {
