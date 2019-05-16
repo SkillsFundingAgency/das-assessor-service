@@ -29,7 +29,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
         Task<IList<ScheduleRun>> GetAllScheduledRun(int scheduleType);
         Task<Certificate> GetCertificate(Guid certificateId);
         Task<List<CertificateResponse>> GetCertificates();
-        Task<List<CertificateSummaryResponse>> GetCertificatesToBeApproved();
+        Task<PaginatedList<CertificateSummaryResponse>> GetCertificatesToBeApproved(int pageSize, int pageIndex,
+            string status, string privatelyFundedStatus);
         Task<IEnumerable<IDictionary<string, object>>> GetDataFromStoredProcedure(string storedProcedure);
         Task<List<DeliveryArea>> GetDeliveryAreas();
         Task<AssessmentOrganisationContact> GetEpaContact(string contactId);

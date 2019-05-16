@@ -63,10 +63,18 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
                 certificate =>
                 {
                     var certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
-                    recordedBy = certificate.CertificateLogs
-                        .OrderByDescending(q => q.EventTime)
-                        .FirstOrDefault(certificateLog =>
-                            certificateLog.Status == Domain.Consts.CertificateStatus.Submitted)?.Username;
+                    if (certificate.IsPrivatelyFunded)
+                    {
+                        recordedBy = certificate.CreatedBy;
+                    }
+                    else
+                    {
+                        recordedBy = certificate.CertificateLogs
+                            .OrderByDescending(q => q.EventTime)
+                            .FirstOrDefault(certificateLog =>
+                                certificateLog.Status == Domain.Consts.CertificateStatus.Submitted)?.Username;
+                    }
+
                     try
                     {
                         if (certificateData.ProviderName == null)
@@ -94,6 +102,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
                         CertificateReference = certificate.CertificateReference,
                         Uln = certificate.Uln,
                         CreatedAt = certificate.CreatedAt,
+                        CreatedDay = certificate.CreateDay,
+                        UpdatedAt = certificate.UpdatedAt,
                         ContactOrganisation = certificateData.ContactOrganisation,
                         ContactName = certificateData.ContactName,
                         TrainingProvider = trainingProviderName,

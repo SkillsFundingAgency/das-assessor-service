@@ -37,22 +37,23 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
 
         public async Task<StaffSearchResult> Handle(StaffSearchRequest request, CancellationToken cancellationToken)
         {
+            var pageSize = 10;
+
             if (string.IsNullOrWhiteSpace(request.SearchQuery))
                 return new StaffSearchResult
                 {
                     EndpointAssessorOrganisationId = String.Empty,
                     StaffSearchItems =
-                        new PaginatedList<StaffSearchItems>(new List<StaffSearchItems>(), 0, request.Page, 10)
+                        new PaginatedList<StaffSearchItems>(new List<StaffSearchItems>(), 0, request.Page, pageSize)
                 };
 
-            var pageSize = 10;
             var searchResult = await Search(request);
             var totalRecordCount = searchResult.TotalCount;
 
             var displayEpao = false;
             if (searchResult.TotalCount == 0)
             {
-                totalRecordCount = await _staffIlrRepository.CountLearnersByName(request.SearchQuery);
+                totalRecordCount = await _staffIlrRepository.SearchForLearnerByNameCount(request.SearchQuery);
                 searchResult.PageOfResults = await _staffIlrRepository.SearchForLearnerByName(request.SearchQuery, request.Page, pageSize);
             }
             else
@@ -84,13 +85,14 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
                 return sr;
             }
 
-            if (SearchStringIsAUln(request))
+            var pageSize = 10;
+            if (SearchStringIsAUln(request))           
             {
                 var sr = new StaffReposSearchResult
                 {
-                    PageOfResults = await _staffIlrRepository.SearchForLearnerByUln(request)
+                    PageOfResults = await _staffIlrRepository.SearchForLearnerByUln(uln, request.Page, pageSize),
+                    TotalCount = await _staffIlrRepository.SearchForLearnerByUlnCount(uln)
                 };
-                sr.TotalCount = sr.PageOfResults.Count();
                 return sr;
             }
 
