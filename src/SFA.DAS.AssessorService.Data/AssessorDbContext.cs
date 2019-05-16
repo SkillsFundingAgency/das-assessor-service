@@ -73,12 +73,6 @@ namespace SFA.DAS.AssessorService.Data
                 .WithMany(s => s.ContactsPrivileges)
                 .HasForeignKey(sc => sc.ContactId);
 
-
-//            modelBuilder.Entity<ContactsPrivilege>()
-//                .HasOne<Privilege>(sc => sc.Privilege)
-//                .WithMany(s => s.ContactsPrivileges)
-//                .HasForeignKey(sc => sc.PrivilegeId);
-
             modelBuilder.Entity<Organisation>()
                 .Property<string>("OrganisationData")
                 .HasField("_extendedOrgData");
