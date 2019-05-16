@@ -37,9 +37,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ao
 
             var standard = await _standardService.GetStandard(organisationStandard.StandardId);
             organisationStandard.StandardTitle = standard?.Title;
-            organisationStandard.StandardEffectiveFrom = standard?.EffectiveFrom;
-            organisationStandard.StandardEffectiveTo = standard?.EffectiveTo;
-            organisationStandard.StandardLastDateForNewStarts = standard?.LastDateForNewStarts;
+            organisationStandard.StandardEffectiveFrom = standard?.StandardData.EffectiveFrom;
+            organisationStandard.StandardEffectiveTo = standard?.StandardData.EffectiveTo;
+            organisationStandard.StandardLastDateForNewStarts = standard?.StandardData.LastDateForNewStarts;
 
             if (organisationStandard.ContactId != null)
                 organisationStandard.Contact =  await _registerQueryRepository.GetContactByContactId(organisationStandard.ContactId.GetValueOrDefault());

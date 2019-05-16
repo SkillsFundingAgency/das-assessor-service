@@ -40,11 +40,11 @@
                         {
                             <tr>
                                 <td data-label="Name">@result.Title</td>
-                                <td data-label="ID">@result.Id</td>
-                                <td data-label="Effective from">@result.EffectiveFrom.ToSfaShortestDateString()</td>
-                                <td data-label="Effective to">@result.EffectiveTo.ToSfaShortestDateString()</td>
-                                <td data-label="Last date for new starts">@result.LastDateForNewStarts.ToSfaShortestDateString()</td>
-                                <td class="numeric"><a href="/register/add-standard/organisation/@Model.OrganisationId/standard/@result.Id">Add to organisation</a></td>
+                                <td data-label="ID">@result.StandardId</td>
+                                <td data-label="Effective from">@result.StandardData.EffectiveFrom.ToSfaShortestDateString()</td>
+                                <td data-label="Effective to">@result.StandardData.EffectiveTo.ToSfaShortestDateString()</td>
+                                <td data-label="Last date for new starts">@result.StandardData.LastDateForNewStarts.ToSfaShortestDateString()</td>
+                                <td class="numeric"><a href="/register/add-standard/organisation/@Model.OrganisationId/standard/@result.StandardId">Add to organisation</a></td>
                             </tr>
                         }
                     </tbody>
