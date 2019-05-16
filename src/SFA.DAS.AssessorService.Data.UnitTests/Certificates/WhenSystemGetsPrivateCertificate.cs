@@ -34,7 +34,7 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
                 _mockDbConnection.Object);
             _certificateRepository = new CertificateRepository(_mockDbContext.Object, new Mock<IDbConnection>().Object);
         
-          _result = _certificateRepository.GetPrivateCertificate(1111111111, "EPA0001", "Hawkins").Result;
+          _result = _certificateRepository.GetPrivateCertificate(1111111111, "EPA0001").Result;
         }
 
         [Test]

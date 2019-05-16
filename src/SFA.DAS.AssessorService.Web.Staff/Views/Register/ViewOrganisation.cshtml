@@ -160,10 +160,10 @@ Layout = "_Layout";
                 </thead>
                 <tbody>
                     @foreach (var result in Model.OrganisationStandards.OrderBy(x =>
-                    x.StandardSummary.Title))
+                    x.StandardCollation.Title))
                     {
                     <tr>
-                        <td data-label="Name">@result.StandardSummary.Title</td>
+                        <td data-label="Name">@result.StandardCollation.Title</td>
                         <td data-label="ID">@result.StandardCode</td>
                         <td><a href="/register/view-standard/@result.Id">View</a></td>
                     </tr>
