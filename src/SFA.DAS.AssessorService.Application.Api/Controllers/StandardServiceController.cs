@@ -27,7 +27,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             _standardService = standardService;
         }
 
-        [HttpGet("standards/summaries", Name = "StandardServiceGetAllStandardSummaries")]
+        [HttpGet("standards", Name = "GetAllStandards")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(IEnumerable<StandardCollation>))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
@@ -38,7 +38,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             return Ok(standards);
         }
 
-        [HttpGet("standards/{standardCode}", Name = "StandardServiceGetStandard")]
+        [HttpGet("standards/{standardCode}", Name = "GetStandard")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(StandardCollation))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
