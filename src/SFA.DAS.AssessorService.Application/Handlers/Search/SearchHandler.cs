@@ -87,7 +87,18 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
                     //Now check if exists for uln and surname without considering org
                     certificate = await _certificateRepository.GetCertificateByUlnLastname(request.Uln, likedSurname);
                     if (certificate != null)
-                        return new List<SearchResult> {new SearchResult {UlnAlreadyExits = true, Uln = request.Uln, IsPrivatelyFunded = true} };
+                    {
+                        if (intStandards?.Contains(certificate.StandardCode) ?? false)
+                        {
+                            var standard = await  _standardService.GetStandard(certificate.StandardCode);
+                            return new List<SearchResult>
+                            {
+                                new SearchResult {UlnAlreadyExits = true,FamilyName = likedSurname, Uln = request.Uln, IsPrivatelyFunded = true, Standard = standard?.Title,Level = standard?.StandardData.Level.GetValueOrDefault()??0}
+                            };
+                        }
+                        return new List<SearchResult> { new SearchResult { UlnAlreadyExits = true, Uln = request.Uln, IsPrivatelyFunded = true, IsNoMatchingFamilyName = true } };
+                    }
+
                     //If we got here then certifcate does not exist with uln and surename so
                     //lastly check if there is a certificate that exist with the given uln only disregarding org and surname
                     var certificateExist = await _certificateRepository.CertifciateExistsForUln(request.Uln);
@@ -99,10 +110,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
                 //We found the certifate, check if standard in certificate exists in standards registered by calling org
                 if (intStandards?.Contains(certificate.StandardCode)??false)
                     listOfIlrResults[0].StdCode = certificate.StandardCode;
-                else
-                    if(certificate.Organisation.EndPointAssessorOrganisationId != thisEpao.EndPointAssessorOrganisationId)
-                        return new List<SearchResult> {new SearchResult()};
-                   
             }
             else
             {
