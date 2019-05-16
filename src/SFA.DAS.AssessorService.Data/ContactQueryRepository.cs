@@ -98,7 +98,7 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<IList<ContactsPrivilege>> GetPrivilegesFor(Guid contactId)
         {
-            return = await _assessorDbContext.ContactsPrivileges.Where(cr => cr.ContactId == contactId).Include(cp => cp.Privilege).ToListAsync();   
+            return await _assessorDbContext.ContactsPrivileges.Where(cr => cr.ContactId == contactId).Include(cp => cp.Privilege).ToListAsync();   
         }
 
         public async Task<bool> CheckContactExists(string userName)
