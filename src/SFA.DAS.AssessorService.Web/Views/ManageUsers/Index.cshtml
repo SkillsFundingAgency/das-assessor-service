@@ -31,29 +31,30 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var item in Model)
+                        @foreach (var contact in Model)
                         {
                             <tr>
-                                <td data-label="@Localizer["User details"]" class="nowrap" >
-                                    @Html.DisplayFor(modelItem => item.Contact.DisplayName)<br />
-                                    <span>@Html.DisplayFor(modelItem => item.Contact.Email)</span>
+                                <td data-label="@Localizer["User details"]" class="nowrap">
+                                    <a class="govuk-link" asp-controller="ManageUsers" asp-action="User" asp-route-userid="@contact.Contact.Id">@Html.DisplayFor(modelItem => contact.Contact.DisplayName)</a>
+                                    <br/>
+                                    <span>@Html.DisplayFor(modelItem => contact.Contact.Email)</span>
                                 </td>
                                 <td data-label="@Localizer["What they can do"]" >
                                     <ul>
-                                        @foreach (var role in item.Privileges )
+                                        @foreach (var role in contact.Privileges )
                                         {
                                             <li> @Html.DisplayFor(modelItem => role)</li>
                                         }
                                     </ul>
                                 </td>
                                 <td data-label="@Localizer["Status"]" >
-                                    @Html.DisplayFor(modelItem => item.Contact.Status)
+                                    @Html.DisplayFor(modelItem => contact.Contact.Status)
                                 </td>
                                 <td data-label="@Localizer["Action required"]">
-                                    @if (item.Contact.Status == ContactStatus.InvitePending)
+                                    @if (contact.Contact.Status == ContactStatus.InvitePending)
                                     {
-                                        <a asp-controller="ManageUsers" asp-action="SetStatusAndNotify" asp-route-status="@ContactStatus.Approve" asp-route-id="@item.Contact.Id">Approve</a>
-                                        <a asp-controller="ManageUsers" asp-action="SetStatusAndNotify" asp-route-status="@ContactStatus.Reject" asp-route-id="@item.Contact.Id">Reject</a>
+                                        <a asp-controller="ManageUsers" asp-action="SetStatusAndNotify" asp-route-status="@ContactStatus.Approve" asp-route-id="@contact.Contact.Id">Approve</a>
+                                        <a asp-controller="ManageUsers" asp-action="SetStatusAndNotify" asp-route-status="@ContactStatus.Reject" asp-route-id="@contact.Contact.Id">Reject</a>
                                     }
                                 </td>
                             </tr>
@@ -69,6 +70,7 @@
                     </div>
                 </div>
             }
+            <a asp-controller="InviteUser" asp-action="Invite" class="button govuk-button">Invite new user</a>
         </div>
     </div>
 </div>
