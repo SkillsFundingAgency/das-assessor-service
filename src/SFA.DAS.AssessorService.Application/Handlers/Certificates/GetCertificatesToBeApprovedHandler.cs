@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -8,6 +9,7 @@ using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.AssessorService.Domain.Extensions;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using SFA.DAS.AssessorService.Domain.Paging;
 using SFA.DAS.AssessorService.ExternalApis;
@@ -15,53 +17,52 @@ using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
 {
-    public class GetCertificatesToBeApprovedHandler : IRequestHandler<GetToBeApprovedCertificatesRequest,
-        List<CertificateSummaryResponse>>
+    public class GetCertificatesToBeApprovedHandler : IRequestHandler<GetToBeApprovedCertificatesRequest, PaginatedList<CertificateSummaryResponse>>
     {
         private readonly ICertificateRepository _certificateRepository;
         private readonly IAssessmentOrgsApiClient _assessmentOrgsApiClient;
-        private readonly ILogger<GetCertificatesHistoryHandler> _logger;
+        private readonly IContactQueryRepository _contactQueryRepository;
+        private readonly ILogger<GetCertificatesToBeApprovedHandler> _logger;
 
         public GetCertificatesToBeApprovedHandler(ICertificateRepository certificateRepository,
             IAssessmentOrgsApiClient assessmentOrgsApiClient,
-            ILogger<GetCertificatesHistoryHandler> logger)
+            IContactQueryRepository contactQueryRepository,
+            ILogger<GetCertificatesToBeApprovedHandler> logger)
         {
             _certificateRepository = certificateRepository;
             _assessmentOrgsApiClient = assessmentOrgsApiClient;
+            _contactQueryRepository = contactQueryRepository;
             _logger = logger;
         }
 
-        public async Task<List<CertificateSummaryResponse>> Handle(GetToBeApprovedCertificatesRequest request,
+        public async Task<PaginatedList<CertificateSummaryResponse>> Handle(GetToBeApprovedCertificatesRequest request,
             CancellationToken cancellationToken)
         {
-            var statuses = new List<string>
-            {
-                "ToBeApproved",
-                "Approved",
-                "Rejected"
-            };
-
-            var certificates = await _certificateRepository.GetCertificates(statuses);
-
+            var certificates = await _certificateRepository.GetCertificatesForApproval(
+                request.PageIndex ?? 1,
+                request.PageSize ?? 0,
+                request.Status,
+                request.PrivatelyFundedStatus);
+            
             // Please Note:- Cannot seem to automap this with custom value/type converters
             // so dealing with it manually for now.
-            var approvals = MapCertificates(certificates);
+            var approvals = await MapCertificates(certificates);
             return approvals;
         }
 
-        private List<CertificateSummaryResponse> MapCertificates(IEnumerable<Certificate> certificates)
+        private async Task<PaginatedList<CertificateSummaryResponse>> MapCertificates(PaginatedList<Certificate> certificates)
         {
             var trainingProviderName = string.Empty;
+            var firstName = string.Empty;
+            var lastName = string.Empty;
             var recordedBy = string.Empty;
+            var reasonForChange = string.Empty;
 
-            var certificateResponses = certificates.Select(
+            var certificateResponses = certificates.Items.Select(
                 certificate =>
                 {
                     var certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
-                    recordedBy = certificate.CertificateLogs
-                        .OrderByDescending(q => q.EventTime)
-                        .FirstOrDefault(certificateLog =>
-                            certificateLog.Status == Domain.Consts.CertificateStatus.Submitted)?.Username;
+                    recordedBy = certificate.CreatedBy;
 
                     try
                     {
@@ -78,6 +79,13 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
                         {
                             trainingProviderName = certificateData.ProviderName;
                         }
+
+                        firstName = certificateData.LearnerGivenNames;
+                        lastName = certificateData.LearnerFamilyName;
+                        reasonForChange = certificate.CertificateLogs
+                            .OrderByDescending(q => q.EventTime)
+                            .FirstOrDefault(certificateLog =>
+                                certificateLog.Status == Domain.Consts.CertificateStatus.Draft && certificateLog.Action == Domain.Consts.CertificateStatus.Rejected)?.ReasonForChange;
                     }
                     catch (EntityNotFoundException)
                     {
@@ -87,9 +95,11 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
 
                     return new CertificateSummaryResponse
                     {
+
                         CertificateReference = certificate.CertificateReference,
                         Uln = certificate.Uln,
-                        CreatedAt = certificate.CreatedAt,
+                        CreatedDay = certificate.CreateDay,
+                        UpdatedAt = certificate.UpdatedAt,
                         ContactOrganisation = certificateData.ContactOrganisation,
                         ContactName = certificateData.ContactName,
                         TrainingProvider = trainingProviderName,
@@ -106,12 +116,31 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
                         ContactAddLine3 = certificateData.ContactAddLine3,
                         ContactAddLine4 = certificateData.ContactAddLine4,
                         ContactPostCode = certificateData.ContactPostCode,
-                        Status = certificate.Status
+                        Status = certificate.Status,
+                        PrivatelyFundedStatus = certificate.PrivatelyFundedStatus,
+                        FirstName = firstName,
+                        LastName = lastName,
+                        Ukprn = certificate.ProviderUkPrn,
+                        StandardCode = certificate.StandardCode,
+                        EpaoId = certificate.Organisation?.EndPointAssessorOrganisationId,
+                        EpaoName = certificate.Organisation?.EndPointAssessorName,
+                        CertificateId = certificate.Id,
+                        ReasonForChange = reasonForChange
                     };
                 });
 
             var responses = certificateResponses.ToList();
-            return responses;
+            foreach (var response in responses)
+            {
+                response.RecordedBy = (await _contactQueryRepository.GetContact(response.RecordedBy))?.DisplayName;
+            }
+            var paginatedList = new PaginatedList<CertificateSummaryResponse>(responses,
+                certificates.TotalRecordCount,
+                certificates.PageIndex,
+                certificates.PageSize
+            );
+
+            return paginatedList;
         }
     }
 }

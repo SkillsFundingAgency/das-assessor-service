@@ -7,88 +7,95 @@
 
 <div class="grid-row">
     <div class="column-two-thirds">     
-        <a class="link-back" asp-controller="CertificateAmend" asp-action="Check" asp-route-certificateId=@Model.Id>Back</a>
+        @if (Model.FromApproval)
+        {
+            <a class="link-back" asp-controller="CertificateAmend" asp-action="Check" asp-route-fromapproval = "true" asp-route-certificateId=@Model.Id>Back</a>
+        }
+        else
+        {
+            <a class="link-back" asp-controller="CertificateAmend" asp-action="Check" asp-route-certificateId=@Model.Id>Back</a>
+        }
 
-        <form type="post" asp-controller="CertificateOption" asp-method="Option" class="apprentice-option-form">
-            @Html.HiddenFor(c => c.Id)
-
-            @* hidden with css by default *@
-            <div class="js-error-summary error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
-                <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
-                    <text>There is a problem</text>
-                </h2>
-                <ul class="js-error-summary-list error-summary-list"></ul>
-            </div>
-
-            @if (!ViewData.ModelState.IsValid)
-            {
-            <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
-                <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
-                    There's a problem
-                </h2>
-                <ul class="error-summary-list">
-                    <li><a sfa-validation-for="HasAdditionalLearningOption"></a></li>
-                    <li><a sfa-validation-for="Option"></a></li>
-                    @*<li><a href="#Pass">You need to specify an achievement grade for this apprentice</a></li>*@
-                    <li><a sfa-validation-for="ReasonForChange"></a></li>
-                </ul>
-            </div>
-            }
-
-            <div sfa-anyvalidationerror-class="after-error-summary">
-                <div id="HasAdditionalLearningOption">
-                    <h1 class="heading-medium">
-                        Did the apprentice take a learning option?
-                    </h1>
-                    <p>You may know options as 'occupational options', 'pathways', 'specialisms' or 'specialist functions'.</p>
-                    <p>The option will appear on the certificate.</p>
-                    <div class="error-message-container" sfa-validation-for="HasAdditionalLearningOption" sfa-validationerror-class="form-group-error">
-                        <span class="error-message" asp-validation-for="HasAdditionalLearningOption"></span>
-                    </div>
+            <form type="post" asp-controller="CertificateOption" asp-method="Option" class="apprentice-option-form">
+                @Html.HiddenFor(c => c.Id)
+                @Html.HiddenFor(c => c.FromApproval)
+                @* hidden with css by default *@
+                <div class="js-error-summary error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+                    <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+                        <text>There is a problem</text>
+                    </h2>
+                    <ul class="js-error-summary-list error-summary-list"></ul>
                 </div>
-                <div class="form-group" sfa-anyvalidationerror-class="form-group-error">
-                    <div class="multiple-choice" data-target="show-option-input">
-                        <input asp-for="HasAdditionalLearningOption" id="options_yes" type="radio" value="True" />
-                        <label for="options_yes">
-                            Yes
+
+                @if (!ViewData.ModelState.IsValid)
+                {
+                    <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+                        <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+                            There's a problem
+                        </h2>
+                        <ul class="error-summary-list">
+                            <li><a sfa-validation-for="HasAdditionalLearningOption"></a></li>
+                            <li><a sfa-validation-for="Option"></a></li>
+                            @*<li><a href="#Pass">You need to specify an achievement grade for this apprentice</a></li>*@
+                            <li><a sfa-validation-for="ReasonForChange"></a></li>
+                        </ul>
+                    </div>
+                }
+
+                <div sfa-anyvalidationerror-class="after-error-summary">
+                    <div id="HasAdditionalLearningOption">
+                        <h1 class="heading-medium">
+                            Did the apprentice take a learning option?
+                        </h1>
+                        <p>You may know options as 'occupational options', 'pathways', 'specialisms' or 'specialist functions'.</p>
+                        <p>The option will appear on the certificate.</p>
+                        <div class="error-message-container" sfa-validation-for="HasAdditionalLearningOption" sfa-validationerror-class="form-group-error">
+                            <span class="error-message" asp-validation-for="HasAdditionalLearningOption"></span>
+                        </div>
+                    </div>
+                    <div class="form-group" sfa-anyvalidationerror-class="form-group-error">
+                        <div class="multiple-choice" data-target="show-option-input">
+                            <input asp-for="HasAdditionalLearningOption" id="options_yes" type="radio" value="True" />
+                            <label for="options_yes">
+                                Yes
+                            </label>
+                        </div>
+                        <div class="panel panel-border-narrow js-hidden" id="show-option-input">
+                            <label class="form-label" for="surname">
+                                <span class="form-label">What was the option?</span>
+                                <span class="error-message" asp-validation-for="Option"></span>
+                            </label>
+                            <input class="form-control" sfa-validation-for="Option" sfa-validationerror-class="form-control-error" asp-for="Option" type="text" />
+                        </div>
+
+                        <div class="multiple-choice">
+                            <input asp-for="HasAdditionalLearningOption" id="options_no" type="radio" value="False" />
+                            <label for="options_no">
+                                No
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group" sfa-validation-for="ReasonForChange" sfa-validationerror-class="form-group-error">
+                        <label for="ReasonForChange">
+                            <span class="form-label-bold">Reason for change</span>
+                            <span class="form-hint">Please could you provide more detail as to why this change is required.</span>
+                            <span class="error-message" asp-validation-for="ReasonForChange"></span>
                         </label>
-                    </div>
-                    <div class="panel panel-border-narrow js-hidden" id="show-option-input">
-                        <label class="form-label" for="surname">
-                            <span class="form-label">What was the option?</span>
-                            <span class="error-message" asp-validation-for="Option"></span>
-                        </label>
-                        <input class="form-control" sfa-validation-for="Option" sfa-validationerror-class="form-control-error" asp-for="Option" type="text" />
-                    </div>
-
-                    <div class="multiple-choice">
-                        <input asp-for="HasAdditionalLearningOption" id="options_no" type="radio" value="False" />
-                        <label for="options_no">
-                            No
-                        </label>
+                        <textarea class="form-control form-control-3-4" rows="5" name="ReasonForChange" sfa-validation-for="ReasonForChange" sfa-validationerror-class="form-control-error" asp-for="ReasonForChange"></textarea>
                     </div>
                 </div>
-                <div class="form-group" sfa-validation-for="ReasonForChange" sfa-validationerror-class="form-group-error">
-                    <label for="ReasonForChange">
-                        <span class="form-label-bold">Reason for change</span>
-                        <span class="form-hint">Please could you provide more detail as to why this change is required.</span>
-                        <span class="error-message" asp-validation-for="ReasonForChange"></span>
-                    </label>
-                    <textarea class="form-control form-control-3-4" rows="5" name="ReasonForChange" sfa-validation-for="ReasonForChange" sfa-validationerror-class="form-control-error" asp-for="ReasonForChange"></textarea>
-                </div>
-            </div>
 
-            <details>
-                <summary><span class="summary">What's a learning option?</span></summary>
-                <div class="panel panel-border-narrow" id="what-is-a-learning-option">
-                    <p>
-                        For some standards, an apprentice can take different learning options. For example, the standard for professional accounting taxation technician has a tax option. If it applies, enter the option the apprentice achieved.
-                    </p>
-                </div>
-            </details>
+                <details>
+                    <summary><span class="summary">What's a learning option?</span></summary>
+                    <div class="panel panel-border-narrow" id="what-is-a-learning-option">
+                        <p>
+                            For some standards, an apprentice can take different learning options. For example, the standard for professional accounting taxation technician has a tax option. If it applies, enter the option the apprentice achieved.
+                        </p>
+                    </div>
+                </details>
 
-            <button type="submit" class="button">Continue</button>
-        </form>
+                <button type="submit" class="button">Continue</button>
+            </form>
     </div>
 </div>
 @section Scripts {
