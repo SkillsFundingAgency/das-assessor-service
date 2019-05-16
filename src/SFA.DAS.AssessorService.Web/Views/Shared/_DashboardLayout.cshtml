@@ -99,7 +99,6 @@
                     <p class="govuk-!-margin-top-0 govuk-!-margin-bottom-0 das-no-wrap">
                         <span class="govuk-visually-hidden">Signed in as </span>
                         @SessionService.Get("LoggedInUser")
-                        @User.Identity.Name
                     </p>
                     @if (@SessionService.Get("OrganisationName") != null)
                     {
@@ -210,24 +209,7 @@
     <script src="~/javascripts/application.min.js"></script>
 </environment>
 
-    @*
-    <environment include="Development">
-        <script src="~/lib/jquery/dist/jquery-1.12.4.js"></script>
-        <script src="~/assets/javascripts/govuk-template.js?0.23.0"></script>
-        <script src="~/js/details.polyfill.js" asp-append-version="true"></script>
-        <script src="~/js/shim-links-with-button-role.js" asp-append-version="true"></script>
-        <script src="~/js/show-hide-content.js" asp-append-version="true"></script>
-        <script src="~/js/expandable-table.js" asp-append-version="true"></script>
-        <script src="~/js/site.js" asp-append-version="true"></script>
-    </environment>
-
-    <environment exclude="Development">
-        <script src="~/lib/jquery/dist/jquery.min.js"></script>
-        <script src="~/js/site.min.js" asp-append-version="true"></script>
-    </environment>
-    *@
-
-    @RenderSection("Scripts", required: false)
+@RenderSection("Scripts", required: false)
 
 </body>
 

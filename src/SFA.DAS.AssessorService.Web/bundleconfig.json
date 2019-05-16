@@ -1,6 +1,6 @@
 ﻿[
   {
-    "outputFileName": "wwwroot/css/application.min.css",
+    "outputFileName": "wwwroot/stylesheets/application.min.css",
     "inputFiles": ["wwwroot/stylesheets/application.css"]
   },
   {
