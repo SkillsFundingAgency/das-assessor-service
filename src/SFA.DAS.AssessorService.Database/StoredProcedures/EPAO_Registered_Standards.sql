@@ -11,7 +11,8 @@ select
 	INNER join organisations o on os.EndPointAssessorOrganisationId = o.EndPointAssessorOrganisationId and o.EndPointAssessorOrganisationId = @EPAOID
 	LEFT outer join StandardCollation sc on os.StandardCode = sc.StandardId
 	LEFT outer join contacts c on os.ContactId = c.Id
-	WHERE os.status = 'Live' ORDER BY 'StandardName'
+	WHERE os.status = 'Live' and CONVERT(DATE, os.EffectiveTo) >= CONVERT(DATE, GETDATE())
+	ORDER BY 'StandardName'
 	OFFSET @Skip ROWS 
     FETCH NEXT @Take ROWS ONLY
 END
