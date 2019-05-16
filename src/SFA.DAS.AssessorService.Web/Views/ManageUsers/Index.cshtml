@@ -35,7 +35,7 @@
                         {
                             <tr>
                                 <td data-label="@Localizer["User details"]" class="nowrap">
-                                    <a asp-controller="UserDetails" asp-action="User" asp-route-userid="@contact.Contact.Id">@Html.DisplayFor(modelItem => contact.Contact.DisplayName)</a>
+                                    <a class="govuk-link" asp-controller="UserDetails" asp-action="User" asp-route-userid="@contact.Contact.Id">@Html.DisplayFor(modelItem => contact.Contact.DisplayName)</a>
                                     <br/>
                                     <span>@Html.DisplayFor(modelItem => contact.Contact.Email)</span>
                                 </td>
@@ -70,7 +70,7 @@
                     </div>
                 </div>
             }
-            <a asp-controller="InviteUser" asp-action="Invite" class="button">Invite new user</a>
+            <a asp-controller="InviteUser" asp-action="Invite" class="button govuk-button">Invite new user</a>
         </div>
     </div>
 </div>
