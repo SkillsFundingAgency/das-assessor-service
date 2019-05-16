@@ -10,7 +10,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Certificates
         public string LearnerSex { get; set; }
         public string StandardName { get; set; }
         public int StandardLevel { get; set; }
-        public DateTime StandardPublicationDate { get; set; }
+        public DateTime? StandardPublicationDate { get; set; }
         public string ContactName { get; set; }
         public string ContactOrganisation { get; set; }
         public string ContactAddLine1 { get; set; }

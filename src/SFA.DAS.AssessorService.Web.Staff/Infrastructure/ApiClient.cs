@@ -15,6 +15,7 @@ using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Paging;
 using SFA.DAS.AssessorService.Web.Staff.ViewModels.Private;
 using SFA.DAS.Apprenticeships.Api.Types;
+using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using OrganisationType = SFA.DAS.AssessorService.Api.Types.Models.AO.OrganisationType;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
@@ -102,9 +103,9 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
             return await Get<List<CertificateResponse>>("/api/v1/certificates?statusses=Submitted");
         }
 
-        public async Task<List<CertificateSummaryResponse>> GetCertificatesToBeApproved()
+        public async Task<PaginatedList<CertificateSummaryResponse>> GetCertificatesToBeApproved(int pageSize, int pageIndex, string status, string privatelyFundedStatus)
         {
-            return await Get<List<CertificateSummaryResponse>>("/api/v1/certificates/approvals");
+            return await Get<PaginatedList<CertificateSummaryResponse>>($"/api/v1/certificates/approvals/?pageSize={pageSize}&pageIndex={pageIndex}&status={status}&privatelyFundedStatus={privatelyFundedStatus}");
         }
 
         public async Task<StaffSearchResult> Search(string searchString, int page)
@@ -278,9 +279,9 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
                 staffCertificateDuplicateRequest);
                 }
 
-        public async Task<List<StandardSummary>> SearchStandards(string searchString)
+        public async Task<List<StandardCollation>> SearchStandards(string searchString)
         {
-            return await Get<List<StandardSummary>>($"/api/ao/assessment-organisations/standards/search/{searchString}");
+            return await Get<List<StandardCollation>>($"/api/ao/assessment-organisations/standards/search/{searchString}");
         }
 
         public async Task ApproveCertificates(CertificatePostApprovalViewModel certificatePostApprovalViewModel)
