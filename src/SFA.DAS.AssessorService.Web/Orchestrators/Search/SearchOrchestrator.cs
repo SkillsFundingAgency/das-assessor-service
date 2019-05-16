@@ -57,7 +57,9 @@ namespace SFA.DAS.AssessorService.Web.Orchestrators.Search
                     AchDate = result.AchDate,
                     LearnStartDate = result.LearnStartDate,
                     ShowExtraInfo = result.ShowExtraInfo,
-                    UlnAlreadyExists = result.UlnAlreadyExits
+                    UlnAlreadyExists = result.UlnAlreadyExits,
+                    IsPrivatelyFunded = result.IsPrivatelyFunded,
+                    IsNoMatchingFamilyName = result.IsNoMatchingFamilyName
                 });
             }
 

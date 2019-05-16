@@ -34,5 +34,6 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Search
         public string AchievementDate { get; set; }
         public bool UlnAlreadyExists { get; set; }
         public bool ShowExtraInfo { get; set; }
+        public bool IsNoMatchingFamilyName { get; set; }
     }
 }
