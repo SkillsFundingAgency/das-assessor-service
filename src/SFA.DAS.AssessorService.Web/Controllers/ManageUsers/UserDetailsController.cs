@@ -1,40 +1,30 @@
 using System;
 using System.Threading.Tasks;
 using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Web.Controllers.ManageUsers.ViewModels;
-using SFA.DAS.AssessorService.Web.Infrastructure;
 
 namespace SFA.DAS.AssessorService.Web.Controllers.ManageUsers
 {
-    [Authorize]
-    [CheckSession]
-    public class UserDetailsController : Controller
+    public class UserDetailsController : ManageUsersBaseController
     {
-        private readonly IContactsApiClient _contactsApiClient;
-        private readonly IHttpContextAccessor _httpContextAccessor;
-
-        public UserDetailsController(IContactsApiClient contactsApiClient, IHttpContextAccessor httpContextAccessor)
-        {
-            _contactsApiClient = contactsApiClient;
-            _httpContextAccessor = httpContextAccessor;
-        }
+        public UserDetailsController(IContactsApiClient contactsApiClient, IHttpContextAccessor httpContextAccessor) : base(contactsApiClient, httpContextAccessor){}
 
         [HttpGet("/ManageUsers/{userid}")]
         public async Task<IActionResult> User(Guid userid)
         {
-            // Get calling userId from claims
-            // Get 
-            
-            
-            var contact = await _contactsApiClient.GetById(userid.ToString());
+            var securityCheckpoint = await SecurityCheckAndGetContact(userid);
 
-            var vm = Mapper.Map<UserViewModel>(contact);
+            if (!securityCheckpoint.isValid)
+            {
+                return Unauthorized();
+            }
 
-            vm.AssignedPrivileges = await _contactsApiClient.GetContactPrivileges(userid);
+            var vm = Mapper.Map<UserViewModel>(securityCheckpoint.contact);
+
+            vm.AssignedPrivileges = await ContactsApiClient.GetContactPrivileges(userid);
             
             return View("~/Views/ManageUsers/UserDetails/User.cshtml", vm);
         }
