@@ -4,13 +4,15 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Certificates
 {
     public class CertificateSummaryResponse
     {
+        public Guid CertificateId { get; set; }
         public string CertificateReference { get; set; }
         public string RecordedBy { get; set; }
         public long Uln { get; set; }
         public string FullName { get; set; }
         public string TrainingProvider { get; set; }
         public DateTime CreatedAt { get; set; }
-
+        public DateTime CreatedDay { get; set; }
+        public DateTime? UpdatedAt { get; set; }
         public string StandardName { get; set; }
         public int Level { get; set; }
         public string OverallGrade { get; set; }
@@ -27,5 +29,13 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Certificates
         public string ContactAddLine4 { get; set; }
         public string ContactPostCode { get; set; }
         public string Status { get; set; }
+        public string PrivatelyFundedStatus { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public int Ukprn { get; set; }
+        public int StandardCode { get; set; }
+        public string EpaoId { get; set; }
+        public string EpaoName { get; set; }
+        public string ReasonForChange { get; set; }
     }
 }

@@ -7,11 +7,18 @@
 
 <div class="grid-row">
     <div class="column-two-thirds">
-        <a class="link-back" asp-controller="CertificateAmend" asp-action="Check" asp-route-certificateId=@Model.Id>Back</a>
-
+        
+        @if (Model.FromApproval)
+        {
+            <a class="link-back" asp-controller="CertificateAmend" asp-action="Check" asp-route-fromapproval="true" asp-route-certificateId=@Model.Id>Back</a>
+        }
+        else
+        {
+            <a class="link-back" asp-controller="CertificateAmend" asp-action="Check" asp-route-certificateId=@Model.Id>Back</a>
+        }
         <form class="apprentice-uln-form js-disable-on-submit" method="post" asp-action="Uln" asp-controller="CertificatePrivateUln">
             @Html.HiddenFor(c => c.Id)
-
+            @Html.HiddenFor(c => c.FromApproval)
             @* hidden with css by default *@
             <div class="js-error-summary error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
                 <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
@@ -33,29 +40,29 @@
                 </div>
             }
 
-                <div sfa-anyvalidationerror-class="after-error-summary">
-                    <h1 class="heading-large">
-                        Please enter Uln
-                    </h1>
+            <div sfa-anyvalidationerror-class="after-error-summary">
+                <h1 class="heading-large">
+                    Please enter Uln
+                </h1>
 
-                    <div class="form-group" sfa-validation-for="Uln" sfa-validationerror-class="form-group-error">
-                        <label class="form-label" for="Uln">
-                            <span class="form-label-bold">Unique learner number (<abbr title="Unique learner number">ULN</abbr>)</span>
-                            <span class="form-hint">"For example, 1234567890"</span>
-                            <span class="error-message" asp-validation-for="Uln"></span>
-                        </label>
-                        <input class="form-control js-integers-only" name="Uln" autocomplete="off" asp-for="Uln" type="text" sfa-validation-for="Uln" sfa-validationerror-class="form-control-error" maxlength="10" />
-                    </div>
-
-                    <div class="form-group" sfa-validation-for="ReasonForChange" sfa-validationerror-class="form-group-error">
-                        <label for="ReasonForChange">
-                            <span class="form-label-bold">Reason for change</span>
-                            <span class="form-hint">Please could you provide more detail as to why this change is required.</span>
-                            <span class="error-message" asp-validation-for="ReasonForChange"></span>
-                        </label>
-                        <textarea class="form-control form-control-3-4" rows="5" name="ReasonForChange" sfa-validation-for="ReasonForChange" sfa-validationerror-class="form-control-error" asp-for="ReasonForChange"></textarea>
-                    </div>
+                <div class="form-group" sfa-validation-for="Uln" sfa-validationerror-class="form-group-error">
+                    <label class="form-label" for="Uln">
+                        <span class="form-label-bold">Unique learner number (<abbr title="Unique learner number">ULN</abbr>)</span>
+                        <span class="form-hint">"For example, 1234567890"</span>
+                        <span class="error-message" asp-validation-for="Uln"></span>
+                    </label>
+                    <input class="form-control js-integers-only" name="Uln" autocomplete="off" asp-for="Uln" type="text" sfa-validation-for="Uln" sfa-validationerror-class="form-control-error" maxlength="10" />
                 </div>
+
+                <div class="form-group" sfa-validation-for="ReasonForChange" sfa-validationerror-class="form-group-error">
+                    <label for="ReasonForChange">
+                        <span class="form-label-bold">Reason for change</span>
+                        <span class="form-hint">Please could you provide more detail as to why this change is required.</span>
+                        <span class="error-message" asp-validation-for="ReasonForChange"></span>
+                    </label>
+                    <textarea class="form-control form-control-3-4" rows="5" name="ReasonForChange" sfa-validation-for="ReasonForChange" sfa-validationerror-class="form-control-error" asp-for="ReasonForChange"></textarea>
+                </div>
+            </div>
 
             <button type="submit" class="button">Continue</button>
         </form>
