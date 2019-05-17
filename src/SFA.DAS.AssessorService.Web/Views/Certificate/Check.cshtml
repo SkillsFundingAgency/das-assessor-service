@@ -9,87 +9,90 @@
     Layout = "_DashboardLayout";
 }
 
-<div class="grid-row">
-    <div class="column-two-thirds">
-        <a class="link-back" asp-controller="CertificateRecipient" asp-action="Recipient">Back</a>
+<a class="govuk-back-link" asp-controller="CertificateRecipient" asp-action="Recipient">Back</a>
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
 
-        <h1 class="heading-large">@Localizer["Heading"]</h1>
+            <h1 class="govuk-heading-xl">@Localizer["Heading"]</h1>
 
-        <div class="info-summary">
-            <h2 class="heading-medium">@Localizer["InfoHeader"]</h2>
-            <p>@Localizer["InfoLine1"]</p>
-            @if (Model.IsPrivatelyFunded)
-            {
-                <p>If the name, standard or level is incorrect, you need to agree on the correct details along with the training provider and the employer.</p>
-            }
-            else
-            {
-                <p>If the name, standard or level is incorrect, you need to agree on the correct details along with the training provider and the employer. The training provider needs to then update the Individualised Learner Record (<abbr title="Individualised Learner Record">ILR</abbr>).</p>
-            }
-        </div>
-
-        <h2 class="heading-medium">
-            Apprentice details
-        </h2>
-
-        <dl class="govuk-check-your-answers cya-questions-short">
-            <div>
-                <dt class="cya-question">
-                    First name
-                </dt>
-                <dd class="cya-answer">
-                    @Model.GivenNames
-                </dd>
-                <dd class="cya-change">
-                    @if (Model.IsPrivatelyFunded)
-                    {
-                        <a asp-controller="CertificatePrivateFirstName" asp-action="FirstName" asp-route-redirecttocheck="true">
-                            Change<span class="visually-hidden"> first name</span>
-                        </a>
-                    }
-                </dd>
+            <div class="info-summary">
+                <h2 class="govuk-heading-m">@Localizer["InfoHeader"]</h2>
+                <p class="govuk-body">@Localizer["InfoLine1"]</p>
+                @if (Model.IsPrivatelyFunded)
+                {
+                    <p class="govuk-body">If the name, standard or level is incorrect, you need to agree on the correct details along with the training provider and the employer.</p>
+                }
+                else
+                {
+                    <p class="govuk-body">If the name, standard or level is incorrect, you need to agree on the correct details along with the training provider and the employer. The training provider needs to then update the Individualised Learner Record (<abbr title="Individualised Learner Record">ILR</abbr>).</p>
+                }
             </div>
 
-            <div>
-                <dt class="cya-question">
-                    Last name
-                </dt>
-                <dd class="cya-answer">
-                    @Model.FamilyName
-                </dd>
-                <dd class="cya-change">
-                    @if (Model.IsPrivatelyFunded)
-                    {
-                        <a asp-controller="CertificatePrivateLastName" asp-action="LastName" asp-route-redirecttocheck="true">
-                            Change<span class="visually-hidden"> last name</span>
-                        </a>
-                    }
-                </dd>
-            </div>
+            <h2 class="govuk-heading-m">
+                Apprentice details
+            </h2>
 
-            <div>
-                <dt class="cya-question">
-                    <abbr title="Unique learner number">ULN</abbr>
-                </dt>
-                <dd class="cya-answer">
-                    @Model.Uln
-                </dd>
-                <dd class="cya-change">
-                    @if (Model.IsPrivatelyFunded)
-                    {
-                        <a asp-controller="CertificatePrivateUln" asp-action="Uln" asp-route-redirecttocheck="true">
-                            Change<span class="visually-hidden"> ULN</span>
-                        </a>
-                    }
-                </dd>
-            </div>
-        </dl>
+            <dl class="govuk-summary-list govuk-!-margin-bottom-9">
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        First name
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Model.GivenNames
+                    </dd>
+                    <dd class="govuk-summary-list__actions">
+                        @if (Model.IsPrivatelyFunded)
+                        {
+                            <a class="govuk-link" asp-controller="CertificatePrivateFirstName" asp-action="FirstName" asp-route-redirecttocheck="true">
+                                Change<span class="govuk-visually-hidden"> first name</span>
+                            </a>
+                        }
+                    </dd>
+                </div>
+
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Last name
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Model.FamilyName
+                    </dd>
+                    <dd class="govuk-summary-list__actions">
+                        @if (Model.IsPrivatelyFunded)
+                        {
+                            <a class="govuk-link" asp-controller="CertificatePrivateLastName" asp-action="LastName" asp-route-redirecttocheck="true">
+                                Change<span class="govuk-visually-hidden"> last name</span>
+                            </a>
+                        }
+                    </dd>
+                </div>
+        
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        <abbr title="Unique learner number">ULN</abbr>
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Model.Uln
+                    </dd>
+                    <dd class="govuk-summary-list__actions">
+                        @if (Model.IsPrivatelyFunded)
+                        {
+                            <a class="govuk-link" asp-controller="CertificatePrivateUln" asp-action="Uln" asp-route-redirecttocheck="true">
+                                Change<span class="govuk-visually-hidden"> ULN</span>
+                            </a>
+                        }
+                    </dd>
+                </div>
+            </dl>
+            
 
 
-        <h2 class="heading-medium">
-            Apprenticeship details
-        </h2>
+            <h2 class="govuk-heading-m">
+                Apprenticeship details
+            </h2>
 
+<<<<<<< HEAD
         <dl class="govuk-check-your-answers cya-questions-short">
 
             <div>
@@ -136,18 +139,66 @@
                 <div>
                     <dt class="cya-question">
                         Option
+=======
+            <dl class="govuk-summary-list govuk-!-margin-bottom-9">
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Standard
                     </dt>
-                    <dd class="cya-answer">
-                        @Model.Option
+                    <dd class="govuk-summary-list__value">
+                        @Model.Standard (@Model.SelectedStandard)
                     </dd>
-                    <dd class="cya-change">
-                        <a asp-controller="CertificateOption" asp-action="Option" asp-route-redirecttocheck="true">
-                            Change<span class="visually-hidden"> option</span>
+                    <dd class="govuk-summary-list__actions">
+                        @if (Model.IsPrivatelyFunded)
+                        {
+                            <a class="govuk-link" asp-controller="CertificatePrivateStandardCode" asp-action="StandardCode" asp-route-redirecttocheck="true">
+                                Change<span class="govuk-visually-hidden"> standard</span>
+                            </a>
+                        }
+                    </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Level
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Model.Level
+                    </dd>
+                    <dd class="govuk-summary-list__actions">
+                    </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Grade
+>>>>>>> ON-1728_css_upgrade
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Model.SelectedGrade
+                    </dd>
+                    <dd class="govuk-summary-list__actions">
+                        <a class="govuk-link" asp-controller="CertificateGrade" asp-action="Grade" asp-route-redirecttocheck="true">
+                            Change<span class="govuk-visually-hidden"> grade</span>
                         </a>
                     </dd>
                 </div>
-            }
+                @if ((bool) TempData["HideOption"] == false)
+                {
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Option
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            @Model.Option
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a class="govuk-link" asp-controller="CertificateOption" asp-action="Option" asp-route-redirecttocheck="true">
+                                Change<span class="govuk-visually-hidden"> option</span>
+                            </a>
+                        </dd>
+                    </div>
+                }
 
+<<<<<<< HEAD
             @if (Model.IsPrivatelyFunded)
             {
                 <div>
@@ -249,14 +300,121 @@
                     </dt>
                     <dd class="cya-answer">
                         @Model.AddressLine1<br />
+=======
+                @if (Model.IsPrivatelyFunded)
+                {
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Apprenticeship start date
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Model.LearnerStartDate?.ToSfaShortDateString()
+                    </dd>
+                    <dd class="govuk-summary-list__actions">
+                        <a class="govuk-link" asp-controller="CertificatePrivateLearnerStartDate" asp-action="LearnerStartDate" asp-route-redirecttocheck="true">
+                            Change<span class="govuk-visually-hidden"> apprenticeship start date</span>
+                        </a>
+                    </dd>
+                </div>
+                }
+                
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Achievement date
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Model.AchievementDate?.ToSfaShortDateString()
+                    </dd>
+                    <dd class="govuk-summary-list__actions">
+                        <a class="govuk-link" asp-controller="CertificateDate" asp-action="Date" asp-route-redirecttocheck="true">
+                            Change<span class="govuk-visually-hidden"> achievement date</span>
+                        </a>
+                    </dd>
+                </div>
+
+                @if (Model.IsPrivatelyFunded)
+                {
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        UKPRN
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Model.SelectedUkPrn
+                    </dd>
+                    <dd class="govuk-summary-list__actions">
+                        <a class="govuk-link" asp-controller="CertificatePrivateProviderUkprn" asp-action="Ukprn" asp-route-redirecttocheck="true">
+                            Change<span class="govuk-visually-hidden"> UKPRN</span>
+                        </a>
+                    </dd>
+                </div>
+                }
+            </dl>
+
+            <h2 class="govuk-heading-m">
+                We'll send the certificate to:
+            </h2>
+
+            <dl class="govuk-summary-list govuk-!-margin-bottom-9">
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Name
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Model.Name
+                    </dd>
+                    <dd class="govuk-summary-list__actions">
+                        <a class="govuk-link" asp-controller="CertificateRecipient" asp-action="Recipient" asp-route-redirecttocheck="true">
+                            Change<span class="govuk-visually-hidden"> recipient name</span>
+                        </a>
+                    </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Department
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Model.Dept
+                    </dd>
+                    <dd class="govuk-summary-list__actions">
+                        <a class="govuk-link" asp-controller="CertificateRecipient" asp-action="Recipient" asp-route-redirecttocheck="true">
+                            Change<span class="govuk-visually-hidden"> department</span>
+                        </a>
+                    </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Organisation
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Model.Employer
+                    </dd>
+                    <dd class="govuk-summary-list__actions">
+                        <a class="govuk-link" asp-controller="CertificateAddress" asp-action="Address" asp-route-redirecttocheck="true" asp-route-edit="true">
+                            Change<span class="govuk-visually-hidden"> organisation</span>
+                        </a>
+                    </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Address
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Model.AddressLine1<br />
+
+>>>>>>> ON-1728_css_upgrade
                         @if (@Model.AddressLine2 != null)
                         {
                             @Model.AddressLine2<br />
                         }
+<<<<<<< HEAD
+=======
+
+>>>>>>> ON-1728_css_upgrade
                         @if (@Model.AddressLine3 != null)
                         {
                             @Model.AddressLine3<br />
                         }
+<<<<<<< HEAD
                         @Model.City<br />
                         @Model.Postcode
                     </dd>
@@ -268,10 +426,24 @@
                 </div>
             </dl>
         }
+=======
+>>>>>>> ON-1728_css_upgrade
 
-        <form class="js-disable-on-submit" method="post" asp-controller="CertificateCheck">
-            @Html.HiddenFor(c => c.Id)
-            <button type="submit" class="button">@Localizer["ContinueButton"]</button>
-        </form>
+                        @Model.City<br />
+                        @Model.Postcode
+                    </dd>
+                    <dd class="govuk-summary-list__actions">
+                        <a class="govuk-link" asp-controller="CertificateAddress" asp-action="Address" asp-route-redirecttocheck="true" asp-route-edit="true">
+                            Change<span class="govuk-visually-hidden"> address</span>
+                        </a>
+                    </dd>
+                </div>
+            </dl>
+
+            <form class="js-disable-on-submit" method="post" asp-controller="CertificateCheck">
+                @Html.HiddenFor(c => c.Id)
+                <button type="submit" class="govuk-button">@Localizer["ContinueButton"]</button>
+            </form>
+        </div>
     </div>
-</div>
+</main>

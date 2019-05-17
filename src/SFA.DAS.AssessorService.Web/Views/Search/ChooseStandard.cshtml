@@ -10,109 +10,123 @@
     Layout = "_DashboardLayout";
 }
 
+<a class="govuk-back-link" asp-controller="Search" asp-action="Index">Back</a>
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
 
-<div class="grid-row">
-    <div class="column-two-thirds">
-        <a class="link-back" asp-controller="Search" asp-action="Index">Back</a>
+            <form class="apprentice-choose-standard-form js-disable-on-submit" asp-controller="Search" asp-action="ChooseStandard" method="post">
 
-        <form class="apprentice-choose-standard-form js-disable-on-submit" asp-controller="Search" asp-action="ChooseStandard" method="post">
-
-            @* hidden with css by default *@
-            <div class="js-error-summary error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
-                <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
-                    @Localizer["ErrorsWithSubmission"]
-                </h2>
-                <ul class="js-error-summary-list error-summary-list"></ul>
-            </div>
-
-            @if (!ViewData.ModelState.IsValid)
-            {
-                <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
-                    <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
-                        @Localizer["ErrorsWithSubmission"]
+                <div class="js-error-summary govuk-error-summary" role="alert" aria-labelledby="error-summary-title" tabindex="-1" data-module="error-summary">
+                    <h2 class="govuk-error-summary__title" id="error-summary-title">
+                        There is a problem
                     </h2>
-                    <ul class="error-summary-list">
-                        <li><a sfa-validation-for="SelectedStandardCode"></a></li>
-                    </ul>
-                </div>
-            }
-
-            <div sfa-anyvalidationerror-class="after-error-summary">
-                <div>
-                    <h1 class="heading-large">@Localizer["PageHeading"]</h1>
-                    <p>@Localizer["PageDescription"]</p>
-                    <ul class="list">
-                        <li>
-                            <p><span class="bold">Name:</span> @Model.SearchResults.First().GivenNames @Model.SearchResults.First().FamilyName</p>
-                        </li>
-                        <li>
-                            <p><span class="bold"><abbr title="Unique learner number">ULN</abbr>:</span> @Model.SearchResults.First().Uln</p>
-                        </li>
-                    </ul>
-                </div>
-
-                <div class="form-group" sfa-validation-for="SelectedStandardCode" sfa-validationerror-class="form-group-error">
-                    <div class="error-message-container" sfa-validation-for="SelectedStandardCode">
-                        <span class="error-message" asp-validation-for="SelectedStandardCode"></span>
+                    <div class="govuk-error-summary__body">
+                        <ul class="js-error-summary-list govuk-list govuk-error-summary__list"></ul>
                     </div>
+                </div>
+
+                @if (!ViewData.ModelState.IsValid)
+                {
+                    <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
+                        <h2 class="govuk-error-summary__title" id="error-summary-title">
+                            @Localizer["ErrorsWithSubmission"]
+                        </h2>
+                        <div class="govuk-error-summary__body">
+                            <ul class="govuk-list govuk-error-summary__list">
+                                <li><a sfa-validation-for="SelectedStandardCode"></a></li>
+                            </ul>
+                        </div>
+                    </div>
+                }
+
+
+                <h1 class="govuk-heading-xl">@Localizer["PageHeading"]</h1>
+                <p class="govuk-body">@Localizer["PageDescription"]</p>
+
+                <dl class="govuk-summary-list govuk-summary-list--no-border">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Name</dt>
+                        <dd class="govuk-summary-list__value">@Model.SearchResults.First().GivenNames @Model.SearchResults.First().FamilyName</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key"><abbr title="Unique learner number">ULN</abbr></dt>
+                        <dd class="govuk-summary-list__value">@Model.SearchResults.First().Uln</dd>
+                    </div>
+                </dl>
+
+                <div class="govuk-form-group" sfa-validation-for="SelectedStandardCode" sfa-validationerror-class="govuk-form-group--error">
+                    <span class="govuk-error-message" asp-validation-for="SelectedStandardCode"></span>
+
                     @if (Model.SearchResults.Any(sr => sr.CertificateReference == null))
                     {
-                        <div class="form-block">
-                            <span class="form-label-bold">@Localizer.Pluralize("AssessmentsNotRecordedYet", Model.SearchResults.Count(sr => sr.CertificateReference == null) > 1)</span>
+                        <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
+                            <h2 class="govuk-fieldset__heading">
+                                @Localizer.Pluralize("AssessmentsNotRecordedYet", Model.SearchResults.Count(sr => sr.CertificateReference == null) > 1)
+                            </h2>
+                        </legend>
+                        <div class="govuk-radios">
+                            @foreach (var result in Model.SearchResults.Where(sr => sr.CertificateReference == null))
+                            {
+                                <div class="govuk-radios__item">
+                                    <input class="govuk-radios__input" id=@("standard_" + result.StdCode) type="radio" name="SelectedStandardCode" value="@result.StdCode">
+                                    <label class="govuk-label govuk-radios__label" for=@("standard_" + result.StdCode)>
+                                        @result.Standard
+                                    </label>
+                                </div>
+                            }
                         </div>
-                        foreach (var result in Model.SearchResults.Where(sr => sr.CertificateReference == null))
-                        {
-                            <div class="multiple-choice">
-                                <input id=@("standard_" + result.StdCode) type="radio" name="SelectedStandardCode" value="@result.StdCode">
-                                <label for=@("standard_" + result.StdCode)>
-                                    @result.Standard
-                                </label>
-                            </div>
-                        }
                     }
 
                     @if (Model.SearchResults.Any(sr => sr.CertificateReference != null && sr.OverallGrade == CertificateGrade.Fail))
                     {
-                        <div class="form-block">
-                            <span class="form-label-bold">Assessments with fail</span>
+                        <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
+                            <h2 class="govuk-fieldset__heading">
+                                Assessments with Fail
+                            </h2>
+                        </legend>
+                        <div class="govuk-radios">
+                            foreach (var result in Model.SearchResults.Where(sr => sr.CertificateReference != null && sr.OverallGrade == CertificateGrade.Fail))
+                            {
+                                <div class="govuk-radios__item">
+                                    <input class="govuk-radios__input" id=@("standard_" + result.StdCode) type="radio" name="SelectedStandardCode" value="@result.StdCode">
+                                    <label class="govuk-label govuk-radios__label" for=@("standard_" + result.StdCode)>
+                                        <span>@result.Standard</span>
+                                        <span>Failed on: @result.AchDate.ToSfaShortDateString()</span>
+                                    </label>
+                                </div>
+                            }
                         </div>
-                        foreach (var result in Model.SearchResults.Where(sr => sr.CertificateReference != null && sr.OverallGrade == CertificateGrade.Fail))
-                        {
-                            <div class="multiple-choice">
-                                <input id=@("standard_" + result.StdCode) type="radio" name="SelectedStandardCode" value="@result.StdCode">
-                                <label for=@("standard_" + result.StdCode)>
-                                    <span>@result.Standard</span>
-                                    <span class="form-label">Failed on: @result.AchDate.ToSfaShortDateString()</span>
-                                </label>
-                            </div>
-                        }
                     }
 
                     @if (Model.SearchResults.Any(sr => sr.CertificateReference != null && sr.OverallGrade != CertificateGrade.Fail))
                     {
-                        <div class="form-block">
-                            <span class="form-label-bold">@Localizer.Pluralize("PreviouslyRecordedAssessments", Model.SearchResults.Count(sr => sr.CertificateReference != null && sr.OverallGrade != CertificateGrade.Fail) > 1)</span>
-                        </div>
+                        <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
+                            <h2 class="govuk-fieldset__heading">
+                                @Localizer.Pluralize("PreviouslyRecordedAssessments", Model.SearchResults.Count(sr => sr.CertificateReference != null && sr.OverallGrade != CertificateGrade.Fail) > 1)
+                            </h2>
+                        </legend>
+                        <div class="govuk-radios">
                         foreach (var result in Model.SearchResults.Where(sr => sr.CertificateReference != null && sr.OverallGrade != CertificateGrade.Fail))
-                        {
-                            <div class="multiple-choice">
-                                <input id=@("standard_" + result.StdCode) type="radio" name="SelectedStandardCode" value="@result.StdCode">
-                                <label for=@("standard_" + result.StdCode)>
-                                    @result.Standard
-                                </label>
-                            </div>
-                        }
+                            {
+                                <div class="govuk-radios__item">
+                                    <input class="govuk-radios__input" id=@("standard_" + result.StdCode) type="radio" name="SelectedStandardCode" value="@result.StdCode">
+                                    <label class="govuk-label govuk-radios__label" for=@("standard_" + result.StdCode)>
+                                        @result.Standard
+                                    </label>
+                                </div>
+                            }
+                        </div>
                     }
                 </div>
-            </div>
-            <div class="form-group">
-                <button class="button" type="submit">@Localizer["SelectStandardButton"]</button>
-            </div>
-        </form>
 
-        <p><a asp-controller="Search" asp-action="Index">Search again</a> if this isn’t the correct apprentice.</p>
+                <button class="govuk-button" type="submit">@Localizer["SelectStandardButton"]</button>
+            </form>
+
+            <p class="govuk-body"><a class="govuk-link" asp-controller="Search" asp-action="Index">Search again</a> if this isn’t the correct apprentice.</p>
+        </div>
     </div>
-</div>
+</main>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
