@@ -16,6 +16,7 @@
     using Api.Types.Models.Validation;
     using Microsoft.AspNetCore.Http;
     using SFA.DAS.AssessorService.Web.Staff.Resources;
+    using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 
     [TestFixture]
     public class AddRoatpOrganisationControllerTests
@@ -25,6 +26,7 @@
         private Mock<IAddOrganisationValidator> _validator;
         private Mock<IRoatpSessionService> _sessionService;
         private AddRoatpOrganisationController _controller;
+        private Mock<IUkrlpApiClient> _ukrlpClient;
 
         [SetUp]
         public void Before_each_test()
@@ -33,9 +35,10 @@
             _logger = new Mock<ILogger<AddRoatpOrganisationController>>();
             _validator = new Mock<IAddOrganisationValidator>();
             _sessionService = new Mock<IRoatpSessionService>();
-            
+            _ukrlpClient = new Mock<IUkrlpApiClient>()
+                ;
             _controller = new AddRoatpOrganisationController(_client.Object, _logger.Object, _validator.Object,
-                _sessionService.Object);
+                _sessionService.Object, _ukrlpClient.Object);
 
             _controller.ControllerContext = new ControllerContext();
             _controller.ControllerContext.HttpContext = new DefaultHttpContext();
