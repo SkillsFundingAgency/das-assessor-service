@@ -62,16 +62,19 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             }
             var certSession = JsonConvert.DeserializeObject<CertificateSession>(sessionString);
 
+            var certificate = await CertificateApiClient.GetCertificate(certSession.CertificateId);
+
             if (!certSession.Options.Any())
             {
                 if (ContextAccessor.HttpContext.Request.Query.ContainsKey("fromback"))
                 {
                     return RedirectToAction("Grade", "CertificateGrade");    
                 }
+                if(certificate.IsPrivatelyFunded)
+                    return RedirectToAction("LearnerStartDate", "CertificatePrivateLearnerStartDate");
+
                 return RedirectToAction("Date", "CertificateDate");
             }
-
-            var certificate = await CertificateApiClient.GetCertificate(certSession.CertificateId);
 
             Logger.LogInformation($"Got Certificate for CertificateOptionViewModel requested by {username} with Id {certificate.Id}");
 
@@ -85,6 +88,13 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [HttpPost(Name = "Option")]
         public async Task<IActionResult> Option(CertificateOptionViewModel vm)
         {
+            var certificate = await CertificateApiClient.GetCertificate(vm.Id);
+            if (certificate.IsPrivatelyFunded)
+            {
+                return await SaveViewModel(vm,
+                    returnToIfModelNotValid: "~/Views/Certificate/Option.cshtml",
+                    nextAction: RedirectToAction("LearnerStartDate", "CertificatePrivateLearnerStartDate"), action: CertificateActions.Option);
+            }
             return await SaveViewModel(vm,
                 returnToIfModelNotValid: "~/Views/Certificate/Option.cshtml",
                 nextAction: RedirectToAction("Date", "CertificateDate"), action: CertificateActions.Option);
