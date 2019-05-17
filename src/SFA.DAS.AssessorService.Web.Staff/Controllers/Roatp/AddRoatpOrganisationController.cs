@@ -76,13 +76,13 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
 
 
 
-        [Route("add-provider-type")]
-        public async Task<IActionResult> AddProviderType(AddOrganisationProviderTypeViewModel model)
-        {
-            model.ProviderTypes = await _apiClient.GetProviderTypes();
-            ModelState.Clear();
-            return View("~/Views/Roatp/AddProviderType.cshtml", model);
-        }
+        //[Route("add-provider-type")]
+        //public async Task<IActionResult> AddProviderType(AddOrganisationProviderTypeViewModel model)
+        //{
+        //    model.ProviderTypes = await _apiClient.GetProviderTypes();
+        //    ModelState.Clear();
+        //    return View("~/Views/Roatp/AddProviderType.cshtml", model);
+        //}
 
         // MFCMFC this may be decommissioned
         [Route("new-training-provider")]
@@ -100,94 +100,81 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
             return View("~/Views/Roatp/AddOrganisation.cshtml", model);
         }
 
-        [Route("add-organisation-type")]
-        public async Task<IActionResult> AddOrganisationType(AddOrganisationProviderTypeViewModel model)
-        {
-            if (!IsRedirectFromConfirmationPage() && !ModelState.IsValid)
-            {
-                model.ProviderTypes = await _apiClient.GetProviderTypes();
-                return View("~/Views/Roatp/AddProviderType.cshtml", model);
-            }
+        //[Route("add-organisation-type")]
+        //public async Task<IActionResult> AddOrganisationType(AddOrganisationProviderTypeViewModel model)
+        //{
+        //    if (!IsRedirectFromConfirmationPage() && !ModelState.IsValid)
+        //    {
+        //        model.ProviderTypes = await _apiClient.GetProviderTypes();
+        //        return View("~/Views/Roatp/AddProviderType.cshtml", model);
+        //    }
 
-            var addOrganisationModel = _sessionService.GetAddOrganisationDetails();
-            //if (addOrganisationModel == null)
-            //{
-            //    addOrganisationModel = new AddOrganisationViewModel
-            //    {
-            //        OrganisationId = model.OrganisationId,
-            //        ProviderTypeId = model.ProviderTypeId,
-            //        LegalName = model.LegalName,
-            //        TradingName = model.TradingName,
-            //        CharityNumber = model.CharityNumber,
-            //        CompanyNumber =  model.CompanyNumber
-            //    };
-            //}
+        //    var addOrganisationModel = _sessionService.GetAddOrganisationDetails();
+          
+        //    if (string.IsNullOrEmpty(addOrganisationModel.LegalName)) addOrganisationModel.LegalName = model.LegalName;
+        //    if (string.IsNullOrEmpty(addOrganisationModel.TradingName)) addOrganisationModel.TradingName = model.TradingName;
+        //    if (string.IsNullOrEmpty(addOrganisationModel.CompanyNumber)) addOrganisationModel.CompanyNumber = model.CompanyNumber;
+        //    if (string.IsNullOrEmpty(addOrganisationModel.CharityNumber)) addOrganisationModel.CharityNumber = model.CharityNumber;
+        //    if (string.IsNullOrEmpty(addOrganisationModel.UKPRN)) addOrganisationModel.UKPRN = model.UKPRN;
 
-            //if (addOrganisationModel.ProviderTypeId == 0) addOrganisationModel.ProviderTypeId = model.ProviderTypeId;
-            if (string.IsNullOrEmpty(addOrganisationModel.LegalName)) addOrganisationModel.LegalName = model.LegalName;
-            if (string.IsNullOrEmpty(addOrganisationModel.TradingName)) addOrganisationModel.TradingName = model.TradingName;
-            if (string.IsNullOrEmpty(addOrganisationModel.CompanyNumber)) addOrganisationModel.CompanyNumber = model.CompanyNumber;
-            if (string.IsNullOrEmpty(addOrganisationModel.CharityNumber)) addOrganisationModel.CharityNumber = model.CharityNumber;
-            if (string.IsNullOrEmpty(addOrganisationModel.UKPRN)) addOrganisationModel.UKPRN = model.UKPRN;
+        //    if (model.OrganisationId != Guid.Empty)
+        //    {
+        //        addOrganisationModel.OrganisationId = model.OrganisationId;
+        //    }
 
-            if (model.OrganisationId != Guid.Empty)
-            {
-                addOrganisationModel.OrganisationId = model.OrganisationId;
-            }
+        //    if (model.ProviderTypeId > 0)
+        //    {
+        //        addOrganisationModel.ProviderTypeId = model.ProviderTypeId;
+        //    }
 
-            if (model.ProviderTypeId > 0)
-            {
-                addOrganisationModel.ProviderTypeId = model.ProviderTypeId;
-            }
-
-            var organisationTypes = await _apiClient.GetOrganisationTypes(addOrganisationModel.ProviderTypeId);
+        //    var organisationTypes = await _apiClient.GetOrganisationTypes(addOrganisationModel.ProviderTypeId);
 
 
-            addOrganisationModel.OrganisationTypes = organisationTypes.Where(x=>x.Id!=0).ToList().OrderBy(x=>x.Type);
+        //    addOrganisationModel.OrganisationTypes = organisationTypes.Where(x=>x.Id!=0).ToList().OrderBy(x=>x.Type);
 
-            _sessionService.SetAddOrganisationDetails(addOrganisationModel);
+        //    _sessionService.SetAddOrganisationDetails(addOrganisationModel);
 
-            ModelState.Clear();
+        //    ModelState.Clear();
 
-            var vm = MapOrganisationVMToOrganisationTypeVM(addOrganisationModel);
+        //    var vm = MapOrganisationVMToOrganisationTypeVM(addOrganisationModel);
 
-            return View("~/Views/Roatp/AddOrganisationType.cshtml", vm);
-        }
+        //    return View("~/Views/Roatp/AddOrganisationType.cshtml", vm);
+        //}
 
-        private static AddOrganisationTypeViewModel MapOrganisationVMToOrganisationTypeVM(AddOrganisationViewModel addOrganisationModel)
-        {
-            return new AddOrganisationTypeViewModel
-            {
-                CharityNumber = addOrganisationModel.CharityNumber,
-                CompanyNumber = addOrganisationModel.CompanyNumber,
-                LegalName = addOrganisationModel.LegalName,
-                OrganisationId = addOrganisationModel.OrganisationId,
-                OrganisationTypeId = addOrganisationModel.OrganisationTypeId,
-                OrganisationTypes = addOrganisationModel.OrganisationTypes,
-                ProviderTypeId = addOrganisationModel.ProviderTypeId,
-                ProviderTypes = addOrganisationModel.ProviderTypes,
-                TradingName = addOrganisationModel.TradingName,
-                UKPRN = addOrganisationModel.UKPRN
-            };
-        }
+        //private static AddOrganisationTypeViewModel MapOrganisationVMToOrganisationTypeVM(AddOrganisationViewModel addOrganisationModel)
+        //{
+        //    return new AddOrganisationTypeViewModel
+        //    {
+        //        CharityNumber = addOrganisationModel.CharityNumber,
+        //        CompanyNumber = addOrganisationModel.CompanyNumber,
+        //        LegalName = addOrganisationModel.LegalName,
+        //        OrganisationId = addOrganisationModel.OrganisationId,
+        //        OrganisationTypeId = addOrganisationModel.OrganisationTypeId,
+        //        OrganisationTypes = addOrganisationModel.OrganisationTypes,
+        //        ProviderTypeId = addOrganisationModel.ProviderTypeId,
+        //        ProviderTypes = addOrganisationModel.ProviderTypes,
+        //        TradingName = addOrganisationModel.TradingName,
+        //        UKPRN = addOrganisationModel.UKPRN
+        //    };
+        //}
 
-        [Route("confirm-organisation-details")]
-        public async Task<IActionResult> ConfirmOrganisationDetails(AddOrganisationTypeViewModel model)
-        {
-            var organisationVm = _sessionService.GetAddOrganisationDetails();
-            var vm = MapOrganisationVMToOrganisationTypeVM(organisationVm);
+        //[Route("confirm-organisation-details")]
+        //public async Task<IActionResult> ConfirmOrganisationDetails(AddOrganisationTypeViewModel model)
+        //{
+        //    var organisationVm = _sessionService.GetAddOrganisationDetails();
+        //    var vm = MapOrganisationVMToOrganisationTypeVM(organisationVm);
 
-            if (!IsRedirectFromConfirmationPage() && !ModelState.IsValid)
-            {
-                //model.ProviderTypes = await _apiClient.GetProviderTypes();
-                return View("~/Views/Roatp/AddOrganisationType.cshtml", vm);
-            }
+        //    if (!IsRedirectFromConfirmationPage() && !ModelState.IsValid)
+        //    {
+        //        //model.ProviderTypes = await _apiClient.GetProviderTypes();
+        //        return View("~/Views/Roatp/AddOrganisationType.cshtml", vm);
+        //    }
 
-            vm.OrganisationTypeId = model.OrganisationTypeId;
-            _sessionService.SetAddOrganisationDetails(vm);
+        //    vm.OrganisationTypeId = model.OrganisationTypeId;
+        //    _sessionService.SetAddOrganisationDetails(vm);
 
-            return View("~/Views/Roatp/ConfirmDetails.cshtml", vm);
-        }
+        //    return View("~/Views/Roatp/ConfirmDetails.cshtml", vm);
+        //}
 
         
         //MFCMFC this may be decommissioned
