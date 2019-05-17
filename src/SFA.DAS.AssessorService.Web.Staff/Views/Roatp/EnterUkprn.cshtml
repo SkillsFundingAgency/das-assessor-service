@@ -1,4 +1,4 @@
-﻿@model SFA.DAS.AssessorService.Web.Staff.ViewModels.Roatp.EnterUkprnViewModel
+﻿@model SFA.DAS.AssessorService.Web.Staff.ViewModels.Roatp.AddOrganisationProviderTypeViewModel
 
 @using SFA.DAS.AssessorService.Web.Staff
 @using SFA.DAS.AssessorService.Web.Staff.Domain
@@ -28,7 +28,7 @@
             There is a problem
         </h2>
         <ul class="error-summary-list">
-            <li><a sfa-validation-for="Ukprn"></a></li>
+            <li><a sfa-validation-for="UKPRN"></a></li>
         </ul>
     </div>
 }
@@ -44,12 +44,12 @@
 
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
-                <form method="post" asp-action="EnterUkprnPreview" asp-controller="AddRoatpOrganisation">
-                    <div class="govuk-form-group" sfa-validation-for="Ukprn" sfa-validationerror-class="form-group-error">
+                <form method="post" asp-action="UkprnPreview" asp-controller="AddRoatpOrganisation">
+                    <div class="govuk-form-group" sfa-validation-for="UKPRN" sfa-validationerror-class="form-group-error">
                         <label for="UKPRN" class="roatp-label">UKPRN</label>
-                        <span class="error-message" asp-validation-for="Ukprn"></span>
-                        <input id="UKPRN" name="Ukprn" type="text" class="roatp-input govuk-!-width-one-third" asp-for="Ukprn"
-                               sfa-validation-for="Ukprn" sfa-validationerror-class="form-control-error" />
+                        <span class="error-message" asp-validation-for="UKPRN"></span>
+                        <input id="UKPRN" name="UKPRN" type="text" class="roatp-input govuk-!-width-one-third" asp-for="UKPRN"
+                               sfa-validation-for="UKPRN" sfa-validationerror-class="form-control-error" />
                     </div>
                     <input type="submit" class="roatp-button" value="Continue" />
                 </form>

@@ -115,6 +115,15 @@ namespace SFA.DAS.AssessorService.Web.Staff.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Tell us what the new organisation type is.
+        /// </summary>
+        public static string InvalidOrganisationTypeId {
+            get {
+                return ResourceManager.GetString("InvalidOrganisationTypeId", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Tell us what the new training provider is.
         /// </summary>
         public static string InvalidProviderTypeId {

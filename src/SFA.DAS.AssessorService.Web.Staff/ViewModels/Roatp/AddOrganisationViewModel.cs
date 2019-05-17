@@ -28,4 +28,13 @@
         }
 
     }
+
+    public class AddOrganisationTypeViewModel : AddOrganisationViewModel
+    {
+        public AddOrganisationTypeViewModel()
+        {
+            OrganisationId = Guid.NewGuid();
+        }
+
+    }
 }
