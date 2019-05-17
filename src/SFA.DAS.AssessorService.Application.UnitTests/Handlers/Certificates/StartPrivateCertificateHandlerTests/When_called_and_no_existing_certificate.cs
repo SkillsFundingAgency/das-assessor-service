@@ -36,7 +36,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
             _endPointAssessorOrganisationId = "EPA0001";
 
             _certificateRepository = new Mock<ICertificateRepository>();
-            _certificateRepository.Setup(r => r.GetPrivateCertificate(1111111111, _endPointAssessorOrganisationId, "Smith")).ReturnsAsync(default(Certificate));
+            _certificateRepository.Setup(r => r.GetPrivateCertificate(1111111111, _endPointAssessorOrganisationId)).ReturnsAsync(default(Certificate));
 
             _certificateRepository.Setup(r => r.NewPrivate(It.IsAny<Certificate>(), _endPointAssessorOrganisationId))
                 .ReturnsAsync(new Certificate() {CertificateReferenceId = 10000, IsPrivatelyFunded = true});
