@@ -1,6 +1,10 @@
+@using SFA.DAS.AssessorService.Domain.Consts
 @using Microsoft.AspNetCore.Mvc.Localization
 @inject IViewLocalizer Localizer
 @model SFA.DAS.AssessorService.Web.ViewModels.Certificate.CertificateGradeViewModel
+{
+    
+}
 
 @{
     ViewBag.Title = (!ViewData.ModelState.IsValid ? "Error: " : "") + "Grade apprentice achieved";
@@ -52,9 +56,16 @@ else
 
                 <div class="govuk-form-group" sfa-validation-for="SelectedGrade" sfa-validationerror-class="govuk-form-group--error">
                     <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
-                        <h1 class="govuk-fieldset__heading">
+                        <h1 class="govuk-fieldset__heading govuk-!-margin-bottom-5">
                             @Localizer["Heading"]
                         </h1>
+                        <div class="govuk-warning-text">
+                            <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                            <strong class="govuk-warning-text__text">
+                                <span class="govuk-warning-text__assistive">Warning</span>
+                                You are not expected to record partial elements or course withdrawals
+                            </strong>
+                        </div>
                     </legend>
 
                     <span class="govuk-error-message" asp-validation-for="SelectedGrade"></span>
@@ -62,6 +73,10 @@ else
                     <div class="govuk-radios">
                         @foreach (var grade in Model.Grades)
                         {
+                            @if (@grade.Text == CertificateGrade.Fail)
+                            {
+                                <div class="govuk-radios__divider">or</div>
+                            }
                             <div class="govuk-radios__item">
                                 <input class="govuk-radios__input" asp-for="SelectedGrade" id="@grade.Text.Replace(" ", "_")" type="radio" value="@grade.Text" />
                                 <label class="govuk-label govuk-radios__label" for="@grade.Text.Replace(" ", "_")">

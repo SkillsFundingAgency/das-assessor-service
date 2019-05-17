@@ -123,10 +123,13 @@
   <data name="Heading" xml:space="preserve">
     <value>What grade did the apprentice achieve?</value>
   </data>
-  <data name="InfoBody" xml:space="preserve">
-    <value>A grade is awarded when the apprentice successfully completes the apprenticeship standard. For some standards there will be no grade awarded. In these cases select 'No grade awarded'.</value>
-  </data>
   <data name="InfoHeader" xml:space="preserve">
-    <value>What is 'No grade awarded'?</value>
+    <value>What do 'No grade awarded' and 'Fail' mean?</value>
+  </data>
+  <data name="InfoBodyNoGrade" xml:space="preserve">
+    <value>No grade awarded: A grade is awarded when the apprentice successfully completes the apprenticeship standard. For some standards there will be no grade awarded. In these cases select 'No grade awarded'.</value>
+  </data>
+  <data name="InfoBodyFail" xml:space="preserve">
+    <value>Fail: Record a 'fail' if a fail is defined in the assessment plan.</value>
   </data>
 </root>
