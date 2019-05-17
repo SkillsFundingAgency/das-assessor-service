@@ -70,10 +70,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
                 LearnerGivenNames = ilr.GivenNames,
                 LearnerFamilyName = ilr.FamilyName,
                 StandardName = standard.Title,
-                LearningStartDate = ilr.LearnStartDate,
-                StandardLevel = standard.Level,
-                // MFC 01/10/18 WE NEED TO TALK ABOUT THIS, COS EFFECTIVEFROM IS NOW NULLABLE
-                StandardPublicationDate = standard.EffectiveFrom.Value,
+                LearningStartDate = ilr.LearnStartDate, 
+                StandardLevel = standard.StandardData.Level.GetValueOrDefault(),
+                StandardPublicationDate = standard.StandardData.EffectiveFrom.GetValueOrDefault(),
                 FullName = $"{ilr.GivenNames} {ilr.FamilyName}",
                 ProviderName = provider.ProviderName,
                 EpaDetails = new EpaDetails { Epas = new List<EpaRecord>() }
