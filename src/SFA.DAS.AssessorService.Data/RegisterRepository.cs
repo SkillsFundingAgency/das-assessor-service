@@ -243,7 +243,7 @@ namespace SFA.DAS.AssessorService.Data
                     "[PhoneNumber] = @phoneNumber, [updatedAt] = getUtcDate() " +
                     "WHERE [Id] = @Id ",
                     new { contact.DisplayName, contact.Email, firstName = string.IsNullOrEmpty(contact.FirstName) ? " " : contact.FirstName,
-                        lastName = string.IsNullOrEmpty(contact.LastName) ? " " : contact.LastName,, contact.PhoneNumber, contact.Id});
+                        lastName = string.IsNullOrEmpty(contact.LastName) ? " " : contact.LastName, contact.PhoneNumber, contact.Id});
 
                 if (actionChoice == "MakePrimaryContact")
                     connection.Execute("update o set PrimaryContact = c.Username from organisations o " +
