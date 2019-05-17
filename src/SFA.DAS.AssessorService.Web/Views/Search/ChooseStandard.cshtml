@@ -65,7 +65,7 @@
                                 @Localizer.Pluralize("AssessmentsNotRecordedYet", Model.SearchResults.Count(sr => sr.CertificateReference == null) > 1)
                             </h2>
                         </legend>
-                        <div class="govuk-radios">
+                        <div class="govuk-radios govuk-!-margin-bottom-9">
                             @foreach (var result in Model.SearchResults.Where(sr => sr.CertificateReference == null))
                             {
                                 <div class="govuk-radios__item">
@@ -85,14 +85,13 @@
                                 Assessments with Fail
                             </h2>
                         </legend>
-                        <div class="govuk-radios">
-                            foreach (var result in Model.SearchResults.Where(sr => sr.CertificateReference != null && sr.OverallGrade == CertificateGrade.Fail))
+                        <div class="govuk-radios govuk-!-margin-bottom-9">
+                            @foreach (var result in Model.SearchResults.Where(sr => sr.CertificateReference != null && sr.OverallGrade == CertificateGrade.Fail))
                             {
                                 <div class="govuk-radios__item">
                                     <input class="govuk-radios__input" id=@("standard_" + result.StdCode) type="radio" name="SelectedStandardCode" value="@result.StdCode">
                                     <label class="govuk-label govuk-radios__label" for=@("standard_" + result.StdCode)>
-                                        <span>@result.Standard</span>
-                                        <span>Failed on: @result.AchDate.ToSfaShortDateString()</span>
+                                        @result.Standard (failed on @result.AchDate.ToSfaShortDateString())
                                     </label>
                                 </div>
                             }
@@ -106,8 +105,8 @@
                                 @Localizer.Pluralize("PreviouslyRecordedAssessments", Model.SearchResults.Count(sr => sr.CertificateReference != null && sr.OverallGrade != CertificateGrade.Fail) > 1)
                             </h2>
                         </legend>
-                        <div class="govuk-radios">
-                        foreach (var result in Model.SearchResults.Where(sr => sr.CertificateReference != null && sr.OverallGrade != CertificateGrade.Fail))
+                        <div class="govuk-radios govuk-!-margin-bottom-9">
+                        @foreach (var result in Model.SearchResults.Where(sr => sr.CertificateReference != null && sr.OverallGrade != CertificateGrade.Fail))
                             {
                                 <div class="govuk-radios__item">
                                     <input class="govuk-radios__input" id=@("standard_" + result.StdCode) type="radio" name="SelectedStandardCode" value="@result.StdCode">
