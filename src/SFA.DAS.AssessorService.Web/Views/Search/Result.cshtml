@@ -3,7 +3,7 @@
 @model SFA.DAS.AssessorService.Web.ViewModels.Search.SelectedStandardViewModel
 
 @{
-    ViewBag.Title = Model.CertificateReference == null ? "Confirm this is the correct apprentice" : "An assessment has already been recorded against this apprentice";
+    ViewBag.Title = (Model.CertificateReference == null && !Model.UlnAlreadyExists) ? "Confirm this is the correct apprentice" : "An assessment has already been recorded against this apprentice";
     Layout = "_DashboardLayout";
 }
 
