@@ -121,10 +121,10 @@
     <value>Continue</value>
   </data>
   <data name="Heading" xml:space="preserve">
-    <value>What's the apprentice's last name?</value>
+    <value>What is the apprentice's family name?</value>
   </data>
   <data name="LastName" xml:space="preserve">
-    <value>Last name</value>
+    <value>Family name</value>
   </data>
   <data name="LastNameHint" xml:space="preserve">
     <value>For example, Hawkins</value>
