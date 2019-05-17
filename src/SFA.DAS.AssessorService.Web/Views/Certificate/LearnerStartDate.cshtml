@@ -12,6 +12,10 @@
         {
             <a class="link-back" asp-controller="CertificateCheck" asp-action="Check">Back</a>
         }
+        else if (Model.IsPrivatelyFunded)
+        {
+            <a class="link-back" asp-controller="CertificateGrade" asp-action="Grade">Back</a>
+        }
         else
         {
             <a class="link-back" asp-controller="CertificateOption" asp-action="Option" asp-route-fromback="true">Back</a>

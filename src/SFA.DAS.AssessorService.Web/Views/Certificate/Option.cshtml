@@ -13,11 +13,15 @@
         {
             <a class="link-back" asp-controller="CertificateCheck" asp-action="Check">Back</a>
         }
+        else if (Model.IsPrivatelyFunded)
+        {
+            <a class="link-back" asp-controller="CertificatePrivateStandardCode" asp-action="StandardCode">Back</a>
+        }
         else
         {
-            <a class="link-back" asp-controller="CertificateGrade" asp-action="Grade">Back</a>
+            <a class="link-back" asp-controller="CertificateDeclaration" asp-action="Declare">Back</a>
         }
-        
+
 
         <form class="apprentice-option-form js-disable-on-submit" method="post" asp-controller="Certificate" asp-method="Options">
             @Html.HiddenFor(c => c.Id)

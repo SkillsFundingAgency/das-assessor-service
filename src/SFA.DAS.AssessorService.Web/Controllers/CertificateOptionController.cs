@@ -68,12 +68,12 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             {
                 if (ContextAccessor.HttpContext.Request.Query.ContainsKey("fromback"))
                 {
-                    return RedirectToAction("Grade", "CertificateGrade");    
+                    if (certificate.IsPrivatelyFunded)
+                        return RedirectToAction("StandardCode", "CertificatePrivateStandardCode");
+                    return RedirectToAction("Declare", "CertificateDeclaration");
                 }
-                if(certificate.IsPrivatelyFunded)
-                    return RedirectToAction("LearnerStartDate", "CertificatePrivateLearnerStartDate");
 
-                return RedirectToAction("Date", "CertificateDate");
+                return RedirectToAction("Grade", "CertificateGrade");
             }
 
             Logger.LogInformation($"Got Certificate for CertificateOptionViewModel requested by {username} with Id {certificate.Id}");
@@ -88,16 +88,10 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [HttpPost(Name = "Option")]
         public async Task<IActionResult> Option(CertificateOptionViewModel vm)
         {
-            var certificate = await CertificateApiClient.GetCertificate(vm.Id);
-            if (certificate.IsPrivatelyFunded)
-            {
-                return await SaveViewModel(vm,
-                    returnToIfModelNotValid: "~/Views/Certificate/Option.cshtml",
-                    nextAction: RedirectToAction("LearnerStartDate", "CertificatePrivateLearnerStartDate"), action: CertificateActions.Option);
-            }
+         
             return await SaveViewModel(vm,
                 returnToIfModelNotValid: "~/Views/Certificate/Option.cshtml",
-                nextAction: RedirectToAction("Date", "CertificateDate"), action: CertificateActions.Option);
+                nextAction: RedirectToAction("Grade", "CertificateGrade"), action: CertificateActions.Option);
         }
 
          private async Task<IActionResult> SaveViewModel(CertificateOptionViewModel vm, string returnToIfModelNotValid, RedirectToActionResult nextAction, string action)
