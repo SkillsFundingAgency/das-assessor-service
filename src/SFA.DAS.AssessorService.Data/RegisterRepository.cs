@@ -171,8 +171,8 @@ namespace SFA.DAS.AssessorService.Data
                         contact.EndPointAssessorOrganisationId,
                         contact.Username,
                         contact.PhoneNumber,
-                        firstName = contact.FirstName??"",
-                        lastName = contact.LastName??"",
+                        firstName = string.IsNullOrEmpty(contact.FirstName)?" ": contact.FirstName,
+                        lastName = string.IsNullOrEmpty(contact.LastName) ? " " : contact.LastName,
                         contact.SigninId,
                         contact.SigninType
                     });
@@ -242,7 +242,8 @@ namespace SFA.DAS.AssessorService.Data
                     "[GivenNames] = @firstName, [FamilyName] = @lastName, " +
                     "[PhoneNumber] = @phoneNumber, [updatedAt] = getUtcDate() " +
                     "WHERE [Id] = @Id ",
-                    new { contact.DisplayName, contact.Email, firstName = contact.FirstName??"", lastName = contact.LastName??"", contact.PhoneNumber, contact.Id});
+                    new { contact.DisplayName, contact.Email, firstName = string.IsNullOrEmpty(contact.FirstName) ? " " : contact.FirstName,
+                        lastName = string.IsNullOrEmpty(contact.LastName) ? " " : contact.LastName,, contact.PhoneNumber, contact.Id});
 
                 if (actionChoice == "MakePrimaryContact")
                     connection.Execute("update o set PrimaryContact = c.Username from organisations o " +
