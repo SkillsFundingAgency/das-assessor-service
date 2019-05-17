@@ -19,7 +19,7 @@ using CertificateStatus = SFA.DAS.AssessorService.Domain.Consts.CertificateStatu
 
 namespace SFA.DAS.AssessorService.Web.Staff.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = Domain.Roles.OperationsTeam + "," + Domain.Roles.CertificationTeam)]
     public class CertificateApprovalsController : CertificateBaseController
     {
         private const int PageSize = 10;
