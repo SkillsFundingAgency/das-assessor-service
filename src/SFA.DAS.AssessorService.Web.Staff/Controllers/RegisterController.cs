@@ -396,9 +396,9 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             vm.OrganisationName = organisation.Name;
             vm.Ukprn = organisation.Ukprn;
             vm.StandardTitle = standard.Title;
-            vm.StandardEffectiveFrom = standard.EffectiveFrom;
-            vm.StandardEffectiveTo = standard.EffectiveTo;
-            vm.StandardLastDateForNewStarts = standard.LastDateForNewStarts;
+            vm.StandardEffectiveFrom = standard.StandardData.EffectiveFrom;
+            vm.StandardEffectiveTo = standard.StandardData.EffectiveTo;
+            vm.StandardLastDateForNewStarts = standard.StandardData.LastDateForNewStarts;
             vm.AvailableDeliveryAreas = availableDeliveryAreas;
             vm.DeliveryAreas = vm.DeliveryAreas ?? new List<int>();
             vm.OrganisationStatus = organisation.Status;
@@ -434,14 +434,6 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         private void GatherOrganisationStandards(RegisterViewAndEditOrganisationViewModel viewAndEditModel)
         {
             var organisationStandards = _apiClient.GetEpaOrganisationStandards(viewAndEditModel.OrganisationId).Result;
-
-            var allStandards = _standardServiceClient.GetAllStandardSummaries().Result;
-
-            foreach (var organisationStandard in organisationStandards)
-            {
-                var std = allStandards.First(x => x.Id == organisationStandard.StandardCode.ToString());
-                organisationStandard.StandardSummary = std;
-            }
 
             viewAndEditModel.OrganisationStandards = organisationStandards;
         }
