@@ -123,13 +123,17 @@
   <data name="DateHint" xml:space="preserve">
     <value>For example, 15 10 2017</value>
   </data>
-  <data name="Heading" xml:space="preserve">
+  <data name="AchievedHeading" xml:space="preserve">
     <value>What is the apprenticeship achievement date?</value>
   </data>
-  <data name="InfoBody" xml:space="preserve">
-    <value>The achievement date is the date you confirmed the apprentice completed the apprenticeship.</value>
+  <data name="AchievedBody" xml:space="preserve">
+    <value>The date you determined the apprentice completed the apprenticeship after internal quality assurance.</value>
   </data>
-  <data name="InfoHeader" xml:space="preserve">
-    <value>What is an apprenticeship achievement date?</value>
+  <data name="FailedHeading" xml:space="preserve">
+    <value>What is the date the apprentice failed?</value>
   </data>
+  <data name="FailedBody" xml:space="preserve">
+    <value>The date you determined the apprentice failed after internal quality assurance.</value>
+  </data>
+
 </root>

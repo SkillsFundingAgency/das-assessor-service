@@ -1,4 +1,5 @@
 ﻿@using Microsoft.AspNetCore.Mvc.Localization
+@using SFA.DAS.AssessorService.Domain.Consts
 @inject IViewLocalizer Localizer
 @model SFA.DAS.AssessorService.Web.ViewModels.Certificate.CertificateDateViewModel
 
@@ -56,9 +57,27 @@ else
                 <div class="govuk-form-group js-date-container" sfa-anyvalidationerror-class="govuk-form-group--error">
                     <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
                         <h1 class="govuk-fieldset__heading">
-                            @Localizer["Heading"]
+                            @if (Model.SelectedGrade == CertificateGrade.Fail)
+                            {
+                                @Localizer["FailedHeading"]
+                            }
+                            else
+                            {
+                                @Localizer["AchievedHeading"]
+                            }
                         </h1>
                     </legend>
+
+                    <p class="govuk-body">
+                        @if (Model.SelectedGrade == CertificateGrade.Fail)
+                        {
+                            @Localizer["FailedBody"]
+                        }
+                        else
+                        {
+                            @Localizer["AchievedBody"]
+                        }
+                    </p>
 
                     <span class="govuk-hint">
                         @Localizer["DateHint"]
@@ -95,6 +114,7 @@ else
 
                 <button type="submit" class="govuk-button">@Localizer["ContinueButton"]</button>
 
+                @*
                 <details class="govuk-details">
                     <summary class="govuk-details__summary">
                         <span class="govuk-details__summary-text">
@@ -105,6 +125,7 @@ else
                         @Localizer["InfoBody"]
                     </div>
                 </details>
+                *@
 
             </form>
         </div>
