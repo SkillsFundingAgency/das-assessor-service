@@ -6,7 +6,8 @@ namespace SFA.DAS.AssessorService.Domain.Entities
 {
     public class Privilege
     {
-       public Guid Id { get; set; }
-       public string UserPrivilege { get; set; }
+        public Guid Id { get; set; }
+        public string UserPrivilege { get; set; }
+        public bool MustBeAtLeastOneUserAssigned { get; set; }
     }
 }

@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Api.Types.Models.UserManagement;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
 using SFA.DAS.AssessorService.Application.Exceptions;
@@ -146,7 +148,13 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             await _contactRepository.AssociatePrivilegesWithContact(contact.Id, privileges);
             return NoContent();
         }
-        
 
+        [HttpPost("setContactPrivileges")]
+        public async Task<ActionResult> SetContactPrivileges([FromBody] SetContactPrivilegesRequest privilegesRequest)
+        {
+            var response = await _mediator.Send(privilegesRequest, CancellationToken.None);
+            
+            return Ok(response);
+        }
     }
 }

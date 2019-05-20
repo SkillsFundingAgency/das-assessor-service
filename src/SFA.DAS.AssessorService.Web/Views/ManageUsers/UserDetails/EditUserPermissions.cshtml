@@ -1,0 +1,88 @@
+@model SFA.DAS.AssessorService.Web.Controllers.ManageUsers.ViewModels.UserViewModel
+
+@{
+    ViewBag.Title = "User";
+}
+
+
+<a asp-controller="ManageUsers" asp-action="Index">Back</a>
+
+<span>User details</span>
+<div>
+    <div class="grid-row">
+        <div class="column-full">
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+                    <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+                        There's a problem
+                    </h2>
+                    <ul class="error-summary-list">
+                        <li><a href="#">@ViewData.ModelState.GetValueOrDefault("permissions").Errors.First().ErrorMessage</a></li>
+                    </ul>
+                </div>
+            }
+            
+            
+            
+            <h1 class="heading-large">@Model.GivenNames @Model.FamilyName</h1>
+
+
+            <div>
+                <label>Title</label>
+                @Model.Title
+            </div>
+
+            <div>
+                <label>First name</label>
+                @Model.GivenNames
+            </div>
+
+            <div>
+                <label>Family name</label>
+                @Model.FamilyName
+            </div>
+
+            <div>
+                <label>Email</label>
+                @Model.Email
+            </div>
+
+            <div>
+                <label>Telephone</label>
+                @Model.PhoneNumber
+            </div>
+
+            <div>
+                <label>Status</label>
+                @Model.Status
+            </div>
+
+            <div>
+                <label>Action required</label>
+                @Model.ActionRequired
+            </div>
+
+            <form asp-controller="UserDetails" asp-action="EditPermissions">
+                <input type="hidden" name="ContactId" value="@Model.EditPrivilegesViewModel.ContactId"/>
+                <div>
+                    <label>Permissions</label>
+                    <ul>
+                        @for (int i = 0; i < Model.EditPrivilegesViewModel.PrivilegeViewModels.Length; i++)
+                        {
+                            <li>
+                                <input type="hidden" name="PrivilegeViewModels[@i].Privilege.Id" value="@Model.EditPrivilegesViewModel.PrivilegeViewModels[i].Privilege.Id"/>
+                                <input type="checkbox" name="PrivilegeViewModels[@i].Selected" value="true" @(Model.EditPrivilegesViewModel.PrivilegeViewModels[i].Selected ? "checked" : "")/>@Model.AllPrivilegeTypes[i].UserPrivilege
+                            </li>
+                        }
+                    </ul>
+                </div>
+                <button type="submit">Save</button>
+            </form>
+
+            <span>Options</span>
+            <a asp-controller="UserDetails" asp-action="EditPermissions" asp-route-userid="@Model.Id">Edit user permissions</a>
+            <a asp-controller="UserDetails" asp-action="Remove" asp-route-userid="@Model.Id">Remove this user</a>
+        </div>
+    </div>
+</div>

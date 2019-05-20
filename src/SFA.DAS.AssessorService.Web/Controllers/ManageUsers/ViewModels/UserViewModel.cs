@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 
@@ -23,5 +24,18 @@ namespace SFA.DAS.AssessorService.Web.Controllers.ManageUsers.ViewModels
         }
         
         public List<ContactsPrivilege> AssignedPrivileges { get; set; }
+        public List<Privilege> AllPrivilegeTypes { get; set; }
+
+        public EditPrivilegesViewModel EditPrivilegesViewModel {
+            get { return new EditPrivilegesViewModel()
+            {
+                ContactId = Id, 
+                PrivilegeViewModels = AllPrivilegeTypes.Select(pt => new PrivilegeViewModel()
+                {
+                    Privilege = pt,
+                    Selected = AssignedPrivileges.Any(ap => ap.PrivilegeId == pt.Id)
+                }).ToArray()
+            }; }
+        }
     }
 }

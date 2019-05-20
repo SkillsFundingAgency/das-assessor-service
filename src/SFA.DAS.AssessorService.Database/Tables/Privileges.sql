@@ -1,6 +1,7 @@
 ﻿CREATE TABLE [dbo].[Privileges](
 	[Id] [uniqueidentifier] NOT NULL,
 	[UserPrivilege] [nvarchar](120) NOT NULL DEFAULT '',
+	[MustBeAtLeastOneUserAssigned] [uniqueidentifier] NOT NULL DEFAULT(0)
  CONSTRAINT [PK_Privileges] PRIMARY KEY CLUSTERED 
 (
 	[Id] ASC

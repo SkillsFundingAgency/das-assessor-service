@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.WindowsAzure.Storage.Blob;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Api.Types.Models.UserManagement;
 using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
@@ -27,6 +28,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         {
         }
 
+        public async Task<List<Privilege>> GetPrivileges()
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/contacts/privileges"))
+            {
+                return await RequestAndDeserialiseAsync<List<Privilege>>(request, $"Could not privileges");
+            }
+        }
+        
         public async Task<List<ContactsPrivilege>> GetContactPrivileges(Guid userId)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/contacts/user/{userId}/privileges"))
@@ -182,10 +191,20 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                 
             }
         }
+
+        public async Task<SetContactPrivilegesResponse> SetContactPrivileges(SetContactPrivilegesRequest privilegesRequest)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Post, "/api/v1/contacts/setContactPrivileges"))
+            {
+                return await PostPutRequestWithResponse<SetContactPrivilegesRequest,SetContactPrivilegesResponse>(request, privilegesRequest);
+            }
+        }
     }
 
     public interface IContactsApiClient
     {
+        Task<List<Privilege>> GetPrivileges();
+        
         Task<List<ContactsPrivilege>> GetContactPrivileges(Guid userId);
         
         Task<ContactResponse> GetByUsername(string username);
@@ -218,5 +237,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         Task<ContactResponse> CreateANewContactWithGivenId(Contact contact);
 
         Task AssociateDefaultRolesAndPrivileges(Contact contact);
+        Task<SetContactPrivilegesResponse> SetContactPrivileges(SetContactPrivilegesRequest privilegesRequest);
     }
 }

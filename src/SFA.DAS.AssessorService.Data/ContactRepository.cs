@@ -76,6 +76,28 @@ namespace SFA.DAS.AssessorService.Data
             return result;
         }
 
+        public async Task RemoveAllPrivileges(Guid contactId)
+        {
+            _assessorDbContext.ContactsPrivileges.RemoveRange(_assessorDbContext.ContactsPrivileges.Where(cp => cp.ContactId == contactId));
+            await _assessorDbContext.SaveChangesAsync();
+        }
+
+        public async Task AddPrivilege(Guid contactId, Guid privilegeId)
+        {
+            await _assessorDbContext.ContactsPrivileges.AddAsync(new ContactsPrivilege() {ContactId = contactId, PrivilegeId = privilegeId});
+            await _assessorDbContext.SaveChangesAsync();
+        }
+
+        public async Task<bool> IsOnlyContactWithPrivilege(Guid contactId, Guid privilegeId)
+        {
+            var contact = await _assessorDbContext.Contacts.FirstOrDefaultAsync(c => c.Id == contactId);
+            var orgContacts = _assessorDbContext.Contacts.Where(c => c.OrganisationId == contact.OrganisationId).Select(c => c.Id);
+
+            var orgContactPrivileges = await _assessorDbContext.ContactsPrivileges.Where(cp => orgContacts.Contains(cp.ContactId)).ToListAsync();
+
+            return orgContactPrivileges.Count(ocp => ocp.PrivilegeId == privilegeId) == 1;
+        }
+
 
         public async Task Update(UpdateContactRequest updateContactRequest)
         {

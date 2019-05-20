@@ -23,6 +23,9 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ManageUsersTests.UserDetailsCont
         protected Mock<IContactsApiClient> ContactsApiClient;
         protected Guid CallingUserId;
         protected Guid DifferentOrganisationId;
+        protected Guid PrivilegeId2;
+        protected Guid PrivilegeId1;
+        protected Guid PrivilegeId3;
 
         [SetUp]
         public async Task SetUp()
@@ -55,13 +58,25 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ManageUsersTests.UserDetailsCont
                 Id = CallingUserId,
                 OrganisationId = requestedContactOrganisationId
             });
+
+
+            PrivilegeId1 = Guid.NewGuid();
+            PrivilegeId2 = Guid.NewGuid();
+            PrivilegeId3 = Guid.NewGuid();
             
             ContactsApiClient.Setup(apiClient => apiClient.GetContactPrivileges(UserId)).ReturnsAsync(new List<ContactsPrivilege>()
             {
-                new ContactsPrivilege(),
-                new ContactsPrivilege()
+                new ContactsPrivilege{PrivilegeId = PrivilegeId1},
+                new ContactsPrivilege{PrivilegeId = PrivilegeId2}
             });
 
+            ContactsApiClient.Setup(apiClient => apiClient.GetPrivileges()).ReturnsAsync(new List<Privilege>
+            {
+                new Privilege{Id = PrivilegeId1},
+                new Privilege{Id = PrivilegeId2},
+                new Privilege{Id = PrivilegeId3}
+            });
+            
             var httpContextAccessor = new Mock<IHttpContextAccessor>();
             
             var context = new DefaultHttpContext();
