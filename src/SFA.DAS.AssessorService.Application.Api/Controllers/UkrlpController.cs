@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
-using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.UKRLP;
 using SFA.DAS.AssessorService.Application.Api.Clients;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
@@ -33,7 +29,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             _ukrlpProcessingService = ukrlpProcessingService;
         }
 
-
         [HttpGet("provider-details/{ukprn}", Name = "GetProviderDetails")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(UkrlpProviderDetails))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
@@ -45,7 +40,5 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             var providerDetails = _ukrlpProcessingService.ProcessDetails(results);
             return Ok(providerDetails);
         }
-
-        
     }
 }

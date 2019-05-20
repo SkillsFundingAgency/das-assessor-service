@@ -46,8 +46,6 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                 cfg.CreateMap<CreateEpaOrganisationStandardRequest, EpaoStandardResponse>();
                 cfg.CreateMap<UpdateEpaOrganisationStandardRequest, EpaoStandardResponse>();
 
-
-
                 cfg.AddProfile<UkrlpVerificationDetailsProfile>();
                 cfg.AddProfile<UkrlpContactPersonalDetailsProfile>();
                 cfg.AddProfile<UkrlpContactAddressProfile>();

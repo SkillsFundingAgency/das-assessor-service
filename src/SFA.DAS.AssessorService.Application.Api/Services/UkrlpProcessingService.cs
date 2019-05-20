@@ -1,8 +1,6 @@
 ﻿using SFA.DAS.AssessorService.Api.Types.Models.UKRLP;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Api.Services
 {
@@ -10,7 +8,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
     {
         public UkrlpProviderDetails ProcessDetails(List<ProviderDetails> providerDetails)
         {
-
             if (providerDetails== null || providerDetails.Count==0)
                 return new UkrlpProviderDetails();
 

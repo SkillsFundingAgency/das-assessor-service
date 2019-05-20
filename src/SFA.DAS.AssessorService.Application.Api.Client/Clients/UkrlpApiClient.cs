@@ -2,7 +2,6 @@
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.UKRLP;
 
 namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
@@ -26,12 +25,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                 return await RequestAndDeserialiseAsync<UkrlpProviderDetails>(request,
                     $"Could not find the provider details from the ukprn {ukprn}");
             }
-
-            //using (var request = new HttpRequestMessage(HttpMethod.Get, $"{WebUtility.UrlEncode(ukprn)}"))
-            //{
-            //    return await RequestAndDeserialiseAsync<UkrlpProviderDetails>(request,
-            //        $"Could not find the provider details from the ukprn {ukprn}");
-            //}
         }
     }
 }
