@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using SFA.DAS.Apprenticeships.Api.Types;
+using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Models
 {
@@ -9,7 +10,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Models
 
         public string OrganisationName { get; set; }
         public string StandardSearchString { get; set; }
-        public List<StandardSummary> Results { get; set; }
+        public List<StandardCollation> Results { get; set; }
         public string ErrorMessage { get; set; }
     }
 

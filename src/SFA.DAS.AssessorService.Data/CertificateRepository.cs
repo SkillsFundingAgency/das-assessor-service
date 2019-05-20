@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
@@ -11,7 +10,6 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Application.Interfaces;
-using SFA.DAS.AssessorService.Data.Consts;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Exceptions;
@@ -116,8 +114,7 @@ namespace SFA.DAS.AssessorService.Data
         }
 
         public async Task<Certificate> GetPrivateCertificate(long uln,
-            string endpointOrganisationId,
-            string lastName)
+            string endpointOrganisationId)
         {
             var existingCert = await _context.Certificates
                 .Include(q => q.Organisation)
@@ -126,6 +123,36 @@ namespace SFA.DAS.AssessorService.Data
                     c.Organisation.EndPointAssessorOrganisationId == endpointOrganisationId &&
                     c.IsPrivatelyFunded);
             return existingCert;
+        }
+
+        public async Task<Certificate> GetCertificateByOrgIdLastname(long uln,
+            string endpointOrganisationId, string lastName)
+        {
+            var existingCert = await _context.Certificates
+                .Include(q => q.Organisation)
+                .FirstOrDefaultAsync(c =>
+                    c.Uln == uln &&
+                    c.Organisation.EndPointAssessorOrganisationId == endpointOrganisationId &&
+                    CheckCertificateData(c, lastName));
+            return existingCert;
+        }
+
+        public async Task<Certificate> GetCertificateByUlnLastname(long uln,
+            string lastName)
+        {
+            var existingCert = await _context.Certificates
+                .Include(q => q.Organisation)
+                .FirstOrDefaultAsync(c =>
+                    c.Uln == uln &&
+                    CheckCertificateData(c,lastName));
+
+            return existingCert;
+        }
+
+        private bool CheckCertificateData(Certificate certificate, string lastName)
+        {
+            var certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
+            return (certificateData.LearnerFamilyName == lastName);
         }
 
         public async Task<Certificate> GetCertificate(
@@ -147,7 +174,7 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<List<Certificate>> GetCompletedCertificatesFor(long uln)
         {
-            return await _context.Certificates.Where(c => c.Uln == uln && (c.Status == CertificateStatus.Reprint || c.Status == CertificateStatus.Printed || c.Status == CertificateStatus.Submitted))
+            return await _context.Certificates.Where(c => c.Uln == uln && (c.Status == CertificateStatus.Reprint || c.Status == CertificateStatus.Printed || c.Status == CertificateStatus.Submitted || c.Status == CertificateStatus.ToBeApproved))
                 .ToListAsync();
         }
 
@@ -161,7 +188,7 @@ namespace SFA.DAS.AssessorService.Data
                     .AsNoTracking()
                     .ToListAsync();
             }
-            else
+            else 
             {
                 return await _context.Certificates
                     .Include(q => q.Organisation)
@@ -170,6 +197,35 @@ namespace SFA.DAS.AssessorService.Data
                     .ToListAsync();
             }
         }
+
+        public async Task<PaginatedList<Certificate>> GetCertificatesForApproval(int pageIndex, int pageSize,string status, string privatelyFundedStatus)
+        {
+            int count;
+            var certificates = _context.Certificates.Include(q => q.Organisation)
+                .Include(q => q.CertificateLogs);
+            IQueryable<Certificate> queryable;
+            if (status == null )
+            {
+                count = await _context.Certificates.Where(x => x.IsPrivatelyFunded).CountAsync();
+                queryable = certificates;
+            }
+            else
+            {
+               count = await _context.Certificates.Where(x => x.Status == status && x.PrivatelyFundedStatus == privatelyFundedStatus).Where(x => x.IsPrivatelyFunded).CountAsync();
+               queryable = certificates.Where(x => x.Status == status && x.PrivatelyFundedStatus == privatelyFundedStatus);
+            }
+
+            if (pageSize == 0)
+                  pageSize = count == 0 ? 1 : count;
+            var  certificateResult = await queryable
+                .Where(x => x.IsPrivatelyFunded) 
+                .OrderByDescending(q => q.UpdatedAt)
+                .Skip((pageIndex - 1) * pageSize)
+                .Take(pageSize).ToListAsync();
+
+            return new PaginatedList<Certificate>(certificateResult, count, pageIndex < 0 ? 1 : pageIndex, pageSize);
+        }
+
 
         public async Task<PaginatedList<Certificate>> GetCertificateHistory(string userName, int pageIndex, int pageSize, List<string> statuses)
         {
@@ -220,6 +276,8 @@ namespace SFA.DAS.AssessorService.Data
             cert.Uln = certificate.Uln;
             cert.CertificateData = certificate.CertificateData;
             cert.Status = certificate.Status;
+            cert.ProviderUkPrn = certificate.ProviderUkPrn;
+            cert.StandardCode = certificate.StandardCode;
             cert.UpdatedBy = username;
             cert.UpdatedAt = DateTime.UtcNow;
 
@@ -326,6 +384,7 @@ namespace SFA.DAS.AssessorService.Data
                 .AsNoTracking()
                 .ToListAsync();
         }
+        
 
         public async Task<CertificateAddress> GetContactPreviousAddress(string userName, bool isPrivatelyFunded)
         {
@@ -395,8 +454,8 @@ namespace SFA.DAS.AssessorService.Data
                         q => q.CertificateReference == approvalResult.CertificateReference);
 
                 certificate.Status = approvalResult.IsApproved;
-
-                UpdateCertificateLog(certificate, CertificateActions.Status, userName);
+                certificate.PrivatelyFundedStatus = approvalResult.PrivatelyFundedStatus;
+               await UpdateCertificateLog(certificate, approvalResult.PrivatelyFundedStatus, userName,approvalResult.ReasonForChange);
             }
 
             await _context.SaveChangesAsync();

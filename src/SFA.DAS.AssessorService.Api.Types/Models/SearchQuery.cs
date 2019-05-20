@@ -9,5 +9,6 @@ namespace SFA.DAS.AssessorService.Api.Types.Models
         public string Surname { get; set; }
         public string EpaOrgId{ get; set; }
         public string Username { get; set; }
+        public bool IsPrivatelyFunded { get; set; }
     }
 }
