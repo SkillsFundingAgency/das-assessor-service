@@ -138,7 +138,7 @@ namespace SFA.DAS.AssessorService.Web.Staff
                 config.For<IRegisterValidationRepository>().Use<RegisterValidationRepository>();
                 config.For<IEpaOrganisationIdGenerator>().Use<EpaOrganisationIdGenerator>();
                 config.For<ISpecialCharacterCleanserService>().Use<SpecialCharacterCleanserService>();
-                //config.For<IUkrlpApiClient>().Use<UkrlpApiClient>();
+
                 config.For<IUkrlpApiClient>().Use<UkrlpApiClient>().Ctor<string>().Is(ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress);
 
 
@@ -151,8 +151,6 @@ namespace SFA.DAS.AssessorService.Web.Staff
                 config.For<CertificateLearnerStartDateViewModelValidator>()
                     .Use<CertificateLearnerStartDateViewModelValidator>();
                 config.For<IRegisterValidator>().Use<RegisterValidator>();
-
-                //MFCMFC config.For<IUkrlpApiClient>().Use(() => new UkrlpApiClient(ApplicationConfiguration.UkrlpApiAuthentication.ApiBaseAddress));
 
                 config.For<IStandardServiceClient>().Use<StandardServiceClient>().Ctor<string>().Is(ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress);
                 config.For<ISessionService>().Use<SessionService>().Ctor<string>("environment")
