@@ -1,0 +1,44 @@
+﻿@{ ViewBag.Title = "UKPRN Not Found"; }
+
+@{
+    await Html.RenderPartialAsync("~/Views/Roatp/_StylesPartial.cshtml");
+}
+
+<div class="grid-row">
+    <form asp-controller="AddRoatpOrganisation" asp-action="Back" method="post" name="backForm">
+        <div class="govuk-grid-column-one-half">
+            <input type="hidden" name="action" value="EnterUkprn" />
+            <a href="JavaScript:document.backForm.submit();" class="govuk-back-link">Back</a>
+        </div>
+    </form>
+</div>
+
+<div class="grid-row">
+    <div class="column-two-thirds">
+        <h1 class="heading-xlarge roatp-heading">UKPRN not found</h1>
+    </div>
+</div>
+<div class="govuk-width-container">
+
+    <main class="govuk-main-wrapper " id="main-content" role="main">
+
+        <div class="govuk-body govuk-grid-row">
+
+            <div class="govuk-grid-column-two-thirds">
+                <p class="govuk-body">This is because the UKPRN either:</p>
+                <ul class="govuk-list govuk-list--bullet">
+                    <li>does not exist</li>
+                    <li>is inactive on the UK Register of Learning Providers</li>
+                </ul>
+                <form method="post" asp-action="EnterUkprn" asp-controller="AddRoatpOrganisation">
+                    <a asp-controller="AddRoatpOrganisation" asp-action="EnterUkprn">
+                        Try Again
+                    </a>
+                </form>
+                    
+            </div>
+
+        </div>
+
+    </main>
+</div>

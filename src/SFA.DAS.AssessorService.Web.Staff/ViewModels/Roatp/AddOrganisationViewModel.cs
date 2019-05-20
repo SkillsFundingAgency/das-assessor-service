@@ -35,6 +35,9 @@
         {
             OrganisationId = Guid.NewGuid();
         }
+    }
 
+    public class AddOrganisatioViaUkprnViewModel : AddOrganisationViewModel
+    {
     }
 }

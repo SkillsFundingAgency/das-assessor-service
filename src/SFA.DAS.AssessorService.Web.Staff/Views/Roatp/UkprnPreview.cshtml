@@ -1,6 +1,6 @@
 ﻿@model SFA.DAS.AssessorService.Web.Staff.ViewModels.Roatp.AddOrganisationProviderTypeViewModel
 
-@{ ViewBag.Title = "Confirm details"; }
+@{ ViewBag.Title = "Details from UKPRN"; }
 
 @{
     await Html.RenderPartialAsync("~/Views/Roatp/_StylesPartial.cshtml");
@@ -9,7 +9,7 @@
 <div class="grid-row">
     <form asp-controller="AddRoatpOrganisation" asp-action="Back" method="post" name="backForm">
         <div class="govuk-grid-column-one-half">
-            <input type="hidden" name="action" value="AddOrganisationDetails" />
+            <input type="hidden" name="action" value="EnterUkprn" />
             <a href="JavaScript:document.backForm.submit();" class="govuk-back-link">Back</a>
         </div>
     </form>

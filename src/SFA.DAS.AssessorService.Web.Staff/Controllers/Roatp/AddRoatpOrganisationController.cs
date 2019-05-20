@@ -47,20 +47,37 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
         public async Task<IActionResult> EnterUkprn()
         { 
             ModelState.Clear();
-            var model = new AddOrganisationProviderTypeViewModel();
+            var model = new AddOrganisatioViaUkprnViewModel();
             return View("~/Views/Roatp/EnterUkprn.cshtml", model);
         }
 
-        [Route("ukprn-preview")]
-        public async Task<IActionResult> UkprnPreview(AddOrganisationProviderTypeViewModel model)
+        [Route("ukprn-not-found")]
+        public async Task<IActionResult> UkprnNotFound()
         {
-            if (string.IsNullOrEmpty(model.UKPRN))
-            {
-                Redirect("enter-ukprn");
-            }
+            ModelState.Clear();
+            return View("~/Views/Roatp/UkprnNotFound.cshtml");
+        }
 
+        [Route("ukprn-preview")]
+        public async Task<IActionResult> UkprnPreview(AddOrganisatioViaUkprnViewModel model)
+        {
+            //if (string.IsNullOrEmpty(model.UKPRN))
+            //{
+            //    Redirect("enter-ukprn");
+            //}
+
+            if (!IsRedirectFromConfirmationPage() && !ModelState.IsValid)
+            {
+                model.ProviderTypes = await _apiClient.GetProviderTypes();
+                return View("~/Views/Roatp/EnterUkprn.cshtml", model);
+            }
             var details = await _ukrlpClient.Get(model.UKPRN);
 
+
+            if (string.IsNullOrEmpty(details.LegalName))
+            {
+                return View("~/Views/Roatp/UkprnNotFound.cshtml");
+            }
 
             var vm = new AddOrganisationProviderTypeViewModel
             {
