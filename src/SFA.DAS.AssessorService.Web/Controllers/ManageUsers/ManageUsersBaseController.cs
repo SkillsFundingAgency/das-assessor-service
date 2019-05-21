@@ -15,6 +15,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.ManageUsers
     {
         protected IContactsApiClient ContactsApiClient;
         protected IHttpContextAccessor HttpContextAccessor;
+        protected ContactResponse RequestingUser;
 
         public ManageUsersBaseController(IContactsApiClient contactsApiClient, IHttpContextAccessor httpContextAccessor)
         {
@@ -24,11 +25,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers.ManageUsers
         
         protected async Task<(bool isValid, ContactResponse contact)> SecurityCheckAndGetContact(Guid contactId)
         {
-            var requestingUser = await ContactsApiClient.GetById(HttpContextAccessor.HttpContext.User.FindFirst("UserId").Value);
+            RequestingUser = await ContactsApiClient.GetById(HttpContextAccessor.HttpContext.User.FindFirst("UserId").Value);
             
             var userToBeDisplayed = await ContactsApiClient.GetById(contactId.ToString());
             
-            return (requestingUser.OrganisationId == userToBeDisplayed.OrganisationId, userToBeDisplayed);
+            return (RequestingUser.OrganisationId == userToBeDisplayed.OrganisationId, userToBeDisplayed);
         }
     }
 }

@@ -70,6 +70,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.ManageUsers
             var response = await ContactsApiClient.SetContactPrivileges(
                 new SetContactPrivilegesRequest()
                 {
+                    AmendingContactId = RequestingUser.Id,
                     ContactId = vm.ContactId, 
                     PrivilegeIds = vm.PrivilegeViewModels.Where(pvm => pvm.Selected).Select(pvm => pvm.Privilege.Id).ToArray()
                 });
