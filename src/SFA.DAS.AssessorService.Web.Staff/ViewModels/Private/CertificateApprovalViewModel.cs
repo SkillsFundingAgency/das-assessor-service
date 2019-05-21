@@ -54,7 +54,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.ViewModels.Private
 
         public CertificateDetailApprovalViewModel[] SentForApprovalsResults()
         {
-            var count = SentForApprovalCertificates.Items.Count();
+            var count = SentForApprovalCertificates?.Items?.Count() ?? ToBeApprovedCertificates.Items.Count;
             var approvalResults =
                 new CertificateDetailApprovalViewModel[count];
             for (var i = 0; i < count; i++)

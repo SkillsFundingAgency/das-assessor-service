@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Net.Http.Formatting;
+using System.Reflection.Metadata;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -10,6 +12,7 @@ using SFA.DAS.AssessorService.Web.Staff.Infrastructure;
 using Microsoft.AspNetCore.Authorization;
 using SFA.DAS.AssessorService.Web.Staff.ViewModels.Private;
 using AutoMapper;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using OfficeOpenXml;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
@@ -52,7 +55,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         [HttpGet]
         public async Task<IActionResult> SentForApproval(int? pageIndex)
         {
-            var certificates = await ApiClient.GetCertificatesToBeApproved(PageSize, pageIndex ?? 1,
+            var certificates = await ApiClient.GetCertificatesToBeApproved(0, pageIndex ?? 1,
                 CertificateStatus.ToBeApproved, CertificateStatus.SentForApproval);
             var items =
                 Mapper.Map<List<CertificateDetailApprovalViewModel>>(certificates.Items.OrderBy(x => x.UpdatedAt));
@@ -97,9 +100,10 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         }
 
         [HttpPost(Name = "Approvals")]
-        public async Task<IActionResult> Approvals(
-            CertificatePostApprovalViewModel certificateApprovalViewModel)
+        public async Task<IActionResult> Approvals(string jsonString)
         {
+            CertificatePostApprovalViewModel certificateApprovalViewModel =
+                JsonConvert.DeserializeObject<CertificatePostApprovalViewModel>(jsonString);
             var approvalsValidationFailed = await ValidateReasonForChange1(certificateApprovalViewModel);
             if (approvalsValidationFailed != null)
                 return approvalsValidationFailed;
@@ -113,11 +117,12 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             await ApiClient.ApproveCertificates(certificateApprovalViewModel);
             return RedirectToAction(certificateApprovalViewModel.ActionHint);
         }
-
-        [HttpGet]
-        public async Task<FileContentResult> ExportSentForApproval(string status)
+        
+        [HttpPost(Name = "ExportSentForApproval")]
+        public async Task<FileContentResult> ExportSentForApproval(string status, string privateFundingStatus)
         {
-            var certificates = await ApiClient.GetCertificatesToBeApproved(0, 1, status, null);
+            var certificates = await ApiClient.GetCertificatesToBeApproved(0, 1, status, 
+                string.IsNullOrEmpty(privateFundingStatus) ? null: privateFundingStatus);
             var data = certificates?.Items.Select(x =>
                 x.ToDictionary(ApprovalToExcelAttributeMappings(), new[] {"LearningStartDate", "AchievementDate"}));
             using (var package = new ExcelPackage())
@@ -210,14 +215,15 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
                 switch (approvalResult.IsApproved)
                 {
                     //When its a new certificate that needs approval the PrivatelyFundedStatus will always be null 
-                    case CertificateStatus.ToBeApproved when approvalResult.PrivatelyFundedStatus == null:
+                    case CertificateStatus.ToBeApproved when string.IsNullOrEmpty(approvalResult.PrivatelyFundedStatus):
+                        approvalResult.PrivatelyFundedStatus = null; //Incase was empty
                         approvalResult.PrivatelyFundedStatus = CertificateStatus.SentForApproval;
                         break;
                     case CertificateStatus.Submitted
                         when approvalResult.PrivatelyFundedStatus == CertificateStatus.SentForApproval:
                         approvalResult.PrivatelyFundedStatus = CertificateStatus.Approved;
                         break;
-                    case CertificateStatus.Draft when (approvalResult.PrivatelyFundedStatus == null ||
+                    case CertificateStatus.Draft when (string.IsNullOrEmpty(approvalResult.PrivatelyFundedStatus) ||
                                                        approvalResult.PrivatelyFundedStatus ==
                                                        CertificateStatus.SentForApproval):
                         approvalResult.PrivatelyFundedStatus = CertificateStatus.Rejected;
