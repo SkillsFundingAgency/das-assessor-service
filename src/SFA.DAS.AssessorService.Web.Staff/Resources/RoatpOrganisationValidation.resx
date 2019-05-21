@@ -124,7 +124,7 @@
     <value>Enter a valid charity registration number</value>
   </data>
   <data name="CharityNumberLength" xml:space="preserve">
-    <value>Enter a charity registration number using 14 characters or less</value>
+    <value>Enter a charity registration number using 6 to 14 characters</value>
   </data>
   <data name="CompanyNumberDuplicateMatch" xml:space="preserve">
     <value>This is an existing company number for ‘{0}’</value>
