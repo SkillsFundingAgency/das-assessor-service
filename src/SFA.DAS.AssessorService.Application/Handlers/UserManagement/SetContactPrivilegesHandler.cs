@@ -53,21 +53,45 @@ namespace SFA.DAS.AssessorService.Application.Handlers.UserManagement
 
         private async Task SendEmail(List<ContactsPrivilege> privilegesBeingAdded, List<ContactsPrivilege> privilegesBeingRemoved, SetContactPrivilegesRequest request)
         {
-            var emailTemplate = await _mediator.Send(new GetEmailTemplateRequest
-                {TemplateName= "EPAOPermissionsAmended" });
-
-            var amendingContact = await _contactQueryRepository.GetContactById(request.AmendingContactId);
-            var contactBeingAmended = await _contactQueryRepository.GetContactById(request.ContactId);
-            
-            await _mediator.Send(new SendEmailRequest(contactBeingAmended.Email, emailTemplate, new
+            if (privilegesBeingAdded.Any() || privilegesBeingRemoved.Any())
             {
-                ServiceName = "Apprenticeship assessment service",
-                Contact = contactBeingAmended.DisplayName,
-                Editor = amendingContact.DisplayName,
-                ServiceTeam = "Apprenticeship assessment service team"
-            }));
-        }
+                var removedText = "";
+                if (privilegesBeingRemoved.Any())
+                {
+                    removedText = @"The following permissions have been removed:"+Environment.NewLine;
+                    foreach (var added in privilegesBeingRemoved)
+                    {
+                        removedText += " • " + added.Privilege.UserPrivilege + Environment.NewLine;
+                    }
+                }
+                
+                var addedText = "";
+                if (privilegesBeingAdded.Any())
+                {
+                    addedText = @"The following permissions have been added:"+Environment.NewLine;
+                    foreach (var added in privilegesBeingAdded)
+                    {
+                        addedText += " • " + added.Privilege.UserPrivilege + Environment.NewLine;
+                    }
+                }
+                
+                var emailTemplate = await _mediator.Send(new GetEmailTemplateRequest
+                    {TemplateName= "EPAOPermissionsAmended" });
 
+                var amendingContact = await _contactQueryRepository.GetContactById(request.AmendingContactId);
+                var contactBeingAmended = await _contactQueryRepository.GetContactById(request.ContactId);
+            
+                await _mediator.Send(new SendEmailRequest(contactBeingAmended.Email, emailTemplate, new
+                {
+                    ServiceName = "Apprenticeship assessment service",
+                    Contact = contactBeingAmended.DisplayName,
+                    Editor = amendingContact.DisplayName,
+                    ServiceTeam = "Apprenticeship assessment service team",
+                    PermissionsAdded = addedText,
+                    PermissionsRemoved = removedText
+                }));
+            }
+        }
 
         private async Task UpdatePrivileges(SetContactPrivilegesRequest request)
         {
