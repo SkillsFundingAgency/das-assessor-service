@@ -159,6 +159,13 @@
             return await Task.FromResult(result == HttpStatusCode.OK);
         }
 
+        public async Task<bool> UpdateOrganisationCharityNumber(UpdateOrganisationCharityNumberRequest request)
+        {
+            HttpStatusCode result = await Put<UpdateOrganisationCharityNumberRequest>($"{_baseUrl}/api/v1/updateOrganisation/charityNumber", request);
+
+            return await Task.FromResult(result == HttpStatusCode.OK);
+        }
+
         private async Task<T> Get<T>(string uri)
         {
             _client.DefaultRequestHeaders.Authorization =
@@ -169,7 +176,7 @@
                 return await response.Content.ReadAsAsync<T>();
             }
         }
-
+   
         private async Task<HttpStatusCode> Post<T>(string uri, T model)
         {
             _client.DefaultRequestHeaders.Authorization =
