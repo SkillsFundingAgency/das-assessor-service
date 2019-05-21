@@ -18,27 +18,4 @@
         <h1 class="heading-xlarge roatp-heading">UKPRN not found</h1>
     </div>
 </div>
-<div class="govuk-width-container">
 
-    <main class="govuk-main-wrapper " id="main-content" role="main">
-
-        <div class="govuk-body govuk-grid-row">
-
-            <div class="govuk-grid-column-two-thirds">
-                <p class="govuk-body">This is because the UKPRN either:</p>
-                <ul class="govuk-list govuk-list--bullet">
-                    <li>does not exist</li>
-                    <li>is inactive on the UK Register of Learning Providers</li>
-                </ul>
-                <form method="post" asp-action="EnterUkprn" asp-controller="AddRoatpOrganisation">
-                    <a asp-controller="AddRoatpOrganisation" asp-action="EnterUkprn">
-                        Try Again
-                    </a>
-                </form>
-                    
-            </div>
-
-        </div>
-
-    </main>
-</div>

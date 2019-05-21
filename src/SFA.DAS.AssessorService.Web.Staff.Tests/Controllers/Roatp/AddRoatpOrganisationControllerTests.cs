@@ -17,6 +17,7 @@
     using Microsoft.AspNetCore.Http;
     using SFA.DAS.AssessorService.Web.Staff.Resources;
     using SFA.DAS.AssessorService.Application.Api.Client.Clients;
+    using SFA.DAS.AssessorService.Api.Types.Models.UKRLP;
 
     [TestFixture]
     public class AddRoatpOrganisationControllerTests
@@ -56,6 +57,19 @@
             _client.Setup(x => x.GetProviderTypes()).ReturnsAsync(providerTypes).Verifiable();
 
             var result = _controller.AddOrganisation(new AddOrganisationProviderTypeViewModel()).GetAwaiter().GetResult();
+
+            result.Should().BeAssignableTo<ViewResult>();
+            _client.VerifyAll();
+        }
+
+        [Test]
+        public void Ukprn_preview_calls_ukrp_client()
+        {
+           
+            var ukrlpProviderDetails = new UkrlpProviderDetails();
+
+            _ukrlpClient.Setup(x => x.Get(It.IsAny<string>())).ReturnsAsync(ukrlpProviderDetails);
+            var result = _controller.UkprnPreview(new AddOrganisatioViaUkprnViewModel()).GetAwaiter().GetResult();
 
             result.Should().BeAssignableTo<ViewResult>();
             _client.VerifyAll();
