@@ -32,8 +32,7 @@
         {
             _client = new Mock<IRoatpApiClient>();
             _sessionService = new Mock<IRoatpSessionService>();
-            _ukrlpClient = new Mock<IUkrlpApiClient>()
-                ;
+            _ukrlpClient = new Mock<IUkrlpApiClient>();
             _controller = new AddRoatpOrganisationController(_client.Object, _sessionService.Object, _ukrlpClient.Object);
 
             _controller.ControllerContext = new ControllerContext {HttpContext = new DefaultHttpContext()};
@@ -63,7 +62,7 @@
             var ukrlpProviderDetails = new UkrlpProviderDetails();
 
             _ukrlpClient.Setup(x => x.Get(It.IsAny<string>())).ReturnsAsync(ukrlpProviderDetails);
-            var result = _controller.UkprnPreview(new AddOrganisatioViaUkprnViewModel()).GetAwaiter().GetResult();
+            var result = _controller.UkprnPreview(new AddOrganisationViaUkprnViewModel()).GetAwaiter().GetResult();
 
             result.Should().BeAssignableTo<ViewResult>();
             _client.VerifyAll();
@@ -78,8 +77,6 @@
             {
                 Errors = new List<ValidationErrorDetail>()
             };
-            //_validator.Setup(x => x.ValidateOrganisationDetails(It.IsAny<AddOrganisationViewModel>()))
-            //    .ReturnsAsync(validationResult);
 
             var organisationTypes = new List<OrganisationType>
             {
@@ -122,9 +119,6 @@
             {
                 Errors = new List<ValidationErrorDetail>()
             };
-
-            //_validator.Setup(x => x.ValidateOrganisationDetails(It.IsAny<AddOrganisationViewModel>()))
-            //    .ReturnsAsync(validationResult);
 
             var result = _controller.AddOrganisationPreview(model).GetAwaiter().GetResult();
 

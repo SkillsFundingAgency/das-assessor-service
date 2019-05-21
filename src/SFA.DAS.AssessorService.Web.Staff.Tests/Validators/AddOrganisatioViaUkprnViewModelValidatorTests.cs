@@ -11,9 +11,9 @@ using SFA.DAS.AssessorService.Web.Staff.ViewModels.Roatp;
 namespace SFA.DAS.AssessorService.Web.Staff.Tests.Validators
 {
     [TestFixture]
-    public class AddOrganisatioViaUkprnViewModelValidatorTests
+    public class AddOrganisationViaUkprnViewModelValidatorTests
     {
-        private AddOrganisatioViaUkprnViewModel _viewModel;
+        private AddOrganisationViaUkprnViewModel _viewModel;
         private Mock<IRoatpOrganisationValidator> _roatpOrganisationValidator;
         private Mock<IRoatpApiClient> _apiClient;
 
@@ -31,7 +31,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Validators
         {
             var errors = new List<ValidationErrorDetail>();
             _roatpOrganisationValidator.Setup(x => x.IsValidUKPRN(It.IsAny<string>())).Returns(errors);
-            _viewModel = new AddOrganisatioViaUkprnViewModel {UKPRN = "11112222"};
+            _viewModel = new AddOrganisationViaUkprnViewModel {UKPRN = "11112222"};
 
             var validator = new AddOrganisatioViaUkprnViewModelValidator(_roatpOrganisationValidator.Object, _apiClient.Object);
             var validationResult = validator.Validate(_viewModel);
@@ -51,7 +51,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Validators
                 }
             };
             _roatpOrganisationValidator.Setup(x => x.IsValidUKPRN(It.IsAny<string>())).Returns(errors);
-            _viewModel = new AddOrganisatioViaUkprnViewModel { UKPRN = "111222" };
+            _viewModel = new AddOrganisationViaUkprnViewModel { UKPRN = "111222" };
 
             var validator = new AddOrganisatioViaUkprnViewModelValidator(_roatpOrganisationValidator.Object, _apiClient.Object);
             var validationResult = validator.Validate(_viewModel);

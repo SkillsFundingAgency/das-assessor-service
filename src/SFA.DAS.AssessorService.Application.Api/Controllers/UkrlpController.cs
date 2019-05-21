@@ -35,7 +35,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> GetProviderDetails(long ukprn)
         {
-            _logger.LogInformation("Get Provider details");
+            _logger.LogInformation($"Get Provider details for ukprn: [{ukprn}]");
             var results = await _client.GetTrainingProviderByUkprn(ukprn);
             var providerDetails = _ukrlpProcessingService.ProcessDetails(results);
             return Ok(providerDetails);

@@ -10,7 +10,7 @@ using SFA.DAS.AssessorService.Web.Staff.ViewModels.Roatp;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Validators.Roatp
 {
-    public class AddOrganisatioViaUkprnViewModelValidator : AbstractValidator<AddOrganisatioViaUkprnViewModel>
+    public class AddOrganisatioViaUkprnViewModelValidator : AbstractValidator<AddOrganisationViaUkprnViewModel>
     {
         private readonly IRoatpOrganisationValidator _validator;
         private readonly IRoatpApiClient _apiClient;
@@ -31,7 +31,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Validators.Roatp
             });
         }
 
-        private ValidationResponse IsValidUkprn(AddOrganisatioViaUkprnViewModel vm)
+        private ValidationResponse IsValidUkprn(AddOrganisationViaUkprnViewModel vm)
         {
             var validationResponse = new ValidationResponse
             {

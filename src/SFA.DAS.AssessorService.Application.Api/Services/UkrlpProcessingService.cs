@@ -6,6 +6,10 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
 {
     public class UkrlpProcessingService: IUkrlpProcessingService
     {
+        //TODO: Possibly turn this into a class of values held against string?
+        private const string CompaniesHouse = "companies house";
+        private const string CharityCommision = "charity commission";
+
         public UkrlpProviderDetails ProcessDetails(List<ProviderDetails> providerDetails)
         {
             if (providerDetails== null || providerDetails.Count==0)
@@ -20,16 +24,19 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
                 providerDetail.TradingName = firstResult.ProviderAliases.First().Alias;
             }
 
-            if (firstResult.VerificationDetails == null) return providerDetail;
+            if (firstResult.VerificationDetails == null)
+            {
+                return providerDetail;
+            }
 
             foreach (var verificationDetail in firstResult.VerificationDetails)
             {
-                if (verificationDetail.VerificationAuthority?.ToLower() == "companies house")
+                if (verificationDetail.VerificationAuthority?.ToLower() == CompaniesHouse.ToLower())
                 {
                     providerDetail.CompanyNumber = verificationDetail.VerificationId;
                 }
 
-                if (verificationDetail.VerificationAuthority?.ToLower() == "charity commission")
+                if (verificationDetail.VerificationAuthority?.ToLower() == CharityCommision.ToLower())
                 {
                     providerDetail.CharityNumber = verificationDetail.VerificationId;
                 }
