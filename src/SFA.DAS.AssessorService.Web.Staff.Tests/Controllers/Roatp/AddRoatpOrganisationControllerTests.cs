@@ -23,8 +23,6 @@
     public class AddRoatpOrganisationControllerTests
     {
         private Mock<IRoatpApiClient> _client;
-        private Mock<ILogger<AddRoatpOrganisationController>> _logger;
-        private Mock<IAddOrganisationValidator> _validator;
         private Mock<IRoatpSessionService> _sessionService;
         private AddRoatpOrganisationController _controller;
         private Mock<IUkrlpApiClient> _ukrlpClient;
@@ -33,16 +31,12 @@
         public void Before_each_test()
         {
             _client = new Mock<IRoatpApiClient>();
-            _logger = new Mock<ILogger<AddRoatpOrganisationController>>();
-            _validator = new Mock<IAddOrganisationValidator>();
             _sessionService = new Mock<IRoatpSessionService>();
             _ukrlpClient = new Mock<IUkrlpApiClient>()
                 ;
-            _controller = new AddRoatpOrganisationController(_client.Object, _logger.Object, _validator.Object,
-                _sessionService.Object, _ukrlpClient.Object);
+            _controller = new AddRoatpOrganisationController(_client.Object, _sessionService.Object, _ukrlpClient.Object);
 
-            _controller.ControllerContext = new ControllerContext();
-            _controller.ControllerContext.HttpContext = new DefaultHttpContext();
+            _controller.ControllerContext = new ControllerContext {HttpContext = new DefaultHttpContext()};
 
         }
 
@@ -84,8 +78,8 @@
             {
                 Errors = new List<ValidationErrorDetail>()
             };
-            _validator.Setup(x => x.ValidateOrganisationDetails(It.IsAny<AddOrganisationViewModel>()))
-                .ReturnsAsync(validationResult);
+            //_validator.Setup(x => x.ValidateOrganisationDetails(It.IsAny<AddOrganisationViewModel>()))
+            //    .ReturnsAsync(validationResult);
 
             var organisationTypes = new List<OrganisationType>
             {
@@ -129,8 +123,8 @@
                 Errors = new List<ValidationErrorDetail>()
             };
 
-            _validator.Setup(x => x.ValidateOrganisationDetails(It.IsAny<AddOrganisationViewModel>()))
-                .ReturnsAsync(validationResult);
+            //_validator.Setup(x => x.ValidateOrganisationDetails(It.IsAny<AddOrganisationViewModel>()))
+            //    .ReturnsAsync(validationResult);
 
             var result = _controller.AddOrganisationPreview(model).GetAwaiter().GetResult();
 

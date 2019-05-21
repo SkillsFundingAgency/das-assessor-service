@@ -19,21 +19,12 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
     public class AddRoatpOrganisationController : Controller
     {
         private readonly IRoatpApiClient _apiClient;
-        private ILogger<AddRoatpOrganisationController> _logger;
-        private IAddOrganisationValidator _validator;
         private readonly IRoatpSessionService _sessionService;
         private readonly IUkrlpApiClient _ukrlpClient;
 
-        //private const string CompleteRegisterWorksheetName = "Providers";
-        //private const string AuditHistoryWorksheetName = "Provider history";
-        //private const string ExcelFileName = "_RegisterOfApprenticeshipTrainingProviders.xlsx";
-
-        public AddRoatpOrganisationController(IRoatpApiClient apiClient, ILogger<AddRoatpOrganisationController> logger, 
-            IAddOrganisationValidator validator, IRoatpSessionService sessionService, IUkrlpApiClient ukrlpClient)
+        public AddRoatpOrganisationController(IRoatpApiClient apiClient, IRoatpSessionService sessionService, IUkrlpApiClient ukrlpClient)
         {
             _apiClient = apiClient;
-            _logger = logger;
-            _validator = validator;
             _sessionService = sessionService;
             _ukrlpClient = ukrlpClient;
         }

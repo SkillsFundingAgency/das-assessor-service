@@ -1014,8 +1014,9 @@
 
 
 .roatp-button--secondary {
-    background-color: #dee0e2 !important;
-    box-shadow: 0 2px 0 #858688;
+    /*TODO: STYLING*/
+    /*background-color: #dee0e2 !important;
+    box-shadow: 0 2px 0 #858688;*/
 }
 
 @media print {

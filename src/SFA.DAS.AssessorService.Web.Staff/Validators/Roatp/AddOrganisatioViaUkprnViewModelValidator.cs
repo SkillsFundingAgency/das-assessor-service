@@ -20,7 +20,6 @@ namespace SFA.DAS.AssessorService.Web.Staff.Validators.Roatp
             _validator = validator;
             _apiClient = apiClient;
 
-
             RuleFor(vm => vm).Custom((vm, context) =>
             {
                 var validationResult = IsValidUkprn(vm);
@@ -34,7 +33,6 @@ namespace SFA.DAS.AssessorService.Web.Staff.Validators.Roatp
 
         private ValidationResponse IsValidUkprn(AddOrganisatioViaUkprnViewModel vm)
         {
-
             var validationResponse = new ValidationResponse
             {
                 Errors = new List<ValidationErrorDetail>()
@@ -57,7 +55,6 @@ namespace SFA.DAS.AssessorService.Web.Staff.Validators.Roatp
                 }
             }
 
-
             return validationResponse;
         }
 
@@ -67,7 +64,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Validators.Roatp
             var errorMessages = new List<ValidationErrorDetail>();
 
             long ukprnValue = 0;
-            bool isParsed = long.TryParse(ukprn, out ukprnValue);
+            var isParsed = long.TryParse(ukprn, out ukprnValue);
 
             var duplicateCheckResponse = _apiClient.DuplicateUKPRNCheck(organisationId, ukprnValue).Result;
 
