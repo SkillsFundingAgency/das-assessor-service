@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using Moq;
 using NUnit.Framework;
+using SFA.DAS.AssessorService.Api.Types.Models.Roatp;
+using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.Web.Staff.Infrastructure;
 using SFA.DAS.AssessorService.Web.Staff.Validators.Roatp;
 using SFA.DAS.AssessorService.Web.Staff.ViewModels.Roatp;
