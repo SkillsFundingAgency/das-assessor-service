@@ -25,5 +25,6 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task RemoveAllPrivileges(Guid contactId);
         Task AddPrivilege(Guid contactId, Guid privilegeId);
         Task<bool> IsOnlyContactWithPrivilege(Guid contactId, Guid privilegeId);
+        Task CreateContactLog(Guid userId, Guid contactId, string logType, object logData);
     }
 }

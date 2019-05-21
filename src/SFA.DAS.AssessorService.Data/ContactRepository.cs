@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
+using Dapper;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
@@ -14,10 +18,12 @@ namespace SFA.DAS.AssessorService.Data
     public class ContactRepository : IContactRepository
     {
         private readonly AssessorDbContext _assessorDbContext;
+        private readonly IDbConnection _connection;
 
-        public ContactRepository(AssessorDbContext assessorDbContext)
+        public ContactRepository(AssessorDbContext assessorDbContext, IDbConnection connection)
         {
             _assessorDbContext = assessorDbContext;
+            _connection = connection;
         }
 
         public async Task<Contact> CreateNewContact(Contact newContact)
@@ -96,6 +102,13 @@ namespace SFA.DAS.AssessorService.Data
             var orgContactPrivileges = await _assessorDbContext.ContactsPrivileges.Where(cp => orgContacts.Contains(cp.ContactId)).ToListAsync();
 
             return orgContactPrivileges.Count(ocp => ocp.PrivilegeId == privilegeId) == 1;
+        }
+
+        public async Task CreateContactLog(Guid userId, Guid contactId, string logType, object logData)
+        {
+            await _connection.ExecuteAsync(@"INSERT INTO ContactLogs (DateTime, UserId, ContactId, ContactLogType, ContactLogDetails) 
+                                                                   VALUES (GETUTCDATE(), @userId, @contactId, @logType, @logDataString)"
+                , new {userId, contactId, logType, logDataString = JsonConvert.SerializeObject(logData)});
         }
 
 

@@ -10,6 +10,12 @@ Post-Deployment Script Template
 --------------------------------------------------------------------------------------
 */
 
+IF NOT EXISTS (SELECT * FROM EMailTemplates WHERE TemplateName = N'EPAOPermissionsAmended')
+BEGIN
+INSERT EMailTemplates ([Id],[TemplateName],[TemplateId],[Recipients],[CreatedAt]) 
+VALUES (NEWID(), N'EPAOPermissionsAmended', N'c1ba00d9-81b6-46d8-9b70-3d89d51aa9c1', NULL, GETDATE())
+END
+
 -- backup ILRS before data synch
 /* DONE
 DELETE FROM IlrsCopy

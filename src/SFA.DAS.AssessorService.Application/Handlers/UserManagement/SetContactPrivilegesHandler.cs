@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
+using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.UserManagement;
 using SFA.DAS.AssessorService.Application.Interfaces;
@@ -39,7 +40,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.UserManagement
                     return new SetContactPrivilegesResponse()
                     {
                         Success = false, 
-                        ErrorMessage = $"{currentPrivilege.Privilege.UserPrivilege} cannot be removed as user is the last with this privilege."
+                        ErrorMessage = $"Before you remove '{currentPrivilege.Privilege.UserPrivilege}' you must assign '{currentPrivilege.Privilege.UserPrivilege}' to another user."
                     };
                 }
             }
@@ -48,33 +49,28 @@ namespace SFA.DAS.AssessorService.Application.Handlers.UserManagement
 
             await SendEmail(privilegesBeingAdded, privilegesBeingRemoved, request);
 
+            await LogChangesToPrivileges(privilegesBeingAdded, privilegesBeingRemoved, request);
+            
             return new SetContactPrivilegesResponse() {Success = true};
+        }
+
+        private async Task LogChangesToPrivileges(List<ContactsPrivilege> privilegesBeingAdded, List<ContactsPrivilege> privilegesBeingRemoved, SetContactPrivilegesRequest request)
+        {          
+            await _contactRepository.CreateContactLog(request.AmendingContactId, request.ContactId, ContactLogType.PrivilegesAmended, 
+                new
+                {
+                    PrivilegesAdded=privilegesBeingAdded.Select(p => p.Privilege.UserPrivilege),
+                    PrivilegesRemoved = privilegesBeingRemoved.Select(p => p.Privilege.UserPrivilege);
+                });
         }
 
         private async Task SendEmail(List<ContactsPrivilege> privilegesBeingAdded, List<ContactsPrivilege> privilegesBeingRemoved, SetContactPrivilegesRequest request)
         {
             if (privilegesBeingAdded.Any() || privilegesBeingRemoved.Any())
             {
-                var removedText = "";
-                if (privilegesBeingRemoved.Any())
-                {
-                    removedText = @"The following permissions have been removed:"+Environment.NewLine;
-                    foreach (var added in privilegesBeingRemoved)
-                    {
-                        removedText += " • " + added.Privilege.UserPrivilege + Environment.NewLine;
-                    }
-                }
-                
-                var addedText = "";
-                if (privilegesBeingAdded.Any())
-                {
-                    addedText = @"The following permissions have been added:"+Environment.NewLine;
-                    foreach (var added in privilegesBeingAdded)
-                    {
-                        addedText += " • " + added.Privilege.UserPrivilege + Environment.NewLine;
-                    }
-                }
-                
+                var removedText = GetRemovedPrivilegesEmailToken(privilegesBeingRemoved);
+                var addedText = GetAddedPrivilegesEmailToken(privilegesBeingAdded);
+
                 var emailTemplate = await _mediator.Send(new GetEmailTemplateRequest
                     {TemplateName= "EPAOPermissionsAmended" });
 
@@ -91,6 +87,36 @@ namespace SFA.DAS.AssessorService.Application.Handlers.UserManagement
                     PermissionsRemoved = removedText
                 }));
             }
+        }
+
+        private string GetAddedPrivilegesEmailToken(List<ContactsPrivilege> privilegesBeingAdded)
+        {
+            var addedText = "";
+            if (privilegesBeingAdded.Any())
+            {
+                addedText = @"The following permissions have been added:" + Environment.NewLine;
+                foreach (var added in privilegesBeingAdded)
+                {
+                    addedText += " • " + added.Privilege.UserPrivilege + Environment.NewLine;
+                }
+            }
+
+            return addedText;
+        }
+
+        private string GetRemovedPrivilegesEmailToken(List<ContactsPrivilege> privilegesBeingRemoved)
+        {
+            var removedText = "";
+            if (privilegesBeingRemoved.Any())
+            {
+                removedText = @"The following permissions have been removed:" + Environment.NewLine;
+                foreach (var added in privilegesBeingRemoved)
+                {
+                    removedText += " • " + added.Privilege.UserPrivilege + Environment.NewLine;
+                }
+            }
+
+            return removedText;
         }
 
         private async Task UpdatePrivileges(SetContactPrivilegesRequest request)
