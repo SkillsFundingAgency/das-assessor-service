@@ -1,0 +1,44 @@
+﻿
+@{
+    var pageIndex = ViewData["PageIndex"] as int?;
+    var totalPages = ViewData["TotalPages"] as int?;
+    var hasPreviousPage = ViewData["HasPreviousPage"];
+    var hasNextPage = ViewData["HasNextPage"];
+    var action = ViewData["Action"] as string;
+}
+
+@if ((bool)hasPreviousPage || (bool)@hasNextPage)
+{
+    <div class="grid-row">
+        <div class="column-full">
+            <div class="page-navigation">
+
+
+                @if ((bool) @hasPreviousPage)
+                {
+                    <a asp-action="@action"
+                       asp-controller="CertificateApprovals"
+                       asp-route-pageIndex="@(pageIndex - 1)"
+                       class="previous">
+                        <i class="arrow-button icon-left-open">&#xe800;</i>
+                        <span class="description">Previous <span class="hide-mob">page</span></span>
+                        <span class="counter">Page <span class="prevPage">@(pageIndex - 1)</span> of <span class="totalPage">@totalPages</span></span>
+                    </a>
+                }
+
+                @if ((bool) hasNextPage)
+                {
+                    <a asp-action="@action"
+                       asp-controller="CertificateApprovals"
+                       asp-route-pageIndex="@(pageIndex + 1)"
+                       class="next">
+                        <i class="arrow-button icon-right-open">&#xe801;</i>
+                        <span class="description">Next <span class="hide-mob">page</span></span>
+                        <span class="counter">Page <span class="nextPage">@(pageIndex + 1)</span> of <span class="totalPage">@totalPages</span></span>
+                    </a>
+                }
+
+            </div>
+        </div>
+    </div>
+}
