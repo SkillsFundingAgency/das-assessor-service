@@ -75,14 +75,14 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
             }
         }
 
-        public async Task<GetCertificateResponse> GetCertificate(GetCertificateRequest request)
+        public virtual async Task<GetCertificateResponse> GetCertificate(GetCertificateRequest request)
         { 
             var apiResponse = await Get<AssessorService.Api.Types.Models.Certificates.Batch.GetBatchCertificateResponse>($"/api/v1/certificates/batch/{request.Uln}/{request.FamilyName}/{request.Standard}/{request.UkPrn}/{request.Email}");
 
             return Mapper.Map<AssessorService.Api.Types.Models.Certificates.Batch.GetBatchCertificateResponse, GetCertificateResponse>(apiResponse);
         }
 
-        public async Task<IEnumerable<BatchCertificateResponse>> CreateCertificates(IEnumerable<BatchCertificateRequest> request)
+        public virtual async Task<IEnumerable<BatchCertificateResponse>> CreateCertificates(IEnumerable<BatchCertificateRequest> request)
         {
             var apiRequest = Mapper.Map<IEnumerable<BatchCertificateRequest>,IEnumerable<AssessorService.Api.Types.Models.Certificates.Batch.CreateBatchCertificateRequest>>(request);
 
@@ -91,7 +91,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
             return Mapper.Map<IEnumerable<AssessorService.Api.Types.Models.Certificates.Batch.BatchCertificateResponse>, IEnumerable<BatchCertificateResponse>>(apiResponse);
         }
 
-        public async Task<IEnumerable<BatchCertificateResponse>> UpdateCertificates(IEnumerable<BatchCertificateRequest> request)
+        public virtual async Task<IEnumerable<BatchCertificateResponse>> UpdateCertificates(IEnumerable<BatchCertificateRequest> request)
         {
             var apiRequest = Mapper.Map<IEnumerable<BatchCertificateRequest>, IEnumerable<AssessorService.Api.Types.Models.Certificates.Batch.UpdateBatchCertificateRequest>>(request);
 
@@ -100,7 +100,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
             return Mapper.Map<IEnumerable<AssessorService.Api.Types.Models.Certificates.Batch.BatchCertificateResponse>, IEnumerable<BatchCertificateResponse>>(apiResponse);
         }
 
-        public async Task<IEnumerable<SubmitBatchCertificateResponse>> SubmitCertificates(IEnumerable<SubmitBatchCertificateRequest> request)
+        public virtual async Task<IEnumerable<SubmitBatchCertificateResponse>> SubmitCertificates(IEnumerable<SubmitBatchCertificateRequest> request)
         {
             var apiRequest = Mapper.Map<IEnumerable<SubmitBatchCertificateRequest>, IEnumerable<AssessorService.Api.Types.Models.Certificates.Batch.SubmitBatchCertificateRequest>>(request);
 
@@ -109,21 +109,21 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
             return Mapper.Map<IEnumerable<AssessorService.Api.Types.Models.Certificates.Batch.SubmitBatchCertificateResponse>, IEnumerable<SubmitBatchCertificateResponse>>(apiResponse);
         }
 
-        public async Task<ApiResponse> DeleteCertificate(DeleteCertificateRequest request)
+        public virtual async Task<ApiResponse> DeleteCertificate(DeleteCertificateRequest request)
         {
             var apiResponse = await Delete<ApiResponse>($"/api/v1/certificates/batch/{request.Uln}/{request.FamilyName}/{request.Standard}/{request.CertificateReference}/{request.UkPrn}/{request.Email}");
 
             return apiResponse;
         }
 
-        public async Task<IEnumerable<StandardOptions>> GetStandards()
+        public virtual async Task<IEnumerable<StandardOptions>> GetStandards()
         {
             var apiResponse = await Get<IEnumerable<AssessorService.Api.Types.Models.Standards.StandardCollation>>($"/api/ao/assessment-organisations/collated-standards");
 
             return Mapper.Map<IEnumerable<AssessorService.Api.Types.Models.Standards.StandardCollation>, IEnumerable<StandardOptions>>(apiResponse);
         }
 
-        public async Task<StandardOptions> GetStandard(string standard)
+        public virtual async Task<StandardOptions> GetStandard(string standard)
         {
             AssessorService.Api.Types.Models.Standards.StandardCollation apiResponse = null;
 
