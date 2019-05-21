@@ -142,6 +142,42 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
             return View("~/Views/Roatp/UpdateOrganisationType.cshtml", model);
         }
 
+
+        [Route("change-company-number")]
+        public async Task<IActionResult> UpdateOrganisationCompanyNumber()
+        {
+            var searchModel = _sessionService.GetSearchResults();
+
+            var model = new UpdateOrganisationCompanyNumberViewModel
+            {
+                CompanyNumber = searchModel.SelectedResult?.OrganisationData?.CompanyNumber,
+                LegalName = searchModel.SelectedResult.LegalName,
+                OrganisationId = searchModel.SelectedResult.Id
+            };
+
+            return View("~/Views/Roatp/UpdateOrganisationCompanyNumber.cshtml", model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateCompanyNumber(UpdateOrganisationCompanyNumberViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View("~/Views/Roatp/UpdateOrganisationCompanyNumber.cshtml", model);
+            }
+
+            model.UpdatedBy = HttpContext.User.OperatorName();
+            var request = Mapper.Map<UpdateOrganisationCompanyNumberRequest>(model);
+            var result = await _apiClient.UpdateOrganisationCompanyNumber(request);
+
+            if (result)
+            {
+                return await RefreshSearchResults();
+            }
+
+            return View("~/Views/Roatp/UpdateOrganisationCompanyNumber.cshtml", model);
+        }
+
         [HttpPost]
         public async Task<IActionResult> UpdateStatus(UpdateOrganisationStatusViewModel model)
         {

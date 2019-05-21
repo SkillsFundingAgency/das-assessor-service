@@ -152,6 +152,12 @@
 
             return await Task.FromResult(result == HttpStatusCode.OK);
         }
+        
+        public async Task<bool> UpdateOrganisationCompanyNumber(UpdateOrganisationCompanyNumberRequest request)
+        {
+            HttpStatusCode result = await Put<UpdateOrganisationCompanyNumberRequest>($"{_baseUrl}/api/v1/updateOrganisation/companyNumber", request);
+            return await Task.FromResult(result == HttpStatusCode.OK);
+        }
 
 
 

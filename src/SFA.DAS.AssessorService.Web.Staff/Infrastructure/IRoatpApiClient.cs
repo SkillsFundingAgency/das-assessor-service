@@ -26,13 +26,11 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
        Task<bool> UpdateOrganisationTradingName(UpdateOrganisationTradingNameRequest request);
        Task<bool> UpdateOrganisationStatus(UpdateOrganisationStatusRequest request);
         Task<bool> UpdateOrganisationType(UpdateOrganisationTypeRequest request);
-
-
-
         Task<bool> UpdateOrganisationParentCompanyGuarantee(UpdateOrganisationParentCompanyGuaranteeRequest request);
        Task<bool> UpdateOrganisationFinancialTrackRecord(UpdateOrganisationFinancialTrackRecordRequest request);
        Task<bool> UpdateOrganisationProviderType(UpdateOrganisationProviderTypeRequest request);
        Task<bool> UpdateOrganisationUkprn(UpdateOrganisationUkprnRequest request);
+        Task<bool> UpdateOrganisationCompanyNumber(UpdateOrganisationCompanyNumberRequest request);
         Task<bool> UpdateOrganisationCharityNumber(UpdateOrganisationCharityNumberRequest request);
     }
 }
