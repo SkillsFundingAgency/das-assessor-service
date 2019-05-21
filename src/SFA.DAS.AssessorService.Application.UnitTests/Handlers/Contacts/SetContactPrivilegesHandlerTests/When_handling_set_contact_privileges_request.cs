@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using MediatR;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models.UserManagement;
@@ -23,6 +24,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Contacts.SetCon
         private Mock<IContactQueryRepository> _contactQueryRepository;
         
         protected SetContactPrivilegesHandler Handler;
+        protected Guid AmendingContactId;
 
         [SetUp]
         public async Task SetUp()
@@ -36,6 +38,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Contacts.SetCon
             _contactQueryRepository = new Mock<IContactQueryRepository>();
 
             ContactId = Guid.NewGuid();
+            AmendingContactId = Guid.NewGuid();
             
             _contactQueryRepository.Setup(repo => repo.GetPrivilegesFor(ContactId)).ReturnsAsync(new List<ContactsPrivilege>()
             {
@@ -51,8 +54,11 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Contacts.SetCon
                 new Privilege {Id = PrivilegeId3},
                 new Privilege {Id = PrivilegeId4},
             });
+
+            _contactQueryRepository.Setup(repo => repo.GetContactById(ContactId)).ReturnsAsync(new Contact() {Email = "email@address.com"});
+            _contactQueryRepository.Setup(repo => repo.GetContactById(AmendingContactId)).ReturnsAsync(new Contact() {Email = "amender@address.com"});
             
-            Handler = new SetContactPrivilegesHandler(ContactRepository.Object, _contactQueryRepository.Object);
+            Handler = new SetContactPrivilegesHandler(ContactRepository.Object, _contactQueryRepository.Object, new Mock<IMediator>().Object);
         }
     }
     
@@ -61,7 +67,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Contacts.SetCon
         [SetUp]
         public async Task Act()
         {
-            await Handler.Handle(new SetContactPrivilegesRequest{ContactId = ContactId, PrivilegeIds = new []{PrivilegeId1, PrivilegeId2}}, CancellationToken.None);
+            await Handler.Handle(new SetContactPrivilegesRequest{AmendingContactId = AmendingContactId, ContactId = ContactId, PrivilegeIds = new []{PrivilegeId1, PrivilegeId2}}, CancellationToken.None);
         }
         
         [Test]
