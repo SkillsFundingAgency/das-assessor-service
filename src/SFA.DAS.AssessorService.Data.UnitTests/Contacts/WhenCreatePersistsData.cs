@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Data;
 using System.Threading;
 using System.Threading.Tasks;
 using FizzWare.NBuilder;
@@ -26,7 +27,7 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Contacts
             var mockSet = CreateMockSet();
             CreateMockDbCOntext(mockSet);
 
-            _contactRepository = new ContactRepository(_assessorDbContext.Object);
+            _contactRepository = new ContactRepository(_assessorDbContext.Object, new Mock<IDbConnection>().Object);
             _result = _contactRepository.CreateNewContact(contactCreateDomainModel).Result;
 
         }

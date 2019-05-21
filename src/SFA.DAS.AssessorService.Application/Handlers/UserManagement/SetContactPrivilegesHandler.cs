@@ -60,7 +60,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.UserManagement
                 new
                 {
                     PrivilegesAdded=privilegesBeingAdded.Select(p => p.Privilege.UserPrivilege),
-                    PrivilegesRemoved = privilegesBeingRemoved.Select(p => p.Privilege.UserPrivilege);
+                    PrivilegesRemoved = privilegesBeingRemoved.Select(p => p.Privilege.UserPrivilege)
                 });
         }
 
