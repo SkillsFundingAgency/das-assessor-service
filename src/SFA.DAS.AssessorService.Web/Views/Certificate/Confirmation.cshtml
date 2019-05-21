@@ -15,16 +15,21 @@
                     @Localizer["Heading"]
                 </h1>
                 <div class="govuk-panel__body">
-                    @Localizer["CertificateNumberIs"]<br />
-                    <strong>@Model.Reference</strong>
+                    <div class="govuk-!-margin-bottom-4">
+                        You have recorded a @Model.SelectedGrade.ToLower() for
+                        <br /><strong>@Model.GivenName @Model.FamilyName</strong>
+                    </div>
+                    <div>
+                        @Localizer["CertificateNumberIs"]<br />
+                        <strong>@Model.Reference</strong>
+                    </div>
                 </div>
             </div>
 
             <h2 class="govuk-heading-m">@Localizer["DoNextHeader"]</h2>
-            <ul class="govuk-list govuk-list--bullet">
+            <ul class="govuk-list">
                 <li><a class="govuk-link" asp-controller="Search" asp-action="Index">@Localizer["DoNextSearch"]</a></li>
-                <li><a class="govuk-link" href="https://www.smartsurvey.co.uk/s/certification-transaction-complete/" target="_blank">@Localizer["DoNextFeedback"]</a> (takes 60 seconds)</li>
-                <li><a class="govuk-link" asp-controller="Account" asp-action="SignOut">@Localizer["DoNextSignOut"]</a></li>
+                <li><a class="govuk-link" href="https://www.smartsurvey.co.uk/s/certification-transaction-complete/" target="_blank">@Localizer["DoNextFeedback"]</a></li>
             </ul>
         </div>
     </div>

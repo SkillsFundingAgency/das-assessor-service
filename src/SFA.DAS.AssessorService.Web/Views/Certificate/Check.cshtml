@@ -9,7 +9,15 @@
     Layout = "_DashboardLayout";
 }
 
-<a class="govuk-back-link" asp-controller="CertificateRecipient" asp-action="Recipient">Back</a>
+@if (Model.SelectedGrade == CertificateGrade.Fail)
+{
+    <a class="govuk-back-link" asp-controller="CertificateDate" asp-action="Date">Back</a>
+}
+else
+{
+    <a class="govuk-back-link" asp-controller="CertificateRecipient" asp-action="Recipient">Back</a>
+}
+
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
@@ -166,14 +174,21 @@
                 
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">
-                        Achievement date
+                        @if (Model.SelectedGrade == CertificateGrade.Fail)
+                        {
+                            <text>Failiure date</text>
+                        }
+                        else
+                        {
+                            <text>Achievement date</text>
+                        }
                     </dt>
                     <dd class="govuk-summary-list__value">
                         @Model.AchievementDate?.ToSfaShortDateString()
                     </dd>
                     <dd class="govuk-summary-list__actions">
                         <a class="govuk-link" asp-controller="CertificateDate" asp-action="Date" asp-route-redirecttocheck="true">
-                            Change<span class="govuk-visually-hidden"> achievement date</span>
+                            Change<span class="govuk-visually-hidden"> date</span>
                         </a>
                     </dd>
                 </div>

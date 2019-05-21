@@ -127,13 +127,13 @@
     <value>Continue</value>
   </data>
   <data name="DoNextFeedback" xml:space="preserve">
-    <value>What do you think of this service?</value>
+    <value>Leave feedback</value>
   </data>
   <data name="DoNextHeader" xml:space="preserve">
     <value>What do you want to do next?</value>
   </data>
   <data name="DoNextSearch" xml:space="preserve">
-    <value>Search for another apprentice</value>
+    <value>Record another grade</value>
   </data>
   <data name="DoNextSignOut" xml:space="preserve">
     <value>Sign out</value>
