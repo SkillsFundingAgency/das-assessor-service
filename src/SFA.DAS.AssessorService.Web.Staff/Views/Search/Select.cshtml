@@ -103,7 +103,18 @@
                         <td>@Model.Learner.LearnStartDate?.ToShortDateString()</td>
                     </tr>
                     <tr>
-                        <td><span class="bold">Achievement date</span></td>
+                        <td>
+                            <span class="bold">
+                                @if(Model.Learner.OverallGrade == CertificateGrade.Fail)
+                                {
+                                    <text>Fail date</text>
+                                }
+                                else
+                                {
+                                    <text>Achievement date</text>
+                                }
+                            </span>
+                        </td>
                         <td>@Model.Learner.AchievementDate?.ToShortDateString()</td>
                     </tr>
                     <tr>
