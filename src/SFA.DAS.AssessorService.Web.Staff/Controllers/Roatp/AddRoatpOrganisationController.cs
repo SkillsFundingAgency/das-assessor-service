@@ -69,7 +69,6 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
 
             if (string.IsNullOrEmpty(details.LegalName))
             {
-                // return View("~/Views/Roatp/UkprnNotFound.cshtml");
                 return Redirect("/ukprn-not-found");
             }
 
