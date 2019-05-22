@@ -40,133 +40,50 @@
 </div>
 <div class="govuk-width-container">
 
-<main class="govuk-main-wrapper " id="main-content" role="main">
-
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-            <form method="post" asp-action="UklrpIsUnavailable" asp-controller="AddRoatpOrganisation">
-                <p class="govuk-body">We were unable to get information from UKRLP.</p> 
-                <h1 class="heading-large">
-                    What do you want to do?
-                </h1>
-
-                <div class="govuk-form-group" sfa-validation-for="NextAction" sfa-validationerror-class="form-group-error">
-                    <span class="error-message" asp-validation-for="NextAction"></span>
-                    
-
-                    <fieldset class="govuk-fieldset">
-
-                        <div class="roatp-radios">
-
-                            
-                            <div class="roatp-radios__item">
-
-                                <input asp-for="NextAction" class="roatp-radios__input" id="route-try-again"
-                                       name="NextAction" type="radio" value="TryAgain"
-                                       sfa-validation-for="NextAction" sfa-validationerror-class="form-control-error">
-                                <label class="roatp-label roatp-radios__label" for="route-try-again">
-                                    Try again later
-                                </label>
-                            </div>
-                            <div class="roatp-radios__item">
-
-                                <input asp-for="NextAction" class="roatp-radios__input" id="route-add-manually"
-                                       name="NextAction" type="radio" value="AddManually"
-                                       sfa-validation-for="NextAction" sfa-validationerror-class="form-control-error">
-                                <label class="roatp-label roatp-radios__label" for="route-add-manually">
-                                   Add organisation manually
-                                </label>
-                            </div>
-                            
-                        </div>
-                    </fieldset>
-                </div>
-                <input type="submit" class="roatp-button" value="Continue" />
-            </form>
-        </div>
-    </div>
-</main>
-
-@*<div class="grid-row">
-    <div class="column-two-thirds">
-        <h1 class="heading-xlarge roatp-heading">UKRLP is unavailable</h1>
-    </div>
-</div>
-<div class="govuk-width-container">
-
     <main class="govuk-main-wrapper " id="main-content" role="main">
 
-        <div class="govuk-body govuk-grid-row">
-
+        <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
-                <p class="govuk-body">We were unable to get information from UKRLP.</p>
                 <form method="post" asp-action="UklrpIsUnavailable" asp-controller="AddRoatpOrganisation">
-                    @*<a asp-controller="AddRoatpOrganisation" asp-action="EnterUkprn">
-                            Try Again
-                        </a>*@
-                    @*<div class="govuk-form-group">
+                    <p class="govuk-body">We were unable to get information from UKRLP.</p> 
+                    <h1 class="heading-large">
+                        What do you want to do?
+                    </h1>
+
+                    <div class="govuk-form-group" sfa-validation-for="NextAction" sfa-validationerror-class="form-group-error">
+                        <span class="error-message" asp-validation-for="NextAction"></span>
+                    
 
                         <fieldset class="govuk-fieldset">
 
-                            <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+                            <div class="roatp-radios">
 
-                                <h1 class="govuk-fieldset__heading">
-                                    What do you want to do?
-                                </h1>
+                            
+                                <div class="roatp-radios__item">
 
-                            </legend>
-
-
-                            <div class="govuk-radios govuk-radios">
-
-
-
-
-
-                                <div class="govuk-radios__item">
-                                    <input class="govuk-radios__input" id="staff-outagechoice-1" name="staff-outagechoice" type="radio" value="register">
-                                    <label class="govuk-label govuk-radios__label" for="staff-outagechoice-1">
+                                    <input asp-for="NextAction" class="roatp-radios__input" id="route-try-again"
+                                           name="NextAction" type="radio" value="TryAgain"
+                                           sfa-validation-for="NextAction" sfa-validationerror-class="form-control-error">
+                                    <label class="roatp-label roatp-radios__label" for="route-try-again">
                                         Try again later
                                     </label>
                                 </div>
+                                <div class="roatp-radios__item">
 
-
-
-
-
-
-
-                                <div class="govuk-radios__item">
-                                    <input class="govuk-radios__input" id="staff-outagechoice-2" name="staff-outagechoice" type="radio" value="add-ukprn-orgname">
-                                    <label class="govuk-label govuk-radios__label" for="staff-outagechoice-2">
+                                    <input asp-for="NextAction" class="roatp-radios__input" id="route-add-manually"
+                                           name="NextAction" type="radio" value="AddManually"
+                                           sfa-validation-for="NextAction" sfa-validationerror-class="form-control-error">
+                                    <label class="roatp-label roatp-radios__label" for="route-add-manually">
                                         Add organisation manually
                                     </label>
                                 </div>
-
-
-
+                            
                             </div>
                         </fieldset>
-
-
                     </div>
-
-
-
-
-
-
-
-                    <button type="submit" class="govuk-button">
-                        Continue
-                    </button>
+                    <input type="submit" class="roatp-button" value="Continue" />
                 </form>
-
             </div>
-
         </div>
-
     </main>
-</div>*@
-
-
+</div>
