@@ -29,7 +29,7 @@ namespace SFA.DAS.AssessorService.Data
 		                            SELECT *,
 		                            DENSE_RANK() OVER (PARTITION BY [Uln], [StdCode] ORDER BY [Source] DESC,[LearnStartDate] DESC) AS rownumber
 		                            FROM ilrs 
-		                            WHERE [Uln] = @uln
+		                            WHERE [Uln] = @uln AND [CompletionStatus] IN (1,2)
 	                            ) AS ilr
                             WHERE rownumber = 1
                             ORDER BY [Id] DESC",

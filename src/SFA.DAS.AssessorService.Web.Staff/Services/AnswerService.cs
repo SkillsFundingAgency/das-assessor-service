@@ -25,6 +25,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
             var tradingName = await GetAnswer(applicationId, "trading-name");
             var useTradingNameString = await GetAnswer(applicationId, "use-trading-name");
             var contactName = await GetAnswer(applicationId, "contact-name");
+            var contactGivenName = await GetAnswer(applicationId, "contact-given-name");
+            var contactFamilyName = await GetAnswer(applicationId, "contact-family-name");
             var contactAddress1 = await GetAnswer(applicationId, "contact-address") ?? await GetAnswer(applicationId, "contact-address1");
             var contactAddress2 = await GetAnswer(applicationId, "contact-address2");
             var contactAddress3 = await GetAnswer(applicationId, "contact-address3");
@@ -73,6 +75,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
                 tradingName,
                 useTradingName,
                 contactName,
+                contactGivenName,
+                contactFamilyName,
                 contactAddress1,
                 contactAddress2,
                 contactAddress3,

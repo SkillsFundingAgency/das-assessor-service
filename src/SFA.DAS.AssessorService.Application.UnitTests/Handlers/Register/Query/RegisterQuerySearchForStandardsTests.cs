@@ -10,6 +10,7 @@ using SFA.DAS.Apprenticeships.Api.Types;
 using SFA.DAS.AssessorService.Api.Types;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
+using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.Application.Exceptions;
 using SFA.DAS.AssessorService.Application.Handlers;
@@ -27,9 +28,9 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
         private Mock<ILogger<SearchStandardsHandler>> _logger;
         private Mock<ISpecialCharacterCleanserService> _cleanserService;
         private Mock<IEpaOrganisationValidator> _validator;
-        private List<StandardSummary> _expectedStandards;
-        private StandardSummary _standardSummary1;
-        private StandardSummary _standardSummary2;
+        private List<StandardCollation> _expectedStandards;
+        private StandardCollation _standardSummary1;
+        private StandardCollation _standardSummary2;
         private ValidationResponse errorResponse;
         const string errorMessage = "error happened";
 
@@ -40,12 +41,12 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
             _cleanserService = new Mock<ISpecialCharacterCleanserService>();
             _logger = new Mock<ILogger<SearchStandardsHandler>>();
             _validator = new Mock<IEpaOrganisationValidator>();
-            _standardSummary1 = new StandardSummary { Id = "1", Title = "name 100" };
-            _standardSummary2 = new StandardSummary { Id = "2", Title = "name 10" };
+            _standardSummary1 = new StandardCollation { StandardId = 1, Title = "name 100" };
+            _standardSummary2 = new StandardCollation { StandardId = 2, Title = "name 10" };
             errorResponse = BuildErrorResponse(errorMessage, ValidationStatusCode.BadRequest);
             _validator.Setup(v => v.ValidatorSearchStandardsRequest(It.IsAny<SearchStandardsValidationRequest>())).Returns(new ValidationResponse());
 
-            _expectedStandards = new List<StandardSummary>
+            _expectedStandards = new List<StandardCollation>
             {
                 _standardSummary1,
                 _standardSummary2
@@ -54,7 +55,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
             _cleanserService.Setup(c => c.UnescapeAndRemoveNonAlphanumericCharacters(_standardSummary1.Title)).Returns(_standardSummary1.Title);
             _cleanserService.Setup(c => c.UnescapeAndRemoveNonAlphanumericCharacters(_standardSummary2.Title)).Returns(_standardSummary2.Title);
 
-            _standardService.Setup(s => s.GetAllStandardsV2()).Returns(Task.FromResult(_expectedStandards.AsEnumerable()));
+            _standardService.Setup(s => s.GetAllStandards()).Returns(Task.FromResult(_expectedStandards.AsEnumerable()));
             _searchStandardsHandler = new SearchStandardsHandler(_standardService.Object,  _logger.Object,_cleanserService.Object, _validator.Object);
         }
 
@@ -74,10 +75,10 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
         [Test]
         public void SearchStandardsWithValidStandardId()
         {
-            var searchstring = _standardSummary1.Id;
+            var searchstring = _standardSummary1.StandardId.ToString();
             var request = new SearchStandardsRequest { SearchTerm = searchstring };
             _cleanserService.Setup(c => c.UnescapeAndRemoveNonAlphanumericCharacters(searchstring)).Returns(searchstring);
-            _standardService.Setup(r => r.GetAllStandardSummaries())
+            _standardService.Setup(r => r.GetAllStandards())
                 .Returns(Task.FromResult(_expectedStandards.AsEnumerable()));
             var standards = _searchStandardsHandler.Handle(request, new CancellationToken()).Result;
 
@@ -92,7 +93,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
             var request = new SearchStandardsRequest { SearchTerm = searchstring };
             _cleanserService.Setup(c => c.UnescapeAndRemoveNonAlphanumericCharacters(searchstring)).Returns(searchstring);
         
-            _standardService.Setup(r => r.GetAllStandardSummaries())
+            _standardService.Setup(r => r.GetAllStandards())
                 .Returns(Task.FromResult(_expectedStandards.AsEnumerable()));
             var standardSummaries = _searchStandardsHandler.Handle(request, new CancellationToken()).Result;
 
@@ -105,7 +106,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
             var searchstring = "Name";
             var request = new SearchStandardsRequest { SearchTerm = searchstring };
             _cleanserService.Setup(c => c.UnescapeAndRemoveNonAlphanumericCharacters(searchstring)).Returns(searchstring); 
-            _standardService.Setup(r => r.GetAllStandardSummaries())
+            _standardService.Setup(r => r.GetAllStandards())
                 .Returns(Task.FromResult(_expectedStandards.AsEnumerable()));
             var standardSummaries = _searchStandardsHandler.Handle(request, new CancellationToken()).Result;
 
@@ -120,7 +121,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
             var searchstring = "Name 100";
             var request = new SearchStandardsRequest { SearchTerm = searchstring };
             _cleanserService.Setup(c => c.UnescapeAndRemoveNonAlphanumericCharacters(searchstring)).Returns(searchstring);       
-            _standardService.Setup(r => r.GetAllStandardSummaries())
+            _standardService.Setup(r => r.GetAllStandards())
                 .Returns(Task.FromResult(_expectedStandards.AsEnumerable()));
             var standardSummaries = _searchStandardsHandler.Handle(request, new CancellationToken()).Result;
 
@@ -134,7 +135,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
             var searchstring = "no match";
             var request = new SearchStandardsRequest { SearchTerm = searchstring };
             _cleanserService.Setup(c => c.UnescapeAndRemoveNonAlphanumericCharacters(searchstring)).Returns(searchstring);       
-            _standardService.Setup(r => r.GetAllStandardSummaries())
+            _standardService.Setup(r => r.GetAllStandards())
                 .Returns(Task.FromResult(_expectedStandards.AsEnumerable()));
             var standardSummaries = _searchStandardsHandler.Handle(request, new CancellationToken()).Result;
 
