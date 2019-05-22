@@ -121,10 +121,10 @@
     <value>There is a problem</value>
   </data>
   <data name="PageHeading" xml:space="preserve">
-    <value>The apprentice is enrolled on more than one apprenticeship</value>
+    <value>Confirm this is the correct apprentice</value>
   </data>
   <data name="PageDescription" xml:space="preserve">
-    <value>Select the standard that you want to record an assessment for.</value>
+    <value>If the name, standard or level is incorrect, you need to agree on the correct details along with the training provider and the employer. The training provider needs to then update the Individualised Learner Record (ILR).</value>
   </data>
   <data name="AssessmentsNotRecordedYet" xml:space="preserve">
     <value>Assessment not recorded yet|Assessments not recorded yet</value>
@@ -134,5 +134,11 @@
   </data>
   <data name="SelectStandardButton" xml:space="preserve">
     <value>Continue</value>
+  </data>
+  <data name="CompletedStandardsHeading" xml:space="preserve">
+    <value>Completed standards</value>
+  </data>
+  <data name="SelectStandardHeading" xml:space="preserve">
+    <value>Select the standard</value>
   </data>
 </root>

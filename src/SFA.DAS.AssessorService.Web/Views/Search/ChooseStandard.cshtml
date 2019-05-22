@@ -6,7 +6,7 @@
 @model SFA.DAS.AssessorService.Web.ViewModels.Search.ChooseStandardViewModel
 
 @{
-    ViewBag.Title = (!ViewData.ModelState.IsValid ? "Error: " : "") + "Choose an apprenticeship";
+    ViewBag.Title = (!ViewData.ModelState.IsValid ? "Error: " : "") + "Confirm apprentice";
     Layout = "_DashboardLayout";
 }
 
@@ -42,7 +42,6 @@
 
 
                 <h1 class="govuk-heading-xl">@Localizer["PageHeading"]</h1>
-                <p class="govuk-body">@Localizer["PageDescription"]</p>
 
                 <dl class="govuk-summary-list govuk-summary-list--no-border">
                     <div class="govuk-summary-list__row">
@@ -55,14 +54,51 @@
                     </div>
                 </dl>
 
+                <p class="govuk-body">@Localizer["PageDescription"]</p>
+
+                @if (Model.SearchResults.Any(sr => sr.CertificateReference != null && sr.OverallGrade != CertificateGrade.Fail))
+                {
+                    <details class="govuk-details">
+                        <summary class="govuk-details__summary">
+                            <span class="govuk-details__summary-text">
+                                View certificate history
+                            </span>
+                        </summary>
+                        <div class="govuk-details__text">
+                            <h2 class="govuk-heading-m">@Localizer["CompletedStandardsHeading"]</h2>
+                            @foreach (var result in Model.SearchResults.Where(sr => sr.CertificateReference != null && sr.OverallGrade != CertificateGrade.Fail))
+                            {
+                                <dl class="govuk-summary-list govuk-summary-list--no-border">
+                                    <div class="govuk-summary-list__row">
+                                        <dt class="govuk-summary-list__key">Standard name</dt>
+                                        <dd class="govuk-summary-list__value">@result.Standard</dd>
+                                    </div>
+                                    <div class="govuk-summary-list__row">
+                                        <dt class="govuk-summary-list__key">Standard level</dt>
+                                        <dd class="govuk-summary-list__value">Level @result.Level</dd>
+                                    </div>
+                                    <div class="govuk-summary-list__row">
+                                        <dt class="govuk-summary-list__key">Grade</dt>
+                                        <dd class="govuk-summary-list__value">@result.OverallGrade</dd>
+                                    </div>
+                                    <div class="govuk-summary-list__row">
+                                        <dt class="govuk-summary-list__key">Achievement date</dt>
+                                        <dd class="govuk-summary-list__value">@result.AchDate.ToSfaShortDateString()</dd>
+                                    </div>
+                                </dl>
+                            }
+                        </div>
+                    </details>
+                }
+
                 <div class="govuk-form-group" sfa-validation-for="SelectedStandardCode" sfa-validationerror-class="govuk-form-group--error">
                     <span class="govuk-error-message" asp-validation-for="SelectedStandardCode"></span>
 
-                    @if (Model.SearchResults.Any(sr => sr.CertificateReference == null))
+                    @if (Model.SearchResults.Any(sr => sr.CertificateReference == null || sr.OverallGrade == CertificateGrade.Fail))
                     {
                         <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
                             <h2 class="govuk-fieldset__heading">
-                                @Localizer.Pluralize("AssessmentsNotRecordedYet", Model.SearchResults.Count(sr => sr.CertificateReference == null) > 1)
+                                @Localizer["SelectStandardHeading"]
                             </h2>
                         </legend>
                         <div class="govuk-radios govuk-!-margin-bottom-9">
@@ -71,47 +107,16 @@
                                 <div class="govuk-radios__item">
                                     <input class="govuk-radios__input" id=@("standard_" + result.StdCode) type="radio" name="SelectedStandardCode" value="@result.StdCode">
                                     <label class="govuk-label govuk-radios__label" for=@("standard_" + result.StdCode)>
-                                        @result.Standard
+                                        @result.Standard <br /> Level @result.Level
                                     </label>
                                 </div>
                             }
-                        </div>
-                    }
-
-                    @if (Model.SearchResults.Any(sr => sr.CertificateReference != null && sr.OverallGrade == CertificateGrade.Fail))
-                    {
-                        <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
-                            <h2 class="govuk-fieldset__heading">
-                                Assessments with Fail
-                            </h2>
-                        </legend>
-                        <div class="govuk-radios govuk-!-margin-bottom-9">
-                            @foreach (var result in Model.SearchResults.Where(sr => sr.CertificateReference != null && sr.OverallGrade == CertificateGrade.Fail))
+                            @foreach (var result in Model.SearchResults.Where(sr => sr.OverallGrade == CertificateGrade.Fail))
                             {
                                 <div class="govuk-radios__item">
                                     <input class="govuk-radios__input" id=@("standard_" + result.StdCode) type="radio" name="SelectedStandardCode" value="@result.StdCode">
                                     <label class="govuk-label govuk-radios__label" for=@("standard_" + result.StdCode)>
-                                        @result.Standard (failed on @result.AchDate.ToSfaShortDateString())
-                                    </label>
-                                </div>
-                            }
-                        </div>
-                    }
-
-                    @if (Model.SearchResults.Any(sr => sr.CertificateReference != null && sr.OverallGrade != CertificateGrade.Fail))
-                    {
-                        <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
-                            <h2 class="govuk-fieldset__heading">
-                                @Localizer.Pluralize("PreviouslyRecordedAssessments", Model.SearchResults.Count(sr => sr.CertificateReference != null && sr.OverallGrade != CertificateGrade.Fail) > 1)
-                            </h2>
-                        </legend>
-                        <div class="govuk-radios govuk-!-margin-bottom-9">
-                        @foreach (var result in Model.SearchResults.Where(sr => sr.CertificateReference != null && sr.OverallGrade != CertificateGrade.Fail))
-                            {
-                                <div class="govuk-radios__item">
-                                    <input class="govuk-radios__input" id=@("standard_" + result.StdCode) type="radio" name="SelectedStandardCode" value="@result.StdCode">
-                                    <label class="govuk-label govuk-radios__label" for=@("standard_" + result.StdCode)>
-                                        @result.Standard
+                                        @result.Standard <br /> Level @result.Level <br /> Failed on @result.AchDate.ToSfaShortDateString()
                                     </label>
                                 </div>
                             }
