@@ -14,6 +14,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
     using Resources;
     using SFA.DAS.AssessorService.Application.Api.Client.Clients;
     using SFA.DAS.AssessorService.Api.Types.Models.Roatp;
+    using SFA.DAS.AssessorService.Api.Types.Models.UKRLP;
 
     [Authorize]
     public class AddRoatpOrganisationController : Controller
@@ -53,8 +54,17 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
                 model.ProviderTypes = await _apiClient.GetProviderTypes();
                 return View("~/Views/Roatp/EnterUkprn.cshtml", model);
             }
-            var details = await _ukrlpClient.Get(model.UKPRN);
 
+            UkrlpProviderDetails details;
+
+            try
+            {
+                details = await _ukrlpClient.Get(model.UKPRN);
+            }
+            catch (Exception ex)
+            {
+                return View("~/Views/Roatp/UkprnIsUnavailable.cshtml");
+            }
 
             if (string.IsNullOrEmpty(details.LegalName))
             {
