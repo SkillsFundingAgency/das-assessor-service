@@ -61,14 +61,16 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
             {
                 details = await _ukrlpClient.Get(model.UKPRN);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                return View("~/Views/Roatp/UkprnIsUnavailable.cshtml");
+                var notFoundModel = new UkrlpNotFoundViewModel {FirstEntry = "true"};
+                return RedirectToAction("UklrpIsUnavailable", notFoundModel);
             }
 
             if (string.IsNullOrEmpty(details.LegalName))
             {
-                return View("~/Views/Roatp/UkprnNotFound.cshtml");
+                // return View("~/Views/Roatp/UkprnNotFound.cshtml");
+                return Redirect("/ukprn-not-found");
             }
 
             var vm = new AddOrganisationProviderTypeViewModel
@@ -81,6 +83,24 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
             };
 
             return View("~/Views/Roatp/UkprnPreview.cshtml", vm);
+        }
+
+        [Route("ukrlp-not-found")]
+        public async Task<IActionResult> UklrpIsUnavailable(UkrlpNotFoundViewModel model)
+        {
+   
+            if (!ModelState.IsValid || !string.IsNullOrEmpty(model?.FirstEntry))
+            {
+                return View("~/Views/Roatp/UkprnIsUnavailable.cshtml", model);
+            }
+
+            if (model?.NextAction == "AddManually")
+            {
+                var notFoundModel = new UkrlpNotFoundViewModel { FirstEntry = "true" };
+                return RedirectToAction("UklrpIsUnavailable", notFoundModel);
+            }
+
+            return RedirectToAction("Index", "RoatpHome");
         }
 
         [Route("new-training-provider")]
