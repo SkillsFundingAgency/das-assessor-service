@@ -182,7 +182,6 @@ DisplayName = TRIM(up1.Title + (CASE WHEN up1.Title = '' THEN '' ELSE + ' ' END)
 
 */
 
-
 /* DONE
 UPDATE [OrganisationType] SET [Type] =  'Training Provider', [TypeDescription] = 'Training provider - including HEI not in England' WHERE id = 7;
 */
