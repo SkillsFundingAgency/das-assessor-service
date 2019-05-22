@@ -10,4 +10,5 @@ namespace SFA.DAS.AssessorService.Web.Staff.ViewModels.Private
         public ApprovalResult[] ApprovalResults { get; set; }
       
     }
+    
 }
