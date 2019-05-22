@@ -124,12 +124,21 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         public IActionResult Result()
         {
             var vm = _sessionService.Get<SelectedStandardViewModel>("SelectedStandard");
-            if (vm == null)
+
+            if (vm != null)
             {
-                return RedirectToAction("Index");
+                return View("Result", vm);
+            }
+            else
+            {
+                var chooseStandardViewModel = _sessionService.Get<ChooseStandardViewModel>("SearchResultsChooseStandard");
+                if (chooseStandardViewModel != null)
+                {
+                    return View("ChooseStandard", chooseStandardViewModel);
+                }
             }
 
-            return View("Result", vm);
+            return RedirectToAction("Index");
         }
 
         [HttpGet(Name = "choose")]
@@ -160,7 +169,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             }
 
             var selected = vm.SearchResults
-                .Single(sr => sr.StdCode == chooseStandardViewModel.SelectedStandardCode);
+                .Single(sr => sr.StdCode == chooseStandardViewModel.StdCode);
 
             var selectedStandardViewModel = new SelectedStandardViewModel()
             {

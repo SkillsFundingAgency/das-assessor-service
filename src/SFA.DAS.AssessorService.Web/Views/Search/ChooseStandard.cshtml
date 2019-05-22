@@ -15,7 +15,7 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
 
-            <form class="apprentice-choose-standard-form js-disable-on-submit" asp-controller="Search" asp-action="ChooseStandard" method="post">
+            <form class="apprentice-choose-standard-form js-disable-on-submit" asp-controller="Certificate" asp-action="Start" method="post">
 
                 <div class="js-error-summary govuk-error-summary" role="alert" aria-labelledby="error-summary-title" tabindex="-1" data-module="error-summary">
                     <h2 class="govuk-error-summary__title" id="error-summary-title">
@@ -34,7 +34,7 @@
                         </h2>
                         <div class="govuk-error-summary__body">
                             <ul class="govuk-list govuk-error-summary__list">
-                                <li><a sfa-validation-for="SelectedStandardCode"></a></li>
+                                <li><a sfa-validation-for="StdCode"></a></li>
                             </ul>
                         </div>
                     </div>
@@ -91,8 +91,8 @@
                     </details>
                 }
 
-                <div class="govuk-form-group" sfa-validation-for="SelectedStandardCode" sfa-validationerror-class="govuk-form-group--error">
-                    <span class="govuk-error-message" asp-validation-for="SelectedStandardCode"></span>
+                <div class="govuk-form-group" sfa-validation-for="StdCode" sfa-validationerror-class="govuk-form-group--error">
+                    <span class="govuk-error-message" asp-validation-for="StdCode"></span>
 
                     @if (Model.SearchResults.Any(sr => sr.CertificateReference == null || sr.OverallGrade == CertificateGrade.Fail))
                     {
@@ -105,7 +105,7 @@
                             @foreach (var result in Model.SearchResults.Where(sr => sr.CertificateReference == null))
                             {
                                 <div class="govuk-radios__item">
-                                    <input class="govuk-radios__input" id=@("standard_" + result.StdCode) type="radio" name="SelectedStandardCode" value="@result.StdCode">
+                                    <input class="govuk-radios__input" id=@("standard_" + result.StdCode) type="radio" name="StdCode" value="@result.StdCode">
                                     <label class="govuk-label govuk-radios__label" for=@("standard_" + result.StdCode)>
                                         @result.Standard <br /> Level @result.Level
                                     </label>
@@ -114,7 +114,7 @@
                             @foreach (var result in Model.SearchResults.Where(sr => sr.OverallGrade == CertificateGrade.Fail))
                             {
                                 <div class="govuk-radios__item">
-                                    <input class="govuk-radios__input" id=@("standard_" + result.StdCode) type="radio" name="SelectedStandardCode" value="@result.StdCode">
+                                    <input class="govuk-radios__input" id=@("standard_" + result.StdCode) type="radio" name="StdCode" value="@result.StdCode">
                                     <label class="govuk-label govuk-radios__label" for=@("standard_" + result.StdCode)>
                                         @result.Standard <br /> Level @result.Level <br /> Failed on @result.AchDate.ToSfaShortDateString()
                                     </label>
@@ -124,6 +124,7 @@
                     }
                 </div>
 
+                @Html.HiddenFor(m => m.SearchResults.First().Uln)
                 <button class="govuk-button" type="submit">@Localizer["SelectStandardButton"]</button>
             </form>
 

@@ -7,7 +7,7 @@ namespace SFA.DAS.AssessorService.Web.Validators
     {
         public ChooseStandardViewModelValidator()
         {
-            RuleFor(vm => vm.SelectedStandardCode).NotEmpty().WithMessage("A standard should be selected");
+            RuleFor(vm => vm.StdCode).NotEmpty().WithMessage("A standard should be selected");
         }
     }
 }
