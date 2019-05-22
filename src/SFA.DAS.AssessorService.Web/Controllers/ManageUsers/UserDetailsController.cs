@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Razor.Compilation;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.UserManagement;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
@@ -15,10 +16,10 @@ namespace SFA.DAS.AssessorService.Web.Controllers.ManageUsers
     {
         public UserDetailsController(IContactsApiClient contactsApiClient, IHttpContextAccessor httpContextAccessor) : base(contactsApiClient, httpContextAccessor){}
 
-        [HttpGet("/ManageUsers/{userid}")]
-        public async Task<IActionResult> User(Guid userid)
+        [HttpGet("/ManageUsers/{contactId}")]
+        public async Task<IActionResult> User(Guid contactId)
         {
-            var securityCheckpoint = await SecurityCheckAndGetContact(userid);
+            var securityCheckpoint = await SecurityCheckAndGetContact(contactId);
 
             if (!securityCheckpoint.isValid)
             {
@@ -27,7 +28,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.ManageUsers
 
             var vm = Mapper.Map<UserViewModel>(securityCheckpoint.contact);
 
-            vm.AssignedPrivileges = await ContactsApiClient.GetContactPrivileges(userid);
+            vm.AssignedPrivileges = await ContactsApiClient.GetContactPrivileges(contactId);
             
             return View("~/Views/ManageUsers/UserDetails/User.cshtml", vm);
         }
@@ -84,13 +85,20 @@ namespace SFA.DAS.AssessorService.Web.Controllers.ManageUsers
                 return View("~/Views/ManageUsers/UserDetails/EditUserPermissions.cshtml", editVm);
             }
             
-            return RedirectToAction("User", new {userId = vm.ContactId});
+            return RedirectToAction("User", new {contactId = vm.ContactId});
         }
 
-        [HttpGet("/ManageUsers/{userid}/remove")]
-        public IActionResult Remove()
+        [HttpGet("/ManageUsers/{contactId}/remove")]
+        public async Task<IActionResult> Remove(Guid contactId)
         {
-            throw new NotImplementedException();
+            var securityCheckpoint = await SecurityCheckAndGetContact(contactId);
+
+            if (!securityCheckpoint.isValid)
+            {
+                return Unauthorized();
+            }
+
+            return View("~/Views/ManageUsers/UserDetails/RemoveConfirm.cshtml", UserToBeDisplayed);
         }
     }
 }

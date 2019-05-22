@@ -25,19 +25,19 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ContactHandlers
                 return response;
             foreach (var result in results)
             {
-                if (result.Key == null)
-                    continue;
                 var contactsWithPrivilegesResponse = new ContactsWithPrivilegesResponse
                 {
-                    Contact = result.Key
+                    Contact = result
                 };
-                contactsWithPrivilegesResponse.Contact.Status = result.Key.Status == ContactStatus.Live
+                contactsWithPrivilegesResponse.Contact.Status = result.Status == ContactStatus.Live
                     ? ContactStatus.Active
-                    : result.Key.Status;
-                foreach (var role in result)
+                    : result.Status;
+                foreach (var role in result.ContactsPrivileges)
                 {
                     contactsWithPrivilegesResponse.Privileges.Add(role.Privilege?.UserPrivilege);
                 }
+
+                contactsWithPrivilegesResponse.Contact.ContactsPrivileges = null;
                 response.Add(contactsWithPrivilegesResponse);
             }
 

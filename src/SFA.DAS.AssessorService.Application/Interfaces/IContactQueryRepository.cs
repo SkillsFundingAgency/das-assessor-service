@@ -14,7 +14,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<Contact> GetContact(string userName);
         Task<Contact> GetContactFromEmailAddress(string email);
         Task<IEnumerable<Contact>> GetAllContacts(string endPointAssessorOrganisationId);
-        Task<IEnumerable<IGrouping<Contact, ContactsPrivilege>>> GetAllContactsWithPrivileges(
+        Task<List<Contact>> GetAllContactsWithPrivileges(
             string endPointAssessorOrganisationId);
         Task<string> GetContactStatus(string endPointAssessorOrganisationId, Guid signInId);
         Task<Contact> GetBySignInId(Guid requestSignInId);
