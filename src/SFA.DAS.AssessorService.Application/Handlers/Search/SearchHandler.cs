@@ -77,21 +77,39 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
             var listOfIlrResults = ilrResults?.ToList();
             if (request.IsPrivatelyFunded && (listOfIlrResults == null || (!listOfIlrResults.Any())))
             {
-                //Learner not in ILR so try to create a in memory record with details from found certificate and request information
+                //Learner not in ILR so try to create an in memory record with details from found certificate and request information
                 listOfIlrResults = new List<Ilr> { new Ilr { Uln = request.Uln, EpaOrgId = request.EpaOrgId, FamilyNameForSearch = request.Surname, FamilyName = request.Surname } };
                 likedSurname = DealWithSpecialCharactersAndSpaces(request, likedSurname, listOfIlrResults);
                 var certificate=
-                    await _certificateRepository.GetCertificateByOrgIdLastname(request.Uln, request.EpaOrgId, likedSurname) ??
-                    await _certificateRepository.GetCertificateByUlnLastname(request.Uln, likedSurname);
-                if(certificate == null)
-                    return new List<SearchResult>();
-                //Check if standard in certificate exists in standards registered by calling org
-                if(intStandards?.Contains(certificate.StandardCode)??false)
+                    await _certificateRepository.GetCertificateByOrgIdLastname(request.Uln, request.EpaOrgId, likedSurname); 
+                if (certificate == null) 
+                {
+                    //Now check if exists for uln and surname without considering org
+                    certificate = await _certificateRepository.GetCertificateByUlnLastname(request.Uln, likedSurname);
+                    if (certificate != null)
+                    {
+                        if (intStandards?.Contains(certificate.StandardCode) ?? false)
+                        {
+                            var standard = await  _standardService.GetStandard(certificate.StandardCode);
+                            return new List<SearchResult>
+                            {
+                                new SearchResult {UlnAlreadyExits = true,FamilyName = likedSurname, Uln = request.Uln, IsPrivatelyFunded = true, Standard = standard?.Title,Level = standard?.StandardData.Level.GetValueOrDefault()??0}
+                            };
+                        }
+                        return new List<SearchResult> { new SearchResult { UlnAlreadyExits = true, Uln = request.Uln, IsPrivatelyFunded = true, IsNoMatchingFamilyName = true } };
+                    }
+
+                    //If we got here then certifcate does not exist with uln and surename so
+                    //lastly check if there is a certificate that exist with the given uln only disregarding org and surname
+                    var certificateExist = await _certificateRepository.CertifciateExistsForUln(request.Uln);
+                    return certificateExist
+                        ? new List<SearchResult> {new SearchResult {UlnAlreadyExits = true, Uln = request.Uln, IsPrivatelyFunded = true, IsNoMatchingFamilyName = true } }
+                        : new List<SearchResult>();
+                }
+                
+                //We found the certifate, check if standard in certificate exists in standards registered by calling org
+                if (intStandards?.Contains(certificate.StandardCode)??false)
                     listOfIlrResults[0].StdCode = certificate.StandardCode;
-                else
-                    if(certificate.Organisation.EndPointAssessorOrganisationId != thisEpao.EndPointAssessorOrganisationId)
-                        return new List<SearchResult> {new SearchResult()};
-                   
             }
             else
             {
@@ -103,7 +121,12 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
                 r.EpaOrgId == thisEpao.EndPointAssessorOrganisationId ||
                 (r.EpaOrgId != thisEpao.EndPointAssessorOrganisationId && intStandards.Contains(r.StdCode)))
             && string.Equals(r.FamilyNameForSearch.Trim(), likedSurname.Trim(), StringComparison.CurrentCultureIgnoreCase)).ToList();
-            
+
+            //If privately funded and uln found in ilr but due to the above check the result was empty then set uln exist flag
+            if (request.IsPrivatelyFunded && ilrResults != null && !ilrResults.Any())
+            {
+              return  new List<SearchResult> { new SearchResult{UlnAlreadyExits = true, Uln = request.Uln , IsPrivatelyFunded = true, IsNoMatchingFamilyName = true } };
+            }
 
             _logger.LogInformation((ilrResults != null && ilrResults.Any())? LoggingConstants.SearchSuccess : LoggingConstants.SearchFailure);
 

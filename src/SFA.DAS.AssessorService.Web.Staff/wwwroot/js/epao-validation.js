@@ -1,4 +1,4 @@
-GOVUK.epaoValidate = function(formElement, validationRulesObject) {
+GOVUK.epaoValidate = function(formElement, validationRulesObject, forwardToForm) {
   var documentTitle = $(document).attr('title');
   var validator = formElement
     .bind('invalid-form.validate', function() {
@@ -80,8 +80,11 @@ GOVUK.epaoValidate = function(formElement, validationRulesObject) {
           error.insertBefore(element);
         }
       },
-      submitHandler: function(form) {
-        form.submit();
+      submitHandler: function (form) {
+          if (forwardToForm === undefined)
+              form.submit();
+          else
+              forwardToForm();
       }
     });
 
