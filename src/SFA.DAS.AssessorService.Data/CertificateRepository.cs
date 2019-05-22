@@ -144,7 +144,17 @@ namespace SFA.DAS.AssessorService.Data
                 .Include(q => q.Organisation)
                 .FirstOrDefaultAsync(c =>
                     c.Uln == uln &&
-                    CheckCertificateData(c,lastName));
+                    CheckCertificateData(c, lastName));
+
+            return existingCert;
+        }
+
+
+        public async Task<bool> CertifciateExistsForUln(long uln)
+        {
+            var existingCert = await _context.Certificates
+                .AnyAsync(c =>
+                    c.Uln == uln);
 
             return existingCert;
         }
