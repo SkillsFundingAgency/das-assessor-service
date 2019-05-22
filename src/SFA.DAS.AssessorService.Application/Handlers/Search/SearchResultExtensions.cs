@@ -33,8 +33,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
                         logger.LogInformation($"Failed to get standard for {searchResult.StdCode}, error message: {e.Message}");
                     }
                 }
-                searchResult.Standard = standard.Title;
-                searchResult.Level = standard.StandardData.Level.GetValueOrDefault();
+                searchResult.Standard = standard?.Title;
+                searchResult.Level = standard?.StandardData.Level.GetValueOrDefault()??0;
             }
 
             return searchResults;
