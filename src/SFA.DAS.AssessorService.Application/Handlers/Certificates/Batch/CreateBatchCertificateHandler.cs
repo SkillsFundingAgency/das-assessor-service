@@ -15,6 +15,7 @@ using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.ExternalApis.Services;
 
 
@@ -130,7 +131,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates.Batch
             return contact;
         }
 
-        private CertificateData CombineCertificateData(CertificateData data, Ilr ilr, Standard standard, Provider provider)
+        private CertificateData CombineCertificateData(CertificateData data, Ilr ilr, StandardCollation standard, Provider provider)
         {
             return new CertificateData()
             {
@@ -138,8 +139,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates.Batch
                 LearnerFamilyName = ilr.FamilyName,
                 LearningStartDate = ilr.LearnStartDate,
                 StandardName = standard.Title,   
-                StandardLevel = standard.Level,
-                StandardPublicationDate = standard.EffectiveFrom.Value,
+                StandardLevel = standard.StandardData.Level.GetValueOrDefault(),
+                StandardPublicationDate = standard.StandardData.EffectiveFrom,
                 FullName = $"{ilr.GivenNames} {ilr.FamilyName}",
                 ProviderName = provider.ProviderName,
 

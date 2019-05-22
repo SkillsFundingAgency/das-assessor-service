@@ -35,7 +35,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Private
             var organisation = await _organisationQueryRepository.GetByUkPrn(request.UkPrn);
 
             var certificate = await _certificateRepository.GetPrivateCertificate(request.Uln,
-                organisation.EndPointAssessorOrganisationId, request.LastName);
+                organisation.EndPointAssessorOrganisationId);
             if (certificate != null)
             {
                 var certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
