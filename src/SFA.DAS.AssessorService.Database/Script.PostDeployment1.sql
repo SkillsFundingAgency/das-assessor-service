@@ -41,7 +41,7 @@ IF (@privilegesCount < 6)
     INSERT INTO Privileges (Id, UserPrivilege) VALUES (NEWID(), 'View pipeline')
 
     -- set Manage Users to MustBeAtLeast.... true
-    UPDATE Privileges SET MustBeAtLeastOneUserAssigned = true WHERE UserPrivilege = 'Manage users'
+    UPDATE Privileges SET MustBeAtLeastOneUserAssigned = 1 WHERE UserPrivilege = 'Manage users'
   END  
   
   
