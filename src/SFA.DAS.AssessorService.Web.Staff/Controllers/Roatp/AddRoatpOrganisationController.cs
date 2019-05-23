@@ -1,4 +1,5 @@
-﻿using SFA.DAS.AssessorService.Application.Api.Services;
+﻿using System.Net.Http;
+using SFA.DAS.AssessorService.Application.Api.Services;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
 {
@@ -22,12 +23,15 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
         private readonly IRoatpApiClient _apiClient;
         private readonly IRoatpSessionService _sessionService;
         private readonly IUkrlpApiClient _ukrlpClient;
+        private ILogger<AddRoatpOrganisationController> _logger;
 
-        public AddRoatpOrganisationController(IRoatpApiClient apiClient, IRoatpSessionService sessionService, IUkrlpApiClient ukrlpClient)
+        public AddRoatpOrganisationController(IRoatpApiClient apiClient, IRoatpSessionService sessionService, 
+            IUkrlpApiClient ukrlpClient, ILogger<AddRoatpOrganisationController> logger)
         {
             _apiClient = apiClient;
             _sessionService = sessionService;
             _ukrlpClient = ukrlpClient;
+            _logger = logger;
         }
         
 
@@ -61,8 +65,9 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
             {
                 details = await _ukrlpClient.Get(model.UKPRN);
             }
-            catch (Exception)
+            catch (HttpRequestException ex)
             {
+                _logger.LogError(ex,$"Failed to gather organisation details from ukrlp for UKPRN:[{model?.UKPRN}]");
                 var notFoundModel = new UkrlpNotFoundViewModel {FirstEntry = "true"};
                 return RedirectToAction("UklrpIsUnavailable", notFoundModel);
             }

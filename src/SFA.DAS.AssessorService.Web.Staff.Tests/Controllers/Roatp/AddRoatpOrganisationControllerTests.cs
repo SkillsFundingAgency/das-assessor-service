@@ -26,14 +26,16 @@
         private Mock<IRoatpSessionService> _sessionService;
         private AddRoatpOrganisationController _controller;
         private Mock<IUkrlpApiClient> _ukrlpClient;
-
+        private Mock<ILogger<AddRoatpOrganisationController>> _logger;
         [SetUp]
         public void Before_each_test()
         {
             _client = new Mock<IRoatpApiClient>();
             _sessionService = new Mock<IRoatpSessionService>();
             _ukrlpClient = new Mock<IUkrlpApiClient>();
-            _controller = new AddRoatpOrganisationController(_client.Object, _sessionService.Object, _ukrlpClient.Object);
+            _logger = new Mock<ILogger<AddRoatpOrganisationController>>();
+            //_logger.Setup(q => q.LogError(It.IsAny<Exception>(), It.IsAny<string>()));
+            _controller = new AddRoatpOrganisationController(_client.Object, _sessionService.Object, _ukrlpClient.Object,_logger.Object);
 
             _controller.ControllerContext = new ControllerContext {HttpContext = new DefaultHttpContext()};
 
@@ -58,13 +60,13 @@
         [Test]
         public void Ukprn_preview_calls_ukrp_client()
         {
-           
+          
             var ukrlpProviderDetails = new UkrlpProviderDetails();
 
             _ukrlpClient.Setup(x => x.Get(It.IsAny<string>())).ReturnsAsync(ukrlpProviderDetails);
             var result = _controller.UkprnPreview(new AddOrganisationViaUkprnViewModel()).GetAwaiter().GetResult();
 
-            result.Should().BeAssignableTo<ViewResult>();
+            result.Should().BeAssignableTo<RedirectResult>();
             _client.VerifyAll();
         }
 

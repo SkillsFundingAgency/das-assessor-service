@@ -38,6 +38,10 @@ namespace SFA.DAS.AssessorService.Web.Staff.Validators.Roatp
                 Errors = new List<ValidationErrorDetail>()
             };
 
+
+            //REMOVEREMOVE this should be removed once APR-471 has been tested, probably before merging into master
+            if (vm.UKPRN == "111111111111")  return validationResponse;
+
             var fieldValidationErrors = _validator.IsValidUKPRN(vm.UKPRN);
             if (fieldValidationErrors.Any())
             {
