@@ -7,105 +7,112 @@
     Layout = "_DashboardLayout";
 }
 
-<div class="grid-row">
-    <div class="column-two-thirds">
-        @if (Model.BackToCheckPage)
-        {
-            <a class="link-back" asp-controller="CertificateCheck" asp-action="Check" >Back</a>
-        }
-        else if(Model.IsPrivatelyFunded)
-        {
-            <a class="link-back" asp-controller="CertificatePrivateProviderUkprn" asp-action="Ukprn">Back</a>
-        }
-        else
-        {
-            <a class="link-back" asp-controller="CertificateGrade" asp-action="Grade">Back</a>
-        }
-        
+@if (Model.BackToCheckPage)
+{
+    <a class="govuk-back-link" asp-controller="CertificateCheck" asp-action="Check">Back</a>
+}
+else if(Model.IsPrivatelyFunded)
+{
+    <a class="govuk-back-link" asp-controller="CertificatePrivateProviderUkprn" asp-action="Ukprn">Back</a>
+}
+else
+{
+    <a class="govuk-back-link" asp-controller="CertificateGrade" asp-action="Grade">Back</a>
+}
 
-        <form class="apprentice-date-form js-disable-on-submit" method="post" asp-controller="CertificateDate">
-            <input type="hidden" name="fullDate" id="fullDate" class="date-input" />
-            @Html.HiddenFor(c => c.Id)
-            @Html.HiddenFor(m => m.StartDate)
-            <input type="hidden" name="WarningShown" id="WarningShown" value="@Model.WarningShown" />
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
 
-            @* hidden with css by default *@
-            <div class="js-error-summary error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
-                <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
-                    There's a problem
-                </h2>
-                <ul class="js-error-summary-list error-summary-list"></ul>
-            </div>
+            <form class="apprentice-date-form js-disable-on-submit" method="post" asp-controller="CertificateDate">
+                <input type="hidden" name="fullDate" id="fullDate" class="date-input" />
+                @Html.HiddenFor(c => c.Id)
+                @Html.HiddenFor(m => m.StartDate)
+                <input type="hidden" name="WarningShown" id="WarningShown" value="@Model.WarningShown" />
 
-            @if (!ViewData.ModelState.IsValid)
-            {
-                if (Model.WarningShown == "true")
+                <div class="js-error-summary govuk-error-summary" role="alert" aria-labelledby="error-summary-title" tabindex="-1" data-module="error-summary">
+                    <h2 class="govuk-error-summary__title" id="error-summary-title">
+                        There is a problem
+                    </h2>
+                    <div class="govuk-error-summary__body">
+                        <ul class="js-error-summary-list govuk-list govuk-error-summary__list"></ul>
+                    </div>
+                </div>
+
+                @if (!ViewData.ModelState.IsValid)
                 {
-                    <text>There is a warning!!</text>
-                }
-                else
-                {
-                    <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
-                        <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
-                            There's a problem
+                    <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
+                        <h2 class="govuk-error-summary__title" id="error-summary-title">
+                            There is a problem
                         </h2>
-                        <ul class="error-summary-list">
-                            <li><a sfa-validation-for="Date"></a></li>
-                            <li><a sfa-validation-for="Day"></a></li>
-                            <li><a sfa-validation-for="Month"></a></li>
-                            <li><a sfa-validation-for="Year"></a></li>
-                        </ul>
+                        <div class="govuk-error-summary__body">
+                            <ul class="govuk-list govuk-error-summary__list">
+                                <li><a sfa-validation-for="Date"></a></li>
+                                <li><a sfa-validation-for="Day"></a></li>
+                                <li><a sfa-validation-for="Month"></a></li>
+                                <li><a sfa-validation-for="Year"></a></li>
+                            </ul>
+                        </div>
                     </div>
                 }
-            }
 
-            <div sfa-anyvalidationerror-class="after-error-summary">
-                <h1 class="heading-large">
-                    @Localizer["Heading"]
-                </h1>                
+                <div class="govuk-form-group js-date-container" sfa-anyvalidationerror-class="govuk-form-group--error">
+                    <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
+                        <h1 class="govuk-fieldset__heading">
+                            @Localizer["Heading"]
+                        </h1>
+                    </legend>
 
-                <div class="form-group error-message-container" sfa-anyvalidationerror-class="form-group-error">
-                    <span class="error-message" asp-validation-for="Date"></span>
-                    <span class="error-message" asp-validation-for="Day"></span>
-                    <span class="error-message" asp-validation-for="Month"></span>
-                    <span class="error-message" asp-validation-for="Year"></span>
-                    
-                    <span class="form-hint">
+                    <span class="govuk-hint">
                         @Localizer["DateHint"]
                     </span>
-                    <div class="form-date">
-                        <div class="form-group form-group-day">
-                            <label for="Day">Day</label>
-                            <input class="form-control date-input js-integers-only" sfa-validation-for="Day" sfa-validationerror-class="form-control-error" asp-for="Day" type="text" maxlength="2" />                                                
+
+                    <div class="error-message-container"></div>
+
+                    <span class="govuk-error-message" asp-validation-for="Date"></span>
+                    <span class="govuk-error-message" asp-validation-for="Day"></span>
+                    <span class="govuk-error-message" asp-validation-for="Month"></span>
+                    <span class="govuk-error-message" asp-validation-for="Year"></span>
+                    
+                    <div class="govuk-date-input">
+                        <div class="govuk-date-input__item">
+                            <div class="govuk-form-group">
+                                <label class="govuk-label govuk-date-input__label" for="Day">Day</label> 
+                                <input class="govuk-input govuk-date-input__input govuk-input--width-2 js-integers-only" sfa-validation-for="Day" sfa-validationerror-class="govuk-input--error" asp-for="Day" type="text" maxlength="2" />                                                
                             </div>
-
-                        <div class="form-group form-group-month">
-                            <label for="Month">Month</label>
-                            <input class="form-control date-input js-integers-only" sfa-validation-for="Month" sfa-validationerror-class="form-control-error" asp-for="Month" type="text" maxlength="2" />
-                         
                         </div>
-
-                        <div class="form-group form-group-year">
-                            <label for="Year">Year</label>
-                            <input class="form-control date-input js-integers-only" sfa-validation-for="Year" sfa-validationerror-class="form-control-error" asp-for="Year" type="text" maxlength="4" />                            
+                        <div class="govuk-date-input__item">
+                            <div class="govuk-form-group">
+                                <label class="govuk-label govuk-date-input__label" for="Month">Month</label> 
+                                <input class="govuk-input govuk-date-input__input govuk-input--width-2 js-integers-only" sfa-validation-for="Month" sfa-validationerror-class="govuk-input--error" asp-for="Month" type="text" maxlength="2" />                                                
+                            </div>
+                        </div>
+                        <div class="govuk-date-input__item">
+                            <div class="govuk-form-group">
+                                <label class="govuk-label govuk-date-input__label" for="Year">Year</label> 
+                                <input class="govuk-input govuk-date-input__input govuk-input--width-4 js-integers-only" sfa-validation-for="Year" sfa-validationerror-class="govuk-input--error" asp-for="Year" type="text" maxlength="4" />                                                
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <details>
-                <summary><span class="summary">@Localizer["InfoHeader"]</span></summary>
-                <div class="panel panel-border-narrow" id="what-is-the-apprenticeship-achievement-date">
-                    <p>
+                <button type="submit" class="govuk-button">@Localizer["ContinueButton"]</button>
+
+                <details class="govuk-details">
+                    <summary class="govuk-details__summary">
+                        <span class="govuk-details__summary-text">
+                            @Localizer["InfoHeader"]
+                        </span>
+                    </summary>
+                    <div class="govuk-details__text">
                         @Localizer["InfoBody"]
-                    </p>
-                </div>
-            </details>
+                    </div>
+                </details>
 
-            <button type="submit" class="button">@Localizer["ContinueButton"]</button>
-        </form>
+            </form>
+        </div>
     </div>
-</div>
+</main>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
