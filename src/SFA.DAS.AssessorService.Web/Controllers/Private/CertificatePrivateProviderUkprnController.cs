@@ -32,9 +32,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Private
         [HttpPost(Name = "Ukprn")]
         public async Task<IActionResult> Ukprn(CertificateUkprnViewModel vm)
         {
-            return await SaveViewModel(vm,
+             return await SaveViewModel(vm,
                 returnToIfModelNotValid: "~/Views/Certificate/Ukprn.cshtml",
-                nextAction: RedirectToAction("Grade", "CertificateGrade"), action: CertificateActions.ProviderUkPrn);
+                nextAction: RedirectToAction("Date", "CertificateDate"), action: CertificateActions.ProviderUkPrn);
         }
     }
 }

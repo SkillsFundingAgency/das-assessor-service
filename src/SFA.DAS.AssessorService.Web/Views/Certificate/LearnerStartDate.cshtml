@@ -11,9 +11,13 @@
 {
     <a class="govuk-back-link" asp-controller="CertificateCheck" asp-action="Check">Back</a>
 }
+else if (Model.IsPrivatelyFunded)
+{
+    <a class="govuk-back-link" asp-controller="CertificateGrade" asp-action="Grade">Back</a>
+}
 else
 {
-    <a class="govuk-back-link" asp-controller="CertificatePrivateStandardCode" asp-action="StandardCode">Back</a>
+    <a class="govuk-back-link" asp-controller="CertificateOption" asp-action="Option" asp-route-fromback="true">Back</a>
 }
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
