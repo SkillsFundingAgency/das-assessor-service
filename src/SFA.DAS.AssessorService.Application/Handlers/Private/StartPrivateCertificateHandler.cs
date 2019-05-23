@@ -40,19 +40,10 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Private
             if (certificate != null)
             {
                 var certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
-                if (certificateData.LearnerFamilyName != request.LastName)
-                {                    
-                    certificateData.LearnerFamilyName = request.LastName;
-                    if (!string.IsNullOrEmpty(certificateData.LearnerGivenNames))
-                    {
-                        certificateData.FullName = certificateData.LearnerGivenNames + ' ' + request.LastName;
-                    }
-                    certificate.CertificateData = JsonConvert.SerializeObject(certificateData);
-                    certificate = await _certificateRepository.Update(certificate,
-                        request.Username,
-                        CertificateActions.Name);
+                if (certificateData.LearnerFamilyName == request.LastName)
+                {
+                    return certificate;
                 }
-                return certificate;
             }
 
             return await CreateNewCertificate(request);

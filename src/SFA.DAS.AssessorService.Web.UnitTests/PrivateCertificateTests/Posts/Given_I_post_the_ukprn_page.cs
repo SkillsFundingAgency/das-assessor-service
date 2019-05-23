@@ -37,13 +37,13 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.PrivateCertificateTests.Posts
         [Test]
         public void ThenShouldReturnRedirectToController()
         {
-            _result.ControllerName.Should().Be("CertificateGrade");
+            _result.ControllerName.Should().Be("CertificateDate");
         }
 
         [Test]
         public void ThenShouldReturnRedirectToAction()
         {
-            _result.ActionName.Should().Be("Grade");
+            _result.ActionName.Should().Be("Date");
         }
     }
 }

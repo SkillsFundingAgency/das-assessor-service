@@ -4,16 +4,17 @@
 @model SFA.DAS.AssessorService.Web.ViewModels.Search.SelectedStandardViewModel
 
 @{
-    ViewBag.Title = Model.CertificateReference == null ? "Confirm this is the correct apprentice" : "An assessment has already been recorded against this apprentice";
+    ViewBag.Title = (Model.CertificateReference == null && !Model.UlnAlreadyExists) ? "Confirm this is the correct apprentice" : "An assessment has already been recorded against this apprentice";
     Layout = "_DashboardLayout";
 }
 
 <a class="govuk-back-link" asp-controller="Search" asp-action="ChooseStandard">Back</a>
+
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
 
-            @if (Model.CertificateReference == null)
+            @if (Model.CertificateReference == null && !Model.UlnAlreadyExists )
             {
                 <h1 class="govuk-heading-xl">Confirm this is the correct apprentice</h1>
                 <form class="apprentice-search-result-form js-disable-on-submit" asp-controller="Certificate" asp-action="Start" method="post">
@@ -108,7 +109,21 @@
                 </form>
 
                 <p class="govuk-body"><a class="govuk-link" asp-controller="Search" asp-action="Index">Search again</a> if this isn't the correct apprentice.</p>
+            }
+            else if (Model.UlnAlreadyExists && Model.IsNoMatchingFamilyName)
+            {
+                <h1 class="govuk-heading-xl">An assessment has already been recorded against this ULN</h1>
 
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key"><abbr title="Unique learner number">ULN</abbr>:</dt>
+                        <dd class="govuk-summary-list__value">@Model.Uln</dd>
+                    </div>
+                </dl>
+
+                <p class="govuk-body">
+                    <a class="govuk-link" asp-controller="Search" asp-action="Index">Search again</a>
+                </p>
             }
             else
             {
@@ -143,7 +158,7 @@
                             <dd class="govuk-summary-list__value">@Model.LearnerStartDate</dd>
                         </div>
                         <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">Achievement Date:</dt>
+                            <dt class="govuk-summary-list__key">Achievement date:</dt>
                             <dd class="govuk-summary-list__value">@Model.AchievementDate</dd>
                         </div>
                         <div class="govuk-summary-list__row">
@@ -161,10 +176,10 @@
                     }
                 </dl>
 
-                <p class="govuk-body"><a class="govuk-link" asp-controller="Search" asp-action="Index">Search again</a></p>
+                <p class="govuk-body">
+                    <a class="govuk-link" asp-controller="Search" asp-action="Index">Search again</a>
+                </p>
             }
-
-            
         </div>
     </div>
 </main>
