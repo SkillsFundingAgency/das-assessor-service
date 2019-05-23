@@ -1168,3 +1168,51 @@ TODO: change to 'das-page-navigation' and BEM
         float: right;
     }
 }
+
+/* Accessible autocomplete */
+
+.autocomplete__option {
+    cursor: pointer;
+    font-family: "nta", Arial, sans-serif;
+    font-size: 19px;
+    line-height: 1.25;
+    font-weight: 300;
+    text-transform: none;
+    border: 0 none;
+}
+
+.autocomplete__hint,
+.autocomplete__input,
+.autocomplete__option {
+    font-size: 16px;
+    padding: 8px 5px;
+}
+
+@media (min-width: 40.0625em) {
+    .autocomplete__hint,
+    .autocomplete__input,
+    .autocomplete__option {
+        font-size: 19px;
+    }
+}
+
+.autocomplete__option--focused,
+.autocomplete__option:hover {
+    background-color: #dee0e2;
+    border-color: #dee0e2;
+    color: #0b0c0c;
+    outline: 0;
+}
+
+.autocomplete__option--odd {
+    background-color: #fff;
+}
+
+.autocomplete__menu {
+    background: #fff;
+    border: 2px solid #bfc1c3;
+    list-style-type: none;
+    max-height: 370px;
+    max-width: 100%;
+    overflow-y: auto;
+}
