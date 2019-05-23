@@ -5,65 +5,110 @@
 }
 
 
-<a asp-controller="ManageUsers" asp-action="Index">Back</a>
+<a class="govuk-back-link" asp-controller="ManageUsers" asp-action="Index">Back</a>
 
-<span>User details</span>
-<div>
-    <div class="grid-row">
-        <div class="column-full">
-            <h1 class="heading-large">@Model.GivenNames @Model.FamilyName</h1>
+<main class="govuk-main-wrapper " id="main-content" role="main">
 
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+
+            <span class="govuk-caption-xl">User details</span>
+            <h1 class="govuk-heading-xl">@Model.GivenNames @Model.FamilyName</h1>
+
+            <dl class="govuk-summary-list">
+
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Title
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Model.Title
+                    </dd>
+                </div>
+
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        First name
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Model.GivenNames
+                    </dd>
+                </div>
+            
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Family name
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Model.FamilyName
+                    </dd>
+                </div>
+        
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Email
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Model.Email
+                    </dd>
+                </div>
+            
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Telephone
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Model.PhoneNumber
+                    </dd>
+                </div>
+            
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Status
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Model.Status
+                    </dd>
+                </div>
+            
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Action required
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Model.ActionRequired
+                    </dd>
+                </div>
+            
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        What can they do?
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        <ul class="govuk-list govuk-list--bullet">
+                            @foreach (var privilege in Model.AssignedPrivileges)
+                            {
+                                <li>
+                                    @privilege.Privilege.UserPrivilege
+                                </li>
+                            }
+                        </ul>
+                    </dd>
+                </div>
+            </dl>
 
             <div>
-                <label>Title</label>
-                @Model.Title
+                <button class="govuk-button" asp-controller="UserDetails" asp-action="EditPermissions" asp-route-userid="@Model.Id">
+                    Edit user permissions
+                </button>
             </div>
 
             <div>
-                <label>First name</label>
-                @Model.GivenNames
+                <button class="govuk-button govuk-button--warning" asp-controller="UserDetails" asp-action="Remove" asp-route-userid="@Model.Id">
+                    Remove this user
+                </button>
             </div>
-            
-            <div>
-                <label>Family name</label>
-                @Model.FamilyName
-            </div>
-           
-            <div>
-                <label>Email</label>
-                @Model.Email
-            </div>
-            
-            <div>
-                <label>Telephone</label>
-                @Model.PhoneNumber
-            </div>
-            
-            <div>
-                <label>Status</label>
-                @Model.Status
-            </div>
-            
-            <div>
-                <label>Action required</label>
-                @Model.ActionRequired
-            </div>
-            
-            <div>
-                <label>What can they do?</label>
-                <ul>
-                    @foreach (var privilege in Model.AssignedPrivileges)
-                    {
-                        <li>
-                            @privilege.Privilege.UserPrivilege
-                        </li>
-                    }
-                </ul>
-            </div>
-            
-            <span>Options</span>
-            <a asp-controller="UserDetails" asp-action="EditPermissions" asp-route-userid="@Model.Id">Edit user permissions</a>
-            <a asp-controller="UserDetails" asp-action="Remove" asp-route-userid="@Model.Id">Remove this user</a>
         </div>
+
     </div>
-</div>
+</main>
