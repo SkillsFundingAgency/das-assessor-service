@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using MediatR;
 using SFA.DAS.AssessorService.Api.Types.Models.UserManagement;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.UserManagement
 {
@@ -40,8 +41,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.UserManagement
 
             await _applyContactsApiClient.RemoveContactFromOrganisation(request.ContactId);
             
-            // call apply to remove user from Apply also.
-
+            await _contactRepository.CreateContactLog(request.RequestingUserId, request.ContactId, ContactLogType.UserRemoved, 
+                null);
+            
             return new RemoveContactFromOrganisationResponse()
             {
                 Success = true,

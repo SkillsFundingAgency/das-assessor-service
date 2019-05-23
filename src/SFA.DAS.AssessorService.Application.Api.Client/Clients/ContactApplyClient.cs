@@ -58,7 +58,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 
         public async Task RemoveContactFromOrganisation(Guid contactId)
         {
-            using (var request = new HttpRequestMessage(HttpMethod.Put,$"/Account/RemoveFromOrganisation"))
+            using (var request = new HttpRequestMessage(HttpMethod.Post,$"/Account/RemoveFromOrganisation"))
             {
                 await PostPutRequest(request, new {contactId});
             }

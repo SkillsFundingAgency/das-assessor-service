@@ -108,7 +108,7 @@ namespace SFA.DAS.AssessorService.Data
         {
             await _connection.ExecuteAsync(@"INSERT INTO ContactLogs (DateTime, UserId, ContactId, ContactLogType, ContactLogDetails) 
                                                                    VALUES (GETUTCDATE(), @userId, @contactId, @logType, @logDataString)"
-                , new {userId, contactId, logType, logDataString = JsonConvert.SerializeObject(logData)});
+                , new {userId, contactId, logType, logDataString = logData == null ? "" : JsonConvert.SerializeObject(logData)});
         }
 
         public async Task RemoveContactFromOrganisation(Guid contactId)

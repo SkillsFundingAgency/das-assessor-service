@@ -14,6 +14,18 @@
     <div class="grid-row">
         <div class="column-full">
 
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+                    <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+                        There's a problem
+                    </h2>
+                    <ul class="error-summary-list">
+                        <li><a href="#">@ViewData.ModelState.GetValueOrDefault("permissions").Errors.First().ErrorMessage</a></li>
+                    </ul>
+                </div>
+            }
+            
             <span>Removing this user will mean they can no longer use the Apprenticeship assessment service. Are you sure you want to remove the user?</span>
             
             <form asp-controller="UserDetails" asp-action="RemoveConfirmed" asp-route-contactId="@Model.Id">
