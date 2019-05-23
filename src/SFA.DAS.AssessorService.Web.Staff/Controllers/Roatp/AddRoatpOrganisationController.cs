@@ -35,7 +35,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
         }
         
 
-        [Route("enter-ukprn")]
+        [Route("organisations-ukprn")]
         public async Task<IActionResult> EnterUkprn()
         { 
             ModelState.Clear();
@@ -50,7 +50,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
             return View("~/Views/Roatp/UkprnNotFound.cshtml");
         }
 
-        [Route("ukprn-preview")]
+        [Route("organisations-details")]
         public async Task<IActionResult> UkprnPreview(AddOrganisationViaUkprnViewModel model)
         {
             if (!IsRedirectFromConfirmationPage() && !ModelState.IsValid)
