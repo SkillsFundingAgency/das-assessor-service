@@ -111,6 +111,11 @@ namespace SFA.DAS.AssessorService.Data
                 , new {userId, contactId, logType, logDataString = JsonConvert.SerializeObject(logData)});
         }
 
+        public async Task RemoveContactFromOrganisation(Guid contactId)
+        {
+            await _connection.ExecuteAsync("UPDATE Contacts SET OrganisationId = NULL, EndPointAssessorOrganisationId = NULL, Status = 'New' WHERE Id = @contactId", new {contactId});
+        }
+
 
         public async Task Update(UpdateContactRequest updateContactRequest)
         {

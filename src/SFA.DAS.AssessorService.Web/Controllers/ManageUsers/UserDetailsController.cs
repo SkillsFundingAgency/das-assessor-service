@@ -101,7 +101,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.ManageUsers
             return View("~/Views/ManageUsers/UserDetails/RemoveConfirm.cshtml", UserToBeDisplayed);
         }
 
-        [HttpPost("/ManageUSers/{contactId}/remove")]
+        [HttpPost("/ManageUsers/{contactId}/remove")]
         public async Task<IActionResult> RemoveConfirmed(Guid contactId)
         {
             var securityCheckpoint = await SecurityCheckAndGetContact(contactId);
@@ -111,7 +111,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.ManageUsers
                 return Unauthorized();
             }
 
-            var response = await ContactsApiClient.RemoveContactFromOrganisation(contactId);
+            var response = await ContactsApiClient.RemoveContactFromOrganisation(RequestingUser.Id, contactId);
 
             if (!response.Success)
             {
