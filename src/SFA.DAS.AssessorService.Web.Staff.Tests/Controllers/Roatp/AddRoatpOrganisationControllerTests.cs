@@ -34,7 +34,7 @@
             _sessionService = new Mock<IRoatpSessionService>();
             _ukrlpClient = new Mock<IUkrlpApiClient>();
             _logger = new Mock<ILogger<AddRoatpOrganisationController>>();
-            //_logger.Setup(q => q.LogError(It.IsAny<Exception>(), It.IsAny<string>()));
+
             _controller = new AddRoatpOrganisationController(_client.Object, _sessionService.Object, _ukrlpClient.Object,_logger.Object);
 
             _controller.ControllerContext = new ControllerContext {HttpContext = new DefaultHttpContext()};
