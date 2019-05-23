@@ -62,16 +62,19 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             }
             var certSession = JsonConvert.DeserializeObject<CertificateSession>(sessionString);
 
+            var certificate = await CertificateApiClient.GetCertificate(certSession.CertificateId);
+
             if (!certSession.Options.Any())
             {
                 if (ContextAccessor.HttpContext.Request.Query.ContainsKey("fromback"))
                 {
-                    return RedirectToAction("Grade", "CertificateGrade");    
+                    if (certificate.IsPrivatelyFunded)
+                        return RedirectToAction("StandardCode", "CertificatePrivateStandardCode");
+                    return RedirectToAction("Declare", "CertificateDeclaration");
                 }
-                return RedirectToAction("Date", "CertificateDate");
-            }
 
-            var certificate = await CertificateApiClient.GetCertificate(certSession.CertificateId);
+                return RedirectToAction("Grade", "CertificateGrade");
+            }
 
             Logger.LogInformation($"Got Certificate for CertificateOptionViewModel requested by {username} with Id {certificate.Id}");
 
@@ -85,9 +88,10 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [HttpPost(Name = "Option")]
         public async Task<IActionResult> Option(CertificateOptionViewModel vm)
         {
+         
             return await SaveViewModel(vm,
                 returnToIfModelNotValid: "~/Views/Certificate/Option.cshtml",
-                nextAction: RedirectToAction("Date", "CertificateDate"), action: CertificateActions.Option);
+                nextAction: RedirectToAction("Grade", "CertificateGrade"), action: CertificateActions.Option);
         }
 
          private async Task<IActionResult> SaveViewModel(CertificateOptionViewModel vm, string returnToIfModelNotValid, RedirectToActionResult nextAction, string action)
