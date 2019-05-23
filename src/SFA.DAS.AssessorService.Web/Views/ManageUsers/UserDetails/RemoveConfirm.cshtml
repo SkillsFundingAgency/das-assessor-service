@@ -16,8 +16,7 @@
 
             <span>Removing this user will mean they can no longer use the Apprenticeship assessment service. Are you sure you want to remove the user?</span>
             
-            <form asp-controller="UserDetails" asp-action="Remove">
-                <input type="hidden" name="ContactId" value="@Model.Id"/>
+            <form asp-controller="UserDetails" asp-action="RemoveConfirmed" asp-route-contactId="@Model.Id">
                 <button type="submit" class="button">Remove user</button>
             </form>
             

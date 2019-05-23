@@ -100,5 +100,32 @@ namespace SFA.DAS.AssessorService.Web.Controllers.ManageUsers
 
             return View("~/Views/ManageUsers/UserDetails/RemoveConfirm.cshtml", UserToBeDisplayed);
         }
+
+        [HttpPost("/ManageUSers/{contactId}/remove")]
+        public async Task<IActionResult> RemoveConfirmed(Guid contactId)
+        {
+            var securityCheckpoint = await SecurityCheckAndGetContact(contactId);
+
+            if (!securityCheckpoint.isValid)
+            {
+                return Unauthorized();
+            }
+
+            var response = await ContactsApiClient.RemoveContactFromOrganisation(contactId);
+
+            if (!response.Success)
+            {
+                ModelState.AddModelError("permissions", response.ErrorMessage);
+            
+                return View("~/Views/ManageUsers/UserDetails/RemoveConfirm.cshtml", UserToBeDisplayed);
+            }
+            else
+            {
+                return response.SelfRemoved 
+                    ? RedirectToAction("SignOut", "Account") 
+                    : RedirectToAction("Index", "ManageUsers");
+            }
+        }
+        
     }
 }
