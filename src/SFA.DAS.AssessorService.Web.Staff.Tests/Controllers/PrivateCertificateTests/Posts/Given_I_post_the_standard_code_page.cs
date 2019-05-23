@@ -50,13 +50,13 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Controllers.PrivateCertificate
         [Test]
         public void ThenShouldReturnRedirectToController()
         {
-            _result.ControllerName.Should().Be("CertificateAmend");
+            _result.ControllerName.Should().Be("CertificateOption");
         }
 
         [Test]
         public void ThenShouldReturnRedirectToAction()
         {
-            _result.ActionName.Should().Be("Check");
+            _result.ActionName.Should().Be("Option");
         }
     }
 }
