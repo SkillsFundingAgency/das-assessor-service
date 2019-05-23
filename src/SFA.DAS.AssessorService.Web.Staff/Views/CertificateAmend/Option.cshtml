@@ -9,7 +9,14 @@
     <div class="column-two-thirds">     
         @if (Model.FromApproval)
         {
-            <a class="link-back" asp-controller="CertificateAmend" asp-action="Check" asp-route-fromapproval = "true" asp-route-certificateId=@Model.Id>Back</a>
+            if (Model.IsFromStandard)
+            {
+                <a class="link-back" asp-controller="CertificatePrivateStandardCode" asp-action="StandardCode" asp-route-fromapproval="true" asp-route-certificateId=@Model.Id>Back</a>
+            }
+            else
+            {
+                <a class="link-back" asp-controller="CertificateAmend" asp-action="Check" asp-route-fromapproval="true" asp-route-certificateId=@Model.Id>Back</a>
+            }
         }
         else
         {

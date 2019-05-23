@@ -93,7 +93,22 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
             if (SessionService.Exists("redirecttocheck") && bool.Parse(SessionService.Get("redirecttocheck")))
             {
-                Logger.LogInformation($"Certificate for {typeof(T).Name} requested by {username} with Id {certificate.Id} redirecting back to Certificate Check.");
+                if (nextAction.ActionName == "Option")
+                {
+                    var sessionString = SessionService.Get("CertificateSession");
+                    if (sessionString == null)
+                    {
+                        Logger.LogInformation(
+                            $"Session for CertificateOptionViewModel requested by {username} has been lost. Redirecting to Search Index");
+                        return RedirectToAction("Index", "Search");
+                    }
+                    var certSession = JsonConvert.DeserializeObject<CertificateSession>(sessionString);
+                    if (certSession.Options != null && certSession.Options.Any())
+                        return new RedirectToActionResult("Option", "CertificateOption", new { redirecttocheck = "true", isFromStandard = true });
+                }
+
+                Logger.LogInformation(
+                    $"Certificate for {typeof(T).Name} requested by {username} with Id {certificate.Id} redirecting back to Certificate Check.");
                 return new RedirectToActionResult("Check", "CertificateCheck", null);
             }
 
@@ -107,5 +122,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
             return properties.Aggregate("", (current, prop) => current + $"{prop.Name}: {prop.GetValue(viewModel)}, ");
         }
+        
     }
 }

@@ -11,7 +11,15 @@
     <div class="column-two-thirds">
         @if (Model.BackToCheckPage)
         {
-            <a class="link-back" asp-controller="CertificateCheck" asp-action="Check">Back</a>
+            if (!Model.IsFromStandard)
+            {
+                <a class="link-back" asp-controller="CertificateCheck" asp-action="Check">Back</a>
+            }
+            else
+            {
+                <a class="link-back" asp-controller="CertificatePrivateStandardCode" asp-action="StandardCode" asp-route-redirecttocheck="true">Back</a>
+            }
+
         }
         else if (Model.IsPrivatelyFunded)
         {
@@ -36,14 +44,14 @@
 
             @if (!ViewData.ModelState.IsValid)
             {
-            <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
-                <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
-                    There's a problem
-                </h2>
-                <ul class="error-summary-list">
-                    <li><a sfa-validation-for="Option"></a></li>
-                </ul>
-            </div>
+                <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+                    <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+                        There's a problem
+                    </h2>
+                    <ul class="error-summary-list">
+                        <li><a sfa-validation-for="Option"></a></li>
+                    </ul>
+                </div>
             }
 
             <div sfa-anyvalidationerror-class="after-error-summary">
@@ -62,7 +70,7 @@
                     @foreach (var option in Model.Options)
                     {
                         <div class="multiple-choice" data-target="show-option-input">
-                            <input asp-for="Option" id="options_@option.Replace(" ", "")" type="radio" value="@option"/>
+                            <input asp-for="Option" id="options_@option.Replace(" ", "")" type="radio" value="@option" />
                             <label for="options_@option.Replace(" ", "")">
                                 @option
                             </label>
