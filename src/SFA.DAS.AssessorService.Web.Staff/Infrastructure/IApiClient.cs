@@ -7,6 +7,7 @@ using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
 using SFA.DAS.AssessorService.Api.Types.Models.Staff;
+using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Paging;
 using SFA.DAS.AssessorService.Web.Staff.ViewModels.Private;
@@ -53,7 +54,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
         Task<object> RunNowScheduledRun(int scheduleType);
         Task<StaffSearchResult> Search(string searchString, int page);
         Task<List<AssessmentOrganisationSummary>> SearchOrganisations(string searchString);
-        Task<List<StandardSummary>> SearchStandards(string searchString);
+        Task<List<StandardCollation>> SearchStandards(string searchString);
         Task<Certificate> UpdateCertificate(UpdateCertificateRequest certificateRequest);
         Task<string> UpdateEpaContact(UpdateEpaOrganisationContactRequest request);
         Task<string> UpdateEpaOrganisation(UpdateEpaOrganisationRequest request);

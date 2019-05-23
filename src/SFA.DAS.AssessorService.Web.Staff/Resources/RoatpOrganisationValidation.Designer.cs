@@ -79,7 +79,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Enter a charity registration number using 14 characters or less.
+        ///   Looks up a localized string similar to Enter a charity registration number using 6 to 14 characters.
         /// </summary>
         public static string CharityNumberLength {
             get {
