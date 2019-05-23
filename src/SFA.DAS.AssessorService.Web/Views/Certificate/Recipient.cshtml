@@ -7,73 +7,78 @@
     Layout = "_DashboardLayout";
 }
 
-<div class="grid-row">
-    <div class="column-two-thirds">
-        @if (Model.BackToCheckPage)
-        {
-            <a class="link-back" asp-controller="CertificateCheck" asp-action="Check">Back</a>
-        }
-        else
-        {
-            <a asp-controller="CertificateAddress" asp-action="Address" class="link-back">Back</a>
-        }
+@if (Model.BackToCheckPage)
+{
+<a class="govuk-back-link" asp-controller="CertificateCheck" asp-action="Check">Back</a>
+}
+else
+{
+<a class="govuk-back-link" asp-controller="CertificateAddress" asp-action="Address">Back</a>
+}
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
    
-        <form class="apprentice-address-form js-disable-on-submit" method="post" asp-controller="CertificateRecipient">
-            @Html.HiddenFor(c => c.Id)
+            <form class="apprentice-address-form js-disable-on-submit" method="post" asp-controller="CertificateRecipient">
+                @Html.HiddenFor(c => c.Id)
 
-            @* hidden with css by default *@
-            <div class="js-error-summary error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
-                <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
-                    There's a problem
-                </h2>
-                <ul class="js-error-summary-list error-summary-list"></ul>
-            </div>
-
-            @if (!ViewData.ModelState.IsValid)
-            {
-                <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
-                    <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
-                        There's a problem
+                <div class="js-error-summary govuk-error-summary" role="alert" aria-labelledby="error-summary-title" tabindex="-1" data-module="error-summary">
+                    <h2 class="govuk-error-summary__title" id="error-summary-title">
+                        There is a problem
                     </h2>
-                    <ul class="error-summary-list">
-                        <li><a sfa-validation-for="Name"></a></li>
-                    </ul>
+                    <div class="govuk-error-summary__body">
+                        <ul class="js-error-summary-list govuk-list govuk-error-summary__list"></ul>
+                    </div>
                 </div>
-            }
 
-            <div sfa-anyvalidationerror-class="after-error-summary">
-                <h1 class="heading-large">
-                    @Localizer["Heading"]
-                </h1>
+                @if (!ViewData.ModelState.IsValid)
+                {
+                    <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
+                        <h2 class="govuk-error-summary__title" id="error-summary-title">
+                            There is a problem
+                        </h2>
+                        <div class="govuk-error-summary__body">
+                            <ul class="govuk-list govuk-error-summary__list">
+                                <li><a sfa-validation-for="Name"></a></li>
+                            </ul>
+                        </div>
+                    </div>
+                }
 
-                <div class="form-group" sfa-validation-for="Name" sfa-validationerror-class="form-group-error">
-                    <label for="Name">
-                        <span class="form-label-bold visually-hidden">@Localizer["Name"]</span>
-                        <span class="form-hint">
-                            @Localizer["NameHint"]
-                        </span>
-                        <span class="error-message" asp-validation-for="Name"></span>
+                <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
+                    <h1 class="govuk-fieldset__heading">
+                        @Localizer["Heading"]
+                    </h1>
+                </legend>
+
+                <div class="govuk-form-group" sfa-validation-for="Name" sfa-validationerror-class="govuk-form-group--error">
+                    <label class="govuk-label" for="Name">
+                        @Localizer["Name"]
                     </label>
-                    <input class="form-control" name="Name" sfa-validation-for="Name" sfa-validationerror-class="form-control-error" asp-for="Name" type="text"/>
+                    <span class="govuk-hint">
+                        @Localizer["NameHint"]
+                    </span>
+                    <span class="govuk-error-message" asp-validation-for="Name"></span>
+                    <input class="govuk-input" name="Name" sfa-validation-for="Name" sfa-validationerror-class="govuk-input--error" asp-for="Name" type="text"/>
                 </div>
 
-                <div class="form-group" sfa-validation-for="Dept" sfa-validationerror-class="form-group-error">
-                    <label for="Dept">
-                        <span class="form-label-bold">@Localizer["Dept"]</span>
-                        <span class="form-hint">
-                            @Localizer["DeptHint"]
-                        </span>
-                        <span class="error-message" asp-validation-for="Dept"></span>
+                <div class="govuk-form-group" sfa-validation-for="Dept" sfa-validationerror-class="govuk-form-group--error">
+                    <label class="govuk-label" for="Dept">
+                        @Localizer["Dept"]
                     </label>
-                    <input class="form-control" name="Dept" sfa-validation-for="Dept" sfa-validationerror-class="form-control-error" asp-for="Dept" type="text"/>
+                    <span class="govuk-hint">
+                        @Localizer["DeptHint"]
+                    </span>
+                    <span class="govuk-error-message" asp-validation-for="Dept"></span>
+                    <input class="govuk-input" name="Dept" sfa-validation-for="Dept" sfa-validationerror-class="govuk-input--error" asp-for="Dept" type="text"/>
                 </div>
 
-            </div>
-
-            <button type="submit" class="button">@Localizer["ContinueButton"]</button>
-        </form>
+                <button type="submit" class="govuk-button">@Localizer["ContinueButton"]</button>
+            </form>
+        </div>
     </div>
-</div>
+</main>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial"); }

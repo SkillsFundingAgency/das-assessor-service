@@ -7,92 +7,92 @@
     Layout = "_DashboardLayout";
 }
 
-<div class="grid-row">
-    <div class="column-two-thirds">
-        @if (Model.BackToCheckPage)
-        {
-            <a class="link-back" asp-controller="CertificateCheck" asp-action="Check">Back</a>
-        }
-        else
-        {
-            <a class="link-back" asp-controller="CertificateAddress" asp-action="Address" asp-route-edit="true">Back</a>
-        }
+@if (Model.BackToCheckPage)
+{
+    <a class="govuk-back-link" asp-controller="CertificateCheck" asp-action="Check">Back</a>
+}
+else
+{
+    <a class="govuk-back-link" asp-controller="CertificateAddress" asp-action="Address" asp-route-edit="true">Back</a>
+}
 
-        <form class="apprentice-address-form js-disable-on-submit" method="post" asp-controller="CertificateAddressSummary">
-            @Html.HiddenFor(c => c.Id)
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
 
-            @* hidden with css by default *@
-            <div class="js-error-summary error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
-                <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
-                    There's a problem
-                </h2>
-                <ul class="js-error-summary-list error-summary-list"></ul>
-            </div>
+            <form class="apprentice-address-form js-disable-on-submit" method="post" asp-controller="CertificateAddressSummary">
+                @Html.HiddenFor(c => c.Id)
 
-            <h1 class="heading-large">
-                @Localizer["Heading"]
-            </h1>
-
-            <div class="info-highlighted">
-                <ul>
-                    <li>
-                        <span>@Model.Employer</span>
-                    </li>
-                    <li>
-                        <span>@Model.AddressLine1</span>
-                    </li>
-                    <li>
-                        <span>@Model.AddressLine2</span>
-                    </li>
-                    <li>
-                        <span>@Model.AddressLine3</span>
-                    </li>
-                    <li>
-                        <span>@Model.City</span>
-                    </li>
-                    <li>
-                        <span>@Model.Postcode</span>
-                    </li>
-                </ul>
-            </div>
-
-            <p>
-                <a asp-controller="CertificateAddress" asp-action="Address" asp-route-edit="true">@Localizer["EditThisAddress"]</a>                
-            </p>
-            <p>
-                <a asp-controller="CertificateAddress" asp-action="ResetAddress">@Localizer["FindANewAddress"]</a>
-            </p>
-
-
-            <div class="form-group" sfa-validation-for="Employer" sfa-validationerror-class="form-group-error">              
-                @Html.HiddenFor(x => x.Name)
-                @Html.HiddenFor(x => x.AddressLine1)
-                @Html.HiddenFor(x => x.AddressLine2)
-                @Html.HiddenFor(x => x.AddressLine3)
-                @Html.HiddenFor(x => x.City)
-                @Html.HiddenFor(x => x.Postcode)
-
-                @if (String.IsNullOrEmpty(@Model.Employer))
-                {
-                    <div class="form-group-compound address-item form-group" sfa-validation-for="Employer" sfa-validationerror-class="form-group-error">
-                        <label for="Employer">
-                            <span class="form-label-bold">@Localizer["Employer"]</span>
-                            <span class="error-message" asp-validation-for="Employer"></span>
-                        </label>
-                        <input autocomplete="off" class="form-control" name="Employer" sfa-validation-for="Employer" sfa-validationerror-class="form-control-error" asp-for="Employer" type="text" />
+                <div class="js-error-summary govuk-error-summary" role="alert" aria-labelledby="error-summary-title" tabindex="-1" data-module="error-summary">
+                    <h2 class="govuk-error-summary__title" id="error-summary-title">
+                        There is a problem
+                    </h2>
+                    <div class="govuk-error-summary__body">
+                        <ul class="js-error-summary-list govuk-list govuk-error-summary__list"></ul>
                     </div>
-                }
-                @*else
-                {
-                    @Html.HiddenFor(x => x.Employer)
-                }*@
-            </div>
+                </div>
 
-            <button type="submit" class="button">@Localizer["ContinueButton"]</button>
-        </form>
+                <h1 class="govuk-heading-xl">
+                    @Localizer["Heading"]
+                </h1>
 
+                <div class="info-highlighted">
+                    <ul class="govuk-list">
+                        <li>
+                            <span>@Model.Employer</span>
+                        </li>
+                        <li>
+                            <span>@Model.AddressLine1</span>
+                        </li>
+                        <li>
+                            <span>@Model.AddressLine2</span>
+                        </li>
+                        <li>
+                            <span>@Model.AddressLine3</span>
+                        </li>
+                        <li>
+                            <span>@Model.City</span>
+                        </li>
+                        <li>
+                            <span>@Model.Postcode</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <p class="govuk-body">
+                    <a class="govuk-link" asp-controller="CertificateAddress" asp-action="Address" asp-route-edit="true">@Localizer["EditThisAddress"]</a>                
+                </p>
+                <p class="govuk-body">
+                    <a class="govuk-link" asp-controller="CertificateAddress" asp-action="ResetAddress">@Localizer["FindANewAddress"]</a>
+                </p>
+
+
+                <div class="govuk-form-group" sfa-validation-for="Employer" sfa-validationerror-class="govuk-form-group--error">              
+                    @Html.HiddenFor(x => x.Name)
+                    @Html.HiddenFor(x => x.AddressLine1)
+                    @Html.HiddenFor(x => x.AddressLine2)
+                    @Html.HiddenFor(x => x.AddressLine3)
+                    @Html.HiddenFor(x => x.City)
+                    @Html.HiddenFor(x => x.Postcode)
+
+                    @if (String.IsNullOrEmpty(@Model.Employer))
+                    {
+                        <div class="address-item" sfa-validation-for="Employer" sfa-validationerror-class="govuk-form-group--error">
+                            <label class="govuk-label" for="Employer">
+                                @Localizer["Employer"]
+                            </label>
+                            <span class="govuk-error-message" asp-validation-for="Employer"></span>
+                            <input class="govuk-input" autocomplete="off" name="Employer" sfa-validation-for="Employer" sfa-validationerror-class="govuk-input--error" asp-for="Employer" type="text" />
+                        </div>
+                    }
+                </div>
+
+                <button type="submit" class="govuk-button">@Localizer["ContinueButton"]</button>
+            </form>
+
+        </div>
     </div>
-</div>
+</main>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
