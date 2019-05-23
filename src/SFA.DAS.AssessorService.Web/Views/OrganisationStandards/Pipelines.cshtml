@@ -108,7 +108,7 @@
                     <a asp-action="Pipeline"
                        asp-controller="OrganisationStandards"
                        asp-route-pageIndex="@(Model.Response.PageIndex - 1)"
-                       class="previous">
+                       class="govuk-link previous">
                         <i class="arrow-button icon-left-open">&#xe800;</i>
                         <span class="description">Previous <span class="hide-mob">page</span></span>
                         <span class="counter">Page <span class="prevPage">@(Model.Response.PageIndex - 1)</span> of <span class="totalPage">@(Model.Response.TotalPages)</span></span>
@@ -120,7 +120,7 @@
                     <a asp-controller="OrganisationStandards"
                        asp-action="Pipeline"
                        asp-route-pageIndex="@(Model.Response.PageIndex + 1)"
-                       class="next">
+                       class="govuk-link next">
                         <i class="arrow-button icon-right-open">&#xe801;</i>
                         <span class="description">Next <span class="hide-mob">page</span></span>
                         <span class="counter">Page <span class="nextPage">@(Model.Response.PageIndex + 1)</span> of <span class="totalPage">@(Model.Response.TotalPages)</span></span>
