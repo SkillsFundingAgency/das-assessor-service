@@ -1166,3 +1166,10 @@ TODO: change to 'das-page-navigation' and BEM
     padding-left: 0;
     border: 0;
 }
+
+@media (min-width: 40.0625em) {
+    .align-button-right {
+        margin-top: 2.55em;
+        float: right;
+    }
+}
