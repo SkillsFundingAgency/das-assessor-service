@@ -40,7 +40,7 @@
                         {
                             <tr class="govuk-table__row">
                                 <td class="govuk-table__cell das-no-wrap" data-label="@Localizer["User details"]" >
-                                    <a class="govuk-link" asp-controller="ManageUsers" asp-action="UserDetails" asp-route-userid="@contact.Contact.Id">@Html.DisplayFor(modelItem => contact.Contact.DisplayName)</a>
+                                    <a class="govuk-link" asp-controller="UserDetails" asp-action="User" asp-route-userid="@contact.Contact.Id">@Html.DisplayFor(modelItem => contact.Contact.DisplayName)</a>
                                     <br/>
                                     <span>@Html.DisplayFor(modelItem => contact.Contact.Email)</span>
                                 </td>
