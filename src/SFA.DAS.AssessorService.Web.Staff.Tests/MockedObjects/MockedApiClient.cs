@@ -70,15 +70,14 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.MockedObjects
             mockHttp.When($"http://localhost:59022/api/v1/certificates/approvals/?pageSize=10&pageIndex=0&status=Draft&privatelyFundedStatus=Rejected")
                 .Respond("application/json", JsonConvert.SerializeObject(paginatedResponseRejections));
 
-            mockHttp.When($"http://localhost:59022/api/v1/certificates/approvals/?pageSize=10&pageIndex=0&status=ToBeApproved&privatelyFundedStatus=SentForApproval")
+            mockHttp.When($"http://localhost:59022/api/v1/certificates/approvals/?pageSize=0&pageIndex=0&status=ToBeApproved&privatelyFundedStatus=SentForApproval")
                 .Respond("application/json", JsonConvert.SerializeObject(paginatedResponseSentForApproval));
 
 
             mockHttp.When($"http://localhost:59022/api/v1/certificates/options/?stdCode={93}")
                 .Respond("application/json", JsonConvert.SerializeObject(options));
 
-
-    
+            
             var certificateFirstNameViewModel = new CertificateFirstNameViewModel
             {
                 Id = new Guid("1f120837-72d5-40eb-a785-b3936210d47a"),

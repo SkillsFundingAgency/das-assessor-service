@@ -101,9 +101,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Private
                 });
             }
 
+       
             return await SaveViewModel(vm,
                 returnToIfModelNotValid: "~/Views/Certificate/StandardCode.cshtml",
-                nextAction: RedirectToAction("LearnerStartDate", "CertificatePrivateLearnerStartDate"), action: CertificateActions.StandardCode);
+                nextAction: RedirectToAction("Option", "CertificateOption"), action: CertificateActions.StandardCode);
+
         }
 
         private IEnumerable<SelectListItem> GetSelectListItems(List<StandardCollation> standards,
