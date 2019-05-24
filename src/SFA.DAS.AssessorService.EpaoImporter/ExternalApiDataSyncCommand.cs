@@ -26,8 +26,8 @@ namespace SFA.DAS.AssessorService.EpaoImporter
         {
             _aggregateLogger = aggregateLogger;
 
-            _allowDataSync = false; // TODO: PLACE THIS INTO config
-            _sourceConnectionString = ""; // TODO: PLACE THIS INTO config
+            _allowDataSync = config.ExternalApiDataSync.IsEnabled;
+            _sourceConnectionString = config.ExternalApiDataSync.SourceSqlConnectionString;
             _destinationConnectionString = config.SqlConnectionString;
 
             SqlMapper.AddTypeHandler(typeof(StandardData), new StandardDataHandler());

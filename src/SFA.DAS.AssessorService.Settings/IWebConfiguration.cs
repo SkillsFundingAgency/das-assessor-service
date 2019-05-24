@@ -23,5 +23,7 @@
 
         string RoatpApiClientBaseUrl { get; set; }
         ClientApiAuthentication RoatpApiAuthentication { get; set; }
+
+        ExternalApiDataSync ExternalApiDataSync { get; set; }
     }
 }
