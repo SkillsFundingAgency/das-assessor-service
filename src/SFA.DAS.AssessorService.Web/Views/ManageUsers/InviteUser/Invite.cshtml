@@ -1,0 +1,68 @@
+@model SFA.DAS.AssessorService.Web.Controllers.ManageUsers.ViewModels.InviteContactViewModel
+
+@{
+    ViewBag.Title = "Invite user";
+}
+
+
+<a asp-controller="ManageUsers" asp-action="Index">Back</a>
+
+<span>User details</span>
+<div>
+    <div class="grid-row">
+        <div class="column-full">
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+                    <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+                        There's a problem
+                    </h2>
+                    <ul class="error-summary-list">
+                        <li>
+                            @foreach (var modelState in ViewData.ModelState)
+                            {
+                                foreach (var error in modelState.Value.Errors)
+                                {
+                                    <a href="#@modelState.Key">@error.ErrorMessage</a>
+                                }
+                            }
+                        </li>
+                    </ul>
+                </div>
+            }
+
+            <h2>Invite User</h2>
+
+            <p>Invite a member of your organisation to use the Apprenticeship assessment service.</p>
+
+            <form asp-controller="InviteUser" asp-action="Invite">
+                <label asp-for="@Model.GivenName">First name</label>
+                <input type="text" asp-for="@Model.GivenName"/>
+
+                <label asp-for="@Model.FamilyName">Family name</label>
+                <input type="text" asp-for="@Model.FamilyName"/>
+
+                <label asp-for="@Model.Email">Email</label>
+                <input type="text" asp-for="@Model.Email"/>
+
+                <div>
+                    <label>Permissions</label>
+                    <p>Select all that apply</p>
+                    <ul>
+                        <li class="disabled">
+                            <input type="checkbox" name="ViewDashboard" value="true" class="disabled" checked/>View dashboard
+                        </li>
+                        @for (int i = 0; i < Model.PrivilegesViewModel.PrivilegeViewModels.Length; i++)
+                        {
+                            <li>
+                                <input type="hidden" name="PrivilegesViewModel.PrivilegeViewModels[@i].Privilege.Id" value="@Model.PrivilegesViewModel.PrivilegeViewModels[i].Privilege.Id"/>
+                                <input type="checkbox" name="PrivilegesViewModel.PrivilegeViewModels[@i].Selected" value="true"/>@Model.PrivilegesViewModel.PrivilegeViewModels[i].Privilege.UserPrivilege
+                            </li>
+                        }
+                    </ul>
+                </div>
+                <button type="submit" class="button">Send Invite</button>
+            </form>
+        </div>
+    </div>
+</div>

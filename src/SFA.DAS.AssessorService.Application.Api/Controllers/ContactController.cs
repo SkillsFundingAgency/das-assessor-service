@@ -162,5 +162,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         {
             return Ok(await _mediator.Send(request, CancellationToken.None));
         }
+        
+        [HttpPost("inviteContactToOrganisation")]
+        public async Task<ActionResult> InviteContactToOrganisation([FromBody] InviteContactToOrganisationRequest request)
+        {
+            return Ok(await _mediator.Send(request, CancellationToken.None));
+        }
     }
 }

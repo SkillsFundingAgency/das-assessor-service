@@ -68,12 +68,16 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<Contact> GetContactFromEmailAddress(string email)
         {
-            var contact = await _assessorDbContext.Organisations
-                .Include(organisation => organisation.Contacts)
-                .Where(q => q.Status != OrganisationStatus.Deleted)
-                .SelectMany(q => q.Contacts)
-                .Where(q => q.Email == email)
-                .FirstOrDefaultAsync();
+            var contact = await _assessorDbContext.Contacts
+                .Include(c => c.OrganisationId)
+                .FirstOrDefaultAsync(c => c.Email.Equals(email, StringComparison.InvariantCultureIgnoreCase) && c.Organisation.Status != OrganisationStatus.Deleted);
+            
+//            var contact = await _assessorDbContext.Organisations
+//                .Include(organisation => organisation.Contacts)
+//                .Where(org => org.Status != OrganisationStatus.Deleted)
+//                .SelectMany(q => q.Contacts)
+//                .Where(q => q.Email == email)
+//                .FirstOrDefaultAsync();
 
             return contact;
         }

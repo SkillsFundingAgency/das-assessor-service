@@ -45,5 +45,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         Task AssociateDefaultRolesAndPrivileges(Contact contact);
         Task<SetContactPrivilegesResponse> SetContactPrivileges(SetContactPrivilegesRequest privilegesRequest);
         Task<RemoveContactFromOrganisationResponse> RemoveContactFromOrganisation(Guid requestingUserId, Guid contactId);
+        Task<InviteContactToOrganisationResponse> InviteContactToOrganisation(InviteContactToOrganisationRequest request);
     }
 }
