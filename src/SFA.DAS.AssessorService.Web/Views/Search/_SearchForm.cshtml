@@ -4,80 +4,90 @@
 
 <form class="apprentice-search-form js-disable-on-submit" method="post" asp-controller="Search" asp-action="Index">
 
-    @* hidden with css by default *@
-    <div class="js-error-summary error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
-        <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
-            There's a problem
+    <div class="js-error-summary govuk-error-summary" role="alert" aria-labelledby="error-summary-title" tabindex="-1" data-module="error-summary">
+        <h2 class="govuk-error-summary__title" id="error-summary-title">
+            There is a problem
         </h2>
-        <ul class="js-error-summary-list error-summary-list"></ul>
+        <div class="govuk-error-summary__body">
+            <ul class="js-error-summary-list govuk-list govuk-error-summary__list"></ul>
+        </div>
     </div>
 
     @if (!ViewData.ModelState.IsValid)
     {
-        <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
-            <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
-                There's a problem
+        <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
+            <h2 class="govuk-error-summary__title" id="error-summary-title">
+                There is a problem
             </h2>
-            <ul class="error-summary-list">
-                <li><a sfa-validation-for="Surname"></a></li>
-                <li><a sfa-validation-for="Uln"></a></li>
-            </ul>
+            <div class="govuk-error-summary__body">
+                <ul class="govuk-list govuk-error-summary__list">
+                    <li><a sfa-validation-for="Surname"></a></li>
+                    <li><a sfa-validation-for="Uln"></a></li>
+                </ul>
+            </div>
         </div>
     }
 
-    <h1 class="heading-large">Record a grade</h1>
+    <h1 class="govuk-heading-xl">Record a grade</h1>
 
     <div class="das-standout-box">
-        <a href="https://www.smartsurvey.co.uk/s/certification-banner/" target="_blank">Complete our survey</a> to help us improve this section of the Apprenticeship assessment service.
+        <p class="govuk-body govuk-!-margin-bottom-0"><a class="govuk-link" href="https://www.smartsurvey.co.uk/s/certification-banner/" target="_blank">Complete our survey</a> to help us improve this section of the Apprenticeship assessment service.</p>
     </div>
-    
+
     <div class="info-summary">
-        <h3 class="heading-medium">@Localizer["SearchInfoSummary"]</h3>
+        <h3 class="govuk-heading-m">@Localizer["SearchInfoSummary"]</h3>
     </div>
 
-    <div class="form-group" sfa-validation-for="Surname" sfa-validationerror-class="form-group-error">
-        <label class="form-label" for="Surname">
-            <span class="form-label-bold">@Localizer["Lastname"]</span>
-            <span class="form-hint">@Localizer["LastnameHint"]</span>
-            <span class="error-message" asp-validation-for="Surname"></span>
+     <div class="govuk-form-group" sfa-validation-for="Surname" sfa-validationerror-class="govuk-form-group--error">
+        <label class="govuk-label govuk-label--m" for="Surname">
+            @Localizer["Lastname"]
         </label>
-        <input class="form-control" name="Surname" autocomplete="off" sfa-validation-for="Surname" sfa-validationerror-class="form-control-error" asp-for="Surname" type="text" maxlength="100" />
+        <span id="Surname-hint" class="govuk-hint">@Localizer["LastnameHint"]</span>
+        <span class="govuk-error-message" asp-validation-for="Surname"></span>
+        <input class="govuk-input govuk-!-width-two-thirds" name="Surname" autocomplete="off" sfa-validation-for="Surname" sfa-validationerror-class="govuk-input--error" asp-for="Surname" type="text" maxlength="100" />
     </div>
 
-    <div class="form-group" sfa-validation-for="Uln" sfa-validationerror-class="form-group-error">
-        <label class="form-label" for="Uln">
+     <div class="govuk-form-group" sfa-validation-for="Uln" sfa-validationerror-class="govuk-form-group--error">
+        <label class="govuk-label govuk-label--m" for="Uln">
             <span class="form-label-bold">Unique learner number (<abbr title="Unique learner number">ULN</abbr>)</span>
-            <span class="form-hint">@Localizer["UlnHint"]</span>
-            <span class="error-message" asp-validation-for="Uln"></span>
         </label>
-        <input class="form-control js-integers-only" name="Uln" autocomplete="off" asp-for="Uln" type="text" sfa-validation-for="Uln" sfa-validationerror-class="form-control-error" maxlength="10" />
+        <span id="Uln-hint" class="govuk-hint">@Localizer["UlnHint"]</span>
+        <span class="govuk-error-message" asp-validation-for="Uln"></span>
+        <input class="govuk-input govuk-input--width-10 js-integers-only" name="Uln" autocomplete="off" asp-for="Uln" type="text" sfa-validation-for="Uln" sfa-validationerror-class="govuk-input--error" maxlength="10" />
     </div>
 
-    <details>
-        <summary><span class="summary">What's a <abbr title="Unique learner number">ULN</abbr>?</span></summary>
-        <div class="panel panel-border-narrow" id="what-is-a-unique-learner-number">
-            <p>The <abbr title="Unique learner number">ULN</abbr> is a 10-digit reference number. It's used to access the online Personal Learning Record (<abbr title="Personal Learning Record">PLR</abbr>) of anyone aged 14 and over in UK education or training, including apprenticeships.</p>
+    <details class="govuk-details">
+        <summary class="govuk-details__summary">
+            <span class="govuk-details__summary-text">
+                What's a <abbr title="Unique learner number">ULN</abbr>?
+            </span>
+        </summary>
+        <div class="govuk-details__text">
+            The <abbr title="Unique learner number">ULN</abbr> is a 10-digit reference number. It's used to access the online Personal Learning Record (<abbr title="Personal Learning Record">PLR</abbr>) of anyone aged 14 and over in UK education or training, including apprenticeships.
         </div>
     </details>
 
-    
-    <div class="form-group">
-        <div class="multiple-choice">
-            <input name="IsPrivatelyFunded" asp-for="IsPrivatelyFunded" type="checkbox" type="checkbox" />
-            <label for="IsPrivatelyFunded">@Localizer["PrivatelyFunded"]</label>
+    <div class="govuk-form-group">
+        <div class="govuk-checkboxes">
+            <div class="govuk-checkboxes__item">
+                <input class="govuk-checkboxes__input" name="IsPrivatelyFunded" asp-for="IsPrivatelyFunded" type="checkbox" type="checkbox" />
+                <label class="govuk-label govuk-checkboxes__label" for="IsPrivatelyFunded">@Localizer["PrivatelyFunded"]</label>
+            </div>
         </div>
     </div>
-    <details> 
-        <summary><span class="summary">How do I know if the apprenticeship is privately funded?</span></summary> 
-        <div class="panel panel-border-narrow" id="what-is-a-unique-learner-number"> 
-            <p>The training provider and employer will know if the apprenticeship is privately funded.</p> 
-            <p>A privately funded apprenticeship doesn't receive government funding.</p>
-        </div> 
-    </details>
-    
 
-    <div class="form-group">
-        <input class="button" id="button-search" type="submit" value="@Localizer["SearchButton"]">
-    </div>
+    <input class="govuk-button" id="button-search" type="submit" value="@Localizer["SearchButton"]">
+
+    <details class="govuk-details">
+        <summary class="govuk-details__summary">
+            <span class="govuk-details__summary-text">
+                How do I know if the apprenticeship is privately funded?
+            </span>
+        </summary>
+        <div class="govuk-details__text">
+            <p class="govuk-body">The training provider and employer will know if the apprenticeship is privately funded.</p> 
+            <p class="govuk-body">A privately funded apprenticeship doesn't receive government funding.</p>
+        </div>
+    </details>    
 
 </form>
