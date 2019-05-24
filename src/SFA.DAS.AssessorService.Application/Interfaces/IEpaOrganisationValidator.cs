@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using SFA.DAS.Apprenticeships.Api.Types;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
+using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 
 namespace SFA.DAS.AssessorService.Application.Interfaces
@@ -19,7 +20,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         string CheckOrganisationTypeExists(int? organisationTypeId);
         string CheckIfOrganisationNotFound(string organisationId); 
         string CheckUkprnIsValid(long? ukprn);
-        Task<Standard> GetStandard(int standardCode);
+        Task<StandardCollation> GetStandard(int standardCode);
         string CheckIfOrganisationStandardAlreadyExists(string organisationId, int standardCode);
         string CheckOrganisationNameNotUsed(string name);
         string CheckOrganisationNameNotUsedForOtherOrganisations(string name, string organisationIdToIgnore);

@@ -51,19 +51,29 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
             if (result.IsPrivatelyFunded)
             {
+                //When there is no certficate found
                 if (!result.SearchResults.Any())
                 {
                     return RedirectToAction("Index", "CertificatePrivateDeclaration", vm);
                 }
-                if (result.SearchResults.Any(x => x.Uln == "0" && x.GivenNames == null))
+                //When certificate found but ULN already being used and a different familyname used
+                if (result.SearchResults.Any(x => x.UlnAlreadyExists && x.IsPrivatelyFunded))
+                {
+                    GetSelectedStandardViewModel(result);
+                    return RedirectToAction("Result");
+                }
+                //Certificate found but was for a uln assocaited with a user in another org
+                if (result.SearchResults.Any(x => x.Uln == "0" && x.GivenNames == null && x.IsPrivatelyFunded))
                 {
                     vm.SearchResults = new List<ResultViewModel>();
                     return View("Index", vm);
                 }
-                if (result.SearchResults.Any(x => x.Standard == null))
+                //Certifcate found but no standard set or a certificate reference not set, this could be a draft certificate
+                if (result.SearchResults.Any(x => x.Standard == null || x.CertificateReference == null))
                 {
                     return RedirectToAction("Index", "CertificatePrivateDeclaration", vm);
                 }
+                
             }
 
             if (!result.SearchResults.Any())
@@ -109,7 +119,10 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 SubmittedBy = resultViewModel.SubmittedBy,
                 LearnerStartDate = resultViewModel.LearnStartDate.GetValueOrDefault().ToString("d MMMM yyyy"),
                 AchievementDate = resultViewModel.AchDate.GetValueOrDefault().ToString("d MMMM yyyy"),
-                ShowExtraInfo = resultViewModel.ShowExtraInfo
+                ShowExtraInfo = resultViewModel.ShowExtraInfo,
+                UlnAlreadyExists = resultViewModel.UlnAlreadyExists,
+                IsNoMatchingFamilyName = resultViewModel.IsNoMatchingFamilyName
+
             };
 
             _sessionService.Set("SelectedStandard", selectedStandardViewModel);
