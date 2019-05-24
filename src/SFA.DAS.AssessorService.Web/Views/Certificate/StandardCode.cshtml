@@ -73,6 +73,10 @@ else
     </div>
 </main>
 
+@section Styles {
+    <link rel="stylesheet" href="/stylesheets/accessible-autocomplete.min.css">
+} 
+
 @section Scripts {
     @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
     @{ await Html.RenderPartialAsync("~/Views/Certificate/_StandardCodesScriptsPartial.cshtml"); }

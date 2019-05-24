@@ -15,13 +15,14 @@
             <h1 class="govuk-heading-xl">Pipeline</h1>
         </div>
     </div>
+
     @if (Model.Response.Items.Any())
     {
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
-                <p class="govuk-body">
-                    /* Assessment numbers may vary because of data changes on the individualised learner record (ILR) and certification service. */
-                </p>
+                <div class="govuk-inset-text">
+                    Assessment numbers may vary because of data changes on the individualised learner record (ILR) and certification service.
+                </div>
             </div>
             <div class="govuk-grid-column-one-third">
                 <div class="govuk-form-group align-button-right">
@@ -81,54 +82,53 @@
                 </table>
             </div>
         </div>
-        }
-        else
-        {
-            <div class="govuk-grid-row">
-                <div class="govuk-grid-column-two-thirds">
-                    <p class="govuk-body">
-                        Assessment numbers may vary because of data changes on the individualised learner record (ILR) and certification service.
-                    </p>
-                    <div class="info-summary">
-                        <h3 class="govuk-heading-m">Your pipeline is empty.</h3>
-                    </div>
+    }
+    else
+    {
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <p class="govuk-body">
+                    Assessment numbers may vary because of data changes on the individualised learner record (ILR) and certification service.
+                </p>
+                <div class="info-summary">
+                    <h3 class="govuk-heading-m">Your pipeline is empty.</h3>
                 </div>
             </div>
-        }
-    </div>
-</div>
-@if (Model.Response.HasPreviousPage || Model.Response.HasNextPage)
-{
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-full">
-            <div class="page-navigation">
+        </div>
+    }
 
-                @if (Model.Response.HasPreviousPage)
-                {
-                    <a asp-action="Pipeline"
-                       asp-controller="OrganisationStandards"
-                       asp-route-pageIndex="@(Model.Response.PageIndex - 1)"
-                       class="previous">
-                        <i class="arrow-button icon-left-open">&#xe800;</i>
-                        <span class="description">Previous <span class="hide-mob">page</span></span>
-                        <span class="counter">Page <span class="prevPage">@(Model.Response.PageIndex - 1)</span> of <span class="totalPage">@(Model.Response.TotalPages)</span></span>
-                    </a>
-                }
+    @if (Model.Response.HasPreviousPage || Model.Response.HasNextPage)
+    {
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
+                <div class="page-navigation">
 
-                @if (Model.Response.HasNextPage)
-                {
-                    <a asp-controller="OrganisationStandards"
-                       asp-action="Pipeline"
-                       asp-route-pageIndex="@(Model.Response.PageIndex + 1)"
-                       class="next">
-                        <i class="arrow-button icon-right-open">&#xe801;</i>
-                        <span class="description">Next <span class="hide-mob">page</span></span>
-                        <span class="counter">Page <span class="nextPage">@(Model.Response.PageIndex + 1)</span> of <span class="totalPage">@(Model.Response.TotalPages)</span></span>
-                    </a>
-                }
+                    @if (Model.Response.HasPreviousPage)
+                    {
+                        <a asp-action="Pipeline"
+                        asp-controller="OrganisationStandards"
+                        asp-route-pageIndex="@(Model.Response.PageIndex - 1)"
+                        class="govuk-link previous">
+                            <i class="arrow-button icon-left-open">&#xe800;</i>
+                            <span class="description">Previous <span class="hide-mob">page</span></span>
+                            <span class="counter">Page <span class="prevPage">@(Model.Response.PageIndex - 1)</span> of <span class="totalPage">@(Model.Response.TotalPages)</span></span>
+                        </a>
+                    }
 
+                    @if (Model.Response.HasNextPage)
+                    {
+                        <a asp-controller="OrganisationStandards"
+                        asp-action="Pipeline"
+                        asp-route-pageIndex="@(Model.Response.PageIndex + 1)"
+                        class="govuk-link next">
+                            <i class="arrow-button icon-right-open">&#xe801;</i>
+                            <span class="description">Next <span class="hide-mob">page</span></span>
+                            <span class="counter">Page <span class="nextPage">@(Model.Response.PageIndex + 1)</span> of <span class="totalPage">@(Model.Response.TotalPages)</span></span>
+                        </a>
+                    }
+
+                </div>
             </div>
         </div>
-    </div>
-}
+    }
 </main>
