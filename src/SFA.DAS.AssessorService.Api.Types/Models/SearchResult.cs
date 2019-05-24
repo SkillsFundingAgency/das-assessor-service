@@ -27,5 +27,8 @@ namespace SFA.DAS.AssessorService.Api.Types.Models
         public DateTime? UpdatedAt { get; set; }
         public string UpdatedBy { get; set; }
         public bool ShowExtraInfo { get; set; }
+        public bool UlnAlreadyExits { get; set; }
+        public bool IsPrivatelyFunded { get; set; }
+        public bool IsNoMatchingFamilyName { get; set; }
     }
 }
