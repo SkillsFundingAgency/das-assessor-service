@@ -24,10 +24,12 @@
     <link rel="apple-touch-icon" href="/assets/images/govuk-apple-touch-icon.png">
 
     <!--[if !IE 8]><!-->
-    <link rel="stylesheet" href="/stylesheets/govuk-frontend-2.5.1.min.css">
+    <link rel="stylesheet" href="/stylesheets/govuk-frontend-2.11.0.min.css">
     <!--<![endif]-->
-    <!--[if IE 8]><link rel="stylesheet" href="/stylesheets/govuk-frontend-ie8-2.5.1.min.css"><![endif]-->
+    <!--[if IE 8]><link rel="stylesheet" href="/stylesheets/govuk-frontend-ie8-2.11.0.min.css"><![endif]-->
     <!--[if lt IE 9]><script src="/javascripts/html5shiv.min.js"></script><![endif]-->
+
+    @RenderSection("Styles", required: false)
 
     <environment include="Development">
         <link rel="stylesheet" href="/stylesheets/application.css">
@@ -202,7 +204,7 @@
 <div id="global-app-error" class="app-error hidden"></div>
 
 <environment include="Development">
-    <script src="~/javascripts/govuk-frontend-2.5.1.min.js"></script>
+    <script src="~/javascripts/govuk-frontend-2.11.0.min.js"></script>
     <script src="~/javascripts/lib/jquery/jquery-1.12.4.js"></script>
     <script src="~/javascripts/das-expandable-table.js"></script>
     <script src="~/javascripts/das-cookie-banner.js"></script>
