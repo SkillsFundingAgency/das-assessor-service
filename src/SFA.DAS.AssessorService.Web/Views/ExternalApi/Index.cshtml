@@ -5,47 +5,52 @@
     Layout = "_Layout";
 }
 
-<div class="grid-row">
-    <div class="column-one-third">
-        <a class="link-back" asp-controller="Dashboard" asp-action="Index">Home</a>
+
+<a class="govuk-back-link" asp-controller="Dashboard" asp-action="Index">Home</a>
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <h1 class="govuk-heading-xl">External API Details</h1>
+        </div>
     </div>
-</div>
 
-<div class="grid-row">
-    <div class="column-full">
-        <h1 class="heading-large">External API Details</h1>
-        @if (!Model.PrimaryContacts.Any())
-        {
-            <span class="form-hint">By enabling access you will be the primary contact.</span>
-
-            <form asp-action="EnableAccess" asp-controller="ExternalApi" method="post">
-                <button class="button" type="submit">Enable</button>
-            </form>
-        }
-        else
-        {
-            <div class="grid-row">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Ukprn</th>
-                            <th>Email</th>
-                            <th>Access</th>
-                            <th></th>
+    @if (!Model.PrimaryContacts.Any())
+    {
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <span class="govuk-hint">By enabling access you will be the primary contact.</span>
+                <form asp-action="EnableAccess" asp-controller="ExternalApi" method="post">
+                    <button class="govuk-button" type="submit">Enable</button>
+                </form>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
+                <table class="govuk-table govuk-table--small responsive">
+                    <thead class="govuk-table__head">
+                        <tr class="govuk-table__row">
+                            <th class="govuk-table__header" scope="col">Ukprn</th>
+                            <th class="govuk-table__header" scope="col">Email</th>
+                            <th class="govuk-table__header" scope="col">Access</th>
+                            <th class="govuk-table__header" scope="col"></th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody class="govuk-table__body" scope="col">
                         @foreach (var user in Model.PrimaryContacts)
                         {
-                            <tr>
-                                <td data-label="Ukprn">@user.Ukprn</td>
-                                <td data-label="Email">@user.Email</td>
-                                <td data-label="Access">@(user.IsActive ? "Enabled" : "Disabled")</td>
-                                <td>
+                            <tr class="govuk-table__row">
+                                <td class="govuk-table__cell" data-label="Ukprn">@user.Ukprn</td>
+                                <td class="govuk-table__cell" data-label="Email">@user.Email</td>
+                                <td class="govuk-table__cell" data-label="Access">@(user.IsActive ? "Enabled" : "Disabled")</td>
+                                <td class="govuk-table__cell">
                                     <form asp-action="RemoveAccess" asp-controller="ExternalApi" method="post">
                                         @Html.Hidden("AzureId", user.AzureId, new { @id = "AzureId" })
                                         @Html.Hidden("State", user.State, new { @id = "State" })
-                                        <button class="button" type="submit">Remove access</button>
+                                        <button class="govuk-button" type="submit">Remove access</button>
                                     </form>
                                 </td>
                             </tr>
@@ -53,43 +58,38 @@
                     </tbody>
                 </table>
             </div>
+        </div>
 
-            @if (Model.SubscriptionsToShow.Any())
-            {
-                <div class="grid-row">
-                    <div class="column-two-thirds">
-                        <h1 class="heading-large">Subscriptions</h1>
-                    </div>
+        @if (Model.SubscriptionsToShow.Any())
+        {
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-two-thirds">
+                    <h2 class="govuk-heading-l">Subscriptions</h2>
+                </div>
+            </div>
 
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-full">
                     @foreach (var subscription in Model.SubscriptionsToShow)
                     {
                         var subscriptionUser = Model.PrimaryContacts.Where(pc => pc.Id == subscription.UserId).FirstOrDefault() ?? Model.LoggedInUser;
-                        <div class="column-full form-group">
-                            <h2>
-                                <label class="form-label">
-                                    <span class="heading-medium">@subscription.ProductId</span>
-                                    <span class="form-hint">@subscriptionUser?.Email</span>
-                                </label>
-                            </h2>
-                            <h3 class="heading-small">Api endpoint</h3>
-                            <span class="code">@subscription.ApiEndPointUrl</span>
-                            <h3 class="heading-small">Subscription key</h3>
+                        <div class="govuk-form-group">
+                            <h2 class="govuk-heading-m govuk-!-margin-bottom-1">@subscription.ProductId</h2>
+                            <span class="govuk-caption-m govuk-!-margin-bottom-5">@subscriptionUser?.Email</span>
+
+                            <h3 class="govuk-heading-s">Api endpoint</h3>
+                            <p class="das-code">@subscription.ApiEndPointUrl</p>
+
+                            <h3 class="govuk-heading-s">Subscription key</h3>
+                            <p class="das-code">@subscription.PrimaryKey</p>
+
                             <form asp-action="RenewPrimaryKey" asp-controller="ExternalApi" asp-route-subscriptionId="@subscription.Id" asp-route-userId="@subscription.UserId" method="post">
-                                <span class="code">@subscription.PrimaryKey</span>
-                                <input type="submit" value="Renew" class="button" />
+                                <input type="submit" value="Renew" class="govuk-button" />
                             </form>
-                            @*
-                                <h3 class="heading-small">Secondary subscription key</h3>
-                                <form asp-action="RenewSecondaryKey" asp-controller="ExternalApi" asp-route-subscriptionId="@subscription.Id" asp-route-userId="@subscription.UserId" method="post">
-                                    <span class="code">@subscription.SecondaryKey</span>
-                                    <input type="submit" value="Renew" class="button" />
-                                </form>
-                            *@
                         </div>
                     }
-
                 </div>
-            }
+            </div>
         }
-    </div>
-</div>
+    }
+</main>

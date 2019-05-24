@@ -1,11 +1,13 @@
 ﻿@model string
 @{
-    ViewData["Title"] = "Request Rejected";
+    ViewData["Title"] = "Request rejected";
 }
 
-<div class="grid-row">
-    <div class="column-two-thirds">
-        <h1 class="heading-large">Request to access rejected</h1>
-        <p>Your request to access @Model account has been rejected.</p>
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <h1 class="govuk-heading-xl">Request to access rejected</h1>
+            <p class="govuk-body">Your request to access @Model account has been rejected.</p>
+        </div>
     </div>
-</div>
+</main>
