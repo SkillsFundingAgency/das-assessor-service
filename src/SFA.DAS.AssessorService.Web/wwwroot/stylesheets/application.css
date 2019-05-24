@@ -1173,3 +1173,62 @@ TODO: change to 'das-page-navigation' and BEM
         float: right;
     }
 }
+
+/* Accessible autocomplete */
+
+.autocomplete__hint,
+.autocomplete__input,
+.autocomplete__option {
+    font-family: nta, Arial, sans-serif;
+    -moz-osx-font-smoothing: grayscale;
+    font-weight: 300;
+    font-size: 16px;
+    font-size: 1rem;
+    line-height: 1.25;
+    box-sizing: border-box;
+    width: 100%;
+    height: 40px;
+    margin-top: 0;
+    padding: 5px;
+    border: 2px solid #0b0c0c;
+    border-radius: 0;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+@media (min-width: 40.0625em) {
+    .autocomplete__hint,
+    .autocomplete__input,
+    .autocomplete__option {
+        font-size: 19px;
+    }
+}
+
+.autocomplete__option {
+    cursor: pointer;
+    text-transform: none;
+    border: 0 none;
+    padding: 10px 5px 8px;
+}
+
+.autocomplete__option--focused,
+.autocomplete__option:hover {
+    background-color: #dee0e2;
+    border-color: #dee0e2;
+    color: #0b0c0c;
+    outline: 0;
+}
+
+.autocomplete__option--odd {
+    background-color: #fff;
+}
+
+.autocomplete__menu {
+    background: #fff;
+    border: 2px solid #bfc1c3;
+    list-style-type: none;
+    max-height: 370px;
+    max-width: 100%;
+    overflow-y: auto;
+}
