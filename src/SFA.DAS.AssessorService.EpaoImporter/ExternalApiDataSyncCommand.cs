@@ -18,6 +18,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter
     public class ExternalApiDataSyncCommand : ICommand
     {
         private readonly IAggregateLogger _aggregateLogger;
+        private readonly bool _allowDataSync;
         private readonly string _sourceConnectionString;
         private readonly string _destinationConnectionString;
 
@@ -25,6 +26,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter
         {
             _aggregateLogger = aggregateLogger;
 
+            _allowDataSync = false; // TODO: PLACE THIS INTO config
             _sourceConnectionString = ""; // TODO: PLACE THIS INTO config
             _destinationConnectionString = config.SqlConnectionString;
 
@@ -37,11 +39,19 @@ namespace SFA.DAS.AssessorService.EpaoImporter
             _aggregateLogger.LogInfo("External Api Data Sync Function Started");
             _aggregateLogger.LogInfo($"Process Environment = {EnvironmentVariableTarget.Process}");
 
-            await Step1_Organisation_Data();
-            await Step2_Contacts_Data();
-            await Step3_Standard_Data();
-            await Step4_OrganisationStandard_Data();
-            Step5_Generate_Test_Data();
+            if (_allowDataSync)
+            {
+                _aggregateLogger.LogInfo("Proceeding with External Api Data Sync...");
+                await Step1_Organisation_Data();
+                await Step2_Contacts_Data();
+                await Step3_Standard_Data();
+                await Step4_OrganisationStandard_Data();
+                Step5_Generate_Test_Data();
+            }
+            else
+            {
+                _aggregateLogger.LogInfo("External Api Data Sync is disabled at this time");
+            }
         }
 
 
@@ -63,13 +73,17 @@ namespace SFA.DAS.AssessorService.EpaoImporter
             {
                 using (SqlConnection conn = new SqlConnection(_destinationConnectionString))
                 {
+                    conn.Open();
+
                     bulk.Setup<OrganisationType>()
                         .ForCollection(orgTypes)
                         .WithTable("OrganisationType")
+                        .WithBulkCopySettings( new BulkCopySettings { SqlBulkCopyOptions = SqlBulkCopyOptions.KeepIdentity })
                         .AddAllColumns()
                         .BulkInsertOrUpdate()
                         .SetIdentityColumn(x => x.Id)
                         .MatchTargetOn(x => x.Id)
+                        .DeleteWhenNotMatched(true)
                         .Commit(conn);
 
                     bulk.Setup<Organisation>()
@@ -144,10 +158,12 @@ namespace SFA.DAS.AssessorService.EpaoImporter
                     bulk.Setup<StandardCollation>()
                         .ForCollection(standards)
                         .WithTable("StandardCollation")
+                        .WithBulkCopySettings(new BulkCopySettings { SqlBulkCopyOptions = SqlBulkCopyOptions.KeepIdentity })
                         .AddAllColumns()
                         .BulkInsertOrUpdate()
                         .SetIdentityColumn(x => x.Id)
                         .MatchTargetOn(x => x.Id)
+                        .DeleteWhenNotMatched(true)
                         .Commit(conn);
 
                     bulk.Setup<Option>()
@@ -156,6 +172,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter
                         .AddAllColumns()
                         .BulkInsertOrUpdate()
                         .MatchTargetOn(x => x.Id)
+                        .DeleteWhenNotMatched(true)
                         .Commit(conn);
                 }
 
@@ -183,25 +200,24 @@ namespace SFA.DAS.AssessorService.EpaoImporter
             {
                 using (SqlConnection conn = new SqlConnection(_destinationConnectionString))
                 {
-                    conn.Open();
-
-                    // NOTE: Have to delete these as IDENTITY insert isn't working correctly
-                    conn.Execute("DELETE FROM OrganisationStandardDeliveryArea");
-                    conn.Execute("DELETE FROM OrganisationStandard");
-
                     bulk.Setup<DeliveryArea>()
                         .ForCollection(deliveryArea)
                         .WithTable("DeliveryArea")
+                        .WithBulkCopySettings(new BulkCopySettings { SqlBulkCopyOptions = SqlBulkCopyOptions.KeepIdentity })
                         .AddAllColumns()
                         .BulkInsertOrUpdate()
                         .SetIdentityColumn(x => x.Id)
                         .MatchTargetOn(x => x.Id)
+                        .DeleteWhenNotMatched(true)
                         .Commit(conn);
 
-                    // NOTE: For some reason IDENTITY insert isn't working correctly
+                    // NOTE: Have to delete these as IDENTITY insert isn't working correctly (maybe because the Id's don't start at 1 due to spreadsheet import)
+                    conn.Execute("DELETE FROM OrganisationStandardDeliveryArea;");
+
                     bulk.Setup<EpaOrganisationStandard>()
                         .ForCollection(orgStandard)
                         .WithTable("OrganisationStandard")
+                        .WithBulkCopySettings(new BulkCopySettings { SqlBulkCopyOptions = SqlBulkCopyOptions.KeepIdentity })
                         .AddAllColumns()
                         .RemoveColumn(x => x.ContactEmail)
                         .RemoveColumn(x => x.ContactName)
@@ -209,20 +225,28 @@ namespace SFA.DAS.AssessorService.EpaoImporter
                         .BulkInsertOrUpdate()
                         .SetIdentityColumn(x => x.Id)
                         .MatchTargetOn(x => x.Id)
+                        .DeleteWhenNotMatched(true)
                         .Commit(conn);
 
-                    // NOTE: For some reason IDENTITY insert isn't working correctly
-                    // NOTE: As the Id's won't match, we cannot sync this
-                    //bulk.Setup<EpaOrganisationStandardDeliveryArea>()
-                    //    .ForCollection(orgStandardDeliveryArea)
-                    //    .WithTable("OrganisationStandardDeliveryArea")
-                    //    .AddAllColumns()
-                    //    .RemoveColumn(x => x.EndPointAssessorOrganisationId)
-                    //    .RemoveColumn(x => x.StandardCode)
-                    //    .BulkInsertOrUpdate()
-                    //    .SetIdentityColumn(x => x.Id)
-                    //    .MatchTargetOn(x => x.Id)
-                    //    .Commit(conn);
+                    // NOTE: As the Id's won't match, we cannot do this...
+                    //    bulk.Setup<EpaOrganisationStandardDeliveryArea>()
+                    //        .ForCollection(orgStandardDeliveryArea)
+                    //        .WithTable("OrganisationStandardDeliveryArea")
+                    //        .WithBulkCopySettings(new BulkCopySettings { SqlBulkCopyOptions = SqlBulkCopyOptions.KeepIdentity })
+                    //        .AddAllColumns()
+                    //        .RemoveColumn(x => x.EndPointAssessorOrganisationId)
+                    //        .RemoveColumn(x => x.StandardCode)
+                    //        .BulkInsertOrUpdate()
+                    //        .SetIdentityColumn(x => x.Id)
+                    //        .MatchTargetOn(x => x.Id)
+                    //        .DeleteWhenNotMatched(true)
+                    //        .Commit(conn);
+                    // ... so we have to generate fake data instead
+                    conn.Execute(@" INSERT INTO OrganisationStandardDeliveryArea
+                                           (OrganisationStandardId, DeliveryAreaId, Comments, Status)
+	                                SELECT os.Id, da.Id AS DeliveryAreaId, NULL AS Comments, os.Status
+	                                FROM OrganisationStandard os, DeliveryArea da
+	                                WHERE os.Status = 'Live' AND da.Status = 'Live';");
                 }
 
                 trans.Complete();
