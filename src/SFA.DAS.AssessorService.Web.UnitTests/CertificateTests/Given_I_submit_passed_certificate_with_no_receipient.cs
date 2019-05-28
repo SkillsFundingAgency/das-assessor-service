@@ -23,29 +23,29 @@ using Organisation = SFA.DAS.AssessorService.Domain.Entities.Organisation;
 
 namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
 {
-    public class Given_I_post_the_date_of_a_failed_grade
+    public class Given_I_submit_passed_certificate_with_no_receipient
     {
         private Certificate Certificate;
-        private RedirectToActionResult _result;
+        private ViewResult _result;
+        private CertificateCheckViewModelValidator _validator;
 
         [SetUp]
         public void Arrange()
         {
             Certificate = SetupCertificate();
 
-            var certificateDateController =
-                new CertificateDateController(Mock.Of<ILogger<CertificateController>>(),
+            var certificateCheckController =
+                new CertificateCheckController(Mock.Of<ILogger<CertificateController>>(),
                     SetupHttpContextAssessor(),
                     SetUpCertificateApiClient(),
                     SetupValidator(),
                     SetupSessionService()
                     );
 
-            certificateDateController.TempData = new TempDataDictionary(new DefaultHttpContext(), Mock.Of<ITempDataProvider>());
+            certificateCheckController.TempData = new TempDataDictionary(new DefaultHttpContext(), Mock.Of<ITempDataProvider>());
 
             var vm = SetupViewModel();
-
-            _result = certificateDateController.Date(vm).GetAwaiter().GetResult() as RedirectToActionResult;
+            _result = certificateCheckController.Check(vm).GetAwaiter().GetResult() as ViewResult;
         }
 
         private Certificate SetupCertificate()
@@ -53,8 +53,14 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
             var certificate = new Builder().CreateNew<Certificate>()
                 .With(q => q.CertificateData = JsonConvert.SerializeObject(new Builder()
                     .CreateNew<CertificateData>()
-                    .With(x => x.OverallGrade = CertificateGrade.Fail)
-                    .With(x => x.AchievementDate = null)
+                    .With(x => x.OverallGrade = CertificateGrade.Pass)
+                    .With(x => x.AchievementDate = DateTime.Now)
+                    .With(x => x.ContactName = null)
+                    .With(x => x.ContactAddLine1 = null)
+                    .With(x => x.ContactAddLine2 = null)
+                    .With(x => x.ContactAddLine3 = null)
+                    .With(x => x.ContactAddLine4 = null)
+                    .With(x => x.ContactPostCode = null)
                     .Build()))
                 .Build();
 
@@ -68,15 +74,10 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
             return certificate;
         }
 
-        private CertificateDateViewModel SetupViewModel()
+        private CertificateCheckViewModel SetupViewModel()
         {
-            var viewModel = new CertificateDateViewModel();
+            var viewModel = new CertificateCheckViewModel();
             viewModel.FromCertificate(Certificate);
-
-            viewModel.Day = DateTime.Now.Day.ToString();
-            viewModel.Month = DateTime.Now.Month.ToString();
-            viewModel.Year = DateTime.Now.Year.ToString();
-
             return viewModel;
         }
 
@@ -90,13 +91,13 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
             return MockedCertificateApiClient.Setup(Certificate, new Mock<ILogger<CertificateApiClient>>());
         }
 
-        private CertificateDateViewModelValidator SetupValidator()
+        private CertificateCheckViewModelValidator SetupValidator()
         {
             var MockStringLocalizer = new MockStringLocaliserBuilder();
 
-            var localiser = MockStringLocalizer.Build<CertificateDateViewModelValidator>();
+            var localiser = MockStringLocalizer.Build<CertificateCheckViewModelValidator>();
 
-            return new CertificateDateViewModelValidator(localiser.Object);
+            return new CertificateCheckViewModelValidator(localiser.Object);
         }
 
         private ISessionService SetupSessionService()
@@ -118,10 +119,9 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
         }
 
         [Test]
-        public void ThenShouldRedirectToCertificateCheckPage()
+        public void ThenShouldNotProgressToConfirmationPage()
         {
-            _result.ControllerName.Should().Be("CertificateCheck");
-            _result.ActionName.Should().Be("Check");
+            _result.ViewName.Should().Be("~/Views/Certificate/Check.cshtml");
         }
     }
 }
