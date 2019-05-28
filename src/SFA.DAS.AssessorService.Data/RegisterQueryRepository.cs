@@ -9,6 +9,8 @@ using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Data.DapperTypeHandlers;
 using System;
+using SFA.DAS.Apprenticeships.Api.Types;
+using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 
 namespace SFA.DAS.AssessorService.Data
 {
@@ -218,9 +220,22 @@ namespace SFA.DAS.AssessorService.Data
                     await connection.OpenAsync();
 
                 var sqlForStandardByOrganisationId =
-                    "SELECT distinct id,EndPointAssessorOrganisationId as organisationId, StandardCode, EffectiveFrom, EffectiveTo, DateStandardApprovedOnRegister, ContactId, OrganisationStandardData "+
-                     "FROM [OrganisationStandard] WHERE EndPointAssessorOrganisationId = @organisationId";
-                return await connection.QueryAsync<OrganisationStandardSummary>(sqlForStandardByOrganisationId, new {organisationId});
+                    @"SELECT distinct os.*, sc.*
+                FROM [OrganisationStandard] os
+                    INNER JOIN StandardCollation sc ON sc.StandardId = os.StandardCode 
+                WHERE EndPointAssessorOrganisationId = @organisationId";
+                
+                var standard = await connection.QueryAsync<OrganisationStandardSummary, StandardCollation, OrganisationStandardSummary>(
+                    sqlForStandardByOrganisationId, (summary, collation) =>
+                    {
+                        summary.StandardCollation = new StandardCollation()
+                        {
+                            Title = collation.Title
+                        };
+                        return summary;
+                    }, new {organisationId});
+                
+                return standard;
             }
         }
 

@@ -29,7 +29,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         {
             return await SaveViewModel(vm, 
                 returnToIfModelNotValid: "~/Views/Certificate/Declaration.cshtml",
-                nextAction: RedirectToAction("Grade", "CertificateGrade"), action: CertificateActions.Declaration);
+                nextAction: RedirectToAction("Option", "CertificateOption"), action: CertificateActions.Declaration);
         }
     }
 }

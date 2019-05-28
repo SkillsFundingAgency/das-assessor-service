@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Web.Staff.Controllers;
@@ -45,7 +46,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Controllers.PrivateCertificate
                 }
             };
 
-            _result = certificateApprovalsController.Approvals(certificatePostApprovalViewModel).GetAwaiter().GetResult();
+            _result = certificateApprovalsController.Approvals(JsonConvert.SerializeObject(certificatePostApprovalViewModel)).GetAwaiter().GetResult();
             _result.As<RedirectToActionResult>().ActionName.Should().Be("Approved");
             var returnResult = certificateApprovalsController.Approved(0).GetAwaiter().GetResult();
             returnResult.As<ViewResult>().Model.As<CertificateApprovalViewModel>().ApprovedCertificates.Items.Count()
@@ -71,7 +72,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Controllers.PrivateCertificate
                 }
             };
 
-            _result = certificateApprovalsController.Approvals(certificatePostApprovalViewModel).GetAwaiter().GetResult();
+            _result = certificateApprovalsController.Approvals(JsonConvert.SerializeObject(certificatePostApprovalViewModel)).GetAwaiter().GetResult();
             _result.As<RedirectToActionResult>().ActionName.Should().Be("Rejected");
             var returnResult = certificateApprovalsController.Rejected(0).GetAwaiter().GetResult();
             returnResult.As<ViewResult>().Model.As<CertificateApprovalViewModel>().RejectedCertificates.Items.Count()
@@ -93,10 +94,11 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Controllers.PrivateCertificate
                         PrivatelyFundedStatus = CertificateStatus.SentForApproval,
                         ReasonForChange = "SomeReason"
                     }
-                }
+                },
+                PageIndex = 0,
             };
 
-            _result = certificateApprovalsController.Approvals(certificatePostApprovalViewModel).GetAwaiter().GetResult();
+            _result = certificateApprovalsController.Approvals(JsonConvert.SerializeObject(certificatePostApprovalViewModel)).GetAwaiter().GetResult();
             _result.As<RedirectToActionResult>().ActionName.Should().Be("SentForApproval");
             var returnResult = certificateApprovalsController.SentForApproval(0).GetAwaiter().GetResult();
             returnResult.As<ViewResult>().Model.As<CertificateApprovalViewModel>().SentForApprovalCertificates.Items.Count()

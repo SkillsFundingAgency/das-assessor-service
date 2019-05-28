@@ -5,16 +5,18 @@
     Layout = "_Layout";
 }
 
-<div class="grid-row">
-    <div class="column-two-thirds">
-        @if (Model != null)
-        {
-            <h1 class="heading-large">Your application to assess @Model.StandardName has been approved.</h1>
-        }
-        else
-        {
-            <h1 class="heading-large">Your application has been approved.</h1>
-        }
-        <p>Before we can add your organisation to the Register, remember to sign and return the conditions of acceptance letter to <a href="mailto:apprentice.assessment@education.gov.uk">apprentice.assessment@education.gov.uk</a></p>
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            @if (Model != null)
+            {
+                <h1 class="govuk-heading-xl">Your application to assess @Model.StandardName has been approved.</h1>
+            }
+            else
+            {
+                <h1 class="govuk-heading-xl">Your application has been approved.</h1>
+            }
+            <p class="govuk-body">Before we can add your organisation to the Register, remember to sign and return the conditions of acceptance letter to <a href="mailto:apprentice.assessment@education.gov.uk">apprentice.assessment@education.gov.uk</a></p>
+        </div>
     </div>
-</div>
+</main>
