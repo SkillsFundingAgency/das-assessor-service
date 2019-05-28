@@ -65,7 +65,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             }
 
             viewModel.Organisations = await _organisationsApplyApiClient.SearchForOrganisations(viewModel.SearchString);
-            viewModel.Organisations = viewModel.Organisations?.OrderByDescending(x => x.RoEPAOApproved).ThenByDescending(x => x.RoATPApproved).ToList();
+            viewModel.Organisations = await OrderOrganisationByLiveStatus(viewModel);
+
             return View(viewModel);
         }
 
@@ -87,8 +88,23 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             }
 
             viewModel.Organisations = await _organisationsApplyApiClient.SearchForOrganisations(viewModel.SearchString);
-            viewModel.Organisations= viewModel.Organisations?.OrderByDescending(x => x.RoEPAOApproved).ThenByDescending( x => x.RoATPApproved).ToList();
+            viewModel.Organisations = await OrderOrganisationByLiveStatus(viewModel);
+
             return View(nameof(Results), viewModel);
+        }
+
+
+        private async Task<List<OrganisationSearchResult>> OrderOrganisationByLiveStatus(OrganisationSearchViewModel viewModel)
+        {
+            foreach (var org in viewModel.Organisations)
+            {
+                if (org.RoEPAOApproved && org.Ukprn != null)
+                {
+                    var foundOrg = await _organisationsApiClient.Get(Convert.ToString(org.Ukprn.Value));
+                    org.OrganisationIsAlive = foundOrg?.Status.Equals("Live", StringComparison.CurrentCultureIgnoreCase) ?? false;
+                }
+            }
+            return viewModel.Organisations?.OrderByDescending(x => x.OrganisationIsAlive).ToList();
         }
 
         [HttpPost]
