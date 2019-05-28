@@ -56,7 +56,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 return RedirectToAction("Index", "Search");
             }
             var certSession = JsonConvert.DeserializeObject<CertificateSession>(sessionString);
-            TempData["HideOption"] = certSession is null || !certSession.Options.Any();
 
             var certificate = await CertificateApiClient.GetCertificate(certSession.CertificateId);
 

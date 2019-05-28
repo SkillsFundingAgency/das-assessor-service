@@ -41,8 +41,6 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
                     SetupSessionService()
                     );
 
-            certificateDateController.TempData = new TempDataDictionary(new DefaultHttpContext(), Mock.Of<ITempDataProvider>());
-
             var vm = SetupViewModel();
 
             _result = certificateDateController.Date(vm).GetAwaiter().GetResult() as RedirectToActionResult;

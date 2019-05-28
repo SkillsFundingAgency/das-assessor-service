@@ -2,11 +2,13 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.Validators;
 using SFA.DAS.AssessorService.Web.ViewModels.Certificate;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Web.Controllers
@@ -26,6 +28,14 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Check()
         {
+            var sessionString = SessionService.Get("CertificateSession");
+            if (sessionString == null)
+            {
+                return RedirectToAction("Index", "Search");
+            }
+            var certSession = JsonConvert.DeserializeObject<CertificateSession>(sessionString);
+            TempData["HideOption"] = !certSession.Options.Any();
+
             return await LoadViewModel<CertificateCheckViewModel>("~/Views/Certificate/Check.cshtml");
         }
         
@@ -40,7 +50,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
             if (!result.IsValid)
             {
-                return await LoadViewModel<CertificateCheckViewModel>("~/Views/Certificate/Check.cshtml");
+                return await Check();
             }
 
             return await SaveViewModel(vm, 
