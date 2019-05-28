@@ -18,7 +18,7 @@
     {
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-full">
-                <table class="govuk-table govuk-table--small responsive user-content">
+                <table class="govuk-table">
                     <thead class="govuk-table__head">
                         <tr class="govuk-table__row">
                             <th class="govuk-table__header" scope="col">
@@ -44,7 +44,7 @@
                                     <span>@Html.DisplayFor(modelItem => item.Contact.Email)</span>
                                 </td>
                                 <td class="govuk-table__cell" data-label="@Localizer["What they can do"]">
-                                    <ul class="govuk-list govuk-list--bullet">
+                                    <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-0">
                                         @foreach (var role in item.Privileges )
                                         {
                                             <li> @Html.DisplayFor(modelItem => role)</li>
