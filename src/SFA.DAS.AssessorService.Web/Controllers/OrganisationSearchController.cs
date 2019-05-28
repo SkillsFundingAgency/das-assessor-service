@@ -101,7 +101,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 if (org.RoEPAOApproved && org.Ukprn != null)
                 {
                     var foundOrg = await _organisationsApiClient.Get(Convert.ToString(org.Ukprn.Value));
-                    org.OrganisationIsAlive = foundOrg?.Status.Equals("Live", StringComparison.CurrentCultureIgnoreCase) ?? false;
+                    org.OrganisationIsAlive = foundOrg?.Status.Equals(OrganisationStatus.Live, StringComparison.CurrentCultureIgnoreCase) ?? false;
                 }
             }
             return viewModel.Organisations?.OrderByDescending(x => x.OrganisationIsAlive).ToList();
