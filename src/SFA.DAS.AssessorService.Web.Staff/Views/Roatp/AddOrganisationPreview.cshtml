@@ -10,7 +10,8 @@
         <form asp-controller="AddRoatpOrganisation" asp-action="Back" method="post" name="backForm">
             <div class="govuk-grid-column-one-half">
                 <input type="hidden" asp-for="OrganisationId" />
-                <input type="hidden" name="action" value="AddOrganisationDetails" />
+                <input type="hidden" asp-for="ProviderTypeId" />
+                <input type="hidden" name="action" value="AddOrganisationType" />
                 <a href="JavaScript:document.backForm.submit();" class="govuk-back-link">Back</a>
             </div>
         </form>
@@ -31,17 +32,6 @@
 
 
                     <dl class="govuk-summary-list">
-
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">
-                                Legal name
-                            </dt>
-                            <dd class="govuk-summary-list__value_long">
-                                @Html.Raw(Model.LegalName)
-                            </dd>
-
-                        </div>
-
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">
                                 UKPRN
@@ -51,7 +41,6 @@
                             </dd>
 
                         </div>
-
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">
                                 Type of provider
@@ -64,14 +53,29 @@
 
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">
-                                Type of organisation
+                                Legal name
                             </dt>
-                            <dd class="govuk-summary-list__value">
-                                @Html.Raw(Model.OrganisationTypes.FirstOrDefault(x => x.Id == Model.OrganisationTypeId).Type)
+                            <dd class="govuk-summary-list__value_long">
+                                @Html.Raw(Model.LegalName)
                             </dd>
 
                         </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Trading name
+                            </dt>
+                            <dd class="govuk-summary-list__value_long">
+                                @if (!String.IsNullOrWhiteSpace(Model.TradingName))
+                                {
+                                    @Html.Raw(Model.TradingName)
+                                }
+                                else
+                                {
+                                    <span class='govuk-hint'>Not applicable</span>
+                                }
+                            </dd>
 
+                        </div>
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">
                                 Company number
@@ -105,31 +109,25 @@
                             </dd>
 
                         </div>
-
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">
-                                Trading name
+                                Type of organisation
                             </dt>
-                            <dd class="govuk-summary-list__value_long">
-                                @if (!String.IsNullOrWhiteSpace(Model.TradingName))
-                                {
-                                    @Html.Raw(Model.TradingName)
-                                }
-                                else
-                                {
-                                    <span class='govuk-hint'>Not applicable</span>
-                                }
+                            <dd class="govuk-summary-list__value">
+                                @Html.Raw(Model.OrganisationTypes.FirstOrDefault(x => x.Id == Model.OrganisationTypeId).Type)
                             </dd>
 
                         </div>
 
+                       
+
                     </dl>
 
-                    <form method="post" asp-action="CreateOrganisation" asp-controller="AddRoatpOrganisation">
+                    <form aria-activedescendantmethod="post" asp-action="CreateOrganisation" asp-controller="AddRoatpOrganisation">
                         @{
                             await Html.RenderPartialAsync("~/Views/Roatp/_AddOrganisationFieldsPartial.cshtml");
                         }
-                        <input type="submit" class="roatp-button" value="Confirm and add" />
+                        <input type="submit" class="roatp-button" value="Confirm and add organisation" />
                     </form>
                 </div>
 

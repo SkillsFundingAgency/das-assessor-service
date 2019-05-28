@@ -1,4 +1,5 @@
 ﻿using System.Net.Http;
+using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client;
 using SFA.DAS.AssessorService.Application.Api.Services;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
@@ -78,7 +79,16 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
                 return Redirect("/ukprn-not-found");
             }
 
-            var vm = new AddOrganisationViewModel
+            _sessionService.SetAddOrganisationDetails(new AddOrganisationViewModel
+                {
+                    UKPRN = model.UKPRN,
+                    LegalName = details.LegalName,
+                    TradingName = details.TradingName,
+                    CompanyNumber = details.CompanyNumber,
+                    CharityNumber = details.CharityNumber
+                });
+
+            var vm = new AddOrganisationProviderTypeViewModel
             {
                 UKPRN = model.UKPRN,
                 LegalName = details.LegalName,
@@ -87,9 +97,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
                 CharityNumber = details.CharityNumber
             };
 
-            _sessionService.SetAddOrganisationDetails(vm);
-
-            return RedirectToAction("AddProviderType");
+            return View("~/Views/Roatp/UkprnPreview.cshtml", vm);
         }
 
         [Route("provider-type")]
@@ -113,6 +121,13 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
         [Route("type-organisation")]
         public async Task<IActionResult> AddOrganisationType(AddOrganisationProviderTypeViewModel model)
         {
+
+            if (string.IsNullOrEmpty(model.LegalName))
+            {
+                var providerDetailsContainer = _sessionService.GetAddOrganisationDetails();
+                model.ProviderTypeId = providerDetailsContainer.ProviderTypeId;
+            }
+
             if (!IsRedirectFromConfirmationPage() && !ModelState.IsValid)
             {
                 model.ProviderTypes = await _apiClient.GetProviderTypes();
@@ -156,16 +171,14 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
             vm.LegalName = vm.LegalName.ToUpper();
             _sessionService.SetAddOrganisationDetails(vm);
 
-            //return View("~/Views/Roatp/ConfirmDetails.cshtml");
-
-
-
             model.OrganisationTypes = await _apiClient.GetOrganisationTypes(vm.ProviderTypeId);
             model.ProviderTypes = await _apiClient.GetProviderTypes();
             model.ProviderTypeId = vm.ProviderTypeId;
-            model.LegalName = TextSanitiser.SanitiseText(vm.LegalName).ToUpper();
+            model.LegalName = TextSanitiser.SanitiseText(vm.LegalName);
             model.TradingName = TextSanitiser.SanitiseText(vm.TradingName);
             model.UKPRN = vm.UKPRN;
+            model.CompanyNumber = vm.CompanyNumber;
+            model.CharityNumber = vm.CharityNumber;
 
             return View("~/Views/Roatp/AddOrganisationPreview.cshtml", model);
         }
@@ -351,7 +364,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
         {
             var model = _sessionService.GetAddOrganisationDetails();
 
-            return RedirectToAction(action);
+            return RedirectToAction(action, model);
         }
 
         private CreateOrganisationRequest CreateAddOrganisationRequestFromModel(AddOrganisationViewModel model)
@@ -369,7 +382,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
                 StatusDate = DateTime.Now,
                 Ukprn = model.UKPRN,
                 TradingName = model?.TradingName,
-                Username = HttpContext.User.OperatorName()
+                Username = HttpContext.User.OperatorName(),
+                SourceIsUKRLP = true
             };
             return request;
         }
@@ -382,6 +396,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
                 return false;
             }
             var referer = refererHeaders[0];
+
+            var path = ControllerContext.HttpContext.Request.Path.ToString();
 
             if (referer.Contains("confirm-details"))
             {

@@ -19,5 +19,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Roatp
         public bool NonLevyContract { get; set; }
 
         public string Username { get; set; }
+
+        public bool? SourceIsUKRLP { get; set; }
     }
 }
