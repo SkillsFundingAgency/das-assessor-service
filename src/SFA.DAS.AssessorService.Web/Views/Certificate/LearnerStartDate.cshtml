@@ -24,7 +24,7 @@ else
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
 
-            <form class="apprentice-learner-date-form js-disable-on-submit" method="post" asp-controller="CertificatePrivateLearnerStartDate">
+            <form class="apprentice-learner-date-form js-disable-on-submit" method="post" asp-controller="CertificatePrivateLearnerStartDate" autocomplete="off">
                 <input type="hidden" name="fullDate" id="fullDate" class="date-input" />
                 @Html.HiddenFor(c => c.Id)
                 @Html.HiddenFor(m => m.StartDate)
@@ -80,7 +80,7 @@ else
                                 <label class="govuk-label govuk-date-input__label" for="Day">
                                     Day
                                 </label>
-                                <input class="govuk-input govuk-date-input__input govuk-input--width-2 js-integers-only" sfa-validation-for="Day" sfa-validationerror-class="govuk-input--error" asp-for="Day" type="text" maxlength="2" />
+                                <input class="govuk-input govuk-date-input__input govuk-input--width-2 js-integers-only" sfa-validation-for="Day" sfa-validationerror-class="govuk-input--error" asp-for="Day" type="text" maxlength="2" autocomplete="off" />
                             </div>
                         </div>
                         <div class="govuk-date-input__item">
@@ -88,7 +88,7 @@ else
                                 <label class="govuk-label govuk-date-input__label" for="Month">
                                     Month
                                 </label>
-                                <input class="govuk-input govuk-date-input__input govuk-input--width-2 js-integers-only" sfa-validation-for="Month" sfa-validationerror-class="govuk-input--error" asp-for="Month" type="text" maxlength="2" />
+                                <input class="govuk-input govuk-date-input__input govuk-input--width-2 js-integers-only" sfa-validation-for="Month" sfa-validationerror-class="govuk-input--error" asp-for="Month" type="text" maxlength="2" autocomplete="off" />
                             </div>
                         </div>
                         <div class="govuk-date-input__item">
@@ -96,7 +96,7 @@ else
                                 <label class="govuk-label govuk-date-input__label"  for="Year">
                                     Year
                                 </label>
-                                <input class="govuk-input govuk-date-input__input govuk-input--width-4 js-integers-only" sfa-validation-for="Year" sfa-validationerror-class="govuk-input--error" asp-for="Year" type="text" maxlength="4" />
+                                <input class="govuk-input govuk-date-input__input govuk-input--width-4 js-integers-only" sfa-validation-for="Year" sfa-validationerror-class="govuk-input--error" asp-for="Year" type="text" maxlength="4" autocomplete="off" />
                             </div>
                         </div>
                     </div>
