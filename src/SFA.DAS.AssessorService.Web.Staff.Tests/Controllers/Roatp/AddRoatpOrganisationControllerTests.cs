@@ -94,42 +94,56 @@
             result.Should().BeAssignableTo<ViewResult>();
             _client.VerifyAll();
         }
-        
-        //MFCMFC
-        //[Test]
-        //public void Add_organisation_confirmation_shows_organisation_to_be_created()
-        //{
-        //    var model = new AddOrganisationViewModel
-        //    {
-        //        ProviderTypeId = 1, UKPRN = "10001234", LegalName = "Legal Name",
-        //        CompanyNumber = "12345678", OrganisationTypeId = 1          
-        //    };
 
-        //    var providerTypes = new List<ProviderType>
-        //    {
-        //        new ProviderType {Id = 1, Type = "Main provider"},
-        //        new ProviderType {Id = 2, Type = "Employer provider"}
-        //    };
-        //    _client.Setup(x => x.GetProviderTypes()).ReturnsAsync(providerTypes).Verifiable();
+        [Test]
+        public void Add_organisation_confirmation_shows_organisation_to_be_created()
+        {
 
-        //    var organisationTypes = new List<OrganisationType>
-        //    {
-        //        new OrganisationType {Id = 1, Type = "Education"},
-        //        new OrganisationType {Id = 2, Type = "Public sector body"}
-        //    };
+            var temporaryModel = new AddOrganisationViewModel
+            {
+                ProviderTypeId = 1,
+                UKPRN = "10001234",
+                LegalName = "Legal Name",
+                CompanyNumber = "12345678",
+                OrganisationTypeId = 1
+            };
 
-        //    var validationResult = new ValidationResponse
-        //    {
-        //        Errors = new List<ValidationErrorDetail>()
-        //    };
+            _sessionService.Setup(x => x.GetAddOrganisationDetails()).Returns(temporaryModel);
 
-        //    var result = _controller.ConfirmOrganisationDetails(model).GetAwaiter().GetResult();
+            var model = new AddOrganisationTypeViewModel
+            {
+                ProviderTypeId = temporaryModel.ProviderTypeId,
+                UKPRN = temporaryModel.UKPRN,
+                LegalName = temporaryModel.LegalName,
+                CompanyNumber = temporaryModel.CompanyNumber,
+                OrganisationTypeId = temporaryModel.OrganisationTypeId
+            };
 
-        //    var viewResult = result as ViewResult;
-        //    var confirmationModel = viewResult.Model as AddOrganisationViewModel;
+            var providerTypes = new List<ProviderType>
+            {
+                new ProviderType {Id = 1, Type = "Main provider"},
+                new ProviderType {Id = 2, Type = "Employer provider"}
+            };
+            _client.Setup(x => x.GetProviderTypes()).ReturnsAsync(providerTypes).Verifiable();
 
-        //    confirmationModel.UKPRN.Should().Be(model.UKPRN);
-        //}
+            var organisationTypes = new List<OrganisationType>
+            {
+                new OrganisationType {Id = 1, Type = "Education"},
+                new OrganisationType {Id = 2, Type = "Public sector body"}
+            };
+
+            var validationResult = new ValidationResponse
+            {
+                Errors = new List<ValidationErrorDetail>()
+            };
+
+            var result = _controller.ConfirmOrganisationDetails(model).GetAwaiter().GetResult();
+
+            var viewResult = result as ViewResult;
+            var confirmationModel = viewResult.Model as AddOrganisationTypeViewModel;
+
+            confirmationModel.UKPRN.Should().Be(model.UKPRN);
+        }
 
         [Test]
         public void Create_organisation_shows_error_message_if_unable_to_save_details()

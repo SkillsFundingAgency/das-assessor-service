@@ -397,8 +397,6 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
             }
             var referer = refererHeaders[0];
 
-            var path = ControllerContext.HttpContext.Request.Path.ToString();
-
             if (referer.Contains("confirm-details"))
             {
                 return true;
