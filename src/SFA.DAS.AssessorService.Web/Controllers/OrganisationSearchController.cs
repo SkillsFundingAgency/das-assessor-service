@@ -65,6 +65,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             }
 
             viewModel.Organisations = await _organisationsApplyApiClient.SearchForOrganisations(viewModel.SearchString);
+            viewModel.Organisations = viewModel.Organisations?.OrderByDescending(x => x.RoEPAOApproved).ThenByDescending(x => x.RoATPApproved).ToList();
             return View(viewModel);
         }
 
@@ -86,6 +87,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             }
 
             viewModel.Organisations = await _organisationsApplyApiClient.SearchForOrganisations(viewModel.SearchString);
+            viewModel.Organisations= viewModel.Organisations?.OrderByDescending(x => x.RoEPAOApproved).ThenByDescending( x => x.RoATPApproved).ToList();
             return View(nameof(Results), viewModel);
         }
 

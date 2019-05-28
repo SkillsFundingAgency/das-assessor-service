@@ -25,5 +25,16 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Organisation
 
         [JsonIgnore]
         public IEnumerable<OrganisationType> OrganisationTypes { get; set; }
+
+        public string OrganisationFoundString()
+        {
+            var result= "0 results found";
+            if(Organisations != null && Organisations.Any())
+            {
+                var resultsString = Organisations.Count() > 1 ? "results" : "result";
+                result = $"{Organisations.Count()} {resultsString} found";
+            }
+            return result;  
+        }
     }
 }
