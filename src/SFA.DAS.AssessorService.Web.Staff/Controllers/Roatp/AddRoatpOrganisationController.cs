@@ -100,7 +100,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
             return View("~/Views/Roatp/UkprnPreview.cshtml", vm);
         }
 
-        [Route("provider-type")]
+        [Route("provider-route")]
         public async Task<IActionResult> AddProviderType()
         {
             var addOrganisationModel = _sessionService.GetAddOrganisationDetails();
@@ -157,7 +157,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
         }
 
 
-        [Route("confirm-details")]
+        [Route("add-confirm")]
         public async Task<IActionResult> ConfirmOrganisationDetails(AddOrganisationTypeViewModel model)
         {
             var organisationVm = _sessionService.GetAddOrganisationDetails();
@@ -315,26 +315,6 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
             return View("~/Views/Roatp/AddOrganisationDetails.cshtml", addOrganisationModel);
         }
 
-        // TODO: REMOVEREMOVE once established there is no totally manual entry process
-        //[Route("confirm-details-original")]
-        //public async Task<IActionResult> AddOrganisationPreview(AddOrganisationViewModel model)
-        //{
-        //    model.OrganisationTypes = await _apiClient.GetOrganisationTypes(model.ProviderTypeId);
-        //    model.ProviderTypes = await _apiClient.GetProviderTypes();
-        //    model.LegalName = TextSanitiser.SanitiseText(model?.LegalName);
-        //    model.TradingName = TextSanitiser.SanitiseText(model?.TradingName);
-        //    if (!ModelState.IsValid)
-        //    {
-        //        model.ProviderTypes = await _apiClient.GetProviderTypes();
-        //        return View("~/Views/Roatp/AddOrganisationDetails.cshtml", model);
-        //    }
-
-        //    model.LegalName = model.LegalName.ToUpper();
-  
-        //    _sessionService.SetAddOrganisationDetails(model);
-
-        //    return View("~/Views/Roatp/AddOrganisationPreview.cshtml", model);
-        //}
 
         [Route("successfully-added")]
         public async Task<IActionResult> CreateOrganisation(AddOrganisationViewModel model)
@@ -397,7 +377,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
             }
             var referer = refererHeaders[0];
 
-            if (referer.Contains("confirm-details"))
+            if (referer.Contains("add-confirm"))
             {
                 return true;
             }

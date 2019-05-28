@@ -39,7 +39,9 @@
                             <dd class="govuk-summary-list__value">
                                 @Html.Raw(Model.UKPRN)
                             </dd>
-
+                            <dd class="govuk-summary-list__actions">
+                                <a href="#">Change</a>
+                            </dd>
                         </div>
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">
@@ -48,7 +50,9 @@
                             <dd class="govuk-summary-list__value">
                                 @Html.Raw(Model.ProviderTypes.FirstOrDefault(x => x.Id == Model.ProviderTypeId).Type)
                             </dd>
-
+                            <dd class="govuk-summary-list__actions">
+                                <a href="#">Change</a>
+                            </dd>
                         </div>
 
                         <div class="govuk-summary-list__row">
@@ -58,7 +62,9 @@
                             <dd class="govuk-summary-list__value_long">
                                 @Html.Raw(Model.LegalName)
                             </dd>
-
+                            <dd class="govuk-summary-list__actions">
+                                <a href="#">Change</a>
+                            </dd>
                         </div>
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">
@@ -74,7 +80,9 @@
                                     <span class='govuk-hint'>Not applicable</span>
                                 }
                             </dd>
-
+                            <dd class="govuk-summary-list__actions">
+                                <a href="#">Change</a>
+                            </dd>
                         </div>
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">
@@ -90,7 +98,9 @@
                                     <span class='govuk-hint'>Not applicable</span>
                                 }
                             </dd>
-
+                            <dd class="govuk-summary-list__actions">
+                                <a href="#">Change</a>
+                            </dd>
                         </div>
 
                         <div class="govuk-summary-list__row">
@@ -107,7 +117,9 @@
                                     <span class='govuk-hint'>Not applicable</span>
                                 }
                             </dd>
-
+                            <dd class="govuk-summary-list__actions">
+                                <a href="#">Change</a>
+                            </dd>
                         </div>
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">
@@ -116,7 +128,9 @@
                             <dd class="govuk-summary-list__value">
                                 @Html.Raw(Model.OrganisationTypes.FirstOrDefault(x => x.Id == Model.OrganisationTypeId).Type)
                             </dd>
-
+                            <dd class="govuk-summary-list__actions">
+                                <a href="#">Change</a>
+                            </dd>
                         </div>
 
                        
