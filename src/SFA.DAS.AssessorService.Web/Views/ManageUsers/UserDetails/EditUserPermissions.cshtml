@@ -39,7 +39,7 @@
                             {
                                 <div class="govuk-checkboxes__item">
                                     <input type="hidden" name="PrivilegeViewModels[@i].Privilege.Id" value="@Model.EditPrivilegesViewModel.PrivilegeViewModels[i].Privilege.Id"/>
-                                    <input class="govuk-checkboxes__input" type="checkbox" id="PrivilegeViewModels[@i].Selected" name="permissions" value="true" @(Model.EditPrivilegesViewModel.PrivilegeViewModels[i].Selected ? "checked" : "")/>
+                                    <input class="govuk-checkboxes__input" type="checkbox" id="PrivilegeViewModels[@i].Selected" name="PrivilegeViewModels[@i].Selected" value="true" @(Model.EditPrivilegesViewModel.PrivilegeViewModels[i].Selected ? "checked" : "")/>
                                     <label class="govuk-label govuk-checkboxes__label" for="PrivilegeViewModels[@i].Selected">@Model.AllPrivilegeTypes[i].UserPrivilege</label>
                                 </div>
                             }
