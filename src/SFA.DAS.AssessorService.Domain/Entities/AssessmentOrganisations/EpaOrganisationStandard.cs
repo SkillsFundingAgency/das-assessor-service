@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SFA.DAS.AssessorService.Domain.Entities.AssessmentOrganisations
 {
@@ -18,5 +20,8 @@ namespace SFA.DAS.AssessorService.Domain.Entities.AssessmentOrganisations
 
         public Guid? ContactId { get; set; }
         public OrganisationStandardData OrganisationStandardData { get; set; }
+
+        [NotMapped]
+        public string OrganisationStandardDataJsonString { get => JsonConvert.SerializeObject(OrganisationStandardData); }
     }
 }

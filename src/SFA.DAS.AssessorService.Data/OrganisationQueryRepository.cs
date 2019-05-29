@@ -73,7 +73,7 @@ namespace SFA.DAS.AssessorService.Data
         {
 
             return await _assessorDbContext.Organisations.Include(x => x.OrganisationType).
-                FirstOrDefaultAsync(x => x.OrganisationDataFromJson.LegalName == name);
+                FirstOrDefaultAsync(x => x.OrganisationData.LegalName == name);
         }
         
     }

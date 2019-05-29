@@ -20,14 +20,10 @@ namespace SFA.DAS.AssessorService.Domain.Entities
 
         public string Status { get; set; }
 
-        public string OrganisationData { get; set; }
+        public OrganisationData OrganisationData { get; set; }
 
         [NotMapped]
-        public OrganisationData OrganisationDataFromJson
-        {
-            get => JsonConvert.DeserializeObject<OrganisationData>(string.IsNullOrWhiteSpace(OrganisationData) ? "{}" : OrganisationData);
-            set => OrganisationData = JsonConvert.SerializeObject(value);
-        }
+        public string OrganisationDataJsonString { get => JsonConvert.SerializeObject(OrganisationData); }
         
         public int? OrganisationTypeId { get; set; }
 

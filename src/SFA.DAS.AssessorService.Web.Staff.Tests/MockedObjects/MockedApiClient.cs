@@ -59,8 +59,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.MockedObjects
             var organisation = Builder<Organisation>.CreateNew()
                 .With(q => q.Id = certificate.OrganisationId)
                 .With(q => q.EndPointAssessorOrganisationId = "EPA00001")
-                .With(q => q.OrganisationData = null)
-                .With(q => q.OrganisationDataFromJson = new OrganisationData())
+                .With(q => q.OrganisationData = new OrganisationData())
                 .Build();
 
             mockHttp.When($"http://localhost:59022/api/v1/organisations/organisation/{certificate.OrganisationId}")

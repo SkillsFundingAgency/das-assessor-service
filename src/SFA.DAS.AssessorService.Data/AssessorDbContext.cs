@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
+using SFA.DAS.AssessorService.Domain.Entities;
+using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Data
 {
@@ -78,6 +78,24 @@ namespace SFA.DAS.AssessorService.Data
                 .HasOne<Privilege>(sc => sc.Privilege)
                 .WithMany(s => s.ContactsPrivileges)
                 .HasForeignKey(sc => sc.PrivilegeId);
+
+            SetUpJsonToEntityTypeHandlers(modelBuilder);
+        }
+
+        private void SetUpJsonToEntityTypeHandlers(ModelBuilder modelBuilder)
+        {
+            // NOTE: These work in the same was as the Dapper Type Handlers
+            modelBuilder.Entity<Organisation>()
+                .Property(e => e.OrganisationData)
+                .HasConversion(
+                    c => JsonConvert.SerializeObject(c),
+                    c => JsonConvert.DeserializeObject<OrganisationData>(string.IsNullOrWhiteSpace(c) ? "{}" : c));
+
+            modelBuilder.Entity<Api.Types.Models.Standards.StandardCollation>()
+                .Property(e => e.StandardData)
+                .HasConversion(
+                    c => JsonConvert.SerializeObject(c),
+                    c => JsonConvert.DeserializeObject<Api.Types.Models.Standards.StandardData>(string.IsNullOrWhiteSpace(c) ? "{}" : c));
         }
     }
 }
