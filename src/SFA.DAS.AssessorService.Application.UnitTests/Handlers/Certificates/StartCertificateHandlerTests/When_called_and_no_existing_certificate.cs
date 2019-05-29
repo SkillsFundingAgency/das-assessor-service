@@ -7,6 +7,7 @@ using NUnit.Framework;
 using SFA.DAS.Apprenticeships.Api.Types;
 using SFA.DAS.Apprenticeships.Api.Types.Providers;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
+using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Handlers.Certificates;
 using SFA.DAS.AssessorService.Application.Handlers.Staff;
 using SFA.DAS.AssessorService.Application.Interfaces;
@@ -54,7 +55,14 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
             var standardService = new Mock<IStandardService>();
 
             standardService.Setup(c => c.GetStandard(30))
-                .ReturnsAsync(new Standard() {Title = "Standard Name", EffectiveFrom = new DateTime(2016,09,01)});
+                .ReturnsAsync(new StandardCollation()
+                {
+                    Title = "Standard Name",
+                    StandardData = new StandardData
+                    {
+                        EffectiveFrom = new DateTime(2016,09,01)
+                    }
+                });
             assessmentOrgsApiClient.Setup(c => c.GetProvider(It.IsAny<long>()))
                 .ReturnsAsync(new Provider {ProviderName = "A Provider"});
 

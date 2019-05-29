@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Web.Constants;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.Orchestrators.Search;
@@ -45,14 +47,39 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 return View(vm);
             }
 
-            if (vm.IsPrivatelyFunded)
+            var result = await _searchOrchestrator.Search(vm);
+
+            if (result.IsPrivatelyFunded)
             {
-                return RedirectToAction("Index", "CertificatePrivateDeclaration", vm);
+                //When there is no certficate found
+                if (!result.SearchResults.Any())
+                {
+                    return RedirectToAction("Index", "CertificatePrivateDeclaration", vm);
+                }
+                //When certificate found but ULN already being used and a different familyname used
+                if (result.SearchResults.Any(x => x.UlnAlreadyExists && x.IsPrivatelyFunded))
+                {
+                    GetSelectedStandardViewModel(result);
+                    return RedirectToAction("Result");
+                }
+                //Certificate found but was for a uln assocaited with a user in another org
+                if (result.SearchResults.Any(x => x.Uln == "0" && x.GivenNames == null && x.IsPrivatelyFunded))
+                {
+                    vm.SearchResults = new List<ResultViewModel>();
+                    return View("Index", vm);
+                }
+                //Certifcate found but no standard set or a certificate reference not set, this could be a draft certificate
+                if (result.SearchResults.Any(x => x.Standard == null || x.CertificateReference == null))
+                {
+                    return RedirectToAction("Index", "CertificatePrivateDeclaration", vm);
+                }
+                
             }
 
-            var result = await _searchOrchestrator.Search(vm);
-            if (!result.SearchResults.Any()) return View("Index", vm);
+            if (!result.SearchResults.Any())
+                return View("Index", vm);
 
+          
             _sessionService.Set("SearchResults", result);
             
             if (result.SearchResults.Count() > 1)
@@ -60,7 +87,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 GetChooseStandardViewModel(vm);
                 return RedirectToAction("ChooseStandard");
             }
-
+            
             GetSelectedStandardViewModel(result);
             return RedirectToAction("Result");
         }
@@ -92,7 +119,10 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 SubmittedBy = resultViewModel.SubmittedBy,
                 LearnerStartDate = resultViewModel.LearnStartDate.GetValueOrDefault().ToString("d MMMM yyyy"),
                 AchievementDate = resultViewModel.AchDate.GetValueOrDefault().ToString("d MMMM yyyy"),
-                ShowExtraInfo = resultViewModel.ShowExtraInfo
+                ShowExtraInfo = resultViewModel.ShowExtraInfo,
+                UlnAlreadyExists = resultViewModel.UlnAlreadyExists,
+                IsNoMatchingFamilyName = resultViewModel.IsNoMatchingFamilyName
+
             };
 
             _sessionService.Set("SelectedStandard", selectedStandardViewModel);

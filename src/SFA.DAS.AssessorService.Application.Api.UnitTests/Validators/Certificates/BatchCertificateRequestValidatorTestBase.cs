@@ -3,7 +3,6 @@ using Moq;
 using Newtonsoft.Json;
 using SFA.DAS.Apprenticeships.Api.Types;
 using SFA.DAS.Apprenticeships.Api.Types.AssessmentOrgs;
-using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
@@ -11,6 +10,7 @@ using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
 using SFA.DAS.AssessorService.ExternalApis.Services;
 using System;
 using System.Collections.Generic;
+using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using Organisation = SFA.DAS.AssessorService.Domain.Entities.Organisation;
 
 
@@ -22,7 +22,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Certifica
         public Mock<IOrganisationQueryRepository> OrganisationQueryRepositoryMock { get; }
         public Mock<IIlrRepository> IlrRepositoryMock { get; }
         public Mock<IAssessmentOrgsApiClient> AssessmentOrgsApiClientMock { get; }
-        public Mock<IStandardRepository> StandardRepositoryMock { get;}
+        public Mock<IStandardService> StandardServiceMock {get;}
 
         public BatchCertificateRequestValidatorTestBase()
         {
@@ -30,7 +30,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Certifica
             OrganisationQueryRepositoryMock = SetupOrganisationQueryRepositoryMock();
             IlrRepositoryMock = SetupIlrRepositoryMock();
             AssessmentOrgsApiClientMock = SetupAssessmentOrgsApiClientMock();
-            StandardRepositoryMock = SetupStandardRepositoryMock();
+            StandardServiceMock = SetupStandardServiceMock();
         }
 
         private static Mock<ICertificateRepository> SetupCertificateRepositoryMock()
@@ -65,10 +65,10 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Certifica
             return organisationQueryRepositoryMock;
         }
 
-        private static Mock<IStandardRepository> SetupStandardRepositoryMock()
+        private static Mock<IStandardService> SetupStandardServiceMock()
         {
-            var standardRepositoryMock = new Mock<IStandardRepository>();
-            standardRepositoryMock.Setup(c => c.GetStandardCollations())
+            var standardServiceMock = new Mock<IStandardService>();
+            standardServiceMock.Setup(c => c.GetAllStandards())
                 .ReturnsAsync(new List<StandardCollation>
                 {
                     GenerateStandard(1),
@@ -76,11 +76,11 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Certifica
                     GenerateStandard(99)
                 });
 
-            standardRepositoryMock.Setup(c => c.GetStandardCollationByReferenceNumber("ST0001")).ReturnsAsync(GenerateStandard(1));
-            standardRepositoryMock.Setup(c => c.GetStandardCollationByReferenceNumber("ST0098")).ReturnsAsync(GenerateStandard(98));
-            standardRepositoryMock.Setup(c => c.GetStandardCollationByReferenceNumber("ST0099")).ReturnsAsync(GenerateStandard(99));
+            standardServiceMock.Setup(c => c.GetStandard(1)).ReturnsAsync(GenerateStandard(1));
+            standardServiceMock.Setup(c => c.GetStandard(98)).ReturnsAsync(GenerateStandard(98));
+            standardServiceMock.Setup(c => c.GetStandard(99)).ReturnsAsync(GenerateStandard(99));
 
-            return standardRepositoryMock;
+            return standardServiceMock;
         }
 
         private static Mock<IAssessmentOrgsApiClient> SetupAssessmentOrgsApiClientMock()
@@ -165,9 +165,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Certifica
         {
             return Builder<StandardCollation>.CreateNew()
                 .With(i => i.Title = $"{standardCode}")
-                .With(i => i.StandardId = standardCode)
-                .With(i => i.ReferenceNumber = $"ST{standardCode:D4}")
-                .Build();
+                .With(i => i.StandardData = new StandardData(){Level = standardCode}).Build();
         }
 
         private static StandardOrganisationSummary GenerateStandardOrganisationSummary(int standardCode)

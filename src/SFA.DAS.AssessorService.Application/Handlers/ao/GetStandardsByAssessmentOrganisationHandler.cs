@@ -37,12 +37,12 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ao
                 orgStandard.DeliveryAreas = deliveryAreas.ToList();
             }
 
-            var allStandards = _standardService.GetAllStandardsV2().Result;
+            var allStandards = _standardService.GetAllStandards().Result;
 
             foreach (var organisationStandard in orgStandards)
             {
-                var std = allStandards.FirstOrDefault(x => x.Id == organisationStandard.StandardCode.ToString());
-                organisationStandard.StandardSummary = std;
+                var std = allStandards.FirstOrDefault(x => x.StandardId == organisationStandard.StandardCode);
+                organisationStandard.StandardCollation = std;
             }
             return orgStandards.ToList();
         }

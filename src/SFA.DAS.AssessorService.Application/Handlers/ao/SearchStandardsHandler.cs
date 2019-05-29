@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using SFA.DAS.Apprenticeships.Api.Types;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
+using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.Application.Exceptions;
 using SFA.DAS.AssessorService.Application.Interfaces;
@@ -15,7 +16,7 @@ using SFA.DAS.AssessorService.ExternalApis.Services;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.ao
 {
-    public class SearchStandardsHandler: IRequestHandler<SearchStandardsRequest, List<StandardSummary>>
+    public class SearchStandardsHandler: IRequestHandler<SearchStandardsRequest, List<StandardCollation>>
     {
         private readonly IStandardService _standardService;
         private readonly ILogger<SearchStandardsHandler> _logger;
@@ -30,7 +31,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ao
             _validator = validator;
         }
 
-        public async Task<List<StandardSummary>> Handle(SearchStandardsRequest request, CancellationToken cancellationToken)
+        public async Task<List<StandardCollation>> Handle(SearchStandardsRequest request, CancellationToken cancellationToken)
         {
             _logger.LogInformation("Handling Search Standards Request");
             
@@ -47,11 +48,12 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ao
 
                 throw new Exception(message);
             }
-            var isAnInt = int.TryParse(searchstring, out _);
+            
+            var isAnInt = int.TryParse(searchstring, out var intSearchString);
            
-            var allStandards = await _standardService.GetAllStandardsV2();
+            var allStandards = await _standardService.GetAllStandards();
             return isAnInt 
-                ? allStandards.Where(x => x.Id == searchstring).ToList() 
+                ? allStandards.Where(x => x.StandardId == intSearchString).ToList() 
                 : allStandards.Where(x => 
                     _cleanser.UnescapeAndRemoveNonAlphanumericCharacters(x.Title.ToLower()).Contains(searchstring.ToLower())).ToList();
         }
