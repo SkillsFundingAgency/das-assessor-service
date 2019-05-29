@@ -7,79 +7,89 @@
     Layout = "_DashboardLayout";
 }
 
-<div class="grid-row">
-    <div class="column-two-thirds">
-        @if (Model.BackToCheckPage)
-        {
-            <a class="link-back" asp-controller="CertificateCheck" asp-action="Check">Back</a>
-        }
-        else if(Model.IsPrivatelyFunded)
-        {
-            <a class="link-back" asp-controller="CertificateOption" asp-action="Option" asp-route-fromback="true">Back</a>
-        }
-        else
-        {
-            <a class="link-back" asp-controller="CertificateOption" asp-action="Option" asp-route-fromback="true">Back</a>
-        }
+@if (Model.BackToCheckPage)
+{
+    <a class="govuk-back-link" asp-controller="CertificateCheck" asp-action="Check">Back</a>
+}
+else if(Model.IsPrivatelyFunded)
+{
+    <a class="govuk-back-link" asp-controller="CertificatePrivateProviderUkprn" asp-action="Ukprn">Back</a>
+}
+else
+{
+    <a class="govuk-back-link" asp-controller="CertificateOption" asp-action="Option" asp-route-fromback="true">Back</a>
+}
 
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
 
-        <form class="apprentice-grade-form js-disable-on-submit" method="post" asp-controller="CertificateGrade">
-            @Html.HiddenFor(c => c.Id)
+            <form class="apprentice-grade-form js-disable-on-submit" method="post" asp-controller="CertificateGrade">
+                @Html.HiddenFor(c => c.Id)
 
-            @* hidden with css by default *@
-            <div class="js-error-summary error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
-                <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
-                    There's a problem
-                </h2>
-                <ul class="js-error-summary-list error-summary-list"></ul>
-            </div>
-
-            @if (!ViewData.ModelState.IsValid)
-            {
-                <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
-                    <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
-                        There's a problem
+                <div class="js-error-summary govuk-error-summary" role="alert" aria-labelledby="error-summary-title" tabindex="-1" data-module="error-summary">
+                    <h2 class="govuk-error-summary__title" id="error-summary-title">
+                        There is a problem
                     </h2>
-                    <ul class="error-summary-list">
-                        <li><a sfa-validation-for="SelectedGrade"></a></li>
-                        @*<li><a href="#Pass">You need to specify an achievement grade for this apprentice</a></li>*@
-                    </ul>
-                </div>
-            }
-
-            <div sfa-anyvalidationerror-class="after-error-summary">
-                <h1 class="heading-large">
-                    @Localizer["Heading"]
-                </h1>
-                <div class="form-group" sfa-validation-for="SelectedGrade" sfa-validationerror-class="form-group-error">
-                    <div class="error-message-container" sfa-validation-for="SelectedGrade">
-                        <span class="error-message" asp-validation-for="SelectedGrade"></span>
+                    <div class="govuk-error-summary__body">
+                        <ul class="js-error-summary-list govuk-list govuk-error-summary__list"></ul>
                     </div>
-                    @foreach (var grade in Model.Grades)
-                    {
-                        <div class="multiple-choice">
-                            <input asp-for="SelectedGrade" id="@grade.Text.Replace(" ", "_")" type="radio" value="@grade.Text" />
-                            <label for="@grade.Text.Replace(" ", "_")">
-                                @grade.Text
-                            </label>
+                </div>
+
+                @if (!ViewData.ModelState.IsValid)
+                {
+                    <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
+                        <h2 class="govuk-error-summary__title" id="error-summary-title">
+                            There is a problem
+                        </h2>
+                        <div class="govuk-error-summary__body">
+                            <ul class="govuk-list govuk-error-summary__list">
+                                <li><a sfa-validation-for="SelectedGrade"></a></li>
+                                @*<li><a href="#Pass">You need to specify an achievement grade for this apprentice</a></li>*@
+                            </ul>
                         </div>
-                    }
-                </div>
-            </div>
+                    </div>
+                }
 
-            <details>
-                <summary><span class="summary">@Localizer["InfoHeader"]</span></summary>
-                <div class="panel panel-border-narrow" id="what-is-no-grade-awarded">
-                    <p>
+                <div class="govuk-form-group" sfa-validation-for="SelectedGrade" sfa-validationerror-class="govuk-form-group--error">
+                    <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
+                        <h1 class="govuk-fieldset__heading">
+                            @Localizer["Heading"]
+                        </h1>
+                    </legend>
+
+                    <span class="govuk-error-message" asp-validation-for="SelectedGrade"></span>
+
+                    <div class="govuk-radios">
+                        @foreach (var grade in Model.Grades)
+                        {
+                            <div class="govuk-radios__item">
+                                <input class="govuk-radios__input" asp-for="SelectedGrade" id="@grade.Text.Replace(" ", "_")" type="radio" value="@grade.Text" />
+                                <label class="govuk-label govuk-radios__label" for="@grade.Text.Replace(" ", "_")">
+                                    @grade.Text
+                                </label>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <button type="submit" class="govuk-button">@Localizer["ContinueButton"]</button>
+
+                <details class="govuk-details">
+                    <summary class="govuk-details__summary">
+                        <span class="govuk-details__summary-text">
+                            @Localizer["InfoHeader"]
+                        </span>
+                    </summary>
+                    <div class="govuk-details__text">
                         @Localizer["InfoBody"]
-                    </p>
-                </div>
-            </details>
+                    </div>
+                </details>
 
-            <button type="submit" class="button">@Localizer["ContinueButton"]</button>
-        </form>
+            </form>
+        </div>
     </div>
-</div>
+</main>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
