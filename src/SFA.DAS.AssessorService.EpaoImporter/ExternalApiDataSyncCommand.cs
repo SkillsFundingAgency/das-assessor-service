@@ -30,6 +30,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter
             _sourceConnectionString = config.ExternalApiDataSync.SourceSqlConnectionString;
             _destinationConnectionString = config.SqlConnectionString;
 
+            SqlMapper.AddTypeHandler(typeof(Domain.Entities.OrganisationData), new OrganisationDataHandler());
             SqlMapper.AddTypeHandler(typeof(StandardData), new StandardDataHandler());
             SqlMapper.AddTypeHandler(typeof(OrganisationStandardData), new OrganisationStandardDataHandler());
         }
@@ -90,6 +91,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter
                         .ForCollection(orgs)
                         .WithTable("Organisations")
                         .AddAllColumns()
+                        .CustomColumnMapping(x => x.OrganisationDataJsonString, "OrganisationData")
                         .BulkInsertOrUpdate()
                         .MatchTargetOn(x => x.Id)
                         .Commit(conn);
@@ -160,6 +162,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter
                         .WithTable("StandardCollation")
                         .WithBulkCopySettings(new BulkCopySettings { SqlBulkCopyOptions = SqlBulkCopyOptions.KeepIdentity })
                         .AddAllColumns()
+                        .CustomColumnMapping(x => x.StandardDataJsonString, "StandardData")
                         .BulkInsertOrUpdate()
                         .SetIdentityColumn(x => x.Id)
                         .MatchTargetOn(x => x.Id)
@@ -222,6 +225,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter
                         .RemoveColumn(x => x.ContactEmail)
                         .RemoveColumn(x => x.ContactName)
                         .RemoveColumn(x => x.ContactPhoneNumber)
+                        .CustomColumnMapping(x => x.OrganisationStandardDataJsonString, "OrganisationStandardData")
                         .BulkInsertOrUpdate()
                         .SetIdentityColumn(x => x.Id)
                         .MatchTargetOn(x => x.Id)
