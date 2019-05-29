@@ -7,8 +7,6 @@ namespace SFA.DAS.AssessorService.Domain.Entities
 {
     public class Organisation : BaseEntity
     {
-        private string _extendedOrgData;
-
         public Guid Id { get; set; }
 
         public string EndPointAssessorOrganisationId { get; set; }
@@ -21,12 +19,14 @@ namespace SFA.DAS.AssessorService.Domain.Entities
         public string ApiUser { get; set; }
 
         public string Status { get; set; }
-        
+
+        public string OrganisationData { get; set; }
+
         [NotMapped]
         public OrganisationData OrganisationDataFromJson
         {
-            get => JsonConvert.DeserializeObject<OrganisationData>(string.IsNullOrEmpty(_extendedOrgData) ? "{}" : _extendedOrgData);
-            set => _extendedOrgData = value.ToString();
+            get => JsonConvert.DeserializeObject<OrganisationData>(string.IsNullOrWhiteSpace(OrganisationData) ? "{}" : OrganisationData);
+            set => OrganisationData = JsonConvert.SerializeObject(value);
         }
         
         public int? OrganisationTypeId { get; set; }
