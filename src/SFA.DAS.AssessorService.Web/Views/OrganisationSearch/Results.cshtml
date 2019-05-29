@@ -88,10 +88,17 @@
                                             @string.Join(", ", addressArray.Where(s => !string.IsNullOrEmpty(s)));
                                         }
                                     </p>
-
-                                    @if (!string.Equals(configuration["EnvironmentName"], "PROD", StringComparison.InvariantCultureIgnoreCase))
+                                    @*Caters for both PROD and PREPROD*@
+                                    @if (!configuration["EnvironmentName"].EndsWith("PROD", StringComparison.InvariantCultureIgnoreCase))
                                     {
                                         @* ON-1205 - request to show flags of what results were found in non-PROD environments *@
+                                        @if (result.OrganisationType != null)
+                                        {
+                                            <p class="govuk-body govuk-!-margin-bottom-1">
+                                                <span class="govuk-!-font-weight-bold">Type:</span>
+                                                @result.OrganisationType
+                                            </p>
+                                        }
                                         <p class="govuk-body">
                                             <span class="govuk-!-font-weight-bold">Found on:</span>
                                             @if (result.RoEPAOApproved)
@@ -128,7 +135,7 @@
                                             </strong>
                                         </p>
                                     }
-                                    </td>
+                                </td>
                             </tr>
                                     }
                     </tbody>
