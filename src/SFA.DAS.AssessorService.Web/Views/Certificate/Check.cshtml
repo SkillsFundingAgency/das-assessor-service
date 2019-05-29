@@ -321,10 +321,15 @@ else
                 </dl>
             }
 
-            <form class="js-disable-on-submit" method="post" asp-controller="CertificateCheck">
-                @Html.HiddenFor(c => c.Id)
-                <button type="submit" class="govuk-button">@Localizer["ContinueButton"]</button>
-            </form>
+                <form class="js-disable-on-submit" method="post" asp-controller="CertificateCheck">
+                    @Html.HiddenFor(c => c.Id)
+                    @Html.HiddenFor(c => c.SelectedGrade)
+                    @Html.HiddenFor(c => c.Name)
+                    @Html.HiddenFor(c => c.AddressLine1)
+                    @Html.HiddenFor(c => c.City)
+                    @Html.HiddenFor(c => c.Postcode)
+                    <button type="submit" class="govuk-button">@Localizer["ContinueButton"]</button>
+                </form>
         </div>
     </div>
 </main>
