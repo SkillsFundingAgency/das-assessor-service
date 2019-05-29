@@ -102,6 +102,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Controllers.PrivateCertificate
             certificate.OrganisationId = organisaionId;
 
             var organisation = new Builder().CreateNew<Organisation>()
+                .With(x => x.OrganisationData = null)
+                .With(x => x.OrganisationDataFromJson = new OrganisationData())
                 .Build();
 
             certificate.Organisation = organisation;
