@@ -7,102 +7,121 @@
     Layout = "_DashboardLayout";
 }
 
+<a class="govuk-back-link" asp-controller="Search" asp-action="ChooseStandard">Back</a>
 
-<div class="grid-row">
-    <div class="column-two-thirds">
-        <a class="link-back" asp-controller="Search" asp-action="ChooseStandard">Back</a>
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
 
-        @if (Model.CertificateReference == null && !Model.UlnAlreadyExists )
-        {
+            @if (Model.CertificateReference == null && !Model.UlnAlreadyExists )
+            {
+                <h1 class="govuk-heading-xl">Confirm this is the correct apprentice</h1>
+                <form class="apprentice-search-result-form js-disable-on-submit" asp-controller="Certificate" asp-action="Start" method="post">
+                    <div class="govuk-form-group">
+                        <dl class="govuk-summary-list">
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Name:</dt>
+                                <dd class="govuk-summary-list__value">@Model.GivenNames @Model.FamilyName</dd>
+                            </div>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key"><abbr title="Unique learner number">ULN</abbr>:</dt>
+                                <dd class="govuk-summary-list__value">@Model.Uln</dd>
+                            </div>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Standard:</dt>
+                                <dd class="govuk-summary-list__value">@Model.Standard</dd>
+                            </div>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Level:</dt>
+                                <dd class="govuk-summary-list__value">@Model.Level</dd>
+                            </div>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Learner start date:</dt>
+                                <dd class="govuk-summary-list__value">@Model.LearnerStartDate</dd>
+                            </div>
+                        </dl>
+                        <p class="govuk-body">If the name, standard or level is incorrect, you need to agree on the correct details along with the training provider and the employer. The training provider needs to then update the Individualised Learner Record (<abbr title="Individualised Learner Record">ILR</abbr>).</p>
+                    </div>
 
-            <h1 class="heading-large">Confirm this is the correct apprentice</h1>
-            <form class="apprentice-search-result-form js-disable-on-submit" asp-controller="Certificate" asp-action="Start" method="post">
-                <div class="form-group">
-                    <ul>
-                        <li>
-                            <p><span class="bold">Name:</span> @Model.GivenNames @Model.FamilyName</p>
-                        </li>
-                        <li>
-                            <p><span class="bold"><abbr title="Unique learner number">ULN</abbr>:</span> @Model.Uln</p>
-                        </li>
-                        <li>
-                            <p><span class="bold">Standard:</span> @Model.Standard</p>
-                        </li>
-                        <li>
-                            <p><span class="bold">Level:</span> @Model.Level</p>
-                        </li>
-                        <li>
-                            <p><span class="bold">Learner start date:</span> @Model.LearnerStartDate</p>
-                        </li>
-                    </ul>
-                    <p>If the name, standard or level is incorrect, you need to agree on the correct details along with the training provider and the employer. The training provider needs to then update the Individualised Learner Record (<abbr title="Individualised Learner Record">ILR</abbr>).</p>
-                </div>
+                    @Html.HiddenFor(m => m.Uln)
+                    @Html.HiddenFor(m => m.StdCode)
+                    <button class="govuk-button" type="submit">Confirm and continue</button>
+                </form>
 
-                @Html.HiddenFor(m => m.Uln)
-                @Html.HiddenFor(m => m.StdCode)
-                <div class="form-group">
-                    <button class="button" type="submit">Confirm and continue</button>
-                </div>
-            </form>
+                <p class="govuk-body"><a class="govuk-link" asp-controller="Search" asp-action="Index">Search again</a> if this isn't the correct apprentice.</p>
+            }
+            else if (Model.UlnAlreadyExists && Model.IsNoMatchingFamilyName)
+            {
+                <h1 class="govuk-heading-xl">An assessment has already been recorded against this ULN</h1>
 
-            <p><a asp-controller="Search" asp-action="Index">Search again</a> if this isn't the correct apprentice.</p>
-        }else if (Model.UlnAlreadyExists && Model.IsNoMatchingFamilyName)
-        {
-            <h1 class="heading-large">An assessment has already been recorded against this ULN</h1>
-            <ul class="list">
-                <li>
-                    <p><span class="bold"><abbr title="Unique learner number">ULN</abbr>:</span> @Model.Uln</p>
-                </li>
-            </ul>
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key"><abbr title="Unique learner number">ULN</abbr>:</dt>
+                        <dd class="govuk-summary-list__value">@Model.Uln</dd>
+                    </div>
+                </dl>
 
-            <p><a asp-controller="Search" asp-action="Index">Search again</a></p>
-        }
-        else
-        {
-            <h1 class="heading-large">An assessment has already been recorded against this apprentice</h1>
-            <ul class="list">
-                <li>
-                    <p><span class="bold">Name:</span> @Model.GivenNames @Model.FamilyName</p>
-                </li>
-                <li>
-                    <p><span class="bold"><abbr title="Unique learner number">ULN</abbr>:</span> @Model.Uln</p>
-                </li>
-                <li>
-                    <p><span class="bold">Standard:</span> @Model.Standard</p>
-                </li>
-                <li>
-                    <p><span class="bold">Level:</span> @Model.Level</p>
-                </li>
+                <p class="govuk-body">
+                    <a class="govuk-link" asp-controller="Search" asp-action="Index">Search again</a>
+                </p>
+            }
+            else
+            {
+                <h1 class="govuk-heading-xl">An assessment has already been recorded against this apprentice</h1>
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Name:</dt>
+                        <dd class="govuk-summary-list__value">@Model.GivenNames @Model.FamilyName</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key"><abbr title="Unique learner number">ULN</abbr>:</dt>
+                        <dd class="govuk-summary-list__value">@Model.Uln</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Standard:</dt>
+                        <dd class="govuk-summary-list__value">@Model.Standard</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Level:</dt>
+                        <dd class="govuk-summary-list__value">@Model.Level</dd>
+                    </div>
 
-                @if (Model.ShowExtraInfo)
-                {
+                    @if (Model.ShowExtraInfo)
+                    {
 
-                    <li>
-                        <p><span class="bold">Certificate number:</span> @Model.CertificateReference</p>
-                    </li>
-                    <li>
-                        <p><span class="bold">Learner start date:</span> @Model.LearnerStartDate</p>
-                    </li>
-                    <li>
-                        <p><span class="bold">Achievement Date:</span> @Model.AchievementDate</p>
-                    </li>
-                    <li>
-                        <p><span class="bold">Grade:</span> @Model.OverallGrade</p>
-                    </li>
-                    <li>
-                        <p><span class="bold">Recorded by:</span> @Model.SubmittedBy</p>
-                    </li>
-                    <li>
-                        <p><span class="bold">Date recorded:</span> @Model.SubmittedAt</p>
-                    </li>
-                }
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Certificate number:</dt>
+                            <dd class="govuk-summary-list__value">@Model.CertificateReference</dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Learner start date:</dt>
+                            <dd class="govuk-summary-list__value">@Model.LearnerStartDate</dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Achievement date:</dt>
+                            <dd class="govuk-summary-list__value">@Model.AchievementDate</dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Grade:</dt>
+                            <dd class="govuk-summary-list__value">@Model.OverallGrade</dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Recorded by:</dt>
+                            <dd class="govuk-summary-list__value">@Model.SubmittedBy</dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Date recorded:</dt>
+                            <dd class="govuk-summary-list__value">@Model.SubmittedAt</dd>
+                        </div>
+                    }
+                </dl>
 
-            </ul>
+                <p class="govuk-body">
+                    <a class="govuk-link" asp-controller="Search" asp-action="Index">Search again</a>
+                </p>
+            }
 
-            <p><a asp-controller="Search" asp-action="Index">Search again</a></p>
-        }
-
-        
+            
+        </div>
     </div>
-</div>
-
+</main>

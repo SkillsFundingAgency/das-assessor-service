@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ErrorsWithSubmission" xml:space="preserve">
-    <value>There's a problem</value>
+    <value>There is a problem</value>
   </data>
   <data name="PageHeading" xml:space="preserve">
     <value>The apprentice is enrolled on more than one apprenticeship</value>
