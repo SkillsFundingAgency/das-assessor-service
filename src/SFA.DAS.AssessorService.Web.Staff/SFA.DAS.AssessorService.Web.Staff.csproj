@@ -22,7 +22,7 @@
     <PackageReference Include="Microsoft.Extensions.Caching.Redis" Version="2.2.0" />
     <PackageReference Include="Microsoft.ApplicationInsights.NLogTarget" Version="2.6.4" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.WsFederation" Version="2.2.0" />
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.2" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.3" />
 
     <PackageReference Include="NLog.Web.AspNetCore" Version="4.5.4" />
     <PackageReference Include="SFA.DAS.NLog.Targets.Redis" Version="1.1.5" />
@@ -132,6 +132,15 @@
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
     <Content Update="Views\CertificateAmend\_ViewImports.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\CertificateApprovals\SentForApproval.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\CertificateApprovals\Rejected.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\CertificateApprovals\New.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
     <Content Update="Views\Reports\Run.cshtml">

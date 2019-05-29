@@ -1,13 +1,69 @@
 <script>
-
-var epaoApprovalsFormElement = $('.apprentice-approvals-form ');
-var epaoApprovalsValidationRulesObject = {
-    rules: {       
-    },
-    messages: {       
+    var epaoApprovalsFormElement = $('.apprentice-approvals-form ');
+    var numberOfElements = $('.apprentice-approvals-form ').find("textarea").length;
+    var rules = {};
+    var messages = {};
+    for (var i = 0; i < numberOfElements; i++) {
+        rules["approvalresults[" + i + "].ReasonForChange"] = { required: true }
+        messages["approvalresults[" + i + "].ReasonForChange"] = { required: 'Enter a reason for the rejection' }
     }
-};
+    var epaoApprovalsValidationRulesObject = {
+        rules,
+        messages
+    };
 
-GOVUK.epaoValidate(epaoApprovalsFormElement, epaoApprovalsValidationRulesObject);
+    function forwardForm () {
+        var forwardFormElement = $('.apprentice-approvals-form');
+        var data = $(forwardFormElement).serializeArray();
+        if (data !== null && data != undefined && data.length > 0) {
+            var jsonResult = {
+                UserName: '',
+                ActionHint: '',
+                PageIndex: 0,
+                ApprovalResults: []
+            };
+            function ApprovalResult() {
+                this.CertificateReference = '';
+                this.IsApproved = '';
+                this.PrivatelyFundedStatus = '';
+                this.ReasonForChange = '';
+            };
 
+            var approvalResult = new ApprovalResult();
+            var index = 0;
+            var foundIndex = 0;
+            data.forEach(function (element) {
+                var name = element.name;
+                var value = element.value;
+                if (name.indexOf('approvalresults') !== -1) {
+                    var splitName = name.split('.');
+                    foundIndex = parseInt(splitName[0].substring(splitName[0].indexOf('[') + 1, splitName[0].indexOf(']')));
+                    if (foundIndex !== index) {
+                        jsonResult.ApprovalResults[index] = approvalResult;
+                        approvalResult = new ApprovalResult();
+                        index = parseInt(foundIndex);
+                    }
+                    if (approvalResult[splitName[1]] === '')
+                        approvalResult[splitName[1]] = value;
+                }
+                if (name.indexOf('userName') !== -1) {
+                    jsonResult.UserName = value;
+                }
+                if (name.indexOf('actionHint') !== -1) {
+                    jsonResult.ActionHint = value;
+                }
+                if (name.indexOf('pageIndex') !== -1) {
+                    jsonResult.PageIndex = value;
+                }
+            });
+            if ((data.length === 6 || data.length === 7) || index === foundIndex) {
+                jsonResult.ApprovalResults[index] = approvalResult;
+            }
+
+            $('#jsonString').val(JSON.stringify(jsonResult));
+            $('#temp-form').submit();
+        }
+    };
+
+    GOVUK.epaoValidate(epaoApprovalsFormElement, epaoApprovalsValidationRulesObject, forwardForm);
 </script>
