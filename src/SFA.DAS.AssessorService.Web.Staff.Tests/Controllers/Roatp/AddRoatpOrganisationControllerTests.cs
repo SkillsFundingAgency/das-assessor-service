@@ -71,6 +71,22 @@
         }
 
         [Test]
+        public void Enter_ukprn_entry_directs_to_view()
+        {
+            var result = _controller.EnterUkprn().GetAwaiter().GetResult();
+            result.Should().BeAssignableTo<ViewResult>();
+            _client.VerifyAll();
+        }
+
+        [Test]
+        public void ukprn_not_found_directs_to_view()
+        {
+            var result = _controller.UkprnNotFound().GetAwaiter().GetResult();
+            result.Should().BeAssignableTo<ViewResult>();
+            _client.VerifyAll();
+        }
+
+        [Test]
         public void Add_organisation_details_initialises_with_list_of_organisation_types()
         {
             var model = new AddOrganisationProviderTypeViewModel { ProviderTypeId = 1};
@@ -94,6 +110,28 @@
             result.Should().BeAssignableTo<ViewResult>();
             _client.VerifyAll();
         }
+
+        [Test]
+        public void Add_provider_type_model_without_legal_name_redirect_to_organisation_details()
+        {
+            _sessionService.Setup(x => x.SetAddOrganisationDetails(It.IsAny<AddOrganisationViewModel>()));
+            var result = _controller.AddProviderType().GetAwaiter().GetResult();
+            result.Should().BeAssignableTo<RedirectResult>();
+            Assert.AreEqual("organisations-details", ((RedirectResult)result).Url);
+            _client.VerifyAll();
+        }
+
+        [Test]
+        public void Add_provider_type_model_with_legal_name_redirect_to_add_provider_type_page()
+        {
+            var vm = new AddOrganisationViewModel {LegalName = "test"};
+            _sessionService.Setup(x => x.GetAddOrganisationDetails()).Returns(vm);
+            var result = _controller.AddProviderType().GetAwaiter().GetResult();
+            result.Should().BeAssignableTo<ViewResult>();
+            Assert.AreEqual("~/Views/Roatp/AddProviderType.cshtml", ((ViewResult)result).ViewName);
+            _client.VerifyAll();
+        }
+
 
         [Test]
         public void Add_organisation_confirmation_shows_organisation_to_be_created()
