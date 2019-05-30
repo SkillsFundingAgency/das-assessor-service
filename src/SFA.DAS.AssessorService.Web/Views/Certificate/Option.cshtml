@@ -23,7 +23,7 @@ else
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-        
+
             <form class="apprentice-option-form js-disable-on-submit" method="post" asp-controller="Certificate" asp-method="Options">
                 @Html.HiddenFor(c => c.Id)
 
@@ -64,7 +64,7 @@ else
                         @foreach (var option in Model.Options)
                         {
                             <div class="govuk-radios__item" data-target="show-option-input">
-                                <input class="govuk-radios__input" asp-for="Option" id="options_@option.Replace(" ", "")" type="radio" value="@option"/>
+                                <input class="govuk-radios__input" asp-for="Option" id="options_@option.Replace(" ", "")" type="radio" value="@option" />
                                 <label class="govuk-label govuk-radios__label" for="options_@option.Replace(" ", "")">
                                     @option
                                 </label>

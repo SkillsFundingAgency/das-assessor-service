@@ -287,3 +287,7 @@ src/SFA.DAS.AssessorService.Web.Staff/wwwroot/js/*.min.js
 
 #Redundant specflow project
 src/SFA.DAS.AssessorService.Application.Api.Specflow.Tests/**/*.*
+/src/SFA.DAS.AssessorService.Web/wwwroot/css/site.min.css
+/src/SFA.DAS.AssessorService.Web/wwwroot/js/site.min.js
+/src/SFA.DAS.AssessorService.Web/wwwroot/js/postcode-lookup-service.min.js
+/src/SFA.DAS.AssessorService.Web/wwwroot/js/epao-validation.min.js
