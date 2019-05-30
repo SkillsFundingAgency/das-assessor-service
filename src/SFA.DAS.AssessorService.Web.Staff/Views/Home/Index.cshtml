@@ -3,18 +3,22 @@
     Layout = "_Layout";
 }
 
-<div class="grid-row">
-    <div class="column-two-thirds">
-        <h1 class="heading-xlarge">ESFA admin services</h1>
-        <p>Use this service to:</p>
-        <ul class="list list-bullet">
-            <li>evaluate applications</li>
-            <li>manage existing accounts</li>
-            <li>view and download reports</li>
-            <li>issue certificates</li>
-        </ul>
-        <div class="form-group">
-            <a asp-action="SignIn" asp-controller="Account" class="button button-start">Start now</a>
+<main class="govuk-main-wrapper " id="main-content" role="main">
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <h1 class="govuk-heading-xl">ESFA admin services</h1>
+            <p class="govuk-body-l">Use this service to:</p>
+            <ul class="govuk-list govuk-list--bullet">
+                <li>evaluate applications</li>
+                <li>manage existing accounts</li>
+                <li>view and download reports</li>
+                <li>issue certificates</li>
+            </ul>
+            <div class="form-group">
+                <a asp-action="SignIn" asp-controller="Account" class="govuk-button govuk-button--start">Start now</a>
+            </div>
         </div>
     </div>
-</div>
+
+</main>
