@@ -1,12 +1,12 @@
 ﻿using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Host;
 using SFA.DAS.AssessorService.EpaoImporter.Const;
-using SFA.DAS.AssessorService.EpaoImporter.Data;
 using SFA.DAS.AssessorService.EpaoImporter.InfrastructureServices;
 using SFA.DAS.AssessorService.EpaoImporter.Logger;
 using SFA.DAS.AssessorService.EpaoImporter.Startup.DependencyResolution;
 using SFA.DAS.AssessorService.Settings;
 using StructureMap;
+using System.Globalization;
 
 namespace SFA.DAS.AssessorService.EpaoImporter.Startup
 {
@@ -33,15 +33,12 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Startup
 
                 configure.For<IAggregateLogger>().Use(logger).Singleton();
                 configure.For<IWebConfiguration>().Use(configuration).Singleton();
-                //configure.For<IAssessorServiceApi>().Use<AssessorServiceApi>().Singleton();
 
                 logger.LogInfo("Calling http registry and getting the token ....");
                 configure.AddRegistry<HttpRegistry>();
             });
 
-            var language = "en-GB";
-            System.Threading.Thread.CurrentThread.CurrentCulture =
-                new System.Globalization.CultureInfo(language);
+            System.Threading.Thread.CurrentThread.CurrentCulture = new CultureInfo("en-GB");
         }
 
         public T GetInstance<T>()
