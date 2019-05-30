@@ -16,6 +16,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Standards
         [NotMapped]
         public string StandardDataJsonString { get => JsonConvert.SerializeObject(StandardData); }
 
+        [NotMapped]
         public List<string> Options { get; set; }
     }
 }
