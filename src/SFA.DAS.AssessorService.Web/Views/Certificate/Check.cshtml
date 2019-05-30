@@ -51,13 +51,16 @@ else
                 </div>
             }
 
-
-
             <h1 class="govuk-heading-xl">@Localizer["Heading"]</h1>
 
             <div class="info-summary">
                 <h2 class="govuk-heading-m">@Localizer["InfoHeader"]</h2>
-                <p class="govuk-body">@Localizer["InfoLine1"]</p>
+
+                @if (Model.SelectedGrade != CertificateGrade.Fail)
+                {
+                    <p class="govuk-body">@Localizer["InfoLine1"]</p>
+                }
+
                 @if (Model.IsPrivatelyFunded)
                 {
                     <p class="govuk-body">If the name, standard or level is incorrect, you need to agree on the correct details along with the training provider and the employer.</p>

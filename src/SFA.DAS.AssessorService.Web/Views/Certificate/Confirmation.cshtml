@@ -1,4 +1,5 @@
 ﻿@using Microsoft.AspNetCore.Mvc.Localization
+@using SFA.DAS.AssessorService.Domain.Consts
 @inject IViewLocalizer Localizer
 @model SFA.DAS.AssessorService.Web.ViewModels.Certificate.CertificateConfirmationViewModel
 
@@ -20,7 +21,15 @@
                         <br /><strong>@Model.GivenName @Model.FamilyName</strong>
                     </div>
                     <div>
-                        @Localizer["CertificateNumberIs"]<br />
+                         @if (Model.SelectedGrade == CertificateGrade.Fail)
+                        {
+                            @Localizer["ReferenceNumberIs"]
+                        }
+                        else
+                        {
+                            @Localizer["CertificateNumberIs"]
+                        }
+                        <br />
                         <strong>@Model.Reference</strong>
                     </div>
                 </div>

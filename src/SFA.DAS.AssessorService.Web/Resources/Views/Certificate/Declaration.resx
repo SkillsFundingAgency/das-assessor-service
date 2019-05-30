@@ -121,7 +121,7 @@
     <value>Declaration</value>
   </data>
   <data name="InfoHeader" xml:space="preserve">
-    <value>By recording a grade for this apprentice you are confirming that:</value>
+    <value>By recording a grade for this apprentice, you are confirming that:</value>
   </data>
   <data name="InfoLine1" xml:space="preserve">
     <value>the assessment was independent of both the training provider and employer</value>
