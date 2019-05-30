@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -157,8 +158,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             {
                 if (organisationSearchResult.OrganisationReferenceType == "RoEPAO")
                 {
-                    TempData["EpaoId"] = organisationSearchResult.OrganisationReferenceId;
-                    return View(nameof(NoAccess), viewModel);
+                    return RequestAccess(viewModel, organisationSearchResult);
                 }
                 viewModel.Organisations = new List<OrganisationSearchResult> {organisationSearchResult};
                 viewModel.OrganisationTypes = await _organisationsApiClient.GetOrganisationTypes();
@@ -329,6 +329,27 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         private List<OrganisationSearchResult> OrderOrganisationByLiveStatus(OrganisationSearchViewModel viewModel)
         {
             return viewModel.Organisations?.OrderByDescending(x => x.OrganisationIsLive).ToList();
+        }
+
+        private ViewResult RequestAccess(OrganisationSearchViewModel viewModel, OrganisationSearchResult organisationSearchResult)
+        {
+            var newViewModel = Mapper.Map<RequestAccessOrgSearchViewModel>(viewModel);
+            var addressArray = new[] { organisationSearchResult.Address?.Address1, organisationSearchResult.Address?.City, organisationSearchResult.Address.Postcode };
+            newViewModel.Address = string.Join(", ", addressArray.Where(s => !string.IsNullOrEmpty(s)));
+            newViewModel.RoEPAOApproved = organisationSearchResult.RoEPAOApproved;
+            newViewModel.OrganisationIsLive = organisationSearchResult.OrganisationIsLive;
+
+            if (!string.IsNullOrEmpty(organisationSearchResult.CompanyNumber))
+            {
+                newViewModel.CompanyOrCharityDisplayText = "Company number";
+                newViewModel.CompanyNumber = organisationSearchResult.CompanyNumber;
+            }
+            else if (!string.IsNullOrEmpty(organisationSearchResult.CharityNumber))
+            {
+                newViewModel.CompanyOrCharityDisplayText = "Charity number";
+                newViewModel.CompanyNumber = organisationSearchResult.CharityNumber;
+            }
+            return View(nameof(NoAccess), newViewModel);
         }
     }
 }

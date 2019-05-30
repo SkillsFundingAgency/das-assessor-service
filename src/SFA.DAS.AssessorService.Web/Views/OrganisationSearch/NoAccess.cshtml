@@ -1,8 +1,7 @@
 ﻿
-@model SFA.DAS.AssessorService.Web.ViewModels.Organisation.OrganisationSearchViewModel
+@model SFA.DAS.AssessorService.Web.ViewModels.Organisation.RequestAccessOrgSearchViewModel
 @{
     ViewData["Title"] = "Access Denied";
-    string epaoId = TempData["EpaoId"] as string;
 }
 <a asp-action="Results" asp-controller="OrganisationSearch" asp-route-searchString="@Model.SearchString" class="govuk-back-link">Back to search results</a>
 
@@ -16,9 +15,40 @@
                 <input asp-for="OrganisationType" type="hidden" />
                 <input asp-for="Postcode" type="hidden" />
 
-                <h1 class="govuk-heading-xl">Access denied</h1>
-                <p class="govuk-body">You do not have access to @epaoId's End-point assessment services.</p>
-                <button type="submit" class="govuk-button">Send request now</button>
+                <h1 class="govuk-heading-xl">Request Access</h1>
+                @if (@Model.RoEPAOApproved && @Model.OrganisationIsLive)
+                {
+                    <p class="govuk-body">
+                        <strong class="govuk-tag">
+                            ACTIVE ACCOUNT
+                        </strong>
+                    </p>
+                }
+                <table class="govuk-table table.responsive">
+                    <tbody class="govuk-table__body">
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__cell"><strong>Organisation</strong></td>
+                            <td class="govuk-table__cell">@Model.Name</td>
+                        </tr>
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__cell"><strong>Address</strong></td>
+                            <td class="govuk-table__cell">@Model.Address</td>
+                        </tr>
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__cell"><strong>Type</strong></td>
+                            <td class="govuk-table__cell">@Model.OrganisationType</td>
+                        </tr>
+                        @if (!string.IsNullOrEmpty(Model.CompanyNumber))
+                        {
+                            <tr class="govuk-table__row">
+                                <td class="govuk-table__cell"><strong>@Model.CompanyOrCharityDisplayText</strong></td>
+                                <td class="govuk-table__cell">@Model.CompanyNumber</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                <p class="govuk-body"> This is an active organisation on the Apprenticeship assessment service, you can request to join the organisation's account.</p>
+                <button type="submit" class="govuk-button">Request Access</button>
             </form>
         </div>
     </div>
