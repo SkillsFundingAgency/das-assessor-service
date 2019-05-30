@@ -51,51 +51,57 @@ namespace SFA.DAS.AssessorService.Data
 
         private async Task<List<StandardCollation>> GetStandardCollationsInternal(int? standardIdFilter = null, string referenceNumberFilter = null)
         {
+            var standardsDictionary = new Dictionary<string, StandardCollation>();
+
             var connectionString = _configuration.SqlConnectionString;
 
             using (var connection = new SqlConnection(connectionString))
             {
-                string query = @"SELECT sc.*, o.*
-                                FROM StandardCollation sc
-                                LEFT JOIN Options o ON sc.StandardId = o.StdCode";
+                string standardsQuery = @"SELECT * FROM StandardCollation";
 
-                if(standardIdFilter != null)
+                if (standardIdFilter != null)
                 {
-                    query += " WHERE StandardId = @standardIdFilter";
+                    standardsQuery += " WHERE StandardId = @standardIdFilter";
                 }
-                else if(referenceNumberFilter != null)
+                else if (referenceNumberFilter != null)
                 {
-                    query += " WHERE ReferenceNumber = @referenceNumberFilter";
+                    standardsQuery += " WHERE ReferenceNumber = @referenceNumberFilter";
                 }
 
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
 
-                var standardsDictionary = new Dictionary<string, StandardCollation>();
-                var standards = connection.Query<StandardCollation, Option, StandardCollation>(
-                    query, (standard, option) =>
+                var standards = connection.Query<StandardCollation>(standardsQuery, param: new { standardIdFilter, referenceNumberFilter });
+
+                foreach (var standard in standards)
+                {
+                    string key = standard.StandardId.HasValue ? standard.StandardId.ToString() : standard.ReferenceNumber;
+
+                    if (!standardsDictionary.TryGetValue(key, out StandardCollation dictionaryEntry))
                     {
-                        string key = standard.StandardId.HasValue ? standard.StandardId.ToString() : standard.ReferenceNumber;
+                        dictionaryEntry = standard;
+                        dictionaryEntry.Options = new List<string>();
+                        standardsDictionary[key] = dictionaryEntry;
+                    }
+                }
 
-                        if (!standardsDictionary.TryGetValue(key, out StandardCollation dictionaryEntry))
-                        {
-                            dictionaryEntry = standard;
-                            dictionaryEntry.Options = new List<string>();
-                            standardsDictionary[key] = dictionaryEntry;
-                        }
+                var optionsQuery = "SELECT * FROM Options WHERE StdCode IN @standardCodes";
+                var standardCodes = standardsDictionary.Values.Where(v => v.StandardId.HasValue).Select(v => v.StandardId).ToList();
+                var options = connection.Query<Option>(optionsQuery, param: new { standardCodes });
 
-                        if (!string.IsNullOrEmpty(option?.OptionName))
+                foreach (var option in options)
+                {
+                    if (standardsDictionary.TryGetValue(option.StdCode.ToString(), out StandardCollation dictionaryEntry))
+                    {
+                        if (!string.IsNullOrEmpty(option.OptionName))
                         {
                             dictionaryEntry.Options.Add(option.OptionName);
                         }
-
-                        return dictionaryEntry;
-                    },
-                    param: new { standardIdFilter, referenceNumberFilter },
-                    splitOn: "StdCode").Distinct();
-
-                return standards.ToList();
+                    }
+                }
             }
+
+            return standardsDictionary.Values.ToList();
         }
 
         public async Task<DateTime?> GetDateOfLastStandardCollation()
