@@ -1,10 +1,21 @@
-// Configure bundling and minification for the project.
-// More info at https://go.microsoft.com/fwlink/?LinkId=808241
 [
   {
-    "outputFileName": "wwwroot/css/site.min.css",
-    // An array of relative input file paths. Globbing patterns supported
-    "inputFiles": [ "wwwroot/css/site.css" ]
+    "outputFileName": "wwwroot/stylesheets/application.min.css",
+    "inputFiles": ["wwwroot/stylesheets/application.css"]
+  },
+  {
+    "outputFileName": "wwwroot/javascripts/application.min.js",
+    "inputFiles": [
+      "wwwroot/javascripts/govuk-frontend-2.5.1.min.js",
+      "wwwroot/javascripts/lib/jquery/jquery-1.12.4.js",
+      "wwwroot/javascripts/das-expandable-table.js",
+      "wwwroot/javascripts/das-cookie-banner.js",
+      "wwwroot/javascripts/application.js"
+    ],
+    "minify": {
+      "renameLocals": true
+    },
+    "sourceMap": false
   },
   {
     "outputFileName": "wwwroot/css/roatp.min.css",
@@ -13,39 +24,5 @@
   {
     "outputFileName": "wwwroot/js/roatp-ui.min.js",
     "inputFiles": [ "wwwroot/js/roatp-ui.js" ]
-  },
-  {
-    "outputFileName": "wwwroot/js/site.min.js",
-    "inputFiles": [
-      "wwwroot/assets/javascripts/govuk-template.js",
-      "wwwroot/js/details.polyfill.js",
-      "wwwroot/js/shim-links-with-button-role.js",
-      "wwwroot/js/show-hide-content.js",
-      "wwwroot/js/expandable-table.js",
-      "wwwroot/js/site.js"
-    ],
-    // Optionally specify minification options
-    "minify": {
-      "renameLocals": true
-    },
-    // Optionally generate .map file
-    "sourceMap": false
-  },
-  {
-    "outputFileName": "wwwroot/js/epao-validation.min.js",
-    "inputFiles": [ "wwwroot/js/epao-validation.js" ],
-    "minify": {
-      "renameLocals": true
-    }
-  },
-  {
-    "outputFileName": "wwwroot/js/postcode-lookup-service.min.js",
-    "inputFiles": [
-      "wwwroot/lib/jquery-ui/dist/jquery-ui.min.js",
-      "wwwroot/js/postcode-lookup-service.js"
-    ],
-    "minify": {
-      "renameLocals": true
-    }
   }
 ]
