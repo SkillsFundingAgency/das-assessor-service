@@ -1,15 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using SFA.DAS.Apprenticeships.Api.Types;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
 using SFA.DAS.AssessorService.ExternalApis.IFAStandards;
 using SFA.DAS.AssessorService.ExternalApis.IFAStandards.Types;
 using SFA.DAS.AssessorService.ExternalApis.Services;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Api.Services
 {
@@ -42,7 +42,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
             await _cacheService.SaveToCache("StandardCollations", standardCollations, 8);
             return standardCollations;
         }
-        
+
         public async Task<StandardCollation> GetStandard(int standardId)
         {
             try
@@ -78,6 +78,12 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
             AddIfaOnlyStandardsToGatheredStandards(ifaResults, collation);
             _logger.LogInformation($"STANDARD COLLATION: collation finished");
             return collation;
+        }
+
+        public async Task<IEnumerable<EPORegisteredStandards>> GetEpaoRegisteredStandards(string endPointAssessorOrganisationId)
+        {
+                var results = await _standardRepository.GetEpaoRegisteredStandards(endPointAssessorOrganisationId, short.MaxValue, null);
+                return results.PageOfResults;
         }
 
         private static void AddIfaOnlyStandardsToGatheredStandards(List<IfaStandard> ifaResults, List<StandardCollation> collation)
