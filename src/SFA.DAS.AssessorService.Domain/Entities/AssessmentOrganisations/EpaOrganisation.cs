@@ -2,6 +2,7 @@
 
 namespace SFA.DAS.AssessorService.Domain.Entities.AssessmentOrganisations
 {
+    // TODO: This looks a lot like SFA.DAS.AssessorService.Domain.Entities.Organisation
     public class EpaOrganisation
     {
         public Guid Id { get; set; }

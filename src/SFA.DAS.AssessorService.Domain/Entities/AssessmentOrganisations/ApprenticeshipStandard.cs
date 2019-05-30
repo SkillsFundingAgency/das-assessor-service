@@ -2,6 +2,7 @@
 
 namespace SFA.DAS.AssessorService.Domain.Entities.AssessmentOrganisations
 {
+    // TODO: This is not being used
     public class ApprenticeshipStandard
     {
         public int Id { get; set; }

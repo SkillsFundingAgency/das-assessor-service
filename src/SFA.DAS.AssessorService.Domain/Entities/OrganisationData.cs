@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace SFA.DAS.AssessorService.Domain.Entities
+﻿namespace SFA.DAS.AssessorService.Domain.Entities
 {
+    //TODO: Move into SFA.DAS.AssessorService.Domain.JsonData
     public class OrganisationData
     {
         public string LegalName { get; set; }
