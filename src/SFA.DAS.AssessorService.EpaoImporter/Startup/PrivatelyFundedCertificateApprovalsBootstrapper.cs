@@ -16,6 +16,8 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Startup
 
         public PrivatelyFundedCertificateApprovalsBootstrapper(TraceWriter functionLogger, ExecutionContext context)
         {
+            BootstrapperHelper.StartUp();
+
             IAggregateLogger logger = new AggregateLogger(FunctionName.PrivatelyFundedCertificateApprovals, functionLogger, context);
 
             var configuration = ConfigurationHelper.GetConfiguration();

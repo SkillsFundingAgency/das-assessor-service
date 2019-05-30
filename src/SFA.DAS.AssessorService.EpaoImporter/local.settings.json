@@ -7,6 +7,12 @@
     "EnvironmentName": "LOCAL",
     "ConfigurationStorageConnectionString": "UseDevelopmentStorage=true",
     "IFATemplateStorageConnectionString": "UseDevelopmentStorage=true",
-    "Redis": "localhost:6379"
+
+    // abortConnect=false prevents abort when redis connection string is invalid
+    "Redis": "localhost:6379,abortConnect=false",
+
+    // these bindings are necessary as version 2.2 is available but 2.0 is requested for Redis NLog target
+    // see https://www.thewissen.io/azure-functions-binding-redirects/ for adding to Azure 
+    "BindingRedirects": "[ { \"ShortName\": \"Microsoft.Extensions.Configuration.Abstractions\", \"RedirectToVersion\": \"2.2.0.0\", \"PublicKeyToken\": \"adb9793829ddae60\" }, { \"ShortName\": \"Microsoft.Extensions.FileProviders.Abstractions\", \"RedirectToVersion\": \"2.2.0.0\", \"PublicKeyToken\": \"adb9793829ddae60\" }, { \"ShortName\": \"Microsoft.Extensions.Primitives\", \"RedirectToVersion\": \"2.2.0.0\", \"PublicKeyToken\": \"adb9793829ddae60\" }, { \"ShortName\": \"Microsoft.Extensions.Configuration\", \"RedirectToVersion\": \"2.2.0.0\", \"PublicKeyToken\": \"adb9793829ddae60\" } ]"
   }
 }
