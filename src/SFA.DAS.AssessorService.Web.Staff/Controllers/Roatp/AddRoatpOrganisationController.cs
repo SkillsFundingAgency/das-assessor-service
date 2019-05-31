@@ -173,8 +173,6 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
             }
             var referer = refererHeaders[0];
 
-           
-
             if (referer.Contains("confirm-details"))
             {
                 return true;
