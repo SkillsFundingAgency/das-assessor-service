@@ -73,7 +73,7 @@
                 </div>
             }
 
-            <form class="apprentice-approvals-form js-disable-on-submit">
+            <form class="apprentice-approvals-form js-disable-on-submit" asp-controller="CertificateApprovals" asp-action="Approvals">
 
                 @if (@Model.SentForApprovalCertificates?.Items.Any() ?? Model.ToBeApprovedCertificates.Items.Any())
                 {
@@ -96,9 +96,6 @@
                 }
             </form>
 
-            <form id="temp-form" type="post" asp-controller="CertificateApprovals" asp-action="Approvals">
-                <input type="hidden" name="jsonString" id="jsonString"/>
-            </form>
         </div>
     </div>
 </div>
