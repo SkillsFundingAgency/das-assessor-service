@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models.Standards
 {
-    //TODO: Move into SFA.DAS.AssessorService.Domain.Entities
+    //TODO: TECH DEBT: Move into SFA.DAS.AssessorService.Domain.Entities as it represents a database table
     public class StandardCollation
     {
         public int Id { get; set; }

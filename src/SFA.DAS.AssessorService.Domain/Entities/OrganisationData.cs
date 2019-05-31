@@ -1,6 +1,6 @@
 ﻿namespace SFA.DAS.AssessorService.Domain.Entities
 {
-    //TODO: Move into SFA.DAS.AssessorService.Domain.JsonData
+    //TODO: TECH DEBT: Move into SFA.DAS.AssessorService.Domain.JsonData
     public class OrganisationData
     {
         public string LegalName { get; set; }

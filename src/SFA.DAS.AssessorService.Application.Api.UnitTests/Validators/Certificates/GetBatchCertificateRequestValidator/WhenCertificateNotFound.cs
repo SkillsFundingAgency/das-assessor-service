@@ -13,7 +13,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Certifica
         [SetUp]
         public void Arrange()
         {
-            // TODO: Ensure there isn't a certificate here!
+            // NOTE: Ensure there isn't an existing certificate here! (currently this is the case)
             GetBatchCertificateRequest request = Builder<GetBatchCertificateRequest>.CreateNew()
                 .With(i => i.Uln = 1234567890)
                 .With(i => i.StandardCode = 99)

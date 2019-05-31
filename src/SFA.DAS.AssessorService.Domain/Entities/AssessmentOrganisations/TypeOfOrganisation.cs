@@ -1,6 +1,6 @@
 namespace SFA.DAS.AssessorService.Domain.Entities.AssessmentOrganisations
 {
-    // TODO: This looks a lot like SFA.DAS.AssessorService.Domain.Entities.OrganisationType but is a struct type instead
+    // TODO: TECH DEBT: This looks a lot like SFA.DAS.AssessorService.Domain.Entities.OrganisationType but is a struct type instead
     public struct TypeOfOrganisation
     {
         public int Id { get; set; }
