@@ -99,9 +99,11 @@
                             User.Claims.First(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname").Value.Trim()) 
                     </p>
                 </span>
+                @*
                 <span class="govuk-body-s das-user-panel__item">
                     <a class="govuk-link govuk-link--white" href="/home/help">Help</a>
                 </span>
+                *@
                 <span class="govuk-body-s das-user-panel__item">
                     <a class="govuk-link govuk-link--white" asp-controller="Account" asp-action="SignOut">Sign out</a>
                 </span>

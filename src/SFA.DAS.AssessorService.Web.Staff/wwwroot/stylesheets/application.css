@@ -1227,3 +1227,10 @@ TODO: change to 'das-page-navigation' and BEM
     max-width: 100%;
     overflow-y: auto;
 }
+
+/* Staff application */
+
+.govuk-body--hint,
+.govuk-list--hint {
+    color: #6f777b;
+}
