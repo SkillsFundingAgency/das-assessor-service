@@ -68,7 +68,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
             catch (HttpRequestException ex)
             {
                 _logger.LogError(ex,$"Failed to gather organisation details from ukrlp for UKPRN:[{model?.UKPRN}]");
-                var notFoundModel = new UkrlpNotFoundViewModel {FirstEntry = "true"};
+                var notFoundModel = new UkrlpNotFoundViewModel {NextAction = "wait"};
                 return RedirectToAction("UklrpIsUnavailable", notFoundModel);
             }
 
@@ -89,19 +89,17 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
             return View("~/Views/Roatp/UkprnPreview.cshtml", vm);
         }
 
-        [Route("ukrlp-not-found")]
+        [Route("ukrlp-unavailable")]
         public async Task<IActionResult> UklrpIsUnavailable(UkrlpNotFoundViewModel model)
         {
-   
-            if (!ModelState.IsValid || !string.IsNullOrEmpty(model?.FirstEntry))
+            if (!ModelState.IsValid)
             {
-                return View("~/Views/Roatp/UkprnIsUnavailable.cshtml", model);
+                return View("~/Views/Roatp/UkprnIsUnavailable.cshtml",model);
             }
 
-            if (model?.NextAction == "AddManually")
+            if (model?.NextAction == "wait" || model?.NextAction == "AddManually")
             {
-                var notFoundModel = new UkrlpNotFoundViewModel { FirstEntry = "true" };
-                return RedirectToAction("UklrpIsUnavailable", notFoundModel);
+                return View("~/Views/Roatp/UkprnIsUnavailable.cshtml");
             }
 
             return RedirectToAction("Index", "RoatpHome");
