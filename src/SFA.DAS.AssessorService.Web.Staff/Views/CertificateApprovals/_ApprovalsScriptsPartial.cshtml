@@ -58,7 +58,7 @@
                     jsonResult.PageIndex = value;
                 }
             });
-            //When there is only one in left the list or the last element in the list
+            //When there is only one left in the list
             if ((data.length === 6 || data.length === 7) || index === foundIndex) {
                 jsonResult.ApprovalResults[index] = approvalResult;
             }
