@@ -4,7 +4,6 @@
     {
         public const string EpaoImporter = "das-assessor-service-func-epaoimporter";
         public const string PrintProcessFlow = "das-assessor-service-func-printing";
-        public const string StandardCollationProcessFlow = "das-assessor-service-func-standard-collation";
         public const string PrivatelyFundedCertificateApprovals = "das-assessor-service-func-approvals";
     }
 }

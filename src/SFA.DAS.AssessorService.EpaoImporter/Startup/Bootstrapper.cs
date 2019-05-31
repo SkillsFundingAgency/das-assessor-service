@@ -19,11 +19,9 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Startup
     {
         private IAggregateLogger _logger;
 
-        public void StartUp(string source, TraceWriter functionLogger, ExecutionContext context)
+        public void StartUp(TraceWriter functionLogger, ExecutionContext context)
         {
-            BootstrapperHelper.StartUp();
-
-            _logger = new AggregateLogger(source, functionLogger, context);          
+            _logger = new AggregateLogger(FunctionName.PrintProcessFlow, functionLogger, context);          
 
             var configuration = ConfigurationHelper.GetConfiguration();
 

@@ -39,9 +39,6 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
-    <None Update="nlog.collation.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Update="nlog.approvals.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
