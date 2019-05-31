@@ -67,28 +67,42 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
         public async Task<IEnumerable<StandardCollation>> GatherAllStandardDetails()
         {
             _logger.LogInformation("STANDARD COLLATION: Starting gathering of all IFA Standard details");
-            var ifaStandards = await _ifaStandardsApiClient.GetAllStandards();
-            _logger.LogInformation($"STANDARD COLLATION: Starting gathering of individual IFA Standard details: [{ifaStandards.Count}]");
-            var ifaResults = await GatherIfaStandardsOneAtATime(ifaStandards);
+            List<IfaStandard> ifaResults = null;
+            try
+            {
+                ifaResults = await _ifaStandardsApiClient.GetAllStandards();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "STANDARD COLLATION: Failed to gather all IFA Standard details");
+            }
+
             _logger.LogInformation("STANDARD COLLATION: Starting gathering of all Win Standard details");
             var winResults = await _assessmentOrgsApiClient.GetAllStandardsV2();
+
             _logger.LogInformation("STANDARD COLLATION: Start collating IFA and WIN standards");
             var collation = CollateWinAndIfaStandardDetails(winResults, ifaResults);
+
             _logger.LogInformation($"STANDARD COLLATION: Add unmatched Ifa Standards to list");
             AddIfaOnlyStandardsToGatheredStandards(ifaResults, collation);
+
             _logger.LogInformation($"STANDARD COLLATION: collation finished");
+
             return collation;
         }
 
         private static void AddIfaOnlyStandardsToGatheredStandards(List<IfaStandard> ifaResults, List<StandardCollation> collation)
         {
-            var uncollatedIfaStandards = ifaResults.Where(ifaStandard => collation.All(s => s.StandardId != ifaStandard.Id))
+            var uncollatedIfaStandards = ifaResults?.Where(ifaStandard => collation.All(s => s.StandardId != ifaStandard.LarsCode))
                 .ToList();
 
-            foreach (var ifaStandard in uncollatedIfaStandards)
+            if (uncollatedIfaStandards != null)
             {
-                var standard = MapDataToStandardCollation(ifaStandard.Id, ifaStandard, null);
-                collation.Add(standard);
+                foreach (var ifaStandard in uncollatedIfaStandards)
+                {
+                    var standard = MapDataToStandardCollation(ifaStandard.LarsCode, ifaStandard, null);
+                    collation.Add(standard);
+                }
             }
         }
 
@@ -97,8 +111,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
             var collation = new List<StandardCollation>();
             foreach (var winStandard in winResults)
             {
-                var ifaStandardToMatch = ifaResults.FirstOrDefault(x => x.Id.ToString() == winStandard.Id);
                 if (!int.TryParse(winStandard.Id, out int standardId)) continue;
+                var ifaStandardToMatch = ifaResults?.FirstOrDefault(x => x.LarsCode.ToString() == winStandard.Id);
                 var standard = MapDataToStandardCollation(standardId, ifaStandardToMatch, winStandard);
                 collation.Add(standard);
             }
@@ -115,37 +129,26 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
                 Title = ifaStandard?.Title ?? winStandard?.Title,
                 StandardData = new StandardData
                 {
-                    Category = ifaStandard?.Category,
+                    Category = ifaStandard?.Route,
                     IfaStatus = ifaStandard?.Status,
                     EffectiveFrom = winStandard?.EffectiveFrom,
                     EffectiveTo = winStandard?.EffectiveTo,
                     Level = winStandard?.Level ?? ifaStandard?.Level,
                     LastDateForNewStarts = winStandard?.LastDateForNewStarts,
                     IfaOnly = winStandard == null,
-                    Duration = winStandard?.Duration ?? ifaStandard?.Duration,
+                    Duration = winStandard?.Duration ?? ifaStandard?.TypicalDuration,
                     MaxFunding = winStandard?.CurrentFundingCap ?? ifaStandard?.MaxFunding,
-                    PublishedDate = ifaStandard?.PublishedDate,
+                    PublishedDate = ifaStandard?.ApprovedForDelivery,
                     IsPublished = winStandard?.IsPublished ?? ifaStandard?.IsPublished,
                     Ssa1 = ifaStandard?.Ssa1,
                     Ssa2 = ifaStandard?.Ssa2,
                     OverviewOfRole = ifaStandard?.OverviewOfRole,
                     IsActiveStandardInWin = winStandard?.IsActiveStandard,
                     FatUri = winStandard?.Uri,
-                    IfaUri = ifaStandard?.Uri,
+                    IfaUri = ifaStandard?.Url,
                     AssessmentPlanUrl = ifaStandard?.AssessmentPlanUrl
                 }
             };
-        }
-
-        private async Task<List<IfaStandard>> GatherIfaStandardsOneAtATime(IEnumerable<IfaStandard> ifaStandards)
-        {
-            var fullIfaStandards = new List<IfaStandard>();
-            foreach (var ifaStandard in ifaStandards)
-            {
-                fullIfaStandards.Add(await _ifaStandardsApiClient.GetStandard(ifaStandard.Id));
-            }
-
-            return fullIfaStandards;
         }
     }
 }
