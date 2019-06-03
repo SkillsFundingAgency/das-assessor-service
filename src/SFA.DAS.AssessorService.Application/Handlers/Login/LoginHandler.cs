@@ -63,7 +63,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Login
             }
 
             var organisation = await _organisationQueryRepository.Get(contact.OrganisationId.Value);
-          
+
 
             if (organisation == null)
             {
@@ -75,52 +75,50 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Login
             
             response.EndPointAssessorName = organisation.EndPointAssessorName;
             response.EndPointAssessorOrganisationId = organisation.EndPointAssessorOrganisationId;
+            response.OrganisationName = organisation.EndPointAssessorName;
+
+            _logger.LogInformation($"Got Org with ukprn: {organisation.EndPointAssessorUkprn}, Id: {organisation.EndPointAssessorOrganisationId}, Status: {organisation.Status}");
 
             if (organisation.Status == OrganisationStatus.Deleted)
             {
-                _logger.LogInformation($"Org found, but Deleted");
                 _logger.LogInformation(LoggingConstants.SignInEpaoDeleted);
                 response.Result = LoginResult.NotRegistered;
                 return response;
             }
-
-            if (organisation.Status == OrganisationStatus.New)
+            else if (organisation.Status == OrganisationStatus.New)
             {
-                _logger.LogInformation($"Org found, but New");
                 _logger.LogInformation(LoggingConstants.SignInEpaoNew);
-                response.Result = LoginResult.NotActivated;
+
+                // Only show true status if contact is marked as being Live
+                response.Result = (contact.Status is ContactStatus.Live) ? LoginResult.NotActivated : LoginResult.InvitePending;
                 return response;
             }
-
-            _logger.LogInformation($"Got Org with ukprn: {organisation.EndPointAssessorUkprn}, Id: {organisation.EndPointAssessorOrganisationId}");
-
-            _logger.LogInformation(LoggingConstants.SignInSuccessful);
-
-            var status = await GetUserStatus(organisation.EndPointAssessorOrganisationId, request.SignInId);
-            switch (status)
+            else
             {
-                case ContactStatus.Live:
-                    response.Result = LoginResult.Valid;
-                    break;
-                case ContactStatus.InvitePending:
-                    response.Result = LoginResult.InvitePending;
-                    break;
-                case ContactStatus.Inactive:
-                    response.Result = LoginResult.Rejected;
-                    break;
-                case ContactStatus.Applying:
-                    response.Result = LoginResult.Applying;
-                    break;
-                default:
-                    response.Result = LoginResult.NotRegistered;
-                    break;
+                _logger.LogInformation(LoggingConstants.SignInSuccessful);
+
+                var status = await GetUserStatus(organisation.EndPointAssessorOrganisationId, request.SignInId);
+                switch (status)
+                {
+                    case ContactStatus.Live:
+                        response.Result = LoginResult.Valid;
+                        break;
+                    case ContactStatus.InvitePending:
+                        response.Result = LoginResult.InvitePending;
+                        break;
+                    case ContactStatus.Inactive:
+                        response.Result = LoginResult.Rejected;
+                        break;
+                    case ContactStatus.Applying:
+                        response.Result = LoginResult.Applying;
+                        break;
+                    default:
+                        response.Result = LoginResult.NotRegistered;
+                        break;
+                }
             }
 
-
-            response.OrganisationName = organisation.EndPointAssessorName;
-
             _logger.LogInformation(LoggingConstants.SignInSuccessful);
-            //response.Result = LoginResult.Valid;
             
             return response;
         }
