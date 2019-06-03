@@ -127,10 +127,11 @@ namespace SFA.DAS.AssessorService.EpaoImporter
 
                     // Obfuscate_Personal_Data
                     conn.Execute(@" UPDATE Contacts
-                                    SET GivenNames = 'TEST'
+                                    SET GivenNames = ISNULL(EndPointAssessorOrganisationId, 'UNKNOWN')
                                         , FamilyName = 'TEST'
-                                        , DisplayName = 'TEST TEST'
-                                        , Email = 'TEST@TEST.TEST'
+                                        , DisplayName = ISNULL(EndPointAssessorOrganisationId, 'UNKNOWN') + ' TEST'
+                                        , Title = ''
+                                        , Email = ISNULL(EndPointAssessorOrganisationId, 'UNKNOWN') + '@TEST.TEST'
                                         , PhoneNumber = NULL
                                         , SignInId = NULL;");
                 }
