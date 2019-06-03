@@ -8,11 +8,12 @@
         messages["approvalresults[" + i + "].ReasonForChange"] = { required: 'Enter a reason for the rejection' }
     }
     var epaoApprovalsValidationRulesObject = {
-        rules,
-        messages
+        rules: rules,
+        messages: messages
     };
 
-    function forwardForm () {
+    function forwardForm() {
+        var baseUrl = '@Url.Content("~/")';
         var forwardFormElement = $('.apprentice-approvals-form');
         var data = $(forwardFormElement).serializeArray();
         if (data !== null && data != undefined && data.length > 0) {
@@ -60,8 +61,25 @@
                 jsonResult.ApprovalResults[index] = approvalResult;
             }
 
-            $('#jsonString').val(JSON.stringify(jsonResult));
-            $('#temp-form').submit();
+            if (jsonResult.ApprovalResults.length > 0) {
+                $.ajax({
+                    type: 'POST',
+                    url: '/CertificateApprovals/Approvals',
+                    dataType: 'json',
+                    headers: {
+                        "Accept": "application/json",
+                        "Content-Type": "application/json",
+                        "RequestVerificationToken": $('input[name=__RequestVerificationToken]').val()
+                    },
+                    data: JSON.stringify(jsonResult),
+                    processData: true,
+                    cache: false
+                }).done(function (action) {
+                    window.location.replace(baseUrl + 'CertificateApprovals/' + action);
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                    console.log("Error: " + textStatus + " : " + errorThrown);
+                });
+            }
         }
     };
 
