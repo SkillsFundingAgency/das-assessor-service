@@ -3,7 +3,7 @@
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
 
-    [Authorize]
+    [Authorize(Roles = Domain.Roles.RoatpGatewayTeam)]
     public class RoatpHomeController : Controller
     {
         [Route("search-apprenticeship-training-providers")]

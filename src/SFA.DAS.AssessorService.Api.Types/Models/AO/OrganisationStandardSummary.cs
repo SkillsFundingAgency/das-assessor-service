@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using SFA.DAS.Apprenticeships.Api.Types;
+using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models.AO
 {
@@ -15,7 +16,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.AO
         public DateTime EffectiveFrom { get; set; }
         public DateTime? EffectiveTo { get; set; }
 
-        public StandardSummary StandardSummary { get; set; }
+        public StandardCollation StandardCollation { get; set; }
         public List<int> DeliveryAreas { get; set; }
 
         public OrganisationStandardData OrganisationStandardData { get; set; }
