@@ -203,97 +203,28 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                     }
                 }
 
-                var orgDetails = new OrganisationDetails
-                {
-                    OrganisationReferenceType = organisationSearchResult.OrganisationReferenceType,
-                    OrganisationReferenceId = organisationSearchResult.OrganisationReferenceId,
-                    LegalName = organisationSearchResult.LegalName,
-                    TradingName = organisationSearchResult.TradingName,
-                    ProviderName = organisationSearchResult.ProviderName,
-                    CompanyNumber = organisationSearchResult.CompanyNumber,
-                    CharityNumber = organisationSearchResult.CharityNumber,
-                    Address1 = organisationSearchResult.Address?.Address1,
-                    Address2 = organisationSearchResult.Address?.Address2,
-                    Address3 = organisationSearchResult.Address?.Address3,
-                    City = organisationSearchResult.Address?.City,
-                    Postcode = organisationSearchResult.Address?.Postcode,
-                    FHADetails = new FHADetails()
-                    {
-                        FinancialDueDate = organisationSearchResult.FinancialDueDate,
-                        FinancialExempt = organisationSearchResult.FinancialExempt
-                    }
-                };
-
-                var request = new ApplyTypes.CreateOrganisationRequest
-                {
-                    Name = organisationSearchResult.Name,
-                    OrganisationType = organisationSearchResult.OrganisationType,
-                    OrganisationUkprn = organisationSearchResult.Ukprn,
-                    RoEPAOApproved = organisationSearchResult.RoEPAOApproved,
-                    RoATPApproved = organisationSearchResult.RoATPApproved,
-                    OrganisationDetails = orgDetails,
-                    CreatedBy = user.Id,
-                    PrimaryContactEmail = organisationSearchResult.Email
-                };
-
+                var request = CreateAnApplyOrganisationRequest(organisationSearchResult, user);
                 if (organisationSearchResult.OrganisationReferenceType == "RoEPAO")
                 {
-                    //Get the organisation from assessor registry
-                    OrganisationResponse registeredOrganisation;
-
-                    if (organisationSearchResult.Ukprn != null)
-                        registeredOrganisation =
-                            await _organisationsApiClient.Get(organisationSearchResult.Ukprn.ToString());
-                    else
-                    {
-                       var result =
-                            await _organisationsApiClient.GetEpaOrganisation(organisationSearchResult.Id);
-                       registeredOrganisation = new OrganisationResponse
-                       {
-                           Id = result.Id
-                       };
-                    }
-
-                    await _contactsApiClient.UpdateOrgAndStatus(new UpdateContactWithOrgAndStausRequest(
-                        user.Id.ToString(),
-                        registeredOrganisation.Id.ToString(),
-                        organisationSearchResult.Id,
-                        ContactStatus.InvitePending));
-
-
-                    try
-                    {
-                        //Check if orgnisation exists on apply
-                        await _organisationsApplyApiClient.DoesOrganisationExist(request.Name);
-                    }
-                    catch (EntityNotFoundException e)
-                    {
-                        _logger.LogInformation($"{e.Message}");
-                        //Try creating an organisation in apply
-                        await _organisationsApplyApiClient.CreateNewOrganisation(request);
-                    }
-
-
-                    await _organisationsApiClient.SendEmailsToOrgApprovedUsers(new EmailAllApprovedContactsRequest(
-                        user.DisplayName, organisationSearchResult
-                            .OrganisationReferenceId, _config.ServiceLink));
+                    //Update assessor organisation status, sync assessor org with apply org and notify org users
+                    await UpdateOrganisationStatus(organisationSearchResult, user);
+                    await TryToCreateOrganisationInApply(request);
+                    await NotifyOrganisationUsers(organisationSearchResult, user);
                 }
                 else
                 {
                     //Try creating a contact and an organisation in apply
                     await _contactsApiClient.MigrateSingleContactToApply(Guid.Parse(signinId));
-
                     await _contactsApiClient.UpdateStatus(new UpdateContactStatusRequest(user.Id.ToString(), ContactStatus.Applying));
                     await _organisationsApplyApiClient.ConfirmSearchedOrganisation(request);
-
                     return Redirect($"{_config.ApplyBaseAddress}/Applications");
                 }
             }
 
 
             return View(viewModel);
-        }     
-
+        }  
+     
         private async Task<OrganisationSearchResult> GetOrganisation(string searchString, string name, int? ukprn,
             string organisationType, string postcode)
         {
@@ -329,6 +260,95 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         private List<OrganisationSearchResult> OrderOrganisationByLiveStatus(OrganisationSearchViewModel viewModel)
         {
             return viewModel.Organisations?.OrderByDescending(x => x.OrganisationIsLive).ToList();
+        }
+
+        private OrganisationDetails MapToOrganisationDetails(OrganisationSearchResult organisationSearchResult)
+        {
+           return new OrganisationDetails
+            {
+                OrganisationReferenceType = organisationSearchResult.OrganisationReferenceType,
+                OrganisationReferenceId = organisationSearchResult.OrganisationReferenceId,
+                LegalName = organisationSearchResult.LegalName,
+                TradingName = organisationSearchResult.TradingName,
+                ProviderName = organisationSearchResult.ProviderName,
+                CompanyNumber = organisationSearchResult.CompanyNumber,
+                CharityNumber = organisationSearchResult.CharityNumber,
+                Address1 = organisationSearchResult.Address?.Address1,
+                Address2 = organisationSearchResult.Address?.Address2,
+                Address3 = organisationSearchResult.Address?.Address3,
+                City = organisationSearchResult.Address?.City,
+                Postcode = organisationSearchResult.Address?.Postcode,
+                FHADetails = new FHADetails()
+                {
+                    FinancialDueDate = organisationSearchResult.FinancialDueDate,
+                    FinancialExempt = organisationSearchResult.FinancialExempt
+                }
+            };
+        }
+
+        private ApplyTypes.CreateOrganisationRequest CreateAnApplyOrganisationRequest(OrganisationSearchResult organisationSearchResult,
+            ContactResponse user)
+        {
+            var orgDetails = MapToOrganisationDetails(organisationSearchResult);
+            return  new ApplyTypes.CreateOrganisationRequest
+            {
+                Name = organisationSearchResult.Name,
+                OrganisationType = organisationSearchResult.OrganisationType,
+                OrganisationUkprn = organisationSearchResult.Ukprn,
+                RoEPAOApproved = organisationSearchResult.RoEPAOApproved,
+                RoATPApproved = organisationSearchResult.RoATPApproved,
+                OrganisationDetails = orgDetails,
+                CreatedBy = user.Id,
+                PrimaryContactEmail = organisationSearchResult.Email
+            };
+
+        }
+
+        private async Task UpdateOrganisationStatus(OrganisationSearchResult organisationSearchResult, ContactResponse user)
+        {
+            OrganisationResponse registeredOrganisation;
+
+            if (organisationSearchResult.Ukprn != null)
+                registeredOrganisation =
+                    await _organisationsApiClient.Get(organisationSearchResult.Ukprn.ToString());
+            else
+            {
+                var result =
+                     await _organisationsApiClient.GetEpaOrganisation(organisationSearchResult.Id);
+                registeredOrganisation = new OrganisationResponse
+                {
+                    Id = result.Id
+                };
+            }
+
+            await _contactsApiClient.UpdateOrgAndStatus(new UpdateContactWithOrgAndStausRequest(
+                     user.Id.ToString(),
+                     registeredOrganisation.Id.ToString(),
+                     organisationSearchResult.Id,
+                     ContactStatus.InvitePending));
+        }
+
+        private async Task TryToCreateOrganisationInApply(ApplyTypes.CreateOrganisationRequest request)
+        {
+            try
+            {
+                //Check if orgnisation exists on apply
+                await _organisationsApplyApiClient.DoesOrganisationExist(request.Name);
+            }
+            catch (EntityNotFoundException e)
+            {
+                _logger.LogInformation($"{e.Message}");
+                //Try creating an organisation in apply
+                await _organisationsApplyApiClient.CreateNewOrganisation(request);
+            }
+        }
+
+        private async Task NotifyOrganisationUsers(OrganisationSearchResult organisationSearchResult,
+          ContactResponse user)
+        {
+            await _organisationsApiClient.SendEmailsToOrgApprovedUsers(new EmailAllApprovedContactsRequest(
+                       user.DisplayName, organisationSearchResult
+                           .OrganisationReferenceId, _config.ServiceLink));
         }
 
         private ViewResult RequestAccess(OrganisationSearchViewModel viewModel, OrganisationSearchResult organisationSearchResult)
