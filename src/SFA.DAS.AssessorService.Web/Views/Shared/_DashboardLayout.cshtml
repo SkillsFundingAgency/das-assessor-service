@@ -29,6 +29,8 @@
     <!--[if IE 8]><link rel="stylesheet" href="/stylesheets/govuk-frontend-ie8-2.5.1.min.css"><![endif]-->
     <!--[if lt IE 9]><script src="/javascripts/html5shiv.min.js"></script><![endif]-->
 
+    @RenderSection("Styles", required: false)
+
     <environment include="Development">
         <link rel="stylesheet" href="/stylesheets/application.css">
     </environment>
@@ -124,7 +126,7 @@
                 beta
             </strong>
             <span class="govuk-phase-banner__text">
-                This is a new service
+                This is a new service – your <a class="govuk-link" target="_blank" href="https://www.smartsurvey.co.uk/s/epao-banner/">feedback</a> will help us to improve it.
             </span>
         </p>
     </div>

@@ -40,6 +40,8 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register
 
             _localizer.Setup(l => l[EpaOrganisationValidatorMessageName.OrganisationTypeIsInvalid])
                 .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.OrganisationTypeIsInvalid, "fail"));
+            _localizer.Setup(l => l[EpaOrganisationValidatorMessageName.OrganisationTypeIsRequired])
+                .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.OrganisationTypeIsRequired, "fail"));
             _localizer.Setup(l => l[EpaOrganisationValidatorMessageName.OrganisationIdAlreadyUsed])
                 .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.OrganisationIdAlreadyUsed, "fail"));
             _localizer.Setup(l => l[EpaOrganisationValidatorMessageName.NoOrganisationId])
@@ -475,8 +477,6 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register
             Assert.AreEqual(0, result.Errors.Count);
         }
         
-        
-        
         [Test]
         public void CheckOrganisationRequestValidationWhenThereIsInvalidOrganisationTypeId()
         {
@@ -492,8 +492,25 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register
             Assert.AreEqual(1, result.Errors.Count);
             Assert.AreEqual("OrganisationTypeId", result.Errors[0].Field);
         }
-        
-        
+
+        [Test]
+        public void CheckOrganisationRequestValidationWhenThereIsNoOrganisationTypeId()
+        {
+            var request = new CreateEpaOrganisationRequest
+            {
+                Name = "test",
+                Ukprn = null,
+                OrganisationTypeId = null
+            };
+
+            _registerRepository.Setup(r => r.OrganisationTypeExists(It.IsAny<int>()))
+                .Returns(Task.FromResult(false));
+            var result = _validator.ValidatorCreateEpaOrganisationRequest(request);
+
+            Assert.AreEqual(1, result.Errors.Count);
+            Assert.AreEqual("OrganisationTypeId", result.Errors[0].Field);
+        }
+
         [Test]
         public void CheckOrganisationRequestValidationWhenThereIsInvalidOrganisationTypeIdAndNoName()
         {
@@ -510,7 +527,26 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register
             Assert.AreEqual(1,result.Errors.Count(x => x.Field == "OrganisationTypeId"));
             Assert.AreEqual(1,result.Errors.Count(x => x.Field == "Name"));
         }
-        
+
+        [Test]
+        public void CheckOrganisationRequestValidationWhenThereIsNoOrganisationTypeIdAndNoName()
+        {
+            var request = new CreateEpaOrganisationRequest
+            {
+                Name = "",
+                Ukprn = null,
+                OrganisationTypeId = null
+            };
+
+            _registerRepository.Setup(r => r.OrganisationTypeExists(It.IsAny<int>()))
+                .Returns(Task.FromResult(false));
+            var result = _validator.ValidatorCreateEpaOrganisationRequest(request);
+
+            Assert.AreEqual(2, result.Errors.Count(x => x.StatusCode == ValidationStatusCode.BadRequest.ToString()));
+            Assert.AreEqual(1, result.Errors.Count(x => x.Field == "OrganisationTypeId"));
+            Assert.AreEqual(1, result.Errors.Count(x => x.Field == "Name"));
+        }
+
         [Test]
         public void CheckOrganisationRequestValidationWhenThereIsInvalidOrganisationTypeIdAndPresentUkprn()
         {
