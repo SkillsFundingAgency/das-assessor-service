@@ -6,7 +6,7 @@
 @{
     ViewBag.Title = "Confirm organisation";
     Layout = "_Layout";
-    
+
     var organisation = Model.Organisations?.FirstOrDefault();
     var organisationType = Model.OrganisationTypes?.FirstOrDefault(ot => ot.Type == organisation?.OrganisationType);
 
@@ -14,13 +14,12 @@
     var epaoId = organisation?.Id?.Split(',').FirstOrDefault(id => epaoRegex.Match(id).Success);
 }
 
-<a asp-action="Results" asp-controller="OrganisationSearch" asp-route-searchString="@Model.SearchString" class="govuk-back-link">Back to search results</a>
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
         @if (organisation != null)
         {
-            <div class="govuk-grid-column-two-thirds">
+            <div class="govuk-grid-column-full">
                 <form method="post" asp-action="DealingWithRequest" asp-controller="OrganisationSearch" novalidate>
                     <input asp-for="SearchString" type="hidden" />
                     <input asp-for="Name" type="hidden" />
@@ -30,7 +29,7 @@
 
 
                     <div class="govuk-form-group">
-                        @if (organisation.OrganisationReferenceType  != "RoEPAO")
+                        @if (organisation.OrganisationReferenceType != "RoEPAO")
                         {
                             <div class="panel panel-border-wide">
                                 <p class="govuk-body">
@@ -41,9 +40,22 @@
                         }
                         <h1 class="govuk-heading-xl">Confirm organisation</h1>
 
-                        <h2 class="govuk-heading-m">@organisation.Name</h2>
-
                         <dl class="govuk-summary-list">
+                            @if (organisation.Address?.Postcode != null)
+                            {
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">
+                                        Organisation
+                                    </dt>
+                                    <dd class="govuk-summary-list__value">
+                                        @organisation.Name
+                                    </dd>
+                                    <dd class="govuk-summary-list__actions">
+                                        <a class="govuk-link" asp-action="Results" asp-controller="OrganisationSearch" asp-route-searchString="@Model.SearchString">Change</a>
+                                    </dd>
+                                </div>
+                            }
+
                             @if (organisation.Address?.Postcode != null)
                             {
                                 <div class="govuk-summary-list__row">
@@ -52,20 +64,9 @@
                                     </dt>
                                     <dd class="govuk-summary-list__value">
                                         @{ var addressArray = new[] { organisation.Address?.Address1, organisation.Address?.City, organisation.Address.Postcode }; }
-                                        @Html.Raw(string.Join("<br>", addressArray.Where(s => !string.IsNullOrEmpty(s))))
+                                        @Html.Raw(string.Join(", ", addressArray.Where(s => !string.IsNullOrEmpty(s))))
                                     </dd>
-                                </div>
-                            }
-
-                            @if (organisation.TradingName != null || organisation.ProviderName != null)
-                            {
-                                <div class="govuk-summary-list__row">
-                                    <dt class="govuk-summary-list__key">
-                                        Trading name
-                                    </dt>
-                                    <dd class="govuk-summary-list__value">
-                                        @(organisation.TradingName ?? organisation.ProviderName)
-                                    </dd>
+                                    <dd class="govuk-summary-list__actions" />
                                 </div>
                             }
 
@@ -78,32 +79,12 @@
                                     <dd class="govuk-summary-list__value">
                                         @organisationType.TypeDescription
                                     </dd>
-                                </div>
-                            }
-
-                            @if (organisation.Ukprn != null)
-                            {
-                                <div class="govuk-summary-list__row">
-                                    <dt class="govuk-summary-list__key">
-                                        UKPRN
-                                    </dt>
-                                    <dd class="govuk-summary-list__value">
-                                        @organisation.Ukprn
+                                    <dd class="govuk-summary-list__actions">
+                                         <a class="govuk-link" asp-action="OrganisationChosen" asp-controller="OrganisationSearch">Change</a>
                                     </dd>
                                 </div>
                             }
 
-                            @if (epaoId != null)
-                            {
-                                <div class="govuk-summary-list__row">
-                                    <dt class="govuk-summary-list__key">
-                                        EPAO ID
-                                    </dt>
-                                    <dd class="govuk-summary-list__value">
-                                        @epaoId
-                                    </dd>
-                                </div>
-                            }
 
                             @if (organisation.CompanyNumber != null)
                             {
@@ -114,6 +95,7 @@
                                     <dd class="govuk-summary-list__value">
                                         @organisation.CompanyNumber
                                     </dd>
+                                    <dd class="govuk-summary-list__actions" />
                                 </div>
                             }
 
@@ -126,6 +108,7 @@
                                     <dd class="govuk-summary-list__value">
                                         @organisation.CharityNumber
                                     </dd>
+                                    <dd class="govuk-summary-list__actions" />
                                 </div>
                             }
 
@@ -136,9 +119,6 @@
                     <button type="submit" class="govuk-button">Confirm</button>
                 </form>
 
-                <p class="govuk-body">
-                    <a class="govuk-link" asp-action="Results" asp-controller="OrganisationSearch" asp-route-searchString="@Model.SearchString">Choose a different organisation</a>
-                </p>
             </div>
         }
         else
