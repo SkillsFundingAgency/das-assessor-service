@@ -116,6 +116,11 @@ namespace SFA.DAS.AssessorService.Data
             await _connection.ExecuteAsync("UPDATE Contacts SET OrganisationId = NULL, EndPointAssessorOrganisationId = NULL, Status = 'New' WHERE Id = @contactId", new {contactId});
         }
 
+        public async Task UpdateOrganisationId(Guid contactId, Guid organisationId)
+        {
+            await _connection.ExecuteAsync("UPDATE Contacts SET OrganisationId = @organisationId WHERE Id = @contactId", new {contactId, organisationId});
+        }
+
 
         public async Task Update(UpdateContactRequest updateContactRequest)
         {

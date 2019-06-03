@@ -162,7 +162,7 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                 config.For<IIfaStandardsApiClient>().Use(() => new IfaStandardsApiClient(Configuration.IfaApiClientBaseUrl));
           
                 config.For<IDateTimeProvider>().Use<UtcDateTimeProvider>();
-                config.For<IDfeSignInService>().Use<DfeSignInService>();
+                config.For<ISignInService>().Use<SignInService>();
                 var option = new DbContextOptionsBuilder<AssessorDbContext>();
                 option.UseSqlServer(Configuration.SqlConnectionString, options => options.EnableRetryOnFailure(3));
 

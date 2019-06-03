@@ -11,5 +11,6 @@
         public const string Reject = "Reject";
         public const string New = "New";
         public const string Applying = "Applying";
+        public const string Pending = "Pending";
     }
 }

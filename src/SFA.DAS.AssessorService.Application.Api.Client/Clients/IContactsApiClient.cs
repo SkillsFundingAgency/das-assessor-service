@@ -17,7 +17,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         
         Task<ContactResponse> Update(UpdateContactRequest updateContactRequest);
 
-        Task<List<ContactsWithPrivilegesResponse>> GetContactsWithPrivileges(string endPointAssessorOrganisationId);
+        Task<List<ContactsWithPrivilegesResponse>> GetContactsWithPrivileges(Guid organisationId);
 
         Task<ContactBoolResponse> DoesContactHavePrivileges(string userId);
 

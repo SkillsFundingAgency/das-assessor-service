@@ -42,7 +42,16 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-       
+        public async Task<OrganisationResponse> GetOrganisationByUserId(Guid userId)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/organisations/forContact/{userId}"))
+            {
+                return await RequestAndDeserialiseAsync<OrganisationResponse>(request,
+                    $"Could not find the organisation for userId {userId}");
+            }
+        }
+
+
         public async Task<OrganisationResponse> Get(string ukprn)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/organisations/ukprn/{ukprn}"))
@@ -265,5 +274,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         Task<List<OrganisationType>> GetOrganisationTypes();
         Task SendEmailsToOrgApprovedUsers(EmailAllApprovedContactsRequest emailAllApprovedContactsRequest);
         Task<OrganisationResponse> GetOrganisationByName(string name);
+        Task<OrganisationResponse> GetOrganisationByUserId(Guid userId);
     }
 }

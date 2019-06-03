@@ -53,10 +53,12 @@ namespace SFA.DAS.AssessorService.Web.Controllers.ManageUsers
 
             var result = await _contactsApiClient.InviteContactToOrganisation(new InviteContactToOrganisationRequest
             {
+                InvitedByContactId = (await GetRequestingContact()).Id,
                 FamilyName = vm.FamilyName,
                 GivenName = vm.GivenName,
                 Email = vm.Email,
-                OrganisationId = requestingContact.OrganisationId.GetValueOrDefault()
+                OrganisationId = requestingContact.OrganisationId.GetValueOrDefault(),
+                Privileges = vm.PrivilegesViewModel.PrivilegeViewModels.Where(pvm => pvm.Selected).Select(pvm => pvm.Privilege.Id).ToArray()
             });
 
             if (!result.Success)

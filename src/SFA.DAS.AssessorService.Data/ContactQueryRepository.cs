@@ -40,12 +40,11 @@ namespace SFA.DAS.AssessorService.Data
             return contacts;
         }
 
-        public async Task<List<Contact>> GetAllContactsWithPrivileges(
-            string endPointAssessorOrganisationId)
+        public async Task<List<Contact>> GetAllContactsWithPrivileges(Guid organisationId)
         {
             var contacts = await _assessorDbContext.Contacts
                 .Include("ContactsPrivileges.Privilege")
-                .Where(contact => contact.EndPointAssessorOrganisationId == endPointAssessorOrganisationId).ToListAsync();
+                .Where(contact => contact.OrganisationId == organisationId).OrderBy(c => c.FamilyName).ThenBy(c => c.GivenNames).ToListAsync();
             
             return contacts;
         }
@@ -69,7 +68,7 @@ namespace SFA.DAS.AssessorService.Data
         public async Task<Contact> GetContactFromEmailAddress(string email)
         {
             var contact = await _assessorDbContext.Contacts
-                .Include(c => c.OrganisationId)
+                .Include(c => c.Organisation)
                 .FirstOrDefaultAsync(c => c.Email.Equals(email, StringComparison.InvariantCultureIgnoreCase) && c.Organisation.Status != OrganisationStatus.Deleted);
             
 //            var contact = await _assessorDbContext.Organisations

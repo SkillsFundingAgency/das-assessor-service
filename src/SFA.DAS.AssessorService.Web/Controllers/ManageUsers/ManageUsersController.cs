@@ -35,24 +35,14 @@ namespace SFA.DAS.AssessorService.Web.Controllers.ManageUsers
         }
 
         [HttpGet]
-        [TypeFilter(typeof(MenuFilter), Arguments = new object[] { Pages.Organisations })]
+        [TypeFilter(typeof(MenuFilter), Arguments = new object[] {Pages.Organisations})]
         public async Task<IActionResult> Index()
         {
-            var response = new List<ContactsWithPrivilegesResponse>();
-            try
-            {
-                var epaoid = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/epaoid")?.Value;
-                var organisation = await _organisationsApiClient.GetEpaOrganisation(epaoid);
-                if (organisation != null)
-                 response = await _contactsApiClient.GetContactsWithPrivileges(organisation.OrganisationId);
-               
-            }
-            catch (EntityNotFoundException)
-            {
-                return RedirectToAction("NotRegistered", "Home");
-            }
-            
-           
+            var userId = _contextAccessor.HttpContext.User.FindFirst("UserId")?.Value;
+            var organisation = await _organisationsApiClient.GetOrganisationByUserId(Guid.Parse(userId));
+
+            var response = await _contactsApiClient.GetContactsWithPrivileges(organisation.Id);
+
             return View(response);
         }
 
@@ -78,7 +68,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers.ManageUsers
                         }));
                 }
             }
-            return  RedirectToAction("Index");
+
+            return RedirectToAction("Index");
         }
     }
 }

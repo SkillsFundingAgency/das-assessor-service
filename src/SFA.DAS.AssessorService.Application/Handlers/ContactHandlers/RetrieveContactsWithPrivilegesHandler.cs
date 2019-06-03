@@ -8,19 +8,19 @@ using SFA.DAS.AssessorService.Domain.Consts;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.ContactHandlers
 {
-    public class RetrieveContactsWithPrivilagesHandler : IRequestHandler<GetContactsWithPrivilagesRequest, List<ContactsWithPrivilegesResponse>>
+    public class RetrieveContactsWithPrivilegesHandler : IRequestHandler<GetContactsWithPrivilegesRequest, List<ContactsWithPrivilegesResponse>>
     {
         private readonly IContactQueryRepository _contactQueryRepository;
-        public RetrieveContactsWithPrivilagesHandler(IContactQueryRepository contactQueryRepository)
+        public RetrieveContactsWithPrivilegesHandler(IContactQueryRepository contactQueryRepository)
         {
             _contactQueryRepository = contactQueryRepository;
         }
 
-        public async Task<List<ContactsWithPrivilegesResponse>> Handle(GetContactsWithPrivilagesRequest request,
+        public async Task<List<ContactsWithPrivilegesResponse>> Handle(GetContactsWithPrivilegesRequest request,
             CancellationToken cancellationToken)
         {
             var response = new List<ContactsWithPrivilegesResponse>();
-            var results = await _contactQueryRepository.GetAllContactsWithPrivileges(request.EndPointAssessorOrganisationId);
+            var results = await _contactQueryRepository.GetAllContactsWithPrivileges(request.OrganisationId);
             if (results == null)
                 return response;
             foreach (var result in results)

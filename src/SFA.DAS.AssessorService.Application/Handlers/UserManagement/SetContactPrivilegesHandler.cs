@@ -45,9 +45,12 @@ namespace SFA.DAS.AssessorService.Application.Handlers.UserManagement
             
             await UpdatePrivileges(request);
 
-            await SendEmail(privilegesBeingAdded, privilegesBeingRemoved, request);
+            if (!request.IsNewContact)
+            {
+                await SendEmail(privilegesBeingAdded, privilegesBeingRemoved, request);
 
-            await LogChangesToPrivileges(privilegesBeingAdded, privilegesBeingRemoved, request);
+                await LogChangesToPrivileges(privilegesBeingAdded, privilegesBeingRemoved, request);
+            }
             
             return new SetContactPrivilegesResponse() {Success = true};
         }
