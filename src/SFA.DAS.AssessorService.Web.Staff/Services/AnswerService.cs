@@ -60,7 +60,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
             var command = new CreateOrganisationContactCommand
             (   organisation.Name,
                 organisation.OrganisationType,
-                organisation.OrganisationUkprn.ToString(),
+                organisation.OrganisationUkprn?.ToString(),
                 organisation.OrganisationDetails?.OrganisationReferenceType,
                 organisation.RoEPAOApproved,
                 tradingName,
