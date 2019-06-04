@@ -6,63 +6,66 @@
     Layout = "_Layout";
 }
 
-<div class="grid-row">
-    <div class="column-two-thirds">
-        <a asp-action="Index" asp-controller="Dashboard" class="link-back">Return to dashboard</a>
+<a class="govuk-back-link" asp-action="Index" asp-controller="Dashboard">Return to dashboard</a>
 
-        <form class="register-search-form" asp-action="Results" asp-controller="Register" method="get">
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <form class="register-search-form" asp-action="Results" asp-controller="Register" method="get">
 
-            @* hidden with js *@
-            <div class="js-error-summary error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
-                <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
-                    There is a problem
-                </h2>
-                <ul class="js-error-summary-list error-summary-list"></ul>
-            </div>
-
-            @if (!ViewData.ModelState.IsValid)
-            {
-            <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
-                <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
-                    There is a problem
-                </h2>
-                <ul class="error-summary-list">
-                    <li><a sfa-validation-for="SearchString"></a></li>
-                </ul>
-            </div>
-            }
-
-            <div sfa-anyvalidationerror-class="after-error-summary">
-                <h1>
-                    <label class="form-label" for="SearchString">
-                        <span class="heading-xlarge">Organisation search</span>
-                    </label>
-                </h1>
-
-                <p>Search using either the:</p>
-                <ul class="list list-bullet">
-                    <li>UKPRN</li>
-                    <li>organisation ID (EPAXXXX)</li>
-                    <li>name</li>
-                </ul>
-
-                <div class="form-group" sfa-validation-for="SearchString" sfa-anyvalidationerror-class="form-group-error">
-                    <span class="error-message" asp-validation-for="SearchString"></span>
-                    <input class="form-control" asp-for="SearchString" name="SearchString" sfa-validationerror-class="form-control-error" type="text" />
+                <div class="js-error-summary govuk-error-summary" role="alert" aria-labelledby="error-summary-title" tabindex="-1" data-module="error-summary">
+                    <h2 class="govuk-error-summary__title" id="error-summary-title">
+                        There is a problem
+                    </h2>
+                    <div class="govuk-error-summary__body">
+                        <ul class="js-error-summary-list govuk-list govuk-error-summary__list"></ul>
+                    </div>
                 </div>
-            </div>
 
-            <div class="form-group">
-                <button class="button" type="submit">Search<span class="visually-hidden"> for an organisation</span></button>
-            </div>
-            
-            <div class="form-group" sfa-show-for-roles="@string.Join(",", Roles.AssessmentDeliveryTeam, Roles.CertificationTeam)">
-                <a class="button" href="/register/add-organisation">Add new<span class="visually-hidden"> organisation</span></a>
-            </div>
-        </form>
+                @if (!ViewData.ModelState.IsValid)
+                {
+                    <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
+                        <h2 class="govuk-error-summary__title" id="error-summary-title">
+                            There is a problem
+                        </h2>
+                        <div class="govuk-error-summary__body">
+                            <ul class="govuk-list govuk-error-summary__list">
+                                <li><a sfa-validation-for="SearchString"></a></li>
+                            </ul>
+                        </div>
+                    </div>
+                }
 
-    </div>  
-</div>
+                <div class="govuk-form-group" sfa-validation-for="SearchString" sfa-anyvalidationerror-class="govuk-form-group--error">
+                    <h1 class="govuk-label-wrapper">
+                        <label class="govuk-label govuk-label--xl" for="SearchString">
+                            <span class="heading-xlarge">Organisation search</span>
+                        </label>
+                    </h1>
+
+                    <span class="govuk-hint">
+                        <p class="govuk-body govuk-body--hint">Search using either the:</p>
+                        <ul class="govuk-list govuk-list--bullet govuk-list--hint">
+                            <li>UKPRN</li>
+                            <li>organisation ID (EPAXXXX)</li>
+                            <li>name</li>
+                        </ul>
+                    </span>
+
+                    <span class="govuk-error-message" asp-validation-for="SearchString"></span>
+                    <input class="govuk-input" asp-for="SearchString" name="SearchString" sfa-validationerror-class="govuk-input--error" type="text" />
+                </div>
+
+                <button class="govuk-button" type="submit">Search<span class="visually-hidden"> for an organisation</span></button>
+
+                <p class="govuk-body" sfa-show-for-roles="@string.Join(",", Roles.AssessmentDeliveryTeam, Roles.CertificationTeam)">
+                    <a class="govuk-link" href="/register/add-organisation">Add new<span class="visually-hidden"> organisation</span></a>
+                </p>
+            </form>
+
+        </div>  
+    </div>
+</main>
 
 @section Scripts {
     @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
