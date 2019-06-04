@@ -3,7 +3,6 @@
     public interface IWebConfiguration
     {
         string SqlConnectionString { get; set; }
-        string SessionRedisConnectionString { get; set; }
         Settings.ExternalApiDataSync ExternalApiDataSync { get; set; }
     }
 }
