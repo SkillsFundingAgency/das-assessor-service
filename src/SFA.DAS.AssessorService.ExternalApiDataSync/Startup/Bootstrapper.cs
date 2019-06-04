@@ -2,7 +2,6 @@
 using Microsoft.Azure.WebJobs.Host;
 using SFA.DAS.AssessorService.ExternalApiDataSync.Infrastructure;
 using SFA.DAS.AssessorService.ExternalApiDataSync.Logger;
-using SFA.DAS.AssessorService.Settings;
 using StructureMap;
 using System.Data;
 using System.Data.SqlClient;

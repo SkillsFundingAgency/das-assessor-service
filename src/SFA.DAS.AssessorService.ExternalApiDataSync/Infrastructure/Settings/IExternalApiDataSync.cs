@@ -1,4 +1,4 @@
-﻿namespace SFA.DAS.AssessorService.Settings
+﻿namespace SFA.DAS.AssessorService.ExternalApiDataSync.Infrastructure.Settings
 {
     public interface IExternalApiDataSync
     {

@@ -26,6 +26,5 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Services
         public DfeSignInConfig DfeSignIn { get; set; }
         public string RoatpApiClientBaseUrl { get; set; }
         public ClientApiAuthentication RoatpApiAuthentication { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public ExternalApiDataSync ExternalApiDataSync { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
     }
 }

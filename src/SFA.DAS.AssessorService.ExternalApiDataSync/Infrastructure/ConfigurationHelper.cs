@@ -3,7 +3,6 @@ using Microsoft.Azure;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Table;
 using Newtonsoft.Json;
-using SFA.DAS.AssessorService.Settings;
 
 namespace SFA.DAS.AssessorService.ExternalApiDataSync.Infrastructure
 {
