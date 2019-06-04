@@ -1,7 +1,11 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net461</TargetFramework>
     <AzureFunctionsVersion>v1</AzureFunctionsVersion>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <NoWarn>NU1605;1701;1702;1705</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Dapper" Version="1.50.5" />
@@ -11,6 +15,7 @@
     <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
     <PackageReference Include="SqlBulkTools.NetStandard" Version="2.1.18" />
     <PackageReference Include="structuremap" Version="4.7.0" />
+    <PackageReference Include="System.ComponentModel.Annotations" Version="4.4.1" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SFA.DAS.AssessorService.Api.Types\SFA.DAS.AssessorService.Api.Types.csproj" />
