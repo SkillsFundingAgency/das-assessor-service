@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Domain.Entities.AssessmentOrganisations;
 using System.Data;
 
-namespace SFA.DAS.AssessorService.EpaoImporter.Data.DapperTypeHandlers
+namespace SFA.DAS.AssessorService.ExternalApiDataSync.Data.DapperTypeHandlers
 {
     public class OrganisationStandardDataHandler : SqlMapper.TypeHandler<OrganisationStandardData>
     {

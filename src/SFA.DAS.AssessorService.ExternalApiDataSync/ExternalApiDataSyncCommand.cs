@@ -2,8 +2,8 @@
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Entities.AssessmentOrganisations;
-using SFA.DAS.AssessorService.EpaoImporter.Data.DapperTypeHandlers;
-using SFA.DAS.AssessorService.EpaoImporter.Logger;
+using SFA.DAS.AssessorService.ExternalApiDataSync.Data.DapperTypeHandlers;
+using SFA.DAS.AssessorService.ExternalApiDataSync.Logger;
 using SFA.DAS.AssessorService.Settings;
 using SqlBulkTools;
 using System;
@@ -13,8 +13,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Transactions;
 
-namespace SFA.DAS.AssessorService.EpaoImporter
+namespace SFA.DAS.AssessorService.ExternalApiDataSync
 {
+    public interface ICommand
+    {
+        Task Execute();
+    }
+
     public class ExternalApiDataSyncCommand : ICommand
     {
         private readonly IAggregateLogger _aggregateLogger;
@@ -79,7 +84,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter
                     bulk.Setup<OrganisationType>()
                         .ForCollection(orgTypes)
                         .WithTable("OrganisationType")
-                        .WithBulkCopySettings( new BulkCopySettings { SqlBulkCopyOptions = SqlBulkCopyOptions.KeepIdentity })
+                        .WithBulkCopySettings(new BulkCopySettings { SqlBulkCopyOptions = SqlBulkCopyOptions.KeepIdentity })
                         .AddAllColumns()
                         .BulkInsertOrUpdate()
                         .SetIdentityColumn(x => x.Id)
