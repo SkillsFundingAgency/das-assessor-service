@@ -33,9 +33,15 @@
                         {
                             <div class="panel panel-border-wide">
                                 <p class="govuk-body">
-                                    <span class="bold-small"> @Model.Name</span> is not recognised as a registered organisation.
-                                    If you continue, you will be taken to the new organisation registration application.
+                                    
                                 </p>
+                            </div>
+                            <div class="govuk-warning-text">
+                                <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                                <strong class="govuk-warning-text__text">
+                                    <span class="bold-small"> @Model.Name</span> is not on the Register of End-point assessment organisations.
+                                     If you continue, you will start a new application to become and End-point assessment organisation.
+                                </strong>
                             </div>
                         }
                         <h1 class="govuk-heading-xl">Confirm organisation</h1>
@@ -80,7 +86,7 @@
                                         @organisationType.TypeDescription
                                     </dd>
                                     <dd class="govuk-summary-list__actions">
-                                         <a class="govuk-link" asp-action="OrganisationChosen" asp-controller="OrganisationSearch">Change</a>
+                                        <a class="govuk-link" asp-action="OrganisationChosen" asp-controller="OrganisationSearch">Change</a>
                                     </dd>
                                 </div>
                             }
@@ -116,7 +122,7 @@
 
 
                     </div>
-                    <button type="submit" class="govuk-button">Confirm</button>
+                    <button type="submit" class="govuk-button">Confirm and apply</button>
                 </form>
 
             </div>
