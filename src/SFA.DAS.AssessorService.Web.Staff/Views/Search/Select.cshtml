@@ -22,7 +22,15 @@
         @if (Model.Learner.CertificateReference != null)
         {
             <h1 class="heading-xlarge">
-                Certificate: @Model.Learner.CertificateReference
+                @if(Model.Learner.OverallGrade == CertificateGrade.Fail)
+                {
+                    <text>Reference: </text>
+                }
+                else
+                {
+                    <text>Certificate: </text>
+                }
+                @Model.Learner.CertificateReference
                 <span class="heading-secondary">Status: @Model.Learner.CertificateStatus</span>
             </h1>
             <h2 class="heading-large">Apprentice details</h2>
@@ -61,10 +69,28 @@
     <div class="grid-row">
         <div class="column-two-thirds">
             <table>
-                <caption class="heading-large">Certificate details</caption>
+                <caption class="heading-large">
+                    @if(Model.Learner.OverallGrade == CertificateGrade.Fail)
+                    {
+                        <text>Assessment details</text>
+                    }
+                    else
+                    {
+                        <text>Certificate details</text>
+                    }
+                </caption>
                 <tbody>
                     <tr>
-                        <td><span class="bold">Certificate number</span></td>
+                        <td><span class="bold">
+                            @if(Model.Learner.OverallGrade == CertificateGrade.Fail)
+                            {
+                                <text>Reference number</text>
+                            }
+                            else
+                            {
+                                <text>Certificate number</text>
+                            }
+                        </span></td>
                         <td>@Model.Learner.CertificateReference</td>
                     </tr>
                     <tr>
