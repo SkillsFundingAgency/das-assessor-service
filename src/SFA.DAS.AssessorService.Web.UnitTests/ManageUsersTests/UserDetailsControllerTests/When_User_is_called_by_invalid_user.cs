@@ -13,7 +13,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ManageUsersTests.UserDetailsCont
         [Test]
         public async Task Then_UnauthorizedResult_is_returned()
         {
-            ContactsApiClient.Setup(apiClient => apiClient.GetById(CallingUserId.ToString())).ReturnsAsync(new ContactResponse
+            ContactsApiClient.Setup(apiClient => apiClient.GetById(CallingUserId)).ReturnsAsync(new ContactResponse
             {
                 Id = CallingUserId,
                 OrganisationId = DifferentOrganisationId

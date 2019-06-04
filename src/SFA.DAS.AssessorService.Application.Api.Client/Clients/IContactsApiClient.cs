@@ -23,7 +23,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 
         Task<ContactResponse> UpdateStatus(UpdateContactStatusRequest updateContactStatusRequest);
 
-        Task<ContactResponse> GetById(string id);
+        Task<ContactResponse> GetById(Guid id);
 
         Task<ContactResponse> GetContactBySignInId(string signInId);
         Task<List<ContactResponse>> GetAllContactsForOrganisation(string epaoId);

@@ -16,10 +16,12 @@ namespace SFA.DAS.AssessorService.Web.Controllers.ManageUsers
     public class InviteUserController : ManageUsersBaseController
     {
         private readonly IContactsApiClient _contactsApiClient;
+        private readonly IOrganisationsApiClient _organisationsApiClient;
 
-        public InviteUserController(IContactsApiClient contactsApiClient, IHttpContextAccessor contextAccessor) :base(contactsApiClient, contextAccessor)
+        public InviteUserController(IContactsApiClient contactsApiClient, IHttpContextAccessor contextAccessor, IOrganisationsApiClient organisationsApiClient) :base(contactsApiClient, contextAccessor)
         {
             _contactsApiClient = contactsApiClient;
+            _organisationsApiClient = organisationsApiClient;
         }
 
         [HttpGet("/ManageUsers/Invite")]
@@ -75,9 +77,12 @@ namespace SFA.DAS.AssessorService.Web.Controllers.ManageUsers
         }
 
         [HttpGet("/ManageUsers/{contactId}/Invited")]
-        public IActionResult Invited(Guid contactId)
+        public async Task<IActionResult> Invited(Guid contactId)
         {
-            return Ok();
+            var contact = await _contactsApiClient.GetById(contactId);
+            var organisation = await _organisationsApiClient.GetOrganisationByUserId(contactId);
+            
+            return View("~/Views/ManageUsers/InviteUser/Invited.cshtml", new InvitedViewModel {Email = contact.Email, Organisation = organisation.EndPointAssessorName});
         }
         
         private async Task RebuildViewModel(InviteContactViewModel vm)

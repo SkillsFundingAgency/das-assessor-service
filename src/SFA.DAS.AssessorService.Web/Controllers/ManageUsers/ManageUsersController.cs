@@ -48,26 +48,24 @@ namespace SFA.DAS.AssessorService.Web.Controllers.ManageUsers
 
         [HttpGet]
         [Route("/[controller]/status/{id}/{status}")]
-        public async Task<IActionResult> SetStatusAndNotify(string id, string status)
+        public async Task<IActionResult> SetStatusAndNotify(Guid id, string status)
         {
             const string epaoApproveConfirmTemplate = "EPAOUserApproveConfirm";
 
-            if (!string.IsNullOrEmpty(id) && !string.IsNullOrEmpty(status))
-            {
-                await _contactsApiClient.UpdateStatus(new UpdateContactStatusRequest(id, status));
-                if (status == ContactStatus.Approve)
+            if (string.IsNullOrEmpty(status)) return RedirectToAction("Index");
+            
+            await _contactsApiClient.UpdateStatus(new UpdateContactStatusRequest(id, status));
+            if (status != ContactStatus.Approve) return RedirectToAction("Index");
+            
+            var contactResponse = await _contactsApiClient.GetById(id);
+            var emailTemplate =
+                await _emailApiClient.GetEmailTemplate(epaoApproveConfirmTemplate);
+            await _emailApiClient.SendEmailWithTemplate(new SendEmailRequest(contactResponse.Email,
+                emailTemplate, new
                 {
-                    var contactResponse = await _contactsApiClient.GetById(id);
-                    var emailTemplate =
-                        await _emailApiClient.GetEmailTemplate(epaoApproveConfirmTemplate);
-                    await _emailApiClient.SendEmailWithTemplate(new SendEmailRequest(contactResponse.Email,
-                        emailTemplate, new
-                        {
-                            contactname = $"{contactResponse.DisplayName}",
-                            ServiceLink = _config.ServiceLink
-                        }));
-                }
-            }
+                    contactname = $"{contactResponse.DisplayName}",
+                    ServiceLink = _config.ServiceLink
+                }));
 
             return RedirectToAction("Index");
         }

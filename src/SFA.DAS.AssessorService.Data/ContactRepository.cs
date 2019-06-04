@@ -145,7 +145,7 @@ namespace SFA.DAS.AssessorService.Data
         public async Task UpdateStatus(UpdateContactStatusRequest updateContactStatusRequest)
         {
             var contactEntity =
-                await _assessorDbContext.Contacts.FirstAsync(q => q.Id == Guid.Parse(updateContactStatusRequest.Id));
+                await _assessorDbContext.Contacts.FirstAsync(q => q.Id == updateContactStatusRequest.Id);
 
             contactEntity.Status = updateContactStatusRequest.Status == ContactStatus.Approve
                 ? ContactStatus.Live

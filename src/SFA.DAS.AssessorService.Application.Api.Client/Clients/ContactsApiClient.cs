@@ -52,7 +52,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task<ContactResponse> GetById(string id)
+        public async Task<ContactResponse> GetById(Guid id)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/contacts/user/{id}"))
             {
