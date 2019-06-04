@@ -250,8 +250,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             {
                 //We got here that means our current screen is the Sent For Approval screen, since you can't submit from 
                 //Approved and Reject screen
-                if (certificateApprovalViewModel.ApprovalResults.Any(
-                    x => x.IsApproved == CertificateStatus.ToBeApproved))
+                if (!certificateApprovalViewModel.HaveAllRecordsBeenProcessed)
                 {
                     //If there are still some certificates left to be approved|rejected stay on the Sent For Approval screen
                     certificateApprovalViewModel.ActionHint = CertificateStatus.SentForApproval;
