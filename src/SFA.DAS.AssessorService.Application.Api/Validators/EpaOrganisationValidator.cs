@@ -369,6 +369,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             return string.Empty;
         }
 
+        public string CheckUkprnForOrganisation(long? ukprn)
+        {
+            if (ukprn == null)
+                return FormatErrorMessage(EpaOrganisationValidatorMessageName.UkprnIsNotPresent);
+
+            return string.Empty;
+        }
+
         public string CheckContactCountForOrganisation(int? numberOfContacts)
         {
             if (numberOfContacts==null || numberOfContacts==0)
@@ -583,6 +591,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             RunValidationCheckAndAppendAnyError("OrganisationTypeId", CheckOrganisationTypeExists(request.OrganisationTypeId), validationResult, ValidationStatusCode.BadRequest);
             RunValidationCheckAndAppendAnyError("Address", CheckAddressDetailsForOrganisation(request.Address1,request.Address2,request.Address3,request.Address4), validationResult, ValidationStatusCode.BadRequest);
             RunValidationCheckAndAppendAnyError("Postcode", CheckPostcodeIsPresentForOrganisation(request.Postcode), validationResult, ValidationStatusCode.BadRequest);
+            RunValidationCheckAndAppendAnyError("Ukprn", CheckUkprnForOrganisation(request.Ukprn), validationResult, ValidationStatusCode.BadRequest);
             RunValidationCheckAndAppendAnyError("ContactsCount", CheckContactCountForOrganisation(contacts?.Count()), validationResult, ValidationStatusCode.BadRequest);
             RunValidationCheckAndAppendAnyError("StandardsCount", CheckStandardCountForOrganisation(standards?.Count()), validationResult, ValidationStatusCode.BadRequest);
 
