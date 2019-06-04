@@ -240,6 +240,11 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
             return await Get<GetAnswersResponse>($"/Answer/{questionTag}/{applicationId}");
         }
 
+        public async Task<List<Contact>> GetOrganisationContacts(Guid organisationId)
+        {
+            return await Get<List<Contact>>($"/Account/Organisation/{organisationId}/Contacts");
+        }
+
         public async Task<Contact> GetContact(Guid contactId)
         {
             return await Get<Contact>($"/Account/Contact/{contactId}");
