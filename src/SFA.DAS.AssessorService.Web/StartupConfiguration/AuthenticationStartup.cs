@@ -171,6 +171,14 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
                                              }
                                              if (assessorOrg != null)
                                              {
+                                                 var contactStatus = ContactStatus.Live;
+
+                                                 // ON-1173 - don't make external user live if org is still New and has a primary contact already
+                                                 if (assessorOrg.Status is OrganisationStatus.New && !string.IsNullOrEmpty(assessorOrg.PrimaryContact))
+                                                 {
+                                                     contactStatus = ContactStatus.InvitePending;
+                                                 }
+
                                                  //Organisation exists in assessor so update contact with organisation
                                                  var newContact = new Contact
                                                  {
@@ -186,7 +194,7 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
                                                      GivenNames = applyContact.GivenNames,
                                                      OrganisationId = assessorOrg.Id,
                                                      EndPointAssessorOrganisationId = assessorOrg.EndPointAssessorOrganisationId,
-                                                     Status = ContactStatus.Live
+                                                     Status = contactStatus
                                                  };
 
                                                  user = await CreateANewContact(newContact, contactClient, logger, signInId);
