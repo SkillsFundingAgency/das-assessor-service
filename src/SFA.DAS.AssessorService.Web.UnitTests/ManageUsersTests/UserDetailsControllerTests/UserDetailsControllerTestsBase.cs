@@ -88,7 +88,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ManageUsersTests.UserDetailsCont
 
             httpContextAccessor.Setup(a => a.HttpContext).Returns(context);
             
-            Controller = new UserDetailsController(ContactsApiClient.Object, httpContextAccessor.Object);
+            Controller = new UserDetailsController(ContactsApiClient.Object, httpContextAccessor.Object, new Mock<IOrganisationsApiClient>().Object);
         }
         
         [TearDown]
