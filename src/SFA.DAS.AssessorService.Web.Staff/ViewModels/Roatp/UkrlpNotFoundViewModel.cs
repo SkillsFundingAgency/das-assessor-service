@@ -3,6 +3,5 @@
     public class UkrlpNotFoundViewModel
     {
         public string NextAction { get; set; }
-        public string FirstEntry { get; set; }
     }
 }

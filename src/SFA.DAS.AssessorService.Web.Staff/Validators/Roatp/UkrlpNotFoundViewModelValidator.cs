@@ -9,7 +9,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Validators.Roatp
         {
             RuleFor(vm => vm).Custom((vm, context) =>
             {
-                if (!string.IsNullOrEmpty(vm?.NextAction) || !string.IsNullOrEmpty(vm?.FirstEntry)) return;
+                if (!string.IsNullOrEmpty(vm?.NextAction)) return;
 
                 context.AddFailure("NextAction", "Tell us what you want to do");
             });

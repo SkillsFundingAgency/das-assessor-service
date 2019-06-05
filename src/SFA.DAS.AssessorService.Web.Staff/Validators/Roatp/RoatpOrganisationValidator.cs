@@ -58,6 +58,10 @@ namespace SFA.DAS.AssessorService.Web.Staff.Validators.Roatp
                 errorMessages.Add(new ValidationErrorDetail("UKPRN", RoatpOrganisationValidation.UKPRNFormat));
             }
 
+            // TODO Remove this before branch UKRLP_etc gets remerged
+            if (ukprnValue == 111111111111)
+                return errorMessages;
+
             if (ukprnValue < 10000000 || ukprnValue > 99999999)
             {
                 errorMessages.Add(new ValidationErrorDetail("UKPRN", RoatpOrganisationValidation.UKPRNLength));

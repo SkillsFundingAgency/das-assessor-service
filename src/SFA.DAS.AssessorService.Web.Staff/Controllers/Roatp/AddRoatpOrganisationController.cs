@@ -72,7 +72,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
             catch (HttpRequestException ex)
             {
                 _logger.LogError(ex,$"Failed to gather organisation details from ukrlp for UKPRN:[{model?.UKPRN}]");
-                var notFoundModel = new UkrlpNotFoundViewModel {FirstEntry = "true"};
+                var notFoundModel = new UkrlpNotFoundViewModel {NextAction = "wait"};
                 return RedirectToAction("UklrpIsUnavailable", notFoundModel);
             }
 
@@ -253,19 +253,18 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
 
 
 
-        [Route("ukrlp-not-found")]
+        [Route("ukrlp-unavailable")]
         public async Task<IActionResult> UklrpIsUnavailable(UkrlpNotFoundViewModel model)
         {
    
-            if (!ModelState.IsValid || !string.IsNullOrEmpty(model?.FirstEntry))
+            if (!ModelState.IsValid) // || !string.IsNullOrEmpty(model?.FirstEntry))
             {
-                return View("~/Views/Roatp/UkprnIsUnavailable.cshtml", model);
+                return View("~/Views/Roatp/UkprnIsUnavailable.cshtml",model);
             }
 
-            if (model?.NextAction == "AddManually")
+            if (model?.NextAction == "wait" || model?.NextAction == "AddManually")
             {
-                var notFoundModel = new UkrlpNotFoundViewModel { FirstEntry = "true" };
-                return RedirectToAction("UklrpIsUnavailable", notFoundModel);
+                return View("~/Views/Roatp/UkprnIsUnavailable.cshtml");
             }
 
             return RedirectToAction("Index", "RoatpHome");
@@ -326,6 +325,25 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
             return View("~/Views/Roatp/AddOrganisationDetails.cshtml", addOrganisationModel);
         }
 
+        [Route("confirm-details")]
+        public async Task<IActionResult> AddOrganisationPreview(AddOrganisationViewModel model)
+        {
+            model.OrganisationTypes = await _apiClient.GetOrganisationTypes(model.ProviderTypeId);
+            model.ProviderTypes = await _apiClient.GetProviderTypes();
+            model.LegalName = TextSanitiser.SanitiseText(model?.LegalName);
+            model.TradingName = TextSanitiser.SanitiseText(model?.TradingName);
+            if (!ModelState.IsValid)
+            {
+                model.ProviderTypes = await _apiClient.GetProviderTypes();
+                return View("~/Views/Roatp/AddOrganisationDetails.cshtml", model);
+            }
+
+            model.LegalName = model.LegalName.ToUpper();
+  
+            _sessionService.SetAddOrganisationDetails(model);
+
+            return View("~/Views/Roatp/AddOrganisationPreview.cshtml", model);
+        }
 
         [Route("successfully-added")]
         public async Task<IActionResult> CreateOrganisation(AddOrganisationViewModel model)
@@ -353,7 +371,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
         [Route("back")]
         public async Task<IActionResult> Back(string action, Guid organisationId)
         {
-            
+            var model = _sessionService.GetAddOrganisationDetails();
 
             return RedirectToAction(action);
         }
@@ -374,7 +392,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
                 Ukprn = model.UKPRN,
                 TradingName = model?.TradingName,
                 Username = HttpContext.User.OperatorName(),
-                SourceIsUKRLP = true
+                // MFCMFC  SourceIsUKRLP = true
             };
             return request;
         }
@@ -388,7 +406,13 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
             }
             var referer = refererHeaders[0];
 
-            if (referer.Contains("add-confirm"))
+            if (referer.Contains("confirm-details"))
+            {
+                return true;
+            }
+
+            var request = ControllerContext.HttpContext.Request;
+            if (request.Method == "GET" && request.Path.ToString().Contains("enter-details"))
             {
                 return true;
             }
