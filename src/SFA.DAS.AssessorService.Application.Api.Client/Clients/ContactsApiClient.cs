@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -24,6 +25,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 
         public ContactsApiClient(HttpClient httpClient, ITokenService tokenService, ILogger<ApiClientBase> logger) : base(httpClient, tokenService, logger)
         {
+        }
+
+        public async Task<List<ContactsPrivilege>> GetContactPrivileges(Guid userId)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/contacts/user/{userId}/privileges"))
+            {
+                return await RequestAndDeserialiseAsync<List<ContactsPrivilege>>(request, $"Could not find the contact");
+            }
         }
 
         public async Task<ContactResponse> GetByUsername(string username)
@@ -177,6 +186,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 
     public interface IContactsApiClient
     {
+        Task<List<ContactsPrivilege>> GetContactPrivileges(Guid userId);
+        
         Task<ContactResponse> GetByUsername(string username);
         
         Task<ContactResponse> Update(UpdateContactRequest updateContactRequest);

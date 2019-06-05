@@ -43,6 +43,13 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             _mediator = mediator;
         }
 
+        [HttpGet("user/{userId}/privileges")]
+        public async Task<IActionResult> GetPrivilegesForContact(Guid userId)
+        {
+            var privileges = await _contactQueryRepository.GetPrivilegesFor(userId);
+            return Ok(privileges);
+        }
+
         [HttpGet("{endPointAssessorOrganisationId}", Name = "SearchContactsForAnOrganisation")]
         [SwaggerResponse((int) HttpStatusCode.OK, Type = typeof(List<ContactResponse>))]
         [SwaggerResponse((int)HttpStatusCode.NotFound)]

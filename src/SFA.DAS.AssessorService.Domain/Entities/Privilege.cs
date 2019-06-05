@@ -8,7 +8,5 @@ namespace SFA.DAS.AssessorService.Domain.Entities
     {
        public Guid Id { get; set; }
        public string UserPrivilege { get; set; }
-
-       public IList<ContactsPrivilege> ContactsPrivileges { get; set; }
     }
 }
