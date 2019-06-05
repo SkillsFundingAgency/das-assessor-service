@@ -21,7 +21,7 @@
                        asp-controller="OrganisationSearch"
                        asp-route-searchString ="@searchString"
                        asp-route-pageIndex="@(pageIndex - 1)"
-                       class="previous">
+                       class="govuk-body  previous">
                         <i class="arrow-button icon-left-open">&#xe800;</i>
                         <span class="description">Previous <span class="hide-mob">page</span></span>
                         <span class="counter">Page <span class="prevPage">@(pageIndex - 1)</span> of <span class="totalPage">@totalPages</span></span>
@@ -34,7 +34,7 @@
                        asp-controller="OrganisationSearch"
                        asp-route-searchString ="@searchString"
                        asp-route-pageIndex="@(pageIndex + 1)"
-                       class="next">
+                       class="govuk-body next">
                         <i class="arrow-button icon-right-open">&#xe801;</i>
                         <span class="description">Next <span class="hide-mob">page</span></span>
                         <span class="counter">Page <span class="nextPage">@(pageIndex + 1)</span> of <span class="totalPage">@totalPages</span></span>
