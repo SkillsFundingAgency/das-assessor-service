@@ -1,4 +1,5 @@
-﻿using System.Net.Http;
+﻿using System.Collections.Generic;
+using System.Net.Http;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client;
 using SFA.DAS.AssessorService.Application.Api.Services;
 
@@ -57,7 +58,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
         {
             if (!IsRedirectFromConfirmationPage() && !ModelState.IsValid)
             {
-                model.ProviderTypes = await _apiClient.GetProviderTypes();
+                var addOrganisationModel = _sessionService.GetAddOrganisationDetails();
+                model.UKPRN = addOrganisationModel.UKPRN;
                 return View("~/Views/Roatp/EnterUkprn.cshtml", model);
             }
 
@@ -121,6 +123,15 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
         [Route("type-organisation")]
         public async Task<IActionResult> AddOrganisationType(AddOrganisationProviderTypeViewModel model)
         {
+            var addOrganisationModel = new AddOrganisationViewModel();
+            
+            if (string.IsNullOrEmpty(model.LegalName))
+            {
+                addOrganisationModel = _sessionService.GetAddOrganisationDetails();
+                model.LegalName = addOrganisationModel.LegalName;
+                model.ProviderTypeId = addOrganisationModel.ProviderTypeId;
+                model.OrganisationTypeId = addOrganisationModel.OrganisationTypeId;
+            }
 
             if (string.IsNullOrEmpty(model.LegalName))
             {
@@ -128,13 +139,13 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
                 model.ProviderTypeId = providerDetailsContainer.ProviderTypeId;
             }
 
-            if (!IsRedirectFromConfirmationPage() && !ModelState.IsValid)
+            if (!IsRedirectFromConfirmationPage() && !ModelState.IsValid && model.ProviderTypeId==0)
             {
                 model.ProviderTypes = await _apiClient.GetProviderTypes();
                 return View("~/Views/Roatp/AddProviderType.cshtml", model);
             }
 
-            var addOrganisationModel = _sessionService.GetAddOrganisationDetails();
+            addOrganisationModel = _sessionService.GetAddOrganisationDetails();
 
             if (string.IsNullOrEmpty(addOrganisationModel?.LegalName))
             {
@@ -143,9 +154,10 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
 
             UpdateAddOrganisationModelFromProviderTypeModel(addOrganisationModel,model);
 
+            
             var organisationTypes = await _apiClient.GetOrganisationTypes(addOrganisationModel.ProviderTypeId);
 
-            addOrganisationModel.OrganisationTypes = organisationTypes.ToList().OrderBy(x => x.Type);
+            addOrganisationModel.OrganisationTypes = organisationTypes.ToList().OrderBy(x => x.Id!=0).ThenBy(x=>x.Type);
 
             _sessionService.SetAddOrganisationDetails(addOrganisationModel);
 
@@ -155,7 +167,6 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
 
             return View("~/Views/Roatp/AddOrganisationType.cshtml", vm);
         }
-
 
         [Route("add-confirm")]
         public async Task<IActionResult> ConfirmOrganisationDetails(AddOrganisationTypeViewModel model)
@@ -342,9 +353,9 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
         [Route("back")]
         public async Task<IActionResult> Back(string action, Guid organisationId)
         {
-            var model = _sessionService.GetAddOrganisationDetails();
+            
 
-            return RedirectToAction(action, model);
+            return RedirectToAction(action);
         }
 
         private CreateOrganisationRequest CreateAddOrganisationRequestFromModel(AddOrganisationViewModel model)

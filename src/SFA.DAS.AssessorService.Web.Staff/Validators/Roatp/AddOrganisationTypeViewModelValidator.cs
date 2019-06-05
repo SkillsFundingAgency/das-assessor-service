@@ -31,7 +31,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Validators.Roatp
                 Errors = new List<ValidationErrorDetail>()
             };
 
-            var isValid = (viewModel.OrganisationTypeId>0);
+            var isValid = (viewModel.OrganisationTypeId>=0);
 
             if (!isValid)
             {
