@@ -14,7 +14,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers.ManageUsers
 {
     public class UserDetailsController : ManageUsersBaseController
     {
-        public UserDetailsController(IContactsApiClient contactsApiClient, IHttpContextAccessor httpContextAccessor) : base(contactsApiClient, httpContextAccessor){}
+        private readonly IOrganisationsApiClient _organisationsApiClient;
+        public UserDetailsController(IContactsApiClient contactsApiClient, IHttpContextAccessor httpContextAccessor, IOrganisationsApiClient organisationsApiClient) : base(contactsApiClient, httpContextAccessor)
+        {
+            _organisationsApiClient = organisationsApiClient;
+        }
 
         [HttpGet("/ManageUsers/{contactId}")]
         public async Task<IActionResult> User(Guid contactId)
@@ -123,8 +127,21 @@ namespace SFA.DAS.AssessorService.Web.Controllers.ManageUsers
             {
                 return response.SelfRemoved 
                     ? RedirectToAction("SignOut", "Account") 
-                    : RedirectToAction("Index", "ManageUsers");
+                    : RedirectToAction("Removed", "UserDetails", new {contactId});
             }
+        }
+
+        [HttpGet("/ManageUsers/{contactId}/removed")]
+        public async Task<IActionResult> Removed(Guid contactId)
+        {
+            var securityCheckpoint = await SecurityCheckAndGetContact(contactId);
+
+            if (!securityCheckpoint.isValid)
+            {
+                return Unauthorized();
+            }
+            
+            //var organisation = _organisationsApiClient.G
         }
         
     }
