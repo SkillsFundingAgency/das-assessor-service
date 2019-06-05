@@ -72,6 +72,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                 await PostPutRequest(request, newContact);
             }
         }
+
+        public async Task SignInIdCallback(SignInCallback callback)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Post,$"/Account/Callback"))
+            {
+                await PostPutRequest(request, callback);
+            }
+        }
     }
 }
 
@@ -83,4 +91,5 @@ public interface IContactApplyClient
     Task<Contact> GetApplyContactBySignInId(Guid signinId);
     Task RemoveContactFromOrganisation(Guid contactId);
     Task CreateNewContact(SFA.DAS.AssessorService.Domain.Entities.Contact newContact);
+    Task SignInIdCallback(SignInCallback callback);
 }

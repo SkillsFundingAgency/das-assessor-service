@@ -13,6 +13,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task Delete(string userName);
         Task LinkOrganisation(string endPointAssessorOrganisationId, string userName);
         Task UpdateStatus(UpdateContactStatusRequest updateContactRequest);
+        Task UpdateStatus(Guid contactId, string status);
 
         Task<Contact> UpdateContactWithOrganisationData(
             UpdateContactWithOrgAndStausRequest updateContactWithOrgAndStaus);

@@ -130,7 +130,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task Callback(DfeSignInCallback callback)
+        public async Task Callback(SignInCallback callback)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/v1/contacts/callback"))
             {

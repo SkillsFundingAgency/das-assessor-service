@@ -142,6 +142,8 @@ namespace SFA.DAS.AssessorService.Data
             await _assessorDbContext.SaveChangesAsync();
         }
 
+        
+        
         public async Task UpdateStatus(UpdateContactStatusRequest updateContactStatusRequest)
         {
             var contactEntity =
@@ -156,6 +158,16 @@ namespace SFA.DAS.AssessorService.Data
             // Workaround for Mocking
             _assessorDbContext.MarkAsModified(contactEntity);
 
+            await _assessorDbContext.SaveChangesAsync();
+        }
+
+        public async Task UpdateStatus(Guid contactId, string status)
+        {
+            var contactEntity =
+                await _assessorDbContext.Contacts.FirstAsync(c => c.Id == contactId);
+
+            contactEntity.Status = status;
+            
             await _assessorDbContext.SaveChangesAsync();
         }
 

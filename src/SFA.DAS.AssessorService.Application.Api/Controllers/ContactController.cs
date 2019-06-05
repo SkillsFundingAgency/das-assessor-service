@@ -118,7 +118,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
         [PerformValidation]
         [HttpPost("callback", Name= "Callback")]
-        public async Task<ActionResult> Callback([FromBody] DfeSignInCallback callback)
+        public async Task<ActionResult> Callback([FromBody] SignInCallback callback)
         {
             _logger.LogInformation($"Received callback from DfE: Sub: {callback.Sub} SourceId: {callback.SourceId}");
             await _mediator.Send(new UpdateSignInIdRequest(Guid.Parse(callback.Sub), Guid.Parse(callback.SourceId)));

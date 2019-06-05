@@ -32,7 +32,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             UpdateContactWithOrgAndStausRequest updateContactWithOrgAndStausRequest);
 
         Task<ContactBoolResponse> InviteUser(CreateContactRequest createAccountRequest);
-        Task Callback(DfeSignInCallback callback);
+        Task Callback(SignInCallback callback);
 
         Task MigrateUsers();
 
