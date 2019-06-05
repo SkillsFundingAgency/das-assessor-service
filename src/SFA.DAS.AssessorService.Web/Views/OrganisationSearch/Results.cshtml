@@ -55,13 +55,13 @@
 
     <div class="govuk-grid-row search-results">
         <div class="govuk-grid-column-two-thirds">
-            @if (@Model.Organisations != null && @Model.Organisations.Any())
+            @if (@Model.Organisations != null && @Model.Organisations.Items.Any())
             {
 
-            <span class="govuk-body">@Model.OrganisationFoundString()</span>
+                <span class="govuk-body">@Model.OrganisationFoundString()</span>
                 <table class="govuk-table table.responsive">
                     <tbody class="govuk-table__body">
-                        @foreach (var result in Model.Organisations)
+                        @foreach (var result in Model.Organisations.Items)
                         {
                             <tr class="govuk-table__row">
                                 <td class="govuk-table__header--no-bottom-border">
@@ -71,6 +71,7 @@
                                         <input asp-for="Ukprn" value="@result.Ukprn" type="hidden" />
                                         <input asp-for="OrganisationType" value="@result.OrganisationType" type="hidden" />
                                         <input asp-for="Postcode" value="@result.Address?.Postcode" type="hidden" />
+                                        <input asp-for="PageIndex" value="@Model.Organisations.PageIndex" type="hidden"/>
 
                                         <p class="govuk-body govuk-!-margin-top-4">
                                             <button type="submit" class="govuk-button govuk-button__looks-like-link--no-decoration">@result.Name</button>
@@ -136,9 +137,22 @@
                                     }
                                 </td>
                             </tr>
-                                    }
+                        }
                     </tbody>
                 </table>
+
+                await Html.RenderPartialAsync("_OrgSearchPaginationLinks", new ViewDataDictionary(ViewData)
+                        {
+                        {"PageIndex", Model.Organisations.PageIndex},
+                        {"TotalPages", Model.Organisations.TotalPages},
+                        {"HasPreviousPage", Model.Organisations.HasPreviousPage},
+                        {"HasNextPage", Model.Organisations.HasNextPage},
+                        {"SearchTerm",Model.SearchString },
+                        {"Action", "NextResults"}
+                    });
+
+
+
             }
             else
             {

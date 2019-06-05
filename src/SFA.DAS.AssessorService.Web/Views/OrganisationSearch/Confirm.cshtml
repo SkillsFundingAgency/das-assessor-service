@@ -7,7 +7,7 @@
     ViewBag.Title = "Confirm organisation";
     Layout = "_Layout";
 
-    var organisation = Model.Organisations?.FirstOrDefault();
+    var organisation = Model.Organisations?.Items?.FirstOrDefault();
     var organisationType = Model.OrganisationTypes?.FirstOrDefault(ot => ot.Type == organisation?.OrganisationType);
 
     var epaoRegex = new Regex(@"[eE][pP][aA][0-9]{4,9}$");
@@ -19,6 +19,18 @@
     <div class="govuk-grid-row">
         @if (organisation != null)
         {
+            @if (organisation.OrganisationReferenceType != "RoEPAO")
+            {
+                <div class="govuk-grid-column-full">
+                    <div class="govuk-warning-text">
+                        <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                        <strong class="govuk-warning-text__text">
+                            <span class="bold-small"> @Model.Name</span> is not on the Register of End-point assessment organisations.
+                            If you continue, you will start a new application to become an End-point assessment organisation.
+                        </strong>
+                    </div>
+                 </div>
+            }
             <div class="govuk-grid-column-full">
                 <form method="post" asp-action="DealingWithRequest" asp-controller="OrganisationSearch" novalidate>
                     <input asp-for="SearchString" type="hidden" />
@@ -26,24 +38,11 @@
                     <input asp-for="Ukprn" type="hidden" />
                     <input asp-for="OrganisationType" type="hidden" />
                     <input asp-for="Postcode" type="hidden" />
+                    <input asp-for="PageIndex" value="@Model.PageIndex" type="hidden" />
 
 
                     <div class="govuk-form-group">
-                        @if (organisation.OrganisationReferenceType != "RoEPAO")
-                        {
-                            <div class="panel panel-border-wide">
-                                <p class="govuk-body">
-                                    
-                                </p>
-                            </div>
-                            <div class="govuk-warning-text">
-                                <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
-                                <strong class="govuk-warning-text__text">
-                                    <span class="bold-small"> @Model.Name</span> is not on the Register of End-point assessment organisations.
-                                     If you continue, you will start a new application to become and End-point assessment organisation.
-                                </strong>
-                            </div>
-                        }
+
                         <h1 class="govuk-heading-xl">Confirm organisation</h1>
 
                         <dl class="govuk-summary-list">
@@ -57,7 +56,7 @@
                                         @organisation.Name
                                     </dd>
                                     <dd class="govuk-summary-list__actions">
-                                        <a class="govuk-link" asp-action="Results" asp-controller="OrganisationSearch" asp-route-searchString="@Model.SearchString">Change</a>
+                                        <a class="govuk-link" asp-action="Results" asp-controller="OrganisationSearch" asp-route-searchString="@Model.SearchString" asp-route-pageIndex="@Model.PageIndex">Change</a>
                                     </dd>
                                 </div>
                             }
@@ -126,9 +125,9 @@
                 </form>
 
             </div>
-        }
-        else
-        {
+            }
+            else
+            {
             <div class="govuk-grid-column-two-thirds">
                 <div class="govuk-form-group">
                     <h1 class="govuk-heading-xl">We cannot find your organisation details</h1>
@@ -143,9 +142,9 @@
                 </div>
 
                 <p class="govuk-body">
-                    <a class="govuk-link" asp-action="Results" asp-controller="OrganisationSearch" asp-route-searchString="@Model.SearchString">Back to search results</a>
+                    <a class="govuk-link" asp-action="Results" asp-controller="OrganisationSearch" asp-route-searchString="@Model.SearchString" asp-route-pageIndex="@Model.PageIndex" >Back to search results</a>
                 </p>
             </div>
-        }
-    </div>
+            }
+        </div>
 </main>

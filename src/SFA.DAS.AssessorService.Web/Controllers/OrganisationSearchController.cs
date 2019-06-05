@@ -13,6 +13,7 @@ using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Application.Api.Client.Exceptions;
 using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.Domain.Consts;
+using SFA.DAS.AssessorService.Domain.Paging;
 using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.ViewModels.Organisation;
@@ -20,9 +21,12 @@ using FHADetails = SFA.DAS.AssessorService.ApplyTypes.FHADetails;
 
 namespace SFA.DAS.AssessorService.Web.Controllers
 {
+    
+
     [Authorize]
     public class OrganisationSearchController : Controller
     {
+        private const int PageSize = 10;
         private readonly IContactsApiClient _contactsApiClient;
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly IOrganisationsApiClient _organisationsApiClient;
@@ -30,6 +34,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         private readonly ILogger<OrganisationSearchController> _logger;
         private readonly IWebConfiguration _config;
         private readonly ISessionService _sessionService;
+
+       
 
         public OrganisationSearchController(ILogger<OrganisationSearchController> logger,
             IHttpContextAccessor contextAccessor, IOrganisationsApiClient organisationsApiClient,
@@ -54,7 +60,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Results(OrganisationSearchViewModel viewModel)
+        public async Task<IActionResult> Results(OrganisationSearchViewModel viewModel, int? pageIndex)
         {
             var signinId = _contextAccessor.HttpContext.User.Claims.First(c => c.Type == "sub")?.Value;
             var user = await _contactsApiClient.GetContactBySignInId(signinId);
@@ -70,14 +76,13 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 return View(nameof(Index));
             }
 
-            viewModel.Organisations = await _organisationsApplyApiClient.SearchForOrganisations(viewModel.SearchString);
-            viewModel.Organisations = OrderOrganisationByLiveStatus(viewModel);
+            viewModel.Organisations = await _organisationsApplyApiClient.SearchForOrganisations(viewModel.SearchString,PageSize, SanitizePageIndex(pageIndex));
 
             return View(viewModel);
         }
 
         [HttpGet]
-        public async Task<IActionResult> FromResults(OrganisationSearchViewModel viewModel)
+        public async Task<IActionResult> FromResults(OrganisationSearchViewModel viewModel, int? pageIndex)
         {
             var signinId = _contextAccessor.HttpContext.User.Claims.First(c => c.Type == "sub")?.Value;
             var user = await _contactsApiClient.GetContactBySignInId(signinId);
@@ -93,11 +98,31 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 return View(nameof(Results), viewModel);
             }
 
-            viewModel.Organisations = await _organisationsApplyApiClient.SearchForOrganisations(viewModel.SearchString);
-            viewModel.Organisations = OrderOrganisationByLiveStatus(viewModel);
+            viewModel.Organisations = await _organisationsApplyApiClient.SearchForOrganisations(viewModel.SearchString, PageSize, SanitizePageIndex(pageIndex));
 
             return View(nameof(Results), viewModel);
         }
+
+        [HttpGet]
+        public async Task<IActionResult> NextResults(string searchString, int? pageIndex)
+        {
+            var viewModel = new OrganisationSearchViewModel
+            {
+                SearchString = searchString
+            };
+
+            if (string.IsNullOrEmpty(viewModel.SearchString) || viewModel.SearchString.Length < 2)
+            {
+                ModelState.AddModelError(nameof(viewModel.SearchString), "Enter a valid search string");
+                TempData["ShowErrors"] = true;
+                return View(nameof(Results), viewModel);
+            }
+            
+            viewModel.Organisations = await _organisationsApplyApiClient.SearchForOrganisations(viewModel.SearchString, PageSize, SanitizePageIndex(pageIndex));
+
+            return View(nameof(Results), viewModel);
+        }
+
 
         [HttpPost]
         public async Task<IActionResult> Confirm(OrganisationSearchViewModel viewModel)
@@ -127,7 +152,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
            
 
             var organisationSearchResult = await GetOrganisation(viewModel.SearchString, viewModel.Name,
-                viewModel.Ukprn, viewModel.OrganisationType, viewModel.Postcode);
+                viewModel.Ukprn, viewModel.OrganisationType, viewModel.Postcode, viewModel.PageIndex);
 
             if (organisationSearchResult != null)
             {
@@ -141,7 +166,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                     }
                 }
 
-                viewModel.Organisations = new List<OrganisationSearchResult> {organisationSearchResult};
+                viewModel.Organisations = new PaginatedList<OrganisationSearchResult>(new List<OrganisationSearchResult> { organisationSearchResult },1,1,1);
                 viewModel.OrganisationTypes = await _organisationsApiClient.GetOrganisationTypes();
             }
             _sessionService.Set("OrganisationSearchViewModel", viewModel);
@@ -170,8 +195,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             _sessionService.Remove("OrganisationSearchViewModel");
 
             var organisationSearchResult = await GetOrganisation(viewModelFromSession.SearchString, viewModelFromSession.Name,
-                viewModelFromSession.Ukprn, viewModelFromSession.OrganisationType, viewModelFromSession.Postcode);
-            viewModelFromSession.Organisations = new List<OrganisationSearchResult> { organisationSearchResult };
+                viewModelFromSession.Ukprn, viewModelFromSession.OrganisationType, viewModelFromSession.Postcode,null);
+            viewModelFromSession.Organisations = new PaginatedList<OrganisationSearchResult>(new List<OrganisationSearchResult> { organisationSearchResult }, 1, 1, PageSize);
             viewModelFromSession.OrganisationTypes = await _organisationsApiClient.GetOrganisationTypes();
 
             return View("Type", viewModelFromSession);
@@ -181,14 +206,14 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         public async Task<IActionResult> OrganisationChosen(OrganisationSearchViewModel viewModel)
         {
             var organisationSearchResult = await GetOrganisation(viewModel.SearchString, viewModel.Name,
-                viewModel.Ukprn, viewModel.OrganisationType, viewModel.Postcode);
+                viewModel.Ukprn, viewModel.OrganisationType, viewModel.Postcode, viewModel.PageIndex);
             if (organisationSearchResult != null)
             {
                 if (organisationSearchResult.OrganisationReferenceType == "RoEPAO")
                 {
                     return RequestAccess(viewModel, organisationSearchResult);
                 }
-                viewModel.Organisations = new List<OrganisationSearchResult> {organisationSearchResult};
+                viewModel.Organisations = new PaginatedList<OrganisationSearchResult>(new List<OrganisationSearchResult> { organisationSearchResult }, 1, 1, PageSize);
                 viewModel.OrganisationTypes = await _organisationsApiClient.GetOrganisationTypes();
 
                 // ON-1818 do not pre-select OrganisationType
@@ -200,6 +225,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                     orgTypeModelState.RawValue = viewModel.OrganisationType;
                     orgTypeModelState.Errors.Clear();
                 }
+                
                 return View("Type", viewModel);
             }
             return View(nameof(Confirm),viewModel);
@@ -221,7 +247,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 _sessionService.Remove("OrganisationSearchViewModel");
 
             var organisationSearchResult = await GetOrganisation(viewModel.SearchString, viewModel.Name,
-                viewModel.Ukprn, viewModel.OrganisationType, viewModel.Postcode);
+                viewModel.Ukprn, viewModel.OrganisationType, viewModel.Postcode, viewModel.PageIndex);
             if (organisationSearchResult != null)
             {
                 if (organisationSearchResult.CompanyNumber != null)
@@ -257,9 +283,12 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         }  
      
         private async Task<OrganisationSearchResult> GetOrganisation(string searchString, string name, int? ukprn,
-            string organisationType, string postcode)
+            string organisationType, string postcode, int? pageIndex)
         {
-            var searchResults = await _organisationsApplyApiClient.SearchForOrganisations(searchString);
+            var searchResultsReturned = await _organisationsApplyApiClient.SearchForOrganisations(searchString,PageSize, SanitizePageIndex(pageIndex));
+            var searchResults = searchResultsReturned.Items == null ? 
+                new List<OrganisationSearchResult>().AsEnumerable() : searchResultsReturned.Items.AsEnumerable();
+
             // filter ukprn
             searchResults = searchResults.Where(sr =>
                 !sr.Ukprn.HasValue || !ukprn.HasValue || sr.Ukprn == ukprn);
@@ -286,11 +315,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             }
 
             return organisationSearchResult;
-        }
-
-        private List<OrganisationSearchResult> OrderOrganisationByLiveStatus(OrganisationSearchViewModel viewModel)
-        {
-            return viewModel.Organisations?.OrderByDescending(x => x.OrganisationIsLive).ToList();
         }
 
         private OrganisationDetails MapToOrganisationDetails(OrganisationSearchResult organisationSearchResult)
@@ -401,6 +425,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 newViewModel.CompanyNumber = organisationSearchResult.CharityNumber;
             }
             return View(nameof(NoAccess), newViewModel);
+        }
+
+        private int SanitizePageIndex(int? pageIndex)
+        {
+            return (pageIndex ?? 1) < 0 ? 1 : pageIndex ?? 1;
         }
     }
 }
