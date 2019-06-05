@@ -190,14 +190,14 @@
                     <p class="govuk-body">There are no contacts.</p>
                 }
             </div>
-            <p class="govuk-body" sfa-show-for-roles="@string.Join(",", Roles.AssessmentDeliveryTeam, Roles.CertificationTeam)">
-                <a class="govuk-link" href="/register/add-contact/@Model.OrganisationId">Add new contact</a>
+            <p class="govuk-body govuk-!-margin-bottom-6" >
+                <a class="govuk-link" href="/register/add-contact/@Model.OrganisationId" sfa-show-for-roles="@string.Join(",", Roles.AssessmentDeliveryTeam, Roles.CertificationTeam)">Add new contact</a>
             </p>
         </div>
     </div>
 
     <div class="govuk-grid-row">
-        <div class="govuk-grid-column-full">
+        <div class="govuk-grid-column-two-thirds">
 
             <h2 class="govuk-heading-l">Standards</h2>
             <div class="govuk-form-group">
@@ -208,7 +208,7 @@
                             <tr class="govuk-table__row">
                                 <th class="govuk-table__header" scope="col">Name</th>
                                 <th class="govuk-table__header" scope="col">Code</th>
-                                <th></th>
+                                <th class="govuk-table__header govuk-table__header--numeric"></th>
                             </tr>
                         </thead>
                         <tbody class="govuk-table__body">
@@ -218,7 +218,7 @@
                                 <tr class="govuk-table__row">
                                     <td class="govuk-table__cell" data-label="Name">@result.StandardCollation.Title</td>
                                     <td class="govuk-table__cell" data-label="ID">@result.StandardCode</td>
-                                    <td class="govuk-table__cell">
+                                    <td class="govuk-table__cell govuk-table__cell--numeric">
                                         <a class="govuk-link" href="/register/view-standard/@result.Id">View</a>
                                     </td>
                                 </tr>

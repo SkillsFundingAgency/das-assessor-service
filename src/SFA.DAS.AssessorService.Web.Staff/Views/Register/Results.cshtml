@@ -19,26 +19,25 @@
         </div>
     </div>
 
-
     @if (@Model.Results.Count > 0)
     {
         <div class="govuk-grid-row">
-            <div class="govuk-grid-column-full">
+            <div class="govuk-grid-column-two-thirds">
                 <table class="govuk-table table-font-xsmall">
                     <thead class="govuk-table__head">
                         <tr class="govuk-table__row">
                             <th class="govuk-table__header" scope="col">Name</th>
                             <th class="govuk-table__header" scope="col">ID</th>
-                            <th class="govuk-table__header" scope="col">UKPRN</th>
+                            <th class="govuk-table__header govuk-table__header--numeric" scope="col">UKPRN</th>
                         </tr>
                     </thead>
                     <tbody class="govuk-table__body">
                         @foreach (var result in Model.Results.OrderBy(x => x.Name))
                         {
                             <tr class="govuk-table__row">
-                                <td class="govuk-table__cell" data-label="Name"><a href="/register/view-organisation/@result.Id">@result.Name</a></td>
+                                <td class="govuk-table__cell" data-label="Name"><a class="govuk-link" href="/register/view-organisation/@result.Id">@result.Name</a></td>
                                 <td class="govuk-table__cell" data-label="ID">@result.Id</td>
-                                <td class="govuk-table__cell" data-label="UKPRN">@result.Ukprn</td>
+                                <td class="govuk-table__cell govuk-table__cell--numeric" data-label="UKPRN">@result.Ukprn</td>
                             </tr>
                         }
                     </tbody>

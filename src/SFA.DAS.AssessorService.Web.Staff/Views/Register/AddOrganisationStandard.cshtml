@@ -159,7 +159,7 @@
                                 <label class="govuk-label govuk-date-input__label" for="EffectiveFromYear">
                                     Year
                                 </label>
-                                <input class="govuk-input govuk-date-input__input govuk-input--width-2 js-integers-only" sfa-validation-for="EffectiveFromYear" sfa-validationerror-class="govuk-form-control--error" asp-for="EffectiveFromYear" type="text" maxlength="4" />
+                                <input class="govuk-input govuk-date-input__input govuk-input--width-4 js-integers-only" sfa-validation-for="EffectiveFromYear" sfa-validationerror-class="govuk-form-control--error" asp-for="EffectiveFromYear" type="text" maxlength="4" />
                             </div>
                         </div>
                     </div>
@@ -198,7 +198,7 @@
                                 <label class="govuk-label govuk-date-input__label" for="EffectiveToYear">
                                     Year
                                 </label>
-                                <input class="govuk-input govuk-date-input__input govuk-input--width-2 js-integers-only" sfa-validation-for="EffectiveToYear" sfa-validationerror-class="govuk-form-control--error" asp-for="EffectiveToYear" type="text" maxlength="4" />
+                                <input class="govuk-input govuk-date-input__input govuk-input--width-4 js-integers-only" sfa-validation-for="EffectiveToYear" sfa-validationerror-class="govuk-form-control--error" asp-for="EffectiveToYear" type="text" maxlength="4" />
                             </div>
                         </div>
                     </div>
@@ -246,20 +246,20 @@
 
                     <span class="govuk-error-message" asp-validation-for="DeliveryAreas"></span>
 
-                    <div class="govuk-radios">
+                    <div class="govuk-checkboxes">
                         @foreach (var deliveryArea in Model.AvailableDeliveryAreas)
                         {
                             var checkboxChecked = Model.DeliveryAreas != null && Model.DeliveryAreas.Any(x => x == deliveryArea.Id) ? "checked" : "";
-                            <div class="govuk-radios__item">
+                            <div class="govuk-checkboxes__item">
                                 <input 
-                                    class="govuk-radios__input" 
+                                    class="govuk-checkboxes__input" 
                                     id="@deliveryArea.Id"
                                     name="DeliveryAreas"
                                     type="checkbox"
                                     value="@deliveryArea.Id"
                                     @checkboxChecked
                                 />
-                                <label class="govuk-label govuk-radios__label" for="@deliveryArea.Id">
+                                <label class="govuk-label govuk-checkboxes__label" for="@deliveryArea.Id">
                                     @deliveryArea.Area
                                 </label>
                             </div>
