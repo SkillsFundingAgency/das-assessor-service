@@ -100,10 +100,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         }
 
         [HttpPost(Name = "Approvals")]
-        public async Task<IActionResult> Approvals(string jsonString)
+        public async Task<IActionResult> Approvals([FromBody]CertificatePostApprovalViewModel certificateApprovalViewModel)
         {
-            CertificatePostApprovalViewModel certificateApprovalViewModel =
-                JsonConvert.DeserializeObject<CertificatePostApprovalViewModel>(jsonString);
             var approvalsValidationFailed = await ValidateReasonForChange1(certificateApprovalViewModel);
             if (approvalsValidationFailed != null)
                 return approvalsValidationFailed;
@@ -115,9 +113,10 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             DetermineNextActionUsingCurrrentStatus(certificateApprovalViewModel);
 
             await ApiClient.ApproveCertificates(certificateApprovalViewModel);
-            return RedirectToAction(certificateApprovalViewModel.ActionHint);
+            return Ok(certificateApprovalViewModel.ActionHint);
         }
-        
+
+
         [HttpPost(Name = "ExportSentForApproval")]
         public async Task<FileContentResult> ExportSentForApproval(string status, string privateFundingStatus)
         {
@@ -251,8 +250,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             {
                 //We got here that means our current screen is the Sent For Approval screen, since you can't submit from 
                 //Approved and Reject screen
-                if (certificateApprovalViewModel.ApprovalResults.Any(
-                    x => x.IsApproved == CertificateStatus.ToBeApproved))
+                if (!certificateApprovalViewModel.HaveAllRecordsBeenProcessed)
                 {
                     //If there are still some certificates left to be approved|rejected stay on the Sent For Approval screen
                     certificateApprovalViewModel.ActionHint = CertificateStatus.SentForApproval;

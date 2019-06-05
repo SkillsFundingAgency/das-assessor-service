@@ -213,6 +213,12 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
                 return true;
             }
 
+            var request = ControllerContext.HttpContext.Request;
+            if (request.Method == "GET" && request.Path.ToString().Contains("enter-details"))
+            {
+                return true;
+            }
+
             return false;
         }
     }
