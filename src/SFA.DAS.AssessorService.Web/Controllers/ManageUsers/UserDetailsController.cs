@@ -144,9 +144,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers.ManageUsers
             var organisation = await _organisationsApiClient.GetOrganisationByUserId(contactId);
 
             return View("~/Views/ManageUsers/UserDetails/Removed.cshtml", new UserRemovedViewModel {ContactEmail = UserToBeDisplayed.Email, OrganisationName = organisation.EndPointAssessorName});
-        }
-        
+        }   
     }
-
-    
 }
