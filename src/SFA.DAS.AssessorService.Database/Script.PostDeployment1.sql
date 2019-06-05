@@ -10,6 +10,41 @@ Post-Deployment Script Template
 --------------------------------------------------------------------------------------
 */
 
+IF NOT EXISTS (SELECT * FROM EMailTemplates WHERE TemplateName = N'EPAOPermissionsAmended')
+BEGIN
+INSERT EMailTemplates ([Id],[TemplateName],[TemplateId],[Recipients],[CreatedAt]) 
+VALUES (NEWID(), N'EPAOPermissionsAmended', N'c1ba00d9-81b6-46d8-9b70-3d89d51aa9c1', NULL, GETDATE())
+END
+
+-- Update privileges
+  
+DECLARE @privilegesCount int
+SELECT @privilegesCount = COUNT(*) FROM Privileges
+
+IF (@privilegesCount < 6)
+  BEGIN
+    -- remove ContactsPrivileges records for View standards
+    DELETE ContactsPrivileges
+    FROM Privileges p
+           INNER JOIN ContactsPrivileges cp ON cp.PrivilegeId = p.Id
+    WHERE p.UserPrivilege = 'View standards'
+
+    -- remove Privileges View standards
+    DELETE Privileges WHERE UserPrivilege = 'View standards'
+
+    -- rename existing privileges
+    UPDATE Privileges SET UserPrivilege = 'Apply for a Standard' WHERE UserPrivilege = 'Apply for standards'
+
+    -- add new ones
+    INSERT INTO Privileges (Id, UserPrivilege) VALUES (NEWID(), 'View completed assessments')
+    INSERT INTO Privileges (Id, UserPrivilege) VALUES (NEWID(), 'Manage API subscription')
+    INSERT INTO Privileges (Id, UserPrivilege) VALUES (NEWID(), 'View pipeline')
+
+    -- set Manage Users to MustBeAtLeast.... true
+    UPDATE Privileges SET MustBeAtLeastOneUserAssigned = true WHERE UserPrivilege = 'Manage users'
+  END  
+  
+  
 -- backup ILRS before data synch
 /* DONE
 DELETE FROM IlrsCopy

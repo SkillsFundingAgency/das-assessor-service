@@ -1,0 +1,54 @@
+@model SFA.DAS.AssessorService.Web.Controllers.ManageUsers.ViewModels.UserViewModel
+
+@{
+    ViewBag.Title = (!ViewData.ModelState.IsValid ? "Error: " : "") + "Edit user permissions";
+}
+
+<a class="govuk-back-link" asp-controller="ManageUsers" asp-action="Index">Back</a>
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+                    <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+                        There is a problem
+                    </h2>
+                    <ul class="error-summary-list">
+                        <li><a href="#">@ViewData.ModelState.GetValueOrDefault("permissions").Errors.First().ErrorMessage</a></li>
+                    </ul>
+                </div>
+            }
+
+            <span class="govuk-caption-xl">Edit user permissions</span>            
+            <partial for="@Model" name="~/Views/ManageUsers/UserDetails/_UserDetails.cshtml"/>
+
+            <form asp-controller="UserDetails" asp-action="EditPermissions">
+                <input type="hidden" name="ContactId" value="@Model.EditPrivilegesViewModel.ContactId"/>
+                <div class="govuk-form-group">
+                    <fieldset class="govuk-fieldset">
+                        <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+                            <h2 class="govuk-fieldset__heading">
+                                Permissions
+                            </h2>
+                        </legend>
+                        <div class="govuk-checkboxes">
+                            @for (int i = 0; i < Model.EditPrivilegesViewModel.PrivilegeViewModels.Length; i++)
+                            {
+                                <div class="govuk-checkboxes__item">
+                                    <input type="hidden" name="PrivilegeViewModels[@i].Privilege.Id" value="@Model.EditPrivilegesViewModel.PrivilegeViewModels[i].Privilege.Id"/>
+                                    <input class="govuk-checkboxes__input" type="checkbox" id="PrivilegeViewModels[@i].Selected" name="PrivilegeViewModels[@i].Selected" value="true" @(Model.EditPrivilegesViewModel.PrivilegeViewModels[i].Selected ? "checked" : "")/>
+                                    <label class="govuk-label govuk-checkboxes__label" for="PrivilegeViewModels[@i].Selected">@Model.AllPrivilegeTypes[i].UserPrivilege</label>
+                                </div>
+                            }
+                        </div>
+                    </fieldset>
+                </div>
+                <button class="govuk-button" type="submit">Save</button>
+            </form>
+
+        </div>
+    </div>
+</main>

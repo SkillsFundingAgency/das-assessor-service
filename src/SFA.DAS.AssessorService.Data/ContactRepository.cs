@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
+using Dapper;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
@@ -14,10 +18,12 @@ namespace SFA.DAS.AssessorService.Data
     public class ContactRepository : IContactRepository
     {
         private readonly AssessorDbContext _assessorDbContext;
+        private readonly IDbConnection _connection;
 
-        public ContactRepository(AssessorDbContext assessorDbContext)
+        public ContactRepository(AssessorDbContext assessorDbContext, IDbConnection connection)
         {
             _assessorDbContext = assessorDbContext;
+            _connection = connection;
         }
 
         public async Task<Contact> CreateNewContact(Contact newContact)
@@ -74,6 +80,35 @@ namespace SFA.DAS.AssessorService.Data
                 result = _assessorDbContext.ContactsPrivileges.Any(x =>
                     x.ContactId == contactId);
             return result;
+        }
+
+        public async Task RemoveAllPrivileges(Guid contactId)
+        {
+            _assessorDbContext.ContactsPrivileges.RemoveRange(_assessorDbContext.ContactsPrivileges.Where(cp => cp.ContactId == contactId));
+            await _assessorDbContext.SaveChangesAsync();
+        }
+
+        public async Task AddPrivilege(Guid contactId, Guid privilegeId)
+        {
+            await _assessorDbContext.ContactsPrivileges.AddAsync(new ContactsPrivilege() {ContactId = contactId, PrivilegeId = privilegeId});
+            await _assessorDbContext.SaveChangesAsync();
+        }
+
+        public async Task<bool> IsOnlyContactWithPrivilege(Guid contactId, Guid privilegeId)
+        {
+            var contact = await _assessorDbContext.Contacts.FirstOrDefaultAsync(c => c.Id == contactId);
+            var orgContacts = _assessorDbContext.Contacts.Where(c => c.OrganisationId == contact.OrganisationId).Select(c => c.Id);
+
+            var orgContactPrivileges = await _assessorDbContext.ContactsPrivileges.Where(cp => orgContacts.Contains(cp.ContactId)).ToListAsync();
+
+            return orgContactPrivileges.Count(ocp => ocp.PrivilegeId == privilegeId) == 1;
+        }
+
+        public async Task CreateContactLog(Guid userId, Guid contactId, string logType, object logData)
+        {
+            await _connection.ExecuteAsync(@"INSERT INTO ContactLogs (DateTime, UserId, ContactId, ContactLogType, ContactLogDetails) 
+                                                                   VALUES (GETUTCDATE(), @userId, @contactId, @logType, @logDataString)"
+                , new {userId, contactId, logType, logDataString = JsonConvert.SerializeObject(logData)});
         }
 
 

@@ -101,7 +101,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
             try
             {
-               var emailTemplate = await _mediator.Send(new GetEMailTemplateRequest
+               var emailTemplate = await _mediator.Send(new GetEmailTemplateRequest
                        {TemplateName= epaoUserApproveRequestTemplate });
                var contacts= await _mediator.Send(new GetContactsForOrganisationRequest(emailAllApprovedContactsRequest.OrganisationReferenceId));
                foreach (var contact in contacts)

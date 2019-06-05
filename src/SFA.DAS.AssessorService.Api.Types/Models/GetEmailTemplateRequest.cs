@@ -4,7 +4,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models
 {
     using MediatR;
 
-    public class GetEMailTemplateRequest : IRequest<EMailTemplate>
+    public class GetEmailTemplateRequest : IRequest<EMailTemplate>
     {
         public string TemplateName { get; set; }
     }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -30,24 +31,6 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ManageUsersTests.UserDetailsCont
         public async Task Then_ViewResult_should_contain_UserViewModel()
         {
             _result.As<ViewResult>().Model.Should().BeOfType<UserViewModel>();
-        }
-
-        [Test]
-        public async Task Then_UserViewModel_contains_correct_user_details()
-        {
-            var expectedViewModel = new UserViewModel
-            {
-                Id = UserId,
-                Title = "AA",
-                GivenNames = "BBBB",
-                FamilyName = "CCCC",
-                Email = "DDDD",
-                PhoneNumber = "EEEE", 
-                Status = ContactStatus.Active,
-                ActionRequired = "No action required",
-                AssignedPrivileges = new List<ContactsPrivilege>{new ContactsPrivilege(), new ContactsPrivilege()}
-            };
-            _result.As<ViewResult>().Model.As<UserViewModel>().Should().BeEquivalentTo(expectedViewModel);
         }
 
         [Test]
