@@ -51,6 +51,7 @@
         public const string OrganisationTypeIsRequired = "OrganisationTypeIsRequired";
         public const string AddressIsNotEntered = "AddressIsNotEntered";
         public const string PostcodeIsNotEntered = "PostcodeIsNotEntered";
+        public const string UkprnIsNotPresent = "UkprnIsNotPresent";
         public const string ContactsAreNotPresent = "ContactsAreNotPresent";
         public const string StandardsAreNotPresent = "StandardsAreNotPresent";
     }

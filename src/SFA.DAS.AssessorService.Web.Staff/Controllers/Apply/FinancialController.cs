@@ -112,10 +112,14 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
                     {
                         foreach (var uploadQuestion in uploadPage.UploadQuestions)
                         {
-                            foreach (var answer in section.QnAData.Pages.SelectMany(p => p.PageOfAnswers).SelectMany(a => a.Answers).Where(a => a.QuestionId == uploadQuestion.QuestionId))
-                            {
-                                if (string.IsNullOrWhiteSpace(answer.Value)) continue;
+                            var answers = section.QnAData.Pages.SelectMany(p => p.PageOfAnswers)
+                                .SelectMany(a => a.Answers)
+                                .Where(a => a.QuestionId == uploadQuestion.QuestionId && !string.IsNullOrWhiteSpace(a.Value)).ToList();
 
+                            foreach (var answer in answers)
+                            {
+                                if (answer == null || string.IsNullOrWhiteSpace(answer.Value)) continue;
+                            
                                 var fileDownloadName = answer.Value;
 
                                 var downloadedFile = await _apiClient.DownloadFile(applicationId, int.Parse(uploadPage.PageId), uploadQuestion.QuestionId, Guid.Empty, 1, 3, fileDownloadName);
@@ -125,7 +129,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
                                 {
                                     var fileStream = await downloadedFile.Content.ReadAsStreamAsync();
                                     fileStream.CopyTo(entryStream);
-                                }
+                                }   
                             }
                         }
                     }

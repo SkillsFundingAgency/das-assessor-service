@@ -44,6 +44,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Services
         public void WhenGatheringAnswersForAnApplication(CommandTest commandTestSetup)
         {
             var signinId = Guid.NewGuid();
+            var contactId = Guid.NewGuid();
 
             var expectedCommand = new CreateOrganisationContactCommand
             {
@@ -71,9 +72,10 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Services
                 UserEmail ="",
                 SigninType = "",
                 SigninId = signinId,
-                CreatedBy = null,
+                CreatedBy = contactId.ToString(),
                 FinancialDueDate = commandTestSetup.FinancialDueDate,
                 IsFinancialExempt = commandTestSetup.IsFinancialExempt,
+                OtherApplyingUserEmails = new List<string>()
             };
 
             int? organisationUkprn = null;
@@ -81,13 +83,14 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Services
             if (int.TryParse(commandTestSetup.OrganisationUkprn, out int ukprnOut))
                 organisationUkprn = ukprnOut;
 
-            var organisationFromApplicationId = new SFA.DAS.AssessorService.ApplyTypes.Organisation
+            var applicationOrganisation = new Organisation
             {
+                Id = Guid.NewGuid(),
                 Name = commandTestSetup.OrganisationName,
                 RoEPAOApproved = commandTestSetup.IsEpaoApproved != null && commandTestSetup.IsEpaoApproved.Value,
                 OrganisationType = commandTestSetup.OrganisationType,
                 OrganisationUkprn = organisationUkprn,
-                CreatedBy = commandTestSetup.CreatedBy,
+                CreatedBy = contactId.ToString(),
                 OrganisationDetails = new OrganisationDetails
                 {
                     OrganisationReferenceType = commandTestSetup.OrganisationReferenceType,
@@ -99,12 +102,20 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Services
                 }
             };
 
-            _mockApplyApiClient.Setup(x => x.GetAnswer(_applicationId, It.IsAny<string>()))
-                .Returns(Task.FromResult(new GetAnswersResponse { Answer = null }));
+            var applicationContact = new Contact { Id = contactId, FamilyName = "", GivenNames = "", SigninType = "", SigninId = signinId, Email = "" };
 
-            _mockApplyApiClient.Setup(x => x.GetContact(It.IsAny<Guid>())).Returns(Task.FromResult(new Contact
-                {FamilyName = "", GivenNames = "", SigninType = "", SigninId = signinId, Email = ""}));
+            var application = new ApplyTypes.Application
+            {
+                Id = _applicationId,
+                ApplyingOrganisation = applicationOrganisation,
+                ApplyingOrganisationId = applicationOrganisation.Id,
+                CreatedBy = applicationContact.Id.ToString()
+            };
 
+            _mockApplyApiClient.Setup(x => x.GetApplication(_applicationId)).Returns(Task.FromResult(application));
+            _mockApplyApiClient.Setup(x => x.GetContact(contactId)).Returns(Task.FromResult(applicationContact));
+            _mockApplyApiClient.Setup(x => x.GetOrganisationContacts(applicationOrganisation.Id)).Returns(Task.FromResult(new List<Contact> { applicationContact }));
+            _mockApplyApiClient.Setup(x => x.GetAnswer(_applicationId, It.IsAny<string>())).Returns(Task.FromResult(new GetAnswersResponse { Answer = null }));
 
             foreach (var answerPair in commandTestSetup.AnswerPairs)
             {
@@ -113,7 +124,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Services
             }
 
             _mockApplyApiClient.Setup(x => x.GetOrganisationForApplication(_applicationId))
-                .Returns(Task.FromResult(organisationFromApplicationId));
+                .Returns(Task.FromResult(applicationOrganisation));
 
             var actualCommand = _answerService.GatherAnswersForOrganisationAndContactForApplication(_applicationId).Result;
    
@@ -162,12 +173,11 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Services
 
             public DateTime? FinancialDueDate { get; set; }
             public bool? IsFinancialExempt { get; set; }
-            public string CreatedBy { get; set; }
 
             public List<GetAnswerPair> AnswerPairs { get; set; }
             public CommandTest(string organisationName, string tradingName, bool isEpaoApproved, bool useTradingName, string useTradingNameString, string organisationType, string organisationUkprn 
                , string organisationReferenceType, string contactName, string contactAddress, string contactAddress1, string contactAddress2, string contactAddress3, string contactAddress4, string contactPostcode
-               , string contactEmail, string contactPhoneNumber, string companyUkprn, string companyNumber, string charityNumber, string standardWebsite, DateTime? financialDueDate, bool? isFinancialExempt, string createdBy = null)
+               , string contactEmail, string contactPhoneNumber, string companyUkprn, string companyNumber, string charityNumber, string standardWebsite, DateTime? financialDueDate, bool? isFinancialExempt)
             {
                 OrganisationName = organisationName;
                 OrganisationType = organisationType;
@@ -192,7 +202,6 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Services
                 StandardWebsite = standardWebsite;
                 FinancialDueDate = financialDueDate;
                 IsFinancialExempt = isFinancialExempt;
-                CreatedBy = createdBy;
 
                 AnswerPairs = new List<GetAnswerPair>
                 {
