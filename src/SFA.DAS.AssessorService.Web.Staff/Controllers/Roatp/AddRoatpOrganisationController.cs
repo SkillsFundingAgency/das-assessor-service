@@ -1,4 +1,5 @@
-﻿using SFA.DAS.AssessorService.Application.Api.Services;
+﻿using System.Net.Http;
+using SFA.DAS.AssessorService.Application.Api.Services;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
 {
@@ -14,6 +15,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
     using Resources;
     using SFA.DAS.AssessorService.Application.Api.Client.Clients;
     using SFA.DAS.AssessorService.Api.Types.Models.Roatp;
+    using SFA.DAS.AssessorService.Api.Types.Models.UKRLP;
 
     [Authorize]
     public class AddRoatpOrganisationController : Controller
@@ -21,12 +23,15 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
         private readonly IRoatpApiClient _apiClient;
         private readonly IRoatpSessionService _sessionService;
         private readonly IUkrlpApiClient _ukrlpClient;
+        private ILogger<AddRoatpOrganisationController> _logger;
 
-        public AddRoatpOrganisationController(IRoatpApiClient apiClient, IRoatpSessionService sessionService, IUkrlpApiClient ukrlpClient)
+        public AddRoatpOrganisationController(IRoatpApiClient apiClient, IRoatpSessionService sessionService, 
+            IUkrlpApiClient ukrlpClient, ILogger<AddRoatpOrganisationController> logger)
         {
             _apiClient = apiClient;
             _sessionService = sessionService;
             _ukrlpClient = ukrlpClient;
+            _logger = logger;
         }
         
 
@@ -53,12 +58,23 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
                 model.ProviderTypes = await _apiClient.GetProviderTypes();
                 return View("~/Views/Roatp/EnterUkprn.cshtml", model);
             }
-            var details = await _ukrlpClient.Get(model.UKPRN);
 
+            UkrlpProviderDetails details;
+
+            try
+            {
+                details = await _ukrlpClient.Get(model.UKPRN);
+            }
+            catch (HttpRequestException ex)
+            {
+                _logger.LogError(ex,$"Failed to gather organisation details from ukrlp for UKPRN:[{model?.UKPRN}]");
+                var notFoundModel = new UkrlpNotFoundViewModel {NextAction = "wait"};
+                return RedirectToAction("UklrpIsUnavailable", notFoundModel);
+            }
 
             if (string.IsNullOrEmpty(details.LegalName))
             {
-                return RedirectToAction("UkprnNotFound");
+                return Redirect("/ukprn-not-found");
             }
 
             var vm = new AddOrganisationProviderTypeViewModel
@@ -71,6 +87,22 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
             };
 
             return View("~/Views/Roatp/UkprnPreview.cshtml", vm);
+        }
+
+        [Route("ukrlp-unavailable")]
+        public async Task<IActionResult> UklrpIsUnavailable(UkrlpNotFoundViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View("~/Views/Roatp/UkprnIsUnavailable.cshtml",model);
+            }
+
+            if (model?.NextAction == "wait" || model?.NextAction == "AddManually")
+            {
+                return View("~/Views/Roatp/UkprnIsUnavailable.cshtml");
+            }
+
+            return RedirectToAction("Index", "RoatpHome");
         }
 
         [Route("new-training-provider")]
