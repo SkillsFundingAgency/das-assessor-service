@@ -231,6 +231,9 @@
   <data name="PostcodeIsNotEntered" xml:space="preserve">
     <value>There are insufficient details in the postcode</value>
   </data>
+  <data name="UkprnIsNotPresent" xml:space="preserve">
+    <value>The organisation cannot go live without a UKPRN</value>
+  </data>
   <data name="ContactsAreNotPresent" xml:space="preserve">
     <value>The organisation cannot go live without at least one contact</value>
   </data>
