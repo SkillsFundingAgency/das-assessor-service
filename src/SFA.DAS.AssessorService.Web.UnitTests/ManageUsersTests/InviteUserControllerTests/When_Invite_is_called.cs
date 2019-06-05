@@ -15,7 +15,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ManageUsersTests.InviteUserContr
         [Test]
         public async Task Then_ViewResult_is_returned()
         {
-            var controller = new InviteUserController(new Mock<IContactsApiClient>().Object, new Mock<IHttpContextAccessor>().Object);
+            var controller = new InviteUserController(new Mock<IContactsApiClient>().Object, new Mock<IHttpContextAccessor>().Object, new Mock<IOrganisationsApiClient>().Object);
             var result = await controller.Invite();
             result.Should().BeOfType<ViewResult>();
         }
