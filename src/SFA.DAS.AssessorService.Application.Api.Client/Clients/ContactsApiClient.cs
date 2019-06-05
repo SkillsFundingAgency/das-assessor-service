@@ -199,44 +199,15 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                 return await PostPutRequestWithResponse<SetContactPrivilegesRequest,SetContactPrivilegesResponse>(request, privilegesRequest);
             }
         }
-    }
 
-    public interface IContactsApiClient
-    {
-        Task<List<Privilege>> GetPrivileges();
-        
-        Task<List<ContactsPrivilege>> GetContactPrivileges(Guid userId);
-        
-        Task<ContactResponse> GetByUsername(string username);
-        
-        Task<ContactResponse> Update(UpdateContactRequest updateContactRequest);
-
-        Task<List<ContactsWithPrivilegesResponse>> GetContactsWithPrivileges(string endPointAssessorOrganisationId);
-
-        Task<ContactBoolResponse> DoesContactHavePrivileges(string userId);
-
-        Task<ContactResponse> UpdateStatus(UpdateContactStatusRequest updateContactStatusRequest);
-
-        Task<ContactResponse> GetById(string id);
-
-        Task<ContactResponse> GetContactBySignInId(string signInId);
-        Task<List<ContactResponse>> GetAllContactsForOrganisation(string epaoId);
-
-        Task<ContactResponse> UpdateOrgAndStatus(
-            UpdateContactWithOrgAndStausRequest updateContactWithOrgAndStausRequest);
-
-        Task<ContactBoolResponse> InviteUser(CreateContactRequest createAccountRequest);
-        Task Callback(DfeSignInCallback callback);
-
-        Task MigrateUsers();
-
-        Task MigrateContactsAndOrgsToApply();
-
-        Task MigrateSingleContactToApply(System.Guid signinId);
-
-        Task<ContactResponse> CreateANewContactWithGivenId(Contact contact);
-
-        Task AssociateDefaultRolesAndPrivileges(Contact contact);
-        Task<SetContactPrivilegesResponse> SetContactPrivileges(SetContactPrivilegesRequest privilegesRequest);
+        public async Task<RemoveContactFromOrganisationResponse> RemoveContactFromOrganisation(Guid requestingUserId, Guid contactId)
+        {
+            var removeContactRequest = new RemoveContactFromOrganisationRequest(requestingUserId, contactId);
+            
+            using (var request = new HttpRequestMessage(HttpMethod.Post, "/api/v1/contacts/removeContactFromOrganisation"))
+            {
+                return await PostPutRequestWithResponse<RemoveContactFromOrganisationRequest,RemoveContactFromOrganisationResponse>(request, removeContactRequest);
+            }
+        }
     }
 }

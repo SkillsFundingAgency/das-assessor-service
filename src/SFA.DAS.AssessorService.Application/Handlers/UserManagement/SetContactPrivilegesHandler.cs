@@ -12,22 +12,20 @@ using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.UserManagement
 {
-    public class SetContactPrivilegesHandler : IRequestHandler<SetContactPrivilegesRequest, SetContactPrivilegesResponse>
+    public class SetContactPrivilegesHandler : PrivilegesHandlerBase, IRequestHandler<SetContactPrivilegesRequest, SetContactPrivilegesResponse>
     {
         private readonly IContactRepository _contactRepository;
-        private readonly IContactQueryRepository _contactQueryRepository;
         private readonly IMediator _mediator;
 
-        public SetContactPrivilegesHandler(IContactRepository contactRepository, IContactQueryRepository contactQueryRepository, IMediator mediator)
+        public SetContactPrivilegesHandler(IContactRepository contactRepository, IContactQueryRepository contactQueryRepository, IMediator mediator) : base(contactQueryRepository)
         {
             _contactRepository = contactRepository;
-            _contactQueryRepository = contactQueryRepository;
             _mediator = mediator;
         }
         
         public async Task<SetContactPrivilegesResponse> Handle(SetContactPrivilegesRequest request, CancellationToken cancellationToken)
         {
-            var currentPrivileges = (await _contactQueryRepository.GetPrivilegesFor(request.ContactId));
+            var currentPrivileges = (await ContactQueryRepository.GetPrivilegesFor(request.ContactId));
             var privilegesBeingRemoved = GetRemovedPrivileges(request, currentPrivileges);
             var privilegesBeingAdded = await GetAddedPrivileges(request, currentPrivileges);
             
@@ -74,8 +72,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.UserManagement
                 var emailTemplate = await _mediator.Send(new GetEmailTemplateRequest
                     {TemplateName= "EPAOPermissionsAmended" });
 
-                var amendingContact = await _contactQueryRepository.GetContactById(request.AmendingContactId);
-                var contactBeingAmended = await _contactQueryRepository.GetContactById(request.ContactId);
+                var amendingContact = await ContactQueryRepository.GetContactById(request.AmendingContactId);
+                var contactBeingAmended = await ContactQueryRepository.GetContactById(request.ContactId);
             
                 await _mediator.Send(new SendEmailRequest(contactBeingAmended.Email, emailTemplate, new
                 {
@@ -129,21 +127,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.UserManagement
             }
         }
 
-        private async Task<List<ContactsPrivilege>> GetAddedPrivileges(SetContactPrivilegesRequest request, IList<ContactsPrivilege> currentPrivileges)
-        {
-            var allPrivileges = await _contactQueryRepository.GetAllPrivileges();
-            
-            return request.PrivilegeIds.Where(p => !currentPrivileges.Select(cp => cp.PrivilegeId).Contains(p))
-                .Select(p => new ContactsPrivilege()
-                {
-                    PrivilegeId = p,
-                    Privilege = allPrivileges.First(ap => ap.Id == p)
-                }).ToList();
-        }
-
-        private List<ContactsPrivilege> GetRemovedPrivileges(SetContactPrivilegesRequest request, IList<ContactsPrivilege> currentPrivileges)
-        {
-            return currentPrivileges.Where(cp => !request.PrivilegeIds.Contains(cp.PrivilegeId)).ToList();
-        }
+        
     }
 }

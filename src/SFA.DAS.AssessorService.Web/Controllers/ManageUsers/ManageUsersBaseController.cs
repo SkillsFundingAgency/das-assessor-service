@@ -16,6 +16,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.ManageUsers
         protected IContactsApiClient ContactsApiClient;
         protected IHttpContextAccessor HttpContextAccessor;
         protected ContactResponse RequestingUser;
+        protected ContactResponse UserToBeDisplayed;
 
         public ManageUsersBaseController(IContactsApiClient contactsApiClient, IHttpContextAccessor httpContextAccessor)
         {
@@ -27,9 +28,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers.ManageUsers
         {
             RequestingUser = await ContactsApiClient.GetById(HttpContextAccessor.HttpContext.User.FindFirst("UserId").Value);
             
-            var userToBeDisplayed = await ContactsApiClient.GetById(contactId.ToString());
+            UserToBeDisplayed = await ContactsApiClient.GetById(contactId.ToString());
             
-            return (RequestingUser.OrganisationId == userToBeDisplayed.OrganisationId, userToBeDisplayed);
+            return (RequestingUser.OrganisationId == UserToBeDisplayed.OrganisationId, UserToBeDisplayed);
         }
     }
 }

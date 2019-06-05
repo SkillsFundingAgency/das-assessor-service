@@ -156,5 +156,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             
             return Ok(response);
         }
+        
+        [HttpPost("removeContactFromOrganisation")]
+        public async Task<ActionResult> RemoveContactFromOrganisation([FromBody] RemoveContactFromOrganisationRequest request)
+        {
+            return Ok(await _mediator.Send(request, CancellationToken.None));
+        }
     }
 }

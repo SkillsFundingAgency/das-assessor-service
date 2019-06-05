@@ -40,21 +40,14 @@ namespace SFA.DAS.AssessorService.Data
             return contacts;
         }
 
-        public async Task<IEnumerable<IGrouping<Contact, ContactsPrivilege>>> GetAllContactsWithPrivileges(
+        public async Task<List<Contact>> GetAllContactsWithPrivileges(
             string endPointAssessorOrganisationId)
         {
-            var groupedContactPrivileges = await _assessorDbContext.Organisations
-                .Include(organisation => organisation.Contacts)
-                .Where(organisation => organisation.EndPointAssessorOrganisationId == endPointAssessorOrganisationId)
-                .SelectMany(q => q.Contacts).SelectMany(a => a.ContactsPrivileges.Select(c => new ContactsPrivilege
-                {
-                    ContactId = c.ContactId,
-                    PrivilegeId = c.PrivilegeId,
-                    Contact = c.Contact,
-                    Privilege = c.Privilege
-                })).GroupBy(x => x.Contact).ToListAsync();
-
-            return groupedContactPrivileges;
+            var contacts = await _assessorDbContext.Contacts
+                .Include("ContactsPrivileges.Privilege")
+                .Where(contact => contact.EndPointAssessorOrganisationId == endPointAssessorOrganisationId).ToListAsync();
+            
+            return contacts;
         }
         public async Task<IEnumerable<Privilege>> GetAllPrivileges()
         {
