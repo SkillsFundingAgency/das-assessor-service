@@ -5,26 +5,41 @@
 }
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
-
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
 
-            <span>User invited</span>
-            
-            <div>
-                <p>You have invited</p>
-                <p>@Model.Email</p>
+            <div class="govuk-panel govuk-panel--confirmation">
+                <h1 class="govuk-panel__title">
+                    User invited
+                </h1>
+                <div class="govuk-panel__body">
+                    <div class="govuk-!-margin-bottom-6">
+                        You have invited<br>
+                        <strong>@Model.Email</strong>
+                    </div>
+                    <div>
+                        To join organisation<br>
+                        <strong>@Model.Organisation</strong>
+                    </div>
+                </div>
             </div>
+
+            <p class="govuk-body">We have sent a confirmation email.</p>
             
-            <div>
-                <p>To join organisation</p>
-                <p>@Model.Organisation</p>
-            </div>
-            
-            <p>What do you want to do next?</p>
-            <a asp-controller="InviteUser" asp-action="Invite">Invite someone else</a>
-            <a asp-controller="Dashboard" asp-action="Index">Back to dashboard</a>
-            <a asp-controller="ManageUsers" asp-action="Index">View user list</a>
+            <h2 class="govuk-heading-m">What do you want to do next?</h2>
+
+            <ul class="govuk-list">
+                <li>
+                    <a asp-controller="InviteUser" asp-action="Invite" class="govuk-link">Invite someone else</a>
+                </li>
+                <li>
+                    <a asp-controller="Dashboard" asp-action="Index" class="govuk-link">Back to dashboard</a>
+                </li>
+                <li>
+                    <a asp-controller="ManageUsers" asp-action="Index" class="govuk-link">View user list</a>
+                </li>
+            </ul>
+
         </div>
     </div>
 </main>
