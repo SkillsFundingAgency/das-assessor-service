@@ -1,6 +1,5 @@
 ﻿namespace SFA.DAS.AssessorService.Domain.Entities.AssessmentOrganisations
 {
-    //TODO: TECH DEBT: Consider removing this and using SFA.DAS.AssessorService.Domain.Entities.OrganisationData
     public class OrganisationData
     {
         public string LegalName { get; set; }

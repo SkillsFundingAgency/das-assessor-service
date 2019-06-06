@@ -79,23 +79,9 @@ namespace SFA.DAS.AssessorService.Data
                 .WithMany(s => s.ContactsPrivileges)
                 .HasForeignKey(sc => sc.PrivilegeId);
 
-            SetUpJsonToEntityTypeHandlers(modelBuilder);
-        }
-
-        private void SetUpJsonToEntityTypeHandlers(ModelBuilder modelBuilder)
-        {
-            // NOTE: These work in the same was as the Dapper Type Handlers
             modelBuilder.Entity<Organisation>()
-                .Property(e => e.OrganisationData)
-                .HasConversion(
-                    c => JsonConvert.SerializeObject(c),
-                    c => JsonConvert.DeserializeObject<OrganisationData>(string.IsNullOrWhiteSpace(c) ? "{}" : c));
-
-            modelBuilder.Entity<Api.Types.Models.Standards.StandardCollation>()
-                .Property(e => e.StandardData)
-                .HasConversion(
-                    c => JsonConvert.SerializeObject(c),
-                    c => JsonConvert.DeserializeObject<Api.Types.Models.Standards.StandardData>(string.IsNullOrWhiteSpace(c) ? "{}" : c));
+                .Property<string>("OrganisationData")
+                .HasField("_extendedOrgData");
         }
     }
 }

@@ -1,10 +1,9 @@
-﻿using Newtonsoft.Json;
+﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
+using System.Text;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models.Standards
 {
-    //TODO: TECH DEBT: Move into SFA.DAS.AssessorService.Domain.Entities as it represents a database table
     public class StandardCollation
     {
         public int Id { get; set; }
@@ -13,10 +12,6 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Standards
         public string Title { get; set; }
         public StandardData StandardData { get; set; }
 
-        [NotMapped]
-        public string StandardDataJsonString { get => JsonConvert.SerializeObject(StandardData); }
-
-        [NotMapped]
         public List<string> Options { get; set; }
     }
 }

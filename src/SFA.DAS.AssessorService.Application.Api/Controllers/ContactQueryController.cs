@@ -283,24 +283,24 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
                     UpdatedBy = null,
                     OrganisationDetails = new OrganisationDetails
                     {
-                        Address1 = contact.Organisation.OrganisationData?.Address1,
-                        Address2 = contact.Organisation.OrganisationData?.Address2,
-                        Address3 = contact.Organisation.OrganisationData?.Address3,
-                        CharityNumber = contact.Organisation.OrganisationData?.CharityNumber,
-                        City = contact.Organisation.OrganisationData?.Address4,
-                        CompanyNumber = contact.Organisation.OrganisationData?.CompanyNumber,
-                        LegalName = contact.Organisation.OrganisationData?.LegalName,
+                        Address1 = contact.Organisation.OrganisationDataFromJson?.Address1,
+                        Address2 = contact.Organisation.OrganisationDataFromJson?.Address2,
+                        Address3 = contact.Organisation.OrganisationDataFromJson?.Address3,
+                        CharityNumber = contact.Organisation.OrganisationDataFromJson?.CharityNumber,
+                        City = contact.Organisation.OrganisationDataFromJson?.Address4,
+                        CompanyNumber = contact.Organisation.OrganisationDataFromJson?.CompanyNumber,
+                        LegalName = contact.Organisation.OrganisationDataFromJson?.LegalName,
                         OrganisationReferenceId = contact.Organisation.EndPointAssessorUkprn == null
                             ? contact.Organisation.EndPointAssessorOrganisationId
                             : contact.Organisation.EndPointAssessorUkprn.ToString(),
                         OrganisationReferenceType = "RoEPAO",
-                        Postcode = contact.Organisation.OrganisationData?.Postcode,
+                        Postcode = contact.Organisation.OrganisationDataFromJson?.Postcode,
                         ProviderName = null,
-                        TradingName = contact.Organisation.OrganisationData?.TradingName,
+                        TradingName = contact.Organisation.OrganisationDataFromJson?.TradingName,
                         FHADetails = new FHADetails
                         {
-                            FinancialDueDate = contact.Organisation.OrganisationData?.FhaDetails?.FinancialDueDate,
-                            FinancialExempt = contact.Organisation.OrganisationData?.FhaDetails?.FinancialExempt
+                            FinancialDueDate = contact.Organisation.OrganisationDataFromJson?.FhaDetails?.FinancialDueDate,
+                            FinancialExempt = contact.Organisation.OrganisationDataFromJson?.FhaDetails?.FinancialExempt
                         },
                         EndPointAssessmentOrgId = contact.EndPointAssessorOrganisationId
                     }

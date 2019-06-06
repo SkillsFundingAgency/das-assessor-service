@@ -71,9 +71,8 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<Organisation> GetOrganisationByName(string name)
         {
-
             return await _assessorDbContext.Organisations.Include(x => x.OrganisationType).
-                FirstOrDefaultAsync(x => x.OrganisationData.LegalName == name);
+                FirstOrDefaultAsync(x => x.OrganisationDataFromJson.LegalName == name);
         }
         
     }

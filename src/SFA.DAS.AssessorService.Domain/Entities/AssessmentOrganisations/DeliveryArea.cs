@@ -1,6 +1,6 @@
 namespace SFA.DAS.AssessorService.Domain.Entities.AssessmentOrganisations
 {
-    public class DeliveryArea
+    public struct DeliveryArea
     {
         public int Id { get; set; }
         public string Area { get; set; }
