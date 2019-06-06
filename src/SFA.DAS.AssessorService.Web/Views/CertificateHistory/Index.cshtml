@@ -85,7 +85,16 @@
                                     </div>
                                     <div class="govuk-summary-list__row">
                                         <dt class="govuk-summary-list__key">@Localizer["Option"]</dt>
-                                        <dd class="govuk-summary-list__value">@Html.DisplayFor(modelItem => item.CourseOption)</dd>
+                                            <dd class="govuk-summary-list__value">
+                                                @if (item.CourseOption != null)
+                                                {
+                                                    @Html.DisplayFor(modelItem => item.CourseOption)
+                                                }
+                                                else
+                                                {
+                                                    <text>None</text>
+                                                }
+                                            </dd>
                                     </div>
                                     <div class="govuk-summary-list__row">
                                         <dt class="govuk-summary-list__key">@Localizer["AchievementStartDate"]</dt>
@@ -125,9 +134,8 @@
                                     </div>
                                 </dl>
 
-                                @if (item.OverallGrade == CertificateGrade.Fail)
+                                @if (item.OverallGrade != CertificateGrade.Fail)
                                 {
-
                                     <h2 class="govuk-heading-m">@Localizer["PostageDetails"]</h2>
 
                                     <p class="govuk-body">
