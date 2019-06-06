@@ -1,8 +1,5 @@
 ﻿using Dapper;
-using SFA.DAS.AssessorService.Api.Types.Models.Standards;
-using SFA.DAS.AssessorService.Domain.Entities;
-using SFA.DAS.AssessorService.Domain.Entities.AssessmentOrganisations;
-using SFA.DAS.AssessorService.ExternalApiDataSync.Data.DapperTypeHandlers;
+using SFA.DAS.AssessorService.ExternalApiDataSync.Data.Entities;
 using SFA.DAS.AssessorService.ExternalApiDataSync.Infrastructure;
 using SFA.DAS.AssessorService.ExternalApiDataSync.Logger;
 using SqlBulkTools;
@@ -29,15 +26,20 @@ namespace SFA.DAS.AssessorService.ExternalApiDataSync
 
         public ExternalApiDataSyncCommand(IWebConfiguration config, IAggregateLogger aggregateLogger)
         {
+            // TODO: When we're allowed to do changes that affect Staff UI...
+            // ..  1. Re-apply fixes to Domain Entities
+            // ..  2. Remove local copies of Entities
+            // ..  3. Migrate back over to Domain Entities
+            // ..  4. Re-enable Type Handlers below
             _aggregateLogger = aggregateLogger;
 
             _allowDataSync = config.ExternalApiDataSync.IsEnabled;
             _sourceConnectionString = config.ExternalApiDataSync.SourceSqlConnectionString;
             _destinationConnectionString = config.SqlConnectionString;
 
-            SqlMapper.AddTypeHandler(typeof(Domain.Entities.OrganisationData), new OrganisationDataHandler());
-            SqlMapper.AddTypeHandler(typeof(StandardData), new StandardDataHandler());
-            SqlMapper.AddTypeHandler(typeof(OrganisationStandardData), new OrganisationStandardDataHandler());
+            //SqlMapper.AddTypeHandler(typeof(Domain.Entities.OrganisationData), new OrganisationDataHandler());
+            //SqlMapper.AddTypeHandler(typeof(StandardData), new StandardDataHandler());
+            //SqlMapper.AddTypeHandler(typeof(OrganisationStandardData), new OrganisationStandardDataHandler());
         }
 
         public async Task Execute()
@@ -96,7 +98,6 @@ namespace SFA.DAS.AssessorService.ExternalApiDataSync
                         .ForCollection(orgs)
                         .WithTable("Organisations")
                         .AddAllColumns()
-                        .CustomColumnMapping(x => x.OrganisationDataJsonString, "OrganisationData")
                         .BulkInsertOrUpdate()
                         .MatchTargetOn(x => x.Id)
                         .Commit(conn);
@@ -168,7 +169,6 @@ namespace SFA.DAS.AssessorService.ExternalApiDataSync
                         .WithTable("StandardCollation")
                         .WithBulkCopySettings(new BulkCopySettings { SqlBulkCopyOptions = SqlBulkCopyOptions.KeepIdentity })
                         .AddAllColumns()
-                        .CustomColumnMapping(x => x.StandardDataJsonString, "StandardData")
                         .BulkInsertOrUpdate()
                         .SetIdentityColumn(x => x.Id)
                         .MatchTargetOn(x => x.Id)
@@ -194,14 +194,14 @@ namespace SFA.DAS.AssessorService.ExternalApiDataSync
             _aggregateLogger.LogInfo("Step 4: Syncing Organisation Standard Data");
 
             var deliveryArea = new List<DeliveryArea>();
-            var orgStandard = new List<EpaOrganisationStandard>();
-            var orgStandardDeliveryArea = new List<EpaOrganisationStandardDeliveryArea>();
+            var orgStandard = new List<OrganisationStandard>();
+            var orgStandardDeliveryArea = new List<OrganisationStandardDeliveryArea>();
 
             using (var sourceConnection = new SqlConnection(_sourceConnectionString))
             {
                 deliveryArea = (await sourceConnection.QueryAsync<DeliveryArea>("SELECT * FROM DeliveryArea ORDER BY [Id]")).ToList();
-                orgStandard = (await sourceConnection.QueryAsync<EpaOrganisationStandard>("SELECT * FROM OrganisationStandard ORDER BY [Id]")).ToList();
-                orgStandardDeliveryArea = (await sourceConnection.QueryAsync<EpaOrganisationStandardDeliveryArea>("SELECT * FROM OrganisationStandardDeliveryArea ORDER BY [Id]")).ToList();
+                orgStandard = (await sourceConnection.QueryAsync<OrganisationStandard>("SELECT * FROM OrganisationStandard ORDER BY [Id]")).ToList();
+                orgStandardDeliveryArea = (await sourceConnection.QueryAsync<OrganisationStandardDeliveryArea>("SELECT * FROM OrganisationStandardDeliveryArea ORDER BY [Id]")).ToList();
             }
 
             var bulk = new BulkOperations();
@@ -223,15 +223,11 @@ namespace SFA.DAS.AssessorService.ExternalApiDataSync
                     // NOTE: Have to delete these as IDENTITY insert isn't working correctly (maybe because the Id's don't start at 1 due to spreadsheet import)
                     conn.Execute("DELETE FROM OrganisationStandardDeliveryArea;");
 
-                    bulk.Setup<EpaOrganisationStandard>()
+                    bulk.Setup<OrganisationStandard>()
                         .ForCollection(orgStandard)
                         .WithTable("OrganisationStandard")
                         .WithBulkCopySettings(new BulkCopySettings { SqlBulkCopyOptions = SqlBulkCopyOptions.KeepIdentity })
                         .AddAllColumns()
-                        .RemoveColumn(x => x.ContactEmail)
-                        .RemoveColumn(x => x.ContactName)
-                        .RemoveColumn(x => x.ContactPhoneNumber)
-                        .CustomColumnMapping(x => x.OrganisationStandardDataJsonString, "OrganisationStandardData")
                         .BulkInsertOrUpdate()
                         .SetIdentityColumn(x => x.Id)
                         .MatchTargetOn(x => x.Id)
@@ -239,13 +235,11 @@ namespace SFA.DAS.AssessorService.ExternalApiDataSync
                         .Commit(conn);
 
                     // NOTE: As the Id's won't match, we cannot do this...
-                    //    bulk.Setup<EpaOrganisationStandardDeliveryArea>()
+                    //    bulk.Setup<OrganisationStandardDeliveryArea>()
                     //        .ForCollection(orgStandardDeliveryArea)
                     //        .WithTable("OrganisationStandardDeliveryArea")
                     //        .WithBulkCopySettings(new BulkCopySettings { SqlBulkCopyOptions = SqlBulkCopyOptions.KeepIdentity })
                     //        .AddAllColumns()
-                    //        .RemoveColumn(x => x.EndPointAssessorOrganisationId)
-                    //        .RemoveColumn(x => x.StandardCode)
                     //        .BulkInsertOrUpdate()
                     //        .SetIdentityColumn(x => x.Id)
                     //        .MatchTargetOn(x => x.Id)
