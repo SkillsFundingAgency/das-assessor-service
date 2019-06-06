@@ -1,4 +1,8 @@
-﻿namespace SFA.DAS.AssessorService.Domain.Entities
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace SFA.DAS.AssessorService.Domain.Entities
 {
     public class OrganisationData
     {
