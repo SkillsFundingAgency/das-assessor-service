@@ -6,16 +6,18 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
+using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Web.Constants;
 using SFA.DAS.AssessorService.Web.Infrastructure;
+using SFA.DAS.AssessorService.Web.StartupConfiguration;
 
 namespace SFA.DAS.AssessorService.Web.Controllers
 {
-    [Authorize]
+    [PrivilegeAuthorize(Privileges.ApplyForStandard)]
     [CheckSession]
-    public class ApplyToAccessStandardController : Controller
+    public class ApplyToAssessStandardController : Controller
     {
 
         private readonly IWebConfiguration _webConfiguration;
@@ -24,7 +26,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly IOrganisationsApiClient _organisationsApiClient;
 
-        public ApplyToAccessStandardController(IWebConfiguration webConfiguration, IContactApplyClient contactApplyContact, 
+        public ApplyToAssessStandardController(IWebConfiguration webConfiguration, IContactApplyClient contactApplyContact, 
             IHttpContextAccessor contextAccessor, IContactsApiClient contactsApiClient, IOrganisationsApiClient organisationsApiClient)
         {
             _webConfiguration = webConfiguration;
@@ -35,7 +37,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         }
 
         [HttpGet]
-        [Route("ApplyToAccessStandard")]
         [TypeFilter(typeof(MenuFilter), Arguments = new object[] { Pages.Standards })]
         public async Task<IActionResult> Index()
         {
@@ -43,9 +44,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         }
 
         [HttpGet]
-        [Route("GoToApplyToAccessStandard")]
+        [Route("GoToApplyToAssessStandard")]
         [TypeFilter(typeof(MenuFilter), Arguments = new object[] { Pages.Standards })]
-        public async Task<IActionResult> GoToApplyToAccessStandard()
+        public async Task<IActionResult> GoToApplyToAssessStandard()
         {
             var signinId = _contextAccessor.HttpContext.User?.Claims.FirstOrDefault(c => c.Type == "sub")?.Value;
             var applyContact = await _contactApplyContact.GetApplyContactBySignInId(Guid.Parse(signinId));

@@ -11,7 +11,6 @@ using SFA.DAS.AssessorService.Web.Infrastructure;
 
 namespace SFA.DAS.AssessorService.Web.Controllers.ManageUsers
 {
-    [Authorize]
     [CheckSession]
     public class InviteUserController : ManageUsersBaseController
     {

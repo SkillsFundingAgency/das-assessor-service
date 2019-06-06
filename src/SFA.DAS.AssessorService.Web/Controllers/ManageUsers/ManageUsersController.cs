@@ -11,10 +11,11 @@ using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Web.Constants;
 using SFA.DAS.AssessorService.Web.Infrastructure;
+using SFA.DAS.AssessorService.Web.StartupConfiguration;
 
 namespace SFA.DAS.AssessorService.Web.Controllers.ManageUsers
 {
-    [Authorize]
+    [PrivilegeAuthorize(Privileges.ManageUsers)]
     [CheckSession]
     public class ManageUsersController : Controller
     {

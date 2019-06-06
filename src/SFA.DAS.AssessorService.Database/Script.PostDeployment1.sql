@@ -16,6 +16,12 @@ INSERT EMailTemplates ([Id],[TemplateName],[TemplateId],[Recipients],[CreatedAt]
 VALUES (NEWID(), N'EPAOPermissionsAmended', N'c1ba00d9-81b6-46d8-9b70-3d89d51aa9c1', NULL, GETDATE())
 END
 
+IF NOT EXISTS (SELECT * FROM EMailTemplates WHERE TemplateName = N'EPAOPermissionsAmended')
+BEGIN
+INSERT EMailTemplates ([Id],[TemplateName],[TemplateId],[Recipients],[CreatedAt]) 
+VALUES (NEWID(), N'EPAOPermissionsRequested', N'addf58d9-9e20-46fe-b952-7fc62a47b7f7', NULL, GETDATE())
+END
+
 -- Update privileges
   
 DECLARE @privilegesCount int
@@ -33,15 +39,17 @@ IF (@privilegesCount < 6)
     DELETE Privileges WHERE UserPrivilege = 'View standards'
 
     -- rename existing privileges
-    UPDATE Privileges SET UserPrivilege = 'Apply for a Standard' WHERE UserPrivilege = 'Apply for standards'
+    UPDATE Privileges SET UserPrivilege = 'Apply for a Standard', Description = 'This area allows you to apply for a standard.' WHERE UserPrivilege = 'Apply for standards'
 
     -- add new ones
-    INSERT INTO Privileges (Id, UserPrivilege) VALUES (NEWID(), 'View completed assessments')
-    INSERT INTO Privileges (Id, UserPrivilege) VALUES (NEWID(), 'Manage API subscription')
-    INSERT INTO Privileges (Id, UserPrivilege) VALUES (NEWID(), 'View pipeline')
+    INSERT INTO Privileges (Id, UserPrivilege, Description) VALUES (NEWID(), 'View completed assessments', 'This area shows all previously recorded assessments.')
+    INSERT INTO Privileges (Id, UserPrivilege, Description) VALUES (NEWID(), 'Manage API subscription', 'This area allows you to manage your API subscriptions.')
+    INSERT INTO Privileges (Id, UserPrivilege, Description) VALUES (NEWID(), 'View pipeline', 'This area shows the Standard and number of apprentices due to be assessed.')
 
     -- set Manage Users to MustBeAtLeast.... true
-    UPDATE Privileges SET MustBeAtLeastOneUserAssigned = 1 WHERE UserPrivilege = 'Manage users'
+    UPDATE Privileges SET MustBeAtLeastOneUserAssigned = 1, Description = 'This area shows a list of all users in your organisation and the ability to manage their permissions.' WHERE UserPrivilege = 'Manage users'
+    
+    UPDATE Privileges SET Description = 'This area allows you to record assessment grades and produce certificates.' WHERE UserPrivilege = 'Record grades and issue certificate'
   END  
   
   

@@ -5,11 +5,13 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
+using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Web.Infrastructure;
+using SFA.DAS.AssessorService.Web.StartupConfiguration;
 
 namespace SFA.DAS.AssessorService.Web.Controllers.ManageUsers
 {
-    [Authorize]
+    [PrivilegeAuthorize(Privileges.ManageUsers)]
     [CheckSession]
     public class ManageUsersBaseController : Controller
     {

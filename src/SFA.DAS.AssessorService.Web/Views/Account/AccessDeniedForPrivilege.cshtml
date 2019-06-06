@@ -1,0 +1,39 @@
+﻿@model SFA.DAS.AssessorService.Web.ViewModels.Account.AccessDeniedViewModel
+
+@{
+    ViewBag.Title = "Access denied";
+    Layout = "_Layout";
+}
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <h1 class="govuk-heading-xl">@Model.Title</h1>
+            <p class="govuk-body">@Model.Description</p>
+
+            <b>
+                Request permission
+            </b>
+
+            <form asp-controller="RequestAccess" asp-action="Request">
+                @Html.HiddenFor(m => m.ContactId)
+                @Html.HiddenFor(m => m.PrivilegeId)
+                @Html.HiddenFor(m => m.UserHasUserManagement)
+                @Html.HiddenFor(m => m.ReturnController)
+                @Html.HiddenFor(m => m.ReturnAction)
+                @if (Model.UserHasUserManagement)
+                {
+                    <p class="govuk-body">You have the User Management permission. Click Access below to gain access.</p>
+                    <button class="button" type="submit">Access</button>
+                }
+                else
+                {
+                    <p class="govuk-body">You do not have permission to view this content.</p>
+                    <button class="button" type="submit">Request access</button>
+                }
+
+            </form>
+
+        </div>
+    </div>
+</main>
