@@ -2,15 +2,15 @@ using System.ComponentModel.DataAnnotations;
 
 namespace SFA.DAS.AssessorService.Web.Controllers.ManageUsers.ViewModels
 {
-    public class InviteContactViewModel
-    {
-        [Required(ErrorMessage = "First name is required")]
-        public string GivenName { get; set; }
-        [Required(ErrorMessage = "Family name is required")]
-        public string FamilyName { get; set; }
-        [Required(ErrorMessage = "Email is required")]
-        [EmailAddress(ErrorMessage = "Email must be valid")]
-        public string Email { get; set; }
-        public EditPrivilegesViewModel PrivilegesViewModel { get; set; }
-    }
+  public class InviteContactViewModel
+  {
+    [Required(ErrorMessage = "Enter a given name")]
+    public string GivenName { get; set; }
+    [Required(ErrorMessage = "Enter a family name")]
+    public string FamilyName { get; set; }
+    [Required(ErrorMessage = "Enter an email address")]
+    [EmailAddress(ErrorMessage = "Enter an email address in the correct format, like name@example.com")]
+    public string Email { get; set; }
+    public EditPrivilegesViewModel PrivilegesViewModel { get; set; }
+  }
 }
