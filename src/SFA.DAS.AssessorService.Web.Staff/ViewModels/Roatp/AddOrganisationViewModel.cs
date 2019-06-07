@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using SFA.DAS.AssessorService.Api.Types.Models.Roatp;
     using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 
@@ -15,7 +16,7 @@
         public string CompanyNumber { get; set; }
         public string CharityNumber { get; set; }
         public string TradingName { get; set; }
-        public DateTime? ApplicationDeterminedDate { get; set; }
+        public virtual DateTime? ApplicationDeterminedDate { get; set; }
         public IEnumerable<ProviderType> ProviderTypes { get; set; }
         public IEnumerable<OrganisationType> OrganisationTypes { get; set; }
 
@@ -44,11 +45,15 @@
         public int? Month { get; set; }
         public int? Year { get; set; }
 
+        public List<ValidationErrorDetail> ErrorMessages { get; set; }
 
-        public AddApplicationDeterminedDateViewModel()
-        {
-            OrganisationId = Guid.NewGuid();
-        }
+        public bool IsError => ErrorMessages != null && ErrorMessages.Count > 0;
+        private bool IsErrorAllFields => IsError && ErrorMessages.Any(x => x.Field == "ApplicationDeterminedDate");
+        public bool IsErrorDay => IsError && (IsErrorAllFields || ErrorMessages.Any(x => x.Field == "Day"));
+        public bool IsErrorMonth => IsError && (IsErrorAllFields || ErrorMessages.Any(x => x.Field == "Month"));
+        public bool IsErrorYear => IsError && (IsErrorAllFields || ErrorMessages.Any(x => x.Field == "Year"));
+
+        public override DateTime? ApplicationDeterminedDate => DateTime.Today;
     }
 
     public class AddOrganisationViaUkprnViewModel : AddOrganisationViewModel

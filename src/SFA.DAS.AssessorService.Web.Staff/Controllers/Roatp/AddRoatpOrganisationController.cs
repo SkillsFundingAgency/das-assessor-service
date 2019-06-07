@@ -19,6 +19,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
     using SFA.DAS.AssessorService.Api.Types.Models.Roatp;
     using SFA.DAS.AssessorService.Api.Types.Models.UKRLP;
     using System.Linq;
+    using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 
     [Authorize]
     public class AddRoatpOrganisationController : Controller
@@ -132,13 +133,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
                 model.ProviderTypeId = addOrganisationModel.ProviderTypeId;
                 model.OrganisationTypeId = addOrganisationModel.OrganisationTypeId;
             }
-
-            if (string.IsNullOrEmpty(model.LegalName))
-            {
-                var providerDetailsContainer = _sessionService.GetAddOrganisationDetails();
-                model.ProviderTypeId = providerDetailsContainer.ProviderTypeId;
-            }
-
+           
             if (!IsRedirectFromConfirmationPage() && !ModelState.IsValid && model.ProviderTypeId==0)
             {
                 model.ProviderTypes = await _apiClient.GetProviderTypes();
@@ -166,6 +161,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
             var vm = MapOrganisationVmToOrganisationTypeVm(addOrganisationModel);
 
             return View("~/Views/Roatp/AddOrganisationType.cshtml", vm);
+           
         }
 
         [Route("add-confirm")]
@@ -175,6 +171,10 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
             var vm = MapOrganisationVmToApplicationDeterminedDateVm(organisationVm);
             if (!IsRedirectFromConfirmationPage() && !ModelState.IsValid)
             {
+                vm.ErrorMessages = model.ErrorMessages;
+                vm.Day = model.Day;
+                vm.Month = model.Month;
+                vm.Year = model.Year;
                 return View("~/Views/Roatp/AddApplicationDeterminedDate.cshtml",vm);
             }
             
@@ -195,15 +195,27 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
         }
 
         [Route("add-determined")]
-        public async Task<IActionResult> AddApplicationDeterminedDate(AddApplicationDeterminedDateViewModel model)
+        public async Task<IActionResult> AddApplicationDeterminedDate(AddOrganisationTypeViewModel model)
         {
 
             var organisationVm = _sessionService.GetAddOrganisationDetails();
             var vm = MapOrganisationVmToApplicationDeterminedDateVm(organisationVm);
-            //if (!IsRedirectFromConfirmationPage() && !ModelState.IsValid)
-            //{
-            //    return View("~/Views/Roatp/AddApplicationDeterminedDate.cshtml", vm);
-            //}
+            if (!IsRedirectFromConfirmationPage() && !ModelState.IsValid)
+            {
+                var local = MapOrganisationVmToOrganisationTypeVm(organisationVm);
+                return View("~/Views/Roatp/AddOrganisationType.cshtml", local);
+            }
+
+
+
+            var errorMessages = !ModelState.IsValid
+                ? ModelState.SelectMany(k => k.Value.Errors.Select(e => new ValidationErrorDetail()
+                {
+                    ErrorMessage = e.ErrorMessage,
+                    Field = k.Key
+                })).ToList()
+                : null;
+            vm.ErrorMessages = errorMessages;
 
             if (!string.IsNullOrEmpty(model.LegalName))
             {
@@ -390,7 +402,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
                 ProviderTypeId = addOrganisationModel.ProviderTypeId,
                 ProviderTypes = addOrganisationModel.ProviderTypes,
                 TradingName = addOrganisationModel.TradingName,
-                UKPRN = addOrganisationModel.UKPRN
+                UKPRN = addOrganisationModel.UKPRN,
             };
         }
 

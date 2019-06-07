@@ -3,11 +3,14 @@
 @using SFA.DAS.AssessorService.Web.Staff
 @using SFA.DAS.AssessorService.Web.Staff.Domain
 @{
-    ViewBag.Title = "Choose an application determeined date";
+    ViewBag.Title = "Choose an application determined date";
 
 
-    var isError = !ViewData.ModelState.IsValid ? "form-control-error" : "";
-    //var isError = "form-control-error";
+    var isError = Model.IsError ? "form-group-error" : "";
+    var isErrorDay = Model.IsErrorDay ? "form-control-error" : "";
+    var isErrorMonth = Model.IsErrorMonth ? "form-control-error" : "";
+    var isErrorYear = Model.IsErrorYear ? "form-control-error" : "";
+
 }
 
 @{
@@ -57,55 +60,58 @@
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
                 <form method="post" asp-action="ConfirmOrganisationDetails" asp-controller="AddRoatpOrganisation">
-                    <div class="govuk-form-group" sfa-validation-for="OrganisationTypeId" sfa-validationerror-class="form-group-error">
-                        <span class="error-message" asp-validation-for="ApplicationDeterminedDate"></span>
-                        <fieldset class="govuk-fieldset">
+                    @*<div class="govuk-form-group " sfa-validation-for="ApplicationDeterminedDate" sfa-validationerror-class="form-group-error">*@
+                    <div class="form-group @isError" sfa-validation-for="ApplicationDeterminedDate" sfa-validationerror-class="form-group-error">
+                        <fieldset class="govuk-fieldset>
                             This is the date of when feedback was given to the training provider.<br/><br/>
-
+                            
                             
                             <span class="govuk-hint" id="dob-hint">
                                 For example, 24 04 2019
                             </span>
-                            <div class="govuk-date-input" id="dob">
-                                <div class="govuk-date-input__item">
-                                    <div class="govuk-form-group">
-                                        <label class="govuk-label govuk-date-input__label" for="Day">Day</label>
-                                        <span class="error-message" asp-validation-for="Day"></span>
-                                        <input value="@Model.Day"
-                                               class="govuk-input govuk-date-input__input govuk-input--width-2  @isError"
-                                               id="Day"
-                                               name="Day"
+                            
+                                <span class="error-message" asp-validation-for="Day"></span>
+                                <span class="error-message" asp-validation-for="Month"></span>
+                                <span class="error-message" asp-validation-for="Year"></span>
+                                <span class="error-message" asp-validation-for="ApplicationDeterminedDate"></span>
+                        @*<div class="govuk-date-input__item">*@
+                            <div class="form-date">
+                                @*<div class="govuk-form-group">*@
+                                <div class="form-group form-group-day">
+                                    <label class="govuk-label govuk-date-input__label" for="Day">Day</label>
+
+                                    <input value="@Model.Day"
+                                           class="govuk-input govuk-date-input__input govuk-input--width-2  @isErrorDay"
+                                           id="Day"
+                                           name="Day"
+                                           type="number"
+                                           pattern="[0-9]*" />
+                                </div>
+                                @*</div>*@
+                                <div class="form-group form-group-month">
+                                    <div class="form-group">
+                                        <label class="govuk-label govuk-date-input__label" for="Month">Month</label>
+                                        <input value="@Model.Month"
+                                               class="govuk-input govuk-date-input__input govuk-input--width-2  @isErrorMonth"
+                                               id="Month"
+                                               name="Month"
                                                type="number"
                                                pattern="[0-9]*" />
                                     </div>
                                 </div>
-                                <div class="govuk-date-input__item">
-                                    <div class="govuk-form-group">
-                                        <label class="govuk-label govuk-date-input__label" for="Month">Month</label>
-                                        <input 
-                                            value="@Model.Month"
-                                            class="govuk-input govuk-date-input__input govuk-input--width-2  @isError"
-                                            id="Month"
-                                            name="Month"
-                                            type="number"
-                                            pattern="[0-9]*"
-                                        />
-                                    </div>
-                                </div>
-                                <div class="govuk-date-input__item">
+                                <div class="form-group form-group-year">
                                     <div class="govuk-form-group">
                                         <label class="govuk-label govuk-date-input__label" for="Year">Year</label>
-                                        <input 
-                                            value="@Model.Year"
-                                            class="govuk-input govuk-date-input__input govuk-input--width-4 @isError"
-                                            id="Year"
-                                            name="Year"
-                                            type="number"
-                                            pattern="[0-9]*"
-                                        />
+                                        <input value="@Model.Year"
+                                               class="govuk-input govuk-date-input__input govuk-input--width-4 @isErrorYear"
+                                               id="Year"
+                                               name="Year"
+                                               type="number"
+                                               pattern="[0-9]*" />
                                     </div>
                                 </div>
                             </div>
+
 
                         </fieldset>
                     </div>
