@@ -169,19 +169,19 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
         }
 
         [Route("add-confirm")]
-        public async Task<IActionResult> ConfirmOrganisationDetails(AddOrganisationTypeViewModel model)
+        public async Task<IActionResult> ConfirmOrganisationDetails(AddApplicationDeterminedDateViewModel model)
         {
             var organisationVm = _sessionService.GetAddOrganisationDetails();
-            var vm = MapOrganisationVmToOrganisationTypeVm(organisationVm);
+            var vm = MapOrganisationVmToApplicationDeterminedDateVm(organisationVm);
             if (!IsRedirectFromConfirmationPage() && !ModelState.IsValid)
             {
-                return View("~/Views/Roatp/AddOrganisationType.cshtml",vm);
+                return View("~/Views/Roatp/AddApplicationDeterminedDate.cshtml",vm);
             }
-
-            vm.OrganisationTypeId = model.OrganisationTypeId;
+            
             vm.LegalName = vm.LegalName.ToUpper();
             _sessionService.SetAddOrganisationDetails(vm);
 
+            model.OrganisationTypeId = vm.OrganisationTypeId;
             model.OrganisationTypes = await _apiClient.GetOrganisationTypes(vm.ProviderTypeId);
             model.ProviderTypes = await _apiClient.GetProviderTypes();
             model.ProviderTypeId = vm.ProviderTypeId;
@@ -194,63 +194,26 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
             return View("~/Views/Roatp/AddOrganisationPreview.cshtml", model);
         }
 
-    private static void UpdateAddOrganisationModelFromProviderTypeModel(AddOrganisationViewModel addOrganisationModel, AddOrganisationProviderTypeViewModel model)
+        [Route("add-determined")]
+        public async Task<IActionResult> AddApplicationDeterminedDate(AddApplicationDeterminedDateViewModel model)
         {
-            if (string.IsNullOrEmpty(addOrganisationModel.LegalName)) addOrganisationModel.LegalName = model.LegalName;
-            if (string.IsNullOrEmpty(addOrganisationModel.TradingName)) addOrganisationModel.TradingName = model.TradingName;
-            if (string.IsNullOrEmpty(addOrganisationModel.CompanyNumber))
-                addOrganisationModel.CompanyNumber = model.CompanyNumber;
-            if (string.IsNullOrEmpty(addOrganisationModel.CharityNumber))
-                addOrganisationModel.CharityNumber = model.CharityNumber;
-            if (string.IsNullOrEmpty(addOrganisationModel.UKPRN)) addOrganisationModel.UKPRN = model.UKPRN;
 
-            if (model.OrganisationId != Guid.Empty)
+            var organisationVm = _sessionService.GetAddOrganisationDetails();
+            var vm = MapOrganisationVmToApplicationDeterminedDateVm(organisationVm);
+            //if (!IsRedirectFromConfirmationPage() && !ModelState.IsValid)
+            //{
+            //    return View("~/Views/Roatp/AddApplicationDeterminedDate.cshtml", vm);
+            //}
+
+            if (!string.IsNullOrEmpty(model.LegalName))
             {
-                addOrganisationModel.OrganisationId = model.OrganisationId;
+                vm.OrganisationTypeId = model.OrganisationTypeId;
+                _sessionService.SetAddOrganisationDetails(vm);
+
             }
 
-            if (model.ProviderTypeId > 0)
-            {
-                addOrganisationModel.ProviderTypeId = model.ProviderTypeId;
-            }
+            return View("~/Views/Roatp/AddApplicationDeterminedDate.cshtml", vm);
         }
-
-        private static AddOrganisationTypeViewModel MapOrganisationVmToOrganisationTypeVm(AddOrganisationViewModel addOrganisationModel)
-        {
-            return new AddOrganisationTypeViewModel
-            {
-                CharityNumber = addOrganisationModel.CharityNumber,
-                CompanyNumber = addOrganisationModel.CompanyNumber,
-                LegalName = addOrganisationModel.LegalName,
-                OrganisationId = addOrganisationModel.OrganisationId,
-                OrganisationTypeId = addOrganisationModel.OrganisationTypeId,
-                OrganisationTypes = addOrganisationModel.OrganisationTypes,
-                ProviderTypeId = addOrganisationModel.ProviderTypeId,
-                ProviderTypes = addOrganisationModel.ProviderTypes,
-                TradingName = addOrganisationModel.TradingName,
-                UKPRN = addOrganisationModel.UKPRN
-            };
-        }
-
-
-        private static AddOrganisationProviderTypeViewModel MapOrganisationVmToProviderTypeVm(AddOrganisationViewModel addOrganisationModel)
-        {
-            return new AddOrganisationProviderTypeViewModel
-            {
-                CharityNumber = addOrganisationModel.CharityNumber,
-                CompanyNumber = addOrganisationModel.CompanyNumber,
-                LegalName = addOrganisationModel.LegalName,
-                OrganisationId = addOrganisationModel.OrganisationId,
-                OrganisationTypeId = addOrganisationModel.OrganisationTypeId,
-                OrganisationTypes = addOrganisationModel.OrganisationTypes,
-                ProviderTypeId = addOrganisationModel.ProviderTypeId,
-                ProviderTypes = addOrganisationModel.ProviderTypes,
-                TradingName = addOrganisationModel.TradingName,
-                UKPRN = addOrganisationModel.UKPRN
-            };
-        }
-
-
 
 
         [Route("ukrlp-unavailable")]
@@ -374,6 +337,79 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
             var model = _sessionService.GetAddOrganisationDetails();
 
             return RedirectToAction(action);
+        }
+
+        private static void UpdateAddOrganisationModelFromProviderTypeModel(AddOrganisationViewModel addOrganisationModel, AddOrganisationProviderTypeViewModel model)
+        {
+            if (string.IsNullOrEmpty(addOrganisationModel.LegalName)) addOrganisationModel.LegalName = model.LegalName;
+            if (string.IsNullOrEmpty(addOrganisationModel.TradingName)) addOrganisationModel.TradingName = model.TradingName;
+            if (string.IsNullOrEmpty(addOrganisationModel.CompanyNumber))
+                addOrganisationModel.CompanyNumber = model.CompanyNumber;
+            if (string.IsNullOrEmpty(addOrganisationModel.CharityNumber))
+                addOrganisationModel.CharityNumber = model.CharityNumber;
+            if (string.IsNullOrEmpty(addOrganisationModel.UKPRN)) addOrganisationModel.UKPRN = model.UKPRN;
+
+            if (model.OrganisationId != Guid.Empty)
+            {
+                addOrganisationModel.OrganisationId = model.OrganisationId;
+            }
+
+            if (model.ProviderTypeId > 0)
+            {
+                addOrganisationModel.ProviderTypeId = model.ProviderTypeId;
+            }
+        }
+
+        private static AddOrganisationTypeViewModel MapOrganisationVmToOrganisationTypeVm(AddOrganisationViewModel addOrganisationModel)
+        {
+            return new AddOrganisationTypeViewModel
+            {
+                CharityNumber = addOrganisationModel.CharityNumber,
+                CompanyNumber = addOrganisationModel.CompanyNumber,
+                LegalName = addOrganisationModel.LegalName,
+                OrganisationId = addOrganisationModel.OrganisationId,
+                OrganisationTypeId = addOrganisationModel.OrganisationTypeId,
+                OrganisationTypes = addOrganisationModel.OrganisationTypes,
+                ProviderTypeId = addOrganisationModel.ProviderTypeId,
+                ProviderTypes = addOrganisationModel.ProviderTypes,
+                TradingName = addOrganisationModel.TradingName,
+                UKPRN = addOrganisationModel.UKPRN
+            };
+        }
+
+        private static AddApplicationDeterminedDateViewModel MapOrganisationVmToApplicationDeterminedDateVm(AddOrganisationViewModel addOrganisationModel)
+        {
+            return new AddApplicationDeterminedDateViewModel
+            {
+                CharityNumber = addOrganisationModel.CharityNumber,
+                CompanyNumber = addOrganisationModel.CompanyNumber,
+                LegalName = addOrganisationModel.LegalName,
+                OrganisationId = addOrganisationModel.OrganisationId,
+                OrganisationTypeId = addOrganisationModel.OrganisationTypeId,
+                OrganisationTypes = addOrganisationModel.OrganisationTypes,
+                ProviderTypeId = addOrganisationModel.ProviderTypeId,
+                ProviderTypes = addOrganisationModel.ProviderTypes,
+                TradingName = addOrganisationModel.TradingName,
+                UKPRN = addOrganisationModel.UKPRN
+            };
+        }
+
+
+        private static AddOrganisationProviderTypeViewModel MapOrganisationVmToProviderTypeVm(AddOrganisationViewModel addOrganisationModel)
+        {
+            return new AddOrganisationProviderTypeViewModel
+            {
+                CharityNumber = addOrganisationModel.CharityNumber,
+                CompanyNumber = addOrganisationModel.CompanyNumber,
+                LegalName = addOrganisationModel.LegalName,
+                OrganisationId = addOrganisationModel.OrganisationId,
+                OrganisationTypeId = addOrganisationModel.OrganisationTypeId,
+                OrganisationTypes = addOrganisationModel.OrganisationTypes,
+                ProviderTypeId = addOrganisationModel.ProviderTypeId,
+                ProviderTypes = addOrganisationModel.ProviderTypes,
+                TradingName = addOrganisationModel.TradingName,
+                UKPRN = addOrganisationModel.UKPRN
+            };
         }
 
         private CreateOrganisationRequest CreateAddOrganisationRequestFromModel(AddOrganisationViewModel model)

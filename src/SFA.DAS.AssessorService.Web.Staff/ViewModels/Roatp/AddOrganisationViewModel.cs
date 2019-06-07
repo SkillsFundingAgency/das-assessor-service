@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using SFA.DAS.AssessorService.Api.Types.Models.Roatp;
+    using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 
     public class AddOrganisationViewModel
     {
@@ -14,7 +15,7 @@
         public string CompanyNumber { get; set; }
         public string CharityNumber { get; set; }
         public string TradingName { get; set; }
-
+        public DateTime? ApplicationDeterminedDate { get; set; }
         public IEnumerable<ProviderType> ProviderTypes { get; set; }
         public IEnumerable<OrganisationType> OrganisationTypes { get; set; }
 
@@ -32,6 +33,19 @@
     public class AddOrganisationTypeViewModel : AddOrganisationViewModel
     {
         public AddOrganisationTypeViewModel()
+        {
+            OrganisationId = Guid.NewGuid();
+        }
+    }
+
+    public class AddApplicationDeterminedDateViewModel : AddOrganisationViewModel
+    {
+        public int? Day { get; set; }
+        public int? Month { get; set; }
+        public int? Year { get; set; }
+
+
+        public AddApplicationDeterminedDateViewModel()
         {
             OrganisationId = Guid.NewGuid();
         }
