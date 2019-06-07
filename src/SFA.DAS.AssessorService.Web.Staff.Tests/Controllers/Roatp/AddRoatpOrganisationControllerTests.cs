@@ -148,7 +148,7 @@
 
             _sessionService.Setup(x => x.GetAddOrganisationDetails()).Returns(temporaryModel);
 
-            var model = new AddOrganisationTypeViewModel
+            var model = new AddApplicationDeterminedDateViewModel
             {
                 ProviderTypeId = temporaryModel.ProviderTypeId,
                 UKPRN = temporaryModel.UKPRN,
@@ -178,7 +178,7 @@
             var result = _controller.ConfirmOrganisationDetails(model).GetAwaiter().GetResult();
 
             var viewResult = result as ViewResult;
-            var confirmationModel = viewResult.Model as AddOrganisationTypeViewModel;
+            var confirmationModel = viewResult.Model as AddApplicationDeterminedDateViewModel;
 
             confirmationModel.UKPRN.Should().Be(model.UKPRN);
         }
