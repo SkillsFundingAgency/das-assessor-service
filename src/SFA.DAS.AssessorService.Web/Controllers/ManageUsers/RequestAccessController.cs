@@ -1,3 +1,5 @@
+using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
@@ -23,13 +25,16 @@ namespace SFA.DAS.AssessorService.Web.Controllers.ManageUsers
 
             return vm.UserHasUserManagement 
                 ? RedirectToAction(vm.ReturnAction, vm.ReturnController) 
-                : RedirectToAction("RequestSent");
+                : RedirectToAction("RequestSent", new {privilegeId = vm.PrivilegeId});
         }
 
         [TypeFilter(typeof(MenuFilter), Arguments = new object[] {Pages.Organisations})]
-        public IActionResult RequestSent()
+        [HttpGet("/RequestAccess/RequestSent/{privilegeId}")]
+        public async Task<IActionResult> RequestSent(Guid privilegeId)
         {
-            return View("~/Views/Account/RequestSent.cshtml");
+            var privilege = (await _contactsApiClient.GetPrivileges()).Single(p => p.Id == privilegeId); 
+            
+            return View("~/Views/Account/RequestSent.cshtml", privilege.UserPrivilege);
         }
     }
 }

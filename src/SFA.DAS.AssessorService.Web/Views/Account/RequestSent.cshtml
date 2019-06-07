@@ -1,3 +1,5 @@
+@model string
+
 @{
     ViewBag.Title = "Access Request Sent";
 }
@@ -6,9 +8,9 @@
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <h1 class="govuk-heading-xl">Request Sent</h1>
+            <h1 class="govuk-heading-xl">Request Submitted</h1>
             
-            <p class="govuk-body">Your access request has been submitted.</p>
+            <p class="govuk-body">Your request to access @Model has been submitted to your organisation’s Administrator. </p>
             
         </div>
     </div>

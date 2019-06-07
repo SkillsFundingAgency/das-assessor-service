@@ -295,16 +295,6 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
 
                                      identity.AddClaim(new Claim("display_name", user?.DisplayName));
                                      identity.AddClaim(new Claim("email", user?.Email));
-
-//                                     //Todo: Need to determine privileges dynamically
-//                                     // Yes! Now is that time!!  Hold on to yer butts.
-//
-//                                     var privileges = await contactClient.GetContactPrivileges(user.Id);
-//                                     privileges.ForEach(privilege =>
-//                                     {
-//                                         identity.AddClaim(new Claim("http://schemas.portal.com/service",
-//                                             privilege.Privilege.UserPrivilege));
-//                                     });
                                  }
                              }
                              context.Principal.AddIdentity(identity);
@@ -323,13 +313,6 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
                             context.User.HasClaim("http://schemas.portal.com/service", Roles.ExternalApiAccess)
                             && context.User.HasClaim("http://schemas.portal.com/service", Roles.EpaoUser)
                             );
-                    });
-                options.AddPolicy(Policies.SuperUserPolicy,
-                    policy =>
-                    {
-                        policy.RequireAssertion(context =>
-                            context.User.HasClaim("http://schemas.portal.com/service", Privileges.ManageUsers)
-                        );
                     });
             });
         }
