@@ -1,7 +1,7 @@
 @model SFA.DAS.AssessorService.Web.Controllers.ManageUsers.ViewModels.UserRemovedViewModel
 
 @{
-    ViewBag.Title = "User Removed";
+    ViewBag.Title = "User removed";
 }
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
@@ -18,22 +18,21 @@
                         <strong>@Model.ContactEmail</strong>
                     </div>
                     <div>
-                        From the organisation<br>
+                        From the organisation
                         <strong>@Model.OrganisationName</strong>
                     </div>
                 </div>
             </div>
-            
+
             <h2 class="govuk-heading-m">What do you want to do next?</h2>
 
-            <ul class="govuk-list">
-                <li>
-                    <a asp-controller="ManageUsers" asp-action="Index" class="govuk-link">View user list</a>
-                </li>
-                <li>
-                    <a asp-controller="Dashboard" asp-action="Index" class="govuk-link">Back to dashboard</a>
-                </li>
-            </ul>
+            <p class="govuk-body">
+                <a class="govuk-link" asp-controller="ManageUsers" asp-action="Index">View user list</a>
+            </p>
+
+            <p class="govuk-body">
+                <a class="govuk-link" asp-controller="Dashboard" asp-action="Index">Back to dashboard</a>
+            </p>
 
         </div>
     </div>
