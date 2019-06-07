@@ -160,7 +160,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Callback([FromBody] DfeSignInCallback callback)
+        public async Task<IActionResult> Callback([FromBody] SignInCallback callback)
         {
             await _contactsApiClient.Callback(callback);
             return Ok();

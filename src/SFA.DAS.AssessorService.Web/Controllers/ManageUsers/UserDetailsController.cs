@@ -115,6 +115,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers.ManageUsers
                 return Unauthorized();
             }
 
+            var removedFrom = UserToBeDisplayed.OrganisationId;
+
             var response = await ContactsApiClient.RemoveContactFromOrganisation(RequestingUser.Id, contactId);
 
             if (!response.Success)
@@ -127,21 +129,16 @@ namespace SFA.DAS.AssessorService.Web.Controllers.ManageUsers
             {
                 return response.SelfRemoved 
                     ? RedirectToAction("SignOut", "Account") 
-                    : RedirectToAction("Removed", "UserDetails", new {contactId});
+                    : RedirectToAction("Removed", "UserDetails", new {contactId, organisationId = removedFrom});
             }
         }
 
-        [HttpGet("/ManageUsers/{contactId}/removed")]
-        public async Task<IActionResult> Removed(Guid contactId)
+        [HttpGet("/ManageUsers/{contactId}/removedFrom/{organisationId}")]
+        public async Task<IActionResult> Removed(Guid contactId, Guid organisationId)
         {
-            var securityCheckpoint = await SecurityCheckAndGetContact(contactId);
+            await SecurityCheckAndGetContact(contactId);
 
-            if (!securityCheckpoint.isValid)
-            {
-                return Unauthorized();
-            }
-
-            var organisation = await _organisationsApiClient.GetOrganisationByUserId(contactId);
+            var organisation = await _organisationsApiClient.Get(organisationId);
 
             return View("~/Views/ManageUsers/UserDetails/Removed.cshtml", new UserRemovedViewModel {ContactEmail = UserToBeDisplayed.Email, OrganisationName = organisation.EndPointAssessorName});
         }   

@@ -35,50 +35,39 @@ namespace SFA.DAS.AssessorService.Web.Controllers.ManageUsers
         }
 
         [HttpGet]
-        [TypeFilter(typeof(MenuFilter), Arguments = new object[] { Pages.Organisations })]
+        [TypeFilter(typeof(MenuFilter), Arguments = new object[] {Pages.Organisations})]
         public async Task<IActionResult> Index()
         {
-            var response = new List<ContactsWithPrivilegesResponse>();
-            try
-            {
-                var epaoid = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/epaoid")?.Value;
-                var organisation = await _organisationsApiClient.GetEpaOrganisation(epaoid);
-                if (organisation != null)
-                 response = await _contactsApiClient.GetContactsWithPrivileges(organisation.OrganisationId);
-               
-            }
-            catch (EntityNotFoundException)
-            {
-                return RedirectToAction("NotRegistered", "Home");
-            }
-            
-           
+            var userId = _contextAccessor.HttpContext.User.FindFirst("UserId")?.Value;
+            var organisation = await _organisationsApiClient.GetOrganisationByUserId(Guid.Parse(userId));
+
+            var response = await _contactsApiClient.GetContactsWithPrivileges(organisation.Id);
+
             return View(response);
         }
 
         [HttpGet]
         [Route("/[controller]/status/{id}/{status}")]
-        public async Task<IActionResult> SetStatusAndNotify(string id, string status)
+        public async Task<IActionResult> SetStatusAndNotify(Guid id, string status)
         {
             const string epaoApproveConfirmTemplate = "EPAOUserApproveConfirm";
 
-            if (!string.IsNullOrEmpty(id) && !string.IsNullOrEmpty(status))
-            {
-                await _contactsApiClient.UpdateStatus(new UpdateContactStatusRequest(id, status));
-                if (status == ContactStatus.Approve)
+            if (string.IsNullOrEmpty(status)) return RedirectToAction("Index");
+            
+            await _contactsApiClient.UpdateStatus(new UpdateContactStatusRequest(id, status));
+            if (status != ContactStatus.Approve) return RedirectToAction("Index");
+            
+            var contactResponse = await _contactsApiClient.GetById(id);
+            var emailTemplate =
+                await _emailApiClient.GetEmailTemplate(epaoApproveConfirmTemplate);
+            await _emailApiClient.SendEmailWithTemplate(new SendEmailRequest(contactResponse.Email,
+                emailTemplate, new
                 {
-                    var contactResponse = await _contactsApiClient.GetById(id);
-                    var emailTemplate =
-                        await _emailApiClient.GetEmailTemplate(epaoApproveConfirmTemplate);
-                    await _emailApiClient.SendEmailWithTemplate(new SendEmailRequest(contactResponse.Email,
-                        emailTemplate, new
-                        {
-                            contactname = $"{contactResponse.DisplayName}",
-                            ServiceLink = _config.ServiceLink
-                        }));
-                }
-            }
-            return  RedirectToAction("Index");
+                    contactname = $"{contactResponse.DisplayName}",
+                    ServiceLink = _config.ServiceLink
+                }));
+
+            return RedirectToAction("Index");
         }
     }
 }

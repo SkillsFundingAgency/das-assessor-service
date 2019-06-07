@@ -10,5 +10,6 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.UserManagement
         public Guid ContactId { get; set; }
 
         public Guid[] PrivilegeIds { get; set; }
+        public bool IsNewContact { get; set; }
     }
 }

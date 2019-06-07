@@ -15,7 +15,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ContactHandlers
     {
         
         private readonly IContactRepository _contactRepository;
-        private readonly IDfeSignInService _dfeSignInService;
+        private readonly ISignInService _signInService;
         private readonly IContactQueryRepository _contactQueryRepository;
         private readonly IMediator _mediator;
         private readonly ILogger<CreateContactHandler> _logger;
@@ -23,12 +23,12 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ContactHandlers
         public CreateContactHandler(
             IContactRepository contactRepository,
             IContactQueryRepository contactQueryRepository,
-            IDfeSignInService dfeSignInService,
+            ISignInService signInService,
             IMediator mediator, ILogger<CreateContactHandler> logger)
         {
             _contactRepository = contactRepository;
             _contactQueryRepository = contactQueryRepository;
-            _dfeSignInService = dfeSignInService;
+            _signInService = signInService;
             _mediator = mediator;
             _logger = logger;
         }
@@ -62,7 +62,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ContactHandlers
                 var privileges = await _contactQueryRepository.GetAllPrivileges();
                 await _contactRepository.AssociatePrivilegesWithContact(contactResponse.Id, privileges);
 
-                var invitationResult = await _dfeSignInService.InviteUser(createContactRequest.Email, createContactRequest.GivenName, createContactRequest.FamilyName, contactResponse.Id);
+                var invitationResult = await _signInService.InviteUser(createContactRequest.Email, createContactRequest.GivenName, createContactRequest.FamilyName, contactResponse.Id);
                 if (!invitationResult.IsSuccess)
                 {
                     if (invitationResult.UserExists)
@@ -77,7 +77,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ContactHandlers
             }
             else
             {
-                var invitationResult = await _dfeSignInService.InviteUser(createContactRequest.Email, createContactRequest.GivenName, createContactRequest.FamilyName, existingContact.Id);
+                var invitationResult = await _signInService.InviteUser(createContactRequest.Email, createContactRequest.GivenName, createContactRequest.FamilyName, existingContact.Id);
                 if (!invitationResult.IsSuccess)
                 {
                     if (invitationResult.UserExists)

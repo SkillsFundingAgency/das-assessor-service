@@ -41,7 +41,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ManageUsersTests.UserDetailsCont
             DifferentOrganisationId = Guid.NewGuid();
             
             ContactsApiClient = new Mock<IContactsApiClient>();
-            ContactsApiClient.Setup(apiClient => apiClient.GetById(UserId.ToString())).ReturnsAsync(new ContactResponse
+            ContactsApiClient.Setup(apiClient => apiClient.GetById(UserId)).ReturnsAsync(new ContactResponse
             {
                 Id = UserId,
                 Title = "AA",
@@ -53,7 +53,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ManageUsersTests.UserDetailsCont
                 OrganisationId = requestedContactOrganisationId
             });
             
-            ContactsApiClient.Setup(apiClient => apiClient.GetById(CallingUserId.ToString())).ReturnsAsync(new ContactResponse
+            ContactsApiClient.Setup(apiClient => apiClient.GetById(CallingUserId)).ReturnsAsync(new ContactResponse
             {
                 Id = CallingUserId,
                 OrganisationId = requestedContactOrganisationId

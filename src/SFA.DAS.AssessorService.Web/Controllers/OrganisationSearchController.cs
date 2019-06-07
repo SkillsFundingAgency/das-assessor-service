@@ -279,7 +279,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                     //Try creating a contact and an organisation in apply
                     await _contactsApiClient.MigrateSingleContactToApply(Guid.Parse(signinId));
 
-                    await _contactsApiClient.UpdateStatus(new UpdateContactStatusRequest(user.Id.ToString(), ContactStatus.Applying));
+                    await _contactsApiClient.UpdateStatus(new UpdateContactStatusRequest(user.Id, ContactStatus.Applying));
                     await _organisationsApplyApiClient.ConfirmSearchedOrganisation(request);
 
                     return Redirect($"{_config.ApplyBaseAddress}/Applications");

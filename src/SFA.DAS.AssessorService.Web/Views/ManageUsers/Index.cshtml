@@ -46,6 +46,9 @@
                                 </td>
                                 <td class="govuk-table__cell" data-label="@Localizer["What they can do"]">
                                     <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-0">
+                                        <li>
+                                            View dashboard
+                                        </li>
                                         @foreach (var role in contact.Privileges )
                                         {
                                             <li> @Html.DisplayFor(modelItem => role)</li>

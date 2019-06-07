@@ -17,13 +17,13 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         
         Task<ContactResponse> Update(UpdateContactRequest updateContactRequest);
 
-        Task<List<ContactsWithPrivilegesResponse>> GetContactsWithPrivileges(string endPointAssessorOrganisationId);
+        Task<List<ContactsWithPrivilegesResponse>> GetContactsWithPrivileges(Guid organisationId);
 
         Task<ContactBoolResponse> DoesContactHavePrivileges(string userId);
 
         Task<ContactResponse> UpdateStatus(UpdateContactStatusRequest updateContactStatusRequest);
 
-        Task<ContactResponse> GetById(string id);
+        Task<ContactResponse> GetById(Guid id);
 
         Task<ContactResponse> GetContactBySignInId(string signInId);
         Task<List<ContactResponse>> GetAllContactsForOrganisation(string epaoId);
@@ -32,7 +32,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             UpdateContactWithOrgAndStausRequest updateContactWithOrgAndStausRequest);
 
         Task<ContactBoolResponse> InviteUser(CreateContactRequest createAccountRequest);
-        Task Callback(DfeSignInCallback callback);
+        Task Callback(SignInCallback callback);
 
         Task MigrateUsers();
 
@@ -45,5 +45,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         Task AssociateDefaultRolesAndPrivileges(Contact contact);
         Task<SetContactPrivilegesResponse> SetContactPrivileges(SetContactPrivilegesRequest privilegesRequest);
         Task<RemoveContactFromOrganisationResponse> RemoveContactFromOrganisation(Guid requestingUserId, Guid contactId);
+        Task<InviteContactToOrganisationResponse> InviteContactToOrganisation(InviteContactToOrganisationRequest request);
     }
 }

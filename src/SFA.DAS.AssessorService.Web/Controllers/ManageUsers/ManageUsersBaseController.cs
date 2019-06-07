@@ -26,11 +26,16 @@ namespace SFA.DAS.AssessorService.Web.Controllers.ManageUsers
         
         protected async Task<(bool isValid, ContactResponse contact)> SecurityCheckAndGetContact(Guid contactId)
         {
-            RequestingUser = await ContactsApiClient.GetById(HttpContextAccessor.HttpContext.User.FindFirst("UserId").Value);
+            RequestingUser = await GetRequestingContact();
             
-            UserToBeDisplayed = await ContactsApiClient.GetById(contactId.ToString());
+            UserToBeDisplayed = await ContactsApiClient.GetById(contactId);
             
             return (RequestingUser.OrganisationId == UserToBeDisplayed.OrganisationId, UserToBeDisplayed);
+        }
+
+        protected async Task<ContactResponse> GetRequestingContact()
+        {
+            return await ContactsApiClient.GetById(Guid.Parse(HttpContextAccessor.HttpContext.User.FindFirst("UserId").Value));
         }
     }
 }
