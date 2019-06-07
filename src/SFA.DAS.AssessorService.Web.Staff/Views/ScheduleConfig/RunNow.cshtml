@@ -1,43 +1,36 @@
 ﻿@using Humanizer
 @model ScheduleConfigViewModel
 @{
-    ViewBag.Title = "Run Schedule";
+    ViewBag.Title = "Run schedule";
     Layout = "_Layout";
 }
 
-<div class="grid-row">
-    <div class="column-two-thirds">
-        <a asp-action="Index" class="link-back">Go back</a>
+<a asp-action="Index" class="govuk-back-link">Go back</a>
 
-        <h1 class="heading-xlarge">
-            Run schedule now
-            <span class="heading-secondary">Please confirm run now</span>
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <h1 class="govuk-heading-xl">
+                Run schedule now
+            </h1>
 
-        </h1>
-    </div>
-</div>
-<div class="grid-row">
-    <div class="column-one-third">
-        <div class="form-group">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Run time</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>@Model.RunTime</td>
-                    </tr>
-                </tbody>
-            </table>
+            <dl class="govuk-summary-list govuk-summary-list--no-border">
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Run time
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Model.RunTime
+                    </dd>
+                </div>
+            </dl>
+
+            <form asp-action="RunNow" asp-controller="ScheduleConfig" method="post">
+                @Html.HiddenFor(m => m.Id)
+                @Html.HiddenFor(m => m.ScheduleType)
+                @Html.HiddenFor(m => m.RunTime)
+                <button class="govuk-button">Confirm</button>
+            </form>
         </div>
-
-        <form asp-action="RunNow" asp-controller="ScheduleConfig" method="post">
-            @Html.HiddenFor(m => m.Id)
-            @Html.HiddenFor(m => m.ScheduleType)
-            @Html.HiddenFor(m => m.RunTime)
-            <button class="button">Confirm</button>
-        </form>
     </div>
-</div>
+</main>

@@ -57,10 +57,12 @@ GOVUK.epaoValidate = function(formElement, validationRulesObject) {
       },
       unhighlight: function(element) {
         if ($(element).hasClass("govuk-date-input__input")) {
+          if (!$(".govuk-date-input__input.govuk-input--error")[0]){
+            $(".js-date-container").removeClass("govuk-form-group--error");
+          }
           $(element).removeClass("govuk-input--error");
-          $(".js-date-container").removeClass("govuk-form-group--error");
           return false;
-        } else {
+        } else {          
           $(element)
             .removeClass("govuk-input--error")
             .closest(".govuk-form-group")
@@ -110,9 +112,32 @@ GOVUK.epaoValidate = function(formElement, validationRulesObject) {
       var userDate = parseDate(getFullDate())
         ? parseDate(getFullDate()).getTime()
         : false;
+      
       return userDate ? this.optional(element) || userDate < now : true;
     },
     "Please enter a date in the past"
+  );
+
+  // Ensures date is not in the past
+  jQuery.validator.addMethod(
+    "noPastDate",
+    function(value, element) {
+
+      var d = new Date();
+      var year = d.getFullYear();
+      var month = d.getMonth() + 1;
+      var day = d.getDate();
+      var now = parseDate(day + '/' + month + '/' +  year).getTime();
+      console.log('now:', now)
+
+      var userDate = parseDate(getFullDate())
+      ? parseDate(getFullDate()).getTime()
+      : false;
+      console.log('userDate:', userDate)
+
+      return userDate ? this.optional(element) || userDate >= now : true;
+    },
+    "Please enter a date in the future"
   );
 
   // Ensures date is not before a set date
@@ -130,7 +155,6 @@ GOVUK.epaoValidate = function(formElement, validationRulesObject) {
     "The entered date cannot be before the set date"
   );
 
-  // Ensures date is not in the future
   jQuery.validator.addMethod(
     "addressFound",
     function(value, element) {
@@ -176,7 +200,7 @@ GOVUK.epaoValidate = function(formElement, validationRulesObject) {
 
   // Helper to ensure date input is correct format
   function parseDate(str) {
-    var t = str.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+    var t = str.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);    
     if (t !== null) {
       var d = +t[1],
         m = +t[2],

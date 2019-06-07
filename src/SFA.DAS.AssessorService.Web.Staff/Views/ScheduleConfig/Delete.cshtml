@@ -5,49 +5,46 @@
     Layout = "_Layout";
 }
 
-<div class="grid-row">
-    <div class="column-full">
-        <a asp-action="Index" class="link-back">Go back</a>
+<a asp-action="Index" class="govuk-back-link">Go back</a>
 
-        <h1 class="heading-large">Delete Schedule</h1>
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
 
-        @if (@Model != null && @Model.Id != Guid.Empty)
-        {
-            <div class="form-group">
-                <span class="bold">Please Confirm Deletion: </span>
-            </div>
+            <h1 class="govuk-heading-xl">Delete schedule</h1>
 
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Is Recurring</th>
-                        <th>Interval</th>
-                        <th>Run Time</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>@Model.IsRecurring</td>
-                        <td>@(Model.ScheduleInterval.HasValue ? Model.ScheduleInterval.Humanize(LetterCasing.Title) : Model.Interval)</td>
-                        <td>@Model.RunTime</td>
-                    </tr>
-                </tbody>
-            </table>
+            @if (@Model != null && @Model.Id != Guid.Empty)
+            {
+                <p class="govuk-body">Please confirm deletion</p>
 
-            <div>
+                <table class="govuk-table">
+                    <thead class="govuk-table__head">
+                        <tr class="govuk-table__row">
+                            <th class="govuk-table__header" scope="col">Is recurring</th>
+                            <th class="govuk-table__header govuk-table__header--numeric" scope="col">Interval</th>
+                            <th class="govuk-table__header govuk-table__header--numeric" scope="col">Run time</th>
+                        </tr>
+                    </thead>
+                    <tbody class="govuk-table__body">
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__cell">@Model.IsRecurring</td>
+                            <td class="govuk-table__cell govuk-table__cell--numeric">@(Model.ScheduleInterval.HasValue ? Model.ScheduleInterval.Humanize(LetterCasing.Title) : Model.Interval)</td>
+                            <td class="govuk-table__cell govuk-table__cell--numeric">@Model.RunTime</td>
+                        </tr>
+                    </tbody>
+                </table>
+
                 <form asp-action="Delete" asp-controller="ScheduleConfig" method="post">
                     @Html.HiddenFor(m => m.Id)
                     @Html.HiddenFor(m => m.ScheduleType)
-                    <button class="button">Confirm</button>
+                    <button class="govuk-button">Confirm</button>
                 </form>
-            </div>
-        }
-        else
-        {
-            <div class="form-group">
-                <span class="bold">No Schedule Found.</span>
-            </div>
-        }
+            }
+            else
+            {
+                <p class="govuk-body">No schedule found.</p>
+            }
 
+        </div>
     </div>
-</div>
+</main>

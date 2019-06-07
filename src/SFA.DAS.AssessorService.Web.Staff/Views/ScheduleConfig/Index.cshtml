@@ -27,23 +27,23 @@
             @if (@Model.Any())
             {
 
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Is recurring</th>
-                            <th>Interval</th>
-                            <th>Run time</th>
-                            <th></th>
+                <table class="govuk-table">
+                    <thead class="govuk-table__head">
+                        <tr class="govuk-table__row">
+                            <th class="govuk-table__header" scope="col">Is recurring</th>
+                            <th class="govuk-table__header govuk-table__header--numeric" scope="col">Interval</th>
+                            <th class="govuk-table__header govuk-table__header--numeric" scope="col">Run time</th>
+                            <th class="govuk-table__header govuk-table__header--numeric" scope="col"></th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody class="govuk-table__body">
                         @foreach (var result in @Model)
                         {
-                            <tr>
-                                <td>@result.IsRecurring</td>
-                                <td>@(result.ScheduleInterval.HasValue ? result.ScheduleInterval.Humanize(LetterCasing.Title) : result.Interval)</td>
-                                <td>@result.RunTime</td>
-                                <td class="numeric"><a asp-action="Delete" asp-route-scheduleRunId="@result.Id">Delete</a></td>
+                            <tr class="govuk-table__row">
+                                <td class="govuk-table__cell">@result.IsRecurring</td>
+                                <td class="govuk-table__cell govuk-table__cell--numeric">@(result.ScheduleInterval.HasValue ? result.ScheduleInterval.Humanize(LetterCasing.Title) : result.Interval)</td>
+                                <td class="govuk-table__cell govuk-table__cell--numeric">@result.RunTime</td>
+                                <td class="govuk-table__cell govuk-table__cell--numeric"><a class="govuk-link" asp-action="Delete" asp-route-scheduleRunId="@result.Id">Delete</a></td>
                             </tr>
                         }
                     </tbody>
@@ -52,7 +52,7 @@
             }
 
             <p class="govuk-body">
-                <a class="govuk-link" asp-action="Create">Create new</a>
+                <a class="govuk-button" asp-action="Create">Create new</a>
             </p>
          
 
