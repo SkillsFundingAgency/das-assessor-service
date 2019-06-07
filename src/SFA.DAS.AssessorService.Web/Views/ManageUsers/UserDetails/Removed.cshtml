@@ -4,18 +4,37 @@
     ViewBag.Title = "User Removed";
 }
 
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
 
+            <div class="govuk-panel govuk-panel--confirmation">
+                <h1 class="govuk-panel__title">
+                    User removed
+                </h1>
+                <div class="govuk-panel__body">
+                    <div class="govuk-!-margin-bottom-6">
+                        You have removed<br>
+                        <strong>@Model.ContactEmail</strong>
+                    </div>
+                    <div>
+                        From the organisation<br>
+                        <strong>@Model.OrganisationName</strong>
+                    </div>
+                </div>
+            </div>
+            
+            <h2 class="govuk-heading-m">What do you want to do next?</h2>
 
-<h1>User Removed</h1>
+            <ul class="govuk-list">
+                <li>
+                    <a asp-controller="ManageUsers" asp-action="Index" class="govuk-link">View user list</a>
+                </li>
+                <li>
+                    <a asp-controller="Dashboard" asp-action="Index" class="govuk-link">Back to dashboard</a>
+                </li>
+            </ul>
 
-<p>You have removed</p>
-<p>@Model.ContactEmail</p>
-
-<p>From the organisation</p>
-<p>@Model.OrganisationName</p>
-
-<p>What do you want to do next?</p>
-<a asp-controller="ManageUsers" asp-action="Index">View user list</a>
-<a asp-controller="Dashboard" asp-action="Index">Back to dashboard</a>
-
-
+        </div>
+    </div>
+</main>
