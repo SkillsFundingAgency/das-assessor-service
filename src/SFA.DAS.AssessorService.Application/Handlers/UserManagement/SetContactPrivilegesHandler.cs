@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.UserManagement;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.UserManagement
@@ -52,7 +53,11 @@ namespace SFA.DAS.AssessorService.Application.Handlers.UserManagement
                 await LogChangesToPrivileges(privilegesBeingAdded, privilegesBeingRemoved, request);
             }
             
-            return new SetContactPrivilegesResponse() {Success = true};
+            return new SetContactPrivilegesResponse()
+            {
+                Success = true, 
+                HasRemovedOwnUserManagement = request.ContactId == request.AmendingContactId && privilegesBeingRemovedThatMustBelongToSomeone.Any(p => p.Privilege.UserPrivilege == Privileges.ManageUsers)
+            };
         }
 
         private async Task LogChangesToPrivileges(List<ContactsPrivilege> privilegesBeingAdded, List<ContactsPrivilege> privilegesBeingRemoved, SetContactPrivilegesRequest request)

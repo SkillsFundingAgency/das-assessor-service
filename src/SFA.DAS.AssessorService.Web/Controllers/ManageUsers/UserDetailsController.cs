@@ -8,7 +8,9 @@ using Microsoft.AspNetCore.Mvc.Razor.Compilation;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.UserManagement;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
+using SFA.DAS.AssessorService.Web.Constants;
 using SFA.DAS.AssessorService.Web.Controllers.ManageUsers.ViewModels;
+using SFA.DAS.AssessorService.Web.Infrastructure;
 
 namespace SFA.DAS.AssessorService.Web.Controllers.ManageUsers
 {
@@ -21,6 +23,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.ManageUsers
         }
 
         [HttpGet("/ManageUsers/{contactId}")]
+        [TypeFilter(typeof(MenuFilter), Arguments = new object[] {Pages.Organisations})]
         public async Task<IActionResult> User(Guid contactId)
         {
             var securityCheckpoint = await SecurityCheckAndGetContact(contactId);
@@ -38,6 +41,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.ManageUsers
         }
 
         [HttpGet("/ManageUsers/{userid}/permissions")]
+        [TypeFilter(typeof(MenuFilter), Arguments = new object[] {Pages.Organisations})]
         public async Task<IActionResult> EditPermissions(Guid userid)
         {
             var securityCheckpoint = await SecurityCheckAndGetContact(userid);
@@ -88,11 +92,17 @@ namespace SFA.DAS.AssessorService.Web.Controllers.ManageUsers
             
                 return View("~/Views/ManageUsers/UserDetails/EditUserPermissions.cshtml", editVm);
             }
+
+            if (response.HasRemovedOwnUserManagement)
+            {
+                return RedirectToAction("Index", "Dashboard", new {contactId = vm.ContactId});    
+            }
             
             return RedirectToAction("User", new {contactId = vm.ContactId});
         }
 
         [HttpGet("/ManageUsers/{contactId}/remove")]
+        [TypeFilter(typeof(MenuFilter), Arguments = new object[] {Pages.Organisations})]
         public async Task<IActionResult> Remove(Guid contactId)
         {
             var securityCheckpoint = await SecurityCheckAndGetContact(contactId);
@@ -106,6 +116,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.ManageUsers
         }
 
         [HttpPost("/ManageUsers/{contactId}/remove")]
+        [TypeFilter(typeof(MenuFilter), Arguments = new object[] {Pages.Organisations})]
         public async Task<IActionResult> RemoveConfirmed(Guid contactId)
         {
             var securityCheckpoint = await SecurityCheckAndGetContact(contactId);
@@ -134,6 +145,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.ManageUsers
         }
 
         [HttpGet("/ManageUsers/{contactId}/removedFrom/{organisationId}")]
+        [TypeFilter(typeof(MenuFilter), Arguments = new object[] {Pages.Organisations})]
         public async Task<IActionResult> Removed(Guid contactId, Guid organisationId)
         {
             await SecurityCheckAndGetContact(contactId);

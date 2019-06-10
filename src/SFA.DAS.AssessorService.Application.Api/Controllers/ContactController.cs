@@ -168,5 +168,12 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         {
             return Ok(await _mediator.Send(request, CancellationToken.None));
         }
+        
+        [HttpPost("requestForPrivilege")]
+        public async Task<ActionResult> RequestForPrivilege([FromBody] RequestForPrivilegeRequest request)
+        {
+            await _mediator.Send(request, CancellationToken.None);
+            return Ok();
+        }
     }
 }

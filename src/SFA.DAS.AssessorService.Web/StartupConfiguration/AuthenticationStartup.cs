@@ -295,10 +295,6 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
 
                                      identity.AddClaim(new Claim("display_name", user?.DisplayName));
                                      identity.AddClaim(new Claim("email", user?.Email));
-
-                                     //Todo: Need to determine privileges dynamically
-                                     identity.AddClaim(new Claim("http://schemas.portal.com/service",
-                                         Privileges.ManageUsers));
                                  }
                              }
                              context.Principal.AddIdentity(identity);
@@ -317,13 +313,6 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
                             context.User.HasClaim("http://schemas.portal.com/service", Roles.ExternalApiAccess)
                             && context.User.HasClaim("http://schemas.portal.com/service", Roles.EpaoUser)
                             );
-                    });
-                options.AddPolicy(Policies.SuperUserPolicy,
-                    policy =>
-                    {
-                        policy.RequireAssertion(context =>
-                            context.User.HasClaim("http://schemas.portal.com/service", Privileges.ManageUsers)
-                        );
                     });
             });
         }
@@ -345,6 +334,7 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
         }
     }
 
+
     public class Policies
     {
         public const string ExternalApiAccess = "ExternalApiAccess";
@@ -355,10 +345,5 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
     {
         public const string ExternalApiAccess = "EPI";
         public const string EpaoUser = "EPA";
-    }
-
-    public class Privileges
-    {
-        public const string ManageUsers = "ManageUser";
     }
 }
