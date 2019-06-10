@@ -2,6 +2,7 @@
 
 @{
     ViewBag.Title = "Invite user";
+    Layout = "_DashboardLayout";
 }
 
 
@@ -26,7 +27,7 @@
                             
                                 @foreach (var modelState in ViewData.ModelState)
                                 {
-                                    @foreach (var error in modelState.Value.Errors)
+                                    foreach (var error in modelState.Value.Errors)
                                     {
                                         <li>
                                             <a href="#@modelState.Key">@error.ErrorMessage</a>

@@ -2,6 +2,7 @@
 
 @{
     ViewBag.Title = (!ViewData.ModelState.IsValid ? "Error: " : "") + "Edit user permissions";
+    Layout = "_DashboardLayout";
 }
 
 <a class="govuk-back-link" asp-controller="ManageUsers" asp-action="Index">Back</a>
