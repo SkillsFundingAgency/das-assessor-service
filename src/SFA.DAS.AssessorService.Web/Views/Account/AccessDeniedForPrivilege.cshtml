@@ -13,17 +13,6 @@
 
             <p class="govuk-body">@Model.Description</p>
 
-            <h2 class="govuk-heading-m">
-                @if (Model.UserHasUserManagement)
-                {
-                    <text>Grant permission</text>
-                }
-                else
-                {
-                    <text>Request permission</text>
-                }
-            </h2>
-
             <form asp-controller="RequestAccess" asp-action="Request">
                 @Html.HiddenFor(m => m.ContactId)
                 @Html.HiddenFor(m => m.PrivilegeId)
@@ -32,11 +21,19 @@
                 @Html.HiddenFor(m => m.ReturnAction)
                 @if (Model.UserHasUserManagement)
                 {
+                    <h2 class="govuk-heading-m">
+                        Grant permission
+                    </h2>
+                    
                     <p class="govuk-body">You have manage users permissions.</p>
                     <button class="govuk-button" type="submit">Access</button>
                 }
                 else
                 {
+                    <h2 class="govuk-heading-m">
+                        Request permission
+                    </h2>
+                    
                     <p class="govuk-body">You do not have permission to view this content.</p>
                     <button class="govuk-button" type="submit">Request access</button>
                 }
