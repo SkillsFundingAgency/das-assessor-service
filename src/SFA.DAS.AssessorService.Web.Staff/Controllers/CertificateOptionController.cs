@@ -19,11 +19,15 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
 
 
         [HttpGet]
-        public async Task<IActionResult> Option(Guid certificateId, bool fromApproval)
+        public async Task<IActionResult> Option(Guid certificateId, bool fromApproval, bool isFromStandard)
         {
             var viewModel =  await LoadViewModel<CertificateOptionViewModel>(certificateId, "~/Views/CertificateAmend/Option.cshtml");
-            if (viewModel is ViewResult viewResult && viewResult.Model is CertificateOptionViewModel certificateOptionViewModel)
+            if (viewModel is ViewResult viewResult &&
+                viewResult.Model is CertificateOptionViewModel certificateOptionViewModel)
+            {
                 certificateOptionViewModel.FromApproval = fromApproval;
+                certificateOptionViewModel.IsFromStandard = isFromStandard;
+            }
 
             return viewModel;
         }
