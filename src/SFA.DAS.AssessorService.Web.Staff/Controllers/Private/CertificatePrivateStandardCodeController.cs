@@ -79,9 +79,21 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Private
                 vm.Level = selectedStandard.StandardData.Level.GetValueOrDefault();
             }
 
+            var options = (await _apiClient.GetOptions(Convert.ToInt32(vm.SelectedStandardCode)))
+                .Select(o => o.OptionName).ToList();
+
             var actionResult = await SaveViewModel(vm,
                 returnToIfModelNotValid: "~/Views/CertificateAmend/StandardCode.cshtml",
-                nextAction: RedirectToAction("Check", "CertificateAmend", new { certificateId = vm.Id, fromapproval = vm.FromApproval }), action: CertificateActions.StandardCode);
+                nextAction: RedirectToAction("Check", "CertificateAmend",
+                    new { certificateId = vm.Id, fromapproval = vm.FromApproval }), action: CertificateActions.StandardCode);
+
+
+            if (options.Any())
+            {
+                 actionResult = await SaveViewModel(vm,
+                    returnToIfModelNotValid: "~/Views/CertificateAmend/StandardCode.cshtml",
+                    nextAction: RedirectToAction("Option", "CertificateOption", new { certificateId = vm.Id, fromapproval = vm.FromApproval, isFromStandard = true }), action: CertificateActions.Option);
+            }
 
             return actionResult;
         }
