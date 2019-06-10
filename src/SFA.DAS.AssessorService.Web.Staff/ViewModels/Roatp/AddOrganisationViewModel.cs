@@ -50,10 +50,10 @@ namespace SFA.DAS.AssessorService.Web.Staff.ViewModels.Roatp
         public List<ValidationErrorDetail> ErrorMessages { get; set; }
 
         public bool IsError => ErrorMessages != null && ErrorMessages.Count > 0;
-        private bool IsErrorAllFields => IsError && ErrorMessages.Any(x => x.Field == "ApplicationDeterminedDate");
-        public bool IsErrorDay => IsError && (IsErrorAllFields || ErrorMessages.Any(x => x.Field == "Day"));
-        public bool IsErrorMonth => IsError && (IsErrorAllFields || ErrorMessages.Any(x => x.Field == "Month"));
-        public bool IsErrorYear => IsError && (IsErrorAllFields || ErrorMessages.Any(x => x.Field == "Year"));
+
+        public bool IsErrorDay => IsError && (ErrorMessages.Any(x => x.Field == "Day"));
+        public bool IsErrorMonth => IsError && (ErrorMessages.Any(x => x.Field == "Month"));
+        public bool IsErrorYear => IsError && (ErrorMessages.Any(x => x.Field == "Year"));
 
         public override DateTime? ApplicationDeterminedDate
         {

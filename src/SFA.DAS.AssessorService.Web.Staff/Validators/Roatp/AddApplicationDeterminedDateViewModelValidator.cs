@@ -36,7 +36,10 @@ namespace SFA.DAS.AssessorService.Web.Staff.Validators.Roatp
 
             if (viewModel.Day == null && viewModel.Month == null && viewModel.Year == null)
             {
-                validationResult.Errors.Add(new ValidationErrorDetail(dateControlName, "Enter the application determined date"));
+                validationResult.Errors.Add(new ValidationErrorDetail(dateControlName, RoatpOrganisationValidation.ApplicationDeterminedDateNoFieldsEntered));
+                validationResult.Errors.Add(new ValidationErrorDetail("Day", "day error"));
+                validationResult.Errors.Add(new ValidationErrorDetail("Month", "month error"));
+                validationResult.Errors.Add(new ValidationErrorDetail("Year", "year error"));
                 return validationResult;
             }
 
@@ -46,24 +49,33 @@ namespace SFA.DAS.AssessorService.Web.Staff.Validators.Roatp
                     string.IsNullOrWhiteSpace(viewModel?.Year.ToString()))
                 {
                     validationResult.Errors.Add(
-                        new ValidationErrorDetail(dateControlName, "Enter the application determined date including a day, month and year"));
-                }
+                        new ValidationErrorDetail(dateControlName, RoatpOrganisationValidation.ApplicationDeterminedDateFieldsNotEntered));
+
+                if (viewModel?.Day == null)
+                    validationResult.Errors.Add(new ValidationErrorDetail("Day", "day error"));
+                if (viewModel?.Month == null)
+                    validationResult.Errors.Add(new ValidationErrorDetail("Month", "month error"));
+                if (viewModel?.Year == null)
+                    validationResult.Errors.Add(new ValidationErrorDetail("Year", "year error"));
+                return validationResult;
+            }
 
             var formatStrings = new string[] { "d/M/yyyy" };
             var yearWithCentury = viewModel?.Year;
             if (yearWithCentury!=null && yearWithCentury < 99)
                 yearWithCentury += 2000;
 
-            if (!DateTime.TryParseExact($"{viewModel?.Day}/{viewModel?.Month}/{yearWithCentury}", formatStrings, null, DateTimeStyles.None, out DateTime formattedDate))
+            if (!DateTime.TryParseExact($"{viewModel?.Day}/{viewModel?.Month}/{yearWithCentury}", formatStrings, null, DateTimeStyles.None, out _))
             {
                 validationResult.Errors.Add(
-                    new ValidationErrorDetail(dateControlName, "Enter a valid application determined date including a day, month and year"));
+                    new ValidationErrorDetail(dateControlName, RoatpOrganisationValidation.ApplicationDeterminedDateInvalidDates));
+                return validationResult;
             }
 
             if (viewModel.ApplicationDeterminedDate > DateTime.Today)
             {
                 validationResult.Errors.Add(
-                    new ValidationErrorDetail(dateControlName, "Application determined date must be today or in the past"));
+                    new ValidationErrorDetail(dateControlName, RoatpOrganisationValidation.ApplicationDeterminedDateFutureDate));
             }
         
             return validationResult;

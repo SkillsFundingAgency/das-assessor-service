@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Net.Http;
-using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client;
+﻿using System.Net.Http;
 using SFA.DAS.AssessorService.Application.Api.Services;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
@@ -174,8 +172,15 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
             vm.Month = model.Month;
             vm.Year = model.Year;
             if (!IsRedirectFromConfirmationPage() && !ModelState.IsValid)
-            {
-                vm.ErrorMessages = model.ErrorMessages;       
+            {       
+                var errorMessages = !ModelState.IsValid
+                    ? ModelState.SelectMany(k => k.Value.Errors.Select(e => new ValidationErrorDetail()
+                    {
+                        ErrorMessage = e.ErrorMessage,
+                        Field = k.Key
+                    })).ToList()
+                    : null;
+                vm.ErrorMessages = errorMessages;
                 return View("~/Views/Roatp/AddApplicationDeterminedDate.cshtml",vm);
             }
             
@@ -206,8 +211,6 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
                 var local = MapOrganisationVmToOrganisationTypeVm(organisationVm);
                 return View("~/Views/Roatp/AddOrganisationType.cshtml", local);
             }
-
-
 
             var errorMessages = !ModelState.IsValid
                 ? ModelState.SelectMany(k => k.Value.Errors.Select(e => new ValidationErrorDetail()

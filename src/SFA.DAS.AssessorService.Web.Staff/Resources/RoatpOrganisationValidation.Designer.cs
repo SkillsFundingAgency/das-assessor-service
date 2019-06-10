@@ -61,6 +61,42 @@ namespace SFA.DAS.AssessorService.Web.Staff.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Enter the application determined date including a day, month and year.
+        /// </summary>
+        public static string ApplicationDeterminedDateFieldsNotEntered {
+            get {
+                return ResourceManager.GetString("ApplicationDeterminedDateFieldsNotEntered", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Application determined date must be today or in the past.
+        /// </summary>
+        public static string ApplicationDeterminedDateFutureDate {
+            get {
+                return ResourceManager.GetString("ApplicationDeterminedDateFutureDate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enter a valid application determined date including a day, month and year.
+        /// </summary>
+        public static string ApplicationDeterminedDateInvalidDates {
+            get {
+                return ResourceManager.GetString("ApplicationDeterminedDateInvalidDates", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enter the application determined date.
+        /// </summary>
+        public static string ApplicationDeterminedDateNoFieldsEntered {
+            get {
+                return ResourceManager.GetString("ApplicationDeterminedDateNoFieldsEntered", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to This is an existing charity number for ‘{0}’.
         /// </summary>
         public static string CharityNumberDuplicateMatch {
