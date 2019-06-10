@@ -187,3 +187,33 @@ DisplayName = TRIM(up1.Title + (CASE WHEN up1.Title = '' THEN '' ELSE + ' ' END)
 /* DONE
 UPDATE [OrganisationType] SET [Type] =  'Training Provider', [TypeDescription] = 'Training provider - including HEI not in England' WHERE id = 7;
 */
+
+-- ON-1933 INC INC01095552
+DELETE FROM [Options] WHERE [StdCode] IN (50, 51);
+
+	-- Options for: Chartered Surveyor (Degree) ST0331
+INSERT INTO [Options] ([StdCode], [OptionName])
+     VALUES
+             (50, 'Building Surveyors')
+		   , (50, 'Commercial Property Surveyors')
+		   , (50, 'Residential Property Surveyors')
+		   , (50, 'Planning and Development Surveyors')
+		   , (50, 'Rural Surveyors')
+		   , (50, 'Minerals and Waste Management Surveyors')
+		   , (50, 'Valuation Surveyors')
+		   , (50, 'Consultant (Professional) Quantity Surveyors')
+		   , (50, 'Consultant (Professional) Project Management Surveyors');
+
+	-- Options for: Surveying technician ST0332
+INSERT INTO [Options] ([StdCode], [OptionName])
+     VALUES
+             (51, 'Building Surveying Technicians')
+		   , (51, 'Commercial Property Surveying Technicians')
+		   , (51, 'Residential Property Surveying Technicians')
+		   , (51, 'Land Surveying Technicians (including rural, minerals and waste management and planning and development)')
+		   , (51, 'Valuation Surveying Technicians')
+		   , (51, 'Consultant (Professional) Quantity Surveying Technicians')
+		   , (51, 'Consultant (Professional) Project Management Technicians');
+
+UPDATE [Options] SET [OptionName] = 'Mechanical' WHERE [OptionName] = 'Mechnical';
+-- END OF ON-1933

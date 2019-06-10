@@ -9,22 +9,57 @@
     <div class="column-two-thirds">     
         @if (Model.FromApproval)
         {
-            <a class="link-back" asp-controller="CertificateAmend" asp-action="Check" asp-route-fromapproval = "true" asp-route-certificateId=@Model.Id>Back</a>
+            if (Model.IsFromStandard)
+            {
+                <a class="link-back" asp-controller="CertificatePrivateStandardCode" asp-action="StandardCode" asp-route-fromapproval="true" asp-route-certificateId=@Model.Id>Back</a>
+            }
+            else
+            {
+                <a class="link-back" asp-controller="CertificateAmend" asp-action="Check" asp-route-fromapproval="true" asp-route-certificateId=@Model.Id>Back</a>
+            }
         }
         else
         {
             <a class="link-back" asp-controller="CertificateAmend" asp-action="Check" asp-route-certificateId=@Model.Id>Back</a>
         }
 
-            <form type="post" asp-controller="CertificateOption" asp-method="Option" class="apprentice-option-form">
-                @Html.HiddenFor(c => c.Id)
-                @Html.HiddenFor(c => c.FromApproval)
-                @* hidden with css by default *@
-                <div class="js-error-summary error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
-                    <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
-                        <text>There is a problem</text>
-                    </h2>
-                    <ul class="js-error-summary-list error-summary-list"></ul>
+        <form type="post" asp-controller="CertificateOption" asp-method="Option" class="apprentice-option-form">
+            @Html.HiddenFor(c => c.Id)
+            @Html.HiddenFor(c => c.FromApproval)
+
+            @* hidden with css by default *@
+            <div class="js-error-summary error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+                <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+                    <text>There is a problem</text>
+                </h2>
+                <ul class="js-error-summary-list error-summary-list"></ul>
+            </div>
+
+            @if (!ViewData.ModelState.IsValid)
+            {
+            <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+                <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+                    There is a problem
+                </h2>
+                <ul class="error-summary-list">
+                    <li><a sfa-validation-for="HasAdditionalLearningOption"></a></li>
+                    <li><a sfa-validation-for="Option"></a></li>
+                    @*<li><a href="#Pass">You need to specify an achievement grade for this apprentice</a></li>*@
+                    <li><a sfa-validation-for="ReasonForChange"></a></li>
+                </ul>
+            </div>
+            }
+
+            <div sfa-anyvalidationerror-class="after-error-summary">
+                <div id="HasAdditionalLearningOption">
+                    <h1 class="heading-medium">
+                        Did the apprentice take a learning option?
+                    </h1>
+                    <p>You may know options as 'occupational options', 'pathways', 'specialisms' or 'specialist functions'.</p>
+                    <p>The option will appear on the certificate.</p>
+                    <div class="error-message-container" sfa-validation-for="HasAdditionalLearningOption" sfa-validationerror-class="form-group-error">
+                        <span class="error-message" asp-validation-for="HasAdditionalLearningOption"></span>
+                    </div>
                 </div>
 
                 @if (!ViewData.ModelState.IsValid)
@@ -43,16 +78,6 @@
                 }
 
                 <div sfa-anyvalidationerror-class="after-error-summary">
-                    <div id="HasAdditionalLearningOption">
-                        <h1 class="heading-medium">
-                            Did the apprentice take a learning option?
-                        </h1>
-                        <p>You may know options as 'occupational options', 'pathways', 'specialisms' or 'specialist functions'.</p>
-                        <p>The option will appear on the certificate.</p>
-                        <div class="error-message-container" sfa-validation-for="HasAdditionalLearningOption" sfa-validationerror-class="form-group-error">
-                            <span class="error-message" asp-validation-for="HasAdditionalLearningOption"></span>
-                        </div>
-                    </div>
                     <div class="form-group" sfa-anyvalidationerror-class="form-group-error">
                         <div class="multiple-choice" data-target="show-option-input">
                             <input asp-for="HasAdditionalLearningOption" id="options_yes" type="radio" value="True" />
@@ -95,7 +120,8 @@
                 </details>
 
                 <button type="submit" class="button">Continue</button>
-            </form>
+            </div>
+        </form>
     </div>
 </div>
 @section Scripts {

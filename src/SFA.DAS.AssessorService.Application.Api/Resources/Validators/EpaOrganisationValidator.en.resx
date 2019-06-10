@@ -231,6 +231,9 @@
   <data name="PostcodeIsNotEntered" xml:space="preserve">
     <value>There are insufficient details in the postcode</value>
   </data>
+  <data name="UkprnIsNotPresent" xml:space="preserve">
+    <value>The organisation cannot go live without a UKPRN</value>
+  </data>
   <data name="ContactsAreNotPresent" xml:space="preserve">
     <value>The organisation cannot go live without at least one contact</value>
   </data>
@@ -241,7 +244,7 @@
     <value>There is already a contact with this name, email and phone number</value>
   </data>
   <data name="OrganisationCharityNumberAlreadyUsed" xml:space="preserve">
-    <value>There is already an organisation with this charity number</value>
+    <value>There is already an organisation with this charity registration number</value>
   </data>
   <data name="OrganisationCompanyNumberAlreadyUsed" xml:space="preserve">
     <value>There is already an organisation with this company number</value>
