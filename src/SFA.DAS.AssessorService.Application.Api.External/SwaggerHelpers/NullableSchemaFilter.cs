@@ -15,7 +15,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.SwaggerHelpers
             {
                 var property = context.SystemType.GetProperty(schemaProperty.Key, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
 
-                if (property != null && property.PropertyType.IsGenericType && property.PropertyType.GetGenericTypeDefinition() == typeof(Nullable<>))
+                if (property != null && property.PropertyType.IsConstructedGenericType && property.PropertyType.GetGenericTypeDefinition() == typeof(Nullable<>))
                 {
                     schemaProperty.Value.Default = null;
                     schemaProperty.Value.Extensions.Add("nullable", true);
