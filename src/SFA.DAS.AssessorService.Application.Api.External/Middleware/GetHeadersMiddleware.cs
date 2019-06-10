@@ -38,8 +38,6 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Middleware
                 context.Request.Headers.TryGetValue(_UserNoteHeader, out var noteHeaderValue);
 
                 string email = emailHeaderValue.FirstOrDefault();
-                email = "epaomailinator+EPA0008@gmail.com";
-                noteHeaderValue = "ukprn=10009931";
 
                 if (!TryExtractUkprnFromHeader(noteHeaderValue, out var ukprn))
                 {
