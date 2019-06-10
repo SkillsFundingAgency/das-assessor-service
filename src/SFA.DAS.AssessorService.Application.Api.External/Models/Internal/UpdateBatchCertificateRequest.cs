@@ -1,8 +1,8 @@
 ﻿using SFA.DAS.AssessorService.Application.Api.External.Models.Request.Certificates;
 
-namespace SFA.DAS.AssessorService.Application.Api.External.Models.Request
+namespace SFA.DAS.AssessorService.Application.Api.External.Models.Internal
 {
-    public class BatchCertificateRequest
+    public class UpdateBatchCertificateRequest
     {
         public string RequestId { get; set; }
         public CertificateData CertificateData { get; set; }

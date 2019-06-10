@@ -9,11 +9,11 @@ namespace SFA.DAS.AssessorService.Application.Api.External.AutoMapperProfiles
         public StandardOptionsProfile()
         {
             CreateMap<AssessorService.Api.Types.Models.Standards.StandardCollation, StandardOptions>()
-                .ForMember(x => x.StandardCode, opt => opt.MapFrom(source => source.StandardId))
-                .ForMember(x => x.StandardReference, opt => opt.MapFrom(source => source.ReferenceNumber))
-                .ForMember(x => x.CourseOption, opt => opt.MapFrom(source => source.Options))
+                .ForMember(dest => dest.StandardCode, opt => opt.MapFrom(source => source.StandardId))
+                .ForMember(dest => dest.StandardReference, opt => opt.MapFrom(source => source.ReferenceNumber))
+                .ForMember(dest => dest.CourseOption, opt => opt.MapFrom(source => source.Options))
                 .AfterMap<CollapseEmptySequenceAction>()
-                .ForAllOtherMembers(x => x.Ignore());
+                .ForAllOtherMembers(dest => dest.Ignore());
         }
 
         public class CollapseEmptySequenceAction : IMappingAction<AssessorService.Api.Types.Models.Standards.StandardCollation, StandardOptions>

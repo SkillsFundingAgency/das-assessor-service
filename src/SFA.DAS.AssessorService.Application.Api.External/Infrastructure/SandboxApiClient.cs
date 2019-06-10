@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
-using SFA.DAS.AssessorService.Application.Api.External.Middleware;
-using SFA.DAS.AssessorService.Application.Api.External.Models.Request;
+using SFA.DAS.AssessorService.Application.Api.External.Models.Internal;
 using SFA.DAS.AssessorService.Application.Api.External.Models.Response;
 using SFA.DAS.AssessorService.Application.Api.External.Models.Response.Certificates;
 using SFA.DAS.AssessorService.Application.Api.External.Models.Response.Standards;
@@ -23,7 +22,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
             _client = client;
         }
 
-        public Task<GetCertificateResponse> GetCertificate(GetCertificateRequest request)
+        public Task<GetCertificateResponse> GetCertificate(GetBatchCertificateRequest request)
         {
             var validationErrors = PerformBasicGetCertificateValidation(request);
 
@@ -47,24 +46,21 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
                     },
                     Status = new Status { CurrentStatus = "Draft" },
                     Created = new Created { CreatedAt = DateTime.UtcNow, CreatedBy = request.Email },
-                },
-                FamilyName = request.FamilyName,
-                Standard = request.Standard,
-                Uln = request.Uln
+                }
             };
 
             return Task.FromResult(response);
         }
 
-        public Task<IEnumerable<BatchCertificateResponse>> CreateCertificates(IEnumerable<BatchCertificateRequest> request)
+        public Task<IEnumerable<CreateCertificateResponse>> CreateCertificates(IEnumerable<CreateBatchCertificateRequest> request)
         {
-            var response = new List<BatchCertificateResponse>();
+            var response = new List<CreateCertificateResponse>();
 
             foreach (var req in request)
             {
-                var validationErrors = PerformBasicBatchCertificateRequestValidation(req);
+                var validationErrors = PerformBasicCreateBatchCertificateRequestValidation(req);
 
-                var responseItem = new BatchCertificateResponse
+                var responseItem = new CreateCertificateResponse
                 {
                     RequestId = req.RequestId,
                     ValidationErrors = validationErrors,
@@ -102,20 +98,20 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
             return Task.FromResult(response.AsEnumerable());
         }
 
-        public Task<IEnumerable<BatchCertificateResponse>> UpdateCertificates(IEnumerable<BatchCertificateRequest> request)
+        public Task<IEnumerable<UpdateCertificateResponse>> UpdateCertificates(IEnumerable<UpdateBatchCertificateRequest> request)
         {
-            var response = new List<BatchCertificateResponse>();
+            var response = new List<UpdateCertificateResponse>();
 
             foreach (var req in request)
             {
-                var validationErrors = PerformBasicBatchCertificateRequestValidation(req);
+                var validationErrors = PerformBasicUpdateBatchCertificateRequestValidation(req);
 
                 if (req.CertificateData != null && string.IsNullOrEmpty(req.CertificateData.CertificateReference))
                 {
                     validationErrors.Add("Enter the certificate reference");
                 }
 
-                var responseItem = new BatchCertificateResponse
+                var responseItem = new UpdateCertificateResponse
                 {
                     RequestId = req.RequestId,
                     ValidationErrors = validationErrors,
@@ -153,15 +149,15 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
             return Task.FromResult(response.AsEnumerable());
         }
 
-        public Task<IEnumerable<SubmitBatchCertificateResponse>> SubmitCertificates(IEnumerable<SubmitBatchCertificateRequest> request)
+        public Task<IEnumerable<SubmitCertificateResponse>> SubmitCertificates(IEnumerable<SubmitBatchCertificateRequest> request)
         {
-            var response = new List<SubmitBatchCertificateResponse>();
+            var response = new List<SubmitCertificateResponse>();
 
             foreach (var req in request)
             {
                 var validationErrors = PerformBasicSubmitCertificateValidation(req);
 
-                var responseItem = new SubmitBatchCertificateResponse
+                var responseItem = new SubmitCertificateResponse
                 {
                     RequestId = req.RequestId,
                     ValidationErrors = validationErrors,
@@ -187,7 +183,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
             return Task.FromResult(response.AsEnumerable());
         }
 
-        public Task<ApiResponse> DeleteCertificate(DeleteCertificateRequest request)
+        public Task<ApiResponse> DeleteCertificate(DeleteBatchCertificateRequest request)
         {
             var validationErrors = PerformBasicDeleteCertificateValidation(request);
 
@@ -196,7 +192,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
             return Task.FromResult(response);
         }
 
-        private List<string> PerformBasicGetCertificateValidation(GetCertificateRequest request)
+        private List<string> PerformBasicGetCertificateValidation(GetBatchCertificateRequest request)
         {
             List<string> validationErrors = new List<string>();
 
@@ -227,7 +223,80 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
             return validationErrors;
         }
 
-        private List<string> PerformBasicBatchCertificateRequestValidation(BatchCertificateRequest request)
+        private List<string> PerformBasicCreateBatchCertificateRequestValidation(CreateBatchCertificateRequest request)
+        {
+            List<string> validationErrors = new List<string>();
+
+            if (request?.CertificateData is null)
+            {
+                validationErrors.Add("Enter Certificate Data");
+            }
+            else
+            {
+                var cert = request.CertificateData;
+
+                if (cert.Learner?.Uln < 1000000000 || cert.Learner?.Uln > 9999999999)
+                {
+                    validationErrors.Add("The apprentice's ULN should contain exactly 10 numbers");
+                }
+                if (string.IsNullOrEmpty(cert.Learner?.FamilyName))
+                {
+                    validationErrors.Add("Enter the apprentice's last name");
+                }
+
+                if (cert.Standard?.StandardCode is null && string.IsNullOrEmpty(cert.Standard?.StandardReference))
+                {
+                    validationErrors.Add("A standard should be selected");
+                }
+                else if (cert.Standard?.StandardCode != null && cert.Standard.StandardCode < 1)
+                {
+                    validationErrors.Add("A standard should be selected");
+                }
+
+                if (string.IsNullOrEmpty(cert.PostalContact?.ContactName))
+                {
+                    validationErrors.Add("Enter a contact name");
+                }
+                if (string.IsNullOrEmpty(cert.PostalContact?.Organisation))
+                {
+                    validationErrors.Add("Enter an organisation");
+                }
+                if (string.IsNullOrEmpty(cert.PostalContact?.AddressLine1))
+                {
+                    validationErrors.Add("Enter an address");
+                }
+                if (string.IsNullOrEmpty(cert.PostalContact?.City))
+                {
+                    validationErrors.Add("Enter a city or town");
+                }
+                if (string.IsNullOrEmpty(cert.PostalContact?.PostCode))
+                {
+                    validationErrors.Add("Enter a postcode");
+                }
+
+                if (string.IsNullOrEmpty(cert.LearningDetails?.OverallGrade))
+                {
+                    validationErrors.Add("Select the grade the apprentice achieved");
+                }
+
+                if (cert.LearningDetails?.AchievementDate is null)
+                {
+                    validationErrors.Add("Enter the achievement date");
+                }
+                else if (cert.LearningDetails.AchievementDate < new DateTime(2017, 1, 1))
+                {
+                    validationErrors.Add("An achievement date cannot be before 01 01 2017");
+                }
+                else if (cert.LearningDetails.AchievementDate > DateTime.UtcNow)
+                {
+                    validationErrors.Add("An achievement date cannot be in the future");
+                }
+            }
+
+            return validationErrors;
+        }
+
+        private List<string> PerformBasicUpdateBatchCertificateRequestValidation(UpdateBatchCertificateRequest request)
         {
             List<string> validationErrors = new List<string>();
 
@@ -335,7 +404,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
             return validationErrors;
         }
 
-        private List<string> PerformBasicDeleteCertificateValidation(DeleteCertificateRequest request)
+        private List<string> PerformBasicDeleteCertificateValidation(DeleteBatchCertificateRequest request)
         {
             List<string> validationErrors = new List<string>();
 

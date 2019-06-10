@@ -10,17 +10,17 @@ namespace SFA.DAS.AssessorService.Application.Api.External.AutoMapperProfiles
         public CertificateProfile()
         {
             CreateMap<Domain.Entities.Certificate, Certificate>()
-                .ForMember(x => x.CertificateData, opt => opt.MapFrom(source => Mapper.Map<Domain.JsonData.CertificateData, CertificateData>(JsonConvert.DeserializeObject<Domain.JsonData.CertificateData>(source.CertificateData))))
-                .ForMember(x => x.Status, opt => opt.MapFrom(source => Mapper.Map<Domain.Entities.Certificate, Status>(source)))
-                .ForMember(x => x.Created, opt => opt.MapFrom(source => Mapper.Map<Domain.Entities.Certificate, Created>(source)))
-                .ForMember(x => x.Submitted, opt => opt.MapFrom(source => Mapper.Map<Domain.Entities.Certificate, Submitted>(source)))
-                .ForMember(x => x.Printed, opt => opt.MapFrom(source => Mapper.Map<Domain.Entities.Certificate, Printed>(source)))
-                .ForPath(x => x.CertificateData.CertificateReference, opt => opt.MapFrom(source => source.CertificateReference))
-                .ForPath(x => x.CertificateData.Learner.Uln, opt => opt.MapFrom(source => source.Uln))
-                .ForPath(x => x.CertificateData.Standard.StandardCode, opt => opt.MapFrom(source => source.StandardCode))
+                .ForMember(dest => dest.CertificateData, opt => opt.MapFrom(source => Mapper.Map<Domain.JsonData.CertificateData, CertificateData>(JsonConvert.DeserializeObject<Domain.JsonData.CertificateData>(source.CertificateData))))
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(source => Mapper.Map<Domain.Entities.Certificate, Status>(source)))
+                .ForMember(dest => dest.Created, opt => opt.MapFrom(source => Mapper.Map<Domain.Entities.Certificate, Created>(source)))
+                .ForMember(dest => dest.Submitted, opt => opt.MapFrom(source => Mapper.Map<Domain.Entities.Certificate, Submitted>(source)))
+                .ForMember(dest => dest.Printed, opt => opt.MapFrom(source => Mapper.Map<Domain.Entities.Certificate, Printed>(source)))
+                .ForPath(dest => dest.CertificateData.CertificateReference, opt => opt.MapFrom(source => source.CertificateReference))
+                .ForPath(dest => dest.CertificateData.Learner.Uln, opt => opt.MapFrom(source => source.Uln))
+                .ForPath(dest => dest.CertificateData.Standard.StandardCode, opt => opt.MapFrom(source => source.StandardCode))
                 .AfterMap<MapProviderUkPrnAction>()
                 .AfterMap<CollapseNullsAction>()
-                .ForAllOtherMembers(x => x.Ignore());
+                .ForAllOtherMembers(dest => dest.Ignore());
         }
 
         public class MapProviderUkPrnAction : IMappingAction<Domain.Entities.Certificate, Certificate>

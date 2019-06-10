@@ -1,9 +1,9 @@
 ﻿using SFA.DAS.AssessorService.Application.Api.External.Models.Response.Certificates;
 using System.Collections.Generic;
 
-namespace SFA.DAS.AssessorService.Application.Api.External.Models.Response
+namespace SFA.DAS.AssessorService.Application.Api.External.Models.Internal
 {
-    public class SubmitBatchCertificateResponse
+    public class BatchCertificateResponse
     {
         public string RequestId { get; set; }
 

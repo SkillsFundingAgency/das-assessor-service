@@ -1,4 +1,4 @@
-﻿namespace SFA.DAS.AssessorService.Application.Api.External.Models.Request
+﻿namespace SFA.DAS.AssessorService.Application.Api.External.Models.Internal
 {
     public class SubmitBatchCertificateRequest
     {

@@ -1,4 +1,5 @@
-﻿using SFA.DAS.AssessorService.Application.Api.External.Models.Request.Certificates;
+﻿using SFA.DAS.AssessorService.Application.Api.External.Models.Request;
+using SFA.DAS.AssessorService.Application.Api.External.Models.Request.Certificates;
 using Swashbuckle.AspNetCore.Examples;
 using System;
 using System.Collections.Generic;
@@ -9,9 +10,9 @@ namespace SFA.DAS.AssessorService.Application.Api.External.SwaggerHelpers.Exampl
     {
         public object GetExamples()
         {
-            return new List<CreateCertificate>
+            return new List<CreateCertificateRequest>
             {
-                new CreateCertificate
+                new CreateCertificateRequest
                 {
                     RequestId = "1",
                     Standard = new Standard { StandardCode = 1 },
@@ -19,7 +20,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.SwaggerHelpers.Exampl
                     LearningDetails = new LearningDetails { CourseOption = "French", OverallGrade = "Pass", AchievementDate = DateTime.UtcNow },
                     PostalContact = new PostalContact { ContactName = "Shreya Smith", Department = "Human Resources", Organisation = "Contoso Ltd", AddressLine1 = "123 Test Road", AddressLine2 = "Green Park", City = "Townsville", PostCode = "ZY9 9ZZ" }
                 },
-                new CreateCertificate
+                new CreateCertificateRequest
                 {
                     RequestId = "2",
                     Standard = new Standard { StandardReference = "ST0099" },
@@ -27,7 +28,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.SwaggerHelpers.Exampl
                     LearningDetails = new LearningDetails { CourseOption = null, OverallGrade = "Merit", AchievementDate = DateTime.UtcNow },
                     PostalContact = new PostalContact { ContactName = "Ken Sanchez", Department = "Human Resources", Organisation = "AdventureWorks Cycles", AddressLine1 = "Silicon Business Park", City = "Bothell", PostCode = "ZY9 9ZZ" }
                 },
-                new CreateCertificate
+                new CreateCertificateRequest
                 {
                     RequestId = "3",
                     Standard = new Standard { StandardCode = 555, StandardReference = "ST0555" },

@@ -6,13 +6,13 @@ using System.Collections.Generic;
 
 namespace SFA.DAS.AssessorService.Application.Api.External.SwaggerHelpers.Examples
 {
-    public class SubmitBatchCertificateResponseExample : IExamplesProvider
+    public class CreateCertificateResponseExample : IExamplesProvider
     {
         public object GetExamples()
         {
-            return new List<SubmitBatchCertificateResponse>
+            return new List<CreateCertificateResponse>
             {
-                new SubmitBatchCertificateResponse
+                new CreateCertificateResponse
                 {
                     RequestId = "1",
                     ValidationErrors = new List<string>(),
@@ -26,12 +26,11 @@ namespace SFA.DAS.AssessorService.Application.Api.External.SwaggerHelpers.Exampl
                             LearningDetails = new LearningDetails { CourseOption = "French", OverallGrade = "Pass", AchievementDate = DateTime.UtcNow, LearningStartDate = DateTime.UtcNow.AddYears(-1), ProviderUkPrn = 123456, ProviderName = "Example Provider" },
                             PostalContact = new PostalContact { ContactName = "Shreya Smith", Department = "Human Resources", Organisation = "Contoso Ltd", AddressLine1 = "123 Test Road", AddressLine2 = "Green Park", City = "Townsville", PostCode = "ZY9 9ZZ" }
                         },
-                        Status = new Status { CurrentStatus = "Submitted" },
-                        Created = new Created { CreatedAt = DateTime.UtcNow, CreatedBy = "Fred Bloggs" },
-                        Submitted = new Submitted { SubmittedAt = DateTime.UtcNow, SubmittedBy = "Fred Bloggs" }
+                        Status = new Status { CurrentStatus = "Draft" },
+                        Created = new Created { CreatedAt = DateTime.UtcNow, CreatedBy = "Fred Bloggs" }
                     }
                 },
-                new SubmitBatchCertificateResponse
+                new CreateCertificateResponse
                 {
                     RequestId = "2",
                     ValidationErrors = new List<string>(),
@@ -45,17 +44,16 @@ namespace SFA.DAS.AssessorService.Application.Api.External.SwaggerHelpers.Exampl
                             LearningDetails = new LearningDetails { CourseOption = null, OverallGrade = "Merit", AchievementDate = DateTime.UtcNow, LearningStartDate = DateTime.UtcNow.AddYears(-1), ProviderUkPrn = 123456, ProviderName = "Example Provider" },
                             PostalContact = new PostalContact { ContactName = "Ken Sanchez", Department = "Human Resources", Organisation = "AdventureWorks Cycles", AddressLine1 = "Silicon Business Park", City = "Bothell", PostCode = "ZY9 9ZZ" }
                         },
-                        Status = new Status { CurrentStatus = "Submitted" },
-                        Created = new Created { CreatedAt = DateTime.UtcNow, CreatedBy = "Fred Bloggs" },
-                        Submitted = new Submitted { SubmittedAt = DateTime.UtcNow, SubmittedBy = "Fred Bloggs" }
+                        Status = new Status { CurrentStatus = "Draft" },
+                        Created = new Created { CreatedAt = DateTime.UtcNow, CreatedBy = "Fred Bloggs" }
                     }
                 },
-                new SubmitBatchCertificateResponse
+                new CreateCertificateResponse
                 {
                     RequestId = "3",
                     ValidationErrors = new List<string>{ "Cannot find apprentice with the specified Uln, FamilyName & Standard" },
                     Certificate = null
-                },
+                }
             };
         }
     }

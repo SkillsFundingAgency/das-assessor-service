@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace SFA.DAS.AssessorService.Application.Api.External.Models.Response
 {
-    public class BatchCertificateResponse
+    public class SubmitCertificateResponse
     {
         public string RequestId { get; set; }
 

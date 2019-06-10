@@ -3,8 +3,10 @@ using System.Collections.Generic;
 
 namespace SFA.DAS.AssessorService.Application.Api.External.Models.Response
 {
-    public class GetCertificateResponse
+    public class UpdateCertificateResponse
     {
+        public string RequestId { get; set; }
+
         public Certificate Certificate { get; set; }
 
         public List<string> ValidationErrors { get; set; } = new List<string>();

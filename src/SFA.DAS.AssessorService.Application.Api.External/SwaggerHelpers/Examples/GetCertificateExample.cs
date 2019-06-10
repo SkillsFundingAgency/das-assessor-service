@@ -4,7 +4,7 @@ using System;
 
 namespace SFA.DAS.AssessorService.Application.Api.External.SwaggerHelpers.Examples
 {
-    public class CertificateExample : IExamplesProvider
+    public class GetCertificateExample : IExamplesProvider
     {
         public object GetExamples()
         {
