@@ -9,7 +9,14 @@
 
 @if (Model.BackToCheckPage)
 {
-    <a class="govuk-back-link" asp-controller="CertificateCheck" asp-action="Check">Back</a>
+    @if (!Model.IsFromStandard)
+    {
+        <a class="govuk-back-link" asp-controller="CertificateCheck" asp-action="Check">Back</a>
+    }
+    else
+    {
+        <a class="govuk-back-link" asp-controller="CertificatePrivateStandardCode" asp-action="StandardCode" asp-route-redirecttocheck="true">Back</a>
+    }
 }
 else if (Model.IsPrivatelyFunded)
 {
@@ -57,7 +64,6 @@ else
                 <p class="govuk-body">The option will appear on the certificate.</p>
 
                 <div class="govuk-form-group" sfa-anyvalidationerror-class="govuk-form-group--error">
-
                     <span class="govuk-error-message" asp-validation-for="Option"></span>
 
                     <div class="govuk-radios">
@@ -71,7 +77,6 @@ else
                             </div>
                         }
                     </div>
-
                 </div>
 
                 <button type="submit" class="govuk-button">@Localizer["ContinueButton"]</button>
