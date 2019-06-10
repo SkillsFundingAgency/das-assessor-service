@@ -73,7 +73,7 @@
                                         <input asp-for="Postcode" value="@result.Address?.Postcode" type="hidden" />
                                         <input asp-for="PageIndex" value="@Model.Organisations.PageIndex" type="hidden"/>
 
-                                        <p class="govuk-body govuk-!-margin-top-3 govuk-!-margin-bottom-1">
+                                        <p class="govuk-body govuk-!-margin-top-5 govuk-!-margin-bottom-1">
                                             <button type="submit" class="govuk-button govuk-button__looks-like-link--no-decoration">@result.Name</button>
                                         </p>
                                     </form>
@@ -89,7 +89,7 @@
                                         }
                                     </p>
                                     @*Caters for both PROD and PREPROD*@
-                                    @if (!configuration["EnvironmentName"].EndsWith("PROD", StringComparison.InvariantCultureIgnoreCase))
+                                    @if (configuration["EnvironmentName"].EndsWith("PROD", StringComparison.InvariantCultureIgnoreCase))
                                     {
                                         @* ON-1205 - request to show flags of what results were found in non-PROD environments *@
                                         @if (result.OrganisationType != null)
