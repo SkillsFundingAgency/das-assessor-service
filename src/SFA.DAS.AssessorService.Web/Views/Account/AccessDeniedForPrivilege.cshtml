@@ -32,8 +32,7 @@
                 @Html.HiddenFor(m => m.ReturnAction)
                 @if (Model.UserHasUserManagement)
                 {
-                    <p class="govuk-body">You do not currently have access to this content.</p>
-                    <p class="govuk-body">Because your account has 'manage users' permissions you can grant yourself access.</p>
+                    <p class="govuk-body">You have manage users permissions.</p>
                     <button class="govuk-button" type="submit">Access</button>
                 }
                 else
