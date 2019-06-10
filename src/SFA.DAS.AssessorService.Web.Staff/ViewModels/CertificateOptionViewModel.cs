@@ -8,6 +8,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.ViewModels
     {
         public bool? HasAdditionalLearningOption { get; set; }
         public string Option { get; set; }
+        public bool IsFromStandard { get; set; }
+
         public void FromCertificate(Certificate cert)
         {
             BaseFromCertificate(cert);

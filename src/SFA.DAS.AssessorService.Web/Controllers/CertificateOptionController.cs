@@ -23,26 +23,24 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         {}
 
         [HttpGet]
-        public async Task<IActionResult> Option(bool? redirectToCheck = false)
+        public async Task<IActionResult> Option(bool? redirectToCheck = false, bool? isFromStandard = false)
         {
             var sessionString = SessionService.Get("CertificateSession");
             if (sessionString == null)
             {
                 return RedirectToAction("Index", "Search");
             }
-            var certSession = JsonConvert.DeserializeObject<CertificateSession>(sessionString);
-
             
-            return await LoadViewModel("~/Views/Certificate/Option.cshtml");
+            return await LoadViewModel("~/Views/Certificate/Option.cshtml", isFromStandard);
         }
 
-        private async Task<IActionResult> LoadViewModel(string view)
+        private async Task<IActionResult> LoadViewModel(string view, bool? isFromStandard)
         {
             var username = ContextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
 
             Logger.LogInformation($"Load View Model for CertificateOptionViewModel for {username}");
-            
-            var viewModel = new CertificateOptionViewModel();
+
+            var viewModel = new CertificateOptionViewModel {IsFromStandard = isFromStandard ?? false};
 
             var query = ContextAccessor.HttpContext.Request.Query;
             if (query.ContainsKey("redirecttocheck") && bool.Parse(query["redirecttocheck"]))
