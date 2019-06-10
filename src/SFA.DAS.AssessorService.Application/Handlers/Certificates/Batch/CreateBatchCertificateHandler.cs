@@ -138,6 +138,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates.Batch
                 LearnerGivenNames = ilr.GivenNames,
                 LearnerFamilyName = ilr.FamilyName,
                 LearningStartDate = ilr.LearnStartDate,
+                StandardReference = standard.ReferenceNumber,
                 StandardName = standard.Title,   
                 StandardLevel = standard.StandardData.Level.GetValueOrDefault(),
                 StandardPublicationDate = standard.StandardData.EffectiveFrom,

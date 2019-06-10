@@ -1,11 +1,11 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System.Linq;
+using System.Net;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using SFA.DAS.AssessorService.Application.Api.External.Models.Response;
-using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Api.External.Middleware
 {
@@ -38,6 +38,8 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Middleware
                 context.Request.Headers.TryGetValue(_UserNoteHeader, out var noteHeaderValue);
 
                 string email = emailHeaderValue.FirstOrDefault();
+                email = "epaomailinator+EPA0008@gmail.com";
+                noteHeaderValue = "ukprn=10009931";
 
                 if (!TryExtractUkprnFromHeader(noteHeaderValue, out var ukprn))
                 {

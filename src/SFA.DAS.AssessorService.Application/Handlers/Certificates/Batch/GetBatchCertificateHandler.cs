@@ -65,6 +65,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates.Batch
                             {
                                 LearnerGivenNames = certData.LearnerGivenNames,
                                 LearnerFamilyName = certData.LearnerFamilyName,
+                                StandardReference = certData.StandardReference,
                                 StandardName = certData.StandardName,
                                 StandardLevel = certData.StandardLevel,
                                 StandardPublicationDate = certData.StandardPublicationDate
