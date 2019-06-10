@@ -49,7 +49,7 @@ IF (@privilegesCount < 6)
     -- set Manage Users to MustBeAtLeast.... true
     UPDATE Privileges SET MustBeAtLeastOneUserAssigned = 1, Description = 'This area shows a list of all users in your organisation and the ability to manage their permissions.' WHERE UserPrivilege = 'Manage users'
     
-    UPDATE Privileges SET Description = 'This area allows you to record assessment grades and produce certificates.' WHERE UserPrivilege = 'Record grades and issue certificate'
+    UPDATE Privileges SET Description = 'This area allows you to record assessment grades and produce certificates.' WHERE UserPrivilege = 'Record grades and issue certificates'
   END  
   
   
