@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SFA.DAS.AssessorService.Application.Api.External.Models.Certificates
+namespace SFA.DAS.AssessorService.Application.Api.External.Models.Response.Certificates
 {
     public class Created : IEquatable<Created>
     {

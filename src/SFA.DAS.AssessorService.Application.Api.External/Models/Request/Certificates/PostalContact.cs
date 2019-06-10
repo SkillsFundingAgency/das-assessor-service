@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace SFA.DAS.AssessorService.Application.Api.External.Models.Certificates
+namespace SFA.DAS.AssessorService.Application.Api.External.Models.Request.Certificates
 {
     public class PostalContact : IEquatable<PostalContact>
     {

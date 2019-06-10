@@ -1,8 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using SFA.DAS.AssessorService.Application.Api.External.Middleware;
+using SFA.DAS.AssessorService.Application.Api.External.Models.Request;
+using SFA.DAS.AssessorService.Application.Api.External.Models.Response;
+using SFA.DAS.AssessorService.Application.Api.External.Models.Response.Standards;
+using System.Collections.Generic;
 using System.Threading.Tasks;
-using SFA.DAS.AssessorService.Application.Api.External.Messages;
-using SFA.DAS.AssessorService.Application.Api.External.Middleware;
-using SFA.DAS.AssessorService.Application.Api.External.Models.Standards;
 
 namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
 {

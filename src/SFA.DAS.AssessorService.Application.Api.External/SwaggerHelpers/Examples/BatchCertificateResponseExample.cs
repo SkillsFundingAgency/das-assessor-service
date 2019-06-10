@@ -1,5 +1,5 @@
-﻿using SFA.DAS.AssessorService.Application.Api.External.Messages;
-using SFA.DAS.AssessorService.Application.Api.External.Models.Certificates;
+﻿using SFA.DAS.AssessorService.Application.Api.External.Models.Response;
+using SFA.DAS.AssessorService.Application.Api.External.Models.Response.Certificates;
 using Swashbuckle.AspNetCore.Examples;
 using System;
 using System.Collections.Generic;

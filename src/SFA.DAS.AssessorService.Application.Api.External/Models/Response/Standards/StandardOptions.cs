@@ -1,13 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 
-namespace SFA.DAS.AssessorService.Application.Api.External.Models.Certificates
+namespace SFA.DAS.AssessorService.Application.Api.External.Models.Response.Standards
 {
-    public class Standard : IEquatable<Standard>
+    public class StandardOptions : IEquatable<StandardOptions>
     {
         public int? StandardCode { get; set; }
         public string StandardReference { get; set; }
-        public string StandardName { get; set; }
-        public int Level { get; set; }
+        public IEnumerable<string> CourseOption { get; set; }
 
         #region GetHashCode, Equals and IEquatable
         public override int GetHashCode()
@@ -20,8 +20,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Models.Certificates
                 int hash = hashBase;
                 hash = (hash * multiplier) ^ StandardCode.GetHashCode();
                 hash = (hash * multiplier) ^ (StandardReference is null ? 0 : StandardReference.GetHashCode());
-                hash = (hash * multiplier) ^ (StandardName is null ? 0 : StandardName.GetHashCode());
-                hash = (hash * multiplier) ^ Level.GetHashCode();
+                hash = (hash * multiplier) ^ (CourseOption is null ? 0 : CourseOption.GetHashCode());
                 return hash;
             }
         }
@@ -31,31 +30,30 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Models.Certificates
             if (obj is null) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != this.GetType()) return false;
-            return IsEqual((Standard)obj);
+            return IsEqual((StandardOptions)obj);
         }
 
-        public bool Equals(Standard other)
+        public bool Equals(StandardOptions other)
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
             return IsEqual(other);
         }
 
-        private bool IsEqual(Standard other)
+        private bool IsEqual(StandardOptions other)
         {
             return Equals(StandardCode, other.StandardCode)
                 && string.Equals(StandardReference, other.StandardReference)
-                && string.Equals(StandardName, other.StandardName)
-                && Equals(Level, other.Level);
+                && Equals(CourseOption, other.CourseOption);
         }
 
-        public static bool operator ==(Standard left, Standard right)
+        public static bool operator ==(StandardOptions left, StandardOptions right)
         {
             if (left is null) return right is null;
             return left.Equals(right);
         }
 
-        public static bool operator !=(Standard left, Standard right)
+        public static bool operator !=(StandardOptions left, StandardOptions right)
         {
             return !(left == right);
         }

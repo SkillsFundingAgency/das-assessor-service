@@ -1,11 +1,11 @@
 ﻿using System;
 
-namespace SFA.DAS.AssessorService.Application.Api.External.Models.Certificates
+namespace SFA.DAS.AssessorService.Application.Api.External.Models.Request.Certificates
 {
-    public class Submitted : IEquatable<Submitted>
+    public class Standard : IEquatable<Standard>
     {
-        public DateTime? SubmittedAt { get; set; }
-        public string SubmittedBy { get; set; }
+        public int? StandardCode { get; set; }
+        public string StandardReference { get; set; }
 
         #region GetHashCode, Equals and IEquatable
         public override int GetHashCode()
@@ -16,8 +16,8 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Models.Certificates
                 const int multiplier = 16777619;
 
                 int hash = hashBase;
-                hash = (hash * multiplier) ^ (SubmittedAt is null ? 0 : SubmittedAt.GetHashCode());
-                hash = (hash * multiplier) ^ (SubmittedBy is null ? 0 : SubmittedBy.GetHashCode());
+                hash = (hash * multiplier) ^ StandardCode.GetHashCode();
+                hash = (hash * multiplier) ^ (StandardReference is null ? 0 : StandardReference.GetHashCode());
                 return hash;
             }
         }
@@ -27,29 +27,29 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Models.Certificates
             if (obj is null) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != this.GetType()) return false;
-            return IsEqual((Submitted)obj);
+            return IsEqual((Standard)obj);
         }
 
-        public bool Equals(Submitted other)
+        public bool Equals(Standard other)
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
             return IsEqual(other);
         }
 
-        private bool IsEqual(Submitted other)
+        private bool IsEqual(Standard other)
         {
-            return Equals(SubmittedAt, other.SubmittedAt)
-                && string.Equals(SubmittedBy, other.SubmittedBy);
+            return Equals(StandardCode, other.StandardCode)
+                && string.Equals(StandardReference, other.StandardReference);
         }
 
-        public static bool operator ==(Submitted left, Submitted right)
+        public static bool operator ==(Standard left, Standard right)
         {
             if (left is null) return right is null;
             return left.Equals(right);
         }
 
-        public static bool operator !=(Submitted left, Submitted right)
+        public static bool operator !=(Standard left, Standard right)
         {
             return !(left == right);
         }

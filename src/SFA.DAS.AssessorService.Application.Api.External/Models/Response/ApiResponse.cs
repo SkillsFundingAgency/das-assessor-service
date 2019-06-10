@@ -1,4 +1,4 @@
-﻿namespace SFA.DAS.AssessorService.Application.Api.External.Middleware
+﻿namespace SFA.DAS.AssessorService.Application.Api.External.Models.Response
 {
     using Newtonsoft.Json;
 

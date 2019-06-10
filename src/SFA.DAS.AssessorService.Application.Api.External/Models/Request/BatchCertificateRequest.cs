@@ -1,6 +1,6 @@
-﻿using SFA.DAS.AssessorService.Application.Api.External.Models.Certificates;
+﻿using SFA.DAS.AssessorService.Application.Api.External.Models.Request.Certificates;
 
-namespace SFA.DAS.AssessorService.Application.Api.External.Messages
+namespace SFA.DAS.AssessorService.Application.Api.External.Models.Request
 {
     public class BatchCertificateRequest
     {

@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Application.Api.External.Infrastructure;
-using SFA.DAS.AssessorService.Application.Api.External.Messages;
 using SFA.DAS.AssessorService.Application.Api.External.Middleware;
-using SFA.DAS.AssessorService.Application.Api.External.Models.Certificates;
+using SFA.DAS.AssessorService.Application.Api.External.Models.Request;
+using SFA.DAS.AssessorService.Application.Api.External.Models.Request.Certificates;
+using SFA.DAS.AssessorService.Application.Api.External.Models.Response;
+using SFA.DAS.AssessorService.Application.Api.External.Models.Response.Certificates;
 using Swashbuckle.AspNetCore.Annotations;
 using Swashbuckle.AspNetCore.Examples;
 using System.Collections.Generic;
@@ -83,7 +85,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
                     UkPrn = _headerInfo.Ukprn,
                     Email = _headerInfo.Email,
                     RequestId = req.RequestId,
-                    CertificateData = new CertificateData
+                    CertificateData = new Models.Request.Certificates.CertificateData
                     {
                         Standard = req.Standard,
                         Learner = req.Learner,
@@ -118,7 +120,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
                     UkPrn = _headerInfo.Ukprn,
                     Email = _headerInfo.Email,
                     RequestId = req.RequestId,
-                    CertificateData = new CertificateData
+                    CertificateData = new Models.Request.Certificates.CertificateData
                     {
                         CertificateReference = req.CertificateReference,
                         Standard = req.Standard,

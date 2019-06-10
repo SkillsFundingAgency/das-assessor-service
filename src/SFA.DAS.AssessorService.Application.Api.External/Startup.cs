@@ -75,6 +75,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External
                     c.EnableAnnotations();
                     c.OperationFilter<UpdateOptionalParamatersWithDefaultValues>();
                     c.OperationFilter<ExamplesOperationFilter>();
+                    c.CustomSchemaIds(x => x.FullName.Replace("SFA.DAS.AssessorService.Application.Api.External.Models.", ""));
 
                     if (_env.IsDevelopment())
                     {

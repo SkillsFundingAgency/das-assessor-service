@@ -1,4 +1,4 @@
-﻿using SFA.DAS.AssessorService.Application.Api.External.Middleware;
+﻿using SFA.DAS.AssessorService.Application.Api.External.Models.Response;
 using Swashbuckle.AspNetCore.Examples;
 using System.Net;
 

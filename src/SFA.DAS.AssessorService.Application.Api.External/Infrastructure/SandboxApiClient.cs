@@ -1,7 +1,9 @@
-﻿using SFA.DAS.AssessorService.Application.Api.External.Messages;
+﻿using AutoMapper;
 using SFA.DAS.AssessorService.Application.Api.External.Middleware;
-using SFA.DAS.AssessorService.Application.Api.External.Models.Certificates;
-using SFA.DAS.AssessorService.Application.Api.External.Models.Standards;
+using SFA.DAS.AssessorService.Application.Api.External.Models.Request;
+using SFA.DAS.AssessorService.Application.Api.External.Models.Response;
+using SFA.DAS.AssessorService.Application.Api.External.Models.Response.Certificates;
+using SFA.DAS.AssessorService.Application.Api.External.Models.Response.Standards;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -68,7 +70,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
                     ValidationErrors = validationErrors,
                     Certificate = validationErrors.Count > 0 ? null : new Certificate
                     {
-                        CertificateData = req.CertificateData ?? new CertificateData { },
+                        CertificateData = Mapper.Map<Models.Request.Certificates.CertificateData, CertificateData>(req.CertificateData),
                         Status = new Status { CurrentStatus = "Draft" },
                         Created = new Created { CreatedAt = DateTime.UtcNow, CreatedBy = req.Email },
                     }
@@ -119,7 +121,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
                     ValidationErrors = validationErrors,
                     Certificate = validationErrors.Count > 0 ? null : new Certificate
                     {
-                        CertificateData = req.CertificateData ?? new CertificateData { },
+                        CertificateData = Mapper.Map<Models.Request.Certificates.CertificateData, CertificateData>(req.CertificateData),
                         Status = new Status { CurrentStatus = "Draft" },
                         Created = new Created { CreatedAt = DateTime.UtcNow.AddHours(-1), CreatedBy = req.Email }
                     }

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using SFA.DAS.AssessorService.Application.Api.External.Models.Request;
 
 namespace SFA.DAS.AssessorService.Application.Api.External.AutoMapperProfiles
 {
@@ -6,7 +7,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.AutoMapperProfiles
     {
         public SubmitBatchCertificateRequestProfile()
         {
-            CreateMap<AssessorService.Api.Types.Models.Certificates.Batch.SubmitBatchCertificateRequest, Messages.SubmitBatchCertificateRequest>()
+            CreateMap<AssessorService.Api.Types.Models.Certificates.Batch.SubmitBatchCertificateRequest, SubmitBatchCertificateRequest>()
             .ForMember(x => x.RequestId, opt => opt.MapFrom(source => source.RequestId))
             .ForMember(x => x.Uln, opt => opt.MapFrom(source => source.Uln))
             .ForMember(x => x.FamilyName, opt => opt.MapFrom(source => source.FamilyName))

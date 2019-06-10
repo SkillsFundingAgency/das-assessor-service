@@ -1,18 +1,13 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
 
-namespace SFA.DAS.AssessorService.Application.Api.External.Models.Certificates
+namespace SFA.DAS.AssessorService.Application.Api.External.Models.Response.Certificates
 {
-    public class CreateCertificate : IEquatable<CreateCertificate>
+    public class CertificateData : IEquatable<CertificateData>
     {
-        public string RequestId { get; set; }
-        [Required]
+        public string CertificateReference { get; set; }
         public Standard Standard { get; set; }
-        [Required]
         public Learner Learner { get; set; }
-        [Required]
         public LearningDetails LearningDetails { get; set; }
-        [Required]
         public PostalContact PostalContact { get; set; }
 
         #region GetHashCode, Equals and IEquatable
@@ -24,6 +19,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Models.Certificates
                 const int multiplier = 16777619;
 
                 int hash = hashBase;
+                hash = (hash * multiplier) ^ (CertificateReference is null ? 0 : CertificateReference.GetHashCode());
                 hash = (hash * multiplier) ^ (Standard is null ? 0 : Standard.GetHashCode());
                 hash = (hash * multiplier) ^ (Learner is null ? 0 : Learner.GetHashCode());
                 hash = (hash * multiplier) ^ (LearningDetails is null ? 0 : LearningDetails.GetHashCode());
@@ -37,31 +33,32 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Models.Certificates
             if (obj is null) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != this.GetType()) return false;
-            return IsEqual((CreateCertificate)obj);
+            return IsEqual((CertificateData)obj);
         }
 
-        public bool Equals(CreateCertificate other)
+        public bool Equals(CertificateData other)
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
             return IsEqual(other);
         }
 
-        private bool IsEqual(CreateCertificate other)
+        private bool IsEqual(CertificateData other)
         {
-            return Equals(Standard, other.Standard)
+            return string.Equals(CertificateReference, other.CertificateReference)
+                && Equals(Standard, other.Standard)
                 && Equals(Learner, other.Learner)
                 && Equals(LearningDetails, other.LearningDetails)
                 && Equals(PostalContact, other.PostalContact);
         }
 
-        public static bool operator ==(CreateCertificate left, CreateCertificate right)
+        public static bool operator ==(CertificateData left, CertificateData right)
         {
             if (left is null) return right is null;
             return left.Equals(right);
         }
 
-        public static bool operator !=(CreateCertificate left, CreateCertificate right)
+        public static bool operator !=(CertificateData left, CertificateData right)
         {
             return !(left == right);
         }

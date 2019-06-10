@@ -1,11 +1,14 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 
-namespace SFA.DAS.AssessorService.Application.Api.External.Models.Certificates
+namespace SFA.DAS.AssessorService.Application.Api.External.Models.Request.Certificates
 {
-    public class Printed : IEquatable<Printed>
+    public class Learner : IEquatable<Learner>
     {
-        public DateTime? PrintedAt { get; set; }
-        public int? PrintedBatch { get; set; }
+        [Required]
+        public long Uln { get; set; }
+        [Required]
+        public string FamilyName { get; set; }
 
         #region GetHashCode, Equals and IEquatable
         public override int GetHashCode()
@@ -16,8 +19,8 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Models.Certificates
                 const int multiplier = 16777619;
 
                 int hash = hashBase;
-                hash = (hash * multiplier) ^ (PrintedAt is null ? 0 : PrintedAt.GetHashCode());
-                hash = (hash * multiplier) ^ (PrintedBatch is null ? 0 : PrintedBatch.GetHashCode());
+                hash = (hash * multiplier) ^ Uln.GetHashCode();
+                hash = (hash * multiplier) ^ (FamilyName is null ? 0 : FamilyName.GetHashCode());
                 return hash;
             }
         }
@@ -27,29 +30,29 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Models.Certificates
             if (obj is null) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != this.GetType()) return false;
-            return IsEqual((Printed)obj);
+            return IsEqual((Learner)obj);
         }
 
-        public bool Equals(Printed other)
+        public bool Equals(Learner other)
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
             return IsEqual(other);
         }
 
-        private bool IsEqual(Printed other)
+        private bool IsEqual(Learner other)
         {
-            return Equals(PrintedAt, other.PrintedAt)
-                && Equals(PrintedBatch, other.PrintedBatch);
+            return Equals(Uln, other.Uln)
+                && string.Equals(FamilyName, other.FamilyName);
         }
 
-        public static bool operator ==(Printed left, Printed right)
+        public static bool operator ==(Learner left, Learner right)
         {
             if (left is null) return right is null;
             return left.Equals(right);
         }
 
-        public static bool operator !=(Printed left, Printed right)
+        public static bool operator !=(Learner left, Learner right)
         {
             return !(left == right);
         }

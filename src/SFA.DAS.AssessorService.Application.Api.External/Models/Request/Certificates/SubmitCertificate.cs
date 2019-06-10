@@ -1,13 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
-namespace SFA.DAS.AssessorService.Application.Api.External.Models.Standards
+namespace SFA.DAS.AssessorService.Application.Api.External.Models.Request.Certificates
 {
-    public class StandardOptions : IEquatable<StandardOptions>
+    public class SubmitCertificate : IEquatable<SubmitCertificate>
     {
+        public string RequestId { get; set; }
+        [Required]
+        public long Uln { get; set; }
         public int? StandardCode { get; set; }
         public string StandardReference { get; set; }
-        public IEnumerable<string> CourseOption { get; set; }
+        [Required]
+        public string FamilyName { get; set; }
+        [Required]
+        public string CertificateReference { get; set; }
 
         #region GetHashCode, Equals and IEquatable
         public override int GetHashCode()
@@ -18,9 +24,12 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Models.Standards
                 const int multiplier = 16777619;
 
                 int hash = hashBase;
+                hash = (hash * multiplier) ^ Uln.GetHashCode();
                 hash = (hash * multiplier) ^ StandardCode.GetHashCode();
                 hash = (hash * multiplier) ^ (StandardReference is null ? 0 : StandardReference.GetHashCode());
-                hash = (hash * multiplier) ^ (CourseOption is null ? 0 : CourseOption.GetHashCode());
+                hash = (hash * multiplier) ^ (FamilyName is null ? 0 : FamilyName.GetHashCode());
+                hash = (hash * multiplier) ^ (CertificateReference is null ? 0 : CertificateReference.GetHashCode());
+
                 return hash;
             }
         }
@@ -30,30 +39,32 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Models.Standards
             if (obj is null) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != this.GetType()) return false;
-            return IsEqual((StandardOptions)obj);
+            return IsEqual((SubmitCertificate)obj);
         }
 
-        public bool Equals(StandardOptions other)
+        public bool Equals(SubmitCertificate other)
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
             return IsEqual(other);
         }
 
-        private bool IsEqual(StandardOptions other)
+        private bool IsEqual(SubmitCertificate other)
         {
-            return Equals(StandardCode, other.StandardCode)
+            return Equals(Uln, other.Uln)
+                && Equals(StandardCode, other.StandardCode)
                 && string.Equals(StandardReference, other.StandardReference)
-                && Equals(CourseOption, other.CourseOption);
+                && string.Equals(FamilyName, other.FamilyName)
+                && string.Equals(CertificateReference, other.CertificateReference);
         }
 
-        public static bool operator ==(StandardOptions left, StandardOptions right)
+        public static bool operator ==(SubmitCertificate left, SubmitCertificate right)
         {
             if (left is null) return right is null;
             return left.Equals(right);
         }
 
-        public static bool operator !=(StandardOptions left, StandardOptions right)
+        public static bool operator !=(SubmitCertificate left, SubmitCertificate right)
         {
             return !(left == right);
         }
