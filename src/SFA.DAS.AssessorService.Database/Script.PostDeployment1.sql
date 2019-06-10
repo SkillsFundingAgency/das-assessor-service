@@ -16,7 +16,7 @@ INSERT EMailTemplates ([Id],[TemplateName],[TemplateId],[Recipients],[CreatedAt]
 VALUES (NEWID(), N'EPAOPermissionsAmended', N'c1ba00d9-81b6-46d8-9b70-3d89d51aa9c1', NULL, GETDATE())
 END
 
-IF NOT EXISTS (SELECT * FROM EMailTemplates WHERE TemplateName = N'EPAOPermissionsAmended')
+IF NOT EXISTS (SELECT * FROM EMailTemplates WHERE TemplateName = N'EPAOPermissionsRequested')
 BEGIN
 INSERT EMailTemplates ([Id],[TemplateName],[TemplateId],[Recipients],[CreatedAt]) 
 VALUES (NEWID(), N'EPAOPermissionsRequested', N'addf58d9-9e20-46fe-b952-7fc62a47b7f7', NULL, GETDATE())
