@@ -267,8 +267,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             if (contact.Organisation != null)
             {
                 var finExempt = contact.Organisation.OrganisationType != null ? 
-                    IsOrganisationTypeFinancialExempt(contact.Organisation.OrganisationType?.Type) : 
-                    contact.Organisation.OrganisationDataFromJson?.FhaDetails?.FinancialExempt;
+                    IsOrganisationTypeFinancialExempt(contact.Organisation.OrganisationType.Type) : false;
                 request.organisation = new Organisation
                 {
                     CreatedAt = contact.Organisation.CreatedAt,
