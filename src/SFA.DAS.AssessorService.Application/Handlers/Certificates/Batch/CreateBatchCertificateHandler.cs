@@ -79,7 +79,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates.Batch
                         CertificateData = JsonConvert.SerializeObject(certData),
                         Status = CertificateStatus.Draft,
                         CertificateReference = "",
-                        LearnRefNumber = ilr.LearnRefNumber
+                        LearnRefNumber = ilr.LearnRefNumber,
+                        CreateDay = DateTime.UtcNow.Date
                     }); // As no Tracking???
 
                 certificate.CertificateReference = certificate.CertificateReferenceId.ToString().PadLeft(8, '0');
