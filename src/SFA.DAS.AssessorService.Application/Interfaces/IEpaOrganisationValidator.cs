@@ -32,6 +32,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         string CheckDisplayName(string displayName);
         string CheckIfEmailIsPresentAndInSuitableFormat(string email);
         string CheckIfEmailAlreadyPresentInAnotherOrganisation(string email, string organisationId);
+        string CheckIfEmailAlreadyPresentInCurrentOrganisation(string email, string organisationId);
         string CheckIfEmailAlreadyPresentInOrganisationNotAssociatedWithContact(string email, string contactId);
         string CheckIfDeliveryAreasAreValid(List<int> DeliveryAreas);
 
