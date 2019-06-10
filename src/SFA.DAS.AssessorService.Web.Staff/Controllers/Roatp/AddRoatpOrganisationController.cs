@@ -168,13 +168,14 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
         public async Task<IActionResult> ConfirmOrganisationDetails(AddApplicationDeterminedDateViewModel model)
         {
             var organisationVm = _sessionService.GetAddOrganisationDetails();
+            organisationVm.ApplicationDeterminedDate = model.ApplicationDeterminedDate;
             var vm = MapOrganisationVmToApplicationDeterminedDateVm(organisationVm);
+            vm.Day = model.Day;
+            vm.Month = model.Month;
+            vm.Year = model.Year;
             if (!IsRedirectFromConfirmationPage() && !ModelState.IsValid)
             {
-                vm.ErrorMessages = model.ErrorMessages;
-                vm.Day = model.Day;
-                vm.Month = model.Month;
-                vm.Year = model.Year;
+                vm.ErrorMessages = model.ErrorMessages;       
                 return View("~/Views/Roatp/AddApplicationDeterminedDate.cshtml",vm);
             }
             
@@ -391,6 +392,21 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
 
         private static AddApplicationDeterminedDateViewModel MapOrganisationVmToApplicationDeterminedDateVm(AddOrganisationViewModel addOrganisationModel)
         {
+            if (addOrganisationModel == null)
+                return new AddApplicationDeterminedDateViewModel();
+
+            int? determinedDay = null;
+            int? determinedMonth = null;
+            int? determinedYear = null;
+
+            if (addOrganisationModel?.ApplicationDeterminedDate != null &&
+                addOrganisationModel.ApplicationDeterminedDate != DateTime.MinValue)
+            {
+                determinedDay = addOrganisationModel.ApplicationDeterminedDate.Value.Day;
+                determinedMonth = addOrganisationModel.ApplicationDeterminedDate.Value.Month;
+                determinedYear = addOrganisationModel.ApplicationDeterminedDate.Value.Year;
+            }
+
             return new AddApplicationDeterminedDateViewModel
             {
                 CharityNumber = addOrganisationModel.CharityNumber,
@@ -403,6 +419,9 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
                 ProviderTypes = addOrganisationModel.ProviderTypes,
                 TradingName = addOrganisationModel.TradingName,
                 UKPRN = addOrganisationModel.UKPRN,
+                Day = determinedDay,
+                Month = determinedMonth,
+                Year = determinedYear
             };
         }
 
@@ -440,7 +459,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
                 Ukprn = model.UKPRN,
                 TradingName = model?.TradingName,
                 Username = HttpContext.User.OperatorName(),
-                // MFCMFC  SourceIsUKRLP = true
+                SourceIsUKRLP = true,
+                ApplicationDeterminedDate = model.ApplicationDeterminedDate
             };
             return request;
         }

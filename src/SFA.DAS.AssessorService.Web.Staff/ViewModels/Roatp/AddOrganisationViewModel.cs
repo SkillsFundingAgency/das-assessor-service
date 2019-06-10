@@ -1,4 +1,6 @@
-﻿namespace SFA.DAS.AssessorService.Web.Staff.ViewModels.Roatp
+﻿using System.Globalization;
+
+namespace SFA.DAS.AssessorService.Web.Staff.ViewModels.Roatp
 {
     using System;
     using System.Collections.Generic;
@@ -53,7 +55,23 @@
         public bool IsErrorMonth => IsError && (IsErrorAllFields || ErrorMessages.Any(x => x.Field == "Month"));
         public bool IsErrorYear => IsError && (IsErrorAllFields || ErrorMessages.Any(x => x.Field == "Year"));
 
-        public override DateTime? ApplicationDeterminedDate => DateTime.Today;
+        public override DateTime? ApplicationDeterminedDate
+        {
+            get
+            {
+                var yearWithCentury = Year;
+                if (yearWithCentury < 99)
+                    yearWithCentury +=2000;
+
+                var formatStrings = new string[] { "d/M/yyyy" };
+                if (!DateTime.TryParseExact($"{Day}/{Month}/{yearWithCentury}", formatStrings, null, DateTimeStyles.None,
+                    out DateTime formattedDate))
+                {
+                    return null;
+                }
+                    return formattedDate;
+            }
+        }
     }
 
     public class AddOrganisationViaUkprnViewModel : AddOrganisationViewModel

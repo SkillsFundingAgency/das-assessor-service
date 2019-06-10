@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentValidation;
@@ -40,7 +41,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Validators.Roatp
             }
 
 
-                if (string.IsNullOrWhiteSpace(viewModel?.Day.ToString()) || 
+            if (string.IsNullOrWhiteSpace(viewModel?.Day.ToString()) || 
                     string.IsNullOrWhiteSpace(viewModel?.Month.ToString()) || 
                     string.IsNullOrWhiteSpace(viewModel?.Year.ToString()))
                 {
@@ -48,28 +49,22 @@ namespace SFA.DAS.AssessorService.Web.Staff.Validators.Roatp
                         new ValidationErrorDetail(dateControlName, "Enter the application determined date including a day, month and year"));
                 }
 
-            if (viewModel.ApplicationDeterminedDate == null)
+            var formatStrings = new string[] { "d/M/yyyy" };
+            var yearWithCentury = viewModel?.Year;
+            if (yearWithCentury!=null && yearWithCentury < 99)
+                yearWithCentury += 2000;
+
+            if (!DateTime.TryParseExact($"{viewModel?.Day}/{viewModel?.Month}/{yearWithCentury}", formatStrings, null, DateTimeStyles.None, out DateTime formattedDate))
             {
                 validationResult.Errors.Add(
                     new ValidationErrorDetail(dateControlName, "Enter a valid application determined date including a day, month and year"));
             }
 
-                //var formatStrings = new string[] { "d/M/yyyy" };
-                //if (!DateTime.TryParseExact($"{day}/{month}/{year}", formatStrings, null, DateTimeStyles.None, out _))
-                //{
-                //    errorMessages.Add(new KeyValuePair<string, string>(question.QuestionId, ValidationDefinition.ErrorMessage));
-                //}
-
-
-
-                if (viewModel.Day == null)
-                {
-                    validationResult.Errors.Add(new ValidationErrorDetail("Day", "Day Message"));
-                }
-            
-            
-
-           // viewModel.ErrorMessages = validationResult.Errors;
+            if (viewModel.ApplicationDeterminedDate > DateTime.Today)
+            {
+                validationResult.Errors.Add(
+                    new ValidationErrorDetail(dateControlName, "Application determined date must be today or in the past"));
+            }
         
             return validationResult;
         }
