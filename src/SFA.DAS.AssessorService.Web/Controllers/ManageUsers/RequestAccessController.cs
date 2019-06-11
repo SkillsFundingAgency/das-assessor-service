@@ -30,7 +30,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.ManageUsers
                 : RedirectToAction("RequestSent", new {privilegeId = vm.PrivilegeId});
         }
 
-        [TypeFilter(typeof(MenuFilter), Arguments = new object[] {Pages.Organisations})]
+        [TypeFilter(typeof(MenuFilter), Arguments = new object[] {Pages.Dashboard})]
         [HttpGet("/RequestAccess/RequestSent/{privilegeId}")]
         public async Task<IActionResult> RequestSent(Guid privilegeId)
         {
