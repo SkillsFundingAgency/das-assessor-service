@@ -20,7 +20,6 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Login
         protected LoginHandler Handler;
         protected Mock<IOrganisationQueryRepository> OrgQueryRepository;
         protected Mock<IContactQueryRepository> ContactQueryRepository;
-        protected Mock<IMediator> Mediator;
 
         [SetUp]
         public void Arrange()
@@ -51,10 +50,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Login
                 Id = It.IsAny<Guid>(),
                 Status = OrganisationStatus.New
             });
-            Mediator = new Mock<IMediator>();
             Handler = new LoginHandler(new Mock<ILogger<LoginHandler>>().Object, config,
-                OrgQueryRepository.Object, ContactQueryRepository.Object,
-                Mediator.Object);
+                OrgQueryRepository.Object, ContactQueryRepository.Object);
         }
     }
 }

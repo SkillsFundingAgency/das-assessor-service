@@ -18,17 +18,15 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Login
         private readonly IWebConfiguration _config;
         private readonly IOrganisationQueryRepository _organisationQueryRepository;
         private readonly IContactQueryRepository _contactQueryRepository;
-        private readonly IMediator _mediator;
 
         public LoginHandler(ILogger<LoginHandler> logger, IWebConfiguration config, 
             IOrganisationQueryRepository organisationQueryRepository, 
-            IContactQueryRepository contactQueryRepository, IMediator mediator)
+            IContactQueryRepository contactQueryRepository)
         {
             _logger = logger;
             _config = config;
             _organisationQueryRepository = organisationQueryRepository;
             _contactQueryRepository = contactQueryRepository;
-            _mediator = mediator;
         }
 
         public async Task<LoginResponse> Handle(LoginRequest request, CancellationToken cancellationToken)
@@ -49,7 +47,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Login
 
             if (contact.OrganisationId == null)
             {
-                var userStatus = await GetUserStatus(null, request.SignInId);
+                var userStatus = contact.Status;// await GetUserStatus(null, request.SignInId);
                 if (userStatus != ContactStatus.Applying)
                 {
                     response.Result = LoginResult.NotRegistered;
@@ -97,7 +95,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Login
             {
                 _logger.LogInformation(LoggingConstants.SignInSuccessful);
 
-                var status = await GetUserStatus(organisation.EndPointAssessorOrganisationId, request.SignInId);
+                var status = contact.Status; //await GetUserStatus(organisation.EndPointAssessorOrganisationId, request.SignInId);
                 switch (status)
                 {
                     case ContactStatus.Live:
@@ -133,10 +131,10 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Login
 //            //return !roles.Contains(_config.Authentication.Role);
         }
 
-        private async Task<string> GetUserStatus(string endPointAssessorOrganisationId, Guid signInId)
-        {
-            return await _contactQueryRepository.GetContactStatus(endPointAssessorOrganisationId, signInId);
-        }
+//        private async Task<string> GetUserStatus(string endPointAssessorOrganisationId, Guid signInId)
+//        {
+//            return await _contactQueryRepository.GetContactStatus(endPointAssessorOrganisationId, signInId);
+//        }
         
     }
 }
