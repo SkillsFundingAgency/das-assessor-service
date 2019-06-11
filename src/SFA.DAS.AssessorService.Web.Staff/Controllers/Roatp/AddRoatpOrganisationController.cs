@@ -1,4 +1,5 @@
-﻿using System.Net.Http;
+﻿using System.Collections.Generic;
+using System.Net.Http;
 using SFA.DAS.AssessorService.Application.Api.Services;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
@@ -174,13 +175,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
             vm.Year = model.Year;
             if (!IsRedirectFromConfirmationPage() && !ModelState.IsValid)
             {       
-                var errorMessages = !ModelState.IsValid
-                    ? ModelState.SelectMany(k => k.Value.Errors.Select(e => new ValidationErrorDetail()
-                    {
-                        ErrorMessage = e.ErrorMessage,
-                        Field = k.Key
-                    })).ToList()
-                    : null;
+                var errorMessages = GatherErrorMessagesFromModelState();
                 vm.ErrorMessages = errorMessages;
                 return View("~/Views/Roatp/AddApplicationDeterminedDate.cshtml",vm);
             }
@@ -188,18 +183,12 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
             vm.LegalName = vm.LegalName.ToUpper();
             _sessionService.SetAddOrganisationDetails(vm);
 
-            model.OrganisationTypeId = vm.OrganisationTypeId;
-            model.OrganisationTypes = await _apiClient.GetOrganisationTypes(vm.ProviderTypeId);
-            model.ProviderTypes = await _apiClient.GetProviderTypes();
-            model.ProviderTypeId = vm.ProviderTypeId;
-            model.LegalName = TextSanitiser.SanitiseText(vm.LegalName);
-            model.TradingName = TextSanitiser.SanitiseText(vm.TradingName);
-            model.UKPRN = vm.UKPRN;
-            model.CompanyNumber = vm.CompanyNumber;
-            model.CharityNumber = vm.CharityNumber;
+            model = await SetUpConfirmationModel(vm);
 
             return View("~/Views/Roatp/AddOrganisationPreview.cshtml", model);
         }
+
+       
 
         [Route("add-determined")]
         public async Task<IActionResult> AddApplicationDeterminedDate(AddOrganisationTypeViewModel model)
@@ -213,13 +202,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
                 return View("~/Views/Roatp/AddOrganisationType.cshtml", local);
             }
 
-            var errorMessages = !ModelState.IsValid
-                ? ModelState.SelectMany(k => k.Value.Errors.Select(e => new ValidationErrorDetail()
-                {
-                    ErrorMessage = e.ErrorMessage,
-                    Field = k.Key
-                })).ToList()
-                : null;
+            var errorMessages = GatherErrorMessagesFromModelState();
             vm.ErrorMessages = errorMessages;
 
             if (!string.IsNullOrEmpty(model.LegalName))
@@ -375,6 +358,38 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
             {
                 addOrganisationModel.ProviderTypeId = model.ProviderTypeId;
             }
+        }
+
+        private async Task<AddApplicationDeterminedDateViewModel> SetUpConfirmationModel(AddApplicationDeterminedDateViewModel vm)
+        {
+            var model = new AddApplicationDeterminedDateViewModel
+            {
+                OrganisationTypeId = vm.OrganisationTypeId,
+                OrganisationTypes = await _apiClient.GetOrganisationTypes(vm.ProviderTypeId),
+                ProviderTypes = await _apiClient.GetProviderTypes(),
+                ProviderTypeId = vm.ProviderTypeId,
+                LegalName = TextSanitiser.SanitiseText(vm.LegalName.ToUpper()),
+                TradingName = TextSanitiser.SanitiseText(vm.TradingName),
+                UKPRN = vm.UKPRN,
+                CompanyNumber = vm.CompanyNumber,
+                CharityNumber = vm.CharityNumber,
+                Day = vm.Day,
+                Month = vm.Month,
+                Year = vm.Year
+            };
+
+            return model;
+        }
+
+        private List<ValidationErrorDetail> GatherErrorMessagesFromModelState()
+        {
+            return !ModelState.IsValid
+                ? ModelState.SelectMany(k => k.Value.Errors.Select(e => new ValidationErrorDetail()
+                {
+                    ErrorMessage = e.ErrorMessage,
+                    Field = k.Key
+                })).ToList()
+                : null;
         }
 
         private static AddOrganisationTypeViewModel MapOrganisationVmToOrganisationTypeVm(AddOrganisationViewModel addOrganisationModel)
