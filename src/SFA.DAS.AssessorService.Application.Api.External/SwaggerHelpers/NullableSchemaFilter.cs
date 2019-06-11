@@ -19,6 +19,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.SwaggerHelpers
                 {
                     schemaProperty.Value.Default = null;
                     //schemaProperty.Value.Extensions.Add("nullable", true); <-- APIM hasn't moved onto OpenAPI 3.0 so cannot use this at the moment
+                    schemaProperty.Value.Extensions.Add("x-nullable", true);
                     schemaProperty.Value.Example = null;
                 }
             }
