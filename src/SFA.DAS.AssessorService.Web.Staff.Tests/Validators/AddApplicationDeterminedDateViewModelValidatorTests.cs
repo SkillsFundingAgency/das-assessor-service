@@ -60,8 +60,6 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Validators
                     break;
                 case "futureDateDetails":
                     errorMessage = RoatpOrganisationValidation.ApplicationDeterminedDateFutureDate;
-                    day = 10;
-                    month = 4;
                     year = DateTime.Today.Year + 1;
                     break;
             }

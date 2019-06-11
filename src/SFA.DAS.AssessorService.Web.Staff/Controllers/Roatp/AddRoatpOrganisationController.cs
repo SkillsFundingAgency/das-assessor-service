@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Net.Http;
+using AutoMapper;
 using SFA.DAS.AssessorService.Application.Api.Services;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
@@ -113,9 +114,9 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
                 return Redirect("organisations-details");
             }
 
-            var model = MapOrganisationVmToProviderTypeVm(addOrganisationModel);
+            var model = Mapper.Map<AddOrganisationProviderTypeViewModel>(addOrganisationModel);
 
-          
+
             model.ProviderTypes = await _apiClient.GetProviderTypes();
             ModelState.Clear();
             return View("~/Views/Roatp/AddProviderType.cshtml", model);
@@ -158,7 +159,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
 
             ModelState.Clear();
 
-            var vm = MapOrganisationVmToOrganisationTypeVm(addOrganisationModel);
+            var vm = Mapper.Map<AddOrganisationTypeViewModel>(addOrganisationModel);
 
             return View("~/Views/Roatp/AddOrganisationType.cshtml", vm);
            
@@ -198,8 +199,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
             var vm = MapOrganisationVmToApplicationDeterminedDateVm(organisationVm);
             if (!IsRedirectFromConfirmationPage() && !ModelState.IsValid)
             {
-                var local = MapOrganisationVmToOrganisationTypeVm(organisationVm);
-                return View("~/Views/Roatp/AddOrganisationType.cshtml", local);
+                var redirectModel = Mapper.Map<AddOrganisationTypeViewModel>(organisationVm);
+                return View("~/Views/Roatp/AddOrganisationType.cshtml", redirectModel);
             }
 
             var errorMessages = GatherErrorMessagesFromModelState();
@@ -392,23 +393,6 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
                 : null;
         }
 
-        private static AddOrganisationTypeViewModel MapOrganisationVmToOrganisationTypeVm(AddOrganisationViewModel addOrganisationModel)
-        {
-            return new AddOrganisationTypeViewModel
-            {
-                CharityNumber = addOrganisationModel.CharityNumber,
-                CompanyNumber = addOrganisationModel.CompanyNumber,
-                LegalName = addOrganisationModel.LegalName,
-                OrganisationId = addOrganisationModel.OrganisationId,
-                OrganisationTypeId = addOrganisationModel.OrganisationTypeId,
-                OrganisationTypes = addOrganisationModel.OrganisationTypes,
-                ProviderTypeId = addOrganisationModel.ProviderTypeId,
-                ProviderTypes = addOrganisationModel.ProviderTypes,
-                TradingName = addOrganisationModel.TradingName,
-                UKPRN = addOrganisationModel.UKPRN
-            };
-        }
-
         private static AddApplicationDeterminedDateViewModel MapOrganisationVmToApplicationDeterminedDateVm(AddOrganisationViewModel addOrganisationModel)
         {
             if (addOrganisationModel == null)
@@ -441,24 +425,6 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
                 Day = determinedDay,
                 Month = determinedMonth,
                 Year = determinedYear
-            };
-        }
-
-
-        private static AddOrganisationProviderTypeViewModel MapOrganisationVmToProviderTypeVm(AddOrganisationViewModel addOrganisationModel)
-        {
-            return new AddOrganisationProviderTypeViewModel
-            {
-                CharityNumber = addOrganisationModel.CharityNumber,
-                CompanyNumber = addOrganisationModel.CompanyNumber,
-                LegalName = addOrganisationModel.LegalName,
-                OrganisationId = addOrganisationModel.OrganisationId,
-                OrganisationTypeId = addOrganisationModel.OrganisationTypeId,
-                OrganisationTypes = addOrganisationModel.OrganisationTypes,
-                ProviderTypeId = addOrganisationModel.ProviderTypeId,
-                ProviderTypes = addOrganisationModel.ProviderTypes,
-                TradingName = addOrganisationModel.TradingName,
-                UKPRN = addOrganisationModel.UKPRN
             };
         }
 
