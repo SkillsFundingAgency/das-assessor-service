@@ -45,9 +45,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.UserManagement
                 };
             }
 
-            var newContact = await CreateNewContact(request);
-
             var organisation = await _organisationQueryRepository.Get(request.OrganisationId);
+            
+            var newContact = await CreateNewContact(request, organisation);
 
             var inviter = await _contactQueryRepository.GetContactById(request.InvitedByContactId);
                 
@@ -56,7 +56,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.UserManagement
             return new InviteContactToOrganisationResponse {Success = true, ContactId = newContact.Id};
         }
 
-        private async Task<Contact> CreateNewContact(InviteContactToOrganisationRequest request)
+        private async Task<Contact> CreateNewContact(InviteContactToOrganisationRequest request, Organisation organisation)
         {
             var newContact = new Contact()
             {
@@ -68,7 +68,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.UserManagement
                 Status = ContactStatus.Pending,
                 SignInType = "ASLogin",
                 Title = "",
-                Username = request.Email
+                Username = request.Email, 
+                EndPointAssessorOrganisationId = organisation.EndPointAssessorOrganisationId
             };
 
             var contact = await _contactRepository.CreateNewContact(newContact);
