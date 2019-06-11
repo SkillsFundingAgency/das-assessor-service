@@ -1234,3 +1234,70 @@ TODO: change to 'das-page-navigation' and BEM
 .govuk-list--hint {
     color: #6f777b;
 }
+
+/* Scrollable Table */
+
+.scrollable-table-scroll-container {
+    display: block;
+    width: calc(100% + 20px);
+    margin: 0 -20px;
+    overflow-x: auto;
+    padding-top: 30px;
+    -webkit-overflow-scrolling: touch;
+    position: relative;
+    mask-image: -webkit-linear-gradient(
+      to right,
+      transparent,
+      white 20px,
+      white 97%,
+      transparent
+    );
+    mask-image: -moz-linear-gradient(
+      to right,
+      transparent,
+      white 20px,
+      white 97%,
+      transparent
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent,
+      white 20px,
+      white 97%,
+      transparent
+    );
+    -webkit-mask-image: -webkit-linear-gradient(
+      to right,
+      transparent,
+      white 20px,
+      white 97%,
+      transparent
+    );
+    -webkit-mask-image: -moz-linear-gradient(
+      to right,
+      transparent,
+      white 20px,
+      white 97%,
+      transparent
+    );
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent,
+      white 20px,
+      white 97%,
+      transparent
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent,
+      white 20px,
+      white 97%,
+      transparent
+    );
+  }
+  
+  .scrollable-table-container {
+    display: inline-block;
+    position: relative;
+    margin: 0 20px;
+  }
