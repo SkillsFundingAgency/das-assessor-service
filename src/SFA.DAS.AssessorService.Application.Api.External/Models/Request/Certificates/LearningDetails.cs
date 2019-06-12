@@ -8,7 +8,8 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Models.Request.Certif
         public string CourseOption { get; set; }
         [Required]
         public string OverallGrade { get; set; }
-        public DateTime? AchievementDate { get; set; }
+        [Required]
+        public DateTime AchievementDate { get; set; }
 
         #region GetHashCode, Equals and IEquatable
         public override int GetHashCode()
@@ -21,7 +22,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Models.Request.Certif
                 int hash = hashBase;
                 hash = (hash * multiplier) ^ (CourseOption is null ? 0 : CourseOption.GetHashCode());
                 hash = (hash * multiplier) ^ (OverallGrade is null ? 0 : OverallGrade.GetHashCode());
-                hash = (hash * multiplier) ^ (AchievementDate is null ? 0 : AchievementDate.GetHashCode());
+                hash = (hash * multiplier) ^ AchievementDate.GetHashCode();
                 return hash;
             }
         }

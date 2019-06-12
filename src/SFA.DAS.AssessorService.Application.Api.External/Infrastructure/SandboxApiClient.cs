@@ -279,11 +279,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
                     validationErrors.Add("Select the grade the apprentice achieved");
                 }
 
-                if (cert.LearningDetails?.AchievementDate is null)
-                {
-                    validationErrors.Add("Enter the achievement date");
-                }
-                else if (cert.LearningDetails.AchievementDate < new DateTime(2017, 1, 1))
+                if (cert.LearningDetails.AchievementDate < new DateTime(2017, 1, 1))
                 {
                     validationErrors.Add("An achievement date cannot be before 01 01 2017");
                 }
@@ -352,11 +348,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
                     validationErrors.Add("Select the grade the apprentice achieved");
                 }
 
-                if (cert.LearningDetails?.AchievementDate is null)
-                {
-                    validationErrors.Add("Enter the achievement date");
-                }
-                else if (cert.LearningDetails.AchievementDate < new DateTime(2017, 1, 1))
+                if (cert.LearningDetails.AchievementDate < new DateTime(2017, 1, 1))
                 {
                     validationErrors.Add("An achievement date cannot be before 01 01 2017");
                 }
