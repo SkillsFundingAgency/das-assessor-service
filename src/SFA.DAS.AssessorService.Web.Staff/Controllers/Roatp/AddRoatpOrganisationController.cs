@@ -325,7 +325,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
             return View("~/Views/Roatp/AddOrganisationDetails.cshtml", addOrganisationModel);
         }
 
-        [Route("confirm-details")]
+        [Route("confirm-details-preview")]
         public async Task<IActionResult> AddOrganisationPreview(AddOrganisationViewModel model)
         {
             model.OrganisationTypes = await _apiClient.GetOrganisationTypes(model.ProviderTypeId);
