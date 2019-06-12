@@ -168,7 +168,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
             return View("~/Views/Roatp/AddOrganisationType.cshtml", vm);
         }
 
-        [Route("add-confirm")]
+        [Route("confirm-details")]
         public async Task<IActionResult> ConfirmOrganisationDetails(AddOrganisationTypeViewModel model)
         {
             var organisationVm = _sessionService.GetAddOrganisationDetails();
@@ -392,7 +392,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
                 Ukprn = model.UKPRN,
                 TradingName = model?.TradingName,
                 Username = HttpContext.User.OperatorName(),
-                // MFCMFC  SourceIsUKRLP = true
+                SourceIsUKRLP = true
             };
             return request;
         }
