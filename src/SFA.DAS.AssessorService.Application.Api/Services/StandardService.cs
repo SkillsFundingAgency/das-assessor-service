@@ -145,8 +145,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
                     OverviewOfRole = ifaStandard?.OverviewOfRole,
                     IsActiveStandardInWin = winStandard?.IsActiveStandard,
                     FatUri = winStandard?.Uri,
-                    IfaUri = ifaStandard?.Url,
-                    AssessmentPlanUrl = ifaStandard?.AssessmentPlanUrl
+                    // ON-1847 - This is a tactical fix to replace the incorrect url with the known url of the ifa service 
+                    // the url which is being returned from the ifa service is currently incorrect and pointing to local host due
+                    // to a bug in the ifa service; the configured url is not available in this method
+                    IfaUri = ifaStandard != null ? ifaStandard.Url.Replace("http://localhost", "https://www.instituteforapprenticeships.org") : null,
+                    AssessmentPlanUrl = ifaStandard != null ? ifaStandard.AssessmentPlanUrl.Replace("http://localhost", "https://www.instituteforapprenticeships.org") : null
                 }
             };
         }
