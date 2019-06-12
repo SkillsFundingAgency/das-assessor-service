@@ -9,7 +9,7 @@
 
         public int? OrganisationTypeId { get; set; }
         public string OrganisationType { get; set; }
-
+        public string Status { get; set; }
         public string Email { get; set; }
     }
 }
