@@ -20,24 +20,31 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.Certificates
             {
                 RuleFor(m => m).Custom((m, context) =>
                 {
-                    var courseOptions = certificateRepository.GetOptions(m.StandardCode).GetAwaiter().GetResult();
-
-                    if (!courseOptions.Any() && !string.IsNullOrEmpty(m.CertificateData?.CourseOption))
-                    {
-                        context.AddFailure(new ValidationFailure("CourseOption", $"Invalid course option for this Standard. Must be empty"));
-                    }
-                    else if (courseOptions.Any() && !courseOptions.Any(o => o.OptionName == m.CertificateData?.CourseOption))
-                    {
-                        string courseOptionsString = string.Join(", ", courseOptions.Select(o => o.OptionName));
-                        context.AddFailure(new ValidationFailure("CourseOption", $"Invalid course option for this Standard. Must be one of the following: {courseOptionsString}"));
-                    }
+                    bool sameStandard = true;
 
                     if (!string.IsNullOrEmpty(m.StandardReference))
                     {
                         var collatedStandard = standardService.GetStandard(m.StandardReference).GetAwaiter().GetResult();
                         if (m.StandardCode != collatedStandard?.StandardId)
                         {
+                            sameStandard = false;
                             context.AddFailure("StandardReference and StandardCode relate to different standards");
+                        }
+                    }
+
+                    // NOTE: This is not a nice way to do this BUT we cannot use another DependantResult()
+                    if (sameStandard)
+                    {
+                        var courseOptions = certificateRepository.GetOptions(m.StandardCode).GetAwaiter().GetResult();
+
+                        if (!courseOptions.Any() && !string.IsNullOrEmpty(m.CertificateData?.CourseOption))
+                        {
+                            context.AddFailure(new ValidationFailure("CourseOption", $"Invalid course option for this Standard. Must be empty"));
+                        }
+                        else if (courseOptions.Any() && !courseOptions.Any(o => o.OptionName == m.CertificateData?.CourseOption))
+                        {
+                            string courseOptionsString = string.Join(", ", courseOptions.Select(o => o.OptionName));
+                            context.AddFailure(new ValidationFailure("CourseOption", $"Invalid course option for this Standard. Must be one of the following: {courseOptionsString}"));
                         }
                     }
                 });
