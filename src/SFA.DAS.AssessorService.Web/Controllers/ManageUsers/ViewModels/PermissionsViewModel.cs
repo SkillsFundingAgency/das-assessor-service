@@ -8,6 +8,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.ManageUsers.ViewModels
         public Guid ContactId { get; set; }
 
         public PrivilegeViewModel[] PrivilegeViewModels { get; set; }
+        public string Button { get; set; }
     }
 
     public class PrivilegeViewModel

@@ -12,10 +12,10 @@ using AutoMapper;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.OrganisationHandlers
 {
-    public class RetrieveContactsForOrganisationHandler : IRequestHandler<GetContactsForOrganisationRequest, List<ContactResponse>>
+    public class GetContactsForOrganisationHandler : IRequestHandler<GetContactsForOrganisationRequest, List<ContactResponse>>
     {
         private readonly IContactQueryRepository _contactQueryRepository;
-        public RetrieveContactsForOrganisationHandler(IContactQueryRepository contactQueryRepository)
+        public GetContactsForOrganisationHandler(IContactQueryRepository contactQueryRepository)
         {
             _contactQueryRepository = contactQueryRepository;
         }

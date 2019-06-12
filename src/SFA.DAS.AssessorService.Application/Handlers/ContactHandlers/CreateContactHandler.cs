@@ -57,10 +57,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ContactHandlers
                     throw;
                 }
                     
-                //Todo: The role should be associated after the user has been created by another mechanism
-                await _contactRepository.AssociateRoleWithContact("SuperUser", newContact);
-                var privileges = await _contactQueryRepository.GetAllPrivileges();
-                await _contactRepository.AssociatePrivilegesWithContact(contactResponse.Id, privileges);
+//                await _contactRepository.AssociateRoleWithContact("SuperUser", newContact);
+//                var privileges = await _contactQueryRepository.GetAllPrivileges();
+//                await _contactRepository.AssociatePrivilegesWithContact(contactResponse.Id, privileges);
 
                 var invitationResult = await _signInService.InviteUser(createContactRequest.Email, createContactRequest.GivenName, createContactRequest.FamilyName, contactResponse.Id);
                 if (!invitationResult.IsSuccess)

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Net;
+using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -89,36 +90,44 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             return NoContent();
         }
 
-        [HttpPut("NotifyAllApprovedUsers", Name = "NotifyAllApprovedUsers")]
+        [HttpPut("NotifyUserManagementUsers", Name = "NotifyUserManagementUsers")]
         [ValidateBadRequest]
-        [SwaggerResponse((int)HttpStatusCode.NoContent)]
+        [SwaggerResponse((int)HttpStatusCode.OK)]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> NotifyAllApprovedUsers([FromBody]EmailAllApprovedContactsRequest emailAllApprovedContactsRequest)
+        public async Task<IActionResult> NotifyUserManagementUsers([FromBody]NotifyUserManagementUsersRequest notifyUserManagementUsersRequest)
         {
-            const string epaoUserApproveRequestTemplate = "EPAOUserApproveRequest";
-            _logger.LogInformation("Received request to Notify Organisation Users");
 
-            try
-            {
-               var emailTemplate = await _mediator.Send(new GetEmailTemplateRequest
-                       {TemplateName= epaoUserApproveRequestTemplate });
-               var contacts= await _mediator.Send(new GetContactsForOrganisationRequest(emailAllApprovedContactsRequest.OrganisationReferenceId));
-               foreach (var contact in contacts)
-               {
-                   await _mediator.Send(new SendEmailRequest(contact.Email, emailTemplate, new
-                   {
-                       username = $"{emailAllApprovedContactsRequest.DisplayName}",
-                       ServiceLink = $"{emailAllApprovedContactsRequest.ServiceLink}"
-                   }));
-               }
-            }
-            catch (NotFound)
-            {
-                throw new ResourceNotFoundException();
-            }
 
-            return NoContent();
+            await _mediator.Send(notifyUserManagementUsersRequest, CancellationToken.None);
+
+            return Ok();
+
+//            
+//            const string epaoUserApproveRequestTemplate = "EPAOUserApproveRequest";
+//            
+//            
+//
+//            try
+//            {
+//               var emailTemplate = await _mediator.Send(new GetEmailTemplateRequest
+//                       {TemplateName= epaoUserApproveRequestTemplate });
+//               var contacts= await _mediator.Send(new GetContactsForOrganisationRequest(notifyUserManagementUsersRequest.OrganisationReferenceId));
+//               foreach (var contact in contacts)
+//               {
+//                   await _mediator.Send(new SendEmailRequest(contact.Email, emailTemplate, new
+//                   {
+//                       username = $"{notifyUserManagementUsersRequest.DisplayName}",
+//                       ServiceLink = $"{notifyUserManagementUsersRequest.ServiceLink}"
+//                   }));
+//               }
+//            }
+//            catch (NotFound)
+//            {
+//                throw new ResourceNotFoundException();
+//            }
+//
+//            return NoContent();
         }
         
     }

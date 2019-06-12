@@ -225,5 +225,21 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                 await PostPutRequest(request, new RequestForPrivilegeRequest {ContactId = contactId, PrivilegeId = privilegeId});
             }
         }
+
+        public async Task ApproveContact(Guid contactId)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Post, "/api/v1/contacts/approve"))
+            {
+                await PostPutRequest(request, new ApproveContactRequest {ContactId = contactId});
+            }
+        }
+        
+        public async Task RejectContact(Guid contactId)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Post, "/api/v1/contacts/reject"))
+            {
+                await PostPutRequest(request, new RejectContactRequest {ContactId = contactId});
+            }
+        }
     }
 }

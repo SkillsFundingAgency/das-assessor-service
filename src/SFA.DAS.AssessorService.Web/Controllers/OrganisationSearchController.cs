@@ -181,6 +181,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             var signinId = _contextAccessor.HttpContext.User.Claims.First(c => c.Type == "sub")?.Value;
             var user = await _contactsApiClient.GetContactBySignInId(signinId);
 
+            // Why would a new user searching for an Organisation have an EPAOrgId or an OrganisationId?
             if (!string.IsNullOrEmpty(user.EndPointAssessorOrganisationId) && user.OrganisationId != null &&
                 user.Status == ContactStatus.Live)
                 return RedirectToAction("Index", "Dashboard");
@@ -270,7 +271,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                     }
 
 
-                    await _organisationsApiClient.SendEmailsToOrgApprovedUsers(new EmailAllApprovedContactsRequest(
+                    await _organisationsApiClient.SendEmailsToOrganisationUserManagementUsers(new NotifyUserManagementUsersRequest(
                         user.DisplayName, organisationSearchResult
                             .OrganisationReferenceId, _config.ServiceLink));
                 }

@@ -28,6 +28,6 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<bool> IsOnlyContactWithPrivilege(Guid contactId, Guid privilegeId);
         Task CreateContactLog(Guid userId, Guid contactId, string logType, object logData);
         Task RemoveContactFromOrganisation(Guid contactId);
-        Task UpdateOrganisationId(Guid contactId, Guid organisationId);
+        Task UpdateOrganisationId(Guid contactId, Guid? organisationId);
     }
 }
