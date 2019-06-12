@@ -50,6 +50,11 @@
     <ProjectReference Include="..\SFA.DAS.AssessorService.Web.Extensions\SFA.DAS.AssessorService.Web.Extensions.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Update="Resources\Validators\CertificateCheckViewModelValidator.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>CertificateCheckViewModelValidator.resx</DependentUpon>
+    </Compile>
     <Compile Update="Resources\Validators\CertificateFirstNameViewModelValidator.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -149,6 +154,10 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Update="Resources\Validators\CertificateCheckViewModelValidator.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>CertificateCheckViewModelValidator.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Update="Resources\Validators\CertificateUlnViewModelValidator.resx">
       <LastGenOutput>CertificateUlnViewModelValidator.Designer.cs</LastGenOutput>
       <Generator>ResXFileCodeGenerator</Generator>

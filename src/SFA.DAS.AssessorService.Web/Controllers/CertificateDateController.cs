@@ -42,10 +42,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 return View("~/Views/Certificate/Date.cshtml", vm);
             }
 
+            var nextAction = vm.SelectedGrade == CertificateGrade.Fail ? RedirectToAction("Check", "CertificateCheck") : RedirectToAction("Address", "CertificateAddress");
 
             var actionResult = await SaveViewModel(vm, 
                 returnToIfModelNotValid: "~/Views/Certificate/Date.cshtml",
-                nextAction: RedirectToAction("Address", "CertificateAddress"), action: CertificateActions.Date);
+                nextAction: nextAction, action: CertificateActions.Date);
 
 
             return actionResult;
