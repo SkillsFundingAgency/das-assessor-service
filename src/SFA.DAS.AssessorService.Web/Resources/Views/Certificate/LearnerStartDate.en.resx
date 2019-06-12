@@ -124,12 +124,12 @@
     <value>For example, 15 10 2017</value>
   </data>
   <data name="Heading" xml:space="preserve">
-    <value>What's the apprenticeship start date?</value>
+    <value>What is the apprenticeship start date?</value>
   </data>
   <data name="InfoBody" xml:space="preserve">
     <value>The start date is the date the apprentice started the apprenticeship.</value>
   </data>
   <data name="InfoHeader" xml:space="preserve">
-    <value>What’s an apprenticeship start date?</value>
+    <value>What is an apprenticeship start date?</value>
   </data>
 </root>
