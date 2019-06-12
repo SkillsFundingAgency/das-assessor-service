@@ -281,7 +281,7 @@ namespace SFA.DAS.AssessorService.Data
                     await connection.OpenAsync();
 
                 var sql =
-                      "SELECT o.EndPointAssessorOrganisationId as Id, o.EndPointAssessorName as Name, o.EndPointAssessorUkprn as ukprn, o.OrganisationData, ot.Id as OrganisationTypeId, ot.Type as OrganisationType, c.Email as Email "
+                      "SELECT o.EndPointAssessorOrganisationId as Id, o.EndPointAssessorName as Name, o.EndPointAssessorUkprn as ukprn, o.OrganisationData, o.Status, ot.Id as OrganisationTypeId, ot.Type as OrganisationType, c.Email as Email "
                     + "FROM [Organisations] o "
                     + "LEFT OUTER JOIN [OrganisationType] ot ON ot.Id = o.OrganisationTypeId "
                     + "LEFT OUTER JOIN [Contacts] c ON c.Username = o.PrimaryContact AND c.EndPointAssessorOrganisationId = o.EndPointAssessorOrganisationId "
@@ -300,7 +300,7 @@ namespace SFA.DAS.AssessorService.Data
                     await connection.OpenAsync();
 
                 var sql =
-                      "SELECT o.EndPointAssessorOrganisationId as Id, o.EndPointAssessorName as Name, o.EndPointAssessorUkprn as ukprn, o.OrganisationData, ot.Id as OrganisationTypeId, ot.Type as OrganisationType, c.Email as Email "
+                      "SELECT o.EndPointAssessorOrganisationId as Id, o.EndPointAssessorName as Name, o.EndPointAssessorUkprn as ukprn, o.OrganisationData, o.Status, ot.Id as OrganisationTypeId, ot.Type as OrganisationType, c.Email as Email "
                     + "FROM [Organisations] o "
                     + "LEFT OUTER JOIN [OrganisationType] ot ON ot.Id = o.OrganisationTypeId "
                     + "LEFT OUTER JOIN [Contacts] c ON c.Username = o.PrimaryContact AND c.EndPointAssessorOrganisationId = o.EndPointAssessorOrganisationId "
@@ -320,7 +320,7 @@ namespace SFA.DAS.AssessorService.Data
                     await connection.OpenAsync();
 
                 var sql =
-                    "SELECT top 1 o.EndPointAssessorOrganisationId as Id, o.EndPointAssessorName as Name, o.EndPointAssessorUkprn as ukprn, o.OrganisationData, ot.Id as OrganisationTypeId, ot.Type as OrganisationType, pc.Email as Email "
+                    "SELECT top 1 o.EndPointAssessorOrganisationId as Id, o.EndPointAssessorName as Name, o.EndPointAssessorUkprn as ukprn, o.OrganisationData, o.Status, ot.Id as OrganisationTypeId, ot.Type as OrganisationType, pc.Email as Email "
                     + "FROM [Organisations] o "
                     + "LEFT OUTER JOIN [OrganisationType] ot ON ot.Id = o.OrganisationTypeId "
                     + "LEFT OUTER JOIN [Contacts] pc ON pc.Username = o.PrimaryContact AND pc.EndPointAssessorOrganisationId = o.EndPointAssessorOrganisationId "
@@ -340,7 +340,7 @@ namespace SFA.DAS.AssessorService.Data
                     await connection.OpenAsync();
 
                 var sql =
-                      "SELECT o.EndPointAssessorOrganisationId as Id, o.EndPointAssessorName as Name, o.EndPointAssessorUkprn as ukprn, o.OrganisationData, ot.Id as OrganisationTypeId, ot.Type as OrganisationType, c.Email as Email "
+                      "SELECT o.EndPointAssessorOrganisationId as Id, o.EndPointAssessorName as Name, o.EndPointAssessorUkprn as ukprn, o.OrganisationData, o.Status, ot.Id as OrganisationTypeId, ot.Type as OrganisationType, c.Email as Email "
                     + "FROM [Organisations] o "
                     + "LEFT OUTER JOIN [OrganisationType] ot ON ot.Id = o.OrganisationTypeId "
                     + "LEFT OUTER JOIN [Contacts] c ON c.Username = o.PrimaryContact AND c.EndPointAssessorOrganisationId = o.EndPointAssessorOrganisationId "
