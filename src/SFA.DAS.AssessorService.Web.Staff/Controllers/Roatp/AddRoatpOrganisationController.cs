@@ -165,7 +165,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
            
         }
 
-        [Route("add-confirm")]
+        [Route("confirm-details")]
         public async Task<IActionResult> ConfirmOrganisationDetails(AddApplicationDeterminedDateViewModel model)
         {
             var organisationVm = _sessionService.GetAddOrganisationDetails();
