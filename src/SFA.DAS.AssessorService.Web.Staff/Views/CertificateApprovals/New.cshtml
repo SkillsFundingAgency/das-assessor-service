@@ -46,19 +46,20 @@
                 <ul class="error-summary-list">
                     @if (ViewData.ModelState.ErrorCount > 1)
                     {
-                        <li>Please enter reasons for @ViewData.ModelState.ErrorCount rejections! </li>
+                        <li>Enter reasons for @ViewData.ModelState.ErrorCount rejections</li>
                     }
                     else
                     {
-                        <li>Please enter a reason for the rejection! </li>
+                        <li>Enter a reason for the rejection</li>
                     }
                 </ul>
             </div>
         }
 
         <div sfa-anyvalidationerror-class="after-error-summary">
-            <h1 class="heading-large">
-                Privately Funded Certificates - New
+            <h1 class="heading-xlarge">
+                <span class="heading-secondary">Privately funded certificates</span>
+                New certificates
             </h1>
 
             @if (@Model.ToBeApprovedCertificates.Items.Any())

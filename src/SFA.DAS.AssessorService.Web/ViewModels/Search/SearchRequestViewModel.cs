@@ -14,7 +14,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Search
 
     public class ChooseStandardViewModel
     {
-        public string SelectedStandardCode { get; set; }
+        public string StdCode { get; set; }
         public IEnumerable<ResultViewModel> SearchResults { get; set; }
     }
 
