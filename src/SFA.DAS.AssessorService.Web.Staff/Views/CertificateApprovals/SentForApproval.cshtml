@@ -59,8 +59,9 @@
 
         <div sfa-anyvalidationerror-class="after-error-summary">
 
-            <h1 class="heading-large">
-                Privately Funded Certificates - Sent For Approval
+            <h1 class="heading-xlarge">
+                <span class="heading-secondary">Privately funded certificates</span>
+                Sent for approval
             </h1>
             @if (@Model.SentForApprovalCertificates?.Items.Any() ?? Model.ToBeApprovedCertificates.Items.Any())
             {

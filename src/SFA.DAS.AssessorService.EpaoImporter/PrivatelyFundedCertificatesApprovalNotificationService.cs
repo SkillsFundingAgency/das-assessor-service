@@ -10,7 +10,6 @@ namespace SFA.DAS.AssessorService.EpaoImporter
         public static void Run([TimerTrigger("0 0 8 4 * *")] TimerInfo myTimer, TraceWriter functionLogger,
             ExecutionContext context)
         {
-
             var privatelyFundedCertificateApprovalsBootstrapper = new PrivatelyFundedCertificateApprovalsBootstrapper(functionLogger, context);
 
             var command = privatelyFundedCertificateApprovalsBootstrapper.GetInstance<PrivatelyFundedCertificatesApprovalCommand>();

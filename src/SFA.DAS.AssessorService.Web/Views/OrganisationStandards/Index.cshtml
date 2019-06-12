@@ -18,52 +18,56 @@
         </div>
     </div>
 
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-full">
 
-        @if (Model.Items.Any())
-        {
-            <table class="govuk-table govuk-table--small responsive">
-                <thead class="govuk-table__head">
-                    <tr class="govuk-table__row">
-                        <th class="govuk-table__header" scope="col">
-                            @Localizer["Standard"]
-                        </th>
-                        <th class="govuk-table__header govuk-table__header--numeric" scope="col">
-                            @Localizer["Code"]
-                        </th>
-                        <th class="govuk-table__header govuk-table__header--numeric" scope="col">
-                            @Localizer["Level"]
-                        </th>
-                    </tr>
-                </thead>
-                <tbody class="govuk-table__body">
-                @foreach (var item in Model.Items)
-                {
-                    <tr class="govuk-table__row">
-                        <td data-label="@Localizer["Standard name"]" class="govuk-table__cell das-no-wrap">
-                            @Html.DisplayFor(modelItem => item.StandardName)
-                        </td>
-                        <td data-label="@Localizer["Standard code"]" class="govuk-table__cell govuk-table__cell--numeric">
-                            @Html.DisplayFor(modelItem => item.StandardCode)
-                        </td>
-                        <td data-label="@Localizer["Standard level"]" class="govuk-table__cell govuk-table__cell--numeric">
-                            @Html.DisplayFor(modelItem => item.Level)
-                        </td>
-                    </tr>
+    @if (Model.Items.Any())
+    {
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
+                <table class="govuk-table govuk-table--small responsive">
+                    <thead class="govuk-table__head">
+                        <tr class="govuk-table__row">
+                            <th class="govuk-table__header" scope="col">
+                                @Localizer["Standard"]
+                            </th>
+                            <th class="govuk-table__header govuk-table__header--numeric" scope="col">
+                                @Localizer["Code"]
+                            </th>
+                            <th class="govuk-table__header govuk-table__header--numeric" scope="col">
+                                @Localizer["Level"]
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="govuk-table__body">
+                    @foreach (var item in Model.Items)
+                    {
+                        <tr class="govuk-table__row">
+                            <td data-label="@Localizer["Standard name"]" class="govuk-table__cell das-no-wrap">
+                                @Html.DisplayFor(modelItem => item.StandardName)
+                            </td>
+                            <td data-label="@Localizer["Standard code"]" class="govuk-table__cell govuk-table__cell--numeric">
+                                @Html.DisplayFor(modelItem => item.StandardCode)
+                            </td>
+                            <td data-label="@Localizer["Standard level"]" class="govuk-table__cell govuk-table__cell--numeric">
+                                @Html.DisplayFor(modelItem => item.Level)
+                            </td>
+                        </tr>
 
-                }
-                </tbody>
-            </table>
-        }
-        else
-        {
-            <div class="info-summary">
-                <h2 class="govuk-heading-m">You are not registered with any standards.</h2>
+                    }
+                    </tbody>
+                </table>
             </div>
-        }
         </div>
-    </div>
+    }
+    else
+    {
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <div class="info-summary">
+                    <h2 class="govuk-heading-m">You are not yet approved to assess any standards.</h2>
+                </div>
+            </div>
+        </div>
+    }
 
     @if (Model.HasPreviousPage || Model.HasNextPage)
     {
