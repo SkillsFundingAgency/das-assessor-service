@@ -15,12 +15,16 @@ namespace SFA.DAS.AssessorService.Application.Api.External.SwaggerHelpers
             foreach (var schemaProperty in model.Properties)
             {
                 var property = context.SystemType.GetProperty(schemaProperty.Key, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
-                var attributes = property?.GetCustomAttributes(true);
 
-                if (attributes != null && attributes.Any(attr => attr is Attributes.SwaggerRequiredAttribute))
+                if (property != null)
                 {
-                    if (model.Required is null) model.Required = new List<string>();
-                    model.Required.Add(schemaProperty.Key);
+                    var attributes = property?.GetCustomAttributes(true);
+
+                    if (attributes != null && attributes.Any(attr => attr is Attributes.SwaggerRequiredAttribute))
+                    {
+                        if (model.Required is null) model.Required = new List<string>();
+                        model.Required.Add(schemaProperty.Key);
+                    }
                 }
             }
         }
