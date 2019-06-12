@@ -1,13 +1,13 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using SFA.DAS.AssessorService.Application.Api.External.SwaggerHelpers.Attributes;
+using System;
 
 namespace SFA.DAS.AssessorService.Application.Api.External.Models.Request.Certificates
 {
     public class Learner : IEquatable<Learner>
     {
-        [Required]
+        [SwaggerRequired]
         public long Uln { get; set; }
-        [Required]
+        [SwaggerRequired]
         public string FamilyName { get; set; }
 
         #region GetHashCode, Equals and IEquatable

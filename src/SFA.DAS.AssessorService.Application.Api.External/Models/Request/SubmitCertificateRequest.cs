@@ -1,18 +1,18 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using SFA.DAS.AssessorService.Application.Api.External.SwaggerHelpers.Attributes;
+using System;
 
 namespace SFA.DAS.AssessorService.Application.Api.External.Models.Request
 {
     public class SubmitCertificateRequest : IEquatable<SubmitCertificateRequest>
     {
         public string RequestId { get; set; }
-        [Required]
+        [SwaggerRequired]
         public long Uln { get; set; }
         public int? StandardCode { get; set; }
         public string StandardReference { get; set; }
-        [Required]
+        [SwaggerRequired]
         public string FamilyName { get; set; }
-        [Required]
+        [SwaggerRequired]
         public string CertificateReference { get; set; }
 
         #region GetHashCode, Equals and IEquatable

@@ -1,21 +1,21 @@
 ﻿using SFA.DAS.AssessorService.Application.Api.External.Models.Request.Certificates;
+using SFA.DAS.AssessorService.Application.Api.External.SwaggerHelpers.Attributes;
 using System;
-using System.ComponentModel.DataAnnotations;
 
 namespace SFA.DAS.AssessorService.Application.Api.External.Models.Request
 {
     public class UpdateCertificateRequest : IEquatable<UpdateCertificateRequest>
     {
         public string RequestId { get; set; }
-        [Required]
+        [SwaggerRequired]
         public string CertificateReference { get; set; }
-        [Required]
+        [SwaggerRequired]
         public Standard Standard { get; set; }
-        [Required]
+        [SwaggerRequired]
         public Learner Learner { get; set; }
-        [Required]
+        [SwaggerRequired]
         public LearningDetails LearningDetails { get; set; }
-        [Required]
+        [SwaggerRequired]
         public PostalContact PostalContact { get; set; }
 
         #region GetHashCode, Equals and IEquatable

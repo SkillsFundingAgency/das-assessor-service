@@ -1,22 +1,22 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using SFA.DAS.AssessorService.Application.Api.External.SwaggerHelpers.Attributes;
+using System;
 
 namespace SFA.DAS.AssessorService.Application.Api.External.Models.Request.Certificates
 {
     public class PostalContact : IEquatable<PostalContact>
     {
-        [Required]
+        [SwaggerRequired]
         public string ContactName { get; set; }
         public string Department { get; set; }
-        [Required]
+        [SwaggerRequired]
         public string Organisation { get; set; }
-        [Required]
+        [SwaggerRequired]
         public string AddressLine1 { get; set; }
         public string AddressLine2 { get; set; }
         public string AddressLine3 { get; set; }
-        [Required]
+        [SwaggerRequired]
         public string City { get; set; }
-        [Required]
+        [SwaggerRequired]
         public string PostCode { get; set; }
 
         #region GetHashCode, Equals and IEquatable
