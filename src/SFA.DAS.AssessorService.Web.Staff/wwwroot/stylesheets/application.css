@@ -997,6 +997,7 @@ TODO: change to 'das-page-navigation' and BEM
 }
 
 .das-code {
+    display: inline-block;
     color: #0b0c0c;
     background-color: #f8f8f8;
     text-shadow: 0 1px #fff;
