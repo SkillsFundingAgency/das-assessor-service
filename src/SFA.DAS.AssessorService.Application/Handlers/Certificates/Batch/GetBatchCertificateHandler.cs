@@ -27,7 +27,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates.Batch
             _certificateRepository = certificateRepository;
             _contactQueryRepository = contactQueryRepository;
             _ilrRepository = ilrRepository;
-            standardRepository = _standardRepository;
+            _standardRepository = standardRepository;
             _logger = logger;
         }
 
