@@ -120,6 +120,9 @@
   <data name="AchievementDate" xml:space="preserve">
     <value>Achievement date</value>
   </data>
+  <data name="FailDate" xml:space="preserve">
+    <value>Fail date</value>
+  </data>
   <data name="AchievementStartDate" xml:space="preserve">
     <value>Apprenticeship start date</value>
   </data>
@@ -131,6 +134,9 @@
   </data>
   <data name="CertificateNumber" xml:space="preserve">
     <value>Certificate number</value>
+  </data>
+  <data name="ReferenceNumber" xml:space="preserve">
+    <value>Reference number</value>
   </data>
   <data name="DateRequested" xml:space="preserve">
     <value>Date requested</value>

@@ -275,6 +275,13 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
                 : string.Empty;
         }
 
+        public string CheckIfEmailAlreadyPresentInCurrentOrganisation(string email, string organisationId)
+        {
+            return _registerRepository.EmailAlreadyPresentInCurrentOrganisation(email, organisationId).Result
+                ? FormatErrorMessage(EpaOrganisationValidatorMessageName.EmailAlreadyPresentInCurrentOrganisation)
+                : string.Empty;
+        }
+
 
         public string CheckIfEmailAlreadyPresentInOrganisationNotAssociatedWithContact(string email, string contactId)
         {
@@ -456,6 +463,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             var validationResult = new ValidationResponse();
             RunValidationCheckAndAppendAnyError("Email", CheckIfEmailIsPresentAndInSuitableFormat(request.Email),
                 validationResult, ValidationStatusCode.BadRequest);
+            RunValidationCheckAndAppendAnyError("Email",
+               CheckIfEmailAlreadyPresentInCurrentOrganisation(request.Email, request.EndPointAssessorOrganisationId),
+               validationResult, ValidationStatusCode.AlreadyExists);
             RunValidationCheckAndAppendAnyError("Email",
                 CheckIfEmailAlreadyPresentInAnotherOrganisation(request.Email, request.EndPointAssessorOrganisationId),
                 validationResult, ValidationStatusCode.AlreadyExists);
