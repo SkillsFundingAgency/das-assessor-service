@@ -99,7 +99,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         {
             var bag = new ConcurrentBag<BatchCertificateResponse>();
 
-            var tasks = batchRequest.Select(async request =>
+            foreach(var request in batchRequest)
             {
                 var validationErrors = new List<string>();
                 var isRequestValid = false;
@@ -143,11 +143,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
                 }
 
                 bag.Add(certResponse);
-            });
+            }
 
-            await Task.WhenAll(tasks);
             return Ok(bag.ToList());
-
         }
 
         [HttpPut]
@@ -158,7 +156,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         {
             var bag = new ConcurrentBag<BatchCertificateResponse>();
 
-            var tasks = batchRequest.Select(async request =>
+            foreach (var request in batchRequest)
             {
                 var validationErrors = new List<string>();
                 var isRequestValid = false;
@@ -202,11 +200,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
                 }
 
                 bag.Add(certResponse);
-            });
+            }
 
-            await Task.WhenAll(tasks);
             return Ok(bag.ToList());
-
         }
 
         [HttpPost("submit")]
@@ -217,7 +213,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         {
             var bag = new ConcurrentBag<SubmitBatchCertificateResponse>();
 
-            var tasks = batchRequest.Select(async request =>
+            foreach (var request in batchRequest)
             {
                 var validationErrors = new List<string>();
                 var isRequestValid = false;
@@ -257,9 +253,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
                 }
 
                     bag.Add(submitResponse);
-            });
+            }
 
-            await Task.WhenAll(tasks);
             return Ok(bag.ToList());
         }
 
