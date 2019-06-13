@@ -66,7 +66,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
                 request.StandardCode = collatedStandard.StandardId ?? int.MinValue;
                 request.StandardReference = collatedStandard.ReferenceNumber;
 
-                ValidationResult validationResult = _getValidator.Validate(request);
+                var validationResult = await _getValidator.ValidateAsync(request);
                 isRequestValid = validationResult.IsValid;
                 validationErrors = validationResult.Errors.Select(error => error.ErrorMessage).ToList();
             }
@@ -118,7 +118,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
                         request.StandardReference = collatedStandard.ReferenceNumber;
                     }
 
-                    ValidationResult validationResult = _createValidator.Validate(request);
+                    var validationResult = await _createValidator.ValidateAsync(request);
                     isRequestValid = validationResult.IsValid;
                     validationErrors = validationResult.Errors.Select(error => error.ErrorMessage).ToList();
                 }
@@ -177,7 +177,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
                         request.StandardReference = collatedStandard.ReferenceNumber;
                     }
 
-                    ValidationResult validationResult = _updateValidator.Validate(request);
+                    var validationResult = await _updateValidator.ValidateAsync(request);
                     isRequestValid = validationResult.IsValid;
                     validationErrors = validationResult.Errors.Select(error => error.ErrorMessage).ToList();
                 }
@@ -236,7 +236,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
                         request.StandardReference = collatedStandard.ReferenceNumber;
                     }
 
-                    ValidationResult validationResult = _submitValidator.Validate(request);
+                    var validationResult = await _submitValidator.ValidateAsync(request);
                     isRequestValid = validationResult.IsValid;
                     validationErrors = validationResult.Errors.Select(error => error.ErrorMessage).ToList();
                 }
@@ -288,7 +288,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
                 request.StandardCode = collatedStandard.StandardId ?? int.MinValue;
                 request.StandardReference = collatedStandard.ReferenceNumber;
 
-                ValidationResult validationResult = _deleteValidator.Validate(request);
+                var validationResult = await _deleteValidator.ValidateAsync(request);
                 isRequestValid = validationResult.IsValid;
                 validationErrors = validationResult.Errors.Select(error => error.ErrorMessage).ToList();
             }

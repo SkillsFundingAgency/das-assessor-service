@@ -16,10 +16,10 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.Certificates
 
             RuleFor(m => m.CertificateReference).NotEmpty().WithMessage("Enter the certificate reference").DependentRules(() =>
             {
-                RuleFor(m => m).Custom((m, context) =>
+                RuleFor(m => m).CustomAsync(async (m, context, cancellation) =>
                 {
-                    var existingCertificate = certificateRepository.GetCertificate(m.Uln, m.StandardCode).GetAwaiter().GetResult();
-                    var sumbittingEpao = organisationQueryRepository.GetByUkPrn(m.UkPrn).GetAwaiter().GetResult();
+                    var existingCertificate = await certificateRepository.GetCertificate(m.Uln, m.StandardCode);
+                    var sumbittingEpao = await organisationQueryRepository.GetByUkPrn(m.UkPrn);
 
                     if (existingCertificate is null || !string.Equals(existingCertificate.CertificateReference, m.CertificateReference, StringComparison.InvariantCultureIgnoreCase)
                         || existingCertificate.Status == CertificateStatus.Deleted)

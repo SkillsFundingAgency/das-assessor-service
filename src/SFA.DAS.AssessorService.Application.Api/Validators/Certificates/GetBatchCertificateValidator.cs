@@ -21,11 +21,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.Certificates
             {
                 When(m => m.StandardCode > 0 && !string.IsNullOrEmpty(m.FamilyName), () =>
                 {
-                    RuleFor(m => m).Custom((m, context) =>
+                    RuleFor(m => m).CustomAsync(async (m, context, cancellation) =>
                     {
                         // TODO: FUTURE WORK - consider comment below. Currently we're making the Certificate & ILR record both mandatory
-                        var requestedIlr = ilrRepository.Get(m.Uln, m.StandardCode).GetAwaiter().GetResult();
-                        var sumbittingEpao = organisationQueryRepository.GetByUkPrn(m.UkPrn).GetAwaiter().GetResult();
+                        var requestedIlr = await ilrRepository.Get(m.Uln, m.StandardCode);
+                        var sumbittingEpao = await organisationQueryRepository.GetByUkPrn(m.UkPrn);
 
                         if (requestedIlr is null || !string.Equals(requestedIlr.FamilyName, m.FamilyName, StringComparison.InvariantCultureIgnoreCase))
                         {
@@ -37,7 +37,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.Certificates
                         }
                         else
                         {
-                            var providedStandards = standardService.GetEpaoRegisteredStandards(sumbittingEpao.EndPointAssessorOrganisationId).GetAwaiter().GetResult();
+                            var providedStandards = await standardService.GetEpaoRegisteredStandards(sumbittingEpao.EndPointAssessorOrganisationId);
 
                             if (!providedStandards.Any(s => s.StandardCode == m.StandardCode))
                             {
@@ -46,9 +46,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.Certificates
                         }
                     });
 
-                    RuleFor(m => m).Custom((m, context) =>
+                    RuleFor(m => m).CustomAsync(async (m, context, cancellation) =>
                     {
-                        var existingCertificate = certificateRepository.GetCertificate(m.Uln, m.StandardCode).GetAwaiter().GetResult();
+                        var existingCertificate = await certificateRepository.GetCertificate(m.Uln, m.StandardCode);
 
                         if (existingCertificate is null)
                         {

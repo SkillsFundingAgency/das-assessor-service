@@ -15,9 +15,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.Certificates
 
             RuleFor(m => m.CertificateReference).Empty().WithMessage("Certificate reference must be empty").DependentRules(() =>
             {
-                RuleFor(m => m).Custom((m, context) =>
+                RuleFor(m => m).CustomAsync(async (m, context, cancellation) =>
                 {
-                    var existingCertificate = certificateRepository.GetCertificate(m.Uln, m.StandardCode).Result;
+                    var existingCertificate = await certificateRepository.GetCertificate(m.Uln, m.StandardCode);
 
                     if (existingCertificate != null && existingCertificate.Status != CertificateStatus.Deleted)
                     {

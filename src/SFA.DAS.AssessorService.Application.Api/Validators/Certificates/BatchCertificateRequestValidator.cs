@@ -18,13 +18,13 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.Certificates
             RuleFor(m => m.FamilyName).NotEmpty().WithMessage("Enter the apprentice's last name");
             RuleFor(m => m.StandardCode).GreaterThan(0).WithMessage("A Standard should be selected").DependentRules(() =>
             {
-                RuleFor(m => m).Custom((m, context) =>
+                RuleFor(m => m).CustomAsync(async (m, context, cancellation) =>
                 {
                     bool sameStandard = true;
 
                     if (!string.IsNullOrEmpty(m.StandardReference))
                     {
-                        var collatedStandard = standardService.GetStandard(m.StandardReference).GetAwaiter().GetResult();
+                        var collatedStandard = await standardService.GetStandard(m.StandardReference);
                         if (m.StandardCode != collatedStandard?.StandardId)
                         {
                             sameStandard = false;
@@ -35,7 +35,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.Certificates
                     // NOTE: This is not a nice way to do this BUT we cannot use another DependantResult()
                     if (sameStandard)
                     {
-                        var courseOptions = certificateRepository.GetOptions(m.StandardCode).GetAwaiter().GetResult();
+                        var courseOptions = await certificateRepository.GetOptions(m.StandardCode);
 
                         if (!courseOptions.Any() && !string.IsNullOrEmpty(m.CertificateData?.CourseOption))
                         {
@@ -54,10 +54,10 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.Certificates
             {
                 When(m => m.StandardCode > 0 && !string.IsNullOrEmpty(m.FamilyName) , () =>
                 {
-                    RuleFor(m => m).Custom((m, context) =>
+                    RuleFor(m => m).CustomAsync(async (m, context, canellation) =>
                     {
-                        var requestedIlr = ilrRepository.Get(m.Uln, m.StandardCode).GetAwaiter().GetResult();
-                        var sumbittingEpao = organisationQueryRepository.GetByUkPrn(m.UkPrn).GetAwaiter().GetResult();
+                        var requestedIlr = await ilrRepository.Get(m.Uln, m.StandardCode);
+                        var sumbittingEpao = await organisationQueryRepository.GetByUkPrn(m.UkPrn);
 
                         if (requestedIlr == null || !string.Equals(requestedIlr.FamilyName, m.FamilyName, StringComparison.InvariantCultureIgnoreCase))
                         {
@@ -69,7 +69,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.Certificates
                         }
                         else
                         {
-                            var providedStandards = standardService.GetEpaoRegisteredStandards(sumbittingEpao.EndPointAssessorOrganisationId).GetAwaiter().GetResult();
+                            var providedStandards = await standardService.GetEpaoRegisteredStandards(sumbittingEpao.EndPointAssessorOrganisationId);
 
                             if (!providedStandards.Any(s => s.StandardCode == m.StandardCode))
                             {
