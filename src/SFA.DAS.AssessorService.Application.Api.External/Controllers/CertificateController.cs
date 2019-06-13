@@ -6,6 +6,7 @@ using SFA.DAS.AssessorService.Application.Api.External.Models.Internal;
 using SFA.DAS.AssessorService.Application.Api.External.Models.Request;
 using SFA.DAS.AssessorService.Application.Api.External.Models.Response;
 using SFA.DAS.AssessorService.Application.Api.External.Models.Response.Certificates;
+using SFA.DAS.AssessorService.Domain.Consts;
 using Swashbuckle.AspNetCore.Annotations;
 using Swashbuckle.AspNetCore.Examples;
 using System.Collections.Generic;
@@ -194,7 +195,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
         [SwaggerOperation("Get Grades", "To get the list of valid pass grades, to use when creating certificates.", Produces = new string[] { "application/json" })]
         public IActionResult GetGrades()
         {
-            string[] grades = { "Pass", "Credit", "Merit", "Distinction", "Pass with excellence", "No grade awarded" };
+            var grades = new string[] { CertificateGrade.Pass, CertificateGrade.Credit, CertificateGrade.Merit, CertificateGrade.Distinction, CertificateGrade.PassWithExcellence, CertificateGrade.NoGradeAwarded, CertificateGrade.Fail };
 
             return Ok(grades);
         }
