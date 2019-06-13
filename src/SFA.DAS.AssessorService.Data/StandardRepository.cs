@@ -244,8 +244,9 @@ namespace SFA.DAS.AssessorService.Data
 
         private static void UpdateCurrentStandard(SqlConnection connection, StandardCollation standard, string standardData)
         {
+            // when new ReferenceNumber is null (IFA has not supplied one) retain the current RefernceNumber
             connection.Execute(
-                "Update [StandardCollation] set ReferenceNumber = @referenceNumber, Title = @Title, StandardData = @StandardData, DateUpdated=getutcdate(), DateRemoved=null, IsLive = 1 " +
+                "Update [StandardCollation] set ReferenceNumber = case when @referenceNumber is not null then @referenceNumber else ReferenceNumber end, Title = @Title, StandardData = @StandardData, DateUpdated=getutcdate(), DateRemoved=null, IsLive = 1 " +
                 "where StandardId = @standardId",
                 new {standard.StandardId, standard.ReferenceNumber, standard.Title, standardData}
             );

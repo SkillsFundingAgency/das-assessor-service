@@ -65,7 +65,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.ViewModels
 
         public Certificate GetCertificateFromViewModel(Certificate certificate, CertificateData data)
         {
-            certificate.Status = CertificateStatus.Submitted;
+            certificate.Status = certificate.IsPrivatelyFunded ? CertificateStatus.ToBeApproved : CertificateStatus.Submitted;
             certificate.CertificateData = JsonConvert.SerializeObject(data);
             return certificate;
         }
