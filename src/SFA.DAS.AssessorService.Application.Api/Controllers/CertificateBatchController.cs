@@ -1,5 +1,4 @@
-﻿using FluentValidation.Results;
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.AssessorService.Api.Types.Models;
@@ -9,7 +8,6 @@ using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
 using SFA.DAS.AssessorService.Application.Api.Validators.Certificates;
 using Swashbuckle.AspNetCore.SwaggerGen;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -97,9 +95,10 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> Create([FromBody] IEnumerable<CreateBatchCertificateRequest> batchRequest)
         {
-            var bag = new ConcurrentBag<BatchCertificateResponse>();
+            //var bag = new ConcurrentBag<BatchCertificateResponse>();
+            var bag = new List<BatchCertificateResponse>();
 
-            foreach(var request in batchRequest)
+            foreach (var request in batchRequest)
             {
                 var validationErrors = new List<string>();
                 var isRequestValid = false;
@@ -154,7 +153,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> Update([FromBody] IEnumerable<UpdateBatchCertificateRequest> batchRequest)
         {
-            var bag = new ConcurrentBag<BatchCertificateResponse>();
+            //var bag = new ConcurrentBag<BatchCertificateResponse>();
+            var bag = new List<BatchCertificateResponse>();
 
             foreach (var request in batchRequest)
             {
@@ -211,7 +211,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> Submit([FromBody] IEnumerable<SubmitBatchCertificateRequest> batchRequest)
         {
-            var bag = new ConcurrentBag<SubmitBatchCertificateResponse>();
+            //var bag = new ConcurrentBag<SubmitBatchCertificateResponse>();
+            var bag = new List<SubmitBatchCertificateResponse>();
 
             foreach (var request in batchRequest)
             {
@@ -252,7 +253,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
                     submitResponse.Certificate = await _mediator.Send(request);
                 }
 
-                    bag.Add(submitResponse);
+                bag.Add(submitResponse);
             }
 
             return Ok(bag.ToList());
@@ -299,7 +300,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
                     await _mediator.Send(request);
                     return NoContent();
                 }
-                catch(NotFound)
+                catch (NotFound)
                 {
                     return NotFound();
                 }
