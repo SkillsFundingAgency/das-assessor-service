@@ -73,7 +73,23 @@ namespace SFA.DAS.AssessorService.Application.Handlers.UserManagement
             };
 
             var contact = await _contactRepository.CreateNewContact(newContact);
-            await _contactApplyClient.CreateNewContact(newContact);
+            
+            var applyContact = new Contact()
+            {
+                Id = contact.Id,
+                OrganisationId = request.OrganisationId,
+                Email = request.Email,
+                GivenNames = request.GivenName,
+                FamilyName = request.FamilyName,
+                DisplayName = request.GivenName + " " + request.FamilyName,
+                Status = ContactStatus.Pending,
+                SignInType = "ASLogin",
+                Title = "",
+                Username = request.Email, 
+                EndPointAssessorOrganisationId = organisation.EndPointAssessorOrganisationId
+            };
+            
+            await _contactApplyClient.CreateNewContact(applyContact);
             await _mediator.Send(new SetContactPrivilegesRequest
             {
                 AmendingContactId = request.InvitedByContactId,
