@@ -6,101 +6,129 @@
     Layout = "_Layout";
 }
 
-<div class="grid-row">
-    <div class="column-full">
-        <a asp-action="Index" class="link-back">Go back</a>
+<a class="govuk-back-link" asp-action="Index">Go back</a>
 
-        <h1 class="heading-xlarge">
-            External API details
-            <span class="heading-secondary">@Model.FirstName - @Model.LastName</span>
-        </h1>
+<main class="govuk-main-wrapper " id="main-content" role="main">
 
-        <h2 class="heading-large">User details</h2>
-
-        <table class="table responsive table-font-xsmall">
-            <thead>
-                <tr>
-                    <th>Ukprn</th>
-                    <th>Email</th>
-                    <th>Registration date</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td data-label="Ukprn">@Model.Ukprn</td>
-                    <td data-label="Email">@Model.Email</td>
-                    <td data-label="Registration date">@Model.RegistrationDate.UtcToTimeZoneTime()</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-</div>
-
-@if (Model.Subscriptions.Any())
-{
-    <div class="grid-row">
-        <div class="column-two-thirds">
-            <h1 class="heading-large">Subscriptions</h1>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <h1 class="govuk-heading-xl">
+                <span class="govuk-caption-xl">External API</span>
+                @Model.FirstName<br/>@Model.LastName
+            </h1>
         </div>
+    </div>
+
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            <h2 class="govuk-heading-l">User details</h2>
+            <table class="govuk-table table-font-xsmall">
+                <thead class="govuk-table__head">
+                    <tr class="govuk-table__row">
+                        <th class="govuk-table__header" scope="col">Ukprn</th>
+                        <th class="govuk-table__header" scope="col">Email</th>
+                        <th class="govuk-table__header" scope="col">Registration date</th>
+                    </tr>
+                </thead>
+                <tbody class="govuk-table__body">
+                    <tr>
+                        <td class="govuk-table__cell" data-label="Ukprn">@Model.Ukprn</td>
+                        <td class="govuk-table__cell" data-label="Email">@Model.Email</td>
+                        <td class="govuk-table__cell" data-label="Registration date">@Model.RegistrationDate.UtcToTimeZoneTime()</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    @if (Model.Subscriptions.Any())
+    {
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <h2 class="govuk-heading-l">Subscriptions</h2>
+            </div>
+        </div>
+
 
         @foreach (var subscription in Model.Subscriptions)
         {
-        <div class="column-full form-group">
-            <h2 class="bold-medium">@subscription.ProductId</h2>
-            <h3 class="heading-small">Api endpoint</h3>
-            <span class="code">@subscription.ApiEndPointUrl</span>
-            <h3 class="heading-small">Subscription key</h3>
-            <form asp-action="RenewPrimaryKey" asp-controller="ExternalApi" asp-route-subscriptionId="@subscription.Id" asp-route-userId="@Model.Id" method="post">
-                <span class="code">@subscription.PrimaryKey</span>
-                <input class="button text-link" type="submit" value="renew key" />
-            </form>
-            <h3 class="heading-small">Secondary subscription key</h3>
-            <form asp-action="RenewSecondaryKey" asp-controller="ExternalApi" asp-route-subscriptionId="@subscription.Id" asp-route-userId="@Model.Id" method="post">
-                <span class="code">@subscription.SecondaryKey</span>
-                <input class="button text-link" type="submit" value="renew key" />
-            </form>
-        </div>
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-full">
+                    <h2 class="govuk-heading-m">@subscription.ProductId</h2>
+
+                    <dl class="govuk-summary-list">
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                API endpoint
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                <span class="das-code govuk-!-margin-bottom-1">@subscription.ApiEndPointUrl</span>
+                            </dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Subscription key
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                <span class="das-code govuk-!-margin-bottom-1">@subscription.PrimaryKey</span>
+                                <form asp-action="RenewPrimaryKey" asp-controller="ExternalApi" asp-route-subscriptionId="@subscription.Id" asp-route-userId="@Model.Id" method="post">
+                                    <input class="govuk-button govuk-button--looks-like-link" type="submit" value="renew key" />
+                                </form>
+                            </dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Secondary subscription key
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                <span class="das-code govuk-!-margin-bottom-1">@subscription.SecondaryKey</span>
+                                <form asp-action="RenewSecondaryKey" asp-controller="ExternalApi" asp-route-subscriptionId="@subscription.Id" asp-route-userId="@Model.Id" method="post">
+                                    <input class="govuk-button govuk-button--looks-like-link" type="submit" value="renew key" />
+                                </form>
+                            </dd>
+                        </div>
+                    </dl>
+                </div>
+            </div>
         }
 
-    </div>
-}
+    }
 
-<div class="grid-row">
-    <div class="column-two-thirds">
-        <div class="form-group">
-            <h2 class="heading-large">Disable or remove access</h2>
-            <div class="notice">
-                <i class="icon icon-important"><span class="visually-hidden">Warning</span></i>
-                <strong class="bold-small">Note that this will be immediate.</strong>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <h2 class="govuk-heading-l">Disable or remove access</h2>
+            <div class="govuk-warning-text">
+                <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                <strong class="govuk-warning-text__text">
+                    <span class="govuk-warning-text__assistive">Warning</span>
+                    Note that this will be immediate.
+                </strong>
             </div>
-        </div>
 
-        <div class="form-group">
-            <div class="panel panel-border-wide">
-                <p><span class="bold">Current status:</span> @Html.Raw(string.Equals(Model.State, "blocked") ? "Disabled" : "Enabled")</p>
+            <div class="govuk-inset-text">
+                <span class="govuk-!-font-weight-bold">Current status:</span> @Html.Raw(string.Equals(Model.State, "blocked") ? "Disabled" : "Enabled")
             </div>
-        </div>
 
-        <div class="form-group">
             @if (string.Equals(Model.State, "blocked"))
             {
+                <p class="govuk-body">Enable the External API subscription for this user.</p>
                 <form asp-action="EnableUser" asp-controller="ExternalApi" asp-route-userId="@Model.Id" method="post">
-                    <button class="button" type="submit">Enable access</button>
+                    <button class="govuk-button" type="submit">Enable access</button>
                 </form>
             }
             else
             {
+                <p class="govuk-body">Disable the External API subscription for this user.</p>
                 <form asp-action="DisableUser" asp-controller="ExternalApi" asp-route-userId="@Model.Id" method="post">
-                    <button class="button" type="submit">Disable access</button>
+                    <button class="govuk-button" type="submit">Disable access</button>
                 </form>
             }
-        </div>
 
-        <div class="form-group">
-            <p class="bold-xsmall">The button below will revoke access to the External API subscription for this user.</p>
+            <p class="govuk-body">Revoke access to the External API subscription for this user.</p>
             <form asp-action="DeleteUser" asp-controller="ExternalApi" asp-route-userId="@Model.Id" method="post">
-                <button class="button" type="submit">Remove access</button>
+                <button class="govuk-button govuk-button--warning" type="submit">Remove access</button>
             </form>
         </div>
     </div>
-</div>
+</main>

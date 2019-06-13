@@ -7,85 +7,89 @@
 }
 
 
-<div class="grid-row">
-    <div class="column-full">
-        <a asp-action="Index" class="link-back">Search again</a>
+<a asp-action="Index" class="govuk-back-link">Search again</a>
 
-        <h1 class="heading-xlarge">
-            Search results
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <h1 class="govuk-heading-xl govuk-!-margin-bottom-1">
+                Search results
+            </h1>
+            <span class="govuk-caption-xl">Number of results: @Model.StaffSearchResult.StaffSearchItems?.TotalRecordCount</span>
             @if (!string.IsNullOrEmpty(@Model.StaffSearchResult.EndpointAssessorOrganisationId) && Model.StaffSearchResult.DisplayEpao)
             {
-                <h2 class="heading-medium">@Model.StaffSearchResult.EndpointAssessorOrganisationId</h2>
+                <h2 class="govuk-heading-m">@Model.StaffSearchResult.EndpointAssessorOrganisationId</h2>
             }
-            <span class="heading-secondary">Number of results: @Model.StaffSearchResult.StaffSearchItems?.TotalRecordCount</span>
-        </h1>
-
-        @if (@Model.StaffSearchResult.StaffSearchItems?.TotalRecordCount > 0)
-        {
-            <table class="table table-font-xsmall">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>ULN</th>
-                        <th>Standard</th>
-                        <th>Certificate reference</th>
-                        <th>Status</th>
-                        <th>Updated</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var result in Model.StaffSearchResult.StaffSearchItems.Items)
-                    {
-                        <tr>
-                            <td><a asp-action="Select" asp-route-stdcode="@result.StandardCode" asp-route-uln="@result.Uln" asp-route-searchstring="@Model.SearchString" asp-route-page="@Model.StaffSearchResult.StaffSearchItems.PageIndex">@result.GivenNames @result.FamilyName</a></td>
-                            <td>@result.Uln</td>
-                            <td>@result.Standard (@result.StandardCode)</td>
-                            <td>@result.CertificateReference</td>
-                            <td>@result.CertificateStatus</td>
-                            <td>@result.LastUpdatedAt?.ToSfaShortDateString()</td>
-
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        }
-
-    </div>
-</div>
-
-@if (Model.StaffSearchResult.StaffSearchItems != null && (Model.StaffSearchResult.StaffSearchItems.HasPreviousPage || Model.StaffSearchResult.StaffSearchItems.HasNextPage))
-{
-    <div class="grid-row">
-        <div class="column-full">
-            <div class="page-navigation">
-
-                @if (Model.StaffSearchResult.StaffSearchItems.HasPreviousPage)
-                {
-                    <a asp-action="Results"
-                       asp-controller="Search"
-                       asp-route-searchstring="@Model.SearchString"
-                       asp-route-page="@( Model.StaffSearchResult.StaffSearchItems.PageIndex - 1)"
-                       class="previous">
-                        <i class="arrow-button icon-left-open">&#xe800;</i>
-                        <span class="description">Previous <span class="hide-mob">page</span></span>
-                        <span class="counter">Page <span class="prevPage">@(Model.StaffSearchResult.StaffSearchItems.PageIndex - 1)</span> of <span class="totalPage">@(Model.StaffSearchResult.StaffSearchItems.TotalPages)</span></span>
-                    </a>
-                }
-
-                @if (Model.StaffSearchResult.StaffSearchItems.HasNextPage)
-                {
-                    <a asp-action="Results"
-                       asp-controller="Search"
-                       asp-route-searchstring="@Model.SearchString"
-                       asp-route-page="@( Model.StaffSearchResult.StaffSearchItems.PageIndex + 1)"
-                       class="next">
-                        <i class="arrow-button icon-right-open">&#xe801;</i>
-                        <span class="description">Next <span class="hide-mob">page</span></span>
-                        <span class="counter">Page <span class="nextPage">@(Model.StaffSearchResult.StaffSearchItems.PageIndex + 1)</span> of <span class="totalPage">@(Model.StaffSearchResult.StaffSearchItems.TotalPages)</span></span>
-                    </a>
-                }
-
-            </div>
         </div>
     </div>
-}
+
+    @if (@Model.StaffSearchResult.StaffSearchItems?.TotalRecordCount > 0)
+    {
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
+                <table class="govuk-table table-font-xsmall">
+                    <thead class="govuk-table__head">
+                        <tr class="govuk-table__row">
+                            <th class="govuk-table__header" scope="col">Name</th>
+                            <th class="govuk-table__header" scope="col">ULN</th>
+                            <th class="govuk-table__header" scope="col">Standard</th>
+                            <th class="govuk-table__header" scope="col">Certificate reference</th>
+                            <th class="govuk-table__header" scope="col">Status</th>
+                            <th class="govuk-table__header" scope="col">Updated</th>
+                        </tr>
+                    </thead>
+                    <tbody class="govuk-table__body">
+                        @foreach (var result in Model.StaffSearchResult.StaffSearchItems.Items)
+                        {
+                            <tr class="govuk-table__row">
+                                <td class="govuk-table__cell"><a class="govuk-link" asp-action="Select" asp-route-stdcode="@result.StandardCode" asp-route-uln="@result.Uln" asp-route-searchstring="@Model.SearchString" asp-route-page="@Model.StaffSearchResult.StaffSearchItems.PageIndex">@result.GivenNames @result.FamilyName</a></td>
+                                <td class="govuk-table__cell">@result.Uln</td>
+                                <td class="govuk-table__cell">@result.Standard (@result.StandardCode)</td>
+                                <td class="govuk-table__cell">@result.CertificateReference</td>
+                                <td class="govuk-table__cell">@result.CertificateStatus</td>
+                                <td class="govuk-table__cell">@result.LastUpdatedAt?.ToSfaShortDateString()</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+
+    @if (Model.StaffSearchResult.StaffSearchItems != null && (Model.StaffSearchResult.StaffSearchItems.HasPreviousPage || Model.StaffSearchResult.StaffSearchItems.HasNextPage))
+    {
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
+
+                <div class="page-navigation">
+                    @if (Model.StaffSearchResult.StaffSearchItems.HasPreviousPage)
+                    {
+                        <a asp-action="Results"
+                        asp-controller="Search"
+                        asp-route-searchstring="@Model.SearchString"
+                        asp-route-page="@( Model.StaffSearchResult.StaffSearchItems.PageIndex - 1)"
+                        class="govuk-link previous">
+                            <i class="arrow-button icon-left-open">&#xe800;</i>
+                            <span class="description">Previous <span class="hide-mob">page</span></span>
+                            <span class="counter">Page <span class="prevPage">@(Model.StaffSearchResult.StaffSearchItems.PageIndex - 1)</span> of <span class="totalPage">@(Model.StaffSearchResult.StaffSearchItems.TotalPages)</span></span>
+                        </a>
+                    }
+
+                    @if (Model.StaffSearchResult.StaffSearchItems.HasNextPage)
+                    {
+                        <a asp-action="Results"
+                        asp-controller="Search"
+                        asp-route-searchstring="@Model.SearchString"
+                        asp-route-page="@( Model.StaffSearchResult.StaffSearchItems.PageIndex + 1)"
+                        class="govuk-link next">
+                            <i class="arrow-button icon-right-open">&#xe801;</i>
+                            <span class="description">Next <span class="hide-mob">page</span></span>
+                            <span class="counter">Page <span class="nextPage">@(Model.StaffSearchResult.StaffSearchItems.PageIndex + 1)</span> of <span class="totalPage">@(Model.StaffSearchResult.StaffSearchItems.TotalPages)</span></span>
+                        </a>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+
+</main>

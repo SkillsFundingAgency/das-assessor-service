@@ -7,49 +7,55 @@
 }
 @Html.HiddenFor(c => c.OrganisationId)
 
-<div class="grid-row">
-    <div class="column-two-thirds">
-        <a href="/register/search-standards/@Model.OrganisationId" class="link-back">Return to standards search</a>
-        <h1 class="heading-xlarge">
-            <span class="heading-secondary">@Model.OrganisationId</span>
-            Standard search results for @Model.OrganisationName
-            <span class="heading-secondary">Number of results: @Model.Results.Count</span>
-        </h1>
-    </div>
-</div>
+<a class="govuk-back-link" href="/register/search-standards/@Model.OrganisationId">Return to standards search</a>
 
-
-@if (@Model.Results.Count > 0)
-{
-    <div class="grid-row">
-        <div class="column-full">
-            <div class="form-group">
-                <table class="table responsive table-font-xsmall">
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Standard ID</th>
-                            <th>Effective from</th>
-                            <th>Effective to</th>
-                            <th>Last date for new starts</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var result in Model.Results.OrderBy(x => x.Title))
-                        {
-                            <tr>
-                                <td data-label="Name">@result.Title</td>
-                                <td data-label="ID">@result.StandardId</td>
-                                <td data-label="Effective from">@result.StandardData.EffectiveFrom.ToSfaShortestDateString()</td>
-                                <td data-label="Effective to">@result.StandardData.EffectiveTo.ToSfaShortestDateString()</td>
-                                <td data-label="Last date for new starts">@result.StandardData.LastDateForNewStarts.ToSfaShortestDateString()</td>
-                                <td class="numeric"><a href="/register/add-standard/organisation/@Model.OrganisationId/standard/@result.StandardId">Add to organisation</a></td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <span class="govuk-caption-xl">@Model.OrganisationId</span>
+            <h1 class="govuk-heading-xl govuk-!-margin-bottom-1">
+                Standard search results for @Model.OrganisationName
+            </h1>
+            <span class="govuk-caption-xl">Number of results: @Model.Results.Count</span>
         </div>
     </div>
-}
+
+    @if (@Model.Results.Count > 0)
+    {
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
+                <div class="form-group">
+                    <table class="govuk-table table-font-xsmall">
+                        <thead class="govuk-table__head">
+                            <tr class="govuk-table__row">
+                                <th class="govuk-table__header" scope="col">Name</th>
+                                <th class="govuk-table__header" scope="col">Standard ID</th>
+                                <th class="govuk-table__header" scope="col">Effective from</th>
+                                <th class="govuk-table__header" scope="col">Effective to</th>
+                                <th class="govuk-table__header" scope="col">Last date for new starts</th>
+                                <th class="govuk-table__header govuk-table__header--numeric"></th>
+                            </tr>
+                        </thead>
+                        <tbody class="govuk-table__body">
+                            @foreach (var result in Model.Results.OrderBy(x => x.Title))
+                            {
+                                <tr class="govuk-table__row">
+                                    <td class="govuk-table__cell" data-label="Name">@result.Title</td>
+                                    <td class="govuk-table__cell" data-label="ID">@result.StandardId</td>
+                                    <td class="govuk-table__cell" data-label="Effective from">@result.StandardData.EffectiveFrom.ToSfaShortestDateString()</td>
+                                    <td class="govuk-table__cell" data-label="Effective to">@result.StandardData.EffectiveTo.ToSfaShortestDateString()</td>
+                                    <td class="govuk-table__cell" data-label="Last date for new starts">@result.StandardData.LastDateForNewStarts.ToSfaShortestDateString()</td>
+                                    <td class="govuk-table__cell govuk-table__cell--numeric">
+                                        <a class="govuk-link" href="/register/add-standard/organisation/@Model.OrganisationId/standard/@result.StandardId">
+                                            Add to organisation
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
+</main>

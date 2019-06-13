@@ -178,7 +178,7 @@
     <value>Enter a name that is 2 or more characters</value>
   </data>
   <data name="ContactIdDoesntExist" xml:space="preserve">
-    <value>The Contact Id is invalid</value>
+    <value>The Contact ID is invalid</value>
   </data>
   <data name="EmailIsIncorrectFormat" xml:space="preserve">
     <value>The email is the wrong format</value>
@@ -193,7 +193,7 @@
     <value>At least 1 of the delivery areas is not valid</value>
   </data>
   <data name="SearchStandardsTooShort" xml:space="preserve">
-    <value>The entry must be a number or a phrase with at least 2 characters</value>
+    <value>Enter 2 or more characters</value>
   </data>
   <data name="OrganisationStandardEffectiveFromAfterStandardEffectiveTo" xml:space="preserve">
     <value>The organisation standard effective from date must be on or before the standard effective to date</value>
@@ -214,22 +214,22 @@
     <value>The organisation standard effective from date must be on or before organisation standard effective to date</value>
   </data>
   <data name="OrganisationStandardCannotBeMadeLiveBecauseEffectiveFromNotSet" xml:space="preserve">
-    <value>This standard cannot be made live because the Effective From is not set</value>
+    <value>This standard cannot be made live because the effective from date is not set</value>
   </data>
   <data name="OrganisationStandardCannotBeUpdatedBecauseEffectiveFromNotSet" xml:space="preserve">
-    <value>This standard cannot be updated because the Effective From is not set</value>
+    <value>This standard cannot be updated because the effective from date is not set</value>
   </data>
   <data name="OrganisationStandardCannotBeAddedBecauseEffectiveFromNotSet" xml:space="preserve">
     <value>An effective from date is required</value>
   </data>
   <data name="OrganisationStandardCannotBeUpdatedBecauseOrganisationNotLive" xml:space="preserve">
-    <value>This standard cannot be updated because the organisation is not Live</value>
+    <value>This standard cannot be updated because the organisation is not live</value>
   </data>
   <data name="AddressIsNotEntered" xml:space="preserve">
-    <value>There are insufficient details in the address</value>
+    <value>Enter an address</value>
   </data>
   <data name="PostcodeIsNotEntered" xml:space="preserve">
-    <value>There are insufficient details in the postcode</value>
+    <value>Enter a postcode</value>
   </data>
   <data name="UkprnIsNotPresent" xml:space="preserve">
     <value>The organisation cannot go live without a UKPRN</value>
@@ -250,9 +250,9 @@
     <value>There is already an organisation with this company number</value>
   </data>
   <data name="OrganisationCharityNumberNotValid" xml:space="preserve">
-    <value>Enter valid charity number</value>
+    <value>Enter a valid charity number</value>
   </data>
   <data name="OrganisationCompanyNumberNotValid" xml:space="preserve">
-    <value>Enter valid company number</value>
+    <value>Enter a valid company number</value>
   </data>
 </root>

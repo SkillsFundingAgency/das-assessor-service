@@ -6,72 +6,78 @@
     Layout = "_Layout";
 }
 
-<div class="grid-row">
-    <div class="column-full">
-        <a asp-action="Index" asp-controller="Dashboard" class="link-back">Return to dashboard</a>
+<a  class="govuk-back-link" asp-action="Index" asp-controller="Dashboard">Return to dashboard</a>
 
-        <h1 class="heading-xlarge">External API users</h1>
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
 
-        @if (@Model.TotalRecordCount > 0)
-        {
-            <table class="table responsive table-font-xsmall">
-                <thead>
-                    <tr>
-                        <th>Ukprn</th>
-                        <th>Email</th>
-                        <th>Name</th>
-                        <th>Access</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var user in @Model.Items)
-                    {
-                    <tr>
-                        <td data-label="Ukprn">@user.Ukprn</td>
-                        <td data-label="Email">@user.Email</td>
-                        <td data-label="Name">@user.FirstName</td>
-                        <td data-label="Access">@Html.Raw(string.Equals(user.State, "blocked") ? "Disabled" : "Enabled")</td>
-                        <td><a asp-action="UserDetails" asp-controller="ExternalApi" asp-route-userId="@user.Id">View details</a></td>
-                    </tr>
-                    }
-                </tbody>
-            </table>
-        }
-        else
-        {
-            <div class="form-group">
-                <span class="bold">No Users present</span>
-            </div>
-        }
-    </div>
-</div>
+            <h1 class="govuk-heading-xl">
+                <span class="govuk-caption-xl">External API</span>
+                Users
+            </h1>
 
-@if (Model.HasPreviousPage || Model.HasNextPage)
-{
-    <div class="grid-row">
-        <div class="column-full">
-            <div class="page-navigation">
-
-                @if (Model.HasPreviousPage)
-                {
-                    <a asp-action="Index" asp-controller="ExternalApi" asp-route-page="@(Model.PageIndex - 1)" class="previous">
-                        <i class="arrow-button icon-left-open">&#xe800;</i>
-                        <span class="description">Previous <span class="hide-mob">page</span></span>
-                        <span class="counter">Page <span class="prevPage">@(Model.PageIndex - 1)</span> of <span class="totalPage">@(Model.TotalPages)</span></span>
-                    </a>
-                }
-
-                @if (Model.HasNextPage)
-                {
-                    <a asp-action="Index" asp-controller="ExternalApi" asp-route-page="@(Model.PageIndex + 1)" class="next">
-                        <i class="arrow-button icon-right-open">&#xe801;</i>
-                        <span class="description">Next <span class="hide-mob">page</span></span>
-                        <span class="counter">Page <span class="nextPage">@(Model.PageIndex + 1)</span> of <span class="totalPage">@(Model.TotalPages)</span></span>
-                    </a>
-                }
-
-            </div>
+            @if (@Model.TotalRecordCount > 0)
+            {
+                <table class="govuk-table table-font-xsmall">
+                    <thead class="govuk-table__head">
+                        <tr class="govuk-table__row">
+                            <th class="govuk-table__header" scope="col">Ukprn</th>
+                            <th class="govuk-table__header" scope="col">Email</th>
+                            <th class="govuk-table__header" scope="col">Name</th>
+                            <th class="govuk-table__header" scope="col">Access</th>
+                            <th class="govuk-table__header"></th>
+                        </tr>
+                    </thead>
+                    <tbody class="govuk-table__body">
+                        @foreach (var user in @Model.Items)
+                        {
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__cell" data-label="Ukprn">@user.Ukprn</td>
+                            <td class="govuk-table__cell" data-label="Email">@user.Email</td>
+                            <td class="govuk-table__cell" data-label="Name">@user.FirstName</td>
+                            <td class="govuk-table__cell" data-label="Access">@Html.Raw(string.Equals(user.State, "blocked") ? "Disabled" : "Enabled")</td>
+                            <td class="govuk-table__cell govuk-table__cell--numeric"><a class="govuk-link" asp-action="UserDetails" asp-controller="ExternalApi" asp-route-userId="@user.Id">View details</a></td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <div class="form-group">
+                    <span class="bold">No Users present</span>
+                </div>
+            }
         </div>
     </div>
-}
+
+    @if (Model.HasPreviousPage || Model.HasNextPage)
+    {
+        <div class="grid-row">
+            <div class="column-full">
+                <div class="page-navigation">
+
+                    @if (Model.HasPreviousPage)
+                    {
+                        <a asp-action="Index" asp-controller="ExternalApi" asp-route-page="@(Model.PageIndex - 1)" class="previous">
+                            <i class="arrow-button icon-left-open">&#xe800;</i>
+                            <span class="description">Previous <span class="hide-mob">page</span></span>
+                            <span class="counter">Page <span class="prevPage">@(Model.PageIndex - 1)</span> of <span class="totalPage">@(Model.TotalPages)</span></span>
+                        </a>
+                    }
+
+                    @if (Model.HasNextPage)
+                    {
+                        <a asp-action="Index" asp-controller="ExternalApi" asp-route-page="@(Model.PageIndex + 1)" class="next">
+                            <i class="arrow-button icon-right-open">&#xe801;</i>
+                            <span class="description">Next <span class="hide-mob">page</span></span>
+                            <span class="counter">Page <span class="nextPage">@(Model.PageIndex + 1)</span> of <span class="totalPage">@(Model.TotalPages)</span></span>
+                        </a>
+                    }
+
+                </div>
+            </div>
+        </div>
+    }
+</main>

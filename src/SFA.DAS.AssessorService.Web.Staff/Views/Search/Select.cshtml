@@ -8,148 +8,204 @@
     Layout = "_Layout";
 }
 
-<div class="grid-row">
-    <div class="column-two-thirds">
-        @if (Model.BatchNumber.HasValue)
-        {
-            <a class="link-back" asp-action="Results" asp-controller="BatchSearch" asp-route-batchNumber="@Model.BatchNumber">Back</a>
-        }
-        else
-        {
-            <a class="link-back" asp-action="Results" asp-controller="Search" asp-route-searchstring="@Model.SearchString" asp-route-page="@Model.Page">Back</a>
-        }
-
-        @if (Model.Learner.CertificateReference != null)
-        {
-            <h1 class="heading-xlarge">
-                Certificate: @Model.Learner.CertificateReference
-                <span class="heading-secondary">Status: @Model.Learner.CertificateStatus</span>
-            </h1>
-            <h2 class="heading-large">Apprentice details</h2>
-        }
-        else
-        {
-            <h1 class="heading-large">Apprentice details</h1>
-        }
-
-    </div>
-</div>
-
-<div class="grid-row">
-    <div class="column-one-half">
-        <table>
-            <tbody>
-                <tr>
-                    <td class="bold">Name</td>
-                    <td>@Model.Learner.GivenNames @Model.Learner.FamilyName</td>
-                </tr>
-                <tr>
-                    <td class="bold"><abbr title="Unique learner number">ULN</abbr></td>
-                    <td>@Model.Learner.Uln</td>
-                </tr>
-                <tr>
-                    <td class="bold">Funding model</td>
-                    <td>@Model.Learner.FundingModel</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-</div>
-
-@if (Model.Learner.CertificateReference != null)
+@if (Model.BatchNumber.HasValue)
 {
-    <div class="grid-row">
-        <div class="column-two-thirds">
-            <table>
-                <caption class="heading-large">Certificate details</caption>
-                <tbody>
-                    <tr>
-                        <td><span class="bold">Certificate number</span></td>
-                        <td>@Model.Learner.CertificateReference</td>
-                    </tr>
-                    <tr>
-                        <td><span class="bold">EPAO</span></td>
-                        <td>@Model.Learner.OrganisationName</td>
-                    </tr>
-                    <tr>
-                        <td><span class="bold">EPAO ID</span></td>
-                        <td>@Model.Learner.OrganisationId</td>
-                    </tr>
-                    <tr>
-                        <td><span class="bold">Standard</span></td>
-                        <td>@Model.Learner.Standard (@Model.Learner.StandardCode)</td>
-                    </tr>
-                    <tr>
-                        <td><span class="bold">Level</span></td>
-                        <td>@Model.Learner.Level</td>
-                    </tr>
-                    <tr>
-                        <td><span class="bold">Option</span></td>
-                        @if (@Model.Learner.Option != null)
-                        {
-                            <td>@Model.Learner.Option</td>
-                        }
-                        else
-                        {
-                            <td>None</td>
-                        }
-                    </tr>
-                    <tr>
-                        <td><span class="bold">Grade</span></td>
-                        <td>@Model.Learner.OverallGrade</td>
-                    </tr>
-                    <tr>
-                        <td><span class="bold">Learner start date</span></td>
-                        <td>@Model.Learner.LearnStartDate?.ToShortDateString()</td>
-                    </tr>
-                    <tr>
-                        <td><span class="bold">Achievement date</span></td>
-                        <td>@Model.Learner.AchievementDate?.ToShortDateString()</td>
-                    </tr>
-                    <tr>
-                        <td><span class="bold">Status</span></td>
-                        <td>@Model.Learner.CertificateStatus</td>
-                    </tr>
-                </tbody>
-            </table>
+    <a class="govuk-back-link" asp-action="Results" asp-controller="BatchSearch" asp-route-batchNumber="@Model.BatchNumber">Back</a>
+}
+else
+{
+    <a class="govuk-back-link" asp-action="Results" asp-controller="Search" asp-route-searchstring="@Model.SearchString" asp-route-page="@Model.Page">Back</a>
+}
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+
+            @if (Model.Learner.CertificateReference != null)
+            {
+                <h1 class="govuk-heading-xl">
+                    Certificate @Model.Learner.CertificateReference
+                    <span class="govuk-caption-xl">Status: @Model.Learner.CertificateStatus</span>
+                </h1>
+                
+            }
+            else
+            {
+                <h1 class="govuk-heading-xl">
+                    No certificate requested
+                </h1>
+            }
+
         </div>
     </div>
 
-    <div class="grid-row">
-        <div class="column-full">
-            <h2 class="heading-large">History</h2>
-            <div class="form-group">
-                <table class="table responsive table-font-xsmall">
-                    <thead>
-                        <tr>
-                            <th>Date and time</th>
-                            <th>Action</th>
-                            <th>User</th>
-                            <th>Status</th>
-                            <th>Batch</th>
-                            <th>@if (Model.Learner.CertificateLogs.Count() > 1) { @Html.Raw("Change"); }</th>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <h2 class="govuk-heading-l">Apprentice details</h2>
+
+            <dl class="govuk-summary-list">
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Name
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Model.Learner.GivenNames @Model.Learner.FamilyName
+                    </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        <abbr title="Unique learner number">ULN</abbr>
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Model.Learner.Uln
+                    </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Funding model
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Model.Learner.FundingModel
+                    </dd>
+                </div>
+            </dl>
+        </div>
+    </div>
+
+    @if (Model.Learner.CertificateReference != null)
+    {
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <h2 class="govuk-heading-l">Certificate details</h2>
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Certificate number
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            @Model.Learner.CertificateReference
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            EPAO
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            @Model.Learner.OrganisationName
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            EPAO ID
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            @Model.Learner.OrganisationId
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Standard
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            @Model.Learner.Standard (@Model.Learner.StandardCode)
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Level
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            @Model.Learner.Level
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Option
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            @if (@Model.Learner.Option != null)
+                            {
+                                @Model.Learner.Option
+                            }
+                            else
+                            {
+                                <text>None</text>
+                            }
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Grade
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            @Model.Learner.OverallGrade
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Learner start date
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            @Model.Learner.LearnStartDate?.ToShortDateString()
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Achievement date
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            @Model.Learner.AchievementDate?.ToShortDateString()
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Status
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            @Model.Learner.CertificateStatus
+                        </dd>
+                    </div>
+                </dl>
+            </div>
+        </div>
+
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
+                <h2 class="govuk-heading-l" id="history">History</h2>
+
+                <table class="govuk-table">
+                    <thead class="govuk-table__head">
+                        <tr class="govuk-table__row">
+                            <th class="govuk-table__header" scope="col">Date and time</th>
+                            <th class="govuk-table__header" scope="col">Action</th>
+                            <th class="govuk-table__header" scope="col">User</th>
+                            <th class="govuk-table__header" scope="col">Status</th>
+                            <th class="govuk-table__header" scope="col">Batch</th>
+                            <th class="govuk-table__header" scope="col">@if (Model.Learner.CertificateLogs.Count() > 1) { @Html.Raw("Changes"); }</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody class="govuk-table__body">
                         @foreach (var log in Model.Learner.CertificateLogs)
                         {
-                            <tr>
-                                <td data-label="Date and time">@log.EventTime.UtcToTimeZoneTime()</td>
-                                <td data-label="Action">@log.Action</td>
-                                <td data-label="By">
+                            <tr class="govuk-table__row">
+                                <td class="govuk-table__cell" data-label="Date and time">@log.EventTime.UtcToTimeZoneTime()</td>
+                                <td class="govuk-table__cell" data-label="Action">@log.Action</td>
+                                <td class="govuk-table__cell" data-label="By">
                                     @log.ActionBy<br />
-                                    @log.ActionByEmail
+                                    <span class="govuk-body-s">@log.ActionByEmail</span>
                                 </td>
-                                <td data-label="Status">@log.Status</td>
-                                <td data-label="Batch">@log.BatchNumber</td>
-                                <td data-label="Change">
+                                <td class="govuk-table__cell" data-label="Status">@log.Status</td>
+                                <td class="govuk-table__cell" data-label="Batch">@log.BatchNumber</td>
+                                <td class="govuk-table__cell" data-label="Change">
                                     @{
                                         if (Model.Learner.CertificateLogs.Count() > 1)
                                         {
                                             foreach (var change in log.DifferencesToPrevious)
                                             {
-                                                <p>
-                                                    <span class="bold">@(change.Key)<text>:</text></span>
+                                                <p class="govuk-body-s govuk-!-font-weight-bold govuk-!-margin-bottom-0">
+                                                    @(change.Key)
+                                                </p>
+                                                <p class="govuk-body-s govuk-!-margin-bottom-3">
                                                     @change.Value
                                                 </p>
                                             }
@@ -164,10 +220,10 @@
                                     }
                                 </td>
                             </tr>
-                            <tr class="js-expandble-cell js-hidden expandble-cell" aria-hidden="true">
-                                <td data-label="Reason for change" colspan="6">
+                            <tr class="govuk-table__row js-expandble-cell expandble-cell--hidden expandble-cell" aria-hidden="true">
+                                <td class="govuk-table__cell" data-label="Reason for change" colspan="6">
                                     <div class="expandble-cell-content">
-                                        <h3 class="heading-small expandble-cell-content--first-heading">Reason for change</h3>
+                                        <h3 class="govuk-heading-s expandble-cell-content--first-heading">Reason for change</h3>
                                         @log.ReasonForChange
                                     </div>
                                 </td>
@@ -175,74 +231,83 @@
                         }
                     </tbody>
                 </table>
+
+                @if (Model.ShowDetail)
+                {
+                    <a class="govuk-button" asp-action="Select" asp-route-stdcode="@Model.Learner.StandardCode" asp-route-uln="@Model.Learner.Uln" asp-route-searchstring="@Model.SearchString" asp-route-alllogs=true>Show all history</a>
+                }
+                else
+                {
+                    <a class="govuk-button" asp-action="Select" asp-route-stdcode="@Model.Learner.StandardCode" asp-route-uln="@Model.Learner.Uln" asp-route-searchstring="@Model.SearchString" asp-route-alllogs=false>Show summary</a>
+                }
             </div>
         </div>
-    </div>
-
-}
-else
-{
-    <div class="grid-row">
-        <div class="column-two-thirds">
-            <table>
-                <caption class="heading-large">Course details</caption>
-                <tbody>
-                    <tr>
-                        <td><span class="bold">Standard</span></td>
-                        <td>@Model.Learner.Standard (@Model.Learner.StandardCode)</td>
-                    </tr>
-                    <tr>
-                        <td><span class="bold">Level</span></td>
-                        <td>@Model.Learner.Level</td>
-                    </tr>
-                    
-                        <tr>
-                            <td><span class="bold">Option</span></td>
+    }
+    else
+    {
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <h2 class="govuk-heading-l">Course details</h2>
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Standard
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            @Model.Learner.Standard (@Model.Learner.StandardCode)
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Level
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            @Model.Learner.Level
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Option
+                        </dt>
+                        <dd class="govuk-summary-list__value">
                             @if (@Model.Learner.Option != null)
                             {
-                                <td>@Model.Learner.Option</td>
+                                @Model.Learner.Option
                             }
                             else
                             {
-                                <td>None</td>
+                                <text>None</text>
                             }
-                        </tr>
-                </tbody>
-            </table>
-            <h2 class="heading-medium">No Certificate requested</h2>
+                        </dd>
+                    </div>
+                </dl>
+            </div>
+        </div>
+    }
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <h2 class="govuk-heading-m">What do you want to do next?</h2>
+            <ul class="govuk-list">
+                @if (Model.Learner.CertificateReference != null)
+                {
+                    if(Model.Learner.CertificateStatus == CertificateStatus.Printed || Model.Learner.CertificateStatus == CertificateStatus.Reprint)
+                    { 
+                        <li>
+                            <a class="govuk-link" asp-action="Index" asp-controller="DuplicateRequest" asp-route-certificateId="@Model.Learner.CertificateId" asp-route-stdcode="@Model.Learner.StandardCode" asp-route-uln="@Model.Learner.Uln" asp-route-searchstring="@Model.SearchString">Request duplicate certificate</a>
+                        </li>
+                    }
+                    else if (Model.Learner.CertificateStatus == CertificateStatus.Draft || Model.Learner.CertificateStatus == CertificateStatus.Submitted)
+                    {
+                        <li>
+                            <a class="govuk-link" asp-action="Check" asp-controller="CertificateAmend" asp-route-certificateId="@Model.Learner.CertificateId" asp-route-stdcode="@Model.Learner.StandardCode" asp-route-uln="@Model.Learner.Uln" asp-route-searchstring="@Model.SearchString">Amend certificate information</a>
+                        </li>
+                    }
+                }
+                <li>
+                    <a class="govuk-link" asp-controller="Search" asp-action="Index">Search for another apprentice</a>
+                </li>
+            </ul>
         </div>
     </div>
-}
-
-<div class="grid-row">
-    <div class="column-two-thirds">
-        @if (Model.ShowDetail)
-        {
-            <a class="button" asp-action="Select" asp-route-stdcode="@Model.Learner.StandardCode" asp-route-uln="@Model.Learner.Uln" asp-route-searchstring="@Model.SearchString" asp-route-alllogs=true>Show all history</a>
-        }
-        else
-        {
-            <a class="button" asp-action="Select" asp-route-stdcode="@Model.Learner.StandardCode" asp-route-uln="@Model.Learner.Uln" asp-route-searchstring="@Model.SearchString" asp-route-alllogs=false>Show summary</a>
-        }
-    </div>
-</div>
-
-<div class="grid-row">
-    <div class="column-two-thirds">
-        <h2 class="heading-medium">What do you want to do next?</h2>
-        <ul class="list list-bullet">
-            @if (Model.Learner.CertificateReference != null)
-            {
-                if(Model.Learner.CertificateStatus == CertificateStatus.Printed || Model.Learner.CertificateStatus == CertificateStatus.Reprint)
-                { 
-                    <li><a asp-action="Index" asp-controller="DuplicateRequest" asp-route-certificateId="@Model.Learner.CertificateId" asp-route-stdcode="@Model.Learner.StandardCode" asp-route-uln="@Model.Learner.Uln" asp-route-searchstring="@Model.SearchString">request duplicate certificate</a></li>
-                }
-                else if (Model.Learner.CertificateStatus == CertificateStatus.Draft || Model.Learner.CertificateStatus == CertificateStatus.Submitted)
-                {
-                    <li><a asp-action="Check" asp-controller="CertificateAmend" asp-route-certificateId="@Model.Learner.CertificateId" asp-route-stdcode="@Model.Learner.StandardCode" asp-route-uln="@Model.Learner.Uln" asp-route-searchstring="@Model.SearchString">amend certificate information</a></li>
-                }
-            }
-            <li><a asp-controller="Search" asp-action="Index">Search for another apprentice</a></li>
-        </ul>
-    </div>
-</div>
+</main>

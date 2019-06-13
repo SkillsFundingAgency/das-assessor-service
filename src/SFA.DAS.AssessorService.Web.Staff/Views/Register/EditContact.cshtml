@@ -4,96 +4,116 @@
     ViewBag.Title = "Edit Contact";
     Layout = "_Layout";
 }
-<div class="grid-row">
-    <div class="column-two-thirds">
-        <a href="/register/view-organisation/@Model.OrganisationId" class="link-back">Return to organisation</a>
-        <form class="register-search-form" asp-action="EditContact" asp-controller="Register" method="POST">
 
-            <div class="js-error-summary error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
-                <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
-                    There is a problem
-                </h2>
+<a class="govuk-back-link" href="/register/view-organisation/@Model.OrganisationId">Return to organisation</a>
 
-                <ul class="js-error-summary-list error-summary-list"></ul>
-            </div>
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <form class="register-search-form" asp-action="EditContact" asp-controller="Register" method="POST">
+                @Html.HiddenFor(c => c.ContactId)
 
-            @if (!ViewData.ModelState.IsValid)
-            {
-                <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
-                    <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+                <div class="js-error-summary govuk-error-summary" role="alert" aria-labelledby="error-summary-title" tabindex="-1" data-module="error-summary">
+                    <h2 class="govuk-error-summary__title" id="error-summary-title">
                         There is a problem
                     </h2>
-                    <ul class="error-summary-list">
-                        <li><a sfa-validation-for="FirstName"></a></li>
-                        <li><a sfa-validation-for="LastName"></a></li>
-                        <li><a sfa-validation-for="Email"></a></li>
-                        <li><a sfa-validation-for="PhoneNumber"></a></li>
-                        <li><a sfa-validation-for="ContactId"></a></li>
-                        <li><a sfa-validation-for="ContactDetails"></a></li>
-                    </ul>
-                </div>
-            }
-
-            <h1>
-                <label class="form-label" for="">
-                    <span class="heading-xlarge">Edit Contact</span>
-                    @Html.HiddenFor(c => c.ContactId)
-                </label>
-            </h1>
-
-            <div id="organisationWrapper">
-                <div class="form-group" sfa-validation-for="ContactDetails" sfa-validationerror-class="form-group-error">
-                    <span class="error-message" asp-validation-for="ContactDetails"></span>
-                    <div class="form-group" sfa-validation-for="OrganisationName" sfa-validationerror-class="form-group-error">
-                        <label for="OrganisationName">
-                            <span class="form-label-bold">Organisation Name</span>
-                            @Model.OrganisationName
-                        </label>
-                    </div>
-                    <div class="form-group" sfa-validation-for="FirstName" sfa-validationerror-class="form-group-error">
-                        <label for="FirstName">
-                            <span class="form-label-bold">First Name</span>
-                            <span class="error-message" asp-validation-for="FirstName"></span>
-                        </label>
-                        <input class="form-control" name="FirstName" sfa-validation-for="FirstName" sfa-validationerror-class="form-control-error" asp-for="FirstName" type="text" maxlength="120" />
-                    </div>
-                    <div class="form-group" sfa-validation-for="LastName" sfa-validationerror-class="form-group-error">
-                        <label for="LastName">
-                            <span class="form-label-bold">Last Name</span>
-                            <span class="error-message" asp-validation-for="LastName"></span>
-                        </label>
-                        <input class="form-control" name="LastName" sfa-validation-for="LastName" sfa-validationerror-class="form-control-error" asp-for="LastName" type="text" maxlength="120" />
-                    </div>
-                    <div class="form-group" sfa-validation-for="Email" sfa-validationerror-class="form-group-error">
-                        <label for="Email">
-                            <span class="form-label-bold">Email</span>
-                            <span class="error-message" asp-validation-for="Email"></span>
-                        </label>
-                        <input class="form-control" name="Email" sfa-validation-for="Email" sfa-validationerror-class="form-control-error" asp-for="Email" type="text" maxlength="120" />
-                    </div>
-                    <div class="form-group" sfa-validation-for="PhoneNumber" sfa-validationerror-class="form-group-error">
-                        <label for="PhoneNumber">
-                            <span class="form-label-bold">Phone Number</span>
-                            <span class="error-message" asp-validation-for="PhoneNumber"></span>
-                        </label>
-                        <input class="form-control" name="PhoneNumber" sfa-validation-for="PhoneNumber" sfa-validationerror-class="form-control-error" asp-for="PhoneNumber" type="text" />
-                    </div>
-                    <div class="form-group">
-                        <label for="IsPrimaryContact">
-                            <span class="form-label-bold">Primary Contact: @Model.IsPrimaryContact</span>
-                        </label>
+                    <div class="govuk-error-summary__body">
+                        <ul class="js-error-summary-list govuk-list govuk-error-summary__list"></ul>
                     </div>
                 </div>
-            </div>
-            <div class="form-group">
-                <button class="button" type="submit" name="ActionChoice" value="Save">Save</button>
+
+                @if (!ViewData.ModelState.IsValid)
+                {
+                    <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
+                        <h2 class="govuk-error-summary__title" id="error-summary-title">
+                            There is a problem
+                        </h2>
+                        <div class="govuk-error-summary__body">
+                            <ul class="govuk-list govuk-error-summary__list">
+                                <li><a sfa-validation-for="FirstName"></a></li>
+                                <li><a sfa-validation-for="LastName"></a></li>
+                                <li><a sfa-validation-for="Email"></a></li>
+                                <li><a sfa-validation-for="PhoneNumber"></a></li>
+                                <li><a sfa-validation-for="ContactId"></a></li>
+                                <li><a sfa-validation-for="ContactDetails"></a></li>
+                            </ul>
+                        </div>
+                    </div>
+                }
+
+                <h1 class="govuk-heading-xl">
+                    Edit contact
+                </h1>
+
+                <div id="organisationWrapper">
+                    <div class="govuk-form-group" sfa-validation-for="ContactDetails" sfa-validationerror-class="govuk-form-group--error">
+                        <span class="govuk-error-message" asp-validation-for="ContactDetails"></span>
+                        <div class="govuk-form-group" sfa-validation-for="OrganisationName" sfa-validationerror-class="form-group-error">
+                            <label class="govuk-label govuk-label--m" for="OrganisationName">
+                                Organisation name
+                            </label>
+                            <p class="govuk-body">@Model.OrganisationName</p>
+                        </div>
+                        <div class="govuk-form-group">
+                            <label class="govuk-label govuk-label--m" for="IsPrimaryContact">
+                                Primary contact
+                            </label>
+                            <p class="govuk-body">@Model.IsPrimaryContact</p>
+                        </div>
+                        <div class="govuk-form-group" sfa-validation-for="FirstName" sfa-validationerror-class="govuk-form-group--error">
+                            <label class="govuk-label" for="FirstName">
+                                Given name
+                            </label>
+                            @if (!ViewData.ModelState.IsValid)
+                            {
+                                <span class="govuk-error-message" asp-validation-for="FirstName"></span>
+                            }
+                            <input class="govuk-input" name="FirstName" sfa-validation-for="FirstName" sfa-validationerror-class="govuk-input--error" asp-for="FirstName" type="text" maxlength="120" />
+                        </div>
+                        <div class="govuk-form-group" sfa-validation-for="LastName" sfa-validationerror-class="govuk-form-group--error">
+                            <label class="govuk-label" for="LastName">
+                                Family name
+                            </label>
+                            @if (!ViewData.ModelState.IsValid)
+                            {
+                                <span class="govuk-error-message" asp-validation-for="LastName"></span>
+                            }
+                            <input class="govuk-input" name="LastName" sfa-validation-for="LastName" sfa-validationerror-class="govuk-input--error" asp-for="LastName" type="text" maxlength="120" />
+                        </div>
+                        <div class="govuk-form-group" sfa-validation-for="Email" sfa-validationerror-class="govuk-form-group--error">
+                            <label class="govuk-label" for="Email">
+                                Email
+                            </label>
+                            @if (!ViewData.ModelState.IsValid)
+                            {
+                                <span class="govuk-error-message" asp-validation-for="Email"></span>
+                            }
+                            <input class="govuk-input" name="Email" sfa-validation-for="Email" sfa-validationerror-class="govuk-input--error" asp-for="Email" type="text" maxlength="120" />
+                        </div>
+                        <div class="govuk-form-group" sfa-validation-for="PhoneNumber" sfa-validationerror-class="govuk-form-group--error">
+                            <label class="govuk-label" for="PhoneNumber">
+                                Phone number
+                            </label>
+                            @if (!ViewData.ModelState.IsValid)
+                            {
+                                <span class="govuk-error-message" asp-validation-for="PhoneNumber"></span>
+                            }
+                            <input class="govuk-input" name="PhoneNumber" sfa-validation-for="PhoneNumber" sfa-validationerror-class="govuk-input--error" asp-for="PhoneNumber" type="text" />
+                        </div>
+                    </div>
+                </div>
+
+                <button class="govuk-button govuk-!-margin-right-1" type="submit" name="ActionChoice" value="Save">Save</button>
+                <a class="govuk-button govuk-button--secondary" href="/register/view-contact/@Model.ContactId">Cancel</a>
+
                 @if (!Model.IsPrimaryContact)
                 {
-                    <button class="button" type="submit" name="ActionChoice" value="MakePrimaryContact">Save &amp; Make Primary Contact</button>
+                    <div>
+                        <button class="govuk-button" type="submit" name="ActionChoice" value="MakePrimaryContact">Save and make primary contact</button>
+                    </div>
                 }
-                <a class="button" href="/register/view-contact/@Model.ContactId">Cancel</a>
-            </div>
-        </form>
-
+                
+            </form>
+        </div>
     </div>
-</div>
+</main>

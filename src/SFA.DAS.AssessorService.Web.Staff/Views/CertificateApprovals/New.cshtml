@@ -2,7 +2,10 @@
 @using SFA.DAS.AssessorService.Web.Staff
 
 
-@{ ViewBag.Title = "Staff Dashboard"; }
+@{ ViewBag.Title = "Privately funded certificates - New"; }
+
+
+<a class="govuk-back-link" asp-controller="Dashboard" asp-action="Index">Return to dashboard</a>
 
 <div>
     <nav class="app-navigation govuk-clearfix">
@@ -11,7 +14,7 @@
                 <a asp-controller="CertificateApprovals" asp-action="New">New</a>
             </li>
             <li class="app-navigation">
-                <a asp-controller="CertificateApprovals" asp-action="SentForApproval">Sent For Approval</a>
+                <a asp-controller="CertificateApprovals" asp-action="SentForApproval">Sent for approval</a>
             </li>
             <li class="app-navigation">
                 <a asp-controller="CertificateApprovals" asp-action="Approved">Approved</a>
@@ -23,89 +26,98 @@
     </nav>
 </div>
 
-<div class="grid-row">
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
 
-    <div class="column-full">
-
-        <a class="link-back" asp-controller="Dashboard" asp-action="Index">Return to dashboard</a>
-
-        @* hidden with css by default *@
-        <div class="js-error-summary error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
-            <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
-                There is a problem
-            </h2>
-            <ul class="js-error-summary-list error-summary-list"></ul>
-        </div>
-
-        @if (!ViewData.ModelState.IsValid)
-        {
-            <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
-                <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+            <div class="js-error-summary govuk-error-summary" role="alert" aria-labelledby="error-summary-title" tabindex="-1" data-module="error-summary">
+                <h2 class="govuk-error-summary__title" id="error-summary-title">
                     There is a problem
                 </h2>
-                <ul class="error-summary-list">
-                    @if (ViewData.ModelState.ErrorCount > 1)
-                    {
-                        <li>Please enter reasons for @ViewData.ModelState.ErrorCount rejections! </li>
-                    }
-                    else
-                    {
-                        <li>Please enter a reason for the rejection! </li>
-                    }
-                </ul>
+                <div class="govuk-error-summary__body">
+                    <ul class="js-error-summary-list govuk-list govuk-error-summary__list"></ul>
+                </div>
             </div>
-        }
 
-        <div sfa-anyvalidationerror-class="after-error-summary">
-            <h1 class="heading-large">
-                Privately Funded Certificates - New
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
+                    <h2 class="govuk-error-summary__title" id="error-summary-title">
+                        There is a problem
+                    </h2>
+                    <div class="govuk-error-summary__body">
+                        <ul class="govuk-list govuk-error-summary__list">
+                            @if (ViewData.ModelState.ErrorCount > 1)
+                            {
+                                <li>Please enter reasons for @ViewData.ModelState.ErrorCount rejections! </li>
+                            }
+                            else
+                            {
+                                <li>Please enter a reason for the rejection! </li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            }
+
+            <h1 class="govuk-heading-xl">
+                <span class="govuk-caption-xl">Privately funded certificates</span>
+                New certificates
             </h1>
 
             @if (@Model.ToBeApprovedCertificates.Items.Any())
             {
-                <div class="form-group">
+                <div class="govuk-form-group">
                     <form asp-controller="CertificateApprovals" asp-action="ExportSentForApproval" method="post">
                         <input type="hidden" name="status" id="status" value="ToBeApproved" />
                         <input type="hidden" name="privateFundingStatus" id="privateFundingStatus" value=""/>
-                        <button type="submit" class="button">Export</button>
+                        <button type="submit" class="govuk-button">Export</button>
                     </form>
                 </div>
             }
-
-            <form  class="apprentice-approvals-form js-disable-on-submit" asp-controller="CertificateApprovals" asp-action="Approvals">
-
-                @if (@Model.ToBeApprovedCertificates.Items.Any())
-                {
-                    await Html.RenderPartialAsync("_ApprovalsDetailsPartial", Model.ToBeApprovedCertificates, new ViewDataDictionary(ViewData)
-                        {
-                            {
-                                "Increment", 0
-                            },
-                            { "ApprovalResults", Model.ToBeApproveResults() },
-                            { "PageIndex", @Model.ToBeApprovedCertificates.PageIndex },
-                            {"ActionHint","SentForApproval" }
-                        });
-                    <button type="submit" class="button" role="button" id="submit-approval">Submit</button>
-                }
-                else
-                {
-                    <div class="info-summary">
-                        <h3 class="heading-medium">No new privately funded certificates found</h3>
-                    </div>
-                }
-            </form>
         </div>
     </div>
-</div>
+
+    <form class="apprentice-approvals-form js-disable-on-submit">
+        @if (@Model.ToBeApprovedCertificates.Items.Any())
+        {
+            await Html.RenderPartialAsync("_ApprovalsDetailsPartial", Model.ToBeApprovedCertificates, new ViewDataDictionary(ViewData)
+                {
+                    {
+                        "Increment", 0
+                    },
+                    { "ApprovalResults", Model.ToBeApproveResults() },
+                    { "PageIndex", @Model.ToBeApprovedCertificates.PageIndex },
+                    { "ActionHint","SentForApproval" }
+                });
+            <button type="submit" class="govuk-button" role="button" id="submit-approval">Submit</button>
+        }
+        else
+        {
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-two-thirds">
+                    <p class="govuk-body">No new privately funded certificates found.</p>
+                </div>
+            </div>
+        }
+    </form>
+
+    <form id="temp-form" type="post" asp-controller="CertificateApprovals" asp-action="Approvals">
+        <input type="hidden" name="jsonString" id="jsonString" />
+    </form>
+</main>
+
 @{
-    await Html.RenderPartialAsync("_ApprovalPaginationLinks", new ViewDataDictionary(ViewData)
-{
-{"PageIndex", Model.ToBeApprovedCertificates.PageIndex},
-{"TotalPages", Model.ToBeApprovedCertificates.TotalPages },
-{"HasPreviousPage", Model.ToBeApprovedCertificates.HasPreviousPage},
-{"HasNextPage", Model.ToBeApprovedCertificates.HasNextPage},
-{"Action","New" }
-});
+    await Html.RenderPartialAsync(
+        "_ApprovalPaginationLinks", new ViewDataDictionary(ViewData)
+        {
+            {"PageIndex", Model.ToBeApprovedCertificates.PageIndex},
+            {"TotalPages", Model.ToBeApprovedCertificates.TotalPages },
+            {"HasPreviousPage", Model.ToBeApprovedCertificates.HasPreviousPage},
+            {"HasNextPage", Model.ToBeApprovedCertificates.HasNextPage},
+            {"Action","New"}
+        }
+    );
 }
 
 @section Scripts {

@@ -5,59 +5,64 @@
     Layout = "_Layout";
 }
 
-<div class="grid-row">
-    <div class="column-two-thirds">
-        <a href="/register/view-organisation/@Model.OrganisationId" class="link-back">Return to organisation view</a>
+<a class="govuk-back-link" href="/register/view-organisation/@Model.OrganisationId">Return to organisation view</a>
 
-        <form class="register-search-form" asp-action="SearchStandardsResults" asp-controller="Register" method="get">
-            @Html.HiddenFor(c => c.OrganisationId)
-            @* hidden with js *@
-            <div class="js-error-summary error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
-                <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
-                    There is a problem
-                </h2>
-                <ul class="js-error-summary-list error-summary-list"></ul>
-            </div>
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
 
-            @if (!ViewData.ModelState.IsValid)
-            {
-                <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
-                    <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+            <form class="register-search-form" asp-action="SearchStandardsResults" asp-controller="Register" method="get">
+                @Html.HiddenFor(c => c.OrganisationId)
+
+                <div class="js-error-summary govuk-error-summary" role="alert" aria-labelledby="error-summary-title" tabindex="-1" data-module="error-summary">
+                    <h2 class="govuk-error-summary__title" id="error-summary-title">
                         There is a problem
                     </h2>
-                    <ul class="error-summary-list">
-                        <li><a sfa-validation-for="StandardSearchString"></a></li>
-                    </ul>
+                    <div class="govuk-error-summary__body">
+                        <ul class="js-error-summary-list govuk-list govuk-error-summary__list"></ul>
+                    </div>
                 </div>
-            }
 
-            <div sfa-anyvalidationerror-class="after-error-summary">
-                <label class="form-label" for="SearchString">
-                    <h1 class="heading-xlarge">
-                        <span class="heading-secondary">@Model.OrganisationId</span>
+                @if (!ViewData.ModelState.IsValid)
+                {
+                    <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
+                        <h2 class="govuk-error-summary__title" id="error-summary-title">
+                            There is a problem
+                        </h2>
+                        <div class="govuk-error-summary__body">
+                            <ul class="govuk-list govuk-error-summary__list">
+                                <li><a sfa-validation-for="StandardSearchString"></a></li>
+                            </ul>
+                        </div>
+                    </div>
+                }
+
+                <h1 class="govuk-label-wrapper">
+                    <span class="govuk-caption-xl">@Model.OrganisationId</span>
+                    <label class="govuk-label govuk-label--xl" for="StandardSearchString">
                         Add a standard to @Model.OrganisationName
-                    </h1>
-                </label>
+                    </label>
+                </h1>
 
-                <p>Search for a standard using either the:</p>
-                <ul class="list list-bullet">
+                <p class="govuk-body">Search for a standard using either the:</p>
+                <ul class="govuk-list govuk-list--bullet">
                     <li>Standard ID</li>
                     <li>Name</li>
                 </ul>
 
-                <div class="form-group" sfa-validation-for="SearchString" sfa-anyvalidationerror-class="form-group-error">
-                    <span class="form-hint">
+                <div class="govuk-form-group" sfa-validation-for="SearchString" sfa-anyvalidationerror-class="govuk-form-group--error">
+                    <span class="govuk-hint">
                         Standard ID must be a number
                     </span>
-                    <span class="error-message" asp-validation-for="StandardSearchString"></span>
-                    <input class="form-control" asp-for="StandardSearchString" name="StandardSearchString" sfa-validationerror-class="form-control-error" type="text" />
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <span class="govuk-error-message" asp-validation-for="StandardSearchString"></span>
+                    }
+                    <input class="govuk-input" asp-for="StandardSearchString" name="StandardSearchString" sfa-validationerror-class="govuk-input--error" type="text" />
                 </div>
-            </div>
+                <button class="govuk-button" type="submit">Search<span class="visually-hidden"> for a standard to add</span></button>
+            </form>
 
-            <div class="form-group">
-                <button class="button" type="submit">Search<span class="visually-hidden"> for a Standard to Add</span></button>
-            </div>
-        </form>
-
+        </div>
     </div>
-</div>
+</main>

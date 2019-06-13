@@ -5,64 +5,77 @@
     Layout = "_Layout";
 }
 
-<div class="grid-row">
-    <div class="column-full">
-        <a asp-action="Index" asp-controller="Dashboard" class="link-back">Return to dashboard</a>
+<a class="govuk-back-link" asp-action="Index" asp-controller="Dashboard">Return to dashboard</a>
 
-        <h1 class="heading-xlarge">Run report</h1>
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
 
-        <form class="report-selection-form" asp-action="Run" method="get">
 
-            @* hidden with css by default *@
-            <div class="js-error-summary error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
-                <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
-                    There is a problem
-                </h2>
-                <ul class="js-error-summary-list error-summary-list"></ul>
-            </div>
+            <form class="report-selection-form" asp-action="Run" method="get">
 
-            @if (!ViewData.ModelState.IsValid)
-            {
-                <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
-                    <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+                <div class="js-error-summary govuk-error-summary" role="alert" aria-labelledby="error-summary-title" tabindex="-1" data-module="error-summary">
+                    <h2 class="govuk-error-summary__title" id="error-summary-title">
                         There is a problem
                     </h2>
-                    <ul class="error-summary-list">
-                        <li><a sfa-validation-for="ReportId"></a></li>
-                    </ul>
-                </div>
-            }
-
-            <div sfa-anyvalidationerror-class="after-error-summary">
-                <div id="SelectedReport">
-                    <h1 class="heading-medium">
-                        Please select the report you wish to run
-                    </h1>
-                </div>
-                <div class="form-group" sfa-validation-for="ReportId" sfa-validationerror-class="form-group-error">
-                    <div class="error-message-container" sfa-validation-for="ReportId">
-                        <span class="error-message" asp-validation-for="ReportId"></span>
+                    <div class="govuk-error-summary__body">
+                        <ul class="js-error-summary-list govuk-list govuk-error-summary__list"></ul>
                     </div>
-                    @foreach (var report in Model.Reports)
-                    {
-                        <div class="multiple-choice">
-                            <input asp-for="ReportId" id="@report.Id" type="radio" value="@report.Id" />
-                            <label for="@report.Id">
-                                @report.ReportName  
-                                @if (report.ReportType == "Download")
-                                {
-                                    @Html.Raw(" (Download only)")
-                                }
-                            </label>
-                        </div>
-                    }
                 </div>
-            </div>
 
-            <button type="submit" class="button">Run</button>
-        </form>
+                @if (!ViewData.ModelState.IsValid)
+                {
+                    <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
+                        <h2 class="govuk-error-summary__title" id="error-summary-title">
+                            There is a problem
+                        </h2>
+                        <div class="govuk-error-summary__body">
+                            <ul class="govuk-list govuk-error-summary__list">
+                                <li><a sfa-validation-for="ReportId"></a></li>
+                            </ul>
+                        </div>
+                    </div>
+                }
+
+                <h1 class="govuk-heading-xl">Run report</h1>
+
+                <div>
+                    <h1 class="govuk-label-wrapper">
+                        <label id="SelectedReport" class="govuk-label" for="SearchString">
+                            <span class="heading-xlarge">
+                                Select the report you wish to run
+                            </span>
+                        </label>
+                    </h1>
+
+                    <div class="govuk-form-group" sfa-validation-for="ReportId" sfa-validationerror-class="govuk-form-group--error">
+                        <div class="error-message-container" sfa-validation-for="ReportId">
+                            <span class="error-message" asp-validation-for="ReportId"></span>
+                        </div>
+
+                        <div class="govuk-radios">
+                            @foreach (var report in Model.Reports)
+                            {
+                                <div class="govuk-radios__item">
+                                    <input class="govuk-radios__input" asp-for="ReportId" id="@report.Id" type="radio" value="@report.Id" />
+                                    <label class="govuk-label govuk-radios__label" for="@report.Id">
+                                        @report.ReportName  
+                                        @if (report.ReportType == "Download")
+                                        {
+                                            @Html.Raw(" (Download only)")
+                                        }
+                                    </label>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="govuk-button">Run</button>
+            </form>
+        </div>
     </div>
-</div>
+</main>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial"); }

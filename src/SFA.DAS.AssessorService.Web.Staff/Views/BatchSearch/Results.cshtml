@@ -7,106 +7,115 @@
     Layout = "_Layout";
 }
 
+<a asp-action="Index" class="govuk-back-link">Search again</a>
 
-<div class="grid-row">
-    <div class="column-full">
-        <a asp-action="Index" class="link-back">Search again</a>
+<main class="govuk-main-wrapper " id="main-content" role="main">
 
-        <h1 class="heading-xlarge">
-            Search results
-            <span class="heading-secondary">Number of results: @Model.PaginatedList.TotalRecordCount</span>
-        </h1>
-    </div>
-</div>
-
-@if (@Model.PaginatedList.TotalRecordCount > 0)
-{
-    <div class="grid-row">
-        <div class="column-one-half">
-            <h2 class="heading-large">Batch details</h2>
-            <table>
-                <tbody>
-                    <tr>
-                        <td class="bold">Batch Number</td>
-                        <td>@(Model.PaginatedList.Items.FirstOrDefault()?.BatchNumber ?? Model.BatchNumber)</td>
-                    </tr>
-                    <tr>
-                        <td class="bold">Print date</td>
-                        <td>@Model.PaginatedList.Items.FirstOrDefault()?.BatchPrintDate.UtcToTimeZoneTime()</td>
-                    </tr>
-                    
-                </tbody>
-            </table>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <h1 class="govuk-heading-xl">
+                Search results
+                <span class="govuk-caption-xl">Number of results: @Model.PaginatedList.TotalRecordCount</span>
+            </h1>
         </div>
     </div>
-    <div class="grid-row">
-        <div class="column-full">
-            <h2 class="heading-large">Certificates</h2>
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>ULN</th>
-                        <th>Standard</th>
-                        <th>Certificate Reference</th>
-                        <th>Status</th>
-                        <th>Overall Grade</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var result in Model.PaginatedList.Items)
-                    {
-                        <tr>
-                            <td>@result.CertificateData.LearnerGivenNames @result.CertificateData.LearnerFamilyName</td>
-                            <td>@result.Uln</td>
-                            <td>@result.CertificateData.StandardName (@result.StandardCode)</td>
-                            <td>@result.CertificateReference</td>
-                            <td>@result.Status</td>
-                            <td>@result.CertificateData.OverallGrade</td>
-                            <td><a asp-controller="Search" asp-action="Select" asp-route-stdcode="@result.StandardCode" asp-route-uln="@result.Uln" asp-route-searchstring="@result.CertificateReference" asp-route-batchNumber="@result.BatchNumber">View</a></td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
-    </div>
-}
 
-
-@if (Model.PaginatedList.HasPreviousPage || Model.PaginatedList.HasNextPage)
-{
-    <div class="grid-row">
-        <div class="column-full">
-            <div class="page-navigation">
-
-                @if (Model.PaginatedList.HasPreviousPage)
-                {
-                    <a asp-action="Results"
-                       asp-controller="BatchSearch"
-                       asp-route-batchNumber="@Model.BatchNumber"
-                       asp-route-page="@( Model.PaginatedList.PageIndex - 1)"
-                       class="previous">
-                        <i class="arrow-button icon-left-open">&#xe800;</i>
-                        <span class="description">Previous <span class="hide-mob">page</span></span>
-                        <span class="counter">Page <span class="prevPage">@(Model.PaginatedList.PageIndex - 1)</span> of <span class="totalPage">@(Model.PaginatedList.TotalPages)</span></span>
-                    </a>
-                }
-
-                @if (Model.PaginatedList.HasNextPage)
-                {
-                    <a asp-action="Results"
-                       asp-controller="BatchSearch"
-                       asp-route-batchNumber="@Model.BatchNumber"
-                       asp-route-page="@( Model.PaginatedList.PageIndex + 1)"
-                       class="next">
-                        <i class="arrow-button icon-right-open">&#xe801;</i>
-                        <span class="description">Next <span class="hide-mob">page</span></span>
-                        <span class="counter">Page <span class="nextPage">@(Model.PaginatedList.PageIndex + 1)</span> of <span class="totalPage">@(Model.PaginatedList.TotalPages)</span></span>
-                    </a>
-                }
-
+    @if (@Model.PaginatedList.TotalRecordCount > 0)
+    {
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-one-half">
+                <h2 class="govuk-heading-l">Batch details</h2>
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Batch Number
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            @(Model.PaginatedList.Items.FirstOrDefault()?.BatchNumber ?? Model.BatchNumber)
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Print date
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            @Model.PaginatedList.Items.FirstOrDefault()?.BatchPrintDate.UtcToTimeZoneTime()
+                        </dd>
+                    </div>
+                </dl>
             </div>
         </div>
-    </div>
-}
+
+
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
+                <h2 class="govuk-heading-l">Certificates</h2>
+                <table class="govuk-table">
+                    <thead class="govuk-table__head">
+                        <tr class="govuk-table__row">
+                            <th class="govuk-table__header">Name</th>
+                            <th class="govuk-table__header">ULN</th>
+                            <th class="govuk-table__header">Standard</th>
+                            <th class="govuk-table__header">Certificate Reference</th>
+                            <th class="govuk-table__header">Status</th>
+                            <th class="govuk-table__header">Overall Grade</th>
+                            <th class="govuk-table__header"></th>
+                        </tr>
+                    </thead>
+                    <tbody class="govuk-table__body">
+                        @foreach (var result in Model.PaginatedList.Items)
+                        {
+                            <tr class="govuk-table__row">
+                                <td class="govuk-table__cell">@result.CertificateData.LearnerGivenNames @result.CertificateData.LearnerFamilyName</td>
+                                <td class="govuk-table__cell">@result.Uln</td>
+                                <td class="govuk-table__cell">@result.CertificateData.StandardName (@result.StandardCode)</td>
+                                <td class="govuk-table__cell">@result.CertificateReference</td>
+                                <td class="govuk-table__cell">@result.Status</td>
+                                <td class="govuk-table__cell">@result.CertificateData.OverallGrade</td>
+                                <td class="govuk-table__cell"><a asp-controller="Search" asp-action="Select" asp-route-stdcode="@result.StandardCode" asp-route-uln="@result.Uln" asp-route-searchstring="@result.CertificateReference" asp-route-batchNumber="@result.BatchNumber">View</a></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+
+
+    @if (Model.PaginatedList.HasPreviousPage || Model.PaginatedList.HasNextPage)
+    {
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
+                <div class="page-navigation">
+
+                    @if (Model.PaginatedList.HasPreviousPage)
+                    {
+                        <a asp-action="Results"
+                        asp-controller="BatchSearch"
+                        asp-route-batchNumber="@Model.BatchNumber"
+                        asp-route-page="@( Model.PaginatedList.PageIndex - 1)"
+                        class="govuk-link previous">
+                            <i class="arrow-button icon-left-open">&#xe800;</i>
+                            <span class="description">Previous <span class="hide-mob">page</span></span>
+                            <span class="counter">Page <span class="prevPage">@(Model.PaginatedList.PageIndex - 1)</span> of <span class="totalPage">@(Model.PaginatedList.TotalPages)</span></span>
+                        </a>
+                    }
+
+                    @if (Model.PaginatedList.HasNextPage)
+                    {
+                        <a asp-action="Results"
+                        asp-controller="BatchSearch"
+                        asp-route-batchNumber="@Model.BatchNumber"
+                        asp-route-page="@( Model.PaginatedList.PageIndex + 1)"
+                        class="govuk-link next">
+                            <i class="arrow-button icon-right-open">&#xe801;</i>
+                            <span class="description">Next <span class="hide-mob">page</span></span>
+                            <span class="counter">Page <span class="nextPage">@(Model.PaginatedList.PageIndex + 1)</span> of <span class="totalPage">@(Model.PaginatedList.TotalPages)</span></span>
+                        </a>
+                    }
+
+                </div>
+            </div>
+        </div>
+    }
+</main>

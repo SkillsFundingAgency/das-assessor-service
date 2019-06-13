@@ -276,10 +276,10 @@ src/Tools/PhantomJS/tools/phantomjs/ChangeLog
 src/SFA.DAS.AssessorService.Web.Specflow.Tests/Project/**/*.*
 
 # Minified css and js
-src/SFA.DAS.AssessorService.Web/wwwroot/stylesheets/application.min.css
-src/SFA.DAS.AssessorService.Web/wwwroot/javascripts/application.min.js
-src/SFA.DAS.AssessorService.Web/wwwroot/javascripts/epao-validation.min.js
-src/SFA.DAS.AssessorService.Web/wwwroot/javascripts/postcode-lookup-service.min.js
+**/javascripts/epao-validation.min.js
+**/javascripts/postcode-lookup-service.min.js
+**/stylesheets/application.min.css
+**/javascripts/application.min.js
 src/SFA.DAS.AssessorService.Web.Staff/wwwroot/css/*.min.css
 src/SFA.DAS.AssessorService.Web.Staff/wwwroot/js/*.min.js
 

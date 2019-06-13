@@ -6,228 +6,277 @@
     Layout = "_Layout";
 }
 
-<div class="grid-row">
-    <div class="column-two-thirds">
-        <a asp-action="OpenApplications" asp-controller="Financial" class="link-back">Back</a>
+<a asp-action="OpenApplications" asp-controller="Financial" class="govuk-back-link">Back</a>
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
 
-        @if (!ViewData.ModelState.IsValid)
-        {
-            <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
-                <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
-                    There is a problem
-                </h2>
-                <ul class="error-summary-list">
-                    <li><a sfa-validation-for="Grade.SelectedGrade"></a></li>
-                    <li><a sfa-validation-for="Grade.InadequateMoreInformation"></a></li>
-                    <li><a sfa-validation-for="Grade.OutstandingFinancialDueDate"></a></li>
-                    <li><a sfa-validation-for="Grade.GoodFinancialDueDate"></a></li>
-                    <li><a sfa-validation-for="Grade.SatisfactoryFinancialDueDate"></a></li>
-                </ul>
-            </div>
-        }
-
-        <h1 class="heading-xlarge">Financial health evaluation</h1>
-        <h2 class="heading-medium">Organisation details</h2>
-
-        <table class="table-spaced">
-            @if (!string.IsNullOrWhiteSpace(Model.ApplicationReference))
+            @if (!ViewData.ModelState.IsValid)
             {
-                <tr>
-                    <td class="bold-small">Application reference</td>
-                    <td>@Model.ApplicationReference</td>
-                </tr>
+                <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
+                    <h2 class="govuk-error-summary__title" id="error-summary-title">
+                        There is a problem
+                    </h2>
+                    <div class="govuk-error-summary__body">
+                        <ul class="govuk-list govuk-error-summary__list">
+                            <li><a sfa-validation-for="Grade.SelectedGrade"></a></li>
+                            <li><a sfa-validation-for="Grade.InadequateMoreInformation"></a></li>
+                            <li><a sfa-validation-for="Grade.OutstandingFinancialDueDate"></a></li>
+                            <li><a sfa-validation-for="Grade.GoodFinancialDueDate"></a></li>
+                            <li><a sfa-validation-for="Grade.SatisfactoryFinancialDueDate"></a></li>
+                        </ul>
+                    </div>
+                </div>
             }
-            @if (!string.IsNullOrWhiteSpace(Model.LegalName))
-            {
-                <tr>
-                    <td class="bold-small">Registered name</td>
-                    <td>@Model.LegalName</td>
-                </tr>
-            }
-            @if (!string.IsNullOrWhiteSpace(Model.TradingName) || !string.IsNullOrWhiteSpace(Model.ProviderName))
-            {
-                <tr>
-                    <td class="bold-small">Trading name</td>
-                    <td>@(Model.TradingName ?? Model.ProviderName)</td>
-                </tr>
-            }
-            @if (Model.Ukprn.HasValue)
-            {
-                <tr>
-                    <td class="bold-small">Ukprn</td>
-                    <td>@Model.Ukprn</td>
-                </tr>
-            }
-        </table>
 
-        @if (!string.IsNullOrWhiteSpace(Model.CompanyNumber))
-        {
-            <div class="form-group">
-                <a target="_blank" href="@string.Format("https://beta.companieshouse.gov.uk/company/{0}", Model.CompanyNumber)">View companies house information</a>
-            </div>
-        }
+            <h1 class="govuk-heading-xl">Financial health evaluation</h1>
+            <h2 class="govuk-heading-m">Organisation details</h2>
 
-        @if (Model.Section.PagesContainingUploadQuestions.Any())
-        {
-            <div class="form-group">
-                <a href="@Url.Action("Download", "Financial", new { Model.Section.ApplicationId })">Download financial statements</a>
-                @* Download @uploadQuestion.Label</a> *@
-            </div>
-        }
-    </div>
-</div>
-
-@if (Model.Section.QnAData.Pages.SelectMany(p => p.Questions).Any(q => q.Input.Type != "FileUpload"))
-{
-<div class="grid-row">
-    <div class="column-full">
-        <table class="table-spaced">
-            <thead>
-                <tr>
-                    <th>
-                        Questions
-                    </th>
-                    <th>
-                        Answers
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var pg in Model.Section.QnAData.Pages)
+            <dl class="govuk-summary-list">
+                @if (!string.IsNullOrWhiteSpace(Model.ApplicationReference))
                 {
-                    foreach (var question in pg.Questions.Where(q => q.Input.Type != "FileUpload"))
-                    {
-                        <tr>
-                            <td>@question.Label</td>
-                            <td>@pg.PageOfAnswers.SelectMany(poa => poa.Answers).SingleOrDefault(a => a.QuestionId == question.QuestionId)?.Value</td>
-                        </tr>
-                    }
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Application reference
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            @Model.ApplicationReference
+                        </dd>
+                    </div>
                 }
-            </tbody>
-        </table>
-    </div>
-</div>
-}
+                @if (!string.IsNullOrWhiteSpace(Model.LegalName))
+                {
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Registered name
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            @Model.LegalName
+                        </dd>
+                    </div>
+                }
+                @if (!string.IsNullOrWhiteSpace(Model.TradingName) || !string.IsNullOrWhiteSpace(Model.ProviderName))
+                {
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Trading name
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            @(Model.TradingName ?? Model.ProviderName)
+                        </dd>
+                    </div>
+                }
+                @if (Model.Ukprn.HasValue)
+                {
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Ukprn
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            @Model.Ukprn
+                        </dd>
+                    </div>
+                }
+            </dl>
 
-<div class="grid-row">
-    <div class="column-two-thirds">
-        <form class="js-disable-on-submit" asp-action="Grade" asp-controller="Financial">
-            <input type="hidden" name="ApplicationId" value="@Model.ApplicationId" />
-            <div class="form-group">
-                <fieldset>
+            @if (!string.IsNullOrWhiteSpace(Model.CompanyNumber))
+            {
+                <p class="govuk-body">
+                    <a class="govuk-link" target="_blank" href="@string.Format("https://beta.companieshouse.gov.uk/company/{0}", Model.CompanyNumber)">View companies house information</a>
+                </p>
+            }
+
+            @if (Model.Section.PagesContainingUploadQuestions.Any())
+            {
+                <p class="govuk-body govuk-!-margin-bottom-8">
+                    <a class="govuk-link" href="@Url.Action("Download", "Financial", new { Model.Section.ApplicationId })">Download financial statements</a>
+                </p>
+            }
+        </div>
+    </div>
+
+    @if (Model.Section.QnAData.Pages.SelectMany(p => p.Questions).Any(q => q.Input.Type != "FileUpload"))
+    {
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            <table class="govuk-table table-font-xsmall">
+                <thead class="govuk-table__head">
+                    <tr class="govuk-table__row">
+                        <th class="govuk-table__header" scope="col">
+                            Questions
+                        </th>
+                        <th class="govuk-table__header" scope="col">
+                            Answers
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="govuk-table__body">
+                    @foreach (var pg in Model.Section.QnAData.Pages)
+                    {
+                        foreach (var question in pg.Questions.Where(q => q.Input.Type != "FileUpload"))
+                        {
+                            <tr class="govuk-table__row">
+                                <td class="govuk-table__cell">@question.Label</td>
+                                <td class="govuk-table__cell">@pg.PageOfAnswers.SelectMany(poa => poa.Answers).SingleOrDefault(a => a.QuestionId == question.QuestionId)?.Value</td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    }
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <form class="js-disable-on-submit" asp-action="Grade" asp-controller="Financial">
+
+                <input type="hidden" name="ApplicationId" value="@Model.ApplicationId" />
+                <div class="govuk-form-group" sfa-anyvalidationerror-class="govuk-form-group--error">
 
                     <legend>
-                        <h2 class="heading-large">
+                        <h2 class="govuk-heading-l">
                             What is the grade for this application?
                         </h2>
-
-                        <div sfa-anyvalidationerror-class="form-group-error">
-                            <span class="error-message" asp-validation-for="Grade.SelectedGrade"></span>
-                            <span class="error-message" asp-validation-for="Grade.InadequateMoreInformation"></span>
-                            <span class="error-message" asp-validation-for="Grade.OutstandingFinancialDueDate"></span>
-                            <span class="error-message" asp-validation-for="Grade.GoodFinancialDueDate"></span>
-                            <span class="error-message" asp-validation-for="Grade.SatisfactoryFinancialDueDate"></span>
-                        </div>
                     </legend>
 
-                    <div class="form-group" sfa-anyvalidationerror-class="form-group-error">
-                        <div class="multiple-choice" data-target="outstanding-more-info">
-                            <input id="outstanding" type="radio" name="Grade.SelectedGrade" value="@(FinancialApplicationSelectedGrade.Outstanding)"  @(Model.Grade.SelectedGrade == FinancialApplicationSelectedGrade.Outstanding ? "checked" : "")>
-                            <label for="outstanding">Outstanding</label>
-                        </div>
-                        <div class="panel panel-border-narrow js-hidden" id="outstanding-more-info">
-                            <legend>
-                                <span class="form-label-bold" for="Grade.OutstandingFinancialDueDate">
-                                    What is the financial due date?
-                                </span>
-                            </legend>
-                            <div class="form-date">
-                                <div class="form-group form-group-day">
-                                    <label class="form-label" for="Grade.OutstandingFinancialDueDate.Day">Day</label>
-                                    <input class="form-control" name="Grade.OutstandingFinancialDueDate.Day" id="Grade.OutstandingFinancialDueDate.Day" sfa-validation-for="Grade.OutstandingFinancialDueDate" sfa-validationerror-class="form-control-error" value="@Model.Grade.OutstandingFinancialDueDate.Day" type="number" pattern="[0-9]*" />
-                                </div>
-                                <div class="form-group form-group-month">
-                                    <label class="form-label" for="Grade.OutstandingFinancialDueDate.Month">Month</label>
-                                    <input class="form-control" name="Grade.OutstandingFinancialDueDate.Month" id="Grade.OutstandingFinancialDueDate.Month" sfa-validation-for="Grade.OutstandingFinancialDueDate" sfa-validationerror-class="form-control-error" value="@Model.Grade.OutstandingFinancialDueDate.Month" type="number" pattern="[0-9]*" />
-                                </div>
-                                <div class="form-group form-group-year">
-                                    <label class="form-label" for="Grade.OutstandingFinancialDueDate.Year">Year</label>
-                                    <input class="form-control" name="Grade.OutstandingFinancialDueDate.Year" id="Grade.OutstandingFinancialDueDate.Year" sfa-validation-for="Grade.OutstandingFinancialDueDate" sfa-validationerror-class="form-control-error" value="@Model.Grade.OutstandingFinancialDueDate.Year" type="number" pattern="[0-9]*" />
-                                </div>
-                            </div>
-                            
+                    <span class="govuk-error-message" asp-validation-for="Grade.SelectedGrade"></span>
+                    <span class="govuk-error-message" asp-validation-for="Grade.InadequateMoreInformation"></span>
+                    <span class="govuk-error-message" asp-validation-for="Grade.OutstandingFinancialDueDate"></span>
+                    <span class="govuk-error-message" asp-validation-for="Grade.GoodFinancialDueDate"></span>
+                    <span class="govuk-error-message" asp-validation-for="Grade.SatisfactoryFinancialDueDate"></span>
+
+                    <div class="govuk-radios govuk-radios--conditional" data-module="radios">
+                        <div class="govuk-radios__item">
+                            <input class="govuk-radios__input" id="outstanding" data-aria-controls="outstanding-conditional" type="radio" name="Grade.SelectedGrade" value="@(FinancialApplicationSelectedGrade.Outstanding)"  @(Model.Grade.SelectedGrade == FinancialApplicationSelectedGrade.Outstanding ? "checked" : "")>
+                            <label class="govuk-label govuk-radios__label" for="outstanding">Outstanding</label>
                         </div>
 
-                        <div class="multiple-choice" data-target="good-more-info">
-                            <input id="good" type="radio" name="Grade.SelectedGrade" value="@(FinancialApplicationSelectedGrade.Good)"  @(Model.Grade.SelectedGrade == FinancialApplicationSelectedGrade.Good ? "checked" : "")>
-                            <label for="good">Good</label>
-                        </div>
-                        <div class="panel panel-border-narrow js-hidden" id="good-more-info">
-                            <legend>
-                                <span class="form-label-bold" for="Grade.OutstandingFinancialDueDate">
-                                    What is the financial due date?
-                                </span>
-                            </legend>
-                            <div class="form-date">
-                                <div class="form-group form-group-day">
-                                    <label class="form-label" for="Grade.GoodFinancialDueDate.Day">Day</label>
-                                    <input class="form-control" name="Grade.GoodFinancialDueDate.Day" id="Grade.GoodFinancialDueDate.Day" sfa-validation-for="Grade.GoodFinancialDueDate" sfa-validationerror-class="form-control-error" value="@Model.Grade.GoodFinancialDueDate.Day" type="number" pattern="[0-9]*" />
-                                </div>
-                                <div class="form-group form-group-month">
-                                    <label class="form-label" for="Grade.GoodFinancialDueDate.Month">Month</label>
-                                    <input class="form-control" name="Grade.GoodFinancialDueDate.Month" id="Grade.GoodFinancialDueDate.Month" sfa-validation-for="Grade.GoodFinancialDueDate" sfa-validationerror-class="form-control-error" value="@Model.Grade.GoodFinancialDueDate.Month" type="number" pattern="[0-9]*" />
-                                </div>
-                                <div class="form-group form-group-year">
-                                    <label class="form-label" for="Grade.GoodFinancialDueDate.Year">Year</label>
-                                    <input class="form-control" name="Grade.GoodFinancialDueDate.Year" id="Grade.GoodFinancialDueDate.Year" sfa-validation-for="Grade.GoodFinancialDueDate" sfa-validationerror-class="form-control-error" value="@Model.Grade.GoodFinancialDueDate.Year" type="number" pattern="[0-9]*" />
+                        <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="outstanding-conditional">
+                            <div class="govuk-form-group">
+                                <legend>
+                                    <span class="govuk-label" for="Grade.OutstandingFinancialDueDate">
+                                        What is the financial due date?
+                                    </span>
+                                </legend>
+
+                                <div class="govuk-date-input">
+                                    <div class="govuk-date-input__item">
+                                        <div class="govuk-form-group">
+                                            <label class="govuk-label govuk-date-input__label" for="Grade.OutstandingFinancialDueDate.Day">Day</label>
+                                            <input class="govuk-input govuk-date-input__input govuk-input--width-2" name="Grade.OutstandingFinancialDueDate.Day" id="Grade.OutstandingFinancialDueDate.Day" sfa-validation-for="Grade.OutstandingFinancialDueDate" sfa-validationerror-class="form-control-error" value="@Model.Grade.OutstandingFinancialDueDate.Day" type="number" pattern="[0-9]*" />
+                                        </div>
+                                    </div>
+                                    <div class="govuk-date-input__item">
+                                        <div class="govuk-form-group">
+                                            <label class="govuk-label govuk-date-input__label" for="Grade.OutstandingFinancialDueDate.Month">Month</label>
+                                            <input class="govuk-input govuk-date-input__input govuk-input--width-2" name="Grade.OutstandingFinancialDueDate.Month" id="Grade.OutstandingFinancialDueDate.Month" sfa-validation-for="Grade.OutstandingFinancialDueDate" sfa-validationerror-class="form-control-error" value="@Model.Grade.OutstandingFinancialDueDate.Month" type="number" pattern="[0-9]*" />
+                                        </div>
+                                    </div>
+                                    <div class="govuk-date-input__item">
+                                        <div class="govuk-form-group">
+                                            <label class="govuk-label govuk-date-input__label" for="Grade.OutstandingFinancialDueDate.Year">Year</label>
+                                            <input class="govuk-input govuk-date-input__input govuk-input--width-4" name="Grade.OutstandingFinancialDueDate.Year" id="Grade.OutstandingFinancialDueDate.Year" sfa-validation-for="Grade.OutstandingFinancialDueDate" sfa-validationerror-class="form-control-error" value="@Model.Grade.OutstandingFinancialDueDate.Year" type="number" pattern="[0-9]*" />
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="multiple-choice" data-target="satisfactory-more-info">
-                            <input id="satisfactory" type="radio" name="Grade.SelectedGrade" value="@(FinancialApplicationSelectedGrade.Satisfactory)" @(Model.Grade.SelectedGrade == FinancialApplicationSelectedGrade.Satisfactory ? "checked" : "") />
-                            <label for="satisfactory">Satisfactory</label>
+                        <div class="govuk-radios__item" data-target="good-more-info">
+                            <input class="govuk-radios__input" id="good" data-aria-controls="good-conditional" type="radio" name="Grade.SelectedGrade" value="@(FinancialApplicationSelectedGrade.Good)"  @(Model.Grade.SelectedGrade == FinancialApplicationSelectedGrade.Good ? "checked" : "")>
+                            <label class="govuk-label govuk-radios__label" for="good">Good</label>
                         </div>
-                        <div class="panel panel-border-narrow js-hidden" id="satisfactory-more-info">
-                            <legend>
-                                <span class="form-label-bold" for="Grade.OutstandingFinancialDueDate">
-                                    What is the financial due date?
-                                </span>
-                            </legend>
-                            <div class="form-date">
-                                <div class="form-group form-group-day">
-                                    <label class="form-label" for="Grade.SatisfactoryFinancialDueDate.Day">Day</label>
-                                    <input class="form-control" name="Grade.SatisfactoryFinancialDueDate.Day" id="Grade.SatisfactoryFinancialDueDate.Day" sfa-validation-for="Grade.SatisfactoryFinancialDueDate" sfa-validationerror-class="form-control-error" value="@Model.Grade.SatisfactoryFinancialDueDate.Day" type="number" pattern="[0-9]*" />
-                                </div>
-                                <div class="form-group form-group-month">
-                                    <label class="form-label" for="Grade.SatisfactoryFinancialDueDate.Month">Month</label>
-                                    <input class="form-control" name="Grade.SatisfactoryFinancialDueDate.Month" id="Grade.SatisfactoryFinancialDueDate.Month" sfa-validation-for="Grade.SatisfactoryFinancialDueDate" sfa-validationerror-class="form-control-error" value="@Model.Grade.SatisfactoryFinancialDueDate.Month" type="number" pattern="[0-9]*" />
-                                </div>
-                                <div class="form-group form-group-year">
-                                    <label class="form-label" for="Grade.SatisfactoryFinancialDueDate.Year">Year</label>
-                                    <input class="form-control" name="Grade.SatisfactoryFinancialDueDate.Year" id="Grade.SatisfactoryFinancialDueDate.Year" sfa-validation-for="Grade.SatisfactoryFinancialDueDate" sfa-validationerror-class="form-control-error" value="@Model.Grade.SatisfactoryFinancialDueDate.Year" type="number" pattern="[0-9]*" />
+
+                        <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="good-conditional">
+                            <div class="govuk-form-group">
+                                <legend>
+                                    <span class="govuk-label" for="Grade.GoodFinancialDueDate">
+                                        What is the financial due date?
+                                    </span>
+                                </legend>
+
+                                <div class="govuk-date-input">
+                                    <div class="govuk-date-input__item">
+                                        <div class="govuk-form-group">
+                                            <label class="govuk-label govuk-date-input__label" for="Grade.GoodFinancialDueDate.Day">Day</label>
+                                            <input class="govuk-input govuk-date-input__input govuk-input--width-2" name="Grade.GoodFinancialDueDate.Day" id="Grade.GoodFinancialDueDate.Day" sfa-validation-for="Grade.GoodFinancialDueDate" sfa-validationerror-class="form-control-error" value="@Model.Grade.GoodFinancialDueDate.Day" type="number" pattern="[0-9]*" />
+                                        </div>
+                                    </div>
+                                    <div class="govuk-date-input__item">
+                                        <div class="govuk-form-group">
+                                            <label class="govuk-label govuk-date-input__label" for="Grade.GoodFinancialDueDate.Month">Month</label>
+                                            <input class="govuk-input govuk-date-input__input govuk-input--width-2" name="Grade.GoodFinancialDueDate.Month" id="Grade.GoodFinancialDueDate.Month" sfa-validation-for="Grade.GoodFinancialDueDate" sfa-validationerror-class="form-control-error" value="@Model.Grade.GoodFinancialDueDate.Month" type="number" pattern="[0-9]*" />
+                                        </div>
+                                    </div>
+                                    <div class="govuk-date-input__item">
+                                        <div class="govuk-form-group">
+                                            <label class="govuk-label govuk-date-input__label" for="Grade.GoodFinancialDueDate.Year">Year</label>
+                                            <input class="govuk-input govuk-date-input__input govuk-input--width-4" name="Grade.GoodFinancialDueDate.Year" id="Grade.GoodFinancialDueDate.Year" sfa-validation-for="Grade.GoodFinancialDueDate" sfa-validationerror-class="form-control-error" value="@Model.Grade.GoodFinancialDueDate.Year" type="number" pattern="[0-9]*" />
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="multiple-choice" data-target="inadequate-more-info">
-                            <input id="inadequate" type="radio" name="Grade.SelectedGrade" value="@(FinancialApplicationSelectedGrade.Inadequate)" @(Model.Grade.SelectedGrade == FinancialApplicationSelectedGrade.Inadequate ? "checked" : "") />
-                            <label for="inadequate">Inadequate</label>
-                        </div>
-                        <div class="panel panel-border-narrow js-hidden" id="inadequate-more-info">
-                            <label class="form-label" for="Grade.InadequateMoreInformation">Why is the application inadequate?</label>
-                            <textarea class="form-control form-control-full" rows="4" name="Grade.InadequateMoreInformation" sfa-validation-for="Grade.InadequateMoreInformation" sfa-validationerror-class="form-control-error"></textarea>
+
+                        <div class="govuk-radios__item">
+                            <input class="govuk-radios__input" id="satisfactory" data-aria-controls="satisfactory-conditional" type="radio" name="Grade.SelectedGrade" value="@(FinancialApplicationSelectedGrade.Satisfactory)" @(Model.Grade.SelectedGrade == FinancialApplicationSelectedGrade.Satisfactory ? "checked" : "") />
+                            <label class="govuk-label govuk-radios__label" for="satisfactory">Satisfactory</label>
                         </div>
 
-                        <div class="multiple-choice">
-                            <input id="exempt" type="radio" name="Grade.SelectedGrade" value="@(FinancialApplicationSelectedGrade.Exempt)">
-                            <label for="exempt">Exempt</label>
+                        <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="satisfactory-conditional">
+                            <div class="govuk-form-group">
+                                <legend>
+                                    <span class="govuk-label" for="Grade.SatisfactoryFinancialDueDate">
+                                        What is the financial due date?
+                                    </span>
+                                </legend>
+
+                                <div class="govuk-date-input">
+                                    <div class="govuk-date-input__item">
+                                        <div class="govuk-form-group">
+                                            <label class="govuk-label govuk-date-input__label" for="Grade.SatisfactoryFinancialDueDate.Day">Day</label>
+                                            <input class="govuk-input govuk-date-input__input govuk-input--width-2" name="Grade.SatisfactoryFinancialDueDate.Day" id="Grade.SatisfactoryFinancialDueDate.Day" sfa-validation-for="Grade.SatisfactoryFinancialDueDate" sfa-validationerror-class="form-control-error" value="@Model.Grade.SatisfactoryFinancialDueDate.Day" type="number" pattern="[0-9]*" />
+                                        </div>
+                                    </div>
+                                    <div class="govuk-date-input__item">
+                                        <div class="govuk-form-group">
+                                            <label class="govuk-label govuk-date-input__label" for="Grade.SatisfactoryFinancialDueDate.Month">Month</label>
+                                            <input class="govuk-input govuk-date-input__input govuk-input--width-2" name="Grade.SatisfactoryFinancialDueDate.Month" id="Grade.SatisfactoryFinancialDueDate.Month" sfa-validation-for="Grade.SatisfactoryFinancialDueDate" sfa-validationerror-class="form-control-error" value="@Model.Grade.SatisfactoryFinancialDueDate.Month" type="number" pattern="[0-9]*" />
+                                        </div>
+                                    </div>
+                                    <div class="govuk-date-input__item">
+                                        <div class="govuk-form-group">
+                                            <label class="govuk-label govuk-date-input__label" for="Grade.SatisfactoryFinancialDueDate.Year">Year</label>
+                                            <input class="govuk-input govuk-date-input__input govuk-input--width-4" name="Grade.SatisfactoryFinancialDueDate.Year" id="Grade.SatisfactoryFinancialDueDate.Year" sfa-validation-for="Grade.SatisfactoryFinancialDueDate" sfa-validationerror-class="form-control-error" value="@Model.Grade.SatisfactoryFinancialDueDate.Year" type="number" pattern="[0-9]*" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
+                        
+                        <div class="govuk-radios__item">
+                            <input class="govuk-radios__input" id="inadequate" data-aria-controls="inadequate-conditional" type="radio" name="Grade.SelectedGrade" value="@(FinancialApplicationSelectedGrade.Inadequate)" @(Model.Grade.SelectedGrade == FinancialApplicationSelectedGrade.Inadequate ? "checked" : "") />
+                            <label class="govuk-label govuk-radios__label" for="inadequate">Inadequate</label>
+                        </div>
+
+                        <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="inadequate-conditional">
+                            <div class="govuk-form-group">
+                                <label class="govuk-label" for="Grade.InadequateMoreInformation">Why is the application inadequate?</label>
+                                <textarea class="govuk-textarea" rows="4" name="Grade.InadequateMoreInformation" sfa-validation-for="Grade.InadequateMoreInformation" sfa-validationerror-class="form-control-error"></textarea>
+                            </div>
+                        </div>
+
+                        <div class="govuk-radios__item">
+                            <input class="govuk-radios__input" id="exempt" type="radio" name="Grade.SelectedGrade" value="@(FinancialApplicationSelectedGrade.Exempt)">
+                            <label class="govuk-label govuk-radios__label" for="exempt">Exempt</label>
+                        </div>
+
                     </div>
-                </fieldset>
-            </div>
-            <div class="form-group">
-                <button class="button" type="submit">Confirm and submit</button>
-            </div>
-        </form>
+                </div>
+
+                <button class="govuk-button" type="submit">Confirm and submit</button>
+            </form>
+        </div>
     </div>
-</div>
+</main>

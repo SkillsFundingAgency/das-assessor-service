@@ -4,53 +4,21 @@
 ViewBag.Title = "Edit organisation";
 Layout = "_Layout";
 }
-<div class="grid-row">
-    <div class="column-two-thirds">
-        <a asp-action="Index" asp-controller="Register" class="link-back">Return to register search</a>
-        <form class="register-search-form" asp-action="EditOrganisation" asp-controller="Register" method="POST">
-            <div class="js-error-summary error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
-                <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
-                    There is a problem
-                </h2>
-                <ul class="js-error-summary-list error-summary-list"></ul>
-            </div>
-            @Html.HiddenFor(c => c.FinancialDueDate)
-            @Html.HiddenFor(c => c.FinancialExempt)
-            @if (!ViewData.ModelState.IsValid)
-            {
-                <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
-                    <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
-                        There is a problem
-                    </h2>
-                    <ul class="error-summary-list">
-                        <li><a sfa-validation-for="OrganisationId"></a></li>
-                        <li><a sfa-validation-for="Name"></a></li>
-                        <li><a sfa-validation-for="CompanyNumber"></a></li>
-                        <li><a sfa-validation-for="CharityNumber"></a></li>
-                        <li><a sfa-validation-for="Ukprn"></a></li>
-                        <li><a sfa-validation-for="OrganisationTypeId"></a></li>
-                        <li><a sfa-validation-for="LegalName"></a></li>
-                        <li><a sfa-validation-for="TradingName"></a></li>
-                        <li><a sfa-validation-for="WebsiteLink"></a></li>
-                        <li><a sfa-validation-for="Address"></a></li>
-                        <li><a sfa-validation-for="Address1"></a></li>
-                        <li><a sfa-validation-for="Address2"></a></li>
-                        <li><a sfa-validation-for="Address3"></a></li>
-                        <li><a sfa-validation-for="Address4"></a></li>
-                        <li><a sfa-validation-for="Postcode"></a></li>
-                        <li><a sfa-validation-for="ContactsCount"></a></li>
-                        <li><a sfa-validation-for="StandardsCount"></a></li>
-                    </ul>
-                </div>
-            }
 
-            <h1 class="heading-xlarge">
-                Edit organisation
-                <!-- <span class="heading-secondary">Organisation ID: @Model.OrganisationId</span> -->
+<a class="govuk-back-link" asp-action="Index" asp-controller="Register">Return to register search</a>
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+
+            <form class="register-search-form" asp-action="EditOrganisation" asp-controller="Register" method="POST">
+                @Html.HiddenFor(c => c.FinancialDueDate)
+                @Html.HiddenFor(c => c.FinancialExempt)
                 @Html.HiddenFor(c => c.OrganisationId)
                 @Html.HiddenFor(c => c.Status)
-            </h1>
+                @Html.HiddenFor(c => c.OrganisationTypes)
 
+<<<<<<< HEAD
             <div id="organisationWrapper">
                 <div class="form-group" sfa-validation-for="OrganisationId" sfa-validationerror-class="form-group-error">
                     <label for="OrganisationId">
@@ -102,163 +70,264 @@ Layout = "_Layout";
                         <span class="error-message" asp-validation-for="Ukprn"></span>
                     </label>
                     <input type="text" maxlength="8" class="form-control js-integers-only" name="Ukprn" sfa-validation-for="Ukprn" sfa-validationerror-class="form-control-error" asp-for="Ukprn" />
+=======
+                <div class="js-error-summary govuk-error-summary" role="alert" aria-labelledby="error-summary-title" tabindex="-1" data-module="error-summary">
+                    <h2 class="govuk-error-summary__title" id="error-summary-title">
+                        There is a problem
+                    </h2>
+                    <div class="govuk-error-summary__body">
+                        <ul class="js-error-summary-list govuk-list govuk-error-summary__list"></ul>
+                    </div>
+>>>>>>> ef5980e7469d71609faff786be3dad6b7717b2dc
                 </div>
-                <div class="form-group" sfa-validation-for="OrganisationTypeId" sfa-validationerror-class="form-group-error">
-                    <span class="form-label-bold">Type of organisation</span>
-                    <span class="error-message" asp-validation-for="OrganisationTypeId"></span>
-                    @Html.HiddenFor(c => c.OrganisationTypes)
-                    @foreach (var organisation in Model.OrganisationTypes)
-                    {
-                        <div class="multiple-choice">
 
-                            <input asp-for="OrganisationTypeId" id="organisation-type-@organisation.Type.Replace(" ", " _")" type="radio" value="@organisation.Id" />
-                            <label for="organisation-type-@organisation.Type.Replace(" ", " _")">
-                                @organisation.Type
-                            </label>
+                @if (!ViewData.ModelState.IsValid)
+                {
+                    <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
+                        <h2 class="govuk-error-summary__title" id="error-summary-title">
+                            There is a problem
+                        </h2>
+                        <div class="govuk-error-summary__body">
+                            <ul class="govuk-list govuk-error-summary__list">
+                                <li><a sfa-validation-for="OrganisationId"></a></li>
+                                <li><a sfa-validation-for="Name"></a></li>
+                                <li><a sfa-validation-for="CompanyNumber"></a></li>
+                                <li><a sfa-validation-for="CharityNumber"></a></li>
+                                <li><a sfa-validation-for="Ukprn"></a></li>
+                                <li><a sfa-validation-for="OrganisationTypeId"></a></li>
+                                <li><a sfa-validation-for="LegalName"></a></li>
+                                <li><a sfa-validation-for="TradingName"></a></li>
+                                <li><a sfa-validation-for="WebsiteLink"></a></li>
+                                <li><a sfa-validation-for="Address"></a></li>
+                                <li><a sfa-validation-for="Address1"></a></li>
+                                <li><a sfa-validation-for="Address2"></a></li>
+                                <li><a sfa-validation-for="Address3"></a></li>
+                                <li><a sfa-validation-for="Address4"></a></li>
+                                <li><a sfa-validation-for="Postcode"></a></li>
+                                <li><a sfa-validation-for="ContactsCount"></a></li>
+                                <li><a sfa-validation-for="StandardsCount"></a></li>
+                            </ul>
                         </div>
-                    }
-                </div>
-                <div class="form-group" sfa-validation-for="WebsiteLink" sfa-validationerror-class="form-group-error">
-                    <label for="WebsiteLink">
-                        <span class="form-label-bold">Website</span>
-                        <span class="error-message" asp-validation-for="WebsiteLink"></span>
-                    </label>
-                    <input class="form-control" name="WebsiteLink" sfa-validation-for="WebsiteLink" sfa-validationerror-class="form-control-error" asp-for="WebsiteLink" type="text" />
-                </div>
-                <div class="form-group-related" sfa-validation-for="Address" sfa-validationerror-class="form-group-error">
-                    <span class="error-message" asp-validation-for="Address"></span>
-                    <div class="form-group-related" sfa-validation-for="Address1" sfa-validationerror-class="form-group-error">
-                        <label for="Address1">
-                            <span class="form-label-bold">Street address</span>
-                            <span class="error-message" asp-validation-for="Address1"></span>
-                        </label>
-                        <input class="form-control" name="Address1" sfa-validation-for="Address1" sfa-validationerror-class="form-control-error" asp-for="Address1" type="text" />
                     </div>
-                    <div class="form-group-related" sfa-validation-for="Address2" sfa-validationerror-class="form-group-error">
-                        <label for="Address2">
-                            <span class="form-label-bold visually-hidden">Address 2</span>
-                            <span class="error-message" asp-validation-for="Address2"></span>
+                }
+
+                <h1 class="govuk-heading-xl">
+                    Edit organisation
+                    <!-- <span class="heading-secondary">Organisation ID: @Model.OrganisationId</span> -->
+                </h1>
+
+                <div id="organisationWrapper">
+                    <div class="govuk-form-group" sfa-validation-for="OrganisationId" sfa-validationerror-class="govuk-form-group--error">
+                        <label class="govuk-label govuk-label--m" for="OrganisationId">
+                            Organisation ID
                         </label>
-                        <input class="form-control" name="Address2" sfa-validation-for="Address2" sfa-validationerror-class="form-control-error" asp-for="Address2" type="text" />
+                        <span class="govuk-error-message" asp-validation-for="OrganisationId"></span>
+                        <p class="govuk-body">@Model.OrganisationId</p>
                     </div>
-                    <div class="form-group" sfa-validation-for="Address3" sfa-validationerror-class="form-group-error">
-                        <label for="Address3">
-                            <span class="form-label-bold visually-hidden">Address 3</span>
-                            <span class="error-message" asp-validation-for="Address3"></span>
+                    <div class="govuk-form-group">
+                        <label class="govuk-label govuk-label--m" for="IsPrimaryContact">
+                            Primary contact
                         </label>
-                        <input class="form-control" name="Address3" sfa-validation-for="Address3" sfa-validationerror-class="form-control-error" asp-for="Address3" type="text" />
+                        <p class="govuk-body">@Model.PrimaryContactName</p>
                     </div>
-                    <div class="form-group" sfa-validation-for="Address4" sfa-validationerror-class="form-group-error">
-                        <label for="Address4">
-                            <span class="form-label-bold">City / Town</span>
-                            <span class="error-message" asp-validation-for="Address4"></span>
+                    <div class="govuk-form-group">
+                        <label class="govuk-label govuk-label--m" for="Status">
+                            Status
                         </label>
-                        <input class="form-control" name="Address4" sfa-validation-for="Address4" sfa-validationerror-class="form-control-error" asp-for="Address4" type="text" />
+                        <p class="govuk-body">@Model.Status</p>
+                    </div>
+                    <div class="govuk-form-group" sfa-validation-for="Name" sfa-validationerror-class="govuk-form-group--error">
+                        <label class="govuk-label" for="Name">
+                            Organisation name
+                        </label>
+                        <span class="govuk-error-message" asp-validation-for="Name"></span>
+                        <input class="govuk-input" name="Name" sfa-validation-for="Name" sfa-validationerror-class="govuk-input-error" asp-for="Name" type="text" maxlength="100" />
+                    </div>
+                    <div class="govuk-form-group" sfa-validation-for="LegalName" sfa-validationerror-class="govuk-form-group--error">
+                        <label class="govuk-label" for="LegalName">
+                            Legal name (optional)
+                        </label>
+                            <span class="govuk-error-message" asp-validation-for="LegalName"></span>
+                            <span class="govuk-hint">if different from organisation name</span>
+                        <input class="govuk-input" name="LegalName" sfa-validation-for="LegalName" sfa-validationerror-class="govuk-input-error" asp-for="LegalName" type="text" />
+                    </div>
+                    <div class="govuk-form-group" sfa-validation-for="TradingName" sfa-validationerror-class="govuk-form-group--error">
+                        <label class="govuk-label" for="TradingName">
+                            Trading name (optional)
+                        </label>
+                            <span class="govuk-error-message" asp-validation-for="TradingName"></span>
+                            <span class="govuk-hint">if different from organisation name</span>
+                        <input class="govuk-input" name="TradingName" sfa-validation-for="TradingName" sfa-validationerror-class="govuk-input-error" asp-for="TradingName" type="text" />
+                    </div>
+                    <div class="govuk-form-group" sfa-validation-for="CompanyNumber" sfa-validationerror-class="govuk-form-group--error">
+                        <label class="govuk-label" for="CompanyNumber">
+                            Company number (optional)
+                        </label>
+                        <span class="govuk-error-message" asp-validation-for="CompanyNumber"></span>
+                        <input class="govuk-input js-alphanumeric-only" name="CompanyNumber" sfa-validation-for="CompanyNumber" sfa-validationerror-class="govuk-input-error" asp-for="CompanyNumber" type="text" />
+                    </div>
+                    <div class="govuk-form-group" sfa-validation-for="CharityNumber" sfa-validationerror-class="govuk-form-group--error">
+                        <label class="govuk-label" for="CharityNumber">
+                            Charity number (optional)
+                        </label>
+                            <span class="govuk-error-message" asp-validation-for="CharityNumber"></span>
+                        <input class="govuk-input" name="CharityNumber" sfa-validation-for="CharityNumber" sfa-validationerror-class="govuk-input-error" asp-for="CharityNumber" type="text" />
+                    </div>
+                    <div class="govuk-form-group" sfa-validation-for="Ukprn" sfa-validationerror-class="govuk-form-group--error">
+                        <label class="govuk-label" for="Ukprn">
+                            UKPRN (optional)
+                        </label>
+                            <span class="govuk-error-message" asp-validation-for="Ukprn"></span>
+                        <input type="text" maxlength="8" class="govuk-input js-integers-only" name="Ukprn" sfa-validation-for="Ukprn" sfa-validationerror-class="govuk-input-error" asp-for="Ukprn" />
+                    </div>
+                    <div class="govuk-form-group" sfa-validation-for="OrganisationTypeId" sfa-validationerror-class="govuk-form-group--error">
+                        <p class="govuk-body">Type of organisation</p>
+                        <span class="govuk-error-message" asp-validation-for="OrganisationTypeId"></span>
+                        <div class="govuk-radios">
+                            @foreach (var organisation in Model.OrganisationTypes)
+                            {
+                                <div class="govuk-radios__item">
+                                    <input class="govuk-radios__input" asp-for="OrganisationTypeId" id="organisation-type-@organisation.Type.Replace(" ", " _")" type="radio" value="@organisation.Id" />
+                                    <label class="govuk-label govuk-radios__label" for="organisation-type-@organisation.Type.Replace(" ", " _")">
+                                        @organisation.Type
+                                    </label>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                    <div class="govuk-form-group" sfa-validation-for="WebsiteLink" sfa-validationerror-class="govuk-form-group--error">
+                        <label class="govuk-label" for="WebsiteLink">
+                            Website
+                        </label>
+                            <span class="govuk-error-message" asp-validation-for="WebsiteLink"></span>
+                        <input class="govuk-input" name="WebsiteLink" sfa-validation-for="WebsiteLink" sfa-validationerror-class="govuk-input-error" asp-for="WebsiteLink" type="text" />
+                    </div>
+                    <div class="govuk-form-group-related" sfa-validation-for="Address" sfa-validationerror-class="govuk-form-group--error">
+                        <div class="govuk-form-group-related" sfa-validation-for="Address1" sfa-validationerror-class="govuk-form-group--error">
+                        <span class="govuk-error-message" asp-validation-for="Address"></span>
+                            <label class="govuk-label" for="Address1">
+                                Street address
+                            </label>
+                                <span class="govuk-error-message" asp-validation-for="Address1"></span>
+                            <input class="govuk-input" name="Address1" sfa-validation-for="Address1" sfa-validationerror-class="govuk-input-error" asp-for="Address1" type="text" />
+                        </div>
+                        <div class="govuk-form-group-related" sfa-validation-for="Address2" sfa-validationerror-class="govuk-form-group--error">
+                            <label class="govuk-label" for="Address2">
+                                <span class="form-label-bold govuk-visually-hidden">Address 2</span>
+                            </label>
+                                <span class="govuk-error-message" asp-validation-for="Address2"></span>
+                            <input class="govuk-input" name="Address2" sfa-validation-for="Address2" sfa-validationerror-class="govuk-input-error" asp-for="Address2" type="text" />
+                        </div>
+                        <div class="govuk-form-group" sfa-validation-for="Address3" sfa-validationerror-class="govuk-form-group--error">
+                            <label class="govuk-label" for="Address3">
+                                <span class="form-label-bold govuk-visually-hidden">Address 3</span>
+                            </label>
+                                <span class="govuk-error-message" asp-validation-for="Address3"></span>
+                            <input class="govuk-input" name="Address3" sfa-validation-for="Address3" sfa-validationerror-class="govuk-input-error" asp-for="Address3" type="text" />
+                        </div>
+                        <div class="govuk-form-group" sfa-validation-for="Address4" sfa-validationerror-class="govuk-form-group--error">
+                            <label class="govuk-label" for="Address4">
+                                City / Town
+                            </label>
+                                <span class="govuk-error-message" asp-validation-for="Address4"></span>
+                            <input class="govuk-input" name="Address4" sfa-validation-for="Address4" sfa-validationerror-class="govuk-input-error" asp-for="Address4" type="text" />
+                        </div>
+                    </div>
+                    <div class="govuk-form-group" sfa-validation-for="Postcode" sfa-validationerror-class="govuk-form-group--error">
+                        <label class="govuk-label" for="Postcode">
+                            Postcode
+                        </label>
+                            <span class="govuk-error-message" asp-validation-for="Postcode"></span>
+                        <input class="govuk-input" name="Postcode" sfa-validation-for="Postcode" sfa-validationerror-class="govuk-input-error" asp-for="Postcode" type="text" />
+                    </div>
+                    <div class="govuk-form-group">
+                        <button class="govuk-button govuk-!-margin-right-1" type="submit" name="ActionChoice" value="Save">Save</button>
+                        <a class="govuk-button govuk-button--secondary" href="/register/view-organisation/@Model.OrganisationId">Cancel</a>
+
+                        @if (Model.Status == "New")
+                        {
+                            <div>
+                                <button class="govuk-button" type="submit" name="ActionChoice" value="MakeLive">Make Live</button>
+                            </div>
+                        }
                     </div>
                 </div>
-                <div class="form-group" sfa-validation-for="Postcode" sfa-validationerror-class="form-group-error">
-                    <label for="Postcode">
-                        <span class="form-label-bold">Postcode</span>
-                        <span class="error-message" asp-validation-for="Postcode"></span>
-                    </label>
-                    <input class="form-control" name="Postcode" sfa-validation-for="Postcode" sfa-validationerror-class="form-control-error" asp-for="Postcode" type="text" />
-                </div>
-                <div class="form-group">
-                    <label for="PrimaryContact">
-                        <span class="form-label-bold">Primary contact</span>
-                    </label>
-                    @Model.PrimaryContactName
-                </div>
-                <div class="form-group">
-                    <label for="Status">
-                        <span class="form-label-bold">Status</span>
-                    </label>
-                    @Model.Status
-                </div>
-                <div class="form-group">
-                    <button class="button" type="submit" name="ActionChoice" value="Save">Save</button>
-                    @if (Model.Status == "New")
-                    {
-                        <button class="button" type="submit" name="ActionChoice" value="MakeLive">Make Live</button>
-                    }
-                    <a class="button" href="/register/view-organisation/@Model.OrganisationId">Cancel</a>
-                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            <h2 class="govuk-heading-l">Contacts</h2>
+            <div class="govuk-form-group">
+                @if (@Model.Contacts.Count > 0)
+                {
+                <table class="govuk-table table-font-xsmall">
+                    <thead class="govuk-table__head">
+                        <tr class="govuk-table__row">
+                            <th class="govuk-table__header">Name</th>
+                            <th class="govuk-table__header">Email</th>
+                            <th class="govuk-table__header">Username</th>
+                        </tr>
+                    </thead>
+                    <tbody class="govuk-table__body">
+                        @foreach (var result in Model.Contacts.OrderBy(x => x.DisplayName))
+                        {
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__cell" data-label="Name">@result.DisplayName</td>
+                            <td class="govuk-table__cell" data-label="ID">@result.Email</td>
+                            <td class="govuk-table__cell" data-label="Username">@result.Username</td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+                }
+                else
+                {
+                    <div class="govuk-form-group" sfa-validation-for="ContactsCount" sfa-validationerror-class="govuk-form-group--error">
+                        <span>There are no contacts</span>
+                        <span class="govuk-error-message" asp-validation-for="ContactsCount"></span>
+                        </div>
+                }
             </div>
-        </form>
-    </div>
-</div>
-
-<div class="grid-row">
-    <div class="column-full">
-        <h2 class="heading-large">Contacts</h2>
-        <div class="form-group">
-            @if (@Model.Contacts.Count > 0)
-            {
-            <table class="table responsive table-font-xsmall">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Username</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var result in Model.Contacts.OrderBy(x => x.DisplayName))
-                    {
-                    <tr>
-                        <td data-label="Name">@result.DisplayName</td>
-                        <td data-label="ID">@result.Email</td>
-                        <td data-label="Username">@result.Username</td>
-                    </tr>
-                    }
-                </tbody>
-            </table>
-            }
-            else
-            {
-                <div class="form-group" sfa-validation-for="ContactsCount" sfa-validationerror-class="form-group-error">
-                    <span class="error-message" asp-validation-for="ContactsCount"></span>
-                    <span>There are no contacts</span>
-                    </div>
-            }
         </div>
     </div>
-</div>
 
-<div class="grid-row">
-    <div class="column-full">
-        <h2 class="heading-large">Standards</h2>
-        <div class="form-group">
-            @if (@Model.OrganisationStandards.Count > 0)
-            {
-            <table class="table responsive table-font-xsmall">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Code</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var result in Model.OrganisationStandards.OrderBy(x =>
-                    x.StandardCollation.Title))
-                    {
-                    <tr>
-                        <td data-label="Name">@result.StandardCollation.Title</td>
-                        <td data-label="ID">@result.StandardCode</td>
-                    </tr>
-                    }
-                </tbody>
-            </table>
-            }
-            else
-            {<div class="form-group" sfa-validation-for="StandardsCount" sfa-validationerror-class="form-group-error">
-                 <span class="error-message" asp-validation-for="StandardsCount"></span>
-                 <span>There are no standards</span>
-             </div>
-            }
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <h2 class="govuk-heading-l">Standards</h2>
+            <div class="govuk-form-group">
+                @if (@Model.OrganisationStandards.Count > 0)
+                {
+                <table class="govuk-table table-font-xsmall">
+                    <thead class="govuk-table__head">
+                        <tr class="govuk-table__row">
+                            <th class="govuk-table__header">Name</th>
+                            <th class="govuk-table__header">Code</th>
+                        </tr>
+                    </thead>
+                    <tbody class="govuk-table__body">
+                        @foreach (var result in Model.OrganisationStandards.OrderBy(x =>
+                        x.StandardCollation.Title))
+                        {
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__cell" data-label="Name">@result.StandardCollation.Title</td>
+                            <td class="govuk-table__cell" data-label="ID">@result.StandardCode</td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+                }
+                else
+                {<div class="govuk-form-group" sfa-validation-for="StandardsCount" sfa-validationerror-class="govuk-form-group--error">
+                    <p class="govuk-body">There are no standards</p>
+                    <span class="govuk-error-message" asp-validation-for="StandardsCount"></span>
+                </div>
+                }
+            </div>
         </div>
     </div>
-</div>
+</main>
 
 @section Scripts {
     @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }

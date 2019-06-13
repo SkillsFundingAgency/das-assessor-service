@@ -2,62 +2,117 @@
 @using SFA.DAS.AssessorService.Web.Staff.Domain
 @model RegisterViewAndEditOrganisationViewModel
 @{
-ViewBag.Title = "View Organisation";
-Layout = "_Layout";
+    ViewBag.Title = "View Organisation";
+    Layout = "_Layout";
 }
-<div class="grid-row">
-    <div class="column-two-thirds">
-        <a asp-action="Index" asp-controller="Register" class="link-back">Return to organisation search</a>
 
-        <h1>
-            <label class="form-label" for="">
-                <span class="heading-xlarge">View organisation</span>
-            </label>
-        </h1>
+<a class="govuk-back-link" asp-action="Index" asp-controller="Register">Return to organisation search</a>
 
-        <div id="organisationWrapper">
-            <div class="form-group">
-                <table>
-                    <tbody>
-                        <tr>
-                            <td><span class="bold-small">Name</span></td>
-                            <td>@Model.Name</td>
-                        </tr>
-                        <tr>
-                            <td><span class="bold-small">Organisation ID</span></td>
-                            <td>@Model.OrganisationId</td>
-                        </tr>
-                        <tr>
-                            <td><span class="bold-small">UKPRN</span></td>
-                            <td>@Model.Ukprn</td>
-                        </tr>
-                        <tr>
-                            <td><span class="bold-small">Organisation Type</span></td>
-                            <td>@Model.OrganisationType</td>
-                        </tr>
-                    <tr>
-                        <td><span class="bold-small">Legal Name</span></td>
-                        <td>@Model.LegalName</td>
-                    </tr>
-                    <tr>
-                        <td><span class="bold-small">Trading Name</span></td>
-                        <td>@Model.TradingName</td>
-                    </tr>
-                        <tr>
-                            <td><span class="bold-small">Company number</span></td>
-                            <td>@Model.CompanyNumber</td>
-                        </tr>
-                        <tr>
-                            <td><span class="bold-small">Charity number</span></td>
-                            <td>@Model.CharityNumber</td>
-                        </tr>
-                        <tr>
-                            <td><span class="bold-small">Website</span></td>
-                            <td>@Model.WebsiteLink</td>
-                        </tr>
-                        <tr>
-                            <td><span class="bold-small">Address</span></td>
-                            <td>
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+
+            <h1 class="govuk-heading-xl">
+                View organisation
+            </h1>
+
+            <div id="organisationWrapper">
+                <div class="form-group">
+                    <dl class="govuk-summary-list">
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Name
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @Model.Name
+                            </dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Organisation ID
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @Model.OrganisationId
+                            </dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Primary contact
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @Model.PrimaryContactName
+                            </dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Status
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @Model.Status
+                            </dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                UKPRN
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @Model.Ukprn
+                            </dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Organisation Type
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @Model.OrganisationType
+                            </dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Legal Name
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @Model.LegalName
+                            </dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Trading Name
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @Model.TradingName
+                            </dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Company number
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @Model.CompanyNumber
+                            </dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Charity number
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @Model.CharityNumber
+                            </dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Website
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @Model.WebsiteLink
+                            </dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Address
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                           
                                 @if (@Model.Address1 != null)
                                 {
                                     @Model.Address1<br />
@@ -78,113 +133,116 @@ Layout = "_Layout";
                                 {
                                     @Model.Postcode
                                 }
+                            </dd>
+                        </div>
+                    </dl>
+                </div>
+
+                <div sfa-show-for-roles="@string.Join(",", Roles.CertificationTeam, Roles.AssessmentDeliveryTeam)">
+                    <a class="govuk-button" href="/register/edit-organisation/@Model.OrganisationId">Edit</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+
+            <h2 class="govuk-heading-l">Contacts</h2>
+
+            <div class="govuk-form-group">
+                @if (@Model.Contacts.Count > 0)
+                {
+                <table class="govuk-table table-font-xsmall">
+                    <thead class="govuk-table__head">
+                        <tr class="govuk-table__row">
+                            <th class="govuk-table__header">Name</th>
+                            <th class="govuk-table__header">Email</th>
+                            <th class="govuk-table__header">Phone number</th>
+                            <th class="govuk-table__header">Username</th>
+                        </tr>
+                    </thead>
+                    <tbody class="govuk-table__body">
+                        @foreach (var result in Model.Contacts.OrderBy(x => x.DisplayName))
+                        {
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__cell" data-label="Name">
+                                <a class="govuk-link" href="/register/view-contact/@result.Id">
+                                    @result.DisplayName
+                                </a>
                             </td>
+                            <td class="govuk-table__cell" data-label="Email">@result.Email</td>
+                            <td class="govuk-table__cell" data-label="Phone number">@result.PhoneNumber</td>
+                            <td class="govuk-table__cell" data-label="Username">
+                                @if (!result.Username.Contains("unknown"))
+                                {
+                                    @result.Username
+                                }
+                            </td>
+                                                        
                         </tr>
-                        <tr>
-                            <td><span class="bold-small">Primary contact</span></td>
-                            <td>@Model.PrimaryContactName</td>
-                        </tr>
-                        <tr>
-                            <td><span class="bold-small">Status</span></td>
-                            <td>@Model.Status</td>
-                        </tr>
+                        }
                     </tbody>
                 </table>
+                }
+                else
+                {
+                    <p class="govuk-body">There are no contacts.</p>
+                }
             </div>
-
-            <div class="form-group" sfa-show-for-roles="@string.Join(",", Roles.CertificationTeam, Roles.AssessmentDeliveryTeam)">
-                <a class="button" href="/register/edit-organisation/@Model.OrganisationId">Edit</a>
-            </div>
+            <p class="govuk-body govuk-!-margin-bottom-6" >
+                <a class="govuk-link" href="/register/add-contact/@Model.OrganisationId" sfa-show-for-roles="@string.Join(",", Roles.AssessmentDeliveryTeam, Roles.CertificationTeam)">Add new contact</a>
+            </p>
         </div>
     </div>
-</div>
 
-<div class="grid-row">
-    <div class="column-full">
-        <h2 class="heading-large">Contacts</h2>
-        <div class="form-group">
-            @if (@Model.Contacts.Count > 0)
-            {
-            <table class="table responsive table-font-xsmall">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Phone number</th>
-                        <th>Username</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var result in Model.Contacts.OrderBy(x => x.DisplayName))
-                    {
-                    <tr>
-                        <td data-label="Name"><a href="/register/view-contact/@result.Id">@result.DisplayName</a></td>
-                        <td data-label="Email">@result.Email</td>
-                        <td data-label="Phone number">@result.PhoneNumber</td>
-                        <td data-label="Username">
-                            @if (!result.Username.Contains("unknown"))
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+
+            <h2 class="govuk-heading-l">Standards</h2>
+            <div class="govuk-form-group">
+                @if (@Model.OrganisationStandards.Count > 0)
+                {
+                    <table class="govuk-table">
+                        <thead class="govuk-table__head">
+                            <tr class="govuk-table__row">
+                                <th class="govuk-table__header" scope="col">Name</th>
+                                <th class="govuk-table__header" scope="col">Code</th>
+                                <th class="govuk-table__header govuk-table__header--numeric"></th>
+                            </tr>
+                        </thead>
+                        <tbody class="govuk-table__body">
+                            @foreach (var result in Model.OrganisationStandards.OrderBy(x =>
+                            x.StandardCollation.Title))
                             {
-                                @result.Username
+                                <tr class="govuk-table__row">
+                                    <td class="govuk-table__cell" data-label="Name">@result.StandardCollation.Title</td>
+                                    <td class="govuk-table__cell" data-label="ID">@result.StandardCode</td>
+                                    <td class="govuk-table__cell govuk-table__cell--numeric">
+                                        <a class="govuk-link" href="/register/view-standard/@result.Id">View</a>
+                                    </td>
+                                </tr>
                             }
-                        </td>
-                                                     
-                    </tr>
-                    }
-                </tbody>
-            </table>
-            }
-            else
-            {
-            <span>There are no contacts</span>
-            }
-        </div>
-        <div class="form-group" sfa-show-for-roles="@string.Join(",", Roles.AssessmentDeliveryTeam, Roles.CertificationTeam)">
-            <a class="button" href="/register/add-contact/@Model.OrganisationId">Add New Contact</a>
-        </div>
-    </div>
-</div>
-
-<div class="grid-row">
-    <div class="column-full">
-        <h2 class="heading-large">Standards</h2>
-        <div class="form-group">
-            @if (@Model.OrganisationStandards.Count > 0)
-            {
-            <table class="table responsive table-font-xsmall">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Code</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var result in Model.OrganisationStandards.OrderBy(x =>
-                    x.StandardCollation.Title))
-                    {
-                    <tr>
-                        <td data-label="Name">@result.StandardCollation.Title</td>
-                        <td data-label="ID">@result.StandardCode</td>
-                        <td><a href="/register/view-standard/@result.Id">View</a></td>
-                    </tr>
-                    }
-                </tbody>
-            </table>
-            }
-            else
-            {
-            <span>There are no standards</span>
-            }
-        </div>
-        <div class="form-group">
-            @if (@Model.Contacts.Count > 0)
-            {
-                <a class="button" href="/register/search-standards/@Model.OrganisationId"  sfa-show-for-roles="@string.Join(",", Roles.AssessmentDeliveryTeam, Roles.CertificationTeam)">Add New Standard</a>
-            }
-            else
-            {
-                <span  sfa-show-for-roles="@string.Join(",", Roles.AssessmentDeliveryTeam, Roles.CertificationTeam)">You can add standards when there are 1 or more contacts added to the organisation</span>
-            }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                <p class="govuk-body">There are no standards.</p>
+                }
+            </div>
+            <div class="form-group">
+                @if (@Model.Contacts.Count > 0)
+                {
+                    <p class="govuk-body">
+                        <a class="govuk-link" href="/register/search-standards/@Model.OrganisationId" sfa-show-for-roles="@string.Join(",", Roles.AssessmentDeliveryTeam, Roles.CertificationTeam)">Add new standard</a>
+                    </p>
+                }
+                else
+                {
+                    <p class="govuk-body" sfa-show-for-roles="@string.Join(",", Roles.AssessmentDeliveryTeam, Roles.CertificationTeam)">You can add standards when there are 1 or more contacts added to the organisation.</p>
+                }
+            </div>
         </div>
     </div>
-</div>
+</main>

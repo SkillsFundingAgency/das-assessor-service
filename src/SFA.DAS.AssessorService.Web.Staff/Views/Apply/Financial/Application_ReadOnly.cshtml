@@ -60,7 +60,7 @@
         <div class="column-full">
             <table class="table-spaced">
                 <caption class="heading-small">Application details</caption>
-                <tbody>
+                <tbody class="govuk-table__body">
                     <tr>
                         <td class="bold-small">Grade</td>
                         <td>@Model.Grade.SelectedGrade</td>
@@ -94,7 +94,7 @@
                     <th>Reviewer</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody class="govuk-table__body">
                 <tr>
                     <td>@Model.Grade.SelectedGrade</td>
                     <td>@Model.Grade.GradedDateTime.ToShortDateString()</td>
@@ -133,7 +133,7 @@
                         </th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody class="govuk-table__body">
                     @foreach (var pg in Model.Section.QnAData.Pages)
                     {
                         foreach (var question in pg.Questions.Where(q => q.Input.Type != "FileUpload"))

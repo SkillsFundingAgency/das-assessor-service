@@ -5,219 +5,307 @@
     Layout = "_Layout";
 }
 
-<div class="grid-row">
-    <div class="column-two-thirds">
-        <a href="/register/search-standards/@Model.OrganisationId" class="link-back">Return to standard search</a>
+<a class="govuk-back-link" href="/register/search-standards/@Model.OrganisationId">Return to standard search</a>
 
-        <form class="add-organisation-form" asp-action="EditOrganisationStandard" asp-controller="Register" method="POST">
-            <input type="hidden" name="fullDate" id="fullDate" class="date-input" />
-            @Html.HiddenFor(c => c.OrganisationId)
-            @Html.HiddenFor(c => c.StandardId)
-            @Html.HiddenFor(c => c.Ukprn)
-            @Html.HiddenFor(c => c.OrganisationName)
-            @Html.HiddenFor(c => c.StandardTitle)        
-            @Html.HiddenFor(m => m.StandardEffectiveFrom)
-            @Html.HiddenFor(m => m.StandardEffectiveTo)  
-            @Html.HiddenFor(c => c.StandardLastDateForNewStarts)
-            @Html.HiddenFor(c => c.Status)
-            @Html.HiddenFor(c => c.OrganisationStatus)
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
 
-            <div class="js-error-summary error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
-                <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
-                    There is a problem
-                </h2>
-                <ul class="js-error-summary-list error-summary-list"></ul>
-            </div>
+            <form class="add-organisation-form" asp-action="EditOrganisationStandard" asp-controller="Register" method="POST">
+                <input type="hidden" name="fullDate" id="fullDate" class="date-input" />
+                @Html.HiddenFor(c => c.OrganisationId)
+                @Html.HiddenFor(c => c.StandardId)
+                @Html.HiddenFor(c => c.Ukprn)
+                @Html.HiddenFor(c => c.OrganisationName)
+                @Html.HiddenFor(c => c.StandardTitle)        
+                @Html.HiddenFor(m => m.StandardEffectiveFrom)
+                @Html.HiddenFor(m => m.StandardEffectiveTo)  
+                @Html.HiddenFor(c => c.StandardLastDateForNewStarts)
+                @Html.HiddenFor(c => c.Status)
+                @Html.HiddenFor(c => c.OrganisationStatus)
 
-            @if (!ViewData.ModelState.IsValid)
-            {
-                <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
-                    <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+                <div class="js-error-summary govuk-error-summary" role="alert" aria-labelledby="error-summary-title" tabindex="-1" data-module="error-summary">
+                    <h2 class="govuk-error-summary__title" id="error-summary-title">
                         There is a problem
                     </h2>
-                    <ul class="error-summary-list">
-                        <li><a sfa-validation-for="OrganisationId"></a></li>
-                        <li><a sfa-validation-for="StandardId"></a></li>
-                        <li><a sfa-validation-for="EffectiveFrom"></a></li>
-                        <li><a sfa-validation-for="EffectiveFromDay"></a></li>
-                        <li><a sfa-validation-for="EffectiveFromMonth"></a></li>
-                        <li><a sfa-validation-for="EffectiveFromYear"></a></li>
-                        <li><a sfa-validation-for="EffectiveTo"></a></li>
-                        <li><a sfa-validation-for="EffectiveToDay"></a></li>
-                        <li><a sfa-validation-for="EffectiveToMonth"></a></li>
-                        <li><a sfa-validation-for="EffectiveToYear"></a></li>
-                        <li><a sfa-validation-for="ContactId"></a></li>
-                        <li><a sfa-validation-for="DeliveryAreas"></a></li>
-                    </ul>
+                    <div class="govuk-error-summary__body">
+                        <ul class="js-error-summary-list govuk-list govuk-error-summary__list"></ul>
+                    </div>
                 </div>
-            }
 
-            <h1 class="heading-xlarge">Edit an organisation standard</h1>
-            <table>
-                <tbody>
-                <tr>
-                    <td><span class="bold-small">Organisation</span></td>
-                    <td>@Model.OrganisationName</td>
-                </tr>
-                <tr>
-                    <td><span class="bold-small">Organisation status</span></td>
-                    <td>@Model.OrganisationStatus</td>
-                </tr>
-                <tr>
-                    <td><span class="bold-small">Organisation ID</span></td>
-                    <td>@Model.OrganisationId</td>
-                </tr>
-                <tr>
-                    <td><span class="bold-small">UKPRN</span></td>
-                    <td>@Model.Ukprn</td>
-                </tr>
-                <tr>
-                    <td><span class="bold-small">Standard</span></td>
-                    <td>@Model.StandardTitle (@Model.StandardId)</td>
-                </tr>
-                <tr>
-                    <td><span class="bold-small">Standard effective from</span></td>
-                    <td>@Model.StandardEffectiveFrom.ToSfaShortDateString()</td>
-                </tr>
-                <tr>
-                    <td><span class="bold-small">Standard effective to</span></td>
-                    <td>@Model.StandardEffectiveTo.ToSfaShortDateString()</td>
-                </tr>
-                <tr>
-                    <td><span class="bold-small">Last date for new starts</span></td>
-                    <td>@Model.StandardLastDateForNewStarts.ToSfaShortDateString()</td>
-                </tr>
-                <tr>
-                    <td><span class="bold-small">Date approved on register</span></td>
-                    <td> @Model.DateStandardApprovedOnRegister.ToSfaShortDateString()</td>
-                </tr>
-                <tr>
-                    <td><span class="bold-small">Standard status</span></td>
-                    <td>@Model.Status</td>
-                </tr>
-                </tbody>
-            </table>
-
-            <h1 class="heading-large">New organisation standard details</h1>
-        
-            <div class="form-group error-message-container" sfa-anyvalidationerror-class="form-group-error">
-                <span class="error-message" asp-validation-for="EffectiveFrom"></span>
-                <span class="error-message" asp-validation-for="EffectiveFromDay"></span>
-                <span class="error-message" asp-validation-for="EffectiveFromMonth"></span>
-                <span class="error-message" asp-validation-for="EffectiveFromYear"></span>
-                <label for="EffectiveFrom">
-                    <span class="form-label-bold">Effective from</span>
-                </label>
-                <span class="form-date">
-                    <div class="form-group form-group-day">
-                        <label for="EffectiveFromDay">Day</label>
-                        <input class="form-control date-input js-integers-only" sfa-validation-for="EffectiveFromDay" sfa-validationerror-class="form-control-error" asp-for="EffectiveFromDay" type="text" maxlength="2" />
-                    </div>
-
-                    <div class="form-group form-group-month">
-                        <label for="EffectiveFromMonth">Month</label>
-                        <input class="form-control date-input js-integers-only" sfa-validation-for="EffectiveFromMonth" sfa-validationerror-class="form-control-error" asp-for="EffectiveFromMonth" type="text" maxlength="2" />
-                    </div>
-
-                    <div class="form-group form-group-year">
-                        <label for="EffectiveFromYear">Year</label>
-                        <input class="form-control date-input js-integers-only" sfa-validation-for="EffectiveFromYear" sfa-validationerror-class="form-control-error" asp-for="EffectiveFromYear" type="text" maxlength="4" />
-                    </div>
-                </span>
-           
-            </div>
-            <div class="form-group error-message-container" sfa-anyvalidationerror-class="form-group-error">
-                <span class="error-message" asp-validation-for="EffectiveTo"></span>
-                <span class="error-message" asp-validation-for="EffectiveToDay"></span>
-                <span class="error-message" asp-validation-for="EffectiveToMonth"></span>
-                <span class="error-message" asp-validation-for="EffectiveToYear"></span>
-                <label for="EffectiveFrom">
-                    <span class="form-label-bold">Effective to</span>
-                </label>
-                <span class="form-date">
-                    <div class="form-group form-group-day">
-                        <label for="EffectiveToDay">Day</label>
-                        <input class="form-control date-input js-integers-only" sfa-validation-for="EffectiveToDay" sfa-validationerror-class="form-control-error" asp-for="EffectiveToDay" type="text" maxlength="2" />
-                    </div>
-
-                    <div class="form-group form-group-month">
-                        <label for="EffectiveToMonth">Month</label>
-                        <input class="form-control date-input js-integers-only" sfa-validation-for="EffectiveToMonth" sfa-validationerror-class="form-control-error" asp-for="EffectiveToMonth" type="text" maxlength="2" />
-                    </div>
-
-                    <div class="form-group form-group-year">
-                        <label for="EffectiveToYear">Year</label>
-                        <input class="form-control date-input js-integers-only" sfa-validation-for="EffectiveToYear" sfa-validationerror-class="form-control-error" asp-for="EffectiveToYear" type="text" maxlength="4" />
-                    </div>
-                </span>
-           
-            </div>
-            <div class="form-group" sfa-validation-for="ContactId" sfa-validationerror-class="form-group-error">
-                <label for="ContactId">
-                    <span class="form-label-bold">Contact</span>
-                    <span class="error-message" asp-validation-for="ContactId"></span>
-                </label>
-                @foreach (var contact in Model.Contacts)
+                @if (!ViewData.ModelState.IsValid)
                 {
-                    <div class="multiple-choice">
-                        <input asp-for="ContactId" id="@contact.Id" type="radio" value="@contact.Id"/>
-                        <label for="@contact.Id">
-                            @contact.DisplayName
-                            @if (!String.IsNullOrEmpty( @contact.Email )) {
-                                <br /><a href="mailto:@contact.Email">@contact.Email</a>
-                            }
-                            @if (!String.IsNullOrEmpty( @contact.PhoneNumber )) {
-                                <br />@contact.PhoneNumber
-                            }
-                        </label>
+                    <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
+                        <h2 class="govuk-error-summary__title" id="error-summary-title">
+                            There is a problem
+                        </h2>
+                        <div class="govuk-error-summary__body">
+                            <ul class="govuk-list govuk-error-summary__list">
+                                <li><a sfa-validation-for="OrganisationId"></a></li>
+                                <li><a sfa-validation-for="StandardId"></a></li>
+                                <li><a sfa-validation-for="EffectiveFrom"></a></li>
+                                <li><a sfa-validation-for="EffectiveFromDay"></a></li>
+                                <li><a sfa-validation-for="EffectiveFromMonth"></a></li>
+                                <li><a sfa-validation-for="EffectiveFromYear"></a></li>
+                                <li><a sfa-validation-for="EffectiveTo"></a></li>
+                                <li><a sfa-validation-for="EffectiveToDay"></a></li>
+                                <li><a sfa-validation-for="EffectiveToMonth"></a></li>
+                                <li><a sfa-validation-for="EffectiveToYear"></a></li>
+                                <li><a sfa-validation-for="ContactId"></a></li>
+                                <li><a sfa-validation-for="DeliveryAreas"></a></li>
+                            </ul>
+                        </div>
                     </div>
                 }
-            </div>
-        <div class="form-group" sfa-validation-for="DeliveryAreas" sfa-validationerror-class="form-group-error">
-            <label for="DeliveryAreas">
-                <span class="form-label-bold">Delivery areas</span>
-                <span class="error-message" asp-validation-for="DeliveryAreas"></span>
-            </label>
-            @foreach (var deliveryArea in Model.AvailableDeliveryAreas)
-            {
-                var checkboxChecked = Model.DeliveryAreas != null && Model.DeliveryAreas.Any(x => x == deliveryArea.Id) ? "checked" : "";
-                <div class="multiple-choice">
-                    <input 
-                        id="@deliveryArea.Id"
-                        name="DeliveryAreas"
-                        type="checkbox"
-                        value="@deliveryArea.Id"
-                        @checkboxChecked
-                    />
-                    <label for="@deliveryArea.Id">
-                        @deliveryArea.Area
-                    </label>
-                </div>
-            }
-        </div>
-        <div class="form-group" sfa-validation-for="DeliveryAreasComments" sfa-validationerror-class="form-group-error">
-            <label class="form-label" for="DeliveryAreasComments">
-                <span class="form-label-bold">Delivery Area Notes</span>
-                <span class="error-message" asp-validation-for="DeliveryAreasComments"></span>
-            </label>
-            <textarea class="form-control form-control-3-4" maxlength="500" name="DeliveryAreasComments" id="DeliveryAreasComments" sfa-validationerror-class="form-control-error" asp-for="DeliveryAreasComments" rows="2"></textarea>
-        </div>
 
-            <div class="form-group" sfa-validation-for="Comments" sfa-validationerror-class="form-group-error">
-                <label for="Comments">
-                    <span class="form-label-bold">Comments</span>
-                    <span class="error-message" asp-validation-for="Comments"></span>
-                </label>
-                <textarea class="form-control form-control-3-4" maxlength="500" name="Comments" id="Comments" sfa-validationerror-class="form-control-error" asp-for="Comments" rows="5"></textarea>
-            </div>
-            <div class="form-group">
-                <button class="button" type="submit" name="ActionChoice" value="Save">Save</button>
-                <a class ="button" href="/register/view-standard/@Model.OrganisationStandardId">Cancel</a>
-            </div>
+                <h1 class="govuk-heading-xl">Edit an organisation standard</h1>
+
+
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Organisation
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            @Model.OrganisationName
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Organisation status
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            @Model.OrganisationStatus
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Organisation ID
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            @Model.OrganisationId
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            UKPRN
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            @Model.Ukprn
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Standard
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            @Model.StandardTitle (@Model.StandardId)
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Standard effective from
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            @Model.StandardEffectiveFrom.ToSfaShortDateString()
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Standard effective to
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            @Model.StandardEffectiveTo.ToSfaShortDateString()
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Last date for new starts
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            @Model.StandardLastDateForNewStarts.ToSfaShortDateString()
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Date approved on register
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            @Model.DateStandardApprovedOnRegister.ToSfaShortDateString()
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Standard status
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            @Model.Status
+                        </dd>
+                    </div>
+                </dl>
+
+                <h2 class="govuk-heading-l">New organisation standard details</h2>
             
-        </form>
+                <div class="govuk-form-group error-message-container" sfa-anyvalidationerror-class="govuk-form-group--error">
+                    <span class="govuk-error-message" asp-validation-for="EffectiveFrom"></span>
+                    <span class="govuk-error-message" asp-validation-for="EffectiveFromDay"></span>
+                    <span class="govuk-error-message" asp-validation-for="EffectiveFromMonth"></span>
+                    <span class="govuk-error-message" asp-validation-for="EffectiveFromYear"></span>
+
+                    <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
+                        Effective from
+                    </legend>
+
+                    <div class="govuk-date-input">
+                        <div class="govuk-date-input__item">
+                            <div class="govuk-form-group">
+                                <label class="govuk-label govuk-date-input__label" for="EffectiveFromDay">
+                                    Day
+                                </label>
+                                <input class="govuk-input govuk-date-input__input govuk-input--width-2 js-integers-only" sfa-validation-for="EffectiveFromDay" sfa-validationerror-class="govuk-input--error" asp-for="EffectiveFromDay" type="text" maxlength="2" />
+                            </div>
+                        </div>
+                        <div class="govuk-date-input__item">
+                            <div class="govuk-form-group">
+                                <label class="govuk-label govuk-date-input__label" for="EffectiveFromMonth">
+                                    Month
+                                </label>
+                                <input class="govuk-input govuk-date-input__input govuk-input--width-2 js-integers-only" sfa-validation-for="EffectiveFromMonth" sfa-validationerror-class="govuk-input--error" asp-for="EffectiveFromMonth" type="text" maxlength="2" />
+                            </div>
+                        </div>
+                        <div class="govuk-date-input__item">
+                            <div class="govuk-form-group">
+                                <label class="govuk-label govuk-date-input__label" for="EffectiveFromYear">
+                                    Year
+                                </label>
+                                <input class="govuk-input govuk-date-input__input govuk-input--width-4 js-integers-only" sfa-validation-for="EffectiveFromYear" sfa-validationerror-class="govuk-input--error" asp-for="EffectiveFromYear" type="text" maxlength="4" />
+                            </div>
+                        </div>
+                    </div>
+
+            
+                </div>
+                <div class="govuk-form-group error-message-container" sfa-anyvalidationerror-class="govuk-form-group--error">
+                    <span class="govuk-error-message" asp-validation-for="EffectiveTo"></span>
+                    <span class="govuk-error-message" asp-validation-for="EffectiveToDay"></span>
+                    <span class="govuk-error-message" asp-validation-for="EffectiveToMonth"></span>
+                    <span class="govuk-error-message" asp-validation-for="EffectiveToYear"></span>
+                    
+                    <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
+                        Effective to
+                    </legend>
+
+                    <div class="govuk-date-input">
+                        <div class="govuk-date-input__item">
+                            <div class="govuk-form-group">
+                                <label class="govuk-label govuk-date-input__label" for="EffectiveToDay">
+                                    Day
+                                </label>
+                                <input class="govuk-input govuk-date-input__input govuk-input--width-2 js-integers-only" sfa-validation-for="EffectiveToDay" sfa-validationerror-class="govuk-input--error" asp-for="EffectiveToDay" type="text" maxlength="2" />
+                            </div>
+                        </div>
+                        <div class="govuk-date-input__item">
+                            <div class="govuk-form-group">
+                                <label class="govuk-label govuk-date-input__label" for="EffectiveToMonth">
+                                    Month
+                                </label>
+                                <input class="govuk-input govuk-date-input__input govuk-input--width-2 js-integers-only" sfa-validation-for="EffectiveToMonth" sfa-validationerror-class="govuk-input--error" asp-for="EffectiveToMonth" type="text" maxlength="2" />
+                            </div>
+                        </div>
+                        <div class="govuk-date-input__item">
+                            <div class="govuk-form-group">
+                                <label class="govuk-label govuk-date-input__label" for="EffectiveToYear">
+                                    Year
+                                </label>
+                                <input class="govuk-input govuk-date-input__input govuk-input--width-4 js-integers-only" sfa-validation-for="EffectiveToYear" sfa-validationerror-class="govuk-input--error" asp-for="EffectiveToYear" type="text" maxlength="4" />
+                            </div>
+                        </div>
+                    </div>
+            
+                </div>
+                <div class="govuk-form-group" sfa-validation-for="ContactId" sfa-validationerror-class="govuk-form-group--error">
+                    
+                    <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
+                        Contact
+                    </legend>
+
+                    <span class="govuk-error-message" asp-validation-for="ContactId"></span>
+
+                    <div class="govuk-radios">
+                        @foreach (var contact in Model.Contacts)
+                        {
+                            <div class="govuk-radios__item">
+                                <input class="govuk-radios__input" asp-for="ContactId" id="@contact.Id" type="radio" value="@contact.Id" />
+                                <label class="govuk-label govuk-radios__label govuk-label--s" for="@contact.Id">
+                                    @contact.DisplayName
+                                </label>
+                                @if (!String.IsNullOrEmpty(@contact.Email))
+                                {
+                                    <span class="govuk-radios__hint">
+                                        <a class="govuk-link" href="mailto:@contact.Email">@contact.Email</a>
+                                    </span>
+                                }
+                                @if (!String.IsNullOrEmpty(@contact.PhoneNumber))
+                                {
+                                    <span class="govuk-radios__hint">
+                                        @contact.PhoneNumber
+                                    </span>
+                                }
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <div class="govuk-form-group" sfa-validation-for="DeliveryAreas" sfa-validationerror-class="govuk-form-group--error">
+                    <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
+                        Delivery areas
+                    </legend>
+
+                    <span class="govuk-error-message" asp-validation-for="DeliveryAreas"></span>
+
+                    <div class="govuk-checkboxes">
+                        @foreach (var deliveryArea in Model.AvailableDeliveryAreas)
+                        {
+                            var checkboxChecked = Model.DeliveryAreas != null && Model.DeliveryAreas.Any(x => x == deliveryArea.Id) ? "checked" : "";
+                            <div class="govuk-checkboxes__item">
+                                <input 
+                                    class="govuk-checkboxes__input" 
+                                    id="@deliveryArea.Id"
+                                    name="DeliveryAreas"
+                                    type="checkbox"
+                                    value="@deliveryArea.Id"
+                                    @checkboxChecked
+                                />
+                                <label class="govuk-label govuk-checkboxes__label" for="@deliveryArea.Id">
+                                    @deliveryArea.Area
+                                </label>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <div class="govuk-form-group" sfa-validation-for="DeliveryAreasComments" sfa-validationerror-class="govuk-form-group--error">
+                    <label class="govuk-label" for="DeliveryAreasComments">
+                        Delivery Area Notes
+                    </label>
+                    <span class="govuk-error-message" asp-validation-for="DeliveryAreasComments"></span>
+                    <textarea class="govuk-input" maxlength="500" name="DeliveryAreasComments" id="DeliveryAreasComments" sfa-validationerror-class="form-control-error" asp-for="DeliveryAreasComments" rows="2"></textarea>
+                </div>
+                <div class="govuk-form-group" sfa-validation-for="Comments" sfa-validationerror-class="govuk-form-group--error">
+                    <label class="govuk-label" for="Comments">
+                        Comments
+                    </label>
+                    <span class="govuk-error-message" asp-validation-for="Comments"></span>
+                    <textarea class="govuk-textarea" maxlength="500" name="Comments" id="Comments" sfa-validationerror-class="form-control-error" asp-for="Comments" rows="5"></textarea>
+                </div>
+                
+                    <button class="govuk-button govuk-!-margin-right-1" type="submit" name="ActionChoice" value="Save">Save</button>
+                    <a class="govuk-button govuk-button--secondary" href="/register/view-standard/@Model.OrganisationStandardId">Cancel</a>
+                
+            </form>
+        </div>
     </div>
-</div>
+</main>
 
 @section Scripts {
     @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }

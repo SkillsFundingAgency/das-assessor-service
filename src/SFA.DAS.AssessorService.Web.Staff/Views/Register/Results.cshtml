@@ -6,49 +6,50 @@
     Layout = "_Layout";
 }
 
+<a asp-action="Index" class="govuk-back-link">Return to organisation search</a>
 
-<div class="grid-row">
-    <div class="column-two-thirds">
-        <a asp-action="Index" class="link-back">Return to organisation search</a>
-        <h1 class="heading-xlarge">
-            Organisation search results
-            <span class="heading-secondary">Number of results: @Model.Results.Count</span>
-        </h1>
-    </div>
-</div>
+<main class="govuk-main-wrapper " id="main-content" role="main">
 
-
-@if (@Model.Results.Count > 0)
-{
-<div class="grid-row">
-    <div class="column-full">
-        <div class="form-group">
-            <table class="table responsive table-font-xsmall">
-                <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>ID</th>
-                    <th>UKPRN</th>
-                </tr>
-                </thead>
-                <tbody>
-                @foreach (var result in Model.Results.OrderBy(x => x.Name))
-                {
-                    <tr>
-                        <td data-label="Name"><a href="/register/view-organisation/@result.Id">@result.Name</a></td>
-                        <td data-label="ID">@result.Id</td>
-                        <td data-label="UKPRN">@result.Ukprn</td>
-                    </tr>
-                }
-                </tbody>
-            </table>
+    <div class="govuk-grid-row govuk-!-margin-bottom-6">
+        <div class="govuk-grid-column-two-thirds">
+            <h1 class="govuk-heading-xl govuk-!-margin-bottom-1">
+                Organisation search results
+            </h1>
+            <span class="govuk-caption-xl">Number of results: @Model.Results.Count</span>
         </div>
     </div>
-</div>
-}
 
-<div class="grid-row" sfa-show-for-roles="@string.Join(",", Roles.AssessmentDeliveryTeam, Roles.CertificationTeam)">
-    <div class="column-two-thirds">
-        <a class="button" href="/register/add-organisation">Add new<span class="visually-hidden"> organisation</span></a>
+    @if (@Model.Results.Count > 0)
+    {
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <table class="govuk-table table-font-xsmall">
+                    <thead class="govuk-table__head">
+                        <tr class="govuk-table__row">
+                            <th class="govuk-table__header" scope="col">Name</th>
+                            <th class="govuk-table__header" scope="col">ID</th>
+                            <th class="govuk-table__header govuk-table__header--numeric" scope="col">UKPRN</th>
+                        </tr>
+                    </thead>
+                    <tbody class="govuk-table__body">
+                        @foreach (var result in Model.Results.OrderBy(x => x.Name))
+                        {
+                            <tr class="govuk-table__row">
+                                <td class="govuk-table__cell" data-label="Name"><a class="govuk-link" href="/register/view-organisation/@result.Id">@result.Name</a></td>
+                                <td class="govuk-table__cell" data-label="ID">@result.Id</td>
+                                <td class="govuk-table__cell govuk-table__cell--numeric" data-label="UKPRN">@result.Ukprn</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+
+    <div class="govuk-grid-row" sfa-show-for-roles="@string.Join(",", Roles.AssessmentDeliveryTeam, Roles.CertificationTeam)">
+        <div class="govuk-grid-column-two-thirds">
+            <a class="govuk-button" href="/register/add-organisation">Add new<span class="visually-hidden"> organisation</span></a>
+        </div>
     </div>
-</div>
+
+</main>

@@ -5,47 +5,63 @@
     ViewBag.Title = "View Contact";
     Layout = "_Layout";
 }
-<div class="grid-row">
-    <div class="column-two-thirds">
-        <a href="/register/view-organisation/@Model.OrganisationId" class="link-back">Return to organisation</a>
-        
-        <h1>
-            <label class="form-label" for="">
-                <span class="heading-xlarge">View contact</span>
-            </label>
-        </h1>
-        
-        <div id="organisationWrapper">
-            <div class="form-group">
-                <table>
-                    <tbody>
-                    <tr>
-                        <td><span class="bold-small">Organisation</span></td>
-                        <td><a href="/register/view-organisation/@Model.OrganisationId">@Model.OrganisationName</a></td>
-                    </tr>
-                    <tr>
-                        <td><span class="bold-small">Contact name</span></td>
-                        <td> @Model.FirstName @Model.LastName</td>
-                    </tr>
-                    <tr>
-                        <td><span class="bold-small">Email</span></td>
-                        <td>@Model.Email</td>
-                    </tr>
-                    <tr>
-                        <td><span class="bold-small">Phone number</span></td>
-                        <td>@Model.PhoneNumber</td>
-                    </tr>
-                    <tr>
-                        <td><span class="bold-small">Primary Contact</span></td>
-                        <td>@Model.IsPrimaryContact</td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
 
-            <div class="form-group" sfa-show-for-roles="@string.Join(",", Roles.AssessmentDeliveryTeam, Roles.CertificationTeam)">
-                <a class="button" href="/register/edit-contact/@Model.ContactId">Edit</a>
+<a class="govuk-back-link" href="/register/view-organisation/@Model.OrganisationId">Return to organisation</a>
+
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+        
+            <h1 class="govuk-heading-xl">View contact</h1>
+            
+            <div id="organisationWrapper">
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Organisation
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            <a class="govuk-link" href="/register/view-organisation/@Model.OrganisationId">@Model.OrganisationName</a>
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Contact name
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            @Model.FirstName @Model.LastName
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Email
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            @Model.Email
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Phone number
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            @Model.PhoneNumber
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Primary contact
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            @Model.IsPrimaryContact
+                        </dd>
+                    </div>
+                </dl>
+            </div>
+            <div sfa-show-for-roles="@string.Join(",", Roles.AssessmentDeliveryTeam, Roles.CertificationTeam)">
+                <a class="govuk-button" href="/register/edit-contact/@Model.ContactId">Edit</a>
             </div>
         </div>    
     </div>
-</div>
+</main>
