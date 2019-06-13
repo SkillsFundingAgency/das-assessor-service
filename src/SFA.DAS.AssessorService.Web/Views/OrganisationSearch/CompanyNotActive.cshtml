@@ -5,43 +5,43 @@
     Layout = "_Layout";
 }
 
-<a asp-action="Results" asp-controller="OrganisationSearch" asp-route-searchString="@Model.SearchString" class="link-back">Back to search results</a>
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        @if (!string.IsNullOrEmpty(Model.Name))
+        {
+            <div class="govuk-grid-column-two-thirds">
+                <div class="govuk-form-group">
+                    <h1 class="govuk-heading-xl">This company is no longer active</h1>
 
-<div class="grid-row">
-    @if (!string.IsNullOrEmpty(Model.Name))
-    {
-    <div class="column-full">
-        <div class="form-group">
-            <h1 class="heading-xlarge">This company is no longer active</h1>
+                    <h2 class="govuk-heading-m">@Model.Name</h2>
 
-            <h2 class="heading-medium">@Model.Name</h2>
+                    <p class="govuk-body">You must select an active company.</p>
+                </div>
 
-            <p class="bold govuk-margin-bottom-0">You must select an active company.</p>
-        </div>
+                <p class="govuk-body">
+                    <a class="govuk-link" asp-action="Results" asp-controller="OrganisationSearch" asp-route-searchString="@Model.SearchString">Choose a different organisation</a>
+                </p>
+            </div>
+        }
+        else
+        {
+            <div class="govuk-grid-column-two-thirds">
+                <div class="govuk-form-group">
+                    <h1 class="govuk-heading-xl">We cannot find your organisation details</h1>
+                    <p class="govuk-body">Check the:</p>
+                    <ul class="govuk-list govuk-list--bullet">
+                        <li>spelling of the name</li>
+                        <li><abbr title="UK provider reference number">UKPRN</abbr> is correct</li>
+                        <li><abbr title="End-point assessor organisation">EPAO ID</abbr> is correct</li>
+                        <li>company number</li>
+                        <li>charity number</li>
+                    </ul>
+                </div>
 
-        <p class="govuk-body-anchor">
-            <a class="link" asp-action="Results" asp-controller="OrganisationSearch" asp-route-searchString="@Model.SearchString">Choose a different organisation</a>
-        </p>
+                <p class="govuk-body">
+                    <a class="govuk-link" asp-action="Results" asp-controller="OrganisationSearch" asp-route-searchString="@Model.SearchString">Back to search results</a>
+                </p>
+            </div>
+        }
     </div>
-    }
-    else
-    {
-    <div class="column-full">
-        <div class="form-group">
-            <h1 class="heading-large">We cannot find your organisation details</h1>
-            <p>Check the:</p>
-            <ul class="list list-bullet ">
-                <li>spelling of the name</li>
-                <li><abbr title="UK provider reference number">UKPRN</abbr> is correct</li>
-                <li><abbr title="End-point assessor organisation">EPAO ID</abbr> is correct</li>
-                <li>company number</li>
-                <li>charity number</li>
-            </ul>
-        </div>
-
-        <p class="govuk-body-anchor">
-            <a class="link" asp-action="Results" asp-controller="OrganisationSearch" asp-route-searchString="@Model.SearchString">Back to search results</a>
-        </p>
-    </div>
-    }
-</div>
+</main>
