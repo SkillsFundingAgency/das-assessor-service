@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
@@ -63,20 +64,20 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
                     ? new Provider {ProviderName = previousProviderName}
                     : new Provider {ProviderName = "Unknown"};
             }
-            
+
             var certData = new CertificateData()
             {
                 LearnerGivenNames = ilr.GivenNames,
                 LearnerFamilyName = ilr.FamilyName,
                 StandardName = standard.Title,
                 LearningStartDate = ilr.LearnStartDate, 
-                StandardLevel = standard.Level,
-                // MFC 01/10/18 WE NEED TO TALK ABOUT THIS, COS EFFECTIVEFROM IS NOW NULLABLE
-                StandardPublicationDate = standard.EffectiveFrom.Value,
+                StandardLevel = standard.StandardData.Level.GetValueOrDefault(),
+                StandardPublicationDate = standard.StandardData.EffectiveFrom.GetValueOrDefault(),
                 FullName = $"{ilr.GivenNames} {ilr.FamilyName}",
-                ProviderName = provider.ProviderName
+                ProviderName = provider.ProviderName,
+                EpaDetails = new EpaDetails { Epas = new List<EpaRecord>() }
             };
-            
+
             _logger.LogInformation("CreateNewCertificate Before create new Certificate");
             var newCertificate = await _certificateRepository.New(
                 new Certificate()
@@ -94,7 +95,11 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
                 });
 
             newCertificate.CertificateReference = newCertificate.CertificateReferenceId.ToString().PadLeft(8,'0');
-            
+
+            // need to update EPA Reference too
+            certData.EpaDetails.EpaReference = newCertificate.CertificateReference;
+            newCertificate.CertificateData = JsonConvert.SerializeObject(certData);
+
             _logger.LogInformation("CreateNewCertificate Before Update Cert in db");
             await _certificateRepository.Update(newCertificate, request.Username, null);
 

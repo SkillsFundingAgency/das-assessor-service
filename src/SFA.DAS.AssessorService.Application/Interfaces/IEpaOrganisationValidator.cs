@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using SFA.DAS.Apprenticeships.Api.Types;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
+using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 
 namespace SFA.DAS.AssessorService.Application.Interfaces
@@ -19,7 +20,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         string CheckOrganisationTypeExists(int? organisationTypeId);
         string CheckIfOrganisationNotFound(string organisationId); 
         string CheckUkprnIsValid(long? ukprn);
-        Task<Standard> GetStandard(int standardCode);
+        Task<StandardCollation> GetStandard(int standardCode);
         string CheckIfOrganisationStandardAlreadyExists(string organisationId, int standardCode);
         string CheckOrganisationNameNotUsed(string name);
         string CheckOrganisationNameNotUsedForOtherOrganisations(string name, string organisationIdToIgnore);
@@ -31,6 +32,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         string CheckDisplayName(string displayName);
         string CheckIfEmailIsPresentAndInSuitableFormat(string email);
         string CheckIfEmailAlreadyPresentInAnotherOrganisation(string email, string organisationId);
+        string CheckIfEmailAlreadyPresentInCurrentOrganisation(string email, string organisationId);
         string CheckIfEmailAlreadyPresentInOrganisationNotAssociatedWithContact(string email, string contactId);
         string CheckIfDeliveryAreasAreValid(List<int> DeliveryAreas);
 
@@ -47,6 +49,8 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
 
         string CheckAddressDetailsForOrganisation(string address1, string address2, string address3, string address4);
         string CheckPostcodeIsPresentForOrganisation(string postcode);
+
+        string CheckUkprnForOrganisation(long? ukprn);
         string CheckContactCountForOrganisation(int? numberOfContacts);
         string CheckStandardCountForOrganisation(int? numberOfStandards);
 

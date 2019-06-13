@@ -14,7 +14,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Search
 
     public class ChooseStandardViewModel
     {
-        public string SelectedStandardCode { get; set; }
+        public string StdCode { get; set; }
         public IEnumerable<ResultViewModel> SearchResults { get; set; }
     }
 
@@ -32,7 +32,8 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Search
         public string SubmittedBy { get; set; }
         public string LearnerStartDate { get; set; }
         public string AchievementDate { get; set; }
-
+        public bool UlnAlreadyExists { get; set; }
         public bool ShowExtraInfo { get; set; }
+        public bool IsNoMatchingFamilyName { get; set; }
     }
 }

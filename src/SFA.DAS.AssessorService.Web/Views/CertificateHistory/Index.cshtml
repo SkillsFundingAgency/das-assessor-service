@@ -1,4 +1,5 @@
 ﻿@using Microsoft.AspNetCore.Mvc.Localization
+@using SFA.DAS.AssessorService.Domain.Consts
 @inject IViewLocalizer Localizer
 @using Microsoft.AspNetCore.Mvc.Localization
 @using SFA.DAS.AssessorService.Domain.Paging
@@ -9,177 +10,213 @@
     Layout = "_DashboardLayout";
 }
 
+<main class="govuk-main-wrapper " id="main-content" role="main">
 
-<div class="grid-row">
-    <div class="column-full">
-        <h1 class="heading-large">Completed assessments</h1>
-        <div class="das-standout-box">
-            <a href="https://www.smartsurvey.co.uk/s/certification-banner/" target="_blank">Complete our survey</a> to help us improve this section of the Apprenticeship assessment service.
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <h1 class="govuk-heading-xl">Completed assessments</h1>
         </div>
-    @if (Model.Items.Any())
-    {
-        <table class="table responsive table-font-xsmall">
-            <thead>
-            <tr>
-                <th>
-                    @Localizer["Apprentice"]
-                </th>
-                <th>
-                    @Localizer["ULN"]
-                </th>
-                <th>
-                    @Localizer["Employer"]
-                </th>
-                <th>
-                    @Localizer["TrainingProvider"]
-                </th>
-                <th>
-                    @Localizer["DateRequested"]
-                </th>
-            </tr>
-            </thead>
-            <tbody>
-            @foreach (var item in Model.Items)
-            {
-                <tr>
-                    <td data-label="@Localizer["Apprentice"]" class="nowrap">
-                        <div role="button" tabindex="0" class="js-expand-table-row expand-table-row" data-expand-id="@Html.DisplayFor(modelItem => item.Uln)"><i class="arrow arrow-closed">►</i> <span>@Html.DisplayFor(modelItem => item.FullName)</span></div>
-                    </td>
-                    <td data-label="@Localizer["ULN"]">
-                        @Html.DisplayFor(modelItem => item.Uln)
-                    </td>
-                    <td data-label="@Localizer["Employer"]">
-                        @Html.DisplayFor(modelItem => item.ContactOrganisation)
-                    </td>
-                    <td data-label="@Localizer["TrainingProvider"]">
-                        @Html.DisplayFor(modelItem => item.TrainingProvider)
-                    </td>
-                    <td data-label="@Localizer["DateRequested"]">
-                        @item.CreatedAt.ToString("dd/MM/yyyy")
-                    </td>
-                </tr>
-                <tr class="js-expandble-cell js-hidden expandble-cell" aria-hidden="true">
-                    <td colspan="5">
-                        <div class="expandble-cell-content">
-                            <h2 class="heading-medium expandble-cell-content--first-heading">@Localizer["AssessmentDetails"]</h2>
-                            <ul>
-                                <li>
-                                    <p><span class="bold">@Localizer["RecordedBy"]:</span> @Html.DisplayFor(modelItem => item.RecordedBy)</p>
-                                </li>
-                                <li>
-                                    <p><span class="bold">@Localizer["Standard"]:</span> @Html.DisplayFor(modelItem => item.StandardName)</p>
-                                </li>
-                                <li>
-                                    <p><span class="bold">@Localizer["Level"]:</span> @Html.DisplayFor(modelItem => item.Level)</p>
-                                </li>
-                                <li>
-                                    <p><span class="bold">@Localizer["Grade"]:</span> @Html.DisplayFor(modelItem => item.OverallGrade)</p>
-                                </li>
-
-                                <li>
-                                    <p><span class="bold">@Localizer["Option"]:</span> @Html.DisplayFor(modelItem => item.CourseOption)</p>
-                                </li>
-                                <li>
-                                    <p>
-                                        <span class="bold">@Localizer["AchievementStartDate"]:</span>
+    </div>
+    
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+        @if (Model.Items.Any())
+        {
+            <table class="govuk-table govuk-table--small responsive">
+                <thead class="govuk-table__head">
+                    <tr class="govuk-table__row">
+                        <th class="govuk-table__header" scope="col">
+                            @Localizer["Apprentice"]
+                        </th>
+                        <th class="govuk-table__header" scope="col">
+                            @Localizer["ULN"]
+                        </th>
+                        <th class="govuk-table__header" scope="col">
+                            @Localizer["Employer"]
+                        </th>
+                        <th class="govuk-table__header" scope="col">
+                            @Localizer["TrainingProvider"]
+                        </th>
+                        <th class="govuk-table__header" scope="col">
+                            @Localizer["DateRequested"]
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="govuk-table__body">
+                @foreach (var item in Model.Items)
+                {
+                    <tr>
+                        <td data-label="@Localizer["Apprentice"]" class="govuk-table__cell das-no-wrap">
+                            <div role="button" tabindex="0" class="js-expand-table-row expand-table-row" data-expand-id="@Html.DisplayFor(modelItem => item.Uln)"><i class="arrow arrow-closed">►</i> <span>@Html.DisplayFor(modelItem => item.FullName)</span></div>
+                        </td>
+                        <td class="govuk-table__cell" data-label="@Localizer["ULN"]">
+                            @Html.DisplayFor(modelItem => item.Uln)
+                        </td>
+                        <td class="govuk-table__cell" data-label="@Localizer["Employer"]">
+                            @Html.DisplayFor(modelItem => item.ContactOrganisation)
+                        </td>
+                        <td class="govuk-table__cell" data-label="@Localizer["TrainingProvider"]">
+                            @Html.DisplayFor(modelItem => item.TrainingProvider)
+                        </td>
+                        <td class="govuk-table__cell" data-label="@Localizer["DateRequested"]">
+                            @item.CreatedAt.ToString("dd/MM/yyyy")
+                        </td>
+                    </tr>
+                    <tr class="js-expandble-cell expandble-cell expandble-cell--hidden" aria-hidden="true">
+                        <td class="govuk-table__cell" colspan="5">
+                            <div class="expandble-cell-content">
+                                <h2 class="govuk-heading-m expandble-cell-content--first-heading">@Localizer["AssessmentDetails"]</h2>
+                                <dl class="govuk-summary-list govuk-summary-list--no-border">
+                                    <div class="govuk-summary-list__row">
+                                        <dt class="govuk-summary-list__key">@Localizer["RecordedBy"]</dt>
+                                        <dd class="govuk-summary-list__value">@Html.DisplayFor(modelItem => item.RecordedBy)</dd>
+                                    </div>
+                                    <div class="govuk-summary-list__row">
+                                        <dt class="govuk-summary-list__key">@Localizer["Standard"]</dt>
+                                        <dd class="govuk-summary-list__value">@Html.DisplayFor(modelItem => item.StandardName)</dd>
+                                    </div>
+                                    <div class="govuk-summary-list__row">
+                                        <dt class="govuk-summary-list__key">@Localizer["Level"]</dt>
+                                        <dd class="govuk-summary-list__value">@Html.DisplayFor(modelItem => item.Level)</dd>
+                                    </div>
+                                    <div class="govuk-summary-list__row">
+                                        <dt class="govuk-summary-list__key">@Localizer["Grade"]</dt>
+                                        <dd class="govuk-summary-list__value">@Html.DisplayFor(modelItem => item.OverallGrade)</dd>
+                                    </div>
+                                    <div class="govuk-summary-list__row">
+                                        <dt class="govuk-summary-list__key">@Localizer["Option"]</dt>
+                                            <dd class="govuk-summary-list__value">
+                                                @if (item.CourseOption != null)
+                                                {
+                                                    @Html.DisplayFor(modelItem => item.CourseOption)
+                                                }
+                                                else
+                                                {
+                                                    <text>None</text>
+                                                }
+                                            </dd>
+                                    </div>
+                                    <div class="govuk-summary-list__row">
+                                        <dt class="govuk-summary-list__key">@Localizer["AchievementStartDate"]</dt>
                                         @{
                                             var achievementStartDate = item.LearningStartDate.HasValue ? item.LearningStartDate.Value.ToString("dd/MM/yyyy") : "";
                                         }
-                                        @achievementStartDate
-                                    </p>
-                                </li>
-                                <li>
-                                    <p>
-                                        <span class="bold">@Localizer["AchievementDate"]:</span>
+                                        <dd class="govuk-summary-list__value">@achievementStartDate</dd>
+                                    </div>
+                                    <div class="govuk-summary-list__row">
+                                        <dt class="govuk-summary-list__key">
+                                            @if (item.OverallGrade == CertificateGrade.Fail)
+                                            {
+                                                @Localizer["FailDate"]
+                                            }
+                                            else
+                                            {
+                                                @Localizer["AchievementDate"]
+                                            }
+                                        </dt>
                                         @{
                                             var achievementDate = item.AchievementDate.HasValue ? item.AchievementDate.Value.ToString("dd/MM/yyyy") : "";
                                         }
-                                        @achievementDate
+                                        <dd class="govuk-summary-list__value">@achievementDate</dd>
+                                    </div>
+                                    <div class="govuk-summary-list__row">
+                                        <dt class="govuk-summary-list__key">
+                                            @if (item.OverallGrade == CertificateGrade.Fail)
+                                            {
+                                                @Localizer["ReferenceNumber"]
+                                            }
+                                            else
+                                            {
+                                                @Localizer["CertificateNumber"]
+                                            }
+                                        </dt>
+                                        <dd class="govuk-summary-list__value">@Html.DisplayFor(modelItem => item.CertificateReference)</dd>
+                                    </div>
+                                </dl>
+
+                                @if (item.OverallGrade != CertificateGrade.Fail)
+                                {
+                                    <h2 class="govuk-heading-m">@Localizer["PostageDetails"]</h2>
+
+                                    <p class="govuk-body">
+                                        The certificate was posted to this address.
                                     </p>
-                                </li>
-                                <li>
-                                    <p><span class="bold">@Localizer["CertificateNumber"]:</span> @Html.DisplayFor(modelItem => item.CertificateReference)</p>
-                                </li>
-                            </ul>
+                                    <ul class="govuk-list">
+                                        <li>
+                                            @Html.DisplayFor(modelItem => item.ContactName)
+                                        </li>
+                                        <li>
+                                            @Html.DisplayFor(modelItem => item.ContactOrganisation)
+                                        </li>
+                                        <li>
+                                            @Html.DisplayFor(modelItem => item.ContactAddLine1)
+                                        </li>
+                                        <li>
+                                            @Html.DisplayFor(modelItem => item.ContactAddLine2)
+                                        </li>
+                                        <li>
+                                            @Html.DisplayFor(modelItem => item.ContactAddLine3)
+                                        </li>
+                                        <li>
+                                            @Html.DisplayFor(modelItem => item.ContactAddLine4)
+                                        </li>
+                                        <li>
+                                            @Html.DisplayFor(modelItem => item.ContactPostCode)
+                                        </li>
+                                    </ul>
+                                }
+                            </div>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <div class="info-summary">
+                <h3 class="govuk-heading-m">You have no completed assessments.</h3>
+            </div>
+        }
+        </div>
+    </div>
 
-                            <h2 class="heading-medium">@Localizer["PostageDetails"]</h2>
-                            <p>
-                                The certificate was posted to this address.
-                            </p>
-                            <ul>
-                                <li>
-                                    @Html.DisplayFor(modelItem => item.ContactName)
-                                </li>
-                                <li>
-                                    @Html.DisplayFor(modelItem => item.ContactOrganisation)
-                                </li>
-                                <li>
-                                    @Html.DisplayFor(modelItem => item.ContactAddLine1)
-                                </li>
-                                <li>
-                                    @Html.DisplayFor(modelItem => item.ContactAddLine2)
-                                </li>
-                                <li>
-                                    @Html.DisplayFor(modelItem => item.ContactAddLine3)
-                                </li>
-                                <li>
-                                    @Html.DisplayFor(modelItem => item.ContactAddLine4)
-                                </li>
-                                <li>
-                                    @Html.DisplayFor(modelItem => item.ContactPostCode)
-                                </li>
-                            </ul>
-                        </div>
-                    </td>
-                </tr>
-            }
-            </tbody>
-        </table>
-    }
-    else
+    @if (Model.HasPreviousPage || Model.HasNextPage)
     {
-        <div class="info-summary">
-            <h3 class="heading-medium">You have no completed assessments.</h3>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            <div class="page-navigation">
+
+                @if (Model.HasPreviousPage)
+                {
+                    <a 
+                        asp-action="Index"
+                        asp-controller="CertificateHistory"
+                        asp-route-pageIndex="@(Model.PageIndex - 1)"
+                        class="govuk-link previous"
+                    >
+                        <i class="arrow-button icon-left-open">&#xe800;</i>
+                        <span class="description">Previous <span class="hide-mob">page</span></span>
+                        <span class="counter">Page <span class="prevPage">@(Model.PageIndex - 1)</span> of <span class="totalPage">@(Model.TotalPages)</span></span>
+                    </a>
+                }
+
+                @if (Model.HasNextPage)
+                {
+                    <a 
+                        asp-controller="CertificateHistory"
+                        asp-action="Index"
+                        asp-route-pageIndex="@(Model.PageIndex + 1)"
+                        class="govuk-link next"
+                    >
+                        <i class="arrow-button icon-right-open">&#xe801;</i>
+                        <span class="description">Next <span class="hide-mob">page</span></span>
+                        <span class="counter">Page <span class="nextPage">@(Model.PageIndex + 1)</span> of <span class="totalPage">@(Model.TotalPages)</span></span>
+                    </a>
+                }
+
+            </div>
         </div>
+    </div>
     }
-    </div>
-</div>
-
-@if (Model.HasPreviousPage || Model.HasNextPage)
-{
-<div class="grid-row">
-    <div class="column-full">
-        <div class="page-navigation">
-
-            @if (Model.HasPreviousPage)
-            {
-                <a 
-                    asp-action="Index"
-                    asp-controller="CertificateHistory"
-                    asp-route-pageIndex="@(Model.PageIndex - 1)"
-                    class="previous"
-                >
-                    <i class="arrow-button icon-left-open">&#xe800;</i>
-                    <span class="description">Previous <span class="hide-mob">page</span></span>
-                    <span class="counter">Page <span class="prevPage">@(Model.PageIndex - 1)</span> of <span class="totalPage">@(Model.TotalPages)</span></span>
-                </a>
-            }
-
-            @if (Model.HasNextPage)
-            {
-                <a 
-                    asp-controller="CertificateHistory"
-                    asp-action="Index"
-                    asp-route-pageIndex="@(Model.PageIndex + 1)"
-                    class="next"
-                >
-                    <i class="arrow-button icon-right-open">&#xe801;</i>
-                    <span class="description">Next <span class="hide-mob">page</span></span>
-                    <span class="counter">Page <span class="nextPage">@(Model.PageIndex + 1)</span> of <span class="totalPage">@(Model.TotalPages)</span></span>
-                </a>
-            }
-
-        </div>
-    </div>
-</div>
-}
+</main>

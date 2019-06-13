@@ -23,16 +23,7 @@ namespace SFA.DAS.AssessorService.Data
         public async Task<IEnumerable<Ilr>> SearchForLearnerByUln(long uln)
         {
             return (await _connection.QueryAsync<Ilr>(
-                            @"SELECT ilr.*
-                            	FROM
-	                            (
-		                            SELECT *,
-		                            DENSE_RANK() OVER (PARTITION BY [Uln], [StdCode] ORDER BY [Source] DESC,[LearnStartDate] DESC) AS rownumber
-		                            FROM ilrs 
-		                            WHERE [Uln] = @uln
-	                            ) AS ilr
-                            WHERE rownumber = 1
-                            ORDER BY [Id] DESC",
+                            @"SELECT * FROM Ilrs WHERE [Uln] = @uln AND [CompletionStatus] IN (1, 2)",
                             new { uln })).ToList();
         }
 

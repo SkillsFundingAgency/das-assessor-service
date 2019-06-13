@@ -89,23 +89,25 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
 
             // Contact checks //////////////////////////////// 
             RaiseWarningIfEmailIsMissingInvalidOrAlreadyUsed(command.ContactEmail, warningMessages); 
-            RaiseWarningIfContactNameIsMissingOrTooShort(command.ContactName, warningMessages);
+            //Removed since some ambiguity will exist in users having contact names in some previously started applications
+            //and givename familyname in new applications
+            //RaiseWarningIfContactNameIsMissingOrTooShort(command.ContactName, warningMessages);
 
             if (warningMessages.Count == 0) 
              {
-          
+                _logger.LogInformation($"Creating a new epa organisation {organisation?.Name}");
                 newOrganisationId = await _registerRepository.CreateEpaOrganisation(organisation);
               
                 var newOrganisation =
                     await _registerQueryRepository.GetEpaOrganisationByOrganisationId(newOrganisationId);
 
-                var contact = MapCommandToContact(string.Empty, command.ContactName, command.ContactEmail,
-                    newOrganisationId, command.ContactPhoneNumber, command.ContactEmail, string.Empty, 
-                   string.Empty, null, string.Empty);
+                var contact = MapCommandToContact(string.Empty, command.ContactEmail,command.ContactName,
+                    newOrganisationId, command.ContactPhoneNumber, command.ContactEmail, 
+                    command.ContactGivenName, command.ContactFamilyName, null, string.Empty);
 
                 var assessorContact = await _registerQueryRepository.GetContactByEmail(contact.Email);
                 
-                //Does the contact already exist
+                //Does the new chosen primary contact already exist
                 if (assessorContact != null)
                 {
                     //Update existing contact entry
@@ -113,12 +115,13 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
                         ContactStatus.Live, "MakePrimaryContact");
                 }
                 //Contact does not exist in assessor but exists in apply and the user details are the same as primary contact matched by email
-                else if (contact.Email.Equals(command.UserEmail, StringComparison.CurrentCultureIgnoreCase))
+                else if (command.ContactEmail.Equals(command.UserEmail, StringComparison.CurrentCultureIgnoreCase))
                 {
+                    //Assume same user since email match, email in aslogin uniquely identifies a user
                     if (!string.IsNullOrEmpty(command.CreatedBy))
                     {
                         _logger.LogInformation("Creating a new user contact in accessor when its the primary contact too");
-                        contact = MapCommandToContact(command.CreatedBy, command.ContactName, command.ContactEmail,
+                        contact = MapCommandToContact(command.CreatedBy, command.ContactEmail, command.ContactName,
                             newOrganisationId, command.ContactPhoneNumber, command.ContactEmail, command.GivenNames,
                             command.FamilyName, command.SigninId, command.SigninType);
 
@@ -142,7 +145,20 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
                         await _registerRepository.AssociateAllPrivilegesWithContact(contact);
                     }
                 }
-               
+
+                if (command.OtherApplyingUserEmails != null)
+                {
+                    // For any other user who was trying to apply for the same organisation; they now need to request access
+                    foreach (var otherApplyingUserEmail in command.OtherApplyingUserEmails)
+                    {
+                        var otherApplyingContact = await _registerQueryRepository.GetContactByEmail(otherApplyingUserEmail);
+                        if (otherApplyingContact != null)
+                        {
+                            await _registerRepository.AssociateOrganisationWithContact(otherApplyingContact.Id, newOrganisation, ContactStatus.InvitePending, "");
+                        }
+                    }
+                }
+
                 //Now check if the user has a status of applying in assessor if so update its status and associate him with the organisation if he has not been associated with an
                 //org before
                 var userContact = await _registerQueryRepository.GetContactBySignInId(command.SigninId.ToString());
@@ -158,7 +174,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
             }
             else
             {
-                _logger.LogWarning("Source has invalid data. Cannot inject organisation details into register at this time");
+                _logger.LogWarning($"Source has invalid data. Cannot inject organisation details into register at this time. Warnings:  {string.Join(",", warningMessages)}");
             }
 
             response.WarningMessages = warningMessages;          
@@ -402,19 +418,20 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
             return organisation;
         }
 
-        private EpaContact MapCommandToContact(string id, string contactName, string contactEmail,
+        private EpaContact MapCommandToContact(string id, string contactEmail,string contactName, 
             string organisationId, string contactPhoneNumber, string username, string givenNames, string familyName,
             Guid? signinId, string signinType)
         {
-            contactName = _cleanser.CleanseStringForSpecialCharacters(contactName);
+            
             contactEmail = _cleanser.CleanseStringForSpecialCharacters(contactEmail);
             contactPhoneNumber = _cleanser.CleanseStringForSpecialCharacters(contactPhoneNumber);
-            givenNames = !string.IsNullOrEmpty(givenNames)?_cleanser.CleanseStringForSpecialCharacters(givenNames):givenNames;
-            familyName = !string.IsNullOrEmpty(familyName)?_cleanser.CleanseStringForSpecialCharacters(familyName):familyName;
+            givenNames = _cleanser.CleanseStringForSpecialCharacters(givenNames);
+            familyName = _cleanser.CleanseStringForSpecialCharacters(familyName);
+            contactName = _cleanser.CleanseStringForSpecialCharacters(contactName);
 
             return new EpaContact
             {
-                DisplayName = contactName,
+                DisplayName = !string.IsNullOrEmpty(contactName)? contactName : $"{givenNames} {familyName}",
                 Email = contactEmail,
                 EndPointAssessorOrganisationId = organisationId,
                 Id = string.IsNullOrEmpty(id) ? Guid.NewGuid() : Guid.Parse(id),

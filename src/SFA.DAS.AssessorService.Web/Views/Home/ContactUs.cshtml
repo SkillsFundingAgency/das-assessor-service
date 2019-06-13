@@ -3,16 +3,20 @@
     Layout = "_Layout";
 }
 
-<div class="grid-row">
-    <div class="column-two-thirds">
-        <a class="link-back" asp-controller="Dashboard" asp-action="Index">Home</a>
-        <h1 class="heading-xlarge">Contact the National Apprenticeship Helpdesk to get help</h1>
-        <h2 class="heading-medium">National Apprenticeship Helpdesk</h2>
-        <p><a href="mailto:helpdesk@manage-apprenticeships.service.gov.uk">helpdesk@manage-apprenticeships.service.gov.uk</a></p>
-        <p>
-            Telephone: 08000 150 600<br />
-            8am to 10pm, 7 days a week
-        </p>
-        <p><a href="https://www.gov.uk/call-charges">Find out about call charges</a></p>
+<a class="govuk-back-link" asp-controller="Dashboard" asp-action="Index">Home</a>
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+            <h1 class="govuk-heading-xl">Contact the National Apprenticeship Helpdesk to get help</h1>
+            <h2 class="govuk-heading-m">National Apprenticeship Helpdesk</h2>
+            <p class="govuk-body"><a class="govuk-link" href="mailto:helpdesk@manage-apprenticeships.service.gov.uk">helpdesk@manage-apprenticeships.service.gov.uk</a></p>
+            <p class="govuk-body govuk-!-margin-bottom-1">
+                Telephone: 08000 150 600
+            </p>
+            <p class="govuk-body">
+                8am to 10pm, 7 days a week
+            </p>
+            <p class="govuk-body"><a class="govuk-link" href="https://www.gov.uk/call-charges">Find out about call charges</a></p>
+        </div>
     </div>
-</div>
+</main>

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace SFA.DAS.AssessorService.Domain.JsonData
 {
@@ -24,6 +25,24 @@ namespace SFA.DAS.AssessorService.Domain.JsonData
         public string CourseOption { get; set; }
         public string OverallGrade { get; set; }
         public string Department { get; set; }
-        public string FullName { get; set; }    
+        public string FullName { get; set; }
+
+        public EpaDetails EpaDetails { get; set; }
+    }
+
+    public class EpaDetails
+    {
+        public string EpaReference { get; set; }
+        public DateTime? LatestEpaDate { get; set; }
+        public string LatestEpaOutcome { get; set; }
+        public List<EpaRecord> Epas { get; set; }
+    }
+
+    public class EpaRecord
+    {
+        public DateTime EpaDate { get; set; }
+        public string EpaOutcome { get; set; }
+        public bool? Resit { get; set; }
+        public bool? Retake { get; set; }
     }
 }

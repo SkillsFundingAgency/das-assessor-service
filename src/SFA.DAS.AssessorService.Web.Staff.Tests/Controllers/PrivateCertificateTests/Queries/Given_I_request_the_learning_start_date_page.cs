@@ -41,7 +41,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Controllers.PrivateCertificate
                     certificateLearnerStartDateViewModelValidator                    
                     );            
 
-            _result = certificatePrivateLearnerStartDateController.LearnerStartDate(Certificate.Id).GetAwaiter().GetResult();
+            _result = certificatePrivateLearnerStartDateController.LearnerStartDate(Certificate.Id, true).GetAwaiter().GetResult();
 
             var result = _result as ViewResult;
             _viewModelResponse = result.Model as CertificateLearnerStartDateViewModel;
