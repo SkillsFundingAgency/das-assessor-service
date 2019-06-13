@@ -3,11 +3,10 @@
 @inject RoatpSessionService sessionService
 @{ ViewBag.Title = "Search for an apprenticeship training provider"; }
 
+@*
 @{ await Html.RenderPartialAsync("~/Views/Roatp/_StylesPartial.cshtml"); }
 
-@{
-    var searchTerm = sessionService.GetSearchTerm();
-}
+
 
 @if (Model != null && !String.IsNullOrWhiteSpace(Model.BannerMessage))
 {
@@ -16,6 +15,9 @@
             @Html.Raw(Model.BannerMessage)
         </h1>
     </div>
+}*@
+@{
+    var searchTerm = sessionService.GetSearchTerm();
 }
 
 <div class="grid-row">
