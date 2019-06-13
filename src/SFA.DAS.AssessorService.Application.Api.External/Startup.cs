@@ -66,6 +66,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External
                     {
                         config.BaseAddress = new Uri(ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress);
                         config.DefaultRequestHeaders.Add("Accept", "Application/json");
+                        config.Timeout = TimeSpan.FromMinutes(5);
                     });
                 }
 
