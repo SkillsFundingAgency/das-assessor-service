@@ -26,7 +26,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Login
         {
             OrgQueryRepository.Setup(r => r.GetByUkPrn(12345)).ReturnsAsync(new Organisation { Status = OrganisationStatus.New });
             var response = Handler.Handle(new LoginRequest() { Roles = new List<string>() { "ABC", "DEF", "EPA" }, UkPrn = 12345, SignInId = Guid.Empty }, new CancellationToken()).Result;
-            response.Result.Should().Be(LoginResult.InvitePending);
+            response.Result.Should().Be(LoginResult.AwaitingApproval);
         }
     }
 }

@@ -88,7 +88,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Login
                 _logger.LogInformation(LoggingConstants.SignInEpaoNew);
 
                 // Only show true status if contact is marked as being Live
-                response.Result = (contact.Status is ContactStatus.Live) ? LoginResult.NotActivated : LoginResult.InvitePending;
+                response.Result = (contact.Status is ContactStatus.Live) ? LoginResult.NotActivated : LoginResult.AwaitingApproval;
                 return response;
             }
             else
@@ -101,8 +101,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Login
                     case ContactStatus.Live:
                         response.Result = LoginResult.Valid;
                         break;
-                    case ContactStatus.InvitePending:
-                        response.Result = LoginResult.InvitePending;
+                    case ContactStatus.AwaitingApproval:
+                        response.Result = LoginResult.AwaitingApproval;
                         break;
                     case ContactStatus.Inactive:
                         response.Result = LoginResult.Rejected;

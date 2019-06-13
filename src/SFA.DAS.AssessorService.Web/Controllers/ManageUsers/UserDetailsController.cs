@@ -19,16 +19,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers.ManageUsers
     public class UserDetailsController : ManageUsersBaseController
     {
         private readonly IOrganisationsApiClient _organisationsApiClient;
-        private readonly IEmailApiClient _emailApiClient;
-        private readonly IWebConfiguration _config;
 
-        public UserDetailsController(IContactsApiClient contactsApiClient, IHttpContextAccessor httpContextAccessor, IOrganisationsApiClient organisationsApiClient, 
-            IEmailApiClient emailApiClient, IWebConfiguration config) 
+        public UserDetailsController(IContactsApiClient contactsApiClient, IHttpContextAccessor httpContextAccessor, IOrganisationsApiClient organisationsApiClient) 
             : base(contactsApiClient, httpContextAccessor)
         {
             _organisationsApiClient = organisationsApiClient;
-            _emailApiClient = emailApiClient;
-            _config = config;
         }
 
         [HttpGet("/ManageUsers/{contactId}")]
