@@ -7,6 +7,7 @@ using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
 using SFA.DAS.AssessorService.ExternalApis.IFAStandards;
 using SFA.DAS.AssessorService.ExternalApis.IFAStandards.Types;
 using SFA.DAS.AssessorService.ExternalApis.Services;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -45,31 +46,43 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
 
         public async Task<StandardCollation> GetStandard(int standardId)
         {
+            StandardCollation standardCollation = null;
+
             try
             {
-                var standardCollation = await _standardRepository.GetStandardCollationByStandardId(standardId);
-
-                return standardCollation;
+                standardCollation = await _standardRepository.GetStandardCollationByStandardId(standardId);
             }
-            catch
+            catch (Exception ex)
             {
-                return null;
+                _logger.LogError(ex, $"STANDARD COLLATION: Failed to get for standard id: {standardId}");
             }
+
+            return standardCollation;
         }
-        
+
         public async Task<StandardCollation> GetStandard(string referenceNumber)
         {
-            var standardCollation = await _standardRepository.GetStandardCollationByReferenceNumber(referenceNumber);
+            StandardCollation standardCollation = null;
+
+            try
+            {
+                standardCollation = await _standardRepository.GetStandardCollationByReferenceNumber(referenceNumber);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"STANDARD COLLATION: Failed to get for standard reference: {referenceNumber}");
+            }
 
             return standardCollation;
         }
 
         public async Task<IEnumerable<StandardCollation>> GatherAllStandardDetails()
         {
-            _logger.LogInformation("STANDARD COLLATION: Starting gathering of all IFA Standard details");
             List<IfaStandard> ifaResults = null;
+
             try
             {
+                _logger.LogInformation("STANDARD COLLATION: Starting gathering of all IFA Standard details");
                 ifaResults = await _ifaStandardsApiClient.GetAllStandards();
             }
             catch (Exception ex)
@@ -93,8 +106,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
 
         public async Task<IEnumerable<EPORegisteredStandards>> GetEpaoRegisteredStandards(string endPointAssessorOrganisationId)
         {
-                var results = await _standardRepository.GetEpaoRegisteredStandards(endPointAssessorOrganisationId, short.MaxValue, null);
-                return results.PageOfResults;
+            var results = await _standardRepository.GetEpaoRegisteredStandards(endPointAssessorOrganisationId, short.MaxValue, null);
+            return results.PageOfResults;
         }
 
         private static void AddIfaOnlyStandardsToGatheredStandards(List<IfaStandard> ifaResults, List<StandardCollation> collation)
@@ -154,8 +167,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
                     // ON-1847 - This is a tactical fix to replace the incorrect url with the known url of the ifa service 
                     // the url which is being returned from the ifa service is currently incorrect and pointing to local host due
                     // to a bug in the ifa service; the configured url is not available in this method
-                    IfaUri = ifaStandard != null ? ifaStandard.Url.Replace("http://localhost", "https://www.instituteforapprenticeships.org") : null,
-                    AssessmentPlanUrl = ifaStandard != null ? ifaStandard.AssessmentPlanUrl.Replace("http://localhost", "https://www.instituteforapprenticeships.org") : null
+                    IfaUri = ifaStandard?.Url is null ? null : ifaStandard.Url.Replace("http://localhost", "https://www.instituteforapprenticeships.org"),
+                    AssessmentPlanUrl = ifaStandard?.AssessmentPlanUrl is null ? null : ifaStandard.AssessmentPlanUrl.Replace("http://localhost", "https://www.instituteforapprenticeships.org")
                 }
             };
         }
