@@ -89,7 +89,7 @@
                                         }
                                     </p>
                                     @*Caters for both PROD and PREPROD*@
-                                    @if (configuration["EnvironmentName"].EndsWith("PROD", StringComparison.InvariantCultureIgnoreCase))
+                                    @if (!configuration["EnvironmentName"].EndsWith("PROD", StringComparison.InvariantCultureIgnoreCase))
                                     {
                                         @* ON-1205 - request to show flags of what results were found in non-PROD environments *@
                                         @if (result.OrganisationType != null)
