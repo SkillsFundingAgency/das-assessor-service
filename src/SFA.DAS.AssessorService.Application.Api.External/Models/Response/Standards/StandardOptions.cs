@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace SFA.DAS.AssessorService.Application.Api.External.Models.Response.Standards
 {
@@ -44,7 +45,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Models.Response.Stand
         {
             return Equals(StandardCode, other.StandardCode)
                 && string.Equals(StandardReference, other.StandardReference)
-                && Equals(CourseOption, other.CourseOption);
+                && CourseOption is null ? other.CourseOption is null : CourseOption.SequenceEqual(other.CourseOption);
         }
 
         public static bool operator ==(StandardOptions left, StandardOptions right)
