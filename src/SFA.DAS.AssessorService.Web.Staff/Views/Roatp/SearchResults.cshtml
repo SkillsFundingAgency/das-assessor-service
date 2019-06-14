@@ -2,29 +2,31 @@
 @model SFA.DAS.AssessorService.Web.Staff.ViewModels.Roatp.OrganisationSearchResultsViewModel
 
 @{
-    ViewBag.Title = Model.Title;
+ViewBag.Title = Model.Title;
 }
+
+@*
+@{
+await Html.RenderPartialAsync("~/Views/Roatp/_StylesPartial.cshtml");
+}
+*@
 
 @{
-    await Html.RenderPartialAsync("~/Views/Roatp/_StylesPartial.cshtml");
-}
-
-@{
-    var searchParams = new Dictionary<string, string>
-    {
-        { "SearchTerm", Model.SearchTerm }
-    };
+var searchParams = new Dictionary<string, string>
+{
+    { "SearchTerm", Model.SearchTerm }
+};
 }
 
 
-<div class="govuk-width-container">
+<a asp-controller="RoatpHome" asp-action="Index" class="govuk-back-link">Back</a>
 
-    <a asp-controller="RoatpHome" asp-action="Index" class="govuk-back-link">Back</a>
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
 
-    <main class="govuk-main-wrapper " id="main-content" role="main">
-
-        <h1 class="govuk-heading-xl govuk-!-width-two-thirds roatp-summary-list-long-text">@Html.Raw(Model.Title)</h1>
-        <div class="govuk-body govuk-grid-row">
+            <h1 class="govuk-heading-xl roatp-summary-list-long-text">@Html.Raw(Model.Title)</h1>
+            
             <div id="searchResultsList" class="govuk-grid-column-one-third">
                 <ul class="govuk-list">
                     @for(var index = 0; index < Model.SearchResults.Count; index++)
@@ -55,7 +57,7 @@
                     </div>
                 }
                 
-                  
+                    
                 @if (!Model.SearchResults.Any())
                 {
                     <div class="govuk-grid-row">
@@ -231,7 +233,7 @@
                         </dd>
 
                         <dd class="govuk-summary-list__actions">
-              
+                
                             <a class="govuk-link" asp-controller="UpdateRoatpOrganisation" asp-action="UpdateOrganisationTradingName">
                                 Change<span class="govuk-visually-hidden"> trading name</span>
                             </a>
@@ -281,7 +283,5 @@
 
             }
         </div>
-
-
-        </main>
-</div>
+    </div>
+</main>
