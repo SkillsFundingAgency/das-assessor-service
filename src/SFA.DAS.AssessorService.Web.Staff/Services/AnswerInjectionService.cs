@@ -154,7 +154,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
                         var otherApplyingContact = await _registerQueryRepository.GetContactByEmail(otherApplyingUserEmail);
                         if (otherApplyingContact != null)
                         {
-                            await _registerRepository.AssociateOrganisationWithContact(otherApplyingContact.Id, newOrganisation, ContactStatus.AwaitingApproval, "");
+                            await _registerRepository.AssociateOrganisationWithContact(otherApplyingContact.Id, newOrganisation, ContactStatus.InvitePending, "");
                         }
                     }
                 }

@@ -59,7 +59,7 @@
                                     @Html.DisplayFor(modelItem => contact.Contact.Status)
                                 </td>
                                 <td class="govuk-table__cell" data-label="@Localizer["Action required"]">
-                                    @if (contact.Contact.Status == ContactStatus.AwaitingApproval)
+                                    @if (contact.Contact.Status == ContactStatus.InvitePending)
                                     {
                                         <a class="govuk-link" asp-controller="ManageUsers" asp-action="SetStatusAndNotify" asp-route-status="@ContactStatus.Approve" asp-route-id="@contact.Contact.Id">Approve</a>
                                         <a class="govuk-link" asp-controller="ManageUsers" asp-action="SetStatusAndNotify" asp-route-status="@ContactStatus.Reject" asp-route-id="@contact.Contact.Id">Reject</a>

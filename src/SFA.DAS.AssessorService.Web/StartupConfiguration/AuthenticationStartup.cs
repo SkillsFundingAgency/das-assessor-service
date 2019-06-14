@@ -176,7 +176,7 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
                                                  // ON-1173 - don't make external user live if org is still New and has a primary contact already
                                                  if (assessorOrg.Status is OrganisationStatus.New && !string.IsNullOrEmpty(assessorOrg.PrimaryContact))
                                                  {
-                                                     contactStatus = ContactStatus.AwaitingApproval;
+                                                     contactStatus = ContactStatus.InvitePending;
                                                  }
 
                                                  //Organisation exists in assessor so update contact with organisation

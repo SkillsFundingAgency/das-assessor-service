@@ -255,7 +255,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                         user.Id.ToString(),
                         registeredOrganisation.Id.ToString(),
                         organisationSearchResult.Id,
-                        ContactStatus.AwaitingApproval));
+                        ContactStatus.InvitePending));
 
 
                     try

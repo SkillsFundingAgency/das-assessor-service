@@ -66,7 +66,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                     return RedirectToAction("NotActivated", "Home", new { epaoId = loginResult.EndPointAssessorOrganisationId });
                 case LoginResult.InvalidRole:
                     return RedirectToAction("InvalidRole", "Home");
-                case LoginResult.AwaitingApproval:
+                case LoginResult.InvitePending:
                     ResetCookies();
                     _sessionService.Set("OrganisationName", loginResult.OrganisationName);
                     return RedirectToAction("InvitePending", "Home");

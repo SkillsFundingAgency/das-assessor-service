@@ -54,7 +54,7 @@
                         </div>
                     </fieldset>
                 </div>
-                @if (Model.Status == ContactStatus.AwaitingApproval)
+                @if (Model.Status == ContactStatus.InvitePending)
                 {
                     <button class="govuk-button" type="submit" name="Button" value="Approve">Approve</button> 
                     <button class="govuk-button govuk-button--secondary" name="Button" value="Reject">Reject</button>
