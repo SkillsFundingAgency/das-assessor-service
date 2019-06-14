@@ -1,4 +1,5 @@
 ﻿@using Microsoft.AspNetCore.Mvc.Localization
+@using SFA.DAS.AssessorService.Domain.Consts
 @inject IViewLocalizer Localizer
 @model SFA.DAS.AssessorService.Web.ViewModels.Search.SelectedStandardViewModel
 
@@ -45,7 +46,66 @@
 
                     @Html.HiddenFor(m => m.Uln)
                     @Html.HiddenFor(m => m.StdCode)
+                    
                     <button class="govuk-button" type="submit">Confirm and continue</button>
+                </form>
+
+                <p class="govuk-body"><a class="govuk-link" asp-controller="Search" asp-action="Index">Search again</a> if this isn't the correct apprentice.</p>
+            }
+            else if (Model.OverallGrade == CertificateGrade.Fail)
+            {
+                <h1 class="govuk-heading-xl">Confirm this is the correct apprentice</h1>
+                <form class="apprentice-search-result-form js-disable-on-submit" asp-controller="Certificate" asp-action="Start" method="post">
+                    <div class="govuk-form-group">
+                        <dl class="govuk-summary-list">
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Name:</dt>
+                                <dd class="govuk-summary-list__value">@Model.GivenNames @Model.FamilyName</dd>
+                            </div>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key"><abbr title="Unique learner number">ULN</abbr>:</dt>
+                                <dd class="govuk-summary-list__value">@Model.Uln</dd>
+                            </div>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Standard:</dt>
+                                <dd class="govuk-summary-list__value">@Model.Standard</dd>
+                            </div>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Level:</dt>
+                                <dd class="govuk-summary-list__value">@Model.Level</dd>
+                            </div>
+                            @if (Model.ShowExtraInfo)
+                            {
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">Learner start date:</dt>
+                                    <dd class="govuk-summary-list__value">@Model.LearnerStartDate</dd>
+                                </div>
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">Failed date:</dt>
+                                    <dd class="govuk-summary-list__value">@Model.AchievementDate</dd>
+                                </div>
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">Grade:</dt>
+                                    <dd class="govuk-summary-list__value">@Model.OverallGrade</dd>
+                                </div>
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">Recorded by:</dt>
+                                    <dd class="govuk-summary-list__value">@Model.SubmittedBy</dd>
+                                </div>
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">Date recorded:</dt>
+                                    <dd class="govuk-summary-list__value">@Model.SubmittedAt</dd>
+                                </div>
+                            }
+                        </dl>
+                        <p class="govuk-body">If the name, standard or level is incorrect, you need to agree on the correct details along with the training provider and the employer. The training provider needs to then update the Individualised Learner Record (<abbr title="Individualised Learner Record">ILR</abbr>).</p>
+                    </div>
+
+                    @Html.HiddenFor(m => m.Uln)
+                    @Html.HiddenFor(m => m.StdCode)
+
+                    <button class="govuk-button" type="submit">Confirm and continue</button>
+
                 </form>
 
                 <p class="govuk-body"><a class="govuk-link" asp-controller="Search" asp-action="Index">Search again</a> if this isn't the correct apprentice.</p>
@@ -120,8 +180,6 @@
                     <a class="govuk-link" asp-controller="Search" asp-action="Index">Search again</a>
                 </p>
             }
-
-            
         </div>
     </div>
 </main>

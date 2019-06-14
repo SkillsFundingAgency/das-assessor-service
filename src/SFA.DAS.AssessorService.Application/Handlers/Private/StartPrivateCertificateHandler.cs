@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Runtime.ConstrainedExecution;
 using System.Threading;
 using System.Threading.Tasks;
@@ -56,7 +57,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Private
 
                 var certData = new CertificateData()
                 {
-                    LearnerFamilyName = request.LastName
+                    LearnerFamilyName = request.LastName,
+                    EpaDetails = new EpaDetails { Epas = new List<EpaRecord>() }
                 };
 
                 _logger.LogInformation("CreateNewCertificate Before create new Certificate");
@@ -75,6 +77,10 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Private
 
                 newCertificate.CertificateReference = newCertificate.CertificateReferenceId.ToString().PadLeft(8, '0');
 
+                // need to update EPA Reference too
+                certData.EpaDetails.EpaReference = newCertificate.CertificateReference;
+                newCertificate.CertificateData = JsonConvert.SerializeObject(certData);
+
                 _logger.LogInformation("CreateNewCertificate Before Update Cert in db");
                 await _certificateRepository.Update(newCertificate, request.Username, null);
 
@@ -88,7 +94,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Private
                 Console.WriteLine(e);
                 throw;
             }
-            return null;
         }
     }
 

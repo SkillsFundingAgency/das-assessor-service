@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Lastname" xml:space="preserve">
-    <value>Last name</value>
+    <value>Family name</value>
   </data>
   <data name="LastnameHint" xml:space="preserve">
     <value>For example, Smith</value>
@@ -126,8 +126,11 @@
   <data name="SearchButton" xml:space="preserve">
     <value>Continue</value>
   </data>
-  <data name="SearchInfoSummary" xml:space="preserve">
-    <value>Only record successful assessments</value>
+  <data name="SearchInfoHeading" xml:space="preserve">
+    <value>Record all assessments</value>
+  </data>
+  <data name="SearchInfoBody" xml:space="preserve">
+    <value>Record all end-point assessment grades. Record a 'fail' if a fail is defined in the assessment plan.</value>
   </data>
   <data name="UlnHint" xml:space="preserve">
     <value>For example, 1234567890</value>

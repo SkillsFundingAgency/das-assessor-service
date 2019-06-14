@@ -3,6 +3,7 @@ using System.Threading;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
+using Newtonsoft.Json;
 using NUnit.Framework;
 using SFA.DAS.Apprenticeships.Api.Types;
 using SFA.DAS.Apprenticeships.Api.Types.Providers;
@@ -12,6 +13,7 @@ using SFA.DAS.AssessorService.Application.Handlers.Certificates;
 using SFA.DAS.AssessorService.Application.Handlers.Staff;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.AssessorService.Domain.JsonData;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
 using SFA.DAS.AssessorService.ExternalApis.Services;
 using Organisation = SFA.DAS.AssessorService.Domain.Entities.Organisation;
@@ -99,6 +101,13 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
         {
             _returnedCertificate.CertificateReference.Should().Be("00010000");
             _certificateRepository.Verify(r => r.Update(It.Is<Certificate>(c => c.CertificateReference == "00010000"), "user", null, true, null));
+        }
+
+        [Test]
+        public void Then_the_EpaReference_is_updated_with_CertificateReference()
+        {
+            var returnedCertificateData = JsonConvert.DeserializeObject<CertificateData>(_returnedCertificate.CertificateData);
+            returnedCertificateData.EpaDetails.EpaReference.Should().Be("00010000");
         }
     }
 }
