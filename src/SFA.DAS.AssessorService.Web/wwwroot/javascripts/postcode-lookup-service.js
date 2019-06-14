@@ -94,7 +94,7 @@
       select: function(event, ui) {
         var item = ui.item.data;
 
-        if (item.Next == "Retrieve") {
+        if (item.Next === "Retrieve") {
           //retrieve the address
           retrieveAddress(item.Id);
           searchContext = "";
