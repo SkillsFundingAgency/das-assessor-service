@@ -3,6 +3,7 @@ using FluentValidation.Results;
 using Microsoft.Extensions.Localization;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates.Batch;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
 using SFA.DAS.AssessorService.ExternalApis.Services;
 using System;
@@ -78,7 +79,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.Certificates
                 RuleFor(m => m.CertificateData.OverallGrade)
                     .Custom((overallGrade, context) =>
                     {
-                        var grades = new string[] { "Pass", "Merit", "Distinction", "Pass with excellence", "No grade awarded" };
+                        var grades = new string[] { CertificateGrade.Pass, CertificateGrade.Credit, CertificateGrade.Merit, CertificateGrade.Distinction, CertificateGrade.PassWithExcellence, CertificateGrade.NoGradeAwarded, CertificateGrade.Fail };
 
                         if (string.IsNullOrWhiteSpace(overallGrade))
                         {

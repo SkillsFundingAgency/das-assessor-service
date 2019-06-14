@@ -8,7 +8,6 @@
     bool showErrors = TempData["ShowErrors"] as bool? ?? false;
 }
 
-<a asp-action="Index" asp-controller="OrganisationSearch" class="govuk-back-link">Search again</a>
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
@@ -39,11 +38,8 @@
 
                 <div class="govuk-form-group" sfa-validation-for="SearchString" sfa-validationerror-class="govuk-form-group--error">
                     <h1 class="govuk-heading-xl">
-                        Select your organisation
+                        Search results for
                     </h1>
-                    <span class="govuk-hint">
-                        or search again
-                    </span>
                     @if (!ViewData.ModelState.IsValid || showErrors)
                     {
                         <span id="search-string-error" class="govuk-error-message">
@@ -59,30 +55,32 @@
 
     <div class="govuk-grid-row search-results">
         <div class="govuk-grid-column-two-thirds">
-            @if (@Model.Organisations != null && @Model.Organisations.Any())
+            @if (@Model.Organisations != null && @Model.Organisations.Items.Any())
             {
+
+                <span class="govuk-body">@Model.OrganisationFoundString()</span>
                 <table class="govuk-table table.responsive">
                     <tbody class="govuk-table__body">
-                        @foreach (var result in Model.Organisations)
+                        @foreach (var result in Model.Organisations.Items)
                         {
                             <tr class="govuk-table__row">
-                                <td class="govuk-table__cell">
+                                <td class="govuk-table__header--no-bottom-border">
                                     <form method="post" asp-action="@("OrganisationChosen")" asp-controller="OrganisationSearch" novalidate>
                                         <input asp-for="SearchString" type="hidden" />
                                         <input asp-for="Name" value="@result.Name" type="hidden" />
                                         <input asp-for="Ukprn" value="@result.Ukprn" type="hidden" />
                                         <input asp-for="OrganisationType" value="@result.OrganisationType" type="hidden" />
                                         <input asp-for="Postcode" value="@result.Address?.Postcode" type="hidden" />
+                                        <input asp-for="PageIndex" value="@Model.Organisations.PageIndex" type="hidden"/>
 
-                                        <p class="govuk-body govuk-!-margin-top-4">
-                                            <button type="submit" class="govuk-button govuk-button--looks-like-link">@result.Name</button>
+                                        <p class="govuk-body govuk-!-margin-top-5 govuk-!-margin-bottom-1">
+                                            <button type="submit" class="govuk-button govuk-button__looks-like-link--no-decoration">@result.Name</button>
                                         </p>
                                     </form>
                                     <p class="govuk-body govuk-!-margin-bottom-1">
-                                        <span class="govuk-!-font-weight-bold">Address:</span>
                                         @if (result.Address?.Postcode == null)
                                         {
-                                            @("Unknown");
+                                            @("Address not found");
                                         }
                                         else
                                         {
@@ -90,16 +88,17 @@
                                             @string.Join(", ", addressArray.Where(s => !string.IsNullOrEmpty(s)));
                                         }
                                     </p>
-                                    @if (result.OrganisationType != null)
-                                    {
-                                        <p class="govuk-body govuk-!-margin-bottom-1">
-                                            <span class="govuk-!-font-weight-bold">Type:</span>
-                                            @result.OrganisationType
-                                        </p>
-                                    }
-                                    @if (!string.Equals(configuration["EnvironmentName"], "PROD", StringComparison.InvariantCultureIgnoreCase))
+                                    @*Caters for both PROD and PREPROD*@
+                                    @if (!configuration["EnvironmentName"].EndsWith("PROD", StringComparison.InvariantCultureIgnoreCase))
                                     {
                                         @* ON-1205 - request to show flags of what results were found in non-PROD environments *@
+                                        @if (result.OrganisationType != null)
+                                        {
+                                            <p class="govuk-body govuk-!-margin-bottom-1">
+                                                <span class="govuk-!-font-weight-bold">Type:</span>
+                                                @result.OrganisationType
+                                            </p>
+                                        }
                                         <p class="govuk-body">
                                             <span class="govuk-!-font-weight-bold">Found on:</span>
                                             @if (result.RoEPAOApproved)
@@ -127,11 +126,33 @@
                                             }
                                         </p>
                                     }
+
+                                    @if (result.RoEPAOApproved && result.OrganisationIsLive)
+                                    {
+                                        <p class="govuk-body">
+                                            <strong class="govuk-tag">
+                                                ACTIVE ACCOUNT
+                                            </strong>
+                                        </p>
+                                    }
                                 </td>
                             </tr>
                         }
                     </tbody>
                 </table>
+
+                await Html.RenderPartialAsync("_OrgSearchPaginationLinks", new ViewDataDictionary(ViewData)
+                        {
+                        {"PageIndex", Model.Organisations.PageIndex},
+                        {"TotalPages", Model.Organisations.TotalPages},
+                        {"HasPreviousPage", Model.Organisations.HasPreviousPage},
+                        {"HasNextPage", Model.Organisations.HasNextPage},
+                        {"SearchTerm",Model.SearchString },
+                        {"Action", "NextResults"}
+                    });
+
+
+
             }
             else
             {

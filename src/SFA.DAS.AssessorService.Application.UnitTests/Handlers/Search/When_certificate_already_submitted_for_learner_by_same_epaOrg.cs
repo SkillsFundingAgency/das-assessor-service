@@ -34,7 +34,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
                         CertificateData =
                             JsonConvert.SerializeObject(new CertificateData
                             {
-                                OverallGrade = "Distinction",
+                                OverallGrade = CertificateGrade.Distinction,
                                 LearningStartDate = new DateTime(2015, 06, 01),
                                 AchievementDate = new DateTime(2018, 06, 01)
                             }),

@@ -73,12 +73,6 @@
         },
         "loggingRedisConnectionString": {
             "type": "securestring"
-        },
-        "sharedKeyVaultName": {
-            "type": "string"
-        },
-        "sharedManagementResourceGroup": {
-            "type": "string"
         }
     },
     "variables": {
