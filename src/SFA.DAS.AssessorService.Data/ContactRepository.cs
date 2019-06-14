@@ -150,12 +150,6 @@ namespace SFA.DAS.AssessorService.Data
                 await _assessorDbContext.Contacts.FirstAsync(q => q.Id == updateContactStatusRequest.Id);
 
             contactEntity.Status = updateContactStatusRequest.Status;
-            
-//            contactEntity.Status = updateContactStatusRequest.Status == ContactStatus.Approve
-//                ? ContactStatus.Live
-//                : (updateContactStatusRequest.Status == ContactStatus.Applying
-//                    ? ContactStatus.Applying
-//                    : ContactStatus.Inactive);
 
             // Workaround for Mocking
             _assessorDbContext.MarkAsModified(contactEntity);

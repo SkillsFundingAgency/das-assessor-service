@@ -97,37 +97,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> NotifyUserManagementUsers([FromBody]NotifyUserManagementUsersRequest notifyUserManagementUsersRequest)
         {
-
-
             await _mediator.Send(notifyUserManagementUsersRequest, CancellationToken.None);
 
             return Ok();
-
-//            
-//            const string epaoUserApproveRequestTemplate = "EPAOUserApproveRequest";
-//            
-//            
-//
-//            try
-//            {
-//               var emailTemplate = await _mediator.Send(new GetEmailTemplateRequest
-//                       {TemplateName= epaoUserApproveRequestTemplate });
-//               var contacts= await _mediator.Send(new GetContactsForOrganisationRequest(notifyUserManagementUsersRequest.OrganisationReferenceId));
-//               foreach (var contact in contacts)
-//               {
-//                   await _mediator.Send(new SendEmailRequest(contact.Email, emailTemplate, new
-//                   {
-//                       username = $"{notifyUserManagementUsersRequest.DisplayName}",
-//                       ServiceLink = $"{notifyUserManagementUsersRequest.ServiceLink}"
-//                   }));
-//               }
-//            }
-//            catch (NotFound)
-//            {
-//                throw new ResourceNotFoundException();
-//            }
-//
-//            return NoContent();
         }
         
     }

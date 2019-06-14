@@ -17,9 +17,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ContactHandlers
 
         public async Task Handle(UpdateContactStatusRequest updateContactStatusRequest, CancellationToken cancellationToken)
         {
-            
-            
-            
             await _contactRepository.UpdateStatus(updateContactStatusRequest);
         }
     }
