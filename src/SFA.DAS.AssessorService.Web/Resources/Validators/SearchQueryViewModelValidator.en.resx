@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="LastNameShouldNotBeEmpty" xml:space="preserve">
-    <value>Enter the apprentice's last name</value>
+    <value>Enter the apprentice's family name</value>
   </data>
   <data name="UlnShouldNotBeEmpty" xml:space="preserve">
     <value>Enter the apprentice's ULN</value>
