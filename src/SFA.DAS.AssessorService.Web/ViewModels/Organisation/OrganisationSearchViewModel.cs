@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
+using SFA.DAS.AssessorService.Domain.Paging;
 
 namespace SFA.DAS.AssessorService.Web.ViewModels.Organisation
 {
@@ -20,10 +21,23 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Organisation
 
         public string OrganisationType { get; set; }
 
+        public int? PageIndex { get; set; }
+
         [JsonIgnore]
-        public IEnumerable<OrganisationSearchResult> Organisations { get; set; }
+        public PaginatedList<OrganisationSearchResult> Organisations { get; set; }
 
         [JsonIgnore]
         public IEnumerable<OrganisationType> OrganisationTypes { get; set; }
+
+        public string OrganisationFoundString()
+        {
+            var result= "0 results found";
+            if(Organisations != null && Organisations.Items.Any())
+            {
+                var resultsString = Organisations.TotalRecordCount > 1 ? "results" : "result";
+                result = $"{Organisations.TotalRecordCount} {resultsString} found";
+            }
+            return result;  
+        }
     }
 }

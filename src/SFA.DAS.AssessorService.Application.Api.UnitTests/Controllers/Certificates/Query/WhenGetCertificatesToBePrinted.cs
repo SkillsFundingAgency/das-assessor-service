@@ -25,13 +25,12 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Certific
             MappingBootstrapper.Initialize();
             var certificateResponses = Builder<CertificateResponse>.CreateListOfSize(10).Build().ToList();
 
-            mediator.Setup(q => q.Send(Moq.It.IsAny<GetCertificatesRequest>(), new CancellationToken()))
+            mediator.Setup(q => q.Send(Moq.It.IsAny<GetToBePrintedCertificatesRequest>(), new CancellationToken()))
                 .Returns(Task.FromResult((certificateResponses)));
 
             var certificateQueryControler = new CertificateQueryController(mediator.Object);
 
-            var statuses = new List<string> {"Submitted"};
-            _result = certificateQueryControler.GetCertificates(statuses).Result;
+            _result = certificateQueryControler.GetCertificatesToBePrinted().Result;
         }
 
         [Test]

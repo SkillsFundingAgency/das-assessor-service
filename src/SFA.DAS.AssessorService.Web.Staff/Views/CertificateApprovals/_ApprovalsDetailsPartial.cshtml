@@ -14,18 +14,18 @@
             <th>Apprentice</th>
             <th>ULN</th>
             <th>Employer</th>
-            <th>Training Provider</th>
+            <th>Training provider</th>
             @if (results[0]?.PrivatelyFundedStatus == CertificateStatus.Rejected)
             {
-            <th>Reason For Rejection</th>
+            <th>Reason for rejection</th>
             }
             @if (results[0]?.PrivatelyFundedStatus != CertificateStatus.SentForApproval)
             {
-                <th>Date Requested</th>
+                <th>Date requested</th>
             }
             else
             {
-                <th>Date Sent For Approval</th>
+                <th>Date sent for approval</th>
             }
             @if (results[0]?.PrivatelyFundedStatus != CertificateStatus.Approved)
             {
@@ -144,7 +144,9 @@
             <tr class="js-expandble-cell js-hidden expandble-cell" aria-hidden="true">
                 <td colspan="5">
                     <div class="expandble-cell-content">
-                        <h2 class="heading-medium expandble-cell-content--first-heading">Certificate Details</h2>
+                        <h2 class="heading-medium expandble-cell-content--first-heading">
+                            Assessment details
+                        </h2>
                         <ul>
                             <li>
                                 <p>
@@ -169,7 +171,15 @@
 
                             <li>
                                 <p>
-                                    <span class="bold">Option: </span> @Html.DisplayFor(modelItem => @results[i].CourseOption)
+                                    <span class="bold">Option: </span> 
+                                    @if (results[i].CourseOption != null) 
+                                    {
+                                        @Html.DisplayFor(modelItem => @results[i].CourseOption)
+                                    }
+                                    else
+                                    {
+                                        <text>None</text>
+                                    }
                                 </p>
                             </li>
                             <li>
@@ -183,7 +193,16 @@
                             </li>
                             <li>
                                 <p>
-                                    <span class="bold">Achievement date: </span>
+                                    <span class="bold">
+                                        @if(results[i].OverallGrade != CertificateGrade.Fail)
+                                        {
+                                            <text>Achievement date:</text>
+                                        }
+                                        else
+                                        {
+                                            <text>Fail date:</text>
+                                        }
+                                    </span>
                                     @{
                                         var achievementDate = @results[i].AchievementDate.HasValue ? @results[i].AchievementDate.Value.ToString("dd/MM/yyyy") : "";
                                     }
@@ -192,38 +211,52 @@
                             </li>
                             <li>
                                 <p>
-                                    <span class="bold">Certificate number:</span> @Html.DisplayFor(modelItem => @results[i].CertificateReference)
+                                    <span class="bold">
+                                        @if(results[i].OverallGrade != CertificateGrade.Fail)
+                                        {
+                                            <text>Certificate number:</text>
+                                        }
+                                        else
+                                        {
+                                            <text>Reference number:</text>
+
+                                        }
+                                    
+                                    </span> @Html.DisplayFor(modelItem => @results[i].CertificateReference)
                                 </p>
                             </li>
                         </ul>
 
-                        <h2 class="heading-medium">Postage details: </h2>
-                        <p>
-                            The certificate was posted to this address.
-                        </p>
-                        <ul>
-                            <li>
-                                @Html.DisplayFor(modelItem => @results[i].ContactName)
-                            </li>
-                            <li>
-                                @Html.DisplayFor(modelItem => @results[i].ContactOrganisation)
-                            </li>
-                            <li>
-                                @Html.DisplayFor(modelItem => @results[i].ContactAddLine1)
-                            </li>
-                            <li>
-                                @Html.DisplayFor(modelItem => @results[i].ContactAddLine2)
-                            </li>
-                            <li>
-                                @Html.DisplayFor(modelItem => @results[i].ContactAddLine3)
-                            </li>
-                            <li>
-                                @Html.DisplayFor(modelItem => @results[i].ContactAddLine4)
-                            </li>
-                            <li>
-                                @Html.DisplayFor(modelItem => @results[i].ContactPostCode)
-                            </li>
-                        </ul>
+                        @if(results[i].OverallGrade != CertificateGrade.Fail)
+                        {
+                            <h2 class="heading-medium">Postage details</h2>
+                            <p>
+                                The certificate was posted to this address.
+                            </p>
+                            <ul>
+                                <li>
+                                    @Html.DisplayFor(modelItem => @results[i].ContactName)
+                                </li>
+                                <li>
+                                    @Html.DisplayFor(modelItem => @results[i].ContactOrganisation)
+                                </li>
+                                <li>
+                                    @Html.DisplayFor(modelItem => @results[i].ContactAddLine1)
+                                </li>
+                                <li>
+                                    @Html.DisplayFor(modelItem => @results[i].ContactAddLine2)
+                                </li>
+                                <li>
+                                    @Html.DisplayFor(modelItem => @results[i].ContactAddLine3)
+                                </li>
+                                <li>
+                                    @Html.DisplayFor(modelItem => @results[i].ContactAddLine4)
+                                </li>
+                                <li>
+                                    @Html.DisplayFor(modelItem => @results[i].ContactPostCode)
+                                </li>
+                            </ul>
+                        }
                     </div>
                 </td>
             </tr>

@@ -280,7 +280,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
             if (contact.Organisation != null)
             {
-                request.organisation = new ApplyTypes.Organisation
+                var finExempt = contact.Organisation.OrganisationType != null ? 
+                    IsOrganisationTypeFinancialExempt(contact.Organisation.OrganisationType.Type) : false;
+                request.organisation = new Organisation
                 {
                     CreatedAt = contact.Organisation.CreatedAt,
                     CreatedBy = contact.Id.ToString(),
@@ -290,9 +292,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
                     Name = contact.Organisation.EndPointAssessorName,
                     OrganisationType = contact.Organisation.OrganisationType?.Type,
                     OrganisationUkprn = contact.Organisation.EndPointAssessorUkprn,
-                    RoATPApproved = true,
+                    RoATPApproved = false,
                     RoEPAOApproved = true,
-                    Status = "New",
+                    Status = contact.Organisation.Status =="Live"?"Approved":"New",
                     UpdatedAt = null,
                     UpdatedBy = null,
                     OrganisationDetails = new OrganisationDetails
@@ -314,7 +316,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
                         FHADetails = new FHADetails
                         {
                             FinancialDueDate = contact.Organisation.OrganisationDataFromJson?.FhaDetails?.FinancialDueDate,
-                            FinancialExempt = contact.Organisation.OrganisationDataFromJson?.FhaDetails?.FinancialExempt
+                            FinancialExempt = finExempt 
                         },
                         EndPointAssessmentOrgId = contact.EndPointAssessorOrganisationId
                     }
@@ -323,7 +325,18 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
             return request;
         }
+
+        private static bool IsOrganisationTypeFinancialExempt(string organisationType)
+        {
+            // This is unlikely to change. Hence, after a quick discussion, decided to hard-code these than cope with external dependencies
+            return "HEI".Equals(organisationType, StringComparison.InvariantCultureIgnoreCase)
+                || "College".Equals(organisationType, StringComparison.InvariantCultureIgnoreCase)
+                || "Public Sector".Equals(organisationType, StringComparison.InvariantCultureIgnoreCase)
+                || "Academy or Free School".Equals(organisationType, StringComparison.InvariantCultureIgnoreCase);
+        }
     }
+
+
     public class MigrateUserResult
     {
         public Guid NewUserId { get; set; }
