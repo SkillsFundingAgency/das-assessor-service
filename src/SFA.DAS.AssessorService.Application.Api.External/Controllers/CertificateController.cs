@@ -21,12 +21,6 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
     [SwaggerTag("Batch Certificates")]
     public class CertificateController : ControllerBase
     {
-        private const string CERTIFICATE_STATUS_DRAFT = "Draft";
-        private const string CERTIFICATE_STATUS_READY = "Ready";
-        private const string CERTIFICATE_STATUS_SUBMITTED = "Submitted";
-        private const string CERTIFICATE_STATUS_PRINTED = "Printed";
-        private const string CERTIFICATE_STATUS_REPRINT = "Reprint";
-
         private readonly ILogger<CertificateController> _logger;
         private readonly IHeaderInfo _headerInfo;
         private readonly IApiClient _apiClient;
@@ -63,11 +57,11 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
             {
                 if(IsDraftCertificateDeemedAsReady(response.Certificate))
                 {
-                    response.Certificate.Status.CurrentStatus = CERTIFICATE_STATUS_READY;
+                    response.Certificate.Status.CurrentStatus = CertificateStatus.Ready;
                 }
-                else if (response.Certificate.Status.CurrentStatus == CERTIFICATE_STATUS_PRINTED || response.Certificate.Status.CurrentStatus == CERTIFICATE_STATUS_REPRINT)
+                else if (response.Certificate.Status.CurrentStatus == CertificateStatus.Printed || response.Certificate.Status.CurrentStatus == CertificateStatus.Reprint)
                 {
-                    response.Certificate.Status.CurrentStatus = CERTIFICATE_STATUS_SUBMITTED;
+                    response.Certificate.Status.CurrentStatus = CertificateStatus.Submitted;
                 }
 
                 return Ok(response.Certificate);
@@ -101,7 +95,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
             {
                 if (IsDraftCertificateDeemedAsReady(result.Certificate))
                 {
-                    result.Certificate.Status.CurrentStatus = CERTIFICATE_STATUS_READY;
+                    result.Certificate.Status.CurrentStatus = CertificateStatus.Ready;
                 }
             }
 
@@ -137,7 +131,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
             {
                 if (IsDraftCertificateDeemedAsReady(result.Certificate))
                 {
-                    result.Certificate.Status.CurrentStatus = CERTIFICATE_STATUS_READY;
+                    result.Certificate.Status.CurrentStatus = CertificateStatus.Ready;
                 }
             }
 
@@ -205,7 +199,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
         {
             // Note: This for the External API only and allows the caller to know if a Draft Certificate is 'Ready' for submitting
             // It is deemed ready if the mandatory fields have been filled out.
-            if (certificate?.CertificateData is null || certificate?.Status?.CurrentStatus != CERTIFICATE_STATUS_DRAFT || string.IsNullOrEmpty(certificate.CertificateData.CertificateReference))
+            if (certificate?.CertificateData is null || certificate?.Status?.CurrentStatus != CertificateStatus.Draft || string.IsNullOrEmpty(certificate.CertificateData.CertificateReference))
             {
                 return false;
             }
