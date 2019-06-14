@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
 
@@ -34,7 +35,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
                         CertificateData =
                             JsonConvert.SerializeObject(new CertificateData
                             {
-                                OverallGrade = "Distinction",
+                                OverallGrade = CertificateGrade.Distinction,
                                 LearningStartDate = new DateTime(2015, 06, 01),
                                 AchievementDate = new DateTime(2018, 06, 01)
                             }),
