@@ -2,117 +2,106 @@
 
 @{ ViewBag.Title = "Details from UKPRN"; }
 
+@*
 @{
     await Html.RenderPartialAsync("~/Views/Roatp/_StylesPartial.cshtml");
 }
+*@
 
-<div class="grid-row">
-    <form asp-controller="AddRoatpOrganisation" asp-action="Back" method="post" name="backForm">
-        <div class="govuk-grid-column-one-half">
-            <input type="hidden" name="action" value="EnterUkprn" />
-            <a href="JavaScript:document.backForm.submit();" class="govuk-back-link">Back</a>
+<form asp-controller="AddRoatpOrganisation" asp-action="Back" method="post" name="backForm">
+    <input type="hidden" name="action" value="EnterUkprn" />
+    <a href="JavaScript:document.backForm.submit();" class="govuk-back-link">Back</a>
+</form>
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+
+            <h1 class="govuk-heading-xl">Organisation's details</h1>
+            <p class="govuk-body">These are the details we found on UKRLP for @Html.Raw(Model.UKPRN).</p>
+
+            <dl class="govuk-summary-list">
+
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Legal name
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Html.Raw(Model.LegalName)
+                    </dd>
+
+                </div>
+
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Trading name
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @if (!String.IsNullOrWhiteSpace(Model.TradingName))
+                        {
+                            @Html.Raw(Model.TradingName)
+                        }
+                        else
+                        {
+                            <span class="govuk-body">Not applicable</span>
+                        }
+                    </dd>
+                </div>
+
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Company number
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @if (!String.IsNullOrWhiteSpace(Model.CompanyNumber))
+                        {
+                            @Html.Raw(Model.CompanyNumber)
+                        }
+                        else
+                        {
+                            <span class="govuk-body">Not applicable</span>
+                        }
+                    </dd>
+                </div>
+
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Charity registration number
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @if (!String.IsNullOrWhiteSpace(Model.CharityNumber))
+                        {
+                            @Html.Raw(Model.CharityNumber)
+                        }
+                        else
+                        {
+                            <span class="govuk-body">Not applicable</span>
+                        }
+                    </dd>
+                </div>
+            </dl>
+
+            @*
+            <form method="post" asp-action="CreateOrganisation" asp-controller="AddRoatpOrganisation">
+                <input type="submit" class="roatp-button" value="Continue" />
+                <input type="button" class="roatp-button--secondary" value="Try Again" />
+            </form>
+            *@
+
+            <form method="post" asp-action="UkprnPreview" asp-controller="AddRoatpOrganisation">
+                @Html.HiddenFor(m => m.LegalName)
+                @Html.HiddenFor(m => m.TradingName)
+                @Html.HiddenFor(m => m.CharityNumber)
+                @Html.HiddenFor(m => m.CompanyNumber)
+                @Html.HiddenFor(m => m.UKPRN)
+                <input type="submit" class="govuk-button" value="Continue" />
+                <a class="govuk-button govuk-button--secondary" asp-controller="AddRoatpOrganisation" asp-action="EnterUkprn">
+                    Try again
+                </a>
+            </form>
+                
         </div>
-    </form>
-</div>
 
-<div class="grid-row">
-    <div class="column-two-thirds">
-        <h1 class="heading-xlarge roatp-heading">Organisation's details</h1>
-        <p>These are the details we found on UKRLP for @Html.Raw(Model.UKPRN).</p>
     </div>
-</div>
-<div class="govuk-width-container">
 
-    <main class="govuk-main-wrapper " id="main-content" role="main">
-
-        <div class="govuk-body govuk-grid-row">
-
-            <div class="govuk-grid-column-two-thirds">
-
-
-                <dl class="govuk-summary-list">
-
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">
-                            Legal name
-                        </dt>
-                        <dd class="govuk-summary-list__value_long">
-                            @Html.Raw(Model.LegalName)
-                        </dd>
-
-                    </div>
-
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">
-                            Trading name
-                        </dt>
-                        <dd class="govuk-summary-list__value">
-                            @if (!String.IsNullOrWhiteSpace(Model.TradingName))
-                            {
-                                @Html.Raw(Model.TradingName)
-                            }
-                            else
-                            {
-                                <span class='govuk-hint'>Not applicable</span>
-                            }
-                        </dd>
-
-                    </div>
-
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">
-                            Company number
-                        </dt>
-                        <dd class="govuk-summary-list__value">
-                            @if (!String.IsNullOrWhiteSpace(Model.CompanyNumber))
-                            {
-                                @Html.Raw(Model.CompanyNumber)
-                            }
-                            else
-                            {
-                                <span class='govuk-hint'>Not applicable</span>
-                            }
-                        </dd>
-
-                    </div>
-
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">
-                            Charity registration number
-                        </dt>
-                        <dd class="govuk-summary-list__value">
-                            @if (!String.IsNullOrWhiteSpace(Model.CharityNumber))
-                            {
-                                @Html.Raw(Model.CharityNumber)
-                            }
-                            else
-                            {
-                                <span class='govuk-hint'>Not applicable</span>
-                            }
-                        </dd>
-
-                    </div>
-                </dl>
-
-                @*<form method="post" asp-action="CreateOrganisation" asp-controller="AddRoatpOrganisation">
-            <input type="submit" class="roatp-button" value="Continue" />
-            <input type="button" class="roatp-button--secondary" value="Try Again" />
-        </form>*@
-                       <form method="post" asp-action="UkprnPreview" asp-controller="AddRoatpOrganisation">
-                           @Html.HiddenFor(m => m.LegalName)
-                           @Html.HiddenFor(m => m.TradingName)
-                           @Html.HiddenFor(m => m.CharityNumber)
-                           @Html.HiddenFor(m => m.CompanyNumber)
-                           @Html.HiddenFor(m => m.UKPRN)
-                           <input type="submit" class="roatp-button" value="Continue" />
-                           <a class="roatp-button--secondary" asp-controller="AddRoatpOrganisation" asp-action="EnterUkprn">
-                               Try Again
-                           </a>
-                </form>
-                    
-            </div>
-
-        </div>
-
-    </main>
-</div>
+</main>

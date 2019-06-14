@@ -5,12 +5,11 @@
 @{ ViewBag.Title = "What is the organisation's UKPRN?"; }
 
 @*
-
 @{
     await Html.RenderPartialAsync("~/Views/Roatp/_StylesPartial.cshtml");
 }
-
 *@
+
 <form asp-controller="RoatpHome" asp-action="Index" method="post" name="backForm">
     <a href="JavaScript:document.backForm.submit();" class="govuk-back-link">Back</a>
 </form>
@@ -42,14 +41,24 @@
                 </div>
             }
 
-            <h1 class="govuk-heading-xl">What is the organisation's UKPRN?</h1>
-
             <form method="post" asp-action="UkprnPreview" asp-controller="AddRoatpOrganisation">
                 <div class="govuk-form-group" sfa-validation-for="UKPRN" sfa-validationerror-class="govuk-form-group--error">
-                    <label for="UKPRN" class="govuk-label">UKPRN</label>
+
+                    <h1 class="govuk-label-wrapper">
+                        <label class="govuk-label govuk-label--xl" for="UKPRN">
+                            What is the organisation's UKPRN?
+                        </label>
+                    </h1>
                     <span class="govuk-error-message" asp-validation-for="UKPRN"></span>
-                    <input id="UKPRN" name="UKPRN" type="text" class="govuk-input " asp-for="UKPRN"
-                            sfa-validation-for="UKPRN" sfa-validationerror-class="govuk-form-control--error" />
+                    <input
+                        id="UKPRN"
+                        name="UKPRN"
+                        type="text"
+                        class="govuk-input govuk-input--width-10"
+                        asp-for="UKPRN"
+                        sfa-validation-for="UKPRN"
+                        sfa-validationerror-class="govuk-form-control--error"
+                    />
                 </div>
                 <input type="submit" class="govuk-button" value="Continue" />
             </form>

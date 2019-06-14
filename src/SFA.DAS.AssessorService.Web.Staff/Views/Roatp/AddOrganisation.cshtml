@@ -4,16 +4,15 @@
 @using SFA.DAS.AssessorService.Web.Staff.Domain
 @{ ViewBag.Title = "What is the new training provider?"; }
 
+@*
 @{
     await Html.RenderPartialAsync("~/Views/Roatp/_StylesPartial.cshtml");
 }
-    <div class="grid-row">
-        <form asp-controller="RoatpHome" asp-action="Index" method="post" name="backForm">
-            <div class="govuk-grid-column-one-half">
-                <a href="JavaScript:document.backForm.submit();" class="govuk-back-link">Back</a>
-            </div>
-        </form>
-    </div>
+*@
+
+<form asp-controller="RoatpHome" asp-action="Index" method="post" name="backForm">
+    <a href="JavaScript:document.backForm.submit();" class="govuk-back-link">Back</a>
+</form>
 
     <div class="js-error-summary error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
         <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
@@ -21,6 +20,7 @@
         </h2>
         <ul class="js-error-summary-list error-summary-list"></ul>
     </div>
+
     @if (!ViewData.ModelState.IsValid)
     {
         <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
