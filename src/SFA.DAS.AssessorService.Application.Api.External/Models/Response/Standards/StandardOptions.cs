@@ -43,9 +43,11 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Models.Response.Stand
 
         private bool IsEqual(StandardOptions other)
         {
+            var courseOptionsEqual = CourseOption is null ? other.CourseOption is null : CourseOption.SequenceEqual(other.CourseOption);
+
             return Equals(StandardCode, other.StandardCode)
                 && string.Equals(StandardReference, other.StandardReference)
-                && CourseOption is null ? other.CourseOption is null : CourseOption.SequenceEqual(other.CourseOption);
+                && courseOptionsEqual;
         }
 
         public static bool operator ==(StandardOptions left, StandardOptions right)
