@@ -26,7 +26,7 @@ var searchParams = new Dictionary<string, string>
         <div class="govuk-grid-column-two-thirds">
 
             <h1 class="govuk-heading-xl roatp-summary-list-long-text">@Html.Raw(Model.Title)</h1>
-            
+
             <div id="searchResultsList" class="govuk-grid-column-one-third">
                 <ul class="govuk-list">
                     @for(var index = 0; index < Model.SearchResults.Count; index++)
@@ -39,11 +39,11 @@ var searchParams = new Dictionary<string, string>
                         <li class="govuk-section-break govuk-!-padding-left-2 govuk-!-padding-right-2 govuk-!-padding-top-2 govuk-!-padding-bottom-1 @Html.Raw(addClass)">
                             @if (Model.SearchResults[index].OrganisationStatus.Id == 0)
                             {
-                                <a href="/results-found?index=@Html.Raw(index)" class="govuk-!-font-weight-bold_ roatp-org-search-result">@Html.Raw(Model.SearchResults[index].LegalName) (Removed)</a>
+                                <a href="/results-found?index=@Html.Raw(index)" class="govuk-!-font-weight-bold roatp-org-search-result">@Html.Raw(Model.SearchResults[index].LegalName) (Removed)</a>
                             }
                             else
                             {
-                                <a href="/results-found?index=@Html.Raw(index)" class="govuk-!-font-weight-bold_ roatp-org-search-result">@Html.Raw(Model.SearchResults[index].LegalName)</a>
+                                <a href="/results-found?index=@Html.Raw(index)" class="govuk-!-font-weight-bold roatp-org-search-result">@Html.Raw(Model.SearchResults[index].LegalName)</a>
                             }
                             <span class="block">UKPRN @Html.Raw(Model.SearchResults[index].UKPRN)</span>
                         </li>
@@ -61,7 +61,7 @@ var searchParams = new Dictionary<string, string>
                 @if (!Model.SearchResults.Any())
                 {
                     <div class="govuk-grid-row">
-                        <a asp-controller="RoatpHome" asp-action="Index" class="roatp-button">Search again</a>
+                        <a asp-controller="RoatpHome" asp-action="Index" class="govuk-button">Search again</a>
                     </div>
                     <div class="govuk-grid-row">
                         <a class="govuk-link govuk-body-m" asp-controller="AddRoatpOrganisation" asp-action="EnterUkprn">Add a new training provider</a>

@@ -3,21 +3,6 @@
 @inject RoatpSessionService sessionService
 @{ ViewBag.Title = "Search for an apprenticeship training provider"; }
 
-@*
-@{ await Html.RenderPartialAsync("~/Views/Roatp/_StylesPartial.cshtml"); }
-
-@if (Model != null && !String.IsNullOrWhiteSpace(Model.BannerMessage))
-{
-    <div class="roatp-panel roatp-panel--confirmation govuk-!-margin-bottom-9">
-        <h1 class="roatp-panel__title govuk-!-font-size-27">
-            @Html.Raw(Model.BannerMessage)
-        </h1>
-    </div>
-}
-
-*@
-
-
 @{
     var searchTerm = sessionService.GetSearchTerm();
 }
@@ -38,7 +23,7 @@
                         id="SearchTerm"
                         name="SearchTerm"
                         sfa-validation-for="SearchTerm"
-                        sfa-validationerror-class="form-control-error"
+                        sfa-validationerror-class="govuk-input--error"
                         value="@searchTerm"
                     />
                 </div>

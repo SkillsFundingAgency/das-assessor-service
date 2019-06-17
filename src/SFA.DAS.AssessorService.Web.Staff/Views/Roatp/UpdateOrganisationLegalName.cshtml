@@ -14,47 +14,45 @@
     <a href="JavaScript:document.backForm.submit();" class="govuk-back-link">Back</a>
 </form>
 
-<div class="js-error-summary error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
-    <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
-        There is a problem
-    </h2>
-    <ul class="js-error-summary-list error-summary-list"></ul>
-</div>
-@if (!ViewData.ModelState.IsValid)
-    {
-<div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
-    <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
-        There is a problem
-    </h2>
-    <ul class="error-summary-list">
-        <li><a sfa-validation-for="LegalName"></a></li>
-    </ul>
-</div>
-    }
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
 
-<div class="grid-row">
-    <div class="column-two-thirds">
-        <h1 class="heading-xlarge roatp-heading">Change legal name for <span class="roatp-update-organisation-long-text">@Html.Raw(Model.LegalName)</span></h1>
-    </div>
-</div>
-<div class="govuk-width-container">
-
-    <main class="govuk-main-wrapper " id="main-content" role="main">
-
-        <div class="govuk-grid-row">
-            <div class="govuk-grid-column-two-thirds">
-                <form method="post" asp-action="UpdateLegalName" asp-controller="UpdateRoatpOrganisation">
-                    @Html.HiddenFor(x => x.OrganisationId)
-                    <div class="govuk-form-group" sfa-validation-for="LegalName" sfa-validationerror-class="form-group-error">
-                        <label for="LegalName" class="roatp-label">Legal name</label>
-                        <span class="error-message" asp-validation-for="LegalName"></span>
-                        <input id="LegalName" name="LegalName" type="text" class="roatp-input" asp-for="LegalName"
-                               sfa-validation-for="LegalName" sfa-validationerror-class="form-control-error" />
-                    </div>
-                    @Html.HiddenFor(x => x.CurrentLegalName)
-                    <input type="submit" class="roatp-button" value="Change" />
-                </form>
+            <div class="js-error-summary govuk-error-summary" role="alert" aria-labelledby="error-summary-title" tabindex="-1" data-module="error-summary">
+                <h2 class="govuk-error-summary__title" id="error-summary-title">
+                    There is a problem
+                </h2>
+                <div class="govuk-error-summary__body">
+                    <ul class="js-error-summary-list govuk-list govuk-error-summary__list"></ul>
+                </div>
             </div>
+
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
+                    <h2 class="govuk-error-summary__title" id="error-summary-title">
+                        There is a problem
+                    </h2>
+                    <div class="govuk-error-summary__body">
+                        <ul class="govuk-list govuk-error-summary__list">
+                            <li><a sfa-validation-for="LegalName"></a></li>
+                        </ul>
+                    </div>
+                </div>
+            }
+
+            <h1 class="govuk-heading-xl">Change legal name for <span class="roatp-update-organisation-long-text">@Html.Raw(Model.LegalName)</span></h1>
+            <form method="post" asp-action="UpdateLegalName" asp-controller="UpdateRoatpOrganisation">
+                @Html.HiddenFor(x => x.OrganisationId)
+                <div class="govuk-form-group" sfa-validation-for="LegalName" sfa-validationerror-class="govuk-form-group--error">
+                    <label for="LegalName" class="govuk-label">Legal name</label>
+                    <span class="error-message" asp-validation-for="LegalName"></span>
+                    <input id="LegalName" name="LegalName" type="text" class="govuk-input" asp-for="LegalName"
+                            sfa-validation-for="LegalName" sfa-validationerror-class="govuk-input--error" />
+                </div>
+                @Html.HiddenFor(x => x.CurrentLegalName)
+                <input type="submit" class="govuk-button" value="Change" />
+            </form>
         </div>
-    </main>
-</div>
+    </div>
+</main>
