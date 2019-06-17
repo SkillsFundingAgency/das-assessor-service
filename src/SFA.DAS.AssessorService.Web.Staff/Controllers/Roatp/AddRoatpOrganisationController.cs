@@ -59,7 +59,9 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
             if (!IsRedirectFromConfirmationPage() && !ModelState.IsValid)
             {
                 var addOrganisationModel = _sessionService.GetAddOrganisationDetails();
-                model.UKPRN = addOrganisationModel.UKPRN;
+                if (addOrganisationModel?.UKPRN!=null)
+                    model.UKPRN = addOrganisationModel.UKPRN;
+
                 return View("~/Views/Roatp/EnterUkprn.cshtml", model);
             }
 
