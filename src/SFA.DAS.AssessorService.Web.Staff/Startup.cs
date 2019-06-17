@@ -99,10 +99,13 @@ namespace SFA.DAS.AssessorService.Web.Staff
                 });
             services.AddSession(opt => { opt.IdleTimeout = TimeSpan.FromHours(1); });
             
-            services.AddDistributedRedisCache(options =>
+            if (!_env.IsDevelopment())
             {
-                options.Configuration = ApplicationConfiguration.SessionRedisConnectionString;
-            });
+                services.AddDistributedRedisCache(options =>
+                {
+                    options.Configuration = ApplicationConfiguration.SessionRedisConnectionString;
+                });
+            }
 
             services.AddAntiforgery(options => options.Cookie = new CookieBuilder() { Name = ".Assessors.Staff.AntiForgery", HttpOnly = false });
 
