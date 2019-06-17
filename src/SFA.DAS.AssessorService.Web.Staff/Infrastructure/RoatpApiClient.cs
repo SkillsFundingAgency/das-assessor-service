@@ -166,6 +166,13 @@
             return await Task.FromResult(result == HttpStatusCode.OK);
         }
 
+        public async Task<bool> UpdateApplicationDeterminedDate(UpdateOrganisationApplicationDeterminedDateRequest request)
+        {
+            HttpStatusCode result = await Put<UpdateOrganisationApplicationDeterminedDateRequest>($"{_baseUrl}/api/v1/updateOrganisation/applicationDeterminedDate", request);
+
+            return await Task.FromResult(result == HttpStatusCode.OK);
+        }
+
         private async Task<T> Get<T>(string uri)
         {
             _client.DefaultRequestHeaders.Authorization =

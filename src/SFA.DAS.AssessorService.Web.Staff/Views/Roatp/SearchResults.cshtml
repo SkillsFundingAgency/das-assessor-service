@@ -25,47 +25,6 @@
 
         <h1 class="govuk-heading-xl govuk-!-width-two-thirds roatp-summary-list-long-text">@Html.Raw(Model.Title)</h1>
         <div class="govuk-body govuk-grid-row">
-            <div id="searchResultsList" class="govuk-grid-column-one-third">
-                <ul class="govuk-list">
-                    @for(var index = 0; index < Model.SearchResults.Count; index++)
-                    {
-                        var addClass = "";
-                        if (index == Model.SelectedIndex)
-                        {
-                            addClass = "selected-item";
-                        }
-                        <li class="govuk-section-break govuk-!-padding-left-2 govuk-!-padding-right-2 govuk-!-padding-top-2 govuk-!-padding-bottom-1 @Html.Raw(addClass)">
-                            @if (Model.SearchResults[index].OrganisationStatus.Id == 0)
-                            {
-                                <a href="/results-found?index=@Html.Raw(index)" class="govuk-!-font-weight-bold_ roatp-org-search-result">@Html.Raw(Model.SearchResults[index].LegalName) (Removed)</a>
-                            }
-                            else
-                            {
-                                <a href="/results-found?index=@Html.Raw(index)" class="govuk-!-font-weight-bold_ roatp-org-search-result">@Html.Raw(Model.SearchResults[index].LegalName)</a>
-                            }
-                            <span class="block">UKPRN @Html.Raw(Model.SearchResults[index].UKPRN)</span>
-                        </li>
-                    }
-                </ul>
-                @if (Model.TotalCount > 5)
-                {
-                    <div class="well govuk-!-font-size-16 govuk-!-padding-2">
-                        Result limited to 5.
-                        <a class="block govuk-link govuk-link--no-visited-state" asp-controller="RoatpSearch" asp-action="RefineSearch" asp-all-route-data="searchParams">Refine search</a>
-                    </div>
-                }
-                
-                  
-                @if (!Model.SearchResults.Any())
-                {
-                    <div class="govuk-grid-row">
-                        <a asp-controller="RoatpHome" asp-action="Index" class="roatp-button">Search again</a>
-                    </div>
-                    <div class="govuk-grid-row">
-                        <a class="govuk-link govuk-body-m" asp-controller="AddRoatpOrganisation" asp-action="EnterUkprn">Add a new training provider</a>
-                    </div> 
-                }
-            </div>
             @if (Model.SearchResults.Count > 0)
             {
                 <div id="organisationDetails" class="govuk-grid-column-two-thirds">
@@ -257,23 +216,42 @@
 
                     </div>
 
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">
-                            Financial track record
-                        </dt>
-                        <dd class="govuk-summary-list__value">
-                            @Html.BooleanYesNo(Model.SelectedResult.OrganisationData.FinancialTrackRecord)
-                        </dd>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Financial track record
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Html.BooleanYesNo(Model.SelectedResult.OrganisationData.FinancialTrackRecord)
+                    </dd>
 
-                        <dd class="govuk-summary-list__actions">
+                    <dd class="govuk-summary-list__actions">
 
-                            <a class="govuk-link" asp-controller="UpdateRoatpOrganisation" asp-action="UpdateOrganisationFinancialTrackRecord">
-                                Change<span class="govuk-visually-hidden"> financial track record</span>
-                            </a>
+                        <a class="govuk-link" asp-controller="UpdateRoatpOrganisation" asp-action="UpdateOrganisationFinancialTrackRecord">
+                            Change<span class="govuk-visually-hidden"> financial track record</span>
+                        </a>
 
-                        </dd>
+                    </dd>
 
-                    </div>
+                </div>
+                    
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Application determined date
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Html.Raw(Model.SelectedResult.OrganisationData.ApplicationDeterminedDate?.ToString("dd MMM yyyy"))
+                    </dd>
+
+                    <dd class="govuk-summary-list__actions">
+
+                        <a class="govuk-link" asp-controller="UpdateRoatpOrganisation" asp-action="UpdateOrganisationApplicationDeterminedDate">
+                            Change<span class="govuk-visually-hidden"> application determined date</span>
+                        </a>
+                        
+
+                    </dd>
+
+                </div>
 
                 </dl>
 

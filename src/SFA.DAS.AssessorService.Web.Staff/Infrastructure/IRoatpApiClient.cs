@@ -32,5 +32,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
        Task<bool> UpdateOrganisationUkprn(UpdateOrganisationUkprnRequest request);
         Task<bool> UpdateOrganisationCompanyNumber(UpdateOrganisationCompanyNumberRequest request);
         Task<bool> UpdateOrganisationCharityNumber(UpdateOrganisationCharityNumberRequest request);
+
+        Task<bool> UpdateApplicationDeterminedDate(UpdateOrganisationApplicationDeterminedDateRequest request);
     }
 }

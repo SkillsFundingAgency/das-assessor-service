@@ -12,6 +12,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
     using SFA.DAS.AssessorService.Api.Types.Models.Roatp;
     using AutoMapper;
     using System.Collections.Generic;
+    using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 
     [Authorize]
     public class UpdateRoatpOrganisationController : RoatpSearchResultsControllerBase
@@ -322,6 +323,24 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
             return View("~/Views/Roatp/UpdateOrganisationFinancialTrackRecord.cshtml", model);
         }
 
+
+        [Route("change-application-determined-date")]
+        public async Task<IActionResult> UpdateOrganisationApplicationDeterminedDate()
+        {
+            var searchModel = _sessionService.GetSearchResults();
+
+            var model = new UpdateApplicationDeterminedDateViewModel
+            {
+                Day = searchModel.SelectedResult.OrganisationData?.ApplicationDeterminedDate?.Day,
+                Month = searchModel.SelectedResult.OrganisationData?.ApplicationDeterminedDate?.Month,
+                Year = searchModel.SelectedResult.OrganisationData?.ApplicationDeterminedDate?.Year,
+                OrganisationId = searchModel.SelectedResult.Id,
+                LegalName = searchModel.SelectedResult.LegalName
+            };
+
+            return View("~/Views/Roatp/UpdateOrganisationApplicationDeterminedDate.cshtml", model);
+        }
+
         [HttpPost]
         public async Task<IActionResult> UpdateFinancialTrackRecord(UpdateOrganisationFinancialTrackRecordViewModel model)
         {
@@ -452,6 +471,38 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
             return View("~/Views/Roatp/UpdateOrganisationCharityNumber.cshtml", model);
         }
 
+        [HttpPost]
+        public async Task<IActionResult> UpdateApplicationDeterminedDate(UpdateApplicationDeterminedDateViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                var errorMessages = GatherErrorMessagesFromModelState();
+                model.ErrorMessages = errorMessages;
+                return View("~/Views/Roatp/UpdateOrganisationApplicationDeterminedDate.cshtml", model);
+            }
 
+            model.UpdatedBy = HttpContext.User.OperatorName();
+            var request = Mapper.Map<UpdateOrganisationApplicationDeterminedDateRequest>(model);
+
+            var result = await _apiClient.UpdateApplicationDeterminedDate(request);
+
+            if (result)
+            {
+                return await RefreshSearchResults();
+            }
+
+            return View("~/Views/Roatp/UpdateOrganisationApplicationDeterminedDate.cshtml", model);
+        }
+
+        private List<ValidationErrorDetail> GatherErrorMessagesFromModelState()
+        {
+            return !ModelState.IsValid
+                ? ModelState.SelectMany(k => k.Value.Errors.Select(e => new ValidationErrorDetail()
+                {
+                    ErrorMessage = e.ErrorMessage,
+                    Field = k.Key
+                })).ToList()
+                : null;
+        }
     }
 }
