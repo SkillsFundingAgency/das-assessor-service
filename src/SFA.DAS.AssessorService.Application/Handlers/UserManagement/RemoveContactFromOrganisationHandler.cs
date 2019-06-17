@@ -38,7 +38,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.UserManagement
             }
 
             await _contactRepository.RemoveContactFromOrganisation(request.ContactId);
-
+            await _contactRepository.RemoveAllPrivileges(request.ContactId);
+            
             await _applyContactsApiClient.RemoveContactFromOrganisation(request.ContactId);
             
             await _contactRepository.CreateContactLog(request.RequestingUserId, request.ContactId, ContactLogType.UserRemoved, 

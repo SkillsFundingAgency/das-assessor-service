@@ -51,22 +51,15 @@ namespace SFA.DAS.AssessorService.Web.Controllers.ManageUsers
         [Route("/[controller]/status/{id}/{status}")]
         public async Task<IActionResult> SetStatusAndNotify(Guid id, string status)
         {
-            const string epaoApproveConfirmTemplate = "EPAOUserApproveConfirm";
+            if (status == ContactStatus.Approve)
+            {
+                await _contactsApiClient.ApproveContact(id);
+            }
+            else
+            {
+                await _contactsApiClient.RejectContact(id);
+            }
 
-            if (string.IsNullOrEmpty(status)) return RedirectToAction("Index");
-            
-            await _contactsApiClient.UpdateStatus(new UpdateContactStatusRequest(id, status));
-            if (status != ContactStatus.Approve) return RedirectToAction("Index");
-            
-            var contactResponse = await _contactsApiClient.GetById(id);
-            var emailTemplate =
-                await _emailApiClient.GetEmailTemplate(epaoApproveConfirmTemplate);
-            await _emailApiClient.SendEmailWithTemplate(new SendEmailRequest(contactResponse.Email,
-                emailTemplate, new
-                {
-                    contactname = $"{contactResponse.DisplayName}",
-                    ServiceLink = _config.ServiceLink
-                }));
 
             return RedirectToAction("Index");
         }

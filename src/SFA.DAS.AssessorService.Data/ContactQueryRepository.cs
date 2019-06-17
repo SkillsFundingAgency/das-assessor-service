@@ -48,6 +48,7 @@ namespace SFA.DAS.AssessorService.Data
             
             return contacts;
         }
+
         public async Task<IEnumerable<Privilege>> GetAllPrivileges()
         {
             return await _assessorDbContext.Privileges.ToListAsync();

@@ -52,6 +52,15 @@ IF (@privilegesCount < 6)
     UPDATE Privileges SET Description = 'This area allows you to record assessment grades and produce certificates.' WHERE UserPrivilege = 'Record grades and issue certificates'
   END  
   
+
+DELETE EMailTemplates WHERE TemplateName = 'EPAOUserApproveRequest'
+DELETE EMailTemplates WHERE TemplateName = 'EPAOUserApproveConfirm'
+DELETE EMailTemplates WHERE TemplateName = 'EPAOUserApproveReject'
+
+INSERT INTO EMailTemplates (Id, TemplateName, TemplateId, CreatedAt) VALUES (NEWID(), 'EPAOUserApproveRequest', 'f7ca95a9-54fb-4f5f-8a88-840445f98c8b', GETUTCDATE())
+INSERT INTO EMailTemplates (Id, TemplateName, TemplateId, CreatedAt) VALUES (NEWID(), 'EPAOUserApproveConfirm', '68506adb-7e17-45c9-ad54-45ef9a2cad15', GETUTCDATE())
+INSERT INTO EMailTemplates (Id, TemplateName, TemplateId, CreatedAt) VALUES (NEWID(), 'EPAOUserApproveReject', 'e7dc7016-9c88-4e25-9496-cb135001f413', GETUTCDATE())
+  
   
 -- backup ILRS before data synch
 /* DONE

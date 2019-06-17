@@ -1,3 +1,4 @@
+@using SFA.DAS.AssessorService.Domain.Consts
 @model SFA.DAS.AssessorService.Web.Controllers.ManageUsers.ViewModels.UserViewModel
 
 @{
@@ -53,7 +54,15 @@
                         </div>
                     </fieldset>
                 </div>
-                <button class="govuk-button" type="submit">Save</button>
+                @if (Model.Status == ContactStatus.InvitePending)
+                {
+                    <button class="govuk-button" type="submit" name="Button" value="Approve">Approve</button> 
+                    <button class="govuk-button govuk-button--secondary" name="Button" value="Reject">Reject</button>
+                }
+                else
+                {
+                    <button class="govuk-button" type="submit" name="Button" value="Save">Save</button>
+                }
             </form>
 
         </div>

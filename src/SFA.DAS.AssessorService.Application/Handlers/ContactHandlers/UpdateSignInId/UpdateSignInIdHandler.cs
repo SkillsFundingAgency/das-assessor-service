@@ -25,15 +25,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ContactHandlers.UpdateSig
         {
             var existingContact = await _contactQueryRepository.GetContactById(request.ContactId);
 
-            if (existingContact.Status == ContactStatus.Pending)
-            {
-                await UpdateContactStatusToLive(existingContact);
-                await UpdateContactRecordInApply(request);
-            }
-            else
-            {
-                await GiveUserAllPrivileges(existingContact);
-            }
+            await UpdateContactStatusToLive(existingContact);
+            await UpdateContactRecordInApply(request);
             
             await _contactRepository.UpdateSignInId(existingContact.Id, request.SignInId);
         }
@@ -46,16 +39,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ContactHandlers.UpdateSig
         private async Task UpdateContactStatusToLive(Contact existingContact)
         {
             await _contactRepository.UpdateStatus(existingContact.Id, ContactStatus.Live);
-        }
-
-        private async Task GiveUserAllPrivileges(Contact existingContact)
-        {
-            await _contactRepository.AssociateRoleWithContact("SuperUser", existingContact);
-            if (!_contactRepository.CheckIfAnyPrivelegesSet(existingContact.Id))
-            {
-                var privileges = await _contactQueryRepository.GetAllPrivileges();
-                await _contactRepository.AssociatePrivilegesWithContact(existingContact.Id, privileges);
-            }
         }
     }
 }

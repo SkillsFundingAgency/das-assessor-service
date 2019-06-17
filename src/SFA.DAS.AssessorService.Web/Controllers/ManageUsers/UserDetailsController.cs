@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Mvc.Razor.Compilation;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.UserManagement;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
+using SFA.DAS.AssessorService.Domain.Consts;
+using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Web.Constants;
 using SFA.DAS.AssessorService.Web.Controllers.ManageUsers.ViewModels;
 using SFA.DAS.AssessorService.Web.Infrastructure;
@@ -17,7 +19,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers.ManageUsers
     public class UserDetailsController : ManageUsersBaseController
     {
         private readonly IOrganisationsApiClient _organisationsApiClient;
-        public UserDetailsController(IContactsApiClient contactsApiClient, IHttpContextAccessor httpContextAccessor, IOrganisationsApiClient organisationsApiClient) : base(contactsApiClient, httpContextAccessor)
+
+        public UserDetailsController(IContactsApiClient contactsApiClient, IHttpContextAccessor httpContextAccessor, IOrganisationsApiClient organisationsApiClient) 
+            : base(contactsApiClient, httpContextAccessor)
         {
             _organisationsApiClient = organisationsApiClient;
         }
@@ -75,30 +79,40 @@ namespace SFA.DAS.AssessorService.Web.Controllers.ManageUsers
             {
                 return Unauthorized();
             }
-            
-            var response = await ContactsApiClient.SetContactPrivileges(
-                new SetContactPrivilegesRequest()
+
+
+            if (vm.Button == "Approve" || vm.Button == "Save")
+            {
+                if (vm.Button == "Approve")
                 {
-                    AmendingContactId = RequestingUser.Id,
-                    ContactId = vm.ContactId, 
-                    PrivilegeIds = vm.PrivilegeViewModels.Where(pvm => pvm.Selected).Select(pvm => pvm.Privilege.Id).ToArray()
-                });
-
-            if (!response.Success)
-            {
-                ModelState.AddModelError("permissions", response.ErrorMessage);
+                    await ContactsApiClient.ApproveContact(vm.ContactId);
+                }
                 
-                var editVm = await GetUserViewModel(vm.ContactId, securityCheckpoint);
+                var response = await ContactsApiClient.SetContactPrivileges(
+                    new SetContactPrivilegesRequest()
+                    {
+                        AmendingContactId = RequestingUser.Id,
+                        ContactId = vm.ContactId, 
+                        PrivilegeIds = vm.PrivilegeViewModels.Where(pvm => pvm.Selected).Select(pvm => pvm.Privilege.Id).ToArray(),
+                        IsNewContact = vm.Button == "Approve"
+                    });
+
+                if (!response.Success)
+                {
+                    ModelState.AddModelError("permissions", response.ErrorMessage);
+                
+                    var editVm = await GetUserViewModel(vm.ContactId, securityCheckpoint);
             
-                return View("~/Views/ManageUsers/UserDetails/EditUserPermissions.cshtml", editVm);
+                    return View("~/Views/ManageUsers/UserDetails/EditUserPermissions.cshtml", editVm);
+                }
+
+                return response.HasRemovedOwnUserManagement 
+                    ? RedirectToAction("Index", "Dashboard", new {contactId = vm.ContactId}) 
+                    : RedirectToAction("User", new {contactId = vm.ContactId});
             }
 
-            if (response.HasRemovedOwnUserManagement)
-            {
-                return RedirectToAction("Index", "Dashboard", new {contactId = vm.ContactId});    
-            }
-            
-            return RedirectToAction("User", new {contactId = vm.ContactId});
+            await ContactsApiClient.RejectContact(vm.ContactId);
+            return RedirectToAction("Index", "ManageUsers");
         }
 
         [HttpGet("/ManageUsers/{contactId}/remove")]

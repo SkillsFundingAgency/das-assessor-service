@@ -116,7 +116,7 @@ namespace SFA.DAS.AssessorService.Data
             await _connection.ExecuteAsync("UPDATE Contacts SET OrganisationId = NULL, EndPointAssessorOrganisationId = NULL, Status = 'New' WHERE Id = @contactId", new {contactId});
         }
 
-        public async Task UpdateOrganisationId(Guid contactId, Guid organisationId)
+        public async Task UpdateOrganisationId(Guid contactId, Guid? organisationId)
         {
             await _connection.ExecuteAsync("UPDATE Contacts SET OrganisationId = @organisationId WHERE Id = @contactId", new {contactId, organisationId});
         }
@@ -149,11 +149,7 @@ namespace SFA.DAS.AssessorService.Data
             var contactEntity =
                 await _assessorDbContext.Contacts.FirstAsync(q => q.Id == updateContactStatusRequest.Id);
 
-            contactEntity.Status = updateContactStatusRequest.Status == ContactStatus.Approve
-                ? ContactStatus.Live
-                : (updateContactStatusRequest.Status == ContactStatus.Applying
-                    ? ContactStatus.Applying
-                    : ContactStatus.Inactive);
+            contactEntity.Status = updateContactStatusRequest.Status;
 
             // Workaround for Mocking
             _assessorDbContext.MarkAsModified(contactEntity);
