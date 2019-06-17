@@ -1,4 +1,5 @@
-﻿using Microsoft.IdentityModel.Clients.ActiveDirectory;
+﻿using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Clients.ActiveDirectory;
 using SFA.DAS.AssessorService.Settings;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
@@ -6,14 +7,19 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
     public class RoatpTokenService : IRoatpTokenService
     {
         private readonly IWebConfiguration _configuration;
-
-        public RoatpTokenService(IWebConfiguration configuration)
+        private readonly IHostingEnvironment _hostingEnvironment;
+        public RoatpTokenService(IWebConfiguration configuration, IHostingEnvironment hostingEnvironment)
         {
             _configuration = configuration;
+            _hostingEnvironment = hostingEnvironment;
         }
 
         public string GetToken()
         {
+
+            if (_hostingEnvironment.IsDevelopment())
+                return string.Empty;
+            
             var tenantId = _configuration.RoatpApiAuthentication.TenantId;
             var clientId = _configuration.RoatpApiAuthentication.ClientId;
             var appKey = _configuration.RoatpApiAuthentication.ClientSecret;
