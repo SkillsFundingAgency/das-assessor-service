@@ -50,12 +50,12 @@
 
             <form method="post" asp-action="UklrpIsUnavailable" asp-controller="AddRoatpOrganisation">
                 <p class="govuk-body">We were unable to get information from UKRLP.</p> 
-                <h1 class="heading-large">
+                <h1 class="govuk-heading-l">
                     What do you want to do?
                 </h1>
 
                 <div class="govuk-form-group" sfa-validation-for="NextAction" sfa-validationerror-class="govuk-form-group--error">
-                    <span class="error-message" asp-validation-for="NextAction"></span>
+                    <span class="govuk-error-message" asp-validation-for="NextAction"></span>
                 
 
                     <fieldset class="govuk-fieldset">

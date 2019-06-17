@@ -47,7 +47,7 @@
                 @Html.HiddenFor(x => x.OrganisationId)
                 <div class="govuk-form-group" sfa-validation-for="CompanyNumber" sfa-validationerror-class="govuk-form-group--error">
                     <label for="CompanyNumber" class="govuk-label">Company Number</label>
-                    <span class="error-message" asp-validation-for="CompanyNumber"></span>
+                    <span class="govuk-error-message" asp-validation-for="CompanyNumber"></span>
                     <input id="CompanyNumber" name="CompanyNumber" type="text" class="govuk-input" asp-for="CompanyNumber"
                             sfa-validation-for="CompanyNumber" sfa-validationerror-class="govuk-input--error" />
                 </div>
