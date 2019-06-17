@@ -154,6 +154,9 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
 
             addOrganisationModel.OrganisationTypes = organisationTypes.ToList().OrderBy(x => x.Id!=0).ThenBy(x=>x.Type);
 
+            if (!addOrganisationModel.OrganisationTypes.Any(x => x.Id == addOrganisationModel.OrganisationTypeId))
+                addOrganisationModel.OrganisationTypeId = 0;
+
             _sessionService.SetAddOrganisationDetails(addOrganisationModel);
 
             ModelState.Clear();
