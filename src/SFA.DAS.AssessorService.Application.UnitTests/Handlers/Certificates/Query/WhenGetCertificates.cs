@@ -32,10 +32,10 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Qu
             _certificateRepository = new Mock<ICertificateRepository>();
             _certificateRepository.Setup(r => r.GetCertificates(It.IsAny<List<string>>())).Returns(Task.FromResult(certificates));
 
-            var getCertificatesToBePrintedHandler =
+            var getCertificatesHandler =
                 new GetCertificatesHandler(_certificateRepository.Object);
 
-            _result = getCertificatesToBePrintedHandler.Handle(new GetCertificatesRequest(), new CancellationToken())
+            _result = getCertificatesHandler.Handle(new GetCertificatesRequest(), new CancellationToken())
                 .Result;
         }
 

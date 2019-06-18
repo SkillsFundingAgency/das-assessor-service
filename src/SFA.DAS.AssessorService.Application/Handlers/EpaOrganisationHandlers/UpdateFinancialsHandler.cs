@@ -21,14 +21,17 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
         public async Task Handle(UpdateFinancialsRequest message, CancellationToken cancellationToken)
         {
             var epaOrg = await _registerQueryRepository.GetEpaOrganisationByOrganisationId(message.EpaOrgId);
- 
-            epaOrg.OrganisationData.FHADetails = new FHADetails()
-            {
-                FinancialDueDate = message.FinancialDueDate,
-                FinancialExempt = message.FinancialExempt
-            };
 
-            await _registerRepository.UpdateEpaOrganisation(epaOrg);
+            if (epaOrg != null)
+            {
+                epaOrg.OrganisationData.FHADetails = new FHADetails()
+                {
+                    FinancialDueDate = message.FinancialDueDate,
+                    FinancialExempt = message.FinancialExempt
+                };
+
+                await _registerRepository.UpdateEpaOrganisation(epaOrg);
+            }
         }
     }
 }

@@ -291,6 +291,11 @@ namespace SFA.DAS.AssessorService.Data
             cert.UpdatedBy = username;
             cert.UpdatedAt = DateTime.UtcNow;
 
+            if (cert.IsPrivatelyFunded)
+            {
+                cert.PrivatelyFundedStatus = certificate.PrivatelyFundedStatus;
+            }
+
             if (certificate.Status != CertificateStatus.Deleted)
             {
                 cert.DeletedBy =  null;
@@ -444,6 +449,7 @@ namespace SFA.DAS.AssessorService.Data
             foreach (var certificate in certificates)
             {
                 certificate.Status = CertificateStatus.ToBeApproved;
+                certificate.PrivatelyFundedStatus = null;
             }
 
             await _context.SaveChangesAsync();
