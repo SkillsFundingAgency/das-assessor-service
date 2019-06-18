@@ -233,31 +233,31 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
                                      context.Response.Redirect("/Home/AccessDenied");
                                      context.HandleResponse();
                                  }
-                                 else if(user.EndPointAssessorOrganisationId != null && user.Status == ContactStatus.Live)
-                                 {
-                                     var havePrivileges = await contactClient.DoesContactHavePrivileges(user.Id.ToString());
-
-                                     if (!havePrivileges.Result)
-                                     {
-                                         var contact = new Contact
-                                         {
-                                             Id = user.Id,
-                                             DisplayName = user.DisplayName,
-                                             Email = user.Email,
-                                             SignInId = user.SignInId,
-                                             SignInType = user.SignInType,
-                                             Username = user.Username,
-                                             Title = user.Title,
-                                             FamilyName = user.FamilyName,
-                                             GivenNames = user.GivenNames,
-                                             OrganisationId = user.OrganisationId,
-                                             EndPointAssessorOrganisationId = user.EndPointAssessorOrganisationId,
-                                             Status = user.Status
-                                         };
-
-                                         await contactClient.AssociateDefaultRolesAndPrivileges(contact);
-                                     }                                     
-                                 }
+//                                 else if(user.EndPointAssessorOrganisationId != null && user.Status == ContactStatus.Live)
+//                                 {
+//                                     var havePrivileges = await contactClient.DoesContactHavePrivileges(user.Id.ToString());
+//
+//                                     if (!havePrivileges.Result)
+//                                     {
+//                                         var contact = new Contact
+//                                         {
+//                                             Id = user.Id,
+//                                             DisplayName = user.DisplayName,
+//                                             Email = user.Email,
+//                                             SignInId = user.SignInId,
+//                                             SignInType = user.SignInType,
+//                                             Username = user.Username,
+//                                             Title = user.Title,
+//                                             FamilyName = user.FamilyName,
+//                                             GivenNames = user.GivenNames,
+//                                             OrganisationId = user.OrganisationId,
+//                                             EndPointAssessorOrganisationId = user.EndPointAssessorOrganisationId,
+//                                             Status = user.Status
+//                                         };
+//
+//                                         await contactClient.AssociateDefaultRolesAndPrivileges(contact);
+//                                     }                                     
+//                                 }
 
 
                                  if (user != null)
