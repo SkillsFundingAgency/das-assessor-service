@@ -15,7 +15,10 @@
             <form method="post" asp-controller="RoatpSearch" asp-action="Search">
                 <div id="searchControls" class="govuk-form-group" sfa-validation-for="SearchTerm" sfa-validationerror-class="govuk-form-group--error">
                     <label for="search" class="govuk-label">Organisation name or UKPRN</label>
-                    <span class="govuk-error-message" asp-validation-for="SearchTerm"></span>
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <span class="govuk-error-message" asp-validation-for="SearchTerm"></span>
+                    }
                     <input
                         class="govuk-input govuk-!-width-two-thirds"
                         autocomplete="off"

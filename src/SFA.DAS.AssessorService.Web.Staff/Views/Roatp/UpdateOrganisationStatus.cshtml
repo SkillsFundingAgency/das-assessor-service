@@ -42,55 +42,57 @@
                 </div>
             }
 
-            <h1 class="govuk-heading-xl">Change status for <span class="roatp-update-organisation-long-text">@Html.Raw(Model.LegalName)</span></h1>
+            <h1 class="govuk-heading-xl">Change status for <span class="das-break-word">@Html.Raw(Model.LegalName)</span></h1>
 
             <form method="post" asp-action="UpdateStatus" asp-controller="UpdateRoatpOrganisation">
                 @Html.HiddenFor(x => x.OrganisationId)
                 @Html.HiddenFor(x => x.ProviderTypeId)
                 @Html.HiddenFor(x => x.LegalName)
 
-                <div class="govuk-radios govuk-radios--conditional" data-module="radios">
-                    @foreach (var organisationStatus in Model.OrganisationStatuses)
-                    {
-                        <div class="govuk-radios__item">
-                            @if (organisationStatus.Id == Model.OrganisationStatusId)
-                            {
-                                <input checked="checked" class="govuk-radios__input" id="status-@Html.Raw(organisationStatus.Id)" name="OrganisationStatusId" type="radio" value="@Html.Raw(organisationStatus.Id)"
-                                        data-aria-controls="conditional-organisation-status-conditional-@Html.Raw(organisationStatus.Id)" asp-for="OrganisationStatusId">
-                            }
-                            else
-                            {
-                                <input class="govuk-radios__input" id="status-@Html.Raw(organisationStatus.Id)" name="OrganisationStatusId" type="radio" value="@Html.Raw(organisationStatus.Id)"
-                                        data-aria-controls="conditional-organisation-status-conditional-@Html.Raw(organisationStatus.Id)" asp-for="OrganisationStatusId">
-                            }
-                            <label class="govuk-label govuk-radios__label" for="status-@Html.Raw(organisationStatus.Id)">
-                                @Html.Raw(organisationStatus.Status)
-                            </label>
-                        </div>
-                    }
-                    
-                    <div class="govuk-radios__conditional govuk-!-width-two-thirds" id="conditional-organisation-status-conditional-0">
-                        <div class="govuk-form-group">
-                            <label class="govuk-label" for="reason">
-                                Select a reason
-                            </label>
-                            <select class="govuk-select" id="RemovedReasonId" name="RemovedReasonId" asp-for="RemovedReasonId">
-                                @foreach (var reason in Model.RemovedReasons)
+                <div class="govuk-form-group">
+
+                    <div class="govuk-radios govuk-radios--conditional" data-module="radios">
+                        @foreach (var organisationStatus in Model.OrganisationStatuses)
+                        {
+                            <div class="govuk-radios__item">
+                                @if (organisationStatus.Id == Model.OrganisationStatusId)
                                 {
-                                    @if (reason.Id == Model.RemovedReasonId)
-                                        {
-                                            <option value="@Html.Raw(reason.Id)" selected="selected">@Html.Raw(reason.Reason)</option>
-                                        }
-                                        else
-                                        {
-                                            <option value="@Html.Raw(reason.Id)">@Html.Raw(reason.Reason)</option>
-                                        }
+                                    <input checked="checked" class="govuk-radios__input" id="status-@Html.Raw(organisationStatus.Id)" name="OrganisationStatusId" type="radio" value="@Html.Raw(organisationStatus.Id)"
+                                            data-aria-controls="conditional-organisation-status-conditional-@Html.Raw(organisationStatus.Id)" asp-for="OrganisationStatusId">
                                 }
-                            </select>
+                                else
+                                {
+                                    <input class="govuk-radios__input" id="status-@Html.Raw(organisationStatus.Id)" name="OrganisationStatusId" type="radio" value="@Html.Raw(organisationStatus.Id)"
+                                            data-aria-controls="conditional-organisation-status-conditional-@Html.Raw(organisationStatus.Id)" asp-for="OrganisationStatusId">
+                                }
+                                <label class="govuk-label govuk-radios__label" for="status-@Html.Raw(organisationStatus.Id)">
+                                    @Html.Raw(organisationStatus.Status)
+                                </label>
+                            </div>
+                        }
+                        
+                        <div class="govuk-radios__conditional govuk-!-width-two-thirds" id="conditional-organisation-status-conditional-0">
+                            <div class="govuk-form-group">
+                                <label class="govuk-label" for="reason">
+                                    Select a reason
+                                </label>
+                                <select class="govuk-select" id="RemovedReasonId" name="RemovedReasonId" asp-for="RemovedReasonId">
+                                    @foreach (var reason in Model.RemovedReasons)
+                                    {
+                                        @if (reason.Id == Model.RemovedReasonId)
+                                            {
+                                                <option value="@Html.Raw(reason.Id)" selected="selected">@Html.Raw(reason.Reason)</option>
+                                            }
+                                            else
+                                            {
+                                                <option value="@Html.Raw(reason.Id)">@Html.Raw(reason.Reason)</option>
+                                            }
+                                    }
+                                </select>
+                            </div>
                         </div>
                     </div>
-                </div>
-                
+                </div>                
                 
                 <input type="submit" class="govuk-button" value="Change" />
             </form>

@@ -41,12 +41,15 @@
                 </div>
             }
 
-            <h1 class="govuk-heading-xl">Change legal name for <span class="roatp-update-organisation-long-text">@Html.Raw(Model.LegalName)</span></h1>
+            <h1 class="govuk-heading-xl">Change legal name for <span class="das-break-word">@Html.Raw(Model.LegalName)</span></h1>
             <form method="post" asp-action="UpdateLegalName" asp-controller="UpdateRoatpOrganisation">
                 @Html.HiddenFor(x => x.OrganisationId)
                 <div class="govuk-form-group" sfa-validation-for="LegalName" sfa-validationerror-class="govuk-form-group--error">
                     <label for="LegalName" class="govuk-label">Legal name</label>
-                    <span class="govuk-error-message" asp-validation-for="LegalName"></span>
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <span class="govuk-error-message" asp-validation-for="LegalName"></span>
+                    }
                     <input id="LegalName" name="LegalName" type="text" class="govuk-input" asp-for="LegalName"
                             sfa-validation-for="LegalName" sfa-validationerror-class="govuk-input--error" />
                 </div>

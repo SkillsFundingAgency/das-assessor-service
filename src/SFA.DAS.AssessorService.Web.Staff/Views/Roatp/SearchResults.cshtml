@@ -24,9 +24,14 @@ var searchParams = new Dictionary<string, string>
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
+            <h1 class="govuk-heading-xl">@Html.Raw(Model.Title)</h1>
+        </div>
+    </div>
 
-            <h1 class="govuk-heading-xl roatp-summary-list-long-text">@Html.Raw(Model.Title)</h1>
+    @if (Model.SearchResults.Count > 0)
+    {
 
+        <div class="govuk-grid-row">
             <div id="searchResultsList" class="govuk-grid-column-one-third">
                 <ul class="govuk-list">
                     @for(var index = 0; index < Model.SearchResults.Count; index++)
@@ -36,48 +41,44 @@ var searchParams = new Dictionary<string, string>
                         {
                             addClass = "selected-item";
                         }
-                        <li class="govuk-section-break govuk-!-padding-left-2 govuk-!-padding-right-2 govuk-!-padding-top-2 govuk-!-padding-bottom-1 @Html.Raw(addClass)">
-                            @if (Model.SearchResults[index].OrganisationStatus.Id == 0)
-                            {
-                                <a href="/results-found?index=@Html.Raw(index)" class="govuk-!-font-weight-bold roatp-org-search-result">@Html.Raw(Model.SearchResults[index].LegalName) (Removed)</a>
-                            }
-                            else
-                            {
-                                <a href="/results-found?index=@Html.Raw(index)" class="govuk-!-font-weight-bold roatp-org-search-result">@Html.Raw(Model.SearchResults[index].LegalName)</a>
-                            }
-                            <span class="block">UKPRN @Html.Raw(Model.SearchResults[index].UKPRN)</span>
+                        <li class="govuk-!-padding-2 @Html.Raw(addClass)">
+                            <p class="govuk-body govuk-!-margin-bottom-0">
+                                <a href="/results-found?index=@Html.Raw(index)" class="govuk-link">
+                                    @Html.Raw(Model.SearchResults[index].LegalName) 
+
+                                    @if (Model.SearchResults[index].OrganisationStatus.Id != 0)
+                                    {
+                                        <text>(Removed)</text>
+                                    }
+                                </a>
+                            </p>
+                            
+                            <p class="govuk-body govuk-!-margin-bottom-0">UKPRN: @Html.Raw(Model.SearchResults[index].UKPRN)</p>
                         </li>
                     }
                 </ul>
+
                 @if (Model.TotalCount > 5)
                 {
-                    <div class="well govuk-!-font-size-16 govuk-!-padding-2">
-                        Result limited to 5.
-                        <a class="block govuk-link govuk-link--no-visited-state" asp-controller="RoatpSearch" asp-action="RefineSearch" asp-all-route-data="searchParams">Refine search</a>
+                    <div class="roatp-search-panel govuk-!-padding-2 govuk-!-margin-bottom-6">
+                        <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-0">
+                            Results limited to 5
+                        </p>
+                        <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-0">
+                            <a class="govuk-link govuk-link--no-visited-state" asp-controller="RoatpSearch" asp-action="RefineSearch" asp-all-route-data="searchParams">Refine search</a>
+                        </p>
                     </div>
                 }
                 
-                    
-                @if (!Model.SearchResults.Any())
-                {
-                    <div class="govuk-grid-row">
-                        <a asp-controller="RoatpHome" asp-action="Index" class="govuk-button">Search again</a>
-                    </div>
-                    <div class="govuk-grid-row">
-                        <a class="govuk-link govuk-body-m" asp-controller="AddRoatpOrganisation" asp-action="EnterUkprn">Add a new training provider</a>
-                    </div> 
-                }
             </div>
-            @if (Model.SearchResults.Count > 0)
-            {
-                <div id="organisationDetails" class="govuk-grid-column-two-thirds">
+        
+            <div id="organisationDetails" class="govuk-grid-column-two-thirds">
                 <dl class="govuk-summary-list">
-
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">
                             Legal name
                         </dt>
-                        <dd class="govuk-summary-list__value roatp-summary-list-long-text">
+                        <dd class="govuk-summary-list__value">
                             @Html.Raw(Model.SelectedResult.LegalName)
                         </dd>
 
@@ -176,7 +177,7 @@ var searchParams = new Dictionary<string, string>
                         else
                         {
                             <dd class="govuk-summary-list__value">
-                                <span class='govuk-hint'>Not applicable</span>
+                                Not applicable
                             </dd>
                         }
 
@@ -203,7 +204,7 @@ var searchParams = new Dictionary<string, string>
                         else
                         {
                             <dd class="govuk-summary-list__value">
-                                <span class='govuk-hint'>Not applicable</span>
+                                Not applicable
                             </dd>
                         }
                         <dd class="govuk-summary-list__actions">
@@ -220,7 +221,7 @@ var searchParams = new Dictionary<string, string>
                             Trading name
                         </dt>
 
-                        <dd class="govuk-summary-list__value roatp-summary-list-long-text">
+                        <dd class="govuk-summary-list__value">
 
                             @if (!String.IsNullOrWhiteSpace(Model.SelectedResult.TradingName))
                             {
@@ -228,7 +229,7 @@ var searchParams = new Dictionary<string, string>
                             }
                             else
                             {
-                                <span class='govuk-hint'>Not applicable</span>
+                                <text>Not applicable</text>
                             }
                         </dd>
 
@@ -278,10 +279,19 @@ var searchParams = new Dictionary<string, string>
                     </div>
 
                 </dl>
-
-                </div>
-
-            }
+            </div>
         </div>
-    </div>
+    }
+    else
+    {
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <a class="govuk-button" asp-controller="RoatpHome" asp-action="Index">Search again</a>
+                <p class="govuk-body">
+                    <a class="govuk-link" asp-controller="AddRoatpOrganisation" asp-action="EnterUkprn">Add a new training provider</a>
+                </p>
+            </div>
+        </div>
+    }
+
 </main>

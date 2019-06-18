@@ -47,7 +47,10 @@
             <form method="post" asp-action="AddOrganisationDetails" asp-controller="AddRoatpOrganisation">
 
                 <div class="govuk-form-group" sfa-validation-for="ProviderTypeId" sfa-validationerror-class="govuk-form-group--error">
-                    <span class="govuk-error-message" asp-validation-for="ProviderTypeId"></span>
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <span class="govuk-error-message" asp-validation-for="ProviderTypeId"></span>
+                    }
                     <fieldset class="govuk-fieldset">
 
                         <div class="govuk-radios">

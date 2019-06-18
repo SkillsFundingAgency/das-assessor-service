@@ -501,8 +501,10 @@
     }
 }
 
-.govuk-table__cell--break-word {
-    word-break: break-word;
+.govuk-table__cell--break-word,
+.das-break-word {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
 }
 
 .govuk-character-count {
@@ -1247,58 +1249,87 @@ TODO: change to 'das-page-navigation' and BEM
     -webkit-overflow-scrolling: touch;
     position: relative;
     mask-image: -webkit-linear-gradient(
-      to right,
-      transparent,
-      white 20px,
-      white 97%,
-      transparent
+        to right,
+        transparent,
+        white 20px,
+        white 97%,
+        transparent
     );
     mask-image: -moz-linear-gradient(
-      to right,
-      transparent,
-      white 20px,
-      white 97%,
-      transparent
+        to right,
+        transparent,
+        white 20px,
+        white 97%,
+        transparent
     );
     mask-image: linear-gradient(
-      to right,
-      transparent,
-      white 20px,
-      white 97%,
-      transparent
+        to right,
+        transparent,
+        white 20px,
+        white 97%,
+        transparent
     );
     -webkit-mask-image: -webkit-linear-gradient(
-      to right,
-      transparent,
-      white 20px,
-      white 97%,
-      transparent
+        to right,
+        transparent,
+        white 20px,
+        white 97%,
+        transparent
     );
     -webkit-mask-image: -moz-linear-gradient(
-      to right,
-      transparent,
-      white 20px,
-      white 97%,
-      transparent
+        to right,
+        transparent,
+        white 20px,
+        white 97%,
+        transparent
     );
     -webkit-mask-image: linear-gradient(
-      to right,
-      transparent,
-      white 20px,
-      white 97%,
-      transparent
+        to right,
+        transparent,
+        white 20px,
+        white 97%,
+        transparent
     );
     mask-image: linear-gradient(
-      to right,
-      transparent,
-      white 20px,
-      white 97%,
-      transparent
+        to right,
+        transparent,
+        white 20px,
+        white 97%,
+        transparent
     );
-  }
-  
-  .scrollable-table-container {
+}
+
+.scrollable-table-container {
     display: inline-block;
     position: relative;
     margin: 0 20px;
-  }
+}
+
+
+
+/* Tag additions */
+
+.govuk-tag--attention {
+    background-color: #b10e1e;
+}
+
+.govuk-tag--onboarding {
+    background-color: #6f777b;
+}
+
+/* Roatp org results.. remove for v4 */
+
+.selected-item {
+    background-color: #005ea5;
+    color: #ffffff;
+}
+
+.selected-item > .govuk-body > .govuk-link,
+.selected-item > .govuk-body {
+    color: #ffffff;
+    text-decoration: none;
+}
+
+.roatp-search-panel {
+    background-color: #f8f8f8;
+}

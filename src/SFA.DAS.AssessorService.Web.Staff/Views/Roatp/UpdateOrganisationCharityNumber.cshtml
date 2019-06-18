@@ -43,13 +43,16 @@
                 </div>
             }
 
-            <h1 class="govuk-heading-xl">Change charity registration number for <span class="roatp-update-organisation-long-text">@Html.Raw(Model.LegalName)</span></h1>
+            <h1 class="govuk-heading-xl">Change charity registration number for <span class="das-break-word">@Html.Raw(Model.LegalName)</span></h1>
 
             <form method="post" asp-action="UpdateCharityNumber" asp-controller="UpdateRoatpOrganisation">
                 @Html.HiddenFor(x => x.OrganisationId)
                 <div class="govuk-form-group" sfa-validation-for="CharityNumber" sfa-validationerror-class="govuk-form-group--error">
                     <label for="CharityNumber" class="govuk-label">Charity registration number</label>
-                    <span class="govuk-error-message" asp-validation-for="CharityNumber"></span>
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <span class="govuk-error-message" asp-validation-for="CharityNumber"></span>
+                    }
                     <input id="CharityNumber" name="CharityNumber" type="text" class="govuk-input" asp-for="CharityNumber"
                             sfa-validation-for="CharityNumber" sfa-validationerror-class="govuk-input--error" />
                 </div>

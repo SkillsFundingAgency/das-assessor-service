@@ -41,36 +41,38 @@
                 </div>
             }
 
-            <h1 class="govuk-heading-xl">Change organisation type for <span class="roatp-update-organisation-long-text">@Html.Raw(Model.LegalName)</span></h1>
+            <h1 class="govuk-heading-xl">Change organisation type for <span class="das-break-word">@Html.Raw(Model.LegalName)</span></h1>
+
 
             <form method="post" asp-action="UpdateType" asp-controller="UpdateRoatpOrganisation">
                 @Html.HiddenFor(x => x.OrganisationId)
                 @Html.HiddenFor(x => x.ProviderTypeId)
-                <div class="govuk-radios govuk-radios--conditional" data-module="radios">
-                    @foreach (var organisationType in Model.OrganisationTypes)
-                    {
-                        <div class="govuk-radios__item">
-                            @if (organisationType.Id == Model.OrganisationTypeId)
-                            {
-                                <input checked="checked" class="govuk-radios__input" id="status-@Html.Raw(organisationType.Id)" name="OrganisationTypeId" type="radio" value="@Html.Raw(organisationType.Id)"
-                                        data-aria-controls="conditional-organisation-status-conditional-@Html.Raw(organisationType.Id)" asp-for="OrganisationTypeId">
-                            }
-                            else
-                            {
-                                <input class="govuk-radios__input" id="status-@Html.Raw(organisationType.Id)" name="OrganisationTypeId" type="radio" value="@Html.Raw(organisationType.Id)"
-                                        data-aria-controls="conditional-organisation-status-conditional-@Html.Raw(organisationType.Id)" asp-for="OrganisationTypeId">
-                            }
-                            <label class="govuk-label govuk-radios__label" for="status-@Html.Raw(organisationType.Id)">
-                                @Html.Raw(organisationType.Type)
-                            </label>
-                        </div>
-                    }
+                @Html.HiddenFor(x => x.LegalName)
+
+                <div class="govuk-form-group">
+                    <div class="govuk-radios govuk-radios--conditional" data-module="radios">
+                        @foreach (var organisationType in Model.OrganisationTypes)
+                        {
+                            <div class="govuk-radios__item">
+                                @if (organisationType.Id == Model.OrganisationTypeId)
+                                {
+                                    <input checked="checked" class="govuk-radios__input" id="status-@Html.Raw(organisationType.Id)" name="OrganisationTypeId" type="radio" value="@Html.Raw(organisationType.Id)"
+                                            data-aria-controls="conditional-organisation-status-conditional-@Html.Raw(organisationType.Id)" asp-for="OrganisationTypeId">
+                                }
+                                else
+                                {
+                                    <input class="govuk-radios__input" id="status-@Html.Raw(organisationType.Id)" name="OrganisationTypeId" type="radio" value="@Html.Raw(organisationType.Id)"
+                                            data-aria-controls="conditional-organisation-status-conditional-@Html.Raw(organisationType.Id)" asp-for="OrganisationTypeId">
+                                }
+                                <label class="govuk-label govuk-radios__label" for="status-@Html.Raw(organisationType.Id)">
+                                    @Html.Raw(organisationType.Type)
+                                </label>
+                            </div>
+                        }
+                    </div>
                 </div>
-                
-                <div class="govuk-grid-row">
-                    @Html.HiddenFor(x => x.LegalName)
-                    <input type="submit" class="govuk-button" value="Change" />
-                </div>
+
+                <input type="submit" class="govuk-button" value="Change" />
             </form>
         </div>
     </div>

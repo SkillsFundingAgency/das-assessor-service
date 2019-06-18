@@ -49,7 +49,12 @@
                             What is the organisation's UKPRN?
                         </label>
                     </h1>
-                    <span class="govuk-error-message" asp-validation-for="UKPRN"></span>
+
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <span class="govuk-error-message" asp-validation-for="UKPRN"></span>
+                    }
+
                     <input
                         id="UKPRN"
                         name="UKPRN"

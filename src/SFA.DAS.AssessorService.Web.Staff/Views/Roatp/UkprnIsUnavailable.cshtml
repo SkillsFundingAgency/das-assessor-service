@@ -41,49 +41,41 @@
                 </div>
             }
 
-            <div class="grid-row">
-                <div class="column-two-thirds">
-                    <h1 class="govuk-heading-xl">UKRLP is unavailable
-                    </h1>
-                </div>
-            </div>
+            <h1 class="govuk-heading-xl">UKRLP is unavailable</h1>
+            
+            <p class="govuk-body">We were unable to get information from UKRLP.</p> 
 
             <form method="post" asp-action="UklrpIsUnavailable" asp-controller="AddRoatpOrganisation">
-                <p class="govuk-body">We were unable to get information from UKRLP.</p> 
-                <h1 class="govuk-heading-l">
+
+                <h2 class="govuk-heading-l">
                     What do you want to do?
-                </h1>
+                </h2>
 
                 <div class="govuk-form-group" sfa-validation-for="NextAction" sfa-validationerror-class="govuk-form-group--error">
-                    <span class="govuk-error-message" asp-validation-for="NextAction"></span>
-                
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <span class="govuk-error-message" asp-validation-for="NextAction"></span>
+                    }
 
-                    <fieldset class="govuk-fieldset">
-
-                        <div class="govuk-radios">
-
-                        
-                            <div class="govuk-radios__item">
-
-                                <input asp-for="NextAction" class="govuk-radios__input" id="route-try-again"
-                                        name="NextAction" type="radio" value="TryAgain"
-                                        sfa-validation-for="NextAction" sfa-validationerror-class="govuk-input--error">
-                                <label class="govuk-label govuk-radios__label" for="route-try-again">
-                                    Try again later
-                                </label>
-                            </div>
-                            <div class="govuk-radios__item">
-
-                                <input asp-for="NextAction" class="govuk-radios__input" id="route-add-manually"
-                                        name="NextAction" type="radio" value="AddManually"
-                                        sfa-validation-for="NextAction" sfa-validationerror-class="govuk-input--error">
-                                <label class="govuk-label govuk-radios__label" for="route-add-manually">
-                                    Add organisation manually
-                                </label>
-                            </div>
-                        
+                    <div class="govuk-radios">
+                        <div class="govuk-radios__item">
+                            <input asp-for="NextAction" class="govuk-radios__input" id="route-try-again"
+                                    name="NextAction" type="radio" value="TryAgain"
+                                    sfa-validation-for="NextAction" sfa-validationerror-class="govuk-input--error">
+                            <label class="govuk-label govuk-radios__label" for="route-try-again">
+                                Try again later
+                            </label>
                         </div>
-                    </fieldset>
+                        <div class="govuk-radios__item">
+                            <input asp-for="NextAction" class="govuk-radios__input" id="route-add-manually"
+                                    name="NextAction" type="radio" value="AddManually"
+                                    sfa-validation-for="NextAction" sfa-validationerror-class="govuk-input--error">
+                            <label class="govuk-label govuk-radios__label" for="route-add-manually">
+                                Add organisation manually
+                            </label>
+                        </div>
+                    
+                    </div>
                 </div>
                 <input type="submit" class="govuk-button" value="Continue" />
             </form>

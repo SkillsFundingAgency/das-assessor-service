@@ -15,28 +15,28 @@
                     var html = "<span class=\"govuk-tag govuk-tag--attention govuk-!-margin-bottom-1\">Removed</span>";
                     if (organisation.OrganisationData.RemovedReason != null)
                     {
-                        html += "<span class=\"block\">Reason: " + organisation.OrganisationData.RemovedReason.Reason + "</span>";
+                        html += "<p class=\"govuk-body govuk-!-margin-bottom-1\">Reason: " + organisation.OrganisationData.RemovedReason.Reason + "</p>";
                     }
-                    html += "<span class=\"block\">Updated: "+ organisation.StatusDate.ToString("dd MMM yyyy") + "</span>";
+                    html += "<p class=\"govuk-body\">Updated: "+ organisation.StatusDate.ToString("dd MMM yyyy") + "</p>";
                     return new HtmlString(html);
                 }
                 case 2:
                 {
                     var html = "<span class=\"govuk-tag govuk-!-margin-bottom-1\">Active</span>" +
-                               "<span class=\"block\">Not accepting new apprentices</span>" +
-                               "<span class=\"block\">Updated: " + organisation.StatusDate.ToString("dd MMM yyyy") + "</span>";
+                               "<p class=\"govuk-body govuk-!-margin-bottom-1\">Not accepting new apprentices</span>" +
+                               "<p class=\"govuk-body\">Updated: " + organisation.StatusDate.ToString("dd MMM yyyy") + "</p>";
                     return new HtmlString(html);
                 }
                 case 3:
                 {
-                    var html = "<span class=\"govuk-tag govuk-onboarding govuk-!-margin-bottom-1\">On-boarding</span>" +
-                               "<span class=\"block\">Updated: " + organisation.StatusDate.ToString("dd MMM yyyy") + "</span>";
+                    var html = "<span class=\"govuk-tag govuk-tag--onboarding govuk-!-margin-bottom-1\">On-boarding</span>" +
+                               "<p class=\"govuk-body\">Updated: " + organisation.StatusDate.ToString("dd MMM yyyy") + "</p>";
                     return new HtmlString(html);
                 }
                 default:
                 {
                     var html = "<span class=\"govuk-tag govuk-!-margin-bottom-1\">Active</span>" +
-                        "<span class=\"block\">Updated: " + organisation.StatusDate.ToString("dd MMM yyyy") + "</span>";
+                        "<p class=\"govuk-body\">Updated: " + organisation.StatusDate.ToString("dd MMM yyyy") + "</p>";
                     return new HtmlString(html);                   
                 }
             }
