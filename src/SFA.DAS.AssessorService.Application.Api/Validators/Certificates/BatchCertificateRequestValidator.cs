@@ -4,8 +4,6 @@ using Microsoft.Extensions.Localization;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates.Batch;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
-using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
-using SFA.DAS.AssessorService.ExternalApis.Services;
 using System;
 using System.Linq;
 
@@ -56,31 +54,31 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.Certificates
             RuleFor(m => m.Uln).InclusiveBetween(1000000000, 9999999999).WithMessage("The apprentice's ULN should contain exactly 10 numbers").DependentRules(() =>
             {
                 When(m => m.StandardCode > 0 && !string.IsNullOrEmpty(m.FamilyName) , () =>
-                {
-                    RuleFor(m => m).CustomAsync(async (m, context, canellation) =>
-                    {
-                        var requestedIlr = await ilrRepository.Get(m.Uln, m.StandardCode);
-                        var sumbittingEpao = await organisationQueryRepository.GetByUkPrn(m.UkPrn);
+               {
+                   RuleFor(m => m).CustomAsync(async (m, context, canellation) =>
+                   {
+                       var requestedIlr = await ilrRepository.Get(m.Uln, m.StandardCode);
+                       var sumbittingEpao = await organisationQueryRepository.GetByUkPrn(m.UkPrn);
 
-                        if (requestedIlr == null || !string.Equals(requestedIlr.FamilyName, m.FamilyName, StringComparison.InvariantCultureIgnoreCase))
-                        {
-                            context.AddFailure(new ValidationFailure("Uln", "Cannot find apprentice with the specified Uln, FamilyName & Standard"));
-                        }
-                        else if (sumbittingEpao == null)
-                        {
-                            context.AddFailure(new ValidationFailure("UkPrn", "Cannot find EPAO for specified UkPrn"));
-                        }
-                        else
-                        {
-                            var providedStandards = await standardService.GetEpaoRegisteredStandards(sumbittingEpao.EndPointAssessorOrganisationId);
+                       if (requestedIlr == null || !string.Equals(requestedIlr.FamilyName, m.FamilyName, StringComparison.InvariantCultureIgnoreCase))
+                       {
+                           context.AddFailure(new ValidationFailure("Uln", "Cannot find apprentice with the specified Uln, FamilyName & Standard"));
+                       }
+                       else if (sumbittingEpao == null)
+                       {
+                           context.AddFailure(new ValidationFailure("UkPrn", "Cannot find EPAO for specified UkPrn"));
+                       }
+                       else
+                       {
+                           var providedStandards = await standardService.GetEpaoRegisteredStandards(sumbittingEpao.EndPointAssessorOrganisationId);
 
-                            if (!providedStandards.Any(s => s.StandardCode == m.StandardCode))
-                            {
-                                context.AddFailure(new ValidationFailure("StandardCode", "EPAO is not registered for this Standard"));
-                            }
-                        }
-                    });
-                });
+                           if (!providedStandards.Any(s => s.StandardCode == m.StandardCode))
+                           {
+                               context.AddFailure(new ValidationFailure("StandardCode", "EPAO is not registered for this Standard"));
+                           }
+                       }
+                   });
+               });
             });
 
             RuleFor(m => m.CertificateData).NotEmpty().WithMessage("Enter Certificate Data").DependentRules(() =>
@@ -95,11 +93,15 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.Certificates
                 RuleFor(m => m.CertificateData.OverallGrade)
                     .Custom((overallGrade, context) =>
                     {
-                        var grades = new string[] { CertificateGrade.Pass, CertificateGrade.Credit, CertificateGrade.Merit, CertificateGrade.Distinction, CertificateGrade.PassWithExcellence, CertificateGrade.NoGradeAwarded, CertificateGrade.Fail };
+                        var grades = new string[] { CertificateGrade.Pass, CertificateGrade.Credit, CertificateGrade.Merit, CertificateGrade.Distinction, CertificateGrade.PassWithExcellence, CertificateGrade.NoGradeAwarded };
 
                         if (string.IsNullOrWhiteSpace(overallGrade))
                         {
                             context.AddFailure(new ValidationFailure("OverallGrade", "Select the grade the apprentice achieved"));
+                        }
+                        else if (overallGrade.Equals(CertificateGrade.Fail, StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            context.AddFailure(new ValidationFailure("OverallGrade", $"Cannot record a {CertificateGrade.Fail} grade via API"));
                         }
                         else if (!grades.Any(g => g.Equals(overallGrade, StringComparison.InvariantCultureIgnoreCase)))
                         {

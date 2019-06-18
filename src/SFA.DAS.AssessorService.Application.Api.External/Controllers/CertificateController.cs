@@ -216,7 +216,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
         [SwaggerOperation("Get Grades", "To get the list of valid pass grades, to use when creating certificates.", Produces = new string[] { "application/json" })]
         public IActionResult GetGrades()
         {
-            var grades = new string[] { CertificateGrade.Pass, CertificateGrade.Credit, CertificateGrade.Merit, CertificateGrade.Distinction, CertificateGrade.PassWithExcellence, CertificateGrade.NoGradeAwarded, CertificateGrade.Fail };
+            var grades = new string[] { CertificateGrade.Pass, CertificateGrade.Credit, CertificateGrade.Merit, CertificateGrade.Distinction, CertificateGrade.PassWithExcellence, CertificateGrade.NoGradeAwarded };
 
             return Ok(grades);
         }

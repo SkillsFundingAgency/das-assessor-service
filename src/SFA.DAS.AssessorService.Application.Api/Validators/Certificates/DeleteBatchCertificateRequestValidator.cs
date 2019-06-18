@@ -16,6 +16,22 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.Certificates
             RuleFor(m => m.UkPrn).InclusiveBetween(10000000, 99999999).WithMessage("The UKPRN should contain exactly 8 numbers");
             RuleFor(m => m.Email).NotEmpty();
 
+            RuleFor(m => m.FamilyName).NotEmpty().WithMessage("Enter the apprentice's last name");
+            RuleFor(m => m.StandardCode).GreaterThan(0).WithMessage("A Standard should be selected").DependentRules(() =>
+            {
+                RuleFor(m => m).CustomAsync(async (m, context, cancellation) =>
+                {
+                    if (!string.IsNullOrEmpty(m.StandardReference))
+                    {
+                        var collatedStandard = await standardService.GetStandard(m.StandardReference);
+                        if (m.StandardCode != collatedStandard?.StandardId)
+                        {
+                            context.AddFailure("StandardReference and StandardCode relate to different standards");
+                        }
+                    }
+                });
+            });
+
             RuleFor(m => m.Uln).InclusiveBetween(1000000000, 9999999999).WithMessage("The apprentice's ULN should contain exactly 10 numbers").DependentRules(() =>
             {
                 When(m => m.StandardCode > 0 && !string.IsNullOrEmpty(m.FamilyName), () =>
@@ -46,8 +62,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.Certificates
                 });
             });
 
-            RuleFor(m => m.FamilyName).NotEmpty().WithMessage("Enter the apprentice's last name");
-            RuleFor(m => m.StandardCode).GreaterThan(0).WithMessage("A Standard should be selected");
             RuleFor(m => m.CertificateReference).NotEmpty().WithMessage("Enter the certificate reference").DependentRules(() =>
             {
                 RuleFor(m => m).CustomAsync(async (m, context, cancellation) =>
@@ -70,8 +84,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.Certificates
                     }
                 });
             });
-
-            // NOTE: StandardReference is ignored for now
         }
     }
 }
