@@ -10,7 +10,8 @@
         <form asp-controller="AddRoatpOrganisation" asp-action="Back" method="post" name="backForm">
             <div class="govuk-grid-column-one-half">
                 <input type="hidden" asp-for="OrganisationId" />
-                <input type="hidden" name="action" value="AddOrganisationDetails" />
+                <input type="hidden" asp-for="ProviderTypeId" />
+                <input type="hidden" name="action" value="AddOrganisationType" />
                 <a href="JavaScript:document.backForm.submit();" class="govuk-back-link">Back</a>
             </div>
         </form>
@@ -31,6 +32,22 @@
 
 
                     <dl class="govuk-summary-list">
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                UKPRN
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @Html.Raw(Model.UKPRN)
+                            </dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Type of provider
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @Html.Raw(Model.ProviderTypes.FirstOrDefault(x => x.Id == Model.ProviderTypeId).Type)
+                            </dd>
+                        </div>
 
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">
@@ -39,39 +56,22 @@
                             <dd class="govuk-summary-list__value_long">
                                 @Html.Raw(Model.LegalName)
                             </dd>
-
                         </div>
-
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">
-                                UKPRN
+                                Trading name
                             </dt>
-                            <dd class="govuk-summary-list__value">
-                                @Html.Raw(Model.UKPRN)
+                            <dd class="govuk-summary-list__value_long">
+                                @if (!String.IsNullOrWhiteSpace(Model.TradingName))
+                                {
+                                    @Html.Raw(Model.TradingName)
+                                }
+                                else
+                                {
+                                    <span class='govuk-hint'>Not applicable</span>
+                                }
                             </dd>
-
                         </div>
-
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">
-                                Type of provider
-                            </dt>
-                            <dd class="govuk-summary-list__value">
-                                @Html.Raw(Model.ProviderTypes.FirstOrDefault(x => x.Id == Model.ProviderTypeId).Type)
-                            </dd>
-
-                        </div>
-
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">
-                                Type of organisation
-                            </dt>
-                            <dd class="govuk-summary-list__value">
-                                @Html.Raw(Model.OrganisationTypes.FirstOrDefault(x => x.Id == Model.OrganisationTypeId).Type)
-                            </dd>
-
-                        </div>
-
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">
                                 Company number
@@ -86,7 +86,6 @@
                                     <span class='govuk-hint'>Not applicable</span>
                                 }
                             </dd>
-
                         </div>
 
                         <div class="govuk-summary-list__row">
@@ -103,33 +102,25 @@
                                     <span class='govuk-hint'>Not applicable</span>
                                 }
                             </dd>
-
                         </div>
-
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">
-                                Trading name
+                                Type of organisation
                             </dt>
-                            <dd class="govuk-summary-list__value_long">
-                                @if (!String.IsNullOrWhiteSpace(Model.TradingName))
-                                {
-                                    @Html.Raw(Model.TradingName)
-                                }
-                                else
-                                {
-                                    <span class='govuk-hint'>Not applicable</span>
-                                }
+                            <dd class="govuk-summary-list__value">
+                                @Html.Raw(Model.OrganisationTypes.FirstOrDefault(x => x.Id == Model.OrganisationTypeId).Type)
                             </dd>
-
                         </div>
+
+                       
 
                     </dl>
 
-                    <form method="post" asp-action="CreateOrganisation" asp-controller="AddRoatpOrganisation">
+                    <form aria-activedescendantmethod="post" asp-action="CreateOrganisation" asp-controller="AddRoatpOrganisation">
                         @{
                             await Html.RenderPartialAsync("~/Views/Roatp/_AddOrganisationFieldsPartial.cshtml");
                         }
-                        <input type="submit" class="roatp-button" value="Confirm and add" />
+                        <input type="submit" class="roatp-button" value="Confirm and add organisation" />
                     </form>
                 </div>
 

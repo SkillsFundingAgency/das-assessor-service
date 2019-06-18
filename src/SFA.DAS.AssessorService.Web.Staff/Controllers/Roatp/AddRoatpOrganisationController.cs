@@ -1,4 +1,6 @@
-﻿using System.Net.Http;
+﻿using System.Collections.Generic;
+using System.Net.Http;
+using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client;
 using SFA.DAS.AssessorService.Application.Api.Services;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
@@ -16,6 +18,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
     using SFA.DAS.AssessorService.Application.Api.Client.Clients;
     using SFA.DAS.AssessorService.Api.Types.Models.Roatp;
     using SFA.DAS.AssessorService.Api.Types.Models.UKRLP;
+    using System.Linq;
 
     [Authorize]
     public class AddRoatpOrganisationController : Controller
@@ -55,7 +58,10 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
         {
             if (!IsRedirectFromConfirmationPage() && !ModelState.IsValid)
             {
-                model.ProviderTypes = await _apiClient.GetProviderTypes();
+                var addOrganisationModel = _sessionService.GetAddOrganisationDetails();
+                if (addOrganisationModel?.UKPRN!=null)
+                    model.UKPRN = addOrganisationModel.UKPRN;
+
                 return View("~/Views/Roatp/EnterUkprn.cshtml", model);
             }
 
@@ -77,6 +83,15 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
                 return Redirect("/ukprn-not-found");
             }
 
+            _sessionService.SetAddOrganisationDetails(new AddOrganisationViewModel
+                {
+                    UKPRN = model.UKPRN,
+                    LegalName = details.LegalName,
+                    TradingName = details.TradingName,
+                    CompanyNumber = details.CompanyNumber,
+                    CharityNumber = details.CharityNumber
+                });
+
             var vm = new AddOrganisationProviderTypeViewModel
             {
                 UKPRN = model.UKPRN,
@@ -89,10 +104,165 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
             return View("~/Views/Roatp/UkprnPreview.cshtml", vm);
         }
 
+        [Route("provider-route")]
+        public async Task<IActionResult> AddProviderType()
+        {
+            var addOrganisationModel = _sessionService.GetAddOrganisationDetails();
+
+            if (string.IsNullOrEmpty(addOrganisationModel?.LegalName))
+            {
+                return Redirect("organisations-details");
+            }
+
+            var model = MapOrganisationVmToProviderTypeVm(addOrganisationModel);
+
+          
+            model.ProviderTypes = await _apiClient.GetProviderTypes();
+            ModelState.Clear();
+            return View("~/Views/Roatp/AddProviderType.cshtml", model);
+        }
+
+        [Route("type-organisation")]
+        public async Task<IActionResult> AddOrganisationType(AddOrganisationProviderTypeViewModel model)
+        {
+            var addOrganisationModel = new AddOrganisationViewModel();
+            
+            if (string.IsNullOrEmpty(model.LegalName))
+            {
+                addOrganisationModel = _sessionService.GetAddOrganisationDetails();
+                model.LegalName = addOrganisationModel.LegalName;
+                model.ProviderTypeId = addOrganisationModel.ProviderTypeId;
+                model.OrganisationTypeId = addOrganisationModel.OrganisationTypeId;
+            }
+
+            if (string.IsNullOrEmpty(model.LegalName))
+            {
+                var providerDetailsContainer = _sessionService.GetAddOrganisationDetails();
+                model.ProviderTypeId = providerDetailsContainer.ProviderTypeId;
+            }
+
+            if (!IsRedirectFromConfirmationPage() && !ModelState.IsValid && model.ProviderTypeId==0)
+            {
+                model.ProviderTypes = await _apiClient.GetProviderTypes();
+                return View("~/Views/Roatp/AddProviderType.cshtml", model);
+            }
+
+            addOrganisationModel = _sessionService.GetAddOrganisationDetails();
+
+            if (string.IsNullOrEmpty(addOrganisationModel?.LegalName))
+            {
+                return Redirect("organisations-details");
+            }
+
+            UpdateAddOrganisationModelFromProviderTypeModel(addOrganisationModel,model);
+
+            
+            var organisationTypes = await _apiClient.GetOrganisationTypes(addOrganisationModel.ProviderTypeId);
+
+            addOrganisationModel.OrganisationTypes = organisationTypes.ToList().OrderBy(x => x.Id!=0).ThenBy(x=>x.Type);
+
+            if (!addOrganisationModel.OrganisationTypes.Any(x => x.Id == addOrganisationModel.OrganisationTypeId))
+                addOrganisationModel.OrganisationTypeId = 0;
+
+            _sessionService.SetAddOrganisationDetails(addOrganisationModel);
+
+            ModelState.Clear();
+
+            var vm = MapOrganisationVmToOrganisationTypeVm(addOrganisationModel);
+
+            return View("~/Views/Roatp/AddOrganisationType.cshtml", vm);
+        }
+
+        [Route("confirm-details")]
+        public async Task<IActionResult> ConfirmOrganisationDetails(AddOrganisationTypeViewModel model)
+        {
+            var organisationVm = _sessionService.GetAddOrganisationDetails();
+            var vm = MapOrganisationVmToOrganisationTypeVm(organisationVm);
+            if (!IsRedirectFromConfirmationPage() && !ModelState.IsValid)
+            {
+                return View("~/Views/Roatp/AddOrganisationType.cshtml",vm);
+            }
+
+            vm.OrganisationTypeId = model.OrganisationTypeId;
+            vm.LegalName = vm.LegalName.ToUpper();
+            _sessionService.SetAddOrganisationDetails(vm);
+
+            model.OrganisationTypes = await _apiClient.GetOrganisationTypes(vm.ProviderTypeId);
+            model.ProviderTypes = await _apiClient.GetProviderTypes();
+            model.ProviderTypeId = vm.ProviderTypeId;
+            model.LegalName = TextSanitiser.SanitiseText(vm.LegalName);
+            model.TradingName = TextSanitiser.SanitiseText(vm.TradingName);
+            model.UKPRN = vm.UKPRN;
+            model.CompanyNumber = vm.CompanyNumber;
+            model.CharityNumber = vm.CharityNumber;
+
+            return View("~/Views/Roatp/AddOrganisationPreview.cshtml", model);
+        }
+
+    private static void UpdateAddOrganisationModelFromProviderTypeModel(AddOrganisationViewModel addOrganisationModel, AddOrganisationProviderTypeViewModel model)
+        {
+            if (string.IsNullOrEmpty(addOrganisationModel.LegalName)) addOrganisationModel.LegalName = model.LegalName;
+            if (string.IsNullOrEmpty(addOrganisationModel.TradingName)) addOrganisationModel.TradingName = model.TradingName;
+            if (string.IsNullOrEmpty(addOrganisationModel.CompanyNumber))
+                addOrganisationModel.CompanyNumber = model.CompanyNumber;
+            if (string.IsNullOrEmpty(addOrganisationModel.CharityNumber))
+                addOrganisationModel.CharityNumber = model.CharityNumber;
+            if (string.IsNullOrEmpty(addOrganisationModel.UKPRN)) addOrganisationModel.UKPRN = model.UKPRN;
+
+            if (model.OrganisationId != Guid.Empty)
+            {
+                addOrganisationModel.OrganisationId = model.OrganisationId;
+            }
+
+            if (model.ProviderTypeId > 0)
+            {
+                addOrganisationModel.ProviderTypeId = model.ProviderTypeId;
+            }
+        }
+
+        private static AddOrganisationTypeViewModel MapOrganisationVmToOrganisationTypeVm(AddOrganisationViewModel addOrganisationModel)
+        {
+            return new AddOrganisationTypeViewModel
+            {
+                CharityNumber = addOrganisationModel.CharityNumber,
+                CompanyNumber = addOrganisationModel.CompanyNumber,
+                LegalName = addOrganisationModel.LegalName,
+                OrganisationId = addOrganisationModel.OrganisationId,
+                OrganisationTypeId = addOrganisationModel.OrganisationTypeId,
+                OrganisationTypes = addOrganisationModel.OrganisationTypes,
+                ProviderTypeId = addOrganisationModel.ProviderTypeId,
+                ProviderTypes = addOrganisationModel.ProviderTypes,
+                TradingName = addOrganisationModel.TradingName,
+                UKPRN = addOrganisationModel.UKPRN
+            };
+        }
+
+
+        private static AddOrganisationProviderTypeViewModel MapOrganisationVmToProviderTypeVm(AddOrganisationViewModel addOrganisationModel)
+        {
+            return new AddOrganisationProviderTypeViewModel
+            {
+                CharityNumber = addOrganisationModel.CharityNumber,
+                CompanyNumber = addOrganisationModel.CompanyNumber,
+                LegalName = addOrganisationModel.LegalName,
+                OrganisationId = addOrganisationModel.OrganisationId,
+                OrganisationTypeId = addOrganisationModel.OrganisationTypeId,
+                OrganisationTypes = addOrganisationModel.OrganisationTypes,
+                ProviderTypeId = addOrganisationModel.ProviderTypeId,
+                ProviderTypes = addOrganisationModel.ProviderTypes,
+                TradingName = addOrganisationModel.TradingName,
+                UKPRN = addOrganisationModel.UKPRN
+            };
+        }
+
+
+
+
         [Route("ukrlp-unavailable")]
         public async Task<IActionResult> UklrpIsUnavailable(UkrlpNotFoundViewModel model)
         {
-            if (!ModelState.IsValid)
+   
+            if (!ModelState.IsValid) // || !string.IsNullOrEmpty(model?.FirstEntry))
             {
                 return View("~/Views/Roatp/UkprnIsUnavailable.cshtml",model);
             }
@@ -160,7 +330,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
             return View("~/Views/Roatp/AddOrganisationDetails.cshtml", addOrganisationModel);
         }
 
-        [Route("confirm-details")]
+        [Route("confirm-details-preview")]
         public async Task<IActionResult> AddOrganisationPreview(AddOrganisationViewModel model)
         {
             model.OrganisationTypes = await _apiClient.GetOrganisationTypes(model.ProviderTypeId);
@@ -226,7 +396,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
                 StatusDate = DateTime.Now,
                 Ukprn = model.UKPRN,
                 TradingName = model?.TradingName,
-                Username = HttpContext.User.OperatorName()
+                Username = HttpContext.User.OperatorName(),
+                SourceIsUKRLP = true
             };
             return request;
         }
