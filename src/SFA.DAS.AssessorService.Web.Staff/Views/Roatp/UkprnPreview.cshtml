@@ -14,6 +14,7 @@
         <div class="govuk-grid-column-two-thirds">
 
             <h1 class="govuk-heading-xl">Organisation's details</h1>
+
             <p class="govuk-body">These are the details we found on UKRLP for @Html.Raw(Model.UKPRN).</p>
 
             <dl class="govuk-summary-list">
@@ -25,7 +26,6 @@
                     <dd class="govuk-summary-list__value">
                         @Html.Raw(Model.LegalName)
                     </dd>
-
                 </div>
 
                 <div class="govuk-summary-list__row">
@@ -77,13 +77,6 @@
                 </div>
             </dl>
 
-            @*
-            <form method="post" asp-action="CreateOrganisation" asp-controller="AddRoatpOrganisation">
-                <input type="submit" class="govuk-button" value="Continue" />
-                <input type="button" class="govuk-button--secondary" value="Try Again" />
-            </form>
-            *@
-
             <form method="post" asp-action="UkprnPreview" asp-controller="AddRoatpOrganisation">
                 @Html.HiddenFor(m => m.LegalName)
                 @Html.HiddenFor(m => m.TradingName)
@@ -97,7 +90,5 @@
             </form>
                 
         </div>
-
     </div>
-
 </main>

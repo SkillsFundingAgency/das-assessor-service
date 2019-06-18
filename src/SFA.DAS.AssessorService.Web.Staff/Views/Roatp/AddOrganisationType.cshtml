@@ -1,0 +1,76 @@
+﻿@model SFA.DAS.AssessorService.Web.Staff.ViewModels.Roatp.AddOrganisationTypeViewModel
+
+@using SFA.DAS.AssessorService.Web.Staff
+@using SFA.DAS.AssessorService.Web.Staff.Domain
+@{ ViewBag.Title = "Choose a type of organisation"; }
+
+@{
+    await Html.RenderPartialAsync("~/Views/Roatp/_StylesPartial.cshtml");
+}
+<div class="grid-row">
+    <form asp-controller="AddRoatpOrganisation" asp-action="Back" method="post" name="backForm">
+        <div class="govuk-grid-column-one-half">
+            <input type="hidden" asp-for="OrganisationId" />
+            <input type="hidden" name="action" value="AddProviderType" />
+            <a href="JavaScript:document.backForm.submit();" class="govuk-back-link">Back</a>
+        </div>
+    </form>
+</div>
+
+<div class="js-error-summary error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+    <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+        There is a problem
+    </h2>
+    <ul class="js-error-summary-list error-summary-list"></ul>
+</div>
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+        <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+            There is a problem
+        </h2>
+        <ul class="error-summary-list">
+            <li><a sfa-validation-for="OrganisationTypeId"></a></li>
+        </ul>
+    </div>
+}
+
+<div class="grid-row">
+    <div class="column-two-thirds">
+        <h1 class="heading-xlarge roatp-heading">Choose a type of organisation for @Model.LegalName</h1>
+    </div>
+</div>
+<div class="govuk-width-container">
+
+    <main class="govuk-main-wrapper " id="main-content" role="main">
+
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <form method="post" asp-action="ConfirmOrganisationDetails" asp-controller="AddRoatpOrganisation">
+                    <div class="govuk-form-group" sfa-validation-for="OrganisationTypeId" sfa-validationerror-class="form-group-error">
+                        <span class="error-message" asp-validation-for="OrganisationTypeId"></span>
+                        <fieldset class="govuk-fieldset">
+
+                            <div class="roatp-radios">
+
+                                @foreach (var organisationType in Model.OrganisationTypes)
+                                {
+                                    <div class="roatp-radios__item">
+
+                                        <input asp-for="OrganisationTypeId" class="roatp-radios__input" id="route-@organisationType.Id"
+                                               name="OrganisationTypeId" type="radio" value="@organisationType.Id"
+                                               sfa-validation-for="OrganisationTypeId" sfa-validationerror-class="form-control-error">
+                                        <label class="roatp-label roatp-radios__label" for="route-@organisationType.Id">
+                                            @organisationType.Type
+                                        </label>
+                                    </div>
+                                }
+                            </div>
+                        </fieldset>
+                    </div>
+                    <input type="submit" class="roatp-button" value="Continue" />
+                </form>
+            </div>
+        </div>
+    </main>
+</div>
