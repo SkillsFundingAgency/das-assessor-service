@@ -175,7 +175,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates.Batch
                 Registration = data.Registration,
                 AchievementDate = data.AchievementDate,
                 CourseOption = data.CourseOption,
-                OverallGrade = data.OverallGrade,
+                OverallGrade = NormalizeOverallGrade(data.OverallGrade),
 
                 EpaDetails = epaDetails
             };
@@ -214,6 +214,12 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates.Batch
             }
 
             return cert;
+        }
+
+        private static string NormalizeOverallGrade(string overallGrade)
+        {
+            var grades = new string[] { CertificateGrade.Pass, CertificateGrade.Credit, CertificateGrade.Merit, CertificateGrade.Distinction, CertificateGrade.PassWithExcellence, CertificateGrade.NoGradeAwarded };
+            return grades.FirstOrDefault(g => g.Equals(overallGrade, StringComparison.InvariantCultureIgnoreCase)) ?? overallGrade;
         }
     }
 }
