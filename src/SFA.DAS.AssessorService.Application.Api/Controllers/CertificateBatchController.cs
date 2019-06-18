@@ -21,8 +21,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
     [Route("api/v1/certificates/batch/")]
     public class CertificateBatchController : Controller
     {
-        private const string INVALID_STANDARD_SPECIFIED = "Unable to find specified Standard";
-
         private readonly IMediator _mediator;
         private readonly GetBatchCertificateRequestValidator _getValidator;
         private readonly CreateBatchCertificateRequestValidator _createValidator;
@@ -63,15 +61,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             {
                 request.StandardCode = collatedStandard.StandardId ?? int.MinValue;
                 request.StandardReference = collatedStandard.ReferenceNumber;
+            }
 
-                var validationResult = await _getValidator.ValidateAsync(request);
-                isRequestValid = validationResult.IsValid;
-                validationErrors = validationResult.Errors.Select(error => error.ErrorMessage).ToList();
-            }
-            else
-            {
-                validationErrors.Add(INVALID_STANDARD_SPECIFIED);
-            }
+            var validationResult = await _getValidator.ValidateAsync(request);
+            isRequestValid = validationResult.IsValid;
+            validationErrors = validationResult.Errors.Select(error => error.ErrorMessage).ToList();
 
             GetBatchCertificateResponse getResponse = new GetBatchCertificateResponse
             {
@@ -116,15 +110,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
                     {
                         request.StandardReference = collatedStandard.ReferenceNumber;
                     }
+                }
 
-                    var validationResult = await _createValidator.ValidateAsync(request);
-                    isRequestValid = validationResult.IsValid;
-                    validationErrors = validationResult.Errors.Select(error => error.ErrorMessage).ToList();
-                }
-                else
-                {
-                    validationErrors.Add(INVALID_STANDARD_SPECIFIED);
-                }
+                var validationResult = await _createValidator.ValidateAsync(request);
+                isRequestValid = validationResult.IsValid;
+                validationErrors = validationResult.Errors.Select(error => error.ErrorMessage).ToList();
 
                 BatchCertificateResponse certResponse = new BatchCertificateResponse
                 {
@@ -174,15 +164,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
                     {
                         request.StandardReference = collatedStandard.ReferenceNumber;
                     }
+                }
 
-                    var validationResult = await _updateValidator.ValidateAsync(request);
-                    isRequestValid = validationResult.IsValid;
-                    validationErrors = validationResult.Errors.Select(error => error.ErrorMessage).ToList();
-                }
-                else
-                {
-                    validationErrors.Add(INVALID_STANDARD_SPECIFIED);
-                }
+                var validationResult = await _updateValidator.ValidateAsync(request);
+                isRequestValid = validationResult.IsValid;
+                validationErrors = validationResult.Errors.Select(error => error.ErrorMessage).ToList();
 
                 BatchCertificateResponse certResponse = new BatchCertificateResponse
                 {
@@ -232,15 +218,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
                     {
                         request.StandardReference = collatedStandard.ReferenceNumber;
                     }
+                }
 
-                    var validationResult = await _submitValidator.ValidateAsync(request);
-                    isRequestValid = validationResult.IsValid;
-                    validationErrors = validationResult.Errors.Select(error => error.ErrorMessage).ToList();
-                }
-                else
-                {
-                    validationErrors.Add(INVALID_STANDARD_SPECIFIED);
-                }
+                var validationResult = await _submitValidator.ValidateAsync(request);
+                isRequestValid = validationResult.IsValid;
+                validationErrors = validationResult.Errors.Select(error => error.ErrorMessage).ToList();
 
                 SubmitBatchCertificateResponse submitResponse = new SubmitBatchCertificateResponse
                 {
@@ -283,15 +265,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             {
                 request.StandardCode = collatedStandard.StandardId ?? int.MinValue;
                 request.StandardReference = collatedStandard.ReferenceNumber;
+            }
 
-                var validationResult = await _deleteValidator.ValidateAsync(request);
-                isRequestValid = validationResult.IsValid;
-                validationErrors = validationResult.Errors.Select(error => error.ErrorMessage).ToList();
-            }
-            else
-            {
-                validationErrors.Add(INVALID_STANDARD_SPECIFIED);
-            }
+            var validationResult = await _deleteValidator.ValidateAsync(request);
+            isRequestValid = validationResult.IsValid;
+            validationErrors = validationResult.Errors.Select(error => error.ErrorMessage).ToList();
 
             if (!validationErrors.Any() && isRequestValid)
             {
