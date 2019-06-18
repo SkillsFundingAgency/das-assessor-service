@@ -208,7 +208,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
                 }
                 if (string.IsNullOrEmpty(request.FamilyName))
                 {
-                    validationErrors.Add("Enter the apprentice's last name");
+                    validationErrors.Add("Enter the apprentice's family name");
                 }
                 if (string.IsNullOrEmpty(request.Standard))
                 {
@@ -241,7 +241,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
                 }
                 if (string.IsNullOrEmpty(cert.Learner?.FamilyName))
                 {
-                    validationErrors.Add("Enter the apprentice's last name");
+                    validationErrors.Add("Enter the apprentice's family name");
                 }
 
                 if (cert.Standard?.StandardCode is null && string.IsNullOrEmpty(cert.Standard?.StandardReference))
@@ -310,7 +310,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
                 }
                 if (string.IsNullOrEmpty(cert.Learner?.FamilyName))
                 {
-                    validationErrors.Add("Enter the apprentice's last name");
+                    validationErrors.Add("Enter the apprentice's family name");
                 }
 
                 if (cert.Standard?.StandardCode is null && string.IsNullOrEmpty(cert.Standard?.StandardReference))
@@ -377,7 +377,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
                 }
                 if (string.IsNullOrEmpty(request.FamilyName))
                 {
-                    validationErrors.Add("Enter the apprentice's last name");
+                    validationErrors.Add("Enter the apprentice's family name");
                 }
                 if (request.StandardCode is null && string.IsNullOrEmpty(request.StandardReference))
                 {
@@ -412,7 +412,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
                 }
                 if (string.IsNullOrEmpty(request.FamilyName))
                 {
-                    validationErrors.Add("Enter the apprentice's last name");
+                    validationErrors.Add("Enter the apprentice's family name");
                 }
                 if (string.IsNullOrEmpty(request.Standard))
                 {
