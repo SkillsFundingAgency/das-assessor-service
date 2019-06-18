@@ -1,11 +1,5 @@
 ﻿@{ ViewBag.Title = "UKPRN Not Found"; }
 
-@*
-@{
-    await Html.RenderPartialAsync("~/Views/Roatp/_StylesPartial.cshtml");
-}
-*@
-
 <form asp-controller="AddRoatpOrganisation" asp-action="Back" method="post" name="backForm">
     <input type="hidden" name="action" value="EnterUkprn" />
     <a href="JavaScript:document.backForm.submit();" class="govuk-back-link">Back</a>

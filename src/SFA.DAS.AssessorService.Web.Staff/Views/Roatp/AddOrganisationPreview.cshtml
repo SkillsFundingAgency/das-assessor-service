@@ -2,12 +2,6 @@
 
 @{ ViewBag.Title = "Confirm details"; }
 
-@*
-@{
-    await Html.RenderPartialAsync("~/Views/Roatp/_StylesPartial.cshtml");
-}
-*@
-
 <form asp-controller="AddRoatpOrganisation" asp-action="Back" method="post" name="backForm">
         <input type="hidden" asp-for="OrganisationId" />
         <input type="hidden" name="action" value="AddOrganisationDetails" />

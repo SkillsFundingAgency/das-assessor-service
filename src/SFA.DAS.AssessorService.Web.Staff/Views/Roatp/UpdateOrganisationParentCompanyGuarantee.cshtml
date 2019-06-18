@@ -2,13 +2,10 @@
 
 @using SFA.DAS.AssessorService.Web.Staff
 @using SFA.DAS.AssessorService.Web.Staff.Domain
-@{ ViewBag.Title = "Enter details"; }
 
-@*
 @{
-    await Html.RenderPartialAsync("~/Views/Roatp/_StylesPartial.cshtml");
+    ViewBag.Title = (!ViewData.ModelState.IsValid ? "Error: " : "") + "Change parent company guarantee";
 }
-*@
 
 <form asp-controller="RoatpSearch" asp-action="SearchResults" method="post" name="backForm">
     <a href="JavaScript:document.backForm.submit();" class="govuk-back-link">Back</a>

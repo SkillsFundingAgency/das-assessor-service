@@ -76,32 +76,6 @@
                 </div>
             }
 
-<<<<<<< HEAD
-            <form class="apprentice-approvals-form js-disable-on-submit" asp-controller="CertificateApprovals" asp-action="Approvals">
-
-                @if (@Model.SentForApprovalCertificates?.Items.Any() ?? Model.ToBeApprovedCertificates.Items.Any())
-                {
-                    await Html.RenderPartialAsync("_ApprovalsDetailsPartial", @Model.SentForApprovalCertificates ?? Model.ToBeApprovedCertificates, new ViewDataDictionary(ViewData)
-                    {
-                        {
-                            "Increment", 0
-                        },
-                        {"ApprovalResults", Model.SentForApprovalsResults()},
-                        {"ActionHint", "Approved"}
-                    });
-
-                    <button type="submit" class="button" role="button" id="submit-approval">Submit</button>
-                }
-                else
-                {
-                    <div class="info-summary">
-                        <h3 class="heading-medium">No privately funded certificates found for approval</h3>
-                    </div>
-                }
-            </form>
-
-=======
->>>>>>> ef5980e7469d71609faff786be3dad6b7717b2dc
         </div>
     </div>
 

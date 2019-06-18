@@ -2,14 +2,8 @@
 @model SFA.DAS.AssessorService.Web.Staff.ViewModels.Roatp.OrganisationSearchResultsViewModel
 
 @{
-ViewBag.Title = Model.Title;
+    ViewBag.Title = Model.Title;
 }
-
-@*
-@{
-await Html.RenderPartialAsync("~/Views/Roatp/_StylesPartial.cshtml");
-}
-*@
 
 @{
 var searchParams = new Dictionary<string, string>
@@ -18,13 +12,12 @@ var searchParams = new Dictionary<string, string>
 };
 }
 
-
 <a asp-controller="RoatpHome" asp-action="Index" class="govuk-back-link">Back</a>
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <h1 class="govuk-heading-xl">@Html.Raw(Model.Title)</h1>
+            <h1 id="results" class="govuk-heading-xl">@Html.Raw(Model.Title)</h1>
         </div>
     </div>
 
@@ -43,7 +36,7 @@ var searchParams = new Dictionary<string, string>
                         }
                         <li class="govuk-!-padding-2 @Html.Raw(addClass)">
                             <p class="govuk-body govuk-!-margin-bottom-0">
-                                <a href="/results-found?index=@Html.Raw(index)" class="govuk-link">
+                                <a href="/results-found?index=@Html.Raw(index)#results" class="govuk-link">
                                     @Html.Raw(Model.SearchResults[index].LegalName) 
 
                                     @if (Model.SearchResults[index].OrganisationStatus.Id != 0)

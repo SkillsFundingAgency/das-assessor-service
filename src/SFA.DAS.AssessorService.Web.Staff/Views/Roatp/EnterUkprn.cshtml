@@ -2,13 +2,10 @@
 
 @using SFA.DAS.AssessorService.Web.Staff
 @using SFA.DAS.AssessorService.Web.Staff.Domain
-@{ ViewBag.Title = "What is the organisation's UKPRN?"; }
 
-@*
-@{
-    await Html.RenderPartialAsync("~/Views/Roatp/_StylesPartial.cshtml");
+@{ 
+    ViewBag.Title = (!ViewData.ModelState.IsValid ? "Error: " : "") + "What is the organisation's UKPRN?"; 
 }
-*@
 
 <form asp-controller="RoatpHome" asp-action="Index" method="post" name="backForm">
     <a href="JavaScript:document.backForm.submit();" class="govuk-back-link">Back</a>
@@ -41,14 +38,14 @@
                 </div>
             }
 
+            <h1 class="govuk-heading-xl">
+                What is the organisation's UKPRN?
+            </h1>
+
             <form method="post" asp-action="UkprnPreview" asp-controller="AddRoatpOrganisation">
                 <div class="govuk-form-group" sfa-validation-for="UKPRN" sfa-validationerror-class="govuk-form-group--error">
 
-                    <h1 class="govuk-label-wrapper">
-                        <label class="govuk-label govuk-label--xl" for="UKPRN">
-                            What is the organisation's UKPRN?
-                        </label>
-                    </h1>
+                    <label for="UKPRN" class="govuk-label">UKPRN</label>
 
                     @if (!ViewData.ModelState.IsValid)
                     {

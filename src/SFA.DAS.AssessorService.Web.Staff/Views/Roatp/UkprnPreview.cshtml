@@ -1,12 +1,8 @@
 ﻿@model SFA.DAS.AssessorService.Web.Staff.ViewModels.Roatp.AddOrganisationProviderTypeViewModel
 
-@{ ViewBag.Title = "Details from UKPRN"; }
-
-@*
 @{
-    await Html.RenderPartialAsync("~/Views/Roatp/_StylesPartial.cshtml");
+    ViewBag.Title = "Details from UKPRN";
 }
-*@
 
 <form asp-controller="AddRoatpOrganisation" asp-action="Back" method="post" name="backForm">
     <input type="hidden" name="action" value="EnterUkprn" />

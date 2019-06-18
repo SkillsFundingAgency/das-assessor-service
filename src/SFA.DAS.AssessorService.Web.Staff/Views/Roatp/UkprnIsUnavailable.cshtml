@@ -1,12 +1,8 @@
 ﻿@model SFA.DAS.AssessorService.Web.Staff.ViewModels.Roatp.UkrlpNotFoundViewModel
 
-@{ ViewBag.Title = "UKRLP is unavailable"; }
-
-@*
 @{
-    await Html.RenderPartialAsync("~/Views/Roatp/_StylesPartial.cshtml");
+    ViewBag.Title = (!ViewData.ModelState.IsValid ? "Error: " : "") + "UKRLP is unavailable";
 }
-*@
 
 <form asp-controller="AddRoatpOrganisation" asp-action="Back" method="post" name="backForm">
     <input type="hidden" name="action" value="EnterUkprn" />

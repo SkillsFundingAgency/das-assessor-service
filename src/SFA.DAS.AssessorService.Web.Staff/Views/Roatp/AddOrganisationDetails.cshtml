@@ -2,13 +2,10 @@
 
 @using SFA.DAS.AssessorService.Web.Staff
 @using SFA.DAS.AssessorService.Web.Staff.Domain
-@{ ViewBag.Title = "Enter details"; }
 
-@*
 @{
-    await Html.RenderPartialAsync("~/Views/Roatp/_StylesPartial.cshtml");
+    ViewBag.Title = (!ViewData.ModelState.IsValid ? "Error: " : "") + "Enter organisation details";
 }
-*@
 
 <form asp-controller="AddRoatpOrganisation" asp-action="Back" method="post" name="backForm">
         <input type="hidden" asp-for="OrganisationId" />

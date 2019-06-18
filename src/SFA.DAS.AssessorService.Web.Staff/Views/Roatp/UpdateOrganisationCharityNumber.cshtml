@@ -2,13 +2,10 @@
 
 @using SFA.DAS.AssessorService.Web.Staff
 @using SFA.DAS.AssessorService.Web.Staff.Domain
-@{ ViewBag.Title = "Enter details"; }
 
-@*
 @{
-    await Html.RenderPartialAsync("~/Views/Roatp/_StylesPartial.cshtml");
+    ViewBag.Title = (!ViewData.ModelState.IsValid ? "Error: " : "") + "Change charity registration number";
 }
-*@
 
 <form asp-controller="RoatpSearch" asp-action="SearchResults" method="post" name="backForm">
     <a href="JavaScript:document.backForm.submit();" class="govuk-back-link">Back</a>
@@ -53,7 +50,7 @@
                     {
                         <span class="govuk-error-message" asp-validation-for="CharityNumber"></span>
                     }
-                    <input id="CharityNumber" name="CharityNumber" type="text" class="govuk-input" asp-for="CharityNumber"
+                    <input id="CharityNumber" name="CharityNumber" type="text" class="govuk-input govuk-input--width-10" asp-for="CharityNumber"
                             sfa-validation-for="CharityNumber" sfa-validationerror-class="govuk-input--error" />
                 </div>
                 @Html.HiddenFor(x => x.LegalName)
