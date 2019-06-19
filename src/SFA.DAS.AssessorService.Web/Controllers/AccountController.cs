@@ -60,7 +60,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 case LoginResult.NotRegistered:
                     return RedirectToAction("Index", "OrganisationSearch");
                 case LoginResult.NotActivated:
-                    return RedirectToAction("NotActivated", "Home", new { epaoId = loginResult.EndPointAssessorOrganisationId });
+                    _sessionService.Set("EndPointAssessorOrganisationId", loginResult.EndPointAssessorOrganisationId);
+                    return RedirectToAction("NotActivated", "Home");
                 case LoginResult.InvalidRole:
                     return RedirectToAction("InvalidRole", "Home");
                 case LoginResult.InvitePending:
