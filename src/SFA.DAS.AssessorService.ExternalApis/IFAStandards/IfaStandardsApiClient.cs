@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,7 +20,7 @@ namespace SFA.DAS.AssessorService.ExternalApis.IFAStandards
 
         public async Task<IfaStandard> GetStandard(int standardId)
         {
-            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/standards/{standardId}"))
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/apprenticeshipstandards/{standardId}"))
             {
                 return await RequestAndDeserialiseAsync<IfaStandard>(request);
             }
@@ -27,9 +28,12 @@ namespace SFA.DAS.AssessorService.ExternalApis.IFAStandards
 
         public async Task<List<IfaStandard>> GetAllStandards()
         {
-            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/standards"))
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/apprenticeshipstandards"))
             {
-                return await RequestAndDeserialiseAsync<List<IfaStandard>>(request);
+                // the list of standards returned from the api can contain null entries and entries
+                // with a LarsCode = 0; these are not standards that can be imported.
+                var allStandards = await RequestAndDeserialiseAsync<List<IfaStandard>>(request);
+                return allStandards?.FindAll(p => p != null && p.LarsCode != 0);
             }
         }
     }

@@ -1,13 +1,16 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using Remotion.Linq.Parsing.Structure.IntermediateModel;
 using SFA.DAS.AssessorService.Application.Handlers.Staff;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.AssessorService.Domain.JsonData;
 
 namespace SFA.DAS.AssessorService.Data.Staff
 {
@@ -28,13 +31,30 @@ namespace SFA.DAS.AssessorService.Data.Staff
         {
             var results = new List<Ilr>();
             
-            var cert = await _context.Certificates.FirstOrDefaultAsync(c => c.CertificateReference == certRef);
+            var cert = await _context.Certificates.Include(q => q.Organisation).FirstOrDefaultAsync(c => c.CertificateReference == certRef);
 
             if(cert != null)
             {
                 var ilr = await _ilrRepository.Get(cert.Uln, cert.StandardCode);
 
-                if (ilr != null) results.Add(ilr);
+                if (ilr is null)
+                {
+                    var certData = JsonConvert.DeserializeObject<CertificateData>(cert.CertificateData);
+
+                    ilr = new Ilr
+                    {
+                        Uln = cert.Uln,
+                        GivenNames = certData.LearnerGivenNames,
+                        FamilyName = certData.LearnerFamilyName,
+                        StdCode = cert.StandardCode,
+                        LearnRefNumber = cert.LearnRefNumber,
+                        LearnStartDate = certData.LearningStartDate ?? DateTime.MinValue,
+                        EpaOrgId = cert.Organisation?.EndPointAssessorOrganisationId,
+                        UkPrn = cert.Organisation?.EndPointAssessorUkprn ?? int.MinValue
+                    };
+                }
+
+                results.Add(ilr);
             }
 
             return results;

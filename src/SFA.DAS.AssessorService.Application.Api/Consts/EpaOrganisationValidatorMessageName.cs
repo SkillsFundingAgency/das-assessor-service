@@ -22,6 +22,7 @@
         public const string OrganisationStandardDoesNotExist = "OrganisationStandardDoesNotExist";
         public const string EmailIsMissing = "EmailIsMissing";
         public const string EmailAlreadyPresentInAnotherOrganisation = "EmailAlreadyPresentInAnotherOrganisation";
+        public const string EmailAlreadyPresentInCurrentOrganisation = "This email is being used by another contact";
         public const string ContactIdIsRequired = "ContactIdIsRequired";   
         public const string DisplayNameTooShort = "DisplayNameTooShort";
         public const string FirstNameTooShort = "First Name Too Short";

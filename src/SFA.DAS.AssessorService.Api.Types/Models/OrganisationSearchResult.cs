@@ -33,6 +33,8 @@ namespace SFA.DAS.AssessorService.Api.Types.Models
 
         public DateTime? FinancialDueDate { get; set; }
         public bool? FinancialExempt { get; set; }
+        
+        public bool OrganisationIsLive { get; set; }
     }
 
     public class OrganisationAddress

@@ -121,13 +121,13 @@
     <value>Continue</value>
   </data>
   <data name="FirstName" xml:space="preserve">
-    <value>First name</value>
+    <value>Given name</value>
   </data>
   <data name="FirstNameHint" xml:space="preserve">
     <value>For example, Karla</value>
   </data>
   <data name="Heading" xml:space="preserve">
-    <value>What's the apprentice's first name?</value>
+    <value>What is the apprentice's given name?</value>
   </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="Recipient_en" type="System.Resources.ResXFileRef, System.Windows.Forms">
