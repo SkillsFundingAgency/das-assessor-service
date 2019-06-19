@@ -60,7 +60,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.ViewModels.Roatp
             get
             {
                 var yearWithCentury = Year;
-                if (yearWithCentury <= 99)
+                if (yearWithCentury != null &&  yearWithCentury <= 99)
                     yearWithCentury +=2000;
 
                 var formatStrings = new string[] { "d/M/yyyy" };
