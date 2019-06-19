@@ -124,7 +124,7 @@
         },
         {
             "apiVersion": "2017-05-10",
-            "name": "external-app-service-certificate",
+            "name": "sandbox-external-app-service-certificate",
             "type": "Microsoft.Resources/deployments",
             "condition": "[greater(length(parameters('externalApiSandboxAppServiceCertificateName')), 0)]",
             "properties": {
@@ -148,7 +148,7 @@
         },
         {
             "apiVersion": "2017-05-10",
-            "name": "internal-app-service-certificate",
+            "name": "sandbox-internal-app-service-certificate",
             "type": "Microsoft.Resources/deployments",
             "condition": "[greater(length(parameters('internalApiSandboxAppServiceCertificateName')), 0)]",
             "properties": {
@@ -228,7 +228,7 @@
                         "value": "[parameters('externalActiveApiSandboxCustomHostname')]"
                     },
                     "certificateThumbprint": {
-                        "value": "[if(greater(length(parameters('externalApiSandboxAppServiceCertificateName')), 0), reference('external-app-service-certificate').outputs.certificateThumbprint.value, '')]"
+                        "value": "[if(greater(length(parameters('externalApiSandboxAppServiceCertificateName')), 0), reference('sandbox-external-app-service-certificate').outputs.certificateThumbprint.value, '')]"
                     }
                 }
             },
@@ -286,7 +286,7 @@
                         "value": "[parameters('internalApiSandboxCustomHostName')]"
                     },
                     "certificateThumbprint": {
-                        "value": "[if(greater(length(parameters('internalApiSandboxAppServiceCertificateName')), 0), reference('internal-app-service-certificate').outputs.certificateThumbprint.value, '')]"
+                        "value": "[if(greater(length(parameters('internalApiSandboxAppServiceCertificateName')), 0), reference('sandbox-internal-app-service-certificate').outputs.certificateThumbprint.value, '')]"
                     }
                 }
             },
@@ -295,7 +295,7 @@
             ]
         },
         {
-            "name": "storage-account",
+            "name": "sandbox-storage-account",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2017-05-10",
             "condition": "[parameters('deploySandbox')]",
@@ -337,11 +337,11 @@
                         "value": [
                             {
                                 "name": "AzureWebJobsStorage",
-                                "value": "[reference('storage-account').outputs.StorageConnectionString.value]"
+                                "value": "[reference('sandbox-storage-account').outputs.StorageConnectionString.value]"
                             },
                             {
                                 "name": "AzureWebJobsDashboard",
-                                "value": "[reference('storage-account').outputs.StorageConnectionString.value]"
+                                "value": "[reference('sandbox-storage-account').outputs.StorageConnectionString.value]"
                             },
                             {
                                 "name": "FUNCTIONS_EXTENSION_VERSION",
@@ -381,7 +381,7 @@
                 "count": "[length(parameters('sandboxFunctionAppNames'))]"
             },
             "dependsOn": [
-                "storage-account"
+                "sandbox-storage-account"
             ]
         },
         {
