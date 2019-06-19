@@ -44,7 +44,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             return View();
         }
 
-        [Authorize]
         public IActionResult AccessDenied()
         {
             return View();
