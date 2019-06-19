@@ -44,7 +44,11 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
         { 
             ModelState.Clear();
             var model = new AddOrganisationViaUkprnViewModel();
-            return View("~/Views/Roatp/EnterUkprn.cshtml", model);
+
+            var addOrganisationModel = _sessionService.GetAddOrganisationDetails();
+            if (addOrganisationModel?.UKPRN != null)
+                model.UKPRN = addOrganisationModel.UKPRN;
+              return View("~/Views/Roatp/EnterUkprn.cshtml", model);
         }
 
         [Route("ukprn-not-found")]
@@ -71,6 +75,10 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
 
             try
             {
+                _sessionService.SetAddOrganisationDetails(new AddOrganisationViewModel
+                {
+                    UKPRN = model.UKPRN
+                });
                 details = await _ukrlpClient.Get(model.UKPRN);
             }
             catch (HttpRequestException ex)
