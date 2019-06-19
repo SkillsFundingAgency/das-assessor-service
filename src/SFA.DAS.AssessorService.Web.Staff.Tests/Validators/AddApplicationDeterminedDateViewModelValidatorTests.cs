@@ -7,6 +7,7 @@ using SFA.DAS.AssessorService.Api.Types.Models.Roatp;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.Web.Staff.Infrastructure;
 using SFA.DAS.AssessorService.Web.Staff.Resources;
+using SFA.DAS.AssessorService.Web.Staff.Services.Roatp;
 using SFA.DAS.AssessorService.Web.Staff.Validators.Roatp;
 using SFA.DAS.AssessorService.Web.Staff.ViewModels.Roatp;
 
@@ -28,7 +29,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Validators
         {   
             _viewModel = new AddApplicationDeterminedDateViewModel { Day = 10, Month = 4, Year=year };
 
-            var validator = new AddApplicationDeterminedDateViewModelValidator();
+            var validator = new AddApplicationDeterminedDateViewModelValidator(new ApplicationDeterminedDateValidationService());
             var validationResult = validator.Validate(_viewModel);
 
             Assert.AreEqual(0, validationResult.Errors.Count);
@@ -66,7 +67,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Validators
 
             _viewModel = new AddApplicationDeterminedDateViewModel { Day = day, Month = month, Year = year };
 
-            var validator = new AddApplicationDeterminedDateViewModelValidator();
+            var validator = new AddApplicationDeterminedDateViewModelValidator(new ApplicationDeterminedDateValidationService());
             var validationResult = validator.Validate(_viewModel);
 
             Assert.AreEqual(numberOfErrors, validationResult.Errors.Count);

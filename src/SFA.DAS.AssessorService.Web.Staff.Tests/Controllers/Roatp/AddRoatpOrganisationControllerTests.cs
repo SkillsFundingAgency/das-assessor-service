@@ -122,7 +122,7 @@
         }
 
         [Test]
-        public void Add_model_with_invalid_application_determined_date_redirect_to_xxx()
+        public void Add_model_with_invalid_application_determined_date_alter_view_model()
         {
             var model = new AddOrganisationTypeViewModel();
             _sessionService.Setup(x => x.SetAddOrganisationDetails(It.IsAny<AddOrganisationViewModel>()));
