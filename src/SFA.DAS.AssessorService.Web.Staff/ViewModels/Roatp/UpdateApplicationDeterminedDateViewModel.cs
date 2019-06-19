@@ -3,8 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Runtime.Serialization;
-using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Web.Staff.ViewModels.Roatp
 {
@@ -21,7 +19,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.ViewModels.Roatp
             get
             {
                 var yearWithCentury = Year;
-                if (yearWithCentury < 99)
+                if (yearWithCentury <= 99)
                     yearWithCentury += 2000;
 
                 var formatStrings = new string[] { "d/M/yyyy" };
@@ -42,10 +40,9 @@ namespace SFA.DAS.AssessorService.Web.Staff.ViewModels.Roatp
         public bool IsErrorMonth => IsError && (ErrorMessages.Any(x => x.Field == "Month"));
         public bool IsErrorYear => IsError && (ErrorMessages.Any(x => x.Field == "Year"));
 
-        //[DataMember]
         public Guid OrganisationId { get; set; }
         public string LegalName { get; set; }
-        //[DataMember]
+
         public string UpdatedBy { get; set; }
     }
 }

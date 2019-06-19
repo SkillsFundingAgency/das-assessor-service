@@ -8,18 +8,17 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
-    using Staff.Domain;
+    using Domain;
     using Infrastructure;
-    using Validators.Roatp;
     using ViewModels.Roatp;
     using System;
     using System.Threading.Tasks;
     using Resources;
-    using SFA.DAS.AssessorService.Application.Api.Client.Clients;
-    using SFA.DAS.AssessorService.Api.Types.Models.Roatp;
-    using SFA.DAS.AssessorService.Api.Types.Models.UKRLP;
     using System.Linq;
+    using SFA.DAS.AssessorService.Application.Api.Client.Clients;
+    using SFA.DAS.AssessorService.Api.Types.Models.UKRLP;
     using SFA.DAS.AssessorService.Api.Types.Models.Validation;
+    using SFA.DAS.AssessorService.Api.Types.Models.Roatp;
 
     [Authorize]
     public class AddRoatpOrganisationController : Controller
@@ -27,7 +26,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
         private readonly IRoatpApiClient _apiClient;
         private readonly IRoatpSessionService _sessionService;
         private readonly IUkrlpApiClient _ukrlpClient;
-        private ILogger<AddRoatpOrganisationController> _logger;
+        private readonly ILogger<AddRoatpOrganisationController> _logger;
 
         public AddRoatpOrganisationController(IRoatpApiClient apiClient, IRoatpSessionService sessionService, 
             IUkrlpApiClient ukrlpClient, ILogger<AddRoatpOrganisationController> logger)
@@ -424,9 +423,9 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
             };
         }
 
-        private CreateOrganisationRequest CreateAddOrganisationRequestFromModel(AddOrganisationViewModel model)
+        private CreateRoatpOrganisationRequest CreateAddOrganisationRequestFromModel(AddOrganisationViewModel model)
         {
-            var request = new CreateOrganisationRequest
+            var request = new CreateRoatpOrganisationRequest
             {
                 CharityNumber = model.CharityNumber,
                 CompanyNumber = model.CompanyNumber,

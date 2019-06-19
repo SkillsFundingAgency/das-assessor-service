@@ -205,7 +205,7 @@
                 OrganisationTypeId = 1
             };
 
-            _client.Setup(x => x.CreateOrganisation(It.IsAny<CreateOrganisationRequest>())).ReturnsAsync(false);
+            _client.Setup(x => x.CreateOrganisation(It.IsAny<CreateRoatpOrganisationRequest>())).ReturnsAsync(false);
 
             var result = _controller.CreateOrganisation(model).GetAwaiter().GetResult();
 
@@ -226,7 +226,7 @@
                 OrganisationTypeId = 1
             };
 
-            _client.Setup(x => x.CreateOrganisation(It.IsAny<CreateOrganisationRequest>())).ReturnsAsync(true);
+            _client.Setup(x => x.CreateOrganisation(It.IsAny<CreateRoatpOrganisationRequest>())).ReturnsAsync(true);
 
             _controller.ControllerContext.HttpContext.User = CreateTestUser();
 

@@ -70,9 +70,9 @@
             return await Get<IEnumerable<RemovedReason>>($"{_baseUrl}/api/v1/lookupData/removedReasons");
         }
 
-        public async Task<bool> CreateOrganisation(CreateOrganisationRequest organisationRequest)
+        public async Task<bool> CreateOrganisation(CreateRoatpOrganisationRequest organisationRequest)
         {
-           HttpStatusCode result = await Post<CreateOrganisationRequest>($"{_baseUrl}/api/v1/organisation/create", organisationRequest);
+           HttpStatusCode result = await Post<CreateRoatpOrganisationRequest>($"{_baseUrl}/api/v1/organisation/create", organisationRequest);
 
            return await Task.FromResult(result == HttpStatusCode.OK);
         }

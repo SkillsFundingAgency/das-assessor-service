@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Threading.Tasks;
 using FluentValidation;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.Web.Staff.Resources;
@@ -62,7 +60,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Validators.Roatp
 
             var formatStrings = new string[] { "d/M/yyyy" };
             var yearWithCentury = viewModel?.Year;
-            if (yearWithCentury!=null && yearWithCentury < 99)
+            if (yearWithCentury!=null && yearWithCentury <= 99)
                 yearWithCentury += 2000;
 
             if (!DateTime.TryParseExact($"{viewModel?.Day}/{viewModel?.Month}/{yearWithCentury}", formatStrings, null, DateTimeStyles.None, out _))

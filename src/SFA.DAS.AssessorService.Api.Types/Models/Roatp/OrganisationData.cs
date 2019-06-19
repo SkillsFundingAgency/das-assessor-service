@@ -10,7 +10,6 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Roatp
         public bool ParentCompanyGuarantee { get; set; }
         public bool FinancialTrackRecord { get; set; }
         public bool NonLevyContract { get; set; }
-
         public DateTime? ApplicationDeterminedDate { get; set; }
     }
 }
