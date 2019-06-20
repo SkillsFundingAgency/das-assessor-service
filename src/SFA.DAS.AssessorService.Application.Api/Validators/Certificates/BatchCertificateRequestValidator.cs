@@ -87,8 +87,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.Certificates
                 RuleFor(m => m.CertificateData.ContactOrganisation).NotEmpty().WithMessage("Provide an organisation");
                 RuleFor(m => m.CertificateData.ContactAddLine1).NotEmpty().WithMessage("Provide an address");
                 RuleFor(m => m.CertificateData.ContactAddLine4).NotEmpty().WithMessage("Provide a city or town");
-                RuleFor(m => m.CertificateData.ContactPostCode).NotEmpty().WithMessage("Provide a postcode");
-                RuleFor(m => m.CertificateData.ContactPostCode).Matches("^(([gG][iI][rR] {0,}0[aA]{2})|((([a-pr-uwyzA-PR-UWYZ][a-hk-yA-HK-Y]?[0-9][0-9]?)|(([a-pr-uwyzA-PR-UWYZ][0-9][a-hjkstuwA-HJKSTUW])|([a-pr-uwyzA-PR-UWYZ][a-hk-yA-HK-Y][0-9][abehmnprv-yABEHMNPRV-Y]))) {0,}[0-9][abd-hjlnp-uw-zABD-HJLNP-UW-Z]{2}))$").WithMessage("Provide a valid UK postcode");
+                RuleFor(m => m.CertificateData.ContactPostCode).NotEmpty().WithMessage("Provide a postcode").DependentRules(() =>
+                    RuleFor(m => m.CertificateData.ContactPostCode).Matches("^(([gG][iI][rR] {0,}0[aA]{2})|((([a-pr-uwyzA-PR-UWYZ][a-hk-yA-HK-Y]?[0-9][0-9]?)|(([a-pr-uwyzA-PR-UWYZ][0-9][a-hjkstuwA-HJKSTUW])|([a-pr-uwyzA-PR-UWYZ][a-hk-yA-HK-Y][0-9][abehmnprv-yABEHMNPRV-Y]))) {0,}[0-9][abd-hjlnp-uw-zABD-HJLNP-UW-Z]{2}))$").WithMessage("Provide a valid UK postcode");
+                });
 
                 RuleFor(m => m.CertificateData.OverallGrade)
                     .Custom((overallGrade, context) =>
