@@ -202,7 +202,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
 
        
 
-        [Route("add-determined")]
+        [Route("application-date-determined")]
         public async Task<IActionResult> AddApplicationDeterminedDate(AddOrganisationTypeViewModel model)
         {
 
