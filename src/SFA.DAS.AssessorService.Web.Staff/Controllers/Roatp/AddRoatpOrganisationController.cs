@@ -46,7 +46,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
 
             var addOrganisationModel = _sessionService.GetAddOrganisationDetails();
             if (addOrganisationModel?.UKPRN != null)
-                model.UKPRN = addOrganisationModel.UKPRN;
+                model.UKPRN = addOrganisationModel.UKPRN.Trim();
               return View("~/Views/Roatp/EnterUkprn.cshtml", model);
         }
 
@@ -64,7 +64,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
             {
                 var addOrganisationModel = _sessionService.GetAddOrganisationDetails();
                 if (addOrganisationModel?.UKPRN!=null)
-                    model.UKPRN = addOrganisationModel.UKPRN;
+                    model.UKPRN = addOrganisationModel.UKPRN.Trim();
 
                 return View("~/Views/Roatp/EnterUkprn.cshtml", model);
                 
@@ -76,9 +76,9 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
             {
                 _sessionService.SetAddOrganisationDetails(new AddOrganisationViewModel
                 {
-                    UKPRN = model.UKPRN
+                    UKPRN = model.UKPRN.Trim()
                 });
-                details = await _ukrlpClient.Get(model.UKPRN);
+                details = await _ukrlpClient.Get(model.UKPRN.Trim());
             }
             catch (HttpRequestException ex)
             {
