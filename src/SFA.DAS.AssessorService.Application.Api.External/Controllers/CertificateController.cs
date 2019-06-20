@@ -22,7 +22,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
     public class CertificateController : ControllerBase
     {
         private const int MAX_CERTIFICATES_IN_REQUEST = 25;
-        private readonly string MAX_CERTIFICATES_IN_REQUEST_ERROR_MESSAGE = $"There are too many certificates specified within the request. Please specify no more than {MAX_CERTIFICATES_IN_REQUEST}";
+        private readonly string MAX_CERTIFICATES_IN_REQUEST_ERROR_MESSAGE = $"Batch limited to {MAX_CERTIFICATES_IN_REQUEST} requests";
 
         private readonly ILogger<CertificateController> _logger;
         private readonly IHeaderInfo _headerInfo;

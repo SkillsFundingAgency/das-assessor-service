@@ -8,7 +8,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.SwaggerHelpers.Exampl
     {
         public object GetExamples()
         {
-            return new ApiResponse((int)HttpStatusCode.Forbidden, "There are too many certificates specified within the request. Please specify no more than 25");
+            return new ApiResponse((int)HttpStatusCode.Forbidden, "Batch limited to 25 requests");
         }
     }
 }

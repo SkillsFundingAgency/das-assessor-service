@@ -13,7 +13,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.Certificates
         {
             Include(new BatchCertificateRequestValidator(localiser, organisationQueryRepository, ilrRepository, certificateRepository, standardService));
 
-            RuleFor(m => m.CertificateReference).Empty().WithMessage("Certificate reference must be empty").DependentRules(() =>
+            RuleFor(m => m.CertificateReference).Empty().WithMessage("Provide the certificate reference").DependentRules(() =>
             {
                 RuleFor(m => m).CustomAsync(async (m, context, cancellation) =>
                 {

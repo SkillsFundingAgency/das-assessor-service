@@ -53,7 +53,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.SwaggerHelpers.Exampl
                 new SubmitCertificateResponse
                 {
                     RequestId = "3",
-                    ValidationErrors = new List<string>{ "Cannot find apprentice with the specified Uln, FamilyName & Standard" },
+                    ValidationErrors = new List<string>{ "ULN, FamilyName and Standard not found" },
                     Certificate = null
                 },
             };

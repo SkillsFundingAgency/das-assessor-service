@@ -14,7 +14,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.Certificates
         {
             Include(new BatchCertificateRequestValidator(localiser, organisationQueryRepository, ilrRepository, certificateRepository, standardService));
 
-            RuleFor(m => m.CertificateReference).NotEmpty().WithMessage("Enter the certificate reference").DependentRules(() =>
+            RuleFor(m => m.CertificateReference).NotEmpty().WithMessage("Provide the certificate reference").DependentRules(() =>
             {
                 RuleFor(m => m).CustomAsync(async (m, context, cancellation) =>
                 {
@@ -28,11 +28,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.Certificates
                     }
                     else if (sumbittingEpao?.Id != existingCertificate.OrganisationId)
                     {
-                        context.AddFailure(new ValidationFailure("CertificateReference", $"EPAO is not the creator of this Certificate"));
+                        context.AddFailure(new ValidationFailure("CertificateReference", $"Your organisation is not the creator of this Certificate"));
                     }
                     else if (existingCertificate.Status != CertificateStatus.Draft)
                     {
-                        context.AddFailure(new ValidationFailure("CertificateReference", $"Certificate is not in '{CertificateStatus.Draft}' status"));
+                        context.AddFailure(new ValidationFailure("CertificateReference", $"Certificate does not exist in {CertificateStatus.Draft} status"));
                     }
                 });
             });
