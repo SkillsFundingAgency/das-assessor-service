@@ -214,8 +214,9 @@ UPDATE [Options] SET [OptionName] = 'Mechanical' WHERE [OptionName] = 'Mechnical
 -- START OF ON-1981
 UPDATE Certificates
 SET CertificateData =	CASE JSON_Value(CertificateData,'$.EpaDetails.LatestEpaOutcome')
-							 WHEN 'fail' THEN JSON_MODIFY(CertificateData,'$.EpaDetails.LatestEpaOutcome','fail')
-							 ELSE JSON_MODIFY(CertificateData,'$.EpaDetails.LatestEpaOutcome','pass')
+                            WHEN 'fail' THEN JSON_MODIFY(CertificateData,'$.EpaDetails.LatestEpaOutcome','fail')
+							WHEN 'Fail' THEN JSON_MODIFY(CertificateData,'$.EpaDetails.LatestEpaOutcome','fail')
+                            ELSE JSON_MODIFY(CertificateData,'$.EpaDetails.LatestEpaOutcome','pass')
 						END
 WHERE JSON_Value(CertificateData,'$.EpaDetails.LatestEpaOutcome') IS NOT NULL;
 
