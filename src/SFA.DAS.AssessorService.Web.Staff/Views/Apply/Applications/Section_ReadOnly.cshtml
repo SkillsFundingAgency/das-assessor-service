@@ -63,7 +63,7 @@
             {
                 // NOTE: The FHA Section has a read only view. See ON-1277
                 var financialApplication = Model.Section.QnAData?.FinancialApplicationGrade;
-                var financialApplicationComments = financialApplication.InadequateMoreInformation;
+                var financialApplicationComments = financialApplication?.InadequateMoreInformation;
 
                 <div class="form-group">
                     <table class="table">
@@ -77,10 +77,10 @@
                         </thead>
                         <tbody>
                             <tr>
-                                <td>@financialApplication.SelectedGrade</td>
-                                <td>@financialApplication.GradedDateTime.ToShortDateString()</td>
+                                <td>@financialApplication?.SelectedGrade</td>
+                                <td>@financialApplication?.GradedDateTime.ToShortDateString()</td>
                                 <td>@financialApplicationComments</td>
-                                <td>@financialApplication.GradedBy</td>
+                                <td>@financialApplication?.GradedBy</td>
                             </tr>
                         </tbody>
                     </table>
