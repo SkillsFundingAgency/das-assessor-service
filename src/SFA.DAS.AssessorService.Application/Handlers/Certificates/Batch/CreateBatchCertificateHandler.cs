@@ -79,7 +79,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates.Batch
                         CertificateData = JsonConvert.SerializeObject(certData),
                         Status = CertificateStatus.Draft, // NOTE: Web & Staff always creates Draft first
                         CertificateReference = "",
-                        LearnRefNumber = ilr.LearnRefNumber
+                        LearnRefNumber = ilr.LearnRefNumber,
+                        CreateDay = DateTime.UtcNow.Date
                     }); // As no Tracking???
 
                 certificate.CertificateReference = certificate.CertificateReferenceId.ToString().PadLeft(8, '0');
@@ -156,6 +157,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates.Batch
                 LearnerGivenNames = ilr.GivenNames,
                 LearnerFamilyName = ilr.FamilyName,
                 LearningStartDate = ilr.LearnStartDate,
+                StandardReference = standard.ReferenceNumber,
                 StandardName = standard.Title,   
                 StandardLevel = standard.StandardData.Level.GetValueOrDefault(),
                 StandardPublicationDate = standard.StandardData.EffectiveFrom,
@@ -173,7 +175,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates.Batch
                 Registration = data.Registration,
                 AchievementDate = data.AchievementDate,
                 CourseOption = data.CourseOption,
-                OverallGrade = data.OverallGrade,
+                OverallGrade = NormalizeOverallGrade(data.OverallGrade),
 
                 EpaDetails = epaDetails
             };
@@ -212,6 +214,12 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates.Batch
             }
 
             return cert;
+        }
+
+        private static string NormalizeOverallGrade(string overallGrade)
+        {
+            var grades = new string[] { CertificateGrade.Pass, CertificateGrade.Credit, CertificateGrade.Merit, CertificateGrade.Distinction, CertificateGrade.PassWithExcellence, CertificateGrade.NoGradeAwarded };
+            return grades.FirstOrDefault(g => g.Equals(overallGrade, StringComparison.InvariantCultureIgnoreCase)) ?? overallGrade;
         }
     }
 }
