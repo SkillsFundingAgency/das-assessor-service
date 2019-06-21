@@ -324,7 +324,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
         }
 
 
-        [Route("change-application-determined-date")]
+        [Route("change-application-date-determined")]
         public async Task<IActionResult> UpdateOrganisationApplicationDeterminedDate()
         {
             var searchModel = _sessionService.GetSearchResults();
