@@ -1,4 +1,4 @@
-﻿using SFA.DAS.AssessorService.Application.Api.External.Middleware;
+﻿using SFA.DAS.AssessorService.Application.Api.External.Models.Response;
 using Swashbuckle.AspNetCore.Examples;
 using System.Net;
 
@@ -8,7 +8,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.SwaggerHelpers.Exampl
     {
         public object GetExamples()
         {
-            return new ApiResponse((int)HttpStatusCode.Forbidden, "Cannot find apprentice with the specified Uln, FamilyName & Standard");
+            return new ApiResponse((int)HttpStatusCode.Forbidden, "ULN, FamilyName and Standard not found");
         }
     }
 }

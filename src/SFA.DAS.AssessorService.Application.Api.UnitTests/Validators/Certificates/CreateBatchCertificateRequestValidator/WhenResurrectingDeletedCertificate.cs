@@ -5,6 +5,7 @@ using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates.Batch;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using System;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Certificates.CreateBatchCertificateRequestValidator
 {
@@ -13,7 +14,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Certifica
         private ValidationResult _validationResult;
 
         [SetUp]
-        public void Arrange()
+        public async Task Arrange()
         {
             CreateBatchCertificateRequest request = Builder<CreateBatchCertificateRequest>.CreateNew()
                 .With(i => i.Uln = 1234567890)
@@ -30,7 +31,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Certifica
                                 .Build())
                 .Build();
 
-            _validationResult = Validator.Validate(request);
+            _validationResult = await Validator.ValidateAsync(request);
         }
 
         [Test]

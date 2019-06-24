@@ -1,4 +1,4 @@
-﻿using SFA.DAS.AssessorService.Application.Api.External.Models.Standards;
+﻿using SFA.DAS.AssessorService.Application.Api.External.Models.Response.Standards;
 using Swashbuckle.AspNetCore.Examples;
 
 namespace SFA.DAS.AssessorService.Application.Api.External.SwaggerHelpers.Examples

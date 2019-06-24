@@ -1,8 +1,9 @@
-﻿using Microsoft.Extensions.Logging;
-using SFA.DAS.AssessorService.Api.Types.Models.ExternalApi;
-using SFA.DAS.AssessorService.Application.Api.Client;
-using SFA.DAS.AssessorService.Application.Api.External.Messages;
-using SFA.DAS.AssessorService.Application.Api.External.Middleware;
+﻿using AutoMapper;
+using SFA.DAS.AssessorService.Application.Api.External.Models.Internal;
+using SFA.DAS.AssessorService.Application.Api.External.Models.Response;
+using SFA.DAS.AssessorService.Application.Api.External.Models.Response.Certificates;
+using SFA.DAS.AssessorService.Application.Api.External.Models.Response.Standards;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
@@ -20,7 +21,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
             return await Get<LearnerDetailForExternalApi>($"/api/v1/externalapi/learnerDetails?standard={standard}&uln={uln}");
         }
 
-        public override async Task<GetCertificateResponse> GetCertificate(GetCertificateRequest request)
+        public override async Task<GetCertificateResponse> GetCertificate(GetBatchCertificateRequest request)
         { 
             if(request != null)
             {
@@ -37,7 +38,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
             return await base.GetCertificate(request);
         }
 
-        public override async Task<IEnumerable<BatchCertificateResponse>> CreateCertificates(IEnumerable<BatchCertificateRequest> request)
+        public override async Task<IEnumerable<CreateCertificateResponse>> CreateCertificates(IEnumerable<CreateBatchCertificateRequest> request)
         {
             if (request != null)
             {
@@ -63,7 +64,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
             return await base.CreateCertificates(request);
         }
 
-        public override async Task<IEnumerable<BatchCertificateResponse>> UpdateCertificates(IEnumerable<BatchCertificateRequest> request)
+        public override async Task<IEnumerable<UpdateCertificateResponse>> UpdateCertificates(IEnumerable<UpdateBatchCertificateRequest> request)
         {
             if (request != null)
             {
@@ -89,7 +90,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
             return await base.UpdateCertificates(request);
         }
 
-        public override async Task<IEnumerable<SubmitBatchCertificateResponse>> SubmitCertificates(IEnumerable<SubmitBatchCertificateRequest> request)
+        public override async Task<IEnumerable<SubmitCertificateResponse>> SubmitCertificates(IEnumerable<SubmitBatchCertificateRequest> request)
         {
             if (request != null)
             {

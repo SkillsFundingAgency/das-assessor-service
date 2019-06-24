@@ -40,10 +40,10 @@ namespace SFA.DAS.AssessorService.Data
                 c.Uln == certificate.Uln && c.StandardCode == certificate.StandardCode && c.CreateDay == certificate.CreateDay);
             if (existingCert != null) return existingCert;
             
-            _context.Certificates.Add(certificate);
+            await _context.Certificates.AddAsync(certificate);
             try
             {
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
             }
             catch (Exception e)
             {
@@ -58,7 +58,7 @@ namespace SFA.DAS.AssessorService.Data
             }
                 
             await UpdateCertificateLog(certificate, CertificateActions.Start, certificate.CreatedBy);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             return certificate;
         }
@@ -77,10 +77,10 @@ namespace SFA.DAS.AssessorService.Data
             if (existingCert != null)
                 return existingCert;
 
-            _context.Certificates.Add(certificate);
+            await _context.Certificates.AddAsync(certificate);
             try
             {
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
             }
             catch (Exception e)
             {
@@ -97,7 +97,7 @@ namespace SFA.DAS.AssessorService.Data
             }
 
             await UpdateCertificateLog(certificate, CertificateActions.Start, certificate.CreatedBy);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             return certificate;
         }
@@ -291,6 +291,11 @@ namespace SFA.DAS.AssessorService.Data
             cert.UpdatedBy = username;
             cert.UpdatedAt = DateTime.UtcNow;
 
+            if (cert.IsPrivatelyFunded)
+            {
+                cert.PrivatelyFundedStatus = certificate.PrivatelyFundedStatus;
+            }
+
             if (certificate.Status != CertificateStatus.Deleted)
             {
                 cert.DeletedBy =  null;
@@ -329,17 +334,17 @@ namespace SFA.DAS.AssessorService.Data
             await _context.SaveChangesAsync();
         }
 
-        public Task<Certificate> UpdateProviderName(Guid id, string providerName)
+        public async Task<Certificate> UpdateProviderName(Guid id, string providerName)
         {
-            var certificate = GetCertificate(id).GetAwaiter().GetResult();
+            var certificate = await GetCertificate(id);
 
             var certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
             certificateData.ProviderName = providerName;
 
             certificate.CertificateData = JsonConvert.SerializeObject(certificateData);           
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
-            return Task.FromResult(certificate);
+            return certificate;
         }
 
         private async Task UpdateCertificateLog(Certificate cert, string action, string username, string reasonForChange = null)
@@ -444,6 +449,7 @@ namespace SFA.DAS.AssessorService.Data
             foreach (var certificate in certificates)
             {
                 certificate.Status = CertificateStatus.ToBeApproved;
+                certificate.PrivatelyFundedStatus = null;
             }
 
             await _context.SaveChangesAsync();

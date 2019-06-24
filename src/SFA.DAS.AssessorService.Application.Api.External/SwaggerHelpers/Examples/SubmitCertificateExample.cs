@@ -1,4 +1,4 @@
-﻿using SFA.DAS.AssessorService.Application.Api.External.Models.Certificates;
+﻿using SFA.DAS.AssessorService.Application.Api.External.Models.Request;
 using Swashbuckle.AspNetCore.Examples;
 using System.Collections.Generic;
 
@@ -8,9 +8,9 @@ namespace SFA.DAS.AssessorService.Application.Api.External.SwaggerHelpers.Exampl
     {
         public object GetExamples()
         {
-            return new List<SubmitCertificate>
+            return new List<SubmitCertificateRequest>
             {
-                new SubmitCertificate
+                new SubmitCertificateRequest
                 {
                     RequestId = "1",
                     CertificateReference = "09876543",
@@ -18,7 +18,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.SwaggerHelpers.Exampl
                     StandardReference = "ST0001",
                     Uln = 1234567890
                 },
-                new SubmitCertificate
+                new SubmitCertificateRequest
                 {
                     RequestId = "2",
                     CertificateReference = "99999999",
@@ -26,7 +26,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.SwaggerHelpers.Exampl
                     StandardCode = 99,
                     Uln = 9999999999
                 },
-                new SubmitCertificate
+                new SubmitCertificateRequest
                 {
                     RequestId = "3",
                     CertificateReference = "55555555",

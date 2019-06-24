@@ -1,4 +1,5 @@
 ﻿@using Microsoft.AspNetCore.Mvc.Localization
+@using SFA.DAS.AssessorService.Domain.Consts
 @inject IViewLocalizer Localizer
 @using Microsoft.AspNetCore.Mvc.Localization
 @using SFA.DAS.AssessorService.Domain.Paging
@@ -14,11 +15,9 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             <h1 class="govuk-heading-xl">Completed assessments</h1>
-            <div class="das-standout-box">
-                <p class="govuk-body govuk-!-margin-bottom-0"><a href="https://www.smartsurvey.co.uk/s/certification-banner/" class="govuk-link" target="_blank">Complete our survey</a> to help us improve this section of the Apprenticeship assessment service.</p>
-            </div>
         </div>
     </div>
+    
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
         @if (Model.Items.Any())
@@ -86,7 +85,16 @@
                                     </div>
                                     <div class="govuk-summary-list__row">
                                         <dt class="govuk-summary-list__key">@Localizer["Option"]</dt>
-                                        <dd class="govuk-summary-list__value">@Html.DisplayFor(modelItem => item.CourseOption)</dd>
+                                            <dd class="govuk-summary-list__value">
+                                                @if (item.CourseOption != null)
+                                                {
+                                                    @Html.DisplayFor(modelItem => item.CourseOption)
+                                                }
+                                                else
+                                                {
+                                                    <text>None</text>
+                                                }
+                                            </dd>
                                     </div>
                                     <div class="govuk-summary-list__row">
                                         <dt class="govuk-summary-list__key">@Localizer["AchievementStartDate"]</dt>
@@ -96,46 +104,67 @@
                                         <dd class="govuk-summary-list__value">@achievementStartDate</dd>
                                     </div>
                                     <div class="govuk-summary-list__row">
-                                        <dt class="govuk-summary-list__key">@Localizer["AchievementDate"]</dt>
+                                        <dt class="govuk-summary-list__key">
+                                            @if (item.OverallGrade == CertificateGrade.Fail)
+                                            {
+                                                @Localizer["FailDate"]
+                                            }
+                                            else
+                                            {
+                                                @Localizer["AchievementDate"]
+                                            }
+                                        </dt>
                                         @{
                                             var achievementDate = item.AchievementDate.HasValue ? item.AchievementDate.Value.ToString("dd/MM/yyyy") : "";
                                         }
                                         <dd class="govuk-summary-list__value">@achievementDate</dd>
                                     </div>
                                     <div class="govuk-summary-list__row">
-                                        <dt class="govuk-summary-list__key">@Localizer["CertificateNumber"]</dt>
+                                        <dt class="govuk-summary-list__key">
+                                            @if (item.OverallGrade == CertificateGrade.Fail)
+                                            {
+                                                @Localizer["ReferenceNumber"]
+                                            }
+                                            else
+                                            {
+                                                @Localizer["CertificateNumber"]
+                                            }
+                                        </dt>
                                         <dd class="govuk-summary-list__value">@Html.DisplayFor(modelItem => item.CertificateReference)</dd>
                                     </div>
                                 </dl>
 
-                                <h2 class="govuk-heading-m">@Localizer["PostageDetails"]</h2>
+                                @if (item.OverallGrade != CertificateGrade.Fail)
+                                {
+                                    <h2 class="govuk-heading-m">@Localizer["PostageDetails"]</h2>
 
-                                <p class="govuk-body">
-                                    The certificate was posted to this address.
-                                </p>
-                                <ul class="govuk-list">
-                                    <li>
-                                        @Html.DisplayFor(modelItem => item.ContactName)
-                                    </li>
-                                    <li>
-                                        @Html.DisplayFor(modelItem => item.ContactOrganisation)
-                                    </li>
-                                    <li>
-                                        @Html.DisplayFor(modelItem => item.ContactAddLine1)
-                                    </li>
-                                    <li>
-                                        @Html.DisplayFor(modelItem => item.ContactAddLine2)
-                                    </li>
-                                    <li>
-                                        @Html.DisplayFor(modelItem => item.ContactAddLine3)
-                                    </li>
-                                    <li>
-                                        @Html.DisplayFor(modelItem => item.ContactAddLine4)
-                                    </li>
-                                    <li>
-                                        @Html.DisplayFor(modelItem => item.ContactPostCode)
-                                    </li>
-                                </ul>
+                                    <p class="govuk-body">
+                                        The certificate was posted to this address.
+                                    </p>
+                                    <ul class="govuk-list">
+                                        <li>
+                                            @Html.DisplayFor(modelItem => item.ContactName)
+                                        </li>
+                                        <li>
+                                            @Html.DisplayFor(modelItem => item.ContactOrganisation)
+                                        </li>
+                                        <li>
+                                            @Html.DisplayFor(modelItem => item.ContactAddLine1)
+                                        </li>
+                                        <li>
+                                            @Html.DisplayFor(modelItem => item.ContactAddLine2)
+                                        </li>
+                                        <li>
+                                            @Html.DisplayFor(modelItem => item.ContactAddLine3)
+                                        </li>
+                                        <li>
+                                            @Html.DisplayFor(modelItem => item.ContactAddLine4)
+                                        </li>
+                                        <li>
+                                            @Html.DisplayFor(modelItem => item.ContactPostCode)
+                                        </li>
+                                    </ul>
+                                }
                             </div>
                         </td>
                     </tr>

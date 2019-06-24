@@ -7,7 +7,7 @@
     bool showErrors = TempData["ShowErrors"] as bool? ?? false;
 }
 
-<a asp-action="Results" asp-controller="OrganisationSearch" asp-route-searchString="@Model.SearchString" class="govuk-back-link">Back to search results</a>
+<a asp-action="Results" asp-controller="OrganisationSearch" asp-route-searchString="@Model.SearchString" asp-route-pageIndex="@Model.PageIndex" class="govuk-back-link">Back</a>
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
@@ -16,6 +16,7 @@
                 <input asp-for="Name" type="hidden" />
                 <input asp-for="Ukprn" type="hidden" />
                 <input asp-for="Postcode" type="hidden" />
+                <input asp-for="PageIndex" value="@Model.PageIndex" type="hidden" />
 
                 <div class="js-error-summary govuk-error-summary" role="alert" aria-labelledby="error-summary-title" tabindex="-1" data-module="error-summary">
                     <h2 class="govuk-error-summary__title" id="error-summary-title">

@@ -3,6 +3,7 @@ using FluentAssertions;
 using FluentValidation.Results;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates.Batch;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Certificates.SubmitBatchCertificateRequestValidator
 {
@@ -11,7 +12,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Certifica
         private ValidationResult _validationResult;
 
         [SetUp]
-        public void Arrange()
+        public async Task Arrange()
         {
             SubmitBatchCertificateRequest request = Builder<SubmitBatchCertificateRequest>.CreateNew()
                 .With(i => i.Uln = 1234567890)
@@ -22,7 +23,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Certifica
                 .With(i => i.CertificateReference = "1234567890-1")
                 .Build();
 
-            _validationResult = Validator.Validate(request);
+            _validationResult = await Validator.ValidateAsync(request);
         }
 
         [Test]

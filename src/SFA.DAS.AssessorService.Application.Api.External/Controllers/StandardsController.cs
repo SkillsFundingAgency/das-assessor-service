@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Application.Api.External.Infrastructure;
 using SFA.DAS.AssessorService.Application.Api.External.Middleware;
-using SFA.DAS.AssessorService.Application.Api.External.Models.Standards;
+using SFA.DAS.AssessorService.Application.Api.External.Models.Response.Standards;
 using Swashbuckle.AspNetCore.Annotations;
 using Swashbuckle.AspNetCore.Examples;
 using System.Collections.Generic;

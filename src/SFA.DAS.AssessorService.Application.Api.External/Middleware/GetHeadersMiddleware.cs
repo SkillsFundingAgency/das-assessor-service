@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using SFA.DAS.AssessorService.Application.Api.External.Models.Response;
 
 namespace SFA.DAS.AssessorService.Application.Api.External.Middleware
 {
@@ -38,7 +39,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Middleware
 
                 string email = emailHeaderValue.FirstOrDefault();
 
-                if(!TryExtractUkprnFromHeader(noteHeaderValue, out var ukprn))
+                if (!TryExtractUkprnFromHeader(noteHeaderValue, out var ukprn))
                 {
                     _logger.LogError("GetHeadersMiddleware - invalid or no UKPRN.");
                     context.Response.StatusCode = (int)HttpStatusCode.BadRequest;

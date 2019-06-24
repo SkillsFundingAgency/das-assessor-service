@@ -145,7 +145,20 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
                         await _registerRepository.AssociateAllPrivilegesWithContact(contact);
                     }
                 }
-               
+
+                if (command.OtherApplyingUserEmails != null)
+                {
+                    // For any other user who was trying to apply for the same organisation; they now need to request access
+                    foreach (var otherApplyingUserEmail in command.OtherApplyingUserEmails)
+                    {
+                        var otherApplyingContact = await _registerQueryRepository.GetContactByEmail(otherApplyingUserEmail);
+                        if (otherApplyingContact != null)
+                        {
+                            await _registerRepository.AssociateOrganisationWithContact(otherApplyingContact.Id, newOrganisation, ContactStatus.InvitePending, "");
+                        }
+                    }
+                }
+
                 //Now check if the user has a status of applying in assessor if so update its status and associate him with the organisation if he has not been associated with an
                 //org before
                 var userContact = await _registerQueryRepository.GetContactBySignInId(command.SigninId.ToString());

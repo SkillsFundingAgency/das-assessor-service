@@ -1,4 +1,5 @@
-﻿using SFA.DAS.AssessorService.Application.Api.External.Models.Certificates;
+﻿using SFA.DAS.AssessorService.Application.Api.External.Models.Request;
+using SFA.DAS.AssessorService.Application.Api.External.Models.Request.Certificates;
 using Swashbuckle.AspNetCore.Examples;
 using System;
 using System.Collections.Generic;
@@ -9,9 +10,9 @@ namespace SFA.DAS.AssessorService.Application.Api.External.SwaggerHelpers.Exampl
     {
         public object GetExamples()
         {
-            return new List<UpdateCertificate>
+            return new List<UpdateCertificateRequest>
             {
-                new UpdateCertificate
+                new UpdateCertificateRequest
                 {
                     RequestId = "1",
                     CertificateReference = "09876543",
@@ -20,7 +21,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.SwaggerHelpers.Exampl
                     LearningDetails = new LearningDetails { CourseOption = "French", OverallGrade = "Pass", AchievementDate = DateTime.UtcNow },
                     PostalContact = new PostalContact { ContactName = "Shreya Smith", Department = "Human Resources", Organisation = "Contoso Ltd", AddressLine1 = "123 Test Road", AddressLine2 = "Green Park", City = "Townsville", PostCode = "ZY9 9ZZ" }
                 },
-                new UpdateCertificate
+                new UpdateCertificateRequest
                 {
                     RequestId = "2",
                     CertificateReference = "99999999",
@@ -29,7 +30,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.SwaggerHelpers.Exampl
                     LearningDetails = new LearningDetails { CourseOption = null, OverallGrade = "Merit", AchievementDate = DateTime.UtcNow },
                     PostalContact = new PostalContact { ContactName = "Ken Sanchez", Department = "Human Resources", Organisation = "AdventureWorks Cycles", AddressLine1 = "Silicon Business Park", City = "Bothell", PostCode = "ZY9 9ZZ" }
                 },
-                new UpdateCertificate
+                new UpdateCertificateRequest
                 {
                     RequestId = "3",
                     CertificateReference = "55555555",
