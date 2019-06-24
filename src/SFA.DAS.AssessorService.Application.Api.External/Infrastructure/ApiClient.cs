@@ -4,7 +4,6 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Application.Api.External.Models.Internal;
-using SFA.DAS.AssessorService.Application.Api.External.Models.Request;
 using SFA.DAS.AssessorService.Application.Api.External.Models.Response;
 using SFA.DAS.AssessorService.Application.Api.External.Models.Response.Standards;
 using System;
@@ -20,12 +19,6 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
         private readonly HttpClient _client;
         private readonly ILogger<ApiClient> _logger;
         private readonly ITokenService _tokenService;
-
-        private readonly JsonSerializerSettings _jsonSettings = new JsonSerializerSettings
-        {
-            ContractResolver = new CamelCasePropertyNamesContractResolver(),
-            NullValueHandling = NullValueHandling.Ignore
-        };
 
         public ApiClient(HttpClient client, ILogger<ApiClient> logger, ITokenService tokenService)
         {

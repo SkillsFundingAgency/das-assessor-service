@@ -4,7 +4,7 @@ using System;
 
 namespace SFA.DAS.AssessorService.Application.Api.External.Models.Request
 {
-    public class UpdateCertificateRequest : IEquatable<UpdateCertificateRequest>
+    public sealed class UpdateCertificateRequest : IEquatable<UpdateCertificateRequest>
     {
         public string RequestId { get; set; }
         [SwaggerRequired]

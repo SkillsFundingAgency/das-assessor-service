@@ -1,9 +1,8 @@
-﻿using AutoMapper;
+﻿using Microsoft.Extensions.Logging;
+using SFA.DAS.AssessorService.Api.Types.Models.ExternalApi;
+using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Application.Api.External.Models.Internal;
 using SFA.DAS.AssessorService.Application.Api.External.Models.Response;
-using SFA.DAS.AssessorService.Application.Api.External.Models.Response.Certificates;
-using SFA.DAS.AssessorService.Application.Api.External.Models.Response.Standards;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
@@ -11,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
 {
-    public class SandboxApiClient : ApiClient
+    public sealed class SandboxApiClient : ApiClient
     {
         public SandboxApiClient(HttpClient client, ILogger<SandboxApiClient> logger, ITokenService tokenService) : base(client, logger, tokenService)
         {}
@@ -116,7 +115,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
             return await base.SubmitCertificates(request);
         }
 
-        public override async Task<ApiResponse> DeleteCertificate(DeleteCertificateRequest request)
+        public override async Task<ApiResponse> DeleteCertificate(DeleteBatchCertificateRequest request)
         {
             var details = await GetLearnerDetail(request.Standard, request.Uln);
 

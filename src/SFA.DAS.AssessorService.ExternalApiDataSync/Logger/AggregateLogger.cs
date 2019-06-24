@@ -11,14 +11,12 @@ namespace SFA.DAS.AssessorService.ExternalApiDataSync.Logger
     {
         private readonly TraceWriter _functionLogger;
         private readonly global::NLog.Logger _redisLogger;
-        private readonly ExecutionContext _executionContext;
         private readonly string _source;
 
         public AggregateLogger(string source, TraceWriter functionLogger, ExecutionContext executionContext)
         {
             _source = source;
             _functionLogger = functionLogger;
-            _executionContext = executionContext;
 
             var nLogFileName = GetNLogConfigurationFileName(source);
 

@@ -67,8 +67,8 @@ namespace SFA.DAS.AssessorService.ExternalApiDataSync
         {
             _aggregateLogger.LogInfo("Step 1: Syncing Organisation Data");
 
-            var orgTypes = new List<OrganisationType>();
-            var orgs = new List<Organisation>();
+            List<OrganisationType> orgTypes;
+            List<Organisation> orgs;
 
             using (var sourceConnection = new SqlConnection(_sourceConnectionString))
             {
@@ -111,7 +111,7 @@ namespace SFA.DAS.AssessorService.ExternalApiDataSync
         {
             _aggregateLogger.LogInfo("Step 2: Syncing Contacts");
 
-            var contacts = new List<Contact>();
+            List<Contact> contacts;
 
             using (var sourceConnection = new SqlConnection(_sourceConnectionString))
             {
@@ -150,8 +150,8 @@ namespace SFA.DAS.AssessorService.ExternalApiDataSync
         {
             _aggregateLogger.LogInfo("Step 3: Syncing Standard Data");
 
-            var standards = new List<StandardCollation>();
-            var options = new List<Option>();
+            List<StandardCollation> standards;
+            List<Option> options;
 
             using (var sourceConnection = new SqlConnection(_sourceConnectionString))
             {
@@ -193,9 +193,9 @@ namespace SFA.DAS.AssessorService.ExternalApiDataSync
         {
             _aggregateLogger.LogInfo("Step 4: Syncing Organisation Standard Data");
 
-            var deliveryArea = new List<DeliveryArea>();
-            var orgStandard = new List<OrganisationStandard>();
-            var orgStandardDeliveryArea = new List<OrganisationStandardDeliveryArea>();
+            List<DeliveryArea> deliveryArea;
+            List<OrganisationStandard> orgStandard;
+            List<OrganisationStandardDeliveryArea> orgStandardDeliveryArea;
 
             using (var sourceConnection = new SqlConnection(_sourceConnectionString))
             {
