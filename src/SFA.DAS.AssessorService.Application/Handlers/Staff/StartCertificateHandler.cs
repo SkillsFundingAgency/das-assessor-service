@@ -69,8 +69,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
             {
                 LearnerGivenNames = ilr.GivenNames,
                 LearnerFamilyName = ilr.FamilyName,
+                LearningStartDate = ilr.LearnStartDate,
+                StandardReference = standard.ReferenceNumber,
                 StandardName = standard.Title,
-                LearningStartDate = ilr.LearnStartDate, 
                 StandardLevel = standard.StandardData.Level.GetValueOrDefault(),
                 StandardPublicationDate = standard.StandardData.EffectiveFrom.GetValueOrDefault(),
                 FullName = $"{ilr.GivenNames} {ilr.FamilyName}",
