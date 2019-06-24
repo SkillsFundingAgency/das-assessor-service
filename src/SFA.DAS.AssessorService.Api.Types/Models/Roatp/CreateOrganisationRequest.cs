@@ -21,5 +21,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Roatp
         public string Username { get; set; }
 
         public bool? SourceIsUKRLP { get; set; }
+
+        public DateTime? ApplicationDeterminedDate { get; set; }
     }
 }

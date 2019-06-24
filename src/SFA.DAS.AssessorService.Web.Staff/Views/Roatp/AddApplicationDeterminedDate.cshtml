@@ -1,0 +1,118 @@
+﻿@model SFA.DAS.AssessorService.Web.Staff.ViewModels.Roatp.AddApplicationDeterminedDateViewModel
+
+@using SFA.DAS.AssessorService.Web.Staff
+@using SFA.DAS.AssessorService.Web.Staff.Domain
+@{
+    ViewBag.Title = "Choose an application determined date";
+
+
+    var isError = Model.IsError ? "form-group-error" : "";
+    var isErrorDay = Model.IsErrorDay ? "form-control-error" : "";
+    var isErrorMonth = Model.IsErrorMonth ? "form-control-error" : "";
+    var isErrorYear = Model.IsErrorYear ? "form-control-error" : "";
+
+}
+
+@{
+    await Html.RenderPartialAsync("~/Views/Roatp/_StylesPartial.cshtml");
+}
+<div class="grid-row">
+    @Html.HiddenFor(x=>x.LegalName)
+    <form asp-controller="AddRoatpOrganisation" asp-action="Back" method="post" name="backForm">
+        <div class="govuk-grid-column-one-half">
+            <input type="hidden" asp-for="OrganisationId"/>
+            <input type="hidden" name="action" value="AddOrganisationType"/>
+            <a href="JavaScript:document.backForm.submit();" class="govuk-back-link">Back</a>
+        </div>
+    </form>
+</div>
+
+<div class="js-error-summary error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+    <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+        There is a problem
+    </h2>
+    <ul class="js-error-summary-list error-summary-list"></ul>
+</div>
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+        <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+            There is a problem
+        </h2>
+        <ul class="error-summary-list">
+            <li><a sfa-validation-for="ApplicationDeterminedDate"></a></li>
+        </ul>
+    </div>
+}
+
+<div class="grid-row">
+    <div class="column-two-thirds">
+        <h1 class="heading-xlarge roatp-heading">What is the application determined date for this organisation?</h1>
+    </div>
+</div>
+<div class="govuk-width-container">
+
+    <main class="govuk-main-wrapper " id="main-content" role="main">
+
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <form method="post" asp-action="ConfirmOrganisationDetails" asp-controller="AddRoatpOrganisation">
+                    
+                    <div class="form-group @isError" sfa-validation-for="ApplicationDeterminedDate" sfa-validationerror-class="form-group-error">
+                        <fieldset class="govuk-fieldset>
+                            <span class="govuk-hint" id="appdd-message-text">This is the date of when feedback was given to the training provider.
+                            <br/><br/>
+                            </span>
+                           
+                            
+                            <span class="govuk-hint" id="dob-hint">
+                                For example, 24 04 2019
+                            </span>
+ 
+                                <span class="error-message" asp-validation-for="ApplicationDeterminedDate"></span>
+                
+                            <div class="form-date">
+
+                                <div class="form-group form-group-day">
+                                    <label class="govuk-label govuk-date-input__label" for="Day">Day</label>
+
+                                    <input value="@Model.Day"
+                                           class="govuk-input govuk-date-input__input govuk-input--width-2  @isErrorDay"
+                                           id="Day"
+                                           name="Day"
+                                           type="number"
+                                           pattern="[0-9]*" />
+                                </div>
+                                <div class="form-group form-group-month">
+                                    <div class="form-group">
+                                        <label class="govuk-label govuk-date-input__label" for="Month">Month</label>
+                                        <input value="@Model.Month"
+                                               class="govuk-input govuk-date-input__input govuk-input--width-2  @isErrorMonth"
+                                               id="Month"
+                                               name="Month"
+                                               type="number"
+                                               pattern="[0-9]*" />
+                                    </div>
+                                </div>
+                                <div class="form-group form-group-year">
+                                    <div class="govuk-form-group">
+                                        <label class="govuk-label govuk-date-input__label" for="Year">Year</label>
+                                        <input value="@Model.Year"
+                                               class="govuk-input govuk-date-input__input govuk-input--width-4 @isErrorYear"
+                                               id="Year"
+                                               name="Year"
+                                               type="number"
+                                               pattern="[0-9]*" />
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </fieldset>
+                    </div>
+                    <input type="submit" class="roatp-button" value="Continue" />
+                </form>
+            </div>
+        </div>
+    </main>
+</div>

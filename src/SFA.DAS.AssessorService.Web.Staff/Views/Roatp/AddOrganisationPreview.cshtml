@@ -11,7 +11,7 @@
             <div class="govuk-grid-column-one-half">
                 <input type="hidden" asp-for="OrganisationId" />
                 <input type="hidden" asp-for="ProviderTypeId" />
-                <input type="hidden" name="action" value="AddOrganisationType" />
+                <input type="hidden" name="action" value="AddApplicationDeterminedDate" />
                 <a href="JavaScript:document.backForm.submit();" class="govuk-back-link">Back</a>
             </div>
         </form>
@@ -111,7 +111,14 @@
                                 @Html.Raw(Model.OrganisationTypes.FirstOrDefault(x => x.Id == Model.OrganisationTypeId).Type)
                             </dd>
                         </div>
-
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Application determined date
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @Html.Raw(Model.ApplicationDeterminedDate.Value.ToString("d MMM yyyy"))
+                            </dd>
+                        </div>
                        
 
                     </dl>
@@ -120,6 +127,7 @@
                         @{
                             await Html.RenderPartialAsync("~/Views/Roatp/_AddOrganisationFieldsPartial.cshtml");
                         }
+                        <input type="hidden" asp-for="ApplicationDeterminedDate" />
                         <input type="submit" class="roatp-button" value="Confirm and add organisation" />
                     </form>
                 </div>
