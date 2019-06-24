@@ -173,6 +173,7 @@ namespace SFA.DAS.AssessorService.Data
                 await _assessorDbContext.Contacts.FirstAsync(q => q.Id == contactId);
 
             contactEntity.SignInId = signInId;
+
             // Workaround for Mocking
             _assessorDbContext.MarkAsModified(contactEntity);
 
@@ -181,11 +182,20 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<Contact> GetContact(string email)
         {
-           
             return  await _assessorDbContext.Contacts.FirstOrDefaultAsync(q => q.Email == email);
-
         }
 
+        public async Task UpdateUserName(Guid contactId, string userName)
+        {
+            var contactEntity =
+               await _assessorDbContext.Contacts.FirstAsync(q => q.Id == contactId);
 
+            contactEntity.Username=userName;
+
+            // Workaround for Mocking
+            _assessorDbContext.MarkAsModified(contactEntity);
+
+            await _assessorDbContext.SaveChangesAsync();
+        }
     }
 }

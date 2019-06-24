@@ -18,17 +18,18 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Login
         private readonly IWebConfiguration _config;
         private readonly IOrganisationQueryRepository _organisationQueryRepository;
         private readonly IContactQueryRepository _contactQueryRepository;
-        private readonly IMediator _mediator;
+        private readonly IContactRepository _contactRepository;
 
         public LoginHandler(ILogger<LoginHandler> logger, IWebConfiguration config, 
             IOrganisationQueryRepository organisationQueryRepository, 
-            IContactQueryRepository contactQueryRepository, IMediator mediator)
+            IContactQueryRepository contactQueryRepository, IContactRepository contactRepository)
         {
             _logger = logger;
             _config = config;
             _organisationQueryRepository = organisationQueryRepository;
             _contactQueryRepository = contactQueryRepository;
-            _mediator = mediator;
+            _contactRepository = contactRepository;
+
         }
 
         public async Task<LoginResponse> Handle(LoginRequest request, CancellationToken cancellationToken)
@@ -37,6 +38,12 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Login
 
             var contact = await _contactQueryRepository.GetBySignInId(request.SignInId);
            
+            //ON-1926 Check if username is the same as the email if not update the username so that it is
+            //Since in aslogin the username is the email address of the user
+            if(string.IsNullOrEmpty(contact.Username) ||
+                !contact.Username.Equals(contact.Email, StringComparison.OrdinalIgnoreCase))
+                await _contactRepository.UpdateUserName(contact.Id,contact.Email);
+
             if (await UserDoesNotHaveAcceptableRole(contact.Id))
             {
                 _logger.LogInformation("Invalid Role");
