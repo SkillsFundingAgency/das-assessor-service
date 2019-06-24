@@ -19,7 +19,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.SwaggerHelpers
 {
     public class UpdateOptionalParamatersWithDefaultValues : IOperationFilter
     {
-        JsonSerializer _jsonSerializer;
+        private readonly JsonSerializer _jsonSerializer;
 
         public UpdateOptionalParamatersWithDefaultValues(IOptions<MvcJsonOptions> mvcJsonOptions)
         {

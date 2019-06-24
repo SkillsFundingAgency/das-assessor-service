@@ -46,7 +46,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 
         public async Task<ContactResponse> GetByUsername(string username)
         {
-            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/contacts/user/{WebUtility.UrlEncode(username)}"))
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/contacts/username/{WebUtility.UrlEncode(username)}"))
             {
                 return await RequestAndDeserialiseAsync<ContactResponse>(request, $"Could not find the contact");
             }
