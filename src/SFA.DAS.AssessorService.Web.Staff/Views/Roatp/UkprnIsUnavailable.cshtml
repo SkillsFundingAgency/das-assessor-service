@@ -1,5 +1,4 @@
-﻿@model SFA.DAS.AssessorService.Web.Staff.ViewModels.Roatp.UkrlpNotFoundViewModel
-
+﻿
 @{ ViewBag.Title = "UKRLP is unavailable"; }
 
 @{
@@ -20,17 +19,6 @@
     </h2>
     <ul class="js-error-summary-list error-summary-list"></ul>
 </div>
-@if (!ViewData.ModelState.IsValid)
-{
-    <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
-        <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
-            There is a problem
-        </h2>
-        <ul class="error-summary-list">
-            <li><a sfa-validation-for="NextAction"></a></li>
-        </ul>
-    </div>
-}
 <div class="grid-row">
     <div class="column-two-thirds">
         <h1 class="heading-xlarge roatp-heading">UKRLP is unavailable
@@ -43,44 +31,10 @@
 
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
-                <form method="post" asp-action="UklrpIsUnavailable" asp-controller="AddRoatpOrganisation">
-                    <p class="govuk-body">We were unable to get information from UKRLP.</p> 
-                    <h1 class="heading-large">
-                        What do you want to do?
-                    </h1>
-
-                    <div class="govuk-form-group" sfa-validation-for="NextAction" sfa-validationerror-class="form-group-error">
-                        <span class="error-message" asp-validation-for="NextAction"></span>
-                    
-
-                        <fieldset class="govuk-fieldset">
-
-                            <div class="roatp-radios">
-
-                            
-                                <div class="roatp-radios__item">
-
-                                    <input asp-for="NextAction" class="roatp-radios__input" id="route-try-again"
-                                           name="NextAction" type="radio" value="TryAgain"
-                                           sfa-validation-for="NextAction" sfa-validationerror-class="form-control-error">
-                                    <label class="roatp-label roatp-radios__label" for="route-try-again">
-                                        Try again later
-                                    </label>
-                                </div>
-                                <div class="roatp-radios__item">
-
-                                    <input asp-for="NextAction" class="roatp-radios__input" id="route-add-manually"
-                                           name="NextAction" type="radio" value="AddManually"
-                                           sfa-validation-for="NextAction" sfa-validationerror-class="form-control-error">
-                                    <label class="roatp-label roatp-radios__label" for="route-add-manually">
-                                        Add organisation manually
-                                    </label>
-                                </div>
-                            
-                            </div>
-                        </fieldset>
-                    </div>
-                    <input type="submit" class="roatp-button" value="Continue" />
+                <label for="UKPRN" class="roatp-label">We were unable to get information from UKRLP.</label>
+                <form method="post" asp-action="EnterUkprn" asp-controller="AddRoatpOrganisation">
+                    You'll need to <a asp-controller="AddRoatpOrganisation" asp-action="EnterUkprn">
+                        try again</a>.
                 </form>
             </div>
         </div>

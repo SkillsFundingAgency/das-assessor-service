@@ -44,7 +44,11 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
         { 
             ModelState.Clear();
             var model = new AddOrganisationViaUkprnViewModel();
-            return View("~/Views/Roatp/EnterUkprn.cshtml", model);
+
+            var addOrganisationModel = _sessionService.GetAddOrganisationDetails();
+            if (addOrganisationModel?.UKPRN != null)
+                model.UKPRN = addOrganisationModel.UKPRN;
+              return View("~/Views/Roatp/EnterUkprn.cshtml", model);
         }
 
         [Route("ukprn-not-found")]
@@ -71,13 +75,16 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
 
             try
             {
+                _sessionService.SetAddOrganisationDetails(new AddOrganisationViewModel
+                {
+                    UKPRN = model.UKPRN
+                });
                 details = await _ukrlpClient.Get(model.UKPRN);
             }
             catch (HttpRequestException ex)
             {
                 _logger.LogError(ex,$"Failed to gather organisation details from ukrlp for UKPRN:[{model?.UKPRN}]");
-                var notFoundModel = new UkrlpNotFoundViewModel {NextAction = "wait"};
-                return RedirectToAction("UklrpIsUnavailable", notFoundModel);
+                return RedirectToAction("UklrpIsUnavailable");
             }
 
             if (string.IsNullOrEmpty(details.LegalName))
@@ -223,20 +230,12 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
 
 
         [Route("ukrlp-unavailable")]
-        public async Task<IActionResult> UklrpIsUnavailable(UkrlpNotFoundViewModel model)
+        public async Task<IActionResult> UklrpIsUnavailable()
         {
    
-            if (!ModelState.IsValid) // || !string.IsNullOrEmpty(model?.FirstEntry))
-            {
-                return View("~/Views/Roatp/UkprnIsUnavailable.cshtml",model);
-            }
-
-            if (model?.NextAction == "wait" || model?.NextAction == "AddManually")
-            {
+           
                 return View("~/Views/Roatp/UkprnIsUnavailable.cshtml");
-            }
-
-            return RedirectToAction("Index", "RoatpHome");
+ 
         }
 
         [Route("new-training-provider")]
