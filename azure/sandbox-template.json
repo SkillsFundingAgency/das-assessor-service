@@ -110,9 +110,6 @@
                       "aseResourceGroup": {
                         "value": "[parameters('aseResourceGroup')]"
                     },
-                    "aspLocation": {
-                        "value": "[resourceGroup().location]"
-                    },
                     "aspSize": {
                         "value": "[parameters('aspSize')]"
                     },
