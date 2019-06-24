@@ -33,7 +33,7 @@
             "type": "string"
         },
         "aspInstances": {
-            "type": "string"
+            "type": "int"
         },
         "externalApiActiveSandboxAppServiceName": {
             "type": "string"
