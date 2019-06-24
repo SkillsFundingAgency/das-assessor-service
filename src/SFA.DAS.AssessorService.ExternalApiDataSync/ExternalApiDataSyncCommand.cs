@@ -24,6 +24,8 @@ namespace SFA.DAS.AssessorService.ExternalApiDataSync
         private readonly string _sourceConnectionString;
         private readonly string _destinationConnectionString;
 
+        private readonly BulkCopySettings _bulkCopySettings;
+
         public ExternalApiDataSyncCommand(IWebConfiguration config, IAggregateLogger aggregateLogger)
         {
             // TODO: When we're allowed to do changes that affect Staff UI...
@@ -37,9 +39,11 @@ namespace SFA.DAS.AssessorService.ExternalApiDataSync
             _sourceConnectionString = config.ExternalApiDataSync.SourceSqlConnectionString;
             _destinationConnectionString = config.SqlConnectionString;
 
-            //SqlMapper.AddTypeHandler(typeof(Domain.Entities.OrganisationData), new OrganisationDataHandler());
-            //SqlMapper.AddTypeHandler(typeof(StandardData), new StandardDataHandler());
-            //SqlMapper.AddTypeHandler(typeof(OrganisationStandardData), new OrganisationStandardDataHandler());
+            _bulkCopySettings = new BulkCopySettings { SqlBulkCopyOptions = SqlBulkCopyOptions.KeepIdentity | SqlBulkCopyOptions.KeepNulls | SqlBulkCopyOptions.TableLock };
+
+                //SqlMapper.AddTypeHandler(typeof(Domain.Entities.OrganisationData), new OrganisationDataHandler());
+                //SqlMapper.AddTypeHandler(typeof(StandardData), new StandardDataHandler());
+                //SqlMapper.AddTypeHandler(typeof(OrganisationStandardData), new OrganisationStandardDataHandler());
         }
 
         public async Task Execute()
@@ -86,7 +90,7 @@ namespace SFA.DAS.AssessorService.ExternalApiDataSync
                     bulk.Setup<OrganisationType>()
                         .ForCollection(orgTypes)
                         .WithTable("OrganisationType")
-                        .WithBulkCopySettings(new BulkCopySettings { SqlBulkCopyOptions = SqlBulkCopyOptions.KeepIdentity })
+                        .WithBulkCopySettings(_bulkCopySettings)
                         .AddAllColumns()
                         .BulkInsertOrUpdate()
                         .SetIdentityColumn(x => x.Id)
@@ -97,6 +101,7 @@ namespace SFA.DAS.AssessorService.ExternalApiDataSync
                     bulk.Setup<Organisation>()
                         .ForCollection(orgs)
                         .WithTable("Organisations")
+                        .WithBulkCopySettings(_bulkCopySettings)
                         .AddAllColumns()
                         .BulkInsertOrUpdate()
                         .MatchTargetOn(x => x.Id)
@@ -126,6 +131,7 @@ namespace SFA.DAS.AssessorService.ExternalApiDataSync
                     bulk.Setup<Contact>()
                         .ForCollection(contacts)
                         .WithTable("Contacts")
+                        .WithBulkCopySettings(_bulkCopySettings)
                         .AddAllColumns()
                         .BulkInsertOrUpdate()
                         .MatchTargetOn(x => x.Id)
@@ -167,7 +173,7 @@ namespace SFA.DAS.AssessorService.ExternalApiDataSync
                     bulk.Setup<StandardCollation>()
                         .ForCollection(standards)
                         .WithTable("StandardCollation")
-                        .WithBulkCopySettings(new BulkCopySettings { SqlBulkCopyOptions = SqlBulkCopyOptions.KeepIdentity })
+                        .WithBulkCopySettings(_bulkCopySettings)
                         .AddAllColumns()
                         .BulkInsertOrUpdate()
                         .SetIdentityColumn(x => x.Id)
@@ -178,6 +184,7 @@ namespace SFA.DAS.AssessorService.ExternalApiDataSync
                     bulk.Setup<Option>()
                         .ForCollection(options)
                         .WithTable("Options")
+                        .WithBulkCopySettings(_bulkCopySettings)
                         .AddAllColumns()
                         .BulkInsertOrUpdate()
                         .MatchTargetOn(x => x.Id)
@@ -212,7 +219,7 @@ namespace SFA.DAS.AssessorService.ExternalApiDataSync
                     bulk.Setup<DeliveryArea>()
                         .ForCollection(deliveryArea)
                         .WithTable("DeliveryArea")
-                        .WithBulkCopySettings(new BulkCopySettings { SqlBulkCopyOptions = SqlBulkCopyOptions.KeepIdentity })
+                        .WithBulkCopySettings(_bulkCopySettings)
                         .AddAllColumns()
                         .BulkInsertOrUpdate()
                         .SetIdentityColumn(x => x.Id)
@@ -226,7 +233,7 @@ namespace SFA.DAS.AssessorService.ExternalApiDataSync
                     bulk.Setup<OrganisationStandard>()
                         .ForCollection(orgStandard)
                         .WithTable("OrganisationStandard")
-                        .WithBulkCopySettings(new BulkCopySettings { SqlBulkCopyOptions = SqlBulkCopyOptions.KeepIdentity })
+                        .WithBulkCopySettings(_bulkCopySettings)
                         .AddAllColumns()
                         .BulkInsertOrUpdate()
                         .SetIdentityColumn(x => x.Id)
@@ -238,7 +245,7 @@ namespace SFA.DAS.AssessorService.ExternalApiDataSync
                     //    bulk.Setup<OrganisationStandardDeliveryArea>()
                     //        .ForCollection(orgStandardDeliveryArea)
                     //        .WithTable("OrganisationStandardDeliveryArea")
-                    //        .WithBulkCopySettings(new BulkCopySettings { SqlBulkCopyOptions = SqlBulkCopyOptions.KeepIdentity })
+                    //        .WithBulkCopySettings(_bulkCopySettings)
                     //        .AddAllColumns()
                     //        .BulkInsertOrUpdate()
                     //        .SetIdentityColumn(x => x.Id)
