@@ -33,7 +33,7 @@
             "type": "string"
         },
         "aspInstances": {
-            "type": "string"
+            "type": "int"
         },
         "externalApiActiveSandboxAppServiceName": {
             "type": "string"
@@ -109,9 +109,6 @@
                     },
                       "aseResourceGroup": {
                         "value": "[parameters('aseResourceGroup')]"
-                    },
-                    "aspLocation": {
-                        "value": "[resourceGroup().location]"
                     },
                     "aspSize": {
                         "value": "[parameters('aspSize')]"

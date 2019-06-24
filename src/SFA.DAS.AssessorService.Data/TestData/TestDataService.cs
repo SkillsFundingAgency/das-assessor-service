@@ -152,6 +152,7 @@ namespace SFA.DAS.AssessorService.Data.TestData
                         Registration = "Registered",
                         LearningStartDate = DateTime.Now.AddDays(10),
 
+                        StandardReference = i.ToString(),
                         StandardLevel = 1,
                         StandardName = "Test",
                         StandardPublicationDate = DateTime.Now,
