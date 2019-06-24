@@ -1,12 +1,12 @@
-﻿using FluentValidation.Results;
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates.Batch;
+using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
 using SFA.DAS.AssessorService.Application.Api.Validators.Certificates;
-using SFA.DAS.AssessorService.Domain.Entities;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,32 +38,44 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             _deleteValidator = deleteValidator;
         }
 
-        [HttpGet("{uln}/{lastname}/{standardcode}/{ukPrn}/{email}")]
+        [HttpGet("{uln}/{lastname}/{standard}/{ukPrn}/{*email}")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(GetBatchCertificateResponse))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(ApiResponse))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> Get(long uln, string lastname, int standardcode, int ukPrn, string email)
+        public async Task<IActionResult> Get(long uln, string lastname, string standard, int ukPrn, string email)
         {
             var request = new GetBatchCertificateRequest
             {
                 Uln = uln,
                 FamilyName = lastname,
-                StandardCode = standardcode,
                 UkPrn = ukPrn,
                 Email = email
             };
 
-            ValidationResult validationResult = _getValidator.Validate(request);
+            var validationErrors = new List<string>();
+            var isRequestValid = false;
+
+            var collatedStandard = int.TryParse(standard, out int standardCode) ? await GetCollatedStandard(standardCode) : await GetCollatedStandard(standard);
+
+            if (collatedStandard != null)
+            {
+                request.StandardCode = collatedStandard.StandardId ?? int.MinValue;
+                request.StandardReference = collatedStandard.ReferenceNumber;
+            }
+
+            var validationResult = await _getValidator.ValidateAsync(request);
+            isRequestValid = validationResult.IsValid;
+            validationErrors = validationResult.Errors.Select(error => error.ErrorMessage).ToList();
 
             GetBatchCertificateResponse getResponse = new GetBatchCertificateResponse
             {
                 Uln = request.Uln,
-                StandardCode = request.StandardCode,
+                Standard = standard,
                 FamilyName = request.FamilyName,
-                ValidationErrors = validationResult.Errors.Select(error => error.ErrorMessage).ToList()
+                ValidationErrors = validationErrors
             };
 
-            if (validationResult.IsValid)
+            if (!validationErrors.Any() && isRequestValid)
             {
                 getResponse.Certificate = await _mediator.Send(request);
             }
@@ -77,31 +89,52 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> Create([FromBody] IEnumerable<CreateBatchCertificateRequest> batchRequest)
         {
-            List<BatchCertificateResponse> response = new List<BatchCertificateResponse>();
+            //var bag = new ConcurrentBag<BatchCertificateResponse>();
+            var bag = new List<BatchCertificateResponse>();
 
-            foreach (CreateBatchCertificateRequest request in batchRequest)
+            foreach (var request in batchRequest)
             {
-                ValidationResult validationResult = _createValidator.Validate(request);
+                var validationErrors = new List<string>();
+                var isRequestValid = false;
+
+                var collatedStandard = request.StandardCode > 0 ? await GetCollatedStandard(request.StandardCode) : await GetCollatedStandard(request.StandardReference);
+
+                if (collatedStandard != null)
+                {
+                    // Only fill in the missing bits...
+                    if (request.StandardCode < 1)
+                    {
+                        request.StandardCode = collatedStandard.StandardId ?? int.MinValue;
+                    }
+                    else if (string.IsNullOrEmpty(request.StandardReference))
+                    {
+                        request.StandardReference = collatedStandard.ReferenceNumber;
+                    }
+                }
+
+                var validationResult = await _createValidator.ValidateAsync(request);
+                isRequestValid = validationResult.IsValid;
+                validationErrors = validationResult.Errors.Select(error => error.ErrorMessage).ToList();
 
                 BatchCertificateResponse certResponse = new BatchCertificateResponse
                 {
                     RequestId = request.RequestId,
                     Uln = request.Uln,
                     StandardCode = request.StandardCode,
+                    StandardReference = request.StandardReference,
                     FamilyName = request.FamilyName,
-                    ValidationErrors = validationResult.Errors.Select(error => error.ErrorMessage).ToList()
+                    ValidationErrors = validationErrors
                 };
 
-                if (validationResult.IsValid)
+                if (!validationErrors.Any() && isRequestValid)
                 {
                     certResponse.Certificate = await _mediator.Send(request);
                 }
 
-                response.Add(certResponse);
+                bag.Add(certResponse);
             }
 
-            return Ok(response);
-
+            return Ok(bag.ToList());
         }
 
         [HttpPut]
@@ -110,31 +143,52 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> Update([FromBody] IEnumerable<UpdateBatchCertificateRequest> batchRequest)
         {
-            List<BatchCertificateResponse> response = new List<BatchCertificateResponse>();
+            //var bag = new ConcurrentBag<BatchCertificateResponse>();
+            var bag = new List<BatchCertificateResponse>();
 
-            foreach (UpdateBatchCertificateRequest request in batchRequest)
+            foreach (var request in batchRequest)
             {
-                ValidationResult validationResult = _updateValidator.Validate(request);
+                var validationErrors = new List<string>();
+                var isRequestValid = false;
+
+                var collatedStandard = request.StandardCode > 0 ? await GetCollatedStandard(request.StandardCode) : await GetCollatedStandard(request.StandardReference);
+
+                if (collatedStandard != null)
+                {
+                    // Only fill in the missing bits...
+                    if (request.StandardCode < 1)
+                    {
+                        request.StandardCode = collatedStandard.StandardId ?? int.MinValue;
+                    }
+                    else if (string.IsNullOrEmpty(request.StandardReference))
+                    {
+                        request.StandardReference = collatedStandard.ReferenceNumber;
+                    }
+                }
+
+                var validationResult = await _updateValidator.ValidateAsync(request);
+                isRequestValid = validationResult.IsValid;
+                validationErrors = validationResult.Errors.Select(error => error.ErrorMessage).ToList();
 
                 BatchCertificateResponse certResponse = new BatchCertificateResponse
                 {
                     RequestId = request.RequestId,
                     Uln = request.Uln,
                     StandardCode = request.StandardCode,
+                    StandardReference = request.StandardReference,
                     FamilyName = request.FamilyName,
-                    ValidationErrors = validationResult.Errors.Select(error => error.ErrorMessage).ToList()
+                    ValidationErrors = validationErrors
                 };
 
-                if (validationResult.IsValid)
+                if (!validationErrors.Any() && isRequestValid)
                 {
                     certResponse.Certificate = await _mediator.Send(request);
                 }
 
-                response.Add(certResponse);
+                bag.Add(certResponse);
             }
 
-            return Ok(response);
-
+            return Ok(bag.ToList());
         }
 
         [HttpPost("submit")]
@@ -143,64 +197,108 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> Submit([FromBody] IEnumerable<SubmitBatchCertificateRequest> batchRequest)
         {
-            List<SubmitBatchCertificateResponse> response = new List<SubmitBatchCertificateResponse>();
+            //var bag = new ConcurrentBag<SubmitBatchCertificateResponse>();
+            var bag = new List<SubmitBatchCertificateResponse>();
 
-            foreach (SubmitBatchCertificateRequest request in batchRequest)
+            foreach (var request in batchRequest)
             {
-                ValidationResult validationResult = _submitValidator.Validate(request);
+                var validationErrors = new List<string>();
+                var isRequestValid = false;
+
+                var collatedStandard = request.StandardCode > 0 ? await GetCollatedStandard(request.StandardCode) : await GetCollatedStandard(request.StandardReference);
+
+                if (collatedStandard != null)
+                {
+                    // Only fill in the missing bits...
+                    if (request.StandardCode < 1)
+                    {
+                        request.StandardCode = collatedStandard.StandardId ?? int.MinValue;
+                    }
+                    else if (string.IsNullOrEmpty(request.StandardReference))
+                    {
+                        request.StandardReference = collatedStandard.ReferenceNumber;
+                    }
+                }
+
+                var validationResult = await _submitValidator.ValidateAsync(request);
+                isRequestValid = validationResult.IsValid;
+                validationErrors = validationResult.Errors.Select(error => error.ErrorMessage).ToList();
 
                 SubmitBatchCertificateResponse submitResponse = new SubmitBatchCertificateResponse
                 {
                     RequestId = request.RequestId,
-                    ValidationErrors = validationResult.Errors.Select(error => error.ErrorMessage).ToList()
+                    ValidationErrors = validationErrors
                 };
 
-                if (validationResult.IsValid)
+                if (!validationErrors.Any() && isRequestValid)
                 {
                     submitResponse.Certificate = await _mediator.Send(request);
                 }
 
-                response.Add(submitResponse);
+                bag.Add(submitResponse);
             }
 
-            return Ok(response);
+            return Ok(bag.ToList());
         }
 
-        [HttpDelete("{uln}/{lastname}/{standardcode}/{certificateReference}/{ukPrn}/{email}")]
+        [HttpDelete("{uln}/{lastname}/{standard}/{certificateReference}/{ukPrn}/{*email}")]
         [SwaggerResponse((int)HttpStatusCode.NoContent)]
         [SwaggerResponse((int)HttpStatusCode.NotFound)]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> Delete(long uln, string lastname, int standardcode, string certificateReference, int ukPrn, string email)
+        public async Task<IActionResult> Delete(long uln, string lastname, string standard, string certificateReference, int ukPrn, string email)
         {
             var request = new DeleteBatchCertificateRequest
             {
                 Uln = uln,
                 FamilyName = lastname,
-                StandardCode = standardcode,
                 CertificateReference = certificateReference,
                 UkPrn = ukPrn,
                 Email = email
             };
 
-            ValidationResult validationResult = _deleteValidator.Validate(request);
+            var validationErrors = new List<string>();
+            var isRequestValid = false;
 
-            if (validationResult.IsValid)
+            var collatedStandard = int.TryParse(standard, out int standardCode) ? await GetCollatedStandard(standardCode) : await GetCollatedStandard(standard);
+
+            if (collatedStandard != null)
+            {
+                request.StandardCode = collatedStandard.StandardId ?? int.MinValue;
+                request.StandardReference = collatedStandard.ReferenceNumber;
+            }
+
+            var validationResult = await _deleteValidator.ValidateAsync(request);
+            isRequestValid = validationResult.IsValid;
+            validationErrors = validationResult.Errors.Select(error => error.ErrorMessage).ToList();
+
+            if (!validationErrors.Any() && isRequestValid)
             {
                 try
                 {
                     await _mediator.Send(request);
                     return NoContent();
                 }
-                catch(NotFound)
+                catch (NotFound)
                 {
                     return NotFound();
                 }
             }
             else
             {
-                ApiResponse response = new ApiResponse((int)HttpStatusCode.Forbidden, string.Join("; ", validationResult.Errors));
+                ApiResponse response = new ApiResponse((int)HttpStatusCode.Forbidden, string.Join("; ", validationErrors));
                 return BadRequest(response);
             }
+        }
+
+
+        private async Task<StandardCollation> GetCollatedStandard(string referenceNumber)
+        {
+            return await _mediator.Send(new GetCollatedStandardRequest { ReferenceNumber = referenceNumber });
+        }
+
+        private async Task<StandardCollation> GetCollatedStandard(int standardId)
+        {
+            return await _mediator.Send(new GetCollatedStandardRequest { StandardId = standardId });
         }
     }
 }

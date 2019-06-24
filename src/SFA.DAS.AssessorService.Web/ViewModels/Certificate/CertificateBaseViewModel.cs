@@ -15,6 +15,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
             GivenNames = CertificateData.LearnerGivenNames;
             FamilyName = CertificateData.LearnerFamilyName;
             FullName = CertificateData.FullName;
+            StandardReference = CertificateData.StandardReference;
             Standard = CertificateData.StandardName;
             Level = CertificateData.StandardLevel;
             Uln = cert.Uln.ToString();
@@ -24,6 +25,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
         public string FamilyName { get; set; }
         public string GivenNames { get; set; }
         public string FullName { get; set; }
+        public string StandardReference { get; set; }
         public string Standard { get; set; }
         public string Uln { get; set; }
         public int Level { get; set; }
