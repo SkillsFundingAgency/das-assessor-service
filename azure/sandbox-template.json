@@ -75,13 +75,13 @@
             "type": "string"
         },
         "externalApiSandboxAppServiceCertificateName": {
-           "type": "string"
+            "type": "string"
         },
         "internalApiSandboxAppServiceCertificateName": {
-           "type": "string"
+            "type": "string"
         },
         "sandboxFunctionAppStorageAccountName": {
-           "type": "string"
+            "type": "string"
         }
     },
     "variables": {
@@ -107,7 +107,7 @@
                     "aseHostingEnvironmentName": {
                         "value": "[parameters('aseHostingEnvironmentName')]"
                     },
-                      "aseResourceGroup": {
+                    "aseResourceGroup": {
                         "value": "[parameters('aseResourceGroup')]"
                     },
                     "aspSize": {
@@ -139,6 +139,9 @@
                     },
                     "keyVaultResourceGroup": {
                         "value": "[parameters('sharedManagementResourceGroup')]"
+                    },
+                    "serverFarmId": {
+                        "value": "[reference('sandbox-app-service-plan').outputs.appServicePlanId.value]"
                     }
                 }
             }
@@ -163,9 +166,15 @@
                     },
                     "keyVaultResourceGroup": {
                         "value": "[parameters('sharedManagementResourceGroup')]"
+                    },
+                    "serverFarmId": {
+                        "value": "[reference('sandbox-app-service-plan').outputs.appServicePlanId.value]"
                     }
                 }
-            }
+            },
+            "dependsOn": [
+                "sandbox-external-app-service-certificate"
+            ]
         },
         {
             "apiVersion": "2017-05-10",
