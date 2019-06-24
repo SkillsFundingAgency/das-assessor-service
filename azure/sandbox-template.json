@@ -122,6 +122,7 @@
         {
             "apiVersion": "2017-05-10",
             "name": "sandbox-external-app-service-certificate",
+            "resourceGroup": "[parameters('sharedManagementResourceGroup')]",
             "type": "Microsoft.Resources/deployments",
             "condition": "[greater(length(parameters('externalApiSandboxAppServiceCertificateName')), 0)]",
             "properties": {
@@ -146,6 +147,7 @@
         {
             "apiVersion": "2017-05-10",
             "name": "sandbox-internal-app-service-certificate",
+            "resourceGroup": "[parameters('sharedManagementResourceGroup')]",
             "type": "Microsoft.Resources/deployments",
             "condition": "[greater(length(parameters('internalApiSandboxAppServiceCertificateName')), 0)]",
             "properties": {
