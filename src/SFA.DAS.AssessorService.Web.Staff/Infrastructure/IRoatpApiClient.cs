@@ -17,7 +17,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
        Task<IEnumerable<OrganisationType>> GetOrganisationTypes(int? providerTypeId);
        Task<IEnumerable<OrganisationStatus>> GetOrganisationStatuses(int? providerTypeId);
        Task<IEnumerable<RemovedReason>> GetRemovedReasons();
-       Task<bool> CreateOrganisation(CreateOrganisationRequest organisationRequest);
+       Task<bool> CreateOrganisation(CreateRoatpOrganisationRequest organisationRequest);
        Task<DuplicateCheckResponse> DuplicateUKPRNCheck(Guid organisationId, long ukprn);
        Task<DuplicateCheckResponse> DuplicateCompanyNumberCheck(Guid organisationId, string companyNumber);
        Task<DuplicateCheckResponse> DuplicateCharityNumberCheck(Guid organisationId, string charityNumber);
@@ -32,5 +32,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
        Task<bool> UpdateOrganisationUkprn(UpdateOrganisationUkprnRequest request);
         Task<bool> UpdateOrganisationCompanyNumber(UpdateOrganisationCompanyNumberRequest request);
         Task<bool> UpdateOrganisationCharityNumber(UpdateOrganisationCharityNumberRequest request);
+
+        Task<bool> UpdateApplicationDeterminedDate(UpdateOrganisationApplicationDeterminedDateRequest request);
     }
 }

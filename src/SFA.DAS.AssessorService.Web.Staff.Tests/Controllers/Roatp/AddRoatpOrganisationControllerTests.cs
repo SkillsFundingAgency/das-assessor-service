@@ -122,6 +122,16 @@
         }
 
         [Test]
+        public void Add_model_with_invalid_application_determined_date_alter_view_model()
+        {
+            var model = new AddOrganisationTypeViewModel();
+            _sessionService.Setup(x => x.SetAddOrganisationDetails(It.IsAny<AddOrganisationViewModel>()));
+            var result = _controller.AddApplicationDeterminedDate(model).GetAwaiter().GetResult();
+            result.Should().BeAssignableTo<ViewResult>();
+            _client.VerifyAll();
+        }
+
+        [Test]
         public void Add_provider_type_model_with_legal_name_redirect_to_add_provider_type_page()
         {
             var vm = new AddOrganisationViewModel {LegalName = "test"};
@@ -195,7 +205,7 @@
                 OrganisationTypeId = 1
             };
 
-            _client.Setup(x => x.CreateOrganisation(It.IsAny<CreateOrganisationRequest>())).ReturnsAsync(false);
+            _client.Setup(x => x.CreateOrganisation(It.IsAny<CreateRoatpOrganisationRequest>())).ReturnsAsync(false);
 
             var result = _controller.CreateOrganisation(model).GetAwaiter().GetResult();
 
@@ -216,7 +226,7 @@
                 OrganisationTypeId = 1
             };
 
-            _client.Setup(x => x.CreateOrganisation(It.IsAny<CreateOrganisationRequest>())).ReturnsAsync(true);
+            _client.Setup(x => x.CreateOrganisation(It.IsAny<CreateRoatpOrganisationRequest>())).ReturnsAsync(true);
 
             _controller.ControllerContext.HttpContext.User = CreateTestUser();
 

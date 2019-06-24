@@ -70,9 +70,9 @@
             return await Get<IEnumerable<RemovedReason>>($"{_baseUrl}/api/v1/lookupData/removedReasons");
         }
 
-        public async Task<bool> CreateOrganisation(CreateOrganisationRequest organisationRequest)
+        public async Task<bool> CreateOrganisation(CreateRoatpOrganisationRequest organisationRequest)
         {
-           HttpStatusCode result = await Post<CreateOrganisationRequest>($"{_baseUrl}/api/v1/organisation/create", organisationRequest);
+           HttpStatusCode result = await Post<CreateRoatpOrganisationRequest>($"{_baseUrl}/api/v1/organisation/create", organisationRequest);
 
            return await Task.FromResult(result == HttpStatusCode.OK);
         }
@@ -162,6 +162,13 @@
         public async Task<bool> UpdateOrganisationCharityNumber(UpdateOrganisationCharityNumberRequest request)
         {
             HttpStatusCode result = await Put<UpdateOrganisationCharityNumberRequest>($"{_baseUrl}/api/v1/updateOrganisation/charityNumber", request);
+
+            return await Task.FromResult(result == HttpStatusCode.OK);
+        }
+
+        public async Task<bool> UpdateApplicationDeterminedDate(UpdateOrganisationApplicationDeterminedDateRequest request)
+        {
+            HttpStatusCode result = await Put<UpdateOrganisationApplicationDeterminedDateRequest>($"{_baseUrl}/api/v1/updateOrganisation/applicationDeterminedDate", request);
 
             return await Task.FromResult(result == HttpStatusCode.OK);
         }
