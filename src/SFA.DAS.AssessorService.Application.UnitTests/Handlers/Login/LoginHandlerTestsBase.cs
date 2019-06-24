@@ -21,6 +21,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Login
         protected Mock<IOrganisationQueryRepository> OrgQueryRepository;
         protected Mock<IContactQueryRepository> ContactQueryRepository;
         protected Mock<IContactRepository> ContactRepository;
+        protected Mock<IRegisterRepository> RegisterRepository;
 
         [SetUp]
         public void Arrange()
@@ -55,9 +56,13 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Login
             });
 
             ContactRepository = new Mock<IContactRepository>();
-            ContactRepository.Setup(x => x.UpdateUserName(It.IsAny<Guid>(), It.IsAny<string>())).Returns(Task.FromResult(default(object))); 
+            ContactRepository.Setup(x => x.UpdateUserName(It.IsAny<Guid>(), It.IsAny<string>())).Returns(Task.FromResult(default(object)));
+
+            RegisterRepository = new Mock<IRegisterRepository>();
+            RegisterRepository.Setup(m => m.UpdateEpaOrganisationPrimaryContact(It.IsAny<Guid>(), It.IsAny<string>())).Returns(Task.FromResult(default(object)));
+
             Handler = new LoginHandler(new Mock<ILogger<LoginHandler>>().Object, config,
-                OrgQueryRepository.Object, ContactQueryRepository.Object, ContactRepository.Object);
+                OrgQueryRepository.Object, ContactQueryRepository.Object, ContactRepository.Object, RegisterRepository.Object);
         }
     }
 }

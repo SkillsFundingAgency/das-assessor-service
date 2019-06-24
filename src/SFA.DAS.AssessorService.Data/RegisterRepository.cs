@@ -24,7 +24,7 @@ namespace SFA.DAS.AssessorService.Data
         {
             _configuration = configuration;
             _logger = logger;
-            SqlMapper.AddTypeHandler(typeof(OrganisationData), new OrganisationDataHandler());
+            SqlMapper.AddTypeHandler(typeof(Api.Types.Models.AO.OrganisationData), new OrganisationDataHandler());
             SqlMapper.AddTypeHandler(typeof(OrganisationStandardData), new OrganisationStandardDataHandler());
         }
 
@@ -276,6 +276,20 @@ namespace SFA.DAS.AssessorService.Data
                         new { contactId });
 
                 return contactId.ToString();
+            }
+        }
+
+        public async Task UpdateEpaOrganisationPrimaryContact(Guid contactId, string contactUsername)
+        {
+            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            {
+                if (connection.State != ConnectionState.Open)
+                    await connection.OpenAsync();
+
+                    connection.Execute("update o set PrimaryContact = c.Email from organisations o " +
+                                       "inner join contacts c on o.EndPointAssessorOrganisationId = c.EndPointAssessorOrganisationId " +
+                                       "Where c.id = @contactId And o.PrimaryContact = @contactUsername",
+                        new { contactId, contactUsername });
             }
         }
     }
