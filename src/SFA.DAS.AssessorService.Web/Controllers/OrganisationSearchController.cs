@@ -263,9 +263,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 var request = CreateAnApplyOrganisationRequest(organisationSearchResult, user);
                 if (organisationSearchResult.OrganisationReferenceType == "RoEPAO")
                 {
-                    //Update assessor organisation status, sync assessor org with apply org and notify org users
+                    //Update assessor organisation status and notify org users (ON-1972 fix was applied here)
                     await UpdateOrganisationStatus(organisationSearchResult, user);
-                    await TryToCreateOrganisationInApply(request);
                     await NotifyOrganisationUsers(organisationSearchResult, user);
                 }
                 else
