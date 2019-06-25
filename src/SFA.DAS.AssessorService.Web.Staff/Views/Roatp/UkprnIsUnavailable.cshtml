@@ -1,5 +1,3 @@
-﻿@model SFA.DAS.AssessorService.Web.Staff.ViewModels.Roatp.UkrlpNotFoundViewModel
-
 @{
     ViewBag.Title = (!ViewData.ModelState.IsValid ? "Error: " : "") + "UKRLP is unavailable";
 }
@@ -9,72 +7,17 @@
     <a href="JavaScript:document.backForm.submit();" class="govuk-back-link">Back</a>
 </form>
 
-
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
 
-            <div class="js-error-summary govuk-error-summary" role="alert" aria-labelledby="error-summary-title" tabindex="-1" data-module="error-summary">
-                <h2 class="govuk-error-summary__title" id="error-summary-title">
-                    There is a problem
-                </h2>
-                <div class="govuk-error-summary__body">
-                    <ul class="js-error-summary-list govuk-list govuk-error-summary__list"></ul>
-                </div>
-            </div>
-
-            @if (!ViewData.ModelState.IsValid)
-            {
-                <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
-                    <h2 class="govuk-error-summary__title" id="error-summary-title">
-                        There is a problem
-                    </h2>
-                    <div class="govuk-error-summary__body">
-                        <ul class="govuk-list govuk-error-summary__list">
-                            <li><a sfa-validation-for="NextAction"></a></li>
-                        </ul>
-                    </div>
-                </div>
-            }
-
             <h1 class="govuk-heading-xl">UKRLP is unavailable</h1>
             
-            <p class="govuk-body">We were unable to get information from UKRLP.</p> 
+            <p class="govuk-body">We were unable to get information from UKRLP.</p>
 
-            <form method="post" asp-action="UklrpIsUnavailable" asp-controller="AddRoatpOrganisation">
-
-                <h2 class="govuk-heading-l">
-                    What do you want to do?
-                </h2>
-
-                <div class="govuk-form-group" sfa-validation-for="NextAction" sfa-validationerror-class="govuk-form-group--error">
-                    @if (!ViewData.ModelState.IsValid)
-                    {
-                        <span class="govuk-error-message" asp-validation-for="NextAction"></span>
-                    }
-
-                    <div class="govuk-radios">
-                        <div class="govuk-radios__item">
-                            <input asp-for="NextAction" class="govuk-radios__input" id="route-try-again"
-                                    name="NextAction" type="radio" value="TryAgain"
-                                    sfa-validation-for="NextAction" sfa-validationerror-class="govuk-input--error">
-                            <label class="govuk-label govuk-radios__label" for="route-try-again">
-                                Try again later
-                            </label>
-                        </div>
-                        <div class="govuk-radios__item">
-                            <input asp-for="NextAction" class="govuk-radios__input" id="route-add-manually"
-                                    name="NextAction" type="radio" value="AddManually"
-                                    sfa-validation-for="NextAction" sfa-validationerror-class="govuk-input--error">
-                            <label class="govuk-label govuk-radios__label" for="route-add-manually">
-                                Add organisation manually
-                            </label>
-                        </div>
-                    
-                    </div>
-                </div>
-                <input type="submit" class="govuk-button" value="Continue" />
-            </form>
+            <p class="govuk-body">
+                You'll need to <a asp-controller="AddRoatpOrganisation" asp-action="EnterUkprn">try <span class="govuk-visually-hidden">entering a UKPRN </span>again</a>.
+            </p>
         </div>
     </div>
 </main>

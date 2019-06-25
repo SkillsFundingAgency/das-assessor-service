@@ -75,6 +75,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Private
             if (!string.IsNullOrEmpty(vm.SelectedStandardCode))
             {
                 var selectedStandard = standards.First(q => q.StandardId.ToString() == vm.SelectedStandardCode);
+                vm.StandardReference = selectedStandard.ReferenceNumber;
                 vm.Standard = selectedStandard.Title;
                 vm.Level = selectedStandard.StandardData.Level.GetValueOrDefault();
 

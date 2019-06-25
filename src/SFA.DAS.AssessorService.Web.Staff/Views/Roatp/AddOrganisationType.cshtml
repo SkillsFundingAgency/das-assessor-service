@@ -46,7 +46,10 @@
 
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
-                <form method="post" asp-action="ConfirmOrganisationDetails" asp-controller="AddRoatpOrganisation">
+               
+                @*<form method="post" asp-action="ConfirmOrganisationDetails" asp-controller="AddRoatpOrganisation">*@
+                <form method="post" asp-action="AddApplicationDeterminedDate" asp-controller="AddRoatpOrganisation">
+                    @Html.HiddenFor(x=>x.LegalName)
                     <div class="govuk-form-group" sfa-validation-for="OrganisationTypeId" sfa-validationerror-class="form-group-error">
                         <span class="error-message" asp-validation-for="OrganisationTypeId"></span>
                         <fieldset class="govuk-fieldset">
@@ -68,7 +71,7 @@
                             </div>
                         </fieldset>
                     </div>
-                    <input type="submit" class="roatp-button" value="Continue" />
+                    <input type="submit" class="roatp-button" value="Continue"/>
                 </form>
             </div>
         </div>

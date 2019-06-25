@@ -17,7 +17,7 @@ namespace SFA.DAS.AssessorService.Domain.Entities
 
         public string CompanyNumber { get; set; }
         public string CharityNumber { get; set; }
-
+        public DateTime? ApplicationDeterminedDate { get; set; }
         public FHADetails FhaDetails { get; set; }
     }
 }

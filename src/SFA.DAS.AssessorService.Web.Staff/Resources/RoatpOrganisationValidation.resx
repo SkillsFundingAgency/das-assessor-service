@@ -138,6 +138,27 @@
   <data name="InvalidProviderTypeId" xml:space="preserve">
     <value>Tell us what the new training provider is</value>
   </data>
+  <data name="ApplicationDeterminedDateNoFieldsEntered" xml:space="preserve">
+    <value>Enter the application determined date</value>
+  </data>
+  <data name="ApplicationDeterminedDateFieldsNotEntered" xml:space="preserve">
+    <value>Enter the application determined date including a day, month and year</value>
+  </data>
+  <data name="ApplicationDeterminedDateInvalidDates" xml:space="preserve">
+    <value>Enter a valid application determined date including a day, month and year</value>
+  </data>
+  <data name="ApplicationDeterminedDateFutureDate" xml:space="preserve">
+    <value>Application determined date must be today or in the past</value>
+  </data>
+  <data name="ApplicationDeterminedDateFutureDay" xml:space="preserve">
+    <value>Application determined date requires a valid day</value>
+  </data>
+  <data name="ApplicationDeterminedDateFutureMonth" xml:space="preserve">
+    <value>Application determined date requires a valid month</value>
+  </data>
+  <data name="ApplicationDeterminedDateFutureYear" xml:space="preserve">
+    <value>Application determined date requires a valid year</value>
+  </data>
   <data name="InvalidOrganisationTypeId" xml:space="preserve">
     <value>Tell us what the new organisation type is</value>
   </data>

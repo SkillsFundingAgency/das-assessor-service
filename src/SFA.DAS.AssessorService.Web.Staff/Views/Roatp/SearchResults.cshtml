@@ -6,13 +6,13 @@
 }
 
 @{
-var searchParams = new Dictionary<string, string>
-{
-    { "SearchTerm", Model.SearchTerm }
-};
+    var searchParams = new Dictionary<string, string>
+    {
+        { "SearchTerm", Model.SearchTerm }
+    };
 }
 
-<a asp-controller="RoatpHome" asp-action="Index" class="govuk-back-link">Back</a>
+<a class="govuk-back-link" asp-controller="RoatpHome" asp-action="Index">Back</a>
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
@@ -21,9 +21,8 @@ var searchParams = new Dictionary<string, string>
         </div>
     </div>
 
-    @if (Model.SearchResults.Count > 0)
+    @if (Model.SearchResults.Any())
     {
-
         <div class="govuk-grid-row">
             <div id="searchResultsList" class="govuk-grid-column-one-third">
                 <ul class="govuk-list">
@@ -67,6 +66,7 @@ var searchParams = new Dictionary<string, string>
         
             <div id="organisationDetails" class="govuk-grid-column-two-thirds">
                 <dl class="govuk-summary-list">
+
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">
                             Legal name
@@ -74,15 +74,11 @@ var searchParams = new Dictionary<string, string>
                         <dd class="govuk-summary-list__value">
                             @Html.Raw(Model.SelectedResult.LegalName)
                         </dd>
-
                         <dd class="govuk-summary-list__actions">
-
                             <a class="govuk-link" asp-controller="UpdateRoatpOrganisation" asp-action="UpdateOrganisationLegalName">
                                 Change<span class="govuk-visually-hidden"> legal name</span>
                             </a>
-
                         </dd>
-
                     </div>
 
                     <div class="govuk-summary-list__row">
@@ -92,15 +88,11 @@ var searchParams = new Dictionary<string, string>
                         <dd class="govuk-summary-list__value">
                             @Html.Raw(Model.SelectedResult.UKPRN)
                         </dd>
-
                         <dd class="govuk-summary-list__actions">
-
                             <a class="govuk-link" asp-controller="UpdateRoatpOrganisation" asp-action="UpdateOrganisationUkprn">
                                 Change<span class="govuk-visually-hidden"> UKPRN</span>
                             </a>
-
                         </dd>
-
                     </div>
 
                     <div class="govuk-summary-list__row">
@@ -110,15 +102,11 @@ var searchParams = new Dictionary<string, string>
                         <dd class="govuk-summary-list__value">
                             @Html.OrganisationStatus(Model.SelectedResult)
                         </dd>
-
                         <dd class="govuk-summary-list__actions">
-
                             <a class="govuk-link" asp-controller="UpdateRoatpOrganisation" asp-action="UpdateOrganisationStatus">
                                 Change<span class="govuk-visually-hidden"> status</span>
                             </a>
-
                         </dd>
-
                     </div>
 
                     <div class="govuk-summary-list__row">
@@ -128,15 +116,11 @@ var searchParams = new Dictionary<string, string>
                         <dd class="govuk-summary-list__value">
                             @Html.ProviderType(Model.SelectedResult)
                         </dd>
-
                         <dd class="govuk-summary-list__actions">
-
                             <a class="govuk-link" asp-controller="UpdateRoatpOrganisation" asp-action="UpdateOrganisationProviderType">
                                 Change<span class="govuk-visually-hidden"> type of provider</span>
                             </a>
-
                         </dd>
-
                     </div>
 
                     <div class="govuk-summary-list__row">
@@ -146,15 +130,11 @@ var searchParams = new Dictionary<string, string>
                         <dd class="govuk-summary-list__value">
                             @Html.Raw(Model.SelectedResult.OrganisationType.Type)
                         </dd>
-
                         <dd class="govuk-summary-list__actions">
-
                             <a class="govuk-link" asp-controller="UpdateRoatpOrganisation" asp-action="UpdateOrganisationType">
                                 Change<span class="govuk-visually-hidden"> organisation type</span>
                             </a>
-
                         </dd>
-
                     </div>
 
                     <div class="govuk-summary-list__row">
@@ -173,15 +153,11 @@ var searchParams = new Dictionary<string, string>
                                 Not applicable
                             </dd>
                         }
-
                         <dd class="govuk-summary-list__actions">
-
                             <a class="govuk-link" asp-controller="UpdateRoatpOrganisation" asp-action="UpdateOrganisationCompanyNumber">
                                 Change<span class="govuk-visually-hidden"> companies house number</span>
                             </a>
-
                         </dd>
-
                     </div>
 
                     <div class="govuk-summary-list__row">
@@ -201,21 +177,17 @@ var searchParams = new Dictionary<string, string>
                             </dd>
                         }
                         <dd class="govuk-summary-list__actions">
-
                             <a class="govuk-link" asp-controller="UpdateRoatpOrganisation" asp-action="UpdateOrganisationCharityNumber">
                                 Change<span class="govuk-visually-hidden"> charity number</span>
                             </a>
                         </dd>
-
                     </div>
 
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">
                             Trading name
                         </dt>
-
                         <dd class="govuk-summary-list__value">
-
                             @if (!String.IsNullOrWhiteSpace(Model.SelectedResult.TradingName))
                             {
                                 @Html.Raw(Model.SelectedResult.TradingName)
@@ -225,9 +197,7 @@ var searchParams = new Dictionary<string, string>
                                 <text>Not applicable</text>
                             }
                         </dd>
-
                         <dd class="govuk-summary-list__actions">
-                
                             <a class="govuk-link" asp-controller="UpdateRoatpOrganisation" asp-action="UpdateOrganisationTradingName">
                                 Change<span class="govuk-visually-hidden"> trading name</span>
                             </a>
@@ -243,14 +213,11 @@ var searchParams = new Dictionary<string, string>
                         <dd class="govuk-summary-list__value">
                             @Html.BooleanYesNo(Model.SelectedResult.OrganisationData.ParentCompanyGuarantee)
                         </dd>
-
                         <dd class="govuk-summary-list__actions">
                             <a class="govuk-link" asp-controller="UpdateRoatpOrganisation" asp-action="UpdateOrganisationParentCompanyGuarantee">
                                 Change<span class="govuk-visually-hidden"> parent company guarantee</span>
                             </a>
-
                         </dd>
-
                     </div>
 
                     <div class="govuk-summary-list__row">
@@ -260,15 +227,25 @@ var searchParams = new Dictionary<string, string>
                         <dd class="govuk-summary-list__value">
                             @Html.BooleanYesNo(Model.SelectedResult.OrganisationData.FinancialTrackRecord)
                         </dd>
-
                         <dd class="govuk-summary-list__actions">
-
                             <a class="govuk-link" asp-controller="UpdateRoatpOrganisation" asp-action="UpdateOrganisationFinancialTrackRecord">
                                 Change<span class="govuk-visually-hidden"> financial track record</span>
                             </a>
-
                         </dd>
+                    </div>
 
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Application determined date
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            @Html.Raw(Model.SelectedResult.OrganisationData.ApplicationDeterminedDate?.ToString("dd MMM yyyy"))
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a class="govuk-link" asp-controller="UpdateRoatpOrganisation" asp-action="UpdateOrganisationApplicationDeterminedDate">
+                                Change<span class="govuk-visually-hidden"> application determined date</span>
+                            </a>
+                        </dd>
                     </div>
 
                 </dl>
