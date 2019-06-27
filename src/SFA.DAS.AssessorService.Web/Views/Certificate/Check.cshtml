@@ -288,9 +288,19 @@ else
                             @Model.Employer
                         </dd>
                         <dd class="govuk-summary-list__actions">
-                            <a class="govuk-link" asp-controller="CertificateAddress" asp-action="Address" asp-route-redirecttocheck="true" asp-route-edit="true">
-                                Change<span class="govuk-visually-hidden"> organisation</span>
-                            </a>
+                            @if (string.IsNullOrEmpty(@Model.AddressLine1) || string.IsNullOrEmpty(@Model.Postcode))
+                            {
+                                <a class="govuk-link" asp-controller="CertificateAddress" asp-action="Address" asp-route-redirecttocheck="true" asp-route-edit="false">
+                                    Change<span class="govuk-visually-hidden"> organisation</span>
+                                </a>
+                            }
+                            else
+                            {
+                                <a class="govuk-link" asp-controller="CertificateAddress" asp-action="Address" asp-route-redirecttocheck="true" asp-route-edit="true">
+                                    Change<span class="govuk-visually-hidden"> organisation</span>
+                                </a>
+                            }
+
                         </dd>
                     </div>
                     <div class="govuk-summary-list__row">
@@ -316,9 +326,18 @@ else
                             @Model.Postcode
                         </dd>
                         <dd class="govuk-summary-list__actions">
-                            <a class="govuk-link" asp-controller="CertificateAddress" asp-action="Address" asp-route-redirecttocheck="true" asp-route-edit="true">
-                                Change<span class="govuk-visually-hidden"> address</span>
-                            </a>
+                            @if (string.IsNullOrEmpty(@Model.AddressLine1) || string.IsNullOrEmpty(@Model.Postcode))
+                            {
+                                <a class="govuk-link" asp-controller="CertificateAddress" asp-action="Address" asp-route-redirecttocheck="true" asp-route-edit="false">
+                                    Change<span class="govuk-visually-hidden"> address</span>
+                                </a>
+                            }
+                            else
+                            {
+                                <a class="govuk-link" asp-controller="CertificateAddress" asp-action="Address" asp-route-redirecttocheck="true" asp-route-edit="true">
+                                    Change<span class="govuk-visually-hidden"> address</span>
+                                </a>
+                            }
                         </dd>
                     </div>
                 </dl>
