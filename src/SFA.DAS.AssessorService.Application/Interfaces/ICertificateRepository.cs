@@ -38,5 +38,6 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task ApproveCertificates(List<ApprovalResult> approvalResults, string userName);
         Task<PaginatedList<Certificate>> GetCertificatesForApproval(int pageIndex, int pageSize,string status, string privatelyFundedStatus);
         Task<bool> CertifciateExistsForUln(long uln);
+        Task UpdateCertificateWithBatchNumber(UpdateCertificatesBatchNumberRequest updateCertificateBatchNumberRequest);
     }
 }

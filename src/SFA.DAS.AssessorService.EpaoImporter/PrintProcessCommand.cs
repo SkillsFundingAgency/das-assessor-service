@@ -47,7 +47,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter
 
         public async Task Execute()
         {
-            await UploadCertificateDetailsToPinter();
+            await UploadCertificateDetailsToPrinter();
             await DownloadAndDeleteCertificatePrinterResponses();
         }
 
@@ -118,7 +118,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter
         }
 
 
-        private async Task UploadCertificateDetailsToPinter()
+        private async Task UploadCertificateDetailsToPrinter()
         {
             try
             {
@@ -144,40 +144,53 @@ namespace SFA.DAS.AssessorService.EpaoImporter
                 }
                 else
                 {
-                    var certificateFileName =
-                        $"IFA-Certificate-{DateTime.UtcNow.UtcToTimeZoneTime():MMyy}-{batchNumber.ToString().PadLeft(3, '0')}.json";
-                    var excelFileName = $"IFA-Certificate-{DateTime.UtcNow.UtcToTimeZoneTime()}-{batchNumber.ToString().PadLeft(3, '0')}.xlsx";
+                    await _assessorServiceApi.UpdateBatchNumberInCertificates(batchNumber, certificates);
 
-                    var batchLogRequest = new CreateBatchLogRequest
+                    var listOfCertificates = certificates.GroupBy(item => item.BatchNumber)
+                                             .Select(group => group.ToList())
+                                             .ToList();
+                    foreach (var certs in listOfCertificates)
                     {
-                        BatchNumber = batchNumber,
-                        FileUploadStartTime = DateTime.UtcNow,
-                        Period = DateTime.UtcNow.UtcToTimeZoneTime().ToString("MMyy"),
-                        BatchCreated = DateTime.UtcNow,
-                        CertificatesFileName = certificateFileName
-                    };
+                        
+                        var certificate = certs.FirstOrDefault();
+                        batchNumber = !string.IsNullOrEmpty(certificate.BatchNumber) ? Convert.ToInt32(certificate.BatchNumber): batchNumber;
 
-                    var configuration = _configurationWrapper.GetConfiguration();
 
-                    if (configuration.Sftp.UseJson)
-                    {
-                        _printingJsonCreator.Create(batchNumber, certificates, certificateFileName);
-                        await _notificationService.Send(batchNumber, certificates, certificateFileName);
+                        var certificateFileName =
+                            $"IFA-Certificate-{DateTime.UtcNow.UtcToTimeZoneTime():MMyy}-{batchNumber.ToString().PadLeft(3, '0')}.json";
+                        var excelFileName = $"IFA-Certificate-{DateTime.UtcNow.UtcToTimeZoneTime()}-{batchNumber.ToString().PadLeft(3, '0')}.xlsx";
+
+                        var batchLogRequest = new CreateBatchLogRequest
+                        {
+                            BatchNumber = batchNumber,
+                            FileUploadStartTime = DateTime.UtcNow,
+                            Period = DateTime.UtcNow.UtcToTimeZoneTime().ToString("MMyy"),
+                            BatchCreated = DateTime.UtcNow,
+                            CertificatesFileName = certificateFileName
+                        };
+
+                        var configuration = _configurationWrapper.GetConfiguration();
+
+                        if (configuration.Sftp.UseJson)
+                        {
+                            _printingJsonCreator.Create(batchNumber, certs, certificateFileName);
+                            await _notificationService.Send(batchNumber, certs, certificateFileName);
+                        }
+                        else
+                        {
+                            _printingSpreadsheetCreator.Create(batchNumber, certs);
+                            await _notificationService.Send(batchNumber, certs, excelFileName);
+                        }
+
+                        batchLogRequest.FileUploadEndTime = DateTime.UtcNow;
+                        batchLogRequest.NumberOfCertificates = certs.Count;
+                        batchLogRequest.NumberOfCoverLetters = 0;
+                        batchLogRequest.ScheduledDate = batchLogResponse.ScheduledDate;
+
+                        await _fileTransferClient.LogUploadDirectory();
+                        await _assessorServiceApi.CreateBatchLog(batchLogRequest);
+                        await _assessorServiceApi.ChangeStatusToPrinted(certs);
                     }
-                    else
-                    {
-                        _printingSpreadsheetCreator.Create(batchNumber, certificates);
-                        await _notificationService.Send(batchNumber, certificates, excelFileName);
-                    }
-
-                    batchLogRequest.FileUploadEndTime = DateTime.UtcNow;
-                    batchLogRequest.NumberOfCertificates = certificates.Count;
-                    batchLogRequest.NumberOfCoverLetters = 0;
-                    batchLogRequest.ScheduledDate = batchLogResponse.ScheduledDate;
-
-                    await _fileTransferClient.LogUploadDirectory();
-                    await _assessorServiceApi.CreateBatchLog(batchLogRequest);
-                    await _assessorServiceApi.ChangeStatusToPrinted(batchNumber, certificates);
                 }
                 await _assessorServiceApi.CompleteSchedule(scheduleRun.Id);
             }

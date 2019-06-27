@@ -377,12 +377,31 @@ namespace SFA.DAS.AssessorService.Data
                 var certificate =
                     await _context.Certificates.FirstAsync(q => q.CertificateReference == certificateStatus.CertificateReference);
 
-                certificate.BatchNumber = updateCertificatesBatchToIndicatePrintedRequest.BatchNumber;
                 certificate.Status = CertificateStatus.Printed;
                 certificate.ToBePrinted = toBePrintedDate;
                 certificate.UpdatedBy = UpdatedBy.PrintFunction;
 
                 await UpdateCertificateLog(certificate, CertificateActions.Printed, UpdatedBy.PrintFunction);
+            }
+
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task UpdateCertificateWithBatchNumber(UpdateCertificatesBatchNumberRequest updateCertificateBatchNumberRequest)
+        {
+          
+            foreach (var certificateReference in updateCertificateBatchNumberRequest.CertificateReference)
+            {
+                var certificate =
+                    await _context.Certificates.FirstOrDefaultAsync(q => q.CertificateReference == certificateReference && 
+                    q.BatchNumber == null && q.Status == CertificateStatus.Submitted);
+                if (certificate != null)
+                {
+                    certificate.BatchNumber = updateCertificateBatchNumberRequest.BatchNumber;
+                    certificate.UpdatedBy = UpdatedBy.PrintFunction;
+
+                    await UpdateCertificateLog(certificate, CertificateActions.BatchNumber, UpdatedBy.PrintFunction);
+                }
             }
 
             await _context.SaveChangesAsync();

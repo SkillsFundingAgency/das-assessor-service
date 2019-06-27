@@ -18,7 +18,7 @@ namespace SFA.DAS.AssessorService.PrintFunction.Tests.AssessorServiceApi
             MockHttp.When(HttpMethod.Put, "http://localhost:59022/api/v1/certificates/*")                         
                 .Respond(System.Net.HttpStatusCode.OK, "application/json", "{'status' : 'Boo'}");
 
-            AssessorServiceApi.ChangeStatusToPrinted(1, certificateResponses).ConfigureAwait(false);
+            AssessorServiceApi.ChangeStatusToPrinted(certificateResponses).ConfigureAwait(false);
         }
 
         [Test]

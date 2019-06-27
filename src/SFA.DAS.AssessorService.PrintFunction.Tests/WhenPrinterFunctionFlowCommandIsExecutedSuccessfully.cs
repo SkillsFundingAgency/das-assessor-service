@@ -132,7 +132,7 @@ namespace SFA.DAS.AssessorService.PrintFunction.Tests
         public void ItShouldSetStatusOnCertificates()
         {
             _assessorServiceApi.Verify(q =>
-                q.ChangeStatusToPrinted(It.IsAny<int>(), It.IsAny<List<CertificateResponse>>()), Times.Once());
+                q.ChangeStatusToPrinted( It.IsAny<List<CertificateResponse>>()), Times.Once());
         }
     }
 }

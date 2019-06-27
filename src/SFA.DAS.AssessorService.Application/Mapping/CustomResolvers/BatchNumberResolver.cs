@@ -8,7 +8,7 @@ namespace SFA.DAS.AssessorService.Application.Mapping.CustomResolvers
     {
         public string Resolve(Certificate source, CertificateResponse destination, string destMember, ResolutionContext context)
         {
-            if (source.BatchNumber.HasValue)
+            if (source.BatchNumber.HasValue && source.ToBePrinted != null)
             {
                 var month = source.ToBePrinted.Value.Month.ToString().PadLeft(2, '0');
                 var year = source.ToBePrinted.Value.Year;
