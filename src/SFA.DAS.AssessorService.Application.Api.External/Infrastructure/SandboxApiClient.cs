@@ -43,19 +43,19 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
             {
                 var newRequest = request.ToList();
 
-                //foreach (var req in newRequest.Where(r => r.CertificateData?.Learner != null && r.CertificateData?.Standard != null))
-                //{
-                //    var standard = req.CertificateData.Standard.StandardCode.HasValue ? req.CertificateData.Standard.StandardCode.ToString() : req.CertificateData.Standard.StandardReference;
-                //    var details = await GetLearnerDetail(standard, req.CertificateData.Learner.Uln);
+                foreach (var req in newRequest.Where(r => r.Learner != null && r.Standard != null))
+                {
+                    var standard = req.Standard.StandardCode.HasValue ? req.Standard.StandardCode.ToString() : req.Standard.StandardReference;
+                    var details = await GetLearnerDetail(standard, req.Learner.Uln);
 
-                //    if (details != null)
-                //    {
-                //        req.CertificateData.Standard.StandardReference = details.StandardReference;
-                //        req.CertificateData.Standard.StandardCode = details.StandardCode;
-                //        req.UkPrn = details.UkPrn;
-                //        req.Email = details.PrimaryContactEmail ?? req.Email;
-                //    }
-                //}
+                    if (details != null)
+                    {
+                        req.Standard.StandardReference = details.StandardReference;
+                        req.Standard.StandardCode = details.StandardCode;
+                        req.UkPrn = details.UkPrn;
+                        req.Email = details.PrimaryContactEmail ?? req.Email;
+                    }
+                }
 
                 return await base.CreateEpas(newRequest);
             }
@@ -69,19 +69,19 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
             {
                 var newRequest = request.ToList();
 
-                //foreach (var req in newRequest.Where(r => r.CertificateData?.Learner != null && r.CertificateData?.Standard != null))
-                //{
-                //    var standard = req.CertificateData.Standard.StandardCode.HasValue ? req.CertificateData.Standard.StandardCode.ToString() : req.CertificateData.Standard.StandardReference;
-                //    var details = await GetLearnerDetail(standard, req.CertificateData.Learner.Uln);
+                foreach (var req in newRequest.Where(r => r.Learner != null && r.Standard != null))
+                {
+                    var standard = req.Standard.StandardCode.HasValue ? req.Standard.StandardCode.ToString() : req.Standard.StandardReference;
+                    var details = await GetLearnerDetail(standard, req.Learner.Uln);
 
-                //    if (details != null)
-                //    {
-                //        req.CertificateData.Standard.StandardReference = details.StandardReference;
-                //        req.CertificateData.Standard.StandardCode = details.StandardCode;
-                //        req.UkPrn = details.UkPrn;
-                //        req.Email = details.PrimaryContactEmail ?? req.Email;
-                //    }
-                //}
+                    if (details != null)
+                    {
+                        req.Standard.StandardReference = details.StandardReference;
+                        req.Standard.StandardCode = details.StandardCode;
+                        req.UkPrn = details.UkPrn;
+                        req.Email = details.PrimaryContactEmail ?? req.Email;
+                    }
+                }
 
                 return await base.UpdateEpas(newRequest);
             }
