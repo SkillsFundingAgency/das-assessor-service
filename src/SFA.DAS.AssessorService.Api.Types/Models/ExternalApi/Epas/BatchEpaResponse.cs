@@ -1,10 +1,9 @@
-﻿using SFA.DAS.AssessorService.Domain.Entities;
-using SFA.DAS.AssessorService.Domain.JsonData;
+﻿using SFA.DAS.AssessorService.Domain.JsonData;
 using System.Collections.Generic;
 
-namespace SFA.DAS.AssessorService.Api.Types.Models.Certificates.Batch
+namespace SFA.DAS.AssessorService.Api.Types.Models.ExternalApi.Epas
 {
-    public class BatchCertificateResponse
+    public class BatchEpaResponse
     {
         public string RequestId { get; set; }
         public long Uln { get; set; }
@@ -13,7 +12,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Certificates.Batch
         public int StandardCode { get; set; }
         public string StandardReference { get; set; }
 
-        public Certificate Certificate { get; set; }
+        public EpaDetails EpaDetails { get; set; }
 
         public List<string> ValidationErrors { get; set; } = new List<string>();
     }

@@ -75,7 +75,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
         [SwaggerRequestExample(typeof(IEnumerable<CreateCertificateRequest>), typeof(SwaggerHelpers.Examples.CreateCertificateExample))]
         [SwaggerResponseExample((int)HttpStatusCode.OK, typeof(SwaggerHelpers.Examples.CreateCertificateResponseExample))]
         [SwaggerResponse((int)HttpStatusCode.OK, "For each item: The created Certificate if valid, else a list of validation errors.", typeof(IEnumerable<CreateCertificateResponse>))]
-        [SwaggerResponseExample((int)HttpStatusCode.Forbidden, typeof(SwaggerHelpers.Examples.TooManyCertificatesApiResponseExample))]
+        [SwaggerResponseExample((int)HttpStatusCode.Forbidden, typeof(SwaggerHelpers.Examples.TooManyRequestsResponseExample))]
         [SwaggerResponse((int)HttpStatusCode.Forbidden, "There are too many certificates specified within the request.", typeof(ApiResponse))]
         [SwaggerOperation("Create Certificates", "Creates a new Certificate for each valid item within the request.", Consumes = new string[] { "application/json" }, Produces = new string[] { "application/json" })]
         public async Task<IActionResult> CreateCertificates([FromBody] IEnumerable<CreateCertificateRequest> request)
@@ -117,7 +117,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
         [SwaggerRequestExample(typeof(IEnumerable<UpdateCertificateRequest>), typeof(SwaggerHelpers.Examples.UpdateCertificateExample))]
         [SwaggerResponseExample((int)HttpStatusCode.OK, typeof(SwaggerHelpers.Examples.UpdateCertificateResponseExample))]
         [SwaggerResponse((int)HttpStatusCode.OK, "For each item: The updated Certificate if valid, else a list of validation errors.", typeof(IEnumerable<UpdateCertificateResponse>))]
-        [SwaggerResponseExample((int)HttpStatusCode.Forbidden, typeof(SwaggerHelpers.Examples.TooManyCertificatesApiResponseExample))]
+        [SwaggerResponseExample((int)HttpStatusCode.Forbidden, typeof(SwaggerHelpers.Examples.TooManyRequestsResponseExample))]
         [SwaggerResponse((int)HttpStatusCode.Forbidden, "There are too many certificates specified within the request.", typeof(ApiResponse))]
         [SwaggerOperation("Update Certificates", "Updates the specified Certificate with the information contained in each valid request.", Consumes = new string[] { "application/json" }, Produces = new string[] { "application/json" })]
         public async Task<IActionResult> UpdateCertificates([FromBody] IEnumerable<UpdateCertificateRequest> request)
@@ -161,7 +161,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
         [SwaggerRequestExample(typeof(IEnumerable<SubmitCertificateRequest>), typeof(SwaggerHelpers.Examples.SubmitCertificateExample))]
         [SwaggerResponseExample((int)HttpStatusCode.OK, typeof(SwaggerHelpers.Examples.SubmitCertificateResponseExample))]
         [SwaggerResponse((int)HttpStatusCode.OK, "For each item: The submitted Certificate if valid, else a list of validation errors.", typeof(IEnumerable<SubmitCertificateResponse>))]
-        [SwaggerResponseExample((int)HttpStatusCode.Forbidden, typeof(SwaggerHelpers.Examples.TooManyCertificatesApiResponseExample))]
+        [SwaggerResponseExample((int)HttpStatusCode.Forbidden, typeof(SwaggerHelpers.Examples.TooManyRequestsResponseExample))]
         [SwaggerResponse((int)HttpStatusCode.Forbidden, "There are too many certificates specified within the request.", typeof(ApiResponse))]
         [SwaggerOperation("Submit Certificates", "Submits the specified Certificate for each valid request.", Consumes = new string[] { "application/json" }, Produces = new string[] { "application/json" })]
         public async Task<IActionResult> SubmitCertificates([FromBody] IEnumerable<SubmitCertificateRequest> request)

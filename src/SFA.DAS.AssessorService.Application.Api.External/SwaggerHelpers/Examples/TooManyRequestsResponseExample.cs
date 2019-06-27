@@ -4,7 +4,7 @@ using System.Net;
 
 namespace SFA.DAS.AssessorService.Application.Api.External.SwaggerHelpers.Examples
 {
-    public class TooManyCertificatesApiResponseExample : IExamplesProvider
+    public class TooManyRequestsResponseExample : IExamplesProvider
     {
         public object GetExamples()
         {

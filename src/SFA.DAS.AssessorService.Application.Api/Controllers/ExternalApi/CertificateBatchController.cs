@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.AssessorService.Api.Types.Models;
-using SFA.DAS.AssessorService.Api.Types.Models.Certificates.Batch;
+using SFA.DAS.AssessorService.Api.Types.Models.ExternalApi.Certificates;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
@@ -14,7 +14,7 @@ using System.Net;
 using System.Threading.Tasks;
 using NotFound = SFA.DAS.AssessorService.Domain.Exceptions.NotFound;
 
-namespace SFA.DAS.AssessorService.Application.Api.Controllers
+namespace SFA.DAS.AssessorService.Application.Api.Controllers.ExternalApi
 {
     [Authorize]
     [ValidateBadRequest]

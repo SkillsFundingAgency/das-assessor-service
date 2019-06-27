@@ -23,6 +23,13 @@ namespace SFA.DAS.AssessorService.Application.Api.External.StartupConfiguration
                 cfg.AddProfile<UpdateBatchCertificateResponseProfile>();
 
                 cfg.AddProfile<StandardOptionsProfile>();
+
+                cfg.AddProfile<EpaDetailsProfile>();
+                cfg.AddProfile<EpaRecordProfile>();
+                cfg.AddProfile<CreateBatchEpaRequestProfile>();
+                cfg.AddProfile<CreateBatchEpaResponseProfile>();
+                cfg.AddProfile<UpdateBatchEpaRequestProfile>();
+                cfg.AddProfile<UpdateBatchEpaResponseProfile>();
             });
 
             Mapper.AssertConfigurationIsValid();

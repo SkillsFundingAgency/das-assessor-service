@@ -1,8 +1,8 @@
 ﻿using MediatR;
 
-namespace SFA.DAS.AssessorService.Api.Types.Models.Certificates.Batch
+namespace SFA.DAS.AssessorService.Api.Types.Models.ExternalApi.Epas
 {
-    public class DeleteBatchCertificateRequest : IRequest
+    public class DeleteBatchEpaRequest : IRequest
     {
         public long Uln { get; set; }
         public string FamilyName { get; set; }
@@ -10,7 +10,8 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Certificates.Batch
         public int StandardCode { get; set; }
         public string StandardReference { get; set; } // Note: Not used at the moment
 
-        public string CertificateReference { get; set; }
+        public string EpaReference { get; set; }
+
         public int UkPrn { get; set; }
         public string Email { get; set; }
     }

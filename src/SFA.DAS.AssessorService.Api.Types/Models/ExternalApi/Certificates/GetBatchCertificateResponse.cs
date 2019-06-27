@@ -1,7 +1,7 @@
 ﻿using SFA.DAS.AssessorService.Domain.Entities;
 using System.Collections.Generic;
 
-namespace SFA.DAS.AssessorService.Api.Types.Models.Certificates.Batch
+namespace SFA.DAS.AssessorService.Api.Types.Models.ExternalApi.Certificates
 {
     public class GetBatchCertificateResponse
     {

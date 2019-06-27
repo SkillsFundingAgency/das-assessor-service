@@ -1,11 +1,12 @@
 ﻿using SFA.DAS.AssessorService.Application.Api.External.Models.Response.Certificates;
+using SFA.DAS.AssessorService.Application.Api.External.Models.Response.Learner;
 using System.Collections.Generic;
 
-namespace SFA.DAS.AssessorService.Application.Api.External.Models.Internal
+namespace SFA.DAS.AssessorService.Application.Api.External.Models.Response
 {
-    public class BatchCertificateResponse
+    public class GetLearnerResponse
     {
-        public string RequestId { get; set; }
+        public GetLearner Learner { get; set; }
 
         public Certificate Certificate { get; set; }
 
