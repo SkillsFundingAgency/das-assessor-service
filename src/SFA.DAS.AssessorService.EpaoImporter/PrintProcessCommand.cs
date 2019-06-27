@@ -10,7 +10,6 @@ using SFA.DAS.AssessorService.Domain.Extensions;
 using SFA.DAS.AssessorService.Domain.JsonData.Printing;
 using SFA.DAS.AssessorService.EpaoImporter.Data;
 using SFA.DAS.AssessorService.EpaoImporter.DomainServices;
-using SFA.DAS.AssessorService.EpaoImporter.InfrastructureServices;
 using SFA.DAS.AssessorService.EpaoImporter.Interfaces;
 using SFA.DAS.AssessorService.EpaoImporter.Logger;
 using SFA.DAS.AssessorService.EpaoImporter.Notification;
@@ -135,8 +134,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter
                 var batchLogResponse = await _assessorServiceApi.GetCurrentBatchLog();
 
                 var batchNumber = batchLogResponse.BatchNumber + 1;
-                var certificates = (await _assessorServiceApi.GetCertificatesToBePrinted()).ToList()
-                    .Sanitise(_aggregateLogger);
+                var certificates = (await _assessorServiceApi.GetCertificatesToBePrinted()).ToList();
 
                 if (certificates.Count == 0)
                 {
@@ -146,14 +144,19 @@ namespace SFA.DAS.AssessorService.EpaoImporter
                 {
                     await _assessorServiceApi.UpdateBatchNumberInCertificates(batchNumber, certificates);
 
-                    var listOfCertificates = certificates.GroupBy(item => item.BatchNumber)
+                    //Fetch again so that we pick updated certificates, sanatize, filter by status and group by batch number
+                   var listOfCertificates = (await _assessorServiceApi.GetCertificatesToBePrinted()).ToList()
+                   .Sanitise(_aggregateLogger).Where(x => x.Status == Domain.Consts.CertificateStatus.Submitted || 
+                                              x.Status == Domain.Consts.CertificateStatus.Queued).GroupBy(item => item.BatchNumber)
                                              .Select(group => group.ToList())
                                              .ToList();
+
                     foreach (var certs in listOfCertificates)
                     {
-                        
                         var certificate = certs.FirstOrDefault();
-                        batchNumber = !string.IsNullOrEmpty(certificate.BatchNumber) ? Convert.ToInt32(certificate.BatchNumber): batchNumber;
+                        batchNumber = !string.IsNullOrEmpty(certificate.BatchNumber) ? Convert.ToInt32(
+                             certificate.BatchNumber.Contains('-') ? certificate.BatchNumber.Split('-')[1]: certificate.BatchNumber
+                            ) : batchNumber;
 
 
                         var certificateFileName =

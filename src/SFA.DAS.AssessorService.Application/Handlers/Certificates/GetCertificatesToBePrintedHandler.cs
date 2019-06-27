@@ -29,7 +29,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
             var statuses = new List<string>
             {
                 Domain.Consts.CertificateStatus.Submitted,
-                Domain.Consts.CertificateStatus.Reprint
+                Domain.Consts.CertificateStatus.Reprint,
+                Domain.Consts.CertificateStatus.Queued,
             };
 
             var certificates = await _certificateRepository.GetCertificates(statuses);
