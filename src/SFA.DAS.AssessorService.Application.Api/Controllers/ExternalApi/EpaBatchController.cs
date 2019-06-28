@@ -6,7 +6,7 @@ using SFA.DAS.AssessorService.Api.Types.Models.ExternalApi.Certificates;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
-using SFA.DAS.AssessorService.Application.Api.Validators.Certificates;
+using SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Certificates;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Collections.Generic;
 using System.Linq;
