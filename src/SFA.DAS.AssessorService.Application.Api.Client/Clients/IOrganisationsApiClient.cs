@@ -33,5 +33,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         Task SendEmailsToOrganisationUserManagementUsers(NotifyUserManagementUsersRequest notifyUserManagementUsersRequest);
         Task<OrganisationResponse> GetOrganisationByName(string name);
         Task<OrganisationResponse> GetOrganisationByUserId(Guid userId);
+        Task<List<OrganisationStandardSummary>> GetOrganisationStandardsByOrganisation(string endPointAssessorOrganisationId);
     }
 }
