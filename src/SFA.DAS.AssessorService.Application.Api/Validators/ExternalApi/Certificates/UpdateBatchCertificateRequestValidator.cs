@@ -6,7 +6,7 @@ using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using System;
 
-namespace SFA.DAS.AssessorService.Application.Api.Validators.Certificates
+namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Certificates
 {
     public class UpdateBatchCertificateRequestValidator : AbstractValidator<BatchCertificateRequest>
     {

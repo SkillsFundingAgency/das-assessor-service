@@ -7,7 +7,7 @@ using SFA.DAS.AssessorService.Domain.Consts;
 using System;
 using System.Linq;
 
-namespace SFA.DAS.AssessorService.Application.Api.Validators.Certificates
+namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Certificates
 {
     public class BatchCertificateRequestValidator : AbstractValidator<BatchCertificateRequest>
     {
@@ -60,11 +60,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.Certificates
                        var requestedIlr = await ilrRepository.Get(m.Uln, m.StandardCode);
                        var sumbittingEpao = await organisationQueryRepository.GetByUkPrn(m.UkPrn);
 
-                       if (requestedIlr == null || !string.Equals(requestedIlr.FamilyName, m.FamilyName, StringComparison.InvariantCultureIgnoreCase))
+                       if (requestedIlr is null || !string.Equals(requestedIlr.FamilyName, m.FamilyName, StringComparison.InvariantCultureIgnoreCase))
                        {
                            context.AddFailure(new ValidationFailure("Uln", "ULN, FamilyName and Standard not found."));
                        }
-                       else if (sumbittingEpao == null)
+                       else if (sumbittingEpao is null)
                        {
                            context.AddFailure(new ValidationFailure("UkPrn", "Specified UKPRN not found"));
                        }
@@ -105,7 +105,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.Certificates
                         {
                             context.AddFailure(new ValidationFailure("OverallGrade", $"Cannot record a {CertificateGrade.Fail} grade via API"));
                         }
-                        else if (!grades.Any(g => g.Equals(overallGrade, StringComparison.InvariantCultureIgnoreCase)))
+                        else if (!grades.Contains(overallGrade, StringComparer.InvariantCultureIgnoreCase))
                         {
                             string gradesString = string.Join(", ", grades);
                             context.AddFailure(new ValidationFailure("OverallGrade", $"You must enter a valid grade. Must be one of the following: {gradesString}"));

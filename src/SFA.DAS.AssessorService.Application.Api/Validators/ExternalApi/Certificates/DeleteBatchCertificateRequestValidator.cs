@@ -3,17 +3,18 @@ using FluentValidation.Results;
 using Microsoft.Extensions.Localization;
 using SFA.DAS.AssessorService.Api.Types.Models.ExternalApi.Certificates;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Domain.Consts;
 using System;
 using System.Linq;
 
-namespace SFA.DAS.AssessorService.Application.Api.Validators.Certificates
+namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Certificates
 {
-    public class GetBatchCertificateRequestValidator : AbstractValidator<GetBatchCertificateRequest>
+    public class DeleteBatchCertificateRequestValidator : AbstractValidator<DeleteBatchCertificateRequest>
     {
-        public GetBatchCertificateRequestValidator(IStringLocalizer<GetBatchCertificateRequestValidator> localiser, IOrganisationQueryRepository organisationQueryRepository, IIlrRepository ilrRepository, ICertificateRepository certificateRepository, IStandardService standardService)
+        public DeleteBatchCertificateRequestValidator(IStringLocalizer<DeleteBatchCertificateRequestValidator> localiser, IOrganisationQueryRepository organisationQueryRepository, IIlrRepository ilrRepository, ICertificateRepository certificateRepository, IStandardService standardService)
         {
             RuleFor(m => m.UkPrn).InclusiveBetween(10000000, 99999999).WithMessage("The UKPRN should contain exactly 8 numbers");
-            RuleFor(m => m.Email).NotEmpty();
+            RuleFor(m => m.Email).NotEmpty().WithMessage("Provide your Email address");
 
             RuleFor(m => m.FamilyName).NotEmpty().WithMessage("Provide apprentice family name");
             RuleFor(m => m.StandardCode).GreaterThan(0).WithMessage("Provide a Standard").DependentRules(() =>
@@ -37,7 +38,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.Certificates
                 {
                     RuleFor(m => m).CustomAsync(async (m, context, cancellation) =>
                     {
-                        // TODO: FUTURE WORK - consider comment below. Currently we're making the Certificate & ILR record both mandatory
                         var requestedIlr = await ilrRepository.Get(m.Uln, m.StandardCode);
                         var sumbittingEpao = await organisationQueryRepository.GetByUkPrn(m.UkPrn);
 
@@ -59,20 +59,29 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.Certificates
                             }
                         }
                     });
+                });
+            });
 
-                    RuleFor(m => m).CustomAsync(async (m, context, cancellation) =>
+            RuleFor(m => m.CertificateReference).NotEmpty().WithMessage("Provide the certificate reference").DependentRules(() =>
+            {
+                RuleFor(m => m).CustomAsync(async (m, context, cancellation) =>
+                {
+                    var existingCertificate = await certificateRepository.GetCertificate(m.Uln, m.StandardCode);
+                    var sumbittingEpao = await organisationQueryRepository.GetByUkPrn(m.UkPrn);
+
+                    if (existingCertificate is null || !string.Equals(existingCertificate.CertificateReference, m.CertificateReference, StringComparison.InvariantCultureIgnoreCase))
                     {
-                        var existingCertificate = await certificateRepository.GetCertificate(m.Uln, m.StandardCode);
-
-                        if (existingCertificate is null)
-                        {
-                            // TODO: FUTURE WORK - Do Alan's Certificate Search THEN the ILR Search (which may be the validation down below)
-                        }
-                        else if (!existingCertificate.CertificateData.Contains(m.FamilyName, StringComparison.InvariantCultureIgnoreCase))
-                        {
-                            context.AddFailure(new ValidationFailure("FamilyName", $"Invalid family name"));
-                        }
-                    });
+                        context.AddFailure(new ValidationFailure("CertificateReference", $"Certificate not found"));
+                    }
+                    else if (sumbittingEpao?.Id != existingCertificate.OrganisationId)
+                    {
+                        context.AddFailure(new ValidationFailure("CertificateReference", $"Your organisation is not the creator of this Certificate"));
+                    }
+                    else if (existingCertificate.Status == CertificateStatus.Submitted || existingCertificate.Status == CertificateStatus.Printed
+                            || existingCertificate.Status == CertificateStatus.Reprint)
+                    {
+                        context.AddFailure(new ValidationFailure("CertificateReference", $"Cannot delete a submitted Certificate"));
+                    }
                 });
             });
         }

@@ -1,17 +1,19 @@
 ﻿using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.Extensions.Localization;
+using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models.ExternalApi.Certificates;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
+using SFA.DAS.AssessorService.Domain.JsonData;
 using System;
 using System.Linq;
 
-namespace SFA.DAS.AssessorService.Application.Api.Validators.Certificates
+namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Certificates
 {
-    public class DeleteBatchCertificateRequestValidator : AbstractValidator<DeleteBatchCertificateRequest>
+    public class SubmitBatchCertificateRequestValidator : AbstractValidator<SubmitBatchCertificateRequest>
     {
-        public DeleteBatchCertificateRequestValidator(IStringLocalizer<DeleteBatchCertificateRequestValidator> localiser, IOrganisationQueryRepository organisationQueryRepository, IIlrRepository ilrRepository, ICertificateRepository certificateRepository, IStandardService standardService)
+        public SubmitBatchCertificateRequestValidator(IStringLocalizer<SubmitBatchCertificateRequestValidator> localiser, IOrganisationQueryRepository organisationQueryRepository, IIlrRepository ilrRepository, ICertificateRepository certificateRepository, IStandardService standardService)
         {
             RuleFor(m => m.UkPrn).InclusiveBetween(10000000, 99999999).WithMessage("The UKPRN should contain exactly 8 numbers");
             RuleFor(m => m.Email).NotEmpty().WithMessage("Provide your Email address");
@@ -55,7 +57,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.Certificates
 
                             if (!providedStandards.Any(s => s.StandardCode == m.StandardCode))
                             {
-                                context.AddFailure(new ValidationFailure("StandardCode", "Your organisation is not approved to assess this Standard"));
+                                context.AddFailure("Your organisation is not approved to assess this Standard");
                             }
                         }
                     });
@@ -69,7 +71,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.Certificates
                     var existingCertificate = await certificateRepository.GetCertificate(m.Uln, m.StandardCode);
                     var sumbittingEpao = await organisationQueryRepository.GetByUkPrn(m.UkPrn);
 
-                    if (existingCertificate is null || !string.Equals(existingCertificate.CertificateReference, m.CertificateReference, StringComparison.InvariantCultureIgnoreCase))
+                    if (existingCertificate is null || !string.Equals(existingCertificate.CertificateReference, m.CertificateReference, StringComparison.InvariantCultureIgnoreCase)
+                        || existingCertificate.Status == CertificateStatus.Deleted)
                     {
                         context.AddFailure(new ValidationFailure("CertificateReference", $"Certificate not found"));
                     }
@@ -78,9 +81,24 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.Certificates
                         context.AddFailure(new ValidationFailure("CertificateReference", $"Your organisation is not the creator of this Certificate"));
                     }
                     else if (existingCertificate.Status == CertificateStatus.Submitted || existingCertificate.Status == CertificateStatus.Printed
-                            || existingCertificate.Status == CertificateStatus.Reprint)
+                                || existingCertificate.Status == CertificateStatus.Reprint)
                     {
-                        context.AddFailure(new ValidationFailure("CertificateReference", $"Cannot delete a {CertificateStatus.Submitted} Certificate"));
+                        context.AddFailure(new ValidationFailure("CertificateReference", $"Certificate has already been submitted"));
+                    }
+                    else if (existingCertificate.Status != CertificateStatus.Draft)
+                    {
+                        context.AddFailure(new ValidationFailure("CertificateReference", $"Certificate is not in {CertificateStatus.Ready} status"));
+                    }
+                    else
+                    {
+                        var certificateData = JsonConvert.DeserializeObject<CertificateData>(existingCertificate.CertificateData);
+
+                        if (certificateData.LearnerGivenNames is null || certificateData.LearnerFamilyName is null || certificateData.ContactName is null ||
+                            certificateData.ContactOrganisation is null || certificateData.ContactAddLine1 is null || certificateData.ContactAddLine4 is null ||
+                            certificateData.ContactPostCode is null || certificateData.OverallGrade is null || certificateData.AchievementDate is null)
+                        {
+                            context.AddFailure(new ValidationFailure("CertificateReference", $"Certificate is missing mandatory data"));
+                        }
                     }
                 });
             });
