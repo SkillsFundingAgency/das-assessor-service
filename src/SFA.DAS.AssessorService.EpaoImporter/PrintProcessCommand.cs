@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Extensions;
 using SFA.DAS.AssessorService.Domain.JsonData.Printing;
@@ -64,11 +65,11 @@ namespace SFA.DAS.AssessorService.EpaoImporter
                 _aggregateLogger.LogInfo("No certificate responses to process");
                 return;
             }
-           
-             foreach (var fileToProcess in filesToProcesses)
-             {
-                 await ProcessEachFileToUploadThenDelete(fileToProcess);
-             }
+
+            foreach (var fileToProcess in filesToProcesses)
+            {
+                await ProcessEachFileToUploadThenDelete(fileToProcess);
+            }
         }
 
         private async Task ProcessEachFileToUploadThenDelete(string fileToProcess)
@@ -82,12 +83,12 @@ namespace SFA.DAS.AssessorService.EpaoImporter
                 return;
             }
 
-            
+
 
             batchResponse.Batch.DateOfResponse = DateTime.UtcNow;
             var batchNumber = batchResponse.Batch.BatchNumber;
-  
-            var batchLogResponse = await _assessorServiceApi.GetGetBatchLogByBatchNumber( batchNumber);
+
+            var batchLogResponse = await _assessorServiceApi.GetGetBatchLogByBatchNumber(batchNumber);
 
             if (batchLogResponse?.Id == null)
             {
@@ -112,7 +113,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter
                 DateOfResponse = batchResponse.Batch.DateOfResponse
             };
 
-            await _assessorServiceApi.UpdateBatchDataInBatchLog((Guid) batchLogResponse.Id, batch);
+            await _assessorServiceApi.UpdateBatchDataInBatchLog((Guid)batchLogResponse.Id, batch);
             _fileTransferClient.DeleteFile(fileToProcess);
         }
 
@@ -142,20 +143,19 @@ namespace SFA.DAS.AssessorService.EpaoImporter
                 }
                 else
                 {
+                    _aggregateLogger.LogInfo("Certificates found and processing.");
+
                     await _assessorServiceApi.UpdateBatchNumberInCertificates(batchNumber, certificates);
 
-                    //Fetch again so that we pick updated certificates, sanatize, filter by status and group by batch number
-                   var listOfCertificates = (await _assessorServiceApi.GetCertificatesToBePrinted()).ToList()
-                   .Sanitise(_aggregateLogger).Where(x => x.Status == Domain.Consts.CertificateStatus.Submitted || 
-                                              x.Status == Domain.Consts.CertificateStatus.Queued).GroupBy(item => item.BatchNumber)
-                                             .Select(group => group.ToList())
-                                             .ToList();
+                    //Fetch again so that we pick updated certificates and then sanatize, filter by status and group by batch number
+                    var dictOfCertificates = (await _assessorServiceApi.GetCertificatesToBePrinted()).ToList()
+                    .Sanitise(_aggregateLogger).FilterAndGroup(_aggregateLogger);
 
-                    foreach (var certs in listOfCertificates)
+                    foreach (KeyValuePair<string, List<CertificateResponse>> certs in dictOfCertificates)
                     {
-                        var certificate = certs.FirstOrDefault();
-                        batchNumber = !string.IsNullOrEmpty(certificate.BatchNumber) ? Convert.ToInt32(
-                             certificate.BatchNumber.Contains('-') ? certificate.BatchNumber.Split('-')[1]: certificate.BatchNumber
+                        var certificate = certs.Value;
+                        batchNumber = !string.IsNullOrEmpty(certs.Key) ? Convert.ToInt32(
+                             certs.Key.Contains('-') ? certs.Key.Split('-')[1] : certs.Key
                             ) : batchNumber;
 
 
@@ -176,23 +176,23 @@ namespace SFA.DAS.AssessorService.EpaoImporter
 
                         if (configuration.Sftp.UseJson)
                         {
-                            _printingJsonCreator.Create(batchNumber, certs, certificateFileName);
-                            await _notificationService.Send(batchNumber, certs, certificateFileName);
+                            _printingJsonCreator.Create(batchNumber, certificate, certificateFileName);
+                            await _notificationService.Send(batchNumber, certificate, certificateFileName);
                         }
                         else
                         {
-                            _printingSpreadsheetCreator.Create(batchNumber, certs);
-                            await _notificationService.Send(batchNumber, certs, excelFileName);
+                            _printingSpreadsheetCreator.Create(batchNumber, certificate);
+                            await _notificationService.Send(batchNumber, certificate, excelFileName);
                         }
 
                         batchLogRequest.FileUploadEndTime = DateTime.UtcNow;
-                        batchLogRequest.NumberOfCertificates = certs.Count;
+                        batchLogRequest.NumberOfCertificates = certificate.Count;
                         batchLogRequest.NumberOfCoverLetters = 0;
                         batchLogRequest.ScheduledDate = batchLogResponse.ScheduledDate;
 
                         await _fileTransferClient.LogUploadDirectory();
                         await _assessorServiceApi.CreateBatchLog(batchLogRequest);
-                        await _assessorServiceApi.ChangeStatusToPrinted(certs);
+                        await _assessorServiceApi.ChangeStatusToPrinted(certificate);
                     }
                 }
                 await _assessorServiceApi.CompleteSchedule(scheduleRun.Id);
