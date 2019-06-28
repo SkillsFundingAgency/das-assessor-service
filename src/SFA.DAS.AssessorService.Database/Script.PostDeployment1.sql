@@ -261,3 +261,26 @@ INSERT INTO [Options] ([StdCode], [OptionName])
 
 UPDATE [Options] SET [OptionName] = 'Mechanical' WHERE [OptionName] = 'Mechnical';
 -- END OF ON-1933
+
+
+-- START OF ON-1981
+UPDATE Certificates
+SET CertificateData =	CASE JSON_Value(CertificateData,'$.EpaDetails.LatestEpaOutcome')
+                            WHEN 'fail' THEN JSON_MODIFY(CertificateData,'$.EpaDetails.LatestEpaOutcome','fail')
+							WHEN 'Fail' THEN JSON_MODIFY(CertificateData,'$.EpaDetails.LatestEpaOutcome','fail')
+                            ELSE JSON_MODIFY(CertificateData,'$.EpaDetails.LatestEpaOutcome','pass')
+						END
+WHERE JSON_Value(CertificateData,'$.EpaDetails.LatestEpaOutcome') IS NOT NULL;
+
+UPDATE [dbo].[Certificates]
+SET [CertificateData] = REPLACE(CertificateData, '"EpaOutcome":"Fail"', '"EpaOutcome":"fail"')
+WHERE JSON_Value(CertificateData,'$.EpaDetails.Epas[0].EpaOutcome') IS NOT NULL;
+
+UPDATE [dbo].[Certificates]
+SET [CertificateData] = REPLACE(REPLACE(REPLACE(CertificateData, '"EpaOutcome":"Pass"', '"EpaOutcome":"pass"'), '"EpaOutcome":"Credit"', '"EpaOutcome":"pass"'), '"EpaOutcome":"Merit"', '"EpaOutcome":"pass"')
+WHERE JSON_Value(CertificateData,'$.EpaDetails.Epas[0].EpaOutcome') IS NOT NULL;
+
+UPDATE [dbo].[Certificates]
+SET [CertificateData] = REPLACE(REPLACE(REPLACE(CertificateData, '"EpaOutcome":"Distinction"', '"EpaOutcome":"pass"'), '"EpaOutcome":"Pass with excellence"', '"EpaOutcome":"pass"'), '"EpaOutcome":"No grade awarded"', '"EpaOutcome":"pass"')
+WHERE JSON_Value(CertificateData,'$.EpaDetails.Epas[0].EpaOutcome') IS NOT NULL;
+-- END OF ON-1981

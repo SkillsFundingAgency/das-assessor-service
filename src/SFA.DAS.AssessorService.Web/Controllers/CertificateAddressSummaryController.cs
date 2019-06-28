@@ -41,17 +41,23 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
             if (!string.IsNullOrEmpty(vm.Employer))
             {
+                string nextRoute = "~/Views/Certificate/AddressSummary.cshtml";
+
                 var certificateAddressView =
-                    await LoadViewModel<CertificateAddressViewModel>("~/Views/Certificate/AddressSummary.cshtml");
+                    await LoadViewModel<CertificateAddressViewModel>(nextRoute);
 
                 var viewResult = certificateAddressView as ViewResult;
                 var certificateAddressViewModel = viewResult.Model as CertificateAddressViewModel;
 
                 certificateAddressViewModel.Employer = vm.Employer;
-
-                return await SaveViewModel(certificateAddressViewModel,
+                if (vm.BackToCheckPage)
+                    return await SaveViewModel(certificateAddressViewModel,
                     returnToIfModelNotValid: "~/Views/Certificate/AddressSummary.cshtml",
-                    nextAction: RedirectToAction("Recipient", "CertificateRecipient"), action: CertificateActions.AddressSummary);
+                    nextAction: RedirectToAction("Check", "CertificateCheck"), action: CertificateActions.AddressSummary);
+                else
+                    return await SaveViewModel(certificateAddressViewModel,
+                  returnToIfModelNotValid: "~/Views/Certificate/AddressSummary.cshtml",
+                  nextAction: RedirectToAction("Recipient", "CertificateRecipient"), action: CertificateActions.AddressSummary);
             }
 
             return RedirectToAction("Recipient", "CertificateRecipient");

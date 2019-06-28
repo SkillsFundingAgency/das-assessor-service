@@ -258,6 +258,17 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                  await PostPutRequest (request, notifyUserManagementUsersRequest);
             }
         }
-        
+
+        public async Task<List<OrganisationStandardSummary>> GetOrganisationStandardsByOrganisation(string endPointAssessorOrganisationId)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get,
+               $"/api/ao/assessment-organisations/{endPointAssessorOrganisationId}/standards"))
+            {
+                return await RequestAndDeserialiseAsync<List<OrganisationStandardSummary>>(request,
+                    $"Could not retrieve standards for organisation with Id of {endPointAssessorOrganisationId}");
+            }
+        }
+
+
     }
 }

@@ -29,7 +29,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.PrivateCertificateTests.Posts
         protected Mock<ILogger<CertificateController>> MockLogger;
         protected Mock<IHttpContextAccessor> MockHttpContextAccessor;
         protected ICertificateApiClient MockCertificateApiClient;
-        protected IAssessmentOrgsApiClient MockAssessmentOrgsApiClient;
+        protected IOrganisationsApiClient MockOrganisationApiClient;
         protected Mock<IStandardServiceClient> MockStandardServiceClient;
 
         protected Mock<ISessionService> MockSession;
@@ -43,7 +43,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.PrivateCertificateTests.Posts
 
             MockLogger = new Mock<ILogger<CertificateController>>();
             var mockedApiClientLogger = new Mock<ILogger<CertificateApiClient>>();
-
+            var mockedOrgApiClientLogger = new Mock<ILogger<OrganisationsApiClient>>();
             MockSession = new Mock<ISessionService>();
             MockStandardServiceClient = new Mock<IStandardServiceClient>();
 
@@ -86,7 +86,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.PrivateCertificateTests.Posts
             MockHttpContextAccessor = MockedHttpContextAccessor.Setup();
             MockCertificateApiClient = MockedCertificateApiClient.Setup(Certificate, mockedApiClientLogger);
 
-            MockAssessmentOrgsApiClient = MockedAssessmentOrgsApiClient.Setup(mockedApiClientLogger);
+            MockOrganisationApiClient = MockedOrganisationsApiClient.Setup(mockedOrgApiClientLogger);
 
             CertificateData = JsonConvert.DeserializeObject<CertificateData>(Certificate.CertificateData);
         }
