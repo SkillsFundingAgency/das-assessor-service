@@ -58,7 +58,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
             var recordedBy = string.Empty;
             var reasonForChange = string.Empty;
 
-            var certificateResponses = certificates.Items.Select(
+            var certificateResponses = certificates.Items.Select(async 
                 certificate =>
                 {
                     var certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
@@ -73,7 +73,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
                                 .GetResult();
 
                             trainingProviderName = provider.ProviderName;
-                            _certificateRepository.UpdateProviderName(certificate.Id, trainingProviderName);
+                            await _certificateRepository.UpdateProviderName(certificate.Id, trainingProviderName);
                         }
                         else
                         {
