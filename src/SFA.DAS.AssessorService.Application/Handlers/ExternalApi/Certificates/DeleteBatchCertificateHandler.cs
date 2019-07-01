@@ -29,7 +29,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
 
         private async Task DeleteCertificate(DeleteBatchCertificateRequest request)
         {
-            _logger.LogInformation("SubmitCertificate Before Get Contact from db");
+            _logger.LogInformation("DeleteCertificate Before Get Contact from db");
             var contact = await GetContactFromEmailAddress(request.Email);
 
             _logger.LogInformation("DeleteCertificate Before set Certificate to Deleted in db");
