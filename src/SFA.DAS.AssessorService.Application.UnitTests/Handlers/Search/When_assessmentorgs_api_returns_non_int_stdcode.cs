@@ -4,6 +4,7 @@ using Moq;
 using NUnit.Framework;
 using SFA.DAS.Apprenticeships.Api.Types.AssessmentOrgs;
 using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Api.Types.Models.AO;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
 {
@@ -20,12 +21,12 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
         [Test]
         public void Then_an_exception_is_not_thrown()
         {
-            AssessmentOrgsApiClient.Setup(c => c.FindAllStandardsByOrganisationIdAsync("EPA0050"))
-                .ReturnsAsync(new List<StandardOrganisationSummary>
+            RegisterQueryRepository.Setup(c => c.GetOrganisationStandardByOrganisationId("EPA0050"))
+                .ReturnsAsync(new List<OrganisationStandardSummary>
                 {
-                    new StandardOrganisationSummary {StandardCode = "12"},
-                    new StandardOrganisationSummary {StandardCode = "13a"},
-                    new StandardOrganisationSummary {StandardCode = "14"}
+                    new OrganisationStandardSummary {StandardCode = 12},
+                    new OrganisationStandardSummary {StandardCode = 13},
+                    new OrganisationStandardSummary {StandardCode = 14}
                 });
 
             SearchHandler
