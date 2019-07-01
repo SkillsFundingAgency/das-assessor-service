@@ -9,23 +9,16 @@ CREATE TABLE #PrimaryOrFirstContact
     OrganisationId nvarchar(20)
 ) 
 
-
-insert into #PrimaryOrFirstContact (OrganisationId, ContactId) select o.EndPointAssessorOrganisationId, c.Id from organisations o left outer join contacts c on o.PrimaryContact = c.username
- where o.deletedat is null and c.DeletedAt is null
- and o.EndPointAssessorOrganisationId in (select EndPointAssessorOrganisationId from contacts)
- and o.Status !='New'
-
-
-DECLARE @orgId nvarchar(20)
-DECLARE @contactId uniqueidentifier
-
-while exists(select * from #PrimaryOrFirstContact where contactId is null and OrganisationId in (select EndPointAssessorOrganisationId from contacts where deletedat is null))
-  BEGIN
-   select top 1 @orgId = OrganisationId from #PrimaryOrFirstContact where contactId is null and OrganisationId in (select EndPointAssessorOrganisationId from contacts where deletedat is null)
-   SELECT top 1 @contactId = id from contacts where EndPointAssessorOrganisationId = @orgId order by createdat    
-  update #PrimaryOrFirstContact set ContactId = @contactId where OrganisationId = @orgId
-  set @ContactId = null
-  END
+insert into #PrimaryOrFirstContact (OrganisationId, ContactId) 
+SELECT EndPointAssessorOrganisationId, ContactId 
+FROM (
+  SELECT co1.EndPointAssessorOrganisationId, co1.Id ContactId, 
+     ROW_NUMBER() OVER (PARTITION BY co1.EndPointAssessorOrganisationId ORDER BY (CASE WHEN primarycontact = co1.username THEN 1 ELSE 0 END) DESC,co1.createdat) rownumber
+     FROM [Organisations] og1 
+   JOIN Contacts co1 ON co1.EndPointAssessorOrganisationId = og1.EndPointAssessorOrganisationId
+   WHERE og1.Status = 'Live'
+   AND co1.Status = 'Live'
+) ab1 WHERE rownumber = 1
 
 -- OPERATION 1 COMPLETED
 
