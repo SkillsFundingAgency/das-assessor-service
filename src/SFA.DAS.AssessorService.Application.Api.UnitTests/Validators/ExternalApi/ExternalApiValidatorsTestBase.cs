@@ -7,6 +7,7 @@ using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Organisation = SFA.DAS.AssessorService.Domain.Entities.Organisation;
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalApi
 {
@@ -105,15 +106,31 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
 
         private static Certificate GenerateCertificate(long uln, int standardCode, string familyName, string status, Guid organisationId)
         {
+            var reference = $"{uln}-{standardCode}";
+
+            var epas = Builder<EpaRecord>.CreateListOfSize(1).All()
+            .With(i => i.EpaDate = DateTime.UtcNow.AddDays(-1))
+            .With(i => i.EpaOutcome = "pass")
+            .Build().ToList();
+
+            var epaDetails = new EpaDetails
+            {
+                EpaReference = reference,
+                LatestEpaDate = epas[0].EpaDate,
+                LatestEpaOutcome = epas[0].EpaOutcome,
+                Epas = epas
+            };
+
             return Builder<Certificate>.CreateNew()
                 .With(i => i.Uln = uln)
                 .With(i => i.StandardCode = standardCode)
                 .With(i => i.Status = status)
                 .With(i => i.OrganisationId = organisationId)
-                .With(i => i.CertificateReference = $"{uln}-{standardCode}")
+                .With(i => i.CertificateReference = reference)
                                 .With(i => i.CertificateData = JsonConvert.SerializeObject(Builder<CertificateData>.CreateNew()
                                 .With(cd => cd.LearnerFamilyName = familyName)
                                 .With(cd => cd.OverallGrade = "Pass")
+                                .With(cd => cd.EpaDetails = epaDetails)
                                 .Build()))
                 .Build();
         }
