@@ -52,9 +52,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.ExternalApi
                 Email = email
             };
 
-            var validationErrors = new List<string>();
-            var isRequestValid = false;
-
             var collatedStandard = int.TryParse(standard, out int standardCode) ? await GetCollatedStandard(standardCode) : await GetCollatedStandard(standard);
 
             if (collatedStandard != null)
@@ -64,8 +61,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.ExternalApi
             }
 
             var validationResult = await _getValidator.ValidateAsync(request);
-            isRequestValid = validationResult.IsValid;
-            validationErrors = validationResult.Errors.Select(error => error.ErrorMessage).ToList();
+            var isRequestValid = validationResult.IsValid;
+            var validationErrors = validationResult.Errors.Select(error => error.ErrorMessage).ToList();
 
             GetBatchCertificateResponse getResponse = new GetBatchCertificateResponse
             {
@@ -94,9 +91,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.ExternalApi
 
             foreach (var request in batchRequest)
             {
-                var validationErrors = new List<string>();
-                var isRequestValid = false;
-
                 var collatedStandard = request.StandardCode > 0 ? await GetCollatedStandard(request.StandardCode) : await GetCollatedStandard(request.StandardReference);
 
                 if (collatedStandard != null)
@@ -113,8 +107,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.ExternalApi
                 }
 
                 var validationResult = await _createValidator.ValidateAsync(request);
-                isRequestValid = validationResult.IsValid;
-                validationErrors = validationResult.Errors.Select(error => error.ErrorMessage).ToList();
+                var isRequestValid = validationResult.IsValid;
+                var validationErrors = validationResult.Errors.Select(error => error.ErrorMessage).ToList();
 
                 BatchCertificateResponse certResponse = new BatchCertificateResponse
                 {
@@ -148,9 +142,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.ExternalApi
 
             foreach (var request in batchRequest)
             {
-                var validationErrors = new List<string>();
-                var isRequestValid = false;
-
                 var collatedStandard = request.StandardCode > 0 ? await GetCollatedStandard(request.StandardCode) : await GetCollatedStandard(request.StandardReference);
 
                 if (collatedStandard != null)
@@ -167,8 +158,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.ExternalApi
                 }
 
                 var validationResult = await _updateValidator.ValidateAsync(request);
-                isRequestValid = validationResult.IsValid;
-                validationErrors = validationResult.Errors.Select(error => error.ErrorMessage).ToList();
+                var isRequestValid = validationResult.IsValid;
+                var validationErrors = validationResult.Errors.Select(error => error.ErrorMessage).ToList();
 
                 BatchCertificateResponse certResponse = new BatchCertificateResponse
                 {
@@ -202,9 +193,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.ExternalApi
 
             foreach (var request in batchRequest)
             {
-                var validationErrors = new List<string>();
-                var isRequestValid = false;
-
                 var collatedStandard = request.StandardCode > 0 ? await GetCollatedStandard(request.StandardCode) : await GetCollatedStandard(request.StandardReference);
 
                 if (collatedStandard != null)
@@ -221,8 +209,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.ExternalApi
                 }
 
                 var validationResult = await _submitValidator.ValidateAsync(request);
-                isRequestValid = validationResult.IsValid;
-                validationErrors = validationResult.Errors.Select(error => error.ErrorMessage).ToList();
+                var isRequestValid = validationResult.IsValid;
+                var validationErrors = validationResult.Errors.Select(error => error.ErrorMessage).ToList();
 
                 SubmitBatchCertificateResponse submitResponse = new SubmitBatchCertificateResponse
                 {
@@ -256,9 +244,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.ExternalApi
                 Email = email
             };
 
-            var validationErrors = new List<string>();
-            var isRequestValid = false;
-
             var collatedStandard = int.TryParse(standard, out int standardCode) ? await GetCollatedStandard(standardCode) : await GetCollatedStandard(standard);
 
             if (collatedStandard != null)
@@ -268,8 +253,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.ExternalApi
             }
 
             var validationResult = await _deleteValidator.ValidateAsync(request);
-            isRequestValid = validationResult.IsValid;
-            validationErrors = validationResult.Errors.Select(error => error.ErrorMessage).ToList();
+            var isRequestValid = validationResult.IsValid;
+            var validationErrors = validationResult.Errors.Select(error => error.ErrorMessage).ToList();
 
             if (!validationErrors.Any() && isRequestValid)
             {
