@@ -23,6 +23,7 @@
         public const string Status = "Status";
 
         // Generated from the External API
+        public const string Epa = "Epa";
         public const string Amend = "Amend";
         public const string Delete = "Delete";
     }
