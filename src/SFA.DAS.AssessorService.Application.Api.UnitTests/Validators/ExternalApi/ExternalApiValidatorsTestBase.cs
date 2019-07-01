@@ -8,18 +8,16 @@ using SFA.DAS.AssessorService.Domain.JsonData;
 using System;
 using System.Collections.Generic;
 using Organisation = SFA.DAS.AssessorService.Domain.Entities.Organisation;
-
-
-namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalApi.Certificates
+namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalApi
 {
-    public class BatchCertificateRequestValidatorTestBase
+    public class ExternalApiValidatorsTestBase
     {
         public Mock<ICertificateRepository> CertificateRepositoryMock { get; }
         public Mock<IOrganisationQueryRepository> OrganisationQueryRepositoryMock { get; }
         public Mock<IIlrRepository> IlrRepositoryMock { get; }
-        public Mock<IStandardService> StandardServiceMock {get;}
+        public Mock<IStandardService> StandardServiceMock { get; }
 
-        public BatchCertificateRequestValidatorTestBase()
+        public ExternalApiValidatorsTestBase()
         {
             CertificateRepositoryMock = SetupCertificateRepositoryMock();
             OrganisationQueryRepositoryMock = SetupOrganisationQueryRepositoryMock();
@@ -149,7 +147,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
         {
             return Builder<StandardCollation>.CreateNew()
                 .With(i => i.Title = $"{standardCode}")
-                .With(i => i.StandardData = new StandardData(){Level = standardCode}).Build();
+                .With(i => i.StandardData = new StandardData() { Level = standardCode }).Build();
         }
 
         private static EPORegisteredStandards GenerateEPORegisteredStandard(int standardCode)

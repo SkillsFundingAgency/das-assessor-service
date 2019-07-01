@@ -3,7 +3,7 @@ using Moq;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalApi.Certificates.GetBatchCertificateRequestValidator
 {
-    public class GetBatchCertificateRequestValidatorTestBase : BatchCertificateRequestValidatorTestBase
+    public class GetBatchCertificateRequestValidatorTestBase : ExternalApiValidatorsTestBase
     {
         protected Api.Validators.ExternalApi.Certificates.GetBatchCertificateRequestValidator Validator;
 

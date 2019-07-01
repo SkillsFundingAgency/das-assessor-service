@@ -3,7 +3,7 @@ using Moq;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalApi.Certificates.DeleteBatchCertificateRequestValidator
 {
-    public class DeleteBatchCertificateRequestValidatorTestBase : BatchCertificateRequestValidatorTestBase
+    public class DeleteBatchCertificateRequestValidatorTestBase : ExternalApiValidatorsTestBase
     {
         protected Api.Validators.ExternalApi.Certificates.DeleteBatchCertificateRequestValidator Validator;
 
