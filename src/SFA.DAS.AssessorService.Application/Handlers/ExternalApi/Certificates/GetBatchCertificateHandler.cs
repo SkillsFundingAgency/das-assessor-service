@@ -12,7 +12,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SFA.DAS.AssessorService.Application.Handlers.Certificates.Batch
+namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
 {
     public class GetBatchCertificateHandler : IRequestHandler<GetBatchCertificateRequest, Certificate>
     {

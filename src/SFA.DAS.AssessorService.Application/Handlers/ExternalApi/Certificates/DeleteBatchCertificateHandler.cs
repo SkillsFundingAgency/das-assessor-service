@@ -7,7 +7,7 @@ using SFA.DAS.AssessorService.Domain.Entities;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SFA.DAS.AssessorService.Application.Handlers.Certificates.Batch
+namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
 {
     public class DeleteBatchCertificateHandler : IRequestHandler<DeleteBatchCertificateRequest>
     {
