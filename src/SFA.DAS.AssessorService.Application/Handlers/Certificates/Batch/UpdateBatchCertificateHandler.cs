@@ -77,9 +77,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates.Batch
             var epaDetails = certData.EpaDetails ?? new EpaDetails();
             if (epaDetails.Epas is null) epaDetails.Epas = new List<EpaRecord>();
 
-            if (requestData.AchievementDate != null && !epaDetails.Epas.Any(rec => rec.EpaDate == requestData.AchievementDate.Value && rec.EpaOutcome == requestData.OverallGrade))
+            var epaOutcome = certData.OverallGrade == CertificateGrade.Fail ? "fail" : "pass";
+            if (requestData.AchievementDate != null && !epaDetails.Epas.Any(rec => rec.EpaDate == requestData.AchievementDate.Value && rec.EpaOutcome == epaOutcome))
             {
-                var epaOutcome = certData.OverallGrade == CertificateGrade.Fail ? "fail" : "pass";
                 var record = new EpaRecord { EpaDate = requestData.AchievementDate.Value, EpaOutcome = epaOutcome };
                 epaDetails.Epas.Add(record);
 
