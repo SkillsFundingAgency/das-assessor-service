@@ -399,7 +399,6 @@ namespace SFA.DAS.AssessorService.Data
                 {
                     certificate.BatchNumber = updateCertificateBatchNumberRequest.BatchNumber;
                     certificate.UpdatedBy = UpdatedBy.PrintFunction;
-                    certificate.Status = CertificateStatus.Queued;
                     certificate.ToBePrinted = DateTime.UtcNow;
 
                     await UpdateCertificateLog(certificate, CertificateActions.BatchNumber, UpdatedBy.PrintFunction);

@@ -135,7 +135,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter
                 var batchLogResponse = await _assessorServiceApi.GetCurrentBatchLog();
 
                 var batchNumber = batchLogResponse.BatchNumber + 1;
-                var certificates = (await _assessorServiceApi.GetCertificatesToBePrinted()).ToList();
+                var certificates = (await _assessorServiceApi.GetCertificatesToBePrinted()).ToList().Sanitise(_aggregateLogger);
 
                 if (certificates.Count == 0)
                 {
@@ -147,9 +147,10 @@ namespace SFA.DAS.AssessorService.EpaoImporter
 
                     await _assessorServiceApi.UpdateBatchNumberInCertificates(batchNumber, certificates);
 
-                    //Fetch again so that we pick updated certificates and then sanatize, filter by status and group by batch number
-                    var dictOfCertificates = (await _assessorServiceApi.GetCertificatesToBePrinted()).ToList()
-                    .Sanitise(_aggregateLogger).FilterAndGroup(_aggregateLogger);
+                    //Fetch again so that we pick updated certificates with status of submitted or reprint
+                    //then sanatize again if incase we pick up newly added certificates and group by batch number
+                    var dictOfCertificates = (await _assessorServiceApi.GetCertificatesToBePrinted()).ToList().
+                    Sanitise(_aggregateLogger).Group(_aggregateLogger);
 
                     foreach (KeyValuePair<string, List<CertificateResponse>> certs in dictOfCertificates)
                     {
