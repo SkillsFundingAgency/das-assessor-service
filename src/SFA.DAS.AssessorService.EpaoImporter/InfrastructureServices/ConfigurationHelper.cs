@@ -22,12 +22,12 @@ namespace SFA.DAS.AssessorService.EpaoImporter.InfrastructureServices
                     var version = "1.0";
 
                     var connection = CloudStorageAccount.Parse(
-                        CloudConfigurationManager.GetSetting("ConfigurationStorageConnectionString"));
+                         Environment.GetEnvironmentVariable("ConfigurationStorageConnectionString"));
                     var tableClient = connection.CreateCloudTableClient();
                     var table = tableClient.GetTableReference("Configuration");
 
                     var operation = TableOperation.Retrieve(
-                        CloudConfigurationManager.GetSetting("EnvironmentName"),
+                        Environment.GetEnvironmentVariable("EnvironmentName"),
                         $"{serviceName}_{version}");
                     var result = table.ExecuteAsync(operation).Result;
                     if (result.Result is DynamicTableEntity dynResult)

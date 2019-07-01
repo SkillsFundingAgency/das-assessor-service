@@ -116,10 +116,6 @@
       <Project>{95283279-6151-4580-a781-93903696a1a2}</Project>
       <Name>SFA.DAS.AssessorService.Domain</Name>
     </ProjectReference>
-    <ProjectReference Include="..\SFA.DAS.AssessorService.EpaoImporter\SFA.DAS.AssessorService.EpaoImporter.csproj">
-      <Project>{6901b04c-fea8-4bab-87cf-1ff871b7c497}</Project>
-      <Name>SFA.DAS.AssessorService.EpaoImporter</Name>
-    </ProjectReference>
     <ProjectReference Include="..\SFA.DAS.AssessorService.Settings\SFA.DAS.AssessorService.Settings.csproj">
       <Project>{16e01083-f698-4e7f-9822-b76d251b8655}</Project>
       <Name>SFA.DAS.AssessorService.Settings</Name>
