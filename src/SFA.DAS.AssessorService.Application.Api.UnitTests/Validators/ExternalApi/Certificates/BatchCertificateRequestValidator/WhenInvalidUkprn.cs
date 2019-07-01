@@ -17,7 +17,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
         public async Task Arrange()
         {
             BatchCertificateRequest request = Builder<BatchCertificateRequest>.CreateNew()
-                .With(i => i.Uln = 123456789)
+                .With(i => i.Uln = 1234567890)
                 .With(i => i.StandardCode = 99)
                 .With(i => i.StandardReference = null)
                 .With(i => i.UkPrn = 1)
@@ -37,6 +37,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
         public void ThenValidationResultShouldBeFalse()
         {
             _validationResult.IsValid.Should().BeFalse();
+            _validationResult.Errors.Count.Should().Be(2); // invalid & not found
         }
     }
 }
