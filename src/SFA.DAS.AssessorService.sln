@@ -68,15 +68,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.App
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.Web.Extensions", "SFA.DAS.AssessorService.Web.Extensions\SFA.DAS.AssessorService.Web.Extensions.csproj", "{33F5D8D1-8C5C-4863-A049-E165C1167B2B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.AssessorService.PrintFunction.Tests", "SFA.DAS.AssessorService.PrintFunction.Tests\SFA.DAS.AssessorService.PrintFunction.Tests.csproj", "{55020A23-70EB-42D3-B7FB-E1156DF6D810}"
+EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.EpaoDataSync", "SFA.DAS.AssessorService.EpaoDataSync\SFA.DAS.AssessorService.EpaoDataSync.csproj", "{2CD0ED7B-43B3-4736-8A59-086AD47C41EF}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.ApplyTypes", "SFA.DAS.AssessorService.ApplyTypes\SFA.DAS.AssessorService.ApplyTypes.csproj", "{7F682D43-DA65-439A-B4AC-27503270FA73}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.Session", "SFA.DAS.AssessorService.Session\SFA.DAS.AssessorService.Session.csproj", "{79A3E336-BE53-446D-B00B-5CD25A4D694E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.EpaoImporter", "SFA.DAS.AssessorService.EpaoImporter\SFA.DAS.AssessorService.EpaoImporter.csproj", "{9201348B-A18A-4987-A318-4385C1572100}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.AssessorService.PrintFunction.Tests", "SFA.DAS.AssessorService.PrintFunction.Tests\SFA.DAS.AssessorService.PrintFunction.Tests.csproj", "{1C7C8F3A-4AE6-47F5-9493-7DB9DDA985DF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.AssessorService.EpaoImporter", "SFA.DAS.AssessorService.EpaoImporter\SFA.DAS.AssessorService.EpaoImporter.csproj", "{9201348B-A18A-4987-A318-4385C1572100}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -174,6 +174,10 @@ Global
 		{33F5D8D1-8C5C-4863-A049-E165C1167B2B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{33F5D8D1-8C5C-4863-A049-E165C1167B2B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{33F5D8D1-8C5C-4863-A049-E165C1167B2B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{55020A23-70EB-42D3-B7FB-E1156DF6D810}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{55020A23-70EB-42D3-B7FB-E1156DF6D810}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{55020A23-70EB-42D3-B7FB-E1156DF6D810}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{55020A23-70EB-42D3-B7FB-E1156DF6D810}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2CD0ED7B-43B3-4736-8A59-086AD47C41EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2CD0ED7B-43B3-4736-8A59-086AD47C41EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2CD0ED7B-43B3-4736-8A59-086AD47C41EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -190,10 +194,6 @@ Global
 		{9201348B-A18A-4987-A318-4385C1572100}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9201348B-A18A-4987-A318-4385C1572100}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9201348B-A18A-4987-A318-4385C1572100}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1C7C8F3A-4AE6-47F5-9493-7DB9DDA985DF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1C7C8F3A-4AE6-47F5-9493-7DB9DDA985DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1C7C8F3A-4AE6-47F5-9493-7DB9DDA985DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1C7C8F3A-4AE6-47F5-9493-7DB9DDA985DF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -208,7 +208,7 @@ Global
 		{05449B49-D2B3-4F63-B981-544F0AF7B4FF} = {EB54D000-867F-48CA-AE28-BDBE0CCE1322}
 		{69B3D223-F8CA-4AF9-A258-F5DF1AE24F27} = {EB54D000-867F-48CA-AE28-BDBE0CCE1322}
 		{F3C414DE-DF53-480A-A1A4-CA1A1E48E10E} = {EB54D000-867F-48CA-AE28-BDBE0CCE1322}
-		{1C7C8F3A-4AE6-47F5-9493-7DB9DDA985DF} = {EB54D000-867F-48CA-AE28-BDBE0CCE1322}
+		{55020A23-70EB-42D3-B7FB-E1156DF6D810} = {EB54D000-867F-48CA-AE28-BDBE0CCE1322}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C5B677B2-0D72-4629-A5FD-F94B00EC858B}
