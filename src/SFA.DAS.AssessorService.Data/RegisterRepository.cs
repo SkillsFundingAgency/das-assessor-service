@@ -286,7 +286,7 @@ namespace SFA.DAS.AssessorService.Data
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
 
-                    connection.Execute("update o set PrimaryContact = c.Email from organisations o " +
+                    connection.Execute("update o set PrimaryContact = c.Username from organisations o " +
                                        "inner join contacts c on o.EndPointAssessorOrganisationId = c.EndPointAssessorOrganisationId " +
                                        "Where c.id = @contactId And o.PrimaryContact = @contactUsername",
                         new { contactId, contactUsername });
