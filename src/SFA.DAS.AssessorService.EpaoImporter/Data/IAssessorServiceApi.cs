@@ -15,8 +15,6 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Data
         Task<BatchLogResponse> GetGetBatchLogByBatchNumber(string batchNumber);
         Task UpdateBatchDataInBatchLog(Guid batchId, BatchData batchData);
         Task<IEnumerable<CertificateResponse>> GetCertificatesToBePrinted();
-        Task UpdatePrivatelyFundedCertificateRequestsToBeApproved();
-        Task<IEnumerable<CertificateResponse>> GetCertificatesToBeApproved();
         Task ChangeStatusToPrinted(IEnumerable<CertificateResponse> responses);
         Task<EMailTemplate> GetEmailTemplate(string templateName);
         Task<ScheduleRun> GetSchedule(ScheduleType scheduleType);

@@ -8,7 +8,6 @@ using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData.Printing;
-using SFA.DAS.AssessorService.EpaoImporter.Const;
 using SFA.DAS.AssessorService.EpaoImporter.Logger;
 
 namespace SFA.DAS.AssessorService.EpaoImporter.Data
@@ -46,32 +45,6 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Data
             else
             {
                 _aggregateLogger.LogInfo($"Getting Certificates to be printed - Status code returned: {response.StatusCode} Content:");
-               // _aggregateLogger.LogInfo($"{response.Content.ReadAsStringAsync().Result}");
-            }
-
-            return certificates;
-        }
-
-        public async Task UpdatePrivatelyFundedCertificateRequestsToBeApproved()
-        {
-            var responseMessage = await _httpClient.PutAsJsonAsync(
-                $"/api/v1/certificates/updatestatustobeapproved", new Object());            
-        }
-
-        public async Task<IEnumerable<CertificateResponse>> GetCertificatesToBeApproved()
-        {
-            var response = await _httpClient.GetAsync(
-                "/api/v1/certificates?statuses=ToBeApproved");
-
-            var certificates = await response.Content.ReadAsAsync<List<CertificateResponse>>();
-            if (response.IsSuccessStatusCode)
-            {
-                _aggregateLogger.LogInfo($"Getting Certificates to be printed - Status code returned: {response.StatusCode} Content:");
-                // _aggregateLogger.LogInfo($"{response.Content.ReadAsStringAsync().Result}");
-            }
-            else
-            {
-                  _aggregateLogger.LogInfo($"Getting Certificates to be printed - Status code returned: {response.StatusCode} Content:");
                // _aggregateLogger.LogInfo($"{response.Content.ReadAsStringAsync().Result}");
             }
 
