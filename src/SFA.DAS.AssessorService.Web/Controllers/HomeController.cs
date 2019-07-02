@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Distributed;
 using SFA.DAS.AssessorService.Api.Types.Models;
@@ -24,6 +25,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             _sessionService = sessionService;
             _standardsApiClient = standardsApiClient;
         }
+
         [HttpGet]
         [Route("/")]
         public IActionResult Index()
@@ -36,22 +38,25 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             return View(new ErrorViewModel { RequestId = HttpContext.TraceIdentifier });
         }
 
+        [Authorize]
         public IActionResult NotRegistered()
         {
             return View();
         }
-        
+
         public IActionResult AccessDenied()
         {
             return View();
         }
 
-        public async Task<IActionResult> NotActivated(string epaoId)
+        [Authorize]
+        public async Task<IActionResult> NotActivated()
         {
             GetEpaoRegisteredStandardsResponse standard;
 
             try
             {
+                var epaoId = _sessionService.Get("EndPointAssessorOrganisationId");
                 var standards = await _standardsApiClient.GetEpaoRegisteredStandards(epaoId, 1);
                 standard = standards.Items.FirstOrDefault(s => !string.IsNullOrEmpty(s.StandardName));
             }
@@ -63,6 +68,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             return View(standard);
         }
 
+        [Authorize]
         public IActionResult InvalidRole()
         {
             return View();
@@ -83,14 +89,18 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             return View();
         }
 
+        [Authorize]
+        [CheckSession]
         public IActionResult InvitePending()
         {
-            return View((object)_sessionService.Get("OrganisationName"));
+            return View(_sessionService.Get("OrganisationName"));
         }
 
+        [Authorize]
+        [CheckSession]
         public IActionResult Rejected()
         {
-            return View((object)_sessionService.Get("OrganisationName"));
+            return View(_sessionService.Get("OrganisationName"));
         }
     }
 }
