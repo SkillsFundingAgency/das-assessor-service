@@ -31,7 +31,6 @@ namespace SFA.DAS.AssessorService.ExternalApiDataSync.Startup
 
                 configure.For<IAggregateLogger>().Use(_logger).Singleton();
                 configure.For<IWebConfiguration>().Use(configuration).Singleton();
-                configure.For<IDbConnection>().Use(c => new SqlConnection(configuration.SqlConnectionString));
             });
 
             var language = "en-GB";
