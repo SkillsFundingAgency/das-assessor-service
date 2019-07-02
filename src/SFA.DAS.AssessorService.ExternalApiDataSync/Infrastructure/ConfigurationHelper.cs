@@ -1,8 +1,7 @@
-﻿using System;
-using Microsoft.Azure;
-using Microsoft.WindowsAzure.Storage;
+﻿using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Table;
 using Newtonsoft.Json;
+using System;
 
 namespace SFA.DAS.AssessorService.ExternalApiDataSync.Infrastructure
 {
@@ -20,15 +19,12 @@ namespace SFA.DAS.AssessorService.ExternalApiDataSync.Infrastructure
                     var serviceName = "SFA.DAS.AssessorService";
                     var version = "1.0";
 
-                    var connection = CloudStorageAccount.Parse(
-                        CloudConfigurationManager.GetSetting("ConfigurationStorageConnectionString"));
+                    var connection = CloudStorageAccount.Parse(Environment.GetEnvironmentVariable("ConfigurationStorageConnectionString"));
                     var tableClient = connection.CreateCloudTableClient();
                     var table = tableClient.GetTableReference("Configuration");
 
-                    var operation = TableOperation.Retrieve(
-                        CloudConfigurationManager.GetSetting("EnvironmentName"),
-                        $"{serviceName}_{version}");
-                    var result = table.ExecuteAsync(operation).Result;
+                    var operation = TableOperation.Retrieve(Environment.GetEnvironmentVariable("EnvironmentName"), $"{serviceName}_{version}");
+                    var result = table.ExecuteAsync(operation).GetAwaiter().GetResult();
                     if (result.Result is DynamicTableEntity dynResult)
                     {
                         var data = dynResult.Properties["Data"].StringValue;
@@ -42,11 +38,6 @@ namespace SFA.DAS.AssessorService.ExternalApiDataSync.Infrastructure
             }
 
             return _webConfiguration;
-        }
-
-        public static string GetEnvironmentName()
-        {
-            return CloudConfigurationManager.GetSetting("EnvironmentName");
         }
     }
 }
