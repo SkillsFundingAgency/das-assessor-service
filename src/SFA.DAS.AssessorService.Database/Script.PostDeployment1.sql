@@ -232,3 +232,7 @@ UPDATE [dbo].[Certificates]
 SET [CertificateData] = REPLACE(REPLACE(REPLACE(CertificateData, '"EpaOutcome":"Distinction"', '"EpaOutcome":"pass"'), '"EpaOutcome":"Pass with excellence"', '"EpaOutcome":"pass"'), '"EpaOutcome":"No grade awarded"', '"EpaOutcome":"pass"')
 WHERE JSON_Value(CertificateData,'$.EpaDetails.Epas[0].EpaOutcome') IS NOT NULL;
 -- END OF ON-1981
+
+-- START OF ON-1926
+update [dbo].[Contacts] set [Username] = [Email] where  [Username] like 'unknown%' and [signinid] is not null
+-- END OF ON-1926
