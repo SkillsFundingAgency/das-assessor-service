@@ -5,14 +5,12 @@ using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Web.Controllers.Private;
 using SFA.DAS.AssessorService.Web.Infrastructure;
-using SFA.DAS.AssessorService.Web.ViewModels.Certificate.Private;
 
 namespace SFA.DAS.AssessorService.Web.UnitTests.PrivateCertificateTests.Queries
 {
     public class Given_I_request_the_standard_code_page_and_session_does_not_exist : CertificateQueryBase
     {
         private RedirectToActionResult _result;
-        private CertificateStandardCodeListViewModel _viewModelResponse;
 
         [SetUp]
         public void Arrange()
@@ -22,7 +20,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.PrivateCertificateTests.Queries
             var certificatePrivateStandardCodeController =
                 new CertificatePrivateStandardCodeController(MockLogger.Object,
                     MockHttpContextAccessor.Object,
-                    MockAssessmentOrgsApiClient,
+                    MockOrganisationApiClient,
                     new CacheHelper(mockDistributedCache.Object),
                     MockCertificateApiClient,
                     MockSession.Object,

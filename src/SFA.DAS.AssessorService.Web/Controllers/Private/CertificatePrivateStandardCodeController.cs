@@ -23,21 +23,21 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Private
     [Route("certificate/privatestandardcodes")]
     public class CertificatePrivateStandardCodeController : CertificateBaseController
     {
-        private readonly IAssessmentOrgsApiClient _assessmentOrgsApiClient;
         private readonly CacheHelper _cacheHelper;
+        private readonly IOrganisationsApiClient _organisationsApiClient;
         private readonly ICertificateApiClient _certificateApiClient;
         private readonly ISessionService _sessionService;
         private readonly IStandardServiceClient _standardServiceClient;
 
         public CertificatePrivateStandardCodeController(ILogger<CertificateController> logger,
             IHttpContextAccessor contextAccessor,
-            IAssessmentOrgsApiClient assessmentOrgsApiClient,
+            IOrganisationsApiClient organisationsApiClient,
             CacheHelper cacheHelper,
             ICertificateApiClient certificateApiClient, ISessionService sessionService,
             IStandardServiceClient standardServiceClient)
             : base(logger, contextAccessor, certificateApiClient, sessionService)
         {
-            _assessmentOrgsApiClient = assessmentOrgsApiClient;
+            _organisationsApiClient = organisationsApiClient;
             _cacheHelper = cacheHelper;
             _certificateApiClient = certificateApiClient;
             _sessionService = sessionService;
@@ -124,9 +124,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Private
             var endPointAsessorOrganisationId = _sessionService.Get("EndPointAsessorOrganisationId");
 
             var filteredStandardCodes =
-                (await _assessmentOrgsApiClient
-                    .FindAllStandardsByOrganisationIdAsync(endPointAsessorOrganisationId))
-                .Select(q => q.StandardCode).ToList();
+                (await  _organisationsApiClient.GetOrganisationStandardsByOrganisation(endPointAsessorOrganisationId))
+                .Select(q => q.StandardCode.ToString()).ToList();
             return filteredStandardCodes;
         }
 
