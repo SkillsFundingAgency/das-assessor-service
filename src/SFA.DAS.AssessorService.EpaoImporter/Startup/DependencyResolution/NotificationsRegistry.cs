@@ -3,6 +3,7 @@ using SFA.DAS.AssessorService.EpaoImporter.InfrastructureServices;
 using SFA.DAS.Http;
 using SFA.DAS.Http.TokenGenerators;
 using SFA.DAS.Notifications.Api.Client;
+using SFA.DAS.Notifications.Api.Client.Configuration;
 using StructureMap;
 
 namespace SFA.DAS.AssessorService.EpaoImporter.Startup.DependencyResolution
@@ -13,7 +14,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Startup.DependencyResolution
         {
             var configuration = ConfigurationHelper.GetConfiguration();
 
-            Notifications.Api.Client.Configuration.INotificationsApiClientConfiguration clientConfiguration = new Notifications.Api.Client.Configuration.NotificationsApiClientConfiguration
+            INotificationsApiClientConfiguration clientConfiguration = new NotificationsApiClientConfiguration
             {
                 ApiBaseUrl = configuration.NotificationsApiClientConfiguration.ApiBaseUrl,
                 ClientToken = configuration.NotificationsApiClientConfiguration.ClientToken,
@@ -23,15 +24,12 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Startup.DependencyResolution
                 Tenant = ""
             };
 
-
             var httpClient = string.IsNullOrWhiteSpace(clientConfiguration.ClientId)
                 ? new HttpClientBuilder().WithBearerAuthorisationHeader(new JwtBearerTokenGenerator(clientConfiguration)).Build()
                 : new HttpClientBuilder().WithBearerAuthorisationHeader(new AzureADBearerTokenGenerator(clientConfiguration)).Build();
 
             For<INotificationsApi>().Use<NotificationsApi>().Ctor<HttpClient>().Is(httpClient);
-            For<Notifications.Api.Client.Configuration.INotificationsApiClientConfiguration>().Use(clientConfiguration);
+            For<INotificationsApiClientConfiguration>().Use(clientConfiguration);
         }
-
     }
-
 }

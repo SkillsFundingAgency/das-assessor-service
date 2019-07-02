@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
@@ -46,7 +48,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
             var gmtNow = utcNow.UtcToTimeZoneTime(TimezoneNames.GmtStandardTimeZone);
             var fileName = $"IFA-Certificate-{gmtNow:MMyy}-{batchNumber.ToString().PadLeft(3, '0')}.xlsx";
 
-            using (var package = new OfficeOpenXml.ExcelPackage(memoryStream))
+            using (var package = new ExcelPackage(memoryStream))
             {
                 CreateWorkBook(package);
                 CreateWorkSheet(batchNumber, package, certificateResponses);
