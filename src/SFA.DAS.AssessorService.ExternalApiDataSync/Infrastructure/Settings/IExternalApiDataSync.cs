@@ -4,5 +4,6 @@
     {
         bool IsEnabled { get; set; }
         string SourceSqlConnectionString { get; set; }
+        string DestinationSqlConnectionString { get; set; }
     }
 }

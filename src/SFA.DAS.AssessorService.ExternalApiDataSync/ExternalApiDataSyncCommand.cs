@@ -37,7 +37,7 @@ namespace SFA.DAS.AssessorService.ExternalApiDataSync
 
             _allowDataSync = config.ExternalApiDataSync.IsEnabled;
             _sourceConnectionString = config.ExternalApiDataSync.SourceSqlConnectionString;
-            _destinationConnectionString = config.SqlConnectionString;
+            _destinationConnectionString = config.ExternalApiDataSync.DestinationSqlConnectionString;
 
             _bulkCopySettings = new BulkCopySettings { SqlBulkCopyOptions = SqlBulkCopyOptions.KeepIdentity | SqlBulkCopyOptions.KeepNulls | SqlBulkCopyOptions.TableLock };
 

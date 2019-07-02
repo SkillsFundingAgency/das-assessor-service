@@ -1,8 +1,11 @@
-﻿namespace SFA.DAS.AssessorService.ExternalApiDataSync.Infrastructure.Settings
+﻿using Newtonsoft.Json;
+
+namespace SFA.DAS.AssessorService.ExternalApiDataSync.Infrastructure.Settings
 {
     public class ExternalApiDataSync : IExternalApiDataSync
     {
-        public bool IsEnabled { get; set; }
-        public string SourceSqlConnectionString { get; set; }
+        [JsonRequired] public bool IsEnabled { get; set; }
+        [JsonRequired] public string SourceSqlConnectionString { get; set; }
+        [JsonRequired] public string DestinationSqlConnectionString { get; set; }
     }
 }
