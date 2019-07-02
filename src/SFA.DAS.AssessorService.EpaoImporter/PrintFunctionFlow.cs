@@ -1,13 +1,13 @@
 using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Host;
 using SFA.DAS.AssessorService.EpaoImporter.Startup;
+using Microsoft.Extensions.Logging;
 
 namespace SFA.DAS.AssessorService.EpaoImporter
 {
     public static class PrintFunctionFlow
     {
         [FunctionName("PrintFunctionFlow")]
-        public static void Run([TimerTrigger("0 */3 * * * *", RunOnStartup = true)] TimerInfo myTimer, TraceWriter functionLogger,
+        public static void Run([TimerTrigger("0 */3 * * * *", RunOnStartup = true)] TimerInfo myTimer, ILogger functionLogger,
             ExecutionContext context)
         {
             new Bootstrapper().StartUp(functionLogger, context);

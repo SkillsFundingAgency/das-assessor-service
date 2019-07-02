@@ -12,6 +12,7 @@ using SFA.DAS.AssessorService.EpaoImporter.Sftp;
 using SFA.DAS.AssessorService.EpaoImporter.Startup.DependencyResolution;
 using SFA.DAS.AssessorService.Settings;
 using StructureMap;
+using Microsoft.Extensions.Logging;
 
 namespace SFA.DAS.AssessorService.EpaoImporter.Startup
 {
@@ -19,7 +20,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Startup
     {
         private IAggregateLogger _logger;            
 
-        public void StartUp(TraceWriter functionLogger, ExecutionContext context)
+        public void StartUp(ILogger functionLogger, ExecutionContext context)
         {
             _logger = new AggregateLogger(FunctionName.PrintProcessFlow, functionLogger, context);          
 
@@ -41,12 +42,10 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Startup
 
                 configure.For<IFileTransferClient>().Use<FileTransferClient>();
                 configure.For<IAssessorServiceApi>().Use<AssessorServiceApi>().Singleton();
-                configure.For<INotificationService>().Use<NotificationService>();
                 configure.For<SftpClient>().Use<SftpClient>("SftpClient",
                     c => new SftpClient(configuration.Sftp.RemoteHost, Convert.ToInt32(configuration.Sftp.Port),
                         configuration.Sftp.Username, configuration.Sftp.Password));
                 configure.AddRegistry<NotificationsRegistry>();
-
                 _logger.LogInfo("Calling http registry and getting the token ....");
                 configure.AddRegistry<HttpRegistry>();
             });

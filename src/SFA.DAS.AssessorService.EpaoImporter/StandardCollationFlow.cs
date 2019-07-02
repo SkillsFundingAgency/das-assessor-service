@@ -1,13 +1,14 @@
 ﻿using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Host;
 using SFA.DAS.AssessorService.EpaoImporter.Startup;
+using Microsoft.Extensions.Logging;
 
 namespace SFA.DAS.AssessorService.EpaoImporter
 {
     public static class StandardCollationFlow
     {
         [FunctionName("StandardCollationFlow")]
-        public static void Run([TimerTrigger("0 30 6 * * *", RunOnStartup = true)] TimerInfo myTimer, TraceWriter functionLogger,
+        public static void Run([TimerTrigger("0 30 6 * * *", RunOnStartup = true)] TimerInfo myTimer, ILogger functionLogger,
             ExecutionContext context)
         {
             new Bootstrapper().StartUp(functionLogger, context);

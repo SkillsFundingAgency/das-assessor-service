@@ -40,11 +40,13 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Data
             var certificates = await response.Content.ReadAsAsync<List<CertificateResponse>>();
             if (response.IsSuccessStatusCode)
             {
-                _aggregateLogger.LogInfo($"Getting Certificates to be printed - Status code returned: {response.StatusCode}. Content: {response.Content.ReadAsStringAsync().Result}");
+                _aggregateLogger.LogInfo($"Getting Certificates to be printed - Status code returned: {response.StatusCode} Content:");
+               // _aggregateLogger.LogInfo($"{response.Content.ReadAsStringAsync().Result}");
             }
             else
             {
-                _aggregateLogger.LogInfo($"Getting Certificates to be printed - Status code returned: {response.StatusCode}. Content: {response.Content.ReadAsStringAsync().Result}");
+                _aggregateLogger.LogInfo($"Getting Certificates to be printed - Status code returned: {response.StatusCode} Content:");
+               // _aggregateLogger.LogInfo($"{response.Content.ReadAsStringAsync().Result}");
             }
 
             return certificates;
@@ -64,11 +66,13 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Data
             var certificates = await response.Content.ReadAsAsync<List<CertificateResponse>>();
             if (response.IsSuccessStatusCode)
             {
-                _aggregateLogger.LogInfo($"Getting Certificates to be printed - Status code returned: {response.StatusCode}. Content: {response.Content.ReadAsStringAsync().Result}");
+                _aggregateLogger.LogInfo($"Getting Certificates to be printed - Status code returned: {response.StatusCode} Content:");
+                // _aggregateLogger.LogInfo($"{response.Content.ReadAsStringAsync().Result}");
             }
             else
             {
-                _aggregateLogger.LogInfo($"Getting Certificates to be printed - Status code returned: {response.StatusCode}. Content: {response.Content.ReadAsStringAsync().Result}");
+                  _aggregateLogger.LogInfo($"Getting Certificates to be printed - Status code returned: {response.StatusCode} Content:");
+               // _aggregateLogger.LogInfo($"{response.Content.ReadAsStringAsync().Result}");
             }
 
             return certificates;
