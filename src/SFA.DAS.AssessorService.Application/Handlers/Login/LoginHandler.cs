@@ -89,7 +89,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Login
             if (!string.IsNullOrEmpty(originalUsername))
                 await _registerRepository.UpdateEpaOrganisationPrimaryContact(contact.Id, originalUsername);
 
-            response.EndPointAssessorName = organisation.EndPointAssessorName;
 
             response.EndPointAssessorOrganisationId = organisation.EndPointAssessorOrganisationId;
 
