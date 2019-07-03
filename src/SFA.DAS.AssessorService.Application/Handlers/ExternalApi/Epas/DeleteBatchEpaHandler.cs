@@ -43,11 +43,12 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Epas
             var certData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
 
             _logger.LogInformation("DeleteEpaDetails Before Update CertificateData");
+            certificate.Status = CertificateStatus.Deleted;
             certData.EpaDetails = null;
             certificate.CertificateData = JsonConvert.SerializeObject(certData);
 
             _logger.LogInformation("DeleteEpaDetails Before Update Cert in db");
-            await _certificateRepository.Update(certificate, contact.Username, CertificateActions.Amend);
+            await _certificateRepository.Update(certificate, contact.Username, CertificateActions.Delete);
         }
 
         private async Task<Contact> GetContactFromEmailAddress(string email)

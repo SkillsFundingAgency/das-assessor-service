@@ -50,6 +50,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Epas
             }
 
             if (certificate is null) throw new NotFound();
+            certificate.Status = Domain.Consts.CertificateStatus.Draft;
 
             _logger.LogInformation("CreateNewEpa Before Combining EpaDetails");
             var latestRecord = request.EpaDetails.Epas.OrderByDescending(epa => epa.EpaDate).First();
