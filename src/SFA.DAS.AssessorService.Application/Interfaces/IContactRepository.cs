@@ -23,6 +23,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task AssociateRoleWithContact(string roleName, Contact newContact);
         Task AssociatePrivilegesWithContact(Guid contactId, IEnumerable<Privilege> privileges);
         bool CheckIfAnyPrivelegesSet(Guid contactId);
+        Task UpdateUserName(Guid contactId, string userName);
         Task RemoveAllPrivileges(Guid contactId);
         Task AddPrivilege(Guid contactId, Guid privilegeId);
         Task<bool> IsOnlyContactWithPrivilege(Guid contactId, Guid privilegeId);
