@@ -90,8 +90,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Login
                 await _registerRepository.UpdateEpaOrganisationPrimaryContact(contact.Id, originalUsername);
 
             response.EndPointAssessorName = organisation.EndPointAssessorName;
+
             response.EndPointAssessorOrganisationId = organisation.EndPointAssessorOrganisationId;
-            response.OrganisationName = organisation.EndPointAssessorName;
 
             _logger.LogInformation($"Got Org with ukprn: {organisation.EndPointAssessorUkprn}, Id: {organisation.EndPointAssessorOrganisationId}, Status: {organisation.Status}");
 
@@ -134,8 +134,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Login
                 }
             }
 
-            _logger.LogInformation(LoggingConstants.SignInSuccessful);
-            
             return response;
         }
 

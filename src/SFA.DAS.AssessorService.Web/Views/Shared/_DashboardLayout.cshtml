@@ -100,7 +100,7 @@
 
                     <p class="govuk-!-margin-top-0 govuk-!-margin-bottom-0 das-no-wrap">
                         <span class="govuk-visually-hidden">Signed in as </span>
-                        @SessionService.Get("LoggedInUser")
+                        @User.Identity.Name
                     </p>
                     @if (@SessionService.Get("OrganisationName") != null)
                     {
