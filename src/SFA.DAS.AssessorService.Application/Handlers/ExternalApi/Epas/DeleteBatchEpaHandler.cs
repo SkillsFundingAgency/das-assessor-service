@@ -40,6 +40,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Epas
             var certificate = await _certificateRepository.GetCertificate(request.Uln, request.StandardCode);
 
             if (certificate is null) throw new NotFound();
+            else if (certificate.Status == CertificateStatus.Deleted) return; // If already deleted ignore
 
             var certData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
 
