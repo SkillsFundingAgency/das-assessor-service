@@ -240,7 +240,18 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                  await PostPutRequest (request, emailAllApprovedContactsRequest);
             }
         }
-        
+
+        public async Task<List<OrganisationStandardSummary>> GetOrganisationStandardsByOrganisation(string endPointAssessorOrganisationId)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get,
+               $"/api/ao/assessment-organisations/{endPointAssessorOrganisationId}/standards"))
+            {
+                return await RequestAndDeserialiseAsync<List<OrganisationStandardSummary>>(request,
+                    $"Could not retrieve standards for organisation with Id of {endPointAssessorOrganisationId}");
+            }
+        }
+
+
     }
 
     public interface IOrganisationsApiClient
@@ -265,5 +276,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         Task<List<OrganisationType>> GetOrganisationTypes();
         Task SendEmailsToOrgApprovedUsers(EmailAllApprovedContactsRequest emailAllApprovedContactsRequest);
         Task<OrganisationResponse> GetOrganisationByName(string name);
+        Task<List<OrganisationStandardSummary>> GetOrganisationStandardsByOrganisation(string endPointAssessorOrganisationId);
     }
 }
