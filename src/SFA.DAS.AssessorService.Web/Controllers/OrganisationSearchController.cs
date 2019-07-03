@@ -402,9 +402,10 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         private async Task NotifyOrganisationUsers(OrganisationSearchResult organisationSearchResult,
           ContactResponse user)
         {
+            //ON-2020 Changed from reference Id to Id , since org reference Id can have multiple values 
             await _organisationsApiClient.SendEmailsToOrganisationUserManagementUsers(new NotifyUserManagementUsersRequest(
                 user.DisplayName, organisationSearchResult
-                    .OrganisationReferenceId, _config.ServiceLink));
+                    .Id, _config.ServiceLink));
         }
 
         private ViewResult RequestAccess(OrganisationSearchViewModel viewModel, OrganisationSearchResult organisationSearchResult)
