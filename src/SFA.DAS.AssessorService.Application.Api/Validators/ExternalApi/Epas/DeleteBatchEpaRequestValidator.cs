@@ -82,6 +82,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Epas
                     {
                         context.AddFailure(new ValidationFailure("EpaReference", $"Cannot delete EPA from a submitted Certificate"));
                     }
+                    ////////////////////////////////////////////////////////////////////////////////////////////
+                    // TODO: Need to redo this taking into account if a certificate has been requested then stop
+                    // 
+                    // TODO: Add various unit tests to cover this and any other scenario
+                    ////////////////////////////////////////////////////////////////////////////////////////////
                 });
             });
         }

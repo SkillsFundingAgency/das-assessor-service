@@ -23,6 +23,13 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Epas
 
                     if (existingCertificate != null && existingCertificate.Status != CertificateStatus.Deleted)
                     {
+                        ///////////////////////////////////////////////////////////////////////////////////
+                        // TODO: Need to redo this taking into account - if a certificate has been requested then stop
+                        // 
+                        // TODO: Add various unit tests to cover this and any other scenario
+                        ///////////////////////////////////////////////////////////////////////////////////
+
+
                         var certData = JsonConvert.DeserializeObject<CertificateData>(existingCertificate.CertificateData);
 
                         if (certData?.EpaDetails?.Epas != null)
