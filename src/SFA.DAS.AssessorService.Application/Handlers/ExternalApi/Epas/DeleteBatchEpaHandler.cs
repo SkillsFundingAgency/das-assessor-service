@@ -6,6 +6,7 @@ using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using NotFound = SFA.DAS.AssessorService.Domain.Exceptions.NotFound;
@@ -44,7 +45,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Epas
 
             _logger.LogInformation("DeleteEpaDetails Before Update CertificateData");
             certificate.Status = CertificateStatus.Deleted;
-            certData.EpaDetails = null;
+            certData.EpaDetails = new EpaDetails { Epas = new List<EpaRecord>() };
             certificate.CertificateData = JsonConvert.SerializeObject(certData);
 
             _logger.LogInformation("DeleteEpaDetails Before Update Cert in db");
