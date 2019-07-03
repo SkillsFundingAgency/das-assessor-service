@@ -1,0 +1,12 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "AzureWebJobsDashboard": "UseDevelopmentStorage=true",
+    "FUNCTIONS_WORKER_RUNTIME": "dotnet",
+    "EnvironmentName": "LOCAL",
+    "ConfigurationStorageConnectionString": "UseDevelopmentStorage=true",
+    "IFATemplateStorageConnectionString": "UseDevelopmentStorage=true",
+    "Redis": "localhost:6379"
+  }
+}
