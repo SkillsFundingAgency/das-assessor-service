@@ -259,6 +259,13 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
 
                                  if (user != null)
                                  {
+                                     var primaryIdentity = context.Principal.Identities.FirstOrDefault();
+                                     if (primaryIdentity != null && string.IsNullOrEmpty(primaryIdentity.Name))
+                                     {
+                                         primaryIdentity.AddClaim(new Claim(ClaimTypes.Name, user.DisplayName));
+                                         // Note: In future, may want to consider populating the other Claims, such as Email
+                                     }
+
                                      identity.AddClaim(new Claim("UserId", user?.Id.ToString()));
                                      identity.AddClaim(new Claim(
                                         "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn",
@@ -292,6 +299,7 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
 
                                      identity.AddClaim(new Claim("display_name", user?.DisplayName));
                                      identity.AddClaim(new Claim("email", user?.Email));
+                                     
 
                                      //Todo: Need to determine privileges dynamically
                                      identity.AddClaim(new Claim("http://schemas.portal.com/service",

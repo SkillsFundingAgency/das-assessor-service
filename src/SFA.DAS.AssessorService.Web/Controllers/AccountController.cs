@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -22,18 +23,21 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         private readonly ILogger<AccountController> _logger;
         private readonly ILoginOrchestrator _loginOrchestrator;
         private readonly ISessionService _sessionService;
-        private readonly IContactsApiClient _contactsApiClient;
         private readonly IWebConfiguration _config;
+        private readonly IContactsApiClient _contactsApiClient;
+        private readonly IHttpContextAccessor _contextAccessor;
         private readonly CreateAccountValidator _createAccountValidator;
 
         public AccountController(ILogger<AccountController> logger, ILoginOrchestrator loginOrchestrator,
-            ISessionService sessionService, IWebConfiguration config, IContactsApiClient contactsApiClient, CreateAccountValidator createAccountValidator)
+            ISessionService sessionService, IWebConfiguration config, IContactsApiClient contactsApiClient,
+            IHttpContextAccessor contextAccessor, CreateAccountValidator createAccountValidator)
         {
             _logger = logger;
             _loginOrchestrator = loginOrchestrator;
             _sessionService = sessionService;
             _config = config;
             _contactsApiClient = contactsApiClient;
+            _contextAccessor = contextAccessor;
             _createAccountValidator = createAccountValidator;
         }
 
@@ -51,11 +55,14 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         public async Task<IActionResult> PostSignIn()
         { 
             var loginResult = await _loginOrchestrator.Login();
+            var orgName = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/orgname")?.Value;
+
             _logger.LogInformation($"  returned from LoginOrchestrator: {loginResult.Result}");
+
             switch (loginResult.Result)
             {
                 case LoginResult.Valid:
-                    _sessionService.Set("OrganisationName", loginResult.EndPointAssessorName);
+                    _sessionService.Set("OrganisationName", orgName);
                     return RedirectToAction("Index", "Dashboard");
                 case LoginResult.NotRegistered:
                     return RedirectToAction("Index", "OrganisationSearch");
@@ -66,13 +73,13 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                     return RedirectToAction("InvalidRole", "Home");
                 case LoginResult.InvitePending:
                     ResetCookies();
-                    _sessionService.Set("OrganisationName", loginResult.OrganisationName);
+                    _sessionService.Set("OrganisationName", orgName);
                     return RedirectToAction("InvitePending", "Home");
                 case LoginResult.Applying:
                     return Redirect($"{_config.ApplyBaseAddress}/Applications");
                 case LoginResult.Rejected:
                     ResetCookies();
-                    _sessionService.Set("OrganisationName", loginResult.OrganisationName);
+                    _sessionService.Set("OrganisationName", orgName);
                     return RedirectToAction("Rejected", "Home");
                 case LoginResult.ContactDoesNotExist:
                     ResetCookies();

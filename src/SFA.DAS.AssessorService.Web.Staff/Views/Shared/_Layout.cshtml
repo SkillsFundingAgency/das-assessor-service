@@ -135,7 +135,7 @@
                     <div class="column-two-thirds">
                         <p class="heading-small">
                             <span class="heading-secondary">
-                                <span class="visuallyhidden">Logged in as </span>
+                                <span class="visuallyhidden">Signed in as </span>
                                 @(User.Claims.First(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname").Value.Trim() 
                                   + " " + 
                                   User.Claims.First(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname").Value.Trim()) 
