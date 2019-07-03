@@ -45,7 +45,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Epas
             if(certificate is null)
             {
                 _logger.LogInformation("CreateNewEpa Before StartCertificateRequest");
-                var startCertificateRequest = new StartCertificateRequest { StandardCode = request.StandardCode, UkPrn = request.UkPrn, Uln = request.Uln, Username = contact.Username }
+                var startCertificateRequest = new StartCertificateRequest { StandardCode = request.StandardCode, UkPrn = request.UkPrn, Uln = request.Uln, Username = contact.Username };
                 certificate = await _mediator.Send(startCertificateRequest);
             }
 
