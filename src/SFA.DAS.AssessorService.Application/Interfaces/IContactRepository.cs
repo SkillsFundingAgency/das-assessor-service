@@ -13,6 +13,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task Delete(string userName);
         Task LinkOrganisation(string endPointAssessorOrganisationId, string userName);
         Task UpdateStatus(UpdateContactStatusRequest updateContactRequest);
+        Task UpdateStatus(Guid contactId, string status);
 
         Task<Contact> UpdateContactWithOrganisationData(
             UpdateContactWithOrgAndStausRequest updateContactWithOrgAndStaus);
@@ -23,5 +24,11 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task AssociatePrivilegesWithContact(Guid contactId, IEnumerable<Privilege> privileges);
         bool CheckIfAnyPrivelegesSet(Guid contactId);
         Task UpdateUserName(Guid contactId, string userName);
+        Task RemoveAllPrivileges(Guid contactId);
+        Task AddPrivilege(Guid contactId, Guid privilegeId);
+        Task<bool> IsOnlyContactWithPrivilege(Guid contactId, Guid privilegeId);
+        Task CreateContactLog(Guid userId, Guid contactId, string logType, object logData);
+        Task RemoveContactFromOrganisation(Guid contactId);
+        Task UpdateOrganisationId(Guid contactId, Guid? organisationId);
     }
 }

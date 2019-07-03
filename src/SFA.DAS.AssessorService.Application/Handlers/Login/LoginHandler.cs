@@ -60,7 +60,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Login
 
             if (contact.OrganisationId == null)
             {
-                var userStatus = await GetUserStatus(null, request.SignInId);
+                var userStatus = contact.Status;// await GetUserStatus(null, request.SignInId);
                 if (userStatus != ContactStatus.Applying)
                 {
                     response.Result = LoginResult.NotRegistered;
@@ -113,7 +113,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Login
             {
                 _logger.LogInformation(LoggingConstants.SignInSuccessful);
 
-                var status = await GetUserStatus(organisation.EndPointAssessorOrganisationId, request.SignInId);
+                var status = contact.Status; //await GetUserStatus(organisation.EndPointAssessorOrganisationId, request.SignInId);
                 switch (status)
                 {
                     case ContactStatus.Live:
@@ -141,17 +141,18 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Login
 
         private async Task<bool> UserDoesNotHaveAcceptableRole(Guid contactId)
         {
-            var roles = await _contactQueryRepository.GetRolesFor(contactId);
-            return roles.All(r => r.RoleName != "SuperUser");
-                
-            //TODO: This needs to look up the user by the id and check they are in the appropriate role.
-            //return !roles.Contains(_config.Authentication.Role);
+            return false;
+//            var roles = await _contactQueryRepository.GetRolesFor(contactId);
+//            return roles.All(r => r.RoleName != "SuperUser");
+//                
+//            //TODO: This needs to look up the user by the id and check they are in the appropriate role.
+//            //return !roles.Contains(_config.Authentication.Role);
         }
 
-        private async Task<string> GetUserStatus(string endPointAssessorOrganisationId, Guid signInId)
-        {
-            return await _contactQueryRepository.GetContactStatus(endPointAssessorOrganisationId, signInId);
-        }
+//        private async Task<string> GetUserStatus(string endPointAssessorOrganisationId, Guid signInId)
+//        {
+//            return await _contactQueryRepository.GetContactStatus(endPointAssessorOrganisationId, signInId);
+//        }
         
     }
 }

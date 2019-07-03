@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
@@ -29,6 +30,8 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
             _configuration = configuration;
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
+            IdentityModelEventSource.ShowPII = true;
+            
             services.AddAuthentication(options =>
                 {
                     options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
@@ -230,31 +233,31 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
                                      context.Response.Redirect("/Home/AccessDenied");
                                      context.HandleResponse();
                                  }
-                                 else if(user.EndPointAssessorOrganisationId != null && user.Status == ContactStatus.Live)
-                                 {
-                                     var havePrivileges = await contactClient.DoesContactHavePrivileges(user.Id.ToString());
-
-                                     if (!havePrivileges.Result)
-                                     {
-                                         var contact = new Contact
-                                         {
-                                             Id = user.Id,
-                                             DisplayName = user.DisplayName,
-                                             Email = user.Email,
-                                             SignInId = user.SignInId,
-                                             SignInType = user.SignInType,
-                                             Username = user.Username,
-                                             Title = user.Title,
-                                             FamilyName = user.FamilyName,
-                                             GivenNames = user.GivenNames,
-                                             OrganisationId = user.OrganisationId,
-                                             EndPointAssessorOrganisationId = user.EndPointAssessorOrganisationId,
-                                             Status = user.Status
-                                         };
-
-                                         await contactClient.AssociateDefaultRolesAndPrivileges(contact);
-                                     }                                     
-                                 }
+//                                 else if(user.EndPointAssessorOrganisationId != null && user.Status == ContactStatus.Live)
+//                                 {
+//                                     var havePrivileges = await contactClient.DoesContactHavePrivileges(user.Id.ToString());
+//
+//                                     if (!havePrivileges.Result)
+//                                     {
+//                                         var contact = new Contact
+//                                         {
+//                                             Id = user.Id,
+//                                             DisplayName = user.DisplayName,
+//                                             Email = user.Email,
+//                                             SignInId = user.SignInId,
+//                                             SignInType = user.SignInType,
+//                                             Username = user.Username,
+//                                             Title = user.Title,
+//                                             FamilyName = user.FamilyName,
+//                                             GivenNames = user.GivenNames,
+//                                             OrganisationId = user.OrganisationId,
+//                                             EndPointAssessorOrganisationId = user.EndPointAssessorOrganisationId,
+//                                             Status = user.Status
+//                                         };
+//
+//                                         await contactClient.AssociateDefaultRolesAndPrivileges(contact);
+//                                     }                                     
+//                                 }
 
 
                                  if (user != null)
@@ -292,10 +295,6 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
 
                                      identity.AddClaim(new Claim("display_name", user?.DisplayName));
                                      identity.AddClaim(new Claim("email", user?.Email));
-
-                                     //Todo: Need to determine privileges dynamically
-                                     identity.AddClaim(new Claim("http://schemas.portal.com/service",
-                                         Privileges.ManageUsers));
                                  }
                              }
                              context.Principal.AddIdentity(identity);
@@ -314,13 +313,6 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
                             context.User.HasClaim("http://schemas.portal.com/service", Roles.ExternalApiAccess)
                             && context.User.HasClaim("http://schemas.portal.com/service", Roles.EpaoUser)
                             );
-                    });
-                options.AddPolicy(Policies.SuperUserPolicy,
-                    policy =>
-                    {
-                        policy.RequireAssertion(context =>
-                            context.User.HasClaim("http://schemas.portal.com/service", Privileges.ManageUsers)
-                        );
                     });
             });
         }
@@ -342,6 +334,7 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
         }
     }
 
+
     public class Policies
     {
         public const string ExternalApiAccess = "ExternalApiAccess";
@@ -352,10 +345,5 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
     {
         public const string ExternalApiAccess = "EPI";
         public const string EpaoUser = "EPA";
-    }
-
-    public class Privileges
-    {
-        public const string ManageUsers = "ManageUser";
     }
 }

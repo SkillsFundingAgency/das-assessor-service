@@ -75,6 +75,16 @@ namespace SFA.DAS.AssessorService.Data
             return await _assessorDbContext.Organisations.Include(x => x.OrganisationType).
                 FirstOrDefaultAsync(x => x.OrganisationDataFromJson.LegalName == name);
         }
-        
+
+        public async Task<Organisation> GetOrganisationByContactId(Guid contactId)
+        {
+            var contact = await _assessorDbContext
+                .Contacts
+                .Include(c => c.Organisation)
+                .FirstOrDefaultAsync(c => c.Id == contactId);
+            
+            return contact
+                .Organisation;
+        }
     }
 }
