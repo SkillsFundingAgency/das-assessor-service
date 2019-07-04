@@ -10,6 +10,10 @@ Post-Deployment Script Template
 --------------------------------------------------------------------------------------
 */
 
+/* Start of data setup scripts - DO NOT REMOVE */
+:r .\DataSetup\OrganisationType.sql
+/* End of data setup scripts - DO NOT REMOVE */
+
 -- backup ILRS before data synch
 /* DONE
 DELETE FROM IlrsCopy

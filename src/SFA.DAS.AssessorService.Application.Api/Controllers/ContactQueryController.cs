@@ -263,11 +263,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
                 }
             };
 
-
             if (contact.Organisation != null)
             {
-                var finExempt = contact.Organisation.OrganisationType != null ? 
-                    IsOrganisationTypeFinancialExempt(contact.Organisation.OrganisationType.Type) : false;
                 request.organisation = new Organisation
                 {
                     CreatedAt = contact.Organisation.CreatedAt,
@@ -280,7 +277,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
                     OrganisationUkprn = contact.Organisation.EndPointAssessorUkprn,
                     RoATPApproved = false,
                     RoEPAOApproved = true,
-                    Status = contact.Organisation.Status =="Live"?"Approved":"New",
+                    Status = contact.Organisation.Status == "Live" ? "Approved" : "New",
                     UpdatedAt = null,
                     UpdatedBy = null,
                     OrganisationDetails = new OrganisationDetails
@@ -302,7 +299,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
                         FHADetails = new FHADetails
                         {
                             FinancialDueDate = contact.Organisation.OrganisationDataFromJson?.FhaDetails?.FinancialDueDate,
-                            FinancialExempt = finExempt 
+                            FinancialExempt = contact.Organisation.OrganisationType.FinancialExempt
                         },
                         EndPointAssessmentOrgId = contact.EndPointAssessorOrganisationId
                     }
@@ -310,15 +307,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             }
 
             return request;
-        }
-
-        private static bool IsOrganisationTypeFinancialExempt(string organisationType)
-        {
-            // This is unlikely to change. Hence, after a quick discussion, decided to hard-code these than cope with external dependencies
-            return "HEI".Equals(organisationType, StringComparison.InvariantCultureIgnoreCase)
-                || "College".Equals(organisationType, StringComparison.InvariantCultureIgnoreCase)
-                || "Public Sector".Equals(organisationType, StringComparison.InvariantCultureIgnoreCase)
-                || "Academy or Free School".Equals(organisationType, StringComparison.InvariantCultureIgnoreCase);
         }
     }
 
