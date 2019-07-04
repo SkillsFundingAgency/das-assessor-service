@@ -1,9 +1,11 @@
 ﻿using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.Extensions.Localization;
+using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models.ExternalApi.Epas;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
+using SFA.DAS.AssessorService.Domain.JsonData;
 using System;
 
 namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Epas
@@ -21,8 +23,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Epas
                     var existingCertificate = await certificateRepository.GetCertificate(m.Uln, m.StandardCode);
                     var sumbittingEpao = await organisationQueryRepository.GetByUkPrn(m.UkPrn);
 
-                    if (existingCertificate is null || !string.Equals(existingCertificate.CertificateReference, m.EpaDetails.EpaReference, StringComparison.InvariantCultureIgnoreCase)
-                        || existingCertificate.Status == CertificateStatus.Deleted)
+                    if (existingCertificate is null || !string.Equals(existingCertificate.CertificateReference, m.EpaDetails.EpaReference, StringComparison.InvariantCultureIgnoreCase))
                     {
                         context.AddFailure(new ValidationFailure("EpaReference", $"EPA not found"));
                     }
@@ -30,16 +31,26 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Epas
                     {
                         context.AddFailure(new ValidationFailure("EpaReference", $"Your organisation is not the creator of this EPA"));
                     }
-                    else if (existingCertificate.Status != CertificateStatus.Draft)
+                    else
                     {
-                        context.AddFailure(new ValidationFailure("EpaReference", $"Certificate has been submitted for this EPA"));
-                    }
+                        switch (existingCertificate.Status)
+                        {
+                            case CertificateStatus.Deleted:
+                                context.AddFailure(new ValidationFailure("EpaReference", $"EPA not found"));
+                                break;
+                            case CertificateStatus.Draft:
+                                var certData = JsonConvert.DeserializeObject<CertificateData>(existingCertificate.CertificateData);
 
-                    ////////////////////////////////////////////////////////////////////////////////////////////
-                    // TODO: Need to redo this taking into account if a certificate has been requested then stop
-                    // 
-                    // TODO: Add various unit tests to cover this and any other scenario
-                    ////////////////////////////////////////////////////////////////////////////////////////////
+                                if (!string.IsNullOrEmpty(certData.OverallGrade) && certData.AchievementDate.HasValue && !string.IsNullOrEmpty(certData.ContactPostCode))
+                                {
+                                    context.AddFailure(new ValidationFailure("EpaReference", $"Certificate already exists, cannot update EPA record"));
+                                }
+                                break;
+                            default:
+                                context.AddFailure(new ValidationFailure("EpaReference", $"Certificate already exists, cannot update EPA record"));
+                                break;
+                        }
+                    }
                 });
             });
         }

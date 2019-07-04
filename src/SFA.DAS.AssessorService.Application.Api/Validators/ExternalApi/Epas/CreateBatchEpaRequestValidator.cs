@@ -21,20 +21,27 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Epas
                 {
                     var existingCertificate = await certificateRepository.GetCertificate(m.Uln, m.StandardCode);
 
-                    if (existingCertificate != null && existingCertificate.Status != CertificateStatus.Deleted)
+                    if (existingCertificate != null)
                     {
-                        ///////////////////////////////////////////////////////////////////////////////////
-                        // TODO: Need to redo this taking into account - if a certificate has been requested then stop
-                        // 
-                        // TODO: Add various unit tests to cover this and any other scenario
-                        ///////////////////////////////////////////////////////////////////////////////////
-
-
-                        var certData = JsonConvert.DeserializeObject<CertificateData>(existingCertificate.CertificateData);
-
-                        if (certData?.EpaDetails?.Epas != null)
+                        switch (existingCertificate.Status)
                         {
-                            context.AddFailure(new ValidationFailure("EpaDetails", $"EPA already provided for the learner"));
+                            case CertificateStatus.Deleted:
+                                break;
+                            case CertificateStatus.Draft:
+                                var certData = JsonConvert.DeserializeObject<CertificateData>(existingCertificate.CertificateData);
+
+                                if (!string.IsNullOrEmpty(certData.OverallGrade) && certData.AchievementDate.HasValue && !string.IsNullOrEmpty(certData.ContactPostCode))
+                                {
+                                    context.AddFailure(new ValidationFailure("EpaDetails", $"Certificate already exists, cannot create EPA record"));
+                                }
+                                else if (certData.EpaDetails?.Epas != null)
+                                {
+                                    context.AddFailure(new ValidationFailure("EpaDetails", $"EPA already provided for the learner"));
+                                }
+                                break;
+                            default:
+                                context.AddFailure(new ValidationFailure("EpaDetails", $"Certificate already exists, cannot create EPA record"));
+                                break;
                         }
                     }
                 });

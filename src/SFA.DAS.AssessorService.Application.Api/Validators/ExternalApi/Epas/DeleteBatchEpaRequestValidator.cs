@@ -1,9 +1,11 @@
 ﻿using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.Extensions.Localization;
+using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models.ExternalApi.Epas;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
+using SFA.DAS.AssessorService.Domain.JsonData;
 using System;
 using System.Linq;
 
@@ -77,16 +79,25 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Epas
                     {
                         context.AddFailure(new ValidationFailure("EpaReference", $"Your organisation is not the creator of this EPA"));
                     }
-                    else if (existingCertificate.Status == CertificateStatus.Submitted || existingCertificate.Status == CertificateStatus.Printed
-                            || existingCertificate.Status == CertificateStatus.Reprint)
+                    else
                     {
-                        context.AddFailure(new ValidationFailure("EpaReference", $"Cannot delete EPA from a submitted Certificate"));
+                        switch (existingCertificate.Status)
+                        {
+                            case CertificateStatus.Deleted:
+                                break;
+                            case CertificateStatus.Draft:
+                                var certData = JsonConvert.DeserializeObject<CertificateData>(existingCertificate.CertificateData);
+
+                                if (!string.IsNullOrEmpty(certData.OverallGrade) && certData.AchievementDate.HasValue && !string.IsNullOrEmpty(certData.ContactPostCode))
+                                {
+                                    context.AddFailure(new ValidationFailure("EpaReference", $"Certificate already exists, cannot delete EPA record"));
+                                }
+                                break;
+                            default:
+                                context.AddFailure(new ValidationFailure("EpaReference", $"Certificate already exists, cannot delete EPA record"));
+                                break;
+                        }
                     }
-                    ////////////////////////////////////////////////////////////////////////////////////////////
-                    // TODO: Need to redo this taking into account if a certificate has been requested then stop
-                    // 
-                    // TODO: Add various unit tests to cover this and any other scenario
-                    ////////////////////////////////////////////////////////////////////////////////////////////
                 });
             });
         }
