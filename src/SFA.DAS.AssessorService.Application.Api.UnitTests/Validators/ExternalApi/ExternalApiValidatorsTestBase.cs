@@ -32,11 +32,13 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
 
             certificateRepositoryMock.Setup(q => q.GetCertificate(1234567890, 1)).ReturnsAsync(GenerateCertificate(1234567890, 1, "test", "Draft", new Guid("12345678123456781234567812345678")));
             certificateRepositoryMock.Setup(q => q.GetCertificate(1234567890, 98)).ReturnsAsync(GenerateCertificate(1234567890, 98, "test", "Deleted", new Guid("12345678123456781234567812345678")));
+            certificateRepositoryMock.Setup(q => q.GetCertificate(1234567890, 101)).ReturnsAsync(GenerateEpaCertificate(1234567890, 101, "test", new Guid("12345678123456781234567812345678")));
             certificateRepositoryMock.Setup(q => q.GetCertificate(9999999999, 1)).ReturnsAsync(GenerateCertificate(9999999999, 1, "test", "Printed", new Guid("99999999999999999999999999999999")));
             certificateRepositoryMock.Setup(q => q.GetCertificate(9999999999, 99)).ReturnsAsync(GeneratePartialCertificate(9999999999, 99, "test", new Guid("99999999999999999999999999999999")));
 
             certificateRepositoryMock.Setup(q => q.GetOptions(1)).ReturnsAsync(new List<Option>());
             certificateRepositoryMock.Setup(q => q.GetOptions(98)).ReturnsAsync(new List<Option>());
+            certificateRepositoryMock.Setup(q => q.GetOptions(101)).ReturnsAsync(new List<Option>());
 
             certificateRepositoryMock.Setup(q => q.GetOptions(99))
                 .ReturnsAsync(new List<Option>
@@ -66,19 +68,22 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
                 {
                     GenerateStandard(1),
                     GenerateStandard(98),
-                    GenerateStandard(99)
+                    GenerateStandard(99),
+                    GenerateStandard(101)
                 });
 
             standardServiceMock.Setup(c => c.GetStandard(1)).ReturnsAsync(GenerateStandard(1));
             standardServiceMock.Setup(c => c.GetStandard(98)).ReturnsAsync(GenerateStandard(98));
             standardServiceMock.Setup(c => c.GetStandard(99)).ReturnsAsync(GenerateStandard(99));
+            standardServiceMock.Setup(c => c.GetStandard(101)).ReturnsAsync(GenerateStandard(101));
 
             standardServiceMock.Setup(c => c.GetEpaoRegisteredStandards("12345678"))
                 .ReturnsAsync(new List<EPORegisteredStandards>
                 {
                     GenerateEPORegisteredStandard(1),
                     GenerateEPORegisteredStandard(98),
-                    GenerateEPORegisteredStandard(99)
+                    GenerateEPORegisteredStandard(99),
+                    GenerateEPORegisteredStandard(101)
                 });
 
             standardServiceMock.Setup(c => c.GetEpaoRegisteredStandards("99999999"))
@@ -96,8 +101,9 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
             var ilrRepositoryMock = new Mock<IIlrRepository>();
 
             ilrRepositoryMock.Setup(q => q.Get(1234567890, 1)).ReturnsAsync(GenerateIlr(1234567890, 1, "Test", "12345678"));
-            ilrRepositoryMock.Setup(q => q.Get(1234567890, 98)).ReturnsAsync(GenerateIlr(1234567890, 1, "Test", "12345678"));
-            ilrRepositoryMock.Setup(q => q.Get(1234567890, 99)).ReturnsAsync(GenerateIlr(1234567890, 1, "Test", "12345678"));
+            ilrRepositoryMock.Setup(q => q.Get(1234567890, 98)).ReturnsAsync(GenerateIlr(1234567890, 98, "Test", "12345678"));
+            ilrRepositoryMock.Setup(q => q.Get(1234567890, 99)).ReturnsAsync(GenerateIlr(1234567890, 99, "Test", "12345678"));
+            ilrRepositoryMock.Setup(q => q.Get(1234567890, 101)).ReturnsAsync(GenerateIlr(1234567890, 101, "Test", "12345678"));
             ilrRepositoryMock.Setup(q => q.Get(9999999999, 1)).ReturnsAsync(GenerateIlr(9999999999, 1, "Test", "99999999"));
             ilrRepositoryMock.Setup(q => q.Get(9999999999, 99)).ReturnsAsync(GenerateIlr(9999999999, 99, "Test", "99999999"));
 
@@ -135,6 +141,46 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
                 .Build();
         }
 
+        private static Certificate GenerateEpaCertificate(long uln, int standardCode, string familyName, Guid organisationId)
+        {
+            // NOTE: This is to simulate a certificate that has only the EPA part submitted
+            var reference = $"{uln}-{standardCode}";
+
+            var epas = Builder<EpaRecord>.CreateListOfSize(1).All()
+            .With(i => i.EpaDate = DateTime.UtcNow.AddDays(-1))
+            .With(i => i.EpaOutcome = "pass")
+            .Build().ToList();
+
+            var epaDetails = new EpaDetails
+            {
+                EpaReference = reference,
+                LatestEpaDate = epas[0].EpaDate,
+                LatestEpaOutcome = epas[0].EpaOutcome,
+                Epas = epas
+            };
+
+            return Builder<Certificate>.CreateNew()
+                .With(i => i.Uln = uln)
+                .With(i => i.StandardCode = standardCode)
+                .With(i => i.Status = "Draft")
+                .With(i => i.OrganisationId = organisationId)
+                .With(i => i.CertificateReference = $"{uln}-{standardCode}")
+                                .With(i => i.CertificateData = JsonConvert.SerializeObject(Builder<CertificateData>.CreateNew()
+                                .With(cd => cd.LearnerFamilyName = familyName)
+                                .With(cd => cd.OverallGrade = null)
+                                .With(cd => cd.EpaDetails = epaDetails)
+                                .With(cd => cd.ContactName = null)
+                                .With(cd => cd.ContactOrganisation = null)
+                                .With(cd => cd.Department = null)
+                                .With(cd => cd.ContactAddLine1 = null)
+                                .With(cd => cd.ContactAddLine2 = null)
+                                .With(cd => cd.ContactAddLine3 = null)
+                                .With(cd => cd.ContactAddLine4 = null)
+                                .With(cd => cd.ContactPostCode = null)
+                                .Build()))
+                .Build();
+        }
+
         private static Certificate GeneratePartialCertificate(long uln, int standardCode, string familyName, Guid organisationId)
         {
             // NOTE: This is to simulate a certificate that was been partly started via the Web App
@@ -147,6 +193,14 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
                                 .With(i => i.CertificateData = JsonConvert.SerializeObject(Builder<CertificateData>.CreateNew()
                                 .With(cd => cd.LearnerFamilyName = familyName)
                                 .With(cd => cd.OverallGrade = null)
+                                .With(cd => cd.ContactName = null)
+                                .With(cd => cd.ContactOrganisation = null)
+                                .With(cd => cd.Department = null)
+                                .With(cd => cd.ContactAddLine1 = null)
+                                .With(cd => cd.ContactAddLine2 = null)
+                                .With(cd => cd.ContactAddLine3 = null)
+                                .With(cd => cd.ContactAddLine4 = null)
+                                .With(cd => cd.ContactPostCode = null)
                                 .Build()))
                 .Build();
         }
