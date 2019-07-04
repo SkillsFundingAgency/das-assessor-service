@@ -233,32 +233,6 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
                                      context.Response.Redirect("/Home/AccessDenied");
                                      context.HandleResponse();
                                  }
-//                                 else if(user.EndPointAssessorOrganisationId != null && user.Status == ContactStatus.Live)
-//                                 {
-//                                     var havePrivileges = await contactClient.DoesContactHavePrivileges(user.Id.ToString());
-//
-//                                     if (!havePrivileges.Result)
-//                                     {
-//                                         var contact = new Contact
-//                                         {
-//                                             Id = user.Id,
-//                                             DisplayName = user.DisplayName,
-//                                             Email = user.Email,
-//                                             SignInId = user.SignInId,
-//                                             SignInType = user.SignInType,
-//                                             Username = user.Username,
-//                                             Title = user.Title,
-//                                             FamilyName = user.FamilyName,
-//                                             GivenNames = user.GivenNames,
-//                                             OrganisationId = user.OrganisationId,
-//                                             EndPointAssessorOrganisationId = user.EndPointAssessorOrganisationId,
-//                                             Status = user.Status
-//                                         };
-//
-//                                         await contactClient.AssociateDefaultRolesAndPrivileges(contact);
-//                                     }                                     
-//                                 }
-
 
                                  if (user != null)
                                  {
@@ -266,7 +240,6 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
                                      if (primaryIdentity != null && string.IsNullOrEmpty(primaryIdentity.Name))
                                      {
                                          primaryIdentity.AddClaim(new Claim(ClaimTypes.Name, user.DisplayName));
-                                         // Note: In future, may want to consider populating the other Claims, such as Email
                                      }
 
                                      identity.AddClaim(new Claim("UserId", user?.Id.ToString()));
@@ -325,13 +298,13 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
             });
         }
 
-        private async static Task<ContactResponse> CreateANewContact(Contact newContact, IContactsApiClient contactClient, ILogger<Startup> logger, string signInId)
+        private static async Task<ContactResponse> CreateANewContact(Contact newContact, IContactsApiClient contactClient, ILogger<Startup> logger, string signInId)
         {
             try
             {
                 var contactResponse = await contactClient.CreateANewContactWithGivenId(newContact);
                 await contactClient.AssociateDefaultRolesAndPrivileges(newContact);
-                //try retrieveing contact again
+                
                 return await contactClient.GetContactBySignInId(signInId);
             }
             catch (Exception e)

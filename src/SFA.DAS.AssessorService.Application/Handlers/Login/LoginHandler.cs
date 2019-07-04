@@ -48,7 +48,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Login
                 !contact.Username.Equals(contact.Email, StringComparison.OrdinalIgnoreCase))
                 await _contactRepository.UpdateUserName(contact.Id,contact.Email);
 
-            if (await UserDoesNotHaveAcceptableRole(contact.Id))
+            if (UserDoesNotHaveAcceptableRole(contact.Id))
             {
                 _logger.LogInformation("Invalid Role");
                 _logger.LogInformation(LoggingConstants.SignInIncorrectRole);
@@ -136,20 +136,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Login
             return response;
         }
 
-        private async Task<bool> UserDoesNotHaveAcceptableRole(Guid contactId)
+        private bool UserDoesNotHaveAcceptableRole(Guid contactId)
         {
             return false;
-//            var roles = await _contactQueryRepository.GetRolesFor(contactId);
-//            return roles.All(r => r.RoleName != "SuperUser");
-//                
-//            //TODO: This needs to look up the user by the id and check they are in the appropriate role.
-//            //return !roles.Contains(_config.Authentication.Role);
         }
-
-//        private async Task<string> GetUserStatus(string endPointAssessorOrganisationId, Guid signInId)
-//        {
-//            return await _contactQueryRepository.GetContactStatus(endPointAssessorOrganisationId, signInId);
-//        }
-        
     }
 }

@@ -72,13 +72,6 @@ namespace SFA.DAS.AssessorService.Data
                 .Include(c => c.Organisation)
                 .FirstOrDefaultAsync(c => c.Email.Equals(email, StringComparison.InvariantCultureIgnoreCase) && c.Organisation.Status != OrganisationStatus.Deleted);
             
-//            var contact = await _assessorDbContext.Organisations
-//                .Include(organisation => organisation.Contacts)
-//                .Where(org => org.Status != OrganisationStatus.Deleted)
-//                .SelectMany(q => q.Contacts)
-//                .Where(q => q.Email == email)
-//                .FirstOrDefaultAsync();
-
             return contact;
         }
 
@@ -104,15 +97,6 @@ namespace SFA.DAS.AssessorService.Data
                 .AnyAsync(q => q.Username == userName);
             return result;
         }
-
-//        public async Task<string> GetContactStatus(string endPointAssessorOrganisationId, Guid signInId)
-//        {
-//            var contactStatus = await _assessorDbContext.Contacts.Where(x =>
-//                    x.EndPointAssessorOrganisationId == endPointAssessorOrganisationId && x.SignInId == signInId)
-//                .FirstOrDefaultAsync();
-//
-//            return contactStatus?.Status;
-//        }
 
         public async Task<Contact> GetContactById(Guid id)
         {
