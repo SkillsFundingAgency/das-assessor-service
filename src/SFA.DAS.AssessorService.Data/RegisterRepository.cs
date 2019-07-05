@@ -218,7 +218,8 @@ namespace SFA.DAS.AssessorService.Data
                 connection.Execute(
                     @" insert into[ContactsPrivileges]" +
                     @" select co1.id, pr1.id from Contacts co1 cross join[Privileges] pr1" +
-                    @"  where co1.status = 'Live'  and co1.username not like 'unknown%' and co1.username != 'manual' and co1.Id = @Id",
+                    @"  where co1.status = 'Live'  and co1.username not like 'unknown%' and co1.username != 'manual' and co1.Id = @Id" +
+                    @"  AND NOT EXISTS(SELECT NULL FROM [ContactsPrivileges] WHERE ContactId = co1.id AND PrivilegeId = pr1.id)",
                     new
                     {
                         contact.Id,
