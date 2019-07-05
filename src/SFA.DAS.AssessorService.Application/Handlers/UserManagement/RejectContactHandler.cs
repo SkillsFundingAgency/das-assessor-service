@@ -43,7 +43,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.UserManagement
                 emailTemplate, new
                 {
                     Contact = $"{contact.DisplayName}",
-                    ServiceName = organisation.EndPointAssessorName,
+                    ServiceName = _config.ServiceName,
+                    Organisation = organisation.EndPointAssessorName,
                     ServiceTeam = "Apprenticeship assessment services team"
                 }), cancellationToken);
         }
