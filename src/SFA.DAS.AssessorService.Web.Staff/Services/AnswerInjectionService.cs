@@ -113,6 +113,10 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
                     //Update existing contact entry
                     await _registerRepository.AssociateOrganisationWithContact(assessorContact.Id, newOrganisation,
                         ContactStatus.Live, "MakePrimaryContact");
+
+                    // As they are now primary, give them all privileges
+                    await _registerRepository.AssociateDefaultRoleWithContact(contact);
+                    await _registerRepository.AssociateAllPrivilegesWithContact(assessorContact);
                 }
                 //Contact does not exist in assessor but exists in apply and the user details are the same as primary contact matched by email
                 else if (command.ContactEmail.Equals(command.UserEmail, StringComparison.CurrentCultureIgnoreCase))
