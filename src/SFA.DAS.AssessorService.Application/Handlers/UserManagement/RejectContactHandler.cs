@@ -5,7 +5,6 @@ using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.UserManagement;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
-using SFA.DAS.AssessorService.Settings;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.UserManagement
 {
@@ -43,7 +42,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.UserManagement
                 emailTemplate, new
                 {
                     Contact = $"{contact.DisplayName}",
-                    ServiceName = _config.ServiceName,
+                    ServiceName = "Apprenticeship assessment service",
                     Organisation = organisation.EndPointAssessorName,
                     ServiceTeam = "Apprenticeship assessment services team"
                 }), cancellationToken);

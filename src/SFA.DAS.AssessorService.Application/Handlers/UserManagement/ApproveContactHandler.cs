@@ -44,7 +44,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.UserManagement
                 emailTemplate, new
                 {
                     Contact = $"{contact.DisplayName}",
-                    ServiceName = _config.ServiceName,
+                    ServiceName = "Apprenticeship assessment service",
                     Organisation = organisation.EndPointAssessorName,
                     LoginLink = _config.ServiceLink,
                     ServiceTeam = "Apprenticeship assessment services team"
