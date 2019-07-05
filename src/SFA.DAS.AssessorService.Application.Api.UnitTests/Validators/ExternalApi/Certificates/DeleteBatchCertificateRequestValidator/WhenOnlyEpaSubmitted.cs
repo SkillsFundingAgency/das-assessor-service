@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalApi.Certificates.DeleteBatchCertificateRequestValidator
 {
-    public class WhenCertificateReferenceInvalid : DeleteBatchCertificateRequestValidatorTestBase
+    public class WhenOnlyEpaSubmitted : DeleteBatchCertificateRequestValidatorTestBase
     {
         private ValidationResult _validationResult;
 
@@ -16,11 +16,11 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
         {
             DeleteBatchCertificateRequest request = Builder<DeleteBatchCertificateRequest>.CreateNew()
                 .With(i => i.Uln = 1234567890)
-                .With(i => i.StandardCode = 1)
+                .With(i => i.StandardCode = 101)
                 .With(i => i.StandardReference = null)
                 .With(i => i.UkPrn = 12345678)
                 .With(i => i.FamilyName = "Test")
-                .With(i => i.CertificateReference = "")
+                .With(i => i.CertificateReference = "1234567890-101")
                 .Build();
 
             _validationResult = await Validator.ValidateAsync(request);

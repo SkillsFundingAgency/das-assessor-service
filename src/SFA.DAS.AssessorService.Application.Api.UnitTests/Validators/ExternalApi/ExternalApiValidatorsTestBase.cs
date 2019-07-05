@@ -168,6 +168,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
                                 .With(i => i.CertificateData = JsonConvert.SerializeObject(Builder<CertificateData>.CreateNew()
                                 .With(cd => cd.LearnerFamilyName = familyName)
                                 .With(cd => cd.OverallGrade = null)
+                                .With(cd => cd.AchievementDate = null)
                                 .With(cd => cd.EpaDetails = epaDetails)
                                 .With(cd => cd.ContactName = null)
                                 .With(cd => cd.ContactOrganisation = null)

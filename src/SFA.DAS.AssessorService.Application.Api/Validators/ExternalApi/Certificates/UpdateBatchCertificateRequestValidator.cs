@@ -1,9 +1,11 @@
 ﻿using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.Extensions.Localization;
+using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models.ExternalApi.Certificates;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
+using SFA.DAS.AssessorService.Domain.JsonData;
 using System;
 
 namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Certificates
@@ -16,6 +18,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Certifi
 
             RuleFor(m => m.CertificateReference).NotEmpty().WithMessage("Provide the certificate reference").DependentRules(() =>
             {
+                // TODO: Consider in the future how to merge both create & update versions as the Cert will always exist due to EPA 
                 RuleFor(m => m).CustomAsync(async (m, context, cancellation) =>
                 {
                     var existingCertificate = await certificateRepository.GetCertificate(m.Uln, m.StandardCode);
@@ -30,7 +33,16 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Certifi
                     {
                         context.AddFailure(new ValidationFailure("CertificateReference", $"Your organisation is not the creator of this Certificate"));
                     }
-                    else if (existingCertificate.Status != CertificateStatus.Draft)
+                    else if (existingCertificate.Status == CertificateStatus.Draft)
+                    {
+                        var certData = JsonConvert.DeserializeObject<CertificateData>(existingCertificate.CertificateData);
+
+                        if (!"pass".Equals(certData.EpaDetails?.LatestEpaOutcome, StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            context.AddFailure(new ValidationFailure("CertificateReference", $"Latest EPA Outcome has not passed"));
+                        }
+                    }
+                    else
                     {
                         context.AddFailure(new ValidationFailure("CertificateReference", $"Certificate does not exist in {CertificateStatus.Draft} status"));
                     }

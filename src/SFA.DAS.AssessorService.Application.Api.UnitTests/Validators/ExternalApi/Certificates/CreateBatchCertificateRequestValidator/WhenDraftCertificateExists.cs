@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalApi.Certificates.CreateBatchCertificateRequestValidator
 {
-    public class WhenResurrectingDeletedCertificate : CreateBatchCertificateRequestValidatorTestBase
+    public class WhenDraftCertificateExists : CreateBatchCertificateRequestValidatorTestBase
     {
         private ValidationResult _validationResult;
 
@@ -18,7 +18,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
         {
             CreateBatchCertificateRequest request = Builder<CreateBatchCertificateRequest>.CreateNew()
                 .With(i => i.Uln = 1234567890)
-                .With(i => i.StandardCode = 98)
+                .With(i => i.StandardCode = 1)
                 .With(i => i.StandardReference = null)
                 .With(i => i.UkPrn = 12345678)
                 .With(i => i.FamilyName = "Test")
@@ -35,9 +35,9 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
         }
 
         [Test]
-        public void ThenValidationResultShouldBeTrue()
+        public void ThenValidationResultShouldBeFalse()
         {
-            _validationResult.IsValid.Should().BeTrue();
+            _validationResult.IsValid.Should().BeFalse();
         }
     }
 }
