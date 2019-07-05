@@ -44,12 +44,13 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
 
             if (certificate != null && allowedCertificateStatus.Contains(certificate.Status))
             {
-                certificate = await ApplyStatusInformation(certificate);
-
                 var certData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
 
-                if(string.Equals(certData.LearnerFamilyName, request.FamilyName, StringComparison.InvariantCultureIgnoreCase))
+                if("pass".Equals(certData.EpaDetails?.LatestEpaOutcome, StringComparison.InvariantCultureIgnoreCase)
+                    && string.Equals(certData.LearnerFamilyName, request.FamilyName, StringComparison.InvariantCultureIgnoreCase))
                 {
+                    certificate = await ApplyStatusInformation(certificate);
+
                     var searchingContact = await _contactQueryRepository.GetContactFromEmailAddress(request.Email);
                     var certificateContact = await GetContactFromCertificateLogs(certificate.Id, certificate.UpdatedBy, certificate.CreatedBy);
 
