@@ -37,7 +37,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [HttpGet]
         [Route("ApplyToAccessStandard")]
         [TypeFilter(typeof(MenuFilter), Arguments = new object[] { Pages.Standards })]
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
             return View();
         }
