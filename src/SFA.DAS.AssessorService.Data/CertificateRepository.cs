@@ -445,7 +445,8 @@ namespace SFA.DAS.AssessorService.Data
         public async Task UpdatePrivatelyFundedCertificatesToBeApproved()
         {
             var certificates =
-                _context.Certificates.Where(q => q.IsPrivatelyFunded && q.Status == CertificateStatus.Submitted);
+                _context.Certificates.Where(q => q.IsPrivatelyFunded && q.Status == CertificateStatus.Submitted && 
+                                                 q.PrivatelyFundedStatus != CertificateStatus.Approved);
             foreach (var certificate in certificates)
             {
                 certificate.Status = CertificateStatus.ToBeApproved;
@@ -467,7 +468,8 @@ namespace SFA.DAS.AssessorService.Data
             {
                 var certificate =
                     await certificates.FirstAsync(
-                        q => q.CertificateReference == approvalResult.CertificateReference);
+                        q => q.CertificateReference == approvalResult.CertificateReference  
+                                 && q.PrivatelyFundedStatus != CertificateStatus.Approved);
 
                 certificate.Status = approvalResult.IsApproved;
                 certificate.PrivatelyFundedStatus = approvalResult.PrivatelyFundedStatus;
