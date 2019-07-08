@@ -39,6 +39,9 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Middleware
 
                 string email = emailHeaderValue.FirstOrDefault();
 
+                email = "epaomailinator+EPA0008@gmail.com";
+                noteHeaderValue = "ukprn=10009931";
+
                 if (!TryExtractUkprnFromHeader(noteHeaderValue, out var ukprn))
                 {
                     _logger.LogError("GetHeadersMiddleware - invalid or no UKPRN.");

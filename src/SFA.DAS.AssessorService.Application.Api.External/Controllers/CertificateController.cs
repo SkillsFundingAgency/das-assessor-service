@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using SFA.DAS.AssessorService.Application.Api.External.Helpers;
 using SFA.DAS.AssessorService.Application.Api.External.Infrastructure;
 using SFA.DAS.AssessorService.Application.Api.External.Middleware;
 using SFA.DAS.AssessorService.Application.Api.External.Models.Internal;
@@ -58,7 +59,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
             }
             else
             {
-                if(IsDraftCertificateDeemedAsReady(response.Certificate))
+                if(CertificateHelpers.IsDraftCertificateDeemedAsReady(response.Certificate))
                 {
                     response.Certificate.Status.CurrentStatus = CertificateStatus.Ready;
                 }
@@ -104,7 +105,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
 
             foreach(var result in results)
             {
-                if (IsDraftCertificateDeemedAsReady(result.Certificate))
+                if (CertificateHelpers.IsDraftCertificateDeemedAsReady(result.Certificate))
                 {
                     result.Certificate.Status.CurrentStatus = CertificateStatus.Ready;
                 }
@@ -148,7 +149,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
 
             foreach (var result in results)
             {
-                if (IsDraftCertificateDeemedAsReady(result.Certificate))
+                if (CertificateHelpers.IsDraftCertificateDeemedAsReady(result.Certificate))
                 {
                     result.Certificate.Status.CurrentStatus = CertificateStatus.Ready;
                 }
@@ -220,39 +221,5 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
 
             return Ok(grades);
         }
-
-        #region Utility Functions
-        private bool IsDraftCertificateDeemedAsReady(Certificate certificate)
-        {
-            // Note: This for the External API only and allows the caller to know if a Draft Certificate is 'Ready' for submitting
-            // It is deemed ready if the mandatory fields have been filled out.
-            if (certificate?.CertificateData is null || certificate?.Status?.CurrentStatus != CertificateStatus.Draft || string.IsNullOrEmpty(certificate.CertificateData.CertificateReference))
-            {
-                return false;
-            }
-            else if (certificate.CertificateData.Standard is null || certificate.CertificateData.Standard.StandardCode < 1)
-            {
-                return false;
-            }
-            else if (certificate.CertificateData.PostalContact is null || string.IsNullOrEmpty(certificate.CertificateData.PostalContact.ContactName)
-                        || string.IsNullOrEmpty(certificate.CertificateData.PostalContact.Organisation) || string.IsNullOrEmpty(certificate.CertificateData.PostalContact.City)
-                        || string.IsNullOrEmpty(certificate.CertificateData.PostalContact.PostCode))
-            {
-                return false;
-            }
-            else if (certificate.CertificateData.Learner is null || string.IsNullOrEmpty(certificate.CertificateData.Learner.FamilyName)
-                        || certificate.CertificateData.Learner.Uln < 1000000000 || certificate.CertificateData.Learner.Uln > 9999999999)
-            {
-                return false;
-            }
-            else if (certificate.CertificateData.LearningDetails is null || string.IsNullOrEmpty(certificate.CertificateData.LearningDetails.OverallGrade)
-                        || !certificate.CertificateData.LearningDetails.AchievementDate.HasValue)
-            {
-                return false;
-            }
-
-            return true;
-        }
-        #endregion
     }
 }

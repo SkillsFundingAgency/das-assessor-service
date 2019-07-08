@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using SFA.DAS.AssessorService.Application.Api.External.Helpers;
 using SFA.DAS.AssessorService.Application.Api.External.Infrastructure;
 using SFA.DAS.AssessorService.Application.Api.External.Middleware;
 using SFA.DAS.AssessorService.Application.Api.External.Models.Internal;
 using SFA.DAS.AssessorService.Application.Api.External.Models.Response;
-using SFA.DAS.AssessorService.Application.Api.External.Models.Response.Learner;
+using SFA.DAS.AssessorService.Application.Api.External.Models.Response.Learners;
+using SFA.DAS.AssessorService.Domain.Consts;
 using Swashbuckle.AspNetCore.Annotations;
 using Swashbuckle.AspNetCore.Examples;
 using System.Linq;
@@ -47,12 +49,25 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
                 ApiResponse error = new ApiResponse((int)HttpStatusCode.Forbidden, string.Join("; ", response.ValidationErrors));
                 return StatusCode(error.StatusCode, error);
             }
-            else if (response.Certificate != null)
+            else if (response.Learner is null)
             {
-                return Ok(response.Certificate);
+                return NoContent();
+            }
+            else if (response.Learner.Certificate != null)
+            {
+                return Ok(response.Learner);
             }
             else
             {
+                if (CertificateHelpers.IsDraftCertificateDeemedAsReady(response.Learner.Certificate))
+                {
+                    response.Learner.Certificate.Status.CurrentStatus = CertificateStatus.Ready;
+                }
+                else if (response.Learner.Certificate.Status.CurrentStatus == CertificateStatus.Printed || response.Learner.Certificate.Status.CurrentStatus == CertificateStatus.Reprint)
+                {
+                    response.Learner.Certificate.Status.CurrentStatus = CertificateStatus.Submitted;
+                }
+
                 return Ok(response.Learner);
             }
         }

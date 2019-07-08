@@ -71,16 +71,9 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
 
         public virtual async Task<GetLearnerResponse> GetLearner(GetBatchLearnerRequest request)
         {
-            // TODO: maybe even tweak & use this one?
-            // TODO: MAPPERS
-            //return await Get<LearnerDetailForExternalApi>($"/api/v1/externalapi/learnerDetails?standard={standard}&uln={uln}");
+            var apiResponse = await Get<AssessorService.Api.Types.Models.ExternalApi.Learners.GetBatchLearnerResponse>($"/api/v1/learners/batch/{request.Uln}/{request.FamilyName}/{request.Standard}/{request.UkPrn}/{request.Email}");
 
-            //var apiResponse = await Get<AssessorService.Api.Types.Models.????.Batch.GetBatchCertificateResponse>($"/api/v1/certificates/batch/{request.Uln}/{request.FamilyName}/{request.Standard}/{request.UkPrn}/{request.Email}");
-
-            // TODO: MAPPERS
-            //return Mapper.Map<AssessorService.Api.Types.Models.????.Batch.GetBatchLearnerResponse, GetLearnerResponse>(apiResponse);
-
-            return await Task.FromResult(new GetLearnerResponse());
+            return Mapper.Map<AssessorService.Api.Types.Models.ExternalApi.Learners.GetBatchLearnerResponse, GetLearnerResponse>(apiResponse);
         }
 
 

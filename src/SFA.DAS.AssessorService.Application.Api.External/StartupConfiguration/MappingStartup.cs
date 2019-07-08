@@ -24,6 +24,9 @@ namespace SFA.DAS.AssessorService.Application.Api.External.StartupConfiguration
 
                 cfg.AddProfile<StandardOptionsProfile>();
 
+                cfg.AddProfile<GetLearnerProfile>();
+                cfg.AddProfile<GetBatchLearnerResponseProfile>();
+
                 cfg.AddProfile<EpaDetailsProfile>();
                 cfg.AddProfile<EpaRecordProfile>();
                 cfg.AddProfile<CreateBatchEpaRequestProfile>();

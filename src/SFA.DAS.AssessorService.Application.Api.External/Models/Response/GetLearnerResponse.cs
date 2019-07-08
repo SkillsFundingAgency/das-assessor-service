@@ -1,5 +1,4 @@
-﻿using SFA.DAS.AssessorService.Application.Api.External.Models.Response.Certificates;
-using SFA.DAS.AssessorService.Application.Api.External.Models.Response.Learner;
+﻿using SFA.DAS.AssessorService.Application.Api.External.Models.Response.Learners;
 using System.Collections.Generic;
 
 namespace SFA.DAS.AssessorService.Application.Api.External.Models.Response
@@ -7,8 +6,6 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Models.Response
     public class GetLearnerResponse
     {
         public GetLearner Learner { get; set; }
-
-        public Certificate Certificate { get; set; }
 
         public List<string> ValidationErrors { get; set; } = new List<string>();
     }

@@ -20,6 +20,13 @@ namespace SFA.DAS.AssessorService.Application.Api.External.AutoMapperProfiles
                 .ForMember(dest => dest.LatestEpaOutcome, opt => opt.MapFrom(source => source.LatestEpaOutcome))
                 .ForMember(dest => dest.Epas, opt => opt.MapFrom(source => Mapper.Map<IEnumerable<Domain.JsonData.EpaRecord>, IEnumerable<Models.Response.Epa.EpaDetails>>(source.Epas)))
                 .ForAllOtherMembers(dest => dest.Ignore());
+
+            // Response from Int API - if using CertificateData
+            CreateMap<Domain.JsonData.CertificateData, Models.Response.Epa.EpaDetails>()
+                .ForMember(dest => dest.LatestEpaDate, opt => opt.ResolveUsing(source => source.EpaDetails?.LatestEpaDate))
+                .ForMember(dest => dest.LatestEpaOutcome, opt => opt.ResolveUsing(source => source.EpaDetails?.LatestEpaOutcome))
+                .ForMember(dest => dest.Epas, opt => opt.ResolveUsing(source => Mapper.Map<IEnumerable<Domain.JsonData.EpaRecord>, IEnumerable<Models.Response.Epa.EpaDetails>>(source.EpaDetails?.Epas)))
+                .ForAllOtherMembers(dest => dest.Ignore());
         }
     }
 }
