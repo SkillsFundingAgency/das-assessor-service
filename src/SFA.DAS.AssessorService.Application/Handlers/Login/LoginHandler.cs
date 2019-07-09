@@ -5,9 +5,11 @@ using System.Threading.Tasks;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Application.Logging;
 using SFA.DAS.AssessorService.Domain.Consts;
+using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Settings;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Login
@@ -89,6 +91,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Login
             if (!string.IsNullOrEmpty(originalUsername))
                 await _registerRepository.UpdateEpaOrganisationPrimaryContact(contact.Id, originalUsername);
 
+            await CheckAndSetPrivileges(contact);
 
             response.EndPointAssessorOrganisationId = organisation.EndPointAssessorOrganisationId;
 
@@ -139,6 +142,18 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Login
         private bool UserDoesNotHaveAcceptableRole(Guid contactId)
         {
             return false;
+        }
+
+        //Additional code to cater for ON-2047
+        private async Task CheckAndSetPrivileges(Contact existingContact)
+        {
+            if (existingContact.EndPointAssessorOrganisationId != null)
+            {
+                var orgHasContacts = await _organisationQueryRepository.CheckIfOrganisationHasContactsWithSigninId(existingContact
+                    .EndPointAssessorOrganisationId, existingContact.Id);
+                if (!orgHasContacts)
+                    await _registerRepository.AssociateDefaultPrivilegesWithContact(new EpaContact { Id = existingContact.Id });
+            }
         }
     }
 }
