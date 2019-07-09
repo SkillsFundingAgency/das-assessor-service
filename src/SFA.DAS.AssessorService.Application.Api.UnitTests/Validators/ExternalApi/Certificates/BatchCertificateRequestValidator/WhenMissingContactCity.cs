@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalApi.Certificates.BatchCertificateRequestValidator
 {
-    public class WhenIlrNotFound : BatchCertificateRequestValidatorTestBase
+    public class WhenMissingContactCity : BatchCertificateRequestValidatorTestBase
     {
         private ValidationResult _validationResult;
 
@@ -17,11 +17,13 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
         public async Task Arrange()
         {
             BatchCertificateRequest request = Builder<BatchCertificateRequest>.CreateNew()
-                .With(i => i.Uln = 1234567899)
+                .With(i => i.Uln = 1234567890)
                 .With(i => i.StandardCode = 99)
                 .With(i => i.StandardReference = null)
                 .With(i => i.UkPrn = 12345678)
+                .With(i => i.FamilyName = "Test")
                 .With(i => i.CertificateData = Builder<CertificateData>.CreateNew()
+                                .With(cd => cd.ContactAddLine4 = null)
                                 .With(cd => cd.ContactPostCode = "AA11AA")
                                 .With(cd => cd.AchievementDate = DateTime.UtcNow)
                                 .With(cd => cd.OverallGrade = "Pass")
