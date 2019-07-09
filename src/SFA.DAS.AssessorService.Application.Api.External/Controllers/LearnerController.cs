@@ -35,7 +35,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
 
         [HttpGet("{uln}/{familyName}/{*standard}")]
         [SwaggerResponseExample((int)HttpStatusCode.OK, typeof(SwaggerHelpers.Examples.GetLearnerExample))]
-        [SwaggerResponse((int)HttpStatusCode.OK, "The current Leaner.", typeof(GetLearner))]
+        [SwaggerResponse((int)HttpStatusCode.OK, "The current Learner.", typeof(GetLearner))]
         [SwaggerResponseExample((int)HttpStatusCode.Forbidden, typeof(SwaggerHelpers.Examples.ApiResponseExample))]
         [SwaggerResponse((int)HttpStatusCode.Forbidden, "There are validation errors preventing you from retrieving the Learner.", typeof(ApiResponse))]
         [SwaggerOperation("Get Learner", "Gets the specified Learner.", Produces = new string[] { "application/json" })]
@@ -51,9 +51,9 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
             }
             else if (response.Learner is null)
             {
-                return NoContent();
+                return NotFound();
             }
-            else if (response.Learner.Certificate != null)
+            else if (response.Learner.Certificate is null)
             {
                 return Ok(response.Learner);
             }
