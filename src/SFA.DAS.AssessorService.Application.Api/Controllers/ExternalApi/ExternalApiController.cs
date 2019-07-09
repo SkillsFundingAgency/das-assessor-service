@@ -1,8 +1,8 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SFA.DAS.AssessorService.Api.Types.Models.ExternalApi.Learners;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
-using SFA.DAS.AssessorService.Application.Handlers.ExternalApi;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers.ExternalApi
@@ -22,7 +22,16 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.ExternalApi
         [HttpGet("learnerdetails")]
         public async Task<IActionResult> GetLearnerDetails(string standard, long uln)
         {
-            return Ok(await _mediator.Send(new LearnerDetailForExternalApiRequest(standard, uln)));
+            var request = new GetBatchLearnerRequest
+            {
+                Uln = uln,
+                Standard = standard,
+                IncludeCertificate = false,
+            };
+
+            var learnerDetails = await _mediator.Send(request);
+
+            return Ok(learnerDetails.Learner);
         }
     }
 }

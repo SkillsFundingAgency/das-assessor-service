@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
-using SFA.DAS.AssessorService.Api.Types.Models.ExternalApi;
+using SFA.DAS.AssessorService.Api.Types.Models.ExternalApi.Learners;
 using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Application.Api.External.Models.Internal;
 using SFA.DAS.AssessorService.Application.Api.External.Models.Response;
@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using GetBatchLearnerRequest = SFA.DAS.AssessorService.Application.Api.External.Models.Internal.GetBatchLearnerRequest;
 
 namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
 {
@@ -28,9 +29,9 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
 
                 if (details != null)
                 {
-                    request.Standard = details.StandardReference ?? details.StandardCode.ToString();
+                    request.Standard = details.Standard?.ReferenceNumber ?? details.Standard?.StandardId.ToString();
                     request.UkPrn = details.UkPrn;
-                    request.Email = details.PrimaryContactEmail ?? request.Email;
+                    request.Email = details.OrganisationPrimaryContactEmail ?? request.Email;
                 }
             }
 
@@ -50,10 +51,10 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
 
                     if (details != null)
                     {
-                        req.Standard.StandardReference = details.StandardReference;
-                        req.Standard.StandardCode = details.StandardCode;
+                        req.Standard.StandardReference = details.Standard?.ReferenceNumber;
+                        req.Standard.StandardCode = details.Standard?.StandardId;
                         req.UkPrn = details.UkPrn;
-                        req.Email = details.PrimaryContactEmail ?? req.Email;
+                        req.Email = details.OrganisationPrimaryContactEmail ?? req.Email;
                     }
                 }
 
@@ -76,10 +77,10 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
 
                     if (details != null)
                     {
-                        req.Standard.StandardReference = details.StandardReference;
-                        req.Standard.StandardCode = details.StandardCode;
+                        req.Standard.StandardReference = details.Standard?.ReferenceNumber;
+                        req.Standard.StandardCode = details.Standard?.StandardId;
                         req.UkPrn = details.UkPrn;
-                        req.Email = details.PrimaryContactEmail ?? req.Email;
+                        req.Email = details.OrganisationPrimaryContactEmail ?? req.Email;
                     }
                 }
 
@@ -95,9 +96,9 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
 
             if (details != null)
             {
-                request.Standard = details.StandardReference ?? details.StandardCode.ToString();
+                request.Standard = details.Standard?.ReferenceNumber ?? details.Standard?.StandardId.ToString();
                 request.UkPrn = details.UkPrn;
-                request.Email = details.PrimaryContactEmail ?? request.Email;
+                request.Email = details.OrganisationPrimaryContactEmail ?? request.Email;
             }
 
             return await base.DeleteEpa(request);
@@ -111,9 +112,9 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
 
                 if (details != null)
                 {
-                    request.Standard = details.StandardReference ?? details.StandardCode.ToString();
+                    request.Standard = details.Standard?.ReferenceNumber ?? details.Standard?.StandardId.ToString();
                     request.UkPrn = details.UkPrn;
-                    request.Email = details.PrimaryContactEmail ?? request.Email;
+                    request.Email = details.OrganisationPrimaryContactEmail ?? request.Email;
                 }
             }
 
@@ -133,10 +134,10 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
 
                     if (details != null)
                     {
-                        req.CertificateData.Standard.StandardReference = details.StandardReference;
-                        req.CertificateData.Standard.StandardCode = details.StandardCode;
+                        req.CertificateData.Standard.StandardReference = details.Standard?.ReferenceNumber;
+                        req.CertificateData.Standard.StandardCode = details.Standard?.StandardId;
                         req.UkPrn = details.UkPrn;
-                        req.Email = details.PrimaryContactEmail ?? req.Email;
+                        req.Email = details.OrganisationPrimaryContactEmail ?? req.Email;
                     }
                 }
 
@@ -159,10 +160,10 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
 
                     if (details != null)
                     {
-                        req.CertificateData.Standard.StandardReference = details.StandardReference;
-                        req.CertificateData.Standard.StandardCode = details.StandardCode;
+                        req.CertificateData.Standard.StandardReference = details.Standard?.ReferenceNumber;
+                        req.CertificateData.Standard.StandardCode = details.Standard?.StandardId;
                         req.UkPrn = details.UkPrn;
-                        req.Email = details.PrimaryContactEmail ?? req.Email;
+                        req.Email = details.OrganisationPrimaryContactEmail ?? req.Email;
                     }
                 }
 
@@ -185,10 +186,10 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
 
                     if (details != null)
                     {
-                        req.StandardReference = details.StandardReference;
-                        req.StandardCode = details.StandardCode;
+                        req.StandardReference = details.Standard?.ReferenceNumber;
+                        req.StandardCode = details.Standard?.StandardId;
                         req.UkPrn = details.UkPrn;
-                        req.Email = details.PrimaryContactEmail ?? req.Email;
+                        req.Email = details.OrganisationPrimaryContactEmail ?? req.Email;
                     }
                 }
 
@@ -204,9 +205,9 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
 
             if (details != null)
             {
-                request.Standard = details.StandardReference ?? details.StandardCode.ToString();
+                request.Standard = details.Standard?.ReferenceNumber ?? details.Standard?.StandardId.ToString();
                 request.UkPrn = details.UkPrn;
-                request.Email = details.PrimaryContactEmail ?? request.Email;
+                request.Email = details.OrganisationPrimaryContactEmail ?? request.Email;
             }
 
             return await base.DeleteCertificate(request);

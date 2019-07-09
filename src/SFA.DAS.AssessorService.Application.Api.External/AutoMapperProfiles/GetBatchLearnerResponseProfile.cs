@@ -2,7 +2,6 @@
 using SFA.DAS.AssessorService.Application.Api.External.Models.Response;
 using SFA.DAS.AssessorService.Application.Api.External.Models.Response.Certificates;
 using SFA.DAS.AssessorService.Application.Api.External.Models.Response.Learners;
-using System;
 
 namespace SFA.DAS.AssessorService.Application.Api.External.AutoMapperProfiles
 {
@@ -42,13 +41,13 @@ namespace SFA.DAS.AssessorService.Application.Api.External.AutoMapperProfiles
                         LearningDetails = destination.Certificate.CertificateData.LearningDetails
                     };
                 }
-                else
+                else if (source.Learner != null)
                 {
                     destination.LearnerData = new LearnerData
                     {
-                        Standard = source.Standard is null ? null : new Standard { StandardCode = source.Standard.StandardId, StandardReference = source.Standard.ReferenceNumber, StandardName = source.Standard.Title, Level = source.Standard.StandardData?.Level ?? 0 },
-                        Learner = source.Ilr is null ? null : new Learner { Uln = source.Ilr.Uln, GivenNames = source.Ilr.GivenNames, FamilyName = source.Ilr.FamilyName },
-                        LearningDetails = source.Provider is null ? null : new LearningDetails { ProviderUkPrn = (int)source.Provider.Ukprn, ProviderName = source.Provider.ProviderName, LearningStartDate = source.Ilr?.LearnStartDate ?? DateTime.UtcNow.Date }
+                        Standard = source.Learner.Standard is null ? null : new Standard { StandardCode = source.Learner.Standard.StandardId, StandardReference = source.Learner.Standard.ReferenceNumber, StandardName = source.Learner.Standard.Title, Level = source.Learner.Standard.StandardData?.Level ?? 0 },
+                        Learner = new Learner { Uln = source.Learner.Uln, GivenNames = source.Learner.GivenNames, FamilyName = source.Learner.FamilyName },
+                        LearningDetails = new LearningDetails { ProviderUkPrn = source.Learner.UkPrn, ProviderName = source.Learner.OrganisationName, LearningStartDate = source.Learner.LearnerStartDate }
                     };
                 }
             }
