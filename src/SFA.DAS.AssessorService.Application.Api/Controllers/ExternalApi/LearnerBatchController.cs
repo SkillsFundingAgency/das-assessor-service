@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.AssessorService.Api.Types.Models.ExternalApi.Learners;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
-using SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Certificates;
+using SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Learners;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Linq;
 using System.Net;
@@ -18,9 +18,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.ExternalApi
     public class LearnerBatchController : Controller
     {
         private readonly IMediator _mediator;
-        private readonly GetBatchCertificateRequestValidator _getValidator; // TODO: User correct validator
+        private readonly GetBatchLearnerRequestValidator _getValidator;
 
-        public LearnerBatchController(IMediator mediator, GetBatchCertificateRequestValidator getValidator)
+        public LearnerBatchController(IMediator mediator, GetBatchLearnerRequestValidator getValidator)
         {
             _mediator = mediator;
             _getValidator = getValidator;
@@ -42,7 +42,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.ExternalApi
                 Email = email
             };
 
-            var validationResult = new FluentValidation.Results.ValidationResult(); //await _getValidator.ValidateAsync(request);
+            var validationResult = await _getValidator.ValidateAsync(request);
             var isRequestValid = validationResult.IsValid;
             var validationErrors = validationResult.Errors.Select(error => error.ErrorMessage).ToList();
 

@@ -219,13 +219,17 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
         {
             return Builder<StandardCollation>.CreateNew()
                 .With(i => i.Title = $"{standardCode}")
+                .With(i => i.StandardId = standardCode)
+                .With(i => i.ReferenceNumber = $"{standardCode}")
                 .With(i => i.StandardData = new StandardData() { Level = standardCode }).Build();
         }
 
         private static EPORegisteredStandards GenerateEPORegisteredStandard(int standardCode)
         {
             return Builder<EPORegisteredStandards>.CreateNew()
+                .With(i => i.StandardName = $"{standardCode}")
                 .With(i => i.StandardCode = standardCode)
+                .With(i => i.Level = standardCode)
                 .Build();
         }
 
