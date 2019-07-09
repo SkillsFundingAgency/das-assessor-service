@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalApi.Epas.BatchEpaRequestValidator
 {
-    public class WhenIlrNotFound : BatchEpaRequestValidatorTestBase
+    public class WhenInvalidFamilyNameForIlr : BatchEpaRequestValidatorTestBase
     {
         private ValidationResult _validationResult;
 
@@ -24,10 +24,11 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
                 .Build().ToList();
 
             var request = Builder<BatchEpaRequest>.CreateNew()
-                .With(i => i.Uln = 1234567899)
+                .With(i => i.Uln = 1234567890)
                 .With(i => i.StandardCode = 99)
                 .With(i => i.StandardReference = null)
                 .With(i => i.UkPrn = 12345678)
+                .With(i => i.FamilyName = "INVALID")
                 .With(i => i.EpaDetails = new EpaDetails { Epas = epas })
                 .Build();
 
