@@ -20,7 +20,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
                 .With(i => i.StandardReference = null)
                 .With(i => i.UkPrn = 12345678)
                 .With(i => i.FamilyName = "Test")
-                .With(i => i.CertificateReference = "")
+                .With(i => i.CertificateReference = "INVALID")
                 .Build();
 
             _validationResult = await Validator.ValidateAsync(request);
@@ -30,6 +30,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
         public void ThenValidationResultShouldBeFalse()
         {
             _validationResult.IsValid.Should().BeFalse();
+            _validationResult.Errors.Count.Should().Be(1);
         }
     }
 }

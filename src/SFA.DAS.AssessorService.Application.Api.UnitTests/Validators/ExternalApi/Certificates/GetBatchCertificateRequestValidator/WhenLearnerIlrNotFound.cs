@@ -29,6 +29,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
         public void ThenValidationResultShouldBeFalse()
         {
             _validationResult.IsValid.Should().BeFalse();
+            _validationResult.Errors.Count.Should().Be(1);
         }
     }
 }
