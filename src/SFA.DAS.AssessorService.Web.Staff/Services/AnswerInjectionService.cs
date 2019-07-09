@@ -212,7 +212,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
             }
             else
             {
-                _logger.LogWarning("Source has invalid data. Cannot inject standard details into register at this time");
+                _logger.LogWarning($"Source has invalid data. Cannot inject standard details into register at this time: Warnings:  {string.Join(", ", warningMessages)}");
             }
 
             response.WarningMessages = warningMessages;
