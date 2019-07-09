@@ -106,7 +106,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
                     command.ContactGivenName, command.ContactFamilyName, null, string.Empty);
 
                 var assessorContact = await _registerQueryRepository.GetContactByEmail(contact.Email);
-                
+
                 //Does the new chosen primary contact already exist
                 if (assessorContact != null)
                 {
@@ -114,9 +114,9 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
                     await _registerRepository.AssociateOrganisationWithContact(assessorContact.Id, newOrganisation,
                         ContactStatus.Live, "MakePrimaryContact");
 
-                    // As they are now primary, give them all privileges
+                    // As they are now primary, give them only the required privileges, the ones where they are marked as MustBeAtLeastOneUserAssigned
                     await _registerRepository.AssociateDefaultRoleWithContact(contact);
-                    await _registerRepository.AssociateAllPrivilegesWithContact(assessorContact);
+                    await _registerRepository.AssociateDefaultPrivilegesWithContact(assessorContact);
                 }
                 //Contact does not exist in assessor but exists in apply and the user details are the same as primary contact matched by email
                 else if (command.ContactEmail.Equals(command.UserEmail, StringComparison.CurrentCultureIgnoreCase))
@@ -131,7 +131,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
 
                         await _registerRepository.CreateEpaOrganisationContact(contact);
                         await _registerRepository.AssociateDefaultRoleWithContact(contact);
-                        await _registerRepository.AssociateAllPrivilegesWithContact(contact);
+                        // As they are now primary too, give them only the required privileges, the ones where they are marked as MustBeAtLeastOneUserAssigned
+                        await _registerRepository.AssociateDefaultPrivilegesWithContact(contact);
                     }
                 }
                 else
@@ -146,7 +147,6 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
                         _logger.LogInformation($"Contacted created successfully {id}");
                         contact.Id = Guid.Parse(id);
                         await _registerRepository.AssociateDefaultRoleWithContact(contact);
-                        await _registerRepository.AssociateAllPrivilegesWithContact(contact);
                     }
                 }
 
@@ -164,15 +164,17 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
                 }
 
                 //Now check if the user has a status of applying in assessor if so update its status and associate him with the organisation if he has not been associated with an
-                //org before
+                //org before and set user privileges
                 var userContact = await _registerQueryRepository.GetContactBySignInId(command.SigninId.ToString());
                 if (userContact != null && userContact.Status == ContactStatus.Applying &&
                     userContact.EndPointAssessorOrganisationId == null)
                 {
                     _logger.LogInformation("Updating newly created assessor contact with new organisation ");
                     await _registerRepository.AssociateOrganisationWithContact(userContact.Id, newOrganisation,
-                        ContactStatus.Live,"");
+                        ContactStatus.Live, "");
+                    await _registerRepository.AssociateDefaultPrivilegesWithContact(userContact);
                 }
+
 
                 response.OrganisationId = newOrganisationId;
             }

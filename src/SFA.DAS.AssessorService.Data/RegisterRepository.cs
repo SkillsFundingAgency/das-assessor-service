@@ -230,6 +230,30 @@ namespace SFA.DAS.AssessorService.Data
             }
         }
 
+        //Fix for ON-2047
+        public async Task<string> AssociateDefaultPrivilegesWithContact(EpaContact contact)
+        {
+            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            {
+                if (connection.State != ConnectionState.Open)
+                    await connection.OpenAsync();
+
+                connection.Execute(
+                    @" INSERT INTO[ContactsPrivileges](contactid, PrivilegeId)" +
+                    @" SELECT contactid, PrivilegeId FROM (select co1.id contactid, pr1.id PrivilegeId from Contacts co1 cross join[Privileges] pr1" +
+                    @" where MustBeAtLeastOneUserAssigned = 1 and co1.username not like 'unknown%' and co1.username != 'manual' and co1.Id = @Id" +
+                    @" and co1.Status = 'Live') ab1" +
+                    @" WHERE NOT EXISTS(SELECT NULL FROM[ContactsPrivileges] WHERE ContactId = ab1.ContactId AND PrivilegeId = ab1.PrivilegeId)" ,
+                    new
+                    {
+                        contact.Id,
+                    });
+
+
+                return contact.Id.ToString();
+            }
+        }
+
         public async Task<string> UpdateEpaOrganisationContact(EpaContact contact, string actionChoice)
         {
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))

@@ -197,5 +197,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             await _contactsApiClient.Callback(callback);
             return Ok();
         }
+
     }
 }
