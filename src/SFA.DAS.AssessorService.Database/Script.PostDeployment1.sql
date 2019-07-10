@@ -27,7 +27,18 @@ END
 DECLARE @privilegesCount int
 SELECT @privilegesCount = COUNT(*) FROM Privileges
 
-IF (@privilegesCount < 6)
+IF (@privilegesCount = 6)
+  BEGIN
+    -- remove ContactsPrivileges records for API
+    DELETE ContactsPrivileges
+    FROM Privileges p
+           INNER JOIN ContactsPrivileges cp ON cp.PrivilegeId = p.Id
+    WHERE p.UserPrivilege = 'Manage API subscription'  
+    
+    DELETE Privileges WHERE UserPrivilege = 'Manage API subscription'
+  END
+  
+IF (@privilegesCount < 5)
   BEGIN
     -- remove ContactsPrivileges records for View standards
     DELETE ContactsPrivileges
@@ -43,7 +54,9 @@ IF (@privilegesCount < 6)
 
     -- add new ones
     INSERT INTO Privileges (Id, UserPrivilege, Description) VALUES (NEWID(), 'View completed assessments', 'This area shows all previously recorded assessments.')
-    INSERT INTO Privileges (Id, UserPrivilege, Description) VALUES (NEWID(), 'Manage API subscription', 'This area allows you to manage your API subscriptions.')
+/*  Do not yet add API management
+--  INSERT INTO Privileges (Id, UserPrivilege, Description) VALUES (NEWID(), 'Manage API subscription', 'This area allows you to manage your API subscriptions.')
+*/
     INSERT INTO Privileges (Id, UserPrivilege, Description) VALUES (NEWID(), 'View pipeline', 'This area shows the Standard and number of apprentices due to be assessed.')
 
     -- set Manage Users to MustBeAtLeast.... true
