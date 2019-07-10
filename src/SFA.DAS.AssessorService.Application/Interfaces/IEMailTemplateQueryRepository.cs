@@ -5,6 +5,6 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
 {
     public interface IEMailTemplateQueryRepository
     {
-        Task<EMailTemplate> GetEMailTemplate(string templateName);
+        Task<EMailTemplate> GetEmailTemplate(string templateName);
     }
 }

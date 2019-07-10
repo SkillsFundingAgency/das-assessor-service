@@ -1,16 +1,20 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
+using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.Orchestrators.Login;
+using SFA.DAS.AssessorService.Web.StartupConfiguration;
 using SFA.DAS.AssessorService.Web.Validators;
 using SFA.DAS.AssessorService.Web.ViewModels.Account;
 
@@ -22,18 +26,21 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         private readonly ILogger<AccountController> _logger;
         private readonly ILoginOrchestrator _loginOrchestrator;
         private readonly ISessionService _sessionService;
-        private readonly IContactsApiClient _contactsApiClient;
         private readonly IWebConfiguration _config;
+        private readonly IContactsApiClient _contactsApiClient;
+        private readonly IHttpContextAccessor _contextAccessor;
         private readonly CreateAccountValidator _createAccountValidator;
 
         public AccountController(ILogger<AccountController> logger, ILoginOrchestrator loginOrchestrator,
-            ISessionService sessionService, IWebConfiguration config, IContactsApiClient contactsApiClient, CreateAccountValidator createAccountValidator)
+            ISessionService sessionService, IWebConfiguration config, IContactsApiClient contactsApiClient,
+            IHttpContextAccessor contextAccessor, CreateAccountValidator createAccountValidator)
         {
             _logger = logger;
             _loginOrchestrator = loginOrchestrator;
             _sessionService = sessionService;
             _config = config;
             _contactsApiClient = contactsApiClient;
+            _contextAccessor = contextAccessor;
             _createAccountValidator = createAccountValidator;
         }
 
@@ -51,27 +58,31 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         public async Task<IActionResult> PostSignIn()
         { 
             var loginResult = await _loginOrchestrator.Login();
+            var orgName = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/orgname")?.Value;
+
             _logger.LogInformation($"  returned from LoginOrchestrator: {loginResult.Result}");
+
             switch (loginResult.Result)
             {
                 case LoginResult.Valid:
-                    _sessionService.Set("OrganisationName", loginResult.EndPointAssessorName);
+                    _sessionService.Set("OrganisationName", orgName);
                     return RedirectToAction("Index", "Dashboard");
                 case LoginResult.NotRegistered:
                     return RedirectToAction("Index", "OrganisationSearch");
                 case LoginResult.NotActivated:
-                    return RedirectToAction("NotActivated", "Home", new { epaoId = loginResult.EndPointAssessorOrganisationId });
+                    _sessionService.Set("EndPointAssessorOrganisationId", loginResult.EndPointAssessorOrganisationId);
+                    return RedirectToAction("NotActivated", "Home");
                 case LoginResult.InvalidRole:
                     return RedirectToAction("InvalidRole", "Home");
                 case LoginResult.InvitePending:
                     ResetCookies();
-                    _sessionService.Set("OrganisationName", loginResult.OrganisationName);
+                    _sessionService.Set("OrganisationName", orgName);
                     return RedirectToAction("InvitePending", "Home");
                 case LoginResult.Applying:
                     return Redirect($"{_config.ApplyBaseAddress}/Applications");
                 case LoginResult.Rejected:
                     ResetCookies();
-                    _sessionService.Set("OrganisationName", loginResult.OrganisationName);
+                    _sessionService.Set("OrganisationName", orgName);
                     return RedirectToAction("Rejected", "Home");
                 case LoginResult.ContactDoesNotExist:
                     ResetCookies();
@@ -104,8 +115,29 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         }
 
         [HttpGet]
-        public IActionResult AccessDenied()
+        public async Task<IActionResult> AccessDenied()
         {
+            if (TempData.Keys.Contains("DeniedPrivilegeContext"))
+            {
+                var deniedPrivilegeContext = JsonConvert.DeserializeObject<DeniedPrivilegeContext>(TempData["DeniedPrivilegeContext"].ToString());
+
+                var userId = Guid.Parse(User.FindFirst("UserId").Value);
+                var privilege = (await _contactsApiClient.GetPrivileges()).Single(p => p.Id == deniedPrivilegeContext.PrivilegeId);
+
+                var usersPrivileges = await _contactsApiClient.GetContactPrivileges(userId);
+                
+                return View("~/Views/Account/AccessDeniedForPrivilege.cshtml", new AccessDeniedViewModel
+                {
+                    Title = privilege.UserPrivilege,
+                    Description = privilege.Description,
+                    PrivilegeId = deniedPrivilegeContext.PrivilegeId,
+                    ContactId = userId,
+                    UserHasUserManagement = usersPrivileges.Any(up => up.Privilege.UserPrivilege == Privileges.ManageUsers),
+                    ReturnController = deniedPrivilegeContext.Controller,
+                    ReturnAction = deniedPrivilegeContext.Action
+                });
+            }
+
             return View();
         }
 
@@ -160,10 +192,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Callback([FromBody] DfeSignInCallback callback)
+        public async Task<IActionResult> Callback([FromBody] SignInCallback callback)
         {
             await _contactsApiClient.Callback(callback);
             return Ok();
         }
+
     }
 }

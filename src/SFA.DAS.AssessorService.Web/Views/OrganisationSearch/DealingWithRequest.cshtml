@@ -4,9 +4,23 @@
     ViewData["Title"] = "Request Received";
 }
 
-<div class="grid-row">
-    <div class="column-two-thirds">
-        <h1 class="heading-xlarge">Request Received</h1>
-        <p>We are dealing with your request; you will receive a confirmation email when you can access <b>@Model.Name's</b> End-point assessment services.</p>
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <div class="govuk-panel govuk-panel--confirmation">
+                <h1 class="govuk-panel__title">
+                    <strong>Access requested</strong>
+                </h1>
+                <div class="govuk-panel__body">
+                    You have requested access for<br />
+                    <strong>@Model.Name</strong>
+                </div>
+            </div>
+
+            <h2 class="govuk-heading-m">What happens next?</h2>
+            <p class="govuk-body">
+                The organisation has been sent your access request. If the organisation approves your request you will be notified by email.
+            </p>
+        </div>
     </div>
-</div>
+</main>

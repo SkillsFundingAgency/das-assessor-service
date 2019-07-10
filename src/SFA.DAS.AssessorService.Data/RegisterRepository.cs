@@ -24,7 +24,7 @@ namespace SFA.DAS.AssessorService.Data
         {
             _configuration = configuration;
             _logger = logger;
-            SqlMapper.AddTypeHandler(typeof(OrganisationData), new OrganisationDataHandler());
+            SqlMapper.AddTypeHandler(typeof(Api.Types.Models.AO.OrganisationData), new OrganisationDataHandler());
             SqlMapper.AddTypeHandler(typeof(OrganisationStandardData), new OrganisationStandardDataHandler());
         }
 
@@ -171,8 +171,8 @@ namespace SFA.DAS.AssessorService.Data
                         contact.EndPointAssessorOrganisationId,
                         contact.Username,
                         contact.PhoneNumber,
-                        contact.FirstName,
-                        contact.LastName,
+                        firstName = string.IsNullOrEmpty(contact.FirstName)?" ": contact.FirstName,
+                        lastName = string.IsNullOrEmpty(contact.LastName) ? " " : contact.LastName,
                         contact.SigninId,
                         contact.SigninType
                     });
@@ -218,7 +218,32 @@ namespace SFA.DAS.AssessorService.Data
                 connection.Execute(
                     @" insert into[ContactsPrivileges]" +
                     @" select co1.id, pr1.id from Contacts co1 cross join[Privileges] pr1" +
-                    @"  where co1.status = 'Live'  and co1.username not like 'unknown%' and co1.username != 'manual' and co1.Id = @Id",
+                    @"  where co1.status = 'Live'  and co1.username not like 'unknown%' and co1.username != 'manual' and co1.Id = @Id" +
+                    @"  AND NOT EXISTS(SELECT NULL FROM [ContactsPrivileges] WHERE ContactId = co1.id AND PrivilegeId = pr1.id)",
+                    new
+                    {
+                        contact.Id,
+                    });
+
+
+                return contact.Id.ToString();
+            }
+        }
+
+        //Fix for ON-2047
+        public async Task<string> AssociateDefaultPrivilegesWithContact(EpaContact contact)
+        {
+            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            {
+                if (connection.State != ConnectionState.Open)
+                    await connection.OpenAsync();
+
+                connection.Execute(
+                    @" INSERT INTO[ContactsPrivileges](contactid, PrivilegeId)" +
+                    @" SELECT contactid, PrivilegeId FROM (select co1.id contactid, pr1.id PrivilegeId from Contacts co1 cross join[Privileges] pr1" +
+                    @" where MustBeAtLeastOneUserAssigned = 1 and co1.username not like 'unknown%' and co1.username != 'manual' and co1.Id = @Id" +
+                    @" and co1.Status = 'Live') ab1" +
+                    @" WHERE NOT EXISTS(SELECT NULL FROM[ContactsPrivileges] WHERE ContactId = ab1.ContactId AND PrivilegeId = ab1.PrivilegeId)" ,
                     new
                     {
                         contact.Id,
@@ -242,7 +267,8 @@ namespace SFA.DAS.AssessorService.Data
                     "[GivenNames] = @firstName, [FamilyName] = @lastName, " +
                     "[PhoneNumber] = @phoneNumber, [updatedAt] = getUtcDate() " +
                     "WHERE [Id] = @Id ",
-                    new { contact.DisplayName, contact.Email, contact.FirstName, contact.LastName, contact.PhoneNumber, contact.Id});
+                    new { contact.DisplayName, contact.Email, firstName = string.IsNullOrEmpty(contact.FirstName) ? " " : contact.FirstName,
+                        lastName = string.IsNullOrEmpty(contact.LastName) ? " " : contact.LastName, contact.PhoneNumber, contact.Id});
 
                 if (actionChoice == "MakePrimaryContact")
                     connection.Execute("update o set PrimaryContact = c.Username from organisations o " +
@@ -275,6 +301,20 @@ namespace SFA.DAS.AssessorService.Data
                         new { contactId });
 
                 return contactId.ToString();
+            }
+        }
+
+        public async Task UpdateEpaOrganisationPrimaryContact(Guid contactId, string contactUsername)
+        {
+            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            {
+                if (connection.State != ConnectionState.Open)
+                    await connection.OpenAsync();
+
+                    connection.Execute("update o set PrimaryContact = c.Username from organisations o " +
+                                       "inner join contacts c on o.EndPointAssessorOrganisationId = c.EndPointAssessorOrganisationId " +
+                                       "Where c.id = @contactId And o.PrimaryContact = @contactUsername",
+                        new { contactId, contactUsername });
             }
         }
     }

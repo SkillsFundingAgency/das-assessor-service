@@ -20,6 +20,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
         Task<ApplicationSection> GetSection(Guid applicationId, int sequenceId, int sectionId);
         Task<Organisation> GetOrganisationForApplication(Guid applicationId);
         Task<Contact> GetContact(Guid contactId);
+        Task<List<Contact>> GetOrganisationContacts(Guid organisationId);
         Task UpdateRoEpaoApprovedFlag(Guid applicationId, Guid contactId, string endPointAssessorOrganisationId,
             bool roEpaoApprovedFlag);
     }

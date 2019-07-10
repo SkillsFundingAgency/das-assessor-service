@@ -127,9 +127,14 @@ namespace SFA.DAS.AssessorService.Data.TestData
                 // create 30 certificates which will not have any duplicate standard codes
                 for (int i = 0; i <=30; i++)
                 {
+                    var certificateReference = $"104123{i:00}";
+                    var achievementDate = DateTime.Now.AddDays(-1);
+                    var grade = CertificateGrade.Pass;
+                    var epaOutcome = "pass";
+
                     var certificateData = new CertificateData
                     {
-                        AchievementDate = DateTime.Now.AddDays(-1),
+                        AchievementDate = achievementDate,
                         ContactName = "Contact One",
                         ContactOrganisation = "1234" + i,
                         Department = "Human Resources",
@@ -142,15 +147,24 @@ namespace SFA.DAS.AssessorService.Data.TestData
                         LearnerFamilyName = "Gouge",
                         LearnerGivenNames = "David",
                         ProviderName = "Test Provider",
-                        OverallGrade = "PASS",
+                        OverallGrade = grade,
 
                         Registration = "Registered",
                         LearningStartDate = DateTime.Now.AddDays(10),
 
+                        StandardReference = i.ToString(),
                         StandardLevel = 1,
                         StandardName = "Test",
                         StandardPublicationDate = DateTime.Now,
-                        FullName = "David Gouge"
+                        FullName = "David Gouge",
+
+                        EpaDetails = new EpaDetails
+                        {
+                            EpaReference = certificateReference,
+                            LatestEpaDate = achievementDate,
+                            LatestEpaOutcome = epaOutcome,
+                            Epas = new List<EpaRecord> { new EpaRecord { EpaDate = achievementDate, EpaOutcome = epaOutcome } }
+                        }
                     };
 
                     var certificate = new Certificate
@@ -160,7 +174,7 @@ namespace SFA.DAS.AssessorService.Data.TestData
                         CertificateData = JsonConvert.SerializeObject(certificateData),
                         Status = CertificateStatus.Submitted,
                         CreatedBy = "user2",
-                        CertificateReference = $"104123{i:00}",
+                        CertificateReference = certificateReference,
                         Uln = 1111111111,
                         ProviderUkPrn = 12345678
                     };
@@ -221,7 +235,7 @@ namespace SFA.DAS.AssessorService.Data.TestData
                         CertificateData = JsonConvert.SerializeObject(certificateData),
                         Certificate = certificate,
                         EventTime = DateTime.Now,
-                        Status = CertificateStatus.Ready,
+                        Status = CertificateStatus.Submitted,
                         Username = "testuser"
                     };
 

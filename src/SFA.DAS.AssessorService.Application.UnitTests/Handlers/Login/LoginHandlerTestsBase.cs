@@ -20,7 +20,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Login
         protected LoginHandler Handler;
         protected Mock<IOrganisationQueryRepository> OrgQueryRepository;
         protected Mock<IContactQueryRepository> ContactQueryRepository;
-        protected Mock<IMediator> Mediator;
+        protected Mock<IContactRepository> ContactRepository;
+        protected Mock<IRegisterRepository> RegisterRepository;
 
         [SetUp]
         public void Arrange()
@@ -38,8 +39,12 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Login
                     RoleName = "SuperUser"
                 }
             };
-            ContactQueryRepository.Setup(r => r.GetBySignInId(It.IsAny<Guid>()))
-                .Returns(Task.FromResult(new Contact() {Id = It.IsAny<Guid>(), OrganisationId = It.IsAny<Guid>()}));
+            ContactQueryRepository.Setup(r => r.GetBySignInId(It.IsNotIn(Guid.Empty)))
+                .Returns(Task.FromResult(new Contact() {Id = It.IsAny<Guid>(), Status = ContactStatus.Live,
+                    OrganisationId = It.IsAny<Guid>(), Username = "Test", Email = "test@email.com" }));
+            ContactQueryRepository.Setup(r => r.GetBySignInId(Guid.Empty))
+                .Returns(Task.FromResult(new Contact() { Id = Guid.Empty, Status = ContactStatus.InvitePending,
+                    OrganisationId = It.IsAny<Guid>(), Username = "Test", Email = "test@email.com" }));
 
             ContactQueryRepository.Setup(r => r.GetRolesFor(It.IsAny<Guid>())).ReturnsAsync(roles);
             OrgQueryRepository.Setup(r => r.Get(It.IsAny<Guid>())).ReturnsAsync(new Organisation
@@ -49,10 +54,15 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Login
                 Id = It.IsAny<Guid>(),
                 Status = OrganisationStatus.New
             });
-            Mediator = new Mock<IMediator>();
+
+            ContactRepository = new Mock<IContactRepository>();
+            ContactRepository.Setup(x => x.UpdateUserName(It.IsAny<Guid>(), It.IsAny<string>())).Returns(Task.FromResult(default(object)));
+
+            RegisterRepository = new Mock<IRegisterRepository>();
+            RegisterRepository.Setup(m => m.UpdateEpaOrganisationPrimaryContact(It.IsAny<Guid>(), It.IsAny<string>())).Returns(Task.FromResult(default(object)));
+
             Handler = new LoginHandler(new Mock<ILogger<LoginHandler>>().Object, config,
-                OrgQueryRepository.Object, ContactQueryRepository.Object,
-                Mediator.Object);
+                OrgQueryRepository.Object, ContactQueryRepository.Object, ContactRepository.Object, RegisterRepository.Object);
         }
     }
 }

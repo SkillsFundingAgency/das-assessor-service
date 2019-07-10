@@ -43,6 +43,20 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             _mediator = mediator;
         }
 
+        [HttpGet("privileges")]
+        public async Task<IActionResult> GetAllPrivileges()
+        {
+            var privileges = await _contactQueryRepository.GetAllPrivileges();
+            return Ok(privileges);
+        }
+        
+        [HttpGet("user/{userId}/privileges")]
+        public async Task<IActionResult> GetPrivilegesForContact(Guid userId)
+        {
+            var privileges = await _contactQueryRepository.GetPrivilegesFor(userId);
+            return Ok(privileges);
+        }
+
         [HttpGet("{endPointAssessorOrganisationId}", Name = "SearchContactsForAnOrganisation")]
         [SwaggerResponse((int) HttpStatusCode.OK, Type = typeof(List<ContactResponse>))]
         [SwaggerResponse((int)HttpStatusCode.NotFound)]
@@ -79,7 +93,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             return Ok(contacts);
         }
 
-        [HttpGet("user/{userName}", Name = "SearchContactByUserName")]
+        [HttpGet("username/{userName}", Name = "SearchContactByUserName")]
         [SwaggerResponse((int) HttpStatusCode.OK, Type = typeof(ContactResponse))]
         [SwaggerResponse((int) HttpStatusCode.NotFound)]
         [SwaggerResponse((int) HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
@@ -93,16 +107,16 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             return Ok(Mapper.Map<ContactResponse>(contact));
         }
 
-        [HttpGet("{endPointAssessorOrganisationId}/withprivileges", Name = "GetAllContactsWithTheirPrivileges")]
+        [HttpGet("{organisationId}/withprivileges", Name = "GetAllContactsWithTheirPrivileges")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<ContactsWithPrivilegesResponse>))]
         [SwaggerResponse((int)HttpStatusCode.NotFound)]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> GetAllContactsWithTheirPrivileges(string endPointAssessorOrganisationId)
+        public async Task<IActionResult> GetAllContactsWithTheirPrivileges(Guid organisationId)
         {
             _logger.LogInformation(
-                $"Received Search for Contacts and their Privileges using endPointAssessorOrganisationId = {endPointAssessorOrganisationId}");
+                $"Received Search for Contacts and their Privileges using endPointAssessorOrganisationId = {organisationId}");
 
-            return Ok(await _mediator.Send(new GetContactsWithPrivilagesRequest(endPointAssessorOrganisationId)));
+            return Ok(await _mediator.Send(new GetContactsWithPrivilegesRequest(organisationId)));
         }
 
         [HttpGet("user/{id}", Name = "GetContactById")]
@@ -266,7 +280,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
             if (contact.Organisation != null)
             {
-                request.organisation = new ApplyTypes.Organisation
+                var finExempt = contact.Organisation.OrganisationType != null ? 
+                    IsOrganisationTypeFinancialExempt(contact.Organisation.OrganisationType.Type) : false;
+                request.organisation = new Organisation
                 {
                     CreatedAt = contact.Organisation.CreatedAt,
                     CreatedBy = contact.Id.ToString(),
@@ -276,9 +292,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
                     Name = contact.Organisation.EndPointAssessorName,
                     OrganisationType = contact.Organisation.OrganisationType?.Type,
                     OrganisationUkprn = contact.Organisation.EndPointAssessorUkprn,
-                    RoATPApproved = true,
+                    RoATPApproved = false,
                     RoEPAOApproved = true,
-                    Status = "New",
+                    Status = contact.Organisation.Status =="Live"?"Approved":"New",
                     UpdatedAt = null,
                     UpdatedBy = null,
                     OrganisationDetails = new OrganisationDetails
@@ -300,7 +316,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
                         FHADetails = new FHADetails
                         {
                             FinancialDueDate = contact.Organisation.OrganisationDataFromJson?.FhaDetails?.FinancialDueDate,
-                            FinancialExempt = contact.Organisation.OrganisationDataFromJson?.FhaDetails?.FinancialExempt
+                            FinancialExempt = finExempt 
                         },
                         EndPointAssessmentOrgId = contact.EndPointAssessorOrganisationId
                     }
@@ -309,7 +325,18 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
             return request;
         }
+
+        private static bool IsOrganisationTypeFinancialExempt(string organisationType)
+        {
+            // This is unlikely to change. Hence, after a quick discussion, decided to hard-code these than cope with external dependencies
+            return "HEI".Equals(organisationType, StringComparison.InvariantCultureIgnoreCase)
+                || "College".Equals(organisationType, StringComparison.InvariantCultureIgnoreCase)
+                || "Public Sector".Equals(organisationType, StringComparison.InvariantCultureIgnoreCase)
+                || "Academy or Free School".Equals(organisationType, StringComparison.InvariantCultureIgnoreCase);
+        }
     }
+
+
     public class MigrateUserResult
     {
         public Guid NewUserId { get; set; }

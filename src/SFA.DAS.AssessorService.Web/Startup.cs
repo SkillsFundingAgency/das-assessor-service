@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
@@ -57,6 +58,10 @@ namespace SFA.DAS.AssessorService.Web
                 options.SupportedCultures = new List<CultureInfo> { new CultureInfo("en-GB") };
                 options.RequestCultureProviders.Clear();
             });
+            
+            services.AddSingleton<IAuthorizationPolicyProvider, PrivilegePolicyProvider>();
+            services.AddSingleton<IAuthorizationHandler, PrivilegeHandler>();
+            
             services.AddMvc(options => { options.Filters.Add<CheckSessionFilter>();})
                 .AddControllersAsServices()
                 .AddSessionStateTempDataProvider()
@@ -148,7 +153,7 @@ namespace SFA.DAS.AssessorService.Web
                 config.For<IEmailApiClient>().Use<EmailApiClient>().Ctor<string>().Is(Configuration.ClientApiAuthentication.ApiBaseAddress);
                 config.For<ICertificateApiClient>().Use<CertificateApiClient>().Ctor<string>().Is(Configuration.ClientApiAuthentication.ApiBaseAddress);
                 config.For<IAssessmentOrgsApiClient>().Use(() => new AssessmentOrgsApiClient(Configuration.AssessmentOrgsApiClientBaseUrl));
-                config.For<IIfaStandardsApiClient>().Use(() => new IfaStandardsApiClient(Configuration.AssessmentOrgsApiClientBaseUrl));
+                config.For<IIfaStandardsApiClient>().Use(() => new IfaStandardsApiClient(Configuration.IfaApiClientBaseUrl));
                 config.For<ILoginApiClient>().Use<LoginApiClient>().Ctor<string>().Is(Configuration.ClientApiAuthentication.ApiBaseAddress);
 
                 config.For<IAzureTokenService>().Use<AzureTokenService>();

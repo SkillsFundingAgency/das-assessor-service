@@ -21,6 +21,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate.Private
         public Domain.Entities.Certificate GetCertificateFromViewModel(Domain.Entities.Certificate certificate, CertificateData data)
         {
             certificate.StandardCode = Convert.ToInt32(SelectedStandardCode);
+            data.StandardReference = StandardReference;
             data.StandardLevel = Level;
             data.StandardName = Standard;
 

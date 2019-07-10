@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using SFA.DAS.Apprenticeships.Api.Types;
-using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
@@ -48,6 +46,8 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
 
         string CheckAddressDetailsForOrganisation(string address1, string address2, string address3, string address4);
         string CheckPostcodeIsPresentForOrganisation(string postcode);
+
+        string CheckUkprnForOrganisation(long? ukprn);
         string CheckContactCountForOrganisation(int? numberOfContacts);
         string CheckStandardCountForOrganisation(int? numberOfStandards);
 

@@ -34,46 +34,67 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<List<StandardCollation>> GetStandardCollations()
         {
-                var connectionString = _configuration.SqlConnectionString;
-
-                using (var connection = new SqlConnection(connectionString))
-                {
-                    if (connection.State != ConnectionState.Open)
-                        await connection.OpenAsync();
-
-                    var standards = await connection.QueryAsync<StandardCollation>("select * from [StandardCollation]");
-                    return standards.ToList();
-                } 
+            return await GetStandardCollationsInternal();
         }
 
         public async Task<StandardCollation> GetStandardCollationByStandardId(int standardId)
         {
-            var connectionString = _configuration.SqlConnectionString;
-
-            using (var connection = new SqlConnection(connectionString))
-            {
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
-
-                var standards = await connection.QueryAsync<StandardCollation>("select * from [StandardCollation] where standardId = @standardId",new {standardId});
-
-                return standards.FirstOrDefault();
-
-
-            }
+            var standards = await GetStandardCollationsInternal(standardIdFilter: standardId);
+            return standards.FirstOrDefault();
         }
 
         public async Task<StandardCollation> GetStandardCollationByReferenceNumber(string referenceNumber)
+        {
+            var standards = await GetStandardCollationsInternal(referenceNumberFilter: referenceNumber);
+            return standards.FirstOrDefault();
+        }
+
+        private async Task<List<StandardCollation>> GetStandardCollationsInternal(int? standardIdFilter = null, string referenceNumberFilter = null)
         {
             var connectionString = _configuration.SqlConnectionString;
 
             using (var connection = new SqlConnection(connectionString))
             {
+                string query = @"SELECT sc.*, o.*
+                                FROM StandardCollation sc
+                                LEFT JOIN Options o ON sc.StandardId = o.StdCode";
+
+                if(standardIdFilter != null)
+                {
+                    query += " WHERE StandardId = @standardIdFilter";
+                }
+                else if(referenceNumberFilter != null)
+                {
+                    query += " WHERE ReferenceNumber = @referenceNumberFilter";
+                }
+
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
 
-                var standards = await connection.QueryAsync<StandardCollation>("select * from [StandardCollation] where ReferenceNumber = @referenceNumber", new { referenceNumber });
-                return standards.FirstOrDefault();
+                var standardsDictionary = new Dictionary<string, StandardCollation>();
+                var standards = connection.Query<StandardCollation, Option, StandardCollation>(
+                    query, (standard, option) =>
+                    {
+                        string key = standard.StandardId.HasValue ? standard.StandardId.ToString() : standard.ReferenceNumber;
+
+                        if (!standardsDictionary.TryGetValue(key, out StandardCollation dictionaryEntry))
+                        {
+                            dictionaryEntry = standard;
+                            dictionaryEntry.Options = new List<string>();
+                            standardsDictionary[key] = dictionaryEntry;
+                        }
+
+                        if (!string.IsNullOrEmpty(option?.OptionName))
+                        {
+                            dictionaryEntry.Options.Add(option.OptionName);
+                        }
+
+                        return dictionaryEntry;
+                    },
+                    param: new { standardIdFilter, referenceNumberFilter },
+                    splitOn: "StdCode").Distinct();
+
+                return standards.ToList();
             }
         }
 
@@ -223,8 +244,9 @@ namespace SFA.DAS.AssessorService.Data
 
         private static void UpdateCurrentStandard(SqlConnection connection, StandardCollation standard, string standardData)
         {
+            // when new ReferenceNumber is null (IFA has not supplied one) retain the current RefernceNumber
             connection.Execute(
-                "Update [StandardCollation] set ReferenceNumber = @referenceNumber, Title = @Title, StandardData = @StandardData, DateUpdated=getutcdate(), DateRemoved=null, IsLive = 1 " +
+                "Update [StandardCollation] set ReferenceNumber = case when @referenceNumber is not null then @referenceNumber else ReferenceNumber end, Title = @Title, StandardData = @StandardData, DateUpdated=getutcdate(), DateRemoved=null, IsLive = 1 " +
                 "where StandardId = @standardId",
                 new {standard.StandardId, standard.ReferenceNumber, standard.Title, standardData}
             );

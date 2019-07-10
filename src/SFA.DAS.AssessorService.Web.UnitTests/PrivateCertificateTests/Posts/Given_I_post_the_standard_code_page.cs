@@ -23,7 +23,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.PrivateCertificateTests.Posts
             var certificatePrivateStandardCodeController =
                 new CertificatePrivateStandardCodeController(MockLogger.Object,
                     MockHttpContextAccessor.Object,
-                    MockAssessmentOrgsApiClient,
+                    MockOrganisationApiClient,
                     new CacheHelper(distributedCacheMock.Object), 
                     MockCertificateApiClient,
                     MockSession.Object,
@@ -51,13 +51,13 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.PrivateCertificateTests.Posts
         [Test]
         public void ThenShouldReturnRedirectToController()
         {
-            _result.ControllerName.Should().Be("CertificatePrivateLearnerStartDate");
+            _result.ControllerName.Should().Be("CertificateOption");
         }
 
         [Test]
         public void ThenShouldReturnRedirectToAction()
         {
-            _result.ActionName.Should().Be("LearnerStartDate");
+            _result.ActionName.Should().Be("Option");
         }
     }
 }

@@ -5,9 +5,11 @@ using System.Threading.Tasks;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Application.Logging;
 using SFA.DAS.AssessorService.Domain.Consts;
+using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Settings;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Login
@@ -18,17 +20,20 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Login
         private readonly IWebConfiguration _config;
         private readonly IOrganisationQueryRepository _organisationQueryRepository;
         private readonly IContactQueryRepository _contactQueryRepository;
-        private readonly IMediator _mediator;
+        private readonly IRegisterRepository _registerRepository;
+        private readonly IContactRepository _contactRepository;
 
         public LoginHandler(ILogger<LoginHandler> logger, IWebConfiguration config, 
             IOrganisationQueryRepository organisationQueryRepository, 
-            IContactQueryRepository contactQueryRepository, IMediator mediator)
+            IContactQueryRepository contactQueryRepository, IContactRepository contactRepository,
+            IRegisterRepository registerRepository)
         {
             _logger = logger;
             _config = config;
             _organisationQueryRepository = organisationQueryRepository;
             _contactQueryRepository = contactQueryRepository;
-            _mediator = mediator;
+            _contactRepository = contactRepository;
+            _registerRepository = registerRepository;
         }
 
         public async Task<LoginResponse> Handle(LoginRequest request, CancellationToken cancellationToken)
@@ -36,8 +41,16 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Login
             var response =new LoginResponse();
 
             var contact = await _contactQueryRepository.GetBySignInId(request.SignInId);
-           
-            if (await UserDoesNotHaveAcceptableRole(contact.Id))
+
+            //ON-1926 Check if username is the same as the email if not update the username so that it is
+            //Since in aslogin the username is the email address of the 
+            var originalUsername = contact.Username;
+
+            if (string.IsNullOrEmpty(originalUsername) ||
+                !contact.Username.Equals(contact.Email, StringComparison.OrdinalIgnoreCase))
+                await _contactRepository.UpdateUserName(contact.Id,contact.Email);
+
+            if (UserDoesNotHaveAcceptableRole(contact.Id))
             {
                 _logger.LogInformation("Invalid Role");
                 _logger.LogInformation(LoggingConstants.SignInIncorrectRole);
@@ -49,7 +62,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Login
 
             if (contact.OrganisationId == null)
             {
-                var userStatus = await GetUserStatus(null, request.SignInId);
+                var userStatus = contact.Status;// await GetUserStatus(null, request.SignInId);
                 if (userStatus != ContactStatus.Applying)
                 {
                     response.Result = LoginResult.NotRegistered;
@@ -63,7 +76,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Login
             }
 
             var organisation = await _organisationQueryRepository.Get(contact.OrganisationId.Value);
-          
+
 
             if (organisation == null)
             {
@@ -72,72 +85,75 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Login
                 response.Result = LoginResult.NotRegistered;
                 return response;
             }
-            
-            response.EndPointAssessorName = organisation.EndPointAssessorName;
+
+            //ON-1926 If there was an organisation associated with the current contact then if the primary contact in 
+            //that organisation matches the orginal username then make sure it is updated to reflect the latest username.
+            if (!string.IsNullOrEmpty(originalUsername))
+                await _registerRepository.UpdateEpaOrganisationPrimaryContact(contact.Id, originalUsername);
+
+            await CheckAndSetPrivileges(contact);
+
             response.EndPointAssessorOrganisationId = organisation.EndPointAssessorOrganisationId;
+
+            _logger.LogInformation($"Got Org with ukprn: {organisation.EndPointAssessorUkprn}, Id: {organisation.EndPointAssessorOrganisationId}, Status: {organisation.Status}");
 
             if (organisation.Status == OrganisationStatus.Deleted)
             {
-                _logger.LogInformation($"Org found, but Deleted");
                 _logger.LogInformation(LoggingConstants.SignInEpaoDeleted);
                 response.Result = LoginResult.NotRegistered;
                 return response;
             }
-
-            if (organisation.Status == OrganisationStatus.New)
+            else if (organisation.Status == OrganisationStatus.New)
             {
-                _logger.LogInformation($"Org found, but New");
                 _logger.LogInformation(LoggingConstants.SignInEpaoNew);
-                response.Result = LoginResult.NotActivated;
+
+                // Only show true status if contact is marked as being Live
+                response.Result = (contact.Status is ContactStatus.Live) ? LoginResult.NotActivated : LoginResult.InvitePending;
                 return response;
             }
-
-            _logger.LogInformation($"Got Org with ukprn: {organisation.EndPointAssessorUkprn}, Id: {organisation.EndPointAssessorOrganisationId}");
-
-            _logger.LogInformation(LoggingConstants.SignInSuccessful);
-
-            var status = await GetUserStatus(organisation.EndPointAssessorOrganisationId, request.SignInId);
-            switch (status)
+            else
             {
-                case ContactStatus.Live:
-                    response.Result = LoginResult.Valid;
-                    break;
-                case ContactStatus.InvitePending:
-                    response.Result = LoginResult.InvitePending;
-                    break;
-                case ContactStatus.Inactive:
-                    response.Result = LoginResult.Rejected;
-                    break;
-                case ContactStatus.Applying:
-                    response.Result = LoginResult.Applying;
-                    break;
-                default:
-                    response.Result = LoginResult.NotRegistered;
-                    break;
+                _logger.LogInformation(LoggingConstants.SignInSuccessful);
+
+                var status = contact.Status; //await GetUserStatus(organisation.EndPointAssessorOrganisationId, request.SignInId);
+                switch (status)
+                {
+                    case ContactStatus.Live:
+                        response.Result = LoginResult.Valid;
+                        break;
+                    case ContactStatus.InvitePending:
+                        response.Result = LoginResult.InvitePending;
+                        break;
+                    case ContactStatus.Inactive:
+                        response.Result = LoginResult.Rejected;
+                        break;
+                    case ContactStatus.Applying:
+                        response.Result = LoginResult.Applying;
+                        break;
+                    default:
+                        response.Result = LoginResult.NotRegistered;
+                        break;
+                }
             }
 
-
-            response.OrganisationName = organisation.EndPointAssessorName;
-
-            _logger.LogInformation(LoggingConstants.SignInSuccessful);
-            //response.Result = LoginResult.Valid;
-            
             return response;
         }
 
-        private async Task<bool> UserDoesNotHaveAcceptableRole(Guid contactId)
+        private bool UserDoesNotHaveAcceptableRole(Guid contactId)
         {
-            var roles = await _contactQueryRepository.GetRolesFor(contactId);
-            return roles.All(r => r.RoleName != "SuperUser");
-                
-            //TODO: This needs to look up the user by the id and check they are in the appropriate role.
-            //return !roles.Contains(_config.Authentication.Role);
+            return false;
         }
 
-        private async Task<string> GetUserStatus(string endPointAssessorOrganisationId, Guid signInId)
+        //Additional code to cater for ON-2047
+        private async Task CheckAndSetPrivileges(Contact existingContact)
         {
-            return await _contactQueryRepository.GetContactStatus(endPointAssessorOrganisationId, signInId);
+            if (existingContact.EndPointAssessorOrganisationId != null)
+            {
+                var orgHasContacts = await _organisationQueryRepository.CheckIfOrganisationHasContactsWithSigninId(existingContact
+                    .EndPointAssessorOrganisationId, existingContact.Id);
+                if (!orgHasContacts)
+                    await _registerRepository.AssociateDefaultPrivilegesWithContact(new EpaContact { Id = existingContact.Id });
+            }
         }
-        
     }
 }

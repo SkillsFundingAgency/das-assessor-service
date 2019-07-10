@@ -5,14 +5,16 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
+using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Web.Constants;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.Orchestrators.Search;
+using SFA.DAS.AssessorService.Web.StartupConfiguration;
 using SFA.DAS.AssessorService.Web.ViewModels.Search;
 
 namespace SFA.DAS.AssessorService.Web.Controllers
 {
-    [Authorize]
+    [PrivilegeAuthorize(Privileges.RecordGrades)]
     [CheckSession]
     [Route("[controller]/[action]")]
     public class SearchController : Controller
@@ -51,19 +53,29 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
             if (result.IsPrivatelyFunded)
             {
+                //When there is no certficate found
                 if (!result.SearchResults.Any())
                 {
                     return RedirectToAction("Index", "CertificatePrivateDeclaration", vm);
                 }
-                if (result.SearchResults.Any(x => x.Uln == "0" && x.GivenNames == null))
+                //When certificate found but ULN already being used and a different familyname used
+                if (result.SearchResults.Any(x => x.UlnAlreadyExists && x.IsPrivatelyFunded))
+                {
+                    GetSelectedStandardViewModel(result);
+                    return RedirectToAction("Result");
+                }
+                //Certificate found but was for a uln assocaited with a user in another org
+                if (result.SearchResults.Any(x => x.Uln == "0" && x.GivenNames == null && x.IsPrivatelyFunded))
                 {
                     vm.SearchResults = new List<ResultViewModel>();
                     return View("Index", vm);
                 }
-                if (result.SearchResults.Any(x => x.Standard == null))
+                //Certifcate found but no standard set or a certificate reference not set, this could be a draft certificate
+                if (result.SearchResults.Any(x => x.Standard == null || x.CertificateReference == null))
                 {
                     return RedirectToAction("Index", "CertificatePrivateDeclaration", vm);
                 }
+                
             }
 
             if (!result.SearchResults.Any())
@@ -109,7 +121,10 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 SubmittedBy = resultViewModel.SubmittedBy,
                 LearnerStartDate = resultViewModel.LearnStartDate.GetValueOrDefault().ToString("d MMMM yyyy"),
                 AchievementDate = resultViewModel.AchDate.GetValueOrDefault().ToString("d MMMM yyyy"),
-                ShowExtraInfo = resultViewModel.ShowExtraInfo
+                ShowExtraInfo = resultViewModel.ShowExtraInfo,
+                UlnAlreadyExists = resultViewModel.UlnAlreadyExists,
+                IsNoMatchingFamilyName = resultViewModel.IsNoMatchingFamilyName
+
             };
 
             _sessionService.Set("SelectedStandard", selectedStandardViewModel);
@@ -124,12 +139,21 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         public IActionResult Result()
         {
             var vm = _sessionService.Get<SelectedStandardViewModel>("SelectedStandard");
-            if (vm == null)
+
+            if (vm != null)
             {
-                return RedirectToAction("Index");
+                return View("Result", vm);
+            }
+            else
+            {
+                var chooseStandardViewModel = _sessionService.Get<ChooseStandardViewModel>("SearchResultsChooseStandard");
+                if (chooseStandardViewModel != null)
+                {
+                    return View("ChooseStandard", chooseStandardViewModel);
+                }
             }
 
-            return View("Result", vm);
+            return RedirectToAction("Index");
         }
 
         [HttpGet(Name = "choose")]
@@ -160,7 +184,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             }
 
             var selected = vm.SearchResults
-                .Single(sr => sr.StdCode == chooseStandardViewModel.SelectedStandardCode);
+                .Single(sr => sr.StdCode == chooseStandardViewModel.StdCode);
 
             var selectedStandardViewModel = new SelectedStandardViewModel()
             {

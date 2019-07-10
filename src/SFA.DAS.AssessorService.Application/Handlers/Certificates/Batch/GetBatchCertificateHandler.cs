@@ -7,7 +7,6 @@ using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Extensions;
 using SFA.DAS.AssessorService.Domain.JsonData;
-using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
 using System;
 using System.Linq;
 using System.Threading;
@@ -21,14 +20,14 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates.Batch
         private readonly IContactQueryRepository _contactQueryRepository;
         private readonly IIlrRepository _ilrRepository;
         private readonly ILogger<GetBatchCertificateHandler> _logger;
-        private readonly IAssessmentOrgsApiClient _assessmentOrgsApiClient;
+        private readonly IStandardRepository _standardRepository;
 
-        public GetBatchCertificateHandler(ICertificateRepository certificateRepository, IContactQueryRepository contactQueryRepository, IIlrRepository ilrRepository, IAssessmentOrgsApiClient assessmentOrgsApiClient, ILogger<GetBatchCertificateHandler> logger)
+        public GetBatchCertificateHandler(ICertificateRepository certificateRepository, IContactQueryRepository contactQueryRepository, IIlrRepository ilrRepository, IStandardRepository standardRepository, ILogger<GetBatchCertificateHandler> logger)
         {
             _certificateRepository = certificateRepository;
             _contactQueryRepository = contactQueryRepository;
             _ilrRepository = ilrRepository;
-            _assessmentOrgsApiClient = assessmentOrgsApiClient;
+            _standardRepository = standardRepository;
             _logger = logger;
         }
 
@@ -56,9 +55,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates.Batch
 
                     if (certificateContact is null || certificateContact.OrganisationId != searchingContact.OrganisationId)
                     {
-                        var providedStandards = await _assessmentOrgsApiClient.FindAllStandardsByOrganisationIdAsync(searchingContact.EndPointAssessorOrganisationId);
+                        var providedStandards = await _standardRepository.GetEpaoRegisteredStandards(searchingContact.EndPointAssessorOrganisationId, short.MaxValue, null);
 
-                        if (providedStandards.Any(s => s.StandardCode == certificate.StandardCode.ToString()))
+                        if (providedStandards.PageOfResults.Any(s => s.StandardCode == certificate.StandardCode))
                         {
                             // Shared standard but not the EPAO who created the certificate
                             // Must redact information
@@ -66,9 +65,11 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates.Batch
                             {
                                 LearnerGivenNames = certData.LearnerGivenNames,
                                 LearnerFamilyName = certData.LearnerFamilyName,
+                                StandardReference = certData.StandardReference,
                                 StandardName = certData.StandardName,
                                 StandardLevel = certData.StandardLevel,
-                                StandardPublicationDate = certData.StandardPublicationDate
+                                StandardPublicationDate = certData.StandardPublicationDate,
+                                EpaDetails = null
                             };
 
                             certificate.CertificateData = JsonConvert.SerializeObject(redactedData);
@@ -148,7 +149,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates.Batch
             var certificateLogs = await _certificateRepository.GetCertificateLogsFor(cert.Id);
             certificateLogs = certificateLogs?.Where(l => l.ReasonForChange is null).ToList(); // this removes any admin changes done within staff app
 
-            var createdLogEntry = certificateLogs.FirstOrDefault(l => l.Status == CertificateStatus.Draft);
+            var createdLogEntry = certificateLogs?.FirstOrDefault(l => l.Status == CertificateStatus.Draft);
             if (createdLogEntry != null)
             {
                 var createdContact = await _contactQueryRepository.GetContact(createdLogEntry.Username);

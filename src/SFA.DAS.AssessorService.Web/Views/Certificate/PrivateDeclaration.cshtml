@@ -4,34 +4,40 @@
 
 @{
     ViewBag.Title = "Declaration";
-    Layout = "_Layout";
+    Layout = "_DashboardLayout";
 }
 
-<div class="grid-row">
-    <div class="column-two-thirds">
-        <a asp-controller="Search" asp-action="Result" class="link-back">Back</a>
+<a asp-controller="Search" asp-action="Result" class="govuk-back-link">Back</a>
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
 
-        <h1 class="heading-large">
-            @Localizer["Heading"]
-        </h1>
+            <h1 class="govuk-heading-xl">
+                @Localizer["Heading"]
+            </h1>
 
-        <p>@Localizer["InfoHeader"]</p>
+            <p class="govuk-body">@Localizer["InfoHeader1"]</p>
 
-        <ul class="list list-bullet">
-            <li>@Localizer["InfoLine1"]</li>
-            <li>@Localizer["InfoLine2"]</li>
-            <li>@Localizer["InfoLine3"]</li>
-            <li>@Localizer["InfoLine4"]</li>
-        </ul>
+            <ul class="govuk-list govuk-list--bullet">
+                <li>@Localizer["InfoLine1"]</li>
+                <li>@Localizer["InfoLine2"]</li>
+            </ul>
 
+            <p class="govuk-body">@Localizer["InfoHeader2"]</p>
 
-        <form class="js-disable-on-submit" method="post" asp-action="StartPrivate" asp-controller="Certificate">
-            @Html.HiddenFor(c => c.Uln)
-            @Html.HiddenFor(c => c.Surname)
-            @Html.HiddenFor(c => c.SearchResults)
-            @Html.HiddenFor(c => c.IsPrivatelyFunded)
-            <button type="submit" class="button">@Localizer["ContinueButton"]</button>
-        </form>
+            <ul class="govuk-list govuk-list--bullet">
+                <li>@Localizer["InfoLine3"]</li>
+                <li>@Localizer["InfoLine4"]</li>
+            </ul>
 
+            <form class="js-disable-on-submit" method="post" asp-action="StartPrivate" asp-controller="Certificate">
+                @Html.HiddenFor(c => c.Uln)
+                @Html.HiddenFor(c => c.Surname)
+                @Html.HiddenFor(c => c.SearchResults)
+                @Html.HiddenFor(c => c.IsPrivatelyFunded)
+                <button type="submit" class="govuk-button">@Localizer["ContinueButton"]</button>
+            </form>
+
+        </div>
     </div>
-</div>
+</main>

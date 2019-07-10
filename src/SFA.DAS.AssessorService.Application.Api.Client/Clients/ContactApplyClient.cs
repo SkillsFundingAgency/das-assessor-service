@@ -55,6 +55,31 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                 throw err;
             }
         }
+
+        public async Task RemoveContactFromOrganisation(Guid contactId)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Post,$"/Account/RemoveFromOrganisation"))
+            {
+                await PostPutRequest(request, new {contactId});
+            }
+        }
+        
+        
+        public async Task CreateNewContact(SFA.DAS.AssessorService.Domain.Entities.Contact newContact)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Post,$"/Account/CreateNewContact"))
+            {
+                await PostPutRequest(request, newContact);
+            }
+        }
+
+        public async Task SignInIdCallback(SignInCallback callback)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Post,$"/Account/Callback"))
+            {
+                await PostPutRequest(request, callback);
+            }
+        }
     }
 }
 
@@ -64,4 +89,7 @@ public interface IContactApplyClient
     Task CreateAccountInApply(NewApplyContact contact);
     Task UpdateApplySignInId(AddToApplyContactASignInId addToApplyContactASignInId);
     Task<Contact> GetApplyContactBySignInId(Guid signinId);
+    Task RemoveContactFromOrganisation(Guid contactId);
+    Task CreateNewContact(SFA.DAS.AssessorService.Domain.Entities.Contact newContact);
+    Task SignInIdCallback(SignInCallback callback);
 }
