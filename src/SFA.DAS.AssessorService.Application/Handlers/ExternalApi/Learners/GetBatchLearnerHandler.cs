@@ -80,6 +80,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Learners
                         GivenNames = learner.GivenNames,
                         FamilyName = learner.FamilyName,
                         LearnerStartDate = learner.LearnStartDate,
+                        CompletionStatus = learner.CompletionStatus,
                         Standard = standard,
                         EndPointAssessorOrganisationId = epao?.EndPointAssessorOrganisationId ?? learner.EpaOrgId,
                         OrganisationPrimaryContactEmail = primaryContact?.Email,

@@ -19,7 +19,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.SwaggerHelpers.Exampl
                     Learner = new Learner { GivenNames = "John", FamilyName = "Smith", Uln = 1234567890 },
                     LearningDetails = new LearningDetails { LearningStartDate = DateTime.UtcNow.AddYears(-1), ProviderUkPrn = 12345678, ProviderName = "Example Provider" },
                 },
-                Status = new Models.Response.Learners.Status { CurrentStatus = "1" },
+                Status = new Models.Response.Learners.Status { CompletionStatus = 1 },
                 EpaDetails = new EpaDetails
                 {
                     LatestEpaDate = DateTime.UtcNow,

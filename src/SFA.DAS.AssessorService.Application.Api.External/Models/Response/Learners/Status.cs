@@ -4,7 +4,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Models.Response.Learn
 {
     public sealed class Status : IEquatable<Status>
     {
-        public string CurrentStatus { get; set; }
+        public int? CompletionStatus { get; set; }
 
         #region GetHashCode, Equals and IEquatable
         public override int GetHashCode()
@@ -15,7 +15,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Models.Response.Learn
                 const int multiplier = 16777619;
 
                 int hash = hashBase;
-                hash = (hash * multiplier) ^ (CurrentStatus is null ? 0 : CurrentStatus.GetHashCode());
+                hash = (hash * multiplier) ^ CompletionStatus.GetHashCode();
                 return hash;
             }
         }
@@ -37,7 +37,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Models.Response.Learn
 
         private bool IsEqual(Status other)
         {
-            return string.Equals(CurrentStatus, other.CurrentStatus);
+            return Equals(CompletionStatus, other.CompletionStatus);
         }
 
         public static bool operator ==(Status left, Status right)
