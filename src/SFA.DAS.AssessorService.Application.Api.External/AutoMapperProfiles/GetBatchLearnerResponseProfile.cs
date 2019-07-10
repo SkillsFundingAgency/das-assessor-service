@@ -1,8 +1,11 @@
 ﻿using AutoMapper;
+using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Application.Api.External.Models.Response;
 using SFA.DAS.AssessorService.Application.Api.External.Models.Response.Certificates;
+using SFA.DAS.AssessorService.Application.Api.External.Models.Response.Epa;
 using SFA.DAS.AssessorService.Application.Api.External.Models.Response.Learners;
 using SFA.DAS.AssessorService.Domain.Consts;
+using System;
 
 namespace SFA.DAS.AssessorService.Application.Api.External.AutoMapperProfiles
 {
@@ -23,9 +26,10 @@ namespace SFA.DAS.AssessorService.Application.Api.External.AutoMapperProfiles
         {
             CreateMap<AssessorService.Api.Types.Models.ExternalApi.Learners.GetBatchLearnerResponse, GetLearner>()
                 .ForMember(dest => dest.Certificate, opt => opt.MapFrom(source => Mapper.Map<Domain.Entities.Certificate, Certificate>(source.Certificate)))
-                .ForMember(dest => dest.EpaDetails, opt => opt.ResolveUsing(source => Mapper.Map<Domain.JsonData.CertificateData>(source.Certificate?.CertificateData)))
+                .ForMember(dest => dest.EpaDetails, opt => opt.ResolveUsing(source => Mapper.Map<Domain.JsonData.CertificateData, EpaDetails>(JsonConvert.DeserializeObject<Domain.JsonData.CertificateData>(source.Certificate?.CertificateData ?? ""))))
                 .AfterMap<MapStatusAction>()
                 .AfterMap<MapLearnerDataAction>()
+                .AfterMap<HideCertificateAction>()
                 .ForAllOtherMembers(dest => dest.Ignore());
         }
 
@@ -90,6 +94,26 @@ namespace SFA.DAS.AssessorService.Application.Api.External.AutoMapperProfiles
                         {
                             CompletionStatus = completionStatus
                         };
+                    }
+                }
+            }
+        }
+
+        public class HideCertificateAction : IMappingAction<AssessorService.Api.Types.Models.ExternalApi.Learners.GetBatchLearnerResponse, GetLearner>
+        {
+            public void Process(AssessorService.Api.Types.Models.ExternalApi.Learners.GetBatchLearnerResponse source, GetLearner destination)
+            {
+                if (destination.Certificate is null) return;
+
+                if (destination.Certificate.Status?.CurrentStatus == CertificateStatus.Deleted)
+                {
+                    destination.Certificate = null;
+                }
+                else if (destination.Certificate.Status?.CurrentStatus == CertificateStatus.Draft)
+                {
+                    if (!"pass".Equals(destination.EpaDetails?.LatestEpaOutcome, StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        destination.Certificate = null;
                     }
                 }
             }
