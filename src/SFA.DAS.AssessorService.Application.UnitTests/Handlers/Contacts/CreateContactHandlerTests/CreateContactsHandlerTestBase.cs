@@ -15,7 +15,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Contacts.Create
     {
         protected Mock<IContactRepository> ContactRepository;
         protected Mock<IContactQueryRepository> ContactQueryRepository;
-        protected Mock<IDfeSignInService> SignInService;
+        protected Mock<ISignInService> SignInService;
         protected Mock<IMediator> Mediator;
         protected CreateContactHandler CreateContactHandler;
 
@@ -30,7 +30,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Contacts.Create
             
             ContactRepository = new Mock<IContactRepository>();
             ContactQueryRepository = new Mock<IContactQueryRepository>();
-            SignInService = new Mock<IDfeSignInService>();
+            SignInService = new Mock<ISignInService>();
             Mediator = new Mock<IMediator>();
             CreateContactHandler = new CreateContactHandler(ContactRepository.Object, ContactQueryRepository.Object, SignInService.Object, Mediator.Object, new Mock<ILogger<CreateContactHandler>>().Object);
         }
