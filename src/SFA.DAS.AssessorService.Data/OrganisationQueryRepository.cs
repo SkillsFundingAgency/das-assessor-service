@@ -69,12 +69,32 @@ namespace SFA.DAS.AssessorService.Data
             return organisation.Contacts.Count() != 0;
         }
 
+        public async Task<bool> CheckIfOrganisationHasContactsWithSigninId(string endPointAssessorOrganisationId, Guid contactId)
+        {
+            var organisation = await _assessorDbContext.Organisations
+                .Include(q => q.Contacts)
+                .FirstOrDefaultAsync(q =>
+                    q.EndPointAssessorOrganisationId == endPointAssessorOrganisationId);
+             //Ignore calling contact
+             return organisation.Contacts?.Any(x => x.SignInId != null && x.Id != contactId) ?? false;
+        }
+
         public async Task<Organisation> GetOrganisationByName(string name)
         {
 
             return await _assessorDbContext.Organisations.Include(x => x.OrganisationType).
                 FirstOrDefaultAsync(x => x.OrganisationDataFromJson.LegalName == name);
         }
-        
+
+        public async Task<Organisation> GetOrganisationByContactId(Guid contactId)
+        {
+            var contact = await _assessorDbContext
+                .Contacts
+                .Include(c => c.Organisation)
+                .FirstOrDefaultAsync(c => c.Id == contactId);
+            
+            return contact
+                .Organisation;
+        }
     }
 }

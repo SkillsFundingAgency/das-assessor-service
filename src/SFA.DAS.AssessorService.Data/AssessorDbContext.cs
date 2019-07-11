@@ -31,7 +31,7 @@ namespace SFA.DAS.AssessorService.Data
         public virtual DbSet<ContactsPrivilege> ContactsPrivileges { get; set; }
         public virtual DbSet<Privilege> Privileges { get; set; }
         public virtual DbSet<ContactRole> ContactRoles { get; set; }
-
+        
         public override int SaveChanges()
         {
             var saveTime = DateTime.UtcNow;
@@ -72,12 +72,6 @@ namespace SFA.DAS.AssessorService.Data
                 .HasOne<Contact>(sc => sc.Contact)
                 .WithMany(s => s.ContactsPrivileges)
                 .HasForeignKey(sc => sc.ContactId);
-
-
-            modelBuilder.Entity<ContactsPrivilege>()
-                .HasOne<Privilege>(sc => sc.Privilege)
-                .WithMany(s => s.ContactsPrivileges)
-                .HasForeignKey(sc => sc.PrivilegeId);
 
             modelBuilder.Entity<Organisation>()
                 .Property<string>("OrganisationData")

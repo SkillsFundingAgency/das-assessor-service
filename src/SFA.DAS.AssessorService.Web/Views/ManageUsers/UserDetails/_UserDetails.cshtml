@@ -1,0 +1,60 @@
+@model SFA.DAS.AssessorService.Web.Controllers.ManageUsers.ViewModels.UserViewModel
+
+<h1 class="govuk-heading-xl">@Model.GivenNames @Model.FamilyName</h1>
+
+<dl class="govuk-summary-list">
+
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+            Title
+        </dt>
+        <dd class="govuk-summary-list__value">
+            @Model.Title
+        </dd>
+    </div>
+
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+            Given name
+        </dt>
+        <dd class="govuk-summary-list__value">
+            @Model.GivenNames
+        </dd>
+    </div>
+
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+            Family name
+        </dt>
+        <dd class="govuk-summary-list__value">
+            @Model.FamilyName
+        </dd>
+    </div>
+
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+            Email
+        </dt>
+        <dd class="govuk-summary-list__value">
+            @Model.Email
+        </dd>
+    </div>
+
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+            Telephone
+        </dt>
+        <dd class="govuk-summary-list__value">
+            @Model.PhoneNumber
+        </dd>
+    </div>
+
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+            Status
+        </dt>
+        <dd class="govuk-summary-list__value">
+            @Model.Status
+        </dd>
+    </div>
+</dl>

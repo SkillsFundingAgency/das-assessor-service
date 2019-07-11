@@ -93,14 +93,14 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [CheckSession]
         public IActionResult InvitePending()
         {
-            return View(_sessionService.Get("OrganisationName"));
+            return View(model: _sessionService.Get("OrganisationName"));
         }
 
         [Authorize]
         [CheckSession]
         public IActionResult Rejected()
         {
-            return View(_sessionService.Get("OrganisationName"));
+            return View(model: _sessionService.Get("OrganisationName"));
         }
     }
 }
