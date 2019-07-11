@@ -301,3 +301,7 @@ WHERE JSON_Value(CertificateData,'$.EpaDetails.Epas[0].EpaOutcome') IS NOT NULL;
 -- START OF ON-1926
 update [dbo].[Contacts] set [Username] = [Email] where  [Username] like 'unknown%' and [signinid] is not null
 -- END OF ON-1926
+
+-- START OF ON-2063
+UPDATE Privileges SET Description = 'This area allows you to apply for a Standard.' WHERE UserPrivilege = 'Apply for a Standard'
+-- END OF ON-2063
