@@ -40,22 +40,15 @@ namespace SFA.DAS.AssessorService.Data
             return contacts;
         }
 
-        public async Task<IEnumerable<IGrouping<Contact, ContactsPrivilege>>> GetAllContactsWithPrivileges(
-            string endPointAssessorOrganisationId)
+        public async Task<List<Contact>> GetAllContactsWithPrivileges(Guid organisationId)
         {
-            var groupedContactPrivileges = await _assessorDbContext.Organisations
-                .Include(organisation => organisation.Contacts)
-                .Where(organisation => organisation.EndPointAssessorOrganisationId == endPointAssessorOrganisationId)
-                .SelectMany(q => q.Contacts).SelectMany(a => a.ContactsPrivileges.Select(c => new ContactsPrivilege
-                {
-                    ContactId = c.ContactId,
-                    PrivilegeId = c.PrivilegeId,
-                    Contact = c.Contact,
-                    Privilege = c.Privilege
-                })).GroupBy(x => x.Contact).ToListAsync();
-
-            return groupedContactPrivileges;
+            var contacts = await _assessorDbContext.Contacts
+                .Include("ContactsPrivileges.Privilege")
+                .Where(contact => contact.OrganisationId == organisationId).OrderBy(c => c.FamilyName).ThenBy(c => c.GivenNames).ToListAsync();
+            
+            return contacts;
         }
+
         public async Task<IEnumerable<Privilege>> GetAllPrivileges()
         {
             return await _assessorDbContext.Privileges.ToListAsync();
@@ -75,13 +68,10 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<Contact> GetContactFromEmailAddress(string email)
         {
-            var contact = await _assessorDbContext.Organisations
-                .Include(organisation => organisation.Contacts)
-                .Where(q => q.Status != OrganisationStatus.Deleted)
-                .SelectMany(q => q.Contacts)
-                .Where(q => q.Email == email)
-                .FirstOrDefaultAsync();
-
+            var contact = await _assessorDbContext.Contacts
+                .Include(c => c.Organisation)
+                .FirstOrDefaultAsync(c => c.Email.Equals(email, StringComparison.InvariantCultureIgnoreCase) && c.Organisation.Status != OrganisationStatus.Deleted);
+            
             return contact;
         }
 
@@ -98,7 +88,7 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<IList<ContactsPrivilege>> GetPrivilegesFor(Guid contactId)
         {
-            return await _assessorDbContext.ContactsPrivileges.Where(cr => cr.ContactId == contactId).ToListAsync();
+            return await _assessorDbContext.ContactsPrivileges.Where(cr => cr.ContactId == contactId).Include(cp => cp.Privilege).ToListAsync();   
         }
 
         public async Task<bool> CheckContactExists(string userName)
@@ -106,15 +96,6 @@ namespace SFA.DAS.AssessorService.Data
             var result = await _assessorDbContext.Contacts
                 .AnyAsync(q => q.Username == userName);
             return result;
-        }
-
-        public async Task<string> GetContactStatus(string endPointAssessorOrganisationId, Guid signInId)
-        {
-            var contactStatus = await _assessorDbContext.Contacts.Where(x =>
-                    x.EndPointAssessorOrganisationId == endPointAssessorOrganisationId && x.SignInId == signInId)
-                .FirstOrDefaultAsync();
-
-            return contactStatus?.Status;
         }
 
         public async Task<Contact> GetContactById(Guid id)

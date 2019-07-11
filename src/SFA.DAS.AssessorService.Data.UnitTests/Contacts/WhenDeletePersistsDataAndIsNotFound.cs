@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -34,7 +35,7 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Contacts
             var mockSet = contacts.CreateMockSet(contacts);
             var mockDbContext = CreateMockDbContext(mockSet);
 
-            var contactRepository = new ContactRepository(mockDbContext.Object);
+            var contactRepository = new ContactRepository(mockDbContext.Object, new Mock<IDbConnection>().Object);
 
             try
             {

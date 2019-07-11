@@ -112,5 +112,17 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             
             return Ok(Mapper.Map<OrganisationResponse>(organisation));
         }
+        
+        [HttpGet("forContact/{userId}")]
+        public async Task<IActionResult> GetOrganisationForContact(Guid userId)
+        {
+            var organisation = await _organisationQueryRepository.GetOrganisationByContactId(userId);
+            if(organisation == null)
+            {
+                throw new ResourceNotFoundException(userId.ToString());
+            }
+            
+            return Ok(Mapper.Map<OrganisationResponse>(organisation));
+        }
     }
 }
