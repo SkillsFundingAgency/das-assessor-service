@@ -30,6 +30,15 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 
         }
 
+        public async Task MigrateSingleContactToApply(MigrateContactOrganisation migrateContactOrganisation)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Post,
+                $"/Account/MigrateContactAndOrgs"))
+            {
+                await PostPutRequest(request, migrateContactOrganisation);
+            }
+        }
+
         public async Task UpdateApplySignInId(AddToApplyContactASignInId addToApplyContactASignInId)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Put,
@@ -87,6 +96,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 public interface IContactApplyClient
 {
     Task CreateAccountInApply(NewApplyContact contact);
+    Task MigrateSingleContactToApply(MigrateContactOrganisation migrateContactOrganisation);
     Task UpdateApplySignInId(AddToApplyContactASignInId addToApplyContactASignInId);
     Task<Contact> GetApplyContactBySignInId(Guid signinId);
     Task RemoveContactFromOrganisation(Guid contactId);
