@@ -9,6 +9,6 @@ namespace SFA.DAS.AssessorService.Domain.Consts
         public const string ManageAPISubscription = "Manage API subscription";
         public const string RecordGrades = "Record grades and issue certificates";
         public const string ManageUsers = "Manage users";
-        public const string ViewPipeline = "View pipeline";
+        public const string ViewPipeline = "Pipeline";
     }
 }
