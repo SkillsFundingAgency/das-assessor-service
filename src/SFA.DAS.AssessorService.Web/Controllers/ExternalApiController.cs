@@ -11,11 +11,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using SFA.DAS.AssessorService.Domain.Consts;
 
 namespace SFA.DAS.AssessorService.Web.Controllers
 {
     //  [Authorize(Policy = Policies.ExternalApiAccess)]
-    [Authorize]
+    [PrivilegeAuthorize(Privileges.ManageAPISubscription)]
     public class ExternalApiController : Controller
     {
         private readonly ILogger<ExternalApiController> _logger;
