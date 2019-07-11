@@ -304,4 +304,5 @@ update [dbo].[Contacts] set [Username] = [Email] where  [Username] like 'unknown
 
 -- START OF ON-2063
 UPDATE Privileges SET Description = 'This area allows you to apply for a Standard.' WHERE UserPrivilege = 'Apply for a Standard'
+UPDATE Privileges SET UserPrivilege = 'Completed assessments' WHERE Description = 'This area shows all previously recorded assessments.'
 -- END OF ON-2063
