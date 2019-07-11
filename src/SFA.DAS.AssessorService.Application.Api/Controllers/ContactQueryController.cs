@@ -43,6 +43,20 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             _mediator = mediator;
         }
 
+        [HttpGet("privileges")]
+        public async Task<IActionResult> GetAllPrivileges()
+        {
+            var privileges = await _contactQueryRepository.GetAllPrivileges();
+            return Ok(privileges);
+        }
+        
+        [HttpGet("user/{userId}/privileges")]
+        public async Task<IActionResult> GetPrivilegesForContact(Guid userId)
+        {
+            var privileges = await _contactQueryRepository.GetPrivilegesFor(userId);
+            return Ok(privileges);
+        }
+
         [HttpGet("{endPointAssessorOrganisationId}", Name = "SearchContactsForAnOrganisation")]
         [SwaggerResponse((int) HttpStatusCode.OK, Type = typeof(List<ContactResponse>))]
         [SwaggerResponse((int)HttpStatusCode.NotFound)]
@@ -79,7 +93,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             return Ok(contacts);
         }
 
-        [HttpGet("user/{userName}", Name = "SearchContactByUserName")]
+        [HttpGet("username/{userName}", Name = "SearchContactByUserName")]
         [SwaggerResponse((int) HttpStatusCode.OK, Type = typeof(ContactResponse))]
         [SwaggerResponse((int) HttpStatusCode.NotFound)]
         [SwaggerResponse((int) HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
@@ -93,16 +107,16 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             return Ok(Mapper.Map<ContactResponse>(contact));
         }
 
-        [HttpGet("{endPointAssessorOrganisationId}/withprivileges", Name = "GetAllContactsWithTheirPrivileges")]
+        [HttpGet("{organisationId}/withprivileges", Name = "GetAllContactsWithTheirPrivileges")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<ContactsWithPrivilegesResponse>))]
         [SwaggerResponse((int)HttpStatusCode.NotFound)]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> GetAllContactsWithTheirPrivileges(string endPointAssessorOrganisationId)
+        public async Task<IActionResult> GetAllContactsWithTheirPrivileges(Guid organisationId)
         {
             _logger.LogInformation(
-                $"Received Search for Contacts and their Privileges using endPointAssessorOrganisationId = {endPointAssessorOrganisationId}");
+                $"Received Search for Contacts and their Privileges using endPointAssessorOrganisationId = {organisationId}");
 
-            return Ok(await _mediator.Send(new GetContactsWithPrivilagesRequest(endPointAssessorOrganisationId)));
+            return Ok(await _mediator.Send(new GetContactsWithPrivilegesRequest(organisationId)));
         }
 
         [HttpGet("user/{id}", Name = "GetContactById")]

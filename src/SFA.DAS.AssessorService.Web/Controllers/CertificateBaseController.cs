@@ -111,6 +111,15 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                         return new RedirectToActionResult("Option", "CertificateOption", new { redirecttocheck = "true", isFromStandard = true });
                 }
 
+                if(nextAction.ActionName == "AddressSummary")
+                {
+                    var certAddress = vm as CertificateAddressViewModel;
+                    if (string.IsNullOrEmpty(certAddress.Employer))
+                    {
+                        return new RedirectToActionResult("AddressSummary", "CertificateAddressSummary", new { redirecttocheck = "true" });
+                    }
+                }
+
                 Logger.LogInformation(
                     $"Certificate for {typeof(T).Name} requested by {username} with Id {certificate.Id} redirecting back to Certificate Check.");
                 return new RedirectToActionResult("Check", "CertificateCheck", null);

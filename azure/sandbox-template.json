@@ -33,12 +33,9 @@
             "type": "string"
         },
         "aspInstances": {
-            "type": "string"
+            "type": "int"
         },
         "externalApiActiveSandboxAppServiceName": {
-            "type": "string"
-        },
-        "certificateName": {
             "type": "string"
         },
         "internalApiSandboxAppServiceName": {
@@ -47,7 +44,7 @@
         "internalApiSandboxCustomHostName": {
             "type": "string"
         },
-        "sandBoxFunctionAppNames": {
+        "sandboxFunctionAppNames": {
             "type": "array"
         },
         "sharedSqlResourceGroup": {
@@ -76,10 +73,22 @@
         },
         "externalActiveApiSandboxCustomHostname": {
             "type": "string"
+        },
+        "externalApiSandboxAppServiceCertificateName": {
+            "type": "string"
+        },
+        "internalApiSandboxAppServiceCertificateName": {
+            "type": "string"
+        },
+        "sandboxFunctionAppStorageAccountName": {
+            "type": "string"
+        },
+        "sandboxSqlDbConnectionString": {
+            "type": "string"
         }
     },
     "variables": {
-        "InstanceName": "[if(equals(toUpper(parameters('environmentName')),'PROD'),'',parameters('environmentName'))]",
+        "instanceName": "[if(equals(toUpper(parameters('environmentName')),'PROD'),'',parameters('environmentName'))]",
         "deploymentUrlBase": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/"
     },
     "resources": [
@@ -101,11 +110,8 @@
                     "aseHostingEnvironmentName": {
                         "value": "[parameters('aseHostingEnvironmentName')]"
                     },
-                      "aseResourceGroup": {
+                    "aseResourceGroup": {
                         "value": "[parameters('aseResourceGroup')]"
-                    },
-                    "aspLocation": {
-                        "value": "[resourceGroup().location]"
                     },
                     "aspSize": {
                         "value": "[parameters('aspSize')]"
@@ -118,7 +124,64 @@
         },
         {
             "apiVersion": "2017-05-10",
-            "name": "[concat('AppService-', parameters('externalApiActiveSandboxAppServiceName'))]",
+            "name": "sandbox-external-app-service-certificate",
+            "type": "Microsoft.Resources/deployments",
+            "condition": "[greater(length(parameters('externalApiSandboxAppServiceCertificateName')), 0)]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('deploymentUrlBase'),'app-service-certificate.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "keyVaultCertificateName": {
+                        "value": "[parameters('externalApiSandboxAppServiceCertificateName')]"
+                    },
+                    "keyVaultName": {
+                        "value": "[parameters('sharedKeyVaultName')]"
+                    },
+                    "keyVaultResourceGroup": {
+                        "value": "[parameters('sharedManagementResourceGroup')]"
+                    },
+                    "serverFarmId": {
+                        "value": "[reference('sandbox-app-service-plan').outputs.appServicePlanId.value]"
+                    }
+                }
+            }
+        },
+        {
+            "apiVersion": "2017-05-10",
+            "name": "sandbox-internal-app-service-certificate",
+            "type": "Microsoft.Resources/deployments",
+            "condition": "[greater(length(parameters('internalApiSandboxAppServiceCertificateName')), 0)]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('deploymentUrlBase'),'app-service-certificate.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "keyVaultCertificateName": {
+                        "value": "[parameters('internalApiSandboxAppServiceCertificateName')]"
+                    },
+                    "keyVaultName": {
+                        "value": "[parameters('sharedKeyVaultName')]"
+                    },
+                    "keyVaultResourceGroup": {
+                        "value": "[parameters('sharedManagementResourceGroup')]"
+                    },
+                    "serverFarmId": {
+                        "value": "[reference('sandbox-app-service-plan').outputs.appServicePlanId.value]"
+                    }
+                }
+            },
+            "dependsOn": [
+                "sandbox-external-app-service-certificate"
+            ]
+        },
+        {
+            "apiVersion": "2017-05-10",
+            "name": "[concat('app-service-', parameters('externalApiActiveSandboxAppServiceName'))]",
             "type": "Microsoft.Resources/deployments",
             "condition": "[parameters('deploySandbox')]",
             "properties": {
@@ -153,7 +216,7 @@
                             },
                             {
                                 "name": "InstanceName",
-                                "value": "[concat(variables('InstanceName'),' (ActiveSandbox)')]"
+                                "value": "[concat(variables('instanceName'),' (ActiveSandbox)')]"
                             },
                             {
                                 "name": "UseSandboxServices",
@@ -174,7 +237,7 @@
                         "value": "[parameters('externalActiveApiSandboxCustomHostname')]"
                     },
                     "certificateThumbprint": {
-                        "value": "[if(greater(length(parameters('certificateName')), 0), reference('app-service-certificate').outputs.certificateThumbprint.value, '')]"
+                        "value": "[if(greater(length(parameters('externalApiSandboxAppServiceCertificateName')), 0), reference('sandbox-external-app-service-certificate').outputs.certificateThumbprint.value, '')]"
                     }
                 }
             },
@@ -183,31 +246,7 @@
             ]
         },
         {
-            "apiVersion": "2017-05-10",
-            "name": "app-service-certificate",
-            "type": "Microsoft.Resources/deployments",
-            "condition": "[greater(length(parameters('certificateName')), 0)]",
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[concat(variables('deploymentUrlBase'),'app-service-certificate.json')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "keyVaultCertificateName": {
-                        "value": "[parameters('certificateName')]"
-                    },
-                    "keyVaultName": {
-                        "value": "[parameters('sharedKeyVaultName')]"
-                    },
-                    "keyVaultResourceGroup": {
-                        "value": "[parameters('sharedManagementResourceGroup')]"
-                    }
-                }
-            }
-        },
-        {
-            "name": "[concat('AppService-', parameters('internalApiSandboxAppServiceName'))]",
+            "name": "[concat('app-service-', parameters('internalApiSandboxAppServiceName'))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2017-05-10",
             "condition": "[parameters('deploySandbox')]",
@@ -249,6 +288,11 @@
                                 "name": "Redis",
                                 "connectionString": "[parameters('loggingRedisConnectionString')]",
                                 "type": "Custom"
+                            },
+                            {
+                                "name": "SandboxSqlDbConnectionString",
+                                "connectionString": "[parameters('sandboxSqlDbConnectionString')]",
+                                "type": "Custom"
                             }
                         ]
                     },
@@ -256,7 +300,7 @@
                         "value": "[parameters('internalApiSandboxCustomHostName')]"
                     },
                     "certificateThumbprint": {
-                        "value": "[if(greater(length(parameters('certificateName')), 0), reference('app-service-certificate').outputs.certificateThumbprint.value, '')]"
+                        "value": "[if(greater(length(parameters('internalApiSandboxAppServiceCertificateName')), 0), reference('sandbox-internal-app-service-certificate').outputs.certificateThumbprint.value, '')]"
                     }
                 }
             },
@@ -265,7 +309,25 @@
             ]
         },
         {
-            "name": "[concat('FunctionApp-', parameters('sandBoxFunctionAppNames')[copyIndex()])]",
+            "name": "sandbox-storage-account",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2017-05-10",
+            "condition": "[parameters('deploySandbox')]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('deploymentUrlBase'), 'storage-account-arm.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "storageAccountName": {
+                        "value": "[parameters('sandboxFunctionAppStorageAccountName')]"
+                    }
+                }
+            }
+        },
+        {
+            "name": "[concat('function-app-', parameters('sandboxFunctionAppNames')[copyIndex()])]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2017-05-10",
             "condition": "[parameters('deploySandbox')]",
@@ -277,7 +339,7 @@
                 },
                 "parameters": {
                     "functionAppName": {
-                        "value": "[parameters('sandBoxFunctionAppNames')[copyIndex()]]"
+                        "value": "[parameters('sandboxFunctionAppNames')[copyIndex()]]"
                     },
                     "appServicePlanName": {
                         "value": "[parameters('activeSandboxAppServicePlanName')]"
@@ -289,11 +351,11 @@
                         "value": [
                             {
                                 "name": "AzureWebJobsStorage",
-                                "value": "[reference('StorageAccount').outputs.StorageConnectionString.value]"
+                                "value": "[reference('sandbox-storage-account').outputs.StorageConnectionString.value]"
                             },
                             {
                                 "name": "AzureWebJobsDashboard",
-                                "value": "[reference('StorageAccount').outputs.StorageConnectionString.value]"
+                                "value": "[reference('sandbox-storage-account').outputs.StorageConnectionString.value]"
                             },
                             {
                                 "name": "FUNCTIONS_EXTENSION_VERSION",
@@ -329,11 +391,11 @@
                 }
             },
             "copy": {
-                "name": "FunctionAppCopy",
-                "count": "[length(parameters('sandBoxFunctionAppNames'))]"
+                "name": "function-app-copy",
+                "count": "[length(parameters('sandboxFunctionAppNames'))]"
             },
             "dependsOn": [
-                "StorageAccount"
+                "sandbox-storage-account"
             ]
         },
         {
@@ -382,7 +444,7 @@
         },
         {
             "apiVersion": "2017-08-01",
-            "name": "[concat(parameters('sandBoxFunctionAppNames')[copyIndex()], '-ai')]",
+            "name": "[concat(parameters('sandboxFunctionAppNames')[copyIndex()], '-ai')]",
             "type": "Microsoft.Resources/deployments",
             "condition": "[parameters('deploySandbox')]",
             "properties": {

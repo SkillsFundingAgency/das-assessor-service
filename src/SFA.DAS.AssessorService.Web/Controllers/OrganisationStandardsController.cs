@@ -10,9 +10,11 @@ using SFA.DAS.Apprenticeships.Api.Types.Exceptions;
 using SFA.DAS.AssessorService.Api.Types;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
+using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Paging;
 using SFA.DAS.AssessorService.Web.Constants;
 using SFA.DAS.AssessorService.Web.Infrastructure;
+using SFA.DAS.AssessorService.Web.StartupConfiguration;
 using SFA.DAS.AssessorService.Web.ViewModels.OrganisationStandards;
 
 namespace SFA.DAS.AssessorService.Web.Controllers
@@ -68,6 +70,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
         [HttpGet]
         [Route("/[controller]/pipelines")]
+        [PrivilegeAuthorize(Privileges.ViewPipeline)]
         public async Task<IActionResult> Pipeline(int? pageIndex)
         {
             OrderedListResultViewModel orderedListResultViewModel;

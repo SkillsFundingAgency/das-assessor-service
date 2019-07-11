@@ -12,13 +12,17 @@ namespace SFA.DAS.AssessorService.Application.Api.External.StartupConfiguration
             Mapper.Initialize(cfg =>
             {
                 cfg.AddProfile<CertificateDataProfile>();
-                cfg.AddProfile<CertificateStatusProfile>();
                 cfg.AddProfile<CertificateProfile>();
-                cfg.AddProfile<BatchCertificateRequestProfile>();
-                cfg.AddProfile<BatchCertificateResponseProfile>();
-                cfg.AddProfile<GetCertificateResponseProfile>();
+                cfg.AddProfile<CertificateStatusProfile>();
+                cfg.AddProfile<CreateBatchCertificateRequestProfile>();
+                cfg.AddProfile<CreateBatchCertificateResponseProfile>();
+                cfg.AddProfile<GetBatchCertificateResponseProfile>();
                 cfg.AddProfile<SubmitBatchCertificateRequestProfile>();
                 cfg.AddProfile<SubmitBatchCertificateResponseProfile>();
+                cfg.AddProfile<UpdateBatchCertificateRequestProfile>();
+                cfg.AddProfile<UpdateBatchCertificateResponseProfile>();
+
+                cfg.AddProfile<StandardOptionsProfile>();
             });
 
             Mapper.AssertConfigurationIsValid();

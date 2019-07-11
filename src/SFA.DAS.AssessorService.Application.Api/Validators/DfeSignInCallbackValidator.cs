@@ -5,7 +5,7 @@ using SFA.DAS.AssessorService.Api.Types.Models;
 
 namespace SFA.DAS.AssessorService.Application.Api.Validators
 {
-    public class DfeSignInCallbackValidator : AbstractValidator<DfeSignInCallback>
+    public class DfeSignInCallbackValidator : AbstractValidator<SignInCallback>
     {
         public DfeSignInCallbackValidator(IStringLocalizer<CreateContactRequest> localizer)
         {
