@@ -279,6 +279,10 @@
                             {
                                 "name": "EnvironmentName",
                                 "value": "[toUpper(parameters('environmentName'))]"
+                            },
+                            {
+                                "name": "UseSandboxServices",
+                                "value": "yes"
                             }
                         ]
                     },
