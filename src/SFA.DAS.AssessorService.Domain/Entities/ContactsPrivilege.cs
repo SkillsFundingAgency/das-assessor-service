@@ -12,6 +12,5 @@ namespace SFA.DAS.AssessorService.Domain.Entities
         public virtual Privilege Privilege { get; set; }
 
         public virtual Contact Contact { get; set; }
-
     }
 }
