@@ -115,6 +115,13 @@ namespace SFA.DAS.AssessorService.Application.Api.External.AutoMapperProfiles
                     {
                         destination.Certificate = null;
                     }
+                    else if (string.IsNullOrEmpty(destination.Certificate?.CertificateData?.LearningDetails?.OverallGrade)
+                        || destination.Certificate?.CertificateData?.LearningDetails?.AchievementDate is null
+                        || string.IsNullOrEmpty(destination.Certificate?.CertificateData?.PostalContact?.PostCode))
+                    {
+                        // Ensure we have a OverallGrade, AchievementDate and a PostalContact before seeing any Cert details
+                        destination.Certificate = null;
+                    }
                 }
             }
         }
