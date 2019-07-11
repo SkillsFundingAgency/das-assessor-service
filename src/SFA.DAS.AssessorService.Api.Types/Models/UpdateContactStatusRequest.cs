@@ -7,12 +7,12 @@ namespace SFA.DAS.AssessorService.Api.Types.Models
 {
     public class UpdateContactStatusRequest : IRequest
     {
-        public UpdateContactStatusRequest(string id, string status)
+        public UpdateContactStatusRequest(Guid id, string status)
         {
             Id = id;
             Status = status;
         }
-        public string Id { get;  }
+        public Guid Id { get;  }
         public string Status { get; }
     }
 }

@@ -24,7 +24,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Contacts
         {
             MappingBootstrapper.Initialize();
             
-            var dfeSignInServiceMock = new Mock<IDfeSignInService>();
+            var dfeSignInServiceMock = new Mock<ISignInService>();
             var contactResponse = Builder<Contact>.CreateNew().Build();
             var contactRequest = Builder<CreateContactRequest>
                 .CreateNew().Build();
