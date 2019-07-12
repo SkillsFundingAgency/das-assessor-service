@@ -27,7 +27,6 @@ namespace SFA.DAS.AssessorService.Web.Orchestrators.Login
         {
             var loginResult = new LoginResponse
             {
-                OrganisationName = string.Empty,
                 Result = LoginResult.ContactDoesNotExist
             };
 

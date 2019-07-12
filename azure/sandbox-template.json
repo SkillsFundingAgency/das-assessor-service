@@ -33,7 +33,7 @@
             "type": "string"
         },
         "aspInstances": {
-            "type": "string"
+            "type": "int"
         },
         "externalApiActiveSandboxAppServiceName": {
             "type": "string"
@@ -75,13 +75,16 @@
             "type": "string"
         },
         "externalApiSandboxAppServiceCertificateName": {
-           "type": "string"
+            "type": "string"
         },
         "internalApiSandboxAppServiceCertificateName": {
-           "type": "string"
+            "type": "string"
         },
         "sandboxFunctionAppStorageAccountName": {
-           "type": "string"
+            "type": "string"
+        },
+        "sandboxSqlDbConnectionString": {
+            "type": "string"
         }
     },
     "variables": {
@@ -107,7 +110,7 @@
                     "aseHostingEnvironmentName": {
                         "value": "[parameters('aseHostingEnvironmentName')]"
                     },
-                      "aseResourceGroup": {
+                    "aseResourceGroup": {
                         "value": "[parameters('aseResourceGroup')]"
                     },
                     "aspSize": {
@@ -139,6 +142,9 @@
                     },
                     "keyVaultResourceGroup": {
                         "value": "[parameters('sharedManagementResourceGroup')]"
+                    },
+                    "serverFarmId": {
+                        "value": "[reference('sandbox-app-service-plan').outputs.appServicePlanId.value]"
                     }
                 }
             }
@@ -163,9 +169,15 @@
                     },
                     "keyVaultResourceGroup": {
                         "value": "[parameters('sharedManagementResourceGroup')]"
+                    },
+                    "serverFarmId": {
+                        "value": "[reference('sandbox-app-service-plan').outputs.appServicePlanId.value]"
                     }
                 }
-            }
+            },
+            "dependsOn": [
+                "sandbox-external-app-service-certificate"
+            ]
         },
         {
             "apiVersion": "2017-05-10",
@@ -267,6 +279,10 @@
                             {
                                 "name": "EnvironmentName",
                                 "value": "[toUpper(parameters('environmentName'))]"
+                            },
+                            {
+                                "name": "UseSandboxServices",
+                                "value": "yes"
                             }
                         ]
                     },
@@ -275,6 +291,11 @@
                             {
                                 "name": "Redis",
                                 "connectionString": "[parameters('loggingRedisConnectionString')]",
+                                "type": "Custom"
+                            },
+                            {
+                                "name": "SandboxSqlDbConnectionString",
+                                "connectionString": "[parameters('sandboxSqlDbConnectionString')]",
                                 "type": "Custom"
                             }
                         ]

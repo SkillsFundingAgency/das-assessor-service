@@ -24,7 +24,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.PrivateCertificateTests.Queries
             var certificatePrivateStandardCodeController =
                 new CertificatePrivateStandardCodeController(MockLogger.Object,
                     MockHttpContextAccessor.Object,
-                    MockAssessmentOrgsApiClient,
+                    MockOrganisationApiClient,
                     new CacheHelper(mockDistributedCache.Object),
                     MockCertificateApiClient,
                     MockSession.Object,
@@ -42,8 +42,6 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.PrivateCertificateTests.Queries
         [Test]
         public void ThenShouldReturnFirstName()
         {
-            var certificateData = JsonConvert.DeserializeObject<CertificateData>(Certificate.CertificateData);
-
             _viewModelResponse.Id.Should().Be(Certificate.Id);
             _viewModelResponse.SelectedStandardCode.Should().Be(Certificate.StandardCode.ToString());
         }

@@ -22,7 +22,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.PrivateCertificateTests.Queries
             var certificatePrivateStandardCodeController =
                 new CertificatePrivateStandardCodeController(MockLogger.Object,
                     MockHttpContextAccessor.Object,
-                    MockAssessmentOrgsApiClient,
+                    MockOrganisationApiClient,
                     new CacheHelper(mockDistributedCache.Object),
                     MockCertificateApiClient,
                     MockSession.Object,
