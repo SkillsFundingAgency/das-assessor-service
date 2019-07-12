@@ -59,7 +59,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External
                 var realSb = new System.Data.SqlClient.SqlConnectionStringBuilder(ApplicationConfiguration.SqlConnectionString);
                 var sandboxSb = new System.Data.SqlClient.SqlConnectionStringBuilder(ApplicationConfiguration.SandboxSqlConnectionString);
                 var apiAddress = UseSandbox ? ApplicationConfiguration.SandboxClientApiAuthentication.ApiBaseAddress : ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress;
-                _logger.LogInformation($"USS: {Configuration["UseSandboxServices"]} -- {UseSandbox.ToString()}, DS: {realSb.DataSource}, SDS: {sandboxSb.DataSource}, API: {apiAddress}");
+                _logger.LogInformation($"USS: {Configuration["UseSandboxServices"]} -- {UseSandbox.ToString()}, RIC: {realSb.InitialCatalog}, SIC: {sandboxSb.InitialCatalog}, API: {apiAddress}");
 
                 if (UseSandbox)
                 {
