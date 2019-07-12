@@ -16,7 +16,7 @@ namespace SFA.DAS.AssessorService.Data
             _assessorDbContext = assessorDbContext;
         }
 
-        public async Task<EMailTemplate> GetEMailTemplate(string templateName)
+        public async Task<EMailTemplate> GetEmailTemplate(string templateName)
         {
             return await _assessorDbContext.EMailTemplates.FirstOrDefaultAsync(q => q.TemplateName == templateName);
         }
