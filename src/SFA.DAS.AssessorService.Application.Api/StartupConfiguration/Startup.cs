@@ -56,6 +56,11 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
             {
                 UseSandbox = "yes".Equals(config["UseSandboxServices"], StringComparison.InvariantCultureIgnoreCase);
             }
+
+            var realSb = new System.Data.SqlClient.SqlConnectionStringBuilder(Configuration.SqlConnectionString);
+            var sandboxSb = new System.Data.SqlClient.SqlConnectionStringBuilder(Configuration.SandboxSqlConnectionString);
+            _logger.LogInformation($"USS: {config["UseSandboxServices"]} -- {UseSandbox.ToString()}, DS: {realSb.DataSource}, SDS: {sandboxSb.DataSource}");
+
             _logger.LogInformation($"UseSandbox is: {UseSandbox.ToString()}");
             _logger.LogInformation("In startup constructor.  After GetConfig");
         }
