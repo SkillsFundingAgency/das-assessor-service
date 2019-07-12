@@ -5,8 +5,6 @@ using SFA.DAS.AssessorService.Application.Api.External.Middleware;
 using SFA.DAS.AssessorService.Application.Api.External.Models.Internal;
 using SFA.DAS.AssessorService.Application.Api.External.Models.Request;
 using SFA.DAS.AssessorService.Application.Api.External.Models.Response;
-using SFA.DAS.AssessorService.Application.Api.External.Models.Response.Certificates;
-using SFA.DAS.AssessorService.Domain.Consts;
 using Swashbuckle.AspNetCore.Annotations;
 using Swashbuckle.AspNetCore.Examples;
 using System.Collections.Generic;
@@ -100,7 +98,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
         [SwaggerResponseExample((int)HttpStatusCode.Forbidden, typeof(SwaggerHelpers.Examples.ApiResponseExample))]
         [SwaggerResponse((int)HttpStatusCode.Forbidden, "There are validation errors preventing you from deleting the EPA record.", typeof(ApiResponse))]
         [SwaggerOperation("Delete EPA Record", "Deletes the specified EPA record.", Produces = new string[] { "application/json" })]
-        public async Task<IActionResult> DeleteCertificate(long uln, string familyName, [SwaggerParameter("Standard Code or Standard Reference Number")] string standard, string epaReference)
+        public async Task<IActionResult> DeleteEpaRecord(long uln, string familyName, [SwaggerParameter("Standard Code or Standard Reference Number")] string standard, string epaReference)
         {
             var deleteRequest = new DeleteBatchEpaRequest { UkPrn = _headerInfo.Ukprn, Email = _headerInfo.Email, Uln = uln, FamilyName = familyName, Standard = standard, EpaReference = epaReference};
             var error = await _apiClient.DeleteEpa(deleteRequest);
