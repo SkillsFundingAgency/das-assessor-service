@@ -41,9 +41,9 @@ namespace SFA.DAS.AssessorService.ExternalApiDataSync
 
             _bulkCopySettings = new BulkCopySettings { SqlBulkCopyOptions = SqlBulkCopyOptions.KeepIdentity | SqlBulkCopyOptions.KeepNulls | SqlBulkCopyOptions.TableLock };
 
-                //SqlMapper.AddTypeHandler(typeof(Domain.Entities.OrganisationData), new OrganisationDataHandler());
-                //SqlMapper.AddTypeHandler(typeof(StandardData), new StandardDataHandler());
-                //SqlMapper.AddTypeHandler(typeof(OrganisationStandardData), new OrganisationStandardDataHandler());
+            //SqlMapper.AddTypeHandler(typeof(Domain.Entities.OrganisationData), new OrganisationDataHandler());
+            //SqlMapper.AddTypeHandler(typeof(StandardData), new StandardDataHandler());
+            //SqlMapper.AddTypeHandler(typeof(OrganisationStandardData), new OrganisationStandardDataHandler());
         }
 
         public async Task Execute()
@@ -56,29 +56,24 @@ namespace SFA.DAS.AssessorService.ExternalApiDataSync
                 try
                 {
                     _aggregateLogger.LogInfo("Proceeding with External Api Data Sync...");
-                    using (var trans = new TransactionScope(TransactionScopeOption.RequiresNew, TransactionScopeAsyncFlowOption.Enabled))
-                    {
-                        await Step1_Organisation_Data();
-                        await Step2_Contacts_Data();
-                        await Step3_Standard_Data();
-                        await Step4_OrganisationStandard_Data();
-                        Step5_Generate_Test_Data();
-
-                        trans.Complete();
-                    }
+                    await Step1_Organisation_Data();
+                    await Step2_Contacts_Data();
+                    await Step3_Standard_Data();
+                    await Step4_OrganisationStandard_Data();
+                    Step5_Generate_Test_Data();
                     _aggregateLogger.LogInfo("External Api Data Sync completed");
                 }
                 catch (TransactionAbortedException ex)
                 {
-                    _aggregateLogger.LogError("Transaction was aborted occurred during External Api Data Sync.", ex);
+                    _aggregateLogger.LogError("Transaction was aborted occurred during External Api Data Sync", ex);
                 }
                 catch (SqlException ex)
                 {
-                    _aggregateLogger.LogError("SqlException occurred during External Api Data Sync. All transactions have been rolled back.", ex);
+                    _aggregateLogger.LogError("SqlException occurred during External Api Data Sync", ex);
                 }
                 catch (Exception ex)
                 {
-                    _aggregateLogger.LogError("Unknown Error occurred during External Api Data Sync. All transactions have been rolled back.", ex);
+                    _aggregateLogger.LogError("Unknown Error occurred during External Api Data Sync", ex);
                 }
             }
             else
@@ -102,7 +97,7 @@ namespace SFA.DAS.AssessorService.ExternalApiDataSync
             }
 
             var bulk = new BulkOperations();
-            using (var trans = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+            using (var trans = new TransactionScope())
             {
                 using (SqlConnection conn = new SqlConnection(_destinationConnectionString))
                 {
@@ -145,7 +140,7 @@ namespace SFA.DAS.AssessorService.ExternalApiDataSync
             }
 
             var bulk = new BulkOperations();
-            using (var trans = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+            using (var trans = new TransactionScope())
             {
                 using (SqlConnection conn = new SqlConnection(_destinationConnectionString))
                 {
@@ -187,7 +182,7 @@ namespace SFA.DAS.AssessorService.ExternalApiDataSync
             }
 
             var bulk = new BulkOperations();
-            using (var trans = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+            using (var trans = new TransactionScope())
             {
                 using (SqlConnection conn = new SqlConnection(_destinationConnectionString))
                 {
@@ -233,7 +228,7 @@ namespace SFA.DAS.AssessorService.ExternalApiDataSync
             }
 
             var bulk = new BulkOperations();
-            using (var trans = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+            using (var trans = new TransactionScope())
             {
                 using (SqlConnection conn = new SqlConnection(_destinationConnectionString))
                 {
