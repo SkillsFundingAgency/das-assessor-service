@@ -35,7 +35,7 @@ namespace SFA.DAS.AssessorService.ExternalApiDataSync
             // ..  4. Re-enable Type Handlers below
             _aggregateLogger = aggregateLogger;
 
-            _allowDataSync = false; //config.ExternalApiDataSync.IsEnabled;
+            _allowDataSync = config.ExternalApiDataSync.IsEnabled;
             _sourceConnectionString = config.SqlConnectionString;
             _destinationConnectionString = config.SandboxSqlConnectionString;
 
