@@ -53,12 +53,33 @@ namespace SFA.DAS.AssessorService.ExternalApiDataSync
 
             if (_allowDataSync)
             {
-                _aggregateLogger.LogInfo("Proceeding with External Api Data Sync...");
-                await Step1_Organisation_Data();
-                await Step2_Contacts_Data();
-                await Step3_Standard_Data();
-                await Step4_OrganisationStandard_Data();
-                Step5_Generate_Test_Data();
+                try
+                {
+                    _aggregateLogger.LogInfo("Proceeding with External Api Data Sync...");
+                    using (var trans = new TransactionScope(TransactionScopeOption.RequiresNew, TransactionScopeAsyncFlowOption.Enabled))
+                    {
+                        await Step1_Organisation_Data();
+                        await Step2_Contacts_Data();
+                        await Step3_Standard_Data();
+                        await Step4_OrganisationStandard_Data();
+                        Step5_Generate_Test_Data();
+
+                        trans.Complete();
+                    }
+                    _aggregateLogger.LogInfo("External Api Data Sync completed");
+                }
+                catch (TransactionAbortedException ex)
+                {
+                    _aggregateLogger.LogError("Transaction was aborted occurred during External Api Data Sync.", ex);
+                }
+                catch (SqlException ex)
+                {
+                    _aggregateLogger.LogError("SqlException occurred during External Api Data Sync. All transactions have been rolled back.", ex);
+                }
+                catch (Exception ex)
+                {
+                    _aggregateLogger.LogError("Unknown Error occurred during External Api Data Sync. All transactions have been rolled back.", ex);
+                }
             }
             else
             {
@@ -67,7 +88,7 @@ namespace SFA.DAS.AssessorService.ExternalApiDataSync
         }
 
 
-        public async Task Step1_Organisation_Data()
+        private async Task Step1_Organisation_Data()
         {
             _aggregateLogger.LogInfo("Step 1: Syncing Organisation Data");
 
@@ -81,7 +102,7 @@ namespace SFA.DAS.AssessorService.ExternalApiDataSync
             }
 
             var bulk = new BulkOperations();
-            using (var trans = new TransactionScope())
+            using (var trans = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             {
                 using (SqlConnection conn = new SqlConnection(_destinationConnectionString))
                 {
@@ -112,7 +133,7 @@ namespace SFA.DAS.AssessorService.ExternalApiDataSync
             }
         }
 
-        public async Task Step2_Contacts_Data()
+        private async Task Step2_Contacts_Data()
         {
             _aggregateLogger.LogInfo("Step 2: Syncing Contacts");
 
@@ -124,7 +145,7 @@ namespace SFA.DAS.AssessorService.ExternalApiDataSync
             }
 
             var bulk = new BulkOperations();
-            using (var trans = new TransactionScope())
+            using (var trans = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             {
                 using (SqlConnection conn = new SqlConnection(_destinationConnectionString))
                 {
@@ -152,7 +173,7 @@ namespace SFA.DAS.AssessorService.ExternalApiDataSync
             }
         }
 
-        public async Task Step3_Standard_Data()
+        private async Task Step3_Standard_Data()
         {
             _aggregateLogger.LogInfo("Step 3: Syncing Standard Data");
 
@@ -166,7 +187,7 @@ namespace SFA.DAS.AssessorService.ExternalApiDataSync
             }
 
             var bulk = new BulkOperations();
-            using (var trans = new TransactionScope())
+            using (var trans = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             {
                 using (SqlConnection conn = new SqlConnection(_destinationConnectionString))
                 {
@@ -196,7 +217,7 @@ namespace SFA.DAS.AssessorService.ExternalApiDataSync
             }
         }
 
-        public async Task Step4_OrganisationStandard_Data()
+        private async Task Step4_OrganisationStandard_Data()
         {
             _aggregateLogger.LogInfo("Step 4: Syncing Organisation Standard Data");
 
@@ -212,7 +233,7 @@ namespace SFA.DAS.AssessorService.ExternalApiDataSync
             }
 
             var bulk = new BulkOperations();
-            using (var trans = new TransactionScope())
+            using (var trans = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             {
                 using (SqlConnection conn = new SqlConnection(_destinationConnectionString))
                 {
@@ -264,7 +285,7 @@ namespace SFA.DAS.AssessorService.ExternalApiDataSync
             }
         }
 
-        public void Step5_Generate_Test_Data()
+        private void Step5_Generate_Test_Data()
         {
             _aggregateLogger.LogInfo("Step 5: Generating Test Data");
 
