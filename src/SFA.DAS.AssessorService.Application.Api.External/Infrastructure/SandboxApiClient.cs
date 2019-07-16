@@ -40,7 +40,9 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
                 }
             }
 
-            return await base.GetLearner(request);
+            var response = await base.GetLearner(request);
+            _logger.LogInformation($"GetLearner returned with response: {JsonConvert.SerializeObject(response)}");
+            return response;
         }
 
         public override async Task<IEnumerable<CreateEpaResponse>> CreateEpas(IEnumerable<CreateBatchEpaRequest> request)
@@ -64,7 +66,9 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
                     }
                 }
 
-                return await base.CreateEpas(newRequest);
+                var response = await base.CreateEpas(newRequest);
+                _logger.LogInformation($"CreateEpas returned with response: {JsonConvert.SerializeObject(response)}");
+                return response;
             }
 
             return await base.CreateEpas(request);
@@ -91,7 +95,9 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
                     }
                 }
 
-                return await base.UpdateEpas(newRequest);
+                var response = await base.UpdateEpas(newRequest);
+                _logger.LogInformation($"UpdateEpas returned with response: {JsonConvert.SerializeObject(response)}");
+                return response;
             }
 
             return await base.UpdateEpas(request);
@@ -112,7 +118,9 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
                 }
             }
 
-            return await base.DeleteEpa(request);
+            var response = await base.DeleteEpa(request);
+            _logger.LogInformation($"DeleteEpa returned with response: {JsonConvert.SerializeObject(response)}");
+            return response;
         }
 
         public override async Task<GetCertificateResponse> GetCertificate(GetBatchCertificateRequest request)
@@ -130,7 +138,9 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
                 }
             }
 
-            return await base.GetCertificate(request);
+            var response = await base.GetCertificate(request);
+            _logger.LogInformation($"GetCertificate returned with response: {JsonConvert.SerializeObject(response)}");
+            return response;
         }
 
         public override async Task<IEnumerable<CreateCertificateResponse>> CreateCertificates(IEnumerable<CreateBatchCertificateRequest> request)
@@ -154,7 +164,9 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
                     }
                 }
 
-                return await base.CreateCertificates(newRequest);
+                var response = await base.CreateCertificates(newRequest);
+                _logger.LogInformation($"CreateCertificates returned with response: {JsonConvert.SerializeObject(response)}");
+                return response;
             }
 
             return await base.CreateCertificates(request);
@@ -181,7 +193,9 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
                     }
                 }
 
-                return await base.UpdateCertificates(newRequest);
+                var response = await base.UpdateCertificates(newRequest);
+                _logger.LogInformation($"UpdateCertificates returned with response: {JsonConvert.SerializeObject(response)}");
+                return response;
             }
 
             return await base.UpdateCertificates(request);
@@ -208,7 +222,9 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
                     }
                 }
 
-                return await base.SubmitCertificates(newRequest);
+                var response = await base.SubmitCertificates(newRequest);
+                _logger.LogInformation($"SubmitCertificates returned with response: {JsonConvert.SerializeObject(response)}");
+                return response;
             }
 
             return await base.SubmitCertificates(request);
@@ -229,7 +245,9 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
                 }
             }
 
-            return await base.DeleteCertificate(request);
+            var response = await base.DeleteCertificate(request);
+            _logger.LogInformation($"DeleteCertificate returned with response: {JsonConvert.SerializeObject(response)}");
+            return response;
         }
     }
 }
