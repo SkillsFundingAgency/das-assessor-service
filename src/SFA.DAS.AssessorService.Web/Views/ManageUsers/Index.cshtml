@@ -36,29 +36,33 @@
                         </tr>
                     </thead>
                     <tbody class="govuk-table__body" scope="col">
-                        @foreach (var item in Model)
+                        @foreach (var contact in Model)
                         {
                             <tr class="govuk-table__row">
                                 <td class="govuk-table__cell das-no-wrap" data-label="@Localizer["User details"]" >
-                                    @Html.DisplayFor(modelItem => item.Contact.DisplayName)<br />
-                                    <span>@Html.DisplayFor(modelItem => item.Contact.Email)</span>
+                                    <a class="govuk-link" asp-controller="UserDetails" asp-action="User" asp-route-contactid="@contact.Contact.Id">@Html.DisplayFor(modelItem => contact.Contact.DisplayName)</a>
+                                    <br/>
+                                    <span>@Html.DisplayFor(modelItem => contact.Contact.Email)</span>
                                 </td>
                                 <td class="govuk-table__cell" data-label="@Localizer["What they can do"]">
                                     <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-0">
-                                        @foreach (var role in item.Privileges )
+                                        <li>
+                                            View dashboard
+                                        </li>
+                                        @foreach (var role in contact.Privileges )
                                         {
                                             <li> @Html.DisplayFor(modelItem => role)</li>
                                         }
                                     </ul>
                                 </td>
                                 <td class="govuk-table__cell" data-label="@Localizer["Status"]" >
-                                    @Html.DisplayFor(modelItem => item.Contact.Status)
+                                    @Html.DisplayFor(modelItem => contact.Contact.Status)
                                 </td>
                                 <td class="govuk-table__cell" data-label="@Localizer["Action required"]">
-                                    @if (item.Contact.Status == ContactStatus.InvitePending)
+                                    @if (contact.Contact.Status == ContactStatus.InvitePending)
                                     {
-                                        <a class="govuk-link" asp-controller="ManageUsers" asp-action="SetStatusAndNotify" asp-route-status="@ContactStatus.Approve" asp-route-id="@item.Contact.Id">Approve</a>
-                                        <a class="govuk-link" asp-controller="ManageUsers" asp-action="SetStatusAndNotify" asp-route-status="@ContactStatus.Reject" asp-route-id="@item.Contact.Id">Reject</a>
+                                        <a class="govuk-link" asp-controller="ManageUsers" asp-action="SetStatusAndNotify" asp-route-status="@ContactStatus.Approve" asp-route-id="@contact.Contact.Id">Approve</a>
+                                        <a class="govuk-link" asp-controller="ManageUsers" asp-action="SetStatusAndNotify" asp-route-status="@ContactStatus.Reject" asp-route-id="@contact.Contact.Id">Reject</a>
                                     }
                                 </td>
                             </tr>
@@ -78,4 +82,5 @@
             </div>
         </div>
     }
+    <a asp-controller="InviteUser" asp-action="Invite" class="button govuk-button">Invite new user</a>
 </main>
