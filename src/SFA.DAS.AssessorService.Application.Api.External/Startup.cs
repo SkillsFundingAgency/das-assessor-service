@@ -136,7 +136,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External
                     _.WithDefaultConventions();
                 });
 
-                config.For<ITokenService>().Use<TokenService>();
+                config.For<ITokenService>().Use<TokenService>().Ctor<bool>("useSandbox").Is(UseSandbox);
                 config.For<IWebConfiguration>().Use(ApplicationConfiguration);
 
                 config.Populate(services);

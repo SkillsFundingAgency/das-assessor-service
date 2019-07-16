@@ -133,7 +133,7 @@ namespace SFA.DAS.AssessorService.Web
                 });
 
                 //config.For<ICache>().Use<SessionCache>();
-                config.For<ITokenService>().Use<TokenService>();
+                config.For<ITokenService>().Use<TokenService>().Ctor<bool>("useSandbox").Is(false); // Always false unless we want to start integrating with the sandbox environment
                 config.For<ITokenService>().Add<ApplyTokenService>().Named("applyTokenService");
 
                 config.For<IOrganisationsApplyApiClient>().Use<OrganisationsApplyApiClient>()
