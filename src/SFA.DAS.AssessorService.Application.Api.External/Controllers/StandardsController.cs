@@ -32,7 +32,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
         [HttpGet("options")]
         [SwaggerResponseExample((int)HttpStatusCode.OK, typeof(SwaggerHelpers.Examples.GetOptionsForAllStandardResponseExample))]
         [SwaggerResponse((int)HttpStatusCode.OK, "The list of options for each Standard.", typeof(IEnumerable<StandardOptions>))]
-        [SwaggerOperation("Get options", "Gets the latest list of course options by Standard.", Produces = new string[] { "application/json" })]
+        [SwaggerOperation("Get Options", "Gets the latest list of course options by Standard.", Produces = new string[] { "application/json" })]
         public async Task<IActionResult> GetOptionsForAllStandards()
         {
             var standards = await _apiClient.GetStandards();
@@ -50,7 +50,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
         [SwaggerResponse((int)HttpStatusCode.OK, "The list of options.", typeof(StandardOptions))]
         [SwaggerResponse((int)HttpStatusCode.NoContent, "The Standard was found, however it has no options.")]
         [SwaggerResponse((int)HttpStatusCode.NotFound, "The Standard was not found.")]
-        [SwaggerOperation("Get options for Standard", "Gets the latest list of course options for the specified Standard.", Produces = new string[] { "application/json" })]
+        [SwaggerOperation("Get Options for Standard", "Gets the latest list of course options for the specified Standard.", Produces = new string[] { "application/json" })]
         public async Task<IActionResult> GetOptionsForStandard([SwaggerParameter("Standard Code or Standard Reference Number")] string standard)
         {
             var requestedStandard = await _apiClient.GetStandard(standard);
