@@ -32,9 +32,10 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
 
             certificateRepositoryMock.Setup(q => q.GetCertificate(1234567890, 1)).ReturnsAsync(GenerateCertificate(1234567890, 1, "test", "Draft", new Guid("12345678123456781234567812345678")));
             certificateRepositoryMock.Setup(q => q.GetCertificate(1234567890, 98)).ReturnsAsync(GenerateCertificate(1234567890, 98, "test", "Deleted", new Guid("12345678123456781234567812345678")));
-            certificateRepositoryMock.Setup(q => q.GetCertificate(1234567890, 101)).ReturnsAsync(GenerateEpaCertificate(1234567890, 101, "test", new Guid("12345678123456781234567812345678")));
+            certificateRepositoryMock.Setup(q => q.GetCertificate(1234567890, 101)).ReturnsAsync(GenerateEpaCertificate(1234567890, 101, "test", new Guid("12345678123456781234567812345678"), true));
             certificateRepositoryMock.Setup(q => q.GetCertificate(9999999999, 1)).ReturnsAsync(GenerateCertificate(9999999999, 1, "test", "Printed", new Guid("99999999999999999999999999999999")));
             certificateRepositoryMock.Setup(q => q.GetCertificate(9999999999, 99)).ReturnsAsync(GeneratePartialCertificate(9999999999, 99, "test", new Guid("99999999999999999999999999999999")));
+            certificateRepositoryMock.Setup(q => q.GetCertificate(9999999999, 101)).ReturnsAsync(GenerateEpaCertificate(9999999999, 101, "test", new Guid("99999999999999999999999999999999"), false));
 
             certificateRepositoryMock.Setup(q => q.GetOptions(1)).ReturnsAsync(new List<Option>());
             certificateRepositoryMock.Setup(q => q.GetOptions(98)).ReturnsAsync(new List<Option>());
@@ -90,7 +91,8 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
                 .ReturnsAsync(new List<EPORegisteredStandards>
                 {
                     GenerateEPORegisteredStandard(1),
-                    GenerateEPORegisteredStandard(99)
+                    GenerateEPORegisteredStandard(99),
+                    GenerateEPORegisteredStandard(101)
                 });
 
             return standardServiceMock;
@@ -106,6 +108,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
             ilrRepositoryMock.Setup(q => q.Get(1234567890, 101)).ReturnsAsync(GenerateIlr(1234567890, 101, "Test", "12345678"));
             ilrRepositoryMock.Setup(q => q.Get(9999999999, 1)).ReturnsAsync(GenerateIlr(9999999999, 1, "Test", "99999999"));
             ilrRepositoryMock.Setup(q => q.Get(9999999999, 99)).ReturnsAsync(GenerateIlr(9999999999, 99, "Test", "99999999"));
+            ilrRepositoryMock.Setup(q => q.Get(9999999999, 101)).ReturnsAsync(GenerateIlr(9999999999, 101, "Test", "99999999"));
 
             return ilrRepositoryMock;
         }
@@ -141,14 +144,14 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
                 .Build();
         }
 
-        private static Certificate GenerateEpaCertificate(long uln, int standardCode, string familyName, Guid organisationId)
+        private static Certificate GenerateEpaCertificate(long uln, int standardCode, string familyName, Guid organisationId, bool hasPassedEpa)
         {
             // NOTE: This is to simulate a certificate that has only the EPA part submitted
             var reference = $"{uln}-{standardCode}";
 
             var epas = Builder<EpaRecord>.CreateListOfSize(1).All()
             .With(i => i.EpaDate = DateTime.UtcNow.AddDays(-1))
-            .With(i => i.EpaOutcome = "pass")
+            .With(i => i.EpaOutcome = hasPassedEpa ? "pass" : "fail")
             .Build().ToList();
 
             var epaDetails = new EpaDetails

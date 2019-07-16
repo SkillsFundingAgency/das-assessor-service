@@ -18,7 +18,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
         {
             CreateBatchCertificateRequest request = Builder<CreateBatchCertificateRequest>.CreateNew()
                 .With(i => i.Uln = 9999999999)
-                .With(i => i.StandardCode = 99)
+                .With(i => i.StandardCode = 101)
                 .With(i => i.StandardReference = null)
                 .With(i => i.UkPrn = 99999999)
                 .With(i => i.FamilyName = "Test")
@@ -27,7 +27,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
                                 .With(cd => cd.ContactPostCode = "AA11AA")
                                 .With(cd => cd.AchievementDate = DateTime.UtcNow)
                                 .With(cd => cd.OverallGrade = "Pass")
-                                .With(cd => cd.CourseOption = "English")
+                                .With(cd => cd.CourseOption = null)
                                 .Build())
                 .Build();
 
