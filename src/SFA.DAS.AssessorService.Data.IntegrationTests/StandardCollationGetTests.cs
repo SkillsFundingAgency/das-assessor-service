@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Handlers;
@@ -15,6 +17,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         private StandardCollationModel _standardCollation2;
         private StandardCollationModel _standardCollation3;
         private readonly DatabaseService _databaseService = new DatabaseService();
+        private SqlConnection _databaseConnection;
         private StandardRepository _repository;
         private int _standardId1;
         private int _standardId2;
@@ -30,7 +33,8 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         [OneTimeSetUp]
         public void SetupOrganisationTests()
         {
-            _repository = new StandardRepository(_databaseService.WebConfiguration, null,null);
+            _databaseConnection = new SqlConnection(_databaseService.WebConfiguration.SqlConnectionString);
+            _repository = new StandardRepository(null, _databaseConnection);
             _standardId1 = 1;
             _standardId2 = 10;
             _standardId3 = 100;
@@ -114,6 +118,11 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         public void TearDownOrganisationTests()
         {
             StandardCollationHandler.DeleteAllRecords();
+
+            if(_databaseConnection != null)
+            {
+                _databaseConnection.Dispose();
+            }
         }
     }
 }
