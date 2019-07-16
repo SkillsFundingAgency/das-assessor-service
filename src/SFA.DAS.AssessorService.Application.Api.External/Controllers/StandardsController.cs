@@ -42,7 +42,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
                 return StatusCode((int)HttpStatusCode.ServiceUnavailable);
             }
 
-            return Ok(standards.Where(s => s.CourseOption != null));
+            return Ok(standards.Where(s => s.CourseOption != null).OrderBy(s => s.StandardCode));
         }
 
         [HttpGet("options/{*standard}")]
