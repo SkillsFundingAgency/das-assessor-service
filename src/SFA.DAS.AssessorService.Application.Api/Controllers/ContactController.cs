@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Api.Types.Models.UserManagement;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
 using SFA.DAS.AssessorService.Application.Exceptions;
@@ -36,24 +38,24 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         }
 
         [HttpPost(Name = "CreateContact")]
-        [SwaggerResponse((int)HttpStatusCode.Created, Type = typeof(ContactBoolResponse))]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
-        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        [SwaggerResponse((int) HttpStatusCode.Created, Type = typeof(ContactBoolResponse))]
+        [SwaggerResponse((int) HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int) HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> CreateContact(
             [FromBody] CreateContactRequest createContactRequest)
         {
             _logger.LogInformation("Received Create Contact Request");
 
-            var contactResponse =await _mediator.Send(createContactRequest);
+            var contactResponse = await _mediator.Send(createContactRequest);
 
             return CreatedAtRoute("CreateContact",
                 contactResponse);
         }
 
         [HttpPut(Name = "UpdateContact")]
-        [SwaggerResponse((int)HttpStatusCode.NoContent)]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
-        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        [SwaggerResponse((int) HttpStatusCode.NoContent)]
+        [SwaggerResponse((int) HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int) HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> UpdateContact([FromBody] UpdateContactRequest updateContactRequest)
         {
             _logger.LogInformation("Received Update Contact Request");
@@ -64,9 +66,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         }
 
         [HttpPut("status", Name = "UpdateContactStatus")]
-        [SwaggerResponse((int)HttpStatusCode.NoContent)]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
-        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        [SwaggerResponse((int) HttpStatusCode.NoContent)]
+        [SwaggerResponse((int) HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int) HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> UpdateContactStatus([FromBody] UpdateContactStatusRequest updateContactStatusRequest)
         {
             _logger.LogInformation("Received Update Contact Status Request");
@@ -77,9 +79,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         }
 
         [HttpDelete(Name = "Delete")]
-        [SwaggerResponse((int)HttpStatusCode.NoContent)]
-        [SwaggerResponse((int)HttpStatusCode.NotFound)]
-        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        [SwaggerResponse((int) HttpStatusCode.NoContent)]
+        [SwaggerResponse((int) HttpStatusCode.NotFound)]
+        [SwaggerResponse((int) HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> Delete(string userName)
         {
             _logger.LogInformation("Received Delete Contact Request");
@@ -102,9 +104,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         }
 
         [HttpPut("updateContactWithOrgAndStatus", Name = "UpdateContactWithOrgAndStatus")]
-        [SwaggerResponse((int)HttpStatusCode.NoContent)]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
-        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        [SwaggerResponse((int) HttpStatusCode.NoContent)]
+        [SwaggerResponse((int) HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int) HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> UpdateContactWithOrgAndStatus([FromBody] UpdateContactWithOrgAndStausRequest updateContactWithOrgAndStausRequest)
         {
             _logger.LogInformation("Received Update Contact Status Request");
@@ -115,18 +117,18 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         }
 
         [PerformValidation]
-        [HttpPost("callback", Name= "Callback")]
-        public async Task<ActionResult> Callback([FromBody] DfeSignInCallback callback)
+        [HttpPost("callback", Name = "Callback")]
+        public async Task<ActionResult> Callback([FromBody] SignInCallback callback)
         {
             _logger.LogInformation($"Received callback from DfE: Sub: {callback.Sub} SourceId: {callback.SourceId}");
             await _mediator.Send(new UpdateSignInIdRequest(Guid.Parse(callback.Sub), Guid.Parse(callback.SourceId)));
-            return NoContent(); 
+            return NoContent();
         }
 
         [HttpPost("createNewContactWithGivenId", Name = "CreateNewContactWithGivenId")]
-        [SwaggerResponse((int)HttpStatusCode.Created, Type = typeof(Contact))]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
-        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        [SwaggerResponse((int) HttpStatusCode.Created, Type = typeof(Contact))]
+        [SwaggerResponse((int) HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int) HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<ActionResult<Contact>> CreateNewContactWithGivenId([FromBody] Contact contact)
         {
             _logger.LogInformation($"Creating a new contact only with given Id");
@@ -135,9 +137,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         }
 
         [HttpPost("associateDefaultRolesAndPrivileges", Name = "AssociateDefaultRolesAndPrivileges")]
-        [SwaggerResponse((int)HttpStatusCode.NoContent)]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
-        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        [SwaggerResponse((int) HttpStatusCode.NoContent)]
+        [SwaggerResponse((int) HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int) HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> AssociateDefaultRolesAndPrivileges([FromBody] Contact contact)
         {
             _logger.LogInformation($"Associating roles and privileges to a contact");
@@ -146,7 +148,46 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             await _contactRepository.AssociatePrivilegesWithContact(contact.Id, privileges);
             return NoContent();
         }
-        
 
+        [HttpPost("setContactPrivileges")]
+        public async Task<ActionResult> SetContactPrivileges([FromBody] SetContactPrivilegesRequest privilegesRequest)
+        {
+            var response = await _mediator.Send(privilegesRequest, CancellationToken.None);
+
+            return Ok(response);
+        }
+
+        [HttpPost("removeContactFromOrganisation")]
+        public async Task<ActionResult> RemoveContactFromOrganisation([FromBody] RemoveContactFromOrganisationRequest request)
+        {
+            return Ok(await _mediator.Send(request, CancellationToken.None));
+        }
+
+        [HttpPost("inviteContactToOrganisation")]
+        public async Task<ActionResult> InviteContactToOrganisation([FromBody] InviteContactToOrganisationRequest request)
+        {
+            return Ok(await _mediator.Send(request, CancellationToken.None));
+        }
+
+        [HttpPost("requestForPrivilege")]
+        public async Task<ActionResult> RequestForPrivilege([FromBody] RequestForPrivilegeRequest request)
+        {
+            await _mediator.Send(request, CancellationToken.None);
+            return Ok();
+        }
+
+        [HttpPost("approve")]
+        public async Task<ActionResult> ApproveContact([FromBody] ApproveContactRequest request)
+        {
+            await _mediator.Send(request, CancellationToken.None);
+            return Ok();
+        }
+
+        [HttpPost("reject")]
+        public async Task<ActionResult> RequestForPrivilege([FromBody] RejectContactRequest request)
+        {
+            await _mediator.Send(request, CancellationToken.None);
+            return Ok();
+        }
     }
 }

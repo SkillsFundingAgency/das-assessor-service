@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -7,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.WindowsAzure.Storage.Blob;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Api.Types.Models.UserManagement;
 using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
@@ -26,15 +28,31 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         {
         }
 
+        public async Task<List<Privilege>> GetPrivileges()
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/contacts/privileges"))
+            {
+                return await RequestAndDeserialiseAsync<List<Privilege>>(request, $"Could not privileges");
+            }
+        }
+        
+        public async Task<List<ContactsPrivilege>> GetContactPrivileges(Guid userId)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/contacts/user/{userId}/privileges"))
+            {
+                return await RequestAndDeserialiseAsync<List<ContactsPrivilege>>(request, $"Could not find the contact");
+            }
+        }
+
         public async Task<ContactResponse> GetByUsername(string username)
         {
-            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/contacts/user/{WebUtility.UrlEncode(username)}"))
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/contacts/username/{WebUtility.UrlEncode(username)}"))
             {
                 return await RequestAndDeserialiseAsync<ContactResponse>(request, $"Could not find the contact");
             }
         }
 
-        public async Task<ContactResponse> GetById(string id)
+        public async Task<ContactResponse> GetById(Guid id)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/contacts/user/{id}"))
             {
@@ -59,11 +77,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task<List<ContactsWithPrivilegesResponse>> GetContactsWithPrivileges(string endPointAssessorOrganisationId)
+        public async Task<List<ContactsWithPrivilegesResponse>> GetContactsWithPrivileges(Guid organisationId)
         {
-            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/contacts/{endPointAssessorOrganisationId}/withprivileges"))
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/contacts/{organisationId}/withprivileges"))
             {
-                return await RequestAndDeserialiseAsync<List<ContactsWithPrivilegesResponse>>(request, $"Could not find contacts for {endPointAssessorOrganisationId}");
+                return await RequestAndDeserialiseAsync<List<ContactsWithPrivilegesResponse>>(request, $"Could not find contacts for {organisationId}");
             }
         }
 
@@ -112,7 +130,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task Callback(DfeSignInCallback callback)
+        public async Task Callback(SignInCallback callback)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/v1/contacts/callback"))
             {
@@ -173,39 +191,55 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                 
             }
         }
-    }
 
-    public interface IContactsApiClient
-    {
-        Task<ContactResponse> GetByUsername(string username);
+        public async Task<SetContactPrivilegesResponse> SetContactPrivileges(SetContactPrivilegesRequest privilegesRequest)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Post, "/api/v1/contacts/setContactPrivileges"))
+            {
+                return await PostPutRequestWithResponse<SetContactPrivilegesRequest,SetContactPrivilegesResponse>(request, privilegesRequest);
+            }
+        }
+
+        public async Task<RemoveContactFromOrganisationResponse> RemoveContactFromOrganisation(Guid requestingUserId, Guid contactId)
+        {
+            var removeContactRequest = new RemoveContactFromOrganisationRequest(requestingUserId, contactId);
+            
+            using (var request = new HttpRequestMessage(HttpMethod.Post, "/api/v1/contacts/removeContactFromOrganisation"))
+            {
+                return await PostPutRequestWithResponse<RemoveContactFromOrganisationRequest,RemoveContactFromOrganisationResponse>(request, removeContactRequest);
+            }
+        }
+
+        public async Task<InviteContactToOrganisationResponse> InviteContactToOrganisation(InviteContactToOrganisationRequest invitationRequest)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Post, "/api/v1/contacts/inviteContactToOrganisation"))
+            {
+                return await PostPutRequestWithResponse<InviteContactToOrganisationRequest,InviteContactToOrganisationResponse>(request, invitationRequest);
+            }
+        }
+
+        public async Task RequestForPrivilege(Guid contactId, Guid privilegeId)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Post, "/api/v1/contacts/requestForPrivilege"))
+            {
+                await PostPutRequest(request, new RequestForPrivilegeRequest {ContactId = contactId, PrivilegeId = privilegeId});
+            }
+        }
+
+        public async Task ApproveContact(Guid contactId)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Post, "/api/v1/contacts/approve"))
+            {
+                await PostPutRequest(request, new ApproveContactRequest {ContactId = contactId});
+            }
+        }
         
-        Task<ContactResponse> Update(UpdateContactRequest updateContactRequest);
-
-        Task<List<ContactsWithPrivilegesResponse>> GetContactsWithPrivileges(string endPointAssessorOrganisationId);
-
-        Task<ContactBoolResponse> DoesContactHavePrivileges(string userId);
-
-        Task<ContactResponse> UpdateStatus(UpdateContactStatusRequest updateContactStatusRequest);
-
-        Task<ContactResponse> GetById(string id);
-
-        Task<ContactResponse> GetContactBySignInId(string signInId);
-        Task<List<ContactResponse>> GetAllContactsForOrganisation(string epaoId);
-
-        Task<ContactResponse> UpdateOrgAndStatus(
-            UpdateContactWithOrgAndStausRequest updateContactWithOrgAndStausRequest);
-
-        Task<ContactBoolResponse> InviteUser(CreateContactRequest createAccountRequest);
-        Task Callback(DfeSignInCallback callback);
-
-        Task MigrateUsers();
-
-        Task MigrateContactsAndOrgsToApply();
-
-        Task MigrateSingleContactToApply(System.Guid signinId);
-
-        Task<ContactResponse> CreateANewContactWithGivenId(Contact contact);
-
-        Task AssociateDefaultRolesAndPrivileges(Contact contact);
+        public async Task RejectContact(Guid contactId)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Post, "/api/v1/contacts/reject"))
+            {
+                await PostPutRequest(request, new RejectContactRequest {ContactId = contactId});
+            }
+        }
     }
 }

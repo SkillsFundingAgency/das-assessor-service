@@ -34,12 +34,16 @@ namespace SFA.DAS.AssessorService.Application.Api.External
         {
             _env = env;
             _logger = logger;
+            _logger.LogInformation("In startup constructor.  Before Config");
             Configuration = configuration;
 
-            if(!bool.TryParse(Configuration["UseSandboxServices"], out UseSandbox))
+            if(!bool.TryParse(configuration["UseSandboxServices"], out UseSandbox))
             {
-                UseSandbox = "yes".Equals(Configuration["UseSandboxServices"], StringComparison.InvariantCultureIgnoreCase);
+                UseSandbox = "yes".Equals(configuration["UseSandboxServices"], StringComparison.InvariantCultureIgnoreCase);
             }
+
+            _logger.LogInformation($"UseSandbox is: {UseSandbox.ToString()}");
+            _logger.LogInformation("In startup constructor.  After GetConfig");
         }
 
         public IConfiguration Configuration { get; }
@@ -56,8 +60,9 @@ namespace SFA.DAS.AssessorService.Application.Api.External
                 {
                     services.AddHttpClient<IApiClient, SandboxApiClient>(config =>
                     {
-                        config.BaseAddress = new Uri(ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress);
+                        config.BaseAddress = new Uri(ApplicationConfiguration.SandboxClientApiAuthentication.ApiBaseAddress);
                         config.DefaultRequestHeaders.Add("Accept", "Application/json");
+                        config.Timeout = TimeSpan.FromMinutes(5);
                     });
                 }
                 else
@@ -66,6 +71,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External
                     {
                         config.BaseAddress = new Uri(ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress);
                         config.DefaultRequestHeaders.Add("Accept", "Application/json");
+                        config.Timeout = TimeSpan.FromMinutes(5);
                     });
                 }
 
@@ -75,6 +81,9 @@ namespace SFA.DAS.AssessorService.Application.Api.External
                     c.EnableAnnotations();
                     c.OperationFilter<UpdateOptionalParamatersWithDefaultValues>();
                     c.OperationFilter<ExamplesOperationFilter>();
+                    c.SchemaFilter<NullableSchemaFilter>();
+                    c.SchemaFilter<SwaggerRequiredSchemaFilter>();
+                    c.CustomSchemaIds(x => x.FullName.Replace("SFA.DAS.AssessorService.Application.Api.External.Models.", ""));
 
                     if (_env.IsDevelopment())
                     {

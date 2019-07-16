@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -34,7 +35,7 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Contacts
             _mockDbContext.Setup(q => q.SaveChangesAsync(new CancellationToken()))
                 .Returns(Task.FromResult((Moq.It.IsAny<int>())));
 
-            var contactRepository = new ContactRepository(_mockDbContext.Object);
+            var contactRepository = new ContactRepository(_mockDbContext.Object, new Mock<IDbConnection>().Object);
 
             await contactRepository.Delete("1234");
         }

@@ -77,9 +77,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates.Batch
             var epaDetails = certData.EpaDetails ?? new EpaDetails();
             if (epaDetails.Epas is null) epaDetails.Epas = new List<EpaRecord>();
 
-            if (requestData.AchievementDate != null && !epaDetails.Epas.Any(rec => rec.EpaDate == requestData.AchievementDate.Value && rec.EpaOutcome == requestData.OverallGrade))
+            var epaOutcome = certData.OverallGrade == CertificateGrade.Fail ? "fail" : "pass";
+            if (requestData.AchievementDate != null && !epaDetails.Epas.Any(rec => rec.EpaDate == requestData.AchievementDate.Value && rec.EpaOutcome == epaOutcome))
             {
-                var epaOutcome = certData.OverallGrade == CertificateGrade.Fail ? "fail" : "pass";
                 var record = new EpaRecord { EpaDate = requestData.AchievementDate.Value, EpaOutcome = epaOutcome };
                 epaDetails.Epas.Add(record);
 
@@ -93,6 +93,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates.Batch
                 LearnerGivenNames = certData.LearnerGivenNames,
                 LearnerFamilyName = certData.LearnerFamilyName,
                 LearningStartDate = certData.LearningStartDate,
+                StandardReference = certData.StandardReference,
                 StandardName = certData.StandardName,     
                 StandardLevel = certData.StandardLevel,
                 StandardPublicationDate = certData.StandardPublicationDate,
@@ -110,7 +111,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates.Batch
                 Registration = requestData.Registration,
                 AchievementDate = requestData.AchievementDate,
                 CourseOption = requestData.CourseOption,
-                OverallGrade = requestData.OverallGrade,
+                OverallGrade = NormalizeOverallGrade(requestData.OverallGrade),
 
                 EpaDetails = epaDetails
             };
@@ -148,6 +149,12 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates.Batch
             }
 
             return cert;
+        }
+
+        private static string NormalizeOverallGrade(string overallGrade)
+        {
+            var grades = new string[] { CertificateGrade.Pass, CertificateGrade.Credit, CertificateGrade.Merit, CertificateGrade.Distinction, CertificateGrade.PassWithExcellence, CertificateGrade.NoGradeAwarded };
+            return grades.FirstOrDefault(g => g.Equals(overallGrade, StringComparison.InvariantCultureIgnoreCase)) ?? overallGrade;
         }
     }
 }
