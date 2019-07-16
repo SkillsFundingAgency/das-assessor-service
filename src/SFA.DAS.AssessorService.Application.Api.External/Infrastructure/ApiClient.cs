@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Application.Api.External.Models.Internal;
 using SFA.DAS.AssessorService.Application.Api.External.Models.Response;
@@ -33,7 +32,15 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
 
             using (var response = await _client.GetAsync(new Uri(uri, UriKind.Relative)))
             {
-                return await response.Content.ReadAsAsync<T>();
+                try
+                {
+                    return await response.Content.ReadAsAsync<T>();
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, $"GET: Error getting response from: {uri} - StatusCode {response.StatusCode} - Message - {ex.Message}");
+                    throw;
+                }
             }
         }
 
@@ -44,7 +51,15 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
 
             using (var response = await _client.PostAsync(new Uri(uri, UriKind.Relative), new StringContent(serializeObject, System.Text.Encoding.UTF8, "application/json")))
             {
-                return await response.Content.ReadAsAsync<U>();
+                try
+                {
+                    return await response.Content.ReadAsAsync<U>();
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, $"POST: Error getting response from: {uri} - StatusCode {response.StatusCode} - Message - {ex.Message}");
+                    throw;
+                }
             }
         }
 
@@ -55,7 +70,15 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
 
             using (var response = await _client.PutAsync(new Uri(uri, UriKind.Relative), new StringContent(serializeObject, System.Text.Encoding.UTF8, "application/json")))
             {
-                return await response.Content.ReadAsAsync<U>();
+                try
+                {
+                    return await response.Content.ReadAsAsync<U>();
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, $"PUT: Error getting response from: {uri} - StatusCode {response.StatusCode} - Message - {ex.Message}");
+                    throw;
+                }
             }
         }
 
@@ -65,7 +88,15 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
 
             using (var response = await _client.DeleteAsync(new Uri(uri, UriKind.Relative)))
             {
-                return await response.Content.ReadAsAsync<T>();
+                try
+                {
+                    return await response.Content.ReadAsAsync<T>();
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, $"DELETE: Error getting response from: {uri} - StatusCode {response.StatusCode} - Message - {ex.Message}");
+                    throw;
+                }
             }
         }
 

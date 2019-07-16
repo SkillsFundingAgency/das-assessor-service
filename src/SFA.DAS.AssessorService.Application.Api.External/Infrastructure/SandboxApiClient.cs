@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models.ExternalApi.Learners;
 using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Application.Api.External.Models.Internal;
@@ -13,8 +14,11 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
 {
     public sealed class SandboxApiClient : ApiClient
     {
+        private readonly ILogger<SandboxApiClient> _logger;
         public SandboxApiClient(HttpClient client, ILogger<SandboxApiClient> logger, ITokenService tokenService) : base(client, logger, tokenService)
-        {}
+        {
+            _logger = logger;
+        }
 
         private async Task<LearnerDetailForExternalApi> GetLearnerDetail(string standard, long uln)
         {
@@ -25,6 +29,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
         {
             if (request != null)
             {
+                _logger.LogInformation($"GetLearner called with request: {JsonConvert.SerializeObject(request)}");
                 var details = await GetLearnerDetail(request.Standard, request.Uln);
 
                 if (details != null)
@@ -42,6 +47,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
         {
             if (request != null)
             {
+                _logger.LogInformation($"CreateEpas called with request: {JsonConvert.SerializeObject(request)}");
                 var newRequest = request.ToList();
 
                 foreach (var req in newRequest.Where(r => r.Learner != null && r.Standard != null))
@@ -68,6 +74,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
         {
             if (request != null)
             {
+                _logger.LogInformation($"UpdateEpas called with request: {JsonConvert.SerializeObject(request)}");
                 var newRequest = request.ToList();
 
                 foreach (var req in newRequest.Where(r => r.Learner != null && r.Standard != null))
@@ -92,13 +99,17 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
 
         public override async Task<ApiResponse> DeleteEpa(DeleteBatchEpaRequest request)
         {
-            var details = await GetLearnerDetail(request.Standard, request.Uln);
-
-            if (details != null)
+            if (request != null)
             {
-                request.Standard = details.Standard?.ReferenceNumber ?? details.Standard?.StandardId.ToString();
-                request.UkPrn = details.UkPrn;
-                request.Email = details.OrganisationPrimaryContactEmail ?? request.Email;
+                _logger.LogInformation($"DeleteEpa called with request: {JsonConvert.SerializeObject(request)}");
+                var details = await GetLearnerDetail(request.Standard, request.Uln);
+
+                if (details != null)
+                {
+                    request.Standard = details.Standard?.ReferenceNumber ?? details.Standard?.StandardId.ToString();
+                    request.UkPrn = details.UkPrn;
+                    request.Email = details.OrganisationPrimaryContactEmail ?? request.Email;
+                }
             }
 
             return await base.DeleteEpa(request);
@@ -108,6 +119,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
         { 
             if(request != null)
             {
+                _logger.LogInformation($"GetCertificate called with request: {JsonConvert.SerializeObject(request)}");
                 var details = await GetLearnerDetail(request.Standard, request.Uln);
 
                 if (details != null)
@@ -125,6 +137,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
         {
             if (request != null)
             {
+                _logger.LogInformation($"CreateCertificates called with request: {JsonConvert.SerializeObject(request)}");
                 var newRequest = request.ToList();
 
                 foreach (var req in newRequest.Where(r => r.CertificateData?.Learner != null && r.CertificateData?.Standard != null))
@@ -151,6 +164,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
         {
             if (request != null)
             {
+                _logger.LogInformation($"UpdateCertificates called with request: {JsonConvert.SerializeObject(request)}");
                 var newRequest = request.ToList();
 
                 foreach (var req in newRequest.Where(r => r.CertificateData?.Learner != null && r.CertificateData?.Standard != null))
@@ -177,6 +191,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
         {
             if (request != null)
             {
+                _logger.LogInformation($"SubmitCertificates called with request: {JsonConvert.SerializeObject(request)}");
                 var newRequest = request.ToList();
 
                 foreach (var req in newRequest)
@@ -201,13 +216,17 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
 
         public override async Task<ApiResponse> DeleteCertificate(DeleteBatchCertificateRequest request)
         {
-            var details = await GetLearnerDetail(request.Standard, request.Uln);
-
-            if (details != null)
+            if (request != null)
             {
-                request.Standard = details.Standard?.ReferenceNumber ?? details.Standard?.StandardId.ToString();
-                request.UkPrn = details.UkPrn;
-                request.Email = details.OrganisationPrimaryContactEmail ?? request.Email;
+                _logger.LogInformation($"DeleteCertificate called with request: {JsonConvert.SerializeObject(request)}");
+                var details = await GetLearnerDetail(request.Standard, request.Uln);
+
+                if (details != null)
+                {
+                    request.Standard = details.Standard?.ReferenceNumber ?? details.Standard?.StandardId.ToString();
+                    request.UkPrn = details.UkPrn;
+                    request.Email = details.OrganisationPrimaryContactEmail ?? request.Email;
+                }
             }
 
             return await base.DeleteCertificate(request);
