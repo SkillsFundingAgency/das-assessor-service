@@ -251,3 +251,12 @@ UPDATE Privileges SET [Key] = 'ApplyForStandard' WHERE UserPrivilege = 'Apply fo
 UPDATE Privileges SET [Key] = 'ViewPipeline' WHERE UserPrivilege = 'Pipeline'
 UPDATE Privileges SET [Key] = 'RecordGrades' WHERE UserPrivilege = 'Record grades and issue certificates'
 UPDATE Privileges SET [Key] = 'ManageUsers' WHERE UserPrivilege = 'Manage users'
+
+IF NOT EXISTS (SELECT * FROM [Privileges] WHERE [UserPrivilege] =  N'Manage API subscription')
+BEGIN
+    INSERT [Privileges] ([Id],[UserPrivilege],[Description],[Key],[Enabled]) VALUES (NEWID(), N'Manage API subscription','This area allows you to manage your API subscriptions.','ManageAPISubscription',0)
+END
+ELSE
+BEGIN
+    UPDATE Privileges SET [Key] = 'ManageAPISubscription', Enabled = 0 WHERE [UserPrivilege] =  N'Manage API subscription' 
+END

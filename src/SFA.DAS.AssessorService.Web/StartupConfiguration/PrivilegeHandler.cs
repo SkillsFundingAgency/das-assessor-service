@@ -38,7 +38,7 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
             var controllerActionDescriptor = (context.Resource as AuthorizationFilterContext).ActionDescriptor as ControllerActionDescriptor;
             
             var privilegeRequested = (await _contactsApiClient.GetPrivileges()).FirstOrDefault(p => p.Key.Equals(requirement.Privilege, StringComparison.InvariantCultureIgnoreCase));
-            if (privilegeRequested is null)
+            if (privilegeRequested is null || !privilegeRequested.Enabled)
             {   
                 var unavailableFeatureContext = new DeniedPrivilegeContext();
                 
