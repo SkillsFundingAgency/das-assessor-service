@@ -2,7 +2,8 @@
     [Id] [uniqueidentifier] NOT NULL,
     [UserPrivilege] [nvarchar](120) NOT NULL DEFAULT '',
     [MustBeAtLeastOneUserAssigned] [bit] NOT NULL DEFAULT(0),
-    [Description] [nvarchar](MAX) NOT NULL DEFAULT ''
+    [Description] [nvarchar](MAX) NOT NULL DEFAULT '',
+    [Key] [nvarchar](125) NOT NULL DEFAULT ''
  CONSTRAINT [PK_Privileges] PRIMARY KEY CLUSTERED 
 (
     [Id] ASC

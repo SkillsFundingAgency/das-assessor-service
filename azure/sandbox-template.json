@@ -82,6 +82,9 @@
         },
         "sandboxFunctionAppStorageAccountName": {
             "type": "string"
+        },
+        "sandboxSqlDbConnectionString": {
+            "type": "string"
         }
     },
     "variables": {
@@ -276,6 +279,10 @@
                             {
                                 "name": "EnvironmentName",
                                 "value": "[toUpper(parameters('environmentName'))]"
+                            },
+                            {
+                                "name": "UseSandboxServices",
+                                "value": "yes"
                             }
                         ]
                     },
@@ -284,6 +291,11 @@
                             {
                                 "name": "Redis",
                                 "connectionString": "[parameters('loggingRedisConnectionString')]",
+                                "type": "Custom"
+                            },
+                            {
+                                "name": "SandboxSqlDbConnectionString",
+                                "connectionString": "[parameters('sandboxSqlDbConnectionString')]",
                                 "type": "Custom"
                             }
                         ]
