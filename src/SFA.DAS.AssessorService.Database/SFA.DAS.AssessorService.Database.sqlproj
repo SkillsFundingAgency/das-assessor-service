@@ -66,6 +66,7 @@
   <ItemGroup>
     <Build Include="Tables\CertificateLogs.sql" />
     <Build Include="Tables\Certificates.sql" />
+    <Build Include="Tables\ContactLogs.sql" />
     <Build Include="Tables\Contacts.sql" />
     <Build Include="Tables\Organisations.sql" />
     <Build Include="Tables\Ilrs.sql" />
