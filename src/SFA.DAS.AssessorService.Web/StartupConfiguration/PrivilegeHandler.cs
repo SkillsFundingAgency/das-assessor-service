@@ -35,22 +35,28 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
             
             var userid = _httpContextAccessor.HttpContext.User.FindFirst("UserId").Value;
 
+            var controllerActionDescriptor = (context.Resource as AuthorizationFilterContext).ActionDescriptor as ControllerActionDescriptor;
+            
+            var privilegeRequested = (await _contactsApiClient.GetPrivileges()).FirstOrDefault(p => p.Key.Equals(requirement.Privilege, StringComparison.InvariantCultureIgnoreCase));
+            if (privilegeRequested is null)
+            {   
+                var unavailableFeatureContext = new DeniedPrivilegeContext();
+                
+                _tempDataProvider.SaveTempData(_httpContextAccessor.HttpContext, new Dictionary<string, object> {{"UnavailableFeatureContext", JsonConvert.SerializeObject(unavailableFeatureContext)}});
+                return;
+            }
+            
             var contactPrivileges = await _contactsApiClient.GetContactPrivileges(Guid.Parse(userid));
 
-            if (contactPrivileges.Any(cp => cp.Privilege.UserPrivilege.Equals(requirement.Privilege, StringComparison.InvariantCultureIgnoreCase)))
+            if (contactPrivileges.Any(cp => cp.Privilege.Key.Equals(requirement.Privilege, StringComparison.InvariantCultureIgnoreCase)))
             {
                 context.Succeed(requirement);    
             }
             else
             {
-                var privilegeDenied = (await _contactsApiClient.GetPrivileges()).First(p => p.UserPrivilege.Equals(requirement.Privilege, StringComparison.InvariantCultureIgnoreCase));
-
-
-                var controllerActionDescriptor = (context.Resource as AuthorizationFilterContext).ActionDescriptor as ControllerActionDescriptor;
-                
                 var deniedPrivilegeContext = new DeniedPrivilegeContext
                 {
-                    PrivilegeId = privilegeDenied.Id,
+                    PrivilegeId = privilegeRequested.Id,
                     Controller = controllerActionDescriptor.ControllerName,
                     Action = controllerActionDescriptor.ActionName
                 };

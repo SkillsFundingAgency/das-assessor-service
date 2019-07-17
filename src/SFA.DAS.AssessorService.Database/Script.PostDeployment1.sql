@@ -245,3 +245,9 @@ UPDATE Privileges SET UserPrivilege = 'Completed assessments' WHERE Description 
 UPDATE Privileges SET UserPrivilege = 'Pipeline' WHERE Description = 'This area shows the Standard and number of apprentices due to be assessed.'
 
 -- END OF ON-2063
+
+UPDATE Privileges SET [Key] = 'ViewCompletedAssessments' WHERE UserPrivilege = 'Completed assessments'
+UPDATE Privileges SET [Key] = 'ApplyForStandard' WHERE UserPrivilege = 'Apply for a Standard'
+UPDATE Privileges SET [Key] = 'ViewPipeline' WHERE UserPrivilege = 'Pipeline'
+UPDATE Privileges SET [Key] = 'RecordGrades' WHERE UserPrivilege = 'Record grades and issue certificates'
+UPDATE Privileges SET [Key] = 'ManageUsers' WHERE UserPrivilege = 'Manage users'
