@@ -23,7 +23,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Login
                 new Contact
                 {
                     Id = guid,
-                    Username = "Unknown",
+                    Username = "Unknown-100",
                     Email = "email@domain.com"
                 }));
 

@@ -27,6 +27,12 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
         
         protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context, PrivilegeRequirement requirement)
         {
+            if (!_httpContextAccessor.HttpContext.User.HasClaim(c => c.Type == "UserId"))
+            {
+                context.Fail();
+                return;
+            }
+            
             var userid = _httpContextAccessor.HttpContext.User.FindFirst("UserId").Value;
 
             var contactPrivileges = await _contactsApiClient.GetContactPrivileges(Guid.Parse(userid));

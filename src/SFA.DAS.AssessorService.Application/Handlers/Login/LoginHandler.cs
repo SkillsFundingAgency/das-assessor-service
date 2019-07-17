@@ -42,12 +42,11 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Login
 
             var contact = await _contactQueryRepository.GetBySignInId(request.SignInId);
 
-            //ON-1926 Check if username is the same as the email if not update the username so that it is
-            //Since in aslogin the username is the email address of the 
+            //Check if username is null or starts with unnown then update the username with users email
             var originalUsername = contact.Username;
 
             if (string.IsNullOrEmpty(originalUsername) ||
-                !contact.Username.Equals(contact.Email, StringComparison.OrdinalIgnoreCase))
+                originalUsername.StartsWith("unknown-",StringComparison.CurrentCultureIgnoreCase))
                 await _contactRepository.UpdateUserName(contact.Id,contact.Email);
 
             if (UserDoesNotHaveAcceptableRole(contact.Id))
