@@ -10,69 +10,6 @@ Post-Deployment Script Template
 --------------------------------------------------------------------------------------
 */
 
-IF NOT EXISTS (SELECT * FROM EMailTemplates WHERE TemplateName = N'EPAOPermissionsAmended')
-BEGIN
-INSERT EMailTemplates ([Id],[TemplateName],[TemplateId],[Recipients],[CreatedAt]) 
-VALUES (NEWID(), N'EPAOPermissionsAmended', N'c1ba00d9-81b6-46d8-9b70-3d89d51aa9c1', NULL, GETDATE())
-END
-
-IF NOT EXISTS (SELECT * FROM EMailTemplates WHERE TemplateName = N'EPAOPermissionsRequested')
-BEGIN
-INSERT EMailTemplates ([Id],[TemplateName],[TemplateId],[Recipients],[CreatedAt]) 
-VALUES (NEWID(), N'EPAOPermissionsRequested', N'addf58d9-9e20-46fe-b952-7fc62a47b7f7', NULL, GETDATE())
-END
-
--- Update privileges
-  
-DECLARE @privilegesCount int
-SELECT @privilegesCount = COUNT(*) FROM Privileges
-
-IF (@privilegesCount = 6)
-  BEGIN
-    -- remove ContactsPrivileges records for API
-    DELETE ContactsPrivileges
-    FROM Privileges p
-           INNER JOIN ContactsPrivileges cp ON cp.PrivilegeId = p.Id
-    WHERE p.UserPrivilege = 'Manage API subscription'  
-    
-    DELETE Privileges WHERE UserPrivilege = 'Manage API subscription'
-  END
-  
-IF (@privilegesCount < 5)
-  BEGIN
-    -- remove ContactsPrivileges records for View standards
-    DELETE ContactsPrivileges
-    FROM Privileges p
-           INNER JOIN ContactsPrivileges cp ON cp.PrivilegeId = p.Id
-    WHERE p.UserPrivilege = 'View standards'
-
-    -- remove Privileges View standards
-    DELETE Privileges WHERE UserPrivilege = 'View standards'
-
-    -- rename existing privileges
-    UPDATE Privileges SET UserPrivilege = 'Apply for a Standard', Description = 'This area allows you to apply for a standard.' WHERE UserPrivilege = 'Apply for standards'
-
-    -- add new ones
-    INSERT INTO Privileges (Id, UserPrivilege, Description) VALUES (NEWID(), 'View completed assessments', 'This area shows all previously recorded assessments.')
-/*  Do not yet add API management
---  INSERT INTO Privileges (Id, UserPrivilege, Description) VALUES (NEWID(), 'Manage API subscription', 'This area allows you to manage your API subscriptions.')
-*/
-    INSERT INTO Privileges (Id, UserPrivilege, Description) VALUES (NEWID(), 'View pipeline', 'This area shows the Standard and number of apprentices due to be assessed.')
-
-    -- set Manage Users to MustBeAtLeast.... true
-    UPDATE Privileges SET MustBeAtLeastOneUserAssigned = 1, Description = 'This area shows a list of all users in your organisation and the ability to manage their permissions.' WHERE UserPrivilege = 'Manage users'
-    
-    UPDATE Privileges SET Description = 'This area allows you to record assessment grades and produce certificates.' WHERE UserPrivilege = 'Record grades and issue certificates'
-  END  
-  
-
-DELETE EMailTemplates WHERE TemplateName = 'EPAOUserApproveRequest'
-DELETE EMailTemplates WHERE TemplateName = 'EPAOUserApproveConfirm'
-DELETE EMailTemplates WHERE TemplateName = 'EPAOUserApproveReject'
-
-INSERT INTO EMailTemplates (Id, TemplateName, TemplateId, CreatedAt) VALUES (NEWID(), 'EPAOUserApproveRequest', 'f7ca95a9-54fb-4f5f-8a88-840445f98c8b', GETUTCDATE())
-INSERT INTO EMailTemplates (Id, TemplateName, TemplateId, CreatedAt) VALUES (NEWID(), 'EPAOUserApproveConfirm', '68506adb-7e17-45c9-ad54-45ef9a2cad15', GETUTCDATE())
-INSERT INTO EMailTemplates (Id, TemplateName, TemplateId, CreatedAt) VALUES (NEWID(), 'EPAOUserApproveReject', 'e7dc7016-9c88-4e25-9496-cb135001f413', GETUTCDATE())
   
   
 -- backup ILRS before data synch
@@ -304,7 +241,7 @@ update [dbo].[Contacts] set [Username] = [Email] where  [Username] like 'unknown
 
 -- START OF ON-2063
 UPDATE Privileges SET Description = 'This area allows you to apply for a Standard.' WHERE UserPrivilege = 'Apply for a Standard'
-UPDATE Privileges SET UserPrivilege = 'View completed assessments' WHERE Description = 'This area shows all previously recorded assessments.'
-UPDATE Privileges SET UserPrivilege = 'View pipeline' WHERE Description = 'This area shows the Standard and number of apprentices due to be assessed.'
+UPDATE Privileges SET UserPrivilege = 'Completed assessments' WHERE Description = 'This area shows all previously recorded assessments.'
+UPDATE Privileges SET UserPrivilege = 'Pipeline' WHERE Description = 'This area shows the Standard and number of apprentices due to be assessed.'
 
 -- END OF ON-2063
