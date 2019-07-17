@@ -12,7 +12,7 @@ namespace SFA.DAS.AssessorService.Domain.Entities
         public DateTime SearchTime { get; set; }
         public SearchData SearchData { get; set; }
         [NotMapped]
-        public string CertificateDataJsonString { get => JsonConvert.SerializeObject(SearchData); }
+        public string SearchDataJsonString { get => JsonConvert.SerializeObject(SearchData); }
         public int NumberOfResults { get; set; }
         public string Username { get; set; }
     }
