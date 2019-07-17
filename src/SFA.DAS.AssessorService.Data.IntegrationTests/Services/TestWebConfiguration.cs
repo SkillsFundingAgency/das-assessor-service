@@ -26,5 +26,11 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Services
         public DfeSignInConfig DfeSignIn { get; set; }
         public string RoatpApiClientBaseUrl { get; set; }
         public ClientApiAuthentication RoatpApiAuthentication { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
+        #region For External API Sandbox
+        public string SandboxSqlConnectionString { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public ApiAuthentication SandboxApiAuthentication { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public ClientApiAuthentication SandboxClientApiAuthentication { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        #endregion
     }
 }
