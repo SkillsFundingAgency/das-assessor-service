@@ -30,28 +30,25 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
         {
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
 
-            try
+            using (var response = await _client.GetAsync(new Uri(uri, UriKind.Relative)))
             {
-                using (var response = await _client.GetAsync(new Uri(uri, UriKind.Relative)))
+                try
                 {
+                    return await response.Content.ReadAsAsync<T>();
+                }
+                catch (Exception ex)
+                {
+                    var actualResponse = string.Empty;
                     try
                     {
-                        return await response.Content.ReadAsAsync<T>();
+                        actualResponse = await response.Content.ReadAsStringAsync();
                     }
-                    catch (Exception ex)
+                    catch
                     {
-                        var actualResponse = string.Empty;
-                        try
-                        {
-                            actualResponse = await response.Content.ReadAsStringAsync();
-                        }
-                        catch
-                        {
-                            // safe to ignore any errors
-                        }
-                        _logger.LogError(ex, $"GET: HTTP {(int)response.StatusCode} Error getting response from: {uri} - ActualResponse: {actualResponse}");
-                        throw;
+                        // safe to ignore any errors
                     }
+                    _logger.LogError(ex, $"GET: HTTP {(int)response.StatusCode} Error getting response from: {uri} - ActualResponse: {actualResponse}");
+                    throw;
                 }
             }
         }
@@ -174,7 +171,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
 
 
         public virtual async Task<GetCertificateResponse> GetCertificate(GetBatchCertificateRequest request)
-        { 
+        {
             var apiResponse = await Get<AssessorService.Api.Types.Models.ExternalApi.Certificates.GetBatchCertificateResponse>($"/api/v1/certificates/batch/{request.Uln}/{request.FamilyName}/{request.Standard}/{request.UkPrn}/{request.Email}");
 
             return Mapper.Map<AssessorService.Api.Types.Models.ExternalApi.Certificates.GetBatchCertificateResponse, GetCertificateResponse>(apiResponse);
@@ -182,7 +179,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
 
         public virtual async Task<IEnumerable<CreateCertificateResponse>> CreateCertificates(IEnumerable<CreateBatchCertificateRequest> request)
         {
-            var apiRequest = Mapper.Map<IEnumerable<CreateBatchCertificateRequest>,IEnumerable<AssessorService.Api.Types.Models.ExternalApi.Certificates.CreateBatchCertificateRequest>>(request);
+            var apiRequest = Mapper.Map<IEnumerable<CreateBatchCertificateRequest>, IEnumerable<AssessorService.Api.Types.Models.ExternalApi.Certificates.CreateBatchCertificateRequest>>(request);
 
             var apiResponse = await Post<IEnumerable<AssessorService.Api.Types.Models.ExternalApi.Certificates.CreateBatchCertificateRequest>, IEnumerable<AssessorService.Api.Types.Models.ExternalApi.Certificates.BatchCertificateResponse>>("/api/v1/certificates/batch", apiRequest);
 
@@ -226,7 +223,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
         {
             AssessorService.Api.Types.Models.Standards.StandardCollation apiResponse = null;
 
-            if(int.TryParse(standard, out int standardId))
+            if (int.TryParse(standard, out int standardId))
             {
                 apiResponse = await Get<AssessorService.Api.Types.Models.Standards.StandardCollation>($"/api/ao/assessment-organisations/collated-standards/{standardId}");
             }
