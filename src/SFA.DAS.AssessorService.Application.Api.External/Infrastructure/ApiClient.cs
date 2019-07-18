@@ -30,16 +30,28 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
         {
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
 
-            using (var response = await _client.GetAsync(new Uri(uri, UriKind.Relative)))
+            try
             {
-                try
+                using (var response = await _client.GetAsync(new Uri(uri, UriKind.Relative)))
                 {
-                    return await response.Content.ReadAsAsync<T>();
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, $"GET: Error getting response from: {uri} - StatusCode {response.StatusCode} - Message - {ex.Message}");
-                    throw;
+                    try
+                    {
+                        return await response.Content.ReadAsAsync<T>();
+                    }
+                    catch (Exception ex)
+                    {
+                        var actualResponse = string.Empty;
+                        try
+                        {
+                            actualResponse = await response.Content.ReadAsStringAsync();
+                        }
+                        catch
+                        {
+                            // safe to ignore any errors
+                        }
+                        _logger.LogError(ex, $"GET: HTTP {(int)response.StatusCode} Error getting response from: {uri} - ActualResponse: {actualResponse}");
+                        throw;
+                    }
                 }
             }
         }
@@ -57,7 +69,16 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex, $"POST: Error getting response from: {uri} - StatusCode {response.StatusCode} - Message - {ex.Message}");
+                    var actualResponse = string.Empty;
+                    try
+                    {
+                        actualResponse = await response.Content.ReadAsStringAsync();
+                    }
+                    catch
+                    {
+                        // safe to ignore any errors
+                    }
+                    _logger.LogError(ex, $"POST: HTTP {(int)response.StatusCode} Error getting response from: {uri} - ActualResponse: {actualResponse}");
                     throw;
                 }
             }
@@ -76,7 +97,16 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex, $"PUT: Error getting response from: {uri} - StatusCode {response.StatusCode} - Message - {ex.Message}");
+                    var actualResponse = string.Empty;
+                    try
+                    {
+                        actualResponse = await response.Content.ReadAsStringAsync();
+                    }
+                    catch
+                    {
+                        // safe to ignore any errors
+                    }
+                    _logger.LogError(ex, $"PUT: HTTP {(int)response.StatusCode} Error getting response from: {uri} - ActualResponse: {actualResponse}");
                     throw;
                 }
             }
@@ -94,7 +124,16 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex, $"DELETE: Error getting response from: {uri} - StatusCode {response.StatusCode} - Message - {ex.Message}");
+                    var actualResponse = string.Empty;
+                    try
+                    {
+                        actualResponse = await response.Content.ReadAsStringAsync();
+                    }
+                    catch
+                    {
+                        // safe to ignore any errors
+                    }
+                    _logger.LogError(ex, $"DELETE: HTTP {(int)response.StatusCode} Error getting response from: {uri} - ActualResponse: {actualResponse}");
                     throw;
                 }
             }
