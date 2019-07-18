@@ -10,20 +10,20 @@ CREATE TABLE #PrimaryOrFirstContact
 ) 
 
 
-insert into #PrimaryOrFirstContact (OrganisationId, ContactId) select o.EndPointAssessorOrganisationId, c.Id from organisations o left outer join contacts c on o.PrimaryContact = c.username
- where o.deletedat is null and c.DeletedAt is null
- and o.EndPointAssessorOrganisationId in (select EndPointAssessorOrganisationId from contacts)
+insert into #PrimaryOrFirstContact (OrganisationId, ContactId) select o.EndPointAssessorOrganisationId, c.Id from Organisations o left outer join Contacts c on o.PrimaryContact = c.Username
+ where o.DeletedAt is null and c.DeletedAt is null
+ and o.EndPointAssessorOrganisationId in (select EndPointAssessorOrganisationId from Contacts)
  and o.Status !='New'
 
 
 DECLARE @orgId nvarchar(20)
 DECLARE @contactId uniqueidentifier
 
-while exists(select * from #PrimaryOrFirstContact where contactId is null and OrganisationId in (select EndPointAssessorOrganisationId from contacts where deletedat is null))
+while exists(select * from #PrimaryOrFirstContact where ContactId is null and OrganisationId in (select EndPointAssessorOrganisationId from Contacts where DeletedAt is null))
   BEGIN
-   select top 1 @orgId = OrganisationId from #PrimaryOrFirstContact where contactId is null and OrganisationId in (select EndPointAssessorOrganisationId from contacts where deletedat is null)
-   SELECT top 1 @contactId = id from contacts where EndPointAssessorOrganisationId = @orgId order by createdat    
-  update #PrimaryOrFirstContact set ContactId = @contactId where OrganisationId = @orgId
+   select top 1 @orgId = OrganisationId from #PrimaryOrFirstContact where ContactId is null and OrganisationId in (select EndPointAssessorOrganisationId from Contacts where DeletedAt is null)
+   SELECT top 1 @contactId = Id from Contacts where EndPointAssessorOrganisationId = @orgId order by CreatedAt    
+  update #PrimaryOrFirstContact set ContactId = @ContactId where OrganisationId = @orgId
   set @ContactId = null
   END
 
@@ -58,22 +58,22 @@ CREATE TABLE #DeliveryAreaSummary
 -- OPERATION 2.1 set organisations mapped to all DeliveryAreas to 'All England'
 insert into #DeliveryAreaSummary (OrganisationId, Delivery_Area_1) 
     select OrganisationId, 'All England' from #DeliveryAreaFirstDetails 
-        group by organisationId
+        group by OrganisationId
         having count(0)>=(select count(0) from DeliveryArea)
 
 -- OPERATION 2.2 set organisations mapped to one and only one delivery area to to have a fixed Delivery_area_1
 insert into #DeliveryAreaSummary (OrganisationId, Delivery_Area_1)
 select OrganisationId, Max(Area) area from #DeliveryAreaFirstDetails 
-        group by organisationId
+        group by OrganisationId
         having count(0)=1
 
-delete from #DeliveryAreaFirstDetails where organisationId in (select OrganisationId from #DeliveryAreaSummary)
+delete from #DeliveryAreaFirstDetails where OrganisationId in (select OrganisationId from #DeliveryAreaSummary)
 
 insert into #DeliveryAreaSummary (OrganisationId)
     select distinct OrganisationId from #DeliveryAreaFirstDetails
 
-select organisationId, Area,
-    row_number() over(partition by organisationId order by organisationId) seq into #sequencedAreaList
+select OrganisationId, Area,
+    row_number() over(partition by OrganisationId order by OrganisationId) seq into #sequencedAreaList
   from #DeliveryAreaFirstDetails
   order by OrganisationId, seq
 
@@ -129,13 +129,13 @@ drop table #sequencedAreaList
 
 -- OPERATION 3 Gather and pivot Standard title and level
 -- GAther standard details, excluding those that have expired or expire today
-select os.EndPointAssessorOrganisationId as organisationid, Title + ' - Level ' + JSON_Value(StandardData,'$.Level') as StandardDetails 
+select os.EndPointAssessorOrganisationId as OrganisationId, Title + ' - Level ' + JSON_Value(StandardData,'$.Level') as StandardDetails 
     into #StandardDetails
-    from organisationStandard os 
-    inner join organisations o on os.EndPointAssessorOrganisationId = o.EndPointAssessorOrganisationId and o.[status] = 'Live'
-    inner join standardCollation sc on os.StandardCode = sc.StandardId 
+    from OrganisationStandard os 
+    inner join Organisations o on os.EndPointAssessorOrganisationId = o.EndPointAssessorOrganisationId and o.[Status] = 'Live'
+    inner join StandardCollation sc on os.StandardCode = sc.StandardId 
     where StandardData is not NULL
-    and (os.effectiveTo is null OR os.EffectiveTo > GETDATE())
+    and (os.EffectiveTo is null OR os.EffectiveTo > GETDATE())
     and (
         JSON_Value(StandardData,'$.EffectiveTo') is null OR
         JSON_Value(StandardData,'$.EffectiveTo') > GETDATE()
@@ -143,8 +143,8 @@ select os.EndPointAssessorOrganisationId as organisationid, Title + ' - Level ' 
     AND os.Status = 'Live' 
     order by os.EndPointAssessorOrganisationId, sc.Title
 
-select organisationId, StandardDetails,
-    row_number() over(partition by organisationId order by organisationId) seq into #sequencedStandardDetails
+select OrganisationId, StandardDetails,
+    row_number() over(partition by OrganisationId order by OrganisationId) seq into #sequencedStandardDetails
   from #StandardDetails
   order by OrganisationId, seq
 
@@ -306,13 +306,13 @@ Standard_2,
     Standard_58,
     Standard_59,    
     Standard_60
- from organisations o 
+ from Organisations o 
 left outer join #PrimaryOrFirstContact pofc on pofc.OrganisationId = o.EndPointAssessorOrganisationId
-left outer join contacts c1 on c1.EndPointAssessorOrganisationId = pofc.OrganisationId and c1.Id = pofc.ContactId and c1.DeletedAt is null
+left outer join Contacts c1 on c1.EndPointAssessorOrganisationId = pofc.OrganisationId and c1.Id = pofc.ContactId and c1.DeletedAt is null
 left outer join #DeliveryAreaSummary das on o.EndPointAssessorOrganisationId = das.OrganisationId
 left outer join OrganisationType ot on o.OrganisationTypeId = ot.Id 
 join #OrganisationStandardTableSummary osts on osts.OrganisationId = o.EndPointAssessorOrganisationId
-where o.deletedat is NULL AND o.EndPointAssessorOrganisationId<>'EPA0000'
+where o.DeletedAt is NULL AND o.EndPointAssessorOrganisationId<>'EPA0000'
 order by o.EndPointAssessorName
 
 drop table #DeliveryAreaSummary
