@@ -247,9 +247,8 @@ namespace SFA.DAS.AssessorService.Data
                                certificate.OrganisationId equals organisation.Id
                              where organisation.EndPointAssessorOrganisationId == endPointAssessorOrganisationId
                                && !statuses.Contains(certificate.Status)
-                             group certificate by new { certificate.Id, certificate.CreatedAt } into result
-                             orderby result.Key.CreatedAt descending
-                             select result.FirstOrDefault().Id)
+                             orderby certificate.CreatedAt descending
+                             select certificate.Id)
                                         .Skip((pageIndex - 1) * pageSize)
                                         .Take(pageSize).ToListAsync();
 
