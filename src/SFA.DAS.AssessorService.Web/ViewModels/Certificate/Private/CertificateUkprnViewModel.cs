@@ -11,9 +11,10 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate.Private
     {
         public string Ukprn { get; set; }
 
-        public void FromCertificate(Domain.Entities.Certificate cert)
+        public override void FromCertificate(Domain.Entities.Certificate cert)
         {
-            BaseFromCertificate(cert);
+            base.FromCertificate(cert);
+
             Ukprn = cert.ProviderUkPrn != 0 ? 
                 cert.ProviderUkPrn.ToString() : string.Empty;
         }
