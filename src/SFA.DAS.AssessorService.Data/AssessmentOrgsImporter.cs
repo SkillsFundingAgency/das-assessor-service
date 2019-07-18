@@ -24,7 +24,6 @@ namespace SFA.DAS.AssessorService.Data
     public class AssessmentOrgsImporter : IAssessmentOrgsImporter
     {
         private readonly IAssessmentOrgsRepository _assessmentOrgsRepository;
-        private static WebClient _webClient;
         private readonly IAssessmentOrgsSpreadsheetReader _spreadsheetReader;
         private readonly IWebConfiguration _configuration;
         private readonly ILogger<AssessmentOrgsImporter> _logger;
@@ -134,8 +133,7 @@ namespace SFA.DAS.AssessorService.Data
             spreadsheetDto.Options = GetOptions();
 
             LogProgress(progressStatus, "Finished extracting from spreadsheet");
-            return spreadsheetDto;
-
+            return await Task.FromResult(spreadsheetDto);
         }
 
         private void LogProgress(StringBuilder progressStatus, string status)
