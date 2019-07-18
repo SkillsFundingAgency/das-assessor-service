@@ -25,7 +25,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
 
         public async Task<ValidationResponse> Handle(UpdateEpaOrganisationValidationRequest request, CancellationToken cancellationToken)
         {
-            return _validator.ValidatorUpdateEpaOrganisationRequest(new UpdateEpaOrganisationRequest
+            var result = _validator.ValidatorUpdateEpaOrganisationRequest(new UpdateEpaOrganisationRequest
             {
                 Name = request.Name,
                 Ukprn = request.Ukprn,
@@ -41,6 +41,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
                 CompanyNumber = request.CompanyNumber,
                 CharityNumber = request.CharityNumber
             });
+
+            return await Task.FromResult(result);
         }
     }
 }

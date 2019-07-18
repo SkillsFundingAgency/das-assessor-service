@@ -27,7 +27,6 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
     {
         private Certificate Certificate;
         private ViewResult _result;
-        private CertificateCheckViewModelValidator _validator;
 
         [SetUp]
         public void Arrange()
