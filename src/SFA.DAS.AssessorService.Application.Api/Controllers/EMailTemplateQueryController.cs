@@ -30,7 +30,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> GetEMailTemplate(string templateName)
         {
-            var emailTemplate = await _mediator.Send(new GetEMailTemplateRequest { TemplateName = templateName });
+            var emailTemplate = await _mediator.Send(new GetEmailTemplateRequest { TemplateName = templateName });
             if (emailTemplate == null)
                 throw new ResourceNotFoundException();
             return Ok(emailTemplate);

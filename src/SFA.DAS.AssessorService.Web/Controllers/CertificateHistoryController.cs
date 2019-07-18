@@ -4,12 +4,14 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
+using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Web.Constants;
 using SFA.DAS.AssessorService.Web.Infrastructure;
+using SFA.DAS.AssessorService.Web.StartupConfiguration;
 
 namespace SFA.DAS.AssessorService.Web.Controllers
 {
-    [Authorize]
+    [PrivilegeAuthorize(Privileges.ViewCompletedAssessments)]
     [CheckSession]
     [Route("[controller]/[action]")]
     public class CertificateHistoryController : Controller

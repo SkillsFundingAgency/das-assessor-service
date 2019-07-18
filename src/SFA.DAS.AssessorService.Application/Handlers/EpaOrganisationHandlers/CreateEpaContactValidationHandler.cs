@@ -24,14 +24,16 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
 
         public async Task<ValidationResponse> Handle(CreateEpaContactValidationRequest request, CancellationToken cancellationToken)
         {
-            return _validator.ValidatorCreateEpaOrganisationContactRequest(new CreateEpaOrganisationContactRequest
+            var result = _validator.ValidatorCreateEpaOrganisationContactRequest(new CreateEpaOrganisationContactRequest
             {
                 EndPointAssessorOrganisationId = request.OrganisationId,
                 FirstName = request.FirstName,
                 LastName = request.LastName,
                 Email = request.Email,
                 PhoneNumber = request.Phone
-            } );   
+            } );
+
+            return await Task.FromResult(result);
         }
     }
 }

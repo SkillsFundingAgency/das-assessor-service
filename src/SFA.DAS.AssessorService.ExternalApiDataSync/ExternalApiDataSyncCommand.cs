@@ -22,8 +22,8 @@ namespace SFA.DAS.AssessorService.ExternalApiDataSync
             _aggregateLogger = aggregateLogger;
 
             _allowDataSync = config.ExternalApiDataSync.IsEnabled;
-            _sourceConnectionString = config.ExternalApiDataSync.SourceSqlConnectionString;
-            _destinationConnectionString = config.SqlConnectionString;
+            _sourceConnectionString = config.SqlConnectionString;
+            _destinationConnectionString = config.SandboxSqlConnectionString;
         }
 
         public async Task Execute()

@@ -7,9 +7,10 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate.Private
     {
         public string FirstName { get; set; }
 
-        public void FromCertificate(Domain.Entities.Certificate cert)
+        public override void FromCertificate(Domain.Entities.Certificate cert)
         {
-            BaseFromCertificate(cert);
+            base.FromCertificate(cert);
+
             FirstName = CertificateData.LearnerGivenNames;
             FullName = CertificateData.FullName;
         }
