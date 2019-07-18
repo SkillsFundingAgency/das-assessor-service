@@ -129,7 +129,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                     new CertificatePreviousAddressViewModel(certificatePreviousAddress);
 
             }
-            catch (EntityNotFoundException e)
+            catch (EntityNotFoundException)
             {
                 var certificatePreviousAddress = new CertificateAddress();
                 certificateAddress.PreviousAddress =

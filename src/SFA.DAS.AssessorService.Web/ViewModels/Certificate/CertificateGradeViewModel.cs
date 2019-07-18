@@ -20,9 +20,9 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
             new SelectListItem {Text = CertificateGrade.NoGradeAwarded, Value = CertificateGrade.NoGradeAwarded},
             new SelectListItem {Text = CertificateGrade.Fail, Value = CertificateGrade.Fail}
         };
-        public void FromCertificate(Domain.Entities.Certificate cert)
+        public override void FromCertificate(Domain.Entities.Certificate cert)
         {
-            BaseFromCertificate(cert);
+            base.FromCertificate(cert);
             SelectedGrade = CertificateData.OverallGrade;
         }
 

@@ -13,7 +13,6 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.PrivateCertificateTests.Queries
     public class Given_I_request_the_learning_start_date_page_and_session_does_not_exist : CertificateQueryBase
     {
         private RedirectToActionResult _result;
-        private CertificateLearnerStartDateViewModel _viewModelResponse;
 
         [SetUp]
         public void Arrange()
