@@ -40,16 +40,10 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             var productId = _webConfiguration.AzureApiAuthentication.ProductId;
 
             var users = await GetAllUsers(ukprn, email);
-            var loggedInUser = users.Where(u => u.Email.Equals(email, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
+            var loggedInUser = users.FirstOrDefault(u => u.Email.Equals(email, StringComparison.InvariantCultureIgnoreCase));
 
             var subscriptionsToShow = users.SelectMany(u => u.Subscriptions.Where(s => s.IsActive && s.ProductId == productId)).ToList();
             var primaryContacts = subscriptionsToShow.SelectMany(s => users.Where(u => u.Id == s.UserId)).ToList();
-
-            // For now we show all subscriptions from the logged in user and the 'productId' subscription if the primary contact has it too.
-            if (loggedInUser != null)
-            {
-                subscriptionsToShow.AddRange(loggedInUser.Subscriptions.Where(s => s.IsActive));
-            }
 
             var viewmodel = new ExternalApiDetailsViewModel
             {
