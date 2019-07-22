@@ -86,41 +86,54 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 
         protected async Task<T> RequestAndDeserialiseAsync<T>(HttpRequestMessage request, string message = null)
         {
-            HttpRequestMessage clonedRequest = null;
-
-            var result = await _retryPolicy.ExecuteAsync(async () =>
+            try
             {
-                clonedRequest = new HttpRequestMessage(request.Method, request.RequestUri);
-                clonedRequest.Headers.Add("Accept", "application/json");
-                clonedRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", TokenService.GetToken());
+                HttpRequestMessage clonedRequest = null;
 
-                return await HttpClient.SendAsync(clonedRequest);
-
-            });
-
-            if (result.StatusCode == HttpStatusCode.OK)
-            {
-                // NOTE: Struct values are valid JSON. For example: 'True'
-                var json = await result.Content.ReadAsStringAsync();
-                return await Task.Factory.StartNew<T>(() => JsonConvert.DeserializeObject<T>(json, JsonSettings));
-            }
-
-            if (result.StatusCode == HttpStatusCode.NotFound)
-            {
-                if (message == null)
+                var result = await _retryPolicy.ExecuteAsync(async () =>
                 {
-                    if(!request.RequestUri.IsAbsoluteUri)
-                        message = "Could not find " + request.RequestUri;
-                    else
-                        message = "Could not find " + request.RequestUri.PathAndQuery;
+                    clonedRequest = new HttpRequestMessage(request.Method, request.RequestUri);
+                    clonedRequest.Headers.Add("Accept", "application/json");
+                    clonedRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", TokenService.GetToken());
+
+                    return await HttpClient.SendAsync(clonedRequest);
+
+                });
+
+                if (result.StatusCode == HttpStatusCode.OK)
+                {
+                    // NOTE: Struct values are valid JSON. For example: 'True'
+                    var json = await result.Content.ReadAsStringAsync();
+                    return await Task.Factory.StartNew<T>(() => JsonConvert.DeserializeObject<T>(json, JsonSettings));
                 }
 
-                RaiseResponseError(message, clonedRequest, result);
+                if (result.StatusCode == HttpStatusCode.NotFound)
+                {
+                    if (message == null)
+                    {
+                        if (!request.RequestUri.IsAbsoluteUri)
+                            message = "Could not find " + request.RequestUri;
+                        else
+                            message = "Could not find " + request.RequestUri.PathAndQuery;
+                    }
+
+                    RaiseResponseError(message, clonedRequest, result);
+                }
+
+                RaiseResponseError(clonedRequest, result);
+
+                return default(T);
             }
-
-            RaiseResponseError(clonedRequest, result);
-
-            return default(T);
+            catch(HttpRequestException httpEx)
+            {
+                _logger.LogError(httpEx, $"Error calling end point: {request.RequestUri}");
+                throw;
+            }
+            catch(EntityNotFoundException ex)
+            {
+                _logger.LogWarning(ex, $"Entity not found on end point: {request.RequestUri}");
+                throw;
+            }
         }
 
         protected async Task<U> PostPutRequestWithResponse<T, U>(HttpRequestMessage requestMessage, T model)
@@ -141,7 +154,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             });
 
             var json = await response.Content.ReadAsStringAsync();
-            //var result = await response;
+
             if (response.StatusCode == HttpStatusCode.OK
                 || response.StatusCode == HttpStatusCode.Created
                 || response.StatusCode == HttpStatusCode.NoContent)
@@ -213,9 +226,34 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
+        #region IDisposable
+        private bool disposed = false;
+
         public void Dispose()
         {
-            HttpClient?.Dispose();
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposed)
+                return;
+
+            if (disposing)
+            {
+                // Free any other managed objects here.
+                HttpClient.Dispose();
+            }
+
+            // Free any unmanaged objects here.
+            disposed = true;
+        }
+
+        ~ApiClientBase()
+        {
+            Dispose(false);
+        }
+        #endregion
     }
 }
