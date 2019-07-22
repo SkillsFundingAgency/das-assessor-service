@@ -58,31 +58,43 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Azure
         protected async Task<T> RequestAndDeserialiseAsync<T>(HttpRequestMessage request, string message = null) where T : class
         {
             request.Headers.Add("Accept", "application/json");
-
             request.Headers.Authorization = new AuthenticationHeaderValue("SharedAccessSignature", _azureTokenService.GetToken());
 
-            using (var response = HttpClient.SendAsync(request))
+            try
             {
-                var result = await response;
-                if (result.StatusCode == HttpStatusCode.OK)
+                using (var response = HttpClient.SendAsync(request))
                 {
-                    var json = await result.Content.ReadAsStringAsync();
-                    return await Task.Factory.StartNew<T>(() => JsonConvert.DeserializeObject<T>(json, _jsonSettings));
-                }
-                if (result.StatusCode == HttpStatusCode.NotFound)
-                {
-                    if (message == null)
+                    var result = await response;
+                    if (result.StatusCode == HttpStatusCode.OK)
                     {
-                        message = "Could not find " + request.RequestUri.PathAndQuery;
+                        var json = await result.Content.ReadAsStringAsync();
+                        return await Task.Run(() => JsonConvert.DeserializeObject<T>(json, _jsonSettings));
+                    }
+                    if (result.StatusCode == HttpStatusCode.NotFound)
+                    {
+                        if (message == null)
+                        {
+                            message = "Could not find " + request.RequestUri.PathAndQuery;
+                        }
+
+                        RaiseResponseError(message, request, result);
                     }
 
-                    RaiseResponseError(message, request, result);
+                    RaiseResponseError(request, result);
                 }
 
-                RaiseResponseError(request, result);
+                return default(T);
             }
-
-            return null;
+            catch (HttpRequestException httpEx)
+            {
+                _logger.LogError(httpEx, $"Error calling end point: {request.RequestUri}");
+                throw;
+            }
+            catch (EntityNotFoundException ex)
+            {
+                _logger.LogWarning(ex, $"Entity not found on end point: {request.RequestUri}");
+                throw;
+            }
         }
 
         protected async Task<U> PostPutRequestWithResponse<T, U>(HttpRequestMessage requestMessage, T model)
@@ -96,12 +108,12 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Azure
             using (var response = await HttpClient.SendAsync(requestMessage))
             {
                 var json = await response.Content.ReadAsStringAsync();
-                //var result = await response;
+
                 if (response.StatusCode == HttpStatusCode.OK
                     || response.StatusCode == HttpStatusCode.Created
                     || response.StatusCode == HttpStatusCode.NoContent)
                 {
-                    return await Task.Factory.StartNew<U>(() => JsonConvert.DeserializeObject<U>(json, _jsonSettings));
+                    return await Task.Run(() => JsonConvert.DeserializeObject<U>(json, _jsonSettings));
                 }
                 else
                 {
@@ -151,9 +163,34 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Azure
             }
         }
 
+        #region IDisposable
+        private bool disposed = false;
+
         public void Dispose()
         {
-            HttpClient?.Dispose();
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposed)
+                return;
+
+            if (disposing)
+            {
+                // Free any other managed objects here.
+                HttpClient.Dispose();
+            }
+
+            // Free any unmanaged objects here.
+            disposed = true;
+        }
+
+        ~AzureApiClientBase()
+        {
+            Dispose(false);
+        }
+        #endregion
     }
 }

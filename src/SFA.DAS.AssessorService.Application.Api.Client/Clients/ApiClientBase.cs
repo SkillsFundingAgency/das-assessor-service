@@ -159,7 +159,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                 || response.StatusCode == HttpStatusCode.Created
                 || response.StatusCode == HttpStatusCode.NoContent)
             {
-                return await Task.Factory.StartNew<U>(() => JsonConvert.DeserializeObject<U>(json, JsonSettings));
+                return await Task.Run(() => JsonConvert.DeserializeObject<U>(json, JsonSettings));
             }
             else
             {
