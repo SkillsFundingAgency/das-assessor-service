@@ -4,11 +4,11 @@ using SFA.DAS.AssessorService.Domain.JsonData;
 
 namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
 {
-    public class CertificateBaseViewModel
+    public abstract class CertificateBaseViewModel
     {
         protected CertificateData CertificateData;
 
-        protected void BaseFromCertificate(Domain.Entities.Certificate cert)
+        public virtual void FromCertificate(Domain.Entities.Certificate cert)
         {
             CertificateData = JsonConvert.DeserializeObject<CertificateData>(cert.CertificateData);
             Id = cert.Id;
@@ -21,6 +21,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
             Uln = cert.Uln.ToString();
             IsPrivatelyFunded = cert.IsPrivatelyFunded;
         }
+
         public Guid Id { get; set; }
         public string FamilyName { get; set; }
         public string GivenNames { get; set; }

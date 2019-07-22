@@ -9,6 +9,5 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Organisation
         public string CompanyOrCharityDisplayText { get; set; }
         public bool RoEPAOApproved { get; set; }
         public bool OrganisationIsLive { get; set; }
-        public int? PageIndex { get; set; }
     }
 }
