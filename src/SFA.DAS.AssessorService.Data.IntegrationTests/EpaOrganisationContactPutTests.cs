@@ -20,8 +20,6 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         private OrganisationModel _organisation;
         private int _organisationTypeId;
         private Guid _id;
-        private OrganisationModel _organisation2;
-        private string _org2IdCreated;
         private Guid _contactId;
         private EpaContact _contactUpdated;
         private OrganisationContactModel _contactModel;

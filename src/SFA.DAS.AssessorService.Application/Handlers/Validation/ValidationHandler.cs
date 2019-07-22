@@ -19,41 +19,65 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Validation
 
         public async Task<bool> Handle(ValidationRequest request, CancellationToken cancellationToken)
         {
+            bool result;
+
             switch (request.Type.ToLower())
             {
                 case "email":
-                    return _validationService.CheckEmailIsValid(request.Value);
+                    result = _validationService.CheckEmailIsValid(request.Value);
+                    break;
                 case "notempty":
-                    return _validationService.IsNotEmpty(request.Value);
+                    result = _validationService.IsNotEmpty(request.Value);
+                    break;
                 case "ukprn":
-                    return _validationService.UkprnIsValid(request.Value);
+                    result = _validationService.UkprnIsValid(request.Value);
+                    break;
                 case "uln":
-                    return _validationService.UlnIsValid(request.Value);
+                    result = _validationService.UlnIsValid(request.Value);
+                    break;
                 case "minimumlength":
                     if (!int.TryParse(request.MatchCriteria, out int validationMatchValue))
+                    {
                         throw new Exception($"Validation Match Value [{request.MatchCriteria}] cannot be mapped to an minimum length integer");
+                    }
                     else
-                        return _validationService.IsMinimumLengthOrMore(request.Value, validationMatchValue);
+                    {
+                        result = _validationService.IsMinimumLengthOrMore(request.Value, validationMatchValue);
+                        break;
+                    }
                 case "maximumlength":
                     if (!int.TryParse(request.MatchCriteria, out int validationMatchVal))
+                    {
                         throw new Exception($"Validation Match Value [{request.MatchCriteria}] cannot be mapped to an maximum length integer");
+                    }
                     else
-                        return _validationService.IsMaximumLengthOrLess(request.Value, validationMatchVal);
+                    {
+                        result = _validationService.IsMaximumLengthOrLess(request.Value, validationMatchVal);
+                        break;
+                    }
                 case "validdate":
-                    return _validationService.DateIsValid(request.Value);
+                    result = _validationService.DateIsValid(request.Value);
+                    break;
                 case "dateistodayorinfuture":
-                    return _validationService.DateIsTodayOrInFuture(request.Value);
+                    result = _validationService.DateIsTodayOrInFuture(request.Value);
+                    break;
                 case "dateistodayorinpast":
-                    return _validationService.DateIsTodayOrInPast(request.Value);
+                    result = _validationService.DateIsTodayOrInPast(request.Value);
+                    break;
                 case "organisationid":
-                    return _validationService.OrganisationIdIsValid(request.Value);
+                    result = _validationService.OrganisationIdIsValid(request.Value);
+                    break;
                 case "companynumber":
-                    return _validationService.CompanyNumberIsValid(request.Value);
+                    result = _validationService.CompanyNumberIsValid(request.Value);
+                    break;
                 case "charitynumber":
-                    return _validationService.CharityNumberIsValid(request.Value);
+                    result = _validationService.CharityNumberIsValid(request.Value);
+                    break;
+                default:
+                    throw new Exception("Type not recognised");
             }
 
-            throw new Exception("Type not recognised");
+            return await Task.FromResult(result);
         }
     }
 

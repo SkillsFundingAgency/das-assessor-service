@@ -6,16 +6,15 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
   public class CertificateConfirmationViewModel : CertificateBaseViewModel, ICertificateViewModel
   {
     public string SelectedGrade { get; set; }
-    public string GivenName { get; set; }
-    public string FamilyName { get; set; }
     public string Reference { get; set; }
 
-    public void FromCertificate(Domain.Entities.Certificate cert)
+    public override void FromCertificate(Domain.Entities.Certificate cert)
     {
-      BaseFromCertificate(cert);
+      base.FromCertificate(cert);
+
       Reference = cert.CertificateReference;
       SelectedGrade = CertificateData.OverallGrade;
-      GivenName = CertificateData.LearnerGivenNames;
+      GivenNames = CertificateData.LearnerGivenNames;
       FamilyName = CertificateData.LearnerFamilyName;
     }
 
