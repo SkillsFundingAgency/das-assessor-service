@@ -13,7 +13,6 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.PrivateCertificateTests.Queries
     public class Given_I_request_the_learning_start_date_page_on_redirect_check_page : CertificateQueryBase
     {
         private ViewResult _result;
-        private CertificateLearnerStartDateViewModel _viewModelResponse;
 
         [SetUp]
         public void Arrange()
