@@ -44,6 +44,7 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
         private const string Version = "1.0";
         private readonly IHostingEnvironment _env;
         private readonly ILogger<Startup> _logger;
+        private readonly bool UseSandbox;
 
         public Startup(IHostingEnvironment env, IConfiguration config, ILogger<Startup> logger)
         {
@@ -52,6 +53,13 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
             _logger.LogInformation("In startup constructor.  Before GetConfig");
             Configuration = ConfigurationService
                 .GetConfig(config["EnvironmentName"], config["ConfigurationStorageConnectionString"], Version, ServiceName).Result;
+
+            if (!bool.TryParse(config["UseSandboxServices"], out UseSandbox))
+            {
+                UseSandbox = "yes".Equals(config["UseSandboxServices"], StringComparison.InvariantCultureIgnoreCase);
+            }
+
+            _logger.LogInformation($"UseSandbox is: {UseSandbox.ToString()}");
             _logger.LogInformation("In startup constructor.  After GetConfig");
         }
 
@@ -74,8 +82,8 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                             RoleClaimType = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role",
                             ValidAudiences = new List<string>
                             {
-                                Configuration.ApiAuthentication.Audience,
-                                Configuration.ApiAuthentication.ClientId
+                                UseSandbox ? Configuration.SandboxApiAuthentication.Audience : Configuration.ApiAuthentication.Audience,
+                                UseSandbox ? Configuration.SandboxApiAuthentication.ClientId : Configuration.ApiAuthentication.ClientId
                             }
                         };
                         o.Events = new JwtBearerEvents()
@@ -163,12 +171,14 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
           
                 config.For<IDateTimeProvider>().Use<UtcDateTimeProvider>();
                 config.For<ISignInService>().Use<SignInService>();
+              
+                var sqlConnectionString = UseSandbox ? Configuration.SandboxSqlConnectionString : Configuration.SqlConnectionString;
                 var option = new DbContextOptionsBuilder<AssessorDbContext>();
-                option.UseSqlServer(Configuration.SqlConnectionString, options => options.EnableRetryOnFailure(3));
+                option.UseSqlServer(sqlConnectionString, options => options.EnableRetryOnFailure(3));
 
                 config.For<AssessorDbContext>().Use(c => new AssessorDbContext(option.Options));
-                config.For<IDbConnection>().Use(c => new SqlConnection(Configuration.SqlConnectionString));
-              
+                config.For<IDbConnection>().Use(c => new SqlConnection(sqlConnectionString));
+
 
                 config.For<INotificationsApi>().Use<NotificationsApi>().Ctor<HttpClient>().Is(string.IsNullOrWhiteSpace(NotificationConfiguration().ClientId)
                     ? new HttpClientBuilder().WithBearerAuthorisationHeader(new JwtBearerTokenGenerator(NotificationConfiguration())).Build()

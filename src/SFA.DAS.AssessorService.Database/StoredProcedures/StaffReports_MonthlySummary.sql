@@ -46,7 +46,7 @@ AS
 		) ab 
 		WHERE ab.rownumber = 1
 	) cl
-	JOIN [dbo].[certificates] ce ON ce.[Id] = cl.[CertificateId]
+	JOIN [dbo].[Certificates] ce ON ce.[Id] = cl.[CertificateId]
 	WHERE cl.[Action] IN ('Submit', 'Printed', 'Reprint')
 
 	ORDER BY 1 
