@@ -15,12 +15,12 @@ select o.EndPointAssessorOrganisationId as EPA_organisation_identifier,
     JSON_VALUE(OrganisationData,'$.Postcode') as Contact_postcode,
     EndPointAssessorUkprn as UKPRN,
     JSON_VALUE(OrganisationData,'$.LegalName') as 'Legal Name'
-     from organisations o 
-     left outer join organisationType ot on o.OrganisationTypeId = ot.Id
+     from Organisations o 
+     left outer join OrganisationType ot on o.OrganisationTypeId = ot.Id
      join (select EndPointAssessorOrganisationId 
            from OrganisationStandard
            where Status = 'Live'
-           and (effectiveTo is null OR EffectiveTo > GETDATE())           
+           and (EffectiveTo is null OR EffectiveTo > GETDATE())           
            group by EndPointAssessorOrganisationId
      ) ab ON ab.EndPointAssessorOrganisationId = o.EndPointAssessorOrganisationId
      WHERE o.EndPointAssessorOrganisationId<> 'EPA0000' 
