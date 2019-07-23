@@ -33,7 +33,6 @@ namespace SFA.DAS.AssessorService.Web.Staff
                 .UseStartup<Startup>()
                 .UseApplicationInsights()
                 .UseUrls("https://localhost:44347")
-                .UseKestrel()
                 .UseNLog();
     }
 }

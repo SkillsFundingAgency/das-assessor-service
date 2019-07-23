@@ -32,7 +32,6 @@ namespace SFA.DAS.AssessorService.Application.Api
             return WebHost.CreateDefaultBuilder(args)
                 .UseStartup<Startup>()
                 .UseApplicationInsights()
-                .UseKestrel()
                 .UseNLog();
         }
     }
