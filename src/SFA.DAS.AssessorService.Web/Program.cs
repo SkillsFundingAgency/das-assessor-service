@@ -30,7 +30,6 @@ namespace SFA.DAS.AssessorService.Web
             IHostingEnvironment hostingEnvironment = null;
 
             return WebHost.CreateDefaultBuilder(args)
-                .UseApplicationInsights()
                 .ConfigureServices(
                     services =>
                     {
@@ -40,7 +39,9 @@ namespace SFA.DAS.AssessorService.Web
                             .First();
                     })
                 .UseStartup<Startup>()
+                .UseApplicationInsights()
                 .UseUrls("https://localhost:5015")
+                .UseKestrel()
                 .UseNLog();
         }
     }
