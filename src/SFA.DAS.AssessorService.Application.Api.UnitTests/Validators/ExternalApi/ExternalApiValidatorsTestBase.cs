@@ -30,11 +30,16 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
         {
             var certificateRepositoryMock = new Mock<ICertificateRepository>();
 
+            // Having a range of certificates for 2 EPAO's (with a shared standard) allows us to test the suite of validation ruleS
             certificateRepositoryMock.Setup(q => q.GetCertificate(1234567890, 1)).ReturnsAsync(GenerateCertificate(1234567890, 1, "test", "Draft", new Guid("12345678123456781234567812345678")));
             certificateRepositoryMock.Setup(q => q.GetCertificate(1234567890, 98)).ReturnsAsync(GenerateCertificate(1234567890, 98, "test", "Deleted", new Guid("12345678123456781234567812345678")));
-            certificateRepositoryMock.Setup(q => q.GetCertificate(1234567890, 101)).ReturnsAsync(GenerateEpaCertificate(1234567890, 101, "test", new Guid("12345678123456781234567812345678"), true));
             certificateRepositoryMock.Setup(q => q.GetCertificate(9999999999, 1)).ReturnsAsync(GenerateCertificate(9999999999, 1, "test", "Printed", new Guid("99999999999999999999999999999999")));
+
+            // This is simulating a Certificate that started it's life on the Web App, but was never submitted
             certificateRepositoryMock.Setup(q => q.GetCertificate(9999999999, 99)).ReturnsAsync(GeneratePartialCertificate(9999999999, 99, "test", new Guid("99999999999999999999999999999999")));
+            
+            // These allow use to test EPAs, which is the initial stage of a Certificate
+            certificateRepositoryMock.Setup(q => q.GetCertificate(1234567890, 101)).ReturnsAsync(GenerateEpaCertificate(1234567890, 101, "test", new Guid("12345678123456781234567812345678"), true));
             certificateRepositoryMock.Setup(q => q.GetCertificate(9999999999, 101)).ReturnsAsync(GenerateEpaCertificate(9999999999, 101, "test", new Guid("99999999999999999999999999999999"), false));
 
             certificateRepositoryMock.Setup(q => q.GetOptions(1)).ReturnsAsync(new List<Option>());
