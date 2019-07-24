@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers.ExternalApi
 {
-    [Authorize]
+    [Authorize(Roles = "AssessorServiceInternalAPI")]
     [ValidateBadRequest]
     [Route("api/v1/learners/batch/")]
     public class LearnerBatchController : Controller

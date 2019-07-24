@@ -16,7 +16,7 @@ using NotFound = SFA.DAS.AssessorService.Domain.Exceptions.NotFound;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers.ExternalApi
 {
-    [Authorize]
+    [Authorize(Roles = "AssessorServiceInternalAPI")]
     [ValidateBadRequest]
     [Route("api/v1/certificates/batch/")]
     public class CertificateBatchController : Controller
