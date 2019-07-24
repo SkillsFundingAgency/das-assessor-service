@@ -30,8 +30,6 @@ namespace SFA.DAS.AssessorService.Web.Staff
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
-                .UseKestrel()
-                .UseIISIntegration()
                 .UseStartup<Startup>()
                 .UseApplicationInsights()
                 .UseUrls("https://localhost:44347")
