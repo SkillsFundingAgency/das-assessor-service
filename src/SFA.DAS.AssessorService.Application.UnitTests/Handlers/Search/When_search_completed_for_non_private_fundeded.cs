@@ -6,7 +6,6 @@ using Moq;
 using Newtonsoft.Json;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models;
-using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
@@ -14,7 +13,7 @@ using SFA.DAS.AssessorService.Domain.JsonData;
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
 {
     [TestFixture]
-    public class When_search_completed : SearchHandlerTestBase
+    public class When_search_completed_for_non_private_fundeded : SearchHandlerTestBase
     {
         [SetUp]
         public void Arrange()
@@ -39,6 +38,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
                                 LearningStartDate = new DateTime(2015, 06, 01),
                                 AchievementDate = new DateTime(2018, 06, 01)
                             }),
+                        IsPrivatelyFunded = false,
                         CreatedBy = "username"
                     }
                 });
@@ -49,7 +49,6 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
             ContactRepository.Setup(cr => cr.GetContact("username"))
                 .ReturnsAsync(new Contact() {DisplayName = "EPAO User from this EAPOrg", OrganisationId = searchingEpaoOrgId});
 
-
             IlrRepository.Setup(r => r.SearchForLearnerByUln(It.IsAny<long>()))
                 .ReturnsAsync(new List<Ilr> {new Ilr() {StdCode = 12, FamilyName = "Lamora"}});
         }                                                           
@@ -59,21 +58,35 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
         {
             var result =
                 SearchHandler.Handle(
-                    new SearchQuery() {Surname = "Lamora", EpaOrgId= "12345", Uln = 1111111111, Username = "username"},
+                    new SearchQuery() {Surname = "Lamora", EpaOrgId= "12345", Uln = 1111111111, Username = "username", IsPrivatelyFunded = false},
                     new CancellationToken()).Result;
 
             result[0].LearnStartDate.Should().Be(new DateTime(2015, 06, 01));
         }
 
+        public void Then_a_response_is_returned_including_IsPrivatelyFunded()
+        {
+            var result =
+                SearchHandler.Handle(
+                    new SearchQuery() { Surname = "Lamora", EpaOrgId = "12345", Uln = 1111111111, Username = "username", IsPrivatelyFunded = false },
+                    new CancellationToken()).Result;
+
+            result[0].IsPrivatelyFunded.Should().Be(false);
+        }
+
         [Test]
-        public void Then_a_Seach_Log_entry_is_created()
+        public void Then_a_Search_Log_entry_is_created()
         {
             SearchHandler.Handle(
-                    new SearchQuery() {Surname = "Lamora", EpaOrgId= "12345", Uln = 1111111111, Username = "username"},
+                    new SearchQuery() {Surname = "Lamora", EpaOrgId= "12345", Uln = 1111111111, Username = "username", IsPrivatelyFunded = false},
                     new CancellationToken()).Wait();
 
             IlrRepository.Verify(r => r.StoreSearchLog(It.Is<SearchLog>(l =>
-                l.Username == "username" && l.NumberOfResults == 1 && l.Surname == "Lamora" && l.Uln == 1111111111)));
+                l.Username == "username" && 
+                l.NumberOfResults == 1 && 
+                l.Surname == "Lamora" && 
+                l.Uln == 1111111111 &&
+                l.SearchData.IsPrivatelyFunded == false)));
         }
     }
 }
