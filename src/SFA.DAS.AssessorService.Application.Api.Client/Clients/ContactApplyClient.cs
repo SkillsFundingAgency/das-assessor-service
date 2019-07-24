@@ -86,10 +86,10 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 
 public interface IContactApplyClient
 {
-    Task CreateAccountInApply(NewApplyContact contact);
-    Task UpdateApplySignInId(AddToApplyContactASignInId addToApplyContactASignInId);
-    Task<Contact> GetApplyContactBySignInId(Guid signinId);
-    Task RemoveContactFromOrganisation(Guid contactId);
-    Task CreateNewContact(SFA.DAS.AssessorService.Domain.Entities.Contact newContact);
-    Task SignInIdCallback(SignInCallback callback);
+    //Task CreateAccountInApply(NewApplyContact contact);
+   // Task UpdateApplySignInId(AddToApplyContactASignInId addToApplyContactASignInId);
+   // Task<Contact> GetApplyContactBySignInId(Guid signinId);
+   // Task RemoveContactFromOrganisation(Guid contactId);
+    //Task CreateNewContact(SFA.DAS.AssessorService.Domain.Entities.Contact newContact);
+   // Task SignInIdCallback(SignInCallback callback);
 }

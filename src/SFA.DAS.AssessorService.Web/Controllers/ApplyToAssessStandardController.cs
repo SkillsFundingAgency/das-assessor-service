@@ -49,11 +49,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         public async Task<IActionResult> GoToApplyToAssessStandard()
         {
             var signinId = _contextAccessor.HttpContext.User?.Claims.FirstOrDefault(c => c.Type == "sub")?.Value;
-            var applyContact = await _contactApplyContact.GetApplyContactBySignInId(Guid.Parse(signinId));
-            if (applyContact == null)
-            {
-                await _contactsApiClient.MigrateSingleContactToApply(Guid.Parse(signinId));
-            }
+           // var applyContact = await _contactApplyContact.GetApplyContactBySignInId(Guid.Parse(signinId));
+           // if (applyContact == null)
+           // {
+           //     await _contactsApiClient.MigrateSingleContactToApply(Guid.Parse(signinId));
+           // }
             
             return Redirect($"{_webConfiguration.ApplyBaseAddress}/Applications");
         }

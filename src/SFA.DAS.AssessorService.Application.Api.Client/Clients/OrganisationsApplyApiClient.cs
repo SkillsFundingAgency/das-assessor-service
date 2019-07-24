@@ -73,13 +73,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task<Organisation> GetOrganisationByUserId(Guid userId)
-        {
-            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/organisations/userid/{userId}"))
-            {
-                return await RequestAndDeserialiseAsync<Organisation>(request);
-            }
-        }
     }
 
 
@@ -90,6 +83,5 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         Task<Organisation> ConfirmSearchedOrganisation(CreateOrganisationRequest createOrganisationRequest);
         Task<Organisation> CreateNewOrganisation(CreateOrganisationRequest createOrganisationRequest);
         Task<Organisation> DoesOrganisationExist(string name);
-        Task<Organisation> GetOrganisationByUserId(Guid userId);
     }
 }

@@ -11,7 +11,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
-using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Application.Api.Client.Exceptions;
 using SFA.DAS.AssessorService.Domain.Consts;
@@ -113,13 +112,7 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
                              var orgClient = context.HttpContext.RequestServices
                                  .GetRequiredService<IOrganisationsApiClient>();
 
-                             var contactApplyClient = context.HttpContext.RequestServices.GetRequiredService<IContactApplyClient>();
-                             var organisationApplyClient = context.HttpContext.RequestServices.GetRequiredService<IOrganisationsApplyApiClient>();
-
                              var signInId = context.Principal.FindFirst("sub")?.Value;
-                             var email = context.Principal.FindFirst("name")?.Value;
-                             var familyName = context.Principal.FindFirst("family_name")?.Value;
-                             var givenName = context.Principal.FindFirst("given_name")?.Value;
 
                              ContactResponse user = null;
                              if (!string.IsNullOrEmpty(signInId))
@@ -133,101 +126,8 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
                                      logger.LogInformation("Failed to retrieve user.");
                                  }
 
-                                 if (user == null)
-                                 {
-                                     //Do all this below if the user is not found in Assessor
-                                     bool createNewContactWithNoOrg = false;
-                                     logger.LogInformation("Trying to get user from apply to retrieve user.");
-
-                                     var applyContact = await contactApplyClient.GetApplyContactBySignInId(Guid.Parse(signInId));
-                                     if (applyContact == null)
-                                         createNewContactWithNoOrg = true;
-                                     else
-                                     {
-                                         //Check if organisation exist in assessor 
-                                         ApplyTypes.Organisation applyOrganisation = null;
-                                         try
-                                         {
-                                             applyOrganisation = await organisationApplyClient.GetOrganisationByUserId(applyContact.Id);
-                                         }
-                                         catch (EntityNotFoundException)
-                                         {
-                                             logger.LogInformation("Found contact in apply, but no organisation associated with it.");
-                                             createNewContactWithNoOrg = true;
-                                         }
-
-                                         if (applyOrganisation != null)
-                                         {
-                                             //Start migrating apply contact into assessor
-                                             OrganisationResponse assessorOrg = null;
-                                             try
-                                             {
-                                                 assessorOrg = await orgClient.GetOrganisationByName(applyOrganisation.Name);
-                                             }
-                                             catch (EntityNotFoundException)
-                                             {
-                                                 logger.LogInformation("No organisation found in Assessor, hence no RoEPAO.");
-                                                 createNewContactWithNoOrg = true;
-                                             }
-                                             if (assessorOrg != null)
-                                             {
-                                                 var contactStatus = ContactStatus.Live;
-
-                                                 // ON-1173 - don't make external user live if org is still New and has a primary contact already
-                                                 if (assessorOrg.Status is OrganisationStatus.New && !string.IsNullOrEmpty(assessorOrg.PrimaryContact))
-                                                 {
-                                                     contactStatus = ContactStatus.InvitePending;
-                                                 }
-
-                                                 //Organisation exists in assessor so update contact with organisation
-                                                 var newContact = new Contact
-                                                 {
-                                                     Id = applyContact.Id,
-                                                     DisplayName = $"{applyContact.GivenNames} {applyContact.FamilyName}",
-                                                     Email = applyContact.Email,
-                                                     SignInId = Guid.Parse(signInId),
-                                                     SignInType = applyContact.SigninType,
-                                                     CreatedAt = applyContact.CreatedAt,
-                                                     Username = applyContact.Email,
-                                                     Title = "",
-                                                     FamilyName = applyContact.FamilyName,
-                                                     GivenNames = applyContact.GivenNames,
-                                                     OrganisationId = assessorOrg.Id,
-                                                     EndPointAssessorOrganisationId = assessorOrg.EndPointAssessorOrganisationId,
-                                                     Status = contactStatus
-                                                 };
-
-                                                 user = await CreateANewContact(newContact, contactClient, logger, signInId);
-
-                                             }
-                                         }
-                                     }
-
-                                     if (createNewContactWithNoOrg)
-                                     {
-                                         //Userexists in apply but associated with org not in assessor (ie not EPAO org) so create a new user
-                                         logger.LogInformation("Creating new user.");
-                                         var newContact = new Contact
-                                         {
-                                             Id = applyContact != null ? applyContact.Id : Guid.NewGuid(),
-                                             DisplayName = $"{givenName} {familyName}",
-                                             Email = email,
-                                             SignInId = Guid.Parse(signInId),
-                                             SignInType = "ASLogin",
-                                             CreatedAt = DateTime.UtcNow,
-                                             Username = email,
-                                             Title = "",
-                                             FamilyName = familyName,
-                                             GivenNames = givenName,
-                                             OrganisationId = null,
-                                             EndPointAssessorOrganisationId = null,
-                                             Status = applyContact != null?ContactStatus.Applying: ContactStatus.New
-                                         };
-
-                                         user = await CreateANewContact(newContact, contactClient, logger, signInId);
-                                     }
-                                 }
-                                 else if (user.Status == ContactStatus.Deleted)
+                               
+                                 if (user?.Status == ContactStatus.Deleted)
                                  {
                                      // Redirect to access denied page. 
                                      context.Response.Redirect("/Home/AccessDenied");
