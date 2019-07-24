@@ -43,7 +43,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
                 request.PageSize ?? 0,
                 request.Status,
                 request.PrivatelyFundedStatus);
-            
+
             // Please Note:- Cannot seem to automap this with custom value/type converters
             // so dealing with it manually for now.
             var approvals = await MapCertificates(certificates);
@@ -57,76 +57,77 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
             var lastName = string.Empty;
             var reasonForChange = string.Empty;
 
-            var certificateResponses = certificates.Items.Select(
-                certificate =>
+            var certificateResponses = new List<CertificateSummaryResponse>();
+
+            foreach (var certificate in certificates.Items)
+            {
+                var certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
+                var recordedBy = certificate.CreatedBy;
+
+                try
                 {
-                    var certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
-
-                    try
+                    if (certificateData.ProviderName == null)
                     {
-                        if (certificateData.ProviderName == null)
-                        {
-                            var provider = _assessmentOrgsApiClient
-                                .GetProvider(certificate.ProviderUkPrn).GetAwaiter()
-                                .GetResult();
+                        var provider = _assessmentOrgsApiClient
+                            .GetProvider(certificate.ProviderUkPrn).GetAwaiter()
+                            .GetResult();
 
-                            trainingProviderName = provider.ProviderName;
-                            _certificateRepository.UpdateProviderName(certificate.Id, trainingProviderName);
-                        }
-                        else
-                        {
-                            trainingProviderName = certificateData.ProviderName;
-                        }
-
-                        firstName = certificateData.LearnerGivenNames;
-                        lastName = certificateData.LearnerFamilyName;
-                        reasonForChange = certificate.CertificateLogs
-                            .OrderByDescending(q => q.EventTime)
-                            .FirstOrDefault(certificateLog =>
-                                certificateLog.Status == Domain.Consts.CertificateStatus.Draft && certificateLog.Action == Domain.Consts.CertificateStatus.Rejected)?.ReasonForChange;
+                        trainingProviderName = provider.ProviderName;
+                        await _certificateRepository.UpdateProviderName(certificate.Id, trainingProviderName);
                     }
-                    catch (EntityNotFoundException)
+                    else
                     {
-                        _logger.LogInformation(
-                            $"Cannot find training provider for ukprn {certificate.Organisation.EndPointAssessorUkprn.Value}");
+                        trainingProviderName = certificateData.ProviderName;
                     }
 
-                    return new CertificateSummaryResponse
-                    {
+                    firstName = certificateData.LearnerGivenNames;
+                    lastName = certificateData.LearnerFamilyName;
+                    reasonForChange = certificate.CertificateLogs
+                        .OrderByDescending(q => q.EventTime)
+                        .FirstOrDefault(certificateLog =>
+                            certificateLog.Status == Domain.Consts.CertificateStatus.Draft && certificateLog.Action == Domain.Consts.CertificateStatus.Rejected)?.ReasonForChange;
+                }
+                catch (EntityNotFoundException)
+                {
+                    _logger.LogInformation(
+                        $"Cannot find training provider for ukprn {certificate.Organisation.EndPointAssessorUkprn.Value}");
+                }
 
-                        CertificateReference = certificate.CertificateReference,
-                        Uln = certificate.Uln,
-                        CreatedDay = certificate.CreateDay,
-                        UpdatedAt = certificate.UpdatedAt,
-                        ContactOrganisation = certificateData.ContactOrganisation,
-                        ContactName = certificateData.ContactName,
-                        TrainingProvider = trainingProviderName,
-                        RecordedBy = certificate.CreatedBy,
-                        CourseOption = certificateData.CourseOption,
-                        FullName = certificateData.FullName,
-                        OverallGrade = certificateData.OverallGrade,
-                        StandardReference = certificateData.StandardReference,
-                        StandardName = certificateData.StandardName,
-                        Level = certificateData.StandardLevel,
-                        AchievementDate = certificateData.AchievementDate,
-                        LearningStartDate = certificateData.LearningStartDate,
-                        ContactAddLine1 = certificateData.ContactAddLine1,
-                        ContactAddLine2 = certificateData.ContactAddLine2,
-                        ContactAddLine3 = certificateData.ContactAddLine3,
-                        ContactAddLine4 = certificateData.ContactAddLine4,
-                        ContactPostCode = certificateData.ContactPostCode,
-                        Status = certificate.Status,
-                        PrivatelyFundedStatus = certificate.PrivatelyFundedStatus,
-                        FirstName = firstName,
-                        LastName = lastName,
-                        Ukprn = certificate.ProviderUkPrn,
-                        StandardCode = certificate.StandardCode,
-                        EpaoId = certificate.Organisation?.EndPointAssessorOrganisationId,
-                        EpaoName = certificate.Organisation?.EndPointAssessorName,
-                        CertificateId = certificate.Id,
-                        ReasonForChange = reasonForChange
-                    };
+                certificateResponses.Add(new CertificateSummaryResponse
+                {
+                    CertificateReference = certificate.CertificateReference,
+                    Uln = certificate.Uln,
+                    CreatedDay = certificate.CreateDay,
+                    UpdatedAt = certificate.UpdatedAt,
+                    ContactOrganisation = certificateData.ContactOrganisation,
+                    ContactName = certificateData.ContactName,
+                    TrainingProvider = trainingProviderName,
+                    RecordedBy = recordedBy,
+                    CourseOption = certificateData.CourseOption,
+                    FullName = certificateData.FullName,
+                    OverallGrade = certificateData.OverallGrade,
+                    StandardReference = certificateData.StandardReference,
+                    StandardName = certificateData.StandardName,
+                    Level = certificateData.StandardLevel,
+                    AchievementDate = certificateData.AchievementDate,
+                    LearningStartDate = certificateData.LearningStartDate,
+                    ContactAddLine1 = certificateData.ContactAddLine1,
+                    ContactAddLine2 = certificateData.ContactAddLine2,
+                    ContactAddLine3 = certificateData.ContactAddLine3,
+                    ContactAddLine4 = certificateData.ContactAddLine4,
+                    ContactPostCode = certificateData.ContactPostCode,
+                    Status = certificate.Status,
+                    PrivatelyFundedStatus = certificate.PrivatelyFundedStatus,
+                    FirstName = firstName,
+                    LastName = lastName,
+                    Ukprn = certificate.ProviderUkPrn,
+                    StandardCode = certificate.StandardCode,
+                    EpaoId = certificate.Organisation?.EndPointAssessorOrganisationId,
+                    EpaoName = certificate.Organisation?.EndPointAssessorName,
+                    CertificateId = certificate.Id,
+                    ReasonForChange = reasonForChange
                 });
+            }
 
             var responses = certificateResponses.ToList();
             foreach (var response in responses)
@@ -135,6 +136,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
                 response.RecordedBy = contact?.DisplayName;
                 response.RecordedByEmail = contact?.Email;
             }
+
             var paginatedList = new PaginatedList<CertificateSummaryResponse>(responses,
                 certificates.TotalRecordCount,
                 certificates.PageIndex,

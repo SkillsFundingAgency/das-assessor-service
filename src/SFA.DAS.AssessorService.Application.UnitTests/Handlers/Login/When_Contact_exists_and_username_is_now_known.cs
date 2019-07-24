@@ -17,11 +17,14 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Login
         [Test]
         public void Then_contact_username_is_Updated()
         {
+            var guid = Guid.NewGuid();
 
             ContactQueryRepository.Setup(x => x.GetBySignInId(It.IsAny<Guid>())).Returns(Task.FromResult(
                 new Contact
                 {
-                    Id = Guid.NewGuid()
+                    Id = guid,
+                    Username = "Unknown-100",
+                    Email = "email@domain.com"
                 }));
 
             IList<ContactRole> listOfRoles = new List<ContactRole> {new ContactRole {RoleName = "SuperUser"}};
@@ -41,22 +44,20 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Login
                 Username = "unknown"
             });
 
+            ContactRepository.Setup(x => x.UpdateUserName(guid, "email@domain.com")).Returns(Task.FromResult(default(object)));
 
+            // Username wiil be ignored and replaced with email address
             Handler.Handle(
                 new LoginRequest()
                 {
                     Roles = new List<string>() { "ABC", "DEF", "EPA" },
                     UkPrn = 12345,
-                    Username = "username", // New Username provided by login
+                    Username = "username", 
                     DisplayName = "Display Name",
                     Email = "email@domain.com"
                 }, new CancellationToken()).Wait();
 
-            //Mediator.Verify(m =>
-            //    m.Send(
-            //        It.Is<UpdateContactRequest>(r =>
-            //            r.UserName == "username" && r.DisplayName == "Display Name" && r.Email == "email@domain.com"),
-            //        It.IsAny<CancellationToken>()));
+            ContactRepository.Verify(m => m.UpdateUserName(guid, "email@domain.com")); 
         }
     }
 }

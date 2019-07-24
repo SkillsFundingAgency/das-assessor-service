@@ -8,7 +8,7 @@ SET NOCOUNT ON;
 ------------------------------------------------------------------------------------------------------------------------------------------------------
 SELECT
 	StandardCode, EndPointAssessorName,
-    row_number() over(partition by StandardCode order by StandardCode) seq 
+    row_number() over(partition by StandardCode order by StandardCode) Seq 
 INTO 
 	#SequencedOrgStandardDetails
 FROM
@@ -21,7 +21,7 @@ FROM
 			LEFT OUTER JOIN StandardCollation sc on os.StandardCode = sc.StandardId
 		WHERE
 			o.EndPointAssessorOrganisationId <> 'EPA0000'
-			AND (os.effectiveTo is null OR os.EffectiveTo > GETDATE())
+			AND (os.EffectiveTo is null OR os.EffectiveTo > GETDATE())
 			AND 
 			(
 				JSON_Value(StandardData,'$.EffectiveTo') is null OR
@@ -41,7 +41,7 @@ DECLARE @Dynamic_sql NVARCHAR(max);
 WITH DistinctEPAAOColumns AS
 (
 	SELECT DISTINCT Seq
-	FROM #sequencedOrgStandardDetails
+	FROM #SequencedOrgStandardDetails
 )
 SELECT 
 	@EP_AAO_Columns = 
@@ -67,7 +67,7 @@ DECLARE @OrganisationStandardTableSummary VARCHAR(32) = REPLACE(CAST(NEWID() AS 
 WITH DistinctEPAAOColumns AS
 (
 	SELECT DISTINCT Seq
-	FROM #sequencedOrgStandardDetails
+	FROM #SequencedOrgStandardDetails
 )
 SELECT 
 	@Dynamic_sql = 'CREATE TABLE ##' + @OrganisationStandardTableSummary + ' (StandardCode INT,' + 
@@ -91,7 +91,7 @@ EXECUTE sp_executesql @Dynamic_sql;
 DECLARE @StandardCode INT
 
 DECLARE DistinctStandardCodesCursor CURSOR  
-FOR SELECT DISTINCT StandardCode FROM #sequencedOrgStandardDetails
+FOR SELECT DISTINCT StandardCode FROM #SequencedOrgStandardDetails
 OPEN DistinctStandardCodesCursor  
 FETCH NEXT FROM DistinctStandardCodesCursor INTO @StandardCode
 	WHILE @@FETCH_STATUS = 0
@@ -109,7 +109,7 @@ FETCH NEXT FROM DistinctStandardCodesCursor INTO @StandardCode
 				(
 					(
 						SELECT ',EP_AAO_' + CAST(seq AS VARCHAR) 
-						FROM #sequencedOrgStandardDetails
+						FROM #SequencedOrgStandardDetails
 						WHERE StandardCode = DistinctStandardCodesCTE.StandardCode
 						ORDER BY StandardCode, Seq
 						FOR XML PATH(''), TYPE
@@ -121,7 +121,7 @@ FETCH NEXT FROM DistinctStandardCodesCursor INTO @StandardCode
 				(
 					(
 						SELECT ',''' + REPLACE(EndPointAssessorName, '''', '''''') + '''' 
-						FROM #sequencedOrgStandardDetails
+						FROM #SequencedOrgStandardDetails
 						WHERE StandardCode = DistinctStandardCodesCTE.StandardCode
 						ORDER BY StandardCode, Seq
 						FOR XML PATH(''), TYPE

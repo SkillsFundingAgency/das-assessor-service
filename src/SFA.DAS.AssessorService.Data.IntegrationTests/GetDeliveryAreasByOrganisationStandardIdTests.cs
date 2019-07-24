@@ -17,8 +17,6 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         private RegisterQueryRepository _repository;
         private string _organisationId1;
         private OrganisationStandardModel _organisationStandard;
-        private int _organisationTypeId;
-        private int _ukprnCreated;
         private string _organisationIdCreated;
         private readonly int _standardCode = 5;
         private readonly int _orgStandardId = 50;
@@ -31,8 +29,6 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         public void SetupOrganisationTests()
         {
             _organisationIdCreated = "EPA0987";
-            _ukprnCreated = 123321;
-            _organisationTypeId = 5;
             _repository = new RegisterQueryRepository(_databaseService.WebConfiguration);
             _organisationId1 = "EPA0987"; 
             _organisation1 = new OrganisationModel

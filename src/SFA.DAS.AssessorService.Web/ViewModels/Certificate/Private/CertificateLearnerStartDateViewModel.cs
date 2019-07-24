@@ -13,9 +13,10 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate.Private
         public DateTime? StartDate { get; set; }
         public string WarningShown { get; set; }
 
-        public void FromCertificate(Domain.Entities.Certificate cert)
+        public override void FromCertificate(Domain.Entities.Certificate cert)
         {
-            BaseFromCertificate(cert);
+            base.FromCertificate(cert);
+
             Day = CertificateData.LearningStartDate?.Day.ToString();
             Month = CertificateData.LearningStartDate?.Month.ToString();
             Year = CertificateData.LearningStartDate?.Year.ToString();
