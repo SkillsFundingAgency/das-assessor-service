@@ -38,6 +38,8 @@ namespace SFA.DAS.AssessorService.Web
                             .Select(x => (IHostingEnvironment) x.ImplementationInstance)
                             .First();
                     })
+                .UseKestrel()
+                .UseIISIntegration()
                 .UseStartup<Startup>()
                 .UseApplicationInsights()
                 .UseUrls("https://localhost:5015")
