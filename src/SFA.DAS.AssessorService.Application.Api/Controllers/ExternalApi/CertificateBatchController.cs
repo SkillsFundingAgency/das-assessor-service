@@ -86,7 +86,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.ExternalApi
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> Create([FromBody] IEnumerable<CreateBatchCertificateRequest> batchRequest)
         {
-            //var bag = new ConcurrentBag<BatchCertificateResponse>();
             var bag = new List<BatchCertificateResponse>();
 
             foreach (var request in batchRequest)
@@ -137,7 +136,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.ExternalApi
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> Update([FromBody] IEnumerable<UpdateBatchCertificateRequest> batchRequest)
         {
-            //var bag = new ConcurrentBag<BatchCertificateResponse>();
             var bag = new List<BatchCertificateResponse>();
 
             foreach (var request in batchRequest)
@@ -188,7 +186,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.ExternalApi
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> Submit([FromBody] IEnumerable<SubmitBatchCertificateRequest> batchRequest)
         {
-            //var bag = new ConcurrentBag<SubmitBatchCertificateResponse>();
             var bag = new List<SubmitBatchCertificateResponse>();
 
             foreach (var request in batchRequest)
