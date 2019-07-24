@@ -37,7 +37,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Certifi
                 {
                     RuleFor(m => m).CustomAsync(async (m, context, cancellation) =>
                     {
-                        // TODO: FUTURE WORK - consider comment below. Currently we're making the Certificate & ILR record both mandatory
+                        // NOTE: Currently we're making the Certificate & ILR record both mandatory
                         var requestedIlr = await ilrRepository.Get(m.Uln, m.StandardCode);
                         var sumbittingEpao = await organisationQueryRepository.GetByUkPrn(m.UkPrn);
 
@@ -66,7 +66,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Certifi
 
                         if (existingCertificate is null)
                         {
-                            // TODO: FUTURE WORK - Do Alan's Certificate Search THEN the ILR Search (which may be the validation down below)
+                            // TODO: FUTURE WORK - ON-2130 Do Alan's Certificate Search THEN the ILR Search (which may be the validation down below)
                         }
                         else if (!existingCertificate.CertificateData.Contains(m.FamilyName, StringComparison.InvariantCultureIgnoreCase))
                         {

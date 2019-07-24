@@ -18,7 +18,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Certifi
 
             RuleFor(m => m.CertificateReference).NotEmpty().WithMessage("Provide the certificate reference").DependentRules(() =>
             {
-                // TODO: Consider in the future how to merge both create & update versions as the Cert will always exist due to EPA 
+                // TODO: ON-2130 Consider in the future how to merge both create & update versions as the Cert will always exist due to EPA 
                 RuleFor(m => m).CustomAsync(async (m, context, cancellation) =>
                 {
                     var existingCertificate = await certificateRepository.GetCertificate(m.Uln, m.StandardCode);
