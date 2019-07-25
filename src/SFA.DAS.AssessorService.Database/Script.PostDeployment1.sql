@@ -10,6 +10,10 @@ Post-Deployment Script Template
 --------------------------------------------------------------------------------------
 */
 
+/* START OF ON-2033 */
+:r .\PostDeploymentScripts\on-2033-anytime_updates.sql
+/* END OF ON-2033 */
+
 IF NOT EXISTS (SELECT * FROM EMailTemplates WHERE TemplateName = N'EPAOPermissionsAmended')
 BEGIN
 INSERT EMailTemplates ([Id],[TemplateName],[TemplateId],[Recipients],[CreatedAt]) 

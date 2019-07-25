@@ -61,6 +61,7 @@
     <Folder Include="StoredProcedures" />
     <Folder Include="DataToImport" />
     <Folder Include="Tables\" />
+    <Folder Include="PostDeploymentScripts" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Tables\CertificateLogs.sql" />
@@ -121,6 +122,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="DataToImport\assessmentorgs.xlsx" />
+    <None Include="PostDeploymentScripts\on-2033-anytime_updates.sql" />
   </ItemGroup>
   <ItemGroup>
     <ArtifactReference Include="$(DacPacRootPath)\Extensions\Microsoft\SQLDB\Extensions\SqlServer\AzureV12\SqlSchemas\master.dacpac">

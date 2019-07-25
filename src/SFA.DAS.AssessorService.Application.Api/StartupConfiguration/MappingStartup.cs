@@ -40,8 +40,9 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
 
                 cfg.CreateMap<Certificate, CertificateSummaryResponse>();
 
-                cfg.CreateMap<CreateEpaOrganisationRequest, EpaOrganisationResponse>();
-                cfg.CreateMap<UpdateEpaOrganisationRequest, EpaOrganisationResponse>();
+                // how can these be automatically mapped they have nothing in common?
+                //cfg.CreateMap<CreateEpaOrganisationRequest, EpaOrganisationResponse>(); // is this ever Mapper.Map (ped)
+                cfg.CreateMap<UpdateEpaOrganisationRequest, EpaOrganisationResponse>(); // is this ever Mapper.Map (ped)
                 cfg.CreateMap<CreateEpaOrganisationStandardRequest, EpaoStandardResponse>();
                 cfg.CreateMap<UpdateEpaOrganisationStandardRequest, EpaoStandardResponse>();
             });
