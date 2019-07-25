@@ -25,7 +25,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
             updateCertificatesBatchToIndicatePrintedRequest.CertificateStatuses.ForEach(s =>
             {
                 _logger.LogInformation(LoggingConstants.CertificatePrinted);
-                _logger.LogInformation($"Certificate with reference of {s.CertificateReference} set as Printed in batch {updateCertificatesBatchToIndicatePrintedRequest.BatchNumber}");
+                _logger.LogInformation($"Certificate with reference of {s.CertificateReference} set as Printed");
             });
 
             await _certificateRepository.UpdateStatuses(updateCertificatesBatchToIndicatePrintedRequest);
