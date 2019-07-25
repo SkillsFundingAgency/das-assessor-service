@@ -235,23 +235,18 @@ namespace SFA.DAS.AssessorService.Data
         }
 
 
-        public async Task<PaginatedList<Certificate>> GetCertificateHistory(string userName, int pageIndex, int pageSize, List<string> statuses)
+        public async Task<PaginatedList<Certificate>> GetCertificateHistory(string endPointAssessorOrganisationId, int pageIndex, int pageSize, List<string> statuses)
         {
           
-            var count = await GetCertificatesCount(userName, statuses);
+            var count = await GetCertificatesCount(endPointAssessorOrganisationId, statuses);
 
             var ids = await (from certificate in _context.Certificates
                              join organisation in _context.Organisations on
                                certificate.OrganisationId equals organisation.Id
-                             join contact in _context.Contacts on
-                               organisation.Id equals contact.OrganisationId
-                             join certificateLog in _context.CertificateLogs on
-                                 certificate.Id equals certificateLog.CertificateId
-                             where contact.Username == userName
-                               && statuses.Contains(certificate.Status)
-                             group certificate by new { certificate.Id, certificate.CreatedAt } into result
-                             orderby result.Key.CreatedAt descending
-                             select result.FirstOrDefault().Id)
+                             where organisation.EndPointAssessorOrganisationId == endPointAssessorOrganisationId
+                               && !statuses.Contains(certificate.Status)
+                             orderby certificate.CreatedAt descending
+                             select certificate.Id)
                                         .Skip((pageIndex - 1) * pageSize)
                                         .Take(pageSize).ToListAsync();
 
@@ -264,16 +259,14 @@ namespace SFA.DAS.AssessorService.Data
             return new PaginatedList<Certificate>(certificates, count, pageIndex, pageSize);
         }
 
-        public async Task<int> GetCertificatesCount(string userName, List<string> statuses)
+        public async Task<int> GetCertificatesCount(string endPointAssessorOrganisationId, List<string> statuses)
         {
            
             return  await (from certificate in _context.Certificates
                 join organisation in _context.Organisations on
                     certificate.OrganisationId equals organisation.Id
-                join contact in _context.Contacts on
-                    organisation.Id equals contact.OrganisationId
-                where contact.Username == userName
-                      && statuses.Contains(certificate.Status)
+                where organisation.EndPointAssessorOrganisationId == endPointAssessorOrganisationId
+                      && !statuses.Contains(certificate.Status)
                 select certificate).CountAsync();
         }
 
@@ -375,12 +368,32 @@ namespace SFA.DAS.AssessorService.Data
                 var certificate =
                     await _context.Certificates.FirstAsync(q => q.CertificateReference == certificateStatus.CertificateReference);
 
-                certificate.BatchNumber = updateCertificatesBatchToIndicatePrintedRequest.BatchNumber;
                 certificate.Status = CertificateStatus.Printed;
                 certificate.ToBePrinted = toBePrintedDate;
                 certificate.UpdatedBy = UpdatedBy.PrintFunction;
 
                 await UpdateCertificateLog(certificate, CertificateActions.Printed, UpdatedBy.PrintFunction);
+            }
+
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task UpdateCertificateWithBatchNumber(UpdateCertificatesBatchNumberRequest updateCertificateBatchNumberRequest)
+        {
+          
+            foreach (var certificateReference in updateCertificateBatchNumberRequest.CertificateReference)
+            {
+                var certificate =
+                    await _context.Certificates.FirstOrDefaultAsync(q => q.CertificateReference == certificateReference &&
+                   (q.BatchNumber == null && q.Status == CertificateStatus.Submitted) || (q.BatchNumber != null && q.Status == CertificateStatus.Reprint));
+                if (certificate != null)
+                {
+                    certificate.BatchNumber = updateCertificateBatchNumberRequest.BatchNumber;
+                    certificate.UpdatedBy = UpdatedBy.PrintFunction;
+                    certificate.ToBePrinted = DateTime.UtcNow;
+
+                    await UpdateCertificateLog(certificate, CertificateActions.BatchNumber, UpdatedBy.PrintFunction);
+                }
             }
 
             await _context.SaveChangesAsync();
