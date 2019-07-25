@@ -36,17 +36,16 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
         public async Task<PaginatedList<CertificateSummaryResponse>> Handle(GetCertificateHistoryRequest request, CancellationToken cancellationToken)
         {
             const int pageSize = 10;
-            var statuses = new List<string>
+            var ignoreStatuses = new List<string>
             {
-                Domain.Consts.CertificateStatus.Submitted,
-                Domain.Consts.CertificateStatus.Printed,
-                Domain.Consts.CertificateStatus.Reprint
+                Domain.Consts.CertificateStatus.Deleted,
+                Domain.Consts.CertificateStatus.Draft,
             };
 
             var certificates = await _certificateRepository.GetCertificateHistory(
-                request.Username,
+                request.EndPointAssessorOrganisationId,
                 request.PageIndex ?? 1,
-                pageSize, statuses);
+                pageSize, ignoreStatuses);
 
             // Please Note:- Cannot seem to automap this with custom value/type converters
             // so dealing with it manually for now.
@@ -59,7 +58,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
         {
             var trainingProviderName = string.Empty;
             var recordedBy = string.Empty;
-            var certificateResponses = certificates.Items.Select(
+            var certificateResponses = certificates?.Items.Select(
                 certificate =>
                 {
                     var certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
@@ -93,8 +92,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
                     }
                     catch (EntityNotFoundException)
                     {
-                        _logger.LogInformation(
-                            $"Cannot find training provider for ukprn {certificate.Organisation.EndPointAssessorUkprn.Value}");
+                        if (certificate.Organisation.EndPointAssessorUkprn != null)
+                            _logger.LogInformation(
+                                $"Cannot find training provider for ukprn {certificate.Organisation.EndPointAssessorUkprn.Value}");
                     }
 
                     return new CertificateSummaryResponse
@@ -124,16 +124,19 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
                     };
                 });
 
-            var responses = certificateResponses.ToList();
-            foreach (var response in responses)
+            var responses = certificateResponses?.ToList();
+            if (responses != null)
             {
-                response.RecordedBy = (await _contactQueryRepository.GetContact(response.RecordedBy))?.DisplayName;
+                foreach (var response in responses)
+                {
+                    response.RecordedBy = (await _contactQueryRepository.GetContact(response.RecordedBy))?.DisplayName;
+                }
             }
 
             var paginatedList = new PaginatedList<CertificateSummaryResponse>(responses,
-                    certificates.TotalRecordCount,
-                    certificates.PageIndex,
-                    certificates.PageSize
+                    certificates?.TotalRecordCount??0,
+                    certificates?.PageIndex??1,
+                    certificates?.PageSize??10
                 );
 
             return paginatedList;

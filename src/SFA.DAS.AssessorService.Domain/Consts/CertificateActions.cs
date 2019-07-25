@@ -21,6 +21,7 @@
         public const string Uln = "Uln";
         public const string ProviderUkPrn = "ProviderUkPrn";
         public const string Status = "Status";
+        public const string BatchNumber = "BatchNumber";
 
         // Generated from the External API
         public const string Amend = "Amend";
