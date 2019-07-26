@@ -23,9 +23,7 @@ namespace SFA.DAS.AssessorService.Data
     {
         private readonly AssessorDbContext _context;
         private readonly IDbConnection _connection;
-        private readonly ILogger<CertificateRepository> _logger;
-
-
+        
         public CertificateRepository(AssessorDbContext context,
             IDbConnection connection)
         {

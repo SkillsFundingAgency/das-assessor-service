@@ -31,7 +31,7 @@ AS
 			   ELSE cl.[Status]
 		   END AS 'Status'
 	FROM [dbo].[Certificates] ce
-	JOIN [dbo].[Organisations] rg ON ce.[OrganisationId] = rg.[id]
+	JOIN [dbo].[Organisations] rg ON ce.[OrganisationId] = rg.[Id]
 	JOIN
 	  (SELECT [Action],
 			  [CertificateId],
@@ -48,7 +48,7 @@ AS
 	   WHERE ab.rownumber = 1 ) cl ON cl.[CertificateId] = ce.[Id] AND ce.[CertificateReferenceId] >= 10000 AND ce.[CreatedBy] <> 'manual'
 	UNION
 	SELECT CONVERT(VARCHAR(10), DATEADD(mm, DATEDIFF(mm, 0, DATEADD(mm, 0, ce.[CreatedAt])), 0), 120) AS 'Month',
-		   ce.[ULN] AS 'Apprentice ULN',
+		   ce.[Uln] AS 'Apprentice ULN',
 		   UPPER(JSON_VALUE(ce.[CertificateData], '$.FullName')) AS 'Apprentice Names',
 		   CONVERT(CHAR(10), JSON_VALUE(ce.[CertificateData], '$.AchievementDate')) AS 'Achievement Date',
 		   UPPER(JSON_VALUE(ce.[CertificateData], '$.StandardName')) AS 'Standard Name',
@@ -72,7 +72,7 @@ AS
 		   END AS 'Provider Name',
 		   ce.[Status] AS 'Status'
 	FROM [dbo].[Certificates] ce
-	JOIN [dbo].[Organisations] rg ON ce.[OrganisationId] = rg.[id]
+	JOIN [dbo].[Organisations] rg ON ce.[OrganisationId] = rg.[Id]
 	WHERE ce.[Status] = 'Draft' AND ce.CreatedAt BETWEEN @fromdate AND @todate
 	ORDER BY 1, 11, 10, 2, 3
 RETURN 0
