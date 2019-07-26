@@ -83,7 +83,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
                                 .GetResult();
 
                             trainingProviderName = provider.ProviderName;
-                            _certificateRepository.UpdateProviderName(certificate.Id, trainingProviderName);
+                            _certificateRepository.UpdateProviderName(certificate.Id, trainingProviderName).GetAwaiter().GetResult();
                         }
                         else
                         {
