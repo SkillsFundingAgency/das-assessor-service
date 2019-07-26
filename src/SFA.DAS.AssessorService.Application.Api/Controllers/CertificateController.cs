@@ -53,23 +53,13 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             return Ok(await _mediator.Send(certificate));
         }
 
-        [HttpPut("printed", Name = "UpdateCertificatesBatchToIndicatePrinted")]
+        [HttpPut("{batchNumber}", Name = "UpdateCertificatesBatchToIndicatePrinted")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(Certificate))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> UpdateCertificatesBatchToIndicatePrinted([FromBody] UpdateCertificatesBatchToIndicatePrintedRequest updateCertificatesBatchToIndicatePrintedRequest)
+        public async Task<IActionResult> UpdateCertificatesBatchToIndicatePrinted(int batchNumber, [FromBody] UpdateCertificatesBatchToIndicatePrintedRequest updateCertificatesBatchToIndicatePrintedRequest)
         {
             await _mediator.Send(updateCertificatesBatchToIndicatePrintedRequest);
-            return Ok();
-        }
-
-        [HttpPut("updateCertificatesWithBatchNumber", Name = "UpdateCertificatesWithBatchNumber")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(CertificateLog))]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
-        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> UpdateCertificatesWithBatchNumber([FromBody] UpdateCertificatesBatchNumberRequest updateCertificatesBatchNumberRequest)
-        {
-            await _mediator.Send(updateCertificatesBatchNumberRequest);
             return Ok();
         }
 
