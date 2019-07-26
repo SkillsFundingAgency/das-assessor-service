@@ -97,8 +97,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssessorServiceApi\AssessorServiceTestBase.cs" />
+    <Compile Include="AssessorServiceApi\WhenSystemChangesStatusesToPrinted.cs" />
     <Compile Include="AssessorServiceApi\WhenSystemGeneratesBatchNumber.cs" />
     <Compile Include="AssessorServiceApi\WhenSystemGetsEmailTemplate.cs" />
+    <Compile Include="AssessorServiceApi\WhenSystemRequestsCertificatesToBePrinted.cs" />
     <Compile Include="WhenJsonRequested.cs" />
     <Compile Include="WhenPrinterFunctionFlowCommandIsExecutedSuccessfully.cs" />
     <Compile Include="WhenSpreadsheetRequested.cs" />
