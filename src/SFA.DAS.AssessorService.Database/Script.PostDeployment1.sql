@@ -10,10 +10,6 @@ Post-Deployment Script Template
 --------------------------------------------------------------------------------------
 */
 
-/* Start of data setup scripts - DO NOT REMOVE */
-:r .\DataSetup\OrganisationType.sql
-/* End of data setup scripts - DO NOT REMOVE */
-
 IF NOT EXISTS (SELECT * FROM EMailTemplates WHERE TemplateName = N'EPAOPermissionsAmended')
 BEGIN
 INSERT EMailTemplates ([Id],[TemplateName],[TemplateId],[Recipients],[CreatedAt]) 
@@ -309,3 +305,10 @@ update [dbo].[Contacts] set [Username] = [Email] where  [Username] like 'unknown
 -- START OF ON-2063
 UPDATE Privileges SET Description = 'This area allows you to apply for a Standard.' WHERE UserPrivilege = 'Apply for a Standard'
 -- END OF ON-2063
+
+-- START OF ON-1952
+UPDATE OrganisationType SET FinancialExempt = 1 WHERE Type = 'HEI' AND FinancialExempt = 0
+UPDATE OrganisationType SET FinancialExempt = 1 WHERE Type = 'Public Sector' AND FinancialExempt = 0
+UPDATE OrganisationType SET FinancialExempt = 1 WHERE Type = 'College' AND FinancialExempt = 0 
+UPDATE OrganisationType SET FinancialExempt = 1 WHERE Type = 'Academy or Free School' AND FinancialExempt = 0
+-- END OF ON-1952

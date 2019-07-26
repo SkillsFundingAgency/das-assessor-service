@@ -61,7 +61,6 @@
     <Folder Include="Tables" />
     <Folder Include="StoredProcedures" />
     <Folder Include="DataToImport" />
-    <Folder Include="DataSetup" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Tables\CertificateLogs.sql" />
@@ -122,7 +121,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="DataToImport\assessmentorgs.xlsx" />
-    <None Include="DataSetup\OrganisationType.sql" />
   </ItemGroup>
   <ItemGroup>
     <ArtifactReference Include="$(DacPacRootPath)\Extensions\Microsoft\SQLDB\Extensions\SqlServer\AzureV12\SqlSchemas\master.dacpac">
