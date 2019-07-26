@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Data
@@ -31,7 +32,7 @@ namespace SFA.DAS.AssessorService.Data
         public virtual DbSet<ContactsPrivilege> ContactsPrivileges { get; set; }
         public virtual DbSet<Privilege> Privileges { get; set; }
         public virtual DbSet<ContactRole> ContactRoles { get; set; }
-        
+
         public override int SaveChanges()
         {
             var saveTime = DateTime.UtcNow;
@@ -76,6 +77,18 @@ namespace SFA.DAS.AssessorService.Data
             modelBuilder.Entity<Organisation>()
                 .Property<string>("OrganisationData")
                 .HasField("_extendedOrgData");
+
+            SetUpJsonToEntityTypeHandlers(modelBuilder);
+        }
+
+        private void SetUpJsonToEntityTypeHandlers(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<SearchLog>()
+                .Property(e => e.SearchData)
+                .HasConversion(
+                    c => JsonConvert.SerializeObject(c),
+                    c => JsonConvert.DeserializeObject<SearchData>(string.IsNullOrWhiteSpace(c) ? "{}" : c));
+
         }
     }
 }

@@ -175,7 +175,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> NoAccess(OrganisationSearchViewModel viewModel)
+        public IActionResult NoAccess(OrganisationSearchViewModel viewModel)
         {
             return View(viewModel);
         }

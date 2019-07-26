@@ -73,7 +73,10 @@ namespace SFA.DAS.AssessorService.PrintFunction.Tests
                 _configurationWrapper.Object
                 );
 
-            var certificateResponses = Builder<CertificateResponse>.CreateListOfSize(10).Build();
+            var certificateResponses = Builder<CertificateResponse>.CreateListOfSize(10).All()
+                .With(c => c.Status = "Submitted")
+                .With(c => c.BatchNumber = "XXXXX-1")
+                .Build();
 
             foreach (var certificateResponse in certificateResponses)
             {
@@ -132,7 +135,7 @@ namespace SFA.DAS.AssessorService.PrintFunction.Tests
         public void ItShouldSetStatusOnCertificates()
         {
             _assessorServiceApi.Verify(q =>
-                q.ChangeStatusToPrinted(It.IsAny<int>(), It.IsAny<List<CertificateResponse>>()), Times.Once());
+                q.ChangeStatusToPrinted( It.IsAny<List<CertificateResponse>>()), Times.Once());
         }
     }
 }

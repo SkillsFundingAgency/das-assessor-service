@@ -27,7 +27,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Contacts.SetCon
         protected Guid AmendingContactId;
 
         [SetUp]
-        public async Task SetUp()
+        public void SetUp()
         {
             PrivilegeId1 = Guid.NewGuid();
             PrivilegeId2 = Guid.NewGuid();
@@ -71,26 +71,26 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Contacts.SetCon
         }
         
         [Test]
-        public async Task Then_existing_privileges_are_deleted()
+        public void Then_existing_privileges_are_deleted()
         {
             ContactRepository.Verify(repo => repo.RemoveAllPrivileges(ContactId));
         }
         
         [Test]
-        public async Task Then_new_privileges_are_created()
+        public void Then_new_privileges_are_created()
         {
             ContactRepository.Verify(repo => repo.AddPrivilege(ContactId, PrivilegeId1));
             ContactRepository.Verify(repo => repo.AddPrivilege(ContactId, PrivilegeId2));
         }
 
         [Test]
-        public async Task Then_check_is_carried_out_that_contact_isnt_last_contact_removing_user_management()
+        public void Then_check_is_carried_out_that_contact_isnt_last_contact_removing_user_management()
         {
             ContactRepository.Verify(repo => repo.IsOnlyContactWithPrivilege(ContactId, PrivilegeId3));
         }
 
         [Test]
-        public async Task Then_email_is_sent_with_correct_tokens()
+        public void Then_email_is_sent_with_correct_tokens()
         {
             
         }

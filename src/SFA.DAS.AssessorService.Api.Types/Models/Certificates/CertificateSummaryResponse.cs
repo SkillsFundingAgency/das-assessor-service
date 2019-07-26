@@ -7,6 +7,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Certificates
         public Guid CertificateId { get; set; }
         public string CertificateReference { get; set; }
         public string RecordedBy { get; set; }
+        public string RecordedByEmail { get; set; }
         public long Uln { get; set; }
         public string FullName { get; set; }
         public string TrainingProvider { get; set; }
