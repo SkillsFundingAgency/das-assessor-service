@@ -114,7 +114,33 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             if (result == null) return BadRequest();
             return Ok(result);
         }
-        
+
+        [HttpGet("assessment-organisations/contacts/signInId/{signInId}", Name = "GetContactBySignInId")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(EpaContact))]
+        [SwaggerResponse((int)HttpStatusCode.NotFound, null)]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> GetContactBySignInId(string signInId)
+        {
+            _logger.LogInformation($@"Get Contact from SignInId [{signInId}]");
+            var result = await _mediator.Send(new GetContactBySignInIdRequest { SignInId = signInId });
+            if (result == null) return BadRequest();
+            return Ok(result);
+        }
+
+        [HttpGet("assessment-organisations/contacts/email/{email}", Name = "GetContactByEmail")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(EpaContact))]
+        [SwaggerResponse((int)HttpStatusCode.NotFound, null)]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> GetContactByEmail(string email)
+        {
+            _logger.LogInformation($@"Get Contact from Email [{email}]");
+            var result = await _mediator.Send(new GetContactByEmailRequest { Email = email });
+            if (result == null) return BadRequest();
+            return Ok(result);
+        }
+
         [HttpGet("assessment-organisations/organisation-standard/{organisationStandardId}", Name = "GetOrganisationStandard")]
         [SwaggerResponse((int) HttpStatusCode.OK, Type = typeof(OrganisationStandard))]
         [SwaggerResponse((int) HttpStatusCode.NotFound, null)]
