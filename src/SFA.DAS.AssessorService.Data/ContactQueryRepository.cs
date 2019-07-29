@@ -70,7 +70,7 @@ namespace SFA.DAS.AssessorService.Data
         {
             var contact = await _assessorDbContext.Contacts
                 .Include(c => c.Organisation)
-                .FirstOrDefaultAsync(c => c.Email.Equals(email, StringComparison.InvariantCultureIgnoreCase) && c.Organisation.Status != OrganisationStatus.Deleted);
+                .FirstOrDefaultAsync(c => c.Email.ToLower() == email.ToLower() && c.Organisation.Status != OrganisationStatus.Deleted);
             
             return contact;
         }

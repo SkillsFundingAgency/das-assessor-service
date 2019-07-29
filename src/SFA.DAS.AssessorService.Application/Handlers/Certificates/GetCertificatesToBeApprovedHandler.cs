@@ -55,7 +55,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
             var trainingProviderName = string.Empty;
             var firstName = string.Empty;
             var lastName = string.Empty;
-            var recordedBy = string.Empty;
             var reasonForChange = string.Empty;
 
             var certificateResponses = new List<CertificateSummaryResponse>();
@@ -63,7 +62,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
             foreach (var certificate in certificates.Items)
             {
                 var certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
-                recordedBy = certificate.CreatedBy;
+                var recordedBy = certificate.CreatedBy;
 
                 try
                 {
@@ -133,7 +132,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
             var responses = certificateResponses.ToList();
             foreach (var response in responses)
             {
-                response.RecordedBy = (await _contactQueryRepository.GetContact(response.RecordedBy))?.DisplayName;
+                var contact = await _contactQueryRepository.GetContact(response.RecordedBy);
+                response.RecordedBy = contact?.DisplayName;
+                response.RecordedByEmail = contact?.Email;
             }
 
             var paginatedList = new PaginatedList<CertificateSummaryResponse>(responses,
