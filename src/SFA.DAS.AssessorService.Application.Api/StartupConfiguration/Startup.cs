@@ -23,6 +23,7 @@ using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Application.Api.Extensions;
+using SFA.DAS.AssessorService.Application.Api.Infrastructure;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Services;
 using SFA.DAS.AssessorService.Data;
@@ -127,7 +128,26 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                     }
                 });
 
-                
+                //services.AddHttpClient<ProviderRegisterApiClient>("ProviderRegisterApiClient", config =>
+                //    {
+                //        config.BaseAddress = new Uri(Configuration.ProviderRegisterApiAuthentication.ApiBaseAddress); //  "https://findapprenticeshiptraining-api.sfa.bis.gov.uk"
+                //        config.DefaultRequestHeaders.Add("Accept", "Application/json");
+                //    })
+                //    .SetHandlerLifetime(TimeSpan.FromMinutes(5));
+
+                services.AddHttpClient<ReferenceDataApiClient>("ReferenceDataApiClient", config =>
+                    {
+                        config.BaseAddress = new Uri(Configuration.ReferenceDataApiAuthentication.ApiBaseAddress); //  "https://at-refdata.apprenticeships.sfa.bis.gov.uk/api"
+                        config.DefaultRequestHeaders.Add("Accept", "Application/json");
+                    })
+                    .SetHandlerLifetime(TimeSpan.FromMinutes(5));
+
+                services.AddHttpClient<CompaniesHouseApiClient>("CompaniesHouseApiClient", config =>
+                    {
+                        config.BaseAddress = new Uri(Configuration.CompaniesHouseApiAuthentication.ApiBaseAddress); //  "https://api.companieshouse.gov.uk"
+                        config.DefaultRequestHeaders.Add("Accept", "Application/json");
+                    })
+                    .SetHandlerLifetime(TimeSpan.FromMinutes(5));
 
                 serviceProvider = ConfigureIOC(services);
 

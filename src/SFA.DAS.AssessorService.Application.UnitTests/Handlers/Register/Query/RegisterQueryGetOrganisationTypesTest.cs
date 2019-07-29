@@ -22,20 +22,20 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
         protected Mock<IRegisterQueryRepository> RegisterQueryRepository;
         protected GetOrganisationTypesHandler GetOrganisationTypesHandler;
         protected Mock<ILogger<GetOrganisationTypesHandler>> Logger;
-        private List<OrganisationType> _expectedOrganisationTypes;
-        private OrganisationType _organisationType1;
-        private OrganisationType _organisationType2;
+        private List<AssessorService.Api.Types.Models.AO.OrganisationType> _expectedOrganisationTypes;
+        private AssessorService.Api.Types.Models.AO.OrganisationType _organisationType1;
+        private AssessorService.Api.Types.Models.AO.OrganisationType _organisationType2;
 
         [SetUp]
         public void Setup()
         {
             RegisterQueryRepository = new Mock<IRegisterQueryRepository>();
-            _organisationType1 = new OrganisationType { Id = 1, Type = "Type 1" };
-            _organisationType2 = new OrganisationType { Id = 2, Type = "Another Type" };
+            _organisationType1 = new AssessorService.Api.Types.Models.AO.OrganisationType { Id = 1, Type = "Type 1" };
+            _organisationType2 = new AssessorService.Api.Types.Models.AO.OrganisationType { Id = 2, Type = "Another Type" };
 
             Logger = new Mock<ILogger<GetOrganisationTypesHandler>>();
           
-            _expectedOrganisationTypes = new List<OrganisationType>
+            _expectedOrganisationTypes = new List<AssessorService.Api.Types.Models.AO.OrganisationType>
             {
                 _organisationType1,
                 _organisationType2

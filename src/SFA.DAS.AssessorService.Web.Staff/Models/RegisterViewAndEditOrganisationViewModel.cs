@@ -29,7 +29,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Models
         public string ContactsCount { get; set; }
         public string StandardsCount { get; set; }
         public List<OrganisationStandardSummary> OrganisationStandards { get; set; }
-        public List<OrganisationType> OrganisationTypes { get; set; }
+        public List<AssessorService.Api.Types.Models.AO.OrganisationType> OrganisationTypes { get; set; }
         public string CompanyNumber { get; set; }
         public string CharityNumber { get; set; }
 

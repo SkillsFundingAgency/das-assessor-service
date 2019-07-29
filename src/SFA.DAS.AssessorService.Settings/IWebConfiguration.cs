@@ -24,10 +24,18 @@
         string RoatpApiClientBaseUrl { get; set; }
         ClientApiAuthentication RoatpApiAuthentication { get; set; }
 
+        ProviderRegisterApiAuthentication ProviderRegisterApiAuthentication { get; set; }
+        ReferenceDataApiAuthentication ReferenceDataApiAuthentication { get; set; }
+
+        CompaniesHouseApiAuthentication CompaniesHouseApiAuthentication { get; set; }
+        CharityCommissionApiAuthentication CharityCommissionApiAuthentication { get; set; }
+
         #region For External API Sandbox
+
         string SandboxSqlConnectionString { get; set; }
         ApiAuthentication SandboxApiAuthentication { get; set; }
         ClientApiAuthentication SandboxClientApiAuthentication { get; set; }
+
         #endregion
     }
 }

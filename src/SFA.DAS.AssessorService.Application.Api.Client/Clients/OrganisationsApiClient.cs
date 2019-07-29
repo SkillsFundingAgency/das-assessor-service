@@ -7,7 +7,6 @@ using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.Domain.Entities;
-using OrganisationType = SFA.DAS.AssessorService.Api.Types.Models.AO.OrganisationType;
 
 namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 {
@@ -238,12 +237,12 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task<List<OrganisationType>> GetOrganisationTypes()
+        public async Task<List<AssessorService.Api.Types.Models.AO.OrganisationType>> GetOrganisationTypes()
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get,
                 $"/api/ao/organisation-types"))
             {
-                return await RequestAndDeserialiseAsync<List<OrganisationType>>(request,
+                return await RequestAndDeserialiseAsync<List<AssessorService.Api.Types.Models.AO.OrganisationType>>(request,
                     $"Could not retrieve organisation types.");
             }
         }

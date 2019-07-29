@@ -11,7 +11,7 @@ using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Application.Api.Client.Exceptions;
 using SFA.DAS.AssessorService.Web.Constants;
 using SFA.DAS.AssessorService.Web.Infrastructure;
-using SFA.DAS.AssessorService.Web.ViewModels;
+using SFA.DAS.AssessorService.Web.ViewModels.Organisation;
 
 namespace SFA.DAS.AssessorService.Web.Controllers
 {
