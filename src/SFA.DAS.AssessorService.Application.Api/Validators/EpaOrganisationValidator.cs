@@ -476,9 +476,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
                     CheckIfContactDetailsAlreadyPresentInSystem(request.FirstName,request.LastName, request.Email, request.PhoneNumber,
                         null), validationResult, ValidationStatusCode.AlreadyExists);
 
-            RunValidationCheckAndAppendAnyError("EndPointAssessorOrganisationId",
-                CheckIfOrganisationNotFound(request.EndPointAssessorOrganisationId), validationResult,
-                ValidationStatusCode.BadRequest);
+            if (!string.IsNullOrEmpty(request.EndPointAssessorOrganisationId))
+            {
+                // NOTE: The current Apply process creates Organisation & Contact in one batch process, therefore EndPointAssessorOrganisationId will be unknown
+                RunValidationCheckAndAppendAnyError("EndPointAssessorOrganisationId",
+                    CheckIfOrganisationNotFound(request.EndPointAssessorOrganisationId), validationResult,
+                    ValidationStatusCode.BadRequest);
+            }
+
             RunValidationCheckAndAppendAnyError("FirstName", CheckFirstName(request.FirstName), validationResult,
                 ValidationStatusCode.BadRequest);
             RunValidationCheckAndAppendAnyError("LastName", CheckLastName(request.LastName), validationResult,
