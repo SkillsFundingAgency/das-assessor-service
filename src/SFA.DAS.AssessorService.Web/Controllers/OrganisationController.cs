@@ -202,24 +202,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             }
         }
 
-        [HttpGet]
-        [TypeFilter(typeof(MenuFilter), Arguments = new object[] { Pages.Organisations })]
-        [PrivilegeAuthorize(Privileges.ChangeOrganisationPrivilege)]
-        public async Task<IActionResult> ChangeTradingName()
-        {
-            var epaoid = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/epaoid")?.Value;
-            try
-            {
-                var organisation = await _organisationsApiClient.GetEpaOrganisation(epaoid);
-                return RedirectToAction("OrganisationDetails");
-            }
-            catch (EntityNotFoundException e)
-            {
-                _logger.LogWarning(e, "Failed to find organisation");
-                return RedirectToAction("NotRegistered", "Home");
-            }
-        }
-
         private ViewAndEditOrganisationViewModel MapOrganisationModel(EpaOrganisation organisation)
         {
             const string notSetDescription = "Not set";
