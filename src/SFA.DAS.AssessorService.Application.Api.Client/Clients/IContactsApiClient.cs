@@ -36,8 +36,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 
         Task MigrateUsers();
 
-        Task MigrateContactsAndOrgsToApply();
-
         Task MigrateSingleContactToApply(System.Guid signinId);
 
         Task<ContactResponse> CreateANewContactWithGivenId(Contact contact);

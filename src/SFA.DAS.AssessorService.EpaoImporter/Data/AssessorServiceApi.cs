@@ -99,7 +99,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Data
             return await response.Content.ReadAsAsync<BatchLogResponse>();
         }
 
-        public async Task ChangeStatusToPrinted(IEnumerable<CertificateResponse> responses)
+        public async Task ChangeStatusToPrinted(int batchNumber, IEnumerable<CertificateResponse> responses)
         {
             var certificateStatuses = responses.Select(
                 q => new CertificateStatus
@@ -110,22 +110,11 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Data
 
             var updateCertificatesBatchToIndicatePrintedRequest = new UpdateCertificatesBatchToIndicatePrintedRequest
             {
+                BatchNumber = batchNumber,
                 CertificateStatuses = certificateStatuses
             };
 
-            await _httpClient.PutAsJsonAsync($"/api/v1/certificates/printed", updateCertificatesBatchToIndicatePrintedRequest);
-        }
-
-        public async Task UpdateBatchNumberInCertificates(int batchNumber, IEnumerable<CertificateResponse> responses)
-        {
-            var certificateReferences = responses.Select(q => q.CertificateReference).ToList();
-            var updateCertificatesRequest = new UpdateCertificatesBatchNumberRequest
-            {
-                CertificateReference = certificateReferences,
-                BatchNumber = batchNumber
-            };
-
-            await _httpClient.PutAsJsonAsync($"/api/v1/certificates/updateCertificatesWithBatchNumber", updateCertificatesRequest);
+            await _httpClient.PutAsJsonAsync($"/api/v1/certificates/{batchNumber}", updateCertificatesBatchToIndicatePrintedRequest);
         }
 
         public async Task UpdateBatchDataInBatchLog(Guid batchId, BatchData batchData)
