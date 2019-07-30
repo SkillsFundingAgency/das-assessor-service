@@ -1,18 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net;
-using System.Threading.Tasks;
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using SFA.DAS.Apprenticeships.Api.Types;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using System.Collections.Generic;
+using System.Net;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers
 {
@@ -123,7 +121,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         public async Task<IActionResult> GetEpaContactBySignInId(string signInId)
         {
             _logger.LogInformation($@"Get EpaContact from SignInId [{signInId}]");
-            var result = await _mediator.Send(new GetContactBySignInIdRequest { SignInId = signInId });
+            var result = await _mediator.Send(new GetEpaContactBySignInIdRequest { SignInId = signInId });
             if (result == null) return BadRequest();
             return Ok(result);
         }
@@ -136,7 +134,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         public async Task<IActionResult> GetEpaContactByEmail(string email)
         {
             _logger.LogInformation($@"Get EpaContact from Email [{email}]");
-            var result = await _mediator.Send(new GetContactByEmailRequest { Email = email });
+            var result = await _mediator.Send(new GetEpaContactByEmailRequest { Email = email });
             if (result == null) return BadRequest();
             return Ok(result);
         }
