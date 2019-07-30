@@ -19,7 +19,8 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.OrganisationControllerTests
         //protected static Mock<IOrganisationService> OrganisationService;
         protected static Mock<ITokenService> TokenService;
         protected static Mock<ISessionService> SessionService;
-        protected static Mock<IOrganisationsApiClient> ApiClient;
+        protected static Mock<IOrganisationsApiClient> OrganisationApiClient;
+        protected static Mock<IContactsApiClient> ContactsApiClient;
 
         public static void Setup()
         {         
@@ -40,10 +41,12 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.OrganisationControllerTests
             TokenService = new Mock<ITokenService>();
             TokenService.Setup(s => s.GetToken()).Returns("jwt");
 
-            ApiClient = new Mock<IOrganisationsApiClient>();
-            ApiClient.Setup(c => c.Get("12345")).ReturnsAsync(new OrganisationResponse() { });
+            OrganisationApiClient = new Mock<IOrganisationsApiClient>();
+            OrganisationApiClient.Setup(c => c.Get("12345")).ReturnsAsync(new OrganisationResponse() { });
 
-            OrganisationController = new OrganisationController(logger.Object, httpContext.Object, ApiClient.Object);
+            ContactsApiClient = new Mock<IContactsApiClient>();
+
+            OrganisationController = new OrganisationController(logger.Object, httpContext.Object, OrganisationApiClient.Object, ContactsApiClient.Object);
         }
     }
 }

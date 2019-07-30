@@ -44,4 +44,12 @@ FROM
 WHERE
 	JSON_VALUE(OrganisationData, '$.PhoneNumber') IS NULL
 
+-- add a priviledge to enable users with the priviledge to edit the organisation details
+IF NOT EXISTS (SELECT * FROM [Privileges] WHERE [Key] = N'ChangeOrganisationDetails')
+BEGIN
+	INSERT INTO [Privileges] (Id, UserPrivilege, MustBeAtLeastOneUserAssigned, Description, [Key], Enabled) 
+	VALUES (NEWID(), 'Change organisation details', 0, 'This area allows you to change organisation details', 'ChangeOrganisationDetails', 1)
+END
+
 COMMIT TRANSACTION
+
