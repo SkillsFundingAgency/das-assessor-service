@@ -123,18 +123,6 @@
                                 </dd>
                             }
                         </div>
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">Trading name</dt>
-                            <dd class="govuk-summary-list__value">@Model.TradingName</dd>
-                            @if (Model.UserHasChangeOrganisationPrivilege == true)
-                            {
-                                <dd class="govuk-summary-list__actions">
-                                    <a class="govuk-link" asp-controller="Organisation" asp-action="ChangeTradingName">
-                                        Change<span class="govuk-visually-hidden"> trading name</span>
-                                    </a>
-                                </dd>
-                            }
-                        </div>
                     </dl>
                 </div>
             </div>

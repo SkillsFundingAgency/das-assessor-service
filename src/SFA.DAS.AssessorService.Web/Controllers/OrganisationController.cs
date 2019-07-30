@@ -226,7 +226,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             var viewModel = new ViewAndEditOrganisationViewModel
             {
                 OrganisationId = organisation.OrganisationId,
-                TradingName = organisation.OrganisationData?.TradingName,
                 Email = organisation.OrganisationData?.Email,
                 PhoneNumber = organisation.OrganisationData?.PhoneNumber,
                 WebsiteLink = organisation.OrganisationData?.WebsiteLink,

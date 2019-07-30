@@ -8,7 +8,6 @@ namespace SFA.DAS.AssessorService.Web.ViewModels
     public class ViewAndEditOrganisationViewModel
     {
         public string OrganisationId { get; set; }
-        public string TradingName { get; set; }
         public string Email { get; set; }
         public string PhoneNumber { get; set; }
         public string WebsiteLink { get; set; }
