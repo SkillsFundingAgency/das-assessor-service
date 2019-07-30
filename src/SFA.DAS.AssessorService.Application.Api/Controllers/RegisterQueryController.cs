@@ -115,27 +115,27 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             return Ok(result);
         }
 
-        [HttpGet("assessment-organisations/contacts/signInId/{signInId}", Name = "GetContactBySignInId")]
+        [HttpGet("assessment-organisations/contacts/signInId/{signInId}", Name = "GetEpaContactBySignInId")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(EpaContact))]
         [SwaggerResponse((int)HttpStatusCode.NotFound, null)]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> GetContactBySignInId(string signInId)
+        public async Task<IActionResult> GetEpaContactBySignInId(string signInId)
         {
-            _logger.LogInformation($@"Get Contact from SignInId [{signInId}]");
+            _logger.LogInformation($@"Get EpaContact from SignInId [{signInId}]");
             var result = await _mediator.Send(new GetContactBySignInIdRequest { SignInId = signInId });
             if (result == null) return BadRequest();
             return Ok(result);
         }
 
-        [HttpGet("assessment-organisations/contacts/email/{email}", Name = "GetContactByEmail")]
+        [HttpGet("assessment-organisations/contacts/email/{email}", Name = "GetEpaContactByEmail")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(EpaContact))]
         [SwaggerResponse((int)HttpStatusCode.NotFound, null)]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> GetContactByEmail(string email)
+        public async Task<IActionResult> GetEpaContactByEmail(string email)
         {
-            _logger.LogInformation($@"Get Contact from Email [{email}]");
+            _logger.LogInformation($@"Get EpaContact from Email [{email}]");
             var result = await _mediator.Send(new GetContactByEmailRequest { Email = email });
             if (result == null) return BadRequest();
             return Ok(result);
