@@ -15,9 +15,10 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
         public DateTime? StartDate { get; set; }
         public string WarningShown { get; set; }
 
-        public void FromCertificate(Domain.Entities.Certificate cert)
+        public override void FromCertificate(Domain.Entities.Certificate cert)
         {
-            BaseFromCertificate(cert);
+            base.FromCertificate(cert);
+
             if (CertificateData.OverallGrade != CertificateGrade.Fail)
             {
                 Day = CertificateData.AchievementDate?.Day.ToString();

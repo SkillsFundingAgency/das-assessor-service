@@ -14,7 +14,8 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
 
         public void FromCertificate(Domain.Entities.Certificate cert, List<string> options)
         {
-            BaseFromCertificate(cert);
+            base.FromCertificate(cert);
+
             Option = CertificateData.CourseOption;
             Options = options;
         }

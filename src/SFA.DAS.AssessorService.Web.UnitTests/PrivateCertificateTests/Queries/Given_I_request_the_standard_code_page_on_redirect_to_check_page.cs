@@ -12,7 +12,6 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.PrivateCertificateTests.Queries
     public class Given_I_request_the_standard_code_page_on_redirect_to_check_page : CertificateQueryBase
     {
         private ViewResult _result;
-        private CertificateStandardCodeListViewModel _viewModelResponse;
 
         [SetUp]
         public void Arrange()
