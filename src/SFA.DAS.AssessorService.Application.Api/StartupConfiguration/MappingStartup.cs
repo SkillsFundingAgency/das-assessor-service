@@ -45,8 +45,8 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                 cfg.CreateMap<CreateEpaOrganisationStandardRequest, EpaoStandardResponse>();
                 cfg.CreateMap<UpdateEpaOrganisationStandardRequest, EpaoStandardResponse>();
 
-                //cfg.AddProfile<AssessorServiceOrganisationProfile>();
-                //cfg.AddProfile<AssessorServiceOrganisationAddressProfile>();
+                cfg.AddProfile<AssessorServiceOrganisationProfile>();
+                cfg.AddProfile<AssessorServiceOrganisationAddressProfile>();
                 cfg.AddProfile<AssessorServiceOrganisationTypeProfile>();
 
                 cfg.AddProfile<ProviderRegisterOrganisationProfile>();

@@ -7,14 +7,17 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using AutoMapper;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Application.Api.Infrastructure;
 using SFA.DAS.AssessorService.Domain.Paging;
 using OrganisationType = SFA.DAS.AssessorService.Api.Types.Models.OrganisationType;
 
-namespace SFA.DAS.AssessorService.Application.Api.Controllers.Apply
+namespace SFA.DAS.AssessorService.Application.Api.Controllers
 {
+    [Authorize(Roles = "AssessorServiceInternalAPI")]
+    [Route("api/v1/search")]
     public class OrganisationSearchController : Controller
     {
         private readonly ILogger<OrganisationSearchController> _logger;
@@ -33,39 +36,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.Apply
             _charityCommissionApiClient = charityCommissionApiClient;
             _mediator = mediator;
         }
+        
 
-        [HttpGet("OrganisationSearch")]
-        public async Task<IEnumerable<OrganisationSearchResult>> OrganisationSearch(string searchTerm)
-        {
-            _logger.LogInformation("Handling Organisation Search Request");
-            if (string.IsNullOrWhiteSpace(searchTerm) || searchTerm.Length < 2)
-            {
-                return new List<OrganisationSearchResult>();
-            }
-
-            if (IsValidEpaOrganisationId(searchTerm))
-            {
-                _logger.LogInformation($@"Searching Organisations based on EPAO ID: [{searchTerm}]");
-                return await OrganisationSearchByEpao(searchTerm);
-            }
-
-            // NOTE: This is required because there are occasions where charity or company number can be interpreted as a ukprn
-            var results = new List<OrganisationSearchResult>();
-            if (IsValidUkprn(searchTerm, out var ukprn))
-            {
-                _logger.LogInformation($@"Searching Organisations based on UKPRN: [{searchTerm}]");
-                var resultFromUkprn = await OrganisationSearchByUkprn(ukprn);
-                if (resultFromUkprn != null) results.AddRange(resultFromUkprn);
-            }
-
-            _logger.LogInformation($@"Searching Organisations based on name or charity number or company number wildcard: [{searchTerm}]");
-            var resultFromName = await OrganisationSearchByNameOrCharityNumberOrCompanyNumber(searchTerm);
-            if (resultFromName != null) results.AddRange(resultFromName);
-
-            return Dedupe(results);
-        }
-
-        [HttpGet("OrganisationSearchPaged")]
+        [HttpGet("organisations")]
         public async Task<PaginatedList<OrganisationSearchResult>> OrganisationSearchPaged(string searchTerm, int pageSize, int pageIndex)
         {
             _logger.LogInformation("Handling Organisation Search Request");
@@ -440,72 +413,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.Apply
             return charityNumberMerge.OrderByDescending(org => org.Ukprn).ToList();
         }
 
-        [HttpGet("OrganisationSearch/email/{email}")]
-        public async Task<OrganisationSearchResult> GetOrganisationByEmail(string email)
-        {
-            
-            _logger.LogInformation($"GetOrganisationByEmail({email})");
-            
-            OrganisationSearchResult result;
+       
 
-            // EPAO Register
-            try
-            {
-                _logger.LogInformation($"Searching EPAO Register for. Email: {email}");
-                var apiResponse = await _mediator.Send(new GetAssessmentOrganisationByEmailRequest {Email = email});
-                result = Mapper.Map<AssessmentOrganisationSummary, OrganisationSearchResult>(apiResponse);
-            }
-            catch (Exception ex)
-            {
-                result = null;
-                _logger.LogError($"Error from EPAO Register. Message: {ex.Message}");
-            }
-
-            if (result == null)
-            {
-                _logger.LogInformation($"GetOrganisationByEmail({email}) result : null");
-            }
-            else
-            {
-                _logger.LogInformation($"GetOrganisationByEmail({email}) result : {result.Name}");
-            }
-            
-            
-            // de-dupe
-            return result;
-        }
-
-        [HttpGet("OrganisationTypes")]
-        public async Task<IEnumerable<OrganisationType>> GetOrganisationTypes(bool activeOnly = true)
-        {
-            IEnumerable<OrganisationType> results = null;
-
-            try
-            {
-
-                _logger.LogInformation($"Getting Organisation Types from EPAO Register.");
-                var apiResponse = await _mediator.Send(new GetOrganisationTypesRequest());
-
-              
-                if (activeOnly)
-                {
-                     apiResponse = apiResponse.Where(ot =>
-                        "Live".Equals(ot.Status, StringComparison.InvariantCultureIgnoreCase)).ToList();
-                }
-
-                 results =  Mapper
-                    .Map<IEnumerable<AssessorService.Api.Types.Models.AO.OrganisationType>, IEnumerable<OrganisationType>>(
-                        apiResponse);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError($"Error from EPAO Register. Message: {ex.Message}");
-            }
-
-            return results;
-        }
-
-        [HttpGet("OrganisationSearch/{companyNumber}/isActivelyTrading")]
+        [HttpGet("organisations/{companyNumber}/isActivelyTrading")]
         public async Task<bool> isCompanyActivelyTrading(string companyNumber)
         {
 

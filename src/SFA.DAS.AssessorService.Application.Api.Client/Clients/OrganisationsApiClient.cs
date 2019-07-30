@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.AssessorService.Domain.Paging;
 
 namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 {
@@ -268,6 +269,31 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
+        public async Task<PaginatedList<OrganisationSearchResult>> SearchForOrganisations(string searchTerm, int pageSize, int pageIndex)
+        {
+            try
+            {
+                using (var request = new HttpRequestMessage(HttpMethod.Get,
+                    $"/api/v1/search/organisations?searchTerm={searchTerm}&pageSize={pageSize}&pageIndex={pageIndex}"))
+                {
+                    return await RequestAndDeserialiseAsync<PaginatedList<OrganisationSearchResult>>(request,
+                        $"Could not retrieve organisations for search {searchTerm}.");
+                }
+            }
+            catch (HttpRequestException err)
+            {
+                if (err.Message.Contains("204"))
+                    return null;
+                throw err;
+            }
+        }
 
+        public async Task<bool> IsCompanyActivelyTrading(string companyNumber)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/search/organisations/{companyNumber}/isActivelyTrading"))
+            {
+                return await RequestAndDeserialiseAsync<bool>(request, $"Could not retrieve trading details for the organisation with an company number of {companyNumber}");
+            }
+        }
     }
 }

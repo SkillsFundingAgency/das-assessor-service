@@ -13,7 +13,7 @@ namespace CharityCommissionService
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("dotnet-svcutil", "1.0.0.1")]
     [System.ServiceModel.ServiceContractAttribute(Namespace="http://www.charitycommission.gov.uk/", ConfigurationName="CharityCommissionService.SearchCharitiesV1Soap")]
-    public interface SearchCharitiesV1Soap
+    public interface ISearchCharitiesV1SoapClient
     {
         
         [System.ServiceModel.OperationContractAttribute(Action="http://www.charitycommission.gov.uk/GetCharityByRegisteredCharityNumber", ReplyAction="*")]
@@ -9834,13 +9834,13 @@ namespace CharityCommissionService
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("dotnet-svcutil", "1.0.0.1")]
-    public interface SearchCharitiesV1SoapChannel : CharityCommissionService.SearchCharitiesV1Soap, System.ServiceModel.IClientChannel
+    public interface ISearchCharitiesV1SoapChannel : CharityCommissionService.ISearchCharitiesV1SoapClient, System.ServiceModel.IClientChannel
     {
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("dotnet-svcutil", "1.0.0.1")]
-    public partial class SearchCharitiesV1SoapClient : System.ServiceModel.ClientBase<CharityCommissionService.SearchCharitiesV1Soap>, CharityCommissionService.SearchCharitiesV1Soap
+    public partial class SearchCharitiesV1SoapClient : System.ServiceModel.ClientBase<CharityCommissionService.ISearchCharitiesV1SoapClient>, CharityCommissionService.ISearchCharitiesV1SoapClient
     {
         
     /// <summary>
@@ -9849,7 +9849,9 @@ namespace CharityCommissionService
     /// <param name="serviceEndpoint">The endpoint to configure</param>
     /// <param name="clientCredentials">The client credentials</param>
     static partial void ConfigureEndpoint(System.ServiceModel.Description.ServiceEndpoint serviceEndpoint, System.ServiceModel.Description.ClientCredentials clientCredentials);
-        
+
+        public SearchCharitiesV1SoapClient() : this(EndpointConfiguration.SearchCharitiesV1Soap) { }
+
         public SearchCharitiesV1SoapClient(EndpointConfiguration endpointConfiguration) : 
                 base(SearchCharitiesV1SoapClient.GetBindingForEndpoint(endpointConfiguration), SearchCharitiesV1SoapClient.GetEndpointAddress(endpointConfiguration))
         {
@@ -10038,13 +10040,11 @@ namespace CharityCommissionService
         {
             if ((endpointConfiguration == EndpointConfiguration.SearchCharitiesV1Soap))
             {
-                return new System.ServiceModel.EndpointAddress("https://apps.charitycommission.gov.uk/Showcharity/API/SearchCharitiesV1/SearchCha" +
-                        "ritiesV1.asmx");
+                return new System.ServiceModel.EndpointAddress("https://apps.charitycommission.gov.uk/Showcharity/API/SearchCharitiesV1/SearchCharitiesV1.asmx");
             }
             if ((endpointConfiguration == EndpointConfiguration.SearchCharitiesV1Soap12))
             {
-                return new System.ServiceModel.EndpointAddress("https://apps.charitycommission.gov.uk/Showcharity/API/SearchCharitiesV1/SearchCha" +
-                        "ritiesV1.asmx");
+                return new System.ServiceModel.EndpointAddress("https://apps.charitycommission.gov.uk/Showcharity/API/SearchCharitiesV1/SearchCharitiesV1.asmx");
             }
             throw new System.InvalidOperationException(string.Format("Could not find endpoint with name \'{0}\'.", endpointConfiguration));
         }

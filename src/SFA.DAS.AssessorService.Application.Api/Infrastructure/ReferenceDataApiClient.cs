@@ -8,7 +8,6 @@ using AutoMapper;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Clients.ActiveDirectory;
 using SFA.DAS.AssessorService.Api.Types.Models;
-using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.Settings;
 
 namespace SFA.DAS.AssessorService.Application.Api.Infrastructure
@@ -29,14 +28,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Infrastructure
         public async Task<IEnumerable<OrganisationSearchResult>> SearchOrgansiation(string searchTerm, bool exactMatch)
         {
             _logger.LogInformation($"Searching Reference Data API. Search Term: {searchTerm}");
-            var apiResponse = await Get<IEnumerable<Organisation>>($"/api/organisations?searchTerm={searchTerm}");
+            var apiResponse = await Get<IEnumerable<AssessorService.Api.Types.Models.ReferenceData.Organisation>>($"/api/organisations?searchTerm={searchTerm}");
 
             if (exactMatch)
             {
                 apiResponse = apiResponse?.Where(r => r.Name.Equals(searchTerm, StringComparison.InvariantCultureIgnoreCase)).AsEnumerable();
             }
 
-            return Mapper.Map<IEnumerable<Organisation>, IEnumerable<OrganisationSearchResult>>(apiResponse);
+            return Mapper.Map<IEnumerable<AssessorService.Api.Types.Models.ReferenceData.Organisation>, IEnumerable<OrganisationSearchResult>>(apiResponse);
         }
 
         private async Task<T> Get<T>(string uri)
