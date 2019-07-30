@@ -27,7 +27,6 @@ using SFA.DAS.AssessorService.ExternalApis.IFAStandards;
 using SFA.DAS.AssessorService.ExternalApis.Services;
 using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Web.Extensions;
-using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.Staff.Helpers;
 using SFA.DAS.AssessorService.Web.Staff.Infrastructure;
 using SFA.DAS.AssessorService.Web.Staff.Validators;
@@ -126,8 +125,6 @@ namespace SFA.DAS.AssessorService.Web.Staff
                 config.For<IContactsApiClient>().Use<ContactsApiClient>().Ctor<string>().Is(ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress);
                 config.For<IApplyApiClient>().Use<ApplyApiClient>().Ctor<string>().Is(ApplicationConfiguration.ApplyApiAuthentication.ApiBaseAddress);
                 config.For<IApiClient>().Use<ApiClient>().Ctor<string>().Is(ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress);
-
-                config.For<IContactApplyClient>().Use<ContactApplyClient>().Ctor<string>().Is(ApplicationConfiguration.ApplyApiAuthentication.ApiBaseAddress);
 
                 config.For<IRegisterQueryRepository>().Use<RegisterQueryRepository>();
                 config.For<IRegisterRepository>().Use<RegisterRepository>();

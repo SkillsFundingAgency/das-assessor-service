@@ -209,9 +209,7 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                 config.For<CharityCommissionService.ISearchCharitiesV1SoapClient>().Use<CharityCommissionService.SearchCharitiesV1SoapClient>();
                 config.For<CharityCommissionApiClient>().Use<CharityCommissionApiClient>();
                 // End of SOAP Services
-                config.For<ITokenService>().Use<ApplyTokenService>();
-                config.For<IContactApplyClient>().Use<ContactApplyClient>().Ctor<string>().Is(Configuration.ApplyApiAuthentication.ApiBaseAddress);
-                
+
                 config.Populate(services);
             });
 

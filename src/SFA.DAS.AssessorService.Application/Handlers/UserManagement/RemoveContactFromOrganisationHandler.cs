@@ -13,7 +13,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.UserManagement
         private readonly IContactQueryRepository _contactQueryRepository;
         private readonly IContactRepository _contactRepository;
 
-        public RemoveContactFromOrganisationHandler(IContactQueryRepository contactQueryRepository, IContactRepository contactRepository, IContactApplyClient applyContactsApiClient) 
+        public RemoveContactFromOrganisationHandler(IContactQueryRepository contactQueryRepository, IContactRepository contactRepository) 
         {
             _contactQueryRepository = contactQueryRepository;
             _contactRepository = contactRepository;
