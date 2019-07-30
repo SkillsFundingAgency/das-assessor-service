@@ -6,16 +6,12 @@ using System.Threading.Tasks;
 using AutoMapper;
 using MediatR;
 using Microsoft.Extensions.Logging;
-using SFA.DAS.Apprenticeships.Api.Types.AssessmentOrgs;
 using SFA.DAS.AssessorService.Api.Types.Models;
-using SFA.DAS.AssessorService.Api.Types.Models.AO;
-using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Application.Logging;
 using SFA.DAS.AssessorService.Domain.Entities;
-using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
-using SFA.DAS.AssessorService.ExternalApis.Services;
 using Organisation = SFA.DAS.AssessorService.Domain.Entities.Organisation;
+using SearchData = SFA.DAS.AssessorService.Domain.Entities.SearchData;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Search
 {
@@ -60,13 +56,29 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
 
         public async Task<List<SearchResult>> Handle(SearchQuery request, CancellationToken cancellationToken)
         {
+            var searchResults = await Search(request, cancellationToken);
+
+            await _ilrRepository.StoreSearchLog(new SearchLog()
+            {
+                NumberOfResults = searchResults.Count,
+                SearchTime = DateTime.UtcNow,
+                SearchData = new SearchData { IsPrivatelyFunded = request.IsPrivatelyFunded },
+                Surname = request.Surname,
+                Uln = request.Uln,
+                Username = request.Username
+            });
+
+            return searchResults;
+        }
+
+        private async Task<List<SearchResult>> Search(SearchQuery request, CancellationToken cancellationToken)
+        { 
             _logger.LogInformation($"Search for surname: {request.Surname} uln: {request.Uln} made by {request.EpaOrgId}");
 
             var thisEpao = await _organisationRepository.Get(request.EpaOrgId);
-
             if (thisEpao == null)
             {
-                _logger.LogInformation(LoggingConstants.SearchFailure);
+                _logger.LogInformation($"{LoggingConstants.SearchFailure} - Invalid EpaOrgId", request.EpaOrgId);
                 return new List<SearchResult>();
             }
 
@@ -118,7 +130,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
                 likedSurname = DealWithSpecialCharactersAndSpaces(request, likedSurname, listOfIlrResults);
             }
 
-
             ilrResults = listOfIlrResults?.Where(r =>(
                 r.EpaOrgId == thisEpao.EndPointAssessorOrganisationId ||
                 (r.EpaOrgId != thisEpao.EndPointAssessorOrganisationId && intStandards.Contains(r.StdCode)))
@@ -135,16 +146,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
             var searchResults = Mapper.Map<List<SearchResult>>(ilrResults)
                 .MatchUpExistingCompletedStandards(request, _certificateRepository, _contactRepository, _logger)
                 .PopulateStandards(_standardService, _logger);
-
-
-            await _ilrRepository.StoreSearchLog(new SearchLog()
-            {
-                NumberOfResults = searchResults.Count,
-                SearchTime = DateTime.UtcNow,
-                Surname = request.Surname,
-                Uln = request.Uln,
-                Username = request.Username
-            });
 
             return searchResults;
         }

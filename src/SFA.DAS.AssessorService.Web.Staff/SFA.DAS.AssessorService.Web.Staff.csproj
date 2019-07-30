@@ -5,6 +5,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="inactive_app_offline_public_beta.htm" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="app_offline.htm">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  
+  <ItemGroup>
     <Compile Remove="Controllers\RoatpController.cs" />
   </ItemGroup>
 
