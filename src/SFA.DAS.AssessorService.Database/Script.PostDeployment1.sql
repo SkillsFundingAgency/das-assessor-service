@@ -13,7 +13,7 @@ Post-Deployment Script Template
 
 -- ON-613 Patch Certificates with STxxxx StandardReference, where it is not yet included. 
 -- AB 11/03/19 Keep this active for new deployments, for now
--- AB 31/07/19 Still seeing existance of certs withiout Standartd reference (need to understand why)
+-- AB 31/07/19 Still seeing existance of certs without Standard reference (need to understand why)
 -- ****************************************************************************
 MERGE INTO certificates ma1
 USING (
