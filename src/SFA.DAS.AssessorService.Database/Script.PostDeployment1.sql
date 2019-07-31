@@ -10,123 +10,10 @@ Post-Deployment Script Template
 --------------------------------------------------------------------------------------
 */
 
-IF NOT EXISTS (SELECT * FROM EMailTemplates WHERE TemplateName = N'EPAOPermissionsAmended')
-BEGIN
-INSERT EMailTemplates ([Id],[TemplateName],[TemplateId],[Recipients],[CreatedAt]) 
-VALUES (NEWID(), N'EPAOPermissionsAmended', N'c1ba00d9-81b6-46d8-9b70-3d89d51aa9c1', NULL, GETDATE())
-END
-
-IF NOT EXISTS (SELECT * FROM EMailTemplates WHERE TemplateName = N'EPAOPermissionsRequested')
-BEGIN
-INSERT EMailTemplates ([Id],[TemplateName],[TemplateId],[Recipients],[CreatedAt]) 
-VALUES (NEWID(), N'EPAOPermissionsRequested', N'addf58d9-9e20-46fe-b952-7fc62a47b7f7', NULL, GETDATE())
-END
-
--- Update privileges
-  
-DECLARE @privilegesCount int
-SELECT @privilegesCount = COUNT(*) FROM Privileges
-
-IF (@privilegesCount = 6)
-  BEGIN
-    -- remove ContactsPrivileges records for API
-    DELETE ContactsPrivileges
-    FROM Privileges p
-           INNER JOIN ContactsPrivileges cp ON cp.PrivilegeId = p.Id
-    WHERE p.UserPrivilege = 'Manage API subscription'  
-    
-    DELETE Privileges WHERE UserPrivilege = 'Manage API subscription'
-  END
-  
-IF (@privilegesCount < 5)
-  BEGIN
-    -- remove ContactsPrivileges records for View standards
-    DELETE ContactsPrivileges
-    FROM Privileges p
-           INNER JOIN ContactsPrivileges cp ON cp.PrivilegeId = p.Id
-    WHERE p.UserPrivilege = 'View standards'
-
-    -- remove Privileges View standards
-    DELETE Privileges WHERE UserPrivilege = 'View standards'
-
-    -- rename existing privileges
-    UPDATE Privileges SET UserPrivilege = 'Apply for a Standard', Description = 'This area allows you to apply for a standard.' WHERE UserPrivilege = 'Apply for standards'
-
-    -- add new ones
-    INSERT INTO Privileges (Id, UserPrivilege, Description) VALUES (NEWID(), 'View completed assessments', 'This area shows all previously recorded assessments.')
-/*  Do not yet add API management
---  INSERT INTO Privileges (Id, UserPrivilege, Description) VALUES (NEWID(), 'Manage API subscription', 'This area allows you to manage your API subscriptions.')
-*/
-    INSERT INTO Privileges (Id, UserPrivilege, Description) VALUES (NEWID(), 'View pipeline', 'This area shows the Standard and number of apprentices due to be assessed.')
-
-    -- set Manage Users to MustBeAtLeast.... true
-    UPDATE Privileges SET MustBeAtLeastOneUserAssigned = 1, Description = 'This area shows a list of all users in your organisation and the ability to manage their permissions.' WHERE UserPrivilege = 'Manage users'
-    
-    UPDATE Privileges SET Description = 'This area allows you to record assessment grades and produce certificates.' WHERE UserPrivilege = 'Record grades and issue certificates'
-  END  
-  
-
-DELETE EMailTemplates WHERE TemplateName = 'EPAOUserApproveRequest'
-DELETE EMailTemplates WHERE TemplateName = 'EPAOUserApproveConfirm'
-DELETE EMailTemplates WHERE TemplateName = 'EPAOUserApproveReject'
-
-INSERT INTO EMailTemplates (Id, TemplateName, TemplateId, CreatedAt) VALUES (NEWID(), 'EPAOUserApproveRequest', 'f7ca95a9-54fb-4f5f-8a88-840445f98c8b', GETUTCDATE())
-INSERT INTO EMailTemplates (Id, TemplateName, TemplateId, CreatedAt) VALUES (NEWID(), 'EPAOUserApproveConfirm', '68506adb-7e17-45c9-ad54-45ef9a2cad15', GETUTCDATE())
-INSERT INTO EMailTemplates (Id, TemplateName, TemplateId, CreatedAt) VALUES (NEWID(), 'EPAOUserApproveReject', 'e7dc7016-9c88-4e25-9496-cb135001f413', GETUTCDATE())
-  
-  
--- backup ILRS before data synch
-/* DONE
-DELETE FROM IlrsCopy
-
-INSERT INTO IlrsCopy SELECT * FROM Ilrs
-*/
-
-/* DONE
-update deliveryarea set Ordering=1 where Area='North East'
-update deliveryarea set Ordering=2 where Area='North West'
-update deliveryarea set Ordering=3 where Area='Yorkshire and the Humber'
-update deliveryarea set Ordering=4 where Area='East Midlands'
-update deliveryarea set Ordering=5 where Area='West Midlands'
-update deliveryarea set Ordering=6 where Area='East of England'
-update deliveryarea set Ordering=7 where Area='London'
-update deliveryarea set Ordering=8 where Area='South East'
-update deliveryarea set Ordering=9 where Area='South West'*/
-
--- ON-1374 update any new organisation standards to 'Live' if minimum acceptance criteria for live is available
-UPDATE organisationStandard 
-    SET Status='Live', 
-    DateStandardApprovedOnRegister = ISNULL(DateStandardApprovedOnRegister, CONVERT(DATE, GETDATE()))
-    WHERE Id IN (SELECT organisationStandardId FROM  OrganisationStandardDeliveryArea)
-    AND contactId IS NOT NULL
-    AND Status='New'
-
-/* DONE
--- ON-1058 update FHA details STORY 
-:r UpdateFHADetails.sql
-*/
-
-/* DONE
--- load December 2018 report DATABASE
-:r setDec18EPAReport.sql
-*/
-
--- patch FundingModel, where this was not set by data sync
-UPDATE Ilrs SET FundingModel = 36 WHERE FundingModel IS NULL
-
--- DONE
--- fix options
---UPDATE [Certificates]
---SET [CertificateData] = JSON_MODIFY([CertificateData], '$.CourseOption','Alcoholic Beverage Service') 
---WHERE json_value(certificatedata,'$.CourseOption') = 'Alcholic beverage service'
-
---UPDATE [Options] 
---SET [OptionName] = 'Alcoholic Beverage Service'
---WHERE [OptionName] = 'Alcholic beverage service'
-
 
 -- ON-613 Patch Certificates with STxxxx StandardReference, where it is not yet included. 
 -- AB 11/03/19 Keep this active for new deployments, for now
+-- AB 31/07/19 Still seeing existance of certs without Standard reference (need to understand why)
 -- ****************************************************************************
 MERGE INTO certificates ma1
 USING (
@@ -138,12 +25,6 @@ SELECT ce1.[Id],JSON_MODIFY([CertificateData],'$.StandardReference',st1.Referenc
 ON (ma1.id = up1.id)
 WHEN MATCHED THEN UPDATE SET ma1.[CertificateData] = up1.[newData];
 
-/* DONE 
-IF NOT EXISTS (SELECT * FROM EMailTemplates WHERE TemplateName = N'EPAOUserApproveConfirm')
-BEGIN
-INSERT EMailTemplates ([Id],[TemplateName],[TemplateId],[Recipients],[CreatedAt]) 
-VALUES (NEWID(), N'EPAOUserApproveConfirm', N'539204f8-e99a-4efa-9d1f-d0e58b26dd7b', NULL, GETDATE())
-END
 
 IF NOT EXISTS (SELECT * FROM EMailTemplates WHERE TemplateName = N'EPAOUserApproveRequest')
 BEGIN
