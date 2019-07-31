@@ -9,9 +9,9 @@ namespace SFA.DAS.AssessorService.Api.Types.Models
     {
         public ContactsWithPrivilegesResponse()
         {
-            Privileges = new List<string>();
+            Privileges = new List<PrivilegeResponse>();
         }
         public Contact Contact { get; set; }
-        public List<string> Privileges { get;  }
+        public List<PrivilegeResponse> Privileges { get;  }
     }
 }

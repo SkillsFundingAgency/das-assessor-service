@@ -19,6 +19,7 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                 cfg.CreateMap<Organisation, OrganisationResponse>();
                 cfg.CreateMap<CreateOrganisationRequest, Organisation>();
                 cfg.CreateMap<UpdateOrganisationRequest, Organisation>();
+
                 cfg.CreateMap<CreateContactRequest, Contact>().ReverseMap();
                 cfg.CreateMap<Contact, ContactResponse>();
                 cfg.CreateMap<Ilr, SearchResult>();
@@ -40,9 +41,8 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
 
                 cfg.CreateMap<Certificate, CertificateSummaryResponse>();
 
-                // how can these be automatically mapped they have nothing in common?
-                //cfg.CreateMap<CreateEpaOrganisationRequest, EpaOrganisationResponse>(); // is this ever Mapper.Map (ped)
-                cfg.CreateMap<UpdateEpaOrganisationRequest, EpaOrganisationResponse>(); // is this ever Mapper.Map (ped)
+                cfg.CreateMap<CreateEpaOrganisationRequest, EpaOrganisationResponse>(); 
+                cfg.CreateMap<UpdateEpaOrganisationRequest, EpaOrganisationResponse>(); 
                 cfg.CreateMap<CreateEpaOrganisationStandardRequest, EpaoStandardResponse>();
                 cfg.CreateMap<UpdateEpaOrganisationStandardRequest, EpaoStandardResponse>();
             });

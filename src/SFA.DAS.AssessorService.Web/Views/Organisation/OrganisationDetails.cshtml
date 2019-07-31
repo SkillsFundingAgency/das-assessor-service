@@ -41,7 +41,7 @@
                             @if (Model.UserHasChangeOrganisationPrivilege == true)
                             {
                                 <dd class="govuk-summary-list__actions">
-                                    <a class="govuk-link" asp-controller="Organisation" asp-action="ChangeContactName">
+                                    <a class="govuk-link" asp-controller="Organisation" asp-action="SelectOrChangeContactName">
                                         @if (string.IsNullOrEmpty(Model.PrimaryContactName))
                                         {
                                             @:Select<span class="govuk-visually-hidden"> contact name</span>

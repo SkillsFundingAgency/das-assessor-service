@@ -158,7 +158,16 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                     validationRequest);
             }
         }
-        
+
+        public async Task<bool> AssociateOrganisationWithEpaContact(AssociateEpaOrganisationWithEpaContactRequest associateEpaOrganisationWithEpaContactRequest)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Put, $"api/ao/assessment-organisations/contacts/associate-organisation"))
+            {
+                return await PostPutRequestWithResponse<AssociateEpaOrganisationWithEpaContactRequest, bool>(request,
+                    associateEpaOrganisationWithEpaContactRequest);
+            }
+        }
+
         public async Task<ValidationResponse> ValidateSearchStandards(string searchstring)
         {
            
@@ -228,6 +237,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                 await Delete(request);
             }
         }
+
         public async Task<EpaOrganisation> GetEpaOrganisation(string endPointAssessorOrganisationId)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get,
@@ -248,8 +258,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-
-      
         public async Task SendEmailsToOrganisationUserManagementUsers(NotifyUserManagementUsersRequest notifyUserManagementUsersRequest)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Put,
@@ -268,7 +276,5 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                     $"Could not retrieve standards for organisation with Id of {endPointAssessorOrganisationId}");
             }
         }
-
-
     }
 }

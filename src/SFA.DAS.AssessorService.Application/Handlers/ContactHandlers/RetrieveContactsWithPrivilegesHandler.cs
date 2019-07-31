@@ -34,7 +34,11 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ContactHandlers
                     : result.Status;
                 foreach (var role in result.ContactsPrivileges)
                 {
-                    contactsWithPrivilegesResponse.Privileges.Add(role.Privilege?.UserPrivilege);
+                    contactsWithPrivilegesResponse.Privileges.Add(new PrivilegeResponse
+                    {
+                        UserPrivilege = role.Privilege?.UserPrivilege,
+                        Key = role.Privilege?.Key
+                    });
                 }
 
                 contactsWithPrivilegesResponse.Contact.ContactsPrivileges = null;
