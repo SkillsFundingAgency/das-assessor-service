@@ -56,7 +56,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.UserManagement
             return new SetContactPrivilegesResponse()
             {
                 Success = true, 
-                HasRemovedOwnUserManagement = request.ContactId == request.AmendingContactId && privilegesBeingRemovedThatMustBelongToSomeone.Any(p => p.Privilege.UserPrivilege == Privileges.ManageUsers)
+                HasRemovedOwnUserManagement = request.ContactId == request.AmendingContactId && privilegesBeingRemovedThatMustBelongToSomeone.Any(p => p.Privilege.Key == Privileges.ManageUsers)
             };
         }
 

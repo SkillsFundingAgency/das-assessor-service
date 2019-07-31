@@ -54,25 +54,26 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
                 certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData) ?? new CertificateData();
                 epao = await _organisationRepository.Get(certificate.OrganisationId) ?? new Organisation();
             }
-            
+
             var learnerDetail = new LearnerDetail()
             {
                 Uln = request.Uln,
-                FamilyName = !string.IsNullOrEmpty(certificateData.LearnerFamilyName) ?  certificateData.LearnerFamilyName : learner?.FamilyName,
-                GivenNames = !string.IsNullOrEmpty(certificateData.LearnerGivenNames) ?  certificateData.LearnerGivenNames : learner?.GivenNames,
+                FamilyName = !string.IsNullOrEmpty(certificateData.LearnerFamilyName) ? certificateData.LearnerFamilyName : learner?.FamilyName,
+                GivenNames = !string.IsNullOrEmpty(certificateData.LearnerGivenNames) ? certificateData.LearnerGivenNames : learner?.GivenNames,
                 LearnStartDate = certificateData.LearningStartDate.HasValue ? certificateData.LearningStartDate : learner?.LearnStartDate,
                 StandardCode = (certificate?.StandardCode).HasValue ? certificate.StandardCode : standard?.StandardId ?? 0,
                 Standard = !string.IsNullOrEmpty(certificateData.StandardName) ? certificateData.StandardName : standard?.Title,
                 Level = certificateData.StandardLevel > 0 ? certificateData.StandardLevel : standard?.StandardData?.Level ?? 0,
-                CertificateReference = certificate?.CertificateReference, 
-                CertificateStatus = certificate?.Status, 
+                CertificateReference = certificate?.CertificateReference,
+                CertificateStatus = certificate?.Status,
                 OverallGrade = certificateData.OverallGrade,
                 AchievementDate = certificateData.AchievementDate, //?.UtcToTimeZoneTime(),
-                Option = certificateData.CourseOption, 
+                Option = certificateData.CourseOption,
                 OrganisationName = epao.EndPointAssessorName,
                 OrganisationId = epao.EndPointAssessorOrganisationId,
                 CertificateLogs = logs,
                 FundingModel = learner?.FundingModel,
+                IsPrivatelyFunded = certificate.IsPrivatelyFunded,
                 CertificateId = certificate?.Id
             };
 
