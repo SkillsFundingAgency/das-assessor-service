@@ -23,21 +23,21 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Private
     [Route("certificate/privatestandardcodes")]
     public class CertificatePrivateStandardCodeController : CertificateBaseController
     {
-        private readonly IAssessmentOrgsApiClient _assessmentOrgsApiClient;
         private readonly CacheHelper _cacheHelper;
+        private readonly IOrganisationsApiClient _organisationsApiClient;
         private readonly ICertificateApiClient _certificateApiClient;
         private readonly ISessionService _sessionService;
         private readonly IStandardServiceClient _standardServiceClient;
 
         public CertificatePrivateStandardCodeController(ILogger<CertificateController> logger,
             IHttpContextAccessor contextAccessor,
-            IAssessmentOrgsApiClient assessmentOrgsApiClient,
+            IOrganisationsApiClient organisationsApiClient,
             CacheHelper cacheHelper,
             ICertificateApiClient certificateApiClient, ISessionService sessionService,
             IStandardServiceClient standardServiceClient)
             : base(logger, contextAccessor, certificateApiClient, sessionService)
         {
-            _assessmentOrgsApiClient = assessmentOrgsApiClient;
+            _organisationsApiClient = organisationsApiClient;
             _cacheHelper = cacheHelper;
             _certificateApiClient = certificateApiClient;
             _sessionService = sessionService;
@@ -74,9 +74,10 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Private
             vm.StandardCodes = GetSelectListItems(standards, filteredStandardCodes);
             if (!string.IsNullOrEmpty(vm.SelectedStandardCode))
             {
-                var selectedStandard = standards.First(q => q.Id == vm.SelectedStandardCode);
+                var selectedStandard = standards.First(q => q.StandardId.ToString() == vm.SelectedStandardCode);
+                vm.StandardReference = selectedStandard.ReferenceNumber;
                 vm.Standard = selectedStandard.Title;
-                vm.Level = selectedStandard.Level;
+                vm.Level = selectedStandard.StandardData.Level.GetValueOrDefault();
 
                 var sessionString = SessionService.Get("CertificateSession");
                 if (sessionString == null)
@@ -101,17 +102,19 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Private
                 });
             }
 
+       
             return await SaveViewModel(vm,
                 returnToIfModelNotValid: "~/Views/Certificate/StandardCode.cshtml",
-                nextAction: RedirectToAction("LearnerStartDate", "CertificatePrivateLearnerStartDate"), action: CertificateActions.StandardCode);
+                nextAction: RedirectToAction("Option", "CertificateOption"), action: CertificateActions.StandardCode);
+
         }
 
-        private IEnumerable<SelectListItem> GetSelectListItems(List<StandardSummary> standards,
+        private IEnumerable<SelectListItem> GetSelectListItems(List<StandardCollation> standards,
             List<string> filteredStandardCodes)
         {
             return standards
-                .Where(a => filteredStandardCodes.Contains(a.Id))
-                .Select(q => new SelectListItem { Value = q.Id, Text = q.Title.ToString() + " (" + q.Id + ')' })
+                .Where(a => filteredStandardCodes.Contains(a.StandardId.ToString()))
+                .Select(q => new SelectListItem { Value = q.StandardId.ToString(), Text = q.Title.ToString() + " (" + q.StandardId + ')' })
                 .ToList()
                 .OrderBy(q => q.Text);
         }
@@ -121,18 +124,17 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Private
             var endPointAsessorOrganisationId = _sessionService.Get("EndPointAsessorOrganisationId");
 
             var filteredStandardCodes =
-                (await _assessmentOrgsApiClient
-                    .FindAllStandardsByOrganisationIdAsync(endPointAsessorOrganisationId))
-                .Select(q => q.StandardCode).ToList();
+                (await  _organisationsApiClient.GetOrganisationStandardsByOrganisation(endPointAsessorOrganisationId))
+                .Select(q => q.StandardCode.ToString()).ToList();
             return filteredStandardCodes;
         }
 
-        private async Task<IEnumerable<StandardSummary>> GetAllStandards()
+        private async Task<IEnumerable<StandardCollation>> GetAllStandards()
         {
-            var results = await _cacheHelper.RetrieveFromCache<IEnumerable<StandardSummary>>("Standards");
+            var results = await _cacheHelper.RetrieveFromCache<IEnumerable<StandardCollation>>("Standards");
             if (results == null)
             {
-                var standards = await _standardServiceClient.GetAllStandardSummaries();
+                var standards = await _standardServiceClient.GetAllStandards();
                 await _cacheHelper.SaveToCache("Standards", standards, 1);
 
                 results = standards;

@@ -7,7 +7,9 @@ namespace SFA.DAS.AssessorService.Web.Staff.ViewModels.Private
         public string UserName { get; set; }
         public string ActionHint { get; set; }
         public int? PageIndex { get; set; }
+        public bool HaveAllRecordsBeenProcessed { get; set; }
         public ApprovalResult[] ApprovalResults { get; set; }
       
     }
+    
 }

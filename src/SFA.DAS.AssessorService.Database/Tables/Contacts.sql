@@ -32,3 +32,5 @@ REFERENCES [dbo].[Organisations] ([Id]);
 GO
  ALTER TABLE [dbo].[Contacts] CHECK CONSTRAINT [FK_Contacts_Organisations_OrganisationId];
 GO
+
+CREATE INDEX [ixu_contacts_signinid] ON [Contacts] (SignInId);

@@ -1,11 +1,13 @@
 ﻿using System;
 using Newtonsoft.Json;
+using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.JsonData;
 
 namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
 {
     public class CertificateDateViewModel : CertificateBaseViewModel, ICertificateViewModel
     {
+        public string SelectedGrade { get; set; }
         public DateTime Date { get; set; }
         public string Day { get; set; }
         public string Month { get; set; }
@@ -13,13 +15,18 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
         public DateTime? StartDate { get; set; }
         public string WarningShown { get; set; }
 
-        public void FromCertificate(Domain.Entities.Certificate cert)
+        public override void FromCertificate(Domain.Entities.Certificate cert)
         {
-            BaseFromCertificate(cert);
-            Day = CertificateData.AchievementDate?.Day.ToString();
-            Month = CertificateData.AchievementDate?.Month.ToString();
-            Year = CertificateData.AchievementDate?.Year.ToString();
+            base.FromCertificate(cert);
+
+            if (CertificateData.OverallGrade != CertificateGrade.Fail)
+            {
+                Day = CertificateData.AchievementDate?.Day.ToString();
+                Month = CertificateData.AchievementDate?.Month.ToString();
+                Year = CertificateData.AchievementDate?.Year.ToString();
+            }
             StartDate = CertificateData.LearningStartDate;
+            SelectedGrade = CertificateData.OverallGrade;
             WarningShown = "false";
         }
 

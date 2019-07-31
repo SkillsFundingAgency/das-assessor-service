@@ -7,6 +7,8 @@ using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Extensions;
 using SFA.DAS.AssessorService.Domain.JsonData;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -41,8 +43,12 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates.Batch
             var certData = CombineCertificateData(JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData), request.CertificateData);
 
             _logger.LogInformation("UpdateCertificate Before Update CertificateData");
+            
+            // need to update EPA Reference too
+            certData.EpaDetails.EpaReference = certificate.CertificateReference;
             certificate.CertificateData = JsonConvert.SerializeObject(certData);
 
+            // adjust Status appropriately
             if(certificate.Status == CertificateStatus.Deleted)
             {
                 certificate.Status = CertificateStatus.Draft;
@@ -68,11 +74,26 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates.Batch
 
         private CertificateData CombineCertificateData(CertificateData certData, CertificateData requestData)
         {
+            var epaDetails = certData.EpaDetails ?? new EpaDetails();
+            if (epaDetails.Epas is null) epaDetails.Epas = new List<EpaRecord>();
+
+            var epaOutcome = certData.OverallGrade == CertificateGrade.Fail ? "fail" : "pass";
+            if (requestData.AchievementDate != null && !epaDetails.Epas.Any(rec => rec.EpaDate == requestData.AchievementDate.Value && rec.EpaOutcome == epaOutcome))
+            {
+                var record = new EpaRecord { EpaDate = requestData.AchievementDate.Value, EpaOutcome = epaOutcome };
+                epaDetails.Epas.Add(record);
+
+                var latestRecord = epaDetails.Epas.OrderByDescending(epa => epa.EpaDate).First();
+                epaDetails.LatestEpaDate = latestRecord.EpaDate;
+                epaDetails.LatestEpaOutcome = latestRecord.EpaOutcome;
+            }
+
             return new CertificateData()
             {
                 LearnerGivenNames = certData.LearnerGivenNames,
                 LearnerFamilyName = certData.LearnerFamilyName,
                 LearningStartDate = certData.LearningStartDate,
+                StandardReference = certData.StandardReference,
                 StandardName = certData.StandardName,     
                 StandardLevel = certData.StandardLevel,
                 StandardPublicationDate = certData.StandardPublicationDate,
@@ -90,7 +111,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates.Batch
                 Registration = requestData.Registration,
                 AchievementDate = requestData.AchievementDate,
                 CourseOption = requestData.CourseOption,
-                OverallGrade = requestData.OverallGrade                
+                OverallGrade = NormalizeOverallGrade(requestData.OverallGrade),
+
+                EpaDetails = epaDetails
             };
         }
 
@@ -102,7 +125,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates.Batch
             var certificateLogs = await _certificateRepository.GetCertificateLogsFor(cert.Id);
             certificateLogs = certificateLogs?.Where(l => l.ReasonForChange is null).ToList(); // this removes any admin changes done within staff app
 
-            var createdLogEntry = certificateLogs.FirstOrDefault(l => l.Status == CertificateStatus.Draft);
+            var createdLogEntry = certificateLogs?.FirstOrDefault(l => l.Status == CertificateStatus.Draft);
             if (createdLogEntry != null)
             {
                 var createdContact = await _contactQueryRepository.GetContact(createdLogEntry.Username);
@@ -126,6 +149,12 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates.Batch
             }
 
             return cert;
+        }
+
+        private static string NormalizeOverallGrade(string overallGrade)
+        {
+            var grades = new string[] { CertificateGrade.Pass, CertificateGrade.Credit, CertificateGrade.Merit, CertificateGrade.Distinction, CertificateGrade.PassWithExcellence, CertificateGrade.NoGradeAwarded };
+            return grades.FirstOrDefault(g => g.Equals(overallGrade, StringComparison.InvariantCultureIgnoreCase)) ?? overallGrade;
         }
     }
 }

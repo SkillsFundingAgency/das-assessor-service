@@ -20,7 +20,7 @@ namespace SFA.DAS.AssessorService.PrintFunction.Tests.AssessorServiceApi
 
             var certificateResponses = Builder<CertificateResponse>.CreateListOfSize(10).Build();
 
-            MockHttp.When("http://localhost:59022/api/v1/certificates?statuses=Submitted&statuses=Reprint")
+            MockHttp.When("http://localhost:59022/api/v1/certificates/tobeprinted")
                 .Respond("application/json", JsonConvert.SerializeObject(certificateResponses)); // Respond with JSON
 
             _result = AssessorServiceApi.GetCertificatesToBePrinted().Result;

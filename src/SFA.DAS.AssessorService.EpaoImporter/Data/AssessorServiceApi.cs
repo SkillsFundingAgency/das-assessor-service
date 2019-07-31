@@ -35,8 +35,8 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Data
         public async Task<IEnumerable<CertificateResponse>> GetCertificatesToBePrinted()
         {
             var response = await _httpClient.GetAsync(
-                "/api/v1/certificates?statuses=Submitted&statuses=Reprint");
-         
+                "/api/v1/certificates/tobeprinted");
+
             var certificates = await response.Content.ReadAsAsync<List<CertificateResponse>>();
             if (response.IsSuccessStatusCode)
             {

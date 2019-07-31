@@ -46,7 +46,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.AccountControllerTests
 
             _accountController = new AccountController(new Mock<ILogger<AccountController>>().Object,
                 _loginOrchestrator.Object, new Mock<ISessionService>().Object, _webConfigurationMock.Object, _contactsApiClientMock.Object,
-                _validatorMock.Object);
+                _contextAccessor.Object, _validatorMock.Object);
         }
 
         [Test]
@@ -83,7 +83,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.AccountControllerTests
         public void And_I_am_not_activated_Then_redirect_to_NotActivated_page()
         {
             _loginOrchestrator.Setup(o => o.Login())
-                .ReturnsAsync(new LoginResponse() { Result = LoginResult.NotActivated, EndPointAssessorName = "EPA01", EndPointAssessorOrganisationId = "EPA0001" });
+                .ReturnsAsync(new LoginResponse() { Result = LoginResult.NotActivated, EndPointAssessorOrganisationId = "EPA0001" });
 
             var result = _accountController.PostSignIn().Result;
 
@@ -98,7 +98,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.AccountControllerTests
         public void And_I_am_valid_Then_redirect_to_Search_page()
         {
             _loginOrchestrator.Setup(o => o.Login())
-                .ReturnsAsync(new LoginResponse() { Result = LoginResult.Valid, EndPointAssessorName = "EPA01", EndPointAssessorOrganisationId = "EPA0001"});
+                .ReturnsAsync(new LoginResponse() { Result = LoginResult.Valid, EndPointAssessorOrganisationId = "EPA0001"});
 
             var result = _accountController.PostSignIn().Result;
 

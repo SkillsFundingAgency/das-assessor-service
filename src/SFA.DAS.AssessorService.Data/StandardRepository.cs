@@ -1,32 +1,27 @@
-﻿using System;
+﻿using Dapper;
+using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
+using SFA.DAS.AssessorService.Api.Types.Models.Standards;
+using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Data.DapperTypeHandlers;
+using SFA.DAS.AssessorService.Domain.Entities;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Threading.Tasks;
-using Dapper;
-using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
 using System.Linq.Dynamic.Core;
-using SFA.DAS.AssessorService.Application.Interfaces;
-using SFA.DAS.AssessorService.Data.DapperTypeHandlers;
-using SFA.DAS.AssessorService.Domain.Entities;
-using SFA.DAS.AssessorService.ExternalApis.IFAStandards.Types;
-using SFA.DAS.AssessorService.Settings;
-using SFA.DAS.AssessorService.Api.Types.Models.Standards;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Data
 {
     public class StandardRepository : IStandardRepository
     {
-
-        private readonly IWebConfiguration _configuration;
         private readonly AssessorDbContext _assessorDbContext;
         private readonly IDbConnection _connection;
 
-        public StandardRepository(IWebConfiguration configuration, AssessorDbContext assessorDbContext, IDbConnection connection)
+        public StandardRepository(AssessorDbContext assessorDbContext, IDbConnection connection)
         {
-            _configuration = configuration;
             _assessorDbContext = assessorDbContext;
             _connection = connection;
             SqlMapper.AddTypeHandler(typeof(StandardData), new StandardDataHandler());
@@ -34,94 +29,100 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<List<StandardCollation>> GetStandardCollations()
         {
-                var connectionString = _configuration.SqlConnectionString;
-
-                using (var connection = new SqlConnection(connectionString))
-                {
-                    if (connection.State != ConnectionState.Open)
-                        await connection.OpenAsync();
-
-                    var standards = await connection.QueryAsync<StandardCollation>("select * from [StandardCollation]");
-                    return standards.ToList();
-                } 
+            return await GetStandardCollationsInternal();
         }
 
         public async Task<StandardCollation> GetStandardCollationByStandardId(int standardId)
         {
-            var connectionString = _configuration.SqlConnectionString;
-
-            using (var connection = new SqlConnection(connectionString))
-            {
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
-
-                var standards = await connection.QueryAsync<StandardCollation>("select * from [StandardCollation] where standardId = @standardId",new {standardId});
-
-                return standards.FirstOrDefault();
-
-
-            }
+            var standards = await GetStandardCollationsInternal(standardIdFilter: standardId);
+            return standards.FirstOrDefault();
         }
 
         public async Task<StandardCollation> GetStandardCollationByReferenceNumber(string referenceNumber)
         {
-            var connectionString = _configuration.SqlConnectionString;
+            var standards = await GetStandardCollationsInternal(referenceNumberFilter: referenceNumber);
+            return standards.FirstOrDefault();
+        }
 
-            using (var connection = new SqlConnection(connectionString))
+        private async Task<List<StandardCollation>> GetStandardCollationsInternal(int? standardIdFilter = null, string referenceNumberFilter = null)
+        {
+            var standardsDictionary = new Dictionary<string, StandardCollation>();
+
+            string standardsQuery = @"SELECT * FROM StandardCollation";
+
+            if (standardIdFilter != null)
             {
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
-
-                var standards = await connection.QueryAsync<StandardCollation>("select * from [StandardCollation] where ReferenceNumber = @referenceNumber", new { referenceNumber });
-                return standards.FirstOrDefault();
+                standardsQuery += " WHERE StandardId = @standardIdFilter";
             }
+            else if (referenceNumberFilter != null)
+            {
+                standardsQuery += " WHERE ReferenceNumber = @referenceNumberFilter";
+            }
+
+            var standards = await _connection.QueryAsync<StandardCollation>(standardsQuery, param: new { standardIdFilter, referenceNumberFilter });
+
+            foreach (var standard in standards)
+            {
+                string key = standard.StandardId.HasValue ? standard.StandardId.ToString() : standard.ReferenceNumber;
+
+                if (!standardsDictionary.TryGetValue(key, out StandardCollation dictionaryEntry))
+                {
+                    dictionaryEntry = standard;
+                    dictionaryEntry.Options = new List<string>();
+                    standardsDictionary[key] = dictionaryEntry;
+                }
+            }
+
+            var optionsQuery = "SELECT * FROM Options WHERE StdCode IN @standardCodes";
+            var standardCodes = standardsDictionary.Values.Where(v => v.StandardId.HasValue).Select(v => v.StandardId).ToList();
+            var options = await _connection.QueryAsync<Option>(optionsQuery, param: new { standardCodes });
+
+            foreach (var option in options)
+            {
+                if (standardsDictionary.TryGetValue(option.StdCode.ToString(), out StandardCollation dictionaryEntry))
+                {
+                    if (!string.IsNullOrEmpty(option.OptionName))
+                    {
+                        dictionaryEntry.Options.Add(option.OptionName);
+                    }
+                }
+            }
+
+            return standardsDictionary.Values.ToList();
         }
 
         public async Task<DateTime?> GetDateOfLastStandardCollation()
         {
-            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
-            {
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
-
-                const string sql = "select top 1 coalesce(max(DateUpdated), max(DateAdded)) maxDate  from StandardCollation";
-                var dateOfLastCollation = await connection.QuerySingleAsync<DateTime?>(sql);
-                return dateOfLastCollation;
-            }
+            const string sql = "select top 1 coalesce(max(DateUpdated), max(DateAdded)) maxDate  from StandardCollation";
+            var dateOfLastCollation = await _connection.QuerySingleAsync<DateTime?>(sql);
+            return dateOfLastCollation;
         }
 
         public async Task<string> UpsertStandards(List<StandardCollation> standards)
         {
-
             var countInserted = 0;
             var countUpdated = 0;
             var countRemoved = 0;
 
-            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            var currentStandards = await GetStandardCollations();
+            countRemoved = UpdateContactsThatAreDeleted(_connection, standards, currentStandards);
+
+            foreach (var standard in standards)
             {
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
+                var isNew = true;
+                var standardData = JsonConvert.SerializeObject(standard.StandardData);
+                if (currentStandards.Any(x => x.StandardId == standard.StandardId))
+                    isNew = false;
 
-                var currentStandards = await GetStandardCollations();
-                countRemoved = UpdateContactsThatAreDeleted(connection, standards, currentStandards);
-
-                foreach (var standard in standards)
+                if (isNew)
                 {
-                    var isNew = true;
-                    var standardData = JsonConvert.SerializeObject(standard.StandardData);
-                    if (currentStandards.Any(x => x.StandardId == standard.StandardId))
-                        isNew = false;
-
-                    if (isNew)
-                    {
-                        countInserted++;
-                        InsertNewStandard(connection, standard, standardData);
-                    }
-                    else
-                    {
-                        countUpdated++;
-                        UpdateCurrentStandard(connection, standard, standardData);
-                    }
+                    countInserted++;
+                    InsertNewStandard(_connection, standard, standardData);
+                }
+                else
+                {
+                    countUpdated++;
+                    UpdateCurrentStandard(_connection, standard, standardData);
                 }
             }
 
@@ -205,7 +206,7 @@ namespace SFA.DAS.AssessorService.Data
 
             epaoPipelineStandardsResult.TotalCount = epaoPipelines.Select(x => x.TotalRows).First();
             epaoPipelineStandardsResult.PageOfResults = epaoPipelines;
-           
+
 
             return epaoPipelineStandardsResult;
         }
@@ -221,25 +222,26 @@ namespace SFA.DAS.AssessorService.Data
             return result.ToList();
         }
 
-        private static void UpdateCurrentStandard(SqlConnection connection, StandardCollation standard, string standardData)
+        private static void UpdateCurrentStandard(IDbConnection connection, StandardCollation standard, string standardData)
         {
+            // when new ReferenceNumber is null (IFA has not supplied one) retain the current RefernceNumber
             connection.Execute(
-                "Update [StandardCollation] set ReferenceNumber = @referenceNumber, Title = @Title, StandardData = @StandardData, DateUpdated=getutcdate(), DateRemoved=null, IsLive = 1 " +
+                "Update [StandardCollation] set ReferenceNumber = case when @referenceNumber is not null then @referenceNumber else ReferenceNumber end, Title = @Title, StandardData = @StandardData, DateUpdated=getutcdate(), DateRemoved=null, IsLive = 1 " +
                 "where StandardId = @standardId",
-                new {standard.StandardId, standard.ReferenceNumber, standard.Title, standardData}
+                new { standard.StandardId, standard.ReferenceNumber, standard.Title, standardData }
             );
         }
 
-        private static void InsertNewStandard(SqlConnection connection, StandardCollation standard, string standardData)
+        private static void InsertNewStandard(IDbConnection connection, StandardCollation standard, string standardData)
         {
             connection.Execute(
                 "INSERT INTO [StandardCollation] ([StandardId],[ReferenceNumber] ,[Title],[StandardData]) " +
                 $@"VALUES (@standardId, @referenceNumber, @Title, @standardData)",
-                new {standard.StandardId, standard.ReferenceNumber, standard.Title, standardData}
+                new { standard.StandardId, standard.ReferenceNumber, standard.Title, standardData }
             );
         }
 
-        private static int UpdateContactsThatAreDeleted(SqlConnection connection, List<StandardCollation> standards,
+        private static int UpdateContactsThatAreDeleted(IDbConnection connection, List<StandardCollation> standards,
             List<StandardCollation> currentStandards)
         {
             var countRemoved = 0;
@@ -257,12 +259,12 @@ namespace SFA.DAS.AssessorService.Data
                 connection.Execute(
                     "Update [StandardCollation] set IsLive=0, DateRemoved=getutcdate() " +
                     "where StandardId = @standardId",
-                    new {standard.StandardId}
+                    new { standard.StandardId }
                 );
             }
             return countRemoved;
         }
 
-      
+
     }
 }

@@ -1,13 +1,10 @@
 ﻿using FizzWare.NBuilder;
 using Moq;
 using Newtonsoft.Json;
-using SFA.DAS.Apprenticeships.Api.Types;
-using SFA.DAS.Apprenticeships.Api.Types.AssessmentOrgs;
+using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
-using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
-using SFA.DAS.AssessorService.ExternalApis.Services;
 using System;
 using System.Collections.Generic;
 using Organisation = SFA.DAS.AssessorService.Domain.Entities.Organisation;
@@ -20,7 +17,6 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Certifica
         public Mock<ICertificateRepository> CertificateRepositoryMock { get; }
         public Mock<IOrganisationQueryRepository> OrganisationQueryRepositoryMock { get; }
         public Mock<IIlrRepository> IlrRepositoryMock { get; }
-        public Mock<IAssessmentOrgsApiClient> AssessmentOrgsApiClientMock { get; }
         public Mock<IStandardService> StandardServiceMock {get;}
 
         public BatchCertificateRequestValidatorTestBase()
@@ -28,7 +24,6 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Certifica
             CertificateRepositoryMock = SetupCertificateRepositoryMock();
             OrganisationQueryRepositoryMock = SetupOrganisationQueryRepositoryMock();
             IlrRepositoryMock = SetupIlrRepositoryMock();
-            AssessmentOrgsApiClientMock = SetupAssessmentOrgsApiClientMock();
             StandardServiceMock = SetupStandardServiceMock();
         }
 
@@ -68,7 +63,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Certifica
         {
             var standardServiceMock = new Mock<IStandardService>();
             standardServiceMock.Setup(c => c.GetAllStandards())
-                .ReturnsAsync(new List<Standard>
+                .ReturnsAsync(new List<StandardCollation>
                 {
                     GenerateStandard(1),
                     GenerateStandard(98),
@@ -79,32 +74,22 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Certifica
             standardServiceMock.Setup(c => c.GetStandard(98)).ReturnsAsync(GenerateStandard(98));
             standardServiceMock.Setup(c => c.GetStandard(99)).ReturnsAsync(GenerateStandard(99));
 
+            standardServiceMock.Setup(c => c.GetEpaoRegisteredStandards("12345678"))
+                .ReturnsAsync(new List<EPORegisteredStandards>
+                {
+                    GenerateEPORegisteredStandard(1),
+                    GenerateEPORegisteredStandard(98),
+                    GenerateEPORegisteredStandard(99)
+                });
+
+            standardServiceMock.Setup(c => c.GetEpaoRegisteredStandards("99999999"))
+                .ReturnsAsync(new List<EPORegisteredStandards>
+                {
+                    GenerateEPORegisteredStandard(1),
+                    GenerateEPORegisteredStandard(99)
+                });
+
             return standardServiceMock;
-        }
-
-        private static Mock<IAssessmentOrgsApiClient> SetupAssessmentOrgsApiClientMock()
-        {
-            var assessmentOrgsApiClientMock = new Mock<IAssessmentOrgsApiClient>();
-
-           
-            assessmentOrgsApiClientMock.Setup(c => c.FindAllStandardsByOrganisationIdAsync("12345678"))
-                .ReturnsAsync(new List<StandardOrganisationSummary>
-                {
-                    GenerateStandardOrganisationSummary(1),
-                    GenerateStandardOrganisationSummary(98),
-                    GenerateStandardOrganisationSummary(99)
-                });
-
-            assessmentOrgsApiClientMock.Setup(c => c.FindAllStandardsByOrganisationIdAsync("99999999"))
-                .ReturnsAsync(new List<StandardOrganisationSummary>
-                {
-                    GenerateStandardOrganisationSummary(1),
-                    GenerateStandardOrganisationSummary(99)
-                });
-
-         
-
-            return assessmentOrgsApiClientMock;
         }
 
         private static Mock<IIlrRepository> SetupIlrRepositoryMock()
@@ -160,18 +145,17 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Certifica
                 .Build();
         }
 
-        private static Standard GenerateStandard(int standardCode)
+        private static StandardCollation GenerateStandard(int standardCode)
         {
-            return Builder<Standard>.CreateNew()
+            return Builder<StandardCollation>.CreateNew()
                 .With(i => i.Title = $"{standardCode}")
-                .With(i => i.Level = standardCode)
-                .Build();
+                .With(i => i.StandardData = new StandardData(){Level = standardCode}).Build();
         }
 
-        private static StandardOrganisationSummary GenerateStandardOrganisationSummary(int standardCode)
+        private static EPORegisteredStandards GenerateEPORegisteredStandard(int standardCode)
         {
-            return Builder<StandardOrganisationSummary>.CreateNew()
-                .With(i => i.StandardCode = $"{standardCode}")
+            return Builder<EPORegisteredStandards>.CreateNew()
+                .With(i => i.StandardCode = standardCode)
                 .Build();
         }
 

@@ -15,6 +15,7 @@ using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Paging;
 using SFA.DAS.AssessorService.Web.Staff.ViewModels.Private;
 using SFA.DAS.Apprenticeships.Api.Types;
+using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using OrganisationType = SFA.DAS.AssessorService.Api.Types.Models.AO.OrganisationType;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
@@ -278,9 +279,9 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
                 staffCertificateDuplicateRequest);
                 }
 
-        public async Task<List<StandardSummary>> SearchStandards(string searchString)
+        public async Task<List<StandardCollation>> SearchStandards(string searchString)
         {
-            return await Get<List<StandardSummary>>($"/api/ao/assessment-organisations/standards/search/{searchString}");
+            return await Get<List<StandardCollation>>($"/api/ao/assessment-organisations/standards/search/{searchString}");
         }
 
         public async Task ApproveCertificates(CertificatePostApprovalViewModel certificatePostApprovalViewModel)

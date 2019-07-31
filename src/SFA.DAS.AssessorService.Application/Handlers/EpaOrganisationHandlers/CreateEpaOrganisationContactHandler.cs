@@ -53,7 +53,10 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
                 throw new Exception(message);
             }
 
-            var newUsername = request.Email;
+            var newUsername = _organisationIdGenerator.GetNextContactUsername();
+            if (newUsername == string.Empty)
+                throw new Exception("A valid contact user name could not be generated");
+
 
             var contact = MapOrganisationContactRequestToContact(request, newUsername);
             return await _registerRepository.CreateEpaOrganisationContact(contact);

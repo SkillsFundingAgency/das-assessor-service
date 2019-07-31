@@ -8,9 +8,10 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
         public string Name { get; set; }
         public string Dept { get; set; }
 
-        public void FromCertificate(Domain.Entities.Certificate cert)
+        public override void FromCertificate(Domain.Entities.Certificate cert)
         {
-            BaseFromCertificate(cert);
+            base.FromCertificate(cert);
+
             Name = CertificateData.ContactName;
             Dept = CertificateData.Department;
         }

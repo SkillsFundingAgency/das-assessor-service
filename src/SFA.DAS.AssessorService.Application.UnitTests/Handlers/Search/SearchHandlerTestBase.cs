@@ -3,6 +3,8 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using SFA.DAS.Apprenticeships.Api.Types;
 using SFA.DAS.Apprenticeships.Api.Types.AssessmentOrgs;
+using SFA.DAS.AssessorService.Api.Types.Models.AO;
+using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Handlers.Search;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
@@ -16,7 +18,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
         protected SearchHandler SearchHandler;
         protected Mock<ICertificateRepository> CertificateRepository;
         protected Mock<IIlrRepository> IlrRepository;
-        protected Mock<IAssessmentOrgsApiClient> AssessmentOrgsApiClient;
+        protected Mock<IRegisterQueryRepository> RegisterQueryRepository;
         protected Mock<IContactQueryRepository> ContactRepository;
         protected Mock<IStandardService> StandardService;
 
@@ -24,22 +26,23 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
         {
             MappingBootstrapper.Initialize();
 
-            AssessmentOrgsApiClient = new Mock<IAssessmentOrgsApiClient>();
+            RegisterQueryRepository = new Mock<IRegisterQueryRepository>();
             StandardService = new Mock<IStandardService>();
 
             StandardService.Setup(c => c.GetAllStandards())
-                .ReturnsAsync(new List<Standard> { new Standard{Title = "Standard Name 12", Level = 2}, new Standard{Title = "Standard Name 13", Level = 3} });
+                .ReturnsAsync(new List<StandardCollation> { new StandardCollation{Title = "Standard Name 12", StandardData = new StandardData{Level = 2}}, 
+                    new StandardCollation{Title = "Standard Name 13", StandardData = new StandardData{Level = 3}} });
 
-            AssessmentOrgsApiClient.Setup(c => c.FindAllStandardsByOrganisationIdAsync("EPA001"))
-                .ReturnsAsync(new List<StandardOrganisationSummary>
+            RegisterQueryRepository.Setup(c => c.GetOrganisationStandardByOrganisationId("EPA001"))
+                .ReturnsAsync(new List<OrganisationStandardSummary>
                 {
-                    new StandardOrganisationSummary {StandardCode = "12"},
-                    new StandardOrganisationSummary {StandardCode = "13"}
+                    new OrganisationStandardSummary {StandardCode = 12},
+                    new OrganisationStandardSummary {StandardCode = 13}
                 });
                       StandardService.Setup(c => c.GetStandard(12))
-                .ReturnsAsync(new Standard { Title = "Standard Name 12", Level = 2 });
+                .ReturnsAsync(new StandardCollation { Title = "Standard Name 12", StandardData = new StandardData{Level = 2} });
             StandardService.Setup(c => c.GetStandard(13))
-                .ReturnsAsync(new Standard { Title = "Standard Name 13", Level = 3 });
+                .ReturnsAsync(new StandardCollation { Title = "Standard Name 13", StandardData = new StandardData{Level = 3}});
 
 
             var orgQueryRepo = new Mock<IOrganisationQueryRepository>();
@@ -55,7 +58,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
             CertificateRepository = new Mock<ICertificateRepository>();
 
             ContactRepository = new Mock<IContactQueryRepository>();
-            SearchHandler = new SearchHandler(AssessmentOrgsApiClient.Object, orgQueryRepo.Object, IlrRepository.Object,
+            SearchHandler = new SearchHandler(RegisterQueryRepository.Object, orgQueryRepo.Object, IlrRepository.Object,
                 CertificateRepository.Object, new Mock<ILogger<SearchHandler>>().Object, ContactRepository.Object, StandardService.Object);
         }
     }

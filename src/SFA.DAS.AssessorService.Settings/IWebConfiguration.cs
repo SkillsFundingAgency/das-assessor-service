@@ -23,5 +23,11 @@
 
         string RoatpApiClientBaseUrl { get; set; }
         ClientApiAuthentication RoatpApiAuthentication { get; set; }
+
+        #region For External API Sandbox
+        string SandboxSqlConnectionString { get; set; }
+        ApiAuthentication SandboxApiAuthentication { get; set; }
+        ClientApiAuthentication SandboxClientApiAuthentication { get; set; }
+        #endregion
     }
 }

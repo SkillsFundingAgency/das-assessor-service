@@ -74,24 +74,36 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Private
             vm.StandardCodes = GetSelectListItems(standards, filteredStandardCodes);
             if (!string.IsNullOrEmpty(vm.SelectedStandardCode))
             {
-                var selectedStandard = standards.First(q => q.Id == vm.SelectedStandardCode);
+                var selectedStandard = standards.First(q => q.StandardId.ToString() == vm.SelectedStandardCode);
                 vm.Standard = selectedStandard.Title;
-                vm.Level = selectedStandard.Level;
+                vm.Level = selectedStandard.StandardData.Level.GetValueOrDefault();
             }
+
+            var options = (await _apiClient.GetOptions(Convert.ToInt32(vm.SelectedStandardCode)))
+                .Select(o => o.OptionName).ToList();
 
             var actionResult = await SaveViewModel(vm,
                 returnToIfModelNotValid: "~/Views/CertificateAmend/StandardCode.cshtml",
-                nextAction: RedirectToAction("Check", "CertificateAmend", new { certificateId = vm.Id, fromapproval = vm.FromApproval }), action: CertificateActions.StandardCode);
+                nextAction: RedirectToAction("Check", "CertificateAmend",
+                    new { certificateId = vm.Id, fromapproval = vm.FromApproval }), action: CertificateActions.StandardCode);
+
+
+            if (options.Any())
+            {
+                 actionResult = await SaveViewModel(vm,
+                    returnToIfModelNotValid: "~/Views/CertificateAmend/StandardCode.cshtml",
+                    nextAction: RedirectToAction("Option", "CertificateOption", new { certificateId = vm.Id, fromapproval = vm.FromApproval, isFromStandard = true }), action: CertificateActions.Option);
+            }
 
             return actionResult;
         }
 
-        private IEnumerable<SelectListItem> GetSelectListItems(List<StandardSummary> standards,
+        private IEnumerable<SelectListItem> GetSelectListItems(List<StandardCollation> standards,
             List<string> filteredStandardCodes)
         {
             return standards
-                .Where(a => filteredStandardCodes.Contains(a.Id))
-                .Select(q => new SelectListItem { Value = q.Id, Text = q.Title.ToString() + " (" + q.Id + ')' })
+                .Where(a => filteredStandardCodes.Contains(a.StandardId.ToString()))
+                .Select(q => new SelectListItem { Value = q.StandardId.ToString(), Text = q.Title.ToString() + " (" + q.StandardId + ')' })
                 .ToList()
                 .OrderBy(q => q.Text);
         }
@@ -108,12 +120,12 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Private
             return filteredStandardCodes;
         }
 
-        private async Task<IEnumerable<StandardSummary>> GetAllStandards()
+        private async Task<IEnumerable<StandardCollation>> GetAllStandards()
         {
-            var results = await _cacheHelper.RetrieveFromCache<IEnumerable<StandardSummary>>("Standards");
+            var results = await _cacheHelper.RetrieveFromCache<IEnumerable<StandardCollation>>("Standards");
             if (results == null)
             {
-                var standards = await _standardServiceClient.GetAllStandardSummaries();
+                var standards = await _standardServiceClient.GetAllStandards();
                 await _cacheHelper.SaveToCache("Standards", standards, 1);
 
                 results = standards;

@@ -15,6 +15,8 @@ namespace SFA.DAS.AssessorService.Api.Types.Commands
         public string TradingName { get; set; }
         public bool UseTradingName { get; set; }
         public string ContactName { get; set; }
+        public string ContactGivenName { get; set; }
+        public string ContactFamilyName { get; set; }
         public string ContactAddress1 { get; set; }
         public string ContactAddress2 { get; set; }
         public string ContactAddress3 { get; set; }
@@ -37,12 +39,15 @@ namespace SFA.DAS.AssessorService.Api.Types.Commands
         public string SigninType { get; set; }
         public string UserEmail { get; set; }
 
+        public List<string> OtherApplyingUserEmails { get; set; }
+
         public CreateOrganisationContactCommand(string organisationName, string organisationType,
             string organisationUkprn, string organisationReferenceType, bool? isEpaoApproved, string tradingName,
-            bool useTradingName, string contactName, string contactAddress1, string contactAddress2,
+            bool useTradingName, string contactName,string contactGivenName, string contactFamilyName, string contactAddress1, string contactAddress2,
             string contactAddress3, string contactAddress4, string contactPostcode, string contactEmail,
             string contactPhoneNumber, string companyUkprn, string companyNumber, string charityNumber,
-            string standardWebsite, string createdBy, string familyName, string givenNames, Guid? signinId, string signinType, string userEmail, DateTime? financialDueDate, bool? isFinancialExempt)
+            string standardWebsite, string createdBy, string familyName, string givenNames, Guid? signinId, string signinType, string userEmail,
+            List<string> otherApplyingUserEmails, DateTime? financialDueDate, bool? isFinancialExempt)
         {
             OrganisationName = organisationName;
             OrganisationType = organisationType;
@@ -52,6 +57,8 @@ namespace SFA.DAS.AssessorService.Api.Types.Commands
             TradingName = tradingName;
             UseTradingName = useTradingName;
             ContactName = contactName;
+            ContactGivenName = contactGivenName;
+            ContactFamilyName = contactFamilyName;
             ContactAddress1 = contactAddress1;
             ContactAddress2 = contactAddress2;
             ContactAddress3 = contactAddress3;
@@ -71,6 +78,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Commands
             SigninId = signinId;
             SigninType = signinType;
             UserEmail = userEmail;
+            OtherApplyingUserEmails = otherApplyingUserEmails;
         }
 
         public CreateOrganisationContactCommand()

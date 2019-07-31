@@ -5,29 +5,30 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.ApplyTypes;
+using SFA.DAS.AssessorService.Domain.Paging;
 using CreateOrganisationRequest = SFA.DAS.AssessorService.ApplyTypes.CreateOrganisationRequest;
 
 namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 {
     public class OrganisationsApplyApiClient:ApiClientBase, IOrganisationsApplyApiClient
     {
-        public OrganisationsApplyApiClient(string baseUri, ITokenService applyTokenService,
+        public OrganisationsApplyApiClient(string baseUri, IApplyTokenService applyTokenService,
             ILogger<OrganisationsApiClient> logger) : base(baseUri, applyTokenService, logger)
         {
         }
         
-        public OrganisationsApplyApiClient(HttpClient httpClient, ITokenService applyTokenService, ILogger<ApiClientBase> logger) : base(httpClient, applyTokenService, logger)
+        public OrganisationsApplyApiClient(HttpClient httpClient, IApplyTokenService applyTokenService, ILogger<ApiClientBase> logger) : base(httpClient, applyTokenService, logger)
         {
         }
 
-        public async Task<IEnumerable<OrganisationSearchResult>> SearchForOrganisations(string searchTerm)
+        public async Task<PaginatedList<OrganisationSearchResult>> SearchForOrganisations(string searchTerm,int pageSize, int pageIndex)
         {
             try
             {
                 using (var request = new HttpRequestMessage(HttpMethod.Get,
-                    $"/OrganisationSearch?searchTerm={searchTerm}"))
+                    $"/OrganisationSearchPaged?searchTerm={searchTerm}&pageSize={pageSize}&pageIndex={pageIndex}"))
                 {
-                    return await RequestAndDeserialiseAsync<IEnumerable<OrganisationSearchResult>>(request,
+                    return await RequestAndDeserialiseAsync<PaginatedList<OrganisationSearchResult>>(request,
                         $"Could not retrieve organisations for search {searchTerm}.");
                 }
             }catch(HttpRequestException err)
@@ -84,7 +85,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 
     public interface IOrganisationsApplyApiClient
     {
-        Task<IEnumerable<OrganisationSearchResult>> SearchForOrganisations(string searchTerm);
+        Task<PaginatedList<OrganisationSearchResult>> SearchForOrganisations(string searchTerm,int pageSize, int pageIndex);
         Task<bool> IsCompanyActivelyTrading(string companyNumber);
         Task<Organisation> ConfirmSearchedOrganisation(CreateOrganisationRequest createOrganisationRequest);
         Task<Organisation> CreateNewOrganisation(CreateOrganisationRequest createOrganisationRequest);
