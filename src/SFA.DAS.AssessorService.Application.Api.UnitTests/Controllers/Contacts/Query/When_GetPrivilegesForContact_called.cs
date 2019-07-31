@@ -14,7 +14,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Contacts
         public async Task Then_repository_is_called_with_correct_Id()
         {
             var repository = new Mock<IContactQueryRepository>();
-            var controller = new ContactQueryController(repository.Object, null, null, null, null, null);
+            var controller = new ContactQueryController(repository.Object, null, null, null, null);
             var userId = Guid.NewGuid();
             await controller.GetPrivilegesForContact(userId);
             

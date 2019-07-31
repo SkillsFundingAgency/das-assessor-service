@@ -10,7 +10,6 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
-using SFA.DAS.AssessorService.Application.Api.Client.Exceptions;
 using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Paging;
@@ -264,6 +263,10 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                     await UpdateOrganisationStatus(organisationSearchResult, user);
                     await NotifyOrganisationUsers(organisationSearchResult, user);
                 }
+                else
+                {
+                    //Todo: As part of ON-2084 insert a new record in assessor organisation table
+                }
             }
 
 
@@ -305,6 +308,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             return organisationSearchResult;
         }
 
+        //Todo: Update this to write to asessor orgs OrganisationData Json
         private OrganisationDetails MapToOrganisationDetails(OrganisationSearchResult organisationSearchResult)
         {
            return new OrganisationDetails
