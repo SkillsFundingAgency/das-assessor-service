@@ -22,10 +22,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
             _validator = validator;
         }
 
-
         public async Task<ValidationResponse> Handle(UpdateEpaOrganisationStandardValidationRequest request, CancellationToken cancellationToken)
         {
-            return _validator.ValidatorUpdateEpaOrganisationStandardRequest(new UpdateEpaOrganisationStandardRequest
+            var result = _validator.ValidatorUpdateEpaOrganisationStandardRequest(new UpdateEpaOrganisationStandardRequest
             {
                 OrganisationId = request.OrganisationId,
                 StandardCode = request.StandardCode,
@@ -34,6 +33,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
                 ContactId = request.ContactId,
                 DeliveryAreas = request.DeliveryAreas
             });
+
+            return await Task.FromResult(result);
         }
     }
 }

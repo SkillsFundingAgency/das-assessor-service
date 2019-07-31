@@ -8,7 +8,7 @@ BEGIN
 	SET NOCOUNT ON;
 
 	set @OrganisationId = (SELECT OrganisationId FROM Contacts 
-			WHERE UserName = @UserName)
+			WHERE Username = @UserName)
   
 	SELECT DISTINCT TOP 10 
 	c.OrganisationId

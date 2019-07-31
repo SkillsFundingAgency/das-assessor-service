@@ -230,9 +230,4 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         public Guid NewUserId { get; set; }
     }
 
-    public class MigrateContactOrganisation
-    {
-        public ApplyTypes.Contact contact { get; set; }
-        public Organisation organisation { get; set; }
-    }
 }

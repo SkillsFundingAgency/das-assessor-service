@@ -10,6 +10,6 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Certificates
         }
 
         public int? PageIndex { get; set; }
-        public string Username { get; set; }
+        public string EndPointAssessorOrganisationId { get; set; }
     }
 }

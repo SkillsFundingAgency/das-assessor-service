@@ -127,7 +127,6 @@ namespace SFA.DAS.AssessorService.Web
                     _.WithDefaultConventions();
                 });
 
-                //config.For<ICache>().Use<SessionCache>();
                 config.For<ITokenService>().Use<TokenService>();
                 config.For<ITokenService>().Add<ApplyTokenService>().Named("applyTokenService");
                 

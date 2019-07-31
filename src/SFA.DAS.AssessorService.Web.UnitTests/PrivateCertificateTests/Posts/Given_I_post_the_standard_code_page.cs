@@ -13,7 +13,6 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.PrivateCertificateTests.Posts
     public class Given_I_post_the_standard_code_page : CertificatePostBase
     {
         private RedirectToActionResult _result;
-        private CertificateFirstNameViewModel _viewModelResponse;
 
         [SetUp]
         public void Arrange()
