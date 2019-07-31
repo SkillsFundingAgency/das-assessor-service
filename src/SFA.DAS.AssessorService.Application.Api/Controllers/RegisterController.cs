@@ -149,7 +149,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             }
         }
 
-        [HttpPost("contacts/associate-organisation", Name = "AssociateEpaContactWithOrganisation")]
+        [HttpPut("contacts/associate-organisation", Name = "AssociateEpaContactWithOrganisation")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(bool))]
         public async Task<IActionResult> AssociateEpaContactWithOrganisation([FromBody] AssociateEpaOrganisationWithEpaContactRequest request)
         {
