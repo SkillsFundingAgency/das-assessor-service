@@ -132,10 +132,14 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                     Description = privilege.Description,
                     PrivilegeId = deniedPrivilegeContext.PrivilegeId,
                     ContactId = userId,
-                    UserHasUserManagement = usersPrivileges.Any(up => up.Privilege.UserPrivilege == Privileges.ManageUsers),
+                    UserHasUserManagement = usersPrivileges.Any(up => up.Privilege.Key == Privileges.ManageUsers),
                     ReturnController = deniedPrivilegeContext.Controller,
                     ReturnAction = deniedPrivilegeContext.Action
                 });
+            }
+            else if (TempData.Keys.Contains("UnavailableFeatureContext"))
+            {
+                return View("~/Views/Account/UnavailableFeature.cshtml");
             }
 
             return View();
