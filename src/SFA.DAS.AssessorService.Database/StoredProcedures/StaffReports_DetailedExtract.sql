@@ -44,8 +44,9 @@ AS
 				 [Status],
 				 ROW_NUMBER() OVER (PARTITION BY [CertificateId], [Action] ORDER BY [EventTime]) rownumber
 		  FROM [dbo].[CertificateLogs]
-		  WHERE ACTION IN ('Submit') AND [EventTime] BETWEEN @fromdate AND @todate) ab
+		  WHERE ACTION IN ('Submit') AND [EventTime] >= @fromdate AND [EventTime] < @todate) ab
 	   WHERE ab.rownumber = 1 ) cl ON cl.[CertificateId] = ce.[Id] AND ce.[CertificateReferenceId] >= 10000 AND ce.[CreatedBy] <> 'manual'
+	WHERE ISNULL(JSON_VALUE(ce.[CertificateData],'$.EpaDetails.LatestEpaOutcome'),'Pass') != 'Fail'
 	UNION
 	SELECT CONVERT(VARCHAR(10), DATEADD(mm, DATEDIFF(mm, 0, DATEADD(mm, 0, ce.[CreatedAt])), 0), 120) AS 'Month',
 		   ce.[Uln] AS 'Apprentice ULN',
@@ -73,6 +74,8 @@ AS
 		   ce.[Status] AS 'Status'
 	FROM [dbo].[Certificates] ce
 	JOIN [dbo].[Organisations] rg ON ce.[OrganisationId] = rg.[Id]
-	WHERE ce.[Status] = 'Draft' AND ce.CreatedAt BETWEEN @fromdate AND @todate
+	WHERE ce.[Status] = 'Draft' AND ce.CreatedDay BETWEEN @fromdate AND @todate
+	AND JSON_VALUE(ce.[CertificateData], '$.FullName') IS NOT NULL
+	AND JSON_VALUE(ce.[CertificateData], '$.StandardName') IS NOT NULL
 	ORDER BY 1, 11, 10, 2, 3
 RETURN 0

@@ -17,11 +17,13 @@ AS
 			SELECT [Action], [CertificateId], [EventTime], row_number() OVER (partition by [CertificateId], [Action] ORDER BY [EventTime]) rownumber
 			FROM [dbo].[CertificateLogs]
 			WHERE [Action] IN ('submit', 'printed') 
+			AND ISNULL(JSON_VALUE([CertificateData],'$.EpaDetails.LatestEpaOutcome'),'Pass') != 'Fail'
 		) ab 
 		WHERE ab.rownumber = 1
 	) cl
 	JOIN [dbo].[Certificates] ce ON ce.[Id] = cl.[CertificateId]
 	WHERE cl.[Action] IN ('Submit', 'Printed', 'Reprint')
+	AND ISNULL(JSON_VALUE(ce.[CertificateData],'$.EpaDetails.LatestEpaOutcome'),'Pass') != 'Fail'
 	GROUP BY CONVERT(VARCHAR(10), DATEADD(mm, DATEDIFF(mm, 0, DATEADD(mm, 0, cl.[EventTime])), 0), 120)
 
 	UNION
@@ -43,11 +45,12 @@ AS
 			SELECT [Action], [CertificateId], [EventTime], row_number() OVER (partition by [CertificateId], [Action] ORDER BY [EventTime]) rownumber
 			FROM [dbo].[CertificateLogs]
 			WHERE [Action] IN ('submit', 'printed') 
+			AND ISNULL(JSON_VALUE([CertificateData],'$.EpaDetails.LatestEpaOutcome'),'Pass') != 'Fail'
 		) ab 
 		WHERE ab.rownumber = 1
 	) cl
 	JOIN [dbo].[Certificates] ce ON ce.[Id] = cl.[CertificateId]
 	WHERE cl.[Action] IN ('Submit', 'Printed', 'Reprint')
-
+	AND ISNULL(JSON_VALUE(ce.[CertificateData],'$.EpaDetails.LatestEpaOutcome'),'Pass') != 'Fail'
 	ORDER BY 1 
 RETURN 0
