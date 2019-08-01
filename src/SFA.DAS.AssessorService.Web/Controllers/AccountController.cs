@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -9,9 +10,11 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
+using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.Orchestrators.Login;
+using SFA.DAS.AssessorService.Web.StartupConfiguration;
 using SFA.DAS.AssessorService.Web.Validators;
 using SFA.DAS.AssessorService.Web.ViewModels.Account;
 
@@ -112,8 +115,33 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         }
 
         [HttpGet]
-        public IActionResult AccessDenied()
+        public async Task<IActionResult> AccessDenied()
         {
+            if (TempData.Keys.Contains("DeniedPrivilegeContext"))
+            {
+                var deniedPrivilegeContext = JsonConvert.DeserializeObject<DeniedPrivilegeContext>(TempData["DeniedPrivilegeContext"].ToString());
+
+                var userId = Guid.Parse(User.FindFirst("UserId").Value);
+                var privilege = (await _contactsApiClient.GetPrivileges()).Single(p => p.Id == deniedPrivilegeContext.PrivilegeId);
+
+                var usersPrivileges = await _contactsApiClient.GetContactPrivileges(userId);
+                
+                return View("~/Views/Account/AccessDeniedForPrivilege.cshtml", new AccessDeniedViewModel
+                {
+                    Title = privilege.UserPrivilege,
+                    Description = privilege.Description,
+                    PrivilegeId = deniedPrivilegeContext.PrivilegeId,
+                    ContactId = userId,
+                    UserHasUserManagement = usersPrivileges.Any(up => up.Privilege.Key == Privileges.ManageUsers),
+                    ReturnController = deniedPrivilegeContext.Controller,
+                    ReturnAction = deniedPrivilegeContext.Action
+                });
+            }
+            else if (TempData.Keys.Contains("UnavailableFeatureContext"))
+            {
+                return View("~/Views/Account/UnavailableFeature.cshtml");
+            }
+
             return View();
         }
 
@@ -168,10 +196,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Callback([FromBody] DfeSignInCallback callback)
+        public async Task<IActionResult> Callback([FromBody] SignInCallback callback)
         {
             await _contactsApiClient.Callback(callback);
             return Ok();
         }
+
     }
 }

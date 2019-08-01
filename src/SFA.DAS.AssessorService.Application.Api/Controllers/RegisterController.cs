@@ -149,6 +149,23 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             }
         }
 
+        [HttpPut("contacts/associate-organisation", Name = "AssociateEpaContactWithOrganisation")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(bool))]
+        public async Task<IActionResult> AssociateEpaContactWithOrganisation([FromBody] AssociateEpaOrganisationWithEpaContactRequest request)
+        {
+            try
+            {
+                _logger.LogInformation($"Associating with Organisation [{request.OrganisationId}, {request.ContactId}]");
+                var result = await _mediator.Send(request);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($@"Bad request, Message: [{ex.Message}]");
+                return BadRequest();
+            }
+        }
+
         [HttpPost("standards",Name = "CreateEpaOrganisationStandard")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(EpaOrganisationStandard))]
         [SwaggerResponse((int)HttpStatusCode.NotFound, typeof(ApiResponse))]

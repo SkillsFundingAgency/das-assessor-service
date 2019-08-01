@@ -33,12 +33,6 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Qu
         public void Arrange()
         {
             MappingBootstrapper.Initialize();
-            var statuses = new List<string>
-            {
-                Domain.Consts.CertificateStatus.Submitted,
-                Domain.Consts.CertificateStatus.Printed,
-                Domain.Consts.CertificateStatus.Reprint
-            };
 
             var certificateData = JsonConvert.SerializeObject(Builder<CertificateData>.CreateNew().Build());
             var certificates = Builder<Certificate>.CreateListOfSize(10)
@@ -50,34 +44,34 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Qu
                 ).Build().ToList();
                                     
             _certificateRepositoryMock = new Mock<ICertificateRepository>();
-            _certificateRepositoryMock.Setup(r => r.GetCertificateHistory(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), statuses))
-                .Returns(Task.FromResult(new PaginatedList<Certificate>(certificates, 40, 1, 10)));
+            _certificateRepositoryMock.Setup(r => r.GetCertificateHistory(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(),It.IsAny<List<string>>()))
+                .ReturnsAsync(new PaginatedList<Certificate>(certificates, 40, 1, 10));
 
             _contactQueryRepositoryMock = new Mock<IContactQueryRepository>();
-            _contactQueryRepositoryMock.Setup(r => r.GetContact(It.IsAny<string>())).Returns(Task.FromResult(new Contact
+            _contactQueryRepositoryMock.Setup(r => r.GetContact(It.IsAny<string>())).ReturnsAsync(new Contact
             {
                 DisplayName = "Test Name"
-            }));
+            });
 
             _assessmentOrgsApiClientMock = new Mock<IAssessmentOrgsApiClient>();
             _assessmentOrgsApiClientMock.Setup(r => r.GetProvider(It.IsAny<long>()))
-                .Returns(Task.FromResult(new Provider
+                .ReturnsAsync( new Provider
                 {
                     ProviderName = "TestProvider",
                     Ukprn = 123456789
-                }));
+                });
 
             _loggermock = new Mock<ILogger<GetCertificatesHistoryHandler>>();
 
-            var getCertificatesHitoryHandler =
+            var getCertificatesHistoryHandler =
                 new GetCertificatesHistoryHandler(_certificateRepositoryMock.Object,
                     _assessmentOrgsApiClientMock.Object, _contactQueryRepositoryMock.Object,
                     _loggermock.Object);
 
-            _result = getCertificatesHitoryHandler.Handle(new GetCertificateHistoryRequest
+            _result = getCertificatesHistoryHandler.Handle(new GetCertificateHistoryRequest
                 {
                     PageIndex = 1,
-                    Username = "TestUser"
+                    EndPointAssessorOrganisationId = "12345677"
                 }, new CancellationToken())
                 .Result;
         }

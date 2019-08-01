@@ -6,17 +6,17 @@ SET NOCOUNT ON;
 
 CREATE TABLE #OrganisationStandardDeliveryAreaDetails
 (
-    organisationStandardId int,
-    cntr int,
+    OrganisationStandardId int,
+    Cntr int,
     DeliveryAreaList VARCHAR (500)
  
 )
 
-insert into #OrganisationStandardDeliveryAreaDetails (organisationStandardId, cntr)
+insert into #OrganisationStandardDeliveryAreaDetails (OrganisationStandardId, Cntr)
 select OrganisationStandardId, count(0) from OrganisationStandardDeliveryArea
 group by OrganisationStandardId
 
-update #OrganisationStandardDeliveryAreaDetails set DeliveryAreaList = 'All' where cntr = (SELECT COUNT(*) FROM [dbo].[DeliveryArea] WHERE [Status] = 'Live')
+update #OrganisationStandardDeliveryAreaDetails set DeliveryAreaList = 'All' where Cntr = (SELECT COUNT(*) FROM [dbo].[DeliveryArea] WHERE [Status] = 'Live')
 
 DECLARE @osId int
 DECLARE @details varchar(500)
@@ -28,7 +28,7 @@ while exists(select * from #OrganisationStandardDeliveryAreaDetails where Delive
           SELECT @details = COALESCE(@details + ', ', '') + Area
                 FROM DeliveryArea
                 WHERE Id in (select DeliveryAreaId from OrganisationStandardDeliveryArea where OrganisationStandardId = @osId )
-  update #OrganisationStandardDeliveryAreaDetails set DeliveryAreaList = @details where organisationStandardId = @osId
+  update #OrganisationStandardDeliveryAreaDetails set DeliveryAreaList = @details where OrganisationStandardId = @osId
   set @Details = null
   END
 
@@ -42,11 +42,11 @@ select os.EndPointAssessorOrganisationId EPA_organisation_identifier,
  from OrganisationStandard os 
 inner join Organisations o on o.EndPointAssessorOrganisationId = os.EndPointAssessorOrganisationId  and o.[Status] = 'Live'
 left outer join StandardCollation sc on os.StandardCode = sc.StandardId
-left outer join #OrganisationStandardDeliveryAreaDetails  dad on dad.organisationStandardId = os.Id
+left outer join #OrganisationStandardDeliveryAreaDetails dad on dad.OrganisationStandardId = os.Id
 where DeliveryAreaList is not null
 and o.EndPointAssessorOrganisationId <> 'EPA0000'
 and os.[Status] = 'Live'
-and (os.effectiveTo is null OR os.EffectiveTo > GETDATE())
+and (os.EffectiveTo is null OR os.EffectiveTo > GETDATE())
 order by o.EndPointAssessorOrganisationId, sc.Title
 
 drop table #OrganisationStandardDeliveryAreaDetails

@@ -279,6 +279,10 @@
                             {
                                 "name": "EnvironmentName",
                                 "value": "[toUpper(parameters('environmentName'))]"
+                            },
+                            {
+                                "name": "UseSandboxServices",
+                                "value": "yes"
                             }
                         ]
                     },
@@ -359,7 +363,7 @@
                             },
                             {
                                 "name": "FUNCTIONS_EXTENSION_VERSION",
-                                "value": "~1"
+                                "value": "~2"
                             },
                             {
                                 "name": "MSDEPLOY_RENAME_LOCKED_FILES",

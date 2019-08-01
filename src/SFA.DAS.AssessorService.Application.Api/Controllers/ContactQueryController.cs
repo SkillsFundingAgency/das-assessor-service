@@ -27,20 +27,37 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
     {
         private readonly SearchOrganisationForContactsValidator _searchOrganisationForContactsValidator;
         private readonly IContactQueryRepository _contactQueryRepository;
+        private readonly IContactApplyClient _contatApplyClient;
         private readonly IMediator _mediator;
         private readonly ILogger<ContactQueryController> _logger;
         private readonly IWebConfiguration _config;
 
         public ContactQueryController(IContactQueryRepository contactQueryRepository,
+            IContactApplyClient contatApplyClient,
             SearchOrganisationForContactsValidator searchOrganisationForContactsValidator,
             IMediator mediator,
             ILogger<ContactQueryController> logger, IWebConfiguration config)
         {
             _contactQueryRepository = contactQueryRepository;
+            _contatApplyClient = contatApplyClient;
             _logger = logger;
             _config = config;
             _searchOrganisationForContactsValidator = searchOrganisationForContactsValidator;
             _mediator = mediator;
+        }
+
+        [HttpGet("privileges")]
+        public async Task<IActionResult> GetAllPrivileges()
+        {
+            var privileges = await _contactQueryRepository.GetAllPrivileges();
+            return Ok(privileges);
+        }
+        
+        [HttpGet("user/{userId}/privileges")]
+        public async Task<IActionResult> GetPrivilegesForContact(Guid userId)
+        {
+            var privileges = await _contactQueryRepository.GetPrivilegesFor(userId);
+            return Ok(privileges);
         }
 
         [HttpGet("{endPointAssessorOrganisationId}", Name = "SearchContactsForAnOrganisation")]
@@ -93,16 +110,16 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             return Ok(Mapper.Map<ContactResponse>(contact));
         }
 
-        [HttpGet("{endPointAssessorOrganisationId}/withprivileges", Name = "GetAllContactsWithTheirPrivileges")]
+        [HttpGet("{organisationId}/withprivileges", Name = "GetAllContactsWithTheirPrivileges")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<ContactsWithPrivilegesResponse>))]
         [SwaggerResponse((int)HttpStatusCode.NotFound)]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> GetAllContactsWithTheirPrivileges(string endPointAssessorOrganisationId)
+        public async Task<IActionResult> GetAllContactsWithTheirPrivileges(Guid organisationId)
         {
             _logger.LogInformation(
-                $"Received Search for Contacts and their Privileges using endPointAssessorOrganisationId = {endPointAssessorOrganisationId}");
+                $"Received Search for Contacts and their Privileges using endPointAssessorOrganisationId = {organisationId}");
 
-            return Ok(await _mediator.Send(new GetContactsWithPrivilagesRequest(endPointAssessorOrganisationId)));
+            return Ok(await _mediator.Send(new GetContactsWithPrivilegesRequest(organisationId)));
         }
 
         [HttpGet("user/{id}", Name = "GetContactById")]
@@ -203,39 +220,23 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
                 }
             }
             
-            
             return Ok(); 
         }
 
-        [HttpPost("MigrateContactsAndOrgsToApply", Name = "MigrateContactsAndOrgsToApply")]
-        public async Task<ActionResult> MigrateContactsAndOrgsToApply()
-        {
-            var endpoint = new Uri(new Uri(_config.ApplyBaseAddress), "/MigrateContactAndOrgs");
-            using (var httpClient = new HttpClient())
-            {
-                var contactsToMigrate = await _contactQueryRepository.GetExsitingContactsToMigrateToApply();
-                foreach (var contact in contactsToMigrate)
-                {
-                    var request = MapAssessorToApply(contact);
-                    
-                    await httpClient.PostAsJsonAsync(endpoint, request);
-
-                }
-            }
-            return Ok();
-        }
-
         [HttpPost("MigrateSingleContactToApply", Name = "MigrateSingleContactToApply")]
+        [SwaggerResponse((int)HttpStatusCode.OK)]
+        [SwaggerResponse((int)HttpStatusCode.NotFound)]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<ActionResult> MigrateSingleContactToApply([FromBody]SigninIdWrapper signinWrapper)
         {
-            var endpoint = new Uri(new Uri(_config.ApplyApiAuthentication.ApiBaseAddress), "/Account/MigrateContactAndOrgs");
-            using (var httpClient = new HttpClient())
+            var contactToMigrate = await _contactQueryRepository.GetSingleContactsToMigrateToApply(signinWrapper.SigninId);
+            if (contactToMigrate == null)
             {
-                var contactToMigrate = await _contactQueryRepository.GetSingleContactsToMigrateToApply(signinWrapper.SigninId);
-                var request = MapAssessorToApply(contactToMigrate);
-                await httpClient.PostAsJsonAsync(endpoint, request);
+                throw new ResourceNotFoundException();
             }
 
+            var migrateContatOrganisation = MapAssessorToApply(contactToMigrate);
+            await _contatApplyClient.MigrateSingleContactToApply(migrateContatOrganisation);
             return Ok();
         }
 
@@ -328,9 +329,4 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         public Guid NewUserId { get; set; }
     }
 
-    public class MigrateContactOrganisation
-    {
-        public ApplyTypes.Contact contact { get; set; }
-        public Organisation organisation { get; set; }
-    }
 }
