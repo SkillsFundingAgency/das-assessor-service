@@ -21,5 +21,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Register
         public string Postcode { get; set; }
         public string CompanyNumber { get; set; }
         public string CharityNumber { get; set; }
+        public DateTime? FinancialDueDate { get; set; }
+        public bool? FinancialExempt { get; set; }
     }
 }
