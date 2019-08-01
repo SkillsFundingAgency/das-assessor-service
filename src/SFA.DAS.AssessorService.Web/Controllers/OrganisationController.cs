@@ -30,16 +30,18 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         private readonly IOrganisationsApiClient _organisationsApiClient;
         private readonly IContactsApiClient _contactsApiClient;
         private readonly IEmailApiClient _emailApiClient;
+        private readonly IValidationApiClient _validationApiClient;
         private readonly ILogger<OrganisationController> _logger;
 
         public OrganisationController(ILogger<OrganisationController> logger, IHttpContextAccessor contextAccessor, 
             IOrganisationsApiClient organisationsApiClient, IContactsApiClient contactsApiClient,
-            IEmailApiClient emailApiClient)
+            IEmailApiClient emailApiClient, IValidationApiClient validationApiClient)
         {
             _contextAccessor = contextAccessor;
             _organisationsApiClient = organisationsApiClient;
             _contactsApiClient = contactsApiClient;
             _emailApiClient = emailApiClient;
+            _validationApiClient = validationApiClient;
             _logger = logger;
         }
 
@@ -162,23 +164,21 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                     ? await _contactsApiClient.GetByUsername(vm.PrimaryContact)
                     : null;
 
-                // are then any API validations which can be applied instead - should there be??
-
                 if (vm.ActionChoice == "Save")
                 {
-                    if (string.IsNullOrEmpty(vm.PrimaryContact))
-                    {
-                        ModelState.AddModelError("PrimaryContact", "Unable to remove the primary contact or save no value");
-                    }
-
                     if (organisation.PrimaryContact == vm.PrimaryContact)
                     {
-                        ModelState.AddModelError("PrimaryContact", "Unable to update the selected contact is the same as the current contact");
+                        ModelState.AddModelError("PrimaryContact", "The contact name has not been changed.");
+                    }
+
+                    if (string.IsNullOrEmpty(vm.PrimaryContact))
+                    {
+                        ModelState.AddModelError("PrimaryContact", "The contact name cannot be removed");
                     }
 
                     if (organisation.Id != primaryContact?.OrganisationId)
                     {
-                        ModelState.AddModelError("PrimaryContact", "Unable to update the selected contact is not a contact for the organisation");
+                        ModelState.AddModelError("PrimaryContact", "The contact name cannot be changed to a contact of a different organisation");
                     }
 
                     if (!ModelState.IsValid)
@@ -278,6 +278,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         }
 
         [HttpGet]
+        [ModelStatePersist(ModelStatePersist.RestoreEntry)]
         [TypeFilter(typeof(MenuFilter), Arguments = new object[] { Pages.Organisations })]
         [PrivilegeAuthorize(Privileges.ChangeOrganisationPrivilege)]
         public async Task<IActionResult> ChangePhoneNumber()
@@ -286,13 +287,74 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             try
             {
                 var organisation = await _organisationsApiClient.GetEpaOrganisation(epaoid);
-                return RedirectToAction("OrganisationDetails");
+
+                var viewModel = new ChangePhoneNumberViewModel
+                {
+                    PhoneNumber = ModelState.IsValid
+                        ? organisation.OrganisationData?.PhoneNumber
+                        : ModelState["PhoneNumber"]?.AttemptedValue
+                };
+
+                return View(viewModel);
             }
             catch (EntityNotFoundException e)
             {
                 _logger.LogWarning(e, "Failed to find organisation");
                 return RedirectToAction("NotRegistered", "Home");
             }
+        }
+
+        [HttpPost]
+        [ModelStatePersist(ModelStatePersist.Store)]
+        [PrivilegeAuthorize(Privileges.ChangeOrganisationPrivilege)]
+        public async Task<IActionResult> ChangePhoneNumber(ChangePhoneNumberViewModel vm)
+        {
+            var epaoid = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/epaoid")?.Value;
+            try
+            {
+                var organisation = await _organisationsApiClient.GetEpaOrganisation(epaoid);
+
+                if (vm.ActionChoice == "Save")
+                {
+                    if (ModelState.IsValid && (await _validationApiClient.ValidatePhoneNumber(vm.PhoneNumber) == false))
+                    {
+                        ModelState.AddModelError("PhoneNumber", "Enter a valid phone number");
+                    }                    
+
+                    if (!ModelState.IsValid)
+                    {
+                        return RedirectToAction("ChangePhoneNumber");
+                    }
+
+                    vm = new ChangePhoneNumberViewModel
+                    {
+                        PhoneNumber = vm.PhoneNumber
+                    };
+
+                    return View("ChangePhoneNumberConfirm", vm);
+                }
+                else if (vm.ActionChoice == "Confirm")
+                {
+                    var request = Mapper.Map<UpdateEpaOrganisationRequest>(organisation);
+                    request.PhoneNumber = vm.PhoneNumber;
+
+                    await _organisationsApiClient.UpdateEpaOrganisation(request);
+
+                    vm = new ChangePhoneNumberViewModel
+                    {
+                        PhoneNumber = vm.PhoneNumber
+                    };
+
+                    return View("ChangePhoneNumberUpdated", vm);
+                }
+            }
+            catch (EntityNotFoundException e)
+            {
+                _logger.LogWarning(e, "Failed to find organisation");
+                return RedirectToAction("NotRegistered", "Home");
+            }
+
+            return RedirectToAction("OrganisationDetails");
         }
 
         [HttpGet]
@@ -314,6 +376,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         }
 
         [HttpGet]
+        [ModelStatePersist(ModelStatePersist.RestoreEntry)]
         [TypeFilter(typeof(MenuFilter), Arguments = new object[] { Pages.Organisations })]
         [PrivilegeAuthorize(Privileges.ChangeOrganisationPrivilege)]
         public async Task<IActionResult> ChangeEmail()
@@ -322,7 +385,15 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             try
             {
                 var organisation = await _organisationsApiClient.GetEpaOrganisation(epaoid);
-                return RedirectToAction("OrganisationDetails");
+
+                var viewModel = new ChangeEmailViewModel
+                {
+                    Email = ModelState.IsValid
+                        ? organisation.OrganisationData?.Email
+                        : ModelState["Email"]?.AttemptedValue
+                };
+
+                return View(viewModel);
             }
             catch (EntityNotFoundException e)
             {
@@ -331,7 +402,62 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             }
         }
 
+        [HttpPost]
+        [ModelStatePersist(ModelStatePersist.Store)]
+        [PrivilegeAuthorize(Privileges.ChangeOrganisationPrivilege)]
+        public async Task<IActionResult> ChangeEmail(ChangeEmailViewModel vm)
+        {
+            var epaoid = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/epaoid")?.Value;
+            try
+            {
+                var organisation = await _organisationsApiClient.GetEpaOrganisation(epaoid);
+
+                if (vm.ActionChoice == "Save")
+                {
+                    // only check if an email address has been entered - model has required validator
+                    if (ModelState.IsValid && (await _validationApiClient.ValidateEmailAddress(vm.Email) == false))
+                    {
+                        ModelState.AddModelError("Email", "Enter a valid email address");
+                    }
+                    
+                    if (!ModelState.IsValid)
+                    {
+                        return RedirectToAction("ChangeEmail");
+                    }
+
+                    vm = new ChangeEmailViewModel
+                    {
+                        Email = vm.Email
+                    };
+
+                    return View("ChangeEmailConfirm", vm);
+                }
+                else if (vm.ActionChoice == "Confirm")
+                {
+                    var request = Mapper.Map<UpdateEpaOrganisationRequest>(organisation);
+                    request.Email = vm.Email;
+
+                    await _organisationsApiClient.UpdateEpaOrganisation(request);
+
+                    vm = new ChangeEmailViewModel
+                    {
+                        Email = vm.Email
+                    };
+
+                    return View("ChangeEmailUpdated", vm);
+                }
+            }
+            catch (EntityNotFoundException e)
+            {
+                _logger.LogWarning(e, "Failed to find organisation");
+                return RedirectToAction("NotRegistered", "Home");
+            }
+
+            return RedirectToAction("OrganisationDetails");
+        }
+
         [HttpGet]
+        [ModelStatePersist(ModelStatePersist.RestoreEntry)]
         [TypeFilter(typeof(MenuFilter), Arguments = new object[] { Pages.Organisations })]
         [PrivilegeAuthorize(Privileges.ChangeOrganisationPrivilege)]
         public async Task<IActionResult> ChangeWebsite()
@@ -340,13 +466,75 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             try
             {
                 var organisation = await _organisationsApiClient.GetEpaOrganisation(epaoid);
-                return RedirectToAction("OrganisationDetails");
+
+                var viewModel = new ChangeWebsiteViewModel
+                {
+                    WebsiteLink = ModelState.IsValid
+                        ? organisation.OrganisationData?.WebsiteLink
+                        : ModelState["WebsiteLink"]?.AttemptedValue
+                };
+
+                return View(viewModel);
             }
             catch (EntityNotFoundException e)
             {
                 _logger.LogWarning(e, "Failed to find organisation");
                 return RedirectToAction("NotRegistered", "Home");
             }
+        }
+
+        [HttpPost]
+        [ModelStatePersist(ModelStatePersist.Store)]
+        [PrivilegeAuthorize(Privileges.ChangeOrganisationPrivilege)]
+        public async Task<IActionResult> ChangeWebsite(ChangeWebsiteViewModel vm)
+        {
+            var epaoid = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/epaoid")?.Value;
+            try
+            {
+                var organisation = await _organisationsApiClient.GetEpaOrganisation(epaoid);
+
+                if (vm.ActionChoice == "Save")
+                {
+                    // only check if an web site link has been entered - model has required validator
+                    if (ModelState.IsValid && (await _validationApiClient.ValidateWebsiteLink(vm.WebsiteLink) == false))
+                    {
+                        ModelState.AddModelError("WebsiteLink", "Enter a valid website address");
+                    }
+
+                    if (!ModelState.IsValid)
+                    {
+                        return RedirectToAction("ChangeWebsite");
+                    }
+
+                    vm = new ChangeWebsiteViewModel
+                    {
+                        WebsiteLink = vm.WebsiteLink
+                    };
+
+                    return View("ChangeWebsiteConfirm", vm);
+                }
+                else if (vm.ActionChoice == "Confirm")
+                {
+                    var request = Mapper.Map<UpdateEpaOrganisationRequest>(organisation);
+                    request.WebsiteLink = vm.WebsiteLink;
+
+                    await _organisationsApiClient.UpdateEpaOrganisation(request);
+
+                    vm = new ChangeWebsiteViewModel
+                    {
+                        WebsiteLink = vm.WebsiteLink
+                    };
+
+                    return View("ChangeWebsiteUpdated", vm);
+                }
+            }
+            catch (EntityNotFoundException e)
+            {
+                _logger.LogWarning(e, "Failed to find organisation");
+                return RedirectToAction("NotRegistered", "Home");
+            }
+
+            return RedirectToAction("OrganisationDetails");
         }
 
         private ViewAndEditOrganisationViewModel MapOrganisationModel(EpaOrganisation organisation)

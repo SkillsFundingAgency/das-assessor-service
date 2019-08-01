@@ -1,7 +1,7 @@
-﻿@model SFA.DAS.AssessorService.Web.ViewModels.SelectOrChangeContactNameViewModel
+﻿@model SFA.DAS.AssessorService.Web.ViewModels.ChangeWebsiteViewModel
 
 @{
-    var viewTitle = "Contact name updated";
+    var viewTitle = "Website address updated";
     ViewBag.Title = viewTitle;
     Layout = "_DashboardLayout";
 }
@@ -11,22 +11,15 @@
         <div class="govuk-grid-column-two-thirds">
             <div class="govuk-panel govuk-panel--confirmation">
                 <h1 class="govuk-panel__title">
-                    @viewTitle
+                    @viewTitle                   
                 </h1>
                 <div class="govuk-panel__body">
                     <div class="govuk-!-margin-bottom-6">
-                        New contact name is<br>
-                        <strong>@Model.PrimaryContactName</strong>
+                        New website address is<br>
+                        <strong>@Model.WebsiteLink</strong>
                     </div>
                 </div>
             </div>
-            <p class="govuk-body">An email has been sent to the following people in your organisation:</p>
-            <ul class="govuk-list govuk-list--bullet">
-                @foreach(var contact in Model.Contacts)
-                {
-                <li>@contact.DisplayName</li>
-                }
-            </ul>
             <h1 class="govuk-heading-l">What do you want to do next?</h1>
             <span class="govuk-body">
                 <a class="govuk-link" asp-controller="Organisation" asp-action="OrganisationDetails">View organisation details</a>

@@ -16,8 +16,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         Task<OrganisationResponse> Get(string ukprn);
         Task<Organisation> Get(Guid organisationId);
        
-        Task<OrganisationResponse> Create(CreateOrganisationRequest organisationCreateViewModel);
-        Task Update(UpdateOrganisationRequest organisationUpdateViewModel);
+        Task<OrganisationResponse> Create(CreateOrganisationRequest createOrganisationRequest);
+        Task Update(UpdateOrganisationRequest updateOrganisationRequest);
         Task Delete(Guid id);
 
         Task<ValidationResponse> ValidateCreateOrganisation(string name, long? ukprn, int? organisationTypeId, string companyNumber, string charityNumber);
@@ -30,8 +30,13 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 
         Task<ValidationResponse> ValidateCreateOrganisationStandard(string organisationId, int standardId, DateTime? effectiveFrom, DateTime? effectiveTo, Guid? contactId, List<int> deliveryAreas);
         Task<ValidationResponse> ValidateUpdateOrganisationStandard(string organisationId, int standardId, DateTime? effectiveFrom, DateTime? effectiveTo, Guid? contactId, List<int> deliveryAreas, string actionChoice, string organisationStandardStatus, string organisationStatus);
+
         Task<EpaOrganisation> GetEpaOrganisation(string organisationId);
+
+        Task UpdateEpaOrganisation(UpdateEpaOrganisationRequest updateEpaOrganisationRequest);
+
         Task<bool> AssociateOrganisationWithEpaContact(AssociateEpaOrganisationWithEpaContactRequest associateEpaOrganisationWithEpaContactRequest);
+
         Task<List<OrganisationType>> GetOrganisationTypes();
         Task SendEmailsToOrganisationUserManagementUsers(NotifyUserManagementUsersRequest notifyUserManagementUsersRequest);
         Task<OrganisationResponse> GetOrganisationByName(string name);

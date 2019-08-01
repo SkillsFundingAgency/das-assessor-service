@@ -25,7 +25,15 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             _logger = logger;
             _mediator = mediator;
         }
-       
+
+        [HttpGet("is-phonenumber-format/{phoneNumberToValidate}", Name = "ValidatePhoneNumber")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(bool))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> ValidatePhoneNumber(string phoneNumberToValidate)
+        {
+            return Ok(await _mediator.Send(new ValidationRequest { Type = "phonenumber", Value = phoneNumberToValidate }));
+        }
 
         [HttpGet("is-email-format/{emailToValidate}", Name = "ValidateEmail")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(bool))]
@@ -36,6 +44,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             return Ok(await _mediator.Send(new ValidationRequest{Type = "email", Value = emailToValidate}));
         }
 
+        [HttpGet("is-websitelink-format/{websiteLinkToValidate}", Name = "ValidateWebsiteLink")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(bool))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> ValidateWebsiteLink(string websiteLinkToValidate)
+        {
+            return Ok(await _mediator.Send(new ValidationRequest { Type = "websitelink", Value = websiteLinkToValidate }));
+        }
 
         [HttpGet("is-not-empty/{stringToValidate}", Name = "ValidateRequired")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(bool))]

@@ -22,6 +22,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.OrganisationControllerTests
         protected static Mock<IOrganisationsApiClient> OrganisationApiClient;
         protected static Mock<IContactsApiClient> ContactsApiClient;
         protected static Mock<IEmailApiClient> EmailApiClient;
+        protected static Mock<IValidationApiClient> ValidateApiClient;
 
         public static void Setup()
         {         
@@ -47,8 +48,9 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.OrganisationControllerTests
 
             ContactsApiClient = new Mock<IContactsApiClient>();
             EmailApiClient = new Mock<IEmailApiClient>();
+            ValidateApiClient = new Mock<IValidationApiClient>();
 
-            OrganisationController = new OrganisationController(logger.Object, httpContext.Object, OrganisationApiClient.Object, ContactsApiClient.Object, EmailApiClient.Object);
+            OrganisationController = new OrganisationController(logger.Object, httpContext.Object, OrganisationApiClient.Object, ContactsApiClient.Object, EmailApiClient.Object, ValidateApiClient.Object);
         }
     }
 }
