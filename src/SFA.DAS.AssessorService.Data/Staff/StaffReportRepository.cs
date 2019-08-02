@@ -40,7 +40,7 @@ namespace SFA.DAS.AssessorService.Data.Staff
             }
             else if(report.StoredProcedure == "StaffReports_DetailedExtract")
             {
-                DateTime date = DateTime.UtcNow
+				DateTime date = DateTime.UtcNow;
                 var firstDayOfMonth = new DateTime(date.Year, date.Month, 1);
                 var lastDayOfMonth = new DateTime(date.Year, date.Month, DateTime.DaysInMonth(date.Year, date.Month));
                 string fromdate = firstDayOfMonth.ToString("yyyy-MM-dd");

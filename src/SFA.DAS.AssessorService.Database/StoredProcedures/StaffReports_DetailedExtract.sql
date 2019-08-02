@@ -74,7 +74,7 @@ AS
 		   ce.[Status] AS 'Status'
 	FROM [dbo].[Certificates] ce
 	JOIN [dbo].[Organisations] rg ON ce.[OrganisationId] = rg.[Id]
-	WHERE ce.[Status] = 'Draft' AND ce.CreatedDay BETWEEN @fromdate AND @todate
+	WHERE ce.[Status] = 'Draft' AND ce.CreateDay BETWEEN @fromdate AND @todate
 	AND JSON_VALUE(ce.[CertificateData], '$.FullName') IS NOT NULL
 	AND JSON_VALUE(ce.[CertificateData], '$.StandardName') IS NOT NULL
 	ORDER BY 1, 11, 10, 2, 3
