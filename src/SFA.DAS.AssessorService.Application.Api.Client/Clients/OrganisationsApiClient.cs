@@ -79,6 +79,15 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
+        public async Task<EpaOrganisationResponse> CreateEpaOrganisation(CreateEpaOrganisationRequest epaoOrganisationModel)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/ao/assessment-organisations/"))
+            {
+                return await PostPutRequestWithResponse<CreateEpaOrganisationRequest, EpaOrganisationResponse>(request,
+                    epaoOrganisationModel);
+            }
+        }
+
         public async Task<ValidationResponse> ValidateCreateOrganisation(string name, long? ukprn, int? organisationTypeId, string companyNumber, string charityNumber)
         {
             var validationRequest = new CreateEpaOrganisationValidationRequest

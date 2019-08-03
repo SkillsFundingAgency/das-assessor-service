@@ -14,6 +14,13 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.AO
         public string Postcode { get; set; }
         public string CompanyNumber { get; set; }
         public string CharityNumber { get; set; }
+        public string ProviderName { get; set; }
+        public string City { get; set; }
+        public string OrganisationReferenceType { get; set; } // "RoEPAO", "RoATP" or "EASAPI"
+        public string OrganisationReferenceId { get; set; } // CSV list of known id's
+        public bool RoATPApproved { get; set; }
+        public bool RoEPAOApproved { get; set; }
+        public string EndPointAssessmentOrgId { get; set; }
         public FHADetails FHADetails { get; set; }
     }
 

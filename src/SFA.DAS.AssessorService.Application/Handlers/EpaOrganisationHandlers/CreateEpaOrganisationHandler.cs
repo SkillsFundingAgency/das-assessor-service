@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using AutoMapper;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
@@ -11,7 +9,6 @@ using SFA.DAS.AssessorService.Api.Types.Models.Register;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.Application.Exceptions;
 using SFA.DAS.AssessorService.Application.Interfaces;
-using SFA.DAS.AssessorService.Domain.Consts;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
 {
@@ -70,6 +67,14 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
             request.Postcode = _cleanser.CleanseStringForSpecialCharacters(request.Postcode);
             request.CompanyNumber = _cleanser.CleanseStringForSpecialCharacters(request.CompanyNumber);
             request.CharityNumber = _cleanser.CleanseStringForSpecialCharacters(request.CharityNumber);
+            request.ProviderName = _cleanser.CleanseStringForSpecialCharacters(request.ProviderName);
+            request.City = _cleanser.CleanseStringForSpecialCharacters(request.City);
+            request.OrganisationReferenceType =
+                _cleanser.CleanseStringForSpecialCharacters(request.OrganisationReferenceType);
+            request.OrganisationReferenceId =
+                _cleanser.CleanseStringForSpecialCharacters(request.OrganisationReferenceId);
+            request.EndPointAssessmentOrgId =
+                _cleanser.CleanseStringForSpecialCharacters(request.EndPointAssessmentOrgId);
         }
 
         private static EpaOrganisation MapOrganisationRequestToOrganisation(CreateEpaOrganisationRequest request, string newOrganisationId)
@@ -95,9 +100,17 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
                     LegalName = request.LegalName,
                     TradingName = request.TradingName,
                     Postcode = request.Postcode,
+                    City = request.City,
                     WebsiteLink = request.WebsiteLink,
                     CompanyNumber = request.CompanyNumber,
-                    CharityNumber = request.CharityNumber
+                    CharityNumber = request.CharityNumber,
+                    ProviderName = request.ProviderName,
+                    OrganisationReferenceType = request.OrganisationReferenceType,
+                    OrganisationReferenceId = request.OrganisationReferenceId,
+                    RoATPApproved = request.RoATPApproved,
+                    RoEPAOApproved = request.RoEPAOApproved,
+                    EndPointAssessmentOrgId = request.EndPointAssessmentOrgId,
+                    FHADetails = request.FHADetails
                 }
             };
 
