@@ -166,6 +166,74 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             }
         }
 
+        [HttpPut("update-primary-contact", Name = "UpdateEpaOrganisationPrimaryContact")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(bool))]
+        public async Task<IActionResult> UpdateEpaOrganisationPrimaryContact([FromBody] UpdateEpaOrganisationPrimaryContactRequest request)
+        {
+            try
+            {
+                _logger.LogInformation($"Amending the Organisation [{request.OrganisationId} with Primary Contact {request.PrimaryContactId}]");
+                var result = await _mediator.Send(request);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($@"Bad request, Message: [{ex.Message}]");
+                return BadRequest();
+            }
+        }
+
+        [HttpPut("update-phone-number", Name = "UpdateEpaOrganisationPhoneNumber")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(bool))]
+        public async Task<IActionResult> UpdateEpaOrganisationPhoneNumber([FromBody] UpdateEpaOrganisationPhoneNumberRequest request)
+        {
+            try
+            {
+                _logger.LogInformation($"Amending the Organisation [{request.OrganisationId} with Phone Number {request.PhoneNumber}]");
+                var result = await _mediator.Send(request);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($@"Bad request, Message: [{ex.Message}]");
+                return BadRequest();
+            }
+        }
+
+        [HttpPut("update-email", Name = "UpdateEpaOrganisationEmail")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(bool))]
+        public async Task<IActionResult> UpdateEpaOrganisationEmail([FromBody] UpdateEpaOrganisationEmailRequest request)
+        {
+            try
+            {
+                _logger.LogInformation($"Amending the Organisation [{request.OrganisationId} with Email {request.Email}]");
+                var result = await _mediator.Send(request);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($@"Bad request, Message: [{ex.Message}]");
+                return BadRequest();
+            }
+        }
+
+        [HttpPut("update-website-link", Name = "UpdateEpaOrganisationWebsiteLink")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(bool))]
+        public async Task<IActionResult> UpdateEpaOrganisationWebsiteLink([FromBody] UpdateEpaOrganisationWebsiteLinkRequest request)
+        {
+            try
+            {
+                _logger.LogInformation($"Amending the Organisation [{request.OrganisationId} with Website Link {request.WebsiteLink}]");
+                var result = await _mediator.Send(request);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($@"Bad request, Message: [{ex.Message}]");
+                return BadRequest();
+            }
+        }
+
         [HttpPost("standards",Name = "CreateEpaOrganisationStandard")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(EpaOrganisationStandard))]
         [SwaggerResponse((int)HttpStatusCode.NotFound, typeof(ApiResponse))]

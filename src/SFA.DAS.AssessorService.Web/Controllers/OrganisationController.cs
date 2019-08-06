@@ -197,75 +197,36 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 }
                 else if (vm.ActionChoice == "Confirm")
                 {
-                    var request = new AssociateEpaOrganisationWithEpaContactRequest
+                    var userId = _contextAccessor.HttpContext.User.FindFirst("UserId").Value;
+                    var request = new UpdateEpaOrganisationPrimaryContactRequest
                     {
-                        ContactId = primaryContact.Id,
+                        PrimaryContactId = primaryContact.Id,
                         OrganisationId = organisation.OrganisationId,
-                        ContactStatus = ContactStatus.Live,
-                        MakePrimaryContact = true,
-                        AddDefaultRoles = false,
-                        AddDefaultPrivileges = false
+                        UpdatedBy = Guid.Parse(userId)
                     };
 
-                    await _organisationsApiClient.AssociateOrganisationWithEpaContact(request);
-
-                    try
+                    if (await _organisationsApiClient.UpdateEpaOrganisationPrimaryContact(request))
                     {
-                        var notifyNewPrimaryContactEmailTemplate = await _emailApiClient.GetEmailTemplate("WHAT_IS_THE_TEMPLATE_NAME");
-                        if (notifyNewPrimaryContactEmailTemplate != null)
+                        var contactsWithPrivileges = await _contactsApiClient.GetContactsWithPrivileges(organisation.Id);
+                        var contactsWithManageUserPrivilege = contactsWithPrivileges?
+                            .Where(c => c.Privileges.Any(p => p.Key == Privileges.ManageUsers))
+                            .Select(p => contacts.First(c => c.Id.Equals(p.Contact.Id)))
+                            .ToList();
+
+                        vm = new SelectOrChangeContactNameViewModel
                         {
-                            _logger.LogInformation($"Sending email to notify updated primary contact {primaryContact.Username} for organisation {organisation.Name}");
+                            Contacts = contactsWithManageUserPrivilege,
+                            PrimaryContact = vm.PrimaryContact,
+                            PrimaryContactName = contacts.FirstOrDefault(p => p.Username == vm.PrimaryContact)?.DisplayName
+                        };
 
-                            await _emailApiClient.SendEmailWithTemplate(new SendEmailRequest(primaryContact.Email, notifyNewPrimaryContactEmailTemplate, new
-                            {
-                                ServiceName = "Apprenticeship assessment service",
-                                Contact = primaryContact.DisplayName,
-                                ServiceTeam = "Apprenticeship assessment service team"
-                            }));
-                        }
+                        return View("SelectOrChangeContactNameUpdated", vm);
                     }
-                    catch(Exception)
+                    else
                     {
-                        _logger.LogInformation($"Unable to send email to notify updated primary contact {primaryContact.Username} for organisation {organisation.Name}");
+                        ModelState.AddModelError("PrimaryContact", "Unable to update the contact name at this time.");
+                        return RedirectToAction("SelectOrChangeContactName");
                     }
-
-                    var contactsWithPrivileges = await _contactsApiClient.GetContactsWithPrivileges(organisation.Id);
-                    var contactsWithManageUserPrivilege = contactsWithPrivileges?
-                        .Where(c => c.Privileges.Any(p => p.Key == Privileges.ManageUsers))
-                        .Select(p => contacts.First(c => c.Id.Equals(p.Contact.Id)))
-                        .ToList();
-
-                    try
-                    {
-                        var notifyContactsWithManageUsersPermissionEmailTemplate = await _emailApiClient.GetEmailTemplate("WHAT_IS_THE_TEMPLATE_NAME");
-                        if (notifyContactsWithManageUsersPermissionEmailTemplate != null)
-                        {
-                            foreach (var contactWithManageUserPrivilege in contactsWithManageUserPrivilege)
-                            {
-                                _logger.LogInformation($"Sending email to notify updated primary contact {primaryContact.Username} for organisation {organisation.Name} to {contactWithManageUserPrivilege.Username}");
-
-                                await _emailApiClient.SendEmailWithTemplate(new SendEmailRequest(contactWithManageUserPrivilege.Email, notifyContactsWithManageUsersPermissionEmailTemplate, new
-                                {
-                                    ServiceName = "Apprenticeship assessment service",
-                                    Contact = contactWithManageUserPrivilege.DisplayName,
-                                    ServiceTeam = "Apprenticeship assessment service team"
-                                }));
-                            }
-                        }
-                    }
-                    catch(Exception)
-                    {
-                        _logger.LogInformation($"Unable to send email to notify updated primary contact {primaryContact.Username} for organisation {organisation.Name} to contacts with mangage user privileges");
-                    }
-
-                    vm = new SelectOrChangeContactNameViewModel
-                    {
-                        Contacts = contactsWithManageUserPrivilege,
-                        PrimaryContact = vm.PrimaryContact,
-                        PrimaryContactName = contacts.FirstOrDefault(p => p.Username == vm.PrimaryContact)?.DisplayName
-                    };
-
-                    return View("SelectOrChangeContactNameUpdated", vm);
                 }
             }
             catch (EntityNotFoundException e)
@@ -316,10 +277,19 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
                 if (vm.ActionChoice == "Save")
                 {
-                    if (ModelState.IsValid && (await _validationApiClient.ValidatePhoneNumber(vm.PhoneNumber) == false))
+                    if (ModelState.IsValid)
                     {
-                        ModelState.AddModelError("PhoneNumber", "Enter a valid phone number");
-                    }                    
+                        // only check if a phone number has been entered - model has required validator
+                        if (await _validationApiClient.ValidatePhoneNumber(vm.PhoneNumber) == false)
+                        {
+                            ModelState.AddModelError("PhoneNumber", "Enter a valid phone number");
+                        }
+
+                        if (vm.PhoneNumber.Equals(organisation.OrganisationData?.PhoneNumber))
+                        {
+                            ModelState.AddModelError("PhoneNumber", "Enter a different phone number");
+                        }
+                    }
 
                     if (!ModelState.IsValid)
                     {
@@ -335,17 +305,34 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 }
                 else if (vm.ActionChoice == "Confirm")
                 {
-                    var request = Mapper.Map<UpdateEpaOrganisationRequest>(organisation);
-                    request.PhoneNumber = vm.PhoneNumber;
-
-                    await _organisationsApiClient.UpdateEpaOrganisation(request);
-
-                    vm = new ChangePhoneNumberViewModel
+                    var userId = _contextAccessor.HttpContext.User.FindFirst("UserId").Value;
+                    var request = new UpdateEpaOrganisationPhoneNumberRequest
                     {
-                        PhoneNumber = vm.PhoneNumber
+                        PhoneNumber = vm.PhoneNumber,
+                        OrganisationId = organisation.OrganisationId,
+                        UpdatedBy = Guid.Parse(userId)
                     };
 
-                    return View("ChangePhoneNumberUpdated", vm);
+                    if (await _organisationsApiClient.UpdateEpaOrganisationPhoneNumber(request))
+                    {
+                        var contactsWithPrivileges = await _contactsApiClient.GetContactsWithPrivileges(organisation.Id);
+                        var contactsWithManageUserPrivilege = contactsWithPrivileges?
+                            .Where(c => c.Privileges.Any(p => p.Key == Privileges.ManageUsers))
+                            .ToList();
+
+                        vm = new ChangePhoneNumberViewModel
+                        {
+                            PhoneNumber = vm.PhoneNumber,
+                            Contacts = contactsWithManageUserPrivilege
+                        };
+
+                        return View("ChangePhoneNumberUpdated", vm);
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("PrimaryContact", "Unable to update the contact phone number at this time.");
+                        return RedirectToAction("ChangePhoneNumber");
+                    }
                 }
             }
             catch (EntityNotFoundException e)
@@ -414,10 +401,19 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
                 if (vm.ActionChoice == "Save")
                 {
-                    // only check if an email address has been entered - model has required validator
-                    if (ModelState.IsValid && (await _validationApiClient.ValidateEmailAddress(vm.Email) == false))
+                    if (ModelState.IsValid)
                     {
-                        ModelState.AddModelError("Email", "Enter a valid email address");
+                        // only check if an email address has been entered - model has required validator
+                        if (await _validationApiClient.ValidateEmailAddress(vm.Email) == false)
+                        {
+                            ModelState.AddModelError("Email", "Enter a valid email address");
+                        }
+
+                        // user can change case of an email only
+                        if(vm.Email.Equals(organisation.OrganisationData?.Email))
+                        {
+                            ModelState.AddModelError("Email", "Enter a different email address");
+                        }
                     }
                     
                     if (!ModelState.IsValid)
@@ -434,17 +430,34 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 }
                 else if (vm.ActionChoice == "Confirm")
                 {
-                    var request = Mapper.Map<UpdateEpaOrganisationRequest>(organisation);
-                    request.Email = vm.Email;
-
-                    await _organisationsApiClient.UpdateEpaOrganisation(request);
-
-                    vm = new ChangeEmailViewModel
+                    var userId = _contextAccessor.HttpContext.User.FindFirst("UserId").Value;
+                    var request = new UpdateEpaOrganisationEmailRequest
                     {
-                        Email = vm.Email
+                        Email = vm.Email,
+                        OrganisationId = organisation.OrganisationId,
+                        UpdatedBy = Guid.Parse(userId)
                     };
 
-                    return View("ChangeEmailUpdated", vm);
+                    if (await _organisationsApiClient.UpdateEpaOrganisationEmail(request))
+                    {
+                        var contactsWithPrivileges = await _contactsApiClient.GetContactsWithPrivileges(organisation.Id);
+                        var contactsWithManageUserPrivilege = contactsWithPrivileges?
+                            .Where(c => c.Privileges.Any(p => p.Key == Privileges.ManageUsers))
+                            .ToList();
+
+                        vm = new ChangeEmailViewModel
+                        {
+                            Email = vm.Email,
+                            Contacts = contactsWithManageUserPrivilege
+                        };
+
+                        return View("ChangeEmailUpdated", vm);
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("Email", "Unable to update the email address at this time.");
+                        return RedirectToAction("ChangeEmail");
+                    }
                 }
             }
             catch (EntityNotFoundException e)
@@ -496,9 +509,18 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 if (vm.ActionChoice == "Save")
                 {
                     // only check if an web site link has been entered - model has required validator
-                    if (ModelState.IsValid && (await _validationApiClient.ValidateWebsiteLink(vm.WebsiteLink) == false))
+                    if (ModelState.IsValid)
                     {
-                        ModelState.AddModelError("WebsiteLink", "Enter a valid website address");
+                        if (await _validationApiClient.ValidateWebsiteLink(vm.WebsiteLink) == false)
+                        {
+                            ModelState.AddModelError("WebsiteLink", "Enter a valid website address");
+                        }
+
+                        // user can change case of an email only
+                        if (vm.WebsiteLink.Equals(organisation.OrganisationData?.WebsiteLink))
+                        {
+                            ModelState.AddModelError("WebsiteLink", "Enter a different website address");
+                        }
                     }
 
                     if (!ModelState.IsValid)
@@ -515,17 +537,34 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 }
                 else if (vm.ActionChoice == "Confirm")
                 {
-                    var request = Mapper.Map<UpdateEpaOrganisationRequest>(organisation);
-                    request.WebsiteLink = vm.WebsiteLink;
-
-                    await _organisationsApiClient.UpdateEpaOrganisation(request);
-
-                    vm = new ChangeWebsiteViewModel
+                    var userId = _contextAccessor.HttpContext.User.FindFirst("UserId").Value;
+                    var request = new UpdateEpaOrganisationWebsiteLinkRequest
                     {
-                        WebsiteLink = vm.WebsiteLink
+                        WebsiteLink = vm.WebsiteLink,
+                        OrganisationId = organisation.OrganisationId,
+                        UpdatedBy = Guid.Parse(userId)
                     };
 
-                    return View("ChangeWebsiteUpdated", vm);
+                    if (await _organisationsApiClient.UpdateEpaOrganisationWebsiteLink(request))
+                    {
+                        var contactsWithPrivileges = await _contactsApiClient.GetContactsWithPrivileges(organisation.Id);
+                        var contactsWithManageUserPrivilege = contactsWithPrivileges?
+                            .Where(c => c.Privileges.Any(p => p.Key == Privileges.ManageUsers))
+                            .ToList();
+
+                        vm = new ChangeWebsiteViewModel
+                        {
+                            WebsiteLink = vm.WebsiteLink,
+                            Contacts = contactsWithManageUserPrivilege
+                        };
+
+                        return View("ChangeWebsiteUpdated", vm);
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("Email", "Unable to update the website address at this time.");
+                        return RedirectToAction("ChangeWebsite");
+                    }
                 }
             }
             catch (EntityNotFoundException e)

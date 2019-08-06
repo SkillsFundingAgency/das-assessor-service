@@ -51,5 +51,18 @@ BEGIN
 	VALUES (NEWID(), 'Change organisation details', 0, 'This area allows you to change organisation details', 'ChangeOrganisationDetails', 1)
 END
 
+-- add email templates for organisation details change notifications
+IF NOT EXISTS (SELECT * FROM [EMailTemplates] WHERE [TemplateName] = N'EPAOOrganisationDetailsAmended')
+BEGIN
+	INSERT INTO [EMailTemplates] (TemplateName, TemplateId, Recipients, CreatedAt, DeletedAt, UpdatedAt, RecipientTemplate) 
+	VALUES ('EPAOOrganisationDetailsAmended', 'd05b7fcd-6aca-4726-8d10-fa36b4172578', NULL, GETUTCDATE(), NULL, NULL, NULL)
+END
+
+IF NOT EXISTS (SELECT * FROM [EMailTemplates] WHERE [TemplateName] = N'EPAOPrimaryContactAmended')
+BEGIN
+	INSERT INTO [EMailTemplates] (TemplateName, TemplateId, Recipients, CreatedAt, DeletedAt, UpdatedAt, RecipientTemplate) 
+	VALUES ('EPAOPrimaryContactAmended', 'f87cb8e2-d544-4edd-8dd6-fa1aeeba584b', NULL, GETUTCDATE(), NULL, NULL, NULL)
+END
+
 COMMIT TRANSACTION
 

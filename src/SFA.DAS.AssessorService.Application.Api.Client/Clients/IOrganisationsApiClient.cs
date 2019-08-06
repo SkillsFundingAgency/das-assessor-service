@@ -36,6 +36,10 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         Task UpdateEpaOrganisation(UpdateEpaOrganisationRequest updateEpaOrganisationRequest);
 
         Task<bool> AssociateOrganisationWithEpaContact(AssociateEpaOrganisationWithEpaContactRequest associateEpaOrganisationWithEpaContactRequest);
+        Task<bool> UpdateEpaOrganisationPrimaryContact(UpdateEpaOrganisationPrimaryContactRequest updateEpaOrganisationPrimaryContactRequest);
+        Task<bool> UpdateEpaOrganisationPhoneNumber(UpdateEpaOrganisationPhoneNumberRequest updateEpaOrganisationPhoneNumberRequest);
+        Task<bool> UpdateEpaOrganisationEmail(UpdateEpaOrganisationEmailRequest updateEpaOrganisationEmailRequest);
+        Task<bool> UpdateEpaOrganisationWebsiteLink(UpdateEpaOrganisationWebsiteLinkRequest updateEpaOrganisationWebsiteLinkRequest);
 
         Task<List<OrganisationType>> GetOrganisationTypes();
         Task SendEmailsToOrganisationUserManagementUsers(NotifyUserManagementUsersRequest notifyUserManagementUsersRequest);

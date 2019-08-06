@@ -20,6 +20,13 @@
                     </div>
                 </div>
             </div>
+            <p class="govuk-body">An email has been sent to the following people in your organisation:</p>
+            <ul class="govuk-list govuk-list--bullet">
+                @foreach (var contact in Model.Contacts)
+                {
+                    <li>@contact.Contact.DisplayName</li>
+                }
+            </ul>
             <h1 class="govuk-heading-l">What do you want to do next?</h1>
             <span class="govuk-body">
                 <a class="govuk-link" asp-controller="Organisation" asp-action="OrganisationDetails">View organisation details</a>

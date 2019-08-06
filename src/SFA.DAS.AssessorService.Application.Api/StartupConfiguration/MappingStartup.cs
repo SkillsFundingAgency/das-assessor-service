@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
+using SFA.DAS.AssessorService.Api.Types.AutoMapperProfiles;
 using SFA.DAS.AssessorService.Api.Types.Models;
-using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
 using SFA.DAS.AssessorService.Application.Mapping.CustomResolvers;
@@ -40,6 +40,8 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                     .ConvertUsing<JsonMappingConverter<CertificateDataResponse>>();
 
                 cfg.CreateMap<Certificate, CertificateSummaryResponse>();
+
+                cfg.AddProfile<EpaOrganisationProfile>();
 
                 cfg.CreateMap<CreateEpaOrganisationRequest, EpaOrganisationResponse>(); 
                 cfg.CreateMap<UpdateEpaOrganisationRequest, EpaOrganisationResponse>(); 

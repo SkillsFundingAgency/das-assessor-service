@@ -184,6 +184,42 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
+        public async Task<bool> UpdateEpaOrganisationPrimaryContact(UpdateEpaOrganisationPrimaryContactRequest updateEpaOrganisationPrimaryContactRequest)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Put, $"api/ao/assessment-organisations/update-primary-contact"))
+            {
+                return await PostPutRequestWithResponse<UpdateEpaOrganisationPrimaryContactRequest, bool>(request,
+                    updateEpaOrganisationPrimaryContactRequest);
+            }
+        }
+
+        public async Task<bool> UpdateEpaOrganisationPhoneNumber(UpdateEpaOrganisationPhoneNumberRequest updateEpaOrganisationPhoneNumberRequest)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Put, $"api/ao/assessment-organisations/update-phone-number"))
+            {
+                return await PostPutRequestWithResponse<UpdateEpaOrganisationPhoneNumberRequest, bool>(request,
+                    updateEpaOrganisationPhoneNumberRequest);
+            }
+        }
+
+        public async Task<bool> UpdateEpaOrganisationEmail(UpdateEpaOrganisationEmailRequest updateEpaOrganisationEmailRequest)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Put, $"api/ao/assessment-organisations/update-email"))
+            {
+                return await PostPutRequestWithResponse<UpdateEpaOrganisationEmailRequest, bool>(request,
+                    updateEpaOrganisationEmailRequest);
+            }
+        }
+
+        public async Task<bool> UpdateEpaOrganisationWebsiteLink(UpdateEpaOrganisationWebsiteLinkRequest updateEpaOrganisationWebsiteLinkRequest)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Put, $"api/ao/assessment-organisations/update-website-link"))
+            {
+                return await PostPutRequestWithResponse<UpdateEpaOrganisationWebsiteLinkRequest, bool>(request,
+                    updateEpaOrganisationWebsiteLinkRequest);
+            }
+        }
+
         public async Task<ValidationResponse> ValidateSearchStandards(string searchstring)
         {
            
