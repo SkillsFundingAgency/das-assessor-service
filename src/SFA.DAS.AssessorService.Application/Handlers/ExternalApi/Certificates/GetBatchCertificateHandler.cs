@@ -46,8 +46,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
             {
                 var certData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
 
-                if("pass".Equals(certData.EpaDetails?.LatestEpaOutcome, StringComparison.InvariantCultureIgnoreCase)
-                    && string.Equals(certData.LearnerFamilyName, request.FamilyName, StringComparison.InvariantCultureIgnoreCase))
+                // EPA Status implications?
+                if(string.Equals(certData.LearnerFamilyName, request.FamilyName, StringComparison.InvariantCultureIgnoreCase))
                 {
                     certificate = await ApplyStatusInformation(certificate);
 
