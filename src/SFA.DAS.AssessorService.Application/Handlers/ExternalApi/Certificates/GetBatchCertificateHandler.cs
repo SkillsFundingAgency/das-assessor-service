@@ -179,7 +179,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
             };
 
             cert.CertificateData = JsonConvert.SerializeObject(redactedData);
-            cert.CertificateReference = "";
+            cert.CertificateReference = null;
             cert.CertificateReferenceId = null;
             cert.CreateDay = DateTime.MinValue;
             cert.CreatedAt = DateTime.MinValue;
