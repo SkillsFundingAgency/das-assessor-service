@@ -46,10 +46,15 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
             {
                 var certData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
 
-                // EPA Status implications?
                 if(string.Equals(certData.LearnerFamilyName, request.FamilyName, StringComparison.InvariantCultureIgnoreCase))
                 {
                     certificate = await ApplyStatusInformation(certificate);
+                    
+                    if(!EpaOutcome.Pass.Equals(certData.EpaDetails?.LatestEpaOutcome, StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        // As EPA has not passed, only give access to basic information & EPA Details
+                        certificate = RedactCertificateInformation(certificate, true);
+                    }
 
                     var searchingContact = await _contactQueryRepository.GetContactFromEmailAddress(request.Email);
                     var certificateContact = await GetContactFromCertificateLogs(certificate.Id, certificate.UpdatedBy, certificate.CreatedBy);
@@ -61,28 +66,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
                         if (providedStandards.PageOfResults.Any(s => s.StandardCode == certificate.StandardCode))
                         {
                             // Shared standard but not the EPAO who created the certificate
-                            // Must redact information
-                            CertificateData redactedData = new CertificateData
-                            {
-                                LearnerGivenNames = certData.LearnerGivenNames,
-                                LearnerFamilyName = certData.LearnerFamilyName,
-                                StandardReference = certData.StandardReference,
-                                StandardName = certData.StandardName,
-                                StandardLevel = certData.StandardLevel,
-                                StandardPublicationDate = certData.StandardPublicationDate,
-                                EpaDetails = null
-                            };
-
-                            certificate.CertificateData = JsonConvert.SerializeObject(redactedData);
-                            certificate.CertificateReference = "PRIVATE";
-                            certificate.CertificateReferenceId = null;
-                            certificate.CreateDay = DateTime.MinValue;
-                            certificate.CreatedAt = DateTime.MinValue;
-                            certificate.CreatedBy = null;
-                            certificate.UpdatedAt = null;
-                            certificate.UpdatedBy = null;
-                            certificate.DeletedBy = null;
-                            certificate.DeletedAt = null;
+                            certificate = RedactCertificateInformation(certificate, false);
                         }
                         else
                         {
@@ -143,7 +127,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
 
         private async Task<Certificate> ApplyStatusInformation(Certificate certificate)
         {
-            // certificate is track-able entity. So we have to this do to stop it from updating in the database
+            // certificate is track-able entity. So we have to do this in order to stop it from updating in the database
             var json = JsonConvert.SerializeObject(certificate);
             var cert = JsonConvert.DeserializeObject<Certificate>(json);
 
@@ -172,6 +156,38 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
                 cert.UpdatedAt = null;
                 cert.UpdatedBy = null;
             }
+
+            return cert;
+        }
+
+        private Certificate RedactCertificateInformation(Certificate certificate, bool showEpaDetails)
+        {
+            // certificate is track-able entity. So we have to do this in order to stop it from updating in the database
+            var json = JsonConvert.SerializeObject(certificate);
+            var cert = JsonConvert.DeserializeObject<Certificate>(json);
+            var certData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
+
+            CertificateData redactedData = new CertificateData
+            {
+                LearnerGivenNames = certData.LearnerGivenNames,
+                LearnerFamilyName = certData.LearnerFamilyName,
+                StandardReference = certData.StandardReference,
+                StandardName = certData.StandardName,
+                StandardLevel = certData.StandardLevel,
+                StandardPublicationDate = certData.StandardPublicationDate,
+                EpaDetails = showEpaDetails ? certData.EpaDetails : null
+            };
+
+            cert.CertificateData = JsonConvert.SerializeObject(redactedData);
+            cert.CertificateReference = "";
+            cert.CertificateReferenceId = null;
+            cert.CreateDay = DateTime.MinValue;
+            cert.CreatedAt = DateTime.MinValue;
+            cert.CreatedBy = null;
+            cert.UpdatedAt = null;
+            cert.UpdatedBy = null;
+            cert.DeletedBy = null;
+            cert.DeletedAt = null;
 
             return cert;
         }
