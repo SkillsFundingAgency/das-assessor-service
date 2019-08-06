@@ -3,6 +3,7 @@ using FluentValidation.Results;
 using Microsoft.Extensions.Localization;
 using SFA.DAS.AssessorService.Api.Types.Models.ExternalApi.Epas;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Domain.Consts;
 using System;
 using System.Linq;
 
@@ -65,7 +66,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Epas
             {
                 var earliestDate = new DateTime(2017, 1, 1);
                 var latestDate = DateTime.UtcNow;
-                var outcomes = new string[] { "pass", "fail", "withdrawn" };
+                var outcomes = new string[] { EpaOutcome.Pass, EpaOutcome.Fail, EpaOutcome.Withdrawn };
 
                 RuleFor(m => m.EpaDetails.Epas).NotEmpty().WithMessage("Provide EPA Details")
                     .ForEach(epaRule =>

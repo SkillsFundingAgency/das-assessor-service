@@ -37,7 +37,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Certifi
                     {
                         var certData = JsonConvert.DeserializeObject<CertificateData>(existingCertificate.CertificateData);
 
-                        if (!"pass".Equals(certData.EpaDetails?.LatestEpaOutcome, StringComparison.InvariantCultureIgnoreCase))
+                        if (!EpaOutcome.Pass.Equals(certData.EpaDetails?.LatestEpaOutcome, StringComparison.InvariantCultureIgnoreCase))
                         {
                             context.AddFailure(new ValidationFailure("CertificateReference", $"Latest EPA Outcome has not passed"));
                         }

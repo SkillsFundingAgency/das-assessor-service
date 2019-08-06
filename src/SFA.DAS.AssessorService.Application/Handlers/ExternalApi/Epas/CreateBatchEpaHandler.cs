@@ -7,6 +7,8 @@ using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -53,12 +55,21 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Epas
             certificate.Status = Domain.Consts.CertificateStatus.Draft;
 
             _logger.LogInformation("CreateNewEpa Before Combining EpaDetails");
-            var latestRecord = request.EpaDetails.Epas.OrderByDescending(epa => epa.EpaDate).First();
             var certData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
-            certData.EpaDetails = request.EpaDetails ?? new EpaDetails();
-            certData.EpaDetails.EpaReference = certificate.CertificateReference;
-            certData.EpaDetails.LatestEpaDate = latestRecord.EpaDate;
-            certData.EpaDetails.LatestEpaOutcome = latestRecord.EpaOutcome;
+            certData.EpaDetails = new EpaDetails { EpaReference = certificate.CertificateReference, Epas = new List<EpaRecord>() };
+
+            if (request.EpaDetails?.Epas != null)
+            {
+                foreach (var epa in request.EpaDetails.Epas)
+                {
+                    epa.EpaOutcome = NormalizeEpaOutcome(epa.EpaOutcome);
+                    certData.EpaDetails.Epas.Add(epa);
+                }
+            }
+
+            var latestEpaRecord = certData.EpaDetails.Epas.OrderByDescending(epa => epa.EpaDate).FirstOrDefault();
+            certData.EpaDetails.LatestEpaDate = latestEpaRecord?.EpaDate;
+            certData.EpaDetails.LatestEpaOutcome = latestEpaRecord?.EpaOutcome;
 
             _logger.LogInformation("CreateNewEpa Before Update CertificateData");
             certificate.CertificateData = JsonConvert.SerializeObject(certData);
@@ -79,6 +90,12 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Epas
             }
 
             return contact;
+        }
+
+        private static string NormalizeEpaOutcome(string epaOutcome)
+        {
+            var outcomes = new string[] { EpaOutcome.Pass, EpaOutcome.Fail, EpaOutcome.Withdrawn };
+            return outcomes.FirstOrDefault(g => g.Equals(epaOutcome, StringComparison.InvariantCultureIgnoreCase)) ?? epaOutcome;
         }
     }
 }
