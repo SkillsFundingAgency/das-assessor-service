@@ -1,12 +1,11 @@
-﻿using SFA.DAS.AssessorService.Application.Api.External.Models.Response.Certificates;
-using System;
+﻿using System;
 
 namespace SFA.DAS.AssessorService.Application.Api.External.Models.Response.Learners
 {
     public sealed class LearnerData : IEquatable<LearnerData>
     {
-        public Standard Standard { get; set; }
-        public Learner Learner { get; set; }
+        public Certificates.Standard Standard { get; set; }
+        public Certificates.Learner Learner { get; set; }
         public LearningDetails LearningDetails { get; set; }
 
         #region GetHashCode, Equals and IEquatable

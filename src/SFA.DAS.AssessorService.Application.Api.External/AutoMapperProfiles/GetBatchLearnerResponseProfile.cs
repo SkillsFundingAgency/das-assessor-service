@@ -39,11 +39,12 @@ namespace SFA.DAS.AssessorService.Application.Api.External.AutoMapperProfiles
             {
                 if (destination.Certificate?.CertificateData != null)
                 {
+                    var certData = destination.Certificate.CertificateData;
                     destination.LearnerData = new LearnerData
                     {
-                        Standard = destination.Certificate.CertificateData.Standard,
-                        Learner = destination.Certificate.CertificateData.Learner,
-                        LearningDetails = destination.Certificate.CertificateData.LearningDetails
+                        Standard = certData.Standard,
+                        Learner = certData.Learner,
+                        LearningDetails = new Models.Response.Learners.LearningDetails { ProviderUkPrn = certData.LearningDetails.ProviderUkPrn, ProviderName = certData.LearningDetails.ProviderName, LearningStartDate = certData.LearningDetails.LearningStartDate}
                     };
                 }
                 else if (source.Learner != null)
@@ -52,7 +53,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.AutoMapperProfiles
                     {
                         Standard = source.Learner.Standard is null ? null : new Standard { StandardCode = source.Learner.Standard.StandardId, StandardReference = source.Learner.Standard.ReferenceNumber, StandardName = source.Learner.Standard.Title, Level = source.Learner.Standard.StandardData?.Level ?? 0 },
                         Learner = new Learner { Uln = source.Learner.Uln, GivenNames = source.Learner.GivenNames, FamilyName = source.Learner.FamilyName },
-                        LearningDetails = new LearningDetails { ProviderUkPrn = source.Learner.UkPrn, ProviderName = source.Learner.OrganisationName, LearningStartDate = source.Learner.LearnerStartDate }
+                        LearningDetails = new Models.Response.Learners.LearningDetails { LearnerReferenceNumber = source.Learner.LearnerReferenceNumber, ProviderUkPrn = source.Learner.UkPrn, ProviderName = source.Learner.OrganisationName, LearningStartDate = source.Learner.LearnerStartDate, PlannedEndDate = source.Learner.PlannedEndDate }
                     };
                 }
             }
@@ -71,7 +72,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.AutoMapperProfiles
                 }
                 else if (destination.Certificate?.Status?.CurrentStatus != null)
                 {
-                    // NOTE: This block of code allows us to deterime the completionStatus based on Certificate Status
+                    // NOTE: This block of code allows us to determine the completionStatus based on Certificate Status
                     int? completionStatus;
                     switch (destination.Certificate.Status.CurrentStatus)
                     {
@@ -111,7 +112,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.AutoMapperProfiles
                 }
                 else if (destination.Certificate.Status?.CurrentStatus == CertificateStatus.Draft)
                 {
-                    if (!"pass".Equals(destination.EpaDetails?.LatestEpaOutcome, StringComparison.InvariantCultureIgnoreCase))
+                    if (!EpaOutcome.Pass.Equals(destination.EpaDetails?.LatestEpaOutcome, StringComparison.InvariantCultureIgnoreCase))
                     {
                         destination.Certificate = null;
                     }

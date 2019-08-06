@@ -9,6 +9,8 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.ExternalApi.Learners
         public string GivenNames { get; set; }
         public string FamilyName { get; set; }
         public DateTime LearnerStartDate { get; set; }
+        public DateTime? PlannedEndDate { get; set; }
+        public string LearnerReferenceNumber { get; set; }
         public int? CompletionStatus { get; set; }
 
         public StandardCollation Standard { get; set; }
