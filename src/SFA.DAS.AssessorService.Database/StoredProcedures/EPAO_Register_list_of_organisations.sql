@@ -9,11 +9,16 @@ CREATE TABLE #PrimaryOrFirstContact
     OrganisationId nvarchar(20)
 ) 
 
-
-insert into #PrimaryOrFirstContact (OrganisationId, ContactId) select o.EndPointAssessorOrganisationId, c.Id from Organisations o left outer join Contacts c on o.PrimaryContact = c.Username
- where o.DeletedAt is null and c.DeletedAt is null
- and o.EndPointAssessorOrganisationId in (select EndPointAssessorOrganisationId from Contacts)
- and o.Status !='New'
+insert into #PrimaryOrFirstContact (OrganisationId, ContactId) 
+SELECT EndPointAssessorOrganisationId, ContactId 
+FROM (
+  SELECT co1.EndPointAssessorOrganisationId, co1.Id ContactId, 
+     ROW_NUMBER() OVER (PARTITION BY co1.EndPointAssessorOrganisationId ORDER BY (CASE WHEN primarycontact = co1.username THEN 1 ELSE 0 END) DESC,co1.createdat) rownumber
+     FROM [Organisations] og1 
+   JOIN Contacts co1 ON co1.EndPointAssessorOrganisationId = og1.EndPointAssessorOrganisationId
+   WHERE og1.Status = 'Live'
+   AND co1.Status = 'Live'
+) ab1 WHERE rownumber = 1
 
 
 DECLARE @orgId nvarchar(20)
