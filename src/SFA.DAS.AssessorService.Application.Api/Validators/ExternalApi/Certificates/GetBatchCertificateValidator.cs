@@ -1,8 +1,11 @@
 ﻿using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.Extensions.Localization;
+using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models.ExternalApi.Certificates;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Domain.Consts;
+using SFA.DAS.AssessorService.Domain.JsonData;
 using System;
 using System.Linq;
 
@@ -68,9 +71,18 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Certifi
                         {
                             // TODO: FUTURE WORK - ON-2130 Do Alan's Certificate Search THEN the ILR Search (which may be the validation down below)
                         }
-                        else if (!existingCertificate.CertificateData.Contains(m.FamilyName, StringComparison.InvariantCultureIgnoreCase))
+                        else
                         {
-                            context.AddFailure(new ValidationFailure("FamilyName", $"Invalid family name"));
+                            var certData = JsonConvert.DeserializeObject<CertificateData>(existingCertificate.CertificateData ?? "{}");
+
+                            if (!certData.LearnerFamilyName.Equals(m.FamilyName, StringComparison.InvariantCultureIgnoreCase))
+                            {
+                                context.AddFailure(new ValidationFailure("FamilyName", $"Invalid family name"));
+                            }
+                            else if (!EpaOutcome.Pass.Equals(certData.EpaDetails?.LatestEpaOutcome, StringComparison.InvariantCultureIgnoreCase))
+                            {
+                                context.AddFailure(new ValidationFailure("Uln", $"Latest EPA Outcome has not passed"));
+                            }
                         }
                     });
                 });
