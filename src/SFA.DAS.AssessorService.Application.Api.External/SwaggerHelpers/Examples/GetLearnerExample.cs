@@ -23,8 +23,8 @@ namespace SFA.DAS.AssessorService.Application.Api.External.SwaggerHelpers.Exampl
                 EpaDetails = new EpaDetails
                 {
                     LatestEpaDate = DateTime.UtcNow,
-                    LatestEpaOutcome = "pass",
-                    Epas = new List<EpaRecord> { new EpaRecord { EpaDate = DateTime.UtcNow, EpaOutcome = "pass" } }
+                    LatestEpaOutcome = "Pass",
+                    Epas = new List<EpaRecord> { new EpaRecord { EpaDate = DateTime.UtcNow, EpaOutcome = "Pass" } }
                 }
             };
         }
