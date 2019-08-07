@@ -9,7 +9,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels
     {
         [Required(AllowEmptyStrings = false, ErrorMessage = "Enter a phone number")]
         public string PhoneNumber { get; set; }
-        public List<ContactsWithPrivilegesResponse> Contacts { get; internal set; }
+        public List<ContactResponse> Contacts { get; internal set; }
         public string ActionChoice { get; set; }
     }
 }

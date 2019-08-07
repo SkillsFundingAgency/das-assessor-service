@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 using MediatR;
@@ -167,7 +168,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         }
 
         [HttpPut("update-primary-contact", Name = "UpdateEpaOrganisationPrimaryContact")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(bool))]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<ContactResponse>))]
         public async Task<IActionResult> UpdateEpaOrganisationPrimaryContact([FromBody] UpdateEpaOrganisationPrimaryContactRequest request)
         {
             try
@@ -184,7 +185,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         }
 
         [HttpPut("update-phone-number", Name = "UpdateEpaOrganisationPhoneNumber")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(bool))]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<ContactResponse>))]
         public async Task<IActionResult> UpdateEpaOrganisationPhoneNumber([FromBody] UpdateEpaOrganisationPhoneNumberRequest request)
         {
             try
@@ -201,7 +202,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         }
 
         [HttpPut("update-email", Name = "UpdateEpaOrganisationEmail")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(bool))]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<ContactResponse>))]
         public async Task<IActionResult> UpdateEpaOrganisationEmail([FromBody] UpdateEpaOrganisationEmailRequest request)
         {
             try
@@ -218,7 +219,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         }
 
         [HttpPut("update-website-link", Name = "UpdateEpaOrganisationWebsiteLink")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(bool))]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<ContactResponse>))]
         public async Task<IActionResult> UpdateEpaOrganisationWebsiteLink([FromBody] UpdateEpaOrganisationWebsiteLinkRequest request)
         {
             try

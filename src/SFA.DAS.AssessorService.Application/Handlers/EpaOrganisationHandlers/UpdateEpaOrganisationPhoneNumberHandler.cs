@@ -5,12 +5,13 @@ using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
 using SFA.DAS.AssessorService.Application.Interfaces;
 
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
 {
-    public class UpdateEpaOrganisationPhoneNumberHandler : IRequestHandler<UpdateEpaOrganisationPhoneNumberRequest, bool>
+    public class UpdateEpaOrganisationPhoneNumberHandler : IRequestHandler<UpdateEpaOrganisationPhoneNumberRequest, List<ContactResponse>>
     { 
         private readonly IContactQueryRepository _contactQueryRepository;
         private readonly IMediator _mediator;
@@ -21,7 +22,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
             _mediator = mediator;
         }
 
-        public async Task<bool> Handle(UpdateEpaOrganisationPhoneNumberRequest request, CancellationToken cancellationToken)
+        public async Task<List<ContactResponse>> Handle(UpdateEpaOrganisationPhoneNumberRequest request, CancellationToken cancellationToken)
         {
             var organisation = await _mediator.Send(new GetAssessmentOrganisationRequest { OrganisationId = request.OrganisationId });
 
@@ -34,15 +35,13 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
                 ? await _contactQueryRepository.GetContactById(request.UpdatedBy.Value)
                 : null;
 
-            await _mediator.Send(new SendOrganisationDetailsAmendedEmailRequest
+            return await _mediator.Send(new SendOrganisationDetailsAmendedEmailRequest
                 {
                     OrganisationId = request.OrganisationId,
                     PropertyChanged = "Contact phone number",
                     ValueAdded = request.PhoneNumber,
                     Editor = updatedBy?.DisplayName ?? "EFSA Staff"
             });
-
-            return true;
         }
     }
 }

@@ -11,7 +11,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models
         {
             Privileges = new List<PrivilegeResponse>();
         }
-        public Contact Contact { get; set; }
+        public ContactResponse Contact { get; set; }
         public List<PrivilegeResponse> Privileges { get;  }
     }
 }

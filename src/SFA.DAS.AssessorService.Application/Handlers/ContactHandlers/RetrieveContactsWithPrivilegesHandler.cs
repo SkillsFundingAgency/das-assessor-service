@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using AutoMapper;
 using MediatR;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Interfaces;
@@ -27,7 +28,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ContactHandlers
             {
                 var contactsWithPrivilegesResponse = new ContactsWithPrivilegesResponse
                 {
-                    Contact = result
+                    Contact = Mapper.Map<ContactResponse>(result)
                 };
                 contactsWithPrivilegesResponse.Contact.Status = result.Status == ContactStatus.Live
                     ? ContactStatus.Active
@@ -41,7 +42,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ContactHandlers
                     });
                 }
 
-                contactsWithPrivilegesResponse.Contact.ContactsPrivileges = null;
                 response.Add(contactsWithPrivilegesResponse);
             }
 

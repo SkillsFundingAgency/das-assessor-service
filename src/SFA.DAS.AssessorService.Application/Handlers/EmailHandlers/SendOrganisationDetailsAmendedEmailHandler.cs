@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -11,7 +12,7 @@ using SFA.DAS.AssessorService.Domain.Consts;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.EmailHandlers
 {
-    public class SendOrganisationDetailsAmendedEmailHandler : IRequestHandler<SendOrganisationDetailsAmendedEmailRequest>
+    public class SendOrganisationDetailsAmendedEmailHandler : IRequestHandler<SendOrganisationDetailsAmendedEmailRequest, List<ContactResponse>>
     {
         private readonly IEMailTemplateQueryRepository _eMailTemplateQueryRepository;
         private readonly IMediator _mediator;
@@ -25,12 +26,12 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EmailHandlers
             _logger = logger;
         }
 
-        public async Task Handle(SendOrganisationDetailsAmendedEmailRequest request, CancellationToken cancellationToken)
+        public async Task<List<ContactResponse>> Handle(SendOrganisationDetailsAmendedEmailRequest request, CancellationToken cancellationToken)
         {
             var organisation = await _mediator.Send(new GetAssessmentOrganisationRequest { OrganisationId = request.OrganisationId });
 
             try
-            {    
+            {
                 var contactsWithPrivileges = await _mediator.Send(new GetContactsWithPrivilegesRequest(organisation.Id));
                 var contactsWithManageUserPrivilege = contactsWithPrivileges?
                     .Where(c => c.Privileges.Any(p => p.Key == Privileges.ManageUsers))
@@ -55,11 +56,17 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EmailHandlers
                             }), cancellationToken);
                     }
                 }
+
+                return contactsWithManageUserPrivilege
+                    .Select(x => x.Contact)
+                    .ToList();
             }
             catch (Exception)
             {
                 _logger.LogInformation($"Unable to send email to notify amended {request.PropertyChanged} {request.ValueAdded} for organisation {organisation.Name} to contacts with mangage user privileges");
             }
+
+            return null;
         }
     }
 }

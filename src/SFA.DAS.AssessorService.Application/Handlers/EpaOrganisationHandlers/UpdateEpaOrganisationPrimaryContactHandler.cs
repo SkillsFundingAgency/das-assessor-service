@@ -8,12 +8,13 @@ using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
 {
-    public class UpdateEpaOrganisationPrimaryContactHandler : IRequestHandler<UpdateEpaOrganisationPrimaryContactRequest, bool>
+    public class UpdateEpaOrganisationPrimaryContactHandler : IRequestHandler<UpdateEpaOrganisationPrimaryContactRequest, List<ContactResponse>>
     { 
         private readonly IContactQueryRepository _contactQueryRepository;
         private readonly ILogger<UpdateEpaOrganisationPrimaryContactHandler> _logger;
@@ -29,7 +30,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
             _mediator = mediator;
         }
 
-        public async Task<bool> Handle(UpdateEpaOrganisationPrimaryContactRequest request, CancellationToken cancellationToken)
+        public async Task<List<ContactResponse>> Handle(UpdateEpaOrganisationPrimaryContactRequest request, CancellationToken cancellationToken)
         {
             var organisation = await _mediator.Send(new GetAssessmentOrganisationRequest { OrganisationId = request.OrganisationId });
             
@@ -73,7 +74,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
                     _logger.LogInformation($"Unable to send email to notify updated primary contact {primaryContact.Username} for organisation {organisation.Name}");
                 }
 
-                await _mediator.Send(new SendOrganisationDetailsAmendedEmailRequest
+                return await _mediator.Send(new SendOrganisationDetailsAmendedEmailRequest
                 {
                     OrganisationId = request.OrganisationId,
                     PropertyChanged = "Contact name",
@@ -82,7 +83,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
                 });
             }
 
-            return success;
+            return null;
         }
     }
 }

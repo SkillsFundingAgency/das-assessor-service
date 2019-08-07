@@ -8,7 +8,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels
     {
         [Required(AllowEmptyStrings = false, ErrorMessage = "Enter an email address")]
         public string Email { get; set; }
-        public List<ContactsWithPrivilegesResponse> Contacts { get; internal set; }
+        public List<ContactResponse> Contacts { get; internal set; }
         public string ActionChoice { get; set; }
     }
 }
