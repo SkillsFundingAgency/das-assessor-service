@@ -73,7 +73,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Epas
                     {
                         epaRule.Must(epa => epa.EpaDate >= earliestDate).WithMessage("EPA Date cannot be before 01 01 2017")
                                .Must(epa => epa.EpaDate <= latestDate).WithMessage("EPA Date cannot be in the future")
-                               .Must(epa => outcomes.Contains(epa.EpaOutcome, StringComparer.InvariantCultureIgnoreCase)).WithMessage($"Invalid outcome: must be pass, fail or withdrawn");
+                               .Must(epa => outcomes.Contains(epa.EpaOutcome, StringComparer.InvariantCultureIgnoreCase)).WithMessage($"Invalid outcome: must be Pass, Fail or Withdrawn");
                     });
             });
         }
