@@ -105,18 +105,31 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
 
         private async Task<Provider> GetProviderFromUkprn(int ukprn)
         {
-            Provider provider;
+            Provider provider = null;
             try
             {
                 provider = await _assessmentOrgsApiClient.GetProvider(ukprn);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                // see whether there are any previous certificates with this ukrpn and a ProviderName....
-                var previousProviderName = await _certificateRepository.GetPreviousProviderName(ukprn);
-                provider = previousProviderName != null
-                    ? new Provider { ProviderName = previousProviderName }
-                    : new Provider { ProviderName = "Unknown" };
+                _logger.LogError(ex, $"Unable to get Provider from AssessmentOrgsApi. Ukprn: {ukprn}");
+            }
+
+            if (provider is null)
+            {
+                // see if we can get it from Organisation Table
+                var org = await _organisationQueryRepository.GetByUkPrn(ukprn);
+
+                if(org != null)
+                {
+                    provider = new Provider { ProviderName = org.EndPointAssessorName, Ukprn = ukprn };
+                }
+                else
+                {
+                    // see whether there are any previous certificates with this ukrpn and a ProviderName....
+                    var previousProviderName = await _certificateRepository.GetPreviousProviderName(ukprn);
+                    provider = new Provider { ProviderName = previousProviderName ?? "Unknown", Ukprn = ukprn };
+                }
             }
 
             return provider;
