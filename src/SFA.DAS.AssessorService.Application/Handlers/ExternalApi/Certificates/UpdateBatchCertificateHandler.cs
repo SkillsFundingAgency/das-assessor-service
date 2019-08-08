@@ -77,7 +77,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
             var epaDetails = certData.EpaDetails ?? new EpaDetails();
             if (epaDetails.Epas is null) epaDetails.Epas = new List<EpaRecord>();
 
-            var epaOutcome = certData.OverallGrade == CertificateGrade.Fail ? "fail" : "pass";
+            var epaOutcome = certData.OverallGrade == CertificateGrade.Fail ? EpaOutcome.Fail : EpaOutcome.Pass;
             if (requestData.AchievementDate != null && !epaDetails.Epas.Any(rec => rec.EpaDate == requestData.AchievementDate.Value && rec.EpaOutcome == epaOutcome))
             {
                 var record = new EpaRecord { EpaDate = requestData.AchievementDate.Value, EpaOutcome = epaOutcome };

@@ -1,6 +1,7 @@
 ﻿using SFA.DAS.AssessorService.Application.Api.External.Models.Response.Certificates;
 using SFA.DAS.AssessorService.Application.Api.External.Models.Response.Epa;
 using SFA.DAS.AssessorService.Application.Api.External.Models.Response.Learners;
+using SFA.DAS.AssessorService.Domain.Consts;
 using Swashbuckle.AspNetCore.Examples;
 using System;
 using System.Collections.Generic;
@@ -23,8 +24,8 @@ namespace SFA.DAS.AssessorService.Application.Api.External.SwaggerHelpers.Exampl
                 EpaDetails = new EpaDetails
                 {
                     LatestEpaDate = DateTime.UtcNow,
-                    LatestEpaOutcome = "Pass",
-                    Epas = new List<EpaRecord> { new EpaRecord { EpaDate = DateTime.UtcNow, EpaOutcome = "Pass" } }
+                    LatestEpaOutcome = EpaOutcome.Pass,
+                    Epas = new List<EpaRecord> { new EpaRecord { EpaDate = DateTime.UtcNow, EpaOutcome = EpaOutcome.Pass } }
                 }
             };
         }

@@ -3,6 +3,7 @@ using FluentAssertions;
 using FluentValidation.Results;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models.ExternalApi.Epas;
+using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using System;
 using System.Linq;
@@ -19,7 +20,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
         {
             var epas = Builder<EpaRecord>.CreateListOfSize(1).All()
                 .With(i => i.EpaDate = new DateTime(2017, 1, 1).AddHours(-1))
-                .With(i => i.EpaOutcome = "pass")
+                .With(i => i.EpaOutcome = EpaOutcome.Pass)
                 .Build().ToList();
 
             var request = Builder<BatchEpaRequest>.CreateNew()

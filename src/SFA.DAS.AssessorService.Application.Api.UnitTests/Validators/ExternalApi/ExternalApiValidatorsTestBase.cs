@@ -3,6 +3,7 @@ using Moq;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using System;
@@ -31,9 +32,9 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
             var certificateRepositoryMock = new Mock<ICertificateRepository>();
 
             // Having a range of certificates for 2 EPAO's (with a shared standard) allows us to test the suite of validation ruleS
-            certificateRepositoryMock.Setup(q => q.GetCertificate(1234567890, 1)).ReturnsAsync(GenerateCertificate(1234567890, 1, "test", "Draft", new Guid("12345678123456781234567812345678")));
-            certificateRepositoryMock.Setup(q => q.GetCertificate(1234567890, 98)).ReturnsAsync(GenerateCertificate(1234567890, 98, "test", "Deleted", new Guid("12345678123456781234567812345678")));
-            certificateRepositoryMock.Setup(q => q.GetCertificate(9999999999, 1)).ReturnsAsync(GenerateCertificate(9999999999, 1, "test", "Printed", new Guid("99999999999999999999999999999999")));
+            certificateRepositoryMock.Setup(q => q.GetCertificate(1234567890, 1)).ReturnsAsync(GenerateCertificate(1234567890, 1, "test", CertificateStatus.Draft, new Guid("12345678123456781234567812345678")));
+            certificateRepositoryMock.Setup(q => q.GetCertificate(1234567890, 98)).ReturnsAsync(GenerateCertificate(1234567890, 98, "test", CertificateStatus.Deleted, new Guid("12345678123456781234567812345678")));
+            certificateRepositoryMock.Setup(q => q.GetCertificate(9999999999, 1)).ReturnsAsync(GenerateCertificate(9999999999, 1, "test", CertificateStatus.Printed, new Guid("99999999999999999999999999999999")));
 
             // This is simulating a Certificate that started it's life on the Web App, but was never submitted
             certificateRepositoryMock.Setup(q => q.GetCertificate(9999999999, 99)).ReturnsAsync(GeneratePartialCertificate(9999999999, 99, "test", new Guid("99999999999999999999999999999999")));
@@ -124,7 +125,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
 
             var epas = Builder<EpaRecord>.CreateListOfSize(1).All()
             .With(i => i.EpaDate = DateTime.UtcNow.AddDays(-1))
-            .With(i => i.EpaOutcome = "pass")
+            .With(i => i.EpaOutcome = EpaOutcome.Pass)
             .Build().ToList();
 
             var epaDetails = new EpaDetails
@@ -143,7 +144,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
                 .With(i => i.CertificateReference = reference)
                                 .With(i => i.CertificateData = JsonConvert.SerializeObject(Builder<CertificateData>.CreateNew()
                                 .With(cd => cd.LearnerFamilyName = familyName)
-                                .With(cd => cd.OverallGrade = "Pass")
+                                .With(cd => cd.OverallGrade = CertificateGrade.Pass)
                                 .With(cd => cd.EpaDetails = epaDetails)
                                 .Build()))
                 .Build();
@@ -156,7 +157,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
 
             var epas = Builder<EpaRecord>.CreateListOfSize(1).All()
             .With(i => i.EpaDate = DateTime.UtcNow.AddDays(-1))
-            .With(i => i.EpaOutcome = hasPassedEpa ? "pass" : "fail")
+            .With(i => i.EpaOutcome = hasPassedEpa ? EpaOutcome.Pass : EpaOutcome.Fail)
             .Build().ToList();
 
             var epaDetails = new EpaDetails
@@ -170,7 +171,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
             return Builder<Certificate>.CreateNew()
                 .With(i => i.Uln = uln)
                 .With(i => i.StandardCode = standardCode)
-                .With(i => i.Status = "Draft")
+                .With(i => i.Status = CertificateStatus.Draft)
                 .With(i => i.OrganisationId = organisationId)
                 .With(i => i.CertificateReference = $"{uln}-{standardCode}")
                                 .With(i => i.CertificateData = JsonConvert.SerializeObject(Builder<CertificateData>.CreateNew()
@@ -196,7 +197,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
             return Builder<Certificate>.CreateNew()
                 .With(i => i.Uln = uln)
                 .With(i => i.StandardCode = standardCode)
-                .With(i => i.Status = "Draft")
+                .With(i => i.Status = CertificateStatus.Draft)
                 .With(i => i.OrganisationId = organisationId)
                 .With(i => i.CertificateReference = $"{uln}-{standardCode}")
                                 .With(i => i.CertificateData = JsonConvert.SerializeObject(Builder<CertificateData>.CreateNew()

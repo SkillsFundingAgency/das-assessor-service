@@ -3,6 +3,7 @@ using FluentAssertions;
 using FluentValidation.Results;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models.ExternalApi.Certificates;
+using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using System;
 using System.Threading.Tasks;
@@ -26,7 +27,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
                                 .With(cd => cd.ContactName = null)
                                 .With(cd => cd.ContactPostCode = "AA11AA")
                                 .With(cd => cd.AchievementDate = DateTime.UtcNow)
-                                .With(cd => cd.OverallGrade = "Pass")
+                                .With(cd => cd.OverallGrade = CertificateGrade.Pass)
                                 .With(cd => cd.CourseOption = "English")
                                 .Build())
                 .Build();
