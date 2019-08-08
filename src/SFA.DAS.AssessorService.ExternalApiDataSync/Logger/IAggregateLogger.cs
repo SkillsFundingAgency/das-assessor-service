@@ -4,7 +4,7 @@ namespace SFA.DAS.AssessorService.ExternalApiDataSync.Logger
 {
     public interface IAggregateLogger
     {
-        void LogError(string message, Exception ex);
-        void LogInfo(string message);
+        void LogError(Exception ex, string message);
+        void LogInformation(string message);
     }
 }
