@@ -207,7 +207,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
             }
             else
             {
-                return BadRequest(error);
+                return StatusCode(error.StatusCode, error);
             }
         }
 
