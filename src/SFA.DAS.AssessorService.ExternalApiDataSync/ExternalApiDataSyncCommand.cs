@@ -5,6 +5,7 @@ using SFA.DAS.AssessorService.ExternalApiDataSync.Logger;
 using SqlBulkTools;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
@@ -92,6 +93,8 @@ namespace SFA.DAS.AssessorService.ExternalApiDataSync
 
             using (var sourceConnection = new SqlConnection(_sourceConnectionString))
             {
+                if(sourceConnection.State != ConnectionState.Open) sourceConnection.Open();
+
                 orgTypes = (await sourceConnection.QueryAsync<OrganisationType>("SELECT * FROM OrganisationType ORDER BY [Id]")).ToList();
                 orgs = (await sourceConnection.QueryAsync<Organisation>("SELECT * FROM Organisations ORDER BY [Id]")).ToList();
             }
@@ -103,7 +106,7 @@ namespace SFA.DAS.AssessorService.ExternalApiDataSync
             {
                 using (SqlConnection conn = new SqlConnection(_destinationConnectionString))
                 {
-                    conn.Open();
+                    if (conn.State != ConnectionState.Open) conn.Open();
 
                     bulk.Setup<OrganisationType>()
                         .ForCollection(orgTypes)
@@ -140,6 +143,8 @@ namespace SFA.DAS.AssessorService.ExternalApiDataSync
 
             using (var sourceConnection = new SqlConnection(_sourceConnectionString))
             {
+                if (sourceConnection.State != ConnectionState.Open) sourceConnection.Open();
+
                 contacts = (await sourceConnection.QueryAsync<Contact>("SELECT * FROM Contacts ORDER BY [Id]")).ToList();
             }
 
@@ -150,6 +155,8 @@ namespace SFA.DAS.AssessorService.ExternalApiDataSync
             {
                 using (SqlConnection conn = new SqlConnection(_destinationConnectionString))
                 {
+                    if (conn.State != ConnectionState.Open) conn.Open();
+
                     bulk.Setup<Contact>()
                         .ForCollection(contacts)
                         .WithTable("Contacts")
@@ -185,6 +192,8 @@ namespace SFA.DAS.AssessorService.ExternalApiDataSync
 
             using (var sourceConnection = new SqlConnection(_sourceConnectionString))
             {
+                if (sourceConnection.State != ConnectionState.Open) sourceConnection.Open();
+
                 standards = (await sourceConnection.QueryAsync<StandardCollation>("SELECT * FROM StandardCollation ORDER BY [Id]")).ToList();
                 options = (await sourceConnection.QueryAsync<Option>("SELECT * FROM Options ORDER BY [Id]")).ToList();
             }
@@ -196,6 +205,8 @@ namespace SFA.DAS.AssessorService.ExternalApiDataSync
             {
                 using (SqlConnection conn = new SqlConnection(_destinationConnectionString))
                 {
+                    if (conn.State != ConnectionState.Open) conn.Open();
+
                     bulk.Setup<StandardCollation>()
                         .ForCollection(standards)
                         .WithTable("StandardCollation")
@@ -234,6 +245,8 @@ namespace SFA.DAS.AssessorService.ExternalApiDataSync
 
             using (var sourceConnection = new SqlConnection(_sourceConnectionString))
             {
+                if (sourceConnection.State != ConnectionState.Open) sourceConnection.Open();
+
                 deliveryArea = (await sourceConnection.QueryAsync<DeliveryArea>("SELECT * FROM DeliveryArea ORDER BY [Id]")).ToList();
                 orgStandard = (await sourceConnection.QueryAsync<OrganisationStandard>("SELECT * FROM OrganisationStandard ORDER BY [Id]")).ToList();
                 orgStandardDeliveryArea = (await sourceConnection.QueryAsync<OrganisationStandardDeliveryArea>("SELECT * FROM OrganisationStandardDeliveryArea ORDER BY [Id]")).ToList();
@@ -246,6 +259,8 @@ namespace SFA.DAS.AssessorService.ExternalApiDataSync
             {
                 using (SqlConnection conn = new SqlConnection(_destinationConnectionString))
                 {
+                    if (conn.State != ConnectionState.Open) conn.Open();
+
                     bulk.Setup<DeliveryArea>()
                         .ForCollection(deliveryArea)
                         .WithTable("DeliveryArea")
@@ -304,7 +319,7 @@ namespace SFA.DAS.AssessorService.ExternalApiDataSync
             {
                 using (SqlConnection conn = new SqlConnection(_destinationConnectionString))
                 {
-                    conn.Open();
+                    if (conn.State != ConnectionState.Open) conn.Open();
 
                     conn.Execute(@"DELETE FROM Ilrs
                                     WHERE GivenNames = 'Test' AND FamilyName LIKE '1%';");
