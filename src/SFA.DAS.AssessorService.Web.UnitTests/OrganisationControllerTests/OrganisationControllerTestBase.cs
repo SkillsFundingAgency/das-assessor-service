@@ -49,6 +49,10 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.OrganisationControllerTests
         protected const string ValidPrimaryContact = "valid@valid.com";
         protected const string ValidPrimaryContactDifferentOrganisation = "othervalid@othervalid.com";
 
+        protected const string ValidPhoneNumber = "012345679";
+        protected const string ValidEmailAddress = "validcontact@validcompany.com";
+        protected const string ValidWebsiteLink = "www.validcompany.com";
+
         public OrganisationControllerTestBase()
         {
             ChangeOrganisationDetailsContactsPrivilege = new ContactsPrivilege
@@ -90,9 +94,9 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.OrganisationControllerTests
                 OrganisationId = EpaoId,
                 OrganisationData = new OrganisationData
                 {
-                    PhoneNumber = "1234567890",
-                    Email = "contact@contactcompany.co.uk",
-                    WebsiteLink = "www.contactcompany.com"
+                    PhoneNumber = ValidPhoneNumber,
+                    Email = ValidEmailAddress,
+                    WebsiteLink = ValidWebsiteLink
                 },
                 PrimaryContact = ValidPrimaryContact
             };
