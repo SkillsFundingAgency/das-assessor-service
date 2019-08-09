@@ -276,17 +276,14 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                     request.Status = OrganisationStatus.Applying;
 
                     var epaoId = await _organisationsApiClient.CreateEpaOrganisation(request);
-                    if (!string.IsNullOrEmpty(epaoId?.Details))
-                    {
-                        _logger.LogInformation($"Organisation with Organisation Id {epaoId.Details} created.");
-                        var newOrg = await _organisationsApiClient.GetEpaOrganisation(epaoId.Details);
-                       if(newOrg != null)
-                        {
-                            var response = await _contactsApiClient.UpdateOrgAndStatus(new UpdateContactWithOrgAndStausRequest(user.Id.ToString(),
-                                newOrg.Id.ToString(), newOrg.OrganisationId,ContactStatus.Applying));
-                            _logger.LogInformation($"Contact with display name {user.DisplayName} is associated with organisation {epaoId.Details}.");
-                        }
-                    }
+                    _logger.LogInformation($"Organisation with Organisation Id {epaoId.Details} created.");
+
+                    var newOrg = await _organisationsApiClient.GetEpaOrganisation(epaoId.Details);
+                    var response = await _contactsApiClient.UpdateOrgAndStatus(new UpdateContactWithOrgAndStausRequest(user.Id.ToString(),
+                        newOrg.Id.ToString(), null, ContactStatus.Live));
+                    _logger.LogInformation($"Contact with display name {user.DisplayName} is associated with organisation {epaoId.Details}.");
+
+                    return Redirect($"{_config.ApplyBaseAddress}/Applications");
                 }
             }
             return View(viewModel);
