@@ -7,6 +7,7 @@ using SFA.DAS.AssessorService.Application.Api.External.Models.Response;
 using SFA.DAS.AssessorService.Application.Api.External.Models.Response.Standards;
 using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
@@ -138,7 +139,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
 
         public virtual async Task<GetLearnerResponse> GetLearner(GetBatchLearnerRequest request)
         {
-            var apiResponse = await Get<AssessorService.Api.Types.Models.ExternalApi.Learners.GetBatchLearnerResponse>($"/api/v1/learners/batch/{request.Uln}/{request.FamilyName}/{request.Standard}/{request.UkPrn}/{request.Email}");
+            var apiResponse = await Get<AssessorService.Api.Types.Models.ExternalApi.Learners.GetBatchLearnerResponse>($"/api/v1/learners/batch/{request.Uln}/{request.FamilyName}/{request.Standard}/{request.UkPrn}/{WebUtility.UrlEncode(request.Email)}");
 
             return Mapper.Map<AssessorService.Api.Types.Models.ExternalApi.Learners.GetBatchLearnerResponse, GetLearnerResponse>(apiResponse);
         }
@@ -172,7 +173,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
 
         public virtual async Task<GetCertificateResponse> GetCertificate(GetBatchCertificateRequest request)
         {
-            var apiResponse = await Get<AssessorService.Api.Types.Models.ExternalApi.Certificates.GetBatchCertificateResponse>($"/api/v1/certificates/batch/{request.Uln}/{request.FamilyName}/{request.Standard}/{request.UkPrn}/{request.Email}");
+            var apiResponse = await Get<AssessorService.Api.Types.Models.ExternalApi.Certificates.GetBatchCertificateResponse>($"/api/v1/certificates/batch/{request.Uln}/{request.FamilyName}/{request.Standard}/{request.UkPrn}/{WebUtility.UrlEncode(request.Email)}");
 
             return Mapper.Map<AssessorService.Api.Types.Models.ExternalApi.Certificates.GetBatchCertificateResponse, GetCertificateResponse>(apiResponse);
         }
@@ -206,7 +207,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
 
         public virtual async Task<ApiResponse> DeleteCertificate(DeleteBatchCertificateRequest request)
         {
-            var apiResponse = await Delete<ApiResponse>($"/api/v1/certificates/batch/{request.Uln}/{request.FamilyName}/{request.Standard}/{request.CertificateReference}/{request.UkPrn}/{request.Email}");
+            var apiResponse = await Delete<ApiResponse>($"/api/v1/certificates/batch/{request.Uln}/{request.FamilyName}/{request.Standard}/{request.CertificateReference}/{request.UkPrn}/{WebUtility.UrlEncode(request.Email)}");
 
             return apiResponse;
         }
