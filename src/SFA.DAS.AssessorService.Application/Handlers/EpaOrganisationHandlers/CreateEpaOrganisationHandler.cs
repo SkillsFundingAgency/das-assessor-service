@@ -90,6 +90,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
                 OrganisationId = newOrganisationId,
                 OrganisationTypeId = request.OrganisationTypeId,
                 Ukprn = request.Ukprn,
+                Status = string.IsNullOrEmpty(request.Status) ? "New" : request.Status,
                 Id = Guid.NewGuid(),
                 OrganisationData = new OrganisationData
                 {

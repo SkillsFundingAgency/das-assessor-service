@@ -262,18 +262,31 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                         return View("~/Views/OrganisationSearch/CompanyNotActive.cshtml", viewModel);
                     }
                 }
-                
-                if (organisationSearchResult.OrganisationReferenceType == "RoEPAO" )
+
+                if (organisationSearchResult.OrganisationReferenceType == "RoEPAO")
                 {
-                    //Update assessor organisation status
-                    await UpdateOrganisationStatusAndInvite(organisationSearchResult, user);
+                    if (organisationSearchResult.OrganisationIsLive)
+                        //Update assessor organisation status
+                        await UpdateOrganisationStatusAndInvite(organisationSearchResult, user);
                 }
                 else
                 {
                     var request = CreateEpaOrganisationRequest(organisationSearchResult);
                     request.OrganisationTypeId = viewModel.OrganisationTypeId;
                     request.Status = OrganisationStatus.Applying;
-                    await _organisationsApiClient.CreateEpaOrganisation(request);
+
+                    var epaoId = await _organisationsApiClient.CreateEpaOrganisation(request);
+                    if (!string.IsNullOrEmpty(epaoId?.Details))
+                    {
+                        _logger.LogInformation($"Organisation with Organisation Id {epaoId.Details} created.");
+                        var newOrg = await _organisationsApiClient.GetEpaOrganisation(epaoId.Details);
+                       if(newOrg != null)
+                        {
+                            var response = await _contactsApiClient.UpdateOrgAndStatus(new UpdateContactWithOrgAndStausRequest(user.Id.ToString(),
+                                newOrg.Id.ToString(), newOrg.OrganisationId,ContactStatus.Applying));
+                            _logger.LogInformation($"Contact with display name {user.DisplayName} is associated with organisation {epaoId.Details}.");
+                        }
+                    }
                 }
             }
             return View(viewModel);

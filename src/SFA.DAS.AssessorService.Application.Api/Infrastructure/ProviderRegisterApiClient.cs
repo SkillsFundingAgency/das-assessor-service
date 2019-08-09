@@ -38,8 +38,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Infrastructure
             _logger.LogInformation($"Searching Provider Register. Ukprn: {ukprn}");
             var apiResponse = await Get<SFA.DAS.AssessorService.Api.Types.Models.ProviderRegister.Provider>($"/providers/{ukprn}");
 
-            return Mapper.Map<SFA.DAS.AssessorService.Api.Types.Models.ProviderRegister.Provider, 
-                SFA.DAS.AssessorService.Api.Types.Models.OrganisationSearchResult>(apiResponse);
+            return Mapper.Map<AssessorService.Api.Types.Models.ProviderRegister.Provider, 
+                AssessorService.Api.Types.Models.OrganisationSearchResult>(apiResponse);
         }
 
         private async Task<T> Get<T>(string uri)
