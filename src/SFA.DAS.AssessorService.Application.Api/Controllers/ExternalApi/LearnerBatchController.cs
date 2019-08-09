@@ -6,6 +6,7 @@ using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
 using SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Learners;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -28,7 +29,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.ExternalApi
 
         [HttpGet("{uln}/{lastname}/{standard}/{ukPrn}/{*email}")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(GetBatchLearnerResponse))]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(ApiResponse))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> Get(long uln, string lastname, string standard, int ukPrn, string email)
         {

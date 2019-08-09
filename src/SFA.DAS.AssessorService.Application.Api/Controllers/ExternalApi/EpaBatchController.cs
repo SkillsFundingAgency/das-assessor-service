@@ -140,7 +140,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.ExternalApi
         [HttpDelete("{uln}/{lastname}/{standard}/{epaReference}/{ukPrn}/{*email}")]
         [SwaggerResponse((int)HttpStatusCode.NoContent)]
         [SwaggerResponse((int)HttpStatusCode.NotFound)]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(ApiResponse))]
+        [SwaggerResponse((int)HttpStatusCode.Forbidden, Type = typeof(ApiResponse))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> Delete(long uln, string lastname, string standard, string epaReference, int ukPrn, string email)
         {
             var request = new DeleteBatchEpaRequest
@@ -179,7 +181,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.ExternalApi
             else
             {
                 ApiResponse response = new ApiResponse((int)HttpStatusCode.Forbidden, string.Join("; ", validationErrors));
-                return BadRequest(response);
+                return StatusCode(response.StatusCode, response);
             }
         }
 
