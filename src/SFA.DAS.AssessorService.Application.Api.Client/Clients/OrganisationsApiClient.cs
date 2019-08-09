@@ -247,6 +247,17 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
+        public async Task<EpaOrganisation> GetEpaOrganisationById(string Id)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get,
+                $"/api/ao/assessment-organisations/{Id}"))
+            {
+                return await RequestAndDeserialiseAsync<EpaOrganisation>(request,
+                    $"Could not retrieve details for the organisation with an Id of {Id}");
+            }
+        }
+
+
         public async Task<List<AssessorService.Api.Types.Models.AO.OrganisationType>> GetOrganisationTypes()
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get,

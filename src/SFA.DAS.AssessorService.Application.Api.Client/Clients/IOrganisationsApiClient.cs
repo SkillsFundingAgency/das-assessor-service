@@ -38,5 +38,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         Task<PaginatedList<OrganisationSearchResult>> SearchForOrganisations(string searchTerm, int pageSize, int pageIndex);
         Task<bool> IsCompanyActivelyTrading(string companyNumber);
         Task<EpaOrganisationResponse> CreateEpaOrganisation(CreateEpaOrganisationRequest epaoOrganisationModel);
+        Task<EpaOrganisation> GetEpaOrganisationById(string Id);
     }
 }

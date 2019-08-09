@@ -15,15 +15,17 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
     public class CreateEpaOrganisationHandler : IRequestHandler<CreateEpaOrganisationRequest, string>
     {
         private readonly IRegisterRepository _registerRepository;
+        private readonly IRegisterQueryRepository _registerQueryRepository;
         private readonly ILogger<CreateEpaOrganisationHandler> _logger;
         private readonly IEpaOrganisationIdGenerator _organisationIdGenerator;
         private readonly ISpecialCharacterCleanserService _cleanser;
         private readonly IEpaOrganisationValidator _validator;
 
-        public CreateEpaOrganisationHandler(IRegisterRepository registerRepository, IEpaOrganisationIdGenerator orgIdGenerator, ILogger<CreateEpaOrganisationHandler> logger, 
+        public CreateEpaOrganisationHandler(IRegisterRepository registerRepository, IRegisterQueryRepository registerQueryRepository, IEpaOrganisationIdGenerator orgIdGenerator, ILogger<CreateEpaOrganisationHandler> logger, 
                                             ISpecialCharacterCleanserService cleanser, IEpaOrganisationValidator validator)
         {
             _registerRepository = registerRepository;
+            _registerQueryRepository = registerQueryRepository;
             _logger = logger;
             _cleanser = cleanser;
             _organisationIdGenerator = orgIdGenerator;
@@ -44,14 +46,21 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
                 {
                     throw new BadRequestException(message);
                 }
+
+                //Incase there already an existing organisation then return that , this is part of ON-2084
+                var organisationId = await _registerQueryRepository.GetEpaOrgIdByEndPointAssessmentName(request.Name);
+                if(!string.IsNullOrEmpty(organisationId))
+                    return organisationId;
             }
 
+         
             var newOrganisationId = _organisationIdGenerator.GetNextOrganisationId();
             if (newOrganisationId == string.Empty)
                 throw new Exception("A valid organisation Id could not be generated");
 
             var organisation = MapOrganisationRequestToOrganisation(request, newOrganisationId);
             return await _registerRepository.CreateEpaOrganisation(organisation);
+         
         }
 
         private void ProcessRequestFieldsForSpecialCharacters(CreateEpaOrganisationRequest request)

@@ -146,10 +146,10 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
                                      identity.AddClaim(new Claim(
                                         "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn",
                                         user?.Username));
-                                     if (user.EndPointAssessorOrganisationId != null)
+                                     if (user.OrganisationId != null)
                                      {
                                          var organisation =
-                                            await orgClient.GetEpaOrganisation(user.EndPointAssessorOrganisationId);
+                                            await orgClient.GetEpaOrganisationById(user.OrganisationId?.ToString());
 
                                          if (organisation.ApiEnabled && !string.IsNullOrEmpty(organisation.ApiUser))
                                          {
