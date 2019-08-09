@@ -44,7 +44,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EmailHandlers
                     {
                         _logger.LogInformation($"Sending email to notify amended {request.PropertyChanged} {request.ValueAdded} for organisation {organisation.Name} to {contactWithManageUserPrivilege.Contact.Email}");
 
-                        await _mediator.Send(new SendEmailRequest(contactWithManageUserPrivilege.Contact.Email,
+                        var sendEmailRequest = new SendEmailRequest(contactWithManageUserPrivilege.Contact.Email,
                             organisationDetailsAmendedEmailTemplate, new
                             {
                                 Contact = $"{contactWithManageUserPrivilege.Contact.DisplayName}",
@@ -53,7 +53,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EmailHandlers
                                 request.ValueAdded,
                                 ServiceTeam = "Apprenticeship assessment services team",
                                 request.Editor
-                            }), cancellationToken);
+                            });
+
+                        await _mediator.Send(sendEmailRequest, cancellationToken);
                     }
                 }
 
