@@ -6,5 +6,6 @@ namespace SFA.DAS.AssessorService.ExternalApiDataSync.Logger
     {
         void LogError(Exception ex, string message);
         void LogInformation(string message);
+        void LogDebug(string message);
     }
 }

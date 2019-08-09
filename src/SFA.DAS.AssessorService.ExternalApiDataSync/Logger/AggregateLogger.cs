@@ -37,6 +37,12 @@ namespace SFA.DAS.AssessorService.ExternalApiDataSync.Logger
             _redisLogger.Info(message);
         }
 
+        public void LogDebug(string message)
+        {
+            _functionLogger.LogDebug(message, _source);
+            _redisLogger.Debug(message);
+        }
+
         private string GetNLogConfigurationFileName(string source)
         {
             var nLogFileName = "nlog." + source.Split('-').Last().Trim();
