@@ -283,7 +283,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                         newOrg.Id.ToString(), null, ContactStatus.Live));
                     _logger.LogInformation($"Contact with display name {user.DisplayName} is associated with organisation {epaoId.Details}.");
 
-                    return View($"Applications");
+                    return View($"~/Views/Apply/Application/Applications.cshtml");
                 }
             }
             return View(viewModel);

@@ -21,7 +21,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             _apiClient = apiClient;
         }
 
-        [HttpGet("/Apply/Applications")]
+        [HttpGet("/Apply/Application")]
         public async Task<IActionResult> Applications()
         {
             var user = User.Identity.Name;
@@ -31,7 +31,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             return View("~/Views/Apply/Application/Declaration.cshtml");
         }
 
-        [HttpPost("/Apply/Applications")]
+        [HttpPost("/Apply/Application")]
         public async Task<IActionResult> StartApplication()
         {
             // var response = await _apiClient.StartApplication(await _userService.GetUserId());
