@@ -1,16 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using SFA.DAS.AssessorService.Api.Types.Models;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace SFA.DAS.AssessorService.Web.ViewModels
 {
-    public class SelectOrChangeContactNameViewModel
+    public class SelectOrChangeContactNameViewModel : ChangeOrganisationDetailsViewModel
     {
-        public List<ContactResponse> Contacts { get; set; }
+        [Required(AllowEmptyStrings = false, ErrorMessage = "Enter a contact name")]
         public string PrimaryContact { get; set; }
         public string PrimaryContactName { get; set; }
-        public string ActionChoice { get; set; }
     }
 }

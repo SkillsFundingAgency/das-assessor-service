@@ -15,7 +15,8 @@
       "wwwroot/javascripts/application.js"
     ],
     "minify": {
-      "renameLocals": true
+        "enabled": true,
+        "renameLocals": true
     },
     "sourceMap": false
   },
@@ -25,7 +26,8 @@
       "wwwroot/javascripts/epao-validation.js"
     ],
     "minify": {
-      "renameLocals": true
+        "enabled": true,
+        "renameLocals": true
     }
   },
   {
@@ -35,7 +37,19 @@
       "wwwroot/javascripts/postcode-lookup-service.js"
     ],
     "minify": {
-      "renameLocals": true
+        "enabled": true,
+        "renameLocals": true
+    }
+  },
+  {
+    "outputFileName": "wwwroot/javascripts/govuk-postcode-lookup-service.min.js",
+    "inputFiles": [
+        "wwwroot/javascripts/lib/jquery-ui/dist/jquery-ui.min.js",
+        "wwwroot/javascripts/govuk-postcode-lookup-service.js"
+    ],
+    "minify": {
+        "enabled": true,
+        "renameLocals": true
     }
   }
 ]

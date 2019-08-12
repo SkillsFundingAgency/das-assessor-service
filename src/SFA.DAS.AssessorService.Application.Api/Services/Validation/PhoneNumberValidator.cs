@@ -6,7 +6,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Services.Validation
     {
         public PhoneNumberValidator()
         {
-            DefaultValidatorExtensions.Matches<PhoneNumberCheck>(RuleFor(x => x.PhoneNumberToCheck), @"^[0-9]{10}$|^[0-9]{11}$");
+            string validUkPhoneNumberRegEx = @"^([+]{0,1}[/0-9]{1,4})[\s]*[(]{0,1}[0-9]{1,5}[)]{0,1}[-\s\./0-9]*$";
+            DefaultValidatorExtensions.Matches<PhoneNumberCheck>(RuleFor(x => x.PhoneNumberToCheck), validUkPhoneNumberRegEx);
         }
     }
 }

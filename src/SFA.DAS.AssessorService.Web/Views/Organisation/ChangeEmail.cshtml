@@ -9,23 +9,23 @@
 <a class="govuk-back-link" asp-controller="Organisation" asp-action="OrganisationDetails">Back</a>
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
+            <h2 class="govuk-error-summary__title" id="error-summary-title">
+                There is a problem
+            </h2>
+            <div class="govuk-error-summary__body">
+                <ul class="govuk-list govuk-error-summary__list">
+                    <li><a sfa-validation-for="Email"></a></li>
+                </ul>
+            </div>
+        </div>
+    }
     <h1 class="govuk-heading-xl">@viewTitle</h1>
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             <p class="govuk-body">This is usually a generic email address that can be accessed by more than one member of your team.</p>
-            @if (!ViewData.ModelState.IsValid)
-            {
-                <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
-                    <h2 class="govuk-error-summary__title" id="error-summary-title">
-                        There is a problem
-                    </h2>
-                    <div class="govuk-error-summary__body">
-                        <ul class="govuk-list govuk-error-summary__list">
-                            <li><a sfa-validation-for="Email"></a></li>
-                        </ul>
-                    </div>
-                </div>
-            }
 
             <form asp-controller="Organisation" asp-action="ChangeEmail">
                 <div class="govuk-form-group">
@@ -33,7 +33,7 @@
                         <label class="govuk-label" for="Email">
                             Contact email
                         </label>
-                        <span class="govuk-error-message" asp-validation-for="Email"></span>
+                        <sfa-validationerror-detail sfa-validation-for="Email" sfa-validationerror-class="govuk-error-message"></sfa-validationerror-detail>
                         <input class="govuk-input" name="Email" sfa-validation-for="Email" sfa-validationerror-class="govuk-input--error" asp-for="Email" type="text" maxlength="254" />
                     </div>
                 </div>

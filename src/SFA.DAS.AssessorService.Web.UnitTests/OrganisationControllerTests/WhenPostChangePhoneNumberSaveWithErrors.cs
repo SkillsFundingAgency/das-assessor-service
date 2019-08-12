@@ -4,7 +4,7 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
-
+using SFA.DAS.AssessorService.Web.Controllers;
 using SFA.DAS.AssessorService.Web.ViewModels;
 
 namespace SFA.DAS.AssessorService.Web.UnitTests.OrganisationControllerTests
@@ -14,7 +14,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.OrganisationControllerTests
         : OrganisationControllerTestBaseForInvalidModel<ChangePhoneNumberViewModel>
     {
         private const string InvalidPhoneNumber = "NOTAPHONENUMBER";
-        private const string InvalidPhoneNumberSame = ValidPrimaryContact;
+        private const string InvalidPhoneNumberSame = ValidPhoneNumber;
         private const string ActionChoiceSave = "Save";
 
         [SetUp]
@@ -44,7 +44,6 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.OrganisationControllerTests
         }
 
         [TestCase(InvalidPhoneNumber)]
-        [TestCase(InvalidPhoneNumberSame)]
         public async Task Should_return_a_model_with_invalid_phone_number(string phoneNumber)
         {
             _actionResult = await Act(new ChangePhoneNumberViewModel
@@ -54,6 +53,31 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.OrganisationControllerTests
             });
 
             sut.ModelState.IsValid.Should().BeFalse();
+        }
+
+        [Test]
+        public async Task Should_return_a_redirecttoaction_same_phone_number()
+        {
+            _actionResult = await Act(new ChangePhoneNumberViewModel
+            {
+                PhoneNumber = InvalidPhoneNumberSame,
+                ActionChoice = ActionChoiceSave
+            });
+
+            _actionResult.Should().BeOfType<RedirectToActionResult>();
+        }
+
+        [Test]
+        public async Task Should_return_a_redirecttoaction_to_organisational_details_for_same_phone_number()
+        {
+            _actionResult = await Act(new ChangePhoneNumberViewModel
+            {
+                PhoneNumber = InvalidPhoneNumberSame,
+                ActionChoice = ActionChoiceSave
+            });
+
+            var _redirect = _actionResult as RedirectToActionResult;
+            _redirect.ActionName.Should().Be(nameof(OrganisationController.OrganisationDetails));
         }
     }
 }

@@ -1,0 +1,134 @@
+﻿@model SFA.DAS.AssessorService.Web.ViewModels.ChangeAddressViewModel
+
+@{
+    var viewTitle = "Change address";
+    ViewBag.Title = (!ViewData.ModelState.IsValid ? "Error: " : "") + viewTitle;
+    Layout = "_DashboardLayout";
+}
+
+<a class="govuk-back-link" asp-controller="Organisation" asp-action="OrganisationDetails">Back</a>
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
+            <h2 class="govuk-error-summary__title" id="error-summary-title">
+                There is a problem
+            </h2>
+            <div class="govuk-error-summary__body">
+                <ul class="govuk-list govuk-error-summary__list">
+                    <li><a sfa-validation-for="AddressLine1"></a></li>
+                    <li><a sfa-validation-for="AddressLine2"></a></li>
+                    <li><a sfa-validation-for="AddressLine3"></a></li>
+                    <li><a sfa-validation-for="AddressLine4"></a></li>
+                    <li><a sfa-validation-for="Postcode"></a></li>
+                </ul>
+            </div>
+        </div>
+    }
+    <h1 class="govuk-heading-xl">@viewTitle</h1>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <p class="govuk-body">The main contact address for this organisation. This information appears on the register.</p>
+
+            <form asp-controller="Organisation" asp-action="ChangeAddress">
+                <div id="addressLookupWrapper" class="hide-nojs form-group disabled">
+                    <div class="govuk-form-group govuk-!-margin-bottom-2" id="address-lookup">
+                        <label for="postcode-search" class="govuk-label govuk-label--m">Start typing the address or postcode</label>
+                        <input id="postcode-search" name="postcodeSearch" type="text" class="govuk-input" spellcheck="false" autocomplete="off" autocorrect="off" disabled="disabled" />
+                        <span class="govuk-visually-hidden" id="ariaAddressEntered" aria-live="polite"></span>
+                    </div>
+                    <div class="govuk-form-group" id="address-manual">
+                        <p class="govuk-body"><a class="govuk-link" href="#" id="enterAddressManually">Enter the address manually</a></p>
+                        <p class="govuk-body toggle-content loading-text" id="addressLoading">Loading address...</p>
+                        <p id="postcodeServiceUnavailable" class="govuk-body error toggle-content text">Service is currently unavailable, please enter the address manually</p>
+                    </div>
+                    <div class="govuk-form-group govuk-!-margin-bottom-0 hidden" id="search-again">
+                        <p class="govuk-body">
+                            <a class="govuk-link" href="#" id="searchAgain">Search for a new address</a>
+                        </p>
+                    </div>
+                    <div class="info-highlighted js-address-panel hidden">
+                        <ul class="govuk-list"></ul>
+                    </div>
+                </div>
+                <div id="addressManualWrapper">
+                    <div id="address-details" class="address-manual-input js-hidden">
+                        <div class="govuk-form-group" sfa-validation-for="AddressLine1" sfa-validationerror-class="govuk-form-group--error">
+                            <label class="govuk-label" for="AddressLine1">
+                                Building and street <span class="govuk-visually-hidden">line 1 of 2</span>
+                            </label>
+                            <sfa-validationerror-detail sfa-validation-for="AddressLine1" sfa-validationerror-class="govuk-error-message"></sfa-validationerror-detail>
+                            <input class="govuk-input govuk-!-margin-bottom-2 address-manual-input-address-line-1 address-manual-input-focus"
+                                   name="AddressLine1"
+                                   sfa-validation-for="AddressLine1"
+                                   sfa-validationerror-class="govuk-input--error"
+                                   asp-for="AddressLine1"
+                                   type="text" />
+                            <label class="govuk-label" for="AddressLine2">
+                                <span class="govuk-visually-hidden">Building and street line 2 of 2</span>
+                            </label>
+                            <input class="govuk-input address-manual-input-address-line-2"
+                                   name="AddressLine2"
+                                   sfa-validation-for="AddressLine2"
+                                   sfa-validationerror-class="govuk-input--error"
+                                   asp-for="AddressLine2"
+                                   type="text" />
+                        </div>
+                        <div class="govuk-form-group">
+                            <div class="govuk-form-group" sfa-validation-for="AddressLine3" sfa-validationerror-class="govuk-form-group--error">
+                                <label class="govuk-label" for="AddressLine3">
+                                    Town or city
+                                </label>
+                                <sfa-validationerror-detail sfa-validation-for="AddressLine3" sfa-validationerror-class="govuk-error-message"></sfa-validationerror-detail>
+                                <input class="govuk-input govuk-!-width-two-thirds address-manual-input-address-line-3"
+                                       name="AddressLine3"
+                                       sfa-validation-for="AddressLine3"
+                                       sfa-validationerror-class="govuk-input--error"
+                                       asp-for="AddressLine3"
+                                       type="text" />
+                            </div>
+                        </div>
+                        <div class="govuk-form-group" sfa-validation-for="AddressLine4" sfa-validationerror-class="govuk-form-group--error">
+                            <label class="govuk-label" for="AddressLine4">
+                                County
+                            </label>
+                            <sfa-validationerror-detail sfa-validation-for="AddressLine4" sfa-validationerror-class="govuk-error-message"></sfa-validationerror-detail>
+                            <input class="govuk-input govuk-!-width-two-thirds address-manual-input-address-line-4"
+                                   name="AddressLine4"
+                                   sfa-validation-for="AddressLine4"
+                                   sfa-validationerror-class="govuk-input--error"
+                                   asp-for="AddressLine4"
+                                   type="text"
+                                   maxlength="30" />
+                        </div>
+                        <div class="govuk-form-group" sfa-validation-for="Postcode" sfa-validationerror-class="govuk-form-group--error">
+                            <label class="govuk-label" for="Postcode">
+                                Postcode
+                            </label>
+                            <sfa-validationerror-detail sfa-validation-for="Postcode" sfa-validationerror-class="govuk-error-message"></sfa-validationerror-detail>
+                            <input class="govuk-input govuk-input--width-10 address-manual-input-postcode"
+                                   name="Postcode"
+                                   sfa-validation-for="Postcode"
+                                   sfa-validationerror-class="govuk-input--error"
+                                   asp-for="Postcode"
+                                   type="text"
+                                   maxlength="10" />
+                        </div>
+                    </div>
+                </div>
+                <button class="govuk-button" type="submit" name="ActionChoice" value="Save">Change address</button>
+            </form>
+        </div>
+    </div>
+</main>
+
+@section Scripts {
+    <environment include="Development">
+        <script src="~/javascripts/lib/jquery-ui/dist/jquery-ui.min.js"></script>
+        <script src="~/javascripts/govuk-postcode-lookup-service.js"></script>
+    </environment>
+    <environment exclude="Development">
+        <script src="~/javascripts/govuk-postcode-lookup-service.min.js"></script>
+    </environment>
+}

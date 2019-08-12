@@ -166,25 +166,23 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
                 if (vm.ActionChoice == "Save")
                 {
-                    if (organisation.PrimaryContact == vm.PrimaryContact)
+                    if (ModelState.IsValid)
                     {
-                        ModelState.AddModelError(nameof(SelectOrChangeContactNameViewModel.PrimaryContact), "The contact name has not been changed.");
-                    }
+                        if (string.Equals(vm.PrimaryContact, organisation.PrimaryContact))
+                        {
+                            return RedirectToAction(nameof(OrganisationDetails));
+                        }
 
-                    if (string.IsNullOrEmpty(vm.PrimaryContact))
-                    {
-                        ModelState.AddModelError(nameof(SelectOrChangeContactNameViewModel.PrimaryContact), "The contact name cannot be removed");
-                    }
-
-                    if (organisation.Id != primaryContact?.OrganisationId)
-                    {
-                        ModelState.AddModelError(nameof(SelectOrChangeContactNameViewModel.PrimaryContact), "The contact name cannot be changed to a contact of a different organisation");
+                        if (organisation.Id != primaryContact?.OrganisationId)
+                        {
+                            ModelState.AddModelError(nameof(SelectOrChangeContactNameViewModel.PrimaryContact), "The contact name cannot be changed to a contact of a different organisation");
+                        }
                     }
 
                     if (!ModelState.IsValid)
                     {
                         return RedirectToAction(nameof(SelectOrChangeContactName));
-                    }
+                    }                   
 
                     vm = new SelectOrChangeContactNameViewModel
                     {
@@ -274,15 +272,15 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 {
                     if (ModelState.IsValid)
                     {
+                        if (string.Equals(vm.PhoneNumber, organisation.OrganisationData?.PhoneNumber))
+                        {
+                            return RedirectToAction(nameof(OrganisationDetails));
+                        }
+
                         // only check if a phone number has been entered - model has required validator
                         if (await _validationApiClient.ValidatePhoneNumber(vm.PhoneNumber) == false)
                         {
                             ModelState.AddModelError(nameof(ChangePhoneNumberViewModel.PhoneNumber), "Enter a valid phone number");
-                        }
-
-                        if (vm.PhoneNumber.Equals(organisation.OrganisationData?.PhoneNumber))
-                        {
-                            ModelState.AddModelError(nameof(ChangePhoneNumberViewModel.PhoneNumber), "Enter a different phone number");
                         }
                     }
 
@@ -336,6 +334,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         }
 
         [HttpGet]
+        [ModelStatePersist(ModelStatePersist.RestoreEntry)]
         [TypeFilter(typeof(MenuFilter), Arguments = new object[] { Pages.Organisations })]
         [PrivilegeAuthorize(Privileges.ChangeOrganisationDetails)]
         public async Task<IActionResult> ChangeAddress()
@@ -344,13 +343,118 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             try
             {
                 var organisation = await _organisationsApiClient.GetEpaOrganisation(epaoid);
-                return RedirectToAction(nameof(OrganisationDetails));
+
+                var viewModel = new ChangeAddressViewModel
+                {
+                    AddressLine1 = ModelState.IsValid
+                        ? organisation.OrganisationData?.Address1
+                        : ModelState[nameof(ChangeAddressViewModel.AddressLine1)]?.AttemptedValue,
+                    AddressLine2 = ModelState.IsValid
+                        ? organisation.OrganisationData?.Address2
+                        : ModelState[nameof(ChangeAddressViewModel.AddressLine2)]?.AttemptedValue,
+                    AddressLine3 = ModelState.IsValid
+                        ? organisation.OrganisationData?.Address3
+                        : ModelState[nameof(ChangeAddressViewModel.AddressLine3)]?.AttemptedValue,
+                    AddressLine4 = ModelState.IsValid
+                        ? organisation.OrganisationData?.Address4
+                        : ModelState[nameof(ChangeAddressViewModel.AddressLine4)]?.AttemptedValue,
+                    Postcode = ModelState.IsValid
+                        ? organisation.OrganisationData?.Postcode
+                        : ModelState[nameof(ChangeAddressViewModel.Postcode)]?.AttemptedValue
+                };
+
+                return View(viewModel);
             }
             catch (EntityNotFoundException e)
             {
                 _logger.LogWarning(e, "Failed to find organisation");
                 return RedirectToAction(nameof(HomeController.NotRegistered), nameof(HomeController).RemoveController());
             }
+        }
+
+        [HttpPost]
+        [ModelStatePersist(ModelStatePersist.Store)]
+        [PrivilegeAuthorize(Privileges.ChangeOrganisationDetails)]
+        public async Task<IActionResult> ChangeAddress(ChangeAddressViewModel vm)
+        {
+            var epaoid = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/epaoid")?.Value;
+            try
+            {
+                var organisation = await _organisationsApiClient.GetEpaOrganisation(epaoid);
+
+                if (vm.ActionChoice == "Save")
+                {
+                    if (ModelState.IsValid)
+                    {
+                        if (string.Equals(vm.AddressLine1, organisation.OrganisationData?.Address1) &&
+                            string.Equals(vm.AddressLine2, organisation.OrganisationData?.Address2) &&
+                            string.Equals(vm.AddressLine3, organisation.OrganisationData?.Address3) &&
+                            string.Equals(vm.AddressLine4, organisation.OrganisationData?.Address4) &&
+                            string.Equals(vm.Postcode, organisation.OrganisationData?.Postcode))
+                        {
+                            return RedirectToAction(nameof(OrganisationDetails));
+                        }
+                    }
+
+                    if (!ModelState.IsValid)
+                    {
+                        return RedirectToAction(nameof(ChangeAddress));
+                    }
+
+                    vm = new ChangeAddressViewModel
+                    {
+                        AddressLine1 = vm.AddressLine1,
+                        AddressLine2 = vm.AddressLine2,
+                        AddressLine3 = vm.AddressLine3,
+                        AddressLine4 = vm.AddressLine4,
+                        Postcode = vm.Postcode
+                    };
+
+                    return View("ChangeAddressConfirm", vm);
+                }
+                else if (vm.ActionChoice == "Confirm")
+                {
+                    var userId = _contextAccessor.HttpContext.User.FindFirst("UserId").Value;
+                    var request = new UpdateEpaOrganisationAddressRequest
+                    {
+                        AddressLine1 = vm.AddressLine1,
+                        AddressLine2 = vm.AddressLine2,
+                        AddressLine3 = vm.AddressLine3,
+                        AddressLine4 = vm.AddressLine4,
+                        Postcode = vm.Postcode,
+                        OrganisationId = organisation.OrganisationId,
+                        UpdatedBy = Guid.Parse(userId)
+                    };
+
+                    var notifiedContacts = await _organisationsApiClient.UpdateEpaOrganisationAddress(request);
+                    if (notifiedContacts != null)
+                    {
+                        vm = new ChangeAddressViewModel
+                        {
+                            AddressLine1 = vm.AddressLine1,
+                            AddressLine2 = vm.AddressLine2,
+                            AddressLine3 = vm.AddressLine3,
+                            AddressLine4 = vm.AddressLine4,
+                            Postcode = vm.Postcode,
+                            Contacts = notifiedContacts
+                        };
+
+                        return View("ChangeAddressUpdated", vm);
+                    }
+                    else
+                    {
+                        ModelState.AddModelError(nameof(ChangePhoneNumberViewModel.PhoneNumber), "Unable to update the addres at this time.");
+                        return RedirectToAction(nameof(ChangeAddress));
+                    }
+                }
+            }
+            catch (EntityNotFoundException e)
+            {
+                _logger.LogWarning(e, "Failed to find organisation");
+                return RedirectToAction(nameof(HomeController.NotRegistered), nameof(HomeController).RemoveController());
+            }
+
+            return RedirectToAction(nameof(OrganisationDetails));
         }
 
         [HttpGet]
@@ -394,19 +498,18 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 {
                     if (ModelState.IsValid)
                     {
+                        if (string.Equals(vm.Email, organisation.OrganisationData?.Email))
+                        {
+                            return RedirectToAction(nameof(OrganisationDetails));
+                        }
+
                         // only check if an email address has been entered - model has required validator
                         if (await _validationApiClient.ValidateEmailAddress(vm.Email) == false)
                         {
                             ModelState.AddModelError(nameof(ChangeEmailViewModel.Email), "Enter a valid email address");
                         }
-
-                        // user can change case of an email only
-                        if(vm.Email.Equals(organisation.OrganisationData?.Email))
-                        {
-                            ModelState.AddModelError(nameof(ChangeEmailViewModel.Email), "Enter a different email address");
-                        }
                     }
-                    
+
                     if (!ModelState.IsValid)
                     {
                         return RedirectToAction(nameof(ChangeEmail));
@@ -495,18 +598,17 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
                 if (vm.ActionChoice == "Save")
                 {
-                    // only check if an web site link has been entered - model has required validator
                     if (ModelState.IsValid)
                     {
+                        if (string.Equals(vm.WebsiteLink, organisation.OrganisationData?.WebsiteLink))
+                        {
+                            return RedirectToAction(nameof(OrganisationDetails));
+                        }
+
+                        // only check if an web site link has been entered - model has required validator
                         if (await _validationApiClient.ValidateWebsiteLink(vm.WebsiteLink) == false)
                         {
                             ModelState.AddModelError(nameof(ChangeWebsiteViewModel.WebsiteLink), "Enter a valid website address");
-                        }
-
-                        // user can change case of an email only
-                        if (vm.WebsiteLink.Equals(organisation.OrganisationData?.WebsiteLink))
-                        {
-                            ModelState.AddModelError(nameof(ChangeWebsiteViewModel.WebsiteLink), "Enter a different website address");
                         }
                     }
 

@@ -201,6 +201,23 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             }
         }
 
+        [HttpPut("update-address", Name = "UpdateEpaOrganisationAddress")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<ContactResponse>))]
+        public async Task<IActionResult> UpdateEpaOrganisationAddress([FromBody] UpdateEpaOrganisationAddressRequest request)
+        {
+            try
+            {
+                _logger.LogInformation($"Amending the Organisation [{request.OrganisationId} with Address {request.AddressLine1}, {request.AddressLine2}, {request.AddressLine3}, {request.AddressLine4}, {request.Postcode}]");
+                var result = await _mediator.Send(request);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($@"Bad request, Message: [{ex.Message}]");
+                return BadRequest();
+            }
+        }
+
         [HttpPut("update-email", Name = "UpdateEpaOrganisationEmail")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<ContactResponse>))]
         public async Task<IActionResult> UpdateEpaOrganisationEmail([FromBody] UpdateEpaOrganisationEmailRequest request)

@@ -202,6 +202,15 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
+        public async Task<List<ContactResponse>> UpdateEpaOrganisationAddress(UpdateEpaOrganisationAddressRequest updateEpaOrganisationAddressRequest)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Put, $"api/ao/assessment-organisations/update-address"))
+            {
+                return await PostPutRequestWithResponse<UpdateEpaOrganisationAddressRequest, List<ContactResponse>>(request,
+                    updateEpaOrganisationAddressRequest);
+            }
+        }
+
         public async Task<List<ContactResponse>> UpdateEpaOrganisationEmail(UpdateEpaOrganisationEmailRequest updateEpaOrganisationEmailRequest)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Put, $"api/ao/assessment-organisations/update-email"))

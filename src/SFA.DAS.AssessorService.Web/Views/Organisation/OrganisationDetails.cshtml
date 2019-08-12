@@ -12,14 +12,16 @@
         </span>
 
         <h1 class="govuk-heading-xl">Organisation details</h1>
-
-        <div class="govuk-warning-text">
-            <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
-            <strong class="govuk-warning-text__text">
-                <span class="govuk-warning-text__assistive">Warning</span>
-                We need to know your Contact name for the register
-            </strong>
-        </div>
+        @if (string.IsNullOrEmpty(Model.PrimaryContactName))
+        {
+            <div class="govuk-warning-text">
+                <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                <strong class="govuk-warning-text__text">
+                    <span class="govuk-warning-text__assistive">Warning</span>
+                    We need to know your Contact name for the register
+                </strong>
+            </div>
+        }
         <p class="govuk-body">This is the information that employers and training providers will use to contact you.</p>
 
         <div class="govuk-grid-row">
@@ -42,14 +44,7 @@
                             {
                                 <dd class="govuk-summary-list__actions">
                                     <a class="govuk-link" asp-controller="Organisation" asp-action="SelectOrChangeContactName">
-                                        @if (string.IsNullOrEmpty(Model.PrimaryContactName))
-                                        {
-                                            @:Select<span class="govuk-visually-hidden"> contact name</span>
-                                        }
-                                        else
-                                        {
-                                            @:Change<span class="govuk-visually-hidden"> contact name</span>
-                                        }
+                                        Change<span class="govuk-visually-hidden"> contact name</span>
                                     </a>
                                 </dd>
                             }
@@ -130,24 +125,24 @@
 
         @if (Model.UserHasChangeOrganisationPrivilege == false)
         {
-        <form asp-controller="RequestAccess" asp-action="Request">
-            @Html.Hidden("ContactId", @Model.AccessDeniedViewModel.ContactId)
-            @Html.Hidden("PrivilegeId", @Model.AccessDeniedViewModel.PrivilegeId)
-            @Html.Hidden("UserHasUserManagement", @Model.AccessDeniedViewModel.UserHasUserManagement)
-            @Html.Hidden("ReturnController", @Model.AccessDeniedViewModel.ReturnController)
-            @Html.Hidden("ReturnAction", @Model.AccessDeniedViewModel.ReturnAction)
+            <form asp-controller="RequestAccess" asp-action="Request">
+                @Html.Hidden("ContactId", @Model.AccessDeniedViewModel.ContactId)
+                @Html.Hidden("PrivilegeId", @Model.AccessDeniedViewModel.PrivilegeId)
+                @Html.Hidden("UserHasUserManagement", @Model.AccessDeniedViewModel.UserHasUserManagement)
+                @Html.Hidden("ReturnController", @Model.AccessDeniedViewModel.ReturnController)
+                @Html.Hidden("ReturnAction", @Model.AccessDeniedViewModel.ReturnAction)
 
-            <p class="govuk-body">
-                <span>To make changes to organisation details you need to&nbsp;</span>
-                @if (Model.AccessDeniedViewModel.UserHasUserManagement)
-                {
-                    <button class="govuk-button govuk-button--looks-like-link" type="submit">grant access</button>
-                }
-                else
-                {
-                    <button class="govuk-button govuk-button--looks-like-link" type="submit">request access</button>
-                }
-            </p>
-        </form>
+                <p class="govuk-body">
+                    <span>To make changes to organisation details you need to&nbsp;</span>
+                    @if (Model.AccessDeniedViewModel.UserHasUserManagement)
+                    {
+                        <button class="govuk-button govuk-button--looks-like-link" type="submit">grant access</button>
+                    }
+                    else
+                    {
+                        <button class="govuk-button govuk-button--looks-like-link" type="submit">request access</button>
+                    }
+                </p>
+            </form>
         }
     </main>

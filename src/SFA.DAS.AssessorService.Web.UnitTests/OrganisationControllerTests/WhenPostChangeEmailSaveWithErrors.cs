@@ -4,7 +4,7 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
-
+using SFA.DAS.AssessorService.Web.Controllers;
 using SFA.DAS.AssessorService.Web.ViewModels;
 
 namespace SFA.DAS.AssessorService.Web.UnitTests.OrganisationControllerTests
@@ -44,7 +44,6 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.OrganisationControllerTests
         }
 
         [TestCase(InvalidEmailAddress)]
-        [TestCase(InvalidEmailSame)]
         public async Task Should_return_a_model_with_invalid_email(string emailAddress)
         {
             _actionResult = await Act(new ChangeEmailViewModel
@@ -54,6 +53,31 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.OrganisationControllerTests
             });
 
             sut.ModelState.IsValid.Should().BeFalse();
+        }
+
+        [Test]
+        public async Task Should_return_a_redirecttoaction_same_email()
+        {
+            _actionResult = await Act(new ChangeEmailViewModel
+            {
+                Email = InvalidEmailSame,
+                ActionChoice = ActionChoiceSave
+            });
+
+            _actionResult.Should().BeOfType<RedirectToActionResult>();
+        }
+
+        [Test]
+        public async Task Should_return_a_redirecttoaction_to_organisational_details_for_same_email()
+        {
+            _actionResult = await Act(new ChangeEmailViewModel
+            {
+                Email = InvalidEmailSame,
+                ActionChoice = ActionChoiceSave
+            });
+
+            var _redirect = _actionResult as RedirectToActionResult;
+            _redirect.ActionName.Should().Be(nameof(OrganisationController.OrganisationDetails));
         }
     }
 }

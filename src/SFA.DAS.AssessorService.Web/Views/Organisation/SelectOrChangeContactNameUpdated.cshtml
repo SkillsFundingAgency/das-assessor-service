@@ -20,20 +20,7 @@
                     </div>
                 </div>
             </div>
-            <p class="govuk-body">An email has been sent to the following people in your organisation:</p>
-            <ul class="govuk-list govuk-list--bullet">
-                @foreach(var contact in Model.Contacts)
-                {
-                <li>@contact.DisplayName</li>
-                }
-            </ul>
-            <h1 class="govuk-heading-l">What do you want to do next?</h1>
-            <span class="govuk-body">
-                <a class="govuk-link" asp-controller="Organisation" asp-action="OrganisationDetails">View organisation details</a>
-            </span><br />
-            <span class="govuk-body">
-                <a class="govuk-link" asp-controller="Dashboard" asp-action="Index">Back to the dashboard</a>
-            </span>
+            @{await Html.RenderPartialAsync("_Updated", @Model);}
         </div>
     </div>
 </main>

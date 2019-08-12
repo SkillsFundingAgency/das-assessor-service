@@ -74,7 +74,6 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.OrganisationControllerTests
         }
 
         [TestCase(InvalidPrimaryContactEmpty)]
-        [TestCase(InvalidPrimaryContactSame)]
         [TestCase(InvalidPrimaryContactWrongOrganisation)]
         public async Task Should_return_a_model_with_invalid_primary_contact(string primaryContact)
         {
@@ -85,6 +84,32 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.OrganisationControllerTests
             });
 
             sut.ModelState.IsValid.Should().BeFalse();
+        }
+
+        [Test]
+        public async Task Should_return_a_redirecttoaction_same_primary_contact()
+        {
+            _actionResult = await Act(new SelectOrChangeContactNameViewModel
+            {
+                PrimaryContact = InvalidPrimaryContactSame,
+                ActionChoice = ActionChoiceSave
+            });
+
+            _actionResult.Should().BeOfType<RedirectToActionResult>();
+        }
+
+        [Test]
+        public async Task Should_return_a_redirecttoaction_to_organisational_details_for_same_primary_contact()
+        {
+            _actionResult = await Act(new SelectOrChangeContactNameViewModel
+            {
+                PrimaryContact = InvalidPrimaryContactSame,
+                ActionChoice = ActionChoiceSave
+                
+            });
+
+            var _redirect = _actionResult as RedirectToActionResult;
+            _redirect.ActionName.Should().Be(nameof(OrganisationController.OrganisationDetails));
         }
     }
 }
