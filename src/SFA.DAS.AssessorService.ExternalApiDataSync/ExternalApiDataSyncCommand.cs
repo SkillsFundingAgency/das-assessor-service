@@ -164,9 +164,14 @@ namespace SFA.DAS.AssessorService.ExternalApiDataSync
                                         , FamilyName = 'TEST'
                                         , DisplayName = ISNULL(EndPointAssessorOrganisationId, 'UNKNOWN') + ' TEST'
                                         , Title = ''
-                                        , Email = ISNULL(EndPointAssessorOrganisationId, 'UNKNOWN') + '@TEST.TEST'
+                                        , Email = CONVERT(VARCHAR(36), Id) + '@TEST.TEST'
+                                        , Username = CONVERT(VARCHAR(36), Id) + '@TEST.TEST'
                                         , PhoneNumber = NULL
                                         , SignInId = NULL;", transaction: transaction);
+
+            transaction.Connection.Execute(@" UPDATE Organisations
+                                    SET PrimaryContact = NULL
+                                        , ApiUser = NULL;", transaction: transaction);
 
             _aggregateLogger.LogInformation("Step 5: Completed");
         }
