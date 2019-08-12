@@ -22,10 +22,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ao
 
         public async Task<EpaOrganisation> Handle(GetAssessmentOrganisationByIdRequest request, CancellationToken cancellationToken)
         {
-            var Id = string.IsNullOrEmpty(request.Id)? Guid.NewGuid() : Guid.Parse(request.Id);
-
-            _logger.LogInformation($@"Handling AssessmentOrganisation Request for [{Id}]");
-            var org = await _registerQueryRepository.GetEpaOrganisationById(Id);
+            _logger.LogInformation($@"Handling AssessmentOrganisation Request for [{request.Id}]");
+            var org = await _registerQueryRepository.GetEpaOrganisationById(request.Id);
 
             return org ?? null;
         }  

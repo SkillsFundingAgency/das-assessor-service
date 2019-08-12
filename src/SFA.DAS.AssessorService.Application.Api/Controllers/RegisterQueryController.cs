@@ -69,20 +69,16 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         public async Task<IActionResult> GetAssessmentOrganisation(string organisationId)
         {
             _logger.LogInformation($@"Get Assessment Organisation [{organisationId}]");
-            var result = await _mediator.Send(new GetAssessmentOrganisationRequest {OrganisationId = organisationId});
-            if (result == null) return NotFound();
-            return Ok(result);
-        }
+            bool isValid = Guid.TryParse(organisationId, out Guid guid);
+            EpaOrganisation result;
+            if (isValid)
+            {
+                result = await _mediator.Send(new GetAssessmentOrganisationByIdRequest { Id = guid });
+                if (result == null) return NotFound();
+                return Ok(result);
+            }
 
-        [HttpGet("assessment-organisations/{Id}", Name = "GetAssessmentOrganisationById")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(EpaOrganisation))]
-        [SwaggerResponse((int)HttpStatusCode.NotFound, null)]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
-        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> GetAssessmentOrganisationById(string Id)
-        {
-            _logger.LogInformation($@"Get Assessment Organisation [{Id}]");
-            var result = await _mediator.Send(new GetAssessmentOrganisationByIdRequest { Id = Id });
+            result = await _mediator.Send(new GetAssessmentOrganisationRequest {OrganisationId = organisationId});
             if (result == null) return NotFound();
             return Ok(result);
         }

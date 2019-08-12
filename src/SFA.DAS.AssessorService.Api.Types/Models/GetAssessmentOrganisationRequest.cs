@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
+using System;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models
 {
@@ -10,7 +11,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models
 
     public class GetAssessmentOrganisationByIdRequest : IRequest<EpaOrganisation>
     {
-        public string Id { get; set; }
+        public Guid Id { get; set; }
     }
 }
 
