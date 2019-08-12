@@ -19,7 +19,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Epas
             RuleFor(m => m.Email).NotEmpty().WithMessage("Provide your Email address");
 
             RuleFor(m => m.FamilyName).NotEmpty().WithMessage("Provide apprentice family name");
-            RuleFor(m => m.StandardCode).GreaterThan(0).WithMessage("Provide a Standard").DependentRules(() =>
+            RuleFor(m => m.StandardCode).GreaterThan(0).WithMessage("Provide a valid Standard").DependentRules(() =>
             {
                 RuleFor(m => m).CustomAsync(async (m, context, cancellation) =>
                 {

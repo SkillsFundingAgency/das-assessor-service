@@ -17,7 +17,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Certifi
             RuleFor(m => m.Email).NotEmpty().WithMessage("Provide your Email address");
 
             RuleFor(m => m.FamilyName).NotEmpty().WithMessage("Provide apprentice family name");
-            RuleFor(m => m.StandardCode).GreaterThan(0).WithMessage("Provide a Standard").DependentRules(() =>
+            RuleFor(m => m.StandardCode).GreaterThan(0).WithMessage("Provide a valid Standard").DependentRules(() =>
             {
                 RuleFor(m => m).CustomAsync(async (m, context, cancellation) =>
                 {
@@ -33,7 +33,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Certifi
                         }
                     }
 
-                    // NOTE: This is not a nice way to do this BUT we cannot use another DependantResult()
+                    // NOTE: This is not a nice way to do this BUT we cannot use another DependantRules()
                     if (sameStandard)
                     {
                         var courseOptions = await certificateRepository.GetOptions(m.StandardCode);
