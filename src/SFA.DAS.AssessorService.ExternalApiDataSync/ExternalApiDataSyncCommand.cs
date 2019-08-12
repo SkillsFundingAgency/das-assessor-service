@@ -89,16 +89,16 @@ namespace SFA.DAS.AssessorService.ExternalApiDataSync
                         @"  DELETE FROM CertificateLogs;
                             DELETE FROM Certificates;
                             DELETE FROM Ilrs;
-                            DBCC CHECKIDENT('Certificates', RESEED, 10000);");
+                            DBCC CHECKIDENT('Certificates', RESEED, 10001);");
 
                     // repopulated in Step 4
                     conn.Execute(
                         @"  DELETE FROM OrganisationStandardDeliveryArea;
                             DELETE FROM OrganisationStandard;
                             DELETE FROM DeliveryArea;
-                            DBCC CHECKIDENT('OrganisationStandardDeliveryArea', RESEED, 0);
-                            DBCC CHECKIDENT('OrganisationStandard', RESEED, 0);
-                            DBCC CHECKIDENT('DeliveryArea', RESEED, 0);");
+                            DBCC CHECKIDENT('OrganisationStandardDeliveryArea', RESEED, 1);
+                            DBCC CHECKIDENT('OrganisationStandard', RESEED, 1);
+                            DBCC CHECKIDENT('DeliveryArea', RESEED, 1);");
 
                     // repopulated in Step 3
                     conn.Execute(
@@ -116,7 +116,7 @@ namespace SFA.DAS.AssessorService.ExternalApiDataSync
                     conn.Execute(
                         @"  DELETE FROM Organisations;
                             DELETE FROM OrganisationType;
-                            DBCC CHECKIDENT('OrganisationType', RESEED, 0);");
+                            DBCC CHECKIDENT('OrganisationType', RESEED, 1);");
                 }
 
                 trans.Complete();
