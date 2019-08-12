@@ -79,7 +79,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                     _sessionService.Set("OrganisationName", orgName);
                     return RedirectToAction("InvitePending", "Home");
                 case LoginResult.Applying:
-                    return Redirect($"{_config.ApplyBaseAddress}/Applications");
+                    return RedirectToAction("Applications", "Application");
                 case LoginResult.Rejected:
                     ResetCookies();
                     _sessionService.Set("OrganisationName", orgName);

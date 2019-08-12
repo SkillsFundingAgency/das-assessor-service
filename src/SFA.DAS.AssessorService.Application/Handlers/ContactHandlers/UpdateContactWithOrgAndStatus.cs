@@ -29,19 +29,19 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ContactHandlers
                     .EndPointAssessorOrganisationId != null && !(await _organisationQueryRepository.CheckIfOrganisationHasContacts(contact
                     .EndPointAssessorOrganisationId)))
             {
-                await SetOrganisationStatusToLiveAndSetPrimaryContact(contact
+                await SetOrganisationStatusToApplyAndSetPrimaryContact(contact
                     .EndPointAssessorOrganisationId, contact);
             }
 
         }
 
-        private async Task SetOrganisationStatusToLiveAndSetPrimaryContact(string endPointAssessorOrganisationId, Contact contact)
+        private async Task SetOrganisationStatusToApplyAndSetPrimaryContact(string endPointAssessorOrganisationId, Contact contact)
         {
             var organisation =
                 await _organisationQueryRepository.Get(endPointAssessorOrganisationId);
 
             organisation.PrimaryContact = contact.Username;
-            organisation.Status = OrganisationStatus.Live;
+            organisation.Status = OrganisationStatus.Applying;
 
             await _organisationRepository.UpdateOrganisation(organisation);
         }

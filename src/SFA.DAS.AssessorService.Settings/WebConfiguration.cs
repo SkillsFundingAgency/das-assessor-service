@@ -44,5 +44,12 @@ namespace SFA.DAS.AssessorService.Settings
         [JsonRequired] public ApiAuthentication SandboxApiAuthentication { get; set; }
         [JsonRequired] public ClientApiAuthentication SandboxClientApiAuthentication { get; set; }
         #endregion
+
+        [JsonRequired] public ProviderRegisterApiAuthentication ProviderRegisterApiAuthentication { get; set; }
+        [JsonRequired] public ReferenceDataApiAuthentication ReferenceDataApiAuthentication { get; set; }
+
+        [JsonRequired] public CompaniesHouseApiAuthentication CompaniesHouseApiAuthentication { get; set; }
+        [JsonRequired] public CharityCommissionApiAuthentication CharityCommissionApiAuthentication { get; set; }
+
     }
 }

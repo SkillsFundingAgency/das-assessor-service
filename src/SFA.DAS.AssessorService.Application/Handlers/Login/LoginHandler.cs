@@ -110,6 +110,13 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Login
                 response.Result = (contact.Status is ContactStatus.Live) ? LoginResult.NotActivated : LoginResult.InvitePending;
                 return response;
             }
+            else if (organisation.Status == OrganisationStatus.Applying)
+            {
+                _logger.LogInformation(LoggingConstants.SignInEpaoNew);
+
+                response.Result = (contact.Status is ContactStatus.Live) ? LoginResult.Applying : LoginResult.NotActivated;
+                return response;
+            }
             else
             {
                 _logger.LogInformation(LoggingConstants.SignInSuccessful);

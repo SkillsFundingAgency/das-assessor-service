@@ -9,7 +9,6 @@ using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Data.DapperTypeHandlers;
 using System;
-using SFA.DAS.Apprenticeships.Api.Types;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 
 namespace SFA.DAS.AssessorService.Data
@@ -438,6 +437,26 @@ namespace SFA.DAS.AssessorService.Data
                 var deliveryAreas =
                     await connection.QueryAsync<OrganisationStandardDeliveryArea>(sql, new {organisationStandardId});
                 return deliveryAreas;
+            }
+        }
+
+
+        public async Task<string> GetEpaOrgIdByEndPointAssessmentName(string name)
+        {
+            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            {
+                name = name.Replace(" ", "");
+                if (connection.State != ConnectionState.Open)
+                    await connection.OpenAsync();
+                var sqlForMainDetails =
+                    "SELECT  O.EndPointAssessorOrganisationId " +
+                    " FROM [Organisations] O " 
+                    + "WHERE replace(o.EndPointAssessorName, ' ','') like @name "
+                    + "OR replace(JSON_VALUE(o.[OrganisationData], '$.TradingName'), ' ','') like @name "
+                    + "OR replace(JSON_VALUE(o.[OrganisationData], '$.LegalName'), ' ','') like @name ";
+                var orgs = await connection.QueryAsync<string>(sqlForMainDetails, new { name });
+                var org = orgs.FirstOrDefault();
+                return org;
             }
         }
     }

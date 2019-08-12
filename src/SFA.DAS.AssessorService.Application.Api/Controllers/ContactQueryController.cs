@@ -27,19 +27,16 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
     {
         private readonly SearchOrganisationForContactsValidator _searchOrganisationForContactsValidator;
         private readonly IContactQueryRepository _contactQueryRepository;
-        private readonly IContactApplyClient _contatApplyClient;
         private readonly IMediator _mediator;
         private readonly ILogger<ContactQueryController> _logger;
         private readonly IWebConfiguration _config;
 
         public ContactQueryController(IContactQueryRepository contactQueryRepository,
-            IContactApplyClient contatApplyClient,
             SearchOrganisationForContactsValidator searchOrganisationForContactsValidator,
             IMediator mediator,
             ILogger<ContactQueryController> logger, IWebConfiguration config)
         {
             _contactQueryRepository = contactQueryRepository;
-            _contatApplyClient = contatApplyClient;
             _logger = logger;
             _config = config;
             _searchOrganisationForContactsValidator = searchOrganisationForContactsValidator;
@@ -220,107 +217,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
                 }
             }
             
+            
             return Ok(); 
         }
 
-        [HttpPost("MigrateSingleContactToApply", Name = "MigrateSingleContactToApply")]
-        [SwaggerResponse((int)HttpStatusCode.OK)]
-        [SwaggerResponse((int)HttpStatusCode.NotFound)]
-        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<ActionResult> MigrateSingleContactToApply([FromBody]SigninIdWrapper signinWrapper)
-        {
-            var contactToMigrate = await _contactQueryRepository.GetSingleContactsToMigrateToApply(signinWrapper.SigninId);
-            if (contactToMigrate == null)
-            {
-                throw new ResourceNotFoundException();
-            }
-
-            var migrateContatOrganisation = MapAssessorToApply(contactToMigrate);
-            await _contatApplyClient.MigrateSingleContactToApply(migrateContatOrganisation);
-            return Ok();
-        }
-
-        private MigrateContactOrganisation MapAssessorToApply(Contact contact)
-        {
-            var request = new MigrateContactOrganisation
-            {
-                contact = new ApplyTypes.Contact
-                {
-                    Id = contact.Id,
-                    CreatedAt = contact.CreatedAt,
-                    CreatedBy = contact.Id.ToString(),
-                    DeletedAt = null,
-                    DeletedBy = null,
-                    Email = contact.Email,
-                    FamilyName = contact.FamilyName ?? string.Empty,
-                    GivenNames = contact.GivenNames ?? string.Empty,
-                    IsApproved = true,
-                    SigninId = contact.SignInId,
-                    SigninType = "ASLogin",
-                    ApplyOrganisationId = Guid.Empty,
-                    Status = "Live",
-                    UpdatedAt = null,
-                    UpdatedBy = null
-                }
-            };
-
-
-            if (contact.Organisation != null)
-            {
-                var finExempt = contact.Organisation.OrganisationType != null ? 
-                    IsOrganisationTypeFinancialExempt(contact.Organisation.OrganisationType.Type) : false;
-                request.organisation = new Organisation
-                {
-                    CreatedAt = contact.Organisation.CreatedAt,
-                    CreatedBy = contact.Id.ToString(),
-                    DeletedAt = null,
-                    DeletedBy = null,
-                    Id = Guid.Empty,
-                    Name = contact.Organisation.EndPointAssessorName,
-                    OrganisationType = contact.Organisation.OrganisationType?.Type,
-                    OrganisationUkprn = contact.Organisation.EndPointAssessorUkprn,
-                    RoATPApproved = false,
-                    RoEPAOApproved = true,
-                    Status = contact.Organisation.Status =="Live"?"Approved":"New",
-                    UpdatedAt = null,
-                    UpdatedBy = null,
-                    OrganisationDetails = new OrganisationDetails
-                    {
-                        Address1 = contact.Organisation.OrganisationDataFromJson?.Address1,
-                        Address2 = contact.Organisation.OrganisationDataFromJson?.Address2,
-                        Address3 = contact.Organisation.OrganisationDataFromJson?.Address3,
-                        CharityNumber = contact.Organisation.OrganisationDataFromJson?.CharityNumber,
-                        City = contact.Organisation.OrganisationDataFromJson?.Address4,
-                        CompanyNumber = contact.Organisation.OrganisationDataFromJson?.CompanyNumber,
-                        LegalName = contact.Organisation.OrganisationDataFromJson?.LegalName,
-                        OrganisationReferenceId = contact.Organisation.EndPointAssessorUkprn == null
-                            ? contact.Organisation.EndPointAssessorOrganisationId
-                            : contact.Organisation.EndPointAssessorUkprn.ToString(),
-                        OrganisationReferenceType = "RoEPAO",
-                        Postcode = contact.Organisation.OrganisationDataFromJson?.Postcode,
-                        ProviderName = null,
-                        TradingName = contact.Organisation.OrganisationDataFromJson?.TradingName,
-                        FHADetails = new FHADetails
-                        {
-                            FinancialDueDate = contact.Organisation.OrganisationDataFromJson?.FhaDetails?.FinancialDueDate,
-                            FinancialExempt = finExempt 
-                        },
-                        EndPointAssessmentOrgId = contact.EndPointAssessorOrganisationId
-                    }
-                };
-            }
-
-            return request;
-        }
-
-        private static bool IsOrganisationTypeFinancialExempt(string organisationType)
-        {
-            // This is unlikely to change. Hence, after a quick discussion, decided to hard-code these than cope with external dependencies
-            return "HEI".Equals(organisationType, StringComparison.InvariantCultureIgnoreCase)
-                || "College".Equals(organisationType, StringComparison.InvariantCultureIgnoreCase)
-                || "Public Sector".Equals(organisationType, StringComparison.InvariantCultureIgnoreCase)
-                || "Academy or Free School".Equals(organisationType, StringComparison.InvariantCultureIgnoreCase);
-        }
+      
     }
 
 

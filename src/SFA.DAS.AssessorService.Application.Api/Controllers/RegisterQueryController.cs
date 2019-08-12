@@ -6,13 +6,13 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using SFA.DAS.Apprenticeships.Api.Types;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using OrganisationType = SFA.DAS.AssessorService.Api.Types.Models.AO.OrganisationType;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers
 {
@@ -69,7 +69,16 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         public async Task<IActionResult> GetAssessmentOrganisation(string organisationId)
         {
             _logger.LogInformation($@"Get Assessment Organisation [{organisationId}]");
-            var result = await _mediator.Send(new GetAssessmentOrganisationRequest {OrganisationId = organisationId});
+            bool isValid = Guid.TryParse(organisationId, out Guid guid);
+            EpaOrganisation result;
+            if (isValid)
+            {
+                result = await _mediator.Send(new GetAssessmentOrganisationByIdRequest { Id = guid });
+                if (result == null) return NotFound();
+                return Ok(result);
+            }
+
+            result = await _mediator.Send(new GetAssessmentOrganisationRequest {OrganisationId = organisationId});
             if (result == null) return NotFound();
             return Ok(result);
         }

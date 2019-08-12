@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using SFA.DAS.AssessorService.Api.Types.Models;
-using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
+using SFA.DAS.AssessorService.Application.Api.AutoMapperProfiles;
 using SFA.DAS.AssessorService.Application.Mapping.CustomResolvers;
 using SFA.DAS.AssessorService.Domain.Entities;
 using Contact = SFA.DAS.AssessorService.Domain.Entities.Contact;
@@ -44,6 +44,30 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                 cfg.CreateMap<UpdateEpaOrganisationRequest, EpaOrganisationResponse>();
                 cfg.CreateMap<CreateEpaOrganisationStandardRequest, EpaoStandardResponse>();
                 cfg.CreateMap<UpdateEpaOrganisationStandardRequest, EpaoStandardResponse>();
+
+                cfg.AddProfile<AssessorServiceOrganisationProfile>();
+                cfg.AddProfile<AssessorServiceOrganisationAddressProfile>();
+                cfg.AddProfile<AssessorServiceOrganisationTypeProfile>();
+
+                cfg.AddProfile<ProviderRegisterOrganisationProfile>();
+                cfg.AddProfile<ProviderRegisterOrganisationAddressProfile>();
+
+                cfg.AddProfile<ReferenceDataOrganisationProfile>();
+                cfg.AddProfile<ReferenceDataOrganisationAddressProfile>();
+
+                cfg.AddProfile<CompaniesHouseCompanyProfile>();
+                cfg.AddProfile<CompaniesHouseAccountsProfile>();
+                cfg.AddProfile<CompaniesHouseRegisteredOfficeAddressProfile>();
+                cfg.AddProfile<CompaniesHouseOfficerAddressProfile>();
+                cfg.AddProfile<CompaniesHouseOfficerProfile>();
+                cfg.AddProfile<CompaniesHouseOfficerDisqualificationProfile>();
+                cfg.AddProfile<CompaniesHousePersonWithSignificantControlProfile>();
+                cfg.AddProfile<CompaniesHousePersonWithSignificantControlAddressProfile>();
+
+                cfg.AddProfile<CharityCommissionProfile>();
+                cfg.AddProfile<CharityCommissionAddressProfile>();
+                cfg.AddProfile<CharityCommissionAccountsProfile>();
+                cfg.AddProfile<CharityCommissionTrusteeProfile>();
             });
         }
     }

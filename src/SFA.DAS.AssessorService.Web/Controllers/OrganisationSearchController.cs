@@ -9,15 +9,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Api.Types.Models.Register;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
-using SFA.DAS.AssessorService.Application.Api.Client.Exceptions;
-using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Paging;
 using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.ViewModels.Organisation;
-using FHADetails = SFA.DAS.AssessorService.ApplyTypes.FHADetails;
 
 namespace SFA.DAS.AssessorService.Web.Controllers
 {
@@ -30,7 +28,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         private readonly IContactsApiClient _contactsApiClient;
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly IOrganisationsApiClient _organisationsApiClient;
-        private readonly IOrganisationsApplyApiClient _organisationsApplyApiClient;
         private readonly ILogger<OrganisationSearchController> _logger;
         private readonly IWebConfiguration _config;
         private readonly ISessionService _sessionService;
@@ -41,7 +38,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             IHttpContextAccessor contextAccessor, IOrganisationsApiClient organisationsApiClient,
             IContactsApiClient contactApiClient,
             IWebConfiguration config,
-            IOrganisationsApplyApiClient organisationApplyApiClient,
             ISessionService sessionService)
         {
             _logger = logger;
@@ -49,7 +45,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             _organisationsApiClient = organisationsApiClient;
             _contactsApiClient = contactApiClient;
             _config = config;
-            _organisationsApplyApiClient = organisationApplyApiClient;
             _sessionService = sessionService;
         }
 
@@ -76,7 +71,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 return View(nameof(Index));
             }
 
-            viewModel.Organisations = await _organisationsApplyApiClient.SearchForOrganisations(viewModel.SearchString,PageSize, SanitizePageIndex(pageIndex));
+            viewModel.Organisations = await _organisationsApiClient.SearchForOrganisations(viewModel.SearchString,PageSize, SanitizePageIndex(pageIndex));
 
             return View(viewModel);
         }
@@ -98,7 +93,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 return View(nameof(Results), viewModel);
             }
 
-            viewModel.Organisations = await _organisationsApplyApiClient.SearchForOrganisations(viewModel.SearchString, PageSize, SanitizePageIndex(pageIndex));
+            viewModel.Organisations = await _organisationsApiClient.SearchForOrganisations(viewModel.SearchString, PageSize, SanitizePageIndex(pageIndex));
 
             return View(nameof(Results), viewModel);
         }
@@ -118,7 +113,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 return View(nameof(Results), viewModel);
             }
             
-            viewModel.Organisations = await _organisationsApplyApiClient.SearchForOrganisations(viewModel.SearchString, PageSize, SanitizePageIndex(pageIndex));
+            viewModel.Organisations = await _organisationsApiClient.SearchForOrganisations(viewModel.SearchString, PageSize, SanitizePageIndex(pageIndex));
 
             return View(nameof(Results), viewModel);
         }
@@ -149,6 +144,13 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 viewModel.OrganisationTypes = await _organisationsApiClient.GetOrganisationTypes();
                 return View("Type", viewModel);
             }
+
+            if(!string.IsNullOrEmpty(viewModel.OrganisationType))
+            {
+                viewModel.OrganisationTypes = await _organisationsApiClient.GetOrganisationTypes();
+                viewModel.OrganisationTypeId = viewModel.OrganisationTypes.Any()? viewModel.OrganisationTypes
+                    .First(x => viewModel.OrganisationType != null && x.Type == viewModel.OrganisationType).Id:0;
+            }
            
 
             var organisationSearchResult = await GetOrganisation(viewModel.SearchString, viewModel.Name,
@@ -158,7 +160,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             {
                 if (organisationSearchResult.CompanyNumber != null)
                 {
-                    var isActivelyTrading = await _organisationsApplyApiClient.IsCompanyActivelyTrading(organisationSearchResult.CompanyNumber);
+                    var isActivelyTrading = await _organisationsApiClient.IsCompanyActivelyTrading(organisationSearchResult.CompanyNumber);
 
                     if (!isActivelyTrading)
                     {
@@ -250,10 +252,10 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             var organisationSearchResult = await GetOrganisation(viewModel.SearchString, viewModel.Name,
                 viewModel.Ukprn, viewModel.OrganisationType, viewModel.Postcode, viewModel.PageIndex);
             if (organisationSearchResult != null)
-            {
+            { 
                 if (organisationSearchResult.CompanyNumber != null)
                 {
-                    var isActivelyTrading = await _organisationsApplyApiClient.IsCompanyActivelyTrading(organisationSearchResult.CompanyNumber);
+                    var isActivelyTrading = await _organisationsApiClient.IsCompanyActivelyTrading(organisationSearchResult.CompanyNumber);
 
                     if (!isActivelyTrading)
                     {
@@ -261,32 +263,36 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                     }
                 }
 
-                var request = CreateAnApplyOrganisationRequest(organisationSearchResult, user);
                 if (organisationSearchResult.OrganisationReferenceType == "RoEPAO")
                 {
-                    //Update assessor organisation status, sync assessor org with apply org and notify org users
-                    await UpdateOrganisationStatus(organisationSearchResult, user);
-                    await TryToCreateOrganisationInApply(request);
-                    await NotifyOrganisationUsers(organisationSearchResult, user);
+                    if (organisationSearchResult.OrganisationIsLive)
+                        //Update assessor organisation status
+                        await UpdateOrganisationStatusAndInvite(organisationSearchResult, user);
                 }
                 else
                 {
-                    //Try creating a contact and an organisation in apply
-                    await _contactsApiClient.MigrateSingleContactToApply(Guid.Parse(signinId));
-                    await _contactsApiClient.UpdateStatus(new UpdateContactStatusRequest(user.Id, ContactStatus.Applying));
-                    await _organisationsApplyApiClient.ConfirmSearchedOrganisation(request);
-                    return Redirect($"{_config.ApplyBaseAddress}/Applications");
+                    var request = CreateEpaOrganisationRequest(organisationSearchResult);
+                    request.OrganisationTypeId = viewModel.OrganisationTypeId;
+                    request.Status = OrganisationStatus.Applying;
+
+                    var epaoId = await _organisationsApiClient.CreateEpaOrganisation(request);
+                    _logger.LogInformation($"Organisation with Organisation Id {epaoId.Details} created.");
+
+                    var newOrg = await _organisationsApiClient.GetEpaOrganisation(epaoId.Details);
+                    var response = await _contactsApiClient.UpdateOrgAndStatus(new UpdateContactWithOrgAndStausRequest(user.Id.ToString(),
+                        newOrg.Id.ToString(), null, ContactStatus.Live));
+                    _logger.LogInformation($"Contact with display name {user.DisplayName} is associated with organisation {epaoId.Details}.");
+
+                    return View($"~/Views/Apply/Application/Applications.cshtml");
                 }
             }
-
-
             return View(viewModel);
         }  
      
         private async Task<OrganisationSearchResult> GetOrganisation(string searchString, string name, int? ukprn,
             string organisationType, string postcode, int? pageIndex)
         {
-            var searchResultsReturned = await _organisationsApplyApiClient.SearchForOrganisations(searchString,PageSize, SanitizePageIndex(pageIndex));
+            var searchResultsReturned = await _organisationsApiClient.SearchForOrganisations(searchString,PageSize, SanitizePageIndex(pageIndex));
             var searchResults = searchResultsReturned.Items == null ? 
                 new List<OrganisationSearchResult>().AsEnumerable() : searchResultsReturned.Items.AsEnumerable();
 
@@ -317,11 +323,12 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
             return organisationSearchResult;
         }
-
-        private OrganisationDetails MapToOrganisationDetails(OrganisationSearchResult organisationSearchResult)
+        
+        private CreateEpaOrganisationRequest CreateEpaOrganisationRequest(OrganisationSearchResult organisationSearchResult)
         {
-           return new OrganisationDetails
-            {
+           return new CreateEpaOrganisationRequest
+           {
+                Name = organisationSearchResult.Name,
                 OrganisationReferenceType = organisationSearchResult.OrganisationReferenceType,
                 OrganisationReferenceId = organisationSearchResult.OrganisationReferenceId,
                 LegalName = organisationSearchResult.LegalName,
@@ -334,7 +341,10 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 Address3 = organisationSearchResult.Address?.Address3,
                 City = organisationSearchResult.Address?.City,
                 Postcode = organisationSearchResult.Address?.Postcode,
-                FHADetails = new FHADetails()
+                RoATPApproved =  false,
+                RoEPAOApproved= false,
+                EndPointAssessmentOrgId = null,
+                FHADetails = new Api.Types.Models.AO.FHADetails
                 {
                     FinancialDueDate = organisationSearchResult.FinancialDueDate,
                     FinancialExempt = organisationSearchResult.FinancialExempt
@@ -342,61 +352,31 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             };
         }
 
-        private ApplyTypes.CreateOrganisationRequest CreateAnApplyOrganisationRequest(OrganisationSearchResult organisationSearchResult,
-            ContactResponse user)
+        private async Task UpdateOrganisationStatusAndInvite(OrganisationSearchResult organisationSearchResult, ContactResponse user)
         {
-            var orgDetails = MapToOrganisationDetails(organisationSearchResult);
-            return  new ApplyTypes.CreateOrganisationRequest
+            var registeredOrganisation = await RetrieveOrganisation(organisationSearchResult);
+            if (registeredOrganisation.Status == OrganisationStatus.Live || registeredOrganisation.Status == OrganisationStatus.New)
             {
-                Name = organisationSearchResult.Name,
-                OrganisationType = organisationSearchResult.OrganisationType,
-                OrganisationUkprn = organisationSearchResult.Ukprn,
-                RoEPAOApproved = organisationSearchResult.RoEPAOApproved,
-                RoATPApproved = organisationSearchResult.RoATPApproved,
-                OrganisationDetails = orgDetails,
-                CreatedBy = user.Id,
-                PrimaryContactEmail = organisationSearchResult.Email
+                await _contactsApiClient.UpdateOrgAndStatus(new UpdateContactWithOrgAndStausRequest(
+                    user.Id.ToString(),
+                    registeredOrganisation?.Id.ToString(),
+                    organisationSearchResult.Id,
+                    ContactStatus.InvitePending));
+
+                await NotifyOrganisationUsers(organisationSearchResult, user);
+            }
+        }
+
+
+        private async Task<OrganisationResponse> RetrieveOrganisation(OrganisationSearchResult organisationSearchResult)
+        {
+            var result =
+                await _organisationsApiClient.GetEpaOrganisation(organisationSearchResult.Id);
+            var registeredOrganisation = new OrganisationResponse
+            {
+                Id = result.Id
             };
-
-        }
-
-        private async Task UpdateOrganisationStatus(OrganisationSearchResult organisationSearchResult, ContactResponse user)
-        {
-            OrganisationResponse registeredOrganisation;
-
-            if (organisationSearchResult.Ukprn != null)
-                registeredOrganisation =
-                    await _organisationsApiClient.Get(organisationSearchResult.Ukprn.ToString());
-            else
-            {
-                var result =
-                     await _organisationsApiClient.GetEpaOrganisation(organisationSearchResult.Id);
-                registeredOrganisation = new OrganisationResponse
-                {
-                    Id = result.Id
-                };
-            }
-
-            await _contactsApiClient.UpdateOrgAndStatus(new UpdateContactWithOrgAndStausRequest(
-                     user.Id.ToString(),
-                     registeredOrganisation.Id.ToString(),
-                     organisationSearchResult.Id,
-                     ContactStatus.InvitePending));
-        }
-
-        private async Task TryToCreateOrganisationInApply(ApplyTypes.CreateOrganisationRequest request)
-        {
-            try
-            {
-                //Check if orgnisation exists on apply
-                await _organisationsApplyApiClient.DoesOrganisationExist(request.Name);
-            }
-            catch (EntityNotFoundException e)
-            {
-                _logger.LogInformation($"{e.Message}");
-                //Try creating an organisation in apply
-                await _organisationsApplyApiClient.CreateNewOrganisation(request);
-            }
+            return registeredOrganisation;
         }
 
         private async Task NotifyOrganisationUsers(OrganisationSearchResult organisationSearchResult,

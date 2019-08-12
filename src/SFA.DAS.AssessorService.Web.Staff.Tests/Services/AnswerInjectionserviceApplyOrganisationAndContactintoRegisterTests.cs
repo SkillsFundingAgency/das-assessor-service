@@ -66,10 +66,10 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Services
             );
 
 
-            var organisationType1 = new OrganisationType {Id = 1, Type = "Type 1"};
-            var organisationType2 = new OrganisationType {Id = 2, Type = "Training Provider"};
+            var organisationType1 = new AssessorService.Api.Types.Models.AO.OrganisationType { Id = 1, Type = "Type 1"};
+            var organisationType2 = new AssessorService.Api.Types.Models.AO.OrganisationType { Id = 2, Type = "Training Provider"};
 
-            var expectedOrganisationTypes = new List<OrganisationType>
+            var expectedOrganisationTypes = new List<AssessorService.Api.Types.Models.AO.OrganisationType>
             {
                 organisationType1,
                 organisationType2
