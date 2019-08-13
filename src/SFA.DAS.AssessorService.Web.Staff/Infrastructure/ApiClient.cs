@@ -119,19 +119,6 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
                 $"/api/ao/assessment-organisations/search/{searchString}");
         }
 
-        public async Task<string> ImportOrganisations()
-        {
-            var uri = "/api/ao/assessment-organisations/";
-            _client.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
-
-            using (var response = await _client.PatchAsync(new Uri(uri, UriKind.Relative), null))
-            {
-                var res = await response.Content.ReadAsAsync<AssessmentOrgsImportResponse>();
-                return res.Status;
-            }
-        }
-
 
         public async Task<List<OrganisationType>> GetOrganisationTypes()
         {
