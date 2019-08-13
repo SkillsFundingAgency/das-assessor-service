@@ -49,7 +49,6 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
         Task<IEnumerable<StaffReport>> GetReportList();
         Task<ReportType> GetReportTypeFromId(Guid reportId);
         Task<ScheduleRun> GetScheduleRun(Guid scheduleRunId);
-        Task<string> ImportOrganisations();
         Task<Certificate> PostReprintRequest(StaffCertificateDuplicateRequest staffCertificateDuplicateRequest);
         Task<object> RunNowScheduledRun(int scheduleType);
         Task<StaffSearchResult> Search(string searchString, int page);
