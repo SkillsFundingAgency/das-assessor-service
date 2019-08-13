@@ -49,6 +49,11 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.OrganisationControllerTests
         protected const string ValidPrimaryContact = "valid@valid.com";
         protected const string ValidPrimaryContactDifferentOrganisation = "othervalid@othervalid.com";
 
+        protected const string ValidAddress1 = "Address";
+        protected const string ValidAddress2 = "Address";
+        protected const string ValidAddress3 = "Address";
+        protected const string ValidAddress4 = "Address";
+        protected const string ValidPostcode = "PP1 7PP";
         protected const string ValidPhoneNumber = "012345679";
         protected const string ValidEmailAddress = "validcontact@validcompany.com";
         protected const string ValidWebsiteLink = "www.validcompany.com";
@@ -94,6 +99,11 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.OrganisationControllerTests
                 OrganisationId = EpaoId,
                 OrganisationData = new OrganisationData
                 {
+                    Address1 = ValidAddress1,
+                    Address2 = ValidAddress2,
+                    Address3 = ValidAddress3,
+                    Address4 = ValidAddress4,
+                    Postcode = ValidPostcode,
                     PhoneNumber = ValidPhoneNumber,
                     Email = ValidEmailAddress,
                     WebsiteLink = ValidWebsiteLink
