@@ -7,8 +7,6 @@ namespace SFA.DAS.AssessorService.ApplyTypes
     {
         public Organisation ApplyingOrganisation { get; set; }
         public Guid ApplyingOrganisationId { get; set; }
-        public DateTime WithdrawnAt { get; set; }
-        public string WithdrawnBy { get; set; }
         public string ApplicationStatus { get; set; }
         public ApplicationData ApplicationData { get; set; }
     }
