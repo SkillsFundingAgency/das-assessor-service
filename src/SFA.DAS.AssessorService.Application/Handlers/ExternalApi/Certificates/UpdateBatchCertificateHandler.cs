@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models.ExternalApi.Certificates;
+using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
@@ -20,12 +21,14 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
         private readonly ICertificateRepository _certificateRepository;
         private readonly IContactQueryRepository _contactQueryRepository;
         private readonly ILogger<UpdateBatchCertificateHandler> _logger;
+        private readonly IStandardService _standardService;
 
-        public UpdateBatchCertificateHandler(ICertificateRepository certificateRepository, IContactQueryRepository contactQueryRepository, ILogger<UpdateBatchCertificateHandler> logger)
+        public UpdateBatchCertificateHandler(ICertificateRepository certificateRepository, IContactQueryRepository contactQueryRepository, ILogger<UpdateBatchCertificateHandler> logger, IStandardService standardService)
         {
             _certificateRepository = certificateRepository;
             _contactQueryRepository = contactQueryRepository;
             _logger = logger;
+            _standardService = standardService;
         }
 
         public async Task<Certificate> Handle(UpdateBatchCertificateRequest request, CancellationToken cancellationToken)
@@ -38,9 +41,12 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
             _logger.LogInformation("UpdateCertificate Before Get Contact from db");
             var contact = await GetContactFromEmailAddress(request.Email);
 
+            _logger.LogInformation("UpdateCertificate Before Get Standard from API");
+            var standard = await _standardService.GetStandard(request.StandardCode);
+
             _logger.LogInformation("UpdateCertificate Before Get Certificate from db");
             var certificate = await _certificateRepository.GetCertificate(request.Uln, request.StandardCode);
-            var certData = CombineCertificateData(JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData), request.CertificateData);
+            var certData = CombineCertificateData(JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData), request.CertificateData, standard);
 
             _logger.LogInformation("UpdateCertificate Before Update CertificateData");
             
@@ -72,7 +78,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
             return contact;
         }
 
-        private CertificateData CombineCertificateData(CertificateData certData, CertificateData requestData)
+        private CertificateData CombineCertificateData(CertificateData certData, CertificateData requestData, StandardCollation standard)
         {
             var epaDetails = certData.EpaDetails ?? new EpaDetails();
             if (epaDetails.Epas is null) epaDetails.Epas = new List<EpaRecord>();
@@ -94,7 +100,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
                 LearnerFamilyName = certData.LearnerFamilyName,
                 LearningStartDate = certData.LearningStartDate,
                 StandardReference = certData.StandardReference,
-                StandardName = certData.StandardName,     
+                StandardName = certData.StandardName,
                 StandardLevel = certData.StandardLevel,
                 StandardPublicationDate = certData.StandardPublicationDate,
                 FullName = certData.FullName,
@@ -110,7 +116,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
                 ContactPostCode = requestData.ContactPostCode,
                 Registration = requestData.Registration,
                 AchievementDate = requestData.AchievementDate,
-                CourseOption = requestData.CourseOption,
+                CourseOption = NormalizeCourseOption(requestData.CourseOption, standard),
                 OverallGrade = NormalizeOverallGrade(requestData.OverallGrade),
 
                 EpaDetails = epaDetails
@@ -155,6 +161,18 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
         {
             var grades = new string[] { CertificateGrade.Pass, CertificateGrade.Credit, CertificateGrade.Merit, CertificateGrade.Distinction, CertificateGrade.PassWithExcellence, CertificateGrade.NoGradeAwarded };
             return grades.FirstOrDefault(g => g.Equals(overallGrade, StringComparison.InvariantCultureIgnoreCase)) ?? overallGrade;
+        }
+
+        private static string NormalizeCourseOption(string courseOption, StandardCollation standard)
+        {
+            if (standard.Options is null)
+            {
+                return courseOption;
+            }
+            else
+            {
+                return standard.Options.FirstOrDefault(g => g.Equals(courseOption, StringComparison.InvariantCultureIgnoreCase)) ?? courseOption;
+            }
         }
     }
 }

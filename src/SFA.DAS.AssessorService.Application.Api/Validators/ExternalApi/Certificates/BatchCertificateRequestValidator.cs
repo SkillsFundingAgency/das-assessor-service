@@ -42,7 +42,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Certifi
                         {
                             context.AddFailure(new ValidationFailure("CourseOption", $"No course option available for this Standard. Must be empty"));
                         }
-                        else if (courseOptions.Any() && !courseOptions.Any(o => o.OptionName == m.CertificateData?.CourseOption))
+                        else if (courseOptions.Any() && !courseOptions.Any(o => o.OptionName.Equals(m.CertificateData?.CourseOption, StringComparison.InvariantCultureIgnoreCase)))
                         {
                             string courseOptionsString = string.Join(", ", courseOptions.Select(o => o.OptionName));
                             context.AddFailure(new ValidationFailure("CourseOption", $"Invalid course option for this Standard. Must be one of the following: {courseOptionsString}"));

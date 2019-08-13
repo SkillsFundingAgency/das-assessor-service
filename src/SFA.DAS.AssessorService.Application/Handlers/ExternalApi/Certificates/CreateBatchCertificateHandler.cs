@@ -185,7 +185,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
                 ContactPostCode = data.ContactPostCode,
                 Registration = data.Registration,
                 AchievementDate = data.AchievementDate,
-                CourseOption = data.CourseOption,
+                CourseOption = NormalizeCourseOption(data.CourseOption, standard),
                 OverallGrade = NormalizeOverallGrade(data.OverallGrade),
 
                 EpaDetails = epaDetails
@@ -231,6 +231,18 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
         {
             var grades = new string[] { CertificateGrade.Pass, CertificateGrade.Credit, CertificateGrade.Merit, CertificateGrade.Distinction, CertificateGrade.PassWithExcellence, CertificateGrade.NoGradeAwarded };
             return grades.FirstOrDefault(g => g.Equals(overallGrade, StringComparison.InvariantCultureIgnoreCase)) ?? overallGrade;
+        }
+
+        private static string NormalizeCourseOption(string courseOption, StandardCollation standard)
+        {
+            if (standard.Options is null)
+            {
+                return courseOption;
+            }
+            else
+            {
+                return standard.Options.FirstOrDefault(g => g.Equals(courseOption, StringComparison.InvariantCultureIgnoreCase)) ?? courseOption;
+            }
         }
     }
 }
