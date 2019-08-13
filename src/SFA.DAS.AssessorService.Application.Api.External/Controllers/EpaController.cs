@@ -19,7 +19,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
     [SwaggerTag("Epa Details")]
     public class EpaController : ControllerBase
     {
-        private const int MAX_EPAS_IN_REQUEST = 50;
+        private const int MAX_EPAS_IN_REQUEST = 25;
         private readonly string MAX_EPAS_IN_REQUEST_ERROR_MESSAGE = $"Batch limited to {MAX_EPAS_IN_REQUEST} requests";
 
         private readonly ILogger<EpaController> _logger;
