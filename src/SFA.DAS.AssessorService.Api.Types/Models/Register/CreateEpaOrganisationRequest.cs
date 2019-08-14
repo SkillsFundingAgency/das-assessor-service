@@ -30,5 +30,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Register
         public bool RoEPAOApproved { get; set; }
         public string EndPointAssessmentOrgId { get; set; }
         public FHADetails FHADetails { get; set; }
+        public DateTime? FinancialDueDate { get; set; }
+        public bool? FinancialExempt { get; set; }
     }
 }

@@ -120,7 +120,11 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
                     RoATPApproved = request.RoATPApproved,
                     RoEPAOApproved = request.RoEPAOApproved,
                     EndPointAssessmentOrgId = request.EndPointAssessmentOrgId,
-                    FHADetails = request.FHADetails
+                    FHADetails = new FHADetails
+                    {
+                        FinancialDueDate = request.FinancialDueDate,
+                        FinancialExempt = request.FinancialExempt
+                    }
                 }
             };
 

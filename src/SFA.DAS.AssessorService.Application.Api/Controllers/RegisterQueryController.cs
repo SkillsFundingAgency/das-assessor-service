@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Net;
-using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,6 +9,9 @@ using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using System.Collections.Generic;
+using System.Net;
+using System.Threading.Tasks;
 using OrganisationType = SFA.DAS.AssessorService.Api.Types.Models.AO.OrganisationType;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers
@@ -123,7 +123,33 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             if (result == null) return BadRequest();
             return Ok(result);
         }
-        
+
+        [HttpGet("assessment-organisations/contacts/signInId/{signInId}", Name = "GetEpaContactBySignInId")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(EpaContact))]
+        [SwaggerResponse((int)HttpStatusCode.NotFound, null)]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> GetEpaContactBySignInId(string signInId)
+        {
+            _logger.LogInformation($@"Get EpaContact from SignInId [{signInId}]");
+            var result = await _mediator.Send(new GetEpaContactBySignInIdRequest { SignInId = signInId });
+            if (result == null) return BadRequest();
+            return Ok(result);
+        }
+
+        [HttpGet("assessment-organisations/contacts/email/{email}", Name = "GetEpaContactByEmail")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(EpaContact))]
+        [SwaggerResponse((int)HttpStatusCode.NotFound, null)]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> GetEpaContactByEmail(string email)
+        {
+            _logger.LogInformation($@"Get EpaContact from Email [{email}]");
+            var result = await _mediator.Send(new GetEpaContactByEmailRequest { Email = email });
+            if (result == null) return BadRequest();
+            return Ok(result);
+        }
+
         [HttpGet("assessment-organisations/organisation-standard/{organisationStandardId}", Name = "GetOrganisationStandard")]
         [SwaggerResponse((int) HttpStatusCode.OK, Type = typeof(OrganisationStandard))]
         [SwaggerResponse((int) HttpStatusCode.NotFound, null)]
