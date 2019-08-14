@@ -18,6 +18,5 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.ExternalApi.Learners
         public string EndPointAssessorOrganisationId { get; set; }
         public int UkPrn { get; set; }
         public string OrganisationName { get; set; }
-        public string OrganisationPrimaryContactEmail { get; set; }
     }
 }

@@ -45,7 +45,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
         [SwaggerOperation("Get Certificate", "Gets the specified Certificate.", Produces = new string[] { "application/json" })]
         public async Task<IActionResult> GetCertificate(long uln, string familyName, [SwaggerParameter("Standard Code or Standard Reference Number")] string standard)
         {
-            var getRequest = new GetBatchCertificateRequest { UkPrn = _headerInfo.Ukprn, Email = _headerInfo.Email, Uln = uln, FamilyName = familyName, Standard = standard };
+            var getRequest = new GetBatchCertificateRequest { UkPrn = _headerInfo.Ukprn, Uln = uln, FamilyName = familyName, Standard = standard };
             var response = await _apiClient.GetCertificate(getRequest);
 
             if (response.ValidationErrors.Any())
@@ -90,7 +90,6 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
             var createRequest = request.Select(req =>
                 new CreateBatchCertificateRequest {
                     UkPrn = _headerInfo.Ukprn,
-                    Email = _headerInfo.Email,
                     RequestId = req.RequestId,
                     CertificateData = new Models.Request.Certificates.CertificateData
                     {
@@ -133,7 +132,6 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
                 new UpdateBatchCertificateRequest
                 {
                     UkPrn = _headerInfo.Ukprn,
-                    Email = _headerInfo.Email,
                     RequestId = req.RequestId,
                     CertificateData = new Models.Request.Certificates.CertificateData
                     {
@@ -177,7 +175,6 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
                 new SubmitBatchCertificateRequest
                 {
                     UkPrn = _headerInfo.Ukprn,
-                    Email = _headerInfo.Email,
                     RequestId = req.RequestId,
                     Uln = req.Uln,
                     StandardCode = req.StandardCode,
@@ -198,7 +195,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
         [SwaggerOperation("Delete Certificate", "Deletes the specified Certificate.", Produces = new string[] { "application/json" })]
         public async Task<IActionResult> DeleteCertificate(long uln, string familyName, [SwaggerParameter("Standard Code or Standard Reference Number")] string standard, string certificateReference)
         {
-            var deleteRequest = new DeleteBatchCertificateRequest { UkPrn = _headerInfo.Ukprn, Email = _headerInfo.Email, Uln = uln, FamilyName = familyName, Standard = standard, CertificateReference = certificateReference};
+            var deleteRequest = new DeleteBatchCertificateRequest { UkPrn = _headerInfo.Ukprn, Uln = uln, FamilyName = familyName, Standard = standard, CertificateReference = certificateReference};
             var error = await _apiClient.DeleteCertificate(deleteRequest);
 
             if (error is null)

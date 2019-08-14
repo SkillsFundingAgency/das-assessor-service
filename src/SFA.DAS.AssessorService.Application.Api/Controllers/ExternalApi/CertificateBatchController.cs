@@ -38,18 +38,17 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.ExternalApi
             _deleteValidator = deleteValidator;
         }
 
-        [HttpGet("{uln}/{lastname}/{standard}/{ukPrn}/{*email}")]
+        [HttpGet("{uln}/{lastname}/{standard}/{ukPrn}")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(GetBatchCertificateResponse))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> Get(long uln, string lastname, string standard, int ukPrn, string email)
+        public async Task<IActionResult> Get(long uln, string lastname, string standard, int ukPrn)
         {
             var request = new GetBatchCertificateRequest
             {
                 Uln = uln,
                 FamilyName = lastname,
-                UkPrn = ukPrn,
-                Email = email
+                UkPrn = ukPrn
             };
 
             var collatedStandard = int.TryParse(standard, out int standardCode) ? await GetCollatedStandard(standardCode) : await GetCollatedStandard(standard);
@@ -226,21 +225,20 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.ExternalApi
             return Ok(bag.ToList());
         }
 
-        [HttpDelete("{uln}/{lastname}/{standard}/{certificateReference}/{ukPrn}/{*email}")]
+        [HttpDelete("{uln}/{lastname}/{standard}/{certificateReference}/{ukPrn}")]
         [SwaggerResponse((int)HttpStatusCode.NoContent)]
         [SwaggerResponse((int)HttpStatusCode.NotFound)]
         [SwaggerResponse((int)HttpStatusCode.Forbidden, Type = typeof(ApiResponse))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> Delete(long uln, string lastname, string standard, string certificateReference, int ukPrn, string email)
+        public async Task<IActionResult> Delete(long uln, string lastname, string standard, string certificateReference, int ukPrn)
         {
             var request = new DeleteBatchCertificateRequest
             {
                 Uln = uln,
                 FamilyName = lastname,
                 CertificateReference = certificateReference,
-                UkPrn = ukPrn,
-                Email = email
+                UkPrn = ukPrn
             };
 
             var collatedStandard = int.TryParse(standard, out int standardCode) ? await GetCollatedStandard(standardCode) : await GetCollatedStandard(standard);

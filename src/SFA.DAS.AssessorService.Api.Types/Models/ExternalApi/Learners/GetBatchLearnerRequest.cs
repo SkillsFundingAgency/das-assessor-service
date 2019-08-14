@@ -11,6 +11,5 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.ExternalApi.Learners
         public bool IncludeCertificate { get; set; }
 
         public int UkPrn { get; set; }
-        public string Email { get; set; }
     }
 }

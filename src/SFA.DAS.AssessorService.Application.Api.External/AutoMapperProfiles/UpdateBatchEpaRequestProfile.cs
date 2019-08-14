@@ -17,7 +17,6 @@ namespace SFA.DAS.AssessorService.Application.Api.External.AutoMapperProfiles
                 .ForMember(dest => dest.EpaDetails, opt => opt.MapFrom(source => Mapper.Map<EpaDetails, Domain.JsonData.EpaDetails>(source.EpaDetails)))
                 .ForPath(dest => dest.EpaDetails.EpaReference, opt => opt.MapFrom(source => source.EpaReference))
                 .ForMember(dest => dest.UkPrn, opt => opt.MapFrom(source => source.UkPrn))
-                .ForMember(dest => dest.Email, opt => opt.MapFrom(source => source.Email))
                 .ForAllOtherMembers(dest => dest.Ignore());
         }
     }

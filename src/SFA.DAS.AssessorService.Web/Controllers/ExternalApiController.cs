@@ -81,18 +81,13 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         public async Task<IActionResult> EnableAccess()
         {
             var ukprn = _contextAccessor.HttpContext.User.Claims.FirstOrDefault(c => c.Type == "http://schemas.portal.com/ukprn")?.Value;
-            var username = _contextAccessor.HttpContext.User.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
-
-            var result = await _apiClient.CreateUser(ukprn, username);
+            await _apiClient.CreateUser(ukprn);
             return RedirectToAction("Index");
         }
 
         [HttpPost]
         public async Task<IActionResult> RemoveAccess(AzureUser viewModel)
         {
-            var ukprn = _contextAccessor.HttpContext.User.Claims.FirstOrDefault(c => c.Type == "http://schemas.portal.com/ukprn")?.Value;
-            var username = _contextAccessor.HttpContext.User.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
-
             if (viewModel.IsActive)
             {
                 await _apiClient.DeleteUser(viewModel.Id);
@@ -104,14 +99,14 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> RenewPrimaryKey(string subscriptionId, string userId)
         {
-            var user = await _apiClient.RegeneratePrimarySubscriptionKey(subscriptionId);
+            await _apiClient.RegeneratePrimarySubscriptionKey(subscriptionId);
             return RedirectToAction("Index");
         }
 
         [HttpPost]
         public async Task<IActionResult> RenewSecondaryKey(string subscriptionId, string userId)
         {
-            var user = await _apiClient.RegenerateSecondarySubscriptionKey(subscriptionId);
+            await _apiClient.RegenerateSecondarySubscriptionKey(subscriptionId);
             return RedirectToAction("Index");
         }
     }

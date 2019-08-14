@@ -6,7 +6,6 @@ using SFA.DAS.AssessorService.Api.Types.Models.ExternalApi.Learners;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -18,16 +17,13 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Learners
         private readonly ILogger<GetBatchLearnerHandler> _logger;
         private readonly IIlrRepository _ilrRepository;
         private readonly IOrganisationQueryRepository _organisationRepository;
-        private readonly IContactQueryRepository _contactRepository;
 
-        public GetBatchLearnerHandler(IMediator mediator, ILogger<GetBatchLearnerHandler> logger,
-                                IIlrRepository ilrRepository, IOrganisationQueryRepository organisationRepository, IContactQueryRepository contactRepository)
+        public GetBatchLearnerHandler(IMediator mediator, ILogger<GetBatchLearnerHandler> logger, IIlrRepository ilrRepository, IOrganisationQueryRepository organisationRepository)
         {
             _mediator = mediator;
             _logger = logger;
             _ilrRepository = ilrRepository;
             _organisationRepository = organisationRepository;
-            _contactRepository = contactRepository;
         }
 
         public async Task<GetBatchLearnerResponse> Handle(GetBatchLearnerRequest request, CancellationToken cancellationToken)
@@ -41,7 +37,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Learners
 
         private async Task<StandardCollation> GetStandard(GetBatchLearnerRequest request)
         {
-            StandardCollation standard = null;
+            StandardCollation standard;
 
             if (int.TryParse(request.Standard, out var standardCode))
             {
@@ -66,13 +62,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Learners
                 if (learner != null)
                 {
                     var epao = await _organisationRepository.GetByUkPrn(learner.UkPrn);
-                    var primaryContact = await _contactRepository.GetContact(epao.PrimaryContact);
-
-                    if (primaryContact is null)
-                    {
-                        var contacts = await _contactRepository.GetAllContacts(epao.EndPointAssessorOrganisationId);
-                        primaryContact = contacts.FirstOrDefault();
-                    }
 
                     learnerDetail = new LearnerDetailForExternalApi()
                     {
@@ -85,10 +74,13 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Learners
                         CompletionStatus = learner.CompletionStatus,
                         Standard = standard,
                         EndPointAssessorOrganisationId = epao?.EndPointAssessorOrganisationId ?? learner.EpaOrgId,
-                        OrganisationPrimaryContactEmail = primaryContact?.Email,
                         UkPrn = epao?.EndPointAssessorUkprn ?? learner.UkPrn,
-                        OrganisationName = epao.EndPointAssessorName
+                        OrganisationName = epao?.EndPointAssessorName ?? "Unknown"
                     };
+                }
+                else
+                {
+                    _logger.LogError($"Could not find learner for ULN {request.Uln} and StandardCode {standard.StandardId.GetValueOrDefault()}");
                 }
             }
 
@@ -107,8 +99,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Learners
                     FamilyName = request.FamilyName,
                     StandardCode = standard.StandardId.GetValueOrDefault(),
                     StandardReference = standard.ReferenceNumber,
-                    UkPrn = request.UkPrn,
-                    Email = request.Email
+                    UkPrn = request.UkPrn
                 };
 
                 certificate = await _mediator.Send(certificateRequest);

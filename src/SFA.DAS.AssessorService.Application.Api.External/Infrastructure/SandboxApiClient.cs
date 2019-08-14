@@ -36,7 +36,6 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
                 {
                     request.Standard = details.Standard?.ReferenceNumber ?? details.Standard?.StandardId.ToString();
                     request.UkPrn = details.UkPrn;
-                    request.Email = details.OrganisationPrimaryContactEmail ?? request.Email;
                 }
             }
 
@@ -62,7 +61,6 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
                         req.Standard.StandardReference = details.Standard?.ReferenceNumber;
                         req.Standard.StandardCode = details.Standard?.StandardId;
                         req.UkPrn = details.UkPrn;
-                        req.Email = details.OrganisationPrimaryContactEmail ?? req.Email;
                     }
                 }
 
@@ -91,7 +89,6 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
                         req.Standard.StandardReference = details.Standard?.ReferenceNumber;
                         req.Standard.StandardCode = details.Standard?.StandardId;
                         req.UkPrn = details.UkPrn;
-                        req.Email = details.OrganisationPrimaryContactEmail ?? req.Email;
                     }
                 }
 
@@ -114,7 +111,6 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
                 {
                     request.Standard = details.Standard?.ReferenceNumber ?? details.Standard?.StandardId.ToString();
                     request.UkPrn = details.UkPrn;
-                    request.Email = details.OrganisationPrimaryContactEmail ?? request.Email;
                 }
             }
 
@@ -134,7 +130,6 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
                 {
                     request.Standard = details.Standard?.ReferenceNumber ?? details.Standard?.StandardId.ToString();
                     request.UkPrn = details.UkPrn;
-                    request.Email = details.OrganisationPrimaryContactEmail ?? request.Email;
                 }
             }
 
@@ -160,7 +155,6 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
                         req.CertificateData.Standard.StandardReference = details.Standard?.ReferenceNumber;
                         req.CertificateData.Standard.StandardCode = details.Standard?.StandardId;
                         req.UkPrn = details.UkPrn;
-                        req.Email = details.OrganisationPrimaryContactEmail ?? req.Email;
                     }
                 }
 
@@ -189,7 +183,6 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
                         req.CertificateData.Standard.StandardReference = details.Standard?.ReferenceNumber;
                         req.CertificateData.Standard.StandardCode = details.Standard?.StandardId;
                         req.UkPrn = details.UkPrn;
-                        req.Email = details.OrganisationPrimaryContactEmail ?? req.Email;
                     }
                 }
 
@@ -218,7 +211,6 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
                         req.StandardReference = details.Standard?.ReferenceNumber;
                         req.StandardCode = details.Standard?.StandardId;
                         req.UkPrn = details.UkPrn;
-                        req.Email = details.OrganisationPrimaryContactEmail ?? req.Email;
                     }
                 }
 
@@ -241,7 +233,6 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
                 {
                     request.Standard = details.Standard?.ReferenceNumber ?? details.Standard?.StandardId.ToString();
                     request.UkPrn = details.UkPrn;
-                    request.Email = details.OrganisationPrimaryContactEmail ?? request.Email;
                 }
             }
 

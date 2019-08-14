@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models.ExternalApi.Epas;
+using SFA.DAS.AssessorService.Application.Handlers.ExternalApi._HelperClasses;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
@@ -33,36 +34,25 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Epas
 
         private async Task DeleteEpaDetails(DeleteBatchEpaRequest request)
         {
-            _logger.LogInformation("DeleteEpaDetails Before Get Contact from db");
-            var contact = await GetContactFromEmailAddress(request.Email);
-
             _logger.LogInformation("DeleteEpaDetails Before Get Certificate from db");
             var certificate = await _certificateRepository.GetCertificate(request.Uln, request.StandardCode);
 
-            if (certificate is null) throw new NotFound();
-            else if (certificate.Status == CertificateStatus.Deleted) return; // If already deleted ignore
-
-            var certData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
-
-            _logger.LogInformation("DeleteEpaDetails Before Update CertificateData");
-            certificate.Status = CertificateStatus.Deleted;
-            certData.EpaDetails = new EpaDetails { Epas = new List<EpaRecord>() };
-            certificate.CertificateData = JsonConvert.SerializeObject(certData);
-
-            _logger.LogInformation("DeleteEpaDetails Before Update Cert in db");
-            await _certificateRepository.Update(certificate, contact.Username, CertificateActions.Delete);
-        }
-
-        private async Task<Contact> GetContactFromEmailAddress(string email)
-        {
-            Contact contact = await _contactQueryRepository.GetContactFromEmailAddress(email);
-
-            if (contact == null)
+            if (certificate is null)
             {
-                contact = new Contact { Username = email, Email = email };
+                throw new NotFound();
+            }
+            else
+            {
+                _logger.LogInformation("DeleteEpaDetails Before Removing EpaDetails CertificateData");
+                var certData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
+                certData.EpaDetails = new EpaDetails { Epas = new List<EpaRecord>() };
+                certificate.CertificateData = JsonConvert.SerializeObject(certData);
+                await _certificateRepository.Update(certificate, ExternalApiConstants.ApiUserName, CertificateActions.Epa);
             }
 
-            return contact;
+            _logger.LogInformation("DeleteEpaDetails Before set Certificate to Deleted in db");
+            await _certificateRepository.Delete(request.Uln, request.StandardCode, ExternalApiConstants.ApiUserName, CertificateActions.Delete);
+            _logger.LogInformation("DeleteEpaDetails Certificate set to Deleted in db");
         }
     }
 }

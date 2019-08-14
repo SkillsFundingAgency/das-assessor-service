@@ -137,21 +137,20 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.ExternalApi
             return Ok(bag.ToList());
         }
 
-        [HttpDelete("{uln}/{lastname}/{standard}/{epaReference}/{ukPrn}/{*email}")]
+        [HttpDelete("{uln}/{lastname}/{standard}/{epaReference}/{ukPrn}")]
         [SwaggerResponse((int)HttpStatusCode.NoContent)]
         [SwaggerResponse((int)HttpStatusCode.NotFound)]
         [SwaggerResponse((int)HttpStatusCode.Forbidden, Type = typeof(ApiResponse))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> Delete(long uln, string lastname, string standard, string epaReference, int ukPrn, string email)
+        public async Task<IActionResult> Delete(long uln, string lastname, string standard, string epaReference, int ukPrn)
         {
             var request = new DeleteBatchEpaRequest
             {
                 Uln = uln,
                 FamilyName = lastname,
                 EpaReference = epaReference,
-                UkPrn = ukPrn,
-                Email = email
+                UkPrn = ukPrn
             };
 
             var collatedStandard = int.TryParse(standard, out int standardCode) ? await GetCollatedStandard(standardCode) : await GetCollatedStandard(standard);

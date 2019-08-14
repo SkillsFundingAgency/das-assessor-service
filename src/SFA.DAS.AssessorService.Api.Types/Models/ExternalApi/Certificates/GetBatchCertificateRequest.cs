@@ -12,6 +12,5 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.ExternalApi.Certificates
         public string StandardReference { get; set; } // Note: Not used at the moment
 
         public int UkPrn { get; set; }
-        public string Email { get; set; }
     }
 }

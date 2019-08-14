@@ -41,7 +41,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
         [SwaggerOperation("Get Learner", "Gets the specified Learner.", Produces = new string[] { "application/json" })]
         public async Task<IActionResult> GetLearner(long uln, string familyName, [SwaggerParameter("Standard Code or Standard Reference Number")] string standard)
         {
-            var getRequest = new GetBatchLearnerRequest { UkPrn = _headerInfo.Ukprn, Email = _headerInfo.Email, Uln = uln, FamilyName = familyName, Standard = standard };
+            var getRequest = new GetBatchLearnerRequest { UkPrn = _headerInfo.Ukprn, Uln = uln, FamilyName = familyName, Standard = standard };
             var response = await _apiClient.GetLearner(getRequest);
 
             if (response.ValidationErrors.Any())

@@ -51,7 +51,6 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
             var createRequest = request.Select(req =>
                 new CreateBatchEpaRequest {
                     UkPrn = _headerInfo.Ukprn,
-                    Email = _headerInfo.Email,
                     RequestId = req.RequestId,
                     Learner = req.Learner,
                     Standard = req.Standard,
@@ -81,7 +80,6 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
                 new UpdateBatchEpaRequest
                 {
                     UkPrn = _headerInfo.Ukprn,
-                    Email = _headerInfo.Email,
                     RequestId = req.RequestId,
                     EpaReference = req.EpaReference,
                     Learner = req.Learner,
@@ -100,7 +98,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
         [SwaggerOperation("Delete EPA Record", "Deletes the specified EPA record.", Produces = new string[] { "application/json" })]
         public async Task<IActionResult> DeleteEpaRecord(long uln, string familyName, [SwaggerParameter("Standard Code or Standard Reference Number")] string standard, string epaReference)
         {
-            var deleteRequest = new DeleteBatchEpaRequest { UkPrn = _headerInfo.Ukprn, Email = _headerInfo.Email, Uln = uln, FamilyName = familyName, Standard = standard, EpaReference = epaReference};
+            var deleteRequest = new DeleteBatchEpaRequest { UkPrn = _headerInfo.Ukprn, Uln = uln, FamilyName = familyName, Standard = standard, EpaReference = epaReference};
             var error = await _apiClient.DeleteEpa(deleteRequest);
 
             if (error is null)

@@ -13,6 +13,5 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.ExternalApi.Epas
         public string EpaReference { get; set; }
 
         public int UkPrn { get; set; }
-        public string Email { get; set; }
     }
 }

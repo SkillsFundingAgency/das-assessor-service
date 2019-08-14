@@ -4,11 +4,11 @@ using Newtonsoft.Json;
 using SFA.DAS.Apprenticeships.Api.Types.Providers;
 using SFA.DAS.AssessorService.Api.Types.Models.ExternalApi.Certificates;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
+using SFA.DAS.AssessorService.Application.Handlers.ExternalApi._HelperClasses;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Application.Logging;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
-using SFA.DAS.AssessorService.Domain.Extensions;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
 using System;
@@ -48,14 +48,21 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
 
         private async Task<Certificate> CreateNewCertificate(CreateBatchCertificateRequest request)
         {
-            _logger.LogInformation("CreateNewCertificate Before Get Contact from API");
-            var contact = await GetContactFromEmailAddress(request.Email);
             _logger.LogInformation("CreateNewCertificate Before Get Ilr from db");
             var ilr = await _ilrRepository.Get(request.Uln, request.StandardCode);
+
+            if(ilr is null)
+            {
+                _logger.LogWarning($"CreateNewCertificate Did not find ILR for Uln {request.Uln} and StandardCode {request.StandardCode}");
+                return null;
+            }
+
             _logger.LogInformation("CreateNewCertificate Before Get Organisation from db");
             var organisation = await _organisationQueryRepository.GetByUkPrn(request.UkPrn);
+
             _logger.LogInformation("CreateNewCertificate Before Get Standard from API");
             var standard = await _standardService.GetStandard(ilr.StdCode);
+
             _logger.LogInformation("CreateNewCertificate Before Get Provider from API");
             var provider = await GetProviderFromUkprn(ilr.UkPrn);
 
@@ -73,13 +80,13 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
                         StandardCode = request.StandardCode,
                         ProviderUkPrn = ilr.UkPrn,
                         OrganisationId = organisation.Id,
-                        CreatedBy = contact.Username,
+                        CreatedBy = ExternalApiConstants.ApiUserName,
                         CertificateData = JsonConvert.SerializeObject(certData),
                         Status = CertificateStatus.Draft, // NOTE: Web & Staff always creates Draft first
                         CertificateReference = "",
                         LearnRefNumber = ilr.LearnRefNumber,
                         CreateDay = DateTime.UtcNow.Date
-                    }); // As no Tracking???
+                    });
 
                 certificate.CertificateReference = certificate.CertificateReferenceId.ToString().PadLeft(8, '0');
             }
@@ -88,6 +95,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
                 _logger.LogInformation("CreateNewCertificate Before resurrecting deleted Certificate");
                 certificate.Status = CertificateStatus.Draft;
                 certificate.CertificateData = JsonConvert.SerializeObject(certData);
+                await _certificateRepository.Update(certificate, ExternalApiConstants.ApiUserName, CertificateActions.Start);
             }
 
             // need to update EPA Reference too
@@ -95,12 +103,12 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
             certificate.CertificateData = JsonConvert.SerializeObject(certData);
 
             _logger.LogInformation("CreateNewCertificate Before Update Cert in db");
-            await _certificateRepository.Update(certificate, contact.Username, null);
+            await _certificateRepository.Update(certificate, ExternalApiConstants.ApiUserName, null);
 
             _logger.LogInformation(LoggingConstants.CertificateStarted);
             _logger.LogInformation($"Certificate with ID: {certificate.Id} Started with reference of {certificate.CertificateReference}");
 
-            return await ApplyStatusInformation(certificate);
+            return await CertificateHelpers.ApplyStatusInformation(_certificateRepository, _contactQueryRepository, certificate);
         }
 
         private async Task<Provider> GetProviderFromUkprn(int ukprn)
@@ -133,18 +141,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
             }
 
             return provider;
-        }
-
-        private async Task<Contact> GetContactFromEmailAddress(string email)
-        {
-            Contact contact = await _contactQueryRepository.GetContactFromEmailAddress(email);
-
-            if( contact == null)
-            {
-                contact = new Contact { Username = email, Email = email };
-            }
-
-            return contact;
         }
 
         private CertificateData CombineCertificateData(CertificateData data, Ilr ilr, StandardCollation standard, Provider provider)
@@ -185,64 +181,11 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
                 ContactPostCode = data.ContactPostCode,
                 Registration = data.Registration,
                 AchievementDate = data.AchievementDate,
-                CourseOption = NormalizeCourseOption(data.CourseOption, standard),
-                OverallGrade = NormalizeOverallGrade(data.OverallGrade),
+                CourseOption = CertificateHelpers.NormalizeCourseOption(standard, data.CourseOption),
+                OverallGrade = CertificateHelpers.NormalizeOverallGrade(data.OverallGrade),
 
                 EpaDetails = epaDetails
             };
-        }
-
-        private async Task<Certificate> ApplyStatusInformation(Certificate certificate)
-        {
-            // certificate is track-able entity. So we have to this do to stop it from updating in the database
-            var json = JsonConvert.SerializeObject(certificate);
-            var cert = JsonConvert.DeserializeObject<Certificate>(json);
-
-            var certificateLogs = await _certificateRepository.GetCertificateLogsFor(cert.Id);
-            certificateLogs = certificateLogs?.Where(l => l.ReasonForChange is null).ToList(); // this removes any admin changes done within staff app
-
-            var createdLogEntry = certificateLogs?.FirstOrDefault(l => l.Status == CertificateStatus.Draft);
-            if (createdLogEntry != null)
-            {
-                var createdContact = await _contactQueryRepository.GetContact(createdLogEntry.Username);
-                cert.CreatedAt = createdLogEntry.EventTime.UtcToTimeZoneTime();
-                cert.CreatedBy = createdContact != null ? createdContact.DisplayName : createdLogEntry.Username;
-            }
-
-            var submittedLogEntry = certificateLogs?.FirstOrDefault(l => l.Status == CertificateStatus.Submitted);
-
-            // NOTE: THIS IS A DATA FRIG FOR EXTERNAL API AS WE NEED SUBMITTED INFORMATION!
-            if (submittedLogEntry != null)
-            {
-                var submittedContact = await _contactQueryRepository.GetContact(submittedLogEntry.Username);
-                cert.UpdatedAt = submittedLogEntry.EventTime.UtcToTimeZoneTime();
-                cert.UpdatedBy = submittedContact != null ? submittedContact.DisplayName : submittedLogEntry.Username;
-            }
-            else
-            {
-                cert.UpdatedAt = null;
-                cert.UpdatedBy = null;
-            }
-
-            return cert;
-        }
-
-        private static string NormalizeOverallGrade(string overallGrade)
-        {
-            var grades = new string[] { CertificateGrade.Pass, CertificateGrade.Credit, CertificateGrade.Merit, CertificateGrade.Distinction, CertificateGrade.PassWithExcellence, CertificateGrade.NoGradeAwarded };
-            return grades.FirstOrDefault(g => g.Equals(overallGrade, StringComparison.InvariantCultureIgnoreCase)) ?? overallGrade;
-        }
-
-        private static string NormalizeCourseOption(string courseOption, StandardCollation standard)
-        {
-            if (standard.Options is null)
-            {
-                return courseOption;
-            }
-            else
-            {
-                return standard.Options.FirstOrDefault(g => g.Equals(courseOption, StringComparison.InvariantCultureIgnoreCase)) ?? courseOption;
-            }
         }
     }
 }

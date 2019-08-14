@@ -27,11 +27,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.ExternalApi
             _getValidator = getValidator;
         }
 
-        [HttpGet("{uln}/{lastname}/{standard}/{ukPrn}/{*email}")]
+        [HttpGet("{uln}/{lastname}/{standard}/{ukPrn}")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(GetBatchLearnerResponse))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> Get(long uln, string lastname, string standard, int ukPrn, string email)
+        public async Task<IActionResult> Get(long uln, string lastname, string standard, int ukPrn)
         {
             var request = new GetBatchLearnerRequest
             {
@@ -39,8 +39,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.ExternalApi
                 FamilyName = lastname,
                 Standard = standard,
                 IncludeCertificate = true,
-                UkPrn = ukPrn,
-                Email = email
+                UkPrn = ukPrn
             };
 
             var validationResult = await _getValidator.ValidateAsync(request);

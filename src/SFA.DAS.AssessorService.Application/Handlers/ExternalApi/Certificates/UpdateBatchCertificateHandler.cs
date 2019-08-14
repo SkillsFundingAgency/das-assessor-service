@@ -3,16 +3,16 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models.ExternalApi.Certificates;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
+using SFA.DAS.AssessorService.Application.Handlers.ExternalApi._HelperClasses;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
-using SFA.DAS.AssessorService.Domain.Extensions;
 using SFA.DAS.AssessorService.Domain.JsonData;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using NotFound = SFA.DAS.AssessorService.Domain.Exceptions.NotFound;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
 {
@@ -38,44 +38,38 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
 
         private async Task<Certificate> UpdateCertificate(UpdateBatchCertificateRequest request)
         {
-            _logger.LogInformation("UpdateCertificate Before Get Contact from db");
-            var contact = await GetContactFromEmailAddress(request.Email);
-
             _logger.LogInformation("UpdateCertificate Before Get Standard from API");
             var standard = await _standardService.GetStandard(request.StandardCode);
 
             _logger.LogInformation("UpdateCertificate Before Get Certificate from db");
             var certificate = await _certificateRepository.GetCertificate(request.Uln, request.StandardCode);
-            var certData = CombineCertificateData(JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData), request.CertificateData, standard);
 
-            _logger.LogInformation("UpdateCertificate Before Update CertificateData");
-            
-            // need to update EPA Reference too
-            certData.EpaDetails.EpaReference = certificate.CertificateReference;
-            certificate.CertificateData = JsonConvert.SerializeObject(certData);
-
-            // adjust Status appropriately
-            if(certificate.Status == CertificateStatus.Deleted)
+            if (standard != null && certificate != null)
             {
-                certificate.Status = CertificateStatus.Draft;
+                var certData = CombineCertificateData(JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData), request.CertificateData, standard);
+
+                _logger.LogInformation("UpdateCertificate Before Update CertificateData");
+
+                // need to update EPA Reference too
+                certData.EpaDetails.EpaReference = certificate.CertificateReference;
+                certificate.CertificateData = JsonConvert.SerializeObject(certData);
+
+                // adjust Status appropriately
+                if (certificate.Status == CertificateStatus.Deleted)
+                {
+                    certificate.Status = CertificateStatus.Draft;
+                }
+
+                _logger.LogInformation("UpdateCertificate Before Update Cert in db");
+                await _certificateRepository.Update(certificate, ExternalApiConstants.ApiUserName, CertificateActions.Amend);
+
+                return await CertificateHelpers.ApplyStatusInformation(_certificateRepository, _contactQueryRepository, certificate);
             }
-
-            _logger.LogInformation("UpdateCertificate Before Update Cert in db");
-            await _certificateRepository.Update(certificate, contact.Username, CertificateActions.Amend);
-
-            return await ApplyStatusInformation(certificate);
-        }
-
-        private async Task<Contact> GetContactFromEmailAddress(string email)
-        {
-            Contact contact = await _contactQueryRepository.GetContactFromEmailAddress(email);
-
-            if (contact == null)
+            else
             {
-                contact = new Contact { Username = email, Email = email };
+                _logger.LogWarning($"UpdateCertificate Did not find Certificate for Uln {request.Uln} and StandardCode {request.StandardCode}");
+                throw new NotFound();
             }
-
-            return contact;
         }
 
         private CertificateData CombineCertificateData(CertificateData certData, CertificateData requestData, StandardCollation standard)
@@ -116,63 +110,11 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
                 ContactPostCode = requestData.ContactPostCode,
                 Registration = requestData.Registration,
                 AchievementDate = requestData.AchievementDate,
-                CourseOption = NormalizeCourseOption(requestData.CourseOption, standard),
-                OverallGrade = NormalizeOverallGrade(requestData.OverallGrade),
+                CourseOption = CertificateHelpers.NormalizeCourseOption(standard, requestData.CourseOption),
+                OverallGrade = CertificateHelpers.NormalizeOverallGrade(requestData.OverallGrade),
 
                 EpaDetails = epaDetails
             };
-        }
-
-        private async Task<Certificate> ApplyStatusInformation(Certificate certificate)
-        {
-            var json = JsonConvert.SerializeObject(certificate);
-            var cert = JsonConvert.DeserializeObject<Certificate>(json);
-
-            var certificateLogs = await _certificateRepository.GetCertificateLogsFor(cert.Id);
-            certificateLogs = certificateLogs?.Where(l => l.ReasonForChange is null).ToList(); // this removes any admin changes done within staff app
-
-            var createdLogEntry = certificateLogs?.FirstOrDefault(l => l.Status == CertificateStatus.Draft);
-            if (createdLogEntry != null)
-            {
-                var createdContact = await _contactQueryRepository.GetContact(createdLogEntry.Username);
-                cert.CreatedAt = createdLogEntry.EventTime.UtcToTimeZoneTime();
-                cert.CreatedBy = createdContact != null ? createdContact.DisplayName : createdLogEntry.Username;
-            }
-
-            var submittedLogEntry = certificateLogs?.FirstOrDefault(l => l.Status == CertificateStatus.Submitted);
-
-            // NOTE: THIS IS A DATA FRIG FOR EXTERNAL API AS WE NEED SUBMITTED INFORMATION!
-            if (submittedLogEntry != null)
-            {
-                var submittedContact = await _contactQueryRepository.GetContact(submittedLogEntry.Username);
-                cert.UpdatedAt = submittedLogEntry.EventTime.UtcToTimeZoneTime();
-                cert.UpdatedBy = submittedContact != null ? submittedContact.DisplayName : submittedLogEntry.Username;
-            }
-            else
-            {
-                cert.UpdatedAt = null;
-                cert.UpdatedBy = null;
-            }
-
-            return cert;
-        }
-
-        private static string NormalizeOverallGrade(string overallGrade)
-        {
-            var grades = new string[] { CertificateGrade.Pass, CertificateGrade.Credit, CertificateGrade.Merit, CertificateGrade.Distinction, CertificateGrade.PassWithExcellence, CertificateGrade.NoGradeAwarded };
-            return grades.FirstOrDefault(g => g.Equals(overallGrade, StringComparison.InvariantCultureIgnoreCase)) ?? overallGrade;
-        }
-
-        private static string NormalizeCourseOption(string courseOption, StandardCollation standard)
-        {
-            if (standard.Options is null)
-            {
-                return courseOption;
-            }
-            else
-            {
-                return standard.Options.FirstOrDefault(g => g.Equals(courseOption, StringComparison.InvariantCultureIgnoreCase)) ?? courseOption;
-            }
         }
     }
 }
