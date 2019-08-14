@@ -17,7 +17,13 @@
 	[LearnRefNumber] NVARCHAR(12) NULL,
 	[CompletionStatus] [int] NULL,
 	[EventId] BIGINT NULL, 
-    [PlannedEndDate] DATETIME2 NULL
+    [PlannedEndDate] DATETIME2 NULL,
+	[DelLocPostCode] [nvarchar](50) NULL,
+	[LearnActEndDate] DATETIME2 NULL,
+	[WithdrawReason] [int] NULL,
+	[Outcome] [int] NULL,
+	[AchDate] [datetime] NULL,
+	[OutGrade] [nvarchar](50) NULL	
 )
 
 GO
