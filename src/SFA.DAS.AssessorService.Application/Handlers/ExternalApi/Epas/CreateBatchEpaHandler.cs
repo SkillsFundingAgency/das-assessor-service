@@ -6,6 +6,7 @@ using SFA.DAS.AssessorService.Api.Types.Models.ExternalApi.Epas;
 using SFA.DAS.AssessorService.Application.Handlers.ExternalApi._HelperClasses;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
+using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using System.Collections.Generic;
 using System.Linq;
@@ -44,6 +45,10 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Epas
                 var startCertificateRequest = new StartCertificateRequest { StandardCode = request.StandardCode, UkPrn = request.UkPrn, Uln = request.Uln, Username = ExternalApiConstants.ApiUserName };
                 certificate = await _mediator.Send(startCertificateRequest);
             }
+            else
+            {
+                certificate = ResetCertificateData(certificate);
+            }
 
             if (certificate is null)
             {
@@ -52,10 +57,10 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Epas
             }
             certificate.Status = Domain.Consts.CertificateStatus.Draft;
 
-            _logger.LogInformation("CreateNewEpa Before Combining EpaDetails");
+            _logger.LogInformation("CreateNewEpa Before Resetting Certificate Data");
             var certData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
-            certData.EpaDetails = new EpaDetails { EpaReference = certificate.CertificateReference, Epas = new List<EpaRecord>() };
 
+            _logger.LogInformation("CreateNewEpa Before Adding EPAs");
             if (request.EpaDetails?.Epas != null)
             {
                 foreach (var epa in request.EpaDetails.Epas)
@@ -76,6 +81,29 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Epas
             await _certificateRepository.Update(certificate, ExternalApiConstants.ApiUserName, CertificateActions.Epa);
 
             return certData.EpaDetails;
+        }
+
+        private Certificate ResetCertificateData(Certificate certificate)
+        {
+            var certData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
+
+            // We need to clear out any old information (as it could be a deleted certificate)
+            certificate.CertificateData = JsonConvert.SerializeObject(
+                new CertificateData()
+                {
+                    LearnerGivenNames = certData.LearnerGivenNames,
+                    LearnerFamilyName = certData.LearnerFamilyName,
+                    LearningStartDate = certData.LearningStartDate,
+                    StandardReference = certData.StandardReference,
+                    StandardName = certData.StandardName,
+                    StandardLevel = certData.StandardLevel,
+                    StandardPublicationDate = certData.StandardPublicationDate,
+                    FullName = certData.FullName,
+                    ProviderName = certData.ProviderName,
+                    EpaDetails = new EpaDetails { EpaReference = certificate.CertificateReference, Epas = new List<EpaRecord>() }
+                });
+
+            return certificate;
         }
     }
 }
