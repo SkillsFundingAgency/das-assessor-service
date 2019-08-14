@@ -6,6 +6,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Models.Response.Epa
 {
     public sealed class EpaDetails : IEquatable<EpaDetails>
     {
+        public string EpaReference { get; set; }
         public DateTime? LatestEpaDate { get; set; }
         public string LatestEpaOutcome { get; set; }
         public List<EpaRecord> Epas { get; set; }
@@ -19,6 +20,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Models.Response.Epa
                 const int multiplier = 16777619;
 
                 int hash = hashBase;
+                hash = (hash * multiplier) ^ (EpaReference is null ? 0 : EpaReference.GetHashCode());
                 hash = (hash * multiplier) ^ (LatestEpaDate is null ? 0 : LatestEpaDate.GetHashCode());
                 hash = (hash * multiplier) ^ (LatestEpaOutcome is null ? 0 : LatestEpaOutcome.GetHashCode());
                 hash = (hash * multiplier) ^ (Epas is null ? 0 : Epas.GetHashCode());
@@ -46,7 +48,8 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Models.Response.Epa
         {
             var epasEqual = Epas is null ? other.Epas is null : Epas.SequenceEqual(other.Epas);
 
-            return Equals(LatestEpaDate, other.LatestEpaDate)
+            return string.Equals(EpaReference, other.EpaReference)
+                && Equals(LatestEpaDate, other.LatestEpaDate)
                 && string.Equals(LatestEpaOutcome, other.LatestEpaOutcome)
                 && epasEqual;
         }

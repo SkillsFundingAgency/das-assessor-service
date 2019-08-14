@@ -23,6 +23,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.SwaggerHelpers.Exampl
                 Status = new Models.Response.Learners.Status { CompletionStatus = 1 },
                 EpaDetails = new EpaDetails
                 {
+                    EpaReference = "12345678",
                     LatestEpaDate = DateTime.UtcNow,
                     LatestEpaOutcome = EpaOutcome.Pass,
                     Epas = new List<EpaRecord> { new EpaRecord { EpaDate = DateTime.UtcNow, EpaOutcome = EpaOutcome.Pass } }
