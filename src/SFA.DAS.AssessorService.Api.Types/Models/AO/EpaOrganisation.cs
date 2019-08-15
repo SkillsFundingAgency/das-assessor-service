@@ -2,7 +2,7 @@
 
 namespace SFA.DAS.AssessorService.Api.Types.Models.AO
 {
-    public class EpaOrganisation
+    public class EpaOrganisation : IAuditFilter
     {
         public Guid Id { get; set; }
         public DateTime CreatedAt { get; set; }
@@ -18,5 +18,15 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.AO
         public OrganisationData OrganisationData { get; set; }
         public bool ApiEnabled { get; set; }
         public string ApiUser { get; set; }
+
+        public string FilterAuditDiff(string propertyChanged)
+        {
+            if (propertyChanged == $"{nameof(OrganisationData)}.{nameof(OrganisationData.PhoneNumber)}")
+            {
+                return "Contact number";
+            }
+
+            return null;
+        }
     }
 }

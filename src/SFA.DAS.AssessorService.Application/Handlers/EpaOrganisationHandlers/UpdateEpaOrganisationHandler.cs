@@ -16,15 +16,20 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
     public class UpdateEpaOrganisationHandler : IRequestHandler<UpdateEpaOrganisationRequest, string>
     {
         private readonly IRegisterRepository _registerRepository;
+        private readonly IRegisterQueryRepository _registerQueryRepository;
         private readonly ILogger<UpdateEpaOrganisationHandler> _logger;
+        private readonly IAuditLogService _auditLogService;
         private readonly ISpecialCharacterCleanserService _cleanser;
         private readonly IEpaOrganisationValidator _validator;
         
-        public UpdateEpaOrganisationHandler(IRegisterRepository registerRepository,  ILogger<UpdateEpaOrganisationHandler> logger, ISpecialCharacterCleanserService cleanser,
-            IEpaOrganisationValidator validator)
+        public UpdateEpaOrganisationHandler(IRegisterRepository registerRepository, IRegisterQueryRepository registerQueryRepository,  
+            ILogger<UpdateEpaOrganisationHandler> logger, IAuditLogService auditLogService, 
+            ISpecialCharacterCleanserService cleanser, IEpaOrganisationValidator validator)
         {
             _registerRepository = registerRepository;
+            _registerQueryRepository = registerQueryRepository;
             _logger = logger;
+            _auditLogService = auditLogService;
             _cleanser = cleanser;
             _validator = validator;
         }
@@ -45,9 +50,30 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
                 }
             }
 
+            // get the current organisation, removing the primary contact information which is not updated by this request
+            var prevOrganisation = await _registerQueryRepository.GetEpaOrganisationByOrganisationId(request.OrganisationId);
+            prevOrganisation.PrimaryContact = null;
+
             var organisation = MapOrganisationRequestToOrganisation(request);
 
-           return await _registerRepository.UpdateEpaOrganisation(organisation);
+            var differences = _auditLogService.Compare<EpaOrganisation>(prevOrganisation, organisation);
+            differences?.ForEach(p => 
+            {
+                /*_auditRespository.CreateAuditLog(new AuditLog
+                {
+                    OrganisationId = "",
+                    UpdatedBy,
+                    UpdatedAt,
+                    AuditData = new AuditData
+                    {
+                        FieldChanged = p.FieldChanged,
+                        PreviousValue = p.PreviousValue,
+                        CurrentValue = p.CurrentValue
+                    }
+                });*/
+            });
+            
+            return await _registerRepository.UpdateEpaOrganisation(organisation);
         }
 
         private void ProcessRequestFieldsForSpecialCharacters(UpdateEpaOrganisationRequest request)

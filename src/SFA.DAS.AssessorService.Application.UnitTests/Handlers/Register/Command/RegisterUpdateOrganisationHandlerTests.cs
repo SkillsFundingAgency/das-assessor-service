@@ -20,11 +20,14 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
     public class RegisterUpdateOrganisationHandlerTests
     {
         private Mock<IRegisterRepository> _registerRepository;
+        private Mock<IRegisterQueryRepository> _registerQueryRepository;
+        private Mock<ILogger<UpdateEpaOrganisationHandler>> _logger;
+        private Mock<IAuditLogService> _auditLogService;
+        private Mock<ISpecialCharacterCleanserService> _cleanserService;
+        private Mock<IEpaOrganisationValidator> _validator;
+
         private UpdateEpaOrganisationHandler _updateEpaOrganisationHandler;
         private string _returnedOrganisationId;
-        private Mock<ISpecialCharacterCleanserService> _cleanserService;
-        private Mock<ILogger<UpdateEpaOrganisationHandler>> _logger;
-        private Mock<IEpaOrganisationValidator> _validator;
         private UpdateEpaOrganisationRequest _requestNoIssues;
         private EpaOrganisation _expectedOrganisationNoIssues;
         private string _organisationId;
@@ -33,9 +36,12 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
         public void Setup()
         {
             _registerRepository = new Mock<IRegisterRepository>();
+            _registerQueryRepository = new Mock<IRegisterQueryRepository>();
+            _logger = new Mock<ILogger<UpdateEpaOrganisationHandler>>();
+            _auditLogService = new Mock<IAuditLogService>();
             _cleanserService = new Mock<ISpecialCharacterCleanserService>();
             _validator = new Mock<IEpaOrganisationValidator>();
-            _logger = new Mock<ILogger<UpdateEpaOrganisationHandler>>();
+            
             _organisationId = "EPA999";
 
             _requestNoIssues = BuildRequest("name 1", _organisationId, 123321);
@@ -47,7 +53,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
             _cleanserService.Setup(c => c.CleanseStringForSpecialCharacters(It.IsAny<string>()))
                 .Returns((string s) => s);
             
-            _updateEpaOrganisationHandler = new UpdateEpaOrganisationHandler(_registerRepository.Object, _logger.Object, _cleanserService.Object, _validator.Object);
+            _updateEpaOrganisationHandler = new UpdateEpaOrganisationHandler(_registerRepository.Object, _registerQueryRepository.Object,
+                _logger.Object, _auditLogService.Object, _cleanserService.Object, _validator.Object);
         }
 
         [Test]

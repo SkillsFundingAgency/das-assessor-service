@@ -327,7 +327,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogWarning(e, "Failed to update phone number");
+                _logger.LogError(e, "Failed to update phone number");
                 ModelState.AddModelError(nameof(ChangePhoneNumberViewModel.PhoneNumber), "Unable to update the contact phone number at this time.");
                 return RedirectToAction(nameof(ChangePhoneNumber));
             }
