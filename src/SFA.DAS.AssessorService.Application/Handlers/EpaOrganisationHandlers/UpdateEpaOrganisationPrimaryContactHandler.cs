@@ -78,7 +78,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
                 {
                     OrganisationId = request.OrganisationId,
                     PropertyChanged = "Contact name",
-                    ValueAdded = primaryContact.Username,
+                    ValueAdded = primaryContact.DisplayName,
                     Editor = updatedBy?.DisplayName ?? "EFSA Staff"
                 });
             }
