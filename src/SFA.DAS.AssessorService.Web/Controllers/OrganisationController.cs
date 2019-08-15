@@ -266,7 +266,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             var epaoid = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/epaoid")?.Value;
             try
             {
-                var organisation = await _organisationsApiClient.GetEpaOrganisation(epaoid);
+                var organisation = await GetEpaOrganisation(epaoid);
+                if (organisation == null)
+                {
+                    return RedirectToAction(nameof(HomeController.NotRegistered), nameof(HomeController).RemoveController());
+                }
 
                 if (vm.ActionChoice == "Save")
                 {
@@ -307,27 +311,25 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                     };
 
                     var notifiedContacts = await _organisationsApiClient.UpdateEpaOrganisationPhoneNumber(request);
-                    if (notifiedContacts != null)
+                    if (notifiedContacts == null)
                     {
-                        vm = new ChangePhoneNumberViewModel
-                        {
-                            PhoneNumber = vm.PhoneNumber,
-                            Contacts = notifiedContacts
-                        };
+                        throw new Exception("Unable to update phone number");
+                    }
 
-                        return View("ChangePhoneNumberUpdated", vm);
-                    }
-                    else
+                    vm = new ChangePhoneNumberViewModel
                     {
-                        ModelState.AddModelError(nameof(ChangePhoneNumberViewModel.PhoneNumber), "Unable to update the contact phone number at this time.");
-                        return RedirectToAction(nameof(ChangePhoneNumber));
-                    }
+                        PhoneNumber = vm.PhoneNumber,
+                        Contacts = notifiedContacts
+                    };
+
+                    return View("ChangePhoneNumberUpdated", vm);
                 }
             }
-            catch (EntityNotFoundException e)
+            catch (Exception e)
             {
-                _logger.LogWarning(e, "Failed to find organisation");
-                return RedirectToAction(nameof(HomeController.NotRegistered), nameof(HomeController).RemoveController());
+                _logger.LogWarning(e, "Failed to update phone number");
+                ModelState.AddModelError(nameof(ChangePhoneNumberViewModel.PhoneNumber), "Unable to update the contact phone number at this time.");
+                return RedirectToAction(nameof(ChangePhoneNumber));
             }
 
             return RedirectToAction(nameof(OrganisationDetails));
@@ -380,7 +382,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             var epaoid = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/epaoid")?.Value;
             try
             {
-                var organisation = await _organisationsApiClient.GetEpaOrganisation(epaoid);
+                var organisation = await GetEpaOrganisation(epaoid);
+                if (organisation == null)
+                {
+                    return RedirectToAction(nameof(HomeController.NotRegistered), nameof(HomeController).RemoveController());
+                }
 
                 if (vm.ActionChoice == "Save")
                 {
@@ -427,31 +433,29 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                     };
 
                     var notifiedContacts = await _organisationsApiClient.UpdateEpaOrganisationAddress(request);
-                    if (notifiedContacts != null)
+                    if (notifiedContacts == null)
                     {
-                        vm = new ChangeAddressViewModel
-                        {
-                            AddressLine1 = vm.AddressLine1,
-                            AddressLine2 = vm.AddressLine2,
-                            AddressLine3 = vm.AddressLine3,
-                            AddressLine4 = vm.AddressLine4,
-                            Postcode = vm.Postcode,
-                            Contacts = notifiedContacts
-                        };
+                        throw new Exception("Unable to update the address");
+                    }
 
-                        return View("ChangeAddressUpdated", vm);
-                    }
-                    else
+                    vm = new ChangeAddressViewModel
                     {
-                        ModelState.AddModelError(nameof(ChangePhoneNumberViewModel.PhoneNumber), "Unable to update the addres at this time.");
-                        return RedirectToAction(nameof(ChangeAddress));
-                    }
+                        AddressLine1 = vm.AddressLine1,
+                        AddressLine2 = vm.AddressLine2,
+                        AddressLine3 = vm.AddressLine3,
+                        AddressLine4 = vm.AddressLine4,
+                        Postcode = vm.Postcode,
+                        Contacts = notifiedContacts
+                    };
+
+                    return View("ChangeAddressUpdated", vm);
                 }
             }
-            catch (EntityNotFoundException e)
+            catch (Exception e)
             {
-                _logger.LogWarning(e, "Failed to find organisation");
-                return RedirectToAction(nameof(HomeController.NotRegistered), nameof(HomeController).RemoveController());
+                _logger.LogError(e, "Failed to change address");
+                ModelState.AddModelError(nameof(ChangeAddressViewModel.AddressLine1), "Unable to update the address at this time.");
+                return RedirectToAction(nameof(ChangeAddress));
             }
 
             return RedirectToAction(nameof(OrganisationDetails));
@@ -492,7 +496,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             var epaoid = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/epaoid")?.Value;
             try
             {
-                var organisation = await _organisationsApiClient.GetEpaOrganisation(epaoid);
+                var organisation = await GetEpaOrganisation(epaoid);
+                if (organisation == null)
+                {
+                    return RedirectToAction(nameof(HomeController.NotRegistered), nameof(HomeController).RemoveController());
+                }
 
                 if (vm.ActionChoice == "Save")
                 {
@@ -533,27 +541,25 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                     };
 
                     var notifiedContacts = await _organisationsApiClient.UpdateEpaOrganisationEmail(request);
-                    if (notifiedContacts != null)
+                    if (notifiedContacts == null)
                     {
-                        vm = new ChangeEmailViewModel
-                        {
-                            Email = vm.Email,
-                            Contacts = notifiedContacts
-                        };
+                        throw new Exception("Unable to update the email address");
+                    }
 
-                        return View("ChangeEmailUpdated", vm);
-                    }
-                    else
+                    vm = new ChangeEmailViewModel
                     {
-                        ModelState.AddModelError(nameof(ChangeEmailViewModel.Email), "Unable to update the email address at this time.");
-                        return RedirectToAction(nameof(ChangeEmail));
-                    }
+                        Email = vm.Email,
+                        Contacts = notifiedContacts
+                    };
+
+                    return View("ChangeEmailUpdated", vm);
                 }
             }
-            catch (EntityNotFoundException e)
+            catch (Exception e)
             {
-                _logger.LogWarning(e, "Failed to find organisation");
-                return RedirectToAction(nameof(HomeController.NotRegistered), nameof(HomeController).RemoveController());
+                _logger.LogError(e, "Failed to change email address");
+                ModelState.AddModelError(nameof(ChangeEmailViewModel.Email), "Unable to update the email address at this time.");
+                return RedirectToAction(nameof(ChangeEmail));
             }
 
             return RedirectToAction(nameof(OrganisationDetails));
@@ -594,7 +600,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             var epaoid = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/epaoid")?.Value;
             try
             {
-                var organisation = await _organisationsApiClient.GetEpaOrganisation(epaoid);
+                var organisation = await GetEpaOrganisation(epaoid);
+                if (organisation == null)
+                {
+                    return RedirectToAction(nameof(HomeController.NotRegistered), nameof(HomeController).RemoveController());
+                }
 
                 if (vm.ActionChoice == "Save")
                 {
@@ -635,27 +645,25 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                     };
 
                     var notifiedContacts = await _organisationsApiClient.UpdateEpaOrganisationWebsiteLink(request);
-                    if (notifiedContacts != null)
+                    if (notifiedContacts == null)
                     {
-                        vm = new ChangeWebsiteViewModel
-                        {
-                            WebsiteLink = vm.WebsiteLink,
-                            Contacts = notifiedContacts
-                        };
+                        throw new Exception("Unable to update the website address.");
+                    }
 
-                        return View("ChangeWebsiteUpdated", vm);
-                    }
-                    else
+                    vm = new ChangeWebsiteViewModel
                     {
-                        ModelState.AddModelError(nameof(ChangeWebsiteViewModel.WebsiteLink), "Unable to update the website address at this time.");
-                        return RedirectToAction("ChangeWebsite");
-                    }
+                        WebsiteLink = vm.WebsiteLink,
+                        Contacts = notifiedContacts
+                    };
+
+                    return View("ChangeWebsiteUpdated", vm);
                 }
             }
-            catch (EntityNotFoundException e)
+            catch (Exception e)
             {
-                _logger.LogWarning(e, "Failed to find organisation");
-                return RedirectToAction(nameof(HomeController.NotRegistered), nameof(HomeController).RemoveController());
+                _logger.LogError(e, "Failed to change website link");
+                ModelState.AddModelError(nameof(ChangeWebsiteViewModel.WebsiteLink), "Unable to update the website address at this time.");
+                return RedirectToAction(nameof(ChangeWebsite));
             }
 
             return RedirectToAction(nameof(OrganisationDetails));
@@ -683,6 +691,20 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             };
 
             return viewModel;
+        }
+
+        private async Task<EpaOrganisation> GetEpaOrganisation(string epaoid)
+        {
+            try
+            {
+                return await _organisationsApiClient.GetEpaOrganisation(epaoid);
+            }
+            catch (EntityNotFoundException e)
+            {
+                _logger.LogWarning(e, "Failed to find organisation");
+            }
+
+            return null;
         }
     }
 }
