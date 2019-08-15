@@ -122,7 +122,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
                 throw new ResourceNotFoundException(userId.ToString());
             }
             
-            return Ok(Mapper.Map<OrganisationResponse>(organisation));
+            return Ok(Mapper.Map<Organisation,OrganisationResponse>(organisation));
         }
     }
 }

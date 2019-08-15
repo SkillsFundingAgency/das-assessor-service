@@ -51,4 +51,20 @@ namespace SFA.DAS.AssessorService.Application.Api.AutoMapperProfiles
                 .ForAllOtherMembers(dest => dest.Ignore());
         }
     }
+
+    public class AssessorServiceOrganisationResponse : Profile
+    {
+        public AssessorServiceOrganisationResponse()
+        {
+            CreateMap<Domain.Entities.Organisation,OrganisationResponse>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom( source => source.Id))
+                .ForMember(dest => dest.PrimaryContact, opt => opt.MapFrom(source => source.PrimaryContact))
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(source => source.Status))
+                .ForMember(dest => dest.EndPointAssessorName, opt => opt.MapFrom(source => source.EndPointAssessorName))
+                .ForMember(dest => dest.EndPointAssessorOrganisationId, opt => opt.MapFrom(source => source.EndPointAssessorOrganisationId))
+                .ForMember(dest => dest.EndPointAssessorUkprn, opt => opt.MapFrom(source => source.EndPointAssessorUkprn))
+                .ForMember(dest => dest.RoATPApproved, opt => opt.ResolveUsing(source => source.OrganisationDataFromJson?.RoATPApproved))
+                .ForMember(dest => dest.RoEPAOApproved, opt => opt.ResolveUsing(source => source.OrganisationDataFromJson?.RoEPAOApproved));
+        }
+    }
 }

@@ -72,13 +72,10 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             bool isValid = Guid.TryParse(organisationId, out Guid guid);
             EpaOrganisation result;
             if (isValid)
-            {
                 result = await _mediator.Send(new GetAssessmentOrganisationByIdRequest { Id = guid });
-                if (result == null) return NotFound();
-                return Ok(result);
-            }
+            else
+                result = await _mediator.Send(new GetAssessmentOrganisationRequest {OrganisationId = organisationId});
 
-            result = await _mediator.Send(new GetAssessmentOrganisationRequest {OrganisationId = organisationId});
             if (result == null) return NotFound();
             return Ok(result);
         }
