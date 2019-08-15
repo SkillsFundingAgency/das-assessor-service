@@ -18,7 +18,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
             _registerQueryRepository = registerQueryRepository;
         }
         
-        public async Task Handle(UpdateFinancialsRequest message, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(UpdateFinancialsRequest message, CancellationToken cancellationToken)
         {
             var epaOrg = await _registerQueryRepository.GetEpaOrganisationByOrganisationId(message.EpaOrgId);
 
@@ -32,6 +32,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
 
                 await _registerRepository.UpdateEpaOrganisation(epaOrg);
             }
+            return Unit.Value;
         }
     }
 }

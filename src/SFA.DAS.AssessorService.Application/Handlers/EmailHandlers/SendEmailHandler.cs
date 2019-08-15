@@ -26,7 +26,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EmailHandlers
         }
 
       
-        public async Task Handle(SendEmailRequest message, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(SendEmailRequest message, CancellationToken cancellationToken)
         {
             var emailTemplate = message.EmailTemplate;
 
@@ -44,6 +44,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EmailHandlers
             {
                 _logger.LogError($"Cannot send email template {emailTemplate.TemplateName} to '{message.Email}'");
             };
+            return Unit.Value;
         }
 
         private Dictionary<string, string> GetPersonalisationTokens(dynamic tokens)
