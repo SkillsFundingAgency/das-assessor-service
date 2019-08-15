@@ -1,7 +1,8 @@
 ﻿CREATE TABLE [dbo].[Applications]
 (
 	[Id] [uniqueidentifier] NOT NULL,
-	[ApplyingOrganisationId] [uniqueidentifier] NOT NULL,
+	[ApplicationId] [uniqueidentifier] NOT NULL,
+	[OrganisationId] [uniqueidentifier] NOT NULL,
 	[ApplicationStatus] [nvarchar](20) NOT NULL,
 	[ApplicationData] [nvarchar](max) NULL,
 	[CreatedAt] [datetime2](7) NOT NULL,
@@ -20,3 +21,9 @@ GO
 ALTER TABLE [dbo].[Applications] ADD  CONSTRAINT [Applications_Id]  DEFAULT (newid()) FOR [Id]
 GO
 
+ALTER TABLE [dbo].[Applications]  WITH CHECK ADD  CONSTRAINT [FK_Applications_Organisations_OrganisationId] FOREIGN KEY([OrganisationId])
+REFERENCES [dbo].[Organisations] ([Id])
+GO
+
+ALTER TABLE [dbo].[Applications] CHECK CONSTRAINT [FK_Applications_Organisations_OrganisationId]
+GO

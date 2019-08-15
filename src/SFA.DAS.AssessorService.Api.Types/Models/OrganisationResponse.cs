@@ -9,7 +9,8 @@
         public int? EndPointAssessorUkprn { get; set; }
         public string EndPointAssessorName { get; set; }
         public string PrimaryContact { get; set; }
-
+        public bool RoATPApproved { get; set; }
+        public bool RoEPAOApproved { get; set; }
         public string Status { get; set; }
     }
 }

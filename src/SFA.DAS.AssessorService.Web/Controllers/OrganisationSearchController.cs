@@ -237,6 +237,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> DealingWithRequest(OrganisationSearchViewModel viewModel)
         {
+            
             var signinId = _contextAccessor.HttpContext.User.Claims.First(c => c.Type == "sub")?.Value;
             var user = await _contactsApiClient.GetContactBySignInId(signinId);
 
@@ -283,7 +284,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                         newOrg.Id.ToString(), null, ContactStatus.Live));
                     _logger.LogInformation($"Contact with display name {user.DisplayName} is associated with organisation {epaoId.Details}.");
 
-                    return View($"~/Views/Apply/Application/Applications.cshtml");
+                    return RedirectToAction("Applications", "Application");
                 }
             }
             return View(viewModel);
