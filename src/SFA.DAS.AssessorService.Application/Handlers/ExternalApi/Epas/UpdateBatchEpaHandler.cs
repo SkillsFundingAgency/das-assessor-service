@@ -35,7 +35,14 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Epas
             _logger.LogInformation("UpdateEpaDetails Before Get Certificate from db");
             var certificate = await _certificateRepository.GetCertificate(request.Uln, request.StandardCode);
 
-            if (certificate is null) throw new NotFound();
+            if (certificate is null)
+            {
+                throw new NotFound();
+            }
+            else
+            {
+                certificate = EpaHelpers.ResetCertificateData(certificate);
+            }
 
             _logger.LogInformation("UpdateEpaDetails Before Combining EpaDetails");
             var certData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);

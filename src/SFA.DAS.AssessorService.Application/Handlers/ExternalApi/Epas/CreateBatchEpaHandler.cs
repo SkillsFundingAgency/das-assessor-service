@@ -47,7 +47,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Epas
             }
             else
             {
-                certificate = ResetCertificateData(certificate);
+                certificate = EpaHelpers.ResetCertificateData(certificate);
             }
 
             if (certificate is null)
@@ -81,29 +81,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Epas
             await _certificateRepository.Update(certificate, ExternalApiConstants.ApiUserName, CertificateActions.Epa);
 
             return certData.EpaDetails;
-        }
-
-        private Certificate ResetCertificateData(Certificate certificate)
-        {
-            var certData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
-
-            // We need to clear out any old information (as it could be a deleted certificate)
-            certificate.CertificateData = JsonConvert.SerializeObject(
-                new CertificateData()
-                {
-                    LearnerGivenNames = certData.LearnerGivenNames,
-                    LearnerFamilyName = certData.LearnerFamilyName,
-                    LearningStartDate = certData.LearningStartDate,
-                    StandardReference = certData.StandardReference,
-                    StandardName = certData.StandardName,
-                    StandardLevel = certData.StandardLevel,
-                    StandardPublicationDate = certData.StandardPublicationDate,
-                    FullName = certData.FullName,
-                    ProviderName = certData.ProviderName,
-                    EpaDetails = new EpaDetails { EpaReference = certificate.CertificateReference, Epas = new List<EpaRecord>() }
-                });
-
-            return certificate;
         }
     }
 }
