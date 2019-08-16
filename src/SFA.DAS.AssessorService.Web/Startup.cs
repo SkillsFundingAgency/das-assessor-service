@@ -72,36 +72,7 @@ namespace SFA.DAS.AssessorService.Web
             
             services.AddAntiforgery(options => options.Cookie = new CookieBuilder() { Name = ".Assessors.AntiForgery", HttpOnly = true });
            
-            if (_env.IsDevelopment())
-            {
-                services.AddDataProtection()
-                    .PersistKeysToFileSystem(new DirectoryInfo(Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "keys")))
-                    .SetApplicationName("AssessorApply");
-
-                services.AddDistributedMemoryCache();
-            }
-            else
-            {
-                try
-                {
-                    var redis = ConnectionMultiplexer.Connect($"{Configuration.SessionRedisConnectionString},DefaultDatabase=1");
             
-                    services.AddDataProtection()
-                        .PersistKeysToStackExchangeRedis(redis, "AssessorApply-DataProtectionKeys")
-                        .SetApplicationName("AssessorApply");
-                    
-                    services.AddDistributedRedisCache(options =>
-                    {
-                        options.Configuration = $"{Configuration.SessionRedisConnectionString},DefaultDatabase=0";
-                    });
-                }
-                catch (Exception e)
-                {
-                    _logger.LogError(e, $"Error setting redis for session.  Conn: {Configuration.SessionRedisConnectionString}");
-                    throw;
-                }
-            }
-
             services.AddSession(opt =>
             {
                 opt.IdleTimeout = TimeSpan.FromHours(1);
@@ -128,8 +99,10 @@ namespace SFA.DAS.AssessorService.Web
                 });
 
                 config.For<ITokenService>().Use<TokenService>();
-                config.For<ITokenService>().Add<ApplyTokenService>().Named("applyTokenService");
-                
+                config.For<ITokenService>().Add<QnaTokenService>().Named("qnaTokenService");
+
+                config.For<IQnaApiClient>().Use<QnaApiClient>()
+                    .Ctor<ITokenService>("qnaTokenService").Is(c => c.GetInstance<ITokenService>("qnaTokenService"));
                 config.For<IWebConfiguration>().Use(Configuration);
                 config.For<ISessionService>().Use<SessionService>().Ctor<string>().Is(_env.EnvironmentName);
                 config.For<IOrganisationsApiClient>().Use<OrganisationsApiClient>().Ctor<string>().Is(Configuration.ClientApiAuthentication.ApiBaseAddress);
@@ -143,6 +116,7 @@ namespace SFA.DAS.AssessorService.Web
                 config.For<IIfaStandardsApiClient>().Use(() => new IfaStandardsApiClient(Configuration.IfaApiClientBaseUrl));
                 config.For<ILoginApiClient>().Use<LoginApiClient>().Ctor<string>().Is(Configuration.ClientApiAuthentication.ApiBaseAddress);
                 config.For<IApplicationApiClient>().Use<ApplicationApiClient>().Ctor<string>().Is(Configuration.ClientApiAuthentication.ApiBaseAddress);
+                config.For<IQnaApiClient>().Use<QnaApiClient>().Ctor<string>().Is(Configuration.QnaApiAuthentication.ApiBaseAddress);
 
                 config.For<IAzureTokenService>().Use<AzureTokenService>();
                 config.For<IAzureApiClient>().Use<AzureApiClient>().Ctor<string>().Is(Configuration.AzureApiAuthentication.ApiBaseAddress);

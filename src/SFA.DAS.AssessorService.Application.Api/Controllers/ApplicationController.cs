@@ -44,5 +44,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             _logger.LogInformation($"Received request to retrieve application for user");
             return Ok(await _mediator.Send(new GetApplicationsRequest(Guid.Parse(userId), true)));
         }
+
+        [HttpGet("{applicationId}/application", Name = "GetApplication")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(ApplicationResponse))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<ActionResult<ApplicationResponse>> GetApplication(string applicationId)
+        {
+            _logger.LogInformation($"Received request to retrieve application for user");
+            return Ok(await _mediator.Send(new GetApplicationRequest(Guid.Parse(applicationId))));
+        }
     }
 }

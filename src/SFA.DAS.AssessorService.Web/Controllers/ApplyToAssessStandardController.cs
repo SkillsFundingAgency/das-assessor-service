@@ -53,7 +53,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
            //     await _contactsApiClient.MigrateSingleContactToApply(Guid.Parse(signinId));
            // }
             
-            return Redirect($"{_webConfiguration.ApplyBaseAddress}/Applications");
+            return Redirect($"/Applications");
         }
     }
 }

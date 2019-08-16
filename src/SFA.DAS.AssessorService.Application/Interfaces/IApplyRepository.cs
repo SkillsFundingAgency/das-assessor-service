@@ -9,5 +9,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
     {
         Task<List<Domain.Entities.Application>> GetUserApplications(Guid userId);
         Task<List<Domain.Entities.Application>> GetOrganisationApplications(Guid userId);
+        Task<Domain.Entities.Application> GetApplication(Guid applicationId);
+        Task<Guid> CreateApplication(string applicationData, Guid applyingOrganisationId, Guid applyingApplicationId);
     }
 }

@@ -2,31 +2,28 @@
 using MediatR;
 using SFA.DAS.AssessorService.Api.Types.Models.Apply;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using System;
 using System.Collections.Generic;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Apply
 {
-    public class GetApplicationsHandler : IRequestHandler<GetApplicationsRequest, List<ApplicationResponse>>
+    public class GetApplicationHandler : IRequestHandler<GetApplicationRequest, ApplicationResponse>
     {
         private readonly IApplyRepository _applyRepository;
 
-        public GetApplicationsHandler(IApplyRepository applyRepository)
+        public GetApplicationHandler(IApplyRepository applyRepository)
         {
             _applyRepository = applyRepository;
         }
 
-        public async Task<List<ApplicationResponse>> Handle(GetApplicationsRequest request, CancellationToken cancellationToken)
+        public async Task<ApplicationResponse> Handle(GetApplicationRequest request, CancellationToken cancellationToken)
         {
-            List<Domain.Entities.Application> result;
+            var result =  await _applyRepository.GetApplication(request.ApplicationId);
 
-            if (!request.CreatedBy)
-                result = await _applyRepository.GetOrganisationApplications(request.UserId);
-            else
-                result = await _applyRepository.GetUserApplications(request.UserId);
-
-            return Mapper.Map<List<Domain.Entities.Application>, List<ApplicationResponse>>(result);
+            return Mapper.Map<Domain.Entities.Application, ApplicationResponse>(result);
         }
     }
 }

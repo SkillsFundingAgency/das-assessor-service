@@ -44,5 +44,27 @@ namespace SFA.DAS.AssessorService.Data.Apply
                                                     WHERE c.Id = @userId", new { userId })).ToList();
             }
         }
+
+        public async Task<Domain.Entities.Application> GetApplication(Guid applicationId)
+        {
+            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            {
+                var application = await connection.QuerySingleOrDefaultAsync<Domain.Entities.Application>(@"SELECT * FROM Applications WHERE Id = @applicationId", new { applicationId });
+
+                return application;
+            }
+        }
+
+        public async Task<Guid> CreateApplication(string applicationData, Guid applyingOrganisationId, Guid applyingApplicationId)
+        {
+            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            {
+                return await connection.QuerySingleAsync<Guid>(
+                    @"INSERT INTO Applications (ApplicationId, OrganisationId,ApplicationStatus,ApplicationData, CreatedAt, CreatedBy)
+                                        OUTPUT INSERTED.[Id] 
+                                        VALUES (@applyingApplicationId, @applyingOrganisationId,@applicationStatus,@applicationData, GETUTCDATE(), @userId, @workflowId)",
+                    new { applyingApplicationId, applyingOrganisationId, applicationStatus = ApplicationStatus.InProgress, applicationData });
+            }
+        }
     }
 }
