@@ -18,12 +18,12 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
         public async Task Arrange()
         {
             var request = Builder<DeleteBatchEpaRequest>.CreateNew()
-                .With(i => i.Uln = 1234567890)
-                .With(i => i.StandardCode = 99)
+                .With(i => i.Uln = 5555555555)
+                .With(i => i.StandardCode = 1)
                 .With(i => i.StandardReference = null)
                 .With(i => i.UkPrn = 12345678)
                 .With(i => i.FamilyName = "Test")
-                .With(i => i.EpaReference = "1234567890-99")
+                .With(i => i.EpaReference = "5555555555-1")
                 .Build();
 
             _validationResult = await Validator.ValidateAsync(request);
