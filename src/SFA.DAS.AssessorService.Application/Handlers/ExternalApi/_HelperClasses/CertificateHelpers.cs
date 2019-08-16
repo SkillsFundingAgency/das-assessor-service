@@ -45,6 +45,13 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi._HelperClasse
                 cert.UpdatedBy = null;
             }
 
+            // Remove Print & Batch information if going for a Reprint
+            if (cert.Status == CertificateStatus.Reprint)
+            {
+                cert.ToBePrinted = null;
+                cert.BatchNumber = null;
+            }
+
             return cert;
         }
 
