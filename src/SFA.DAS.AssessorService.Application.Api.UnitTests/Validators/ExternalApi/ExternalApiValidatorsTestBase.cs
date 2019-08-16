@@ -37,9 +37,10 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
             certificateRepositoryMock.Setup(q => q.GetCertificate(9999999999, 1)).ReturnsAsync(GenerateCertificate(9999999999, 1, "test", CertificateStatus.Printed, new Guid("99999999999999999999999999999999")));
 
             // This is simulating a Certificate that started it's life on the Web App, but was never submitted
-            certificateRepositoryMock.Setup(q => q.GetCertificate(9999999999, 99)).ReturnsAsync(GeneratePartialCertificate(9999999999, 99, "test", new Guid("99999999999999999999999999999999")));
-            
-            // These allow use to test EPAs, which is the initial stage of a Certificate
+            certificateRepositoryMock.Setup(q => q.GetCertificate(1234567890, 99)).ReturnsAsync(GeneratePartialCertificate(1234567890, 99, "test", new Guid("12345678123456781234567812345678"), null));
+            certificateRepositoryMock.Setup(q => q.GetCertificate(9999999999, 99)).ReturnsAsync(GeneratePartialCertificate(9999999999, 99, "test", new Guid("99999999999999999999999999999999"), CertificateGrade.Fail));
+
+            // These allow us to test EPAs, which is the initial stage of a Certificate
             certificateRepositoryMock.Setup(q => q.GetCertificate(1234567890, 101)).ReturnsAsync(GenerateEpaCertificate(1234567890, 101, "test", new Guid("12345678123456781234567812345678"), true));
             certificateRepositoryMock.Setup(q => q.GetCertificate(9999999999, 101)).ReturnsAsync(GenerateEpaCertificate(9999999999, 101, "test", new Guid("99999999999999999999999999999999"), false));
 
@@ -116,6 +117,9 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
             ilrRepositoryMock.Setup(q => q.Get(9999999999, 99)).ReturnsAsync(GenerateIlr(9999999999, 99, "Test", "99999999"));
             ilrRepositoryMock.Setup(q => q.Get(9999999999, 101)).ReturnsAsync(GenerateIlr(9999999999, 101, "Test", "99999999"));
 
+            // Leave this ILR without a EPA or a Certificate!
+            ilrRepositoryMock.Setup(q => q.Get(5555555555, 1)).ReturnsAsync(GenerateIlr(5555555555, 1, "Test", "12345678"));
+
             return ilrRepositoryMock;
         }
 
@@ -191,18 +195,40 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
                 .Build();
         }
 
-        private static Certificate GeneratePartialCertificate(long uln, int standardCode, string familyName, Guid organisationId)
+        private static Certificate GeneratePartialCertificate(long uln, int standardCode, string familyName, Guid organisationId, string overallGrade)
         {
+            var reference = $"{uln}-{standardCode}";
+
+            var epaDetails = new EpaDetails { Epas = new List<EpaRecord>() };
+            if(!string.IsNullOrEmpty(overallGrade))
+            {
+                var epas = Builder<EpaRecord>.CreateListOfSize(1).All()
+                            .With(i => i.EpaDate = DateTime.UtcNow.AddDays(-1))
+                            .With(i => i.EpaOutcome = overallGrade == CertificateGrade.Fail ? EpaOutcome.Fail : EpaOutcome.Pass)
+                            .Build().ToList();
+
+                epaDetails = new EpaDetails
+                {
+                    EpaReference = reference,
+                    LatestEpaDate = epas[0].EpaDate,
+                    LatestEpaOutcome = epas[0].EpaOutcome,
+                    Epas = epas
+                };
+            }
+
+
             // NOTE: This is to simulate a certificate that was been partly started via the Web App
             return Builder<Certificate>.CreateNew()
                 .With(i => i.Uln = uln)
                 .With(i => i.StandardCode = standardCode)
                 .With(i => i.Status = CertificateStatus.Draft)
                 .With(i => i.OrganisationId = organisationId)
-                .With(i => i.CertificateReference = $"{uln}-{standardCode}")
+                .With(i => i.CertificateReference = reference)
                                 .With(i => i.CertificateData = JsonConvert.SerializeObject(Builder<CertificateData>.CreateNew()
                                 .With(cd => cd.LearnerFamilyName = familyName)
-                                .With(cd => cd.OverallGrade = null)
+                                .With(cd => cd.OverallGrade = overallGrade)
+                                .With(cd => cd.AchievementDate = null)
+                                .With(cd => cd.EpaDetails = epaDetails)
                                 .With(cd => cd.ContactName = null)
                                 .With(cd => cd.ContactOrganisation = null)
                                 .With(cd => cd.Department = null)
