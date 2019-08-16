@@ -34,7 +34,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Epas
                                 {
                                     context.AddFailure(new ValidationFailure("EpaDetails", $"Certificate already exists, cannot create EPA record"));
                                 }
-                                else if (certData.EpaDetails?.Epas != null)
+                                else if (!string.IsNullOrEmpty(certData.EpaDetails?.LatestEpaOutcome))
                                 {
                                     context.AddFailure(new ValidationFailure("EpaDetails", $"EPA already provided for the learner"));
                                 }
