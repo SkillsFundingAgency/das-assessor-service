@@ -45,11 +45,14 @@
                         @if (Model.Response.Items.Any())
                         {
                             <th class="govuk-table__header govuk-table__header--numeric" aria-sort="@(Model.OrderDirection)">
-                                <a asp-controller="OrganisationStandards"
+                                <a
+                                    class="govuk-link"
+                                    asp-controller="OrganisationStandards"
                                     asp-action="OrderPipeline"
                                     asp-route-pageIndex="@(Model.Response.PageIndex)"
                                     asp-route-orderBy="EstimateDate"
-                                    asp-route-orderDirection="@(Model.OrderDirection)">
+                                    asp-route-orderDirection="@(Model.OrderDirection)"
+                                >
                                     @Localizer["Estimated EPA date"]
                                 </a>
                             </th>
