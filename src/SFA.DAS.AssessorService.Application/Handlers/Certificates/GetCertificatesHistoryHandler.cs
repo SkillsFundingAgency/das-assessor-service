@@ -129,7 +129,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
             {
                 foreach (var response in responses)
                 {
-                    response.RecordedBy = (await _contactQueryRepository.GetContact(response.RecordedBy))?.DisplayName;
+                    var displayName = (await _contactQueryRepository.GetContact(response.RecordedBy))?.DisplayName;
+                    response.RecordedBy = displayName ?? response.RecordedBy;
                 }
             }
 
