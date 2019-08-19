@@ -24,6 +24,14 @@ namespace SFA.DAS.AssessorService.ApplyTypes
 
     }
 
+    public class StandardApplicationData
+    {
+        public string StandardName { get; set; }
+        public int StandardCode { get; set; }
+        public Guid UserId { get; set; }
+        public string UserEmail { get; set; }
+    }
+
     public class Submission
     {
         public DateTime SubmittedAt { get; set; }

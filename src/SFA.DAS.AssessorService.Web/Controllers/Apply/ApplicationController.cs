@@ -6,9 +6,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using SFA.DAS.AssessorService.Api.Types.Models.Apply;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
+using SFA.DAS.AssessorService.Application.Exceptions;
 using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.Domain.Consts;
+using SFA.DAS.AssessorService.Web.ViewModels.Apply;
 using SFA.DAS.QnA.Api.Types;
 
 namespace SFA.DAS.ApplyService.Web.Controllers.Apply
@@ -89,30 +92,33 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Apply
                 UserReference = userId.ToString(),
                 WorkflowType = WorkflowType,
                 ApplicationData = JsonConvert.SerializeObject(new ApplicationData {
-                    ContactGivenName = " ",
-                    ReferenceNumber = " ",
-                    StandardCode = " ",
-                    StandardName = " ",
-                    TradingName = " ",
                     UseTradingName = false,
                     OrganisationName = org.EndPointAssessorName,
                     OrganisationReferenceId = org.Id.ToString()
                 })
             };
 
-            var response = await _qnaApiClient.StartApplications(applicationStartRequest);
+            var qnaResponse = await _qnaApiClient.StartApplications(applicationStartRequest);
 
-            //Todo: Save application and applicaitondata locally
+            //Todo: Create a page to go to if qna fails checks or invalid response is received
+            var  appResponse = await _applicationApiClient.CreateApplication(new CreateApplicationRequest
+            {
+                ApplicationData = applicationStartRequest.ApplicationData,
+                ApplicationStatus = ApplicationStatus.InProgress,
+                OrganisationId = org.Id,
+                QnaApplicationId = qnaResponse?.ApplicationId??Guid.Empty,
+                UserId = userId
+            });
 
-            return RedirectToAction("SequenceSignPost", new { applicationId = response.ApplicationId });
-
-            return View();
+            return RedirectToAction("SequenceSignPost", new { Id = appResponse });
         }
 
         [HttpGet("/Application/{applicationId}")]
-        public async Task<IActionResult> SequenceSignPost(Guid applicationId)
+        public async Task<IActionResult> SequenceSignPost(Guid Id)
         {
-            var application = await _applicationApiClient.GetApplication(applicationId);
+            var userId = await GetUserId();
+            var application = await _applicationApiClient.GetApplication(Id);
+
             if (application is null)
             {
                 return RedirectToAction("Applications");
@@ -133,42 +139,53 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Apply
                 return View("~/Views/Application/FeedbackIntro.cshtml", application.Id);
             }
 
-            //var sequence = await _apiClient.GetSequence(applicationId, User.GetUserId());
+            var sequence = await _qnaApiClient.GetApplicationActiveSequence(application.ApplicationId);
 
-            //StandardApplicationData applicationData = null;
+            StandardApplicationData applicationData = null;
 
-            //if (application.ApplicationData != null)
-            //{
-            //    applicationData = new StandardApplicationData
-            //    {
-            //        StandardName = application.ApplicationData.StandardName
-            //    };
-            //}
+            if (application.ApplicationData != null)
+            {
+                applicationData = new StandardApplicationData
+                {
+                    StandardName = application.ApplicationData.StandardName
+                };
+            }
+            var sequenceNo = (SequenceNo)sequence.SequenceNo;
 
             //// Only go to search if application hasn't got a selected standard?
-            //if (sequence.SequenceId == SequenceId.Stage1)
-            //{
-            //    return RedirectToAction("Sequence", new { applicationId });
-            //}
-            //else if (sequence.SequenceId == SequenceId.Stage2 && string.IsNullOrWhiteSpace(applicationData?.StandardName))
-            //{
-            //    var org = await _apiClient.GetOrganisationByUserId(User.GetUserId());
-            //    if (org.RoEPAOApproved)
-            //    {
-            //        return RedirectToAction("Index", "Standard", new { applicationId });
-            //    }
+            if (sequenceNo == SequenceNo.Stage1)
+            {
+                return RedirectToAction("Sequence", new { application.ApplicationId });
+            }
+            else if (sequenceNo == SequenceNo.Stage2 && string.IsNullOrWhiteSpace(applicationData?.StandardName))
+            {
+                var org = await _apiClient.GetOrganisationByUserId(userId);
+                if (org.RoEPAOApproved)
+                {
+                   return RedirectToAction("Index", "Standard", new { application.Id });
+                }
 
-            //    return View("~/Views/Application/Stage2Intro.cshtml", applicationId);
-            //}
-            //else if (sequence.SequenceId == SequenceId.Stage2)
-            //{
-            //    return RedirectToAction("Sequence", new { applicationId });
-            //}
+                return View("~/Views/Application/Stage2Intro.cshtml", application.Id);
+            }
+            else if (sequenceNo == SequenceNo.Stage2)
+            {
+                return RedirectToAction("Sequence", new { application.Id });
+            }
 
-            //throw new BadRequestException("Section does not have a valid DisplayType");
-            return View();
+            throw new BadRequestException("Section does not have a valid DisplayType");
         }
 
+        [HttpGet("/Application/{applicationId}/Sequence")]
+        public async Task<IActionResult> Sequence(Guid Id)
+        {
+            // Break this out into a "Signpost" action.
+            var application = await _applicationApiClient.GetApplication(Id);
+            var sequence = await _qnaApiClient.GetApplicationActiveSequence(application.ApplicationId);
+            var sections = await _qnaApiClient.GetSections(application.ApplicationId, sequence.Id);
+            
+            var sequenceVm = new SequenceViewModel(sequence, application.Id, sections, null);
+            return View(sequenceVm);
+        }
 
         private async Task<Guid> GetUserId()
         {

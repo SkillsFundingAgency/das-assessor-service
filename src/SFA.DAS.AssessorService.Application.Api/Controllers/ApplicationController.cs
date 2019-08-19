@@ -53,5 +53,20 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             _logger.LogInformation($"Received request to retrieve application for user");
             return Ok(await _mediator.Send(new GetApplicationRequest(Guid.Parse(applicationId))));
         }
+
+        [HttpPost("createApplication", Name = "CreateApplication")]
+        [SwaggerResponse((int)HttpStatusCode.Created, Type = typeof(Guid))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<ActionResult<Guid>> CreateApplication(
+          [FromBody] CreateApplicationRequest createApplicationRequest)
+        {
+            _logger.LogInformation("Received Create Application Request");
+
+            var applicationResponse = await _mediator.Send(createApplicationRequest);
+
+            return CreatedAtRoute("CreateApplication",
+                applicationResponse);
+        }
     }
 }

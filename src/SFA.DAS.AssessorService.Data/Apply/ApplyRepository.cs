@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using Microsoft.Extensions.Logging;
+using SFA.DAS.AssessorService.Api.Types.Models.Apply;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.Data.DapperTypeHandlers;
@@ -55,15 +56,16 @@ namespace SFA.DAS.AssessorService.Data.Apply
             }
         }
 
-        public async Task<Guid> CreateApplication(string applicationData, Guid applyingOrganisationId, Guid applyingApplicationId)
+        public async Task<Guid> CreateApplication(CreateApplicationRequest applicationRequest)
         {
+            string applicationStatus = applicationRequest.ApplicationStatus;
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))
             {
                 return await connection.QuerySingleAsync<Guid>(
                     @"INSERT INTO Applications (ApplicationId, OrganisationId,ApplicationStatus,ApplicationData, CreatedAt, CreatedBy)
                                         OUTPUT INSERTED.[Id] 
-                                        VALUES (@applyingApplicationId, @applyingOrganisationId,@applicationStatus,@applicationData, GETUTCDATE(), @userId, @workflowId)",
-                    new { applyingApplicationId, applyingOrganisationId, applicationStatus = ApplicationStatus.InProgress, applicationData });
+                                        VALUES (@QnaApplicationId, @OrganisationId,@applicationStatus,@ApplicationData, GETUTCDATE(), @userId)",
+                    new { applicationRequest.QnaApplicationId, applicationRequest.OrganisationId, applicationStatus, applicationRequest.ApplicationData, applicationRequest.UserId });
             }
         }
     }
