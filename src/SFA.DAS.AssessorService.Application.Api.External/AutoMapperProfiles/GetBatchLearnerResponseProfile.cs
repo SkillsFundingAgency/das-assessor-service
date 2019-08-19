@@ -30,6 +30,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.AutoMapperProfiles
                 .AfterMap<MapStatusAction>()
                 .AfterMap<MapLearnerDataAction>()
                 .AfterMap<HideCertificateAction>()
+                .AfterMap<CollapseNullsAction>()
                 .ForAllOtherMembers(dest => dest.Ignore());
         }
 
@@ -124,6 +125,22 @@ namespace SFA.DAS.AssessorService.Application.Api.External.AutoMapperProfiles
                         // Ensure we have a OverallGrade, AchievementDate and a PostalContact before seeing any Cert details
                         destination.Certificate = null;
                     }
+                }
+            }
+        }
+
+        public class CollapseNullsAction : IMappingAction<AssessorService.Api.Types.Models.ExternalApi.Learners.GetBatchLearnerResponse, GetLearner>
+        {
+            public void Process(AssessorService.Api.Types.Models.ExternalApi.Learners.GetBatchLearnerResponse source, GetLearner destination)
+            {
+                if (destination.EpaDetails != null && string.IsNullOrEmpty(destination.EpaDetails.LatestEpaOutcome))
+                {
+                    destination.EpaDetails = null;
+                }
+
+                if (destination.Status != null && !destination.Status.CompletionStatus.HasValue)
+                {
+                    destination.Status = null;
                 }
             }
         }
