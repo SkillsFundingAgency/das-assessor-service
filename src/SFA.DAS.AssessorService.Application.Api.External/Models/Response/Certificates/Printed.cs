@@ -2,7 +2,7 @@
 
 namespace SFA.DAS.AssessorService.Application.Api.External.Models.Response.Certificates
 {
-    public class Printed : IEquatable<Printed>
+    public sealed class Printed : IEquatable<Printed>
     {
         public DateTime? PrintedAt { get; set; }
         public int? PrintedBatch { get; set; }

@@ -117,7 +117,7 @@ namespace SFA.DAS.AssessorService.Web.Staff
                     _.AssemblyContainingType(typeof(Startup));
                     _.WithDefaultConventions();
                 });
-                config.For<ITokenService>().Use<TokenService>();
+                config.For<ITokenService>().Use<TokenService>().Ctor<bool>("useSandbox").Is(false); // Always false unless we want to start integrating with the sandbox environment
                 config.For<IWebConfiguration>().Use(ApplicationConfiguration);
                 config.For<ISessionService>().Use<SessionService>().Ctor<string>().Is(_env.EnvironmentName);
                 config.For<CertificateDateViewModelValidator>().Use<CertificateDateViewModelValidator>();

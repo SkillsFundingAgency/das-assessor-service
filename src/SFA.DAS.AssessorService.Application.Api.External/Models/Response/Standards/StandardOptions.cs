@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace SFA.DAS.AssessorService.Application.Api.External.Models.Response.Standards
 {
-    public class StandardOptions : IEquatable<StandardOptions>
+    public sealed class StandardOptions : IEquatable<StandardOptions>
     {
         public int? StandardCode { get; set; }
         public string StandardReference { get; set; }

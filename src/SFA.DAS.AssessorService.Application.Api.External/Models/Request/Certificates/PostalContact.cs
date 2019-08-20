@@ -3,7 +3,7 @@ using System;
 
 namespace SFA.DAS.AssessorService.Application.Api.External.Models.Request.Certificates
 {
-    public class PostalContact : IEquatable<PostalContact>
+    public sealed class PostalContact : IEquatable<PostalContact>
     {
         [SwaggerRequired]
         public string ContactName { get; set; }
