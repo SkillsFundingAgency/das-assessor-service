@@ -8,6 +8,12 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
 {
     public interface IApiClient
     {
+        Task<GetLearnerResponse> GetLearner(GetBatchLearnerRequest request);
+
+        Task<IEnumerable<CreateEpaResponse>> CreateEpas(IEnumerable<CreateBatchEpaRequest> request);
+        Task<IEnumerable<UpdateEpaResponse>> UpdateEpas(IEnumerable<UpdateBatchEpaRequest> request);
+        Task<ApiResponse> DeleteEpa(DeleteBatchEpaRequest request);
+
         Task<GetCertificateResponse> GetCertificate(GetBatchCertificateRequest request);
         Task<IEnumerable<CreateCertificateResponse>> CreateCertificates(IEnumerable<CreateBatchCertificateRequest> request);
         Task<IEnumerable<UpdateCertificateResponse>> UpdateCertificates(IEnumerable<UpdateBatchCertificateRequest> request);

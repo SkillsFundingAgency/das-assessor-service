@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace SFA.DAS.AssessorService.Application.Api.External.Models.Response.Certificates
 {
-    public class PostalContact : IEquatable<PostalContact>
+    public sealed class PostalContact : IEquatable<PostalContact>
     {
         [Required]
         public string ContactName { get; set; }
