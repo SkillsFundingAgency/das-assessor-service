@@ -7,7 +7,7 @@ namespace SFA.DAS.AssessorService.ApplyTypes
     public class ApplicationSequence : ApplyTypeBase
     {
         public Guid ApplicationId { get; set; }
-        public int SequenceId { get; set; }
+        public int SequenceNo { get; set; }
         public bool IsActive { get; set; }
         public List<ApplicationSection> Sections { get; set; }
         public bool NotRequired { get; set; }
@@ -22,5 +22,11 @@ namespace SFA.DAS.AssessorService.ApplyTypes
         public const string Resubmitted = "Resubmitted";
         public const string Rejected = "Rejected";
         public const string Approved = "Approved";
+    }
+
+    public enum SequenceNo
+    {
+        Stage1 = 1,
+        Stage2 = 2
     }
 }

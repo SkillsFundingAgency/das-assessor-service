@@ -22,7 +22,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ContactHandlers
             _organisationQueryRepository = organisationQueryRepository;
         }
 
-        public async Task Handle(UpdateContactWithOrgAndStausRequest updateContactStatusRequest, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(UpdateContactWithOrgAndStausRequest updateContactStatusRequest, CancellationToken cancellationToken)
         {
            var contact =  await _contactRepository.UpdateContactWithOrganisationData(updateContactStatusRequest);
             if (contact
@@ -32,7 +32,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ContactHandlers
                 await SetOrganisationStatusToApplyAndSetPrimaryContact(contact
                     .EndPointAssessorOrganisationId, contact);
             }
-
+            return Unit.Value;
         }
 
         private async Task SetOrganisationStatusToApplyAndSetPrimaryContact(string endPointAssessorOrganisationId, Contact contact)

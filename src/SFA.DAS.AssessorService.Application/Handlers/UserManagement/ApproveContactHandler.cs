@@ -29,7 +29,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.UserManagement
             _organisationQueryRepository = organisationQueryRepository;
         }
 
-        public async Task Handle(ApproveContactRequest message, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(ApproveContactRequest message, CancellationToken cancellationToken)
         {
             const string epaoApproveConfirmTemplate = "EPAOUserApproveConfirm";
 
@@ -49,6 +49,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.UserManagement
                     LoginLink = _config.ServiceLink,
                     ServiceTeam = "Apprenticeship assessment services team"
                 }), cancellationToken);
+            return Unit.Value;
         }
     }
 }

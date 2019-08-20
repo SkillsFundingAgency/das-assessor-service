@@ -8,6 +8,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
     public interface IApplicationApiClient
     {
         Task<List<ApplicationResponse>> GetApplications(Guid userId, bool createdBy);
+        Task<ApplicationResponse> GetApplication(Guid applicationId);
+        Task<Guid> CreateApplication(CreateApplicationRequest createApplicationRequest);
 
         //Task<UploadResult> Upload(Guid applicationId, string userId, int sequenceId, int sectionId, string pageId, IFormFileCollection files);
 

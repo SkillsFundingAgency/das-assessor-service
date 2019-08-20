@@ -1,0 +1,84 @@
+@using SFA.DAS.AssessorService.ApplyTypes
+@model SFA.DAS.AssessorService.Web.ViewModels.Apply.SequenceViewModel
+
+@{
+    ViewBag.Title = "Application overview";
+    Layout = "_Layout";
+}
+
+@* Commenting out the below until we actually need it.. will need logic if (applications > 1) {} *@
+@* <a asp-action="Applications" asp-controller="Application" class="govuk-back-link">Back to application selection</a> *@
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <h1 class="govuk-heading-xl">Application overview</h1>
+
+            @if (!ViewData.ModelState.IsValid || Model.ErrorMessages?.Any() is true)
+            {
+                <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
+                    <h2 class="govuk-error-summary__title" id="error-summary-title">
+                        There is a problem
+                    </h2>
+                    <div class="govuk-error-summary__body">
+                        <ul class="govuk-list govuk-error-summary__list">
+                            @foreach (var error in Model.ErrorMessages)
+                            {
+                                <li>
+                                    <a href="#@error.Field">@error.ErrorMessage</a>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            }
+
+            @if (Model.Status == ApplicationSequenceStatus.Submitted)
+            {
+                <div class="das-apply-notification-summary govuk-!-margin-bottom-8">
+                    <h2 class="govuk-heading-l">
+                        Your application has been submitted
+                    </h2>
+                    <div class="govuk-body govuk-!-margin-bottom-0">
+                        Once your application has been reviewed you'll hear from us by email.
+                    </div>
+                </div>
+            }
+            else
+            {
+                <ul class="govuk-list">
+                    @foreach (var applicationSection in Model.Sections.OrderBy(s => s.SectionNo))
+                    {
+                        <li>
+                            <h2 id="@applicationSection.Id" class="govuk-heading-m govuk-!-margin-bottom-2">
+                                @applicationSection.LinkTitle
+                            </h2>
+                            <span id="company-details-hint" class="govuk-hint">
+                                @applicationSection.QnAData.Pages.Count(x => x.Complete == true) of @applicationSection.QnAData.Pages.Count( x => x.Active) questions completed
+                            </span>
+                            @if (Model.Status != ApplicationSequenceStatus.Submitted)
+                            {
+                                <a class="govuk-link" href="@Url.Action("Section", "Application", new { @Model.ApplicationId, Model.SequenceNo, applicationSection.SectionNo })">
+                                    Go to @applicationSection.LinkTitle.ToLower()
+                                </a>
+                            }
+                        </li>
+                        <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+                    }
+                </ul>
+
+                @if (Model.Status != ApplicationSequenceStatus.Submitted)
+                {
+                    <form asp-action="Submit" asp-controller="Application">
+                        <input type="hidden" id="applicationId" name="applicationId" value="@Model.ApplicationId" />
+                        <input type="hidden" id="sequenceId" name="sequenceId" value="@Model.SequenceNo" />
+                        <div class="govuk-form-group">
+                            <button type="submit" class="govuk-button">
+                                Submit
+                            </button>
+                        </div>
+                    </form>
+                }
+            }
+        </div>
+    </div>
+</main>

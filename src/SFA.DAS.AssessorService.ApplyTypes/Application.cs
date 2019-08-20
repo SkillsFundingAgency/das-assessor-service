@@ -13,19 +13,23 @@ namespace SFA.DAS.AssessorService.ApplyTypes
 
     public class ApplicationData
     {
+        public string OrganisationReferenceId { get; set; }
+        public string OrganisationName { get; set; }
         public string ReferenceNumber { get; set; }
-        public int StandardCode { get; set; }
         public string StandardName { get; set; }
-        public List<Submission> InitSubmissions { get; set; }
-        public int InitSubmissionsCount { get; set; }
-        public DateTime? LatestInitSubmissionDate { get; set; }
-        public DateTime? InitSubmissionFeedbackAddedDate { get; set; }
-        public DateTime? InitSubmissionClosedDate { get; set; }
-        public List<Submission> StandardSubmissions { get; set; }
-        public int StandardSubmissionsCount { get; set; }
-        public DateTime? LatestStandardSubmissionDate { get; set; }
-        public DateTime? StandardSubmissionFeedbackAddedDate { get; set; }
-        public DateTime? StandardSubmissionClosedDate { get; set; }
+        public string StandardCode { get; set; }
+        public string TradingName { get; set; }
+        public bool UseTradingName { get; set; }
+        public string ContactGivenName { get; set; }
+
+    }
+
+    public class StandardApplicationData
+    {
+        public string StandardName { get; set; }
+        public int StandardCode { get; set; }
+        public Guid UserId { get; set; }
+        public string UserEmail { get; set; }
     }
 
     public class Submission

@@ -4,12 +4,12 @@ using SFA.DAS.AssessorService.Settings;
 
 namespace SFA.DAS.AssessorService.Application.Api.Client
 {
-    public class ApplyTokenService : IApplyTokenService
+    public class QnaTokenService : IQnaTokenService
     {
         private readonly IWebConfiguration _configuration;
         private readonly IHostingEnvironment _hostingEnvironment;
 
-        public ApplyTokenService(IWebConfiguration configuration, IHostingEnvironment hostingEnvironment)
+        public QnaTokenService(IWebConfiguration configuration, IHostingEnvironment hostingEnvironment)
         {
             _hostingEnvironment = hostingEnvironment;
             _configuration = configuration;
@@ -20,10 +20,10 @@ namespace SFA.DAS.AssessorService.Application.Api.Client
             if (_hostingEnvironment.IsDevelopment())
                 return string.Empty;
 
-            var tenantId = _configuration.ApplyApiAuthentication.TenantId;// 
-            var clientId = _configuration.ApplyApiAuthentication.ClientId;// 
-            var appKey = _configuration.ApplyApiAuthentication.ClientSecret;// 
-            var resourceId = _configuration.ApplyApiAuthentication.ResourceId;// 
+            var tenantId = _configuration.QnaApiAuthentication.TenantId;
+            var clientId = _configuration.QnaApiAuthentication.ClientId;
+            var appKey = _configuration.QnaApiAuthentication.ClientSecret;
+            var resourceId = _configuration.QnaApiAuthentication.ResourceId;
 
             var authority = $"https://login.microsoftonline.com/{tenantId}";
             var clientCredential = new ClientCredential(clientId, appKey);

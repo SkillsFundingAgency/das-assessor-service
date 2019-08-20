@@ -19,7 +19,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
             _certificateRepository = certificateRepository;
         }
 
-        public async Task Handle(CertificateReprintRequest request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(CertificateReprintRequest request, CancellationToken cancellationToken)
         {
             var certificate = await _certificateRepository.GetCertificate(request.CertificateReference, request.LastName, request.AchievementDate);
             if (certificate == null)
@@ -27,7 +27,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
 
             if (certificate.Status == SFA.DAS.AssessorService.Domain.Consts.CertificateStatus.Reprint)
             {
-                return;
+                return Unit.Value;
             }
 
             if (certificate.Status == SFA.DAS.AssessorService.Domain.Consts.CertificateStatus.Printed)
@@ -40,6 +40,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
             {
                 throw new NotFound();
             }
+            return Unit.Value;
         }
     }
 }

@@ -16,8 +16,7 @@
         string SpecflowDBTestConnectionString { get; set; }
         string SessionRedisConnectionString { get; set; }
         AuthSettings StaffAuthentication { get; set; }
-        ClientApiAuthentication ApplyApiAuthentication { get; set; }
-        string ApplyBaseAddress { get; set; }
+        ClientApiAuthentication QnaApiAuthentication { get; set; }
         string ServiceLink { get; set; }
         DfeSignInConfig DfeSignIn { get; set; }
 

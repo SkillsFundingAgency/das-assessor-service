@@ -30,7 +30,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.UserManagement
             _contactRepository = contactRepository;
         }
         
-        public async Task Handle(RequestForPrivilegeRequest message, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(RequestForPrivilegeRequest message, CancellationToken cancellationToken)
         {
             var privilege = (await _contactQueryRepository.GetAllPrivileges()).Single(p => p.Id == message.PrivilegeId);
             
@@ -62,11 +62,14 @@ namespace SFA.DAS.AssessorService.Application.Handlers.UserManagement
                     }));
                 });   
             }
+            return Unit.Value;
         }
 
         private static bool RequestingUserHasUserManagementPrivilege(List<Contact> contactsWithUserManagementPrivilege, Contact requestingContact)
         {
             return contactsWithUserManagementPrivilege.Any(c => c.Id == requestingContact.Id);
         }
+
+       
     }
 }

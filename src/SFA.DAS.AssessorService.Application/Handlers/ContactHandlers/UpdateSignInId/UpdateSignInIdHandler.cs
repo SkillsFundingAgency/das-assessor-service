@@ -19,13 +19,14 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ContactHandlers.UpdateSig
             _contactQueryRepository = contactQueryRepository;
         }
 
-        public async Task Handle(UpdateSignInIdRequest request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(UpdateSignInIdRequest request, CancellationToken cancellationToken)
         {
             var existingContact = await _contactQueryRepository.GetContactById(request.ContactId);
 
             await UpdateContactStatusToLive(existingContact);
             
             await _contactRepository.UpdateSignInId(existingContact.Id, request.SignInId);
+            return Unit.Value;
         }
         private async Task UpdateContactStatusToLive(Contact existingContact)
         {
