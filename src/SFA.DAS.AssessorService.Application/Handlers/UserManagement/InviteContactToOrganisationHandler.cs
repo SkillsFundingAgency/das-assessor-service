@@ -51,7 +51,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.UserManagement
 
             var inviter = await _contactQueryRepository.GetContactById(request.InvitedByContactId);
                 
-            await _signInService.InviteUserToOrganisation(request.Email, request.GivenName, request.FamilyName, newContact.Id, organisation.EndPointAssessorName, inviter.DisplayName);
+            await _signInService.InviteUserToOrganisation(request.Email, request.GivenName, request.FamilyName, newContact.Id, organisation.EndPointAssessorName, inviter.DisplayName, inviter.Email);
 
             return new InviteContactToOrganisationResponse {Success = true, ContactId = newContact.Id};
         }
