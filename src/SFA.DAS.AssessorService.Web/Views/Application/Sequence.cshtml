@@ -57,7 +57,7 @@
                             </span>
                             @if (Model.Status != ApplicationSequenceStatus.Submitted)
                             {
-                                <a class="govuk-link" href="@Url.Action("Section", "Application", new { applicationSection.ApplicationId, Model.SequenceNo, applicationSection.SectionNo })">
+                                <a class="govuk-link" href="@Url.Action("Section", "Application", new { @Model.ApplicationId, Model.SequenceNo, applicationSection.SectionNo })">
                                     Go to @applicationSection.LinkTitle.ToLower()
                                 </a>
                             }

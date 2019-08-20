@@ -39,12 +39,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Apply
         [HttpGet("/Application")]
         public async Task<IActionResult> Applications()
         {
-            var user = User.Identity.Name;
-          
+            _logger.LogInformation($"Got LoggedInUser from Session: { User.Identity.Name}");
+
             var userId = await GetUserId();
-
-            _logger.LogInformation($"Got LoggedInUser from Session: {user}");
-
             var org = await _apiClient.GetOrganisationByUserId(userId);
             var applications = await _applicationApiClient.GetApplications(userId, false);
             applications = applications.Where(app => app.ApplicationStatus != ApplicationStatus.Rejected).ToList();
@@ -76,7 +73,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Apply
                 case ApplicationStatus.Approved:
                     return View(applications);
                 default:
-                    return RedirectToAction("SequenceSignPost", new { applicationId = application.Id });
+                    return RedirectToAction("SequenceSignPost", new { Id = application.Id });
             }
 
         }
@@ -103,7 +100,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Apply
             //Todo: Create a page to go to if qna fails checks or invalid response is received
             var  appResponse = await _applicationApiClient.CreateApplication(new CreateApplicationRequest
             {
-                ApplicationData = applicationStartRequest.ApplicationData,
                 ApplicationStatus = ApplicationStatus.InProgress,
                 OrganisationId = org.Id,
                 QnaApplicationId = qnaResponse?.ApplicationId??Guid.Empty,
@@ -113,7 +109,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Apply
             return RedirectToAction("SequenceSignPost", new { Id = appResponse });
         }
 
-        [HttpGet("/Application/{applicationId}")]
+        [HttpGet("/Application/{Id}")]
         public async Task<IActionResult> SequenceSignPost(Guid Id)
         {
             var userId = await GetUserId();
@@ -175,10 +171,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Apply
             throw new BadRequestException("Section does not have a valid DisplayType");
         }
 
-        [HttpGet("/Application/{applicationId}/Sequence")]
+        [HttpGet("/Application/{Id}/Sequence")]
         public async Task<IActionResult> Sequence(Guid Id)
         {
-            // Break this out into a "Signpost" action.
             var application = await _applicationApiClient.GetApplication(Id);
             var sequence = await _qnaApiClient.GetApplicationActiveSequence(application.ApplicationId);
             var sections = await _qnaApiClient.GetSections(application.ApplicationId, sequence.Id);

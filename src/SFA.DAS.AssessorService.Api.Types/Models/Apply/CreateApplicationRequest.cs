@@ -10,7 +10,6 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Apply
         public Guid QnaApplicationId { get; set; }
         public Guid OrganisationId { get; set; }
         public string ApplicationStatus { get; set; }
-        public string ApplicationData { get; set; }
         public Guid UserId { get; set; }
     }
 }

@@ -62,10 +62,10 @@ namespace SFA.DAS.AssessorService.Data.Apply
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))
             {
                 return await connection.QuerySingleAsync<Guid>(
-                    @"INSERT INTO Applications (ApplicationId, OrganisationId,ApplicationStatus,ApplicationData, CreatedAt, CreatedBy)
+                    @"INSERT INTO Applications (ApplicationId, OrganisationId,ApplicationStatus, CreatedAt, CreatedBy)
                                         OUTPUT INSERTED.[Id] 
-                                        VALUES (@QnaApplicationId, @OrganisationId,@applicationStatus,@ApplicationData, GETUTCDATE(), @userId)",
-                    new { applicationRequest.QnaApplicationId, applicationRequest.OrganisationId, applicationStatus, applicationRequest.ApplicationData, applicationRequest.UserId });
+                                        VALUES (@QnaApplicationId, @OrganisationId,@applicationStatus, GETUTCDATE(), @userId)",
+                    new { applicationRequest.QnaApplicationId, applicationRequest.OrganisationId, applicationStatus, applicationRequest.UserId });
             }
         }
     }
