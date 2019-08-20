@@ -40,16 +40,10 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             var productId = _webConfiguration.AzureApiAuthentication.ProductId;
 
             var users = await GetAllUsers(ukprn, email);
-            var loggedInUser = users.Where(u => u.Email.Equals(email, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
+            var loggedInUser = users.FirstOrDefault(u => u.Email.Equals(email, StringComparison.InvariantCultureIgnoreCase));
 
             var subscriptionsToShow = users.SelectMany(u => u.Subscriptions.Where(s => s.IsActive && s.ProductId == productId)).ToList();
             var primaryContacts = subscriptionsToShow.SelectMany(s => users.Where(u => u.Id == s.UserId)).ToList();
-
-            // For now we show all subscriptions from the logged in user and the 'productId' subscription if the primary contact has it too.
-            if (loggedInUser != null)
-            {
-                subscriptionsToShow.AddRange(loggedInUser.Subscriptions.Where(s => s.IsActive));
-            }
 
             var viewmodel = new ExternalApiDetailsViewModel
             {
@@ -87,18 +81,13 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         public async Task<IActionResult> EnableAccess()
         {
             var ukprn = _contextAccessor.HttpContext.User.Claims.FirstOrDefault(c => c.Type == "http://schemas.portal.com/ukprn")?.Value;
-            var username = _contextAccessor.HttpContext.User.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
-
-            var result = await _apiClient.CreateUser(ukprn, username);
+            await _apiClient.CreateUser(ukprn);
             return RedirectToAction("Index");
         }
 
         [HttpPost]
         public async Task<IActionResult> RemoveAccess(AzureUser viewModel)
         {
-            var ukprn = _contextAccessor.HttpContext.User.Claims.FirstOrDefault(c => c.Type == "http://schemas.portal.com/ukprn")?.Value;
-            var username = _contextAccessor.HttpContext.User.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
-
             if (viewModel.IsActive)
             {
                 await _apiClient.DeleteUser(viewModel.Id);
@@ -110,14 +99,14 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> RenewPrimaryKey(string subscriptionId, string userId)
         {
-            var user = await _apiClient.RegeneratePrimarySubscriptionKey(subscriptionId);
+            await _apiClient.RegeneratePrimarySubscriptionKey(subscriptionId);
             return RedirectToAction("Index");
         }
 
         [HttpPost]
         public async Task<IActionResult> RenewSecondaryKey(string subscriptionId, string userId)
         {
-            var user = await _apiClient.RegenerateSecondarySubscriptionKey(subscriptionId);
+            await _apiClient.RegenerateSecondarySubscriptionKey(subscriptionId);
             return RedirectToAction("Index");
         }
     }

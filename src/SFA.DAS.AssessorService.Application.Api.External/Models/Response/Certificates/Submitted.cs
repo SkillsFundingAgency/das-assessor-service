@@ -2,7 +2,7 @@
 
 namespace SFA.DAS.AssessorService.Application.Api.External.Models.Response.Certificates
 {
-    public class Submitted : IEquatable<Submitted>
+    public sealed class Submitted : IEquatable<Submitted>
     {
         public DateTime? SubmittedAt { get; set; }
         public string SubmittedBy { get; set; }

@@ -1,6 +1,6 @@
 ﻿namespace SFA.DAS.AssessorService.Domain.Consts
 {
-    public class CertificateGrade
+    public static class CertificateGrade
     {
         public const string Pass = "Pass";
         public const string Credit = "Credit";
