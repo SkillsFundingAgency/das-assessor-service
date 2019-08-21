@@ -59,7 +59,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
             }
         }
         
-        public async Task<InviteUserResponse> InviteUserToOrganisation(string email, string givenName, string familyName, Guid userId, string organisationName, string inviter, string inviterEmail)
+        public async Task<InviteUserResponse> InviteUserToOrganisation(string email, string givenName, string familyName, Guid userId, string organisationName, string inviter, Guid inviterId)
         {
             var tokenResponse = await GetAuthorizationToken();
             
@@ -76,7 +76,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
                     callback = _config.DfeSignIn.CallbackUri, 
                     organisationName,
                     inviter,
-                    inviterEmail
+                    inviterId = inviterId.ToString()
                 });
 
                 var inviteUrl = _config.DfeSignIn.ApiUri + "/inviteToOrganisation";
