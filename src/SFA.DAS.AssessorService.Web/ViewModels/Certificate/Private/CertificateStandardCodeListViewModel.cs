@@ -12,15 +12,17 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate.Private
         
         public IEnumerable<SelectListItem> StandardCodes { get; set; }
 
-        public void FromCertificate(Domain.Entities.Certificate cert)
+        public override void FromCertificate(Domain.Entities.Certificate cert)
         {
-            BaseFromCertificate(cert);
+            base.FromCertificate(cert);
+
             SelectedStandardCode = cert.StandardCode.ToString();
         }
 
         public Domain.Entities.Certificate GetCertificateFromViewModel(Domain.Entities.Certificate certificate, CertificateData data)
         {
             certificate.StandardCode = Convert.ToInt32(SelectedStandardCode);
+            data.StandardReference = StandardReference;
             data.StandardLevel = Level;
             data.StandardName = Standard;
 

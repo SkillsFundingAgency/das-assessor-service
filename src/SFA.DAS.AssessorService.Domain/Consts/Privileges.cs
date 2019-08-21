@@ -3,9 +3,11 @@ namespace SFA.DAS.AssessorService.Domain.Consts
 {
     public static class Privileges
     {
-        public const string ManageUsers = "Manage users";
-        public const string RecordGrades = "Record grades and issue certificates";
-        public const string ViewStandards = "View standards";
-        public const string ApplyForStandards = "Apply for standards";
+        public const string ViewCompletedAssessments = "ViewCompletedAssessments";
+        public const string ApplyForStandard = "ApplyForStandard";
+        public const string ManageAPISubscription = "ManageAPISubscription";
+        public const string RecordGrades = "RecordGrades";
+        public const string ManageUsers = "ManageUsers";
+        public const string ViewPipeline = "ViewPipeline";
     }
 }

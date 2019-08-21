@@ -7,12 +7,12 @@ BEGIN
 select 
 	os.StandardCode as StandardCode,
 	sc.Title as 'StandardName',
-	JSON_VALUE(sc.StandardData, '$.Level') as [Level] FROM organisationStandard os 
-	INNER join organisations o on os.EndPointAssessorOrganisationId = o.EndPointAssessorOrganisationId and o.EndPointAssessorOrganisationId = @EPAOID
+	JSON_VALUE(sc.StandardData, '$.Level') as [Level] FROM OrganisationStandard os 
+	INNER join Organisations o on os.EndPointAssessorOrganisationId = o.EndPointAssessorOrganisationId and o.EndPointAssessorOrganisationId = @EPAOID
 	LEFT outer join StandardCollation sc on os.StandardCode = sc.StandardId
-	LEFT outer join contacts c on os.ContactId = c.Id
-	WHERE os.status = 'Live' 
-	and (os.effectiveTo is null OR os.EffectiveTo > GETDATE())
+	LEFT outer join Contacts c on os.ContactId = c.Id
+	WHERE os.Status = 'Live' 
+	and (os.EffectiveTo is null OR os.EffectiveTo > GETDATE())
 	and (
 		JSON_VALUE(StandardData,'$.EffectiveTo') is null OR
 		JSON_VALUE(StandardData,'$.EffectiveTo') > GETDATE()

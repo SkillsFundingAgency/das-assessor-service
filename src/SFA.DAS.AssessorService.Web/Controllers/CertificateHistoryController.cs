@@ -4,12 +4,14 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
+using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Web.Constants;
 using SFA.DAS.AssessorService.Web.Infrastructure;
+using SFA.DAS.AssessorService.Web.StartupConfiguration;
 
 namespace SFA.DAS.AssessorService.Web.Controllers
 {
-    [Authorize]
+    [PrivilegeAuthorize(Privileges.ViewCompletedAssessments)]
     [CheckSession]
     [Route("[controller]/[action]")]
     public class CertificateHistoryController : Controller
@@ -36,9 +38,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [TypeFilter(typeof(MenuFilter), Arguments = new object[] { Pages.Assessments })]
         public async Task<IActionResult> Index(int? pageIndex)
         {
-            var username = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
+            var endPointAssessorOrganisationId = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/epaoid")?.Value;
 
-            var certificateHistory = await _certificateApiClient.GetCertificateHistory(pageIndex ?? 1, username);            
+            var certificateHistory = await _certificateApiClient.GetCertificateHistory(pageIndex ?? 1, endPointAssessorOrganisationId);            
             return View("Index", certificateHistory);
         }
     }

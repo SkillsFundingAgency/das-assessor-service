@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Application.Api.External.Infrastructure;
 using SFA.DAS.AssessorService.Application.Api.External.Middleware;
+using SFA.DAS.AssessorService.Application.Api.External.Models.Response;
 using SFA.DAS.AssessorService.Application.Api.External.StartupConfiguration;
 using SFA.DAS.AssessorService.Application.Api.External.SwaggerHelpers;
 using SFA.DAS.AssessorService.Settings;
@@ -19,6 +20,8 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
+using System.Net;
 
 namespace SFA.DAS.AssessorService.Application.Api.External
 {
@@ -34,12 +37,16 @@ namespace SFA.DAS.AssessorService.Application.Api.External
         {
             _env = env;
             _logger = logger;
+            _logger.LogInformation("In startup constructor.  Before Config");
             Configuration = configuration;
 
-            if(!bool.TryParse(Configuration["UseSandboxServices"], out UseSandbox))
+            if(!bool.TryParse(configuration["UseSandboxServices"], out UseSandbox))
             {
-                UseSandbox = "yes".Equals(Configuration["UseSandboxServices"], StringComparison.InvariantCultureIgnoreCase);
+                UseSandbox = "yes".Equals(configuration["UseSandboxServices"], StringComparison.InvariantCultureIgnoreCase);
             }
+
+            _logger.LogInformation($"UseSandbox is: {UseSandbox.ToString()}");
+            _logger.LogInformation("In startup constructor.  After GetConfig");
         }
 
         public IConfiguration Configuration { get; }
@@ -56,8 +63,9 @@ namespace SFA.DAS.AssessorService.Application.Api.External
                 {
                     services.AddHttpClient<IApiClient, SandboxApiClient>(config =>
                     {
-                        config.BaseAddress = new Uri(ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress);
+                        config.BaseAddress = new Uri(ApplicationConfiguration.SandboxClientApiAuthentication.ApiBaseAddress);
                         config.DefaultRequestHeaders.Add("Accept", "Application/json");
+                        config.Timeout = TimeSpan.FromMinutes(5);
                     });
                 }
                 else
@@ -66,6 +74,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External
                     {
                         config.BaseAddress = new Uri(ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress);
                         config.DefaultRequestHeaders.Add("Accept", "Application/json");
+                        config.Timeout = TimeSpan.FromMinutes(5);
                     });
                 }
 
@@ -75,6 +84,9 @@ namespace SFA.DAS.AssessorService.Application.Api.External
                     c.EnableAnnotations();
                     c.OperationFilter<UpdateOptionalParamatersWithDefaultValues>();
                     c.OperationFilter<ExamplesOperationFilter>();
+                    c.SchemaFilter<NullableSchemaFilter>();
+                    c.SchemaFilter<SwaggerRequiredSchemaFilter>();
+                    c.CustomSchemaIds(x => x.FullName.Replace("SFA.DAS.AssessorService.Application.Api.External.Models.", ""));
 
                     if (_env.IsDevelopment())
                     {
@@ -89,11 +101,32 @@ namespace SFA.DAS.AssessorService.Application.Api.External
 
                 services.AddMvc()
                     .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
+                    .ConfigureApiBehaviorOptions(options =>
+                    {
+                        options.InvalidModelStateResponseFactory = context =>
+                        {
+                            try
+                            {
+                                var requestUrl = context.HttpContext.Request.Path;
+                                var requestMethod = context.HttpContext.Request.Method;
+                                var modelErrors = context.ModelState.SelectMany(model => model.Value.Errors.Select(err => err.ErrorMessage));
+                                _logger.LogError($"Invalid request detected. {requestMethod.ToUpper()}: {requestUrl} - Errors: {string.Join(",", modelErrors)}");
+                            }
+                            catch
+                            {
+                                // safe to ignore!
+                            }
+
+                            var error = new ApiResponse((int)HttpStatusCode.Forbidden, "Your request contains invalid input. Please ensure it matches the swagger definition and try again.");
+                            return new BadRequestObjectResult(error) { StatusCode = error.StatusCode };
+                        };
+                    }
+                    )
                     .AddJsonOptions(options =>
                     {
                         options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
                         options.SerializerSettings.DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate;
-                        options.SerializerSettings.NullValueHandling = NullValueHandling.Include;
+                        options.SerializerSettings.NullValueHandling = NullValueHandling.Include;                        
                     });
 
                 services.AddLocalization(opts => { opts.ResourcesPath = "Resources"; });
@@ -127,7 +160,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External
                     _.WithDefaultConventions();
                 });
 
-                config.For<ITokenService>().Use<TokenService>();
+                config.For<ITokenService>().Use<TokenService>().Ctor<bool>("useSandbox").Is(UseSandbox);
                 config.For<IWebConfiguration>().Use(ApplicationConfiguration);
 
                 config.Populate(services);

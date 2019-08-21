@@ -41,10 +41,10 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
                 var epaDetails = certData.EpaDetails ?? new EpaDetails();
                 if (epaDetails.Epas is null) epaDetails.Epas = new List<EpaRecord>();
 
-                if (certData.AchievementDate != null && !epaDetails.Epas.Any(rec => rec.EpaDate == certData.AchievementDate.Value && rec.EpaOutcome == certData.OverallGrade))
+                var epaOutcome = certData.OverallGrade == CertificateGrade.Fail ? EpaOutcome.Fail : EpaOutcome.Pass;
+                if (certData.AchievementDate != null && !epaDetails.Epas.Any(rec => rec.EpaDate == certData.AchievementDate.Value && rec.EpaOutcome == epaOutcome))
                 {
-                    var epaOutcome = certData.OverallGrade == CertificateGrade.Fail ? "fail" : "pass";
-                    var record = new EpaRecord { EpaDate = certData.AchievementDate.Value, EpaOutcome = certData.OverallGrade };
+                    var record = new EpaRecord { EpaDate = certData.AchievementDate.Value, EpaOutcome = epaOutcome };
                     epaDetails.Epas.Add(record);
 
                     var latestRecord = epaDetails.Epas.OrderByDescending(epa => epa.EpaDate).First();

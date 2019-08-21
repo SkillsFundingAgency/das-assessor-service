@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using FizzWare.NBuilder;
 using FluentAssertions;
@@ -42,8 +43,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
                                                                .With(c => c.CertificateReference = _certificateReference)
                                                                .With(c => c.CertificateData = JsonConvert.SerializeObject(existingCertData)).Build();
 
-            var updatedCertData = Builder<CertificateData>.CreateNew().With(cd => cd.OverallGrade = CertificateGrade.Pass).With(cd => cd.AchievementDate = DateTime.Now).Build();
-            var epaoRecord = new EpaRecord { EpaDate = updatedCertData.AchievementDate.Value, EpaOutcome = "pass" };
+            var updatedCertData = Builder<CertificateData>.CreateNew().With(cd => cd.OverallGrade = CertificateGrade.Credit).With(cd => cd.AchievementDate = DateTime.Now).Build();
+            var epaoRecord = new EpaRecord { EpaDate = updatedCertData.AchievementDate.Value, EpaOutcome = EpaOutcome.Pass };
             var epaoDetails = new EpaDetails
             {
                 EpaReference = _certificateReference,
@@ -82,8 +83,16 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
         {
             var returnedCertificateData = JsonConvert.DeserializeObject<CertificateData>(_returnedCertificate.CertificateData);
             returnedCertificateData.EpaDetails.EpaReference.Should().Be("00010000");
-            returnedCertificateData.EpaDetails.LatestEpaOutcome.Should().Be("pass");
+            returnedCertificateData.EpaDetails.LatestEpaOutcome.Should().Be(EpaOutcome.Pass);
             returnedCertificateData.EpaDetails.Epas.Should().NotBeEmpty();
+        }
+
+        [Test]
+        public void Then_the_EpaOutcome_will_be_pass_instead_of_OverallGrade()
+        {
+            var returnedCertificateData = JsonConvert.DeserializeObject<CertificateData>(_returnedCertificate.CertificateData);
+            returnedCertificateData.EpaDetails.LatestEpaOutcome.Should().Be(EpaOutcome.Pass);
+            returnedCertificateData.EpaDetails.Epas.OrderByDescending(epa => epa.EpaDate).First().EpaOutcome.Should().Be(EpaOutcome.Pass);
         }
     }
 }

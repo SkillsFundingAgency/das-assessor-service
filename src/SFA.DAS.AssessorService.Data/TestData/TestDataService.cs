@@ -130,7 +130,7 @@ namespace SFA.DAS.AssessorService.Data.TestData
                     var certificateReference = $"104123{i:00}";
                     var achievementDate = DateTime.Now.AddDays(-1);
                     var grade = CertificateGrade.Pass;
-                    var epaOutcome = "pass";
+                    var epaOutcome = EpaOutcome.Pass;
 
                     var certificateData = new CertificateData
                     {
@@ -152,6 +152,7 @@ namespace SFA.DAS.AssessorService.Data.TestData
                         Registration = "Registered",
                         LearningStartDate = DateTime.Now.AddDays(10),
 
+                        StandardReference = i.ToString(),
                         StandardLevel = 1,
                         StandardName = "Test",
                         StandardPublicationDate = DateTime.Now,

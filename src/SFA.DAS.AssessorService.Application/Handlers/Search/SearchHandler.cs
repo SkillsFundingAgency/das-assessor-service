@@ -6,21 +6,19 @@ using System.Threading.Tasks;
 using AutoMapper;
 using MediatR;
 using Microsoft.Extensions.Logging;
-using SFA.DAS.Apprenticeships.Api.Types.AssessmentOrgs;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Application.Logging;
 using SFA.DAS.AssessorService.Domain.Entities;
-using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
-using SFA.DAS.AssessorService.ExternalApis.Services;
 using Organisation = SFA.DAS.AssessorService.Domain.Entities.Organisation;
+using SearchData = SFA.DAS.AssessorService.Domain.Entities.SearchData;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Search
 {
     public class SearchHandler : IRequestHandler<SearchQuery, List<SearchResult>>
     {
-        private readonly IAssessmentOrgsApiClient _assessmentOrgsApiClient;
         private readonly IOrganisationQueryRepository _organisationRepository;
+        private readonly IRegisterQueryRepository _registerQueryRepository;
         private readonly IIlrRepository _ilrRepository;
         private readonly ICertificateRepository _certificateRepository;
         private readonly ILogger<SearchHandler> _logger;
@@ -28,10 +26,10 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
         private readonly IStandardService _standardService;
         private Dictionary<char, char[]> _alternates;
 
-        public SearchHandler(IAssessmentOrgsApiClient assessmentOrgsApiClient, IOrganisationQueryRepository organisationRepository, 
+        public SearchHandler(IRegisterQueryRepository registerQueryRepository, IOrganisationQueryRepository organisationRepository, 
             IIlrRepository ilrRepository, ICertificateRepository certificateRepository, ILogger<SearchHandler> logger, IContactQueryRepository contactRepository, IStandardService standardService)
         {
-            _assessmentOrgsApiClient = assessmentOrgsApiClient;
+            _registerQueryRepository = registerQueryRepository;
             _organisationRepository = organisationRepository;
             _ilrRepository = ilrRepository;
             _certificateRepository = certificateRepository;
@@ -58,13 +56,29 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
 
         public async Task<List<SearchResult>> Handle(SearchQuery request, CancellationToken cancellationToken)
         {
+            var searchResults = await Search(request, cancellationToken);
+
+            await _ilrRepository.StoreSearchLog(new SearchLog()
+            {
+                NumberOfResults = searchResults.Count,
+                SearchTime = DateTime.UtcNow,
+                SearchData = new SearchData { IsPrivatelyFunded = request.IsPrivatelyFunded },
+                Surname = request.Surname,
+                Uln = request.Uln,
+                Username = request.Username
+            });
+
+            return searchResults;
+        }
+
+        private async Task<List<SearchResult>> Search(SearchQuery request, CancellationToken cancellationToken)
+        { 
             _logger.LogInformation($"Search for surname: {request.Surname} uln: {request.Uln} made by {request.EpaOrgId}");
 
             var thisEpao = await _organisationRepository.Get(request.EpaOrgId);
-
             if (thisEpao == null)
             {
-                _logger.LogInformation(LoggingConstants.SearchFailure);
+                _logger.LogInformation($"{LoggingConstants.SearchFailure} - Invalid EpaOrgId", request.EpaOrgId);
                 return new List<SearchResult>();
             }
 
@@ -116,7 +130,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
                 likedSurname = DealWithSpecialCharactersAndSpaces(request, likedSurname, listOfIlrResults);
             }
 
-
             ilrResults = listOfIlrResults?.Where(r =>(
                 r.EpaOrgId == thisEpao.EndPointAssessorOrganisationId ||
                 (r.EpaOrgId != thisEpao.EndPointAssessorOrganisationId && intStandards.Contains(r.StdCode)))
@@ -131,29 +144,18 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
             _logger.LogInformation((ilrResults != null && ilrResults.Any())? LoggingConstants.SearchSuccess : LoggingConstants.SearchFailure);
 
             var searchResults = Mapper.Map<List<SearchResult>>(ilrResults)
-                .MatchUpExistingCompletedStandards(request, _certificateRepository, _contactRepository, _logger)
+                .MatchUpExistingCompletedStandards(request, _certificateRepository, _contactRepository, _organisationRepository, _logger)
                 .PopulateStandards(_standardService, _logger);
-
-
-            await _ilrRepository.StoreSearchLog(new SearchLog()
-            {
-                NumberOfResults = searchResults.Count,
-                SearchTime = DateTime.UtcNow,
-                Surname = request.Surname,
-                Uln = request.Uln,
-                Username = request.Username
-            });
 
             return searchResults;
         }
 
         private async Task<List<int>> GetEpaoStandards(Organisation thisEpao)
         {
-            var theStandardsThisEpaoProvides = await _assessmentOrgsApiClient.FindAllStandardsByOrganisationIdAsync(thisEpao
-                .EndPointAssessorOrganisationId);
+            var filteredStandardCodes = (await _registerQueryRepository.GetOrganisationStandardByOrganisationId(thisEpao
+                .EndPointAssessorOrganisationId)).Select(q => q.StandardCode).ToList(); 
 
-            var intStandards = ConvertStandardsToListOfInts(theStandardsThisEpaoProvides);
-            return intStandards;
+            return filteredStandardCodes;
         }
 
         private string DealWithSpecialCharactersAndSpaces(SearchQuery request, string likedSurname, IEnumerable<Ilr> ilrResults)
@@ -186,19 +188,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
             return likedSurname;
         }
 
-        private List<int> ConvertStandardsToListOfInts(IEnumerable<StandardOrganisationSummary> theStandardsThisEpaoProvides)
-        {
-            var list = new List<int>();
-            foreach (var standardSummary in theStandardsThisEpaoProvides)
-            {
-                if (int.TryParse(standardSummary.StandardCode, out var stdCode))
-                {
-                    list.Add(stdCode);
-                }
-            }
-
-            return list;
-        }
 
         private char[] SpecialCharactersInSurname(string surname)
         {

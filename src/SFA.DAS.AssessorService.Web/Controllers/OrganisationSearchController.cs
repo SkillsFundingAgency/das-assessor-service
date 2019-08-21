@@ -175,7 +175,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> NoAccess(OrganisationSearchViewModel viewModel)
+        public IActionResult NoAccess(OrganisationSearchViewModel viewModel)
         {
             return View(viewModel);
         }
@@ -238,6 +238,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             var signinId = _contextAccessor.HttpContext.User.Claims.First(c => c.Type == "sub")?.Value;
             var user = await _contactsApiClient.GetContactBySignInId(signinId);
 
+            // Why would a new user searching for an Organisation have an EPAOrgId or an OrganisationId?
             if (!string.IsNullOrEmpty(user.EndPointAssessorOrganisationId) && user.OrganisationId != null &&
                 user.Status == ContactStatus.Live)
                 return RedirectToAction("Index", "Dashboard");
@@ -263,16 +264,15 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 var request = CreateAnApplyOrganisationRequest(organisationSearchResult, user);
                 if (organisationSearchResult.OrganisationReferenceType == "RoEPAO")
                 {
-                    //Update assessor organisation status, sync assessor org with apply org and notify org users
+                    //Update assessor organisation status and notify org users (ON-1972 fix was applied here)
                     await UpdateOrganisationStatus(organisationSearchResult, user);
-                    await TryToCreateOrganisationInApply(request);
                     await NotifyOrganisationUsers(organisationSearchResult, user);
                 }
                 else
                 {
                     //Try creating a contact and an organisation in apply
                     await _contactsApiClient.MigrateSingleContactToApply(Guid.Parse(signinId));
-                    await _contactsApiClient.UpdateStatus(new UpdateContactStatusRequest(user.Id.ToString(), ContactStatus.Applying));
+                    await _contactsApiClient.UpdateStatus(new UpdateContactStatusRequest(user.Id, ContactStatus.Applying));
                     await _organisationsApplyApiClient.ConfirmSearchedOrganisation(request);
                     return Redirect($"{_config.ApplyBaseAddress}/Applications");
                 }
@@ -401,9 +401,10 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         private async Task NotifyOrganisationUsers(OrganisationSearchResult organisationSearchResult,
           ContactResponse user)
         {
-            await _organisationsApiClient.SendEmailsToOrgApprovedUsers(new EmailAllApprovedContactsRequest(
-                       user.DisplayName, organisationSearchResult
-                           .OrganisationReferenceId, _config.ServiceLink));
+            //ON-2020 Changed from reference Id to Id , since org reference Id can have multiple values 
+            await _organisationsApiClient.SendEmailsToOrganisationUserManagementUsers(new NotifyUserManagementUsersRequest(
+                user.DisplayName, organisationSearchResult
+                    .Id, _config.ServiceLink));
         }
 
         private ViewResult RequestAccess(OrganisationSearchViewModel viewModel, OrganisationSearchResult organisationSearchResult)

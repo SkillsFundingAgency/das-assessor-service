@@ -16,18 +16,13 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Contacts
         protected ContactQueryController ContactQueryController;
         protected UkPrnValidator UkPrnValidator;
 
-        
-
         protected Mock<IContactQueryRepository> ContactQueryRepositoryMock;
+        protected Mock<IContactApplyClient> ContactApplyClientMock;
         protected Mock<IOrganisationQueryRepository> OrganisationQueryRepositoryMock;
 
         protected Mock<IStringLocalizer<ContactQueryController>> ContactControllerLocaliserMock;
         
-
-        protected Mock<IStringLocalizer<SearchOrganisationForContactsValidator>>
-            SearchOrganisationForContactsValidatorLocaliserMock;
-
-
+        protected Mock<IStringLocalizer<SearchOrganisationForContactsValidator>> SearchOrganisationForContactsValidatorLocaliserMock;
 
         protected Mock<ILogger<ContactQueryController>> ControllerLoggerMock;
 
@@ -35,7 +30,6 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Contacts
 
         private MockStringLocaliserBuilder _mockStringLocaliserBuilder;
         
-
         private SearchOrganisationForContactsValidator _searchOrganisationForContactsValidator;
 
         protected void Setup()
@@ -47,6 +41,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Contacts
 
             ContactQueryController = new ContactQueryController(
                 ContactQueryRepositoryMock.Object,
+                ContactApplyClientMock.Object,
                 _searchOrganisationForContactsValidator,
                 MediatorMock.Object,
                 ControllerLoggerMock.Object, new Mock<IWebConfiguration>().Object);
@@ -65,6 +60,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Contacts
         private void SetupOrchestratorMocks()
         {
             ContactQueryRepositoryMock = new Mock<IContactQueryRepository>();
+            ContactApplyClientMock = new Mock<IContactApplyClient>();
 
             _mockStringLocaliserBuilder = new MockStringLocaliserBuilder();
 

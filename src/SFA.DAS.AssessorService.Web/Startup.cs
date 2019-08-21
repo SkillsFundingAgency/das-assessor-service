@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
@@ -57,6 +58,10 @@ namespace SFA.DAS.AssessorService.Web
                 options.SupportedCultures = new List<CultureInfo> { new CultureInfo("en-GB") };
                 options.RequestCultureProviders.Clear();
             });
+            
+            services.AddSingleton<IAuthorizationPolicyProvider, PrivilegePolicyProvider>();
+            services.AddSingleton<IAuthorizationHandler, PrivilegeHandler>();
+            
             services.AddMvc(options => { options.Filters.Add<CheckSessionFilter>();})
                 .AddControllersAsServices()
                 .AddSessionStateTempDataProvider()
@@ -127,15 +132,8 @@ namespace SFA.DAS.AssessorService.Web
                     _.WithDefaultConventions();
                 });
 
-                //config.For<ICache>().Use<SessionCache>();
-                config.For<ITokenService>().Use<TokenService>();
-                config.For<ITokenService>().Add<ApplyTokenService>().Named("applyTokenService");
-
-                config.For<IOrganisationsApplyApiClient>().Use<OrganisationsApplyApiClient>()
-                    .Ctor<ITokenService>("applyTokenService").Is(c=> c.GetInstance<ITokenService>("applyTokenService"));
-                config.For<IContactApplyClient>().Use<ContactApplyClient>()
-                    .Ctor<ITokenService>("applyTokenService").Is(c=> c.GetInstance<ITokenService>("applyTokenService")); 
-                
+                config.For<ITokenService>().Use<TokenService>().Ctor<bool>("useSandbox").Is(false); // Always false unless we want to start integrating with the sandbox environment;
+                config.For<IApplyTokenService>().Add<ApplyTokenService>();                
                 config.For<IWebConfiguration>().Use(Configuration);
                 config.For<ISessionService>().Use<SessionService>().Ctor<string>().Is(_env.EnvironmentName);
                 config.For<IOrganisationsApiClient>().Use<OrganisationsApiClient>().Ctor<string>().Is(Configuration.ClientApiAuthentication.ApiBaseAddress);

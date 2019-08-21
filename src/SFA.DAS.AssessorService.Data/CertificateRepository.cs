@@ -23,9 +23,7 @@ namespace SFA.DAS.AssessorService.Data
     {
         private readonly AssessorDbContext _context;
         private readonly IDbConnection _connection;
-        private readonly ILogger<CertificateRepository> _logger;
-
-
+        
         public CertificateRepository(AssessorDbContext context,
             IDbConnection connection)
         {
@@ -40,10 +38,10 @@ namespace SFA.DAS.AssessorService.Data
                 c.Uln == certificate.Uln && c.StandardCode == certificate.StandardCode && c.CreateDay == certificate.CreateDay);
             if (existingCert != null) return existingCert;
             
-            _context.Certificates.Add(certificate);
+            await _context.Certificates.AddAsync(certificate);
             try
             {
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
             }
             catch (Exception e)
             {
@@ -58,7 +56,7 @@ namespace SFA.DAS.AssessorService.Data
             }
                 
             await UpdateCertificateLog(certificate, CertificateActions.Start, certificate.CreatedBy);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             return certificate;
         }
@@ -77,10 +75,10 @@ namespace SFA.DAS.AssessorService.Data
             if (existingCert != null)
                 return existingCert;
 
-            _context.Certificates.Add(certificate);
+            await _context.Certificates.AddAsync(certificate);
             try
             {
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
             }
             catch (Exception e)
             {
@@ -97,7 +95,7 @@ namespace SFA.DAS.AssessorService.Data
             }
 
             await UpdateCertificateLog(certificate, CertificateActions.Start, certificate.CreatedBy);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             return certificate;
         }
@@ -237,23 +235,18 @@ namespace SFA.DAS.AssessorService.Data
         }
 
 
-        public async Task<PaginatedList<Certificate>> GetCertificateHistory(string userName, int pageIndex, int pageSize, List<string> statuses)
+        public async Task<PaginatedList<Certificate>> GetCertificateHistory(string endPointAssessorOrganisationId, int pageIndex, int pageSize, List<string> statuses)
         {
           
-            var count = await GetCertificatesCount(userName, statuses);
+            var count = await GetCertificatesCount(endPointAssessorOrganisationId, statuses);
 
             var ids = await (from certificate in _context.Certificates
                              join organisation in _context.Organisations on
                                certificate.OrganisationId equals organisation.Id
-                             join contact in _context.Contacts on
-                               organisation.Id equals contact.OrganisationId
-                             join certificateLog in _context.CertificateLogs on
-                                 certificate.Id equals certificateLog.CertificateId
-                             where contact.Username == userName
-                               && statuses.Contains(certificate.Status)
-                             group certificate by new { certificate.Id, certificate.CreatedAt } into result
-                             orderby result.Key.CreatedAt descending
-                             select result.FirstOrDefault().Id)
+                             where organisation.EndPointAssessorOrganisationId == endPointAssessorOrganisationId
+                               && !statuses.Contains(certificate.Status)
+                             orderby certificate.CreatedAt descending
+                             select certificate.Id)
                                         .Skip((pageIndex - 1) * pageSize)
                                         .Take(pageSize).ToListAsync();
 
@@ -266,16 +259,14 @@ namespace SFA.DAS.AssessorService.Data
             return new PaginatedList<Certificate>(certificates, count, pageIndex, pageSize);
         }
 
-        public async Task<int> GetCertificatesCount(string userName, List<string> statuses)
+        public async Task<int> GetCertificatesCount(string endPointAssessorOrganisationId, List<string> statuses)
         {
            
             return  await (from certificate in _context.Certificates
                 join organisation in _context.Organisations on
                     certificate.OrganisationId equals organisation.Id
-                join contact in _context.Contacts on
-                    organisation.Id equals contact.OrganisationId
-                where contact.Username == userName
-                      && statuses.Contains(certificate.Status)
+                where organisation.EndPointAssessorOrganisationId == endPointAssessorOrganisationId
+                      && !statuses.Contains(certificate.Status)
                 select certificate).CountAsync();
         }
 
@@ -334,17 +325,17 @@ namespace SFA.DAS.AssessorService.Data
             await _context.SaveChangesAsync();
         }
 
-        public Task<Certificate> UpdateProviderName(Guid id, string providerName)
+        public async Task<Certificate> UpdateProviderName(Guid id, string providerName)
         {
-            var certificate = GetCertificate(id).GetAwaiter().GetResult();
+            var certificate = await GetCertificate(id);
 
             var certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
             certificateData.ProviderName = providerName;
 
             certificate.CertificateData = JsonConvert.SerializeObject(certificateData);           
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
-            return Task.FromResult(certificate);
+            return certificate;
         }
 
         private async Task UpdateCertificateLog(Certificate cert, string action, string username, string reasonForChange = null)

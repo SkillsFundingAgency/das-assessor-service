@@ -4,7 +4,7 @@ using SFA.DAS.AssessorService.Settings;
 
 namespace SFA.DAS.AssessorService.Application.Api.Client
 {
-    public class ApplyTokenService : ITokenService
+    public class ApplyTokenService : IApplyTokenService
     {
         private readonly IWebConfiguration _configuration;
         private readonly IHostingEnvironment _hostingEnvironment;
@@ -31,7 +31,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Client
             var result = context.AcquireTokenAsync(resourceId, clientCredential).Result;
 
             return result.AccessToken;
-            
         }
     }
 }
