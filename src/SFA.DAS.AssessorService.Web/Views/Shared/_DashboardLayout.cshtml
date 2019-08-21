@@ -100,19 +100,17 @@
             <div class="das-user-panel__content">
                 <span class="govuk-body-s das-user-panel__item das-user-panel__item--grow">
 
-                    <p class="govuk-!-margin-top-0 govuk-!-margin-bottom-0 das-no-wrap">
+                    <p class="govuk-!-margin-top-0 das-!-margin-bottom-xs das-no-wrap">
                         <span class="govuk-visually-hidden">Signed in as </span>
                         @User.Identity.Name
                     </p>
                     @if (@SessionService.Get("OrganisationName") != null)
                     {
-                        <p class="govuk-!-font-weight-bold govuk-!-margin-top-0 govuk-!-margin-bottom-0">
-                            @SessionService.Get("OrganisationName")
+                        <p class="govuk-!-margin-top-0 govuk-!-margin-bottom-0">
+                            <span class="govuk-!-font-weight-bold">@SessionService.Get("OrganisationName")</span>
                             @if (@SessionService.Get("EndPointAssessorOrganisationId") != null)
                             {
-                                <text>(</text>
-                                @SessionService.Get("EndPointAssessorOrganisationId")
-                                <text>)</text>
+                                <text>(@SessionService.Get("EndPointAssessorOrganisationId"))</text>
                             }
                         </p>
                     }
