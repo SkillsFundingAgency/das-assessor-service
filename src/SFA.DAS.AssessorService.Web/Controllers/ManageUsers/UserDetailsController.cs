@@ -28,7 +28,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.ManageUsers
 
         [HttpGet("/ManageUsers/{contactId}")]
         [TypeFilter(typeof(MenuFilter), Arguments = new object[] {Pages.Organisations})]
-        public async Task<IActionResult> User(Guid contactId)
+        public async Task<IActionResult> Details(Guid contactId)
         {
             var securityCheckpoint = await SecurityCheckAndGetContact(contactId);
 
@@ -108,7 +108,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.ManageUsers
 
                 return response.HasRemovedOwnUserManagement 
                     ? RedirectToAction("Index", "Dashboard", new {contactId = vm.ContactId}) 
-                    : RedirectToAction("User", new {contactId = vm.ContactId});
+                    : RedirectToAction("Details", new {contactId = vm.ContactId});
             }
 
             await ContactsApiClient.RejectContact(vm.ContactId);
