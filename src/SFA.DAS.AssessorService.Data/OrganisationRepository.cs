@@ -41,8 +41,13 @@ namespace SFA.DAS.AssessorService.Data
                 organisationEntity.PrimaryContact = contact.Username;
             }
 
+            // Only update if it a new status was specified!
+            if(!string.IsNullOrEmpty(organisation.Status))
+            {
+                organisationEntity.Status = organisation.Status;
+            }
+
             organisationEntity.EndPointAssessorName = organisation.EndPointAssessorName;
-            organisationEntity.Status = organisation.Status;
             organisationEntity.EndPointAssessorUkprn = organisation.EndPointAssessorUkprn;
             organisationEntity.ApiEnabled = organisation.ApiEnabled ;
             organisationEntity.ApiUser = organisation.ApiUser;
