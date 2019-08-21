@@ -133,15 +133,17 @@
                 @Html.Hidden("ReturnAction", @Model.AccessDeniedViewModel.ReturnAction)
 
                 <p class="govuk-body">
-                    <span>To make changes to organisation details you need to&nbsp;</span>
-                    @if (Model.AccessDeniedViewModel.UserHasUserManagement)
-                    {
-                        <button class="govuk-button govuk-button--looks-like-link" type="submit">grant access</button>
-                    }
-                    else
-                    {
-                        <button class="govuk-button govuk-button--looks-like-link" type="submit">request access</button>
-                    }
+                    <span>To make changes to organisation details you need to</span> 
+                    <button class="govuk-button govuk-button--looks-like-link govuk-button--looks-like-link--inline" type="submit">
+                        @if (Model.AccessDeniedViewModel.UserHasUserManagement)
+                        {
+                            <text>grant access</text>
+                        }
+                        else
+                        {
+                            <text>request access</text>
+                        }
+                    </button>.
                 </p>
             </form>
         }
