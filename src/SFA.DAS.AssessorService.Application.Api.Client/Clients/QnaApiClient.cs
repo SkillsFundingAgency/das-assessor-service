@@ -53,5 +53,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                     $"Could not find the sections");
             }
         }
+
+        public async Task<Section> GetSection(Guid applicationId, Guid sectionId)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/applications/{applicationId}/sections/{sectionId}"))
+            {
+                return await RequestAndDeserialiseAsync<Section>(request,
+                    $"Could not find the section");
+            }
+        }
     }
 }
