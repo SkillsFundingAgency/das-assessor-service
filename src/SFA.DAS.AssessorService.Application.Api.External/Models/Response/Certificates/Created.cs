@@ -2,7 +2,7 @@
 
 namespace SFA.DAS.AssessorService.Application.Api.External.Models.Response.Certificates
 {
-    public class Created : IEquatable<Created>
+    public sealed class Created : IEquatable<Created>
     {
         public DateTime CreatedAt { get; set; }
         public string CreatedBy { get; set; }

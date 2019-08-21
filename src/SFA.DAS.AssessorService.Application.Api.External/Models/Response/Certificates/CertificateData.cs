@@ -2,7 +2,7 @@
 
 namespace SFA.DAS.AssessorService.Application.Api.External.Models.Response.Certificates
 {
-    public class CertificateData : IEquatable<CertificateData>
+    public sealed class CertificateData : IEquatable<CertificateData>
     {
         public string CertificateReference { get; set; }
         public Standard Standard { get; set; }

@@ -13,7 +13,7 @@
 
             <p class="govuk-body">@Model.Description</p>
 
-            <form asp-controller="RequestAccess" asp-action="Request">
+            <form asp-controller="RequestAccess" asp-action="RequestAccess">
                 @Html.HiddenFor(m => m.ContactId)
                 @Html.HiddenFor(m => m.PrivilegeId)
                 @Html.HiddenFor(m => m.UserHasUserManagement)

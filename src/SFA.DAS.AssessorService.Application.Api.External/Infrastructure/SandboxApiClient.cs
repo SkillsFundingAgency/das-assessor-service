@@ -1,463 +1,244 @@
-﻿using AutoMapper;
+﻿using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using SFA.DAS.AssessorService.Api.Types.Models.ExternalApi.Learners;
+using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Application.Api.External.Models.Internal;
 using SFA.DAS.AssessorService.Application.Api.External.Models.Response;
-using SFA.DAS.AssessorService.Application.Api.External.Models.Response.Certificates;
-using SFA.DAS.AssessorService.Application.Api.External.Models.Response.Standards;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-
+using GetBatchLearnerRequest = SFA.DAS.AssessorService.Application.Api.External.Models.Internal.GetBatchLearnerRequest;
 
 namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
 {
-    public class SandboxApiClient : IApiClient
+    public sealed class SandboxApiClient : ApiClient
     {
-        private readonly HttpClient _client;
-
-        public SandboxApiClient(HttpClient client)
+        private readonly ILogger<SandboxApiClient> _logger;
+        public SandboxApiClient(HttpClient client, ILogger<SandboxApiClient> logger, ITokenService tokenService) : base(client, logger, tokenService)
         {
-            _client = client;
+            _logger = logger;
         }
 
-        public Task<GetCertificateResponse> GetCertificate(GetBatchCertificateRequest request)
+        private async Task<LearnerDetailForExternalApi> GetLearnerDetail(string standard, long uln)
         {
-            var validationErrors = PerformBasicGetCertificateValidation(request);
+            return await Get<LearnerDetailForExternalApi>($"/api/v1/externalapi/learnerDetails?standard={standard}&uln={uln}");
+        }
 
-            if (!int.TryParse(request.Standard, out int standardCode))
+        public override async Task<GetLearnerResponse> GetLearner(GetBatchLearnerRequest request)
+        {
+            if (request != null)
             {
-                standardCode = 9999;
+                _logger.LogInformation($"GetLearner called with request: {JsonConvert.SerializeObject(request)}");
+                var details = await GetLearnerDetail(request.Standard, request.Uln);
+
+                if (details != null)
+                {
+                    request.Standard = details.Standard?.ReferenceNumber ?? details.Standard?.StandardId.ToString();
+                    request.UkPrn = details.UkPrn;
+                }
             }
 
-            var response = new GetCertificateResponse
-            {
-                ValidationErrors = validationErrors,
-                Certificate = validationErrors.Count > 0 ? null : new Certificate
-                {
-                    CertificateData = new CertificateData
-                    {
-                        CertificateReference = "SANDBOX",
-                        Learner = new Learner { FamilyName = request.FamilyName, GivenNames = "FIRSTNAME", Uln = request.Uln },
-                        LearningDetails = new LearningDetails { CourseOption = "COURSEOPTION", OverallGrade = "Pass", AchievementDate = DateTime.UtcNow, LearningStartDate = DateTime.UtcNow.AddYears(-1), ProviderName = "PROVIDER", ProviderUkPrn = request.UkPrn },
-                        Standard = new Standard { Level = 1, StandardCode = standardCode, StandardReference = request.Standard, StandardName = "STANDARD" },
-                        PostalContact = new PostalContact { AddressLine1 = "ADDRESS1", City = "CITY", ContactName = "CONTACT", Organisation = "ORGANISATION", PostCode = "AB1 1AA" }
-                    },
-                    Status = new Status { CurrentStatus = "Draft" },
-                    Created = new Created { CreatedAt = DateTime.UtcNow, CreatedBy = request.Email },
-                }
-            };
-
-            return Task.FromResult(response);
+            var response = await base.GetLearner(request);
+            _logger.LogInformation($"GetLearner returned with response: {JsonConvert.SerializeObject(response)}");
+            return response;
         }
 
-        public Task<IEnumerable<CreateCertificateResponse>> CreateCertificates(IEnumerable<CreateBatchCertificateRequest> request)
+        public override async Task<IEnumerable<CreateEpaResponse>> CreateEpas(IEnumerable<CreateBatchEpaRequest> request)
         {
-            var response = new List<CreateCertificateResponse>();
-
-            foreach (var req in request)
+            if (request != null)
             {
-                var validationErrors = PerformBasicCreateBatchCertificateRequestValidation(req);
+                _logger.LogInformation($"CreateEpas called with request: {JsonConvert.SerializeObject(request)}");
+                var newRequest = request.ToList();
 
-                var responseItem = new CreateCertificateResponse
+                foreach (var req in newRequest.Where(r => r.Learner != null && r.Standard != null))
                 {
-                    RequestId = req.RequestId,
-                    ValidationErrors = validationErrors,
-                    Certificate = validationErrors.Count > 0 ? null : new Certificate
-                    {
-                        CertificateData = Mapper.Map<Models.Request.Certificates.CertificateData, CertificateData>(req.CertificateData),
-                        Status = new Status { CurrentStatus = "Draft" },
-                        Created = new Created { CreatedAt = DateTime.UtcNow, CreatedBy = req.Email },
-                    }
-                };
+                    var standard = req.Standard.StandardCode.HasValue ? req.Standard.StandardCode.ToString() : req.Standard.StandardReference;
+                    var details = await GetLearnerDetail(standard, req.Learner.Uln);
 
-                if (responseItem.Certificate != null)
-                {
-                    responseItem.Certificate.CertificateData.CertificateReference = "SANDBOX";
-                    responseItem.Certificate.CertificateData.Learner.GivenNames = "FIRSTNAME";
-                    responseItem.Certificate.CertificateData.Standard.Level = 1;
-                    responseItem.Certificate.CertificateData.Standard.StandardName = "STANDARD";
-                    responseItem.Certificate.CertificateData.LearningDetails.ProviderName = "PROVIDER";
-                    responseItem.Certificate.CertificateData.LearningDetails.ProviderUkPrn = req.UkPrn;
-                    responseItem.Certificate.CertificateData.LearningDetails.LearningStartDate = DateTime.UtcNow.AddYears(-1);
-
-                    if (responseItem.Certificate.CertificateData.Standard.StandardCode is null)
+                    if (details != null)
                     {
-                        responseItem.Certificate.CertificateData.Standard.StandardCode = 9999;
-                    }
-                    if (string.IsNullOrEmpty(responseItem.Certificate.CertificateData.Standard.StandardReference))
-                    {
-                        responseItem.Certificate.CertificateData.Standard.StandardReference = "ST9999";
+                        req.Standard.StandardReference = details.Standard?.ReferenceNumber;
+                        req.Standard.StandardCode = details.Standard?.StandardId;
+                        req.UkPrn = details.UkPrn;
                     }
                 }
 
-                response.Add(responseItem);
+                var response = await base.CreateEpas(newRequest);
+                _logger.LogInformation($"CreateEpas returned with response: {JsonConvert.SerializeObject(response)}");
+                return response;
             }
 
-            return Task.FromResult(response.AsEnumerable());
+            return await base.CreateEpas(request);
         }
 
-        public Task<IEnumerable<UpdateCertificateResponse>> UpdateCertificates(IEnumerable<UpdateBatchCertificateRequest> request)
+        public override async Task<IEnumerable<UpdateEpaResponse>> UpdateEpas(IEnumerable<UpdateBatchEpaRequest> request)
         {
-            var response = new List<UpdateCertificateResponse>();
-
-            foreach (var req in request)
+            if (request != null)
             {
-                var validationErrors = PerformBasicUpdateBatchCertificateRequestValidation(req);
+                _logger.LogInformation($"UpdateEpas called with request: {JsonConvert.SerializeObject(request)}");
+                var newRequest = request.ToList();
 
-                if (req.CertificateData != null && string.IsNullOrEmpty(req.CertificateData.CertificateReference))
+                foreach (var req in newRequest.Where(r => r.Learner != null && r.Standard != null))
                 {
-                    validationErrors.Add("Enter the certificate reference");
-                }
+                    var standard = req.Standard.StandardCode.HasValue ? req.Standard.StandardCode.ToString() : req.Standard.StandardReference;
+                    var details = await GetLearnerDetail(standard, req.Learner.Uln);
 
-                var responseItem = new UpdateCertificateResponse
-                {
-                    RequestId = req.RequestId,
-                    ValidationErrors = validationErrors,
-                    Certificate = validationErrors.Count > 0 ? null : new Certificate
+                    if (details != null)
                     {
-                        CertificateData = Mapper.Map<Models.Request.Certificates.CertificateData, CertificateData>(req.CertificateData),
-                        Status = new Status { CurrentStatus = "Draft" },
-                        Created = new Created { CreatedAt = DateTime.UtcNow.AddHours(-1), CreatedBy = req.Email }
-                    }
-                };
-
-                if (responseItem.Certificate != null)
-                {
-                    responseItem.Certificate.CertificateData.CertificateReference = "SANDBOX";
-                    responseItem.Certificate.CertificateData.Learner.GivenNames = "FIRSTNAME";
-                    responseItem.Certificate.CertificateData.Standard.Level = 1;
-                    responseItem.Certificate.CertificateData.Standard.StandardName = "STANDARD";
-                    responseItem.Certificate.CertificateData.LearningDetails.ProviderName = "PROVIDER";
-                    responseItem.Certificate.CertificateData.LearningDetails.ProviderUkPrn = req.UkPrn;
-                    responseItem.Certificate.CertificateData.LearningDetails.LearningStartDate = DateTime.UtcNow.AddYears(-1);
-
-                    if (responseItem.Certificate.CertificateData.Standard.StandardCode is null)
-                    {
-                        responseItem.Certificate.CertificateData.Standard.StandardCode = 9999;
-                    }
-                    if (string.IsNullOrEmpty(responseItem.Certificate.CertificateData.Standard.StandardReference))
-                    {
-                        responseItem.Certificate.CertificateData.Standard.StandardReference = "ST9999";
+                        req.Standard.StandardReference = details.Standard?.ReferenceNumber;
+                        req.Standard.StandardCode = details.Standard?.StandardId;
+                        req.UkPrn = details.UkPrn;
                     }
                 }
 
-                response.Add(responseItem);
+                var response = await base.UpdateEpas(newRequest);
+                _logger.LogInformation($"UpdateEpas returned with response: {JsonConvert.SerializeObject(response)}");
+                return response;
             }
 
-            return Task.FromResult(response.AsEnumerable());
+            return await base.UpdateEpas(request);
         }
 
-        public Task<IEnumerable<SubmitCertificateResponse>> SubmitCertificates(IEnumerable<SubmitBatchCertificateRequest> request)
+        public override async Task<ApiResponse> DeleteEpa(DeleteBatchEpaRequest request)
         {
-            var response = new List<SubmitCertificateResponse>();
-
-            foreach (var req in request)
+            if (request != null)
             {
-                var validationErrors = PerformBasicSubmitCertificateValidation(req);
+                _logger.LogInformation($"DeleteEpa called with request: {JsonConvert.SerializeObject(request)}");
+                var details = await GetLearnerDetail(request.Standard, request.Uln);
 
-                var responseItem = new SubmitCertificateResponse
+                if (details != null)
                 {
-                    RequestId = req.RequestId,
-                    ValidationErrors = validationErrors,
-                    Certificate = validationErrors.Count > 0 ? null : new Certificate
+                    request.Standard = details.Standard?.ReferenceNumber ?? details.Standard?.StandardId.ToString();
+                    request.UkPrn = details.UkPrn;
+                }
+            }
+
+            var response = await base.DeleteEpa(request);
+            _logger.LogInformation($"DeleteEpa returned with response: {JsonConvert.SerializeObject(response)}");
+            return response;
+        }
+
+        public override async Task<GetCertificateResponse> GetCertificate(GetBatchCertificateRequest request)
+        { 
+            if(request != null)
+            {
+                _logger.LogInformation($"GetCertificate called with request: {JsonConvert.SerializeObject(request)}");
+                var details = await GetLearnerDetail(request.Standard, request.Uln);
+
+                if (details != null)
+                {
+                    request.Standard = details.Standard?.ReferenceNumber ?? details.Standard?.StandardId.ToString();
+                    request.UkPrn = details.UkPrn;
+                }
+            }
+
+            var response = await base.GetCertificate(request);
+            _logger.LogInformation($"GetCertificate returned with response: {JsonConvert.SerializeObject(response)}");
+            return response;
+        }
+
+        public override async Task<IEnumerable<CreateCertificateResponse>> CreateCertificates(IEnumerable<CreateBatchCertificateRequest> request)
+        {
+            if (request != null)
+            {
+                _logger.LogInformation($"CreateCertificates called with request: {JsonConvert.SerializeObject(request)}");
+                var newRequest = request.ToList();
+
+                foreach (var req in newRequest.Where(r => r.CertificateData?.Learner != null && r.CertificateData?.Standard != null))
+                {
+                    var standard = req.CertificateData.Standard.StandardCode.HasValue ? req.CertificateData.Standard.StandardCode.ToString() : req.CertificateData.Standard.StandardReference;
+                    var details = await GetLearnerDetail(standard, req.CertificateData.Learner.Uln);
+
+                    if (details != null)
                     {
-                        CertificateData = new CertificateData
-                        {
-                            CertificateReference = "SANDBOX",
-                            Learner = new Learner { FamilyName = req.FamilyName, GivenNames = "FIRSTNAME", Uln = req.Uln },
-                            LearningDetails = new LearningDetails { CourseOption = "COURSEOPTION", OverallGrade = "Pass", AchievementDate = DateTime.UtcNow, LearningStartDate = DateTime.UtcNow.AddYears(-1), ProviderName = "PROVIDER", ProviderUkPrn = req.UkPrn },
-                            Standard = new Standard { Level = 1, StandardCode = req.StandardCode ?? 9999, StandardReference = req.StandardReference ?? "ST9999", StandardName = "STANDARD" },
-                            PostalContact = new PostalContact { AddressLine1 = "ADDRESS1", City = "CITY", ContactName = "CONTACT", Organisation = "ORGANISATION", PostCode = "AB1 1AA" }
-                        },
-                        Status = new Status { CurrentStatus = "Submitted" },
-                        Created = new Created { CreatedAt = DateTime.UtcNow.AddHours(-1), CreatedBy = req.Email },
-                        Submitted = new Submitted { SubmittedAt = DateTime.UtcNow, SubmittedBy = req.Email }
+                        req.CertificateData.Standard.StandardReference = details.Standard?.ReferenceNumber;
+                        req.CertificateData.Standard.StandardCode = details.Standard?.StandardId;
+                        req.UkPrn = details.UkPrn;
                     }
-                };
+                }
 
-                response.Add(responseItem);
+                var response = await base.CreateCertificates(newRequest);
+                _logger.LogInformation($"CreateCertificates returned with response: {JsonConvert.SerializeObject(response)}");
+                return response;
             }
 
-            return Task.FromResult(response.AsEnumerable());
+            return await base.CreateCertificates(request);
         }
 
-        public Task<ApiResponse> DeleteCertificate(DeleteBatchCertificateRequest request)
+        public override async Task<IEnumerable<UpdateCertificateResponse>> UpdateCertificates(IEnumerable<UpdateBatchCertificateRequest> request)
         {
-            var validationErrors = PerformBasicDeleteCertificateValidation(request);
+            if (request != null)
+            {
+                _logger.LogInformation($"UpdateCertificates called with request: {JsonConvert.SerializeObject(request)}");
+                var newRequest = request.ToList();
 
-            var response = validationErrors.Count == 0 ? null : new ApiResponse((int)HttpStatusCode.Forbidden, string.Join("; ", validationErrors));
+                foreach (var req in newRequest.Where(r => r.CertificateData?.Learner != null && r.CertificateData?.Standard != null))
+                {
+                    var standard = req.CertificateData.Standard.StandardCode.HasValue ? req.CertificateData.Standard.StandardCode.ToString() : req.CertificateData.Standard.StandardReference;
+                    var details = await GetLearnerDetail(standard, req.CertificateData.Learner.Uln);
 
-            return Task.FromResult(response);
+                    if (details != null)
+                    {
+                        req.CertificateData.Standard.StandardReference = details.Standard?.ReferenceNumber;
+                        req.CertificateData.Standard.StandardCode = details.Standard?.StandardId;
+                        req.UkPrn = details.UkPrn;
+                    }
+                }
+
+                var response = await base.UpdateCertificates(newRequest);
+                _logger.LogInformation($"UpdateCertificates returned with response: {JsonConvert.SerializeObject(response)}");
+                return response;
+            }
+
+            return await base.UpdateCertificates(request);
         }
 
-        private List<string> PerformBasicGetCertificateValidation(GetBatchCertificateRequest request)
+        public override async Task<IEnumerable<SubmitCertificateResponse>> SubmitCertificates(IEnumerable<SubmitBatchCertificateRequest> request)
         {
-            List<string> validationErrors = new List<string>();
+            if (request != null)
+            {
+                _logger.LogInformation($"SubmitCertificates called with request: {JsonConvert.SerializeObject(request)}");
+                var newRequest = request.ToList();
 
-            if (request is null)
-            {
-                validationErrors.Add("Enter Certificate Data");
-            }
-            else
-            {
-                if (request.Uln < 1000000000 || request.Uln > 9999999999)
+                foreach (var req in newRequest)
                 {
-                    validationErrors.Add("The apprentice's ULN should contain exactly 10 numbers");
+                    var standard = req.StandardCode.HasValue ? req.StandardCode.ToString() : req.StandardReference;
+                    var details = await GetLearnerDetail(standard, req.Uln);
+
+                    if (details != null)
+                    {
+                        req.StandardReference = details.Standard?.ReferenceNumber;
+                        req.StandardCode = details.Standard?.StandardId;
+                        req.UkPrn = details.UkPrn;
+                    }
                 }
-                if (string.IsNullOrEmpty(request.FamilyName))
-                {
-                    validationErrors.Add("Enter the apprentice's family name");
-                }
-                if (string.IsNullOrEmpty(request.Standard))
-                {
-                    validationErrors.Add("A standard should be selected");
-                }
-                else if (int.TryParse(request.Standard, out int standardCode) && standardCode < 1)
-                {
-                    validationErrors.Add("A standard should be selected");
-                }
+
+                var response = await base.SubmitCertificates(newRequest);
+                _logger.LogInformation($"SubmitCertificates returned with response: {JsonConvert.SerializeObject(response)}");
+                return response;
             }
 
-            return validationErrors;
+            return await base.SubmitCertificates(request);
         }
 
-        private List<string> PerformBasicCreateBatchCertificateRequestValidation(CreateBatchCertificateRequest request)
+        public override async Task<ApiResponse> DeleteCertificate(DeleteBatchCertificateRequest request)
         {
-            List<string> validationErrors = new List<string>();
-
-            if (request?.CertificateData is null)
+            if (request != null)
             {
-                validationErrors.Add("Enter Certificate Data");
-            }
-            else
-            {
-                var cert = request.CertificateData;
+                _logger.LogInformation($"DeleteCertificate called with request: {JsonConvert.SerializeObject(request)}");
+                var details = await GetLearnerDetail(request.Standard, request.Uln);
 
-                if (cert.Learner?.Uln < 1000000000 || cert.Learner?.Uln > 9999999999)
+                if (details != null)
                 {
-                    validationErrors.Add("The apprentice's ULN should contain exactly 10 numbers");
-                }
-                if (string.IsNullOrEmpty(cert.Learner?.FamilyName))
-                {
-                    validationErrors.Add("Enter the apprentice's family name");
-                }
-
-                if (cert.Standard?.StandardCode is null && string.IsNullOrEmpty(cert.Standard?.StandardReference))
-                {
-                    validationErrors.Add("A standard should be selected");
-                }
-                else if (cert.Standard?.StandardCode != null && cert.Standard.StandardCode < 1)
-                {
-                    validationErrors.Add("A standard should be selected");
-                }
-
-                if (string.IsNullOrEmpty(cert.PostalContact?.ContactName))
-                {
-                    validationErrors.Add("Enter a contact name");
-                }
-                if (string.IsNullOrEmpty(cert.PostalContact?.Organisation))
-                {
-                    validationErrors.Add("Enter an organisation");
-                }
-                if (string.IsNullOrEmpty(cert.PostalContact?.AddressLine1))
-                {
-                    validationErrors.Add("Enter an address");
-                }
-                if (string.IsNullOrEmpty(cert.PostalContact?.City))
-                {
-                    validationErrors.Add("Enter a city or town");
-                }
-                if (string.IsNullOrEmpty(cert.PostalContact?.PostCode))
-                {
-                    validationErrors.Add("Enter a postcode");
-                }
-
-                if (string.IsNullOrEmpty(cert.LearningDetails?.OverallGrade))
-                {
-                    validationErrors.Add("Select the grade the apprentice achieved");
-                }
-
-                if (cert.LearningDetails.AchievementDate < new DateTime(2017, 1, 1))
-                {
-                    validationErrors.Add("An achievement date cannot be before 01 01 2017");
-                }
-                else if (cert.LearningDetails.AchievementDate > DateTime.UtcNow)
-                {
-                    validationErrors.Add("An achievement date cannot be in the future");
+                    request.Standard = details.Standard?.ReferenceNumber ?? details.Standard?.StandardId.ToString();
+                    request.UkPrn = details.UkPrn;
                 }
             }
 
-            return validationErrors;
-        }
-
-        private List<string> PerformBasicUpdateBatchCertificateRequestValidation(UpdateBatchCertificateRequest request)
-        {
-            List<string> validationErrors = new List<string>();
-
-            if (request?.CertificateData is null)
-            {
-                validationErrors.Add("Enter Certificate Data");
-            }
-            else
-            {
-                var cert = request.CertificateData;
-
-                if (cert.Learner?.Uln < 1000000000 || cert.Learner?.Uln > 9999999999)
-                {
-                    validationErrors.Add("The apprentice's ULN should contain exactly 10 numbers");
-                }
-                if (string.IsNullOrEmpty(cert.Learner?.FamilyName))
-                {
-                    validationErrors.Add("Enter the apprentice's family name");
-                }
-
-                if (cert.Standard?.StandardCode is null && string.IsNullOrEmpty(cert.Standard?.StandardReference))
-                {
-                    validationErrors.Add("A standard should be selected");
-                }
-                else if (cert.Standard?.StandardCode != null && cert.Standard.StandardCode < 1)
-                {
-                    validationErrors.Add("A standard should be selected");
-                }
-
-                if (string.IsNullOrEmpty(cert.PostalContact?.ContactName))
-                {
-                    validationErrors.Add("Enter a contact name");
-                }
-                if (string.IsNullOrEmpty(cert.PostalContact?.Organisation))
-                {
-                    validationErrors.Add("Enter an organisation");
-                }
-                if (string.IsNullOrEmpty(cert.PostalContact?.AddressLine1))
-                {
-                    validationErrors.Add("Enter an address");
-                }
-                if (string.IsNullOrEmpty(cert.PostalContact?.City))
-                {
-                    validationErrors.Add("Enter a city or town");
-                }
-                if (string.IsNullOrEmpty(cert.PostalContact?.PostCode))
-                {
-                    validationErrors.Add("Enter a postcode");
-                }
-
-                if (string.IsNullOrEmpty(cert.LearningDetails?.OverallGrade))
-                {
-                    validationErrors.Add("Select the grade the apprentice achieved");
-                }
-
-                if (cert.LearningDetails.AchievementDate < new DateTime(2017, 1, 1))
-                {
-                    validationErrors.Add("An achievement date cannot be before 01 01 2017");
-                }
-                else if (cert.LearningDetails.AchievementDate > DateTime.UtcNow)
-                {
-                    validationErrors.Add("An achievement date cannot be in the future");
-                }
-            }
-
-            return validationErrors;
-        }
-
-        private List<string> PerformBasicSubmitCertificateValidation(SubmitBatchCertificateRequest request)
-        {
-            List<string> validationErrors = new List<string>();
-
-            if (request is null)
-            {
-                validationErrors.Add("Enter Certificate Data");
-            }
-            else
-            {
-                if (request.Uln < 1000000000 || request.Uln > 9999999999)
-                {
-                    validationErrors.Add("The apprentice's ULN should contain exactly 10 numbers");
-                }
-                if (string.IsNullOrEmpty(request.FamilyName))
-                {
-                    validationErrors.Add("Enter the apprentice's family name");
-                }
-                if (request.StandardCode is null && string.IsNullOrEmpty(request.StandardReference))
-                {
-                    validationErrors.Add("A standard should be selected");
-                }
-                else if (request.StandardCode.HasValue && request.StandardCode < 1)
-                {
-                    validationErrors.Add("A standard should be selected");
-                }
-                if (string.IsNullOrEmpty(request.CertificateReference))
-                {
-                    validationErrors.Add("Enter the certificate reference");
-                }
-            }
-
-            return validationErrors;
-        }
-
-        private List<string> PerformBasicDeleteCertificateValidation(DeleteBatchCertificateRequest request)
-        {
-            List<string> validationErrors = new List<string>();
-
-            if (request is null)
-            {
-                validationErrors.Add("Enter Certificate Data");
-            }
-            else
-            {
-                if (request.Uln < 1000000000 || request.Uln > 9999999999)
-                {
-                    validationErrors.Add("The apprentice's ULN should contain exactly 10 numbers");
-                }
-                if (string.IsNullOrEmpty(request.FamilyName))
-                {
-                    validationErrors.Add("Enter the apprentice's family name");
-                }
-                if (string.IsNullOrEmpty(request.Standard))
-                {
-                    validationErrors.Add("A standard should be selected");
-                }
-                else if (int.TryParse(request.Standard, out int standardCode) && standardCode < 1)
-                {
-                    validationErrors.Add("A standard should be selected");
-                }
-                if (string.IsNullOrEmpty(request.CertificateReference))
-                {
-                    validationErrors.Add("Enter the certificate reference");
-                }
-            }
-
-            return validationErrors;
-        }
-
-
-        private readonly List<StandardOptions> standards = new List<StandardOptions> {
-                new StandardOptions { StandardCode = 6, StandardReference = "ST0156", CourseOption = new[] { "Overhead lines", "Substation fitting", "Underground cables" } },
-                new StandardOptions { StandardCode = 7, StandardReference = "ST0184", CourseOption = new[] { "Card services", "Corporate/Commercial", "Retail", "Wealth", } },
-                new StandardOptions { StandardCode = 314, StandardReference = "ST0018", CourseOption = new[] { "Container based system", "Soil based system" } } };
-
-
-        public async Task<IEnumerable<StandardOptions>> GetStandards()
-        {
-            return await Task.FromResult(standards);
-        }
-
-        public async Task<StandardOptions> GetStandard(string standard)
-        {
-            StandardOptions standardOption = null;
-
-            if (int.TryParse(standard, out int standardId))
-            {
-                standardOption = standards.Where(s => s.StandardCode == standardId).FirstOrDefault();
-            }
-
-            if (standardOption is null)
-            {
-                standardOption = standards.Where(s => s.StandardReference == standard).FirstOrDefault();
-            }
-
-            return await Task.FromResult(standardOption);
+            var response = await base.DeleteCertificate(request);
+            _logger.LogInformation($"DeleteCertificate returned with response: {JsonConvert.SerializeObject(response)}");
+            return response;
         }
     }
 }
