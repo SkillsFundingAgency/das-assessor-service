@@ -8,8 +8,6 @@ using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Extensions;
 using SFA.DAS.AssessorService.Domain.JsonData;
-using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
-using SFA.DAS.AssessorService.ExternalApis.Services;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Search
 {
@@ -40,11 +38,14 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
             return searchResults;
         }
 
-        public static List<SearchResult> MatchUpExistingCompletedStandards(this List<SearchResult> searchResults, SearchQuery request, ICertificateRepository certificateRepository, IContactQueryRepository contactRepository, ILogger<SearchHandler> logger)
+        public static List<SearchResult> MatchUpExistingCompletedStandards(this List<SearchResult> searchResults, SearchQuery request, ICertificateRepository certificateRepository, IContactQueryRepository contactRepository, IOrganisationQueryRepository _organisationRepository, ILogger<SearchHandler> logger)
         {
             logger.LogInformation("MatchUpExistingCompletedStandards Before Get Certificates for uln from db");
             var completedCertificates = certificateRepository.GetCompletedCertificatesFor(request.Uln).Result;
             logger.LogInformation("MatchUpExistingCompletedStandards After Get Certificates for uln from db");
+
+            var searchingEpao = _organisationRepository.Get(request.EpaOrgId).Result;
+
             foreach (var searchResult in searchResults.Where(r => completedCertificates.Select(s => s.StandardCode).Contains(r.StdCode)))
             {
                 var certificate = completedCertificates.Single(s => s.StandardCode == searchResult.StdCode);
@@ -97,6 +98,16 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
                     searchResult.SubmittedAt = submittedLogEntry.EventTime.UtcToTimeZoneTime(); // This needs to be local time 
                     searchResult.AchDate = certificateData.AchievementDate;
                     searchResult.UpdatedBy = lastUpdatedContact != null ? lastUpdatedContact.DisplayName : lastUpdatedLogEntry.Username; // This needs to be contact real name
+                    searchResult.UpdatedAt = lastUpdatedLogEntry.EventTime.UtcToTimeZoneTime(); // This needs to be local time
+                }
+                else if(certificate.OrganisationId == searchingEpao?.Id)
+                {
+                    searchResult.ShowExtraInfo = true;
+                    searchResult.OverallGrade = certificateData.OverallGrade;
+                    searchResult.SubmittedBy = submittedLogEntry.Username ?? certificate.UpdatedBy;
+                    searchResult.SubmittedAt = submittedLogEntry.EventTime.UtcToTimeZoneTime(); // This needs to be local time 
+                    searchResult.AchDate = certificateData.AchievementDate;
+                    searchResult.UpdatedBy = lastUpdatedLogEntry.Username ?? certificate.UpdatedBy;
                     searchResult.UpdatedAt = lastUpdatedLogEntry.EventTime.UtcToTimeZoneTime(); // This needs to be local time
                 }
                 else

@@ -15,6 +15,9 @@ namespace SFA.DAS.AssessorService.EpaoImporter.InfrastructureServices
 
         public string GetToken()
         {
+            if(string.Equals("LOCAL", ConfigurationHelper.GetEnvironmentName()))
+                return string.Empty;
+
             var tenantId = _configuration.ClientApiAuthentication.TenantId;
             var clientId = _configuration.ClientApiAuthentication.ClientId; 
             var appKey = _configuration.ClientApiAuthentication.ClientSecret; 

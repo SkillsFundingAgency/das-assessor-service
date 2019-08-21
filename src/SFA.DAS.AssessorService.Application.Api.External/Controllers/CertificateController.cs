@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using SFA.DAS.AssessorService.Application.Api.External.Helpers;
 using SFA.DAS.AssessorService.Application.Api.External.Infrastructure;
 using SFA.DAS.AssessorService.Application.Api.External.Middleware;
 using SFA.DAS.AssessorService.Application.Api.External.Models.Internal;
@@ -44,7 +45,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
         [SwaggerOperation("Get Certificate", "Gets the specified Certificate.", Produces = new string[] { "application/json" })]
         public async Task<IActionResult> GetCertificate(long uln, string familyName, [SwaggerParameter("Standard Code or Standard Reference Number")] string standard)
         {
-            var getRequest = new GetBatchCertificateRequest { UkPrn = _headerInfo.Ukprn, Email = _headerInfo.Email, Uln = uln, FamilyName = familyName, Standard = standard };
+            var getRequest = new GetBatchCertificateRequest { UkPrn = _headerInfo.Ukprn, Uln = uln, FamilyName = familyName, Standard = standard };
             var response = await _apiClient.GetCertificate(getRequest);
 
             if (response.ValidationErrors.Any())
@@ -58,7 +59,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
             }
             else
             {
-                if(IsDraftCertificateDeemedAsReady(response.Certificate))
+                if(CertificateHelpers.IsDraftCertificateDeemedAsReady(response.Certificate))
                 {
                     response.Certificate.Status.CurrentStatus = CertificateStatus.Ready;
                 }
@@ -75,7 +76,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
         [SwaggerRequestExample(typeof(IEnumerable<CreateCertificateRequest>), typeof(SwaggerHelpers.Examples.CreateCertificateExample))]
         [SwaggerResponseExample((int)HttpStatusCode.OK, typeof(SwaggerHelpers.Examples.CreateCertificateResponseExample))]
         [SwaggerResponse((int)HttpStatusCode.OK, "For each item: The created Certificate if valid, else a list of validation errors.", typeof(IEnumerable<CreateCertificateResponse>))]
-        [SwaggerResponseExample((int)HttpStatusCode.Forbidden, typeof(SwaggerHelpers.Examples.TooManyCertificatesApiResponseExample))]
+        [SwaggerResponseExample((int)HttpStatusCode.Forbidden, typeof(SwaggerHelpers.Examples.TooManyRequestsResponseExample))]
         [SwaggerResponse((int)HttpStatusCode.Forbidden, "There are too many certificates specified within the request.", typeof(ApiResponse))]
         [SwaggerOperation("Create Certificates", "Creates a new Certificate for each valid item within the request.", Consumes = new string[] { "application/json" }, Produces = new string[] { "application/json" })]
         public async Task<IActionResult> CreateCertificates([FromBody] IEnumerable<CreateCertificateRequest> request)
@@ -89,7 +90,6 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
             var createRequest = request.Select(req =>
                 new CreateBatchCertificateRequest {
                     UkPrn = _headerInfo.Ukprn,
-                    Email = _headerInfo.Email,
                     RequestId = req.RequestId,
                     CertificateData = new Models.Request.Certificates.CertificateData
                     {
@@ -104,7 +104,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
 
             foreach(var result in results)
             {
-                if (IsDraftCertificateDeemedAsReady(result.Certificate))
+                if (CertificateHelpers.IsDraftCertificateDeemedAsReady(result.Certificate))
                 {
                     result.Certificate.Status.CurrentStatus = CertificateStatus.Ready;
                 }
@@ -117,7 +117,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
         [SwaggerRequestExample(typeof(IEnumerable<UpdateCertificateRequest>), typeof(SwaggerHelpers.Examples.UpdateCertificateExample))]
         [SwaggerResponseExample((int)HttpStatusCode.OK, typeof(SwaggerHelpers.Examples.UpdateCertificateResponseExample))]
         [SwaggerResponse((int)HttpStatusCode.OK, "For each item: The updated Certificate if valid, else a list of validation errors.", typeof(IEnumerable<UpdateCertificateResponse>))]
-        [SwaggerResponseExample((int)HttpStatusCode.Forbidden, typeof(SwaggerHelpers.Examples.TooManyCertificatesApiResponseExample))]
+        [SwaggerResponseExample((int)HttpStatusCode.Forbidden, typeof(SwaggerHelpers.Examples.TooManyRequestsResponseExample))]
         [SwaggerResponse((int)HttpStatusCode.Forbidden, "There are too many certificates specified within the request.", typeof(ApiResponse))]
         [SwaggerOperation("Update Certificates", "Updates the specified Certificate with the information contained in each valid request.", Consumes = new string[] { "application/json" }, Produces = new string[] { "application/json" })]
         public async Task<IActionResult> UpdateCertificates([FromBody] IEnumerable<UpdateCertificateRequest> request)
@@ -132,7 +132,6 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
                 new UpdateBatchCertificateRequest
                 {
                     UkPrn = _headerInfo.Ukprn,
-                    Email = _headerInfo.Email,
                     RequestId = req.RequestId,
                     CertificateData = new Models.Request.Certificates.CertificateData
                     {
@@ -148,7 +147,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
 
             foreach (var result in results)
             {
-                if (IsDraftCertificateDeemedAsReady(result.Certificate))
+                if (CertificateHelpers.IsDraftCertificateDeemedAsReady(result.Certificate))
                 {
                     result.Certificate.Status.CurrentStatus = CertificateStatus.Ready;
                 }
@@ -161,7 +160,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
         [SwaggerRequestExample(typeof(IEnumerable<SubmitCertificateRequest>), typeof(SwaggerHelpers.Examples.SubmitCertificateExample))]
         [SwaggerResponseExample((int)HttpStatusCode.OK, typeof(SwaggerHelpers.Examples.SubmitCertificateResponseExample))]
         [SwaggerResponse((int)HttpStatusCode.OK, "For each item: The submitted Certificate if valid, else a list of validation errors.", typeof(IEnumerable<SubmitCertificateResponse>))]
-        [SwaggerResponseExample((int)HttpStatusCode.Forbidden, typeof(SwaggerHelpers.Examples.TooManyCertificatesApiResponseExample))]
+        [SwaggerResponseExample((int)HttpStatusCode.Forbidden, typeof(SwaggerHelpers.Examples.TooManyRequestsResponseExample))]
         [SwaggerResponse((int)HttpStatusCode.Forbidden, "There are too many certificates specified within the request.", typeof(ApiResponse))]
         [SwaggerOperation("Submit Certificates", "Submits the specified Certificate for each valid request.", Consumes = new string[] { "application/json" }, Produces = new string[] { "application/json" })]
         public async Task<IActionResult> SubmitCertificates([FromBody] IEnumerable<SubmitCertificateRequest> request)
@@ -176,7 +175,6 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
                 new SubmitBatchCertificateRequest
                 {
                     UkPrn = _headerInfo.Ukprn,
-                    Email = _headerInfo.Email,
                     RequestId = req.RequestId,
                     Uln = req.Uln,
                     StandardCode = req.StandardCode,
@@ -197,7 +195,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
         [SwaggerOperation("Delete Certificate", "Deletes the specified Certificate.", Produces = new string[] { "application/json" })]
         public async Task<IActionResult> DeleteCertificate(long uln, string familyName, [SwaggerParameter("Standard Code or Standard Reference Number")] string standard, string certificateReference)
         {
-            var deleteRequest = new DeleteBatchCertificateRequest { UkPrn = _headerInfo.Ukprn, Email = _headerInfo.Email, Uln = uln, FamilyName = familyName, Standard = standard, CertificateReference = certificateReference};
+            var deleteRequest = new DeleteBatchCertificateRequest { UkPrn = _headerInfo.Ukprn, Uln = uln, FamilyName = familyName, Standard = standard, CertificateReference = certificateReference};
             var error = await _apiClient.DeleteCertificate(deleteRequest);
 
             if (error is null)
@@ -206,7 +204,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
             }
             else
             {
-                return BadRequest(error);
+                return StatusCode(error.StatusCode, error);
             }
         }
 
@@ -220,39 +218,5 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
 
             return Ok(grades);
         }
-
-        #region Utility Functions
-        private bool IsDraftCertificateDeemedAsReady(Certificate certificate)
-        {
-            // Note: This for the External API only and allows the caller to know if a Draft Certificate is 'Ready' for submitting
-            // It is deemed ready if the mandatory fields have been filled out.
-            if (certificate?.CertificateData is null || certificate?.Status?.CurrentStatus != CertificateStatus.Draft || string.IsNullOrEmpty(certificate.CertificateData.CertificateReference))
-            {
-                return false;
-            }
-            else if (certificate.CertificateData.Standard is null || certificate.CertificateData.Standard.StandardCode < 1)
-            {
-                return false;
-            }
-            else if (certificate.CertificateData.PostalContact is null || string.IsNullOrEmpty(certificate.CertificateData.PostalContact.ContactName)
-                        || string.IsNullOrEmpty(certificate.CertificateData.PostalContact.Organisation) || string.IsNullOrEmpty(certificate.CertificateData.PostalContact.City)
-                        || string.IsNullOrEmpty(certificate.CertificateData.PostalContact.PostCode))
-            {
-                return false;
-            }
-            else if (certificate.CertificateData.Learner is null || string.IsNullOrEmpty(certificate.CertificateData.Learner.FamilyName)
-                        || certificate.CertificateData.Learner.Uln < 1000000000 || certificate.CertificateData.Learner.Uln > 9999999999)
-            {
-                return false;
-            }
-            else if (certificate.CertificateData.LearningDetails is null || string.IsNullOrEmpty(certificate.CertificateData.LearningDetails.OverallGrade)
-                        || !certificate.CertificateData.LearningDetails.AchievementDate.HasValue)
-            {
-                return false;
-            }
-
-            return true;
-        }
-        #endregion
     }
 }

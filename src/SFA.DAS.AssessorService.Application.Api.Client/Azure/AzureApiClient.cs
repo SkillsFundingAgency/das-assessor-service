@@ -136,12 +136,12 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Azure
             }
         }
 
-        public async Task<AzureUser> CreateUser(string ukprn, string username)
+        public async Task<AzureUser> CreateUser(string ukprn)
         {
             AzureUser user = null;
 
             var organisation = await _organisationsApiClient.Get(ukprn);
-            var contact = await _contactsApiClient.GetByUsername(username);
+            var emailForOrganisation = $"api+donotreplyto-{organisation.EndPointAssessorOrganisationId}@education.gov.uk";
 
             IEnumerable<AzureUser> ukprnUsers = await GetUserDetailsByUkprn(ukprn, true, true);
 
@@ -150,12 +150,12 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Azure
                                               where u.Id == subs.UserId
                                               select u).ToList();
 
-            AzureUser emailUser = await GetUserDetailsByEmail(contact?.Email, true, true);
-            AzureUser ukprnUser = ukprnUsersWithSubscription.Where(u => u.Email.Equals(contact?.Email)).FirstOrDefault();
+            AzureUser emailUser = await GetUserDetailsByEmail(emailForOrganisation, true, true);
+            AzureUser ukprnUser = ukprnUsersWithSubscription.FirstOrDefault(u => u.Email.Equals(emailForOrganisation));
             
             if (ukprnUsersWithSubscription.Any() && ukprnUser is null)
             {
-                throw new Exceptions.EntityAlreadyExistsException($"Access is already enabled but not for the supplied ukprn and username.");
+                throw new Exceptions.EntityAlreadyExistsException($"Access is already enabled.");
             }
             else if (ukprnUser != null)
             {
@@ -170,9 +170,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Azure
             {
                 var request = new CreateAzureUserRequest
                 {
-                    FirstName = organisation.EndPointAssessorName,
-                    LastName = contact.DisplayName,
-                    Email = contact.Email,
+                    FirstName = organisation.EndPointAssessorOrganisationId,
+                    LastName = organisation.EndPointAssessorName,
+                    Email = emailForOrganisation,
                     Note = $"ukprn={ukprn}"
                 };
 

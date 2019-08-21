@@ -45,47 +45,6 @@ namespace SFA.DAS.AssessorService.Application.Api.External.AutoMapperProfiles
                 .ForPath(dest => dest.PostalContact.Organisation, opt => opt.MapFrom(source => source.ContactOrganisation))
                 .ForPath(dest => dest.PostalContact.PostCode, opt => opt.MapFrom(source => source.ContactPostCode))
                 .ForAllOtherMembers(dest => dest.Ignore());
-
-            // These ones are required for replaying back stuff to the 'front end'
-            CreateMap<Models.Response.Certificates.CertificateData, Models.Request.Certificates.CertificateData>()
-                .ForMember(dest => dest.CertificateReference, opt => opt.MapFrom(source => source.CertificateReference))
-                .ForPath(dest => dest.Learner.Uln, opt => opt.MapFrom(source => source.Learner.Uln))
-                .ForPath(dest => dest.Learner.FamilyName, opt => opt.MapFrom(source => source.Learner.FamilyName))
-                .ForPath(dest => dest.LearningDetails.AchievementDate, opt => opt.MapFrom(source => source.LearningDetails.AchievementDate))
-                .ForPath(dest => dest.LearningDetails.CourseOption, opt => opt.MapFrom(source => source.LearningDetails.CourseOption))
-                .ForPath(dest => dest.LearningDetails.OverallGrade, opt => opt.MapFrom(source => source.LearningDetails.OverallGrade))
-                .ForPath(dest => dest.Standard.StandardReference, opt => opt.MapFrom(source => source.Standard.StandardReference))
-                .ForPath(dest => dest.Standard.StandardCode, opt => opt.MapFrom(source => source.Standard.StandardCode))
-                .ForPath(dest => dest.Standard.StandardReference, opt => opt.MapFrom(source => source.Standard.StandardReference))
-                .ForPath(dest => dest.PostalContact.AddressLine1, opt => opt.MapFrom(source => source.PostalContact.AddressLine1))
-                .ForPath(dest => dest.PostalContact.AddressLine2, opt => opt.MapFrom(source => source.PostalContact.AddressLine2))
-                .ForPath(dest => dest.PostalContact.AddressLine3, opt => opt.MapFrom(source => source.PostalContact.AddressLine3))
-                .ForPath(dest => dest.PostalContact.City, opt => opt.MapFrom(source => source.PostalContact.City))
-                .ForPath(dest => dest.PostalContact.PostCode, opt => opt.MapFrom(source => source.PostalContact.PostCode))
-                .ForPath(dest => dest.PostalContact.ContactName, opt => opt.MapFrom(source => source.PostalContact.ContactName))
-                .ForPath(dest => dest.PostalContact.Department, opt => opt.MapFrom(source => source.PostalContact.Department))
-                .ForPath(dest => dest.PostalContact.Organisation, opt => opt.MapFrom(source => source.PostalContact.Organisation))
-                .ForAllOtherMembers(dest => dest.Ignore());
-
-            CreateMap<Models.Request.Certificates.CertificateData, Models.Response.Certificates.CertificateData>()
-                .ForMember(dest => dest.CertificateReference, opt => opt.MapFrom(source => source.CertificateReference))
-                .ForPath(dest => dest.Learner.Uln, opt => opt.MapFrom(source => source.Learner.Uln))
-                .ForPath(dest => dest.Learner.FamilyName, opt => opt.MapFrom(source => source.Learner.FamilyName))
-                .ForPath(dest => dest.LearningDetails.AchievementDate, opt => opt.MapFrom(source => source.LearningDetails.AchievementDate))
-                .ForPath(dest => dest.LearningDetails.CourseOption, opt => opt.MapFrom(source => source.LearningDetails.CourseOption))
-                .ForPath(dest => dest.LearningDetails.OverallGrade, opt => opt.MapFrom(source => source.LearningDetails.OverallGrade))
-                .ForPath(dest => dest.Standard.StandardReference, opt => opt.MapFrom(source => source.Standard.StandardReference))
-                .ForPath(dest => dest.Standard.StandardCode, opt => opt.MapFrom(source => source.Standard.StandardCode))
-                .ForPath(dest => dest.Standard.StandardReference, opt => opt.MapFrom(source => source.Standard.StandardReference))
-                .ForPath(dest => dest.PostalContact.AddressLine1, opt => opt.MapFrom(source => source.PostalContact.AddressLine1))
-                .ForPath(dest => dest.PostalContact.AddressLine2, opt => opt.MapFrom(source => source.PostalContact.AddressLine2))
-                .ForPath(dest => dest.PostalContact.AddressLine3, opt => opt.MapFrom(source => source.PostalContact.AddressLine3))
-                .ForPath(dest => dest.PostalContact.City, opt => opt.MapFrom(source => source.PostalContact.City))
-                .ForPath(dest => dest.PostalContact.PostCode, opt => opt.MapFrom(source => source.PostalContact.PostCode))
-                .ForPath(dest => dest.PostalContact.ContactName, opt => opt.MapFrom(source => source.PostalContact.ContactName))
-                .ForPath(dest => dest.PostalContact.Department, opt => opt.MapFrom(source => source.PostalContact.Department))
-                .ForPath(dest => dest.PostalContact.Organisation, opt => opt.MapFrom(source => source.PostalContact.Organisation))
-                .ForAllOtherMembers(dest => dest.Ignore());
         }
     }
 }

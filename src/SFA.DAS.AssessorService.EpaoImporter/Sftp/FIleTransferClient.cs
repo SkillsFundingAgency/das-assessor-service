@@ -96,7 +96,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Sftp
             }
         }
 
-        public async Task<string> DownloadFile(string fileName)
+        public string DownloadFile(string fileName)
         {
             _fileName = fileName;
             var fileContent = string.Empty;
