@@ -19,7 +19,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ManageUsersTests.UserDetailsCont
                 OrganisationId = DifferentOrganisationId
             });
             
-            var result = await Controller.User(UserId);
+            var result = await Controller.Details(UserId);
 
             result.Should().BeOfType<UnauthorizedResult>();
         }
