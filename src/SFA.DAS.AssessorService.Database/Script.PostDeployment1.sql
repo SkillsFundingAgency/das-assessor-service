@@ -35,3 +35,6 @@ UPDATE OrganisationType SET FinancialExempt = 1 WHERE Type = 'Academy or Free Sc
 
 -- ON-2197 - PostCode to Region Mapping 
 :r .\Insert-Postcode-to-Regions.sql
+
+-- ON-2222 - remove duplicated certs
+:r .\Delete-Duplicated-Certs.sql
