@@ -18,23 +18,23 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ManageUsersTests.UserDetailsCont
         [SetUp]
         public async Task Arrange()
         {
-            _result = await Controller.User(UserId);
+            _result = await Controller.Details(UserId);
         }
         
         [Test]
-        public async Task Then_a_ViewResult_is_returned()
+        public void Then_a_ViewResult_is_returned()
         {
             _result.Should().BeOfType<ViewResult>();
         }
 
         [Test]
-        public async Task Then_ViewResult_should_contain_UserViewModel()
+        public void Then_ViewResult_should_contain_UserViewModel()
         {
             _result.As<ViewResult>().Model.Should().BeOfType<UserViewModel>();
         }
 
         [Test]
-        public async Task Then_UserViewModel_contains_correct_privileges()
+        public void Then_UserViewModel_contains_correct_privileges()
         {
             _result.As<ViewResult>().Model.As<UserViewModel>().AssignedPrivileges.Count.Should().Be(2);
         }

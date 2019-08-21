@@ -39,5 +39,10 @@ namespace SFA.DAS.AssessorService.ExternalApiDataSync.Infrastructure
 
             return _webConfiguration;
         }
+
+        public static string GetEnvironmentName()
+        {
+            return Environment.GetEnvironmentVariable("EnvironmentName");
+        }
     }
 }

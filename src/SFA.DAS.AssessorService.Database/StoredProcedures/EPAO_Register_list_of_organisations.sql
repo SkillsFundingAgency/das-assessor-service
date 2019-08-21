@@ -13,7 +13,7 @@ insert into #PrimaryOrFirstContact (OrganisationId, ContactId)
 SELECT EndPointAssessorOrganisationId, ContactId 
 FROM (
   SELECT co1.EndPointAssessorOrganisationId, co1.Id ContactId, 
-     ROW_NUMBER() OVER (PARTITION BY co1.EndPointAssessorOrganisationId ORDER BY (CASE WHEN primarycontact = co1.username THEN 1 ELSE 0 END) DESC,co1.createdat) rownumber
+     ROW_NUMBER() OVER (PARTITION BY co1.EndPointAssessorOrganisationId ORDER BY (CASE WHEN PrimaryContact = co1.Username THEN 1 ELSE 0 END) DESC,co1.CreatedAt) rownumber
      FROM [Organisations] og1 
    JOIN Contacts co1 ON co1.EndPointAssessorOrganisationId = og1.EndPointAssessorOrganisationId
    WHERE og1.Status = 'Live'

@@ -28,7 +28,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ManageUsersTests.UserDetailsCont
         protected Guid PrivilegeId3;
 
         [SetUp]
-        public async Task SetUp()
+        public void SetUp()
         {
             Mapper.Initialize(cfg =>
             {
@@ -92,7 +92,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ManageUsersTests.UserDetailsCont
         }
         
         [TearDown]
-        public async Task TearDown()
+        public void TearDown()
         {
             Mapper.Reset();
         }

@@ -51,19 +51,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
             _logger.LogInformation("CreateNewCertificate Before Get Standard from API");
             var standard = await _standardService.GetStandard(ilr.StdCode);
             _logger.LogInformation("CreateNewCertificate Before Get Provider from API");
-            Provider provider;
-            try
-            {
-                provider = await _assessmentOrgsApiClient.GetProvider(ilr.UkPrn);
-            }
-            catch (Exception)
-            {
-                // see whether there are any previous certificates with this ukrpn and a ProviderName....
-                var previousProviderName = await _certificateRepository.GetPreviousProviderName(ilr.UkPrn);
-                provider = previousProviderName != null
-                    ? new Provider {ProviderName = previousProviderName}
-                    : new Provider {ProviderName = "Unknown"};
-            }
+            var provider = await GetProviderFromUkprn(ilr.UkPrn);
 
             var certData = new CertificateData()
             {
@@ -108,6 +96,38 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
             _logger.LogInformation($"Certificate with ID: {newCertificate.Id} Started with reference of {newCertificate.CertificateReference}");
 
             return newCertificate;
+        }
+
+        private async Task<Provider> GetProviderFromUkprn(int ukprn)
+        {
+            Provider provider = null;
+            try
+            {
+                provider = await _assessmentOrgsApiClient.GetProvider(ukprn);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Unable to get Provider from AssessmentOrgsApi. Ukprn: {ukprn}");
+            }
+
+            if (provider is null)
+            {
+                // see if we can get it from Organisation Table
+                var org = await _organisationQueryRepository.GetByUkPrn(ukprn);
+
+                if (org != null)
+                {
+                    provider = new Provider { ProviderName = org.EndPointAssessorName, Ukprn = ukprn };
+                }
+                else
+                {
+                    // see whether there are any previous certificates with this ukrpn and a ProviderName....
+                    var previousProviderName = await _certificateRepository.GetPreviousProviderName(ukprn);
+                    provider = new Provider { ProviderName = previousProviderName ?? "Unknown", Ukprn = ukprn };
+                }
+            }
+
+            return provider;
         }
     }
 
