@@ -5,7 +5,7 @@
     Layout = "_DashboardLayout";
 }
 
-<a class="govuk-back-link" asp-controller="UserDetails" asp-action="User" asp-route-contactId="@Model.Id">Back</a>
+<a class="govuk-back-link" asp-controller="UserDetails" asp-action="Details" asp-route-contactId="@Model.Id">Back</a>
 
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
@@ -44,7 +44,7 @@
             </form>
 
             <p class="govuk-body">
-                <a class="govuk-link" id="cancel" asp-controller="UserDetails" asp-action="User" asp-route-contactId="@Model.Id">
+                <a class="govuk-link" id="cancel" asp-controller="UserDetails" asp-action="Details" asp-route-contactId="@Model.Id">
                     Cancel
                 </a>
             </p>

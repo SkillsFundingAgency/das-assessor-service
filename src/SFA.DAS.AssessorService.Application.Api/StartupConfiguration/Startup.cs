@@ -238,7 +238,9 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
             return new Notifications.Api.Client.Configuration.NotificationsApiClientConfiguration
             {
                 ApiBaseUrl = Configuration.NotificationsApiClientConfiguration.ApiBaseUrl,
+#pragma warning disable 618
                 ClientToken = Configuration.NotificationsApiClientConfiguration.ClientToken,
+#pragma warning restore 618
                 ClientId = "",
                 ClientSecret = "",
                 IdentifierUri = "",
