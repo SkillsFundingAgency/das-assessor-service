@@ -122,6 +122,13 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         {
             _logger.LogInformation($"Received callback from DfE: Sub: {callback.Sub} SourceId: {callback.SourceId}");
             await _mediator.Send(new UpdateSignInIdRequest(Guid.Parse(callback.Sub), Guid.Parse(callback.SourceId)));
+
+            if (!string.IsNullOrEmpty(callback.InviterId))
+            {
+                _logger.LogInformation($"Notifying inviter that the invitation was accepted");
+                await _mediator.Send(new NotifyInvitationAcceptedRequest(Guid.Parse(callback.InviterId), Guid.Parse(callback.SourceId)));
+            }
+
             return NoContent();
         }
 
