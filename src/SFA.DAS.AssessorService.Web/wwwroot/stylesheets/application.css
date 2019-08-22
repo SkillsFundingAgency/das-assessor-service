@@ -137,6 +137,10 @@
   white-space: nowrap;
 }
 
+.das-\!-margin-bottom-xs {
+  margin-bottom: 2px !important;
+}
+
 .app-check-your-answers {
   font-family: "nta", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
