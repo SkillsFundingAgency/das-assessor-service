@@ -36,7 +36,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 
         public async Task<bool> ValidateWebsiteLink(string websiteLinkToValidate)
         {
-            var url = $"/api/validation/is-websitelink-format/{websiteLinkToValidate}";
+            var url = $"/api/validation/is-websitelink-format?websiteLinkToValidate={websiteLinkToValidate}";
             _logger.LogInformation($"VALIDATEWEBSITELINK - ValidationApiClient.ValidateWebsiteLink API url called: {url}");
             using (var request = new HttpRequestMessage(HttpMethod.Get, url))
             {
