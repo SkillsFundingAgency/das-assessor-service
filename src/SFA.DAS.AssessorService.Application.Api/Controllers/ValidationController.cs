@@ -51,7 +51,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> ValidateWebsiteLink(string websiteLinkToValidate)
         {
-            return Ok(await _mediator.Send(new ValidationRequest { Type = "websitelink", Value = HttpUtility.UrlDecode(websiteLinkToValidate) }));
+            var decodedUrl = HttpUtility.UrlDecode(websiteLinkToValidate);
+            _logger.LogInformation($"VALIDATEWEBSITELINK - ValidationController.ValidateWebsiteLink: {websiteLinkToValidate}, decoded: {decodedUrl}");
+            return Ok(await _mediator.Send(new ValidationRequest { Type = "websitelink", Value = decodedUrl }));
         }
 
         [HttpGet("is-not-empty/{stringToValidate}", Name = "ValidateRequired")]
