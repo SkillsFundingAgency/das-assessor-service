@@ -3,7 +3,7 @@ using System;
 
 namespace SFA.DAS.AssessorService.Application.Api.External.Models.Request.Certificates
 {
-    public class LearningDetails : IEquatable<LearningDetails>
+    public sealed class LearningDetails : IEquatable<LearningDetails>
     {
         public string CourseOption { get; set; }
         [SwaggerRequired]

@@ -75,7 +75,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.MockedObjects
                 .Setup(m => m.EnvironmentName)
                 .Returns(EnvironmentName.Development);
 
-            var mockTokenService = new Mock<TokenService>(webConfigMock.Object, hostMock.Object);
+            var mockTokenService = new Mock<TokenService>(webConfigMock.Object, hostMock.Object, false);
 
             var apiBaseLogger = new Mock<ILogger<ApiClientBase>>();
 

@@ -40,8 +40,11 @@ namespace SFA.DAS.AssessorService.Data.Staff
             }
             else if(report.StoredProcedure == "StaffReports_DetailedExtract")
             {
-                string fromdate = DateTime.UtcNow.AddDays(1 - DateTime.UtcNow.Day).ToString("yyyy-MM-dd");
-                string todate = DateTime.UtcNow.AddDays(1 - DateTime.UtcNow.Day).AddMonths(1).ToString("yyyy-MM-dd");
+				DateTime date = DateTime.UtcNow;
+                var firstDayOfMonth = new DateTime(date.Year, date.Month, 1);
+                var lastDayOfMonth = new DateTime(date.Year, date.Month, DateTime.DaysInMonth(date.Year, date.Month));
+                string fromdate = firstDayOfMonth.ToString("yyyy-MM-dd");
+                string todate = lastDayOfMonth.ToString("yyyy-MM-dd");
 
                 return (await _connection.QueryAsync(report.StoredProcedure, param: new { fromdate, todate }, commandType: CommandType.StoredProcedure)).OfType<IDictionary<string, object>>().ToList();
             }

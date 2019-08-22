@@ -7,6 +7,8 @@ namespace SFA.DAS.AssessorService.Application.Api.External
 {
     public class Program
     {
+        protected Program() { }
+
         public static void Main(string[] args)
         {
             var logger = NLogBuilder.ConfigureNLog("nlog.config").GetCurrentClassLogger();
