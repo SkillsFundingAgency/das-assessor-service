@@ -1269,3 +1269,15 @@ TODO: change to 'das-page-navigation' and BEM
   max-width: 100%;
   overflow-y: auto;
 }
+
+th[aria-sort] a {
+  text-decoration: none;
+}
+
+th[aria-sort="descending"] a:after {
+  content: "\25BC";
+}
+
+th[aria-sort="ascending"] a:after {
+  content: "\25B2";
+}
