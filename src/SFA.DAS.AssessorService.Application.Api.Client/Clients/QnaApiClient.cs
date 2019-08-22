@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.QnA.Api.Types;
+using SFA.DAS.QnA.Api.Types.Page;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -60,6 +61,15 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             {
                 return await RequestAndDeserialiseAsync<Section>(request,
                     $"Could not find the section");
+            }
+        }
+
+        public async Task<Page> GetPage(Guid applicationId, Guid sectionId, string pageId)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/applications/{applicationId}/sections/{sectionId}/pages/{pageId}"))
+            {
+                return await RequestAndDeserialiseAsync<Page>(request,
+                    $"Could not find the page");
             }
         }
     }

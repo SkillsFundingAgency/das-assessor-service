@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Apply;
+using SFA.DAS.QnA.Api.Types.Page;
 
 namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 {
@@ -44,6 +47,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             using (var request = new HttpRequestMessage(HttpMethod.Post, $"api/v1/applications/createApplication"))
             {
                 return await PostPutRequestWithResponse<CreateApplicationRequest, Guid>(request, createApplicationRequest);
+            }
+        }
+
+        public async Task<List<Option>> GetQuestionDataFedOptions()
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"api/ao/delivery-areas"))
+            {
+                return (await RequestAndDeserialiseAsync<IEnumerable<DeliveryArea>>(request, $"Could not retrieve applications")).Select(da => new Option() { Label = da.Area, Value = da.Area }).ToList(); 
             }
         }
     }

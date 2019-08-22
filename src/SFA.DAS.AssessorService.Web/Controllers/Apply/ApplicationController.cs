@@ -11,10 +11,12 @@ using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Application.Exceptions;
 using SFA.DAS.AssessorService.ApplyTypes;
+using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.ViewModels.Apply;
 using SFA.DAS.QnA.Api.Types;
+using SFA.DAS.QnA.Api.Types.Page;
 
-namespace SFA.DAS.ApplyService.Web.Controllers.Apply
+namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 {
     [Authorize]
     public class ApplicationController : Controller
@@ -182,18 +184,18 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Apply
             return View(sequenceVm);
         }
 
-        [HttpGet("/Application/{applicationId}/Sequences/{sequenceNo}/Sections/{sectionId}")]
-        public async Task<IActionResult> Section(Guid applicationId, int sequenceNo, Guid sectionId)
+        [HttpGet("/Application/{Id}/Sequences/{sequenceNo}/Sections/{sectionId}")]
+        public async Task<IActionResult> Section(Guid Id, int sequenceNo, Guid sectionId)
         {
-            var application = await _applicationApiClient.GetApplication(applicationId);
+            var application = await _applicationApiClient.GetApplication(Id);
             var canUpdate = await CanUpdateApplication(application.ApplicationId, sequenceNo);
             if (!canUpdate)
             {
-                return RedirectToAction("Sequence", new { applicationId });
+                return RedirectToAction("Sequence", new { Id });
             }
 
             var section = await _qnaApiClient.GetSection(application.ApplicationId, sectionId);
-            var applicationSection = new ApplicationSection { Section = section, ApplicationId = applicationId };
+            var applicationSection = new ApplicationSection { Section = section, Id = Id };
             switch (section?.DisplayType)
             {
                 case null:
@@ -208,6 +210,75 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Apply
             }
         }
 
+        [HttpGet("/Application/{Id}/Sequences/{sequenceNo}/Sections/{sectionId}/Pages/{pageId}"), ModelStatePersist(ModelStatePersist.RestoreEntry)]
+        public async Task<IActionResult> Page(Guid Id, int sequenceNo, Guid sectionId, string pageId, string redirectAction)
+        {
+            var application = await _applicationApiClient.GetApplication(Id);
+            var sequence = await _qnaApiClient.GetApplicationActiveSequence(application.ApplicationId);
+
+            var canUpdate = await CanUpdateApplication(application.ApplicationId, sequenceNo);
+            if (!canUpdate)
+            {
+                return RedirectToAction("Sequence", new { Id });
+            }
+
+            PageViewModel viewModel = null;
+            var returnUrl = Request.Headers["Referer"].ToString();
+
+            if (!ModelState.IsValid)
+            {
+                // when the model state has errors the page will be displayed with the values which failed validation
+                var page = JsonConvert.DeserializeObject<QnA.Api.Types.Page.Page>((string)TempData["InvalidPage"]);
+
+                var errorMessages = !ModelState.IsValid
+                    ? ModelState.SelectMany(k => k.Value.Errors.Select(e => new ValidationErrorDetail()
+                    {
+                        ErrorMessage = e.ErrorMessage,
+                        Field = k.Key
+                    })).ToList()
+                    : null;
+
+                viewModel = new PageViewModel(Id, sequenceNo, sectionId, pageId, page, redirectAction,
+                    returnUrl, errorMessages);
+            }
+            else
+            {
+                // when the model state has no errors the page will be displayed with the last valid values which were saved
+                var page = await _qnaApiClient.GetPage(application.ApplicationId, sectionId, pageId);
+
+                if (page != null && (!page.Active || page.NotRequired))
+                {
+                    var nextPage = page.Next.FirstOrDefault(p => p.Condition is null);
+
+                    if (nextPage?.ReturnId != null && nextPage?.Action == "NextPage")
+                    {
+                        pageId = nextPage.ReturnId;
+                        return RedirectToAction("Page",
+                            new { Id, sequenceNo, sectionId, pageId, redirectAction });
+                    }
+                    else
+                    {
+                        return RedirectToAction("Section", new { Id, sequenceNo, sectionId });
+                    }
+                }
+
+                page = await GetDataFedOptions(page);
+
+                viewModel = new PageViewModel(Id, sequenceNo, sectionId, pageId, page, redirectAction,
+                    returnUrl, null);
+
+                ProcessPageVmQuestionsForStandardName(viewModel.Questions, application);
+            }
+
+            if (viewModel.AllowMultipleAnswers)
+            {
+                return View("~/Views/Application/Pages/MultipleAnswers.cshtml", viewModel);
+            }
+
+            return View("~/Views/Application/Pages/Index.cshtml", viewModel);
+        }
+
+
         [HttpPost("/Application/Submit")]
         public async Task<IActionResult> Submit(Guid applicationId, int sequenceNo)
         {
@@ -220,7 +291,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Apply
 
             var activeSequence = await _qnaApiClient.GetApplicationActiveSequence(application.ApplicationId);
             var sections = await _qnaApiClient.GetSections(application.ApplicationId, activeSequence.Id);
-            var errors = ValidateSubmit(activeSequence, sections);
+            var errors = ValidateSubmit(sections);
             if (errors.Any())
             {
                 var sequenceVm = new SequenceViewModel(activeSequence, applicationId,sections, errors);
@@ -246,7 +317,55 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Apply
             //}
         }
 
-        private List<ValidationErrorDetail> ValidateSubmit(Sequence sequence, List<Section> sections)
+        private async Task<Page> GetDataFedOptions(Page page)
+        {
+            if (page != null)
+            {
+                foreach (var question in page.Questions)
+                {
+                    if (question.Input.Type.StartsWith("DataFed_"))
+                    {
+                        var questionOptions = await _applicationApiClient.GetQuestionDataFedOptions();
+                        question.Input.Options = questionOptions;
+                        question.Input.Type = question.Input.Type.Replace("DataFed_", "");
+                    }
+                }
+            }
+
+            return page;
+        }
+
+        private void ProcessPageVmQuestionsForStandardName(List<QuestionViewModel> pageVmQuestions, ApplicationResponse application)
+        {
+            if (pageVmQuestions == null) return;
+
+            var placeholderString = "StandardName";
+            var isPlaceholderPresent = false;
+
+            foreach (var question in pageVmQuestions)
+
+                if (question.Label.Contains($"[{placeholderString}]") ||
+                   question.Hint.Contains($"[{placeholderString}]") ||
+                    question.QuestionBodyText.Contains($"[{placeholderString}]") ||
+                    question.ShortLabel.Contains($"[{placeholderString}]")
+                   )
+                    isPlaceholderPresent = true;
+
+            if (!isPlaceholderPresent) return;
+
+            var standardName = application?.ApplicationData?.StandardName;
+
+            if (string.IsNullOrEmpty(standardName)) standardName = "the standard to be selected";
+
+            foreach (var question in pageVmQuestions)
+            {
+                question.Label = question.Label?.Replace($"[{placeholderString}]", standardName);
+                question.Hint = question.Hint?.Replace($"[{placeholderString}]", standardName);
+                question.QuestionBodyText = question.QuestionBodyText?.Replace($"[{placeholderString}]", standardName);
+                question.ShortLabel = question.Label?.Replace($"[{placeholderString}]", standardName);
+            }
+        }
+        private List<ValidationErrorDetail> ValidateSubmit(List<Section> sections)
         {
             var validationErrors = new List<ValidationErrorDetail>();
 

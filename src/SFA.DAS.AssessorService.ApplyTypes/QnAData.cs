@@ -1,3 +1,4 @@
+using SFA.DAS.QnA.Api.Types.Page;
 using System.Collections.Generic;
 using System.Linq;
 

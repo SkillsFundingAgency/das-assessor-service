@@ -6,7 +6,7 @@ namespace SFA.DAS.AssessorService.ApplyTypes
 {
     public class ApplicationSection : ApplyTypeBase
     {
-        public Guid ApplicationId { get; set; }
+        public Guid Id { get; set; }
         public Section Section { get; set; }
         public int SequenceId { get; set; }
 

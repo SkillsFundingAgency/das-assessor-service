@@ -1,4 +1,5 @@
 ﻿using SFA.DAS.AssessorService.Api.Types.Models.Apply;
+using SFA.DAS.QnA.Api.Types.Page;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -33,7 +34,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         //Task<string> GetApplicationStatus(Guid applicationId, int standardCode);
 
         //Task<List<StandardCollation>> GetStandards();
-        //Task<List<Option>> GetQuestionDataFedOptions(string dataEndpoint);
+        Task<List<Option>> GetQuestionDataFedOptions();
         //Task DeleteFile(Guid applicationId, Guid userId, int sequenceId, int sectionId, string pageId, string questionId);
 
     }

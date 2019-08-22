@@ -1,5 +1,6 @@
 ﻿using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.QnA.Api.Types;
+using SFA.DAS.QnA.Api.Types.Page;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -13,5 +14,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         Task<Sequence> GetApplicationActiveSequence(Guid applicationId);
         Task<List<Section>> GetSections(Guid applicationId, Guid sequenceId);
         Task<Section> GetSection(Guid applicationId, Guid sectionId);
+        Task<Page> GetPage(Guid applicationId, Guid sectionId, string pageId);
     }
 }
