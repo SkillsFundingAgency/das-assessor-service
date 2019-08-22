@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-
+using System.Web;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -616,7 +616,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                         }
 
                         // only check if an web site link has been entered - model has required validator
-                        if (await _validationApiClient.ValidateWebsiteLink(vm.WebsiteLink) == false)
+                        if (await _validationApiClient.ValidateWebsiteLink(HttpUtility.UrlEncode(vm.WebsiteLink)) == false)
                         {
                             ModelState.AddModelError(nameof(ChangeWebsiteViewModel.WebsiteLink), "Enter a valid website address");
                         }
