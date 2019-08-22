@@ -11,7 +11,8 @@ using SFA.DAS.AssessorService.Web.Infrastructure;
 namespace SFA.DAS.AssessorService.Web.UnitTests.OrganisationControllerTests
 {
     using Api.Types.Models;
-
+    using SFA.DAS.AssessorService.Application.Api.Client.Azure;
+    using SFA.DAS.AssessorService.Settings;
 
     public class OrganisationControllerTestBase
     {
@@ -20,9 +21,11 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.OrganisationControllerTests
         protected static Mock<ITokenService> TokenService;
         protected static Mock<ISessionService> SessionService;
         protected static Mock<IOrganisationsApiClient> ApiClient;
+        protected static Mock<IWebConfiguration> WebConfiguration;
+        protected static Mock<IAzureApiClient> ExternalApiClient;
 
         public static void Setup()
-        {         
+        {
             var httpContext = new Mock<IHttpContextAccessor>();
             httpContext
                 .Setup(c => c.HttpContext)
@@ -40,10 +43,14 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.OrganisationControllerTests
             TokenService = new Mock<ITokenService>();
             TokenService.Setup(s => s.GetToken()).Returns("jwt");
 
+            WebConfiguration = new Mock<IWebConfiguration>();
+
             ApiClient = new Mock<IOrganisationsApiClient>();
             ApiClient.Setup(c => c.Get("12345")).ReturnsAsync(new OrganisationResponse() { });
 
-            OrganisationController = new OrganisationController(logger.Object, httpContext.Object, ApiClient.Object);
+            ExternalApiClient = new Mock<IAzureApiClient>();
+
+            OrganisationController = new OrganisationController(logger.Object, httpContext.Object, WebConfiguration.Object, ApiClient.Object, ExternalApiClient.Object);
         }
     }
 }
