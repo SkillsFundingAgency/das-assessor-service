@@ -12,9 +12,11 @@ using SFA.DAS.AssessorService.Api.Types.Models.Azure;
 using SFA.DAS.AssessorService.Application.Api.Client.Azure;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Application.Api.Client.Exceptions;
+using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Web.Constants;
 using SFA.DAS.AssessorService.Web.Infrastructure;
+using SFA.DAS.AssessorService.Web.StartupConfiguration;
 using SFA.DAS.AssessorService.Web.ViewModels;
 
 namespace SFA.DAS.AssessorService.Web.Controllers
@@ -75,6 +77,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
         [HttpGet]
         [TypeFilter(typeof(MenuFilter), Arguments = new object[] { Pages.Organisations })]
+        [PrivilegeAuthorize(Privileges.ChangeOrganisationDetails)]
         public async Task<IActionResult> OrganisationDetails()
         {
             var epaoid = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/epaoid")?.Value;
@@ -97,6 +100,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         }
 
         [HttpPost]
+        [PrivilegeAuthorize(Privileges.ChangeOrganisationDetails)]
         public async Task<IActionResult> EnableApiAccess()
         {
             var ukprn = _contextAccessor.HttpContext.User.Claims.FirstOrDefault(c => c.Type == "http://schemas.portal.com/ukprn")?.Value;
@@ -105,6 +109,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         }
 
         [HttpPost]
+        [PrivilegeAuthorize(Privileges.ChangeOrganisationDetails)]
         public async Task<IActionResult> RenewApiKey(string subscriptionId)
         {
             await _externalApiClient.RegeneratePrimarySubscriptionKey(subscriptionId);
