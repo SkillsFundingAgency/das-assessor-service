@@ -31,4 +31,5 @@ GO
 GO
 
 
-CREATE UNIQUE INDEX [IXU_Certificates] ON [Certificates] ([Uln], [StandardCode], [CreateDay])
+CREATE UNIQUE INDEX [IXU_Certificates] ON [Certificates] ([Uln], [StandardCode])
+
