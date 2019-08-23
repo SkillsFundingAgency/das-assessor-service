@@ -1,3 +1,4 @@
+using SFA.DAS.QnA.Api.Types.Page;
 using System;
 using System.Collections.Generic;
 
@@ -130,11 +131,6 @@ namespace SFA.DAS.AssessorService.ApplyTypes
         public List<Question> FurtherQuestions { get; set; }
     }
 
-    public class Answer
-    {
-        public string QuestionId { get; set; }
-        public string Value { get; set; }
-    }
     
     public class Condition
     {

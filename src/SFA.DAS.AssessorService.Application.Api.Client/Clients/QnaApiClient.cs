@@ -1,4 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.QnA.Api.Types;
 using SFA.DAS.QnA.Api.Types.Page;
@@ -70,6 +72,97 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             {
                 return await RequestAndDeserialiseAsync<Page>(request,
                     $"Could not find the page");
+            }
+        }
+
+        public async Task<AddPageAnswerResponse> AddPageAnswers(Guid applicationId, Guid sectionId, string pageId, List<Answer> answer)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Post, $"/applications/{applicationId}/sections/{sectionId}/pages/{pageId}/multiple"))
+            {
+                JsonSerializerSettings settings = new JsonSerializerSettings();
+                settings.Converters.Add(new AddResultConverter());
+                return await PostPutRequestWithResponse<List<Answer>, AddPageAnswerResponse> (request, answer, settings);
+            }
+        }
+
+        public async Task<SetPageAnswersResponse> AddPageAnswer(Guid applicationId, Guid sectionId, string pageId, List<Answer> answer)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Post, $"/applications/{applicationId}/sections/{sectionId}/pages/{pageId}"))
+            {
+                JsonSerializerSettings settings = new JsonSerializerSettings();
+                settings.Converters.Add(new SetResultConverter());
+                return await PostPutRequestWithResponse<List<Answer>, SetPageAnswersResponse>(request, answer,settings);
+            }
+        }
+
+        public async Task Upload(Guid applicationId, Guid sectionId, string pageId, string questionId)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Post, $"/applications/{applicationId}/sections/{sectionId}/pages/{pageId}/questions/{questionId}/upload"))
+            {
+                 await PostPutRequest(request);
+            }
+        }
+
+        private class SetResultConverter : JsonConverter
+        {
+            public override bool CanConvert(Type objectType)
+            {
+                return (objectType == typeof(SetPageAnswersResponse));
+            }
+
+            public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+            {
+                JObject jo = JObject.Load(reader);
+                string nextAction = (string)jo["nextAction"];
+                string nextActionId = (string)jo["nextActionId"];
+                List<KeyValuePair<string, string>> errors = JsonConvert.DeserializeObject<List<KeyValuePair<string, string>>>(jo["validationErrors"]?.ToString(Formatting.None));
+                SetPageAnswersResponse result;
+                if (errors == null)
+                    result = new SetPageAnswersResponse(nextAction, nextActionId);
+                else
+                    result = new SetPageAnswersResponse(errors);
+                return result;
+            }
+
+            public override bool CanWrite
+            {
+                get { return false; }
+            }
+
+            public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        private class AddResultConverter : JsonConverter
+        {
+            public override bool CanConvert(Type objectType)
+            {
+                return (objectType == typeof(AddPageAnswerResponse));
+            }
+
+            public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+            {
+                JObject jo = JObject.Load(reader);
+                Page page = JsonConvert.DeserializeObject<Page>(jo["page"].ToString(Formatting.None));
+                List<KeyValuePair<string, string>> errors = JsonConvert.DeserializeObject<List<KeyValuePair<string, string>>>(jo["validationErrors"]?.ToString(Formatting.None));
+                AddPageAnswerResponse result;
+                if (errors == null)
+                    result = new AddPageAnswerResponse(page);
+                else
+                    result = new AddPageAnswerResponse(errors);
+                return result;
+            }
+
+            public override bool CanWrite
+            {
+                get { return false; }
+            }
+
+            public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+            {
+                throw new NotImplementedException();
             }
         }
     }

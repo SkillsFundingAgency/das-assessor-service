@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -276,6 +277,124 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             }
 
             return View("~/Views/Application/Pages/Index.cshtml", viewModel);
+        }
+
+        [HttpPost("/Application/{Id}/Sequences/{sequenceNo}/Sections/{sectionId}/Pages/{pageId}"), ModelStatePersist(ModelStatePersist.Store)]
+        public async Task<IActionResult> SaveAnswers(Guid Id, int sequenceNo, Guid sectionId, string pageId, string redirectAction, string __formAction)
+        {
+            var application = await _applicationApiClient.GetApplication(Id);
+
+            var canUpdate = await CanUpdateApplication(application.ApplicationId, sequenceNo);
+            if (!canUpdate)
+            {
+                return RedirectToAction("Sequence", new { application.ApplicationId });
+            }
+
+            var page = await _qnaApiClient.GetPage(application.ApplicationId, sectionId, pageId);
+
+            var errorMessages = new List<ValidationErrorDetail>();
+            var answers = new List<Answer>();
+
+            var fileValidationPassed = FileValidator.FileValidationPassed(answers, page, errorMessages, ModelState, HttpContext.Request.Form.Files);
+            GetAnswersFromForm(answers);
+
+           
+            if (page.AllowMultipleAnswers)
+            {
+                var pageAddResponse = await _qnaApiClient.AddPageAnswers(application.ApplicationId, sectionId, pageId, answers);
+                if (pageAddResponse?.Success == null ? false : pageAddResponse.Success)
+                {
+                    if (__formAction == "Add" && pageAddResponse.Page.AllowMultipleAnswers)
+                    {
+                        return RedirectToAction("Page", new
+                        {
+                            Id,
+                            sequenceNo,
+                            sectionId,
+                            pageId = pageAddResponse.Page.PageId,
+                            redirectAction
+                        });
+                    }
+                }
+                else
+                {
+                    if (pageAddResponse?.ValidationErrors != null)
+                    {
+                        foreach (var error in pageAddResponse?.ValidationErrors)
+                        {
+                            ModelState.AddModelError(error.Key, error.Value);
+                        }
+                    }
+
+                   var invalidMultiPage = await GetDataFedOptions(page);
+                    this.TempData["InvalidPage"] = JsonConvert.SerializeObject(invalidMultiPage);
+
+                    return RedirectToAction("Page", new { Id, sequenceNo, sectionId, pageId, redirectAction });
+                }
+
+            }
+
+            var updatePageResult = await _qnaApiClient.AddPageAnswer(application.ApplicationId, sectionId, pageId, answers);
+
+            if (updatePageResult?.ValidationPassed == null ? false: updatePageResult.ValidationPassed && fileValidationPassed)
+            {
+                await UploadFilesToStorage(application.ApplicationId, sectionId, pageId, answers[0].QuestionId);
+
+                if (redirectAction == "Feedback")
+                {
+                    return RedirectToAction("Feedback", new { Id });
+                }
+
+                var nextAction = updatePageResult.NextAction;
+
+                if (!string.IsNullOrEmpty(nextAction))
+                {
+                    if (nextAction == "NextPage")
+                    {
+                        return RedirectToAction("Page", new
+                        {
+                            Id,
+                            sequenceNo,
+                            sectionId,
+                            pageId = updatePageResult.NextActionId,
+                            redirectAction
+                        });
+                    }
+
+                    return nextAction == "ReturnToSection"
+                        ? RedirectToAction("Section", "Application", new { Id, sequenceId = sequenceNo, sectionId })
+                        : RedirectToAction("Sequence", "Application", new { Id });
+                }
+            }
+
+            if (updatePageResult?.ValidationErrors != null)
+            {
+                foreach (var error in updatePageResult?.ValidationErrors)
+                {
+                    ModelState.AddModelError(error.Key, error.Value);
+                }
+            }
+
+            var invalidPage = await GetDataFedOptions(page);
+            this.TempData["InvalidPage"] = JsonConvert.SerializeObject(invalidPage);
+
+            return RedirectToAction("Page", new { Id, sequenceNo, sectionId, pageId, redirectAction });
+        }
+
+        private async Task UploadFilesToStorage(Guid applicationId, Guid sectionId, string pageId, string questionId)
+        {
+            if (HttpContext.Request.Form.Files.Any())
+            {
+                await _qnaApiClient.Upload(applicationId, sectionId, pageId, questionId);
+            }
+        }
+
+        private void GetAnswersFromForm(List<Answer> answers)
+        {
+            foreach (var keyValuePair in HttpContext.Request.Form.Where(f => !f.Key.StartsWith("__")))
+            {
+                answers.Add(new Answer() { QuestionId = keyValuePair.Key, Value = keyValuePair.Value });
+            }
         }
 
 
