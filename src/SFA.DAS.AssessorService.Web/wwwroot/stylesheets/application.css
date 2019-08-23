@@ -147,6 +147,10 @@
   white-space: nowrap;
 }
 
+.das-\!-margin-bottom-xs {
+  margin-bottom: 2px !important;
+}
+
 .app-check-your-answers {
   font-family: "nta", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -1274,4 +1278,16 @@ TODO: change to 'das-page-navigation' and BEM
   max-height: 370px;
   max-width: 100%;
   overflow-y: auto;
+}
+
+th[aria-sort] a {
+  text-decoration: none;
+}
+
+th[aria-sort="descending"] a:after {
+  content: "\25BC";
+}
+
+th[aria-sort="ascending"] a:after {
+  content: "\25B2";
 }
