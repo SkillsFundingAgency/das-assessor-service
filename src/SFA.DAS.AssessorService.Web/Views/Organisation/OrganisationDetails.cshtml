@@ -5,310 +5,181 @@
 }
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
+        <div class="govuk-grid-column-full">
+
             <h1 class="govuk-heading-xl">Organisation details</h1>
 
-            <div id="organisationWrapper">
-                <dl class="govuk-summary-list">
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">Name</dt>
-                        <dd class="govuk-summary-list__value">@Model.Name</dd>
-                    </div>
-
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">Organisation ID</dt>
-                        <dd class="govuk-summary-list__value">@Model.OrganisationId</dd>
-                    </div>
-
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">UKPRN</dt>
-                        <dd class="govuk-summary-list__value">@Model.Ukprn</dd>
-                    </div>
-
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">Organisation type</dt>
-                        <dd class="govuk-summary-list__value">@Model.OrganisationType</dd>
-                    </div>
-
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">Legal name</dt>
-                        <dd class="govuk-summary-list__value">@Model.LegalName</dd>
-                    </div>
-
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">Trading name</dt>
-                        <dd class="govuk-summary-list__value">@Model.TradingName</dd>
-                    </div>
-
-                    @if (@Model.CompanyNumber != null)
-                    {
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">Company number</dt>
-                            <dd class="govuk-summary-list__value">@Model.CompanyNumber</dd>
-                        </div>
-                    }
-
-                    @if (@Model.CharityNumber != null)
-                    {
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">Charity number</dt>
-                            <dd class="govuk-summary-list__value">@Model.CharityNumber</dd>
-                        </div>
-                    }
-
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">Website</dt>
-                        <dd class="govuk-summary-list__value">@Model.WebsiteLink</dd>
-                    </div>
-
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">Address</dt>
-                        <dd class="govuk-summary-list__value">
-                            @if (@Model.Address1 != null)
-                            {
-                                @Model.Address1<br />
-                            }
-                            @if (@Model.Address2 != null)
-                            {
-                                @Model.Address2<br />
-                            }
-                            @if (@Model.Address3 != null)
-                            {
-                                @Model.Address3<br />
-                            }
-                            @if (@Model.Address4 != null)
-                            {
-                                @Model.Address4<br />
-                            }
-                            @if (@Model.Postcode != null)
-                            {
-                                @Model.Postcode
-                            }
-                        </dd>
-                    </div>
-
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">Primary contact</dt>
-                        <dd class="govuk-summary-list__value">@Model.PrimaryContactName</dd>
-                    </div>
-
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">Status</dt>
-                        <dd class="govuk-summary-list__value">@Model.Status</dd>
-                    </div>
-                </dl>
-
-            </div>
-
-            <div id="organisationWrapper">
-                <div class="govuk-grid-row">
-                    <div class="govuk-grid-column-two-thirds">
-                        @if (!Model.ExternalApiSubscriptions.Any())
-                        {
-                            <div class="info-summary">
-                                <h2 class="govuk-heading-m">Record a grade API</h2>
-                                Use the Record a grade API to:
-                                <ul>
-                                    <li>record a grade and request a single certificate</li>
-                                    <li>record a grade and request a batch of certificates</li>
-                                    <li>check if a certificate exists</li>
-                                    <li>delete a certificate before it is submitted</li>
-                                    <li>request a list of valid certificate grades</li>
-                                    <li>request the list of options for a Standard</li>
-                                </ul>
-
-                                <div role="note" aria-label="Information" class="application-notice info-notice">
-                                    <p class="govuk-body">
-                                        Before you continue to request your subscription key, you need to have tested your API on the Developer Hub
-                                    </p>
-
-                                    <form asp-action="EnableApiAccess" method="post">
-                                        <button class="govuk-button" type="submit">Enable key</button>
-                                    </form>
-
-                                </div>
-                            </div>
-                        }
-                        else
-                        {
-                            <div class="govuk-grid-row">
-                                <div class="govuk-grid-column-two-thirds">
-                                    <h2 class="govuk-heading-l">Subscriptions</h2>
-                                </div>
-                            </div>
-
-                            <div class="govuk-grid-row">
-                                <div class="govuk-grid-column-full">
-                                    @foreach (var subscription in Model.ExternalApiSubscriptions)
-                                    {
-                                        <div class="govuk-form-group">
-                                            <h2 class="govuk-heading-m govuk-!-margin-bottom-1">@subscription.ProductId</h2>
-
-                                            <h3 class="govuk-heading-s">Api endpoint</h3>
-                                            <p class="das-code">@subscription.ApiEndPointUrl</p>
-
-                                            <h3 class="govuk-heading-s">Subscription key</h3>
-                                            <p class="das-code">@subscription.PrimaryKey</p>
-
-                                            <form asp-action="RenewApiKey" asp-route-subscriptionId="@subscription.Id" method="post">
-                                                <input type="submit" value="Renew" class="govuk-button" />
-                                            </form>
-                                        </div>
-                                    }
-                                </div>
-                            </div>
-                        }
-                    </div>
-                </div>
-            </div>
-
-            <div class="govuk-tabs" data-module="govuk-tabs">
+            <!-- tabs -->
+            <div class="govuk-tabs" data-module="tabs">
                 <h2 class="govuk-tabs__title">
-                    Contents
+                    Organisation details
                 </h2>
                 <ul class="govuk-tabs__list">
                     <li class="govuk-tabs__list-item govuk-tabs__list-item--selected">
-                    <a class="govuk-tabs__tab" href="#past-day">
-                        Past day
-                    </a>
+                        <a class="govuk-tabs__tab" href="#register-details">
+                            Register details
+                        </a>
                     </li>
+                    <!-- <li class="govuk-tabs__list-item">
+                        <a class="govuk-tabs__tab" href="#financial-health">
+                            Financial health
+                        </a>
+                    </li> -->
                     <li class="govuk-tabs__list-item">
-                    <a class="govuk-tabs__tab" href="#past-week">
-                        Past week
-                    </a>
-                    </li>
-                    <li class="govuk-tabs__list-item">
-                    <a class="govuk-tabs__tab" href="#past-month">
-                        Past month
-                    </a>
-                    </li>
-                    <li class="govuk-tabs__list-item">
-                    <a class="govuk-tabs__tab" href="#past-year">
-                        Past year
-                    </a>
+                        <a class="govuk-tabs__tab" href="#api-subscription">
+                            API subscription
+                        </a>
                     </li>
                 </ul>
-                <section class="govuk-tabs__panel" id="past-day">
-                    <h2 class="govuk-heading-l">Past day</h2>
-                    <table class="govuk-table">
-                    <thead class="govuk-table__head">
-                        <tr class="govuk-table__row">
-                        <th scope="col" class="govuk-table__header">Case manager</th>
-                        <th scope="col" class="govuk-table__header">Cases opened</th>
-                        <th scope="col" class="govuk-table__header">Cases closed</th>
-                        </tr>
-                    </thead>
-                    <tbody class="govuk-table__body">
-                        <tr class="govuk-table__row">
-                        <td class="govuk-table__cell">David Francis</td>
-                        <td class="govuk-table__cell">3</td>
-                        <td class="govuk-table__cell">0</td>
-                        </tr>
-                        <tr class="govuk-table__row">
-                        <td class="govuk-table__cell">Paul Farmer</td>
-                        <td class="govuk-table__cell">1</td>
-                        <td class="govuk-table__cell">0</td>
-                        </tr>
-                        <tr class="govuk-table__row">
-                        <td class="govuk-table__cell">Rita Patel</td>
-                        <td class="govuk-table__cell">2</td>
-                        <td class="govuk-table__cell">0</td>
-                        </tr>
-                    </tbody>
-                    </table>
+                <section class="govuk-tabs__panel" id="register-details">
+                    <div id="organisationWrapper">
+                        <h2 class="govuk-heading-l">Register details</h2>
+                        <dl class="govuk-summary-list govuk-!-margin-bottom-0">
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Name</dt>
+                                <dd class="govuk-summary-list__value">@Model.Name</dd>
+                            </div>
+
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Organisation ID</dt>
+                                <dd class="govuk-summary-list__value">@Model.OrganisationId</dd>
+                            </div>
+
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">UKPRN</dt>
+                                <dd class="govuk-summary-list__value">@Model.Ukprn</dd>
+                            </div>
+
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Organisation type</dt>
+                                <dd class="govuk-summary-list__value">@Model.OrganisationType</dd>
+                            </div>
+
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Legal name</dt>
+                                <dd class="govuk-summary-list__value">@Model.LegalName</dd>
+                            </div>
+
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Trading name</dt>
+                                <dd class="govuk-summary-list__value">@Model.TradingName</dd>
+                            </div>
+
+                            @if (@Model.CompanyNumber != null)
+                            {
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">Company number</dt>
+                                    <dd class="govuk-summary-list__value">@Model.CompanyNumber</dd>
+                                </div>
+                            }
+
+                            @if (@Model.CharityNumber != null)
+                            {
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">Charity number</dt>
+                                    <dd class="govuk-summary-list__value">@Model.CharityNumber</dd>
+                                </div>
+                            }
+
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Website</dt>
+                                <dd class="govuk-summary-list__value">@Model.WebsiteLink</dd>
+                            </div>
+
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Address</dt>
+                                <dd class="govuk-summary-list__value">
+                                    @if (@Model.Address1 != null)
+                                    {
+                                        @Model.Address1<br />
+                                    }
+                                    @if (@Model.Address2 != null)
+                                    {
+                                        @Model.Address2<br />
+                                    }
+                                    @if (@Model.Address3 != null)
+                                    {
+                                        @Model.Address3<br />
+                                    }
+                                    @if (@Model.Address4 != null)
+                                    {
+                                        @Model.Address4<br />
+                                    }
+                                    @if (@Model.Postcode != null)
+                                    {
+                                        @Model.Postcode
+                                    }
+                                </dd>
+                            </div>
+
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Primary contact</dt>
+                                <dd class="govuk-summary-list__value">@Model.PrimaryContactName</dd>
+                            </div>
+
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Status</dt>
+                                <dd class="govuk-summary-list__value">@Model.Status</dd>
+                            </div>
+                        </dl>
+
+                    </div>
+
 
                 </section>
-                <section class="govuk-tabs__panel govuk-tabs__panel--hidden" id="past-week">
-                    <h2 class="govuk-heading-l">Past week</h2>
-                    <table class="govuk-table">
-                    <thead class="govuk-table__head">
-                        <tr class="govuk-table__row">
-                        <th scope="col" class="govuk-table__header">Case manager</th>
-                        <th scope="col" class="govuk-table__header">Cases opened</th>
-                        <th scope="col" class="govuk-table__header">Cases closed</th>
-                        </tr>
-                    </thead>
-                    <tbody class="govuk-table__body">
-                        <tr class="govuk-table__row">
-                        <td class="govuk-table__cell">David Francis</td>
-                        <td class="govuk-table__cell">24</td>
-                        <td class="govuk-table__cell">18</td>
-                        </tr>
-                        <tr class="govuk-table__row">
-                        <td class="govuk-table__cell">Paul Farmer</td>
-                        <td class="govuk-table__cell">16</td>
-                        <td class="govuk-table__cell">20</td>
-                        </tr>
-                        <tr class="govuk-table__row">
-                        <td class="govuk-table__cell">Rita Patel</td>
-                        <td class="govuk-table__cell">24</td>
-                        <td class="govuk-table__cell">27</td>
-                        </tr>
-                    </tbody>
-                    </table>
+                <!-- <section class="govuk-tabs__panel govuk-tabs__panel--hidden" id="financial-health">
+                    <h2 class="govuk-heading-l">Financial health</h2>
+                </section> -->
+                <section class="govuk-tabs__panel govuk-tabs__panel--hidden" id="api-subscription">
+                    <div id="organisationWrapper">
+                        @if (!Model.ExternalApiSubscriptions.Any())
+                        {
+                            <h2 class="govuk-heading-m">Record a grade API</h2>
+                            <p class="govuk-body">Use the Record a grade API to:</p>
+                            <ul class="govuk-list govuk-list--bullet">
+                                <li>record a grade and request a single certificate</li>
+                                <li>record a grade and request a batch of certificates</li>
+                                <li>check if a certificate exists</li>
+                                <li>delete a certificate before it is submitted</li>
+                                <li>request a list of valid certificate grades</li>
+                                <li>request the list of options for a Standard</li>
+                            </ul>
 
-                </section>
-                <section class="govuk-tabs__panel govuk-tabs__panel--hidden" id="past-month">
-                    <h2 class="govuk-heading-l">Past month</h2>
-                    <table class="govuk-table">
-                    <thead class="govuk-table__head">
-                        <tr class="govuk-table__row">
-                        <th scope="col" class="govuk-table__header">Case manager</th>
-                        <th scope="col" class="govuk-table__header">Cases opened</th>
-                        <th scope="col" class="govuk-table__header">Cases closed</th>
-                        </tr>
-                    </thead>
-                    <tbody class="govuk-table__body">
-                        <tr class="govuk-table__row">
-                        <td class="govuk-table__cell">David Francis</td>
-                        <td class="govuk-table__cell">98</td>
-                        <td class="govuk-table__cell">95</td>
-                        </tr>
-                        <tr class="govuk-table__row">
-                        <td class="govuk-table__cell">Paul Farmer</td>
-                        <td class="govuk-table__cell">122</td>
-                        <td class="govuk-table__cell">131</td>
-                        </tr>
-                        <tr class="govuk-table__row">
-                        <td class="govuk-table__cell">Rita Patel</td>
-                        <td class="govuk-table__cell">126</td>
-                        <td class="govuk-table__cell">142</td>
-                        </tr>
-                    </tbody>
-                    </table>
+                            <div class="govuk-warning-text">
+                                <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                                <strong class="govuk-warning-text__text">
+                                    <span class="govuk-warning-text__assistive">Warning</span>
+                                    Before you continue to request your subscription key, you need to have tested your API on the Developer Hub.
+                                </strong>
+                            </div>
 
-                </section>
-                <section class="govuk-tabs__panel govuk-tabs__panel--hidden" id="past-year">
-                    <h2 class="govuk-heading-l">Past year</h2>
-                    <table class="govuk-table">
-                    <thead class="govuk-table__head">
-                        <tr class="govuk-table__row">
-                        <th scope="col" class="govuk-table__header">Case manager</th>
-                        <th scope="col" class="govuk-table__header">Cases opened</th>
-                        <th scope="col" class="govuk-table__header">Cases closed</th>
-                        </tr>
-                    </thead>
-                    <tbody class="govuk-table__body">
-                        <tr class="govuk-table__row">
-                        <td class="govuk-table__cell">David Francis</td>
-                        <td class="govuk-table__cell">1380</td>
-                        <td class="govuk-table__cell">1472</td>
-                        </tr>
-                        <tr class="govuk-table__row">
-                        <td class="govuk-table__cell">Paul Farmer</td>
-                        <td class="govuk-table__cell">1129</td>
-                        <td class="govuk-table__cell">1083</td>
-                        </tr>
-                        <tr class="govuk-table__row">
-                        <td class="govuk-table__cell">Rita Patel</td>
-                        <td class="govuk-table__cell">1539</td>
-                        <td class="govuk-table__cell">1265</td>
-                        </tr>
-                    </tbody>
-                    </table>
+                            <form asp-action="EnableApiAccess" method="post">
+                                <button class="govuk-button" type="submit">Enable key</button>
+                            </form>
+                        }
+                        else
+                        {
+                            <h2 class="govuk-heading-l">Subscriptions</h2>
+                            @foreach (var subscription in Model.ExternalApiSubscriptions)
+                            {
+                                <h2 class="govuk-heading-m">@subscription.ProductId</h2>
 
+                                <h3 class="govuk-heading-s govuk-!-margin-bottom-0">API endpoint</h3>
+                                <p class="das-code">@subscription.ApiEndPointUrl</p>
+
+                                <h3 class="govuk-heading-s govuk-!-margin-bottom-0">Subscription key</h3>
+                                <p class="das-code">@subscription.PrimaryKey</p>
+
+                                <form asp-action="RenewApiKey" asp-route-subscriptionId="@subscription.Id" method="post">
+                                    <input type="submit" value="Renew" class="govuk-button govuk-!-margin-bottom-0" />
+                                </form>
+                            }
+                        }
+                    </div>
                 </section>
-                </div>
+            </div>
+            <!-- /tabs -->
+
         </div>
     </div>
 </main>
