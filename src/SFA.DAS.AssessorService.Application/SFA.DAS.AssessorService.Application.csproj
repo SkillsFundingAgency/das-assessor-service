@@ -12,7 +12,6 @@
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="2.2.0" />
     <PackageReference Include="SFA.DAS.Notifications.Api.Client" Version="2.1.19" />
     <PackageReference Include="SFA.DAS.QnA.Api.Client" Version="1.0.5" />
-    <PackageReference Include="SFA.DAS.QnA.Api.Types" Version="1.0.2" />
   </ItemGroup>
 
   <ItemGroup>
