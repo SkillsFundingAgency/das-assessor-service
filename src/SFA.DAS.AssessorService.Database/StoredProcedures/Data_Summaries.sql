@@ -6,7 +6,7 @@
 --	c. List of EPAOS by region, Active Learners by Region and Completed Assessments by Region 
 --	   with details of all EPAOs (can be over 30!)
 --
-CREATE OR ALTER PROCEDURE [Data_Summaries]
+CREATE PROCEDURE [Data_Summaries]
 AS
 
 SET NOCOUNT ON;
