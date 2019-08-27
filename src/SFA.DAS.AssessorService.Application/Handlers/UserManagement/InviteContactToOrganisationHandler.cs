@@ -53,6 +53,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.UserManagement
                 
             await _signInService.InviteUserToOrganisation(request.Email, request.GivenName, request.FamilyName, newContact.Id, organisation.EndPointAssessorName, inviter.DisplayName);
 
+            await _contactRepository.AddContactInvitation(request.InvitedByContactId);
+            
             return new InviteContactToOrganisationResponse {Success = true, ContactId = newContact.Id};
         }
 
