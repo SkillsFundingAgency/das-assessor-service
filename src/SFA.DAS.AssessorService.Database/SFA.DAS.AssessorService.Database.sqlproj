@@ -111,6 +111,8 @@
     <Build Include="StoredProcedures\GetEPAO_DashboardCounts.sql" />
     <Build Include="StoredProcedures\GetEPAO_Pipelines_Extract.sql" />
     <Build Include="StoredProcedures\StaffSearchCertificates_Count.sql" />
+    <Build Include="Tables\StandardSummary.sql" />
+    <Build Include="StoredProcedures\Data_Summaries.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="SFA.DAS.AssessorService.Database.refactorlog" />
