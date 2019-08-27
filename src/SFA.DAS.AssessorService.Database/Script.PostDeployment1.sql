@@ -10,6 +10,21 @@ Post-Deployment Script Template
 --------------------------------------------------------------------------------------
 */
 
+-- START OF ON-2193
+IF NOT EXISTS (SELECT * FROM EMailTemplates WHERE TemplateName = N'EPAOLoginAccountCreated')
+BEGIN
+INSERT EMailTemplates 
+([Id]
+           ,[TemplateName]
+           ,[TemplateId]
+           ,[Recipients]
+           ,[CreatedAt]
+           ,[DeletedAt]
+           ,[UpdatedAt]
+           ,[RecipientTemplate])
+VALUES (N'dcc27f50-ddd7-4fea-a60a-c440243b6f22', N'EPAOLoginAccountCreated', N'1843d03d-898c-45e5-88d5-8fed1e78cc3b', NULL, GETDATE(), NULL, NULL, NULL)
+END
+-- END OF ON-2193
 
 -- ON-613 Patch Certificates with STxxxx StandardReference, where it is not yet included. 
 -- AB 11/03/19 Keep this active for new deployments, for now

@@ -128,9 +128,16 @@ namespace SFA.DAS.AssessorService.Data
             await _assessorDbContext.SaveChangesAsync();
         }
 
-        public Task<ContactInvitation> GetContactInvitation(Guid inviteeContactId)
+        public async Task<ContactInvitation> GetContactInvitation(Guid inviteeContactId)
         {
             return await _assessorDbContext.ContactInvitations.SingleOrDefaultAsync(ci => ci.InviteeContactId == inviteeContactId);
+        }
+
+        public async Task SetInvitationAccepted(ContactInvitation contactInvitation)
+        {
+            contactInvitation.IsAccountCreated = true;
+            contactInvitation.AccountCreatedDate = DateTime.UtcNow;
+            await _assessorDbContext.SaveChangesAsync();
         }
 
 
