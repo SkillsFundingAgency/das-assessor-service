@@ -1,8 +1,10 @@
-﻿using SFA.DAS.AssessorService.ApplyTypes;
+﻿using Microsoft.AspNetCore.Http;
+using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.QnA.Api.Types;
 using SFA.DAS.QnA.Api.Types.Page;
 using System;
 using System.Collections.Generic;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
@@ -17,6 +19,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         Task<Page> GetPage(Guid applicationId, Guid sectionId, string pageId);
         Task<SetPageAnswersResponse> AddPageAnswer(Guid applicationId, Guid sectionId, string pageId, List<Answer> answer);
         Task<AddPageAnswerResponse> AddPageAnswers(Guid applicationId, Guid sectionId, string pageId, List<Answer> answer);
-        Task Upload(Guid applicationId, Guid sectionId,string pageId,string questionId);
+        Task Upload(Guid applicationId, Guid sectionId, string pageId, string questionId, IFormFileCollection files);
+        Task<HttpResponseMessage> DownloadFile(Guid applicationId, Guid sectionId, string pageId, string questionId, string fileName);
+        Task DeleteFile(Guid applicationId, Guid sectionId, string pageId, string questionId, string fileName);
     }
 }

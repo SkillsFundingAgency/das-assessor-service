@@ -4,6 +4,7 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -189,6 +190,70 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                 _logger.LogInformation($"HttpRequestException: Status Code: {response.StatusCode} Body: {json}");
                 throw new HttpRequestException(json);
             }
+        }
+
+
+        protected async Task PostRequestWithFiles(HttpRequestMessage requestMessage, IFormFileCollection files)
+        {
+            HttpRequestMessage clonedRequest = null;
+
+            var formDataContent = new MultipartFormDataContent();
+            foreach (var file in files)
+            {
+                var fileContent = new StreamContent(file.OpenReadStream())
+                { Headers = { ContentLength = file.Length, ContentType = new MediaTypeHeaderValue(file.ContentType) } };
+                formDataContent.Add(fileContent, file.Name, file.FileName);
+            }
+            var response = await _retryPolicy.ExecuteAsync(async () =>
+            {
+                clonedRequest = new HttpRequestMessage(requestMessage.Method, requestMessage.RequestUri);
+                clonedRequest.Content = formDataContent;
+                clonedRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", TokenService.GetToken());
+
+                return await HttpClient.SendAsync(clonedRequest);
+
+            });
+
+            if (response.StatusCode == HttpStatusCode.InternalServerError)
+            {
+                throw new HttpRequestException();
+            }
+        }
+
+        protected async Task<HttpResponseMessage> RequestToDownloadFile(HttpRequestMessage request, string message = null)
+        {
+            HttpRequestMessage clonedRequest = null;
+
+            var result = await _retryPolicy.ExecuteAsync(async () =>
+            {
+                clonedRequest = new HttpRequestMessage(request.Method, request.RequestUri);
+                clonedRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", TokenService.GetToken());
+
+                return await HttpClient.SendAsync(clonedRequest);
+
+            });
+
+            if (result.StatusCode == HttpStatusCode.OK)
+            {
+                return result;
+            }
+
+            if (result.StatusCode == HttpStatusCode.NotFound)
+            {
+                if (message == null)
+                {
+                    if (!request.RequestUri.IsAbsoluteUri)
+                        message = "Could not find " + request.RequestUri;
+                    else
+                        message = "Could not find " + request.RequestUri.PathAndQuery;
+                }
+
+                RaiseResponseError(message, clonedRequest, result);
+            }
+
+            RaiseResponseError(clonedRequest, result);
+
+            return result;
         }
 
 

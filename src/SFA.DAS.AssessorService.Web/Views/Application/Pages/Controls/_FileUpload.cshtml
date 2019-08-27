@@ -14,8 +14,7 @@
                 <td class="govuk-table__cell govuk-table__cell--break-word" scope="row">
                     <a href="@Url.Action("Download", "Application", new
                     {
-                        applicationId = Model.Id,
-                        sequenceNo = Model.SequenceNo,
+                        Id = Model.Id,
                         sectionId = Model.SectionId,
                         pageId = Model.PageId,
                         questionId = Model.QuestionId,
@@ -32,6 +31,7 @@
                         sectionId = Model.SectionId,
                         pageId = Model.PageId,
                         questionId = Model.QuestionId,
+                        filename = Model.Value,
                         redirectAction = Model.RedirectAction
                     })">
                         Remove 

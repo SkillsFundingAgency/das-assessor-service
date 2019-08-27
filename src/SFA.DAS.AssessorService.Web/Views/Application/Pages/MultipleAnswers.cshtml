@@ -65,10 +65,10 @@
                         {
                             <div class="govuk-summary-list__row">
                                 <dt class="govuk-summary-list__key">
-                                    @Model.Questions.SingleOrDefault(q => q.QuestionId == answer.QuestionId).Label
+                                    @Model.Questions.SingleOrDefault(q => q.QuestionId == answer.QuestionId)?.Label
                                 </dt>
                                 <dd class="govuk-summary-list__value">
-                                    @Model.Questions.SingleOrDefault(q => q.QuestionId == answer.QuestionId).DisplayAnswerValue(answer)
+                                    @Model.Questions.SingleOrDefault(q => q.QuestionId == answer.QuestionId)?.DisplayAnswerValue(answer)
                                 </dd>
                             </div>
                         }

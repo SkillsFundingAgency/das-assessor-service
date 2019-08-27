@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using SFA.DAS.AssessorService.ApplyTypes;
@@ -7,6 +8,7 @@ using SFA.DAS.QnA.Api.Types.Page;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -95,11 +97,28 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task Upload(Guid applicationId, Guid sectionId, string pageId, string questionId)
+        public async Task Upload(Guid applicationId, Guid sectionId, string pageId, string questionId, IFormFileCollection files)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Post, $"/applications/{applicationId}/sections/{sectionId}/pages/{pageId}/questions/{questionId}/upload"))
             {
-                 await PostPutRequest(request);
+                 await PostRequestWithFiles(request, files);
+            }
+        }
+
+        public async Task<HttpResponseMessage> DownloadFile(Guid applicationId, Guid sectionId, string pageId, string questionId, string fileName)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/applications/{applicationId}/sections/{sectionId}/pages/{pageId}/questions/{questionId}/download/{fileName}"))
+            {
+                return await RequestToDownloadFile(request,
+                    $"Could not download file {fileName}");
+            }
+        }
+
+        public async Task DeleteFile(Guid applicationId, Guid sectionId, string pageId, string questionId, string fileName)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Delete, $"/applications/{applicationId}/sections/{sectionId}/pages/{pageId}/questions/{questionId}/download/{fileName}"))
+            {
+                await Delete(request);
             }
         }
 
