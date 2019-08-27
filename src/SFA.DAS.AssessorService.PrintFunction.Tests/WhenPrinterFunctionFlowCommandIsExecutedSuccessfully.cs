@@ -43,8 +43,6 @@ namespace SFA.DAS.AssessorService.PrintFunction.Tests
             _configurationWrapper.Setup(x => x.GetConfiguration()).Returns(new WebConfiguration()
             {
                 ApiAuthentication = new ApiAuthentication(),
-                ApplyBaseAddress = "SomeAddress",
-                ApplyApiAuthentication = new ClientApiAuthentication(),
                 AzureApiAuthentication = new AzureApiAuthentication(),
                 AssessmentOrgsApiClientBaseUrl = "SomeAddress",
                 Authentication = new AuthSettings(),
