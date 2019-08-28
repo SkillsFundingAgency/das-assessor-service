@@ -96,20 +96,20 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             return Ok(contacts);
         }
 
-        [HttpGet("get-all-with-user/{endPointAssessorOrganisationId}", Name = "GetAllContactsWithUserForOrganisation")]
+        [HttpGet("get-all-who-can-be-primary/{endPointAssessorOrganisationId}", Name = "GetAllContactsWhoCanBePrimaryForOrganisation")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<ContactResponse>))]
         [SwaggerResponse((int)HttpStatusCode.NotFound)]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> GetAllContactsWithUserForOrganisation(string endPointAssessorOrganisationId)
+        public async Task<IActionResult> GetAllContactsWhoCanBePrimaryForOrganisation(string endPointAssessorOrganisationId)
         {
             _logger.LogInformation(
-                $"Received Search for Contacts with User using endPointAssessorOrganisationId = {endPointAssessorOrganisationId}");
+                $"Received Search for Contacts who can be primary using endPointAssessorOrganisationId = {endPointAssessorOrganisationId}");
 
             var result = _searchOrganisationForContactsValidator.Validate(endPointAssessorOrganisationId);
             if (!result.IsValid)
                 throw new ResourceNotFoundException(result.Errors[0].ErrorMessage);
 
-            return Ok(await _mediator.Send(new GetContactsWithUserForOrganisationRequest(endPointAssessorOrganisationId)));
+            return Ok(await _mediator.Send(new GetContactsWhoCanBePrimaryForOrganisationRequest(endPointAssessorOrganisationId)));
         }
 
         [HttpGet("username/{userName}", Name = "SearchContactByUserName")]

@@ -12,22 +12,22 @@ using AutoMapper;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.OrganisationHandlers
 {
-    public class GetContactsWithUserForOrganisationHandler : IRequestHandler<GetContactsWithUserForOrganisationRequest, List<ContactResponse>>
+    public class GetContactsWhoCanBePrimaryForOrganisationHandler : IRequestHandler<GetContactsWhoCanBePrimaryForOrganisationRequest, List<ContactResponse>>
     {
         private readonly IContactQueryRepository _contactQueryRepository;
-        public GetContactsWithUserForOrganisationHandler(IContactQueryRepository contactQueryRepository)
+        public GetContactsWhoCanBePrimaryForOrganisationHandler(IContactQueryRepository contactQueryRepository)
         {
             _contactQueryRepository = contactQueryRepository;
         }
 
-        public async Task<List<ContactResponse>> Handle(GetContactsWithUserForOrganisationRequest request, CancellationToken cancellationToken)
+        public async Task<List<ContactResponse>> Handle(GetContactsWhoCanBePrimaryForOrganisationRequest request, CancellationToken cancellationToken)
         {
             var response = new List<ContactResponse>();
             var contacts = await _contactQueryRepository.GetContacts(request.EndPointAssessorOrganisationId);
             if (contacts == null)
                 return response;
             return Mapper.Map<List<ContactResponse>>(
-                contacts.Where(x => x.Status == ContactStatus.Live && x.SignInId != null));
+                contacts.Where(x => x.Status == ContactStatus.Live));
         }
     }
 }

@@ -110,11 +110,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task<List<ContactResponse>> GetAllContactsWithUserForOrganisation(string epaoId)
+        public async Task<List<ContactResponse>> GetAllContactsWhoCanBePrimaryForOrganisation(string epaoId)
         {
-            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/contacts/get-all-with-user/{epaoId}"))
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/contacts/get-all-who-can-be-primary/{epaoId}"))
             {
-                return await RequestAndDeserialiseAsync<List<ContactResponse>>(request, $"Could not find any contacts with users for organisation {epaoId}");
+                return await RequestAndDeserialiseAsync<List<ContactResponse>>(request, $"Could not find any contacts who can be primary for organisation {epaoId}");
             }
         }
 
