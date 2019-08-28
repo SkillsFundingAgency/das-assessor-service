@@ -75,9 +75,9 @@
 
                         <form asp-action="DeleteAnswer" asp-controller="Application">
                             <input type="hidden" id="AnswerId" name="AnswerId" value="@answerPage.Id" />
-                            <input type="hidden" id="ApplicationId" name="ApplicationId" value="@Model.Id" />
+                            <input type="hidden" id="Id" name="Id" value="@Model.Id" />
                             <input type="hidden" id="SectionId" name="SectionId" value="@Model.SectionId" />
-                            <input type="hidden" id="SequenceId" name="SequenceId" value="@Model.SequenceNo" />
+                            <input type="hidden" id="SequenceNo" name="SequenceNo" value="@Model.SequenceNo" />
                             <input type="hidden" id="PageId" name="PageId" value="@Model.PageId" />
                             <input type="hidden" id="RedirectAction" name="RedirectAction" value="@Model.RedirectAction" />
                             <div class="govuk-!-margin-top-4">

@@ -7,6 +7,7 @@ using SFA.DAS.QnA.Api.Types;
 using SFA.DAS.QnA.Api.Types.Page;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
@@ -87,6 +88,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
+        public async Task<Page> RemovePageAnswer(Guid applicationId, Guid sectionId, string pageId, Guid answerId)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Delete, $"/applications/{applicationId}/sections/{sectionId}/pages/{pageId}/multiple/{answerId}"))
+            {
+                return await Delete<Page>(request);
+            }
+        }
+
         public async Task<SetPageAnswersResponse> AddPageAnswer(Guid applicationId, Guid sectionId, string pageId, List<Answer> answer)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Post, $"/applications/{applicationId}/sections/{sectionId}/pages/{pageId}"))
@@ -97,11 +106,19 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task Upload(Guid applicationId, Guid sectionId, string pageId, string questionId, IFormFileCollection files)
+        public async Task Upload(Guid applicationId, Guid sectionId, string pageId, string questionId, string fileName, IFormFileCollection files)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Post, $"/applications/{applicationId}/sections/{sectionId}/pages/{pageId}/questions/{questionId}/upload"))
             {
-                 await PostRequestWithFiles(request, files);
+                var file = files.SingleOrDefault(x => x.FileName.Equals(fileName, StringComparison.OrdinalIgnoreCase));
+                if (file != null)
+                {
+                    var formDataContent = new MultipartFormDataContent();
+                    var fileContent = new StreamContent(file.OpenReadStream())
+                    { Headers = { ContentLength = file.Length, ContentType = new MediaTypeHeaderValue(file.ContentType) } };
+                    formDataContent.Add(fileContent, file.Name, file.FileName);
+                    await PostRequestWithFile(request, formDataContent);
+                }
             }
         }
 

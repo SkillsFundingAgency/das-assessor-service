@@ -19,8 +19,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         Task<Page> GetPage(Guid applicationId, Guid sectionId, string pageId);
         Task<SetPageAnswersResponse> AddPageAnswer(Guid applicationId, Guid sectionId, string pageId, List<Answer> answer);
         Task<AddPageAnswerResponse> AddPageAnswers(Guid applicationId, Guid sectionId, string pageId, List<Answer> answer);
-        Task Upload(Guid applicationId, Guid sectionId, string pageId, string questionId, IFormFileCollection files);
+        Task Upload(Guid applicationId, Guid sectionId, string pageId, string questionId, string fileName, IFormFileCollection files);
         Task<HttpResponseMessage> DownloadFile(Guid applicationId, Guid sectionId, string pageId, string questionId, string fileName);
         Task DeleteFile(Guid applicationId, Guid sectionId, string pageId, string questionId, string fileName);
+        Task<Page> RemovePageAnswer(Guid applicationId, Guid sectionId, string pageId, Guid answerId);
     }
 }

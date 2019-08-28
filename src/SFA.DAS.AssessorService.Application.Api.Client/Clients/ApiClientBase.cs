@@ -193,17 +193,10 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         }
 
 
-        protected async Task PostRequestWithFiles(HttpRequestMessage requestMessage, IFormFileCollection files)
+        protected async Task PostRequestWithFile(HttpRequestMessage requestMessage, MultipartFormDataContent formDataContent)
         {
             HttpRequestMessage clonedRequest = null;
 
-            var formDataContent = new MultipartFormDataContent();
-            foreach (var file in files)
-            {
-                var fileContent = new StreamContent(file.OpenReadStream())
-                { Headers = { ContentLength = file.Length, ContentType = new MediaTypeHeaderValue(file.ContentType) } };
-                formDataContent.Add(fileContent, file.Name, file.FileName);
-            }
             var response = await _retryPolicy.ExecuteAsync(async () =>
             {
                 clonedRequest = new HttpRequestMessage(requestMessage.Method, requestMessage.RequestUri);
@@ -312,6 +305,33 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             if (response.StatusCode == HttpStatusCode.InternalServerError)
             {
                 throw new HttpRequestException();
+            }
+        }
+
+        protected async Task<U> Delete<U>(HttpRequestMessage requestMessage)
+        {
+            HttpRequestMessage clonedRequest = null;
+            var response = await _retryPolicy.ExecuteAsync(async () =>
+            {
+                clonedRequest = new HttpRequestMessage(requestMessage.Method, requestMessage.RequestUri);
+                clonedRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", TokenService.GetToken());
+
+                return await HttpClient.SendAsync(clonedRequest);
+
+            });
+
+            var json = await response.Content.ReadAsStringAsync();
+            //var result = await response;
+            if (response.StatusCode == HttpStatusCode.OK
+                || response.StatusCode == HttpStatusCode.NoContent)
+            {
+
+                return await Task.Factory.StartNew<U>(() => JsonConvert.DeserializeObject<U>(json));
+            }
+            else
+            {
+                _logger.LogInformation($"HttpRequestException: Status Code: {response.StatusCode} Body: {json}");
+                throw new HttpRequestException(json);
             }
         }
 

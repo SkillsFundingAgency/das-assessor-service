@@ -100,7 +100,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
             var qnaResponse = await _qnaApiClient.StartApplications(applicationStartRequest);
 
-            //Todo: Create a page to go to if qna fails checks or invalid response is received
             var  appResponse = await _applicationApiClient.CreateApplication(new CreateApplicationRequest
             {
                 ApplicationStatus = ApplicationStatus.InProgress,
@@ -303,8 +302,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 var pageAddResponse = await _qnaApiClient.AddPageAnswers(application.ApplicationId, sectionId, pageId, answers);
                 if (pageAddResponse?.Success == null ? false : pageAddResponse.Success && fileValidationPassed)
                 {
-                    await UploadFilesToStorage(application.ApplicationId, sectionId, pageId,page, answers);
-
                     if (__formAction == "Add")
                     {
                         return RedirectToAction("Page", new
@@ -327,6 +324,13 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                             return RedirectToNextAction(Id, sequenceNo, sectionId, redirectAction, nextAction.Action, nextAction.ReturnId);
                     }
                 }
+                else if(page.PageOfAnswers?.Count > 0)
+                {
+                    var nextAction = page.Next.SingleOrDefault(x => x.Action == "NextPage");
+
+                    if (!string.IsNullOrEmpty(nextAction.Action))
+                        return RedirectToNextAction(Id, sequenceNo, sectionId, redirectAction, nextAction.Action, nextAction.ReturnId);
+                }
 
                 await SetResponseValidationErrors(pageAddResponse?.ValidationErrors, page);
             }
@@ -347,6 +351,16 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
                 await SetResponseValidationErrors(updatePageResult?.ValidationErrors, page);
             }
+
+            return RedirectToAction("Page", new { Id, sequenceNo, sectionId, pageId, redirectAction });
+        }
+
+        [HttpPost("/Application/DeleteAnswer")]
+        public async Task<IActionResult> DeleteAnswer(Guid Id, int sequenceNo, Guid sectionId, string pageId, Guid answerId, string redirectAction)
+        {
+            var application = await _applicationApiClient.GetApplication(Id);
+
+            await _qnaApiClient.RemovePageAnswer(application.ApplicationId, sectionId, pageId, answerId);
 
             return RedirectToAction("Page", new { Id, sequenceNo, sectionId, pageId, redirectAction });
         }
@@ -427,7 +441,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             }
 
             return nextAction == "ReturnToSection"
-                ? RedirectToAction("Section", "Application", new { Id, sequenceNo = sequenceNo, sectionId })
+                ? RedirectToAction("Section", "Application", new { Id, sequenceNo, sectionId })
                 : RedirectToAction("Sequence", "Application", new { Id });
         }
 
@@ -453,7 +467,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 {
                     if(page.Questions.Any(q => q.QuestionId == answer.QuestionId))
                     {
-                        await _qnaApiClient.Upload(applicationId, sectionId, pageId, answer.QuestionId, HttpContext.Request.Form.Files);
+                        await _qnaApiClient.Upload(applicationId, sectionId, pageId, answer.QuestionId, answer.Value, HttpContext.Request.Form.Files);
                     }
                 }
             }
