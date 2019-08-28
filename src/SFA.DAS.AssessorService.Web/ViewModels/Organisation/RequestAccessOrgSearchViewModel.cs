@@ -1,6 +1,4 @@
-﻿using AutoMapper;
-
-namespace SFA.DAS.AssessorService.Web.ViewModels.Organisation
+﻿namespace SFA.DAS.AssessorService.Web.ViewModels.Organisation
 {
     public class RequestAccessOrgSearchViewModel : OrganisationSearchViewModel
     {

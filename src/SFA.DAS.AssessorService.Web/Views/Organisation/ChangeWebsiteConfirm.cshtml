@@ -1,0 +1,32 @@
+﻿@model SFA.DAS.AssessorService.Web.ViewModels.ChangeWebsiteViewModel
+
+@{
+    var viewTitle = "Confirm website address";
+    ViewBag.Title = viewTitle;
+    Layout = "_DashboardLayout";
+}
+
+<a class="govuk-back-link" asp-controller="Organisation" asp-action="ChangeWebsite">Back</a>
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <h1 class="govuk-heading-xl">@viewTitle</h1>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <form asp-controller="Organisation" asp-action="ChangeWebsite">
+                @Html.HiddenFor(m => m.WebsiteLink)
+                <div>
+                    <dl class="govuk-summary-list">
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Website url</dt>
+                            <dd class="govuk-summary-list__value">
+                                @Model.WebsiteLink
+                            </dd>
+                        </div>
+                    </dl>
+                </div>
+                <p class="govuk-body">Confirm the new website address for this organisation. This address will appear on the register.</p>
+                <button class="govuk-button" type="submit" name="ActionChoice" value="Confirm">Confirm</button>
+            </form>
+        </div>
+    </div>
+</main>
