@@ -17,6 +17,7 @@ AS
 			SELECT [Action], [CertificateId], [EventTime], row_number() OVER (partition by [CertificateId], [Action] ORDER BY [EventTime]) rownumber
 			FROM [dbo].[CertificateLogs]
 			WHERE [Action] IN ('submit', 'printed') 
+			AND ISNULL(JSON_VALUE([CertificateData],'$.EpaDetails.LatestEpaOutcome'),'Pass') != 'Fail'			
 		) ab 
 		WHERE ab.rownumber = 1
 	) cl
@@ -43,6 +44,7 @@ AS
 			SELECT [Action], [CertificateId], [EventTime], row_number() OVER (partition by [CertificateId], [Action] ORDER BY [EventTime]) rownumber
 			FROM [dbo].[CertificateLogs]
 			WHERE [Action] IN ('submit', 'printed') 
+			AND ISNULL(JSON_VALUE([CertificateData],'$.EpaDetails.LatestEpaOutcome'),'Pass') != 'Fail'			
 		) ab 
 		WHERE ab.rownumber = 1
 	) cl

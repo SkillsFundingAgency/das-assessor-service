@@ -63,3 +63,6 @@ END
 
 -- ON-2197 - PostCode to Region Mapping 
 :r .\Insert-Postcode-to-Regions.sql
+
+-- ON-2222 - remove duplicated certs
+:r .\Delete-Duplicated-Certs.sql

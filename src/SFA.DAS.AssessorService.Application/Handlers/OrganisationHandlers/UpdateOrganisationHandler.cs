@@ -22,10 +22,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.OrganisationHandlers
         public async Task<Organisation> Handle(UpdateOrganisationRequest updateOrganisationRequest, CancellationToken cancellationToken)
         {
             var organisation = Mapper.Map<Organisation>(updateOrganisationRequest);
-            organisation.Status = string.IsNullOrEmpty(updateOrganisationRequest.PrimaryContact) ? OrganisationStatus.New : OrganisationStatus.Live;
-
-            var organisationRespone = await _organisationRepository.UpdateOrganisation(organisation);
-            return organisationRespone;
+            return await _organisationRepository.UpdateOrganisation(organisation);
         }
     }
 }
