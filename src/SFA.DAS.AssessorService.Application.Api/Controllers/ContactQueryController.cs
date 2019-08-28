@@ -96,7 +96,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             return Ok(contacts);
         }
 
-        [HttpGet("get-all-who-can-be-primary/{endPointAssessorOrganisationId}", Name = "GetAllContactsWhoCanBePrimaryForOrganisation")]
+        [HttpGet("getAllWhoCanBePrimary/{endPointAssessorOrganisationId}", Name = "GetAllContactsWhoCanBePrimaryForOrganisation")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<ContactResponse>))]
         [SwaggerResponse((int)HttpStatusCode.NotFound)]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
