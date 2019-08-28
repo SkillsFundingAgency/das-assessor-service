@@ -51,7 +51,7 @@
                                         </li>
                                         @foreach (var role in contact.Privileges )
                                         {
-                                            <li> @Html.DisplayFor(modelItem => role)</li>
+                                            <li> @Html.DisplayFor(modelItem => role.UserPrivilege)</li>
                                         }
                                     </ul>
                                 </td>

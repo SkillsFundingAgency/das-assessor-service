@@ -133,6 +133,16 @@
   color: #4c2c92;
 }
 
+.govuk-button--looks-like-link--inline {
+  display: inline-block;
+  line-height: 1.31579;
+}
+
+.das-wrap {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
 .das-no-wrap {
   white-space: nowrap;
 }
