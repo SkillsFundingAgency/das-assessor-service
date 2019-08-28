@@ -133,7 +133,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             try
             {
                 var organisation = await _organisationsApiClient.GetEpaOrganisation(epaoid);
-                var contacts = await _contactsApiClient.GetAllContactsForOrganisation(organisation.OrganisationId);
+                var contacts = await _contactsApiClient.GetAllContactsWithUserForOrganisation(organisation.OrganisationId);
 
                 var viewModel = new SelectOrChangeContactNameViewModel
                 {

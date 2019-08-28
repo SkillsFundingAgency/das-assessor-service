@@ -12,15 +12,15 @@ using AutoMapper;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.OrganisationHandlers
 {
-    public class GetContactsForOrganisationHandler : IRequestHandler<GetContactsForOrganisationRequest, List<ContactResponse>>
+    public class GetContactsWithUserForOrganisationHandler : IRequestHandler<GetContactsWithUserForOrganisationRequest, List<ContactResponse>>
     {
         private readonly IContactQueryRepository _contactQueryRepository;
-        public GetContactsForOrganisationHandler(IContactQueryRepository contactQueryRepository)
+        public GetContactsWithUserForOrganisationHandler(IContactQueryRepository contactQueryRepository)
         {
             _contactQueryRepository = contactQueryRepository;
         }
 
-        public async Task<List<ContactResponse>> Handle(GetContactsForOrganisationRequest request, CancellationToken cancellationToken)
+        public async Task<List<ContactResponse>> Handle(GetContactsWithUserForOrganisationRequest request, CancellationToken cancellationToken)
         {
             var response = new List<ContactResponse>();
             var contacts = await _contactQueryRepository.GetContacts(request.EndPointAssessorOrganisationId);

@@ -96,6 +96,22 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             return Ok(contacts);
         }
 
+        [HttpGet("get-all-with-user/{endPointAssessorOrganisationId}", Name = "GetAllContactsWithUserForOrganisation")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<ContactResponse>))]
+        [SwaggerResponse((int)HttpStatusCode.NotFound)]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> GetAllContactsWithUserForOrganisation(string endPointAssessorOrganisationId)
+        {
+            _logger.LogInformation(
+                $"Received Search for Contacts with User using endPointAssessorOrganisationId = {endPointAssessorOrganisationId}");
+
+            var result = _searchOrganisationForContactsValidator.Validate(endPointAssessorOrganisationId);
+            if (!result.IsValid)
+                throw new ResourceNotFoundException(result.Errors[0].ErrorMessage);
+
+            return Ok(await _mediator.Send(new GetContactsWithUserForOrganisationRequest(endPointAssessorOrganisationId)));
+        }
+
         [HttpGet("username/{userName}", Name = "SearchContactByUserName")]
         [SwaggerResponse((int) HttpStatusCode.OK, Type = typeof(ContactResponse))]
         [SwaggerResponse((int) HttpStatusCode.NotFound)]

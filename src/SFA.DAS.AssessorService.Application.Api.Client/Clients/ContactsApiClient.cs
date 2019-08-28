@@ -110,6 +110,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
+        public async Task<List<ContactResponse>> GetAllContactsWithUserForOrganisation(string epaoId)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/contacts/get-all-with-user/{epaoId}"))
+            {
+                return await RequestAndDeserialiseAsync<List<ContactResponse>>(request, $"Could not find any contacts with users for organisation {epaoId}");
+            }
+        }
+
         public async Task<ContactResponse> UpdateOrgAndStatus(UpdateContactWithOrgAndStausRequest updateContactWithOrgAndStausRequest)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Put, $"/api/v1/contacts/updateContactWithOrgAndStatus"))

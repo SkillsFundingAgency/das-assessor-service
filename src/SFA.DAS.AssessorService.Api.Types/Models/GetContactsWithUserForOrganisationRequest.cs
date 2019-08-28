@@ -5,9 +5,9 @@ using MediatR;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models
 {
-    public class GetContactsForOrganisationRequest : IRequest<List<ContactResponse>>
+    public class GetContactsWithUserForOrganisationRequest : IRequest<List<ContactResponse>>
     {
-        public GetContactsForOrganisationRequest(string endPointAssessorOrganisationId)
+        public GetContactsWithUserForOrganisationRequest(string endPointAssessorOrganisationId)
         {
             EndPointAssessorOrganisationId = endPointAssessorOrganisationId;
         }
