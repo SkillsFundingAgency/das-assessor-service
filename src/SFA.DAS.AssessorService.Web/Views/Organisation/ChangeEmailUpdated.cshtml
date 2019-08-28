@@ -1,0 +1,26 @@
+﻿@model SFA.DAS.AssessorService.Web.ViewModels.ChangeEmailViewModel
+
+@{
+    var viewTitle = "Email address updated";
+    ViewBag.Title = viewTitle;
+    Layout = "_DashboardLayout";
+}
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <div class="govuk-panel govuk-panel--confirmation">
+                <h1 class="govuk-panel__title">
+                    @viewTitle
+                </h1>
+                <div class="govuk-panel__body">
+                    <div class="govuk-!-margin-bottom-6">
+                        New email address is<br>
+                        <strong>@Model.Email</strong>
+                    </div>
+                </div>
+            </div>
+            @{await Html.RenderPartialAsync("_Updated", @Model);}
+        </div>
+    </div>
+</main>

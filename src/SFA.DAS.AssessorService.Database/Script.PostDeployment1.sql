@@ -10,6 +10,11 @@ Post-Deployment Script Template
 --------------------------------------------------------------------------------------
 */
 
+/* START OF ON-2033 */
+:r .\PostDeploymentScripts\on-2033-anytime_updates.sql
+/* END OF ON-2033 */
+
+
 
 -- ON-613 Patch Certificates with STxxxx StandardReference, where it is not yet included. 
 -- AB 11/03/19 Keep this active for new deployments, for now

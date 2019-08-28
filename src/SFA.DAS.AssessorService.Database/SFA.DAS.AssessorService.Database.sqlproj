@@ -61,6 +61,7 @@
     <Folder Include="StoredProcedures" />
     <Folder Include="DataToImport" />
     <Folder Include="Tables\" />
+    <Folder Include="PostDeploymentScripts" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Tables\CertificateLogs.sql" />
@@ -111,6 +112,8 @@
     <Build Include="StoredProcedures\GetEPAO_Pipelines_Extract.sql" />
     <Build Include="StoredProcedures\StaffSearchCertificates_Count.sql" />
     <Build Include="Tables\Applications.sql" />
+    <Build Include="Tables\StandardSummary.sql" />
+    <Build Include="StoredProcedures\Data_Summaries.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="SFA.DAS.AssessorService.Database.refactorlog" />
@@ -123,6 +126,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="DataToImport\assessmentorgs.xlsx" />
+    <None Include="PostDeploymentScripts\on-2033-anytime_updates.sql" />
   </ItemGroup>
   <ItemGroup>
     <ArtifactReference Include="$(DacPacRootPath)\Extensions\Microsoft\SQLDB\Extensions\SqlServer\AzureV12\SqlSchemas\master.dacpac">
