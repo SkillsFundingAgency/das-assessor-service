@@ -4,6 +4,8 @@
 	[ApplicationId] [uniqueidentifier] NOT NULL,
 	[OrganisationId] [uniqueidentifier] NOT NULL,
 	[ApplicationStatus] [nvarchar](20) NOT NULL,
+	[FinancialGrade] [nvarchar](max) NULL,
+	[StandardCode] int NULL,
 	[ApplicationData] [nvarchar](max) NULL,
 	[CreatedAt] [datetime2](7) NOT NULL,
 	[CreatedBy] [nvarchar](256) NOT NULL,
