@@ -13,7 +13,7 @@ insert into #PrimaryOrFirstContact (OrganisationId, ContactId)
 SELECT EndPointAssessorOrganisationId, ContactId 
 FROM (
   SELECT co1.EndPointAssessorOrganisationId, co1.Id ContactId, 
-     ROW_NUMBER() OVER (PARTITION BY co1.EndPointAssessorOrganisationId ORDER BY (CASE WHEN primarycontact = co1.username THEN 1 ELSE 0 END) DESC,co1.createdat) rownumber
+     ROW_NUMBER() OVER (PARTITION BY co1.EndPointAssessorOrganisationId ORDER BY (CASE WHEN PrimaryContact = co1.Username THEN 1 ELSE 0 END) DESC,co1.CreatedAt) rownumber
      FROM [Organisations] og1 
    JOIN Contacts co1 ON co1.EndPointAssessorOrganisationId = og1.EndPointAssessorOrganisationId
    WHERE og1.Status = 'Live'
@@ -243,8 +243,8 @@ JSON_VALUE(OrganisationData,'$.Address2') as Contact_address2,
 JSON_VALUE(OrganisationData,'$.Address3') as Contact_address3,
 JSON_VALUE(OrganisationData,'$.Address4') as Contact_address4,
 JSON_VALUE(OrganisationData,'$.Postcode') as Postcode,
-C1.PhoneNumber as Contact_number,
-C1.Email as Contact_email,
+JSON_VALUE(OrganisationData, '$.PhoneNumber') Contact_number,
+JSON_VALUE(OrganisationData, '$.Email') Contact_email,
 das.Delivery_Area_1,
 das.Delivery_Area_2,
 das.Delivery_Area_3,

@@ -40,7 +40,7 @@
                         {
                             <tr class="govuk-table__row">
                                 <td class="govuk-table__cell das-no-wrap" data-label="@Localizer["User details"]" >
-                                    <a class="govuk-link" asp-controller="UserDetails" asp-action="User" asp-route-contactid="@contact.Contact.Id">@Html.DisplayFor(modelItem => contact.Contact.DisplayName)</a>
+                                    <a class="govuk-link" asp-controller="UserDetails" asp-action="Details" asp-route-contactid="@contact.Contact.Id">@Html.DisplayFor(modelItem => contact.Contact.DisplayName)</a>
                                     <br/>
                                     <span>@Html.DisplayFor(modelItem => contact.Contact.Email)</span>
                                 </td>
@@ -51,7 +51,7 @@
                                         </li>
                                         @foreach (var role in contact.Privileges )
                                         {
-                                            <li> @Html.DisplayFor(modelItem => role)</li>
+                                            <li> @Html.DisplayFor(modelItem => role.UserPrivilege)</li>
                                         }
                                     </ul>
                                 </td>

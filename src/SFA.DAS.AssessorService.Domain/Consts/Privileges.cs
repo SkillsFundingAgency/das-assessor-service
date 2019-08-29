@@ -9,5 +9,6 @@ namespace SFA.DAS.AssessorService.Domain.Consts
         public const string RecordGrades = "RecordGrades";
         public const string ManageUsers = "ManageUsers";
         public const string ViewPipeline = "ViewPipeline";
+        public const string ChangeOrganisationDetails = "ChangeOrganisationDetails";
     }
 }

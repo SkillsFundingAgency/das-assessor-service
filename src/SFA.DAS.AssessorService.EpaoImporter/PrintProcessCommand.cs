@@ -74,7 +74,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter
 
         private async Task ProcessEachFileToUploadThenDelete(string fileToProcess)
         {
-            var stringBatchResponse = await _fileTransferClient.DownloadFile(fileToProcess);
+            var stringBatchResponse = _fileTransferClient.DownloadFile(fileToProcess);
             var batchResponse = JsonConvert.DeserializeObject<BatchResponse>(stringBatchResponse);
 
             if (batchResponse?.Batch == null || batchResponse.Batch.BatchDate == DateTime.MinValue)

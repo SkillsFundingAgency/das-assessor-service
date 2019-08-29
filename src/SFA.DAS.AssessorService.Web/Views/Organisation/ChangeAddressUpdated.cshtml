@@ -1,0 +1,30 @@
+﻿@model SFA.DAS.AssessorService.Web.ViewModels.ChangeAddressViewModel
+
+@{
+    var viewTitle = "Contact address updated";
+    ViewBag.Title = viewTitle;
+    Layout = "_DashboardLayout";
+}
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <div class="govuk-panel govuk-panel--confirmation">
+                <h1 class="govuk-panel__title">
+                    @viewTitle
+                </h1>
+                <div class="govuk-panel__body">
+                    <div class="das-wrap govuk-!-font-size-24">
+                        New address is<br>
+                        @if (!string.IsNullOrEmpty(Model.AddressLine1)) { <strong>@Model.AddressLine1</strong><br /> }
+                        @if (!string.IsNullOrEmpty(Model.AddressLine2)) { <strong>@Model.AddressLine2</strong><br /> }
+                        @if (!string.IsNullOrEmpty(Model.AddressLine3)) { <strong>@Model.AddressLine3</strong><br /> }
+                        @if (!string.IsNullOrEmpty(Model.AddressLine4)) { <strong>@Model.AddressLine4</strong><br /> }
+                        @if (!string.IsNullOrEmpty(Model.Postcode)) { <strong>@Model.Postcode</strong><br /> }
+                    </div>
+                </div>
+            </div>
+            @{await Html.RenderPartialAsync("_Updated", @Model);}
+        </div>
+    </div>
+</main>
