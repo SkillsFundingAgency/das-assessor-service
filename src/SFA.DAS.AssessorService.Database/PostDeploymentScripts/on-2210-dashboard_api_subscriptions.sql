@@ -17,12 +17,12 @@ END
 
 IF EXISTS (SELECT * FROM [Privileges] WHERE [Key] = N'ViewPipeline')
 BEGIN
-	UPDATE Privileges SET PrivilegeData = '{"Rights":["displays the Standard and number of apprentices due to be assessed"]}' WHERE [Key] = 'ViewPipeline'
+	UPDATE Privileges SET PrivilegeData = '{"Rights":["view the Standard and number of apprentices due to be assessed"]}' WHERE [Key] = 'ViewPipeline'
 END
 
 IF EXISTS (SELECT * FROM [Privileges] WHERE [Key] = N'ViewCompletedAssessments')
 BEGIN
-	UPDATE Privileges SET PrivilegeData = '{"Rights":["displays all previously recorded assessments"]}' WHERE [Key] = 'ViewCompletedAssessments'
+	UPDATE Privileges SET PrivilegeData = '{"Rights":["view all previously recorded assessments"]}' WHERE [Key] = 'ViewCompletedAssessments'
 END
 
 IF EXISTS (SELECT * FROM [Privileges] WHERE [Key] = N'ApplyForStandard')
@@ -32,7 +32,7 @@ END
 
 IF EXISTS (SELECT * FROM [Privileges] WHERE [Key] = N'ManageUsers')
 BEGIN
-	UPDATE Privileges SET PrivilegeData = '{"Rights":["displays a list of all users in your organisation and the ability to manage their permissions"]}' WHERE [Key] = 'ManageUsers'
+	UPDATE Privileges SET PrivilegeData = '{"Rights":["view a list of all users in your organisation", "manage user permissions"]}' WHERE [Key] = 'ManageUsers'
 END
 
 IF EXISTS (SELECT * FROM [Privileges] WHERE [Key] = N'RecordGrades')
