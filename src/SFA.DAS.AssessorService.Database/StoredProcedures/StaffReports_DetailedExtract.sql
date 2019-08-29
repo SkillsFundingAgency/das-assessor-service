@@ -12,20 +12,7 @@ AS
 		   rg.[EndPointAssessorOrganisationId] AS 'EPAO ID',
 		   rg.[EndPointAssessorName] AS 'EPAO Name',
 		   ce.[ProviderUkPrn] AS 'Provider UkPrn',
-		   CASE ce.[ProviderUkPrn]
-			   WHEN 10004344 THEN 'MIDDLESBROUGH COLLEGE'
-			   WHEN 10005991 THEN 'CENTRAL COLLEGE NOTTINGHAM'
-			   WHEN 10007315 THEN 'WALSALL COLLEGE'
-			   WHEN 10007949 THEN 'HUNTINGDONSHIRE REGIONAL COLLEGE'
-			   WHEN 10021221 THEN 'MERSEY CARE NHS FOUNDATION TRUST'
-			   WHEN 10001548 THEN 'COLLEGE OF HARINGEY, ENFIELD AND NORTH-EAST LONDON, THE'
-			   WHEN 10007144 THEN 'UNIVERSITY OF EAST LONDON'
-			   WHEN 10005404 THEN 'REASEHEATH COLLEGE'
-			   WHEN 10005077 THEN 'PETERBOROUGH REGIONAL COLLEGE'
-			   WHEN 10007431 THEN 'WEST SUFFOLK COLLEGE'
-			   WHEN 10007697 THEN 'YH TRAINING SERVICES LIMITED'
-			   ELSE (SELECT MAX(UPPER(JSON_VALUE([CertificateData], '$.ProviderName'))) FROM [dbo].[Certificates] WHERE [ProviderUkPrn] = ce.[ProviderUkPrn])
-		   END AS 'Provider Name',
+		   UPPER(JSON_VALUE(ce.[CertificateData], '$.ProviderName')) AS 'Provider Name',
 		   CASE
 			   WHEN cl.[EventTime] IS NULL THEN ce.[Status]
 			   ELSE cl.[Status]
@@ -57,25 +44,13 @@ AS
 		   rg.[EndPointAssessorOrganisationId] AS 'EPAO ID',
 		   rg.[EndPointAssessorName] AS 'EPAO Name',
 		   ce.[ProviderUkPrn]  AS 'Provider UkPrn',
-		   CASE ce.[ProviderUkPrn]
-			   WHEN 10004344 THEN 'MIDDLESBROUGH COLLEGE'
-			   WHEN 10005991 THEN 'CENTRAL COLLEGE NOTTINGHAM'
-			   WHEN 10007315 THEN 'WALSALL COLLEGE'
-			   WHEN 10007949 THEN 'HUNTINGDONSHIRE REGIONAL COLLEGE'
-			   WHEN 10021221 THEN 'MERSEY CARE NHS FOUNDATION TRUST'
-			   WHEN 10001548 THEN 'COLLEGE OF HARINGEY, ENFIELD AND NORTH-EAST LONDON, THE'
-			   WHEN 10007144 THEN 'UNIVERSITY OF EAST LONDON'
-			   WHEN 10005404 THEN 'REASEHEATH COLLEGE'
-			   WHEN 10005077 THEN 'PETERBOROUGH REGIONAL COLLEGE'
-			   WHEN 10007431 THEN 'WEST SUFFOLK COLLEGE'
-			   WHEN 10007697 THEN 'YH TRAINING SERVICES LIMITED'
-			   ELSE (SELECT MAX(UPPER(JSON_VALUE([CertificateData], '$.ProviderName'))) FROM [dbo].[Certificates] WHERE [ProviderUkPrn] = ce.[ProviderUkPrn])
-		   END AS 'Provider Name',
+		   UPPER(JSON_VALUE(ce.[CertificateData], '$.ProviderName')) AS 'Provider Name',
 		   ce.[Status] AS 'Status'
 	FROM [dbo].[Certificates] ce
 	JOIN [dbo].[Organisations] rg ON ce.[OrganisationId] = rg.[Id]
 	WHERE ce.[Status] = 'Draft' AND ce.CreateDay BETWEEN @fromdate AND @todate
 	AND JSON_VALUE(ce.[CertificateData], '$.FullName') IS NOT NULL
 	AND JSON_VALUE(ce.[CertificateData], '$.StandardName') IS NOT NULL
+	AND ISNULL(JSON_VALUE(ce.[CertificateData], '$.ProviderName'),'') != '' 
 	ORDER BY 1, 11, 10, 2, 3
 RETURN 0
