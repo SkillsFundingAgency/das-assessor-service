@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 using MediatR;
@@ -156,6 +157,91 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             try
             {
                 _logger.LogInformation($"Associating with Organisation [{request.OrganisationId}, {request.ContactId}]");
+                var result = await _mediator.Send(request);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($@"Bad request, Message: [{ex.Message}]");
+                return BadRequest();
+            }
+        }
+
+        [HttpPut("update-primary-contact", Name = "UpdateEpaOrganisationPrimaryContact")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<ContactResponse>))]
+        public async Task<IActionResult> UpdateEpaOrganisationPrimaryContact([FromBody] UpdateEpaOrganisationPrimaryContactRequest request)
+        {
+            try
+            {
+                _logger.LogInformation($"Amending the Organisation [{request.OrganisationId} with Primary Contact {request.PrimaryContactId}]");
+                var result = await _mediator.Send(request);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($@"Bad request, Message: [{ex.Message}]");
+                return BadRequest();
+            }
+        }
+
+        [HttpPut("update-phone-number", Name = "UpdateEpaOrganisationPhoneNumber")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<ContactResponse>))]
+        public async Task<IActionResult> UpdateEpaOrganisationPhoneNumber([FromBody] UpdateEpaOrganisationPhoneNumberRequest request)
+        {
+            try
+            {
+                _logger.LogInformation($"Amending the Organisation [{request.OrganisationId} with Phone Number {request.PhoneNumber}]");
+                var result = await _mediator.Send(request);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($@"Bad request, Message: [{ex.Message}]");
+                return BadRequest();
+            }
+        }
+
+        [HttpPut("update-address", Name = "UpdateEpaOrganisationAddress")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<ContactResponse>))]
+        public async Task<IActionResult> UpdateEpaOrganisationAddress([FromBody] UpdateEpaOrganisationAddressRequest request)
+        {
+            try
+            {
+                _logger.LogInformation($"Amending the Organisation [{request.OrganisationId} with Address {request.AddressLine1}, {request.AddressLine2}, {request.AddressLine3}, {request.AddressLine4}, {request.Postcode}]");
+                var result = await _mediator.Send(request);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($@"Bad request, Message: [{ex.Message}]");
+                return BadRequest();
+            }
+        }
+
+        [HttpPut("update-email", Name = "UpdateEpaOrganisationEmail")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<ContactResponse>))]
+        public async Task<IActionResult> UpdateEpaOrganisationEmail([FromBody] UpdateEpaOrganisationEmailRequest request)
+        {
+            try
+            {
+                _logger.LogInformation($"Amending the Organisation [{request.OrganisationId} with Email {request.Email}]");
+                var result = await _mediator.Send(request);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($@"Bad request, Message: [{ex.Message}]");
+                return BadRequest();
+            }
+        }
+
+        [HttpPut("update-website-link", Name = "UpdateEpaOrganisationWebsiteLink")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<ContactResponse>))]
+        public async Task<IActionResult> UpdateEpaOrganisationWebsiteLink([FromBody] UpdateEpaOrganisationWebsiteLinkRequest request)
+        {
+            try
+            {
+                _logger.LogInformation($"Amending the Organisation [{request.OrganisationId} with Website Link {request.WebsiteLink}]");
                 var result = await _mediator.Send(request);
                 return Ok(result);
             }
