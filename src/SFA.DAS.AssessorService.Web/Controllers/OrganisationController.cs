@@ -116,8 +116,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                     var changeOrganisationPriviledge = (await _contactsApiClient.GetPrivileges()).First(p => p.Key == Privileges.ChangeOrganisationDetails);
                     viewModel.AccessDeniedViewModel = new AccessDeniedViewModel
                     {
-                        Title = Privileges.ChangeOrganisationDetails,
-                        Description = changeOrganisationPriviledge.Description,
                         PrivilegeId = changeOrganisationPriviledge.Id,
                         ContactId = Guid.Parse(userId),
                         UserHasUserManagement = userPrivileges.Any(up => up.Privilege.Key == Privileges.ManageUsers),

@@ -90,6 +90,11 @@ namespace SFA.DAS.AssessorService.Data
                     c => JsonConvert.SerializeObject(c),
                     c => JsonConvert.DeserializeObject<SearchData>(string.IsNullOrWhiteSpace(c) ? "{}" : c));
 
+            modelBuilder.Entity<Privilege>()
+                .Property(e => e.PrivilegeData)
+                .HasConversion(
+                    c => JsonConvert.SerializeObject(c),
+                    c => JsonConvert.DeserializeObject<PrivilegeData>(string.IsNullOrWhiteSpace(c) ? "{}" : c));
         }
     }
 }

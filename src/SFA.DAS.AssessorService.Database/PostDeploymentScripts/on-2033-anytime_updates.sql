@@ -47,8 +47,8 @@ WHERE
 -- add a priviledge to enable users with the priviledge to edit the organisation details
 IF NOT EXISTS (SELECT * FROM [Privileges] WHERE [Key] = N'ChangeOrganisationDetails')
 BEGIN
-	INSERT INTO [Privileges] (Id, UserPrivilege, MustBeAtLeastOneUserAssigned, Description, [Key], Enabled) 
-	VALUES (NEWID(), 'Change organisation details', 0, 'This area allows you to change organisation details', 'ChangeOrganisationDetails', 1)
+	INSERT INTO [Privileges] (Id, UserPrivilege, MustBeAtLeastOneUserAssigned, PrivilegeData, [Key], Enabled) 
+	VALUES (NEWID(), 'Change organisation details', 0, '{"Rights":["change contact details on the Register", "manage API key"]}', 'ChangeOrganisationDetails', 1)
 END
 
 -- add email templates for organisation details change notifications
