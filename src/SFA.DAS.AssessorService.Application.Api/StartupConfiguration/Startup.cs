@@ -135,6 +135,8 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                 {
                     TestDataService.AddTestData(serviceProvider.GetService<AssessorDbContext>());
                 }
+
+                services.AddHealthChecks();
             }
             catch (Exception e)
             {
@@ -223,6 +225,7 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                 app.UseMiddleware(typeof(ErrorHandlingMiddleware));
                 
                 app.UseRequestLocalization();
+                app.UseHealthChecks("/health");
                 app.UseMvc();
             }
             catch (Exception e)
