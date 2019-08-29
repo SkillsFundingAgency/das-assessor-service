@@ -3,7 +3,7 @@ CREATE TABLE [Applications](
 	[ApplicationId] [uniqueidentifier] NOT NULL,
 	[OrganisationId] [uniqueidentifier] NOT NULL,
 	[ApplicationStatus] [nvarchar](20) NOT NULL,
-	[ApplicationData] [nvarchar](max) NULL,
+	[ApplyData] [nvarchar](max) NULL,
 	[FinancialGrade] [nvarchar](max) NULL,
 	[StandardCode] int NULL,
 	[CreatedAt] [datetime2](7) NOT NULL,
