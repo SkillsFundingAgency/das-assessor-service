@@ -141,11 +141,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
             StandardApplicationData applicationData = null;
 
-            if (application.ApplicationData != null)
+            if (application.ApplyData != null)
             {
                 applicationData = new StandardApplicationData
                 {
-                    StandardName = application.ApplicationData.StandardName
+                    StandardName = application.ApplyData?.Apply?.StandardName
                 };
             }
             var sequenceNo = (SequenceNo)sequence.SequenceNo;
@@ -517,7 +517,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
             if (!isPlaceholderPresent) return;
 
-            var standardName = application?.ApplicationData?.StandardName;
+            var standardName = application?.ApplyData?.Apply?.StandardName;
 
             if (string.IsNullOrEmpty(standardName)) standardName = "the standard to be selected";
 
