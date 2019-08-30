@@ -1,12 +1,12 @@
-﻿CREATE PROCEDURE [dbo].[StaffReports_DetailedExtract]
+﻿CREATE PROCEDURE [StaffReports_DetailedExtract]
 
 AS
 
 DECLARE @fromdate DATE;
 DECLARE @todate DATE;
 
-SELECT @fromdate = DATEADD(day, 1, EOMONTH(DATEADD(month, -2, GETDATE()))) as firstdateoflastmonth;
-SELECT @todate = EOMONTH(DATEADD(month, -1, GETDATE())) lasstdateoflastmonth;
+SELECT @fromdate = DATEADD(day, 1, EOMONTH(DATEADD(month, -2, GETDATE())));
+SELECT @todate = EOMONTH(DATEADD(month, -1, GETDATE()));
 
 	   
 	SELECT
@@ -58,6 +58,5 @@ SELECT @todate = EOMONTH(DATEADD(month, -1, GETDATE())) lasstdateoflastmonth;
 	WHERE ce.[Status] = 'Draft' AND ce.CreateDay BETWEEN @fromdate AND @todate
 	AND JSON_VALUE(ce.[CertificateData], '$.FullName') IS NOT NULL
 	AND JSON_VALUE(ce.[CertificateData], '$.StandardName') IS NOT NULL
-	AND ISNULL(JSON_VALUE(ce.[CertificateData], '$.ProviderName'),'') != '' 
 	ORDER BY 1, 11, 10, 2, 3
 RETURN 0
