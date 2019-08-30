@@ -29,7 +29,7 @@ UPDATE StaffReports SET DisplayOrder = 3  WHERE ReportName = 'Weekly summary'
 
 -- this changes report on screen to download only.
 update StaffReports Set Storedprocedure = '', reporttype = 'Download',
-reportdetails = '{"Name": "Monthly detailed extract","Worksheets": {"worksheet": "Monthly detailed extract","order": 1,"StoredProcedure": "StaffReports_DetailedExtract"}}'
+reportdetails = '{"Name":"Monthly detailed extract","Worksheets": [ { "worksheet":"Monthly detailed extract", "order": 1, "StoredProcedure":"StaffReports_DetailedExtract" } ]}'
 where reportname = 'Monthly detailed extract' 
 
 
