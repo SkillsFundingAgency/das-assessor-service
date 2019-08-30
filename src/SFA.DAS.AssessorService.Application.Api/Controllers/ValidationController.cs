@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
+using System.Web;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -44,13 +45,15 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             return Ok(await _mediator.Send(new ValidationRequest{Type = "email", Value = emailToValidate}));
         }
 
-        [HttpGet("is-websitelink-format/{*websiteLinkToValidate}", Name = "ValidateWebsiteLink")]
+        [HttpGet("is-websitelink-format", Name = "ValidateWebsiteLink")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(bool))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> ValidateWebsiteLink(string websiteLinkToValidate)
         {
-            return Ok(await _mediator.Send(new ValidationRequest { Type = "websitelink", Value = websiteLinkToValidate }));
+            var decodedUrl = HttpUtility.UrlDecode(websiteLinkToValidate);
+            _logger.LogInformation($"VALIDATEWEBSITELINK - ValidationController.ValidateWebsiteLink: {websiteLinkToValidate}, decoded: {decodedUrl}");
+            return Ok(await _mediator.Send(new ValidationRequest { Type = "websitelink", Value = decodedUrl }));
         }
 
         [HttpGet("is-not-empty/{stringToValidate}", Name = "ValidateRequired")]

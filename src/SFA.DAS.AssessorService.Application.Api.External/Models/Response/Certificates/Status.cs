@@ -2,7 +2,7 @@
 
 namespace SFA.DAS.AssessorService.Application.Api.External.Models.Response.Certificates
 {
-    public class Status : IEquatable<Status>
+    public sealed class Status : IEquatable<Status>
     {
         public string CurrentStatus { get; set; }
 

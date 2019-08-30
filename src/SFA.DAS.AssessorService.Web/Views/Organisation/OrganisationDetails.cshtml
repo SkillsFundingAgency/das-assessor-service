@@ -7,10 +7,6 @@
     <a class="govuk-back-link" asp-controller="Dashboard" asp-action="Index">Back</a>
 
     <main class="govuk-main-wrapper " id="main-content" role="main">
-        <span class="govuk-caption-xl">
-            @Model.OrganisationId
-        </span>
-
         <h1 class="govuk-heading-xl">Organisation details</h1>
         @if (string.IsNullOrEmpty(Model.PrimaryContactName))
         {
@@ -18,7 +14,7 @@
                 <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
                 <strong class="govuk-warning-text__text">
                     <span class="govuk-warning-text__assistive">Warning</span>
-                    We need to know your Contact name for the register
+                    We need to know your contact name for the register
                 </strong>
             </div>
         }
@@ -125,7 +121,7 @@
 
         @if (Model.UserHasChangeOrganisationPrivilege == false)
         {
-            <form asp-controller="RequestAccess" asp-action="Request">
+            <form asp-controller="RequestAccess" asp-action="RequestAccess">
                 @Html.Hidden("ContactId", @Model.AccessDeniedViewModel.ContactId)
                 @Html.Hidden("PrivilegeId", @Model.AccessDeniedViewModel.PrivilegeId)
                 @Html.Hidden("UserHasUserManagement", @Model.AccessDeniedViewModel.UserHasUserManagement)
@@ -133,15 +129,17 @@
                 @Html.Hidden("ReturnAction", @Model.AccessDeniedViewModel.ReturnAction)
 
                 <p class="govuk-body">
-                    <span>To make changes to organisation details you need to&nbsp;</span>
-                    @if (Model.AccessDeniedViewModel.UserHasUserManagement)
-                    {
-                        <button class="govuk-button govuk-button--looks-like-link" type="submit">grant access</button>
-                    }
-                    else
-                    {
-                        <button class="govuk-button govuk-button--looks-like-link" type="submit">request access</button>
-                    }
+                    <span>To make changes to organisation details you need to</span> 
+                    <button class="govuk-button govuk-button--looks-like-link govuk-button--looks-like-link--inline" type="submit">
+                        @if (Model.AccessDeniedViewModel.UserHasUserManagement)
+                        {
+                            <text>grant access</text>
+                        }
+                        else
+                        {
+                            <text>request access</text>
+                        }
+                    </button>.
                 </p>
             </form>
         }

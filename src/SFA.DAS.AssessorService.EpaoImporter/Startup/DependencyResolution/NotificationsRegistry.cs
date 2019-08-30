@@ -17,7 +17,9 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Startup.DependencyResolution
             INotificationsApiClientConfiguration clientConfiguration = new NotificationsApiClientConfiguration
             {
                 ApiBaseUrl = configuration.NotificationsApiClientConfiguration.ApiBaseUrl,
+#pragma warning disable 618
                 ClientToken = configuration.NotificationsApiClientConfiguration.ClientToken,
+#pragma warning restore 618
                 ClientId = "",
                 ClientSecret = "",
                 IdentifierUri = "",

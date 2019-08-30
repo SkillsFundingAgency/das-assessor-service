@@ -114,7 +114,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.EmailHandler
                 Contact = new ContactResponse
                 {
                     Email = "second@organisation.com",
-                    DisplayName = "Second Person"
+                    DisplayName = "Second Person",
+                    GivenNames = "Second"
                 }
             };
             _secondContact.Privileges.Add(new PrivilegeResponse
@@ -131,7 +132,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.EmailHandler
                 Contact = new ContactResponse
                 {
                     Email = "third@organisation.com",
-                    DisplayName = "Third Person"
+                    DisplayName = "Third Person",
+                    GivenNames = "Third"
                 }
             };
             _thirdContact.Privileges.Add(new PrivilegeResponse
@@ -231,7 +233,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.EmailHandler
                 EmailTemplate = _eMailTemplate.TemplateName,
                 Tokens = new
                 {
-                    Contact = _secondContact.Contact.DisplayName,
+                    Contact = _secondContact.Contact.GivenNames,
                     Organisation = EpaOrganisation.Name,
                     PropertyChanged = PropertyChangedName,
                     ValueAdded = ValueAddedValue,
@@ -246,7 +248,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.EmailHandler
                 EmailTemplate = _eMailTemplate.TemplateName,
                 Tokens = new
                 {
-                    Contact = _thirdContact.Contact.DisplayName,
+                    Contact = _thirdContact.Contact.GivenNames,
                     Organisation = EpaOrganisation.Name,
                     PropertyChanged = PropertyChangedName,
                     ValueAdded = ValueAddedValue,

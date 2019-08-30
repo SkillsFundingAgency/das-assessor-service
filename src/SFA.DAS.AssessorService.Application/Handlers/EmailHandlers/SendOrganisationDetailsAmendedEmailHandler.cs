@@ -47,7 +47,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EmailHandlers
                         var sendEmailRequest = new SendEmailRequest(contactWithManageUserPrivilege.Contact.Email,
                             organisationDetailsAmendedEmailTemplate, new
                             {
-                                Contact = $"{contactWithManageUserPrivilege.Contact.DisplayName}",
+                                Contact = $"{contactWithManageUserPrivilege.Contact.GivenNames}",
                                 Organisation = organisation.Name,
                                 request.PropertyChanged,
                                 request.ValueAdded,

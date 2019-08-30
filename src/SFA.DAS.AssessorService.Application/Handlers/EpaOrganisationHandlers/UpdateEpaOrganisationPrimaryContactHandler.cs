@@ -61,7 +61,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
                         await _mediator.Send(new SendEmailRequest(primaryContact.Email,
                             primaryContactaAmendedEmailTemplate, new
                             {
-                                Contact = $"{primaryContact.DisplayName}",
+                                Contact = primaryContact.GivenNames,
                                 ServiceName = "Apprenticeship assessment service",
                                 Organisation = organisation.Name,
                                 ServiceTeam = "Apprenticeship assessment services team",
@@ -79,7 +79,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
                     OrganisationId = request.OrganisationId,
                     PropertyChanged = "Contact name",
                     ValueAdded = primaryContact.DisplayName,
-                    Editor = updatedBy?.DisplayName ?? "EFSA Staff"
+                    Editor = updatedBy?.DisplayName ?? "ESFA Staff"
                 });
             }
 

@@ -7,11 +7,11 @@ namespace SFA.DAS.AssessorService.Application.Api.External.SwaggerHelpers
 {
     public class NullableSchemaFilter : ISchemaFilter
     {
-        public void Apply(Schema model, SchemaFilterContext context)
+        public void Apply(Schema schema, SchemaFilterContext context)
         {
-            if (model.Properties is null) return;
+            if (schema.Properties is null) return;
 
-            foreach (var schemaProperty in model.Properties)
+            foreach (var schemaProperty in schema.Properties)
             {
                 var property = context.SystemType.GetProperty(schemaProperty.Key, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
 

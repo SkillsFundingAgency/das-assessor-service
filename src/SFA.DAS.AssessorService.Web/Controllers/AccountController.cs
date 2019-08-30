@@ -59,6 +59,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         { 
             var loginResult = await _loginOrchestrator.Login();
             var orgName = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/orgname")?.Value;
+            var epaoId = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/epaoid")?.Value;
 
             _logger.LogInformation($"  returned from LoginOrchestrator: {loginResult.Result}");
 
@@ -66,6 +67,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             {
                 case LoginResult.Valid:
                     _sessionService.Set("OrganisationName", orgName);
+                    _sessionService.Set("EndPointAssessorOrganisationId", epaoId);
                     return RedirectToAction("Index", "Dashboard");
                 case LoginResult.NotRegistered:
                     return RedirectToAction("Index", "OrganisationSearch");
@@ -77,12 +79,14 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 case LoginResult.InvitePending:
                     ResetCookies();
                     _sessionService.Set("OrganisationName", orgName);
+                    _sessionService.Set("EndPointAssessorOrganisationId", epaoId);
                     return RedirectToAction("InvitePending", "Home");
                 case LoginResult.Applying:
                     return Redirect($"{_config.ApplyBaseAddress}/Applications");
                 case LoginResult.Rejected:
                     ResetCookies();
                     _sessionService.Set("OrganisationName", orgName);
+                    _sessionService.Set("EndPointAssessorOrganisationId", epaoId);
                     return RedirectToAction("Rejected", "Home");
                 case LoginResult.ContactDoesNotExist:
                     ResetCookies();

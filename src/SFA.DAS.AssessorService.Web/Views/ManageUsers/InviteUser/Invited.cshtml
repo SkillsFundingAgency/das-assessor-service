@@ -14,7 +14,7 @@
                     User invited
                 </h1>
                 <div class="govuk-panel__body">
-                    <div class="govuk-!-margin-bottom-6">
+                    <div class="govuk-!-margin-bottom-6 das-wrap">
                         You have invited<br>
                         <strong>@Model.Email</strong>
                     </div>
@@ -29,12 +29,12 @@
             
             <h2 class="govuk-heading-m">What do you want to do next?</h2>
 
-            <ul class="govuk-list">
+            <ul class="govuk-list govuk-list--bullet">
                 <li>
                     <a asp-controller="InviteUser" asp-action="Invite" class="govuk-link">Invite someone else</a>
                 </li>
                 <li>
-                    <a asp-controller="Dashboard" asp-action="Index" class="govuk-link">Back to dashboard</a>
+                    <a asp-controller="Dashboard" asp-action="Index" class="govuk-link">Return to dashboard</a>
                 </li>
                 <li>
                     <a asp-controller="ManageUsers" asp-action="Index" class="govuk-link">View user list</a>

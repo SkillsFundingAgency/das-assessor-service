@@ -121,6 +121,25 @@ namespace SFA.DAS.AssessorService.Data
             await _connection.ExecuteAsync("UPDATE Contacts SET OrganisationId = @organisationId WHERE Id = @contactId", new {contactId, organisationId});
         }
 
+        public async Task AddContactInvitation(Guid invitorContactId, Guid inviteeContactId, Guid organisationId)
+        {
+            var contactInvitation = new ContactInvitation() {InvitationDate = DateTime.UtcNow, OrganisationId = organisationId, InvitorContactId = invitorContactId, InviteeContactId = inviteeContactId};
+            await _assessorDbContext.ContactInvitations.AddAsync(contactInvitation);
+            await _assessorDbContext.SaveChangesAsync();
+        }
+
+        public async Task<ContactInvitation> GetContactInvitation(Guid inviteeContactId)
+        {
+            return await _assessorDbContext.ContactInvitations.SingleOrDefaultAsync(ci => ci.InviteeContactId == inviteeContactId);
+        }
+
+        public async Task SetInvitationAccepted(ContactInvitation contactInvitation)
+        {
+            contactInvitation.IsAccountCreated = true;
+            contactInvitation.AccountCreatedDate = DateTime.UtcNow;
+            await _assessorDbContext.SaveChangesAsync();
+        }
+
 
         public async Task Update(UpdateContactRequest updateContactRequest)
         {

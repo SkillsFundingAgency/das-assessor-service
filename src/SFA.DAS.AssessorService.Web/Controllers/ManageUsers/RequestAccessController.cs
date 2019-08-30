@@ -21,7 +21,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.ManageUsers
         }
         
         [HttpPost]
-        public async Task<IActionResult> Request(AccessDeniedViewModel vm)
+        public async Task<IActionResult> RequestAccess(AccessDeniedViewModel vm)
         {
             await _contactsApiClient.RequestForPrivilege(vm.ContactId, vm.PrivilegeId);
 

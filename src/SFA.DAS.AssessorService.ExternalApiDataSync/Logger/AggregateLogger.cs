@@ -25,16 +25,22 @@ namespace SFA.DAS.AssessorService.ExternalApiDataSync.Logger
             _redisLogger = LogManager.GetCurrentClassLogger();
         }
 
-        public void LogError(string message, Exception ex)
+        public void LogError(Exception ex, string message)
         {
-            _functionLogger.LogError(message, ex, _source);
+            _functionLogger.LogError(ex, message, _source);
             _redisLogger.Error(ex, message);
         }
 
-        public void LogInfo(string message)
+        public void LogInformation(string message)
         {
             _functionLogger.LogInformation(message, _source);
             _redisLogger.Info(message);
+        }
+
+        public void LogDebug(string message)
+        {
+            _functionLogger.LogDebug(message, _source);
+            _redisLogger.Debug(message);
         }
 
         private string GetNLogConfigurationFileName(string source)

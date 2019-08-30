@@ -66,6 +66,7 @@
   <ItemGroup>
     <Build Include="Tables\CertificateLogs.sql" />
     <Build Include="Tables\Certificates.sql" />
+    <Build Include="Tables\ContactInvitations.sql" />
     <Build Include="Tables\ContactLogs.sql" />
     <Build Include="Tables\Contacts.sql" />
     <Build Include="Tables\Organisations.sql" />
@@ -111,6 +112,9 @@
     <Build Include="StoredProcedures\GetEPAO_DashboardCounts.sql" />
     <Build Include="StoredProcedures\GetEPAO_Pipelines_Extract.sql" />
     <Build Include="StoredProcedures\StaffSearchCertificates_Count.sql" />
+    <Build Include="Tables\StandardSummary.sql" />
+    <Build Include="StoredProcedures\Data_Summaries.sql" />
+    <Build Include="Tables\Applications.sql" />
     <Build Include="Tables\Audits.sql" />
   </ItemGroup>
   <ItemGroup>
