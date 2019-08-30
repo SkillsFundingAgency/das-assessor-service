@@ -1,8 +1,11 @@
-﻿using System;
+﻿using SFA.DAS.AssessorService.Api.Types.Attributes;
+using SFA.DAS.AssessorService.Api.Types.Auditing;
+using System;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models.AO
 {
-    public class EpaOrganisation : IAuditFilter
+    [AuditFilter(typeof(EpaOrganisationAuditFilter))]
+    public class EpaOrganisation //: IAuditFilter
     {
         public Guid Id { get; set; }
         public DateTime CreatedAt { get; set; }
@@ -19,7 +22,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.AO
         public bool ApiEnabled { get; set; }
         public string ApiUser { get; set; }
 
-        public string FilterAuditDiff(string propertyChanged)
+        /*public string FilterAuditDiff(string propertyChanged)
         {
             if (propertyChanged == $"{nameof(OrganisationData)}.{nameof(OrganisationData.PhoneNumber)}")
             {
@@ -27,6 +30,6 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.AO
             }
 
             return null;
-        }
+        }*/
     }
 }

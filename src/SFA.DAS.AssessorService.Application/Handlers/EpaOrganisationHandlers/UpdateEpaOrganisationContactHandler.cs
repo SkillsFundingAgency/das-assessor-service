@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
@@ -18,13 +19,18 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
     {
         private readonly IRegisterRepository _registerRepository;
         private readonly ILogger<UpdateEpaOrganisationContactHandler> _logger;
+        private readonly IMediator _mediator;
+        private readonly IAuditLogService _auditLogService;
         private readonly IEpaOrganisationValidator _validator;
         private readonly ISpecialCharacterCleanserService _cleanser;
 
-        public UpdateEpaOrganisationContactHandler(IRegisterRepository registerRepository, IEpaOrganisationValidator validator, ISpecialCharacterCleanserService cleanser, ILogger<UpdateEpaOrganisationContactHandler> logger)
+        public UpdateEpaOrganisationContactHandler(IRegisterRepository registerRepository, IEpaOrganisationValidator validator, IMediator mediator,
+            IAuditLogService auditLogService, ISpecialCharacterCleanserService cleanser, ILogger<UpdateEpaOrganisationContactHandler> logger)
         {
             _registerRepository = registerRepository;
             _validator = validator;
+            _mediator = mediator;
+            _auditLogService = auditLogService;
             _cleanser = cleanser;
             _logger = logger;
         }
@@ -47,8 +53,18 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
                 }
                 throw new Exception(message);
             }
+
+            var primaryContact = await _mediator.Send(new GetEpaContactRequest { ContactId = Guid.Parse(request.ContactId) });
+            
+            var changes = await _auditLogService.GetEpaOrganisationPrimaryContactChanges(primaryContact.EndPointAssessorOrganisationId, primaryContact);
+
             var contact = MapOrganisationContactRequestToContact(request);
-            return await _registerRepository.UpdateEpaOrganisationContact(contact, request.ActionChoice);
+
+            var result = await _registerRepository.UpdateEpaOrganisationContact(contact, request.MakePrimaryContact);
+
+            await _auditLogService.WriteChangesToAuditLog(primaryContact.EndPointAssessorOrganisationId, request.UpdatedBy, changes);
+
+            return result;
         }
 
         private static EpaContact MapOrganisationContactRequestToContact(UpdateEpaOrganisationContactRequest request)

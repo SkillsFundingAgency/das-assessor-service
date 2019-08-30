@@ -13,8 +13,8 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
 
         Task<string> UpdateEpaOrganisationStandard(EpaOrganisationStandard organisationStandard, List<int> deliveryAreas);
         Task<string> CreateEpaOrganisationContact(EpaContact contact);
-        Task<string> UpdateEpaOrganisationContact(EpaContact contact, string actionChoice);
-        Task<string> AssociateOrganisationWithContact(Guid id, EpaOrganisation org, string status, string actionChoice);
+        Task<string> UpdateEpaOrganisationContact(EpaContact contact, bool makePrimaryContact);
+        Task<string> AssociateOrganisationWithContact(Guid id, EpaOrganisation org, string status, bool makePrimaryContact);
         Task<string> AssociateDefaultRoleWithContact(EpaContact contact);
         Task<string> AssociateAllPrivilegesWithContact(EpaContact contact);
         Task UpdateEpaOrganisationPrimaryContact(Guid contactId, string contactUsername);

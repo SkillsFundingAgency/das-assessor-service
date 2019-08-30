@@ -16,7 +16,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
     public class UpdateEpaOrganisationHandler : IRequestHandler<UpdateEpaOrganisationRequest, string>
     {
         private readonly IRegisterRepository _registerRepository;
-        private readonly IRegisterQueryRepository _registerQueryRepository;
         private readonly ILogger<UpdateEpaOrganisationHandler> _logger;
         private readonly IAuditLogService _auditLogService;
         private readonly ISpecialCharacterCleanserService _cleanser;
@@ -27,7 +26,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
             ISpecialCharacterCleanserService cleanser, IEpaOrganisationValidator validator)
         {
             _registerRepository = registerRepository;
-            _registerQueryRepository = registerQueryRepository;
             _logger = logger;
             _auditLogService = auditLogService;
             _cleanser = cleanser;
@@ -50,30 +48,15 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
                 }
             }
 
-            // get the current organisation, removing the primary contact information which is not updated by this request
-            var prevOrganisation = await _registerQueryRepository.GetEpaOrganisationByOrganisationId(request.OrganisationId);
-            prevOrganisation.PrimaryContact = null;
-
             var organisation = MapOrganisationRequestToOrganisation(request);
 
-            var differences = _auditLogService.Compare<EpaOrganisation>(prevOrganisation, organisation);
-            differences?.ForEach(p => 
-            {
-                /*_auditRespository.CreateAuditLog(new AuditLog
-                {
-                    OrganisationId = "",
-                    UpdatedBy,
-                    UpdatedAt,
-                    AuditData = new AuditData
-                    {
-                        FieldChanged = p.FieldChanged,
-                        PreviousValue = p.PreviousValue,
-                        CurrentValue = p.CurrentValue
-                    }
-                });*/
-            });
-            
-            return await _registerRepository.UpdateEpaOrganisation(organisation);
+            var changes = await _auditLogService.GetEpaOrganisationChanges(request.OrganisationId, organisation);
+
+            var result = await _registerRepository.UpdateEpaOrganisation(organisation);
+
+            await _auditLogService.WriteChangesToAuditLog(organisation.OrganisationId, request.UpdatedBy, changes);
+
+            return result;
         }
 
         private void ProcessRequestFieldsForSpecialCharacters(UpdateEpaOrganisationRequest request)

@@ -254,13 +254,12 @@ namespace SFA.DAS.AssessorService.Data
             }
         }
 
-        public async Task<string> UpdateEpaOrganisationContact(EpaContact contact, string actionChoice)
+        public async Task<string> UpdateEpaOrganisationContact(EpaContact contact, bool makePrimaryContact)
         {
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))
             {
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
-
 
                 connection.Execute(
                     "UPDATE [Contacts] SET [DisplayName] = @displayName, [Email] = @email, " +
@@ -270,23 +269,25 @@ namespace SFA.DAS.AssessorService.Data
                     new { contact.DisplayName, contact.Email, firstName = string.IsNullOrEmpty(contact.FirstName) ? " " : contact.FirstName,
                         lastName = string.IsNullOrEmpty(contact.LastName) ? " " : contact.LastName, contact.PhoneNumber, contact.Id});
 
-                if (actionChoice == "MakePrimaryContact")
-                    connection.Execute("update o set PrimaryContact = c.Username from organisations o " +
-                                       "inner join contacts c on o.EndPointAssessorOrganisationId = c.EndPointAssessorOrganisationId " +
-                                       "Where c.id = @Id",
-                        new {contact.Id});
+                if (makePrimaryContact)
+                {
+                    connection.Execute(
+                        "update o set PrimaryContact = c.Username from organisations o " +
+                        "inner join contacts c on o.EndPointAssessorOrganisationId = c.EndPointAssessorOrganisationId " +
+                        "Where c.id = @Id",
+                        new { contact.Id });
+                }
 
                 return contact.Id.ToString();
             }
         }
 
-        public async Task<string> AssociateOrganisationWithContact(Guid contactId, EpaOrganisation org, string status, string actionChoice)
+        public async Task<string> AssociateOrganisationWithContact(Guid contactId, EpaOrganisation org, string status, bool makePrimaryContact)
         {
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))
             {
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
-
 
                 connection.Execute(
                     "UPDATE [Contacts] SET [EndPointAssessorOrganisationId] = @OrganisationId, [OrganisationId] = @Id, " +
@@ -294,11 +295,14 @@ namespace SFA.DAS.AssessorService.Data
                     "WHERE [Id] = @contactId ",
                     new { org.OrganisationId, org.Id, contactId,  status });
 
-                if (actionChoice == "MakePrimaryContact")
-                    connection.Execute("update o set PrimaryContact = c.Username from organisations o " +
-                                       "inner join contacts c on o.EndPointAssessorOrganisationId = c.EndPointAssessorOrganisationId " +
-                                       "Where c.id = @contactId",
+                if (makePrimaryContact)
+                {
+                    connection.Execute(
+                        "update o set PrimaryContact = c.Username from organisations o " +
+                        "inner join contacts c on o.EndPointAssessorOrganisationId = c.EndPointAssessorOrganisationId " +
+                        "Where c.id = @contactId",
                         new { contactId });
+                }
 
                 return contactId.ToString();
             }

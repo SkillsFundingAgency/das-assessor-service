@@ -26,7 +26,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
 
             if (contact != null && organisation != null)
             {
-                await _registerRepository.AssociateOrganisationWithContact(contact.Id, organisation, request.ContactStatus, request.MakePrimaryContact ? "MakePrimaryContact" : string.Empty);
+                await _registerRepository.AssociateOrganisationWithContact(contact.Id, organisation, request.ContactStatus, request.MakePrimaryContact);
 
                 if (request.AddDefaultRoles)
                 {

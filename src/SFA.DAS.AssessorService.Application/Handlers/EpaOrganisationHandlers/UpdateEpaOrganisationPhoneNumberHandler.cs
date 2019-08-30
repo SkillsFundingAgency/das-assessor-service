@@ -13,12 +13,10 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
 {
     public class UpdateEpaOrganisationPhoneNumberHandler : IRequestHandler<UpdateEpaOrganisationPhoneNumberRequest, List<ContactResponse>>
     { 
-        private readonly IContactQueryRepository _contactQueryRepository;
         private readonly IMediator _mediator;
 
-        public UpdateEpaOrganisationPhoneNumberHandler(IContactQueryRepository contactQueryRepository, IMediator mediator)
+        public UpdateEpaOrganisationPhoneNumberHandler(IMediator mediator)
         {
-            _contactQueryRepository = contactQueryRepository;
             _mediator = mediator;
         }
 
@@ -26,21 +24,22 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
         {
             var organisation = await _mediator.Send(new GetAssessmentOrganisationRequest { OrganisationId = request.OrganisationId });
 
+            var updatedByContact = request.UpdatedBy.HasValue
+                                ? await _mediator.Send(new GetEpaContactRequest { ContactId = request.UpdatedBy.Value })
+                                : null;
+
             var updateEpaOrganisationRequest = Mapper.Map<UpdateEpaOrganisationRequest>(organisation);
             updateEpaOrganisationRequest.PhoneNumber = request.PhoneNumber;
+            updateEpaOrganisationRequest.UpdatedBy = updatedByContact?.DisplayName ?? "Unknown";
 
             await _mediator.Send(updateEpaOrganisationRequest);
-
-            var updatedBy = request.UpdatedBy.HasValue
-                ? await _contactQueryRepository.GetContactById(request.UpdatedBy.Value)
-                : null;
 
             return await _mediator.Send(new SendOrganisationDetailsAmendedEmailRequest
                 {
                     OrganisationId = request.OrganisationId,
                     PropertyChanged = "Contact phone number",
                     ValueAdded = request.PhoneNumber,
-                    Editor = updatedBy?.DisplayName ?? "EFSA Staff"
+                    Editor = updatedByContact?.DisplayName ?? "EFSA Staff"
             });
         }
     }

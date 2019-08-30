@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -89,10 +90,10 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         }
 
         [Test]
-        public void UpdateOrganisationContactCheckNewDetails()
+        public async Task UpdateOrganisationContactCheckNewDetails()
         {
             var contactBeforeChange = OrganisationContactHandler.GetContactById(_contactId.ToString());
-            var returnedContactId = _repository.UpdateEpaOrganisationContact(_contactUpdated,"Save").Result;
+            await _repository.UpdateEpaOrganisationContact(_contactUpdated,false);
             var contactAfterChange = OrganisationContactHandler.GetContactById(_contactId.ToString());
    
             _contactBeforeChange.Should().BeEquivalentTo(contactBeforeChange);

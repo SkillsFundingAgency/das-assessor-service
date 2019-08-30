@@ -14,12 +14,10 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
 {
     public class UpdateEpaOrganisationAddressHandler : IRequestHandler<UpdateEpaOrganisationAddressRequest, List<ContactResponse>>
     { 
-        private readonly IContactQueryRepository _contactQueryRepository;
         private readonly IMediator _mediator;
 
-        public UpdateEpaOrganisationAddressHandler(IContactQueryRepository contactQueryRepository, IMediator mediator)
+        public UpdateEpaOrganisationAddressHandler(IMediator mediator)
         {
-            _contactQueryRepository = contactQueryRepository;
             _mediator = mediator;
         }
 
@@ -27,18 +25,19 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
         {
             var organisation = await _mediator.Send(new GetAssessmentOrganisationRequest { OrganisationId = request.OrganisationId });
 
+            var updatedByContact = request.UpdatedBy.HasValue
+                                ? await _mediator.Send(new GetEpaContactRequest { ContactId = request.UpdatedBy.Value })
+                                : null;
+
             var updateEpaOrganisationRequest = Mapper.Map<UpdateEpaOrganisationRequest>(organisation);
             updateEpaOrganisationRequest.Address1 = request.AddressLine1;
             updateEpaOrganisationRequest.Address2 = request.AddressLine2;
             updateEpaOrganisationRequest.Address3 = request.AddressLine3;
             updateEpaOrganisationRequest.Address4 = request.AddressLine4;
             updateEpaOrganisationRequest.Postcode = request.Postcode;
+            updateEpaOrganisationRequest.UpdatedBy = updatedByContact?.DisplayName ?? "Unknown";
 
             await _mediator.Send(updateEpaOrganisationRequest);
-
-            var updatedBy = request.UpdatedBy.HasValue
-                ? await _contactQueryRepository.GetContactById(request.UpdatedBy.Value)
-                : null;
 
             string valueAdded = string.Join(", ", 
                 (new List<string>
@@ -57,7 +56,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
                     OrganisationId = request.OrganisationId,
                     PropertyChanged = "Contact address",
                     ValueAdded = valueAdded,
-                    Editor = updatedBy?.DisplayName ?? "EFSA Staff"
+                    Editor = updatedByContact?.DisplayName ?? "EFSA Staff"
             });
         }
     }

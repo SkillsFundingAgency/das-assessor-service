@@ -16,28 +16,30 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
 {
     public class UpdateEpaOrganisationPrimaryContactHandler : IRequestHandler<UpdateEpaOrganisationPrimaryContactRequest, List<ContactResponse>>
     { 
-        private readonly IContactQueryRepository _contactQueryRepository;
         private readonly ILogger<UpdateEpaOrganisationPrimaryContactHandler> _logger;
         private readonly IEMailTemplateQueryRepository _eMailTemplateQueryRepository;
         private readonly IMediator _mediator;
+        private readonly IAuditLogService _auditLogService;
 
-        public UpdateEpaOrganisationPrimaryContactHandler(IContactQueryRepository contactQueryRepository, ILogger<UpdateEpaOrganisationPrimaryContactHandler> logger,
-            IEMailTemplateQueryRepository eMailTemplateQueryRepository, IMediator mediator)
+        public UpdateEpaOrganisationPrimaryContactHandler(ILogger<UpdateEpaOrganisationPrimaryContactHandler> logger,
+            IEMailTemplateQueryRepository eMailTemplateQueryRepository, IMediator mediator, IAuditLogService auditLogService)
         {
-            _contactQueryRepository = contactQueryRepository;
             _logger = logger;
             _eMailTemplateQueryRepository = eMailTemplateQueryRepository;
             _mediator = mediator;
+            _auditLogService = auditLogService;
         }
 
         public async Task<List<ContactResponse>> Handle(UpdateEpaOrganisationPrimaryContactRequest request, CancellationToken cancellationToken)
         {
-            var organisation = await _mediator.Send(new GetAssessmentOrganisationRequest { OrganisationId = request.OrganisationId });
-            
+            var primaryContact = await _mediator.Send(new GetEpaContactRequest { ContactId = request.PrimaryContactId });
+
+            var changes = await _auditLogService.GetEpaOrganisationPrimaryContactChanges(request.OrganisationId, primaryContact);
+
             var success = await _mediator.Send(new AssociateEpaOrganisationWithEpaContactRequest
             {
                 ContactId = request.PrimaryContactId,
-                OrganisationId = organisation.OrganisationId,
+                OrganisationId = request.OrganisationId,
                 ContactStatus = ContactStatus.Live,
                 MakePrimaryContact = true,
                 AddDefaultRoles = false,
@@ -46,10 +48,12 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
 
             if (success)
             {
-                var primaryContact = await _contactQueryRepository.GetContactById(request.PrimaryContactId);
-                var updatedBy = request.UpdatedBy.HasValue
-                    ? await _contactQueryRepository.GetContactById(request.UpdatedBy.Value)
+                var organisation = await _mediator.Send(new GetAssessmentOrganisationRequest { OrganisationId = request.OrganisationId });
+                var updatedByContact = request.UpdatedBy.HasValue
+                    ? await _mediator.Send(new GetEpaContactRequest { ContactId = request.UpdatedBy.Value })
                     : null;
+
+                await _auditLogService.WriteChangesToAuditLog(request.OrganisationId, updatedByContact?.DisplayName ?? "Unknown", changes);
 
                 try
                 {
@@ -61,11 +65,11 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
                         await _mediator.Send(new SendEmailRequest(primaryContact.Email,
                             primaryContactaAmendedEmailTemplate, new
                             {
-                                Contact = primaryContact.GivenNames,
+                                Contact = primaryContact.FirstName,
                                 ServiceName = "Apprenticeship assessment service",
                                 Organisation = organisation.Name,
                                 ServiceTeam = "Apprenticeship assessment services team",
-                                Editor = updatedBy?.DisplayName ?? "EFSA Staff"
+                                Editor = updatedByContact?.DisplayName ?? "EFSA Staff"
                             }), cancellationToken);
                     }
                 }
@@ -79,7 +83,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
                     OrganisationId = request.OrganisationId,
                     PropertyChanged = "Contact name",
                     ValueAdded = primaryContact.DisplayName,
-                    Editor = updatedBy?.DisplayName ?? "ESFA Staff"
+                    Editor = updatedByContact?.DisplayName ?? "ESFA Staff"
                 });
             }
 

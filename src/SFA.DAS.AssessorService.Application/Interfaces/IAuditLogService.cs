@@ -1,11 +1,18 @@
-﻿using System.Collections.Generic;
-using SFA.DAS.AssessorService.Api.Types.Models;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
+using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Application.Auditing;
+using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Application.Interfaces
 {
     public interface IAuditLogService
     {
-        List<AuditLogDiff> Compare<T>(T previous, T current) where T : IAuditFilter;
+        Task<List<AuditChange>> GetEpaOrganisationChanges(string organisationId, EpaOrganisation organisation);
+        Task<List<AuditChange>> GetEpaOrganisationPrimaryContactChanges(string organisationId, EpaContact primaryContactId);
+
+        Task WriteChangesToAuditLog(string organisationId, string updatedBy, List<AuditChange> auditChanges);
     }
 }

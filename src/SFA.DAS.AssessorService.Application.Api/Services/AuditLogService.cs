@@ -2,24 +2,94 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 using Newtonsoft.Json.Linq;
+
+using SFA.DAS.AssessorService.Api.Types.Attributes;
 using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Application.Auditing;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Application.Api.Services
 {
     public class AuditLogService : IAuditLogService
     {
-        public List<AuditLogDiff> Compare<T>(T previous, T current) where T : IAuditFilter
+        private readonly IAuditRepository _auditRepository;
+        private readonly IRegisterQueryRepository _registerQueryRepository;
+
+        public AuditLogService(IAuditRepository auditRepository, IRegisterQueryRepository registerQueryRepository)
         {
-            var auditDifferences = new List<AuditLogDiff>();
+            _auditRepository = auditRepository;
+            _registerQueryRepository = registerQueryRepository;
+        }
 
-            CompareObjects(string.Empty, JObject.FromObject(previous), JObject.FromObject(current), auditDifferences);
+        public async Task<List<AuditChange>> GetEpaOrganisationChanges(string organisationId, EpaOrganisation organisation)
+        {
+            // get the current organisation to compare, removing the primary contact information which is not updated by this request
+            var prevOrganisation = await _registerQueryRepository.GetEpaOrganisationByOrganisationId(organisationId);
+            prevOrganisation.PrimaryContact = null;
 
-            return auditDifferences?
-                .Select(p => { p.FieldChanged = previous.FilterAuditDiff(p.ProperyChanged); return p; })
-                .Where(p => !string.IsNullOrEmpty(p.FieldChanged)).ToList();
+            return Compare<EpaOrganisation>(prevOrganisation, organisation);
+        }
+
+        public async Task<List<AuditChange>> GetEpaOrganisationPrimaryContactChanges(string organisationId, EpaContact primaryContact)
+        {
+            var attributes = typeof(EpaOrganisation).GetCustomAttributes(typeof(AuditFilterAttribute), true);
+            if (attributes.Length == 0)
+                throw new ArgumentException("T does not have attribute AuditFilterAttribute");
+
+            if (attributes[0] is AuditFilterAttribute auditFilterAttribute)
+            {
+                var auditChanges = new List<AuditChange>();
+
+                // get the current organisation details and compare to the new primary contact username
+                var prevOrganisation = await _registerQueryRepository.GetEpaOrganisationByOrganisationId(organisationId);
+                if(!string.Equals(prevOrganisation.PrimaryContact, primaryContact.Username, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    auditChanges.Add(new AuditChange
+                    {
+                        ProperyChanged = $"{nameof(EpaOrganisation.PrimaryContact)}",
+                        PreviousValue = prevOrganisation.PrimaryContact,
+                        CurrentValue = primaryContact.Username
+                    });
+                }
+
+                var auditFilter = Activator.CreateInstance(auditFilterAttribute.AuditFilter) as IAuditFilter;
+                return auditChanges?
+                    .Select(p => { p.FieldChanged = auditFilter.FilterAuditDiff(p.ProperyChanged); return p; })
+                    .Where(p => !string.IsNullOrEmpty(p.FieldChanged)).ToList();
+            }
+
+            return null;
+        }
+
+        public async Task WriteChangesToAuditLog(string organisationId, string updatedBy, List<AuditChange> auditChanges)
+        {
+            var organisation = await _registerQueryRepository.GetEpaOrganisationByOrganisationId(organisationId);
+            await _auditRepository.CreateAudit(organisation.Id, updatedBy, auditChanges);
+        }
+
+        public List<AuditChange> Compare<T>(T previous, T current)
+        {
+            var attributes = typeof(T).GetCustomAttributes(typeof(AuditFilterAttribute), true);
+            if (attributes.Length == 0)
+                throw new ArgumentException("T does not have attribute AuditFilterAttribute");
+
+            if (attributes[0] is AuditFilterAttribute auditFilterAttribute)
+            {
+                var auditChanges = new List<AuditChange>();
+                
+                CompareObjects(string.Empty, JObject.FromObject(previous), JObject.FromObject(current), auditChanges);
+
+                var auditFilter = Activator.CreateInstance(auditFilterAttribute.AuditFilter) as IAuditFilter;
+                return auditChanges?
+                    .Select(p => { p.FieldChanged = auditFilter.FilterAuditDiff(p.ProperyChanged); return p; })
+                    .Where(p => !string.IsNullOrEmpty(p.FieldChanged)).ToList();
+            }
+
+            return null;
         }
 
         /// <summary>
@@ -28,8 +98,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
         /// <param name="parent">The property which contains the objects to be compared.</param>
         /// <param name="source">The expected results</param>
         /// <param name="target">The actual results</param>
-        /// <param name="auditDifferences">The list to which differences will be appended</param>
-        private void CompareObjects(string parent, JObject source, JObject target, List<AuditLogDiff> auditDifferences)
+        /// <param name="auditChanges">The list to which differences will be appended</param>
+        private void CompareObjects(string parent, JObject source, JObject target, List<AuditChange> auditChanges)
         {
             foreach (KeyValuePair<string, JToken> sourcePair in source)
             {
@@ -37,7 +107,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
                 {
                     if (target.GetValue(sourcePair.Key) == null)
                     {
-                        auditDifferences.Add(new AuditLogDiff
+                        auditChanges.Add(new AuditChange
                         {
                             ProperyChanged = FormatPropertyChanged(parent, sourcePair.Key),
                             PreviousValue = sourcePair.Value.ToString(),
@@ -46,7 +116,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
                     }
                     else if (target.GetValue(sourcePair.Key).Type != JTokenType.Object)
                     {
-                        auditDifferences.Add(new AuditLogDiff
+                        auditChanges.Add(new AuditChange
                         {
                             ProperyChanged = FormatPropertyChanged(parent, sourcePair.Key),
                             PreviousValue = sourcePair.Value.ToString(),
@@ -56,14 +126,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
                     else
                     {
                         CompareObjects(parent + sourcePair.Key, sourcePair.Value.ToObject<JObject>(),
-                            target.GetValue(sourcePair.Key).ToObject<JObject>(), auditDifferences);
+                            target.GetValue(sourcePair.Key).ToObject<JObject>(), auditChanges);
                     }
                 }
                 else if (sourcePair.Value.Type == JTokenType.Array)
                 {
                     if (target.GetValue(sourcePair.Key) == null)
                     {
-                        auditDifferences.Add(new AuditLogDiff
+                        auditChanges.Add(new AuditChange
                         {
                             ProperyChanged = FormatPropertyChanged(parent, sourcePair.Key),
                             PreviousValue = sourcePair.Value.ToString(),
@@ -73,7 +143,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
                     else
                     {
                         CompareArrays(parent + sourcePair.Key, sourcePair.Value.ToObject<JArray>(),
-                            target.GetValue(sourcePair.Key).ToObject<JArray>(), auditDifferences, sourcePair.Key);
+                            target.GetValue(sourcePair.Key).ToObject<JArray>(), auditChanges, sourcePair.Key);
                     }
                 }
                 else
@@ -82,7 +152,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
                     var actual = target.SelectToken(sourcePair.Key);
                     if (actual == null)
                     {
-                        auditDifferences.Add(new AuditLogDiff
+                        auditChanges.Add(new AuditChange
                         {
                             ProperyChanged = FormatPropertyChanged(parent, sourcePair.Key),
                             PreviousValue = sourcePair.Value.ToString(),
@@ -93,7 +163,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
                     {
                         if (!JToken.DeepEquals(expected, actual))
                         {
-                            auditDifferences.Add(new AuditLogDiff
+                            auditChanges.Add(new AuditChange
                             {
                                 ProperyChanged = FormatPropertyChanged(parent, sourcePair.Key),
                                 PreviousValue = sourcePair.Value.ToString(),
@@ -111,9 +181,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
         /// <param name="parent">The property which contains the arrays to be compared.</param>
         /// <param name="source">The expected results</param>
         /// <param name="target">The actual results</param>
-        /// <param name="auditDifferences">The list to which differences will be appended</param>
+        /// <param name="auditChanges">The list to which differences will be appended</param>
         /// <param name="arrayName">The name of the array to use in the audit diff property name</param>
-        private void CompareArrays(string parent, JArray source, JArray target, List<AuditLogDiff> auditDifferences, string arrayName = "")
+        private void CompareArrays(string parent, JArray source, JArray target, List<AuditChange> auditChanges, string arrayName = "")
         {
             for (var index = 0; index < (source?.Count ?? 0); index++)
             {
@@ -122,14 +192,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
                 {
                     var actual = (index >= (target?.Count ?? 0)) ? new JObject() : target[index];
                     CompareObjects(FormatPropertyChanged(parent, arrayName), expected.ToObject<JObject>(),
-                        actual.ToObject<JObject>(), auditDifferences);
+                        actual.ToObject<JObject>(), auditChanges);
                 }
                 else
                 {
                     var actual = (index >= (target?.Count ?? 0)) ? "" : target[index];
                     if (!JToken.DeepEquals(expected, actual))
                     {
-                        auditDifferences.Add(new AuditLogDiff
+                        auditChanges.Add(new AuditChange
                         {
                             ProperyChanged = FormatPropertyChanged(parent, $"{arrayName}[{index}]"),
                             PreviousValue = expected.ToString(),
