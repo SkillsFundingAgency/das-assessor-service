@@ -1,7 +1,14 @@
 ﻿CREATE PROCEDURE [dbo].[StaffReports_DetailedExtract]
-       @fromdate NVARCHAR(16),
-       @todate NVARCHAR(16)
+
 AS
+
+DECLARE @fromdate DATE;
+DECLARE @todate DATE;
+
+SELECT @fromdate = DATEADD(day, 1, EOMONTH(DATEADD(month, -2, GETDATE()))) as firstdateoflastmonth;
+SELECT @todate = EOMONTH(DATEADD(month, -1, GETDATE())) lasstdateoflastmonth;
+
+	   
 	SELECT
 		   CONVERT(VARCHAR(10), DATEADD(mm, DATEDIFF(mm, 0, DATEADD(mm, 0, cl.[EventTime])), 0), 120) AS 'Month',
 		   ce.[Uln] AS 'Apprentice ULN',

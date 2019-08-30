@@ -60,5 +60,7 @@ UPDATE OrganisationType SET FinancialExempt = 1 WHERE Type = 'Academy or Free Sc
 :r .\PostDeploymentScripts\on-2033-anytime_updates.sql
 /* END OF ON-2033 */
 
+-- ON-2242
+:r .\Update-Staff-Reports-Config.sql
 
 -- END
