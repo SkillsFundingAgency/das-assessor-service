@@ -4,9 +4,14 @@ AS
 
 DECLARE @fromdate DATE;
 DECLARE @todate DATE;
+DECLARE @totime DATE;
 
+-- Start of previous month
 SELECT @fromdate = DATEADD(day, 1, EOMONTH(DATEADD(month, -2, GETDATE())));
+-- End of previous month
 SELECT @todate = EOMONTH(DATEADD(month, -1, GETDATE()));
+-- Start of the current month (at Midnight)
+SELECT @totime = DATEADD(day, 1, EOMONTH(DATEADD(month, -1, GETDATE())));
 
 	   
 	SELECT
@@ -38,7 +43,7 @@ SELECT @todate = EOMONTH(DATEADD(month, -1, GETDATE()));
 				 [Status],
 				 ROW_NUMBER() OVER (PARTITION BY [CertificateId], [Action] ORDER BY [EventTime]) rownumber
 		  FROM [dbo].[CertificateLogs]
-		  WHERE ACTION IN ('Submit') AND [EventTime] >= @fromdate AND [EventTime] < @todate) ab
+		  WHERE ACTION IN ('Submit') AND [EventTime] >= @fromdate AND [EventTime] < @totime) ab
 	   WHERE ab.rownumber = 1 ) cl ON cl.[CertificateId] = ce.[Id] AND ce.[CertificateReferenceId] >= 10000 AND ce.[CreatedBy] <> 'manual'
 	WHERE ISNULL(JSON_VALUE(ce.[CertificateData],'$.EpaDetails.LatestEpaOutcome'),'Pass') != 'Fail'
 	UNION
