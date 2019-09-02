@@ -1,7 +1,19 @@
-﻿CREATE PROCEDURE [dbo].[StaffReports_DetailedExtract]
-       @fromdate NVARCHAR(16),
-       @todate NVARCHAR(16)
+﻿CREATE PROCEDURE [StaffReports_DetailedExtract]
+
 AS
+
+DECLARE @fromdate DATE;
+DECLARE @todate DATE;
+DECLARE @totime DATE;
+
+-- Start of previous month
+SELECT @fromdate = DATEADD(day, 1, EOMONTH(DATEADD(month, -2, GETDATE())));
+-- End of previous month
+SELECT @todate = EOMONTH(DATEADD(month, -1, GETDATE()));
+-- Start of the current month (at Midnight)
+SELECT @totime = DATEADD(day, 1, EOMONTH(DATEADD(month, -1, GETDATE())));
+
+	   
 	SELECT
 		   CONVERT(VARCHAR(10), DATEADD(mm, DATEDIFF(mm, 0, DATEADD(mm, 0, cl.[EventTime])), 0), 120) AS 'Month',
 		   ce.[Uln] AS 'Apprentice ULN',
@@ -31,7 +43,7 @@ AS
 				 [Status],
 				 ROW_NUMBER() OVER (PARTITION BY [CertificateId], [Action] ORDER BY [EventTime]) rownumber
 		  FROM [dbo].[CertificateLogs]
-		  WHERE ACTION IN ('Submit') AND [EventTime] >= @fromdate AND [EventTime] < @todate) ab
+		  WHERE ACTION IN ('Submit') AND [EventTime] >= @fromdate AND [EventTime] < @totime) ab
 	   WHERE ab.rownumber = 1 ) cl ON cl.[CertificateId] = ce.[Id] AND ce.[CertificateReferenceId] >= 10000 AND ce.[CreatedBy] <> 'manual'
 	WHERE ISNULL(JSON_VALUE(ce.[CertificateData],'$.EpaDetails.LatestEpaOutcome'),'Pass') != 'Fail'
 	UNION
@@ -51,6 +63,5 @@ AS
 	WHERE ce.[Status] = 'Draft' AND ce.CreateDay BETWEEN @fromdate AND @todate
 	AND JSON_VALUE(ce.[CertificateData], '$.FullName') IS NOT NULL
 	AND JSON_VALUE(ce.[CertificateData], '$.StandardName') IS NOT NULL
-	AND ISNULL(JSON_VALUE(ce.[CertificateData], '$.ProviderName'),'') != '' 
 	ORDER BY 1, 11, 10, 2, 3
 RETURN 0
