@@ -1,6 +1,6 @@
 ﻿namespace SFA.DAS.AssessorService.Domain.Consts
 {
-    public class CertificateActions
+    public static class CertificateActions
     {
         public const string Start = "Start";
         public const string Address = "Address";
@@ -23,6 +23,7 @@
         public const string Status = "Status";
 
         // Generated from the External API
+        public const string Epa = "Epa";
         public const string Amend = "Amend";
         public const string Delete = "Delete";
     }

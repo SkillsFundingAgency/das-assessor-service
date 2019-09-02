@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Application.Api.External.Infrastructure;
 using SFA.DAS.AssessorService.Application.Api.External.Middleware;
+using SFA.DAS.AssessorService.Application.Api.External.Models.Response;
 using SFA.DAS.AssessorService.Application.Api.External.StartupConfiguration;
 using SFA.DAS.AssessorService.Application.Api.External.SwaggerHelpers;
 using SFA.DAS.AssessorService.Settings;
@@ -19,6 +20,8 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
+using System.Net;
 
 namespace SFA.DAS.AssessorService.Application.Api.External
 {
@@ -98,11 +101,32 @@ namespace SFA.DAS.AssessorService.Application.Api.External
 
                 services.AddMvc()
                     .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
+                    .ConfigureApiBehaviorOptions(options =>
+                    {
+                        options.InvalidModelStateResponseFactory = context =>
+                        {
+                            try
+                            {
+                                var requestUrl = context.HttpContext.Request.Path;
+                                var requestMethod = context.HttpContext.Request.Method;
+                                var modelErrors = context.ModelState.SelectMany(model => model.Value.Errors.Select(err => err.ErrorMessage));
+                                _logger.LogError($"Invalid request detected. {requestMethod.ToUpper()}: {requestUrl} - Errors: {string.Join(",", modelErrors)}");
+                            }
+                            catch
+                            {
+                                // safe to ignore!
+                            }
+
+                            var error = new ApiResponse((int)HttpStatusCode.Forbidden, "Your request contains invalid input. Please ensure it matches the swagger definition and try again.");
+                            return new BadRequestObjectResult(error) { StatusCode = error.StatusCode };
+                        };
+                    }
+                    )
                     .AddJsonOptions(options =>
                     {
                         options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
                         options.SerializerSettings.DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate;
-                        options.SerializerSettings.NullValueHandling = NullValueHandling.Include;
+                        options.SerializerSettings.NullValueHandling = NullValueHandling.Include;                        
                     });
 
                 services.AddLocalization(opts => { opts.ResourcesPath = "Resources"; });
@@ -136,7 +160,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External
                     _.WithDefaultConventions();
                 });
 
-                config.For<ITokenService>().Use<TokenService>();
+                config.For<ITokenService>().Use<TokenService>().Ctor<bool>("useSandbox").Is(UseSandbox);
                 config.For<IWebConfiguration>().Use(ApplicationConfiguration);
 
                 config.Populate(services);
@@ -176,7 +200,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External
                 app.UseMiddleware<GetHeadersMiddleware>();
 
                 app.UseHttpsRedirection();
-                app.UseMvc();
+                app.UseSecurityHeaders().UseMvc();
             }
             catch (Exception e)
             {

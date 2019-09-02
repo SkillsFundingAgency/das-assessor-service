@@ -11,6 +11,23 @@ Post-Deployment Script Template
 */
 
 
+-- START OF ON-2193
+IF NOT EXISTS (SELECT * FROM EMailTemplates WHERE TemplateName = N'EPAOLoginAccountCreated')
+BEGIN
+INSERT EMailTemplates 
+	([Id]
+	,[TemplateName]
+	,[TemplateId]
+	,[Recipients]
+	,[CreatedAt]
+	,[DeletedAt]
+	,[UpdatedAt]
+	,[RecipientTemplate])
+VALUES (N'dcc27f50-ddd7-4fea-a60a-c440243b6f22', N'EPAOLoginAccountCreated', N'1843d03d-898c-45e5-88d5-8fed1e78cc3b', NULL, GETDATE(), NULL, NULL, NULL)
+END
+-- END OF ON-2193
+
+
 -- ON-613 Patch Certificates with STxxxx StandardReference, where it is not yet included. 
 -- AB 11/03/19 Keep this active for new deployments, for now
 -- AB 31/07/19 Still seeing existance of certs without Standard reference (need to understand why)
@@ -32,3 +49,18 @@ UPDATE OrganisationType SET FinancialExempt = 1 WHERE Type = 'Public Sector' AND
 UPDATE OrganisationType SET FinancialExempt = 1 WHERE Type = 'College' AND FinancialExempt = 0 
 UPDATE OrganisationType SET FinancialExempt = 1 WHERE Type = 'Academy or Free School' AND FinancialExempt = 0
 -- END OF ON-1952
+
+-- ON-2197 - PostCode to Region Mapping 
+:r .\Insert-Postcode-to-Regions.sql
+
+-- ON-2222 - remove duplicated certs
+:r .\Delete-Duplicated-Certs.sql
+
+/* START OF ON-2033 */
+:r .\PostDeploymentScripts\on-2033-anytime_updates.sql
+/* END OF ON-2033 */
+
+-- ON-2242
+:r .\Update-Staff-Reports-Config.sql
+
+-- END

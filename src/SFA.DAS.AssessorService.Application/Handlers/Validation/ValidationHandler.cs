@@ -23,8 +23,14 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Validation
 
             switch (request.Type.ToLower())
             {
+                case "phonenumber":
+                    result = _validationService.CheckPhoneNumberIsValue(request.Value);
+                    break;
                 case "email":
                     result = _validationService.CheckEmailIsValid(request.Value);
+                    break;
+                case "websitelink":
+                    result = _validationService.CheckWebsiteLinkIsValid(request.Value);
                     break;
                 case "notempty":
                     result = _validationService.IsNotEmpty(request.Value);

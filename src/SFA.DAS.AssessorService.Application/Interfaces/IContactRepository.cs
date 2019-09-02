@@ -30,5 +30,8 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task CreateContactLog(Guid userId, Guid contactId, string logType, object logData);
         Task RemoveContactFromOrganisation(Guid contactId);
         Task UpdateOrganisationId(Guid contactId, Guid? organisationId);
+        Task AddContactInvitation(Guid invitorContactId, Guid inviteeContactId, Guid organisationId);
+        Task<ContactInvitation> GetContactInvitation(Guid inviteeContactId);
+        Task SetInvitationAccepted(ContactInvitation contactInvitation);
     }
 }

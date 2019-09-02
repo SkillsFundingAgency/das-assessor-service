@@ -13,31 +13,31 @@ using SFA.DAS.AssessorService.Domain.Paging;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Standards
 {
-    public class GetEpaoPipelineStandardsHandler : IRequestHandler<EpaoPipelineStandardsRequest, PaginatedList<EpaoPipelineStandardsResponse>>
+  public class GetEpaoPipelineStandardsHandler : IRequestHandler<EpaoPipelineStandardsRequest, PaginatedList<EpaoPipelineStandardsResponse>>
+  {
+    private readonly ILogger<GetEpaoPipelineStandardsHandler> _logger;
+    private readonly IStandardRepository _standardRepository;
+
+    public GetEpaoPipelineStandardsHandler(ILogger<GetEpaoPipelineStandardsHandler> logger, IStandardRepository standardRepository)
     {
-        private readonly ILogger<GetEpaoPipelineStandardsHandler> _logger;
-        private readonly IStandardRepository _standardRepository;
-
-        public GetEpaoPipelineStandardsHandler(ILogger<GetEpaoPipelineStandardsHandler> logger, IStandardRepository standardRepository)
-        {
-            _logger = logger;
-            _standardRepository = standardRepository;
-        }
-        public async Task<PaginatedList<EpaoPipelineStandardsResponse>> Handle(EpaoPipelineStandardsRequest request, CancellationToken cancellationToken)
-        {
-            _logger.LogInformation("Retreiving Epao pipeline information");
-            var result =
-                await _standardRepository.GetEpaoPipelineStandards(request.EpaoId, request.OrderBy,request.OrderDirection,request.PageSize,
-                    request.PageIndex);
-            var epaoPipelinStandardsResult = result.PageOfResults.Select(o =>
-                new EpaoPipelineStandardsResponse
-                {
-                    EstimatedDate = o.EstimateDate.UtcToTimeZoneTime().Date.ToString("MMM yyyy"),
-                    Pipeline = o.Pipeline,
-                    StandardName= o.Title
-                }).ToList();
-
-            return new PaginatedList<EpaoPipelineStandardsResponse>(epaoPipelinStandardsResult, result.TotalCount, request.PageIndex ?? 1, request.PageSize);
-        }
+      _logger = logger;
+      _standardRepository = standardRepository;
     }
+    public async Task<PaginatedList<EpaoPipelineStandardsResponse>> Handle(EpaoPipelineStandardsRequest request, CancellationToken cancellationToken)
+    {
+      _logger.LogInformation("Retreiving Epao pipeline information");
+      var result =
+          await _standardRepository.GetEpaoPipelineStandards(request.EpaoId, request.OrderBy, request.OrderDirection, request.PageSize,
+              request.PageIndex);
+      var epaoPipelinStandardsResult = result.PageOfResults.Select(o =>
+          new EpaoPipelineStandardsResponse
+          {
+            EstimatedDate = o.EstimateDate.UtcToTimeZoneTime().Date.ToString("MMMM yyyy"),
+            Pipeline = o.Pipeline,
+            StandardName = o.Title
+          }).ToList();
+
+      return new PaginatedList<EpaoPipelineStandardsResponse>(epaoPipelinStandardsResult, result.TotalCount, request.PageIndex ?? 1, request.PageSize);
+    }
+  }
 }

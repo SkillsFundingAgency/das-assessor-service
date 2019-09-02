@@ -1,0 +1,66 @@
+﻿@model SFA.DAS.AssessorService.Web.ViewModels.SelectOrChangeContactNameViewModel
+
+@{
+    var viewTitle = (string.IsNullOrEmpty(Model.PrimaryContact) ? "Select" : "Change") + " contact name";
+    ViewBag.Title = (!ViewData.ModelState.IsValid ? "Error: " : "") + viewTitle;
+    Layout = "_DashboardLayout";
+}
+
+<a class="govuk-back-link" asp-controller="Organisation" asp-action="OrganisationDetails">Back</a>
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
+            <h2 class="govuk-error-summary__title" id="error-summary-title">
+                There is a problem
+            </h2>
+            <div class="govuk-error-summary__body">
+                <ul class="govuk-list govuk-error-summary__list">
+                    <li><a sfa-validation-for="PrimaryContact"></a></li>
+                </ul>
+            </div>
+        </div>
+    }
+    <h1 class="govuk-heading-xl">@viewTitle</h1>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <p class="govuk-body">Select a user as your main contact for your organisation. This is the name employers and training providers will see on the Register.</p>
+
+            <form asp-controller="Organisation" asp-action="SelectOrChangeContactName">
+                <div class="govuk-form-group" sfa-validation-for="PrimaryContact" sfa-validationerror-class="govuk-form-group--error">
+                    <fieldset class="govuk-fieldset">
+                        <div class="govuk-radios">
+                            <sfa-validationerror-detail sfa-validation-for="PrimaryContact" sfa-validationerror-class="govuk-error-message"></sfa-validationerror-detail>
+                            @foreach (var contact in Model.Contacts.OrderBy(p => p.FamilyName).ThenBy(p => p.GivenNames))
+                            {
+                                <div class="govuk-radios__item">
+                                    <input class="govuk-radios__input" id="PrimaryContact" name="PrimaryContact" type="radio" value="@contact.Username" checked="@(contact.Username == Model.PrimaryContact)">
+                                    <label class="govuk-label govuk-radios__label" for="PrimaryContact">
+                                        @contact.DisplayName
+                                    </label>
+                                </div>
+                            }
+                        </div>
+                    </fieldset>
+                </div>
+                <button class="govuk-button" type="submit" name="ActionChoice" value="Save">Save</button>
+            </form>
+            <p>
+                <span class="govuk-body">
+                    <a asp-controller="InviteUser" asp-action="Invite" asp-route-backController="Organisation" asp-route-backAction="SelectOrChangeContactName" class="govuk-link">Invite a new user</a> if they are not in the list above.
+                </span>
+            </p>
+            <details class="govuk-details" data-module="govuk-details">
+                <summary class="govuk-details__summary">
+                    <span class="govuk-details__summary-text">
+                        Why you need to select a user
+                    </span>
+                </summary>
+                <div class="govuk-details__text">
+                    Having a user of the Apprenticeship assessment service as your main contact on the Register will help you keep it current.
+                </div>
+            </details>
+        </div>
+    </div>
+</main>

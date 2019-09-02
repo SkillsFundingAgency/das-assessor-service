@@ -10,7 +10,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.InfrastructureServices
     public static class ConfigurationHelper
     {
         private static IWebConfiguration _webConfiguration;
-        private static readonly Object _lock = new Object();
+        private static readonly object _lock = new object();
 
         public static IWebConfiguration GetConfiguration()
         {
@@ -43,6 +43,11 @@ namespace SFA.DAS.AssessorService.EpaoImporter.InfrastructureServices
             }
 
             return _webConfiguration;
+        }
+
+        public static string GetEnvironmentName()
+        {
+            return CloudConfigurationManager.GetSetting("EnvironmentName");
         }
     }
 }

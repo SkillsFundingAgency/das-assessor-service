@@ -3,7 +3,7 @@ using System;
 
 namespace SFA.DAS.AssessorService.Application.Api.External.Models.Request
 {
-    public class SubmitCertificateRequest : IEquatable<SubmitCertificateRequest>
+    public sealed class SubmitCertificateRequest : IEquatable<SubmitCertificateRequest>
     {
         public string RequestId { get; set; }
         [SwaggerRequired]

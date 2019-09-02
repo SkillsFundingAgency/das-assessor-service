@@ -24,7 +24,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.ManageUsers
         }
 
         [HttpGet("/ManageUsers/Invite")]
-        public async Task<IActionResult> Invite()
+        public async Task<IActionResult> Invite(string backController = "ManageUsers", string backAction = "Index")
         {
             var privileges = await _contactsApiClient.GetPrivileges();
 
@@ -33,7 +33,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers.ManageUsers
                 PrivilegesViewModel = new EditPrivilegesViewModel
                 {
                     PrivilegeViewModels = privileges.Select(p => new PrivilegeViewModel {Privilege = p}).ToArray()
-                }
+                },
+                BackController = backController,
+                BackAction = backAction
             };
 
 

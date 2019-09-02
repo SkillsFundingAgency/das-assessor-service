@@ -18,8 +18,8 @@ namespace SFA.DAS.AssessorService.ExternalApiDataSync.Startup
 
             var configuration = ConfigurationHelper.GetConfiguration();
 
-            _logger.LogInfo("Initialising bootstrapper ....");
-            _logger.LogInfo("Config Received");
+            _logger.LogInformation("Initialising bootstrapper ....");
+            _logger.LogInformation("Config Received");
 
             Container = new Container(configure =>
             {

@@ -8,11 +8,11 @@ namespace SFA.DAS.AssessorService.Application.Api.External.SwaggerHelpers
 {
     public class SwaggerRequiredSchemaFilter : ISchemaFilter
     {
-        public void Apply(Schema model, SchemaFilterContext context)
+        public void Apply(Schema schema, SchemaFilterContext context)
         {
-            if (model.Properties is null) return;
+            if (schema.Properties is null) return;
 
-            foreach (var schemaProperty in model.Properties)
+            foreach (var schemaProperty in schema.Properties)
             {
                 var property = context.SystemType.GetProperty(schemaProperty.Key, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
 
@@ -22,8 +22,8 @@ namespace SFA.DAS.AssessorService.Application.Api.External.SwaggerHelpers
 
                     if (attributes != null && attributes.Any(attr => attr is Attributes.SwaggerRequiredAttribute))
                     {
-                        if (model.Required is null) model.Required = new List<string>();
-                        model.Required.Add(schemaProperty.Key);
+                        if (schema.Required is null) schema.Required = new List<string>();
+                        schema.Required.Add(schemaProperty.Key);
                     }
                 }
             }

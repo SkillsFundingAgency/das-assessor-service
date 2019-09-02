@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
+using SFA.DAS.AssessorService.Api.Types.AutoMapperProfiles;
 using SFA.DAS.AssessorService.Api.Types.Models;
-using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
 using SFA.DAS.AssessorService.Application.Mapping.CustomResolvers;
@@ -19,6 +19,7 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                 cfg.CreateMap<Organisation, OrganisationResponse>();
                 cfg.CreateMap<CreateOrganisationRequest, Organisation>();
                 cfg.CreateMap<UpdateOrganisationRequest, Organisation>();
+
                 cfg.CreateMap<CreateContactRequest, Contact>().ReverseMap();
                 cfg.CreateMap<Contact, ContactResponse>();
                 cfg.CreateMap<Ilr, SearchResult>();
@@ -40,8 +41,10 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
 
                 cfg.CreateMap<Certificate, CertificateSummaryResponse>();
 
-                cfg.CreateMap<CreateEpaOrganisationRequest, EpaOrganisationResponse>();
-                cfg.CreateMap<UpdateEpaOrganisationRequest, EpaOrganisationResponse>();
+                cfg.AddProfile<EpaOrganisationProfile>();
+
+                cfg.CreateMap<CreateEpaOrganisationRequest, EpaOrganisationResponse>(); 
+                cfg.CreateMap<UpdateEpaOrganisationRequest, EpaOrganisationResponse>(); 
                 cfg.CreateMap<CreateEpaOrganisationStandardRequest, EpaoStandardResponse>();
                 cfg.CreateMap<UpdateEpaOrganisationStandardRequest, EpaoStandardResponse>();
             });

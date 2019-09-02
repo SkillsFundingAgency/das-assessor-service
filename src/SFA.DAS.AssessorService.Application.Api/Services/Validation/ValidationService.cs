@@ -14,10 +14,24 @@ namespace SFA.DAS.AssessorService.Application.Api.Services.Validation
             return !regex.Match(charityNumberToCheck).Success; 
         }
 
+        public bool CheckPhoneNumberIsValue(string phoneNumberToCheck)
+        {
+            if (string.IsNullOrEmpty(phoneNumberToCheck?.Trim())) return true;
+            var validationResults = new PhoneNumberValidator().Validate(new PhoneNumberCheck { PhoneNumberToCheck = phoneNumberToCheck });
+            return validationResults.IsValid;
+        }
+
         public bool CheckEmailIsValid(string emailToCheck)
         {
             if (string.IsNullOrEmpty(emailToCheck?.Trim())) return true;
             var validationResults = new EmailCheckValidator().Validate(new EmailCheck { EmailToCheck = emailToCheck });
+            return validationResults.IsValid;
+        }
+
+        public bool CheckWebsiteLinkIsValid(string websiteLinkToCheck)
+        {
+            if (string.IsNullOrEmpty(websiteLinkToCheck?.Trim())) return true;
+            var validationResults = new WebsiteLinkCheckValidator().Validate(new WebsiteLinkCheck { WebsiteLinkToCheck = websiteLinkToCheck });
             return validationResults.IsValid;
         }
 

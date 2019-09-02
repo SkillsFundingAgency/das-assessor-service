@@ -6,14 +6,8 @@ using SFA.DAS.AssessorService.Web.Controllers;
 namespace SFA.DAS.AssessorService.Web.UnitTests.OrganisationControllerTests
 {
     [TestFixture]
-    public class WhenOrganisationalControllerIsInstantiated : OrganisationControllerTestBase
+    public class WhenOrganisationalControllerIsInstantiated
     {
-        [SetUp]
-        public void Arrange()
-        {
-            Setup();
-        }
-        
         [Test]
         public void Should_have_authorize_attribute()
         {

@@ -12,5 +12,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.ManageUsers.ViewModels
     [EmailAddress(ErrorMessage = "Enter an email address in the correct format, like name@example.com")]
     public string Email { get; set; }
     public EditPrivilegesViewModel PrivilegesViewModel { get; set; }
+    public string BackController { get; set; }
+    public string BackAction { get; set; }
   }
 }
