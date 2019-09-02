@@ -10,7 +10,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
@@ -106,19 +105,20 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task Upload(Guid applicationId, Guid sectionId, string pageId, string questionId, string fileName, IFormFileCollection files)
+        public async Task<SetPageAnswersResponse> Upload(Guid applicationId, Guid sectionId, string pageId,  IFormFileCollection files)
         {
-            using (var request = new HttpRequestMessage(HttpMethod.Post, $"/applications/{applicationId}/sections/{sectionId}/pages/{pageId}/questions/{questionId}/upload"))
+            using (var request = new HttpRequestMessage(HttpMethod.Post, $"/applications/{applicationId}/sections/{sectionId}/pages/{pageId}/upload"))
             {
-                var file = files.SingleOrDefault(x => x.FileName.Equals(fileName, StringComparison.OrdinalIgnoreCase));
-                if (file != null)
+                var formDataContent = new MultipartFormDataContent();
+                foreach (var file in files)
                 {
-                    var formDataContent = new MultipartFormDataContent();
                     var fileContent = new StreamContent(file.OpenReadStream())
                     { Headers = { ContentLength = file.Length, ContentType = new MediaTypeHeaderValue(file.ContentType) } };
                     formDataContent.Add(fileContent, file.Name, file.FileName);
-                    await PostRequestWithFile(request, formDataContent);
                 }
+                JsonSerializerSettings settings = new JsonSerializerSettings();
+                settings.Converters.Add(new SetResultConverter());
+                return await PostRequestWithFileAndResponse<SetPageAnswersResponse>(request, formDataContent, settings);
             }
         }
 

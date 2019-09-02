@@ -193,7 +193,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         }
 
 
-        protected async Task PostRequestWithFile(HttpRequestMessage requestMessage, MultipartFormDataContent formDataContent)
+        protected async Task<U> PostRequestWithFileAndResponse<U>(HttpRequestMessage requestMessage, MultipartFormDataContent formDataContent, JsonSerializerSettings setting)
         {
             HttpRequestMessage clonedRequest = null;
 
@@ -207,9 +207,19 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 
             });
 
-            if (response.StatusCode == HttpStatusCode.InternalServerError)
+            var json = await response.Content.ReadAsStringAsync();
+            //var result = await response;
+            if (response.StatusCode == HttpStatusCode.OK
+                || response.StatusCode == HttpStatusCode.Created
+                || response.StatusCode == HttpStatusCode.NoContent)
             {
-                throw new HttpRequestException();
+
+                return await Task.Factory.StartNew<U>(() => JsonConvert.DeserializeObject<U>(json,setting));
+            }
+            else
+            {
+                _logger.LogInformation($"HttpRequestException: Status Code: {response.StatusCode} Body: {json}");
+                throw new HttpRequestException(json);
             }
         }
 
