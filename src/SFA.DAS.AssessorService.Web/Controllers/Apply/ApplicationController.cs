@@ -336,12 +336,15 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             }
             else
             {
-                var updatePageResult = await _qnaApiClient.AddPageAnswer(application.ApplicationId, sectionId, pageId, answers);
+                SetPageAnswersResponse updatePageResult;
+                var fileupload = page.Questions?.Any(q => q.Input.Type == "FileUpload");
+                if(fileupload??false)
+                    updatePageResult = await UploadFilesToStorage(application.ApplicationId, sectionId, pageId, page);
+                else
+                    updatePageResult = await _qnaApiClient.AddPageAnswer(application.ApplicationId, sectionId, pageId, answers);
 
                 if (updatePageResult?.ValidationPassed == null ? false : updatePageResult.ValidationPassed && fileValidationPassed)
                 {
-                    await UploadFilesToStorage(application.ApplicationId, sectionId, pageId,page, answers);
-
                     if (redirectAction == "Feedback")
                         return RedirectToAction("Feedback", new { Id });
 
@@ -459,18 +462,14 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             this.TempData["InvalidPage"] = JsonConvert.SerializeObject(invalidPage);
         }
 
-        private async Task UploadFilesToStorage(Guid applicationId, Guid sectionId, string pageId, Page page, List<Answer> answers)
+        private async Task<SetPageAnswersResponse> UploadFilesToStorage(Guid applicationId, Guid sectionId, string pageId, Page page)
         {
+            SetPageAnswersResponse response = null;
             if (HttpContext.Request.Form.Files.Any() && page != null)
             {
-                foreach(var answer in answers)
-                {
-                    if(page.Questions.Any(q => q.QuestionId == answer.QuestionId))
-                    {
-                        await _qnaApiClient.Upload(applicationId, sectionId, pageId, answer.QuestionId, answer.Value, HttpContext.Request.Form.Files);
-                    }
-                }
+                response = await _qnaApiClient.Upload(applicationId, sectionId, pageId, HttpContext.Request.Form.Files);
             }
+            return response;
         }
 
         private void GetAnswersFromForm(List<Answer> answers)

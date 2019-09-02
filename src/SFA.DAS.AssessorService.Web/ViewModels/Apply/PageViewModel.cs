@@ -72,7 +72,11 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Apply
             SectionId = SectionId;
 
             var questions = page.Questions;
-            var answers = page.PageOfAnswers.FirstOrDefault()?.Answers;
+            var answers = new List<Answer>();
+            foreach(var pageAnswer in page.PageOfAnswers)
+            {
+                answers.AddRange(pageAnswer.Answers);
+            }
 
             Questions = new List<QuestionViewModel>();
 
