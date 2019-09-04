@@ -167,7 +167,7 @@
                     </section> -->
                     <section class="govuk-tabs__panel govuk-tabs__panel--hidden" id="api-subscription">
                         <div id="organisationWrapper">
-                            @if (!Model.ExternalApiSubscriptions.Any())
+                            @if (!Model.UserHasChangeOrganisationPrivilege || !Model.ExternalApiSubscriptions.Any())
                             {
                                 <h2 class="govuk-heading-m">Record a grade API</h2>
                                 <p class="govuk-body">Use the Record a grade API to:</p>
@@ -180,17 +180,29 @@
                                     <li>request the list of options for a Standard</li>
                                 </ul>
 
-                                <div class="govuk-warning-text">
-                                    <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
-                                    <strong class="govuk-warning-text__text">
-                                        <span class="govuk-warning-text__assistive">Warning</span>
-                                        Before you continue to request your subscription key, you need to have tested your API on the Developer Hub.
-                                    </strong>
-                                </div>
+                                @if (!Model.UserHasChangeOrganisationPrivilege)
+                                {
+                                    <p class="govuk-body">
+                                        <span>To enable your API subscription you need to</span>
+                                        <a class="govuk-link" asp-controller="Organisation" asp-action="ApiSubscriptionRequestAccess">
+                                            request the Change organisation details permission
+                                        </a>
+                                    </p>
+                                }
+                                else
+                                {
+                                    <div class="govuk-warning-text">
+                                        <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                                        <strong class="govuk-warning-text__text">
+                                            <span class="govuk-warning-text__assistive">Warning</span>
+                                            Before you continue to request your subscription key, you need to have tested your API on the Developer Hub.
+                                        </strong>
+                                    </div>
 
-                                <form asp-action="EnableApiAccess" method="post">
-                                    <button class="govuk-button" type="submit">Enable key</button>
-                                </form>
+                                    <form asp-controller="Organisation" asp-action="OrganisationDetails">
+                                        <button class="govuk-button" type="submit" name="ActionChoice" value="Enable">Enable key</button>
+                                    </form>
+                                }
                             }
                             else
                             {
@@ -205,8 +217,9 @@
                                     <h3 class="govuk-heading-s govuk-!-margin-bottom-0">Subscription key</h3>
                                     <p class="das-code">@subscription.PrimaryKey</p>
 
-                                    <form asp-action="RenewApiKey" asp-route-subscriptionId="@subscription.Id" method="post">
-                                        <input type="submit" value="Renew" class="govuk-button govuk-!-margin-bottom-0" />
+                                    <form asp-controller="Organisation" asp-action="OrganisationDetails">
+                                        @Html.Hidden("SubscriptionId", @subscription.Id)
+                                        <button class="govuk-button" type="submit" name="ActionChoice" value="Renew">Renew</button>
                                     </form>
                                 }
                             }

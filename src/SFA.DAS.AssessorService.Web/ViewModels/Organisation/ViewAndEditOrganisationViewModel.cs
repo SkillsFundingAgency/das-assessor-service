@@ -28,6 +28,8 @@ namespace SFA.DAS.AssessorService.Web.ViewModels
         public bool UserHasChangeOrganisationPrivilege { get; set; }
         public AccessDeniedViewModel AccessDeniedViewModel { get; set; }
         public List<AzureSubscription> ExternalApiSubscriptions { get; set; }
+        public string ActionChoice { get; set; }
+        public string SubscriptionId { get; set; }
     }
 }
  

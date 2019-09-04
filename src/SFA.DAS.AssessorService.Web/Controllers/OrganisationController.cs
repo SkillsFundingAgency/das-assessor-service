@@ -133,6 +133,30 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             }
         }
 
+        [HttpPost]
+        [ModelStatePersist(ModelStatePersist.Store)]
+        [PrivilegeAuthorize(Privileges.ChangeOrganisationDetails)]
+        public async Task<IActionResult> OrganisationDetails(ViewAndEditOrganisationViewModel vm)
+        {
+            var ukprn = _contextAccessor.HttpContext.User.Claims.FirstOrDefault(c => c.Type == "http://schemas.portal.com/ukprn")?.Value;
+
+            if (vm.ActionChoice == "Enable" || vm.ActionChoice == "Renew")
+            {
+                if (vm.ActionChoice == "Enable")
+                {        
+                    await _externalApiClient.CreateUser(ukprn);
+                }
+                else
+                {
+                    await _externalApiClient.RegeneratePrimarySubscriptionKey(vm.SubscriptionId);
+                }
+
+                return RedirectToAction(nameof(OrganisationDetails), nameof(OrganisationController).RemoveController(), "api-subscription");
+            }
+
+            return RedirectToAction(nameof(OrganisationDetails), nameof(OrganisationController).RemoveController(), "register-details");
+        }
+
         [HttpGet]
         [ModelStatePersist(ModelStatePersist.RestoreEntry)]
         [TypeFilter(typeof(MenuFilter), Arguments = new object[] { Pages.Organisations })]
@@ -682,23 +706,12 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
             return RedirectToAction(nameof(OrganisationDetails));
         }
-    
 
-        [HttpPost]
+        [HttpGet]
         [PrivilegeAuthorize(Privileges.ChangeOrganisationDetails)]
-        public async Task<IActionResult> EnableApiAccess()
+        public IActionResult ApiSubscriptionRequestAccess()
         {
-          var ukprn = _contextAccessor.HttpContext.User.Claims.FirstOrDefault(c => c.Type == "http://schemas.portal.com/ukprn")?.Value;
-          await _externalApiClient.CreateUser(ukprn);
-          return RedirectToAction(nameof(OrganisationDetails));
-        }
-
-        [HttpPost]
-        [PrivilegeAuthorize(Privileges.ChangeOrganisationDetails)]
-        public async Task<IActionResult> RenewApiKey(string subscriptionId)
-        {
-          await _externalApiClient.RegeneratePrimarySubscriptionKey(subscriptionId);
-          return RedirectToAction(nameof(OrganisationDetails));
+            return RedirectToAction(nameof(OrganisationDetails), nameof(OrganisationController).RemoveController(), "api-subscription");
         }
 
         private async Task<List<AzureSubscription>> GetExternalApiSubscriptions(string productId, string ukprn)
