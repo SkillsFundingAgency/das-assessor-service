@@ -149,13 +149,13 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
         {
             if (sequenceNo == 1)
             {
-                var emailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.APPLY_EPAO_INITIAL_SUBMISSION);
+                var emailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.ApplyEPAOInitialSubmission);
                 await _mediator.Send(new SendEmailRequest(email, emailTemplate, new { reference }), cancellationToken);
 
             }
             else if (sequenceNo == 2)
             {
-                var emailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.APPLY_EPAO_STANDARD_SUBMISSION);
+                var emailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.ApplyEPAOStandardSubmission);
                 await _mediator.Send(new SendEmailRequest(email, emailTemplate, new { reference, standard }), cancellationToken);
             }
         }

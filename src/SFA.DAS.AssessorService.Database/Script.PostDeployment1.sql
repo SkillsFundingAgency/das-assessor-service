@@ -91,16 +91,3 @@ END
 -- ON-2242
 :r .\Update-Staff-Reports-Config.sql
 -- END
-
--- ON-2088
-IF NOT EXISTS(SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[AppRefSequence]') AND type = 'SO')
-CREATE SEQUENCE [dbo].[AppRefSequence] 
- AS [int]
- START WITH 100001
- INCREMENT BY 1
- MINVALUE 100000
- MAXVALUE 2147483647
- CYCLE 
- CACHE 
-GO
--- END

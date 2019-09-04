@@ -36,9 +36,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task<ApplicationResponse> GetApplication(Guid Id)
+        public async Task<ApplicationResponse> GetApplication(Guid id)
         {
-            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/applications/{Id}/application"))
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/applications/{id}/application"))
             {
                 return await RequestAndDeserialiseAsync<ApplicationResponse>(request, $"Could not retrieve applications");
             }

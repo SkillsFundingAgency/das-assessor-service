@@ -10,7 +10,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
     public interface IApplicationApiClient
     {
         Task<List<ApplicationResponse>> GetApplications(Guid userId, bool createdBy);
-        Task<ApplicationResponse> GetApplication(Guid Id);
+        Task<ApplicationResponse> GetApplication(Guid id);
         Task<Guid> CreateApplication(CreateApplicationRequest createApplicationRequest);
         Task<bool> Submit(Guid id,Guid userId,string email, Sequence sequence, List<Section> sections, string referenceFormat);
 
