@@ -8,6 +8,6 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Apply
         public Guid Id { get; set; }
         public Guid ApplicationId { get; set; }
         public string ApplicationStatus { get; set; }
-        public ApplicationData ApplicationData { get; set; }
+        public ApplyData ApplyData { get; set; }
     }
 }

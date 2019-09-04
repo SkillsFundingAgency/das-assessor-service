@@ -90,5 +90,4 @@ END
 
 -- ON-2242
 :r .\Update-Staff-Reports-Config.sql
-
 -- END
