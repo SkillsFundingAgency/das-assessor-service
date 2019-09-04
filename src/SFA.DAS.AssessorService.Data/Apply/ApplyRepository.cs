@@ -23,7 +23,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
             _configuration = configuration;
             _logger = logger;
 
-            SqlMapper.AddTypeHandler(typeof(ApplicationData), new ApplicationDataHandler());
+            SqlMapper.AddTypeHandler(typeof(ApplyData), new ApplyDataHandler());
         }
 
         public async Task<List<Domain.Entities.Application>> GetUserApplications(Guid userId)
@@ -68,5 +68,27 @@ namespace SFA.DAS.AssessorService.Data.Apply
                     new { applicationRequest.QnaApplicationId, applicationRequest.OrganisationId, applicationStatus, applicationRequest.UserId });
             }
         }
+
+        public async Task SubmitApplicationSequence(Domain.Entities.Application application)
+        {
+            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            {
+              var result =  await connection.ExecuteAsync(@"UPDATE Applications
+                                                SET  ApplicationStatus = @ApplicationStatus, ApplyData = @ApplyData
+                                                WHERE  (Applications.Id = @Id)",
+                  new { application.ApplicationStatus, application.ApplyData, application.Id});
+            }
+        }
+
+
+        public async Task<int> GetNextAppReferenceSequence()
+        {
+            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            {
+                return (await connection.QueryAsync<int>(@"SELECT NEXT VALUE FOR AppRefSequence")).FirstOrDefault();
+
+            }
+        }
+
     }
 }

@@ -62,7 +62,7 @@ namespace SFA.DAS.AssessorService.ApplyTypes
     public class ApplySection
     {
         public Guid SectionId { get; set; }
-        public int SequenceNo { get; set; }
+        public int SectionNo { get; set; }
         public string Status { get; set; }
         public DateTime? ReviewStartDate { get; set; }
         public string ReviewedBy { get; set; }
@@ -82,16 +82,16 @@ namespace SFA.DAS.AssessorService.ApplyTypes
     public class Apply
     {
         public string ReferenceNumber { get; set; }
-        public string StandardCode { get; set; }
+        public int StandardCode { get; set; }
         public string StandardReference { get; set; }
         public string StandardName { get; set; }
-        public List<InitSubmission> initSubmissions { get; set; }
-        public List<StandardSubmission> standardSubmissions { get; set; }
+        public List<InitSubmission> InitSubmissions { get; set; }
+        public List<StandardSubmission> StandardSubmissions { get; set; }
         public int InitSubmissionCount { get; set; }
         public DateTime? LatestInitSubmissionDate { get; set; }
         public DateTime? InitSubmissionFeedbackAddedDate { get; set; }
         public DateTime? InitSubmissionClosedDate { get; set; }
-        public int StandardSubmissionCount { get; set; }
+        public int StandardSubmissionsCount { get; set; }
         public DateTime? LatestStandardSubmissionDate { get; set; }
         public DateTime? StandardSubmissionFeedbackAddedDate { get; set; }
         public DateTime? StandardSubmissionClosedDate { get; set; }
@@ -101,14 +101,14 @@ namespace SFA.DAS.AssessorService.ApplyTypes
     {
         public DateTime SubmittedAt { get; set; }
         public Guid SubmittedBy { get; set; }
-        public string SubmittedEmail { get; set; }
+        public string SubmittedByEmail { get; set; }
     }
 
     public class StandardSubmission
     {
         public DateTime SubmittedAt { get; set; }
         public Guid SubmittedBy { get; set; }
-        public string SubmittedEmail { get; set; }
+        public string SubmittedByEmail { get; set; }
     }
 
 }

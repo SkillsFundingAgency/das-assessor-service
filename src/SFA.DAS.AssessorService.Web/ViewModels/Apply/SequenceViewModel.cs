@@ -16,7 +16,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Apply
             ErrorMessages = errorMessages;
         }
 
-        public string Status { get; }
+        public string Status { get; set; }
         public List<Section> Sections { get; }
 
         public Guid Id { get; }

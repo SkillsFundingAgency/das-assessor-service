@@ -1,4 +1,5 @@
 ﻿using SFA.DAS.AssessorService.Api.Types.Models.Apply;
+using SFA.DAS.QnA.Api.Types;
 using SFA.DAS.QnA.Api.Types.Page;
 using System;
 using System.Collections.Generic;
@@ -9,9 +10,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
     public interface IApplicationApiClient
     {
         Task<List<ApplicationResponse>> GetApplications(Guid userId, bool createdBy);
-        Task<ApplicationResponse> GetApplication(Guid applicationId);
+        Task<ApplicationResponse> GetApplication(Guid Id);
         Task<Guid> CreateApplication(CreateApplicationRequest createApplicationRequest);
-        //Task<bool> Submit(Guid applicationId, int sequenceId, Guid userId, string userEmail);
+        Task<bool> Submit(Guid id,Guid userId,string email, Sequence sequence, List<Section> sections, string referenceFormat);
 
         //Task DeleteAnswer(Guid applicationId, int sequenceId, int sectionId, string pageId, Guid answerId, Guid userId);
         //Task ImportWorkflow(IFormFile file);
