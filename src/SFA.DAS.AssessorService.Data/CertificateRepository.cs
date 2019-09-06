@@ -436,14 +436,17 @@ namespace SFA.DAS.AssessorService.Data
         public async Task UpdatePrivatelyFundedCertificatesToBeApproved()
         {
             var certificates =
-                _context.Certificates.Where(q => q.IsPrivatelyFunded && q.Status == CertificateStatus.Submitted);
-            foreach (var certificate in certificates)
+                _context.Certificates.Where(q => q.IsPrivatelyFunded && q.Status == CertificateStatus.Submitted &&
+                                                 q.PrivatelyFundedStatus != CertificateStatus.Approved);
+            if (certificates.Any())
             {
-                certificate.Status = CertificateStatus.ToBeApproved;
-                certificate.PrivatelyFundedStatus = null;
+                foreach (var certificate in certificates)
+                {
+                    certificate.Status = CertificateStatus.ToBeApproved;
+                    certificate.PrivatelyFundedStatus = null;
+                }
+                await _context.SaveChangesAsync();
             }
-
-            await _context.SaveChangesAsync();
         }
 
         public async Task ApproveCertificates(List<ApprovalResult> approvalResults, string userName)
@@ -453,19 +456,37 @@ namespace SFA.DAS.AssessorService.Data
 
             var certificates =
                 _context.Certificates.Where(q => certificateReferences.Contains(q.CertificateReference));
-
-            foreach (var approvalResult in approvalResults)
+            if (certificates.Any())
             {
-                var certificate =
-                    await certificates.FirstAsync(
-                        q => q.CertificateReference == approvalResult.CertificateReference);
+                foreach (var approvalResult in approvalResults)
+                {
+                    var certificate =
+                        await certificates.FirstOrDefaultAsync(
+                            q => q.CertificateReference == approvalResult.CertificateReference
+                                 && q.PrivatelyFundedStatus != CertificateStatus.Approved);
 
-                certificate.Status = approvalResult.IsApproved;
-                certificate.PrivatelyFundedStatus = approvalResult.PrivatelyFundedStatus;
-               await UpdateCertificateLog(certificate, approvalResult.PrivatelyFundedStatus, userName,approvalResult.ReasonForChange);
+                    if (certificate == null) continue;
+
+                    if (approvalResult.IsApproved == CertificateStatus.ToBeApproved &&
+                        approvalResult.PrivatelyFundedStatus == CertificateStatus.SentForApproval)
+                    {
+                        var certLog = await _context.CertificateLogs.FirstOrDefaultAsync(x =>
+                            x.CertificateId == certificate.Id && x.Action == CertificateStatus.SentForApproval &&
+                            x.Status == CertificateStatus.ToBeApproved);
+                        if (certLog != null) continue;
+                    }
+
+                    certificate.Status = approvalResult.IsApproved;
+                    certificate.PrivatelyFundedStatus = approvalResult.PrivatelyFundedStatus;
+
+                    await UpdateCertificateLog(certificate, approvalResult.PrivatelyFundedStatus, userName,
+                        approvalResult.ReasonForChange);
+
+                }
+
+
+                await _context.SaveChangesAsync();
             }
-
-            await _context.SaveChangesAsync();
         }
 
         private bool CheckLastName(string data, string lastName)
