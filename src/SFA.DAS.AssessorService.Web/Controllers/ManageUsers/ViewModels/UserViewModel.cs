@@ -37,5 +37,10 @@ namespace SFA.DAS.AssessorService.Web.Controllers.ManageUsers.ViewModels
                 }).ToArray()
             }; }
         }
+
+        public bool ContactIsAdmin(Guid privilegeId)
+        {
+            return AssignedPrivileges.Any(ap => ap.Privilege.MustBeAtLeastOneUserAssigned) && !AllPrivilegeTypes.Single(t => t.Id == privilegeId).MustBeAtLeastOneUserAssigned;
+        }
     }
 }

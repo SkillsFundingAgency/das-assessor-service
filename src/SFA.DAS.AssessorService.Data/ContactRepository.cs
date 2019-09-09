@@ -140,6 +140,19 @@ namespace SFA.DAS.AssessorService.Data
             await _assessorDbContext.SaveChangesAsync();
         }
 
+        public async Task AddAllPrivileges(Guid contactId)
+        {
+            await _connection.ExecuteAsync(@"INSERT INTO ContactsPrivileges (ContactId, PrivilegeId) 
+                                                    SELECT @contactId AS ContactId, Id AS PrivilegeId FROM Privileges", new {contactId});
+        }
+
+        public async Task RemovePrivilege(Guid contactId, Guid privilegeId)
+        {
+            var privilege = await _assessorDbContext.ContactsPrivileges.SingleAsync(cp => cp.ContactId == contactId && cp.PrivilegeId == privilegeId);
+            _assessorDbContext.ContactsPrivileges.Remove(privilege);
+            await _assessorDbContext.SaveChangesAsync();
+        }
+
 
         public async Task Update(UpdateContactRequest updateContactRequest)
         {

@@ -33,5 +33,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task AddContactInvitation(Guid invitorContactId, Guid inviteeContactId, Guid organisationId);
         Task<ContactInvitation> GetContactInvitation(Guid inviteeContactId);
         Task SetInvitationAccepted(ContactInvitation contactInvitation);
+        Task AddAllPrivileges(Guid contactId);
+        Task RemovePrivilege(Guid contactId, Guid privilegeId);
     }
 }

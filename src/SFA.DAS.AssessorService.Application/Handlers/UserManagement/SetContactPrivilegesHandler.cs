@@ -44,7 +44,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.UserManagement
                 }
             }
             
-            await UpdatePrivileges(request);
+            await UpdatePrivileges(request,privilegesBeingRemovedThatMustBelongToSomeone);
 
             if (!request.IsNewContact)
             {
@@ -125,16 +125,32 @@ namespace SFA.DAS.AssessorService.Application.Handlers.UserManagement
             return removedText;
         }
 
-        private async Task UpdatePrivileges(SetContactPrivilegesRequest request)
+        private async Task UpdatePrivileges(SetContactPrivilegesRequest request, List<ContactsPrivilege> privilegesBeingRemovedThatMustBelongToSomeone)
         {
-            await _contactRepository.RemoveAllPrivileges(request.ContactId);
-
-            foreach (var privilegeId in request.PrivilegeIds)
+            if (!privilegesBeingRemovedThatMustBelongToSomeone.Any())
             {
-                await _contactRepository.AddPrivilege(request.ContactId, privilegeId);
+                await _contactRepository.RemoveAllPrivileges(request.ContactId);
+            }
+            else
+            {
+                await _contactRepository.RemovePrivilege(request.ContactId, privilegesBeingRemovedThatMustBelongToSomeone.Single().PrivilegeId);
+            }
+            
+
+            var privilegeTypesWithAdmin = (await ContactQueryRepository.GetAllPrivileges()).Where(p => p.MustBeAtLeastOneUserAssigned).Select(p => p.Id).Single();
+            
+            if (request.PrivilegeIds.Contains(privilegeTypesWithAdmin))
+            {
+                await _contactRepository.AddAllPrivileges(request.ContactId);
+            }
+
+            else
+            {
+                foreach (var privilegeId in request.PrivilegeIds)
+                {
+                    await _contactRepository.AddPrivilege(request.ContactId, privilegeId);
+                }   
             }
         }
-
-        
     }
 }
