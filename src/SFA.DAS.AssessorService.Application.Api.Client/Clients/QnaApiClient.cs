@@ -7,7 +7,6 @@ using SFA.DAS.QnA.Api.Types;
 using SFA.DAS.QnA.Api.Types.Page;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
@@ -18,7 +17,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
     {
         private readonly ILogger<QnaApiClient> _logger;
 
-        public QnaApiClient(string baseUri, ITokenService tokenService, ILogger<QnaApiClient> logger) : base(baseUri, tokenService, logger)
+
+        public QnaApiClient(string baseUri, ITokenService qnaTokenService, ILogger<QnaApiClient> logger) : base(baseUri, qnaTokenService, logger)
         {
             _logger = logger;
         }
