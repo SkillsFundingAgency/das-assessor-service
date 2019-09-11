@@ -136,6 +136,7 @@ namespace SFA.DAS.AssessorService.Web
                 config.For<IApplyTokenService>().Add<ApplyTokenService>();                
                 config.For<IWebConfiguration>().Use(Configuration);
                 config.For<ISessionService>().Use<SessionService>().Ctor<string>().Is(_env.EnvironmentName);
+                config.For<IOppFinderSession>().Use<OppFinderSession>();
                 config.For<IOrganisationsApiClient>().Use<OrganisationsApiClient>().Ctor<string>().Is(Configuration.ClientApiAuthentication.ApiBaseAddress);
                 config.For<IOrganisationsApplyApiClient>().Use<OrganisationsApplyApiClient>().Ctor<string>().Is(Configuration.ApplyApiAuthentication.ApiBaseAddress);
                 config.For<IContactApplyClient>().Use<ContactApplyClient>().Ctor<string>().Is(Configuration.ApplyApiAuthentication.ApiBaseAddress);

@@ -1,0 +1,54 @@
+﻿@using SFA.DAS.AssessorService.Domain.Paging
+@using SFA.DAS.AssessorService.Api.Types.Models.OppFinder
+@using SFA.DAS.AssessorService.Web.ViewModels.OppFinder
+@model OppFinderSearchViewModel
+
+<table class="govuk-table">
+    <thead class="govuk-table__head">
+        <tr class="govuk-table__row">
+            <th scope="col" class="govuk-table__header">
+                <sfa-sortable-column-header class="proposed-sort"
+                                            data-sortColumn="@nameof(OppFinderSearchSortColumn.Name)"
+                                            asp-action="SortProposedStandards"
+                                            asp-controller="OppFinder"
+                                            asp-fragment="proposed"
+                                            sfa-sort-column="@nameof(OppFinderSearchSortColumn.Name)"
+                                            sfa-table-sort-column="@Model.ProposedSortColumn"
+                                            sfa-sort-direction="@Model.ProposedSortDirection">
+                    Proposed Standards
+                </sfa-sortable-column-header>
+            </th>
+        </tr>
+    </thead>
+    <tbody class="govuk-table__body">
+        @if (Model?.ProposedStandards != null)
+        {
+            @foreach (var proposedStandard in Model.ProposedStandards.Items)
+            {
+                <tr class="govuk-table__row">
+                    <td class="govuk-table__cell">@proposedStandard.Name</td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+@if (Model != null)
+{
+    <form asp-action="ShowProposedStandardsPerPage" asp-controller="OppFinder" method="get" asp-fragment="proposed">
+        <select class="proposed-per-page" asp-for="ProposedStandardsPerPage" asp-items="Model.StandardsPerPage"></select>
+        <button class="govuk-button govuk-button--looks-like-link govuk-button--looks-like-link--inline js-hidden" type="submit">
+            Show
+        </button>
+        <text>Standards per page</text>
+    </form>
+
+    await Html.RenderPartialAsync("_PaginationLinksPartial", new OppFinderPaginationViewModel
+    {
+        Standards = Model.ProposedStandards,
+        PageIndex = Model.ProposedPageIndex,
+        ChangePageAction = "ChangePageProposedStandards",
+        ChangePageSetAction = "ChangePageSetProposedStandards",
+        Fragment = "proposed"
+    });
+}
+

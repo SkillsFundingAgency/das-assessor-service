@@ -1,0 +1,54 @@
+﻿@using SFA.DAS.AssessorService.Domain.Paging
+@using SFA.DAS.AssessorService.Api.Types.Models.OppFinder
+@using SFA.DAS.AssessorService.Web.ViewModels.OppFinder
+@model OppFinderSearchViewModel
+
+<table class="govuk-table">
+    <thead class="govuk-table__head">
+        <tr class="govuk-table__row">
+            <th scope="col" class="govuk-table__header">
+                <sfa-sortable-column-header class="in-development-sort"
+                                            data-sortColumn="@nameof(OppFinderSearchSortColumn.Name)"
+                                            asp-action="SortInDevelopmentStandards"
+                                            asp-controller="OppFinder"
+                                            asp-fragment="in-development"
+                                            sfa-sort-column="@nameof(OppFinderSearchSortColumn.Name)"
+                                            sfa-table-sort-column="@Model.InDevelopmentSortColumn"
+                                            sfa-sort-direction="@Model.InDevelopmentSortDirection">
+                    Standards In-development
+                </sfa-sortable-column-header>
+            </th>
+        </tr>
+    </thead>
+    <tbody class="govuk-table__body">
+        @if (Model?.InDevelopmentStandards != null)
+        {
+            @foreach (var inDevelopmentStandard in Model.InDevelopmentStandards.Items)
+            {
+                <tr class="govuk-table__row">
+                    <td class="govuk-table__cell">@inDevelopmentStandard.Name</td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+@if (Model != null)
+{
+    <form asp-action="ShowInDevelopmentStandardsPerPage" asp-controller="OppFinder" method="get" asp-fragment="in-development">
+        <select class="in-development-per-page" asp-for="InDevelopmentStandardsPerPage" asp-items="Model.StandardsPerPage"></select>
+        <button class="govuk-button govuk-button--looks-like-link govuk-button--looks-like-link--inline js-hidden" type="submit">
+            Show
+        </button>
+        <text>Standards per page</text>
+    </form>
+
+    await Html.RenderPartialAsync("_PaginationLinksPartial", new OppFinderPaginationViewModel
+    {
+        Standards = Model.InDevelopmentStandards,
+        PageIndex = Model.InDevelopmentPageIndex,
+        ChangePageAction = "ChangePageInDevelopmentStandards",
+        ChangePageSetAction = "ChangePageSetInDevelopmentStandards",
+        Fragment = "in-development"
+    });
+}
+
