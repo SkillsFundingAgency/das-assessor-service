@@ -147,9 +147,14 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                         config.DefaultRequestHeaders.Add("Accept", "Application/json");
                     })
                     .SetHandlerLifetime(TimeSpan.FromMinutes(5));
+<<<<<<< HEAD
                     
                 services.AddHealthChecks();
                 
+=======
+
+                services.AddHealthChecks();
+>>>>>>> ea08bce7fd92ab14afb15766cb7ce5c6ea029005
                 serviceProvider = ConfigureIOC(services);
 
                 if (_env.IsDevelopment())

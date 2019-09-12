@@ -179,8 +179,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             var inviteSuccess =
                 await _contactsApiClient.InviteUser(new CreateContactRequest(vm.GivenName, vm.FamilyName, vm.Email,null,vm.Email));
 
-            TempData["NewAccount"] = JsonConvert.SerializeObject(vm);
-
+            _sessionService.Set("NewAccount", JsonConvert.SerializeObject(vm));
             return inviteSuccess.Result ? RedirectToAction("InviteSent") : RedirectToAction("Error", "Home");
             
         }
@@ -188,13 +187,14 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         public IActionResult InviteSent()
         {
             CreateAccountViewModel viewModel;
-            if (TempData["NewAccount"] is null)
+            var newAccount = _sessionService.Get("NewAccount");
+            if (string.IsNullOrEmpty(newAccount))
             {
                 viewModel = new CreateAccountViewModel() { Email = "[email placeholder]" };
             }
             else
             {
-                viewModel = JsonConvert.DeserializeObject<CreateAccountViewModel>(TempData["NewAccount"].ToString());
+                viewModel = JsonConvert.DeserializeObject<CreateAccountViewModel>(newAccount);
             }
 
             return View(viewModel);

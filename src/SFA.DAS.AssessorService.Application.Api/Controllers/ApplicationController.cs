@@ -45,13 +45,13 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             return Ok(await _mediator.Send(new GetApplicationsRequest(Guid.Parse(userId), true)));
         }
 
-        [HttpGet("{applicationId}/application", Name = "GetApplication")]
+        [HttpGet("{Id}/application", Name = "GetApplication")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(ApplicationResponse))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<ActionResult<ApplicationResponse>> GetApplication(string applicationId)
+        public async Task<ActionResult<ApplicationResponse>> GetApplication(string Id)
         {
             _logger.LogInformation($"Received request to retrieve application for user");
-            return Ok(await _mediator.Send(new GetApplicationRequest(Guid.Parse(applicationId))));
+            return Ok(await _mediator.Send(new GetApplicationRequest(Guid.Parse(Id))));
         }
 
         [HttpPost("createApplication", Name = "CreateApplication")]
@@ -67,6 +67,21 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
             return CreatedAtRoute("CreateApplication",
                 applicationResponse);
+        }
+
+        [HttpPost("submitApplication", Name = "SubmitApplication")]
+        [SwaggerResponse((int)HttpStatusCode.Created, Type = typeof(bool))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<ActionResult<Guid>> SubmitApplication(
+         [FromBody] SubmitApplicationRequest submitApplicationRequest)
+        {
+            _logger.LogInformation("Received Submit Application Request");
+
+            var response = await _mediator.Send(submitApplicationRequest);
+
+            return CreatedAtRoute("SubmitApplication",
+                response);
         }
     }
 }

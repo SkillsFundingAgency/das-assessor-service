@@ -29,6 +29,8 @@
         CompaniesHouseApiAuthentication CompaniesHouseApiAuthentication { get; set; }
         CharityCommissionApiAuthentication CharityCommissionApiAuthentication { get; set; }
 
+        string ReferenceFormat { get; set; }
+        string FeedbackUrl { get; set; }
         #region For External API Sandbox
 
         string SandboxSqlConnectionString { get; set; }

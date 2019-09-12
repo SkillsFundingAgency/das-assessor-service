@@ -57,7 +57,7 @@
                             </span>
                             @if (Model.Status != ApplicationSequenceStatus.Submitted)
                             {
-                                <a class="govuk-link" href="@Url.Action("Section", "Application", new { @Model.ApplicationId, Model.SequenceNo, applicationSection.SectionNo })">
+                                <a class="govuk-link" href="@Url.Action("Section", "Application", new { @Model.Id, Model.SequenceNo, sectionId=applicationSection.Id })">
                                     Go to @applicationSection.LinkTitle.ToLower()
                                 </a>
                             }
@@ -69,8 +69,7 @@
                 @if (Model.Status != ApplicationSequenceStatus.Submitted)
                 {
                     <form asp-action="Submit" asp-controller="Application">
-                        <input type="hidden" id="applicationId" name="applicationId" value="@Model.ApplicationId" />
-                        <input type="hidden" id="sequenceId" name="sequenceId" value="@Model.SequenceNo" />
+                        <input type="hidden" id="Id" name="Id" value="@Model.Id" />
                         <div class="govuk-form-group">
                             <button type="submit" class="govuk-button">
                                 Submit

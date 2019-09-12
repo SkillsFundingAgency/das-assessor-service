@@ -4,15 +4,6 @@ using System.Linq;
 
 namespace SFA.DAS.AssessorService.ApplyTypes
 {
-    public class ApplicationSequence : ApplyTypeBase
-    {
-        public Guid ApplicationId { get; set; }
-        public int SequenceNo { get; set; }
-        public bool IsActive { get; set; }
-        public List<ApplicationSection> Sections { get; set; }
-        public bool NotRequired { get; set; }
-    }
-
     public class ApplicationSequenceStatus
     {
         public const string Draft = "Draft";
