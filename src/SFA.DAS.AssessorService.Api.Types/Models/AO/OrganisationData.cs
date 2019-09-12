@@ -1,4 +1,6 @@
-﻿using System;
+﻿using SFA.DAS.AssessorService.ApplyTypes;
+using System;
+using System.Collections.Generic;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models.AO
 {
@@ -23,6 +25,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.AO
         public bool RoATPApproved { get; set; }
         public bool RoEPAOApproved { get; set; }
         public string EndPointAssessmentOrgId { get; set; }
+        public List<FinancialGrade> FinancialGrades { get; set; }
         public FHADetails FHADetails { get; set; }
     }
 
@@ -31,4 +34,5 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.AO
         public DateTime? FinancialDueDate { get; set; }
         public bool? FinancialExempt { get; set; }
     }
+
 }

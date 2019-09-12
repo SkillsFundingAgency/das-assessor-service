@@ -11,7 +11,7 @@ namespace SFA.DAS.AssessorService.Domain.Entities
         public Guid OrganisationId { get; set; }
         public virtual Organisation Organisation { get; set; }
         public string ApplicationStatus { get; set; }
-        public string FinancialGrade { get; set; }
+        public FinancialGrade FinancialGrade { get; set; }
         public int StandardCode { get; set; }
         public ApplyData ApplyData { get; set; }
         public string CreatedBy { get; set; }

@@ -67,6 +67,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                 SectionId = x.Id,
                 SectionNo = x.SectionNo,
                 Status = ApplicationSectionStatus.Submitted,
+                RequestedFeedbackAnswered = x.QnAData.RequestedFeedbackAnswered
             }).ToList();
 
             using (var request = new HttpRequestMessage(HttpMethod.Post, $"api/v1/applications/submitApplication"))

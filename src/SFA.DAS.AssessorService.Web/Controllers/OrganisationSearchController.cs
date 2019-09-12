@@ -342,7 +342,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 Address3 = organisationSearchResult.Address?.Address3,
                 City = organisationSearchResult.Address?.City,
                 Postcode = organisationSearchResult.Address?.Postcode,
-                RoATPApproved =  false,
+                RoATPApproved =  organisationSearchResult.RoATPApproved,
                 RoEPAOApproved= false,
                 EndPointAssessmentOrgId = null,
                 FHADetails = new Api.Types.Models.AO.FHADetails
