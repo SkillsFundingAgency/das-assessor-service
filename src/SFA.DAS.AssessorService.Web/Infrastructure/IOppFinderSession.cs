@@ -1,4 +1,4 @@
-﻿using SFA.DAS.AssessorService.Api.Types.Models.OppFinder;
+﻿using SFA.DAS.AssessorService.Api.Types.Models;
 using System;
 
 namespace SFA.DAS.AssessorService.Web.Infrastructure

@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using SFA.DAS.AssessorService.Api.Types.Models.OppFinder;
+using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Domain.Paging;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.ViewModels.OppFinder;
@@ -13,11 +14,14 @@ namespace SFA.DAS.AssessorService.Web.Controllers.OppFinder
     public class OppFinderController : Controller
     {
         private readonly IOppFinderSession _oppFinderSession;
+        private readonly IOppFinderApiClient _oppFinderApiClient;
+
         private const int PageSetSize = 6;
 
-        public OppFinderController(IOppFinderSession oppFinderSession)
+        public OppFinderController(IOppFinderSession oppFinderSession, IOppFinderApiClient oppFinderApiClient)
         {
             _oppFinderSession = oppFinderSession;
+            _oppFinderApiClient = oppFinderApiClient;
         }
 
         public async Task<IActionResult> Index()
@@ -33,11 +37,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers.OppFinder
             _oppFinderSession.ProposedStandardsPerPage = standardsPerPage;
 
             var sortDirection = "Asc";
-            _oppFinderSession.ApprovedSortColumn = OppFinderApprovedSearchSortColumn.Name;
+            _oppFinderSession.ApprovedSortColumn = OppFinderApprovedSearchSortColumn.StandardName;
             _oppFinderSession.ApprovedSortDirection = sortDirection;
-            _oppFinderSession.InDevelopmentSortColumn = OppFinderSearchSortColumn.Name;
+            _oppFinderSession.InDevelopmentSortColumn = OppFinderSearchSortColumn.StandardName;
             _oppFinderSession.InDevelopmentSortDirection = sortDirection;
-            _oppFinderSession.ProposedSortColumn = OppFinderSearchSortColumn.Name;
+            _oppFinderSession.ProposedSortColumn = OppFinderSearchSortColumn.StandardName;
             _oppFinderSession.ProposedSortDirection = sortDirection;
 
             var vm = await MapViewModelFromSession();
@@ -58,11 +62,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers.OppFinder
             _oppFinderSession.ProposedStandardsPerPage = standardsPerPage;
 
             var sortDirection = "Asc";
-            _oppFinderSession.ApprovedSortColumn = OppFinderApprovedSearchSortColumn.Name;
+            _oppFinderSession.ApprovedSortColumn = OppFinderApprovedSearchSortColumn.StandardName;
             _oppFinderSession.ApprovedSortDirection = sortDirection;
-            _oppFinderSession.InDevelopmentSortColumn = OppFinderSearchSortColumn.Name;
+            _oppFinderSession.InDevelopmentSortColumn = OppFinderSearchSortColumn.StandardName;
             _oppFinderSession.InDevelopmentSortDirection = sortDirection;
-            _oppFinderSession.ProposedSortColumn = OppFinderSearchSortColumn.Name;
+            _oppFinderSession.ProposedSortColumn = OppFinderSearchSortColumn.StandardName;
             _oppFinderSession.ProposedSortDirection = sortDirection;
 
             var vm = await MapViewModelFromSession();
@@ -331,18 +335,27 @@ namespace SFA.DAS.AssessorService.Web.Controllers.OppFinder
         {
             var pageSize = _oppFinderSession.ApprovedStandardsPerPage;
             var sortColumn = _oppFinderSession.ApprovedSortColumn;
-            var sortDirection = _oppFinderSession.ApprovedSortDirection;
+            var sortDirection = _oppFinderSession.ApprovedSortDirection == "Asc" ? 1 : 0;
 
-            var approvedTestData = ApprovedTestData().ConvertAll(p => p as OppFinderApprovedSearchResult);
+            var response = await  _oppFinderApiClient.GetApprovedStandards(
+                sortColumn.ToString(),
+                sortDirection,
+                pageSize,
+                pageIndex,
+                PageSetSize);
 
-            var oppFinderSearchResults = OrderByList(approvedTestData, sortColumn.ToString(), sortDirection)
-                .Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
+            //var approvedStandards = response.Standards.ConvertAll(p => p as OppFinderApprovedSearchResult);
 
-            var approvedStandards = new PaginatedList<OppFinderSearchResult>(
-                oppFinderSearchResults.ConvertAll(p => p as OppFinderSearchResult), ApprovedTestData().Count, pageIndex, pageSize);
-            approvedStandards.PageSetSize = PageSetSize;
+            //var approvedTestData = ApprovedTestData().ConvertAll(p => p as OppFinderApprovedSearchResult);
 
-            return await Task.FromResult(approvedStandards);
+            //var oppFinderSearchResults = OrderByList(approvedTestData, sortColumn.ToString(), sortDirection)
+            //  .Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
+
+            //var approvedStandards = new PaginatedList<OppFinderSearchResult>(
+            //  oppFinderSearchResults.ConvertAll(p => p as OppFinderSearchResult), ApprovedTestData().Count, pageIndex, pageSize);
+            //response.Standards.PageSetSize = PageSetSize;
+
+            return await Task.FromResult(response.Standards.Convert<OppFinderSearchResult>());
         }
 
         private List<T> OrderByList<T>(List<T> list, string columnName, string sortDirection)
@@ -427,7 +440,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.OppFinder
             for (int count = 1; count <= 600; count++)
             {
                 var name = $"{count.ToString()} ->>>>>>>>>>>>>>>>>>";
-                oppFinderSearchResults.Add(new OppFinderApprovedSearchResult { Name = name, ActiveApprentices = count, RegisteredEPAOs = count*2 });
+                oppFinderSearchResults.Add(new OppFinderApprovedSearchResult { StandardName = name, ActiveApprentices = count, RegisteredEPAOs = count*2 });
             }
 
             return oppFinderSearchResults;
@@ -440,7 +453,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.OppFinder
             for (int count = 601; count <= 622; count++)
             {
                 var name = $"{count.ToString()} ->>>>>>>>>>>>>>>>>>";
-                oppFinderSearchResults.Add(new OppFinderSearchResult { Name = name });
+                oppFinderSearchResults.Add(new OppFinderSearchResult { StandardName = name });
             }
 
             return oppFinderSearchResults;
@@ -453,7 +466,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.OppFinder
             for (int count = 623; count <= 644; count++)
             {
                 var name = $"{count.ToString()} ->>>>>>>>>>>>>>>>>>";
-                oppFinderSearchResults.Add(new OppFinderSearchResult { Name = name });
+                oppFinderSearchResults.Add(new OppFinderSearchResult { StandardName = name });
             }
 
             return oppFinderSearchResults;

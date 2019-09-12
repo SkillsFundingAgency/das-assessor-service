@@ -222,6 +222,37 @@ namespace SFA.DAS.AssessorService.Data
             return result.ToList();
         }
 
+        public async Task<ApprovedStandardsResult> GetOppFinderApprovedStandards(string sortColumn, int sortAscending, int pageSize, int pageIndex)
+        {
+            var @params = new DynamicParameters();
+            @params.Add("sortColumn", sortColumn);
+            @params.Add("sortAscending", sortAscending);
+            @params.Add("pageSize", pageSize);
+            @params.Add("pageIndex", pageIndex);
+            @params.Add("totalCount", dbType: DbType.Int32, direction: ParameterDirection.Output);
+
+            var results = (await _connection.QueryAsync<OppFinderApprovedStandard>(
+                "OppFinder_Approved_Standards", 
+                @params, 
+                commandType: CommandType.StoredProcedure))?.ToList();
+
+            var approvedStandardsResult = new ApprovedStandardsResult
+            {
+                PageOfResults = new List<OppFinderApprovedStandard>(),
+                TotalCount = 0
+            };
+
+            if (results == null || !results.Any())
+            {
+                return approvedStandardsResult;
+            }
+
+            approvedStandardsResult.PageOfResults = results;
+            approvedStandardsResult.TotalCount = @params.Get<int>("totalCount");
+            
+            return approvedStandardsResult;
+        }
+
         private static void UpdateCurrentStandard(IDbConnection connection, StandardCollation standard, string standardData)
         {
             // when new ReferenceNumber is null (IFA has not supplied one) retain the current RefernceNumber

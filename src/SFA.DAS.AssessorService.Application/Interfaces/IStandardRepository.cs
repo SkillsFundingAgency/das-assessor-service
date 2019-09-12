@@ -21,6 +21,8 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<EpaoPipelineStandardsResult> GetEpaoPipelineStandards(string endPointAssessorOrganisationId,
             string orderBy, string orderDirection, int pageSize, int? pageIndex);
         Task<List<EpaoPipelineStandardExtract>> GetEpaoPipelineStandardsExtract(string endPointAssessorOrganisationId);
+
+        Task<ApprovedStandardsResult> GetOppFinderApprovedStandards(string sortColumn, int sortAscending, int pageSize, int pageIndex);
     }
 
     public class EpoRegisteredStandardsResult
@@ -33,6 +35,13 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
     public class EpaoPipelineStandardsResult
     {
         public IEnumerable<EpaoPipelineStandard> PageOfResults { get; set; }
+
+        public int TotalCount { get; set; }
+    }
+
+    public class ApprovedStandardsResult
+    {
+        public IEnumerable<OppFinderApprovedStandard> PageOfResults { get; set; }
 
         public int TotalCount { get; set; }
     }

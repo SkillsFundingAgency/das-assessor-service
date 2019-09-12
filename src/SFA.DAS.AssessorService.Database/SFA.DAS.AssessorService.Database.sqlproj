@@ -115,6 +115,7 @@
     <Build Include="Tables\StandardSummary.sql" />
     <Build Include="StoredProcedures\Data_Summaries.sql" />
     <Build Include="Tables\Applications.sql" />
+    <Build Include="StoredProcedures\OppFinder_Approved_Standards.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="SFA.DAS.AssessorService.Database.refactorlog" />

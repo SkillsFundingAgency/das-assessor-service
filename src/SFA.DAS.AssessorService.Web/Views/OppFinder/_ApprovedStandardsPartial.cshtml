@@ -1,5 +1,5 @@
 ﻿@using SFA.DAS.AssessorService.Domain.Paging
-@using SFA.DAS.AssessorService.Api.Types.Models.OppFinder
+@using SFA.DAS.AssessorService.Api.Types.Models
 @using SFA.DAS.AssessorService.Web.ViewModels.OppFinder
 @model OppFinderSearchViewModel
 
@@ -8,11 +8,11 @@
         <tr class="govuk-table__row">
             <th scope="col" class="govuk-table__header">
                 <sfa-sortable-column-header class="approved-sort"
-                                            data-sortColumn="@nameof(OppFinderApprovedSearchSortColumn.Name)"
+                                            data-sortColumn="@nameof(OppFinderApprovedSearchSortColumn.StandardName)"
                                             asp-action="SortApprovedStandards"
                                             asp-controller="OppFinder"
                                             asp-fragment="approved"
-                                            sfa-sort-column="@nameof(OppFinderApprovedSearchSortColumn.Name)"
+                                            sfa-sort-column="@nameof(OppFinderApprovedSearchSortColumn.StandardName)"
                                             sfa-table-sort-column="@Model.ApprovedSortColumn"
                                             sfa-sort-direction="@Model.ApprovedSortDirection">
                     Approved Standards
@@ -50,7 +50,7 @@
             @foreach (var approvedStandard in Model.ApprovedStandards.Items.ConvertAll(x => x as OppFinderApprovedSearchResult))
             {
                 <tr class="govuk-table__row">
-                    <td class="govuk-table__cell">@approvedStandard.Name</td>
+                    <td class="govuk-table__cell">@approvedStandard.StandardName</td>
                     <td class="govuk-table__cell">@approvedStandard.ActiveApprentices</td>
                     <td class="govuk-table__cell">@approvedStandard.RegisteredEPAOs</td>
                 </tr>

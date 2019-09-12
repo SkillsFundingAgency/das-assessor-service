@@ -1,4 +1,4 @@
-﻿namespace SFA.DAS.AssessorService.Api.Types.Models.OppFinder
+﻿namespace SFA.DAS.AssessorService.Api.Types.Models
 {
     public class OppFinderApprovedSearchResult : OppFinderSearchResult
     {
@@ -9,7 +9,7 @@
 
     public enum OppFinderApprovedSearchSortColumn
     {
-        Name,
+        StandardName,
         ActiveApprentices,
         RegisteredEPAOs
     }
