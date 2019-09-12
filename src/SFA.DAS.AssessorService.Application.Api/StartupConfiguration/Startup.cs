@@ -147,7 +147,9 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                         config.DefaultRequestHeaders.Add("Accept", "Application/json");
                     })
                     .SetHandlerLifetime(TimeSpan.FromMinutes(5));
-
+                    
+                services.AddHealthChecks();
+                
                 serviceProvider = ConfigureIOC(services);
 
                 if (_env.IsDevelopment())
@@ -242,6 +244,7 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                 app.UseMiddleware(typeof(ErrorHandlingMiddleware));
                 
                 app.UseRequestLocalization();
+                app.UseHealthChecks("/health");
                 app.UseMvc();
             }
             catch (Exception e)
