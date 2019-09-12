@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Threading.Tasks;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.AssessorService.Api.Types.Models.Apply;
 using SFA.DAS.AssessorService.ApplyTypes;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers
 {
+    [Authorize(Roles = "AssessorServiceInternalAPI")]
     public class FinancialController : Controller
     {
         private readonly IMediator _mediator;
