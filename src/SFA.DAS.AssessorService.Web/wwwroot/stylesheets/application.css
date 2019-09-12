@@ -725,6 +725,12 @@
   }
 }
 
+@media (min-width: 40.0625em) {
+  .dashboard-box--two-thirds {
+    width: 66.666666%;
+  }
+}
+
 .dashboard-box__content {
   display: -webkit-box;
   display: -ms-flexbox;
@@ -735,6 +741,11 @@
   flex-direction: column;
   width: 100%;
   border: 1px solid #bfc1c3;
+}
+
+.dashboard-box--grey .dashboard-box__content {
+  background-color: #f8f8f8;
+  border: 0 none;
 }
 
 .dashboard-box--green .dashboard-box__content {
@@ -769,6 +780,10 @@
 
 .dashboard-box__body {
   padding: 15px 15px 0;
+}
+
+.dashboard-box__body--no-top-padding {
+  padding: 0 15px 0;
 }
 
 .dashboard-box__count,
@@ -1044,6 +1059,7 @@ TODO: change to 'das-page-navigation' and BEM
 }
 
 .das-code {
+  display: inline-block;
   color: #0b0c0c;
   background-color: #f8f8f8;
   text-shadow: 0 1px #fff;
@@ -1051,9 +1067,9 @@ TODO: change to 'das-page-navigation' and BEM
   font-size: 14px;
   direction: ltr;
   text-align: left;
-  white-space: pre;
   word-spacing: normal;
   word-break: normal;
+  white-space: pre-wrap;
   line-height: 1.5;
   -moz-tab-size: 4;
   -o-tab-size: 4;
