@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
@@ -10,10 +11,13 @@ using Microsoft.Extensions.Logging;
 
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
+using SFA.DAS.AssessorService.Api.Types.Models.Azure;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
+using SFA.DAS.AssessorService.Application.Api.Client.Azure;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Application.Api.Client.Exceptions;
 using SFA.DAS.AssessorService.Domain.Consts;
+using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Web.Constants;
 using SFA.DAS.AssessorService.Web.Extensions;
 using SFA.DAS.AssessorService.Web.Infrastructure;
@@ -30,21 +34,26 @@ namespace SFA.DAS.AssessorService.Web.Controllers
     {
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly IOrganisationsApiClient _organisationsApiClient;
+        private readonly IAzureApiClient _externalApiClient;
         private readonly IContactsApiClient _contactsApiClient;
         private readonly IEmailApiClient _emailApiClient;
         private readonly IValidationApiClient _validationApiClient;
         private readonly ILogger<OrganisationController> _logger;
+        private readonly IWebConfiguration _webConfiguration;
 
-        public OrganisationController(ILogger<OrganisationController> logger, IHttpContextAccessor contextAccessor, 
-            IOrganisationsApiClient organisationsApiClient, IContactsApiClient contactsApiClient,
-            IEmailApiClient emailApiClient, IValidationApiClient validationApiClient)
+        public OrganisationController(IHttpContextAccessor contextAccessor, 
+            IOrganisationsApiClient organisationsApiClient, IAzureApiClient externalApiClient, IContactsApiClient contactsApiClient,
+            IEmailApiClient emailApiClient, IValidationApiClient validationApiClient, ILogger<OrganisationController> logger, 
+            IWebConfiguration webConfiguration)
         {
             _contextAccessor = contextAccessor;
             _organisationsApiClient = organisationsApiClient;
+            _externalApiClient = externalApiClient;
             _contactsApiClient = contactsApiClient;
             _emailApiClient = emailApiClient;
             _validationApiClient = validationApiClient;
             _logger = logger;
+            _webConfiguration = webConfiguration;
         }
 
         [HttpGet]
@@ -89,10 +98,13 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         public async Task<IActionResult> OrganisationDetails()
         {
             var epaoid = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/epaoid")?.Value;
+            var ukprn = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/ukprn")?.Value;
+
             try
             {
                 var organisation = await _organisationsApiClient.GetEpaOrganisation(epaoid);
                 var viewModel = MapOrganisationModel(organisation);
+                viewModel.ExternalApiSubscriptions = await GetExternalApiSubscriptions(_webConfiguration.AzureApiAuthentication.ProductId, ukprn);
 
                 var userId = _contextAccessor.HttpContext.User.FindFirst("UserId").Value;
                 var userPrivileges = await _contactsApiClient.GetContactPrivileges(Guid.Parse(userId));
@@ -105,8 +117,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                     var changeOrganisationPriviledge = (await _contactsApiClient.GetPrivileges()).First(p => p.Key == Privileges.ChangeOrganisationDetails);
                     viewModel.AccessDeniedViewModel = new AccessDeniedViewModel
                     {
-                        Title = Privileges.ChangeOrganisationDetails,
-                        Description = changeOrganisationPriviledge.Description,
                         PrivilegeId = changeOrganisationPriviledge.Id,
                         ContactId = Guid.Parse(userId),
                         UserHasUserManagement = userPrivileges.Any(up => up.Privilege.Key == Privileges.ManageUsers),
@@ -122,6 +132,30 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 _logger.LogWarning(e, "Failed to find organisation");
                 return RedirectToAction(nameof(HomeController.NotRegistered), nameof(HomeController).RemoveController());
             }
+        }
+
+        [HttpPost]
+        [ModelStatePersist(ModelStatePersist.Store)]
+        [PrivilegeAuthorize(Privileges.ChangeOrganisationDetails)]
+        public async Task<IActionResult> OrganisationDetails(ViewAndEditOrganisationViewModel vm)
+        {
+            var ukprn = _contextAccessor.HttpContext.User.Claims.FirstOrDefault(c => c.Type == "http://schemas.portal.com/ukprn")?.Value;
+
+            if (vm.ActionChoice == "Enable" || vm.ActionChoice == "Renew")
+            {
+                if (vm.ActionChoice == "Enable")
+                {        
+                    await _externalApiClient.CreateUser(ukprn);
+                }
+                else
+                {
+                    await _externalApiClient.RegeneratePrimarySubscriptionKey(vm.SubscriptionId);
+                }
+
+                return RedirectToAction(nameof(OrganisationDetails), nameof(OrganisationController).RemoveController(), "api-subscription");
+            }
+
+            return RedirectToAction(nameof(OrganisationDetails), nameof(OrganisationController).RemoveController(), "register-details");
         }
 
         [HttpGet]
@@ -672,6 +706,19 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             }
 
             return RedirectToAction(nameof(OrganisationDetails));
+        }
+
+        [HttpGet]
+        [PrivilegeAuthorize(Privileges.ChangeOrganisationDetails)]
+        public IActionResult ApiSubscriptionRequestAccess()
+        {
+            return RedirectToAction(nameof(OrganisationDetails), nameof(OrganisationController).RemoveController(), "api-subscription");
+        }
+
+        private async Task<List<AzureSubscription>> GetExternalApiSubscriptions(string productId, string ukprn)
+        {
+          var users = await _externalApiClient.GetUserDetailsByUkprn(ukprn, true);
+          return users.SelectMany(u => u.Subscriptions.Where(s => s.IsActive && s.ProductId == productId)).ToList();
         }
 
         private ViewAndEditOrganisationViewModel MapOrganisationModel(EpaOrganisation organisation)

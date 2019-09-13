@@ -149,6 +149,7 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                     .SetHandlerLifetime(TimeSpan.FromMinutes(5));
 
                 services.AddHealthChecks();
+
                 serviceProvider = ConfigureIOC(services);
 
                 if (_env.IsDevelopment())
