@@ -509,22 +509,31 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
         private void GetAnswersFromForm(List<Answer> answers,Page page)
         {
-            var questionId = page.Questions.Where(x => x.Input.Type == "ComplexRadio").Select(y => y.QuestionId).FirstOrDefault();
+            var questionId = page.Questions.Where(x => x.Input.Type == "ComplexRadio" || x.Input.Type == "Radio" ).Select(y => y.QuestionId).FirstOrDefault();
 
             foreach (var keyValuePair in HttpContext.Request.Form.Where(f => !f.Key.StartsWith("__") && !f.Key.Contains("RedirectAction")))
             {
                  answers.Add(new Answer() { QuestionId = keyValuePair.Key, Value = keyValuePair.Value });
             }
 
-            if (questionId!= null && answers.Any(y => y.QuestionId.Contains(questionId))){
-                if (answers.All(x => x.Value == "")){
-                    foreach (var answer in answers.Where(y => y.QuestionId.Contains(questionId+".") && y.Value == ""))
+            if (questionId != null && answers.Any(y => y.QuestionId.Contains(questionId)))
+            {
+                if (answers.All(x => x.Value == ""))
+                {
+                    foreach (var answer in answers.Where(y => y.QuestionId.Contains(questionId + ".") && y.Value == ""))
+                    {
+                        answer.QuestionId = questionId;
+                        break;
+                    }
+                }
+                else if (answers.Count(y => y.QuestionId.Contains(questionId) && y.Value == "") == 1 && answers.Count(y => y.QuestionId == questionId && y.Value != "") == 0)
+                {
+                    foreach (var answer in answers.Where(y => y.QuestionId.Contains(questionId + ".") && y.Value == ""))
                     {
                         answer.QuestionId = questionId;
                     }
                 }
             }
-            
         }
 
         private async Task<Page> GetDataFedOptions(Page page)
