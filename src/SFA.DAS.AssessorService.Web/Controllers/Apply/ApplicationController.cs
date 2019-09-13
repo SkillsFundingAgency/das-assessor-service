@@ -307,7 +307,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             var answers = new List<Answer>();
 
             var fileValidationPassed = FileValidator.FileValidationPassed(answers, page, errorMessages, ModelState, HttpContext.Request.Form.Files);
-            GetAnswersFromForm(answers);
+            GetAnswersFromForm(answers,page);
 
             if (page.AllowMultipleAnswers)
             {
@@ -507,11 +507,16 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             return response;
         }
 
-        private void GetAnswersFromForm(List<Answer> answers)
+        private void GetAnswersFromForm(List<Answer> answers,Page page)
         {
+            var questionId = page.Questions.Where(x => x.Input.Type == "ComplexRadio").Select(y => y.QuestionId).FirstOrDefault();
+
             foreach (var keyValuePair in HttpContext.Request.Form.Where(f => !f.Key.StartsWith("__")))
             {
-                answers.Add(new Answer() { QuestionId = keyValuePair.Key, Value = keyValuePair.Value });
+                if (keyValuePair.Value == "" && !string.IsNullOrEmpty(questionId) && keyValuePair.Key.Contains(questionId))
+                    answers.Add(new Answer() { QuestionId = questionId, Value = keyValuePair.Value });
+                else
+                    answers.Add(new Answer() { QuestionId = keyValuePair.Key, Value = keyValuePair.Value });
             }
         }
 
