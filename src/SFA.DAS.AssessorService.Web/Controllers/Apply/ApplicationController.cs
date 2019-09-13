@@ -511,13 +511,20 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         {
             var questionId = page.Questions.Where(x => x.Input.Type == "ComplexRadio").Select(y => y.QuestionId).FirstOrDefault();
 
-            foreach (var keyValuePair in HttpContext.Request.Form.Where(f => !f.Key.StartsWith("__")))
+            foreach (var keyValuePair in HttpContext.Request.Form.Where(f => !f.Key.StartsWith("__") && !f.Key.Contains("RedirectAction")))
             {
-                if (keyValuePair.Value == "" && !string.IsNullOrEmpty(questionId) && keyValuePair.Key.Contains(questionId))
-                    answers.Add(new Answer() { QuestionId = questionId, Value = keyValuePair.Value });
-                else
-                    answers.Add(new Answer() { QuestionId = keyValuePair.Key, Value = keyValuePair.Value });
+                 answers.Add(new Answer() { QuestionId = keyValuePair.Key, Value = keyValuePair.Value });
             }
+
+            if (questionId!= null && answers.Any(y => y.QuestionId.Contains(questionId))){
+                if (answers.All(x => x.Value == "")){
+                    foreach (var answer in answers.Where(y => y.QuestionId.Contains(questionId+".") && y.Value == ""))
+                    {
+                        answer.QuestionId = questionId;
+                    }
+                }
+            }
+            
         }
 
         private async Task<Page> GetDataFedOptions(Page page)
