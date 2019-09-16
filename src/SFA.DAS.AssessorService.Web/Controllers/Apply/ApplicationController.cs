@@ -298,7 +298,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
            
             if (page.AllowMultipleAnswers)
             {
-                var answers = GetAnswersFromForm();
+                var answers = GetAnswersFromForm(page);
                 var pageAddResponse = await _qnaApiClient.AddAnswersToMultipleAnswerPage(application.ApplicationId, sectionId, pageId, answers);
                 if (pageAddResponse?.Success != null && pageAddResponse.Success)
                 {
@@ -330,7 +330,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                         return RedirectToNextAction(Id, sequenceNo, sectionId, __redirectAction, nextAction.Action, nextAction.ReturnId);
                 }
 
-                await SetResponseValidationErrors(pageAddResponse?.ValidationErrors, page);
+                SetResponseValidationErrors(pageAddResponse?.ValidationErrors, page);
             }
             else
             {
@@ -354,7 +354,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
             var page = await _qnaApiClient.GetPage(application.ApplicationId, sectionId, pageId);
 
-            var answers = GetAnswersFromForm();
+            var answers = GetAnswersFromForm(page);
             
             SetPageAnswersResponse updatePageResult;
             var fileupload = page.Questions?.Any(q => q.Input.Type == "FileUpload");
@@ -379,7 +379,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             
             page = StoreEnteredAnswers(answers, page);
 
-            await SetResponseValidationErrors(updatePageResult?.ValidationErrors, page);
+            SetResponseValidationErrors(updatePageResult?.ValidationErrors, page);
             
 
             return RedirectToAction("Page", new { Id, sequenceNo, sectionId, pageId, __redirectAction });
@@ -516,7 +516,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 : RedirectToAction("Sequence", "Application", new { Id });
         }
 
-        private async Task SetResponseValidationErrors(List<KeyValuePair<string, string>> validationErrors, Page page)
+        private void SetResponseValidationErrors(List<KeyValuePair<string, string>> validationErrors, Page page)
         {
             if (validationErrors != null)
             {
@@ -539,14 +539,38 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             return response;
         }
 
-        private List<Answer> GetAnswersFromForm()
+        private List<Answer> GetAnswersFromForm(Page page)
         {
-            var answers = new List<Answer>();
-            foreach (var keyValuePair in HttpContext.Request.Form.Where(f => !f.Key.StartsWith("__")))
+            List<Answer> answers = new List<Answer>();
+            var questionId = page.Questions.Where(x => x.Input.Type == "ComplexRadio" || x.Input.Type == "Radio").Select(y => y.QuestionId).FirstOrDefault();
+
+            foreach (var keyValuePair in HttpContext.Request.Form.Where(f => !f.Key.StartsWith("__") && !f.Key.Contains("RedirectAction")))
             {
                 answers.Add(new Answer() { QuestionId = keyValuePair.Key, Value = keyValuePair.Value });
             }
 
+            if (answers != null && !answers.Any())
+            {
+                answers.Add(new Answer { QuestionId = questionId, Value = "" });
+            }
+            else if (questionId != null && answers.Any(y => y.QuestionId.Contains(questionId)))
+            {
+                if (answers.All(x => x.Value == ""))
+                {
+                    foreach (var answer in answers.Where(y => y.QuestionId.Contains(questionId + ".") && y.Value == ""))
+                    {
+                        answer.QuestionId = questionId;
+                        break;
+                    }
+                }
+                else if (answers.Count(y => y.QuestionId.Contains(questionId) && y.Value == "") == 1 && answers.Count(y => y.QuestionId == questionId && y.Value != "") == 0)
+                {
+                    foreach (var answer in answers.Where(y => y.QuestionId.Contains(questionId + ".") && y.Value == ""))
+                    {
+                        answer.QuestionId = questionId;
+                    }
+                }
+            }
             return answers;
         }
 
