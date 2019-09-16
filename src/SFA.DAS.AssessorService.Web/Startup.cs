@@ -72,6 +72,36 @@ namespace SFA.DAS.AssessorService.Web
             
             services.AddAntiforgery(options => options.Cookie = new CookieBuilder() { Name = ".Assessors.AntiForgery", HttpOnly = true });
            
+            if (_env.IsDevelopment())
+            {
+                services.AddDataProtection()
+                    .PersistKeysToFileSystem(new DirectoryInfo(Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "keys")))
+                    .SetApplicationName("AssessorApply");
+
+                services.AddDistributedMemoryCache();
+            }
+            else
+            {
+                try
+                {
+                    var redis = ConnectionMultiplexer.Connect(
+                        $"{Configuration.SessionRedisConnectionString},DefaultDatabase=1");
+
+                    services.AddDataProtection()
+                        .PersistKeysToStackExchangeRedis(redis, "AssessorApply-DataProtectionKeys")
+                        .SetApplicationName("AssessorApply");
+                    services.AddDistributedRedisCache(options =>
+                    {
+                        options.Configuration = $"{Configuration.SessionRedisConnectionString},DefaultDatabase=0";
+                    });
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError(e,
+                        $"Error setting redis for session.  Conn: {Configuration.SessionRedisConnectionString}");
+                    throw;
+                }
+            }
             
             services.AddSession(opt =>
             {

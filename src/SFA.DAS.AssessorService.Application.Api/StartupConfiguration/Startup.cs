@@ -156,6 +156,8 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                 {
                     TestDataService.AddTestData(serviceProvider.GetService<AssessorDbContext>());
                 }
+                
+                
             }
             catch (Exception e)
             {
