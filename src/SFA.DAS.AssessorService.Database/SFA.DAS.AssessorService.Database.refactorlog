@@ -56,4 +56,11 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="UserPrivilege" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="a4a5fc29-8ed4-47cf-83a1-6cd4f455a8ee" ChangeDateTime="09/14/2019 09:25:20">
+    <Property Name="ElementName" Value="[dbo].[Data_Summaries]" />
+    <Property Name="ElementType" Value="SqlProcedure" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[OppFinder_Update_StandardSummary]" />
+  </Operation>
 </Operations>

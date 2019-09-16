@@ -13,14 +13,12 @@ namespace SFA.DAS.AssessorService.Api.Types.AutoMapperProfiles
                 .ForMember(dest => dest.StandardReference, opt => opt.MapFrom(source => source.StandardReference))
                 .ForMember(dest => dest.StandardName, opt => opt.MapFrom(source => source.StandardName))
                 .ForMember(dest => dest.ActiveApprentices, opt => opt.MapFrom(source => source.ActiveApprentices))
-                .ForMember(dest => dest.RegisteredEPAOs, opt => opt.MapFrom(source => source.RegisteredEPAOs))
-                .ForAllOtherMembers(dest => dest.Ignore());
+                .ForMember(dest => dest.RegisteredEPAOs, opt => opt.MapFrom(source => source.RegisteredEPAOs));
 
-            CreateMap<OppFinderApprovedStandard, OppFinderSearchResult>()
-                .ForMember(dest => dest.StandardCode, opt => opt.MapFrom(source => source.StandardCode))
+            CreateMap<OppFinderNonApprovedStandard, OppFinderSearchResult>()
+                .ForMember(dest => dest.StandardCode, opt => opt.Ignore())
                 .ForMember(dest => dest.StandardReference, opt => opt.MapFrom(source => source.StandardReference))
-                .ForMember(dest => dest.StandardName, opt => opt.MapFrom(source => source.StandardName))
-                .ForAllOtherMembers(dest => dest.Ignore());
+                .ForMember(dest => dest.StandardName, opt => opt.MapFrom(source => source.StandardName));
         }
     }
 }

@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models.Standards
 {
@@ -11,7 +9,6 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Standards
         public string ReferenceNumber { get; set; }
         public string Title { get; set; }
         public StandardData StandardData { get; set; }
-
         public List<string> Options { get; set; }
     }
 }

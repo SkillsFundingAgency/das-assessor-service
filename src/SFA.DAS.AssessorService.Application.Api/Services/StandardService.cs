@@ -76,30 +76,43 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
             return standardCollation;
         }
 
-        public async Task<IEnumerable<StandardCollation>> GatherAllStandardDetails()
+        public async Task<IEnumerable<IfaStandard>> GetIfaStandards()
         {
-            List<IfaStandard> ifaResults = null;
-
             try
             {
                 _logger.LogInformation("STANDARD COLLATION: Starting gathering of all IFA Standard details");
-                ifaResults = await _ifaStandardsApiClient.GetAllStandards();
+                return await _ifaStandardsApiClient.GetAllStandards();
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "STANDARD COLLATION: Failed to gather all IFA Standard details");
             }
 
-            _logger.LogInformation("STANDARD COLLATION: Starting gathering of all Win Standard details");
+            return null;
+        }
+
+        public async Task<IEnumerable<StandardCollation>> GatherAllApprovedStandardDetails(List<IfaStandard> approvedIfaStandards)
+        {
+            _logger.LogInformation("STANDARD COLLATION: Starting gathering of all WIN Standard details");
             var winResults = await _assessmentOrgsApiClient.GetAllStandardsV2();
 
-            _logger.LogInformation("STANDARD COLLATION: Start collating IFA and WIN standards");
-            var collation = CollateWinAndIfaStandardDetails(winResults, ifaResults);
+            _logger.LogInformation("STANDARD COLLATION: Start collating approved IFA and WIN standards");
+            var collation = CollateWinAndIfaStandardDetails(winResults, approvedIfaStandards);
 
-            _logger.LogInformation($"STANDARD COLLATION: Add unmatched Ifa Standards to list");
-            AddIfaOnlyStandardsToGatheredStandards(ifaResults, collation);
+            _logger.LogInformation($"STANDARD COLLATION: Add unmatched approved IFA Standards to collation");
+            AddIfaOnlyStandardsToCollatedStandards(approvedIfaStandards, collation);
 
-            _logger.LogInformation($"STANDARD COLLATION: collation finished");
+            _logger.LogInformation($"STANDARD COLLATION: Approved collation finished");
+
+            return collation;
+        }
+
+        public IEnumerable<StandardNonApprovedCollation> GatherAllNonApprovedStandardDetails(List<IfaStandard> nonApprovedIfaStandards)
+        {
+            _logger.LogInformation("STANDARD COLLATION: Start collating non-approved IFA and WIN standards");
+            var collation = CollateNonApprovedIfaStandardDetails(nonApprovedIfaStandards);
+
+            _logger.LogInformation($"STANDARD COLLATION: Non-Approved collation finished");
 
             return collation;
         }
@@ -110,7 +123,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
             return results.PageOfResults;
         }
 
-        private static void AddIfaOnlyStandardsToGatheredStandards(List<IfaStandard> ifaResults, List<StandardCollation> collation)
+        private void AddIfaOnlyStandardsToCollatedStandards(List<IfaStandard> ifaResults, List<StandardCollation> collation)
         {
             var uncollatedIfaStandards = ifaResults?.Where(ifaStandard => collation.All(s => s.StandardId != ifaStandard.LarsCode))
                 .ToList();
@@ -125,7 +138,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
             }
         }
 
-        private static List<StandardCollation> CollateWinAndIfaStandardDetails(List<StandardSummary> winResults, List<IfaStandard> ifaResults)
+        private List<StandardCollation> CollateWinAndIfaStandardDetails(List<StandardSummary> winResults, List<IfaStandard> ifaResults)
         {
             var collation = new List<StandardCollation>();
             foreach (var winStandard in winResults)
@@ -139,7 +152,19 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
             return collation;
         }
 
-        private static StandardCollation MapDataToStandardCollation(int standardId, IfaStandard ifaStandard, StandardSummary winStandard)
+        private List<StandardNonApprovedCollation> CollateNonApprovedIfaStandardDetails(List<IfaStandard> ifaResultsWithoutLarsCode)
+        {
+            var collation = new List<StandardNonApprovedCollation>();
+            foreach (var ifaStandard in ifaResultsWithoutLarsCode)
+            {
+                var standard = MapDataToStandardNonApprovedCollation(ifaStandard);
+                collation.Add(standard);
+            }
+
+            return collation;
+        }
+
+        private StandardCollation MapDataToStandardCollation(int standardId, IfaStandard ifaStandard, StandardSummary winStandard)
         {
             return new StandardCollation
             {
@@ -150,6 +175,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
                 {
                     Category = ifaStandard?.Route,
                     IfaStatus = ifaStandard?.Status,
+                    IntegratedDegree = ifaStandard?.IntegratedDegree,
                     EffectiveFrom = winStandard?.EffectiveFrom,
                     EffectiveTo = winStandard?.EffectiveTo,
                     Level = winStandard?.Level ?? ifaStandard?.Level,
@@ -157,6 +183,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
                     IfaOnly = winStandard == null,
                     Duration = winStandard?.Duration ?? ifaStandard?.TypicalDuration,
                     MaxFunding = winStandard?.CurrentFundingCap ?? ifaStandard?.MaxFunding,
+                    Trailblazer = ifaStandard?.TbMainContact,
                     PublishedDate = ifaStandard?.ApprovedForDelivery,
                     IsPublished = winStandard?.IsPublished ?? ifaStandard?.IsPublished,
                     Ssa1 = ifaStandard?.Ssa1,
@@ -164,11 +191,29 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
                     OverviewOfRole = ifaStandard?.OverviewOfRole,
                     IsActiveStandardInWin = winStandard?.IsActiveStandard,
                     FatUri = winStandard?.Uri,
-                    // ON-1847 - This is a tactical fix to replace the incorrect url with the known url of the ifa service 
-                    // the url which is being returned from the ifa service is currently incorrect and pointing to local host due
-                    // to a bug in the ifa service; the configured url is not available in this method
-                    IfaUri = ifaStandard?.Url is null ? null : ifaStandard.Url.Replace("http://localhost", "https://www.instituteforapprenticeships.org"),
-                    AssessmentPlanUrl = ifaStandard?.AssessmentPlanUrl is null ? null : ifaStandard.AssessmentPlanUrl.Replace("http://localhost", "https://www.instituteforapprenticeships.org")
+                    IfaUri = ifaStandard?.Url,
+                    AssessmentPlanUrl = ifaStandard?.AssessmentPlanUrl,
+                    StandardPageUrl = ifaStandard?.StandardPageUrl
+                }
+            };
+        }
+
+        private StandardNonApprovedCollation MapDataToStandardNonApprovedCollation(IfaStandard ifaStandard)
+        {
+            return new StandardNonApprovedCollation
+            {
+                ReferenceNumber = ifaStandard.ReferenceNumber,
+                Title = ifaStandard.Title,
+                StandardData = new StandardNonApprovedData
+                {
+                    Category = ifaStandard.Route,
+                    IfaStatus = ifaStandard.Status,
+                    IntegratedDegree = ifaStandard.IntegratedDegree,
+                    Level = ifaStandard.Level,
+                    Duration = ifaStandard.TypicalDuration,
+                    Trailblazer = ifaStandard.TbMainContact,
+                    OverviewOfRole = ifaStandard.OverviewOfRole,
+                    StandardPageUrl = ifaStandard.StandardPageUrl
                 }
             };
         }

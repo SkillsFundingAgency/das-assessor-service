@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [dbo].[OppFinder_Approved_Standards]
+﻿CREATE PROCEDURE [dbo].[OppFinder_List_Approved_Standards]
 	 @SortColumn AS NVARCHAR(20),
 	 @SortAscending AS INT,
      @PageSize AS INT,

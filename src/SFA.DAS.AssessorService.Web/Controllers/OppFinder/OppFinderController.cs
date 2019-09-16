@@ -91,7 +91,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.OppFinder
         {
             _oppFinderSession.ApprovedPageIndex = pageIndex;
             var approvedStandards = await GetPageApprovedStandards(_oppFinderSession.ApprovedPageIndex);
-            
+
             var vm = new OppFinderSearchViewModel
             {
                 ApprovedStandards = approvedStandards,
@@ -335,80 +335,52 @@ namespace SFA.DAS.AssessorService.Web.Controllers.OppFinder
         {
             var pageSize = _oppFinderSession.ApprovedStandardsPerPage;
             var sortColumn = _oppFinderSession.ApprovedSortColumn;
-            var sortDirection = _oppFinderSession.ApprovedSortDirection == "Asc" ? 1 : 0;
+            var sortAscending = _oppFinderSession.ApprovedSortDirection == "Asc" ? 1 : 0;
 
             var response = await  _oppFinderApiClient.GetApprovedStandards(
                 sortColumn.ToString(),
-                sortDirection,
+                sortAscending,
                 pageSize,
                 pageIndex,
                 PageSetSize);
 
-            //var approvedStandards = response.Standards.ConvertAll(p => p as OppFinderApprovedSearchResult);
-
-            //var approvedTestData = ApprovedTestData().ConvertAll(p => p as OppFinderApprovedSearchResult);
-
-            //var oppFinderSearchResults = OrderByList(approvedTestData, sortColumn.ToString(), sortDirection)
-            //  .Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
-
-            //var approvedStandards = new PaginatedList<OppFinderSearchResult>(
-            //  oppFinderSearchResults.ConvertAll(p => p as OppFinderSearchResult), ApprovedTestData().Count, pageIndex, pageSize);
-            //response.Standards.PageSetSize = PageSetSize;
-
-            return await Task.FromResult(response.Standards.Convert<OppFinderSearchResult>());
-        }
-
-        private List<T> OrderByList<T>(List<T> list, string columnName, string sortDirection)
-        {
-            var property = typeof(T).GetProperty(columnName);
-            var multiplier = sortDirection == "Asc" ? 1 : -1;
-
-            var sortedList = new List<T>();
-            sortedList.AddRange(list);
-
-            sortedList.Sort((t1, t2) => {
-                var col1 = property.GetValue(t1);
-                var col2 = property.GetValue(t2);
-                return multiplier * Comparer<object>.Default.Compare(col1, col2);
-            });
-
-            return sortedList;
+            return response.Standards.Convert<OppFinderSearchResult>();
         }
 
         private async Task<PaginatedList<OppFinderSearchResult>> GetPageInDevelopmentStandards(int pageIndex)
         {
             var pageSize = _oppFinderSession.InDevelopmentStandardsPerPage;
             var sortColumn = _oppFinderSession.InDevelopmentSortColumn;
-            var sortDirection = _oppFinderSession.InDevelopmentSortDirection;
+            var sortAscending = _oppFinderSession.InDevelopmentSortDirection == "Asc" ? 1 : 0;
+            var nonApprovedType = "InDevelopment";
 
-            var inDevelopmentTestData = InDevelopmentTestData();
+            var response = await _oppFinderApiClient.GetNonApprovedStandards(
+                sortColumn.ToString(),
+                sortAscending,
+                pageSize,
+                pageIndex,
+                PageSetSize,
+                nonApprovedType);
 
-            var oppFinderSearchResults = OrderByList(inDevelopmentTestData, sortColumn.ToString(), sortDirection)
-                .Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
-
-            var inDevelopmentStandards = new PaginatedList<OppFinderSearchResult>(
-                oppFinderSearchResults.ConvertAll(p => p as OppFinderSearchResult), InDevelopmentTestData().Count, pageIndex, pageSize);
-            inDevelopmentStandards.PageSetSize = PageSetSize;
-
-            return await Task.FromResult(inDevelopmentStandards);
+            return response.Standards;
         }
 
         private async Task<PaginatedList<OppFinderSearchResult>> GetPageProposedStandards(int pageIndex)
         {
             var pageSize = _oppFinderSession.ProposedStandardsPerPage;
             var sortColumn = _oppFinderSession.ProposedSortColumn;
-            var sortDirection = _oppFinderSession.ProposedSortDirection;
+            var sortAscending = _oppFinderSession.ProposedSortDirection == "Asc" ? 1 : 0;
+            var nonApprovedType = "Proposed";
 
-            var proposedTestData = ProposedTestData();
+            var response = await _oppFinderApiClient.GetNonApprovedStandards(
+                sortColumn.ToString(),
+                sortAscending,
+                pageSize,
+                pageIndex,
+                PageSetSize,
+                nonApprovedType);
 
-            var oppFinderSearchResults = OrderByList(proposedTestData, sortColumn.ToString(), sortDirection)
-                .Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
-
-            var proposedStandards = new PaginatedList<OppFinderSearchResult>(
-                oppFinderSearchResults.ConvertAll(p => p as OppFinderSearchResult), ProposedTestData().Count, pageIndex, pageSize);
-            proposedStandards.PageSetSize = PageSetSize;
-
-            return await Task.FromResult(proposedStandards);
+            return response.Standards;
         }
 
         private async Task<OppFinderSearchViewModel> MapViewModelFromSession()
@@ -431,45 +403,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers.OppFinder
                 ProposedSortDirection = _oppFinderSession.ProposedSortDirection,
                 ProposedPageIndex = _oppFinderSession.ProposedPageIndex
             };
-        }
-
-        private List<OppFinderSearchResult> ApprovedTestData()
-        {
-            var oppFinderSearchResults = new List<OppFinderSearchResult>();
-
-            for (int count = 1; count <= 600; count++)
-            {
-                var name = $"{count.ToString()} ->>>>>>>>>>>>>>>>>>";
-                oppFinderSearchResults.Add(new OppFinderApprovedSearchResult { StandardName = name, ActiveApprentices = count, RegisteredEPAOs = count*2 });
-            }
-
-            return oppFinderSearchResults;
-        }
-
-        private List<OppFinderSearchResult> InDevelopmentTestData()
-        {
-            var oppFinderSearchResults = new List<OppFinderSearchResult>();
-
-            for (int count = 601; count <= 622; count++)
-            {
-                var name = $"{count.ToString()} ->>>>>>>>>>>>>>>>>>";
-                oppFinderSearchResults.Add(new OppFinderSearchResult { StandardName = name });
-            }
-
-            return oppFinderSearchResults;
-        }
-
-        private List<OppFinderSearchResult> ProposedTestData()
-        {
-            var oppFinderSearchResults = new List<OppFinderSearchResult>();
-
-            for (int count = 623; count <= 644; count++)
-            {
-                var name = $"{count.ToString()} ->>>>>>>>>>>>>>>>>>";
-                oppFinderSearchResults.Add(new OppFinderSearchResult { StandardName = name });
-            }
-
-            return oppFinderSearchResults;
         }
     }
 }

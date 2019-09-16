@@ -9,10 +9,16 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
 {
     public interface IStandardRepository
     {
-        Task<string> UpsertStandards(List<StandardCollation> standards);
+        Task<string> UpsertApprovedStandards(List<StandardCollation> standards);
+        Task<string> UpsertNonApprovedStandards(List<StandardNonApprovedCollation> standards);
+
         Task<List<StandardCollation>> GetStandardCollations();
         Task<StandardCollation> GetStandardCollationByStandardId(int standardId);
         Task<StandardCollation> GetStandardCollationByReferenceNumber(string referenceNumber);
+
+        Task<List<StandardNonApprovedCollation>> GetStandardNonApprovedCollations();
+        Task<StandardNonApprovedCollation> GetStandardNonApprovedCollationByReferenceNumber(string referenceNumber);
+
         Task<DateTime?> GetDateOfLastStandardCollation();
         Task<int> GetEpaoStandardsCount(string endPointAssessorOrganisationId);
         Task<EpoRegisteredStandardsResult> GetEpaoRegisteredStandards(string endPointAssessorOrganisationId,
@@ -23,6 +29,8 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<List<EpaoPipelineStandardExtract>> GetEpaoPipelineStandardsExtract(string endPointAssessorOrganisationId);
 
         Task<ApprovedStandardsResult> GetOppFinderApprovedStandards(string sortColumn, int sortAscending, int pageSize, int pageIndex);
+        Task<NonApprovedStandardsResult> GetOppFinderNonApprovedStandards(string sortColumn, int sortAscending, int pageSize, int pageIndex, string nonApprovedType);
+        
     }
 
     public class EpoRegisteredStandardsResult
@@ -42,6 +50,13 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
     public class ApprovedStandardsResult
     {
         public IEnumerable<OppFinderApprovedStandard> PageOfResults { get; set; }
+
+        public int TotalCount { get; set; }
+    }
+
+    public class NonApprovedStandardsResult
+    {
+        public IEnumerable<OppFinderNonApprovedStandard> PageOfResults { get; set; }
 
         public int TotalCount { get; set; }
     }

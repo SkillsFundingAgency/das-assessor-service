@@ -39,5 +39,15 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             _logger.LogInformation($"Received request to retrieve approved standards");
             return Ok(await _mediator.Send(new GetOppFinderApprovedStandardsRequest(sortColumn, sortAscending, pageSize, normalisedPageIndex, pageSetSize)));
         }
+
+        [HttpGet("nonapproved", Name = "GetNonApprovedStandards")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(int))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> GetNonApprovedStandards(string sortColumn, int sortAscending, int pageSize, int? pageIndex, int pageSetSize, string nonApprovedType)
+        {
+            var normalisedPageIndex = (pageIndex == null || pageIndex == 0) ? 1 : pageIndex;
+            _logger.LogInformation($"Received request to retrieve non approved standards {nonApprovedType}");
+            return Ok(await _mediator.Send(new GetOppFinderNonApprovedStandardsRequest(sortColumn, sortAscending, pageSize, normalisedPageIndex, pageSetSize, nonApprovedType)));
+        }
     }
 }

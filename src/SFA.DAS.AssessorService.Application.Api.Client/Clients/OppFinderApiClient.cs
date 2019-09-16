@@ -27,5 +27,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                     $"Could not find any approved standards");
             }
         }
+
+        public async Task<GetOppFinderNonApprovedStandardsResponse> GetNonApprovedStandards(string sortColumn, int sortAscending, int pageSize, int? pageIndex, int pageSetSize, string nonApprovedType)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/oppfinder/nonapproved?sortColumn={sortColumn}&sortAscending={sortAscending}&pageSize={pageSize}&pageIndex={pageIndex}&pageSetSize={pageSetSize}&nonApprovedType={nonApprovedType}"))
+            {
+                return await RequestAndDeserialiseAsync<GetOppFinderNonApprovedStandardsResponse>(request,
+                    $"Could not find any non approved standards {nonApprovedType}");
+            }
+        }
     }
 }
