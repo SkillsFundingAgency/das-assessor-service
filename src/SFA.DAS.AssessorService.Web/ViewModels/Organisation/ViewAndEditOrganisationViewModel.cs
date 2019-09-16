@@ -1,12 +1,10 @@
 ﻿using System.Collections.Generic;
-using SFA.DAS.Apprenticeships.Api.Types;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Azure;
 
 
 using SFA.DAS.AssessorService.Web.ViewModels.Account;
-using SFA.DAS.AssessorService.Api.Types.Models.AO;
 
 namespace SFA.DAS.AssessorService.Web.ViewModels.Organisation
 {

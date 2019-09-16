@@ -68,8 +68,8 @@ BEGIN
 							JSON_VALUE(StandardData,'$.LastDateForNewStarts') IS NULL 
 						)
 				) st1 ON st1.StandardId = il1.StdCode
-				LEFT JOIN Organisations og1 ON og1.EndPointAssessorOrganisationId = il1.EPAOrgid
-				LEFT JOIN Certificates ce1 ON ce1.StandardCode = il1.stdcode and ce1.Uln = il1.uln 
+				LEFT JOIN Organisations og1 ON og1.EndPointAssessorOrganisationId = il1.EpaOrgid
+				LEFT JOIN Certificates ce1 ON ce1.StandardCode = il1.StdCode and ce1.Uln = il1.Uln 
 				WHERE ce1.Uln IS NULL
 				AND il1.CompletionStatus = 1
 				AND (CASE WHEN il1.PlannedEndDate > GETDATE() THEN EOMONTH(il1.PlannedEndDate) ELSE EOMONTH(DATEADD(month, st1.Duration, il1.LearnStartDate)) END) >= DATEADD(month,-3,GETDATE())
@@ -134,9 +134,9 @@ BEGIN
 		SELECT StandardCode,  ReferenceNumber StandardReference, Title StandardName, JSON_VALUE(StandardData, '$.Category') Sector, JSON_VALUE(StandardData,'$.Level') StandardLevel
 				,ISNULL(Area,'Other') Region, ISNULL(Ordering,10) Ordering, 0 Learners, COUNT(*) Assessments, 0 TotalEPAOs, 0 EndPointAssessors, NULL EndPointAssessorList
 		FROM (
-			SELECT ce1.StandardCode,  ISNULL(ISNULL(il1.DelLocPostCode, JSON_VALUE(ce1.Certificatedata,'$.ContactPostCode')),'ZZ99 9ZZ') DelLocPostCode
+			SELECT ce1.StandardCode,  ISNULL(ISNULL(il1.DelLocPostCode, JSON_VALUE(ce1.CertificateData,'$.ContactPostCode')),'ZZ99 9ZZ') DelLocPostCode
 			FROM [Certificates] ce1
-			LEFT JOIN Ilrs il1 ON il1.StdCode = ce1.StandardCode AND il1.Uln = ce1.uln
+			LEFT JOIN Ilrs il1 ON il1.StdCode = ce1.StandardCode AND il1.Uln = ce1.Uln
 			WHERE 1=1
 			AND IsPrivatelyFunded = 0
 			AND ce1.[Status] NOT IN ('Deleted','Draft')

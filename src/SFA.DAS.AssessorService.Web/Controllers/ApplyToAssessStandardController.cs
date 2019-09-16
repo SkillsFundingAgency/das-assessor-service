@@ -44,7 +44,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [HttpGet]
         [Route("GoToApplyToAssessStandard")]
         [TypeFilter(typeof(MenuFilter), Arguments = new object[] { Pages.Standards })]
-        public async Task<IActionResult> GoToApplyToAssessStandard()
+        public IActionResult GoToApplyToAssessStandard()
         {
             var signinId = _contextAccessor.HttpContext.User?.Claims.FirstOrDefault(c => c.Type == "sub")?.Value;
            // var applyContact = await _contactApplyContact.GetApplyContactBySignInId(Guid.Parse(signinId));
