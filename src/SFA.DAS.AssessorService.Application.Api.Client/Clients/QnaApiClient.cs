@@ -77,7 +77,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task<AddPageAnswerResponse> AddPageAnswers(Guid applicationId, Guid sectionId, string pageId, List<Answer> answer)
+        public async Task<AddPageAnswerResponse> AddAnswersToMultipleAnswerPage(Guid applicationId, Guid sectionId, string pageId, List<Answer> answer)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Post, $"/applications/{applicationId}/sections/{sectionId}/pages/{pageId}/multiple"))
             {
