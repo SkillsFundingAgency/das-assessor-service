@@ -68,7 +68,7 @@ BEGIN
 							JSON_VALUE(StandardData,'$.LastDateForNewStarts') IS NULL 
 						)
 				) st1 ON st1.StandardId = il1.StdCode
-				LEFT JOIN Organisations og1 ON og1.EndPointAssessorOrganisationId = il1.EpaOrgid
+				LEFT JOIN Organisations og1 ON og1.EndPointAssessorOrganisationId = il1.EpaOrgId
 				LEFT JOIN Certificates ce1 ON ce1.StandardCode = il1.StdCode and ce1.Uln = il1.Uln 
 				WHERE ce1.Uln IS NULL
 				AND il1.CompletionStatus = 1
