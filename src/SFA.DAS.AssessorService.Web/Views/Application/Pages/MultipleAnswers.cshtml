@@ -79,7 +79,7 @@
                             <input type="hidden" id="SectionId" name="SectionId" value="@Model.SectionId" />
                             <input type="hidden" id="SequenceNo" name="SequenceNo" value="@Model.SequenceNo" />
                             <input type="hidden" id="PageId" name="PageId" value="@Model.PageId" />
-                            <input type="hidden" id="RedirectAction" name="RedirectAction" value="@Model.RedirectAction" />
+                            <input type="hidden" id="__redirectAction" name="__redirectAction" value="@Model.RedirectAction" />
                             <div class="govuk-!-margin-top-4">
                                 <button class="govuk-button govuk-button--looks-like-link" type="submit">Delete</button>
                             </div>
@@ -93,9 +93,10 @@
     
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            @* no action is specified for the form, post back to the get url to preserve the page hierarchy parameters *@
-            <form method="post" novalidate enctype="multipart/form-data">
-                <input type="hidden" id="RedirectAction" name="RedirectAction" value="@Model.RedirectAction" />
+            <form method="post" novalidate enctype="multipart/form-data" 
+                  asp-action="SaveMultiplePageAnswers" asp-route-Id="@Model.Id" asp-route-sequenceNo="@Model.SequenceNo" 
+                  asp-route-sectionId="@Model.SectionId" asp-route-pageId="@Model.PageId" asp-route-__redirectAction="@Model.RedirectAction">
+                <input type="hidden" id="__redirectAction" name="__redirectAction" value="@Model.RedirectAction" />
                 @if (Model.Questions.Count() == 1)
                 {
                     foreach (var question in Model.Questions)
