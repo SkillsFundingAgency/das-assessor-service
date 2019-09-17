@@ -12,7 +12,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         Task<List<ApplicationResponse>> GetApplications(Guid userId, bool createdBy);
         Task<ApplicationResponse> GetApplication(Guid id);
         Task<Guid> CreateApplication(CreateApplicationRequest createApplicationRequest);
-        Task<bool> Submit(Guid id,Guid userId,string email, Sequence sequence, List<Section> sections, string referenceFormat);
+        Task<bool> Submit(Guid id,Guid userId,string email,string contactName, Sequence sequence, List<Section> sections, string referenceFormat);
 
         //Task DeleteAnswer(Guid applicationId, int sequenceId, int sectionId, string pageId, Guid answerId, Guid userId);
         //Task ImportWorkflow(IFormFile file);

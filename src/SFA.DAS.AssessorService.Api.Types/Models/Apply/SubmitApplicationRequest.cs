@@ -10,6 +10,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Apply
         public string ReferenceFormat { get; set; }
         public ApplySequence Sequence { get; set; }
         public Guid UserId { get; set; }
+        public string ContactName { get; set; }
         public string Email { get; set; }
         public string StandardReference { get; set; }
         public string StandardName { get; set; }

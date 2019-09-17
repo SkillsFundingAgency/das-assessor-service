@@ -60,7 +60,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task<bool> Submit(Guid id, Guid userId, string email, Sequence sequence, List<Section> sections, string referenceFormat)
+        public async Task<bool> Submit(Guid id, Guid userId, string email, string contactName, Sequence sequence, List<Section> sections, string referenceFormat)
         {
             var applySections = sections.Select(x => new ApplySection
             {
@@ -75,6 +75,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                 return await PostPutRequestWithResponse<SubmitApplicationRequest, bool>(request, new SubmitApplicationRequest {
                     ApplicationId = id,
                     ReferenceFormat = referenceFormat,
+                    ContactName = contactName,
                     Email = email,
                     UserId = userId,
                     Sequence = new ApplySequence

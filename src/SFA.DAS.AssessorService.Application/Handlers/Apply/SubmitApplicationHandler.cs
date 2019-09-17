@@ -45,8 +45,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
                 application = await _applyRepository.GetApplication(request.ApplicationId);
                 var reference = application.ApplyData.Apply.ReferenceNumber;
                 var standard = application.ApplyData.Apply.StandardName;
-
-                await NotifyContact(request.Email, request.Sequence.SequenceNo, reference, standard, cancellationToken);
+                await NotifyContact(request.Email, request.ContactName, request.Sequence.SequenceNo, reference, standard, cancellationToken);
 
                 return true;
             }
@@ -145,12 +144,12 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
             return referenceNumber;
         }
 
-        private async Task NotifyContact(string email, int sequenceNo, string reference, string standard, CancellationToken cancellationToken)
+        private async Task NotifyContact(string email, string contactname, int sequenceNo, string reference, string standard, CancellationToken cancellationToken)
         {
             if (sequenceNo == 1)
             {
                 var emailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.ApplyEPAOInitialSubmission);
-                await _mediator.Send(new SendEmailRequest(email, emailTemplate, new { reference }), cancellationToken);
+                await _mediator.Send(new SendEmailRequest(email, emailTemplate, new { contactname, reference }), cancellationToken);
 
             }
             else if (sequenceNo == 2)

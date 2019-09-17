@@ -448,8 +448,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         [HttpPost("/Application/Submit")]
         public async Task<IActionResult> Submit(Guid Id)
         {
-            var userId = await GetUserId();
-            var email = await GetUserEmail();
+            var signinId = User.Claims.First(c => c.Type == "sub")?.Value;
+            var contact = await GetUserContact(signinId);
             var application = await _applicationApiClient.GetApplication(Id);
             var activeSequence = await _qnaApiClient.GetApplicationActiveSequence(application.ApplicationId);
             var canUpdate = CanUpdateApplication(activeSequence);
@@ -474,7 +474,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 }
             }
 
-            if (await _applicationApiClient.Submit(Id, userId, email, activeSequence, sections, _config.ReferenceFormat))
+            if (await _applicationApiClient.Submit(Id, contact.Id, contact?.Email, contact.DisplayName, activeSequence, sections, _config.ReferenceFormat))
             {
                 return RedirectToAction("Submitted", new { Id });
             }
@@ -660,14 +660,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             var contact = await GetUserContact(signinId);
 
             return contact?.Id ?? Guid.Empty;
-        }
-
-        private async Task<string> GetUserEmail()
-        {
-            var signinId = User.Claims.First(c => c.Type == "sub")?.Value;
-            var contact = await GetUserContact(signinId);
-
-            return contact.Email;
         }
 
         private async Task<ContactResponse> GetUserContact(string signinId)
