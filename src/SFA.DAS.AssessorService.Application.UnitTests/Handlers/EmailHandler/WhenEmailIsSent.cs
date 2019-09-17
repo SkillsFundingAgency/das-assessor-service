@@ -10,6 +10,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Internal;
 using SFA.DAS.AssessorService.Application.Handlers.EmailHandlers;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.Notifications.Api.Types;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.EmailHandler
 {
@@ -34,12 +35,19 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.EmailHandler
         public void Then_Should_Have_Invoked_NotificationApi_Successfully()
         {
             //arrange
+            var firstEmailTemplate = Builder<EMailTemplate>.CreateNew().Build();
+            firstEmailTemplate.TemplateId = "FirstTemplateId"; 
+                
             _message = Builder<SendEmailRequest>.CreateNew().WithConstructor(() =>
-                new SendEmailRequest("test@test.com", 
-                    Builder<EMailTemplate>.CreateNew().Build(),
+                new SendEmailRequest("test@test.com", firstEmailTemplate
+                    ,
                     new { key = "value" })).Build();
 
-            _emailTemplateQueryRepository.Setup(x => x.GetEmailTemplate(It.IsAny<string>())).ReturnsAsync(Builder<EMailTemplate>.CreateNew().Build());
+            var secondEmailTemplate = Builder<EMailTemplate>.CreateNew().Build();
+            secondEmailTemplate.RecipientTemplate = null;
+            
+            _emailTemplateQueryRepository.Setup(x => x.GetEmailTemplate(firstEmailTemplate.TemplateId)).ReturnsAsync(secondEmailTemplate);
+            
             _sendEmailHandler = new SendEmailHandler(_notificationApiMock.Object, _emailTemplateQueryRepository.Object,_loggerMock.Object);
 
             //act
@@ -50,14 +58,51 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.EmailHandler
         }
 
         [Test]
+        public void Then_RecipientTemplate_should_be_used_to_send_subsequent_emails()
+        {
+            var eMailTemplate1 = Builder<EMailTemplate>.CreateNew().Build();
+            eMailTemplate1.RecipientTemplate = "SecondTemplateId";
+            //arrange
+            var request = Builder<SendEmailRequest>.CreateNew().WithConstructor(() =>
+                new SendEmailRequest("test@test.com", 
+                    eMailTemplate1,
+                    new { key = "value" })).Build();
+            
+            var secondEmailTemplate = Builder<EMailTemplate>.CreateNew().Build();
+            secondEmailTemplate.TemplateId = "SecondTemplateId";
+            secondEmailTemplate.RecipientTemplate = "ThirdTemplateId";
+            
+            _emailTemplateQueryRepository.Setup(x => x.GetEmailTemplate("SecondTemplateId")).ReturnsAsync(secondEmailTemplate);
+            
+            var thirdEmailTemplate = Builder<EMailTemplate>.CreateNew().Build();
+            thirdEmailTemplate.TemplateId = "ThirdTemplateId";
+            thirdEmailTemplate.RecipientTemplate = null;
+            
+            _emailTemplateQueryRepository.Setup(x => x.GetEmailTemplate("ThirdTemplateId")).ReturnsAsync(thirdEmailTemplate);
+            
+            _sendEmailHandler = new SendEmailHandler(_notificationApiMock.Object, _emailTemplateQueryRepository.Object,_loggerMock.Object);
+            
+            _sendEmailHandler.Handle(request, new CancellationToken()).Wait();
+            
+            _notificationApiMock.Verify(not => not.SendEmail(It.IsAny<Email>()), Times.Exactly(3));
+        }
+
+        [Test]
         public void Then_Should_Have_Invoked_NotificationApi_Successfully_With_No_Personalisation_Tokens()
         {
             //arrange
+            var firstEmailTemplate = Builder<EMailTemplate>.CreateNew().Build();
+            firstEmailTemplate.TemplateId = "FirstTemplateId"; 
+            
             _message = Builder<SendEmailRequest>.CreateNew().WithConstructor(() =>
                 new SendEmailRequest("test@test.com",
-                    Builder<EMailTemplate>.CreateNew().Build(),
+                    firstEmailTemplate,
                     new {})).Build();
-            _emailTemplateQueryRepository.Setup(x => x.GetEmailTemplate(It.IsAny<string>())).ReturnsAsync(Builder<EMailTemplate>.CreateNew().Build());
+
+            var secondEmailTemplate = Builder<EMailTemplate>.CreateNew().Build();
+            secondEmailTemplate.RecipientTemplate = null;
+            
+            _emailTemplateQueryRepository.Setup(x => x.GetEmailTemplate(firstEmailTemplate.TemplateId)).ReturnsAsync(secondEmailTemplate);
 
             _sendEmailHandler = new SendEmailHandler(_notificationApiMock.Object, _emailTemplateQueryRepository.Object,_loggerMock.Object);
             //act
