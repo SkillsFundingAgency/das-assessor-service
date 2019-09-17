@@ -370,7 +370,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             else
                 updatePageResult = await _qnaApiClient.AddPageAnswer(application.ApplicationId, sectionId, pageId, answers);
 
-            if (updatePageResult.ValidationPassed)
+            if (updatePageResult?.ValidationPassed ?? false)
             {
                 if (__redirectAction == "Feedback")
                     return RedirectToAction("Feedback", new { Id });
@@ -396,6 +396,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         {
             foreach (var answer in answers)
             {
+                if (answer.QuestionId == null) continue;
+
                 var pageAnswer = page.PageOfAnswers.Single().Answers.SingleOrDefault(a => a.QuestionId == answer.QuestionId);
                 if (pageAnswer is null)
                 {
@@ -433,14 +435,14 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
         }
 
-        [HttpGet("Application/{Id}/SequenceNo/{sequenceNo}Section/{sectionId}/Page/{pageId}/Question/{questionId}/download/{filename}/RedirectAction/{redirectAction}")]
-        public async Task<IActionResult> DeleteFile(Guid Id, int sequenceNo, Guid sectionId, string pageId, string questionId, string filename, string redirectAction)
+        [HttpGet("Application/{Id}/SequenceNo/{sequenceNo}Section/{sectionId}/Page/{pageId}/Question/{questionId}/download/{filename}/RedirectAction/{__redirectAction}")]
+        public async Task<IActionResult> DeleteFile(Guid Id, int sequenceNo, Guid sectionId, string pageId, string questionId, string filename, string __redirectAction)
         {
             var application = await _applicationApiClient.GetApplication(Id);
 
             await _qnaApiClient.DeleteFile(application.ApplicationId, sectionId, pageId, questionId, filename);
 
-            return RedirectToAction("Page", new { Id, sequenceNo, sectionId, pageId,  redirectAction });
+            return RedirectToAction("Page", new { Id, sequenceNo, sectionId, pageId,  __redirectAction });
         }
 
         [HttpPost("/Application/Submit")]
