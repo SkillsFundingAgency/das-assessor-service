@@ -60,6 +60,10 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                 cfg.AddProfile<ReferenceDataOrganisationProfile>();
                 cfg.AddProfile<ReferenceDataOrganisationAddressProfile>();
 
+                cfg.AddProfile<RoatpOrganisationProfile>();
+                cfg.AddProfile<UkrlpOrganisationProfile>();
+                cfg.AddProfile<UkrlpOrganisationAddressProfile>();
+
                 cfg.AddProfile<CompaniesHouseCompanyProfile>();
                 cfg.AddProfile<CompaniesHouseAccountsProfile>();
                 cfg.AddProfile<CompaniesHouseRegisteredOfficeAddressProfile>();
