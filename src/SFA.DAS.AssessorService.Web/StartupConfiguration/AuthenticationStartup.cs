@@ -251,14 +251,6 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
                                          var organisation =
                                             await orgClient.GetEpaOrganisation(user.EndPointAssessorOrganisationId);
 
-                                         if (organisation.ApiEnabled && !string.IsNullOrEmpty(organisation.ApiUser))
-                                         {
-                                             identity.AddClaim(new Claim("http://schemas.portal.com/service",
-                                                Roles.ExternalApiAccess));
-                                             identity.AddClaim(new Claim("http://schemas.portal.com/service",
-                                                Roles.EpaoUser));
-                                         }
-
                                          identity.AddClaim(new Claim("http://schemas.portal.com/ukprn",
                                             organisation?.Ukprn == null ? "" : organisation?.Ukprn.ToString()));
 
@@ -285,17 +277,7 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
                  });
 
 
-            services.AddAuthorization(options =>
-            {
-                options.AddPolicy(Policies.ExternalApiAccess,
-                    policy =>
-                    {
-                        policy.RequireAssertion(context =>
-                            context.User.HasClaim("http://schemas.portal.com/service", Roles.ExternalApiAccess)
-                            && context.User.HasClaim("http://schemas.portal.com/service", Roles.EpaoUser)
-                            );
-                    });
-            });
+            services.AddAuthorization();
         }
 
         private static async Task<ContactResponse> CreateANewContact(Contact newContact, IContactsApiClient contactClient, ILogger<Startup> logger, string signInId)
@@ -318,13 +300,11 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
 
     public class Policies
     {
-        public const string ExternalApiAccess = "ExternalApiAccess";
         public const string SuperUserPolicy = "SuperUserPolicy";
     }
     
     public class Roles
     {
-        public const string ExternalApiAccess = "EPI";
         public const string EpaoUser = "EPA";
     }
 }

@@ -14,7 +14,7 @@
                 <div class="dashboard-box dashboard-box--green">
                     <div class="dashboard-box__content">
                         <div class="dashboard-box__header">
-                            <p class="dashboard-box__count govuk-body govuk-!-font-size-80 govuk-!-margin-bottom-1">@Model.StandardsCount</p>
+                            <p class="dashboard-box__count govuk-body govuk-!-font-size-80 govuk-!-margin-bottom-1 das-wrap">@Model.StandardsCount</p>
                             <h2 class="dashboard-box__name govuk-body govuk-!-font-size-24 govuk-!-margin-top-0 govuk-!-margin-bottom-0">Standards</h2>
                         </div>
                         <div class="dashboard-box__body">
@@ -32,7 +32,7 @@
                 <div class="dashboard-box dashboard-box--lightblue">
                     <div class="dashboard-box__content">
                         <div class="dashboard-box__header">
-                            <p class="dashboard-box__count govuk-body govuk-!-font-size-80 govuk-!-margin-bottom-1">@Model.PipelinesCount</p>
+                            <p class="dashboard-box__count govuk-body govuk-!-font-size-80 govuk-!-margin-bottom-1 das-wrap">@Model.PipelinesCount</p>
                             <h2 class="dashboard-box__name govuk-body govuk-!-font-size-24 govuk-!-margin-top-0 govuk-!-margin-bottom-0">Pipeline</h2>
                         </div>
                         <div class="dashboard-box__body">
@@ -50,8 +50,8 @@
                 <div class="dashboard-box dashboard-box--darkblue">
                     <div class="dashboard-box__content">
                         <div class="dashboard-box__header">
-                            <p class="dashboard-box__count govuk-body govuk-!-font-size-80 govuk-!-margin-bottom-1">@Model.AssessmentsCount</p>
-                            <h2 class="dashboard-box__name govuk-body govuk-!-font-size-24 govuk-!-margin-top-0 govuk-!-margin-bottom-0">Completed Assessments</h2>
+                            <p class="dashboard-box__count govuk-body govuk-!-font-size-80 govuk-!-margin-bottom-1 das-wrap">@Model.AssessmentsCount</p>
+                            <h2 class="dashboard-box__name govuk-body govuk-!-font-size-24 govuk-!-margin-top-0 govuk-!-margin-bottom-0">Completed assessments</h2>
                         </div>
                         <div class="dashboard-box__body">
                             <ul class="govuk-list">
@@ -67,21 +67,49 @@
                         <div class="dashboard-box__header">
                             <h2 class="govuk-body govuk-!-font-weight-bold govuk-!-font-size-24 govuk-!-margin-top-0 govuk-!-margin-bottom-0">Organisation</h2>
                         </div>
-                        <div class="dashboard-box__body">
+                        <div class="dashboard-box__body dashboard-box__body--no-top-padding">
                             <ul class="govuk-list">
                                 <li>
-                                    <a class="govuk-link" asp-controller="Organisation" asp-action="OrganisationDetails">View organisation details</a>
+                                    <a class="govuk-link" asp-controller="Organisation" asp-action="OrganisationDetails" asp-fragment="register-details">View organisation details</a>
                                 </li>
                                 <li>
                                     <a class="govuk-link" asp-controller="ManageUsers" asp-action="Index">Manage users</a>
                                 </li>
                                 <li>
-                                    <a class="govuk-link" asp-controller="ExternalApi" asp-action="Index">External API keys</a>
+                                    <a class="govuk-link" asp-controller="Organisation" asp-action="OrganisationDetails" asp-fragment="api-subscription">API subscription</a>
                                 </li>
                             </ul>
                         </div>
                     </div>
                 </div>
+
+                <div class="dashboard-box dashboard-box--grey dashboard-box--two-thirds">
+                    <div class="dashboard-box__content">
+                        <div class="dashboard-box__header">
+                            <h2 class="govuk-body govuk-!-font-weight-bold govuk-!-font-size-24 govuk-!-margin-top-0 govuk-!-margin-bottom-0">Record multiple assessments with ease</h2>
+                        </div>
+                        <div class="dashboard-box__body dashboard-box__body--no-top-padding">
+                            <p class="govuk-body">
+                                Our Record a grade API will help you to:
+                            </p>
+                            <ul class="govuk-list govuk-list--bullet">
+                                <li>
+                                    record all grades
+                                </li>
+                                <li>
+                                    submit one or more certificate requests at once
+                                </li>
+                                <li>
+                                    reduce errors and increase speed
+                                </li>
+                            </ul>
+                            <p class="govuk-body">
+                                <a class="govuk-link" href="https://www.gov.uk/guidance/record-a-grade-api" target="_blank">Read more</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>

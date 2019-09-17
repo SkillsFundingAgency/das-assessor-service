@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using MediatR;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models
 {
-    public class GetContactsForOrganisationRequest : IRequest<List<ContactResponse>>
+    public class GetContactsWhoCanBePrimaryForOrganisationRequest : IRequest<List<ContactResponse>>
     {
-        public GetContactsForOrganisationRequest(string endPointAssessorOrganisationId)
+        public GetContactsWhoCanBePrimaryForOrganisationRequest(string endPointAssessorOrganisationId)
         {
             EndPointAssessorOrganisationId = endPointAssessorOrganisationId;
         }

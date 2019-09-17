@@ -116,6 +116,8 @@ namespace SFA.DAS.AssessorService.Web
                     HttpOnly = true
                 };
             });
+
+            services.AddHealthChecks();
             
             return ConfigureIoc(services);
         }        
@@ -177,11 +179,13 @@ namespace SFA.DAS.AssessorService.Web
             }
 
             app.UseHttpsRedirection();
+            
             app.UseSecurityHeaders()
                 .UseStaticFiles()
                 .UseSession()
                 .UseAuthentication()
                 .UseRequestLocalization()
+                .UseHealthChecks("/health")
                 .UseMvc(routes =>
                 {
                     routes.MapRoute(

@@ -56,6 +56,13 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="UserPrivilege" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="4bc0fb21-b7d1-4c62-af8c-801f0dd54547" ChangeDateTime="08/29/2019 09:01:21">
+    <Property Name="ElementName" Value="[dbo].[Privileges].[Description]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[Privileges]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="PrivilegeData" />
+  </Operation>
   <Operation Name="Rename Refactor" Key="a4a5fc29-8ed4-47cf-83a1-6cd4f455a8ee" ChangeDateTime="09/14/2019 09:25:20">
     <Property Name="ElementName" Value="[dbo].[Data_Summaries]" />
     <Property Name="ElementType" Value="SqlProcedure" />

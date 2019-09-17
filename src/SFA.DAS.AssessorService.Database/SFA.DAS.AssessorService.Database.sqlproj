@@ -124,6 +124,8 @@
     <Build Include="Tables\StandardNonApprovedCollation.sql" />
     <Build Include="Functions\Scalar-valued Functions\OppFinder_Is_Proposed_StandardStatus.sql" />
     <Build Include="StoredProcedures\OppFinder_List_NonApproved_Standards.sql" />
+    <Build Include="Tables\Audits.sql" />
+    <None Include="PostDeploymentScripts\on-2210-dashboard_api_subscriptions.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="SFA.DAS.AssessorService.Database.refactorlog" />

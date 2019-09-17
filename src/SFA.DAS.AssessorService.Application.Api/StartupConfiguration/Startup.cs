@@ -128,7 +128,7 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                     }
                 });
 
-                
+                services.AddHealthChecks();
 
                 serviceProvider = ConfigureIOC(services);
 
@@ -224,6 +224,7 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                 app.UseMiddleware(typeof(ErrorHandlingMiddleware));
                 
                 app.UseRequestLocalization();
+                app.UseHealthChecks("/health");
                 app.UseMvc();
             }
             catch (Exception e)
