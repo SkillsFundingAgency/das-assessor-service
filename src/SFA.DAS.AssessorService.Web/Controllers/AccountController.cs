@@ -134,7 +134,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 return View("~/Views/Account/AccessDeniedForPrivilege.cshtml", new AccessDeniedViewModel
                 {
                     Title = privilege.UserPrivilege,
-                    Description = privilege.Description,
+                    Rights = privilege.PrivilegeData.Rights,
                     PrivilegeId = deniedPrivilegeContext.PrivilegeId,
                     ContactId = userId,
                     UserHasUserManagement = usersPrivileges.Any(up => up.Privilege.Key == Privileges.ManageUsers),

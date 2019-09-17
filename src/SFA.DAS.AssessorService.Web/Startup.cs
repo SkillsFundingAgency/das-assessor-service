@@ -82,6 +82,8 @@ namespace SFA.DAS.AssessorService.Web
                     HttpOnly = true
                 };
             });
+
+            services.AddHealthChecks();
             
             return ConfigureIoc(services);
         }        
@@ -100,12 +102,10 @@ namespace SFA.DAS.AssessorService.Web
 
                 config.For<ITokenService>().Use<TokenService>();
                 config.For<ITokenService>().Add<QnaTokenService>().Named("qnaTokenService");
-
-                config.For<IQnaApiClient>().Use<QnaApiClient>()
-                    .Ctor<ITokenService>("qnaTokenService").Is(c => c.GetInstance<ITokenService>("qnaTokenService"));
                 config.For<ITokenService>().Use<TokenService>().Ctor<bool>("useSandbox").Is(false); // Always false unless we want to start integrating with the sandbox environment;
-                             
                 config.For<IWebConfiguration>().Use(Configuration);
+                config.For<IQnaApiClient>().Use<QnaApiClient>()
+                  .Ctor<ITokenService>("qnaTokenService").Is(c => c.GetInstance<ITokenService>("qnaTokenService")).Ctor<string>().Is(Configuration.QnaApiAuthentication.ApiBaseAddress);
                 config.For<ISessionService>().Use<SessionService>().Ctor<string>().Is(_env.EnvironmentName);
                 config.For<IOrganisationsApiClient>().Use<OrganisationsApiClient>().Ctor<string>().Is(Configuration.ClientApiAuthentication.ApiBaseAddress);
                 config.For<IStandardsApiClient>().Use<StandardsApiClient>().Ctor<string>().Is(Configuration.ClientApiAuthentication.ApiBaseAddress);
@@ -119,7 +119,6 @@ namespace SFA.DAS.AssessorService.Web
                 config.For<IIfaStandardsApiClient>().Use(() => new IfaStandardsApiClient(Configuration.IfaApiClientBaseUrl));
                 config.For<ILoginApiClient>().Use<LoginApiClient>().Ctor<string>().Is(Configuration.ClientApiAuthentication.ApiBaseAddress);
                 config.For<IApplicationApiClient>().Use<ApplicationApiClient>().Ctor<string>().Is(Configuration.ClientApiAuthentication.ApiBaseAddress);
-                config.For<IQnaApiClient>().Use<QnaApiClient>().Ctor<string>().Is(Configuration.QnaApiAuthentication.ApiBaseAddress);
 
                 config.For<IAzureTokenService>().Use<AzureTokenService>();
                 config.For<IAzureApiClient>().Use<AzureApiClient>().Ctor<string>().Is(Configuration.AzureApiAuthentication.ApiBaseAddress);
@@ -146,11 +145,13 @@ namespace SFA.DAS.AssessorService.Web
             }
 
             app.UseHttpsRedirection();
+            
             app.UseSecurityHeaders()
                 .UseStaticFiles()
                 .UseSession()
                 .UseAuthentication()
                 .UseRequestLocalization()
+                .UseHealthChecks("/health")
                 .UseMvc(routes =>
                 {
                     routes.MapRoute(

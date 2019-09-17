@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Security.Claims;
 
 using Microsoft.AspNetCore.Http;
@@ -12,11 +13,13 @@ using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Domain.Entities;
-using System.Collections.Generic;
 using SFA.DAS.AssessorService.Domain.Consts;
+using SFA.DAS.AssessorService.Application.Api.Client.Azure;
+using SFA.DAS.AssessorService.Settings;
 
 using Microsoft.AspNetCore.Mvc;
 using OrganisationData = SFA.DAS.AssessorService.Api.Types.Models.AO.OrganisationData;
+using SFA.DAS.AssessorService.Api.Types.Models.Azure;
 
 namespace SFA.DAS.AssessorService.Web.UnitTests.OrganisationControllerTests
 {
@@ -33,6 +36,9 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.OrganisationControllerTests
         protected Mock<IContactsApiClient> ContactsApiClient;
         protected Mock<IEmailApiClient> EmailApiClient;
         protected Mock<IValidationApiClient> ValidateApiClient;
+        protected Mock<IWebConfiguration> WebConfiguration;
+        protected Mock<IAzureApiClient> ExternalApiClient;
+        protected Mock<ILogger<OrganisationController>> Logger;
 
         protected string EpaoId = "EPA0001";
         protected Guid OrganisationOneId = Guid.NewGuid();
@@ -85,7 +91,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.OrganisationControllerTests
         {
             HttpContextAssessor = new Mock<IHttpContextAccessor>();
 
-            var logger = new Mock<ILogger<OrganisationController>>();
+            Logger = new Mock<ILogger<OrganisationController>>();
             SessionService = new Mock<ISessionService>();
             TokenService = new Mock<ITokenService>();
             TokenService.Setup(s => s.GetToken()).Returns("jwt");
@@ -112,6 +118,25 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.OrganisationControllerTests
             };
 
             OrganisationApiClient.Setup(c => c.GetEpaOrganisation(EpaoId)).ReturnsAsync(EpaOrganisation);
+
+            WebConfiguration = new Mock<IWebConfiguration>();
+            WebConfiguration.Setup(c => c.AzureApiAuthentication).Returns(new AzureApiAuthentication
+            {
+                ProductId = "1234567"
+            });
+
+            ExternalApiClient = new Mock<IAzureApiClient>();
+            ExternalApiClient.Setup(c => c.GetUserDetailsByUkprn(It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<bool>())).ReturnsAsync(
+                new List<AzureUser>
+                {
+                    new AzureUser
+                    {
+                        Subscriptions = new List<AzureSubscription>
+                        {
+                            new AzureSubscription()
+                        }
+                    }
+                });
 
             ContactsApiClient = new Mock<IContactsApiClient>();
             ContactsApiClient.Setup(c => c.GetPrivileges()).ReturnsAsync(
@@ -156,7 +181,9 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.OrganisationControllerTests
                     User = new ClaimsPrincipal(new ClaimsIdentity(claims.ToArray()))
                 });
 
-            sut = new OrganisationController(logger.Object, HttpContextAssessor.Object, OrganisationApiClient.Object, ContactsApiClient.Object, EmailApiClient.Object, ValidateApiClient.Object);
+            sut = new OrganisationController(HttpContextAssessor.Object, OrganisationApiClient.Object, ExternalApiClient.Object,
+                ContactsApiClient.Object, EmailApiClient.Object, ValidateApiClient.Object,
+                Logger.Object, WebConfiguration.Object);
         }
     }
 }
