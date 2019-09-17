@@ -36,6 +36,17 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Apply
                 var datetime = DateTime.Parse($"{day}/{month}/{year}");
                 return datetime.ToString("dd/MM/yyyy");
             }
+
+            if (Type == "MonthAndYear")
+            {
+                var dateparts = answer.Value.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries);
+
+                var month = int.Parse(dateparts[0]);
+                var year = int.Parse(dateparts[1]);
+                
+                return $"{month:D2}/{year}";
+            }
+            
             return answer.Value;
         }
     }

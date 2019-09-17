@@ -330,6 +330,13 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                         return RedirectToNextAction(Id, sequenceNo, sectionId, __redirectAction, nextAction.Action, nextAction.ReturnId);
                 }
 
+                if (!page.PageOfAnswers.Any())
+                {
+                    page.PageOfAnswers = new List<PageOfAnswers>() {new PageOfAnswers(){Answers = new List<Answer>()}};
+                }
+            
+                page = StoreEnteredAnswers(answers, page);
+                
                 SetResponseValidationErrors(pageAddResponse?.ValidationErrors, page);
             }
             else
