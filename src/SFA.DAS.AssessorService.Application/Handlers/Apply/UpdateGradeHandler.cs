@@ -43,10 +43,10 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
             if (org.OrganisationData.FinancialGrades == null)
                 org.OrganisationData.FinancialGrades = new List<FinancialGrade>();
 
-            if (org.OrganisationData.FinancialGrades.Any( x => x.ApplicationReference == request.Id.ToString()))
+            if (org.OrganisationData.FinancialGrades.Any( x => x.ApplicationReference == request.UpdatedGrade.ApplicationReference))
             {
                 org.OrganisationData.FinancialGrades=org.OrganisationData.FinancialGrades.
-                    Where(x => x.ApplicationReference == request.Id.ToString()).Select( s => { return request.UpdatedGrade; }
+                    Where(x => x.ApplicationReference == request.UpdatedGrade.ApplicationReference).Select( s => { return request.UpdatedGrade; }
                 ).ToList();
             }
             else
