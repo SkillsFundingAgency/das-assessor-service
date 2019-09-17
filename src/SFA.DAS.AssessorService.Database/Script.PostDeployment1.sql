@@ -79,8 +79,9 @@ END
 IF NOT EXISTS (SELECT * FROM EMailTemplates WHERE TemplateName = N'ApplyEPAOAlertSubmission')
 BEGIN
 INSERT [dbo].[EmailTemplates] ([Id],  [TemplateName], [TemplateId], [Recipients], [RecipientTemplate], [CreatedAt],  [UpdatedAt], [DeletedAt]) 
-VALUES (N'a701f4a4-2672-4da9-8005-e6eef10455D0',  N'ApplyEPAOStandardSubmission', N'a56c47c8-6310-4f5c-a3f6-9e996c375557', N'PRA.financialhealth@education.gov.uk', NULL, CAST(N'2019-01-08T11:52:09.2430000' AS DateTime2), NULL, NULL)
+VALUES (N'a701f4a4-2672-4da9-8005-e6eef10455D0',  N'ApplyEPAOAlertSubmission', N'a56c47c8-6310-4f5c-a3f6-9e996c375557', N'PRA.financialhealth@education.gov.uk', NULL, CAST(N'2019-01-08T11:52:09.2430000' AS DateTime2), NULL, NULL)
 END
+
 
 -- END OF ON-2089
 

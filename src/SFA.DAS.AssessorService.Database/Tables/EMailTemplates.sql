@@ -12,3 +12,5 @@
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
 
+CREATE UNIQUE INDEX [IXU_EMailTemplates] ON [EMailTemplates] ([TemplateName])
+GO

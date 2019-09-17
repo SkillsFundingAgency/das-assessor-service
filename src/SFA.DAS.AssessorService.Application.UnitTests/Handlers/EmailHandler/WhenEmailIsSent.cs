@@ -9,6 +9,7 @@ using SFA.DAS.Notifications.Api.Client;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Internal;
 using SFA.DAS.AssessorService.Application.Handlers.EmailHandlers;
+using SFA.DAS.AssessorService.Application.Interfaces;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.EmailHandler
 {
@@ -18,11 +19,14 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.EmailHandler
         private SendEmailHandler _sendEmailHandler;
         private SendEmailRequest _message;
         private Mock<ILogger<SendEmailHandler>> _loggerMock;
+        private Mock<IEMailTemplateQueryRepository> _emailTemplateQueryRepository;
 
        [SetUp]
         public void SetUp()
         {
             _notificationApiMock = new Mock<INotificationsApi>();
+            _emailTemplateQueryRepository = new Mock<IEMailTemplateQueryRepository>();
+
              _loggerMock = new Mock<ILogger<SendEmailHandler>>();
         }
         
@@ -35,7 +39,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.EmailHandler
                     Builder<EMailTemplate>.CreateNew().Build(),
                     new { key = "value" })).Build();
 
-            _sendEmailHandler = new SendEmailHandler(_notificationApiMock.Object, _loggerMock.Object);
+            _emailTemplateQueryRepository.Setup(x => x.GetEmailTemplate(It.IsAny<string>())).ReturnsAsync(Builder<EMailTemplate>.CreateNew().Build());
+            _sendEmailHandler = new SendEmailHandler(_notificationApiMock.Object, _emailTemplateQueryRepository.Object,_loggerMock.Object);
 
             //act
             _sendEmailHandler.Handle(_message, new CancellationToken()).Wait();
@@ -52,8 +57,9 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.EmailHandler
                 new SendEmailRequest("test@test.com",
                     Builder<EMailTemplate>.CreateNew().Build(),
                     new {})).Build();
-            _sendEmailHandler = new SendEmailHandler(_notificationApiMock.Object, _loggerMock.Object);
+            _emailTemplateQueryRepository.Setup(x => x.GetEmailTemplate(It.IsAny<string>())).ReturnsAsync(Builder<EMailTemplate>.CreateNew().Build());
 
+            _sendEmailHandler = new SendEmailHandler(_notificationApiMock.Object, _emailTemplateQueryRepository.Object,_loggerMock.Object);
             //act
             _sendEmailHandler.Handle(_message, new CancellationToken()).Wait();
 
@@ -69,7 +75,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.EmailHandler
                 new SendEmailRequest("",
                     Builder<EMailTemplate>.CreateNew().Build(),
                     new { })).Build();
-            _sendEmailHandler = new SendEmailHandler(_notificationApiMock.Object, _loggerMock.Object);
+            _emailTemplateQueryRepository.Setup(x => x.GetEmailTemplate(It.IsAny<string>())).ReturnsAsync(Builder<EMailTemplate>.CreateNew().Build());
+            _sendEmailHandler = new SendEmailHandler(_notificationApiMock.Object, _emailTemplateQueryRepository.Object, _loggerMock.Object);
 
             //act
             _sendEmailHandler.Handle(_message, new CancellationToken()).Wait();
