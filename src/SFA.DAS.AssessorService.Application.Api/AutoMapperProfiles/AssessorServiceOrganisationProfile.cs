@@ -63,8 +63,8 @@ namespace SFA.DAS.AssessorService.Application.Api.AutoMapperProfiles
                 .ForMember(dest => dest.EndPointAssessorName, opt => opt.MapFrom(source => source.EndPointAssessorName))
                 .ForMember(dest => dest.EndPointAssessorOrganisationId, opt => opt.MapFrom(source => source.EndPointAssessorOrganisationId))
                 .ForMember(dest => dest.EndPointAssessorUkprn, opt => opt.MapFrom(source => source.EndPointAssessorUkprn))
-                .ForMember(dest => dest.RoATPApproved, opt => opt.ResolveUsing(source => source.OrganisationDataFromJson?.RoATPApproved))
-                .ForMember(dest => dest.RoEPAOApproved, opt => opt.ResolveUsing(source => source.OrganisationDataFromJson?.RoEPAOApproved));
+                .ForMember(dest => dest.RoATPApproved, opt => opt.ResolveUsing(source => source.OrganisationData?.RoATPApproved))
+                .ForMember(dest => dest.RoEPAOApproved, opt => opt.ResolveUsing(source => source.OrganisationData?.RoEPAOApproved));
         }
     }
 }

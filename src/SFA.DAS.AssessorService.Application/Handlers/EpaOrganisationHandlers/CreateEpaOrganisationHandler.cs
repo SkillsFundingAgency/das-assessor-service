@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -124,6 +125,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
                     RoATPApproved = request.RoATPApproved,
                     RoEPAOApproved = request.RoEPAOApproved,
                     EndPointAssessmentOrgId = request.EndPointAssessmentOrgId,
+                    FinancialGrades = new List<ApplyTypes.FinancialGrade>(),
                     FHADetails = new FHADetails
                     {
                         FinancialDueDate = request.FinancialDueDate,

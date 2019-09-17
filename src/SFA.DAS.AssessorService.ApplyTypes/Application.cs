@@ -3,14 +3,6 @@ using System.Collections.Generic;
 
 namespace SFA.DAS.AssessorService.ApplyTypes
 {
-    public class Application : ApplyTypeBase
-    {
-        public Organisation ApplyingOrganisation { get; set; }
-        public Guid ApplyingOrganisationId { get; set; }
-        public string ApplicationStatus { get; set; }
-        public ApplicationData ApplicationData { get; set; }
-    }
-
     public class ApplicationData
     {
         public string OrganisationReferenceId { get; set; }
@@ -68,6 +60,7 @@ namespace SFA.DAS.AssessorService.ApplyTypes
         public string ReviewedBy { get; set; }
         public DateTime? EvaluatedDate { get; set; }
         public string EvaluatedBy { get; set; }
+        public bool? RequestedFeedbackAnswered { get; set; }
     }
 
     public class Feedback

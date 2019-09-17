@@ -1,9 +1,11 @@
 using System;
+using System.Collections.Generic;
 
 namespace SFA.DAS.AssessorService.ApplyTypes
 {
-    public class FinancialApplicationGrade
+    public class FinancialGrade
     {
+        public string ApplicationReference { get; set; }
         public string SelectedGrade { get; set; }
         public string InadequateMoreInformation { get; set; }
 
@@ -15,6 +17,8 @@ namespace SFA.DAS.AssessorService.ApplyTypes
         
         public string GradedBy { get; set; }
         public DateTime GradedDateTime { get; set; }
+
+        public List<FinancialEvidence> FinancialEvidences { get; set; }
     }
 
     public class FinancialDueDate
@@ -27,6 +31,11 @@ namespace SFA.DAS.AssessorService.ApplyTypes
         {
             return new DateTime(int.Parse(Year), int.Parse(Month), int.Parse(Day));
         }
+    }
+
+    public class FinancialEvidence
+    {
+        public string Filename { get; set; }
     }
 
     public class FinancialApplicationSelectedGrade

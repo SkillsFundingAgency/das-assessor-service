@@ -1,4 +1,5 @@
 ﻿using SFA.DAS.AssessorService.Api.Types.Models.Apply;
+using SFA.DAS.AssessorService.ApplyTypes;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -13,5 +14,10 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<Guid> CreateApplication(CreateApplicationRequest applicationRequest);
         Task SubmitApplicationSequence(Domain.Entities.Application application);
         Task<int> GetNextAppReferenceSequence();
+        Task<List<FinancialApplicationSummaryItem>> GetOpenFinancialApplications();
+        Task<List<FinancialApplicationSummaryItem>> GetFeedbackAddedFinancialApplications();
+        Task<List<FinancialApplicationSummaryItem>> GetClosedFinancialApplications();
+        Task UpdateApplicationFinancialGrade(Guid id,FinancialGrade financialGrade);
+        Task UpdateApplicationSectionStatus(Guid id, string sequenceNo, string sectionNo, string status);
     }
 }
