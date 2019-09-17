@@ -81,7 +81,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Infrastructure
                     return await response.Content.ReadAsAsync<T>();
                 }
 
-                return default;
+                return default(T);
             }
         }
 
