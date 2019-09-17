@@ -26,7 +26,6 @@ namespace SFA.DAS.AssessorService.Data.Apply
 
             SqlMapper.AddTypeHandler(typeof(ApplyData), new ApplyDataHandler());
             SqlMapper.AddTypeHandler(typeof(FinancialGrade), new FinancialGradeHandler());
-            SqlMapper.AddTypeHandler(typeof(FinancialDueDate), new FinancialDueDateHandler());
             SqlMapper.AddTypeHandler(typeof(FinancialEvidence), new FinancialEvidenceHandler());
         }
 

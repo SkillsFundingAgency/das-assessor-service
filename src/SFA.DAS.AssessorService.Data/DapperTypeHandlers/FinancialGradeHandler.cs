@@ -19,19 +19,6 @@ namespace SFA.DAS.AssessorService.Data.DapperTypeHandlers
 
     }
 
-    public class FinancialDueDateHandler : SqlMapper.TypeHandler<FinancialDueDate>
-    {
-        public override void SetValue(IDbDataParameter parameter, FinancialDueDate value)
-        {
-            parameter.Value = JsonConvert.SerializeObject(value);
-        }
-
-        public override FinancialDueDate Parse(object value)
-        {
-            return JsonConvert.DeserializeObject<FinancialDueDate>(value.ToString());
-        }
-
-    }
 
     public class FinancialEvidenceHandler : SqlMapper.TypeHandler<FinancialEvidence>
     {
