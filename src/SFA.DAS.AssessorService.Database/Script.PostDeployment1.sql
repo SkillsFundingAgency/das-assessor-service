@@ -66,11 +66,6 @@ BEGIN
 INSERT [dbo].[EmailTemplates] ([Id],  [TemplateName], [TemplateId], [Recipients], [RecipientTemplate], [CreatedAt],  [UpdatedAt],  [DeletedAt]) 
 VALUES (N'b66dfd61-5cc3-4a0b-83a2-84f63f3e3371',  N'ApplyEPAOInitialSubmission', N'68410850-909b-4669-a60a-f60e4b1cb89f', NULL, N'ApplyEPAOAlertSubmission', CAST(N'2019-01-08T11:52:09.2400000' AS DateTime2),  NULL, NULL)
 END
-IF NOT EXISTS (SELECT * FROM EMailTemplates WHERE TemplateName = N'ApplySignupError')
-BEGIN
-INSERT [dbo].[EmailTemplates] ([Id], [TemplateName], [TemplateId], [Recipients], [RecipientTemplate], [CreatedAt],  [UpdatedAt], [DeletedAt]) 
-VALUES (N'01dd414e-585c-47cf-8c89-ba1b84cfb103',  N'ApplySignupError', N'88799189-fe12-4887-a13f-f7f76cd6945a', NULL, NULL, CAST(N'2019-01-08T11:52:09.2200000' AS DateTime2),  NULL, NULL)
-END
 IF NOT EXISTS (SELECT * FROM EMailTemplates WHERE TemplateName = N'ApplyEPAOStandardSubmission')
 BEGIN
 INSERT [dbo].[EmailTemplates] ([Id],  [TemplateName], [TemplateId], [Recipients], [RecipientTemplate], [CreatedAt],  [UpdatedAt], [DeletedAt]) 
