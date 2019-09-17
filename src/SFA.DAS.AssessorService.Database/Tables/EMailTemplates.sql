@@ -1,7 +1,7 @@
 ﻿CREATE TABLE [dbo].[EMailTemplates](
 	[Id] [uniqueidentifier] NOT NULL DEFAULT NEWID(),
-	[TemplateName] [nvarchar](max) NOT NULL,
-	[TemplateId]  [nvarchar](max) NOT NULL,
+	[TemplateName] [nvarchar](100) NOT NULL,
+	[TemplateId]  [nvarchar](100) NOT NULL,
 	[Recipients]  [nvarchar](max) NULL,
 	[CreatedAt] [datetime2](7) NOT NULL,
 	[DeletedAt] [datetime2](7) NULL,	
