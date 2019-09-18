@@ -24,7 +24,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Standards
         public async Task<GetOppFinderNonApprovedStandardsResponse> Handle(GetOppFinderNonApprovedStandardsRequest request, CancellationToken cancellationToken)
         {
             _logger.LogInformation($"Retreiving non approved standards: {request.NonApprovedType}");
-            var result = await _standardRepository.GetOppFinderNonApprovedStandards(request.SortColumn, request.SortAscending, 
+            var result = await _standardRepository.GetOppFinderNonApprovedStandards(request.SearchTerm, request.SortColumn, request.SortAscending, 
                 request.PageSize, request.PageIndex ?? 1, request.NonApprovedType);
 
             var standards = result.PageOfResults

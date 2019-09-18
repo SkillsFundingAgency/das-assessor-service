@@ -7,6 +7,8 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.OppFinder
 {
     public class OppFinderSearchViewModel
     {
+        public string SearchTerm { get; set; }
+
         public PaginatedList<OppFinderSearchResult> ApprovedStandards { get; set; }
 
         public int ApprovedStandardsPerPage { get; set; }

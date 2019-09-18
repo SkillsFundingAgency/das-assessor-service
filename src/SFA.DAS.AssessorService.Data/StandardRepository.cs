@@ -306,9 +306,10 @@ namespace SFA.DAS.AssessorService.Data
             return result.ToList();
         }
 
-        public async Task<ApprovedStandardsResult> GetOppFinderApprovedStandards(string sortColumn, int sortAscending, int pageSize, int pageIndex)
+        public async Task<ApprovedStandardsResult> GetOppFinderApprovedStandards(string searchTerm, string sortColumn, int sortAscending, int pageSize, int pageIndex)
         {
             var @params = new DynamicParameters();
+            @params.Add("searchTerm", searchTerm);
             @params.Add("sortColumn", sortColumn);
             @params.Add("sortAscending", sortAscending);
             @params.Add("pageSize", pageSize);
@@ -338,9 +339,10 @@ namespace SFA.DAS.AssessorService.Data
             return approvedStandardsResult;
         }
 
-        public async Task<NonApprovedStandardsResult> GetOppFinderNonApprovedStandards(string sortColumn, int sortAscending, int pageSize, int pageIndex, string nonApprovedType)
+        public async Task<NonApprovedStandardsResult> GetOppFinderNonApprovedStandards(string searchTerm, string sortColumn, int sortAscending, int pageSize, int pageIndex, string nonApprovedType)
         {
             var @params = new DynamicParameters();
+            @params.Add("searchTerm", searchTerm);
             @params.Add("sortColumn", sortColumn);
             @params.Add("sortAscending", sortAscending);
             @params.Add("pageSize", pageSize);

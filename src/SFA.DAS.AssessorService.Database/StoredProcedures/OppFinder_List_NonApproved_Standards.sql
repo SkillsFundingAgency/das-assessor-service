@@ -1,4 +1,5 @@
 ﻿CREATE PROCEDURE [dbo].OppFinder_List_NonApproved_Standards
+	 @SearchTerm AS NVARCHAR(100),
 	 @SortColumn AS NVARCHAR(20),
 	 @SortAscending AS INT,
      @PageSize AS INT,
@@ -43,6 +44,14 @@ BEGIN
 			-- when an Approved standard is in the [StandardNonApprovedCollation] (because it has no StandardId) it counts as an InDevelopment standard
 			(@NonApprovedType = 'InDevelopment' AND [dbo].OppFinder_Is_Approved_StandardStatus(StandardData) = 1) OR
 			(@NonApprovedType = 'Proposed' AND [dbo].OppFinder_Is_Proposed_StandardStatus(StandardData) = 1)
+		)
+		AND 
+		(	@SearchTerm = '' OR
+			(
+				(Title LIKE '%' + @SearchTerm + '%' ) OR
+				(ReferenceNumber LIKE '%' + @SearchTerm + '%') OR
+				(JSON_VALUE(StandardData, '$.Category') LIKE '%' + @SearchTerm + '%')
+			)
 		)
 		AND IsLive = 1
 	GROUP BY 

@@ -28,8 +28,8 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
             string orderBy, string orderDirection, int pageSize, int? pageIndex);
         Task<List<EpaoPipelineStandardExtract>> GetEpaoPipelineStandardsExtract(string endPointAssessorOrganisationId);
 
-        Task<ApprovedStandardsResult> GetOppFinderApprovedStandards(string sortColumn, int sortAscending, int pageSize, int pageIndex);
-        Task<NonApprovedStandardsResult> GetOppFinderNonApprovedStandards(string sortColumn, int sortAscending, int pageSize, int pageIndex, string nonApprovedType);
+        Task<ApprovedStandardsResult> GetOppFinderApprovedStandards(string searchTerm, string sortColumn, int sortAscending, int pageSize, int pageIndex);
+        Task<NonApprovedStandardsResult> GetOppFinderNonApprovedStandards(string searchTerm, string sortColumn, int sortAscending, int pageSize, int pageIndex, string nonApprovedType);
         
     }
 

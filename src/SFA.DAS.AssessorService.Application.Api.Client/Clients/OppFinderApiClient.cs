@@ -19,21 +19,21 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         {
         }
 
-        public async Task<GetOppFinderApprovedStandardsResponse> GetApprovedStandards(string sortColumn, int sortAscending, int pageSize, int? pageIndex, int pageSetSize)
+        public async Task<GetOppFinderApprovedStandardsResponse> GetApprovedStandards(GetOppFinderApprovedStandardsRequest approvedStandardsRequest)
         {
-            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/oppfinder/approved?sortColumn={sortColumn}&sortAscending={sortAscending}&pageSize={pageSize}&pageIndex={pageIndex}&pageSetSize={pageSetSize}"))
+            using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/v1/oppfinder/approved"))
             {
-                return await RequestAndDeserialiseAsync<GetOppFinderApprovedStandardsResponse>(request,
-                    $"Could not find any approved standards");
+                return await PostPutRequestWithResponse<GetOppFinderApprovedStandardsRequest, GetOppFinderApprovedStandardsResponse>(request,
+                    approvedStandardsRequest);
             }
         }
 
-        public async Task<GetOppFinderNonApprovedStandardsResponse> GetNonApprovedStandards(string sortColumn, int sortAscending, int pageSize, int? pageIndex, int pageSetSize, string nonApprovedType)
+        public async Task<GetOppFinderNonApprovedStandardsResponse> GetNonApprovedStandards(GetOppFinderNonApprovedStandardsRequest nonApprovedStandradsRequest )
         {
-            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/oppfinder/nonapproved?sortColumn={sortColumn}&sortAscending={sortAscending}&pageSize={pageSize}&pageIndex={pageIndex}&pageSetSize={pageSetSize}&nonApprovedType={nonApprovedType}"))
-            {
-                return await RequestAndDeserialiseAsync<GetOppFinderNonApprovedStandardsResponse>(request,
-                    $"Could not find any non approved standards {nonApprovedType}");
+            using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/v1/oppfinder/nonapproved"))
+            {                    
+                return await PostPutRequestWithResponse<GetOppFinderNonApprovedStandardsRequest, GetOppFinderNonApprovedStandardsResponse>(request,
+                    nonApprovedStandradsRequest);
             }
         }
     }

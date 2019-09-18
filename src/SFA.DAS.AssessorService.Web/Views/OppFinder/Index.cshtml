@@ -10,8 +10,12 @@
             <div>
                 <h1 class="govuk-heading-xl">Search</h1>
                 Search for Standard, reference or sector (route)
-                <input type="text" />
-                <a asp-action="Search" asp-controller="OppFinder">Search</a>
+                <form asp-action="Search"  asp-controller="OppFinder" method="get" asp-fragment="approved">
+                    <input type="search" asp-for="SearchTerm" id="searchTerm"/>
+                    <button class="govuk-button govuk-button--looks-like-link govuk-button--looks-like-link--inline" type="submit" id="search">
+                        Search
+                    </button>
+                </form>
             </div>
             Show filters
 
@@ -35,37 +39,34 @@
                     </li>
                 </ul>
                 <section class="govuk-tabs__panel" id="approved">
-                    <span>
-                        Showing @(Model?.ApprovedStandards.TotalRecordCount ?? 0) approved Standards
-                    </span>
                     <div id="approved-standards">
                         @{await Html.RenderPartialAsync("_ApprovedStandardsPartial", @Model);}
                     </div>
                 </section>
                 <section class="govuk-tabs__panel govuk-tabs__panel--hidden" id="in-development">
-                    <p>
-                        Standards in development are being created by a Trailblazer group and are not yet approved
-                        for delivery. If you are interested in assessing one or more of these Standards, complete the
-                        <a>expression of interest form</a>.
-                    </p>
-                    <span>
-                        Showing @(Model?.InDevelopmentStandards.TotalRecordCount ?? 0) Standards in-development
-                    </span>
+                    @if ((Model?.InDevelopmentStandards.TotalRecordCount ?? 0) > 0)
+                    {
+                        <p class="govuk-body">
+                            Standards in development are being created by a Trailblazer group and are not yet approved
+                            for delivery. If you are interested in assessing one or more of these Standards, complete the
+                            <a>expression of interest form</a>.
+                        </p>
+                    }
                     <div id="in-development-standards">
                         @{await Html.RenderPartialAsync("_InDevelopmentStandardsPartial", @Model);}
                     </div>
-                </section>
+                    </section>
                 <section class="govuk-tabs__panel govuk-tabs__panel--hidden" id="proposed">
-                    <p>
-                        A proposal to develop an apprenticeship Standard means that a Trailblazer group of
-                        employers are preparing to submit a proposal to develop an apprenticeship standard for this
-                        occupation. This proposal will be subject to Institute for Apprenticeships and Technical
-                        Education approval process and if agreed, will appear on the Institute for Apprenticeships
-                        and Technical Education's list of standards in development.
-                    </p>
-                    <span>
-                        Showing @(Model?.ProposedStandards.TotalRecordCount ?? 0) proposed Standards
-                    </span>
+                    @if ((Model?.ProposedStandards.TotalRecordCount ?? 0) > 0)
+                    {
+                        <p class="govuk-body">
+                            A proposal to develop an apprenticeship Standard means that a Trailblazer group of
+                            employers are preparing to submit a proposal to develop an apprenticeship standard for this
+                            occupation. This proposal will be subject to Institute for Apprenticeships and Technical
+                            Education approval process and if agreed, will appear on the Institute for Apprenticeships
+                            and Technical Education's list of standards in development.
+                        </p>
+                    }
                     <div id="proposed-standards">
                         @{await Html.RenderPartialAsync("_ProposedStandardsPartial", @Model);}
                     </div>

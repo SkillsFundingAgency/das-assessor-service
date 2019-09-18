@@ -5,6 +5,8 @@ namespace SFA.DAS.AssessorService.Web.Infrastructure
 {
     public interface IOppFinderSession
     {
+        string SearchTerm { get; set; }
+
         int ApprovedPageIndex { get; set; }
         int ApprovedStandardsPerPage { get; set; }
 
@@ -34,6 +36,18 @@ namespace SFA.DAS.AssessorService.Web.Infrastructure
         public OppFinderSession(ISessionService sessionService)
         {
             _sessionService = sessionService;
+        }
+
+        public string SearchTerm
+        {
+            get
+            {
+                return _sessionService.Get("SearchTerm");
+            }
+            set
+            {
+                _sessionService.Set("SearchTerm", value);
+            }
         }
 
         public int ApprovedPageIndex

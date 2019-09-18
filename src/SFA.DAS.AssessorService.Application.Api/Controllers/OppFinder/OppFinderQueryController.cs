@@ -30,24 +30,26 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             _logger = logger;
         }
 
-        [HttpGet("approved", Name = "GetApprovedStandards")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(int))]
+        [HttpPost("approved", Name = "GetApprovedStandards")]
+        [ValidateBadRequest]
+        [SwaggerResponse((int)HttpStatusCode.Created, Type = typeof(GetOppFinderApprovedStandardsResponse))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> GetApprovedStandards(string sortColumn, int sortAscending, int pageSize, int? pageIndex, int pageSetSize)
+        public async Task<IActionResult> GetApprovedStandards([FromBody] GetOppFinderApprovedStandardsRequest request)
         {
-            var normalisedPageIndex = (pageIndex == null || pageIndex == 0) ? 1 : pageIndex;
             _logger.LogInformation($"Received request to retrieve approved standards");
-            return Ok(await _mediator.Send(new GetOppFinderApprovedStandardsRequest(sortColumn, sortAscending, pageSize, normalisedPageIndex, pageSetSize)));
+            return Ok(await _mediator.Send(request));
         }
 
-        [HttpGet("nonapproved", Name = "GetNonApprovedStandards")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(int))]
+        [HttpPost("nonapproved", Name = "GetNonApprovedStandards")]
+        [ValidateBadRequest]
+        [SwaggerResponse((int)HttpStatusCode.Created, Type = typeof(GetOppFinderNonApprovedStandardsResponse))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> GetNonApprovedStandards(string sortColumn, int sortAscending, int pageSize, int? pageIndex, int pageSetSize, string nonApprovedType)
+        public async Task<IActionResult> GetNonApprovedStandards([FromBody] GetOppFinderNonApprovedStandardsRequest request)
         {
-            var normalisedPageIndex = (pageIndex == null || pageIndex == 0) ? 1 : pageIndex;
-            _logger.LogInformation($"Received request to retrieve non approved standards {nonApprovedType}");
-            return Ok(await _mediator.Send(new GetOppFinderNonApprovedStandardsRequest(sortColumn, sortAscending, pageSize, normalisedPageIndex, pageSetSize, nonApprovedType)));
+            _logger.LogInformation($"Received request to retrieve non approved standards {request.NonApprovedType}");
+            return Ok(await _mediator.Send(request));
         }
     }
 }

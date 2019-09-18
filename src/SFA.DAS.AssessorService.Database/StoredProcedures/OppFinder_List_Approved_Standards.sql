@@ -1,4 +1,5 @@
 ﻿CREATE PROCEDURE [dbo].[OppFinder_List_Approved_Standards]
+	 @SearchTerm AS NVARCHAR(100),
 	 @SortColumn AS NVARCHAR(20),
 	 @SortAscending AS INT,
      @PageSize AS INT,
@@ -25,6 +26,13 @@ BEGIN
 		#Results
 	FROM 
 		StandardSummary
+	WHERE
+		@SearchTerm = '' OR
+		(
+			(StandardName LIKE '%' + @SearchTerm + '%' ) OR
+			(StandardReference LIKE '%' + @SearchTerm + '%') OR
+			(Sector LIKE '%' + @SearchTerm + '%')
+		)
 	GROUP BY 
 		StandardCode, StandardReference, StandardName
 	ORDER BY

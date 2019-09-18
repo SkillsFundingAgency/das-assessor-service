@@ -3,52 +3,72 @@
 @using SFA.DAS.AssessorService.Web.ViewModels.OppFinder
 @model OppFinderSearchViewModel
 
-<table class="govuk-table">
-    <thead class="govuk-table__head">
-        <tr class="govuk-table__row">
-            <th scope="col" class="govuk-table__header">
-                <sfa-sortable-column-header class="proposed-sort"
-                                            data-sortColumn="@nameof(OppFinderSearchSortColumn.StandardName)"
-                                            asp-action="SortProposedStandards"
-                                            asp-controller="OppFinder"
-                                            asp-fragment="proposed"
-                                            sfa-sort-column="@nameof(OppFinderSearchSortColumn.StandardName)"
-                                            sfa-table-sort-column="@Model.ProposedSortColumn"
-                                            sfa-sort-direction="@Model.ProposedSortDirection">
-                    Proposed Standards
-                </sfa-sortable-column-header>
-            </th>
-        </tr>
-    </thead>
-    <tbody class="govuk-table__body">
-        @if (Model?.ProposedStandards != null)
+@{ var proposedRecordCount = (Model?.ProposedStandards.TotalRecordCount ?? 0); }
+    <span>
+        @if (!string.IsNullOrEmpty(Model?.SearchTerm))
         {
-            @foreach (var proposedStandard in Model.ProposedStandards.Items)
-            {
-                <tr class="govuk-table__row">
-                    <td class="govuk-table__cell">@proposedStandard.StandardName</td>
-                </tr>
-            }
+            <text>Showing </text>
+            <span class="govuk-!-font-weight-bold">@proposedRecordCount</span>
+            @if (proposedRecordCount == 1){<text> result</text>}else{<text> results</text>}
         }
-    </tbody>
-</table>
-@if (Model != null)
+        else
+        {
+            <text>Showing <span class="govuk-!-font-weight-bold">@proposedRecordCount</span> proposed Standards</text>
+        }
+    </span>
+@if (proposedRecordCount == 0)
 {
-    <form asp-action="ShowProposedStandardsPerPage" asp-controller="OppFinder" method="get" asp-fragment="proposed">
-        <select class="proposed-per-page" asp-for="ProposedStandardsPerPage" asp-items="Model.StandardsPerPage"></select>
-        <button class="govuk-button govuk-button--looks-like-link govuk-button--looks-like-link--inline js-hidden" type="submit">
-            Show
-        </button>
-        <text>Standards per page</text>
-    </form>
-
-    await Html.RenderPartialAsync("_PaginationLinksPartial", new OppFinderPaginationViewModel
+    await Html.RenderPartialAsync("_NoSearchResults");
+}
+else
+{
+    <table class="govuk-table">
+        <thead class="govuk-table__head">
+            <tr class="govuk-table__row">
+                <th scope="col" class="govuk-table__header">
+                    <sfa-sortable-column-header class="proposed-sort"
+                                                data-sortColumn="@nameof(OppFinderSearchSortColumn.StandardName)"
+                                                asp-action="SortProposedStandards"
+                                                asp-controller="OppFinder"
+                                                asp-fragment="proposed"
+                                                sfa-sort-column="@nameof(OppFinderSearchSortColumn.StandardName)"
+                                                sfa-table-sort-column="@Model.ProposedSortColumn"
+                                                sfa-sort-direction="@Model.ProposedSortDirection">
+                        Proposed Standards
+                    </sfa-sortable-column-header>
+                </th>
+            </tr>
+        </thead>
+        <tbody class="govuk-table__body">
+            @if (Model?.ProposedStandards != null)
+            {
+                @foreach (var proposedStandard in Model.ProposedStandards.Items)
+                {
+                    <tr class="govuk-table__row">
+                        <td class="govuk-table__cell">@proposedStandard.StandardName</td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+    @if (Model != null)
     {
-        Standards = Model.ProposedStandards,
-        PageIndex = Model.ProposedPageIndex,
-        ChangePageAction = "ChangePageProposedStandards",
-        ChangePageSetAction = "ChangePageSetProposedStandards",
-        Fragment = "proposed"
-    });
+        <form asp-action="ShowProposedStandardsPerPage" asp-controller="OppFinder" method="get" asp-fragment="proposed">
+            <select class="proposed-per-page" asp-for="ProposedStandardsPerPage" asp-items="Model.StandardsPerPage"></select>
+            <button class="govuk-button govuk-button--looks-like-link govuk-button--looks-like-link--inline js-hidden" type="submit">
+                Show
+            </button>
+            <text>Standards per page</text>
+        </form>
+
+        await Html.RenderPartialAsync("_PaginationLinksPartial", new OppFinderPaginationViewModel
+        {
+            Standards = Model.ProposedStandards,
+            PageIndex = Model.ProposedPageIndex,
+            ChangePageAction = "ChangePageProposedStandards",
+            ChangePageSetAction = "ChangePageSetProposedStandards",
+            Fragment = "proposed"
+        });
+    }
 }
 

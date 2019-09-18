@@ -1,5 +1,16 @@
 ﻿(function ($) {    
     refreshClickHandlers();
+    $('#search').click(function (event) {
+        var searchTerm = $('#searchTerm').val();
+        initSearchPartial({ searchTerm: searchTerm }, searchPartial);
+        event.preventDefault();
+    });
+
+    function searchPartial() {
+        changeStandardsPartial('ChangePageSetApprovedStandardsPartial', { pageSetIndex: 1 }, '#approved-standards', refreshApprovedClickHandlers);
+        changeStandardsPartial('ChangePageSetInDevelopmentStandardsPartial', { pageSetIndex: 1 }, '#in-development-standards', refreshInDevelopmentClickHandlers);
+        changeStandardsPartial('ChangePageSetProposedStandardsPartial', { pageSetIndex: 1 }, '#proposed-standards', refreshProposedClickHandlers);
+    }
 
     function refreshClickHandlers() {
         refreshApprovedClickHandlers();
@@ -76,6 +87,19 @@
                 var jqContainer = $(containerId);
                 jqContainer.html(response);
                 refreshFunction();
+            },
+            error: function (xhr) {
+            }
+        });
+    }
+
+    function initSearchPartial(data, searchPartialFunction) {
+        $.ajax({
+            url: "/OppFinder/SearchPartial",
+            type: "get",
+            data: data,
+            success: function (response) {
+                searchPartialFunction();
             },
             error: function (xhr) {
             }

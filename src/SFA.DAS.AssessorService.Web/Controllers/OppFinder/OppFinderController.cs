@@ -26,51 +26,27 @@ namespace SFA.DAS.AssessorService.Web.Controllers.OppFinder
 
         public async Task<IActionResult> Index()
         {
-            var pageIndex = 1;
-            _oppFinderSession.ApprovedPageIndex = pageIndex;
-            _oppFinderSession.InDevelopmentPageIndex = pageIndex;
-            _oppFinderSession.ProposedPageIndex = pageIndex;
-
-            var standardsPerPage = 10;
-            _oppFinderSession.ApprovedStandardsPerPage = standardsPerPage;
-            _oppFinderSession.InDevelopmentStandardsPerPage = standardsPerPage;
-            _oppFinderSession.ProposedStandardsPerPage = standardsPerPage;
-
-            var sortDirection = "Asc";
-            _oppFinderSession.ApprovedSortColumn = OppFinderApprovedSearchSortColumn.StandardName;
-            _oppFinderSession.ApprovedSortDirection = sortDirection;
-            _oppFinderSession.InDevelopmentSortColumn = OppFinderSearchSortColumn.StandardName;
-            _oppFinderSession.InDevelopmentSortDirection = sortDirection;
-            _oppFinderSession.ProposedSortColumn = OppFinderSearchSortColumn.StandardName;
-            _oppFinderSession.ProposedSortDirection = sortDirection;
+            SetDefaultSession();
 
             var vm = await MapViewModelFromSession();
             return View(vm);
         }
 
         [HttpGet]
-        public async Task<IActionResult> Search()
+        public async Task<IActionResult> Search(string searchTerm)
         {
-            var pageIndex = 1;
-            _oppFinderSession.ApprovedPageIndex = pageIndex;
-            _oppFinderSession.InDevelopmentPageIndex = pageIndex;
-            _oppFinderSession.ProposedPageIndex = pageIndex;
-
-            var standardsPerPage = 10;
-            _oppFinderSession.ApprovedStandardsPerPage = standardsPerPage;
-            _oppFinderSession.InDevelopmentStandardsPerPage = standardsPerPage;
-            _oppFinderSession.ProposedStandardsPerPage = standardsPerPage;
-
-            var sortDirection = "Asc";
-            _oppFinderSession.ApprovedSortColumn = OppFinderApprovedSearchSortColumn.StandardName;
-            _oppFinderSession.ApprovedSortDirection = sortDirection;
-            _oppFinderSession.InDevelopmentSortColumn = OppFinderSearchSortColumn.StandardName;
-            _oppFinderSession.InDevelopmentSortDirection = sortDirection;
-            _oppFinderSession.ProposedSortColumn = OppFinderSearchSortColumn.StandardName;
-            _oppFinderSession.ProposedSortDirection = sortDirection;
-
+            SetDefaultSession();
+            _oppFinderSession.SearchTerm = searchTerm ?? string.Empty;
+            
             var vm = await MapViewModelFromSession();
             return View("Index", vm);
+        }
+
+        [HttpGet]
+        public void SearchPartial(string searchTerm)
+        {
+            // further partial methods will be called to update the results
+            _oppFinderSession.SearchTerm = searchTerm ?? string.Empty;
         }
 
         public async Task<IActionResult> ChangePageApprovedStandards(int pageIndex)
@@ -90,17 +66,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.OppFinder
         public async Task<IActionResult> ChangePageApprovedStandardsPartial(int pageIndex)
         {
             _oppFinderSession.ApprovedPageIndex = pageIndex;
-            var approvedStandards = await GetPageApprovedStandards(_oppFinderSession.ApprovedPageIndex);
-
-            var vm = new OppFinderSearchViewModel
-            {
-                ApprovedStandards = approvedStandards,
-                ApprovedStandardsPerPage = _oppFinderSession.ApprovedStandardsPerPage,
-                ApprovedSortColumn = _oppFinderSession.ApprovedSortColumn,
-                ApprovedSortDirection = _oppFinderSession.ApprovedSortDirection,
-                ApprovedPageIndex = _oppFinderSession.ApprovedPageIndex
-            };
-
+            var vm = await AddApprovedViewModelValues(new OppFinderSearchViewModel());
             return PartialView("_ApprovedStandardsPartial", vm);
         }
 
@@ -176,17 +142,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.OppFinder
         public async Task<IActionResult> ChangePageInDevelopmentStandardsPartial(int pageIndex)
         {
             _oppFinderSession.InDevelopmentPageIndex = pageIndex;
-            var inDevelopmentStandards = await GetPageInDevelopmentStandards(_oppFinderSession.InDevelopmentPageIndex);
-            
-            var vm = new OppFinderSearchViewModel
-            {
-                InDevelopmentStandards = inDevelopmentStandards,
-                InDevelopmentStandardsPerPage = _oppFinderSession.InDevelopmentStandardsPerPage,
-                InDevelopmentSortColumn = _oppFinderSession.InDevelopmentSortColumn,
-                InDevelopmentSortDirection = _oppFinderSession.InDevelopmentSortDirection,
-                InDevelopmentPageIndex = _oppFinderSession.InDevelopmentPageIndex
-            };
-
+            var vm = await AddInDevelopmentViewModelValues(new OppFinderSearchViewModel());
             return PartialView("_InDevelopmentStandardsPartial", vm);
         }
 
@@ -262,17 +218,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.OppFinder
         public async Task<IActionResult> ChangePageProposedStandardsPartial(int pageIndex)
         {
             _oppFinderSession.ProposedPageIndex = pageIndex;
-            var proposedStandards = await GetPageProposedStandards(_oppFinderSession.ProposedPageIndex);
-            
-            var vm = new OppFinderSearchViewModel
-            {
-                ProposedStandards = proposedStandards,
-                ProposedStandardsPerPage = _oppFinderSession.ProposedStandardsPerPage,
-                ProposedSortColumn = _oppFinderSession.ProposedSortColumn,
-                ProposedSortDirection = _oppFinderSession.ProposedSortDirection,
-                ProposedPageIndex = _oppFinderSession.ProposedPageIndex
-            };
-
+            var vm = await AddProposedViewModelValues(new OppFinderSearchViewModel()); 
             return PartialView("_ProposedStandardsPartial", vm);
         }
 
@@ -331,78 +277,138 @@ namespace SFA.DAS.AssessorService.Web.Controllers.OppFinder
             }
         }
 
-        private async Task<PaginatedList<OppFinderSearchResult>> GetPageApprovedStandards(int pageIndex)
+        private async Task<PaginatedList<OppFinderSearchResult>> GetPageApprovedStandards(string searchTerm, int pageIndex)
         {
             var pageSize = _oppFinderSession.ApprovedStandardsPerPage;
             var sortColumn = _oppFinderSession.ApprovedSortColumn;
             var sortAscending = _oppFinderSession.ApprovedSortDirection == "Asc" ? 1 : 0;
 
-            var response = await  _oppFinderApiClient.GetApprovedStandards(
-                sortColumn.ToString(),
-                sortAscending,
-                pageSize,
-                pageIndex,
-                PageSetSize);
+            var approvedStandardsRequest = new GetOppFinderApprovedStandardsRequest
+            {
+                SearchTerm = searchTerm,
+                SortColumn = sortColumn.ToString(),
+                SortAscending = sortAscending,
+                PageSize = pageSize,
+                PageIndex = pageIndex,
+                PageSetSize = PageSetSize
+            };
 
+            var response = await _oppFinderApiClient.GetApprovedStandards(approvedStandardsRequest);
             return response.Standards.Convert<OppFinderSearchResult>();
         }
 
-        private async Task<PaginatedList<OppFinderSearchResult>> GetPageInDevelopmentStandards(int pageIndex)
+        private async Task<PaginatedList<OppFinderSearchResult>> GetPageInDevelopmentStandards(string searchTerm, int pageIndex)
         {
             var pageSize = _oppFinderSession.InDevelopmentStandardsPerPage;
             var sortColumn = _oppFinderSession.InDevelopmentSortColumn;
             var sortAscending = _oppFinderSession.InDevelopmentSortDirection == "Asc" ? 1 : 0;
             var nonApprovedType = "InDevelopment";
 
-            var response = await _oppFinderApiClient.GetNonApprovedStandards(
-                sortColumn.ToString(),
-                sortAscending,
-                pageSize,
-                pageIndex,
-                PageSetSize,
-                nonApprovedType);
+            var nonApprovedStandardsRequest = new GetOppFinderNonApprovedStandardsRequest
+            {
+                SearchTerm = searchTerm,
+                SortColumn = sortColumn.ToString(),
+                SortAscending = sortAscending,
+                PageSize = pageSize,
+                PageIndex = pageIndex,
+                PageSetSize = PageSetSize,
+                NonApprovedType = nonApprovedType
+            };
 
+            var response = await _oppFinderApiClient.GetNonApprovedStandards(nonApprovedStandardsRequest);
             return response.Standards;
         }
 
-        private async Task<PaginatedList<OppFinderSearchResult>> GetPageProposedStandards(int pageIndex)
+        private async Task<PaginatedList<OppFinderSearchResult>> GetPageProposedStandards(string searchTerm, int pageIndex)
         {
             var pageSize = _oppFinderSession.ProposedStandardsPerPage;
             var sortColumn = _oppFinderSession.ProposedSortColumn;
             var sortAscending = _oppFinderSession.ProposedSortDirection == "Asc" ? 1 : 0;
             var nonApprovedType = "Proposed";
 
-            var response = await _oppFinderApiClient.GetNonApprovedStandards(
-                sortColumn.ToString(),
-                sortAscending,
-                pageSize,
-                pageIndex,
-                PageSetSize,
-                nonApprovedType);
+            var nonApprovedStandardsRequest = new GetOppFinderNonApprovedStandardsRequest
+            {
+                SearchTerm = searchTerm,
+                SortColumn = sortColumn.ToString(),
+                SortAscending = sortAscending,
+                PageSize = pageSize,
+                PageIndex = pageIndex,
+                PageSetSize = PageSetSize,
+                NonApprovedType = nonApprovedType
+            };
 
+            var response = await _oppFinderApiClient.GetNonApprovedStandards(nonApprovedStandardsRequest);
             return response.Standards;
         }
 
         private async Task<OppFinderSearchViewModel> MapViewModelFromSession()
         {
-            return new OppFinderSearchViewModel
-            {
-                ApprovedStandards = await GetPageApprovedStandards(_oppFinderSession.ApprovedPageIndex),
-                ApprovedStandardsPerPage = _oppFinderSession.ApprovedStandardsPerPage,
-                ApprovedSortColumn = _oppFinderSession.ApprovedSortColumn,
-                ApprovedSortDirection = _oppFinderSession.ApprovedSortDirection,
-                ApprovedPageIndex = _oppFinderSession.ApprovedPageIndex,
-                InDevelopmentStandards = await GetPageInDevelopmentStandards(_oppFinderSession.ProposedPageIndex),
-                InDevelopmentStandardsPerPage = _oppFinderSession.InDevelopmentStandardsPerPage,
-                InDevelopmentSortColumn = _oppFinderSession.InDevelopmentSortColumn,
-                InDevelopmentSortDirection = _oppFinderSession.InDevelopmentSortDirection,
-                InDevelopmentPageIndex = _oppFinderSession.InDevelopmentPageIndex,
-                ProposedStandards = await GetPageProposedStandards(_oppFinderSession.ProposedPageIndex),
-                ProposedStandardsPerPage = _oppFinderSession.ProposedStandardsPerPage,
-                ProposedSortColumn = _oppFinderSession.ProposedSortColumn,
-                ProposedSortDirection = _oppFinderSession.ProposedSortDirection,
-                ProposedPageIndex = _oppFinderSession.ProposedPageIndex
-            };
+            var viewModel = new OppFinderSearchViewModel();
+
+            viewModel = await AddApprovedViewModelValues(viewModel);
+            viewModel = await AddInDevelopmentViewModelValues(viewModel);
+            viewModel = await AddProposedViewModelValues(viewModel);
+
+            return viewModel;
+        }
+
+        private async Task<OppFinderSearchViewModel> AddApprovedViewModelValues(OppFinderSearchViewModel viewModel)
+        {
+            viewModel.SearchTerm = _oppFinderSession.SearchTerm;
+            viewModel.ApprovedStandards = await GetPageApprovedStandards(_oppFinderSession.SearchTerm, _oppFinderSession.ApprovedPageIndex);
+            viewModel.ApprovedStandardsPerPage = _oppFinderSession.ApprovedStandardsPerPage;
+            viewModel.ApprovedSortColumn = _oppFinderSession.ApprovedSortColumn;
+            viewModel.ApprovedSortDirection = _oppFinderSession.ApprovedSortDirection;
+            viewModel.ApprovedPageIndex = _oppFinderSession.ApprovedPageIndex;
+
+            return viewModel;
+        }
+
+        private async Task<OppFinderSearchViewModel> AddInDevelopmentViewModelValues(OppFinderSearchViewModel viewModel)
+        {
+            viewModel.SearchTerm = _oppFinderSession.SearchTerm;
+            viewModel.InDevelopmentStandards = await GetPageInDevelopmentStandards(_oppFinderSession.SearchTerm, _oppFinderSession.ProposedPageIndex);
+            viewModel.InDevelopmentStandardsPerPage = _oppFinderSession.InDevelopmentStandardsPerPage;
+            viewModel.InDevelopmentSortColumn = _oppFinderSession.InDevelopmentSortColumn;
+            viewModel.InDevelopmentSortDirection = _oppFinderSession.InDevelopmentSortDirection;
+            viewModel.InDevelopmentPageIndex = _oppFinderSession.InDevelopmentPageIndex;
+
+            return viewModel;
+        }
+
+        private async Task<OppFinderSearchViewModel> AddProposedViewModelValues(OppFinderSearchViewModel viewModel)
+        {
+            viewModel.SearchTerm = _oppFinderSession.SearchTerm;
+            viewModel.ProposedStandards = await GetPageProposedStandards(_oppFinderSession.SearchTerm, _oppFinderSession.ProposedPageIndex);
+            viewModel.ProposedStandardsPerPage = _oppFinderSession.ProposedStandardsPerPage;
+            viewModel.ProposedSortColumn = _oppFinderSession.ProposedSortColumn;
+            viewModel.ProposedSortDirection = _oppFinderSession.ProposedSortDirection;
+            viewModel.ProposedPageIndex = _oppFinderSession.ProposedPageIndex;
+
+            return viewModel;
+        }
+
+        private void SetDefaultSession()
+        {
+            _oppFinderSession.SearchTerm = string.Empty;
+
+            var pageIndex = 1;
+            _oppFinderSession.ApprovedPageIndex = pageIndex;
+            _oppFinderSession.InDevelopmentPageIndex = pageIndex;
+            _oppFinderSession.ProposedPageIndex = pageIndex;
+
+            var standardsPerPage = 10;
+            _oppFinderSession.ApprovedStandardsPerPage = standardsPerPage;
+            _oppFinderSession.InDevelopmentStandardsPerPage = standardsPerPage;
+            _oppFinderSession.ProposedStandardsPerPage = standardsPerPage;
+
+            var sortDirection = "Asc";
+            _oppFinderSession.ApprovedSortColumn = OppFinderApprovedSearchSortColumn.StandardName;
+            _oppFinderSession.ApprovedSortDirection = sortDirection;
+            _oppFinderSession.InDevelopmentSortColumn = OppFinderSearchSortColumn.StandardName;
+            _oppFinderSession.InDevelopmentSortDirection = sortDirection;
+            _oppFinderSession.ProposedSortColumn = OppFinderSearchSortColumn.StandardName;
+            _oppFinderSession.ProposedSortDirection = sortDirection;
         }
     }
 }
