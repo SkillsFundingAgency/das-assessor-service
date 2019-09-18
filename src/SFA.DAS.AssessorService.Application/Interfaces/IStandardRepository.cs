@@ -23,13 +23,13 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<int> GetEpaoStandardsCount(string endPointAssessorOrganisationId);
         Task<EpoRegisteredStandardsResult> GetEpaoRegisteredStandards(string endPointAssessorOrganisationId,
             int pageSize, int? pageIndex);
-
         Task<EpaoPipelineStandardsResult> GetEpaoPipelineStandards(string endPointAssessorOrganisationId,
             string orderBy, string orderDirection, int pageSize, int? pageIndex);
         Task<List<EpaoPipelineStandardExtract>> GetEpaoPipelineStandardsExtract(string endPointAssessorOrganisationId);
 
-        Task<ApprovedStandardsResult> GetOppFinderApprovedStandards(string searchTerm, string sortColumn, int sortAscending, int pageSize, int pageIndex);
-        Task<NonApprovedStandardsResult> GetOppFinderNonApprovedStandards(string searchTerm, string sortColumn, int sortAscending, int pageSize, int pageIndex, string nonApprovedType);
+        Task<OppFinderFilterStandardsResult> GetOppFinderFilterStandards(string searchTerm, string sectorFilters, string levelFilters);
+        Task<OppFinderApprovedStandardsResult> GetOppFinderApprovedStandards(string searchTerm, string sectorFilters, string levelFilters, string sortColumn, int sortAscending, int pageSize, int pageIndex);
+        Task<OppFinderNonApprovedStandardsResult> GetOppFinderNonApprovedStandards(string searchTerm, string sortColumn, int sortAscending, int pageSize, int pageIndex, string nonApprovedType);
         
     }
 
@@ -43,21 +43,24 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
     public class EpaoPipelineStandardsResult
     {
         public IEnumerable<EpaoPipelineStandard> PageOfResults { get; set; }
-
         public int TotalCount { get; set; }
     }
 
-    public class ApprovedStandardsResult
+    public class OppFinderFilterStandardsResult
+    {
+        public IEnumerable<OppFinderSectorFilterResult> MatchingSectorFilterResults { get; set; }
+        public IEnumerable<OppFinderLevelFilterResult> MatchingLevelFilterResults { get; set; }
+    }
+
+    public class OppFinderApprovedStandardsResult
     {
         public IEnumerable<OppFinderApprovedStandard> PageOfResults { get; set; }
-
         public int TotalCount { get; set; }
     }
 
-    public class NonApprovedStandardsResult
+    public class OppFinderNonApprovedStandardsResult
     {
         public IEnumerable<OppFinderNonApprovedStandard> PageOfResults { get; set; }
-
         public int TotalCount { get; set; }
     }
 }

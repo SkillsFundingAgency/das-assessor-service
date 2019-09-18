@@ -30,6 +30,17 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             _logger = logger;
         }
 
+        [HttpPost("filter", Name = "GetFilterStandards")]
+        [ValidateBadRequest]
+        [SwaggerResponse((int)HttpStatusCode.Created, Type = typeof(GetOppFinderFilterStandardsResponse))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> GetFilterStandards([FromBody] GetOppFinderFilterStandardsRequest request)
+        {
+            _logger.LogInformation($"Received request to retrieve filter standards");
+            return Ok(await _mediator.Send(request));
+        }
+
         [HttpPost("approved", Name = "GetApprovedStandards")]
         [ValidateBadRequest]
         [SwaggerResponse((int)HttpStatusCode.Created, Type = typeof(GetOppFinderApprovedStandardsResponse))]

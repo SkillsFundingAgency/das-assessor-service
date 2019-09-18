@@ -19,6 +19,15 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         {
         }
 
+        public async Task<GetOppFinderFilterStandardsResponse> GetFilterStandards(GetOppFinderFilterStandardsRequest filterStandardsRequest)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/v1/oppfinder/filter"))
+            {
+                return await PostPutRequestWithResponse<GetOppFinderFilterStandardsRequest, GetOppFinderFilterStandardsResponse>(request,
+                    filterStandardsRequest);
+            }
+        }
+
         public async Task<GetOppFinderApprovedStandardsResponse> GetApprovedStandards(GetOppFinderApprovedStandardsRequest approvedStandardsRequest)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/v1/oppfinder/approved"))

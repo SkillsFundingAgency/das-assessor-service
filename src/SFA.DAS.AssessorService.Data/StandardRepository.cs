@@ -306,40 +306,59 @@ namespace SFA.DAS.AssessorService.Data
             return result.ToList();
         }
 
-        public async Task<ApprovedStandardsResult> GetOppFinderApprovedStandards(string searchTerm, string sortColumn, int sortAscending, int pageSize, int pageIndex)
+        public async Task<OppFinderFilterStandardsResult> GetOppFinderFilterStandards(string searchTerm, string sectorFilters, string levelFilters)
         {
             var @params = new DynamicParameters();
             @params.Add("searchTerm", searchTerm);
+            @params.Add("sectorFilters", sectorFilters);
+            @params.Add("levelFilters", levelFilters);
+
+            var filterResults = (await _unitOfWork.Connection.QueryMultipleAsync(
+                "OppFinder_List_Filter_Standards",
+                @params,
+                _unitOfWork.Transaction,
+                commandType: CommandType.StoredProcedure));
+
+            var matchingSectorFilterResults = filterResults.Read<OppFinderSectorFilterResult>().ToList();
+            var matchingLevelFilterResults = filterResults.Read<OppFinderLevelFilterResult>().ToList();
+
+            var filterStandardsResult = new OppFinderFilterStandardsResult
+            {
+                MatchingSectorFilterResults = matchingSectorFilterResults,
+                MatchingLevelFilterResults = matchingLevelFilterResults,
+            };
+
+            return filterStandardsResult;
+        }
+
+        public async Task<OppFinderApprovedStandardsResult> GetOppFinderApprovedStandards(string searchTerm, string sectorFilters, string levelFilters, string sortColumn, int sortAscending, int pageSize, int pageIndex)
+        {
+            var @params = new DynamicParameters();
+            @params.Add("searchTerm", searchTerm);
+            @params.Add("sectorFilters", sectorFilters);
+            @params.Add("levelFilters", levelFilters);
             @params.Add("sortColumn", sortColumn);
             @params.Add("sortAscending", sortAscending);
             @params.Add("pageSize", pageSize);
             @params.Add("pageIndex", pageIndex);
             @params.Add("totalCount", dbType: DbType.Int32, direction: ParameterDirection.Output);
 
-            var results = (await _unitOfWork.Connection.QueryAsync<OppFinderApprovedStandard>(
-                "OppFinder_List_Approved_Standards", 
+            var approvedResults = (await _unitOfWork.Connection.QueryAsync< OppFinderApprovedStandard>(
+                "OppFinder_List_Approved_Standards",
                 @params,
                 _unitOfWork.Transaction,
-                commandType: CommandType.StoredProcedure))?.ToList();
+                commandType: CommandType.StoredProcedure));
 
-            var approvedStandardsResult = new ApprovedStandardsResult
+            var approvedStandardsResult = new OppFinderApprovedStandardsResult
             {
-                PageOfResults = new List<OppFinderApprovedStandard>(),
-                TotalCount = 0
+                PageOfResults = approvedResults ?? new List<OppFinderApprovedStandard>(),
+                TotalCount = @params.Get<int>("totalCount")
             };
-
-            if (results == null || !results.Any())
-            {
-                return approvedStandardsResult;
-            }
-
-            approvedStandardsResult.PageOfResults = results;
-            approvedStandardsResult.TotalCount = @params.Get<int>("totalCount");
-            
+ 
             return approvedStandardsResult;
         }
 
-        public async Task<NonApprovedStandardsResult> GetOppFinderNonApprovedStandards(string searchTerm, string sortColumn, int sortAscending, int pageSize, int pageIndex, string nonApprovedType)
+        public async Task<OppFinderNonApprovedStandardsResult> GetOppFinderNonApprovedStandards(string searchTerm, string sortColumn, int sortAscending, int pageSize, int pageIndex, string nonApprovedType)
         {
             var @params = new DynamicParameters();
             @params.Add("searchTerm", searchTerm);
@@ -350,25 +369,17 @@ namespace SFA.DAS.AssessorService.Data
             @params.Add("nonApprovedtype", nonApprovedType);
             @params.Add("totalCount", dbType: DbType.Int32, direction: ParameterDirection.Output);
 
-            var results = (await _unitOfWork.Connection.QueryAsync<OppFinderNonApprovedStandard>(
+            var nonApprovedResults = (await _unitOfWork.Connection.QueryAsync<OppFinderNonApprovedStandard>(
                 "OppFinder_List_NonApproved_Standards",
                 @params,
                 _unitOfWork.Transaction,
                 commandType: CommandType.StoredProcedure))?.ToList();
 
-            var nonApprovedStandardsResult = new NonApprovedStandardsResult
+            var nonApprovedStandardsResult = new OppFinderNonApprovedStandardsResult
             {
-                PageOfResults = new List<OppFinderNonApprovedStandard>(),
-                TotalCount = 0
+                PageOfResults = nonApprovedResults ?? new List<OppFinderNonApprovedStandard>(),
+                TotalCount = @params.Get<int>("totalCount")
             };
-
-            if (results == null || !results.Any())
-            {
-                return nonApprovedStandardsResult;
-            }
-
-            nonApprovedStandardsResult.PageOfResults = results;
-            nonApprovedStandardsResult.TotalCount = @params.Get<int>("totalCount");
 
             return nonApprovedStandardsResult;
         }

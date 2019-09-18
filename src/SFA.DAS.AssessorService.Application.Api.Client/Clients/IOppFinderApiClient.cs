@@ -7,6 +7,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 {
     public interface IOppFinderApiClient
     {
+        Task<GetOppFinderFilterStandardsResponse> GetFilterStandards(GetOppFinderFilterStandardsRequest filterStandardsRequest);
         Task<GetOppFinderApprovedStandardsResponse> GetApprovedStandards(GetOppFinderApprovedStandardsRequest approvedStandardsRequest);
         Task<GetOppFinderNonApprovedStandardsResponse> GetNonApprovedStandards(GetOppFinderNonApprovedStandardsRequest nonApprovedStandardsRequest);
     }

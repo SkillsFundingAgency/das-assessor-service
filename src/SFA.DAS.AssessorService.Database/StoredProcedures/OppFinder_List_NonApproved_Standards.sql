@@ -1,5 +1,7 @@
 ﻿CREATE PROCEDURE [dbo].OppFinder_List_NonApproved_Standards
 	 @SearchTerm AS NVARCHAR(100),
+	 @SectorFilters AS NVARCHAR(MAX),
+	 @LevelFilters AS NVARCHAR(MAX),
 	 @SortColumn AS NVARCHAR(20),
 	 @SortAscending AS INT,
      @PageSize AS INT,
@@ -9,6 +11,9 @@
 AS
 BEGIN
 	-- redeclare variables to workaround query plan caching performance issues
+	DECLARE @SearchTermInternal NVARCHAR(100) = @SearchTerm
+	DECLARE @SectorFiltersInternal NVARCHAR(MAX) = @SectorFilters
+	DECLARE @LevelFiltersInternal NVARCHAR(MAX) = @LevelFilters
 	DECLARE @SortColumnInternal NVARCHAR(20) = @SortColumn
 	DECLARE @SortAscendingInternal INT = @SortAscending
 	DECLARE @PageSizeInternal INT = @PageSize
@@ -53,27 +58,19 @@ BEGIN
 				(JSON_VALUE(StandardData, '$.Category') LIKE '%' + @SearchTerm + '%')
 			)
 		)
+		AND
+		(
+			@SectorFiltersInternal = '' OR
+			JSON_VALUE(StandardData, '$.Category') IN (SELECT LTRIM(RTRIM(value)) FROM STRING_SPLIT ( @SectorFiltersInternal, ',' ))
+		)
+		AND
+		(
+			@LevelFiltersInternal = '' OR
+			CASE JSON_VALUE(StandardData, '$.Level') WHEN 0 THEN 'TBC' ELSE CONVERT(VARCHAR, JSON_VALUE(StandardData, '$.Level')) END IN (SELECT LTRIM(RTRIM(value)) FROM STRING_SPLIT ( @LevelFiltersInternal, ',' ))
+		)
 		AND IsLive = 1
 	GROUP BY 
-		ReferenceNumber, Title
-	ORDER BY
-		CASE WHEN @SortAscendingInternal = 0 THEN ''
-		ELSE
-			-- column sorting by column name is retained to allow consistent column naming with approved
-			CASE 
-				WHEN @SortColumnInternal = 'StandardName' THEN Title
-				ELSE Title
-			END
-		END ASC,
-		CASE WHEN @SortAscendingInternal = 1 THEN ''
-		ELSE
-			CASE 
-				WHEN @SortColumnInternal = 'StandardName' THEN Title
-				ELSE Title
-			END
-		END DESC
-	OFFSET @Skip ROWS
-	FETCH NEXT @PageSizeInternal ROWS ONLY
+		ReferenceNumber, Title, StandardData
 
 	SELECT @TotalCount = (SELECT MAX(TotalCount) FROM #Results)
 
@@ -91,4 +88,6 @@ BEGIN
 		ELSE
 			Results.StandardName
 		END DESC
+	OFFSET @Skip ROWS
+	FETCH NEXT @PageSizeInternal ROWS ONLY
 END
