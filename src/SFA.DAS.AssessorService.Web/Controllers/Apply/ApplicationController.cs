@@ -474,7 +474,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 }
             }
 
-            if (await _applicationApiClient.Submit(Id, contact.Id, contact?.Email, contact.DisplayName, activeSequence, sections, _config.ReferenceFormat))
+            if (await _applicationApiClient.Submit(Id, contact.Id, contact?.Email, contact.GivenNames, activeSequence, sections, _config.ReferenceFormat))
             {
                 return RedirectToAction("Submitted", new { Id });
             }
