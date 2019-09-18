@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity.UI;
@@ -558,23 +559,24 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 answers.Add(new Answer() { QuestionId = keyValuePair.Key, Value = keyValuePair.Value });
             }
 
-            if (answers != null && !answers.Any())
+            if (answers != null && (!answers.Any()))
             {
                 answers.Add(new Answer { QuestionId = questionId, Value = "" });
             }
             else if (questionId != null && answers.Any(y => y.QuestionId.Contains(questionId)))
             {
-                if (answers.All(x => x.Value == ""))
+                if (answers.All(x => x.Value == "" || Regex.IsMatch(x.Value, "^[,]+$")))
                 {
-                    foreach (var answer in answers.Where(y => y.QuestionId.Contains(questionId + ".") && y.Value == ""))
+                    foreach (var answer in answers.Where(y => y.QuestionId.Contains(questionId + ".") && (y.Value == "" || Regex.IsMatch(y.Value, "^[,]+$"))))
                     {
                         answer.QuestionId = questionId;
                         break;
                     }
                 }
-                else if (answers.Count(y => y.QuestionId.Contains(questionId) && y.Value == "") == 1 && answers.Count(y => y.QuestionId == questionId && y.Value != "") == 0)
+                else if (answers.Count(y => y.QuestionId.Contains(questionId) && (y.Value == "" || Regex.IsMatch(y.Value, "^[,]+$"))) == 1 
+                    && answers.Count(y => y.QuestionId == questionId && y.Value != "") == 0)
                 {
-                    foreach (var answer in answers.Where(y => y.QuestionId.Contains(questionId + ".") && y.Value == ""))
+                    foreach (var answer in answers.Where(y => y.QuestionId.Contains(questionId + ".") && (y.Value == "" || Regex.IsMatch(y.Value, "^[,]+$"))))
                     {
                         answer.QuestionId = questionId;
                     }
