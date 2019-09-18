@@ -2,7 +2,8 @@ CREATE TABLE [Applications](
 	[Id] [uniqueidentifier] NOT NULL DEFAULT NEWID(),
 	[ApplicationId] [uniqueidentifier] NOT NULL,
 	[OrganisationId] [uniqueidentifier] NOT NULL,
-	[ApplicationStatus] [nvarchar](20) NOT NULL,
+	[ApplicationStatus] [nvarchar](20) NOT NULL DEFAULT 'New',
+	[ReviewStatus] [nvarchar](20) NOT NULL DEFAULT 'Draft',
 	[ApplyData] [nvarchar](max) NULL,
 	[FinancialGrade] [nvarchar](max) NULL,
 	[StandardCode] int NULL,
@@ -12,7 +13,6 @@ CREATE TABLE [Applications](
 	[UpdatedBy] [nvarchar](256) NULL,
 	[DeletedAt] [datetime2](7) NULL,
 	[DeletedBy] [nvarchar](256) NULL,
-	[ReviewStatus] [nvarchar](20) NOT NULL,
  CONSTRAINT [PK_Applications] PRIMARY KEY CLUSTERED 
  (
 	[Id] ASC
