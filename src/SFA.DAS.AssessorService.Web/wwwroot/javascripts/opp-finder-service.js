@@ -1,4 +1,7 @@
 ﻿(function ($) {    
+    /* using the route override for the OppFinder controller */
+    var controller = 'apprenticeship-assessment-business-opportunity';
+
     refreshClickHandlers();
     $('#search').click(function (event) {
         var searchTerm = $('#searchTerm').val();
@@ -80,7 +83,7 @@
 
     function changeStandardsPartial(actionMethod, data, containerId, refreshFunction) {
         $.ajax({
-            url: "/OppFinder/" + actionMethod,
+            url: "/" + controller + "/" + actionMethod,
             type: "get",
             data: data,
             success: function (response) {
@@ -95,7 +98,7 @@
 
     function initSearchPartial(data, searchPartialFunction) {
         $.ajax({
-            url: "/OppFinder/SearchPartial",
+            url: "/" + controller + "/SearchPartial",
             type: "get",
             data: data,
             success: function (response) {
