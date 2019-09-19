@@ -319,19 +319,17 @@ namespace SFA.DAS.AssessorService.Data
                 _unitOfWork.Transaction,
                 commandType: CommandType.StoredProcedure));
 
-            var matchingSectorFilterResults = filterResults.Read<OppFinderSectorFilterResult>().ToList();
-            var matchingLevelFilterResults = filterResults.Read<OppFinderLevelFilterResult>().ToList();
-
             var filterStandardsResult = new OppFinderFilterStandardsResult
             {
-                MatchingSectorFilterResults = matchingSectorFilterResults,
-                MatchingLevelFilterResults = matchingLevelFilterResults,
+                MatchingSectorFilterResults = filterResults.Read<OppFinderSectorFilterResult>().ToList(),
+                MatchingLevelFilterResults = filterResults.Read<OppFinderLevelFilterResult>().ToList()
             };
 
             return filterStandardsResult;
         }
 
-        public async Task<OppFinderApprovedStandardsResult> GetOppFinderApprovedStandards(string searchTerm, string sectorFilters, string levelFilters, string sortColumn, int sortAscending, int pageSize, int pageIndex)
+        public async Task<OppFinderApprovedStandardsResult> GetOppFinderApprovedStandards(string searchTerm, string sectorFilters, string levelFilters, 
+            string sortColumn, int sortAscending, int pageSize, int pageIndex)
         {
             var @params = new DynamicParameters();
             @params.Add("searchTerm", searchTerm);
@@ -343,7 +341,7 @@ namespace SFA.DAS.AssessorService.Data
             @params.Add("pageIndex", pageIndex);
             @params.Add("totalCount", dbType: DbType.Int32, direction: ParameterDirection.Output);
 
-            var approvedResults = (await _unitOfWork.Connection.QueryAsync< OppFinderApprovedStandard>(
+            var approvedResults = (await _unitOfWork.Connection.QueryAsync<OppFinderApprovedStandard>(
                 "OppFinder_List_Approved_Standards",
                 @params,
                 _unitOfWork.Transaction,
@@ -351,17 +349,20 @@ namespace SFA.DAS.AssessorService.Data
 
             var approvedStandardsResult = new OppFinderApprovedStandardsResult
             {
-                PageOfResults = approvedResults ?? new List<OppFinderApprovedStandard>(),
-                TotalCount = @params.Get<int>("totalCount")
+                PageOfResults = approvedResults?.ToList() ?? new List<OppFinderApprovedStandard>(),
+                TotalCount = @params.Get<int?>("totalCount") ?? 0
             };
  
             return approvedStandardsResult;
         }
 
-        public async Task<OppFinderNonApprovedStandardsResult> GetOppFinderNonApprovedStandards(string searchTerm, string sortColumn, int sortAscending, int pageSize, int pageIndex, string nonApprovedType)
+        public async Task<OppFinderNonApprovedStandardsResult> GetOppFinderNonApprovedStandards(string searchTerm, string sectorFilters, string levelFilters, 
+            string sortColumn, int sortAscending, int pageSize, int pageIndex, string nonApprovedType)
         {
             var @params = new DynamicParameters();
             @params.Add("searchTerm", searchTerm);
+            @params.Add("sectorFilters", sectorFilters);
+            @params.Add("levelFilters", levelFilters);
             @params.Add("sortColumn", sortColumn);
             @params.Add("sortAscending", sortAscending);
             @params.Add("pageSize", pageSize);
@@ -373,12 +374,12 @@ namespace SFA.DAS.AssessorService.Data
                 "OppFinder_List_NonApproved_Standards",
                 @params,
                 _unitOfWork.Transaction,
-                commandType: CommandType.StoredProcedure))?.ToList();
+                commandType: CommandType.StoredProcedure));
 
             var nonApprovedStandardsResult = new OppFinderNonApprovedStandardsResult
             {
-                PageOfResults = nonApprovedResults ?? new List<OppFinderNonApprovedStandard>(),
-                TotalCount = @params.Get<int>("totalCount")
+                PageOfResults = nonApprovedResults?.ToList() ?? new List<OppFinderNonApprovedStandard>(),
+                TotalCount = @params.Get<int?>("totalCount") ?? 0
             };
 
             return nonApprovedStandardsResult;

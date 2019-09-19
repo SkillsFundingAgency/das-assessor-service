@@ -286,6 +286,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers.OppFinder
             var approvedStandardsRequest = new GetOppFinderApprovedStandardsRequest
             {
                 SearchTerm = searchTerm,
+                SectorFilters = string.Empty,
+                LevelFilters = string.Empty,
                 SortColumn = sortColumn.ToString(),
                 SortAscending = sortAscending,
                 PageSize = pageSize,
@@ -307,6 +309,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers.OppFinder
             var nonApprovedStandardsRequest = new GetOppFinderNonApprovedStandardsRequest
             {
                 SearchTerm = searchTerm,
+                SectorFilters = string.Empty,
+                LevelFilters = string.Empty,
                 SortColumn = sortColumn.ToString(),
                 SortAscending = sortAscending,
                 PageSize = pageSize,
@@ -329,6 +333,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers.OppFinder
             var nonApprovedStandardsRequest = new GetOppFinderNonApprovedStandardsRequest
             {
                 SearchTerm = searchTerm,
+                SectorFilters = string.Empty,
+                LevelFilters = string.Empty,
                 SortColumn = sortColumn.ToString(),
                 SortAscending = sortAscending,
                 PageSize = pageSize,

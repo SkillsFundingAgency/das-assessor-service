@@ -23,7 +23,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Standards
         public async Task<GetOppFinderApprovedStandardsResponse> Handle(GetOppFinderApprovedStandardsRequest request, CancellationToken cancellationToken)
         {
             _logger.LogInformation("Retreiving approved standards");
-            var standardResult = await _standardRepository.GetOppFinderApprovedStandards(request.SearchTerm, request.SectorFilters, request.LevelFilters, request.SortColumn, request.SortAscending, request.PageSize, request.PageIndex ?? 1);
+            var standardResult = await _standardRepository.GetOppFinderApprovedStandards(request.SearchTerm, request.SectorFilters, request.LevelFilters, 
+                request.SortColumn, request.SortAscending, request.PageSize, request.PageIndex ?? 1);
 
             var standards = standardResult.PageOfResults
                 .ToList()
