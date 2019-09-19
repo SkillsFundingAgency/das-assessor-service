@@ -91,7 +91,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         {
             var userId = await GetUserId();
             var org = await _orgApiClient.GetOrganisationByUserId(userId);
-            // here
+
             var applicationStartRequest = new StartApplicationRequest
             {
                 UserReference = userId.ToString(),
@@ -99,7 +99,10 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 ApplicationData = JsonConvert.SerializeObject(new ApplicationData {
                     UseTradingName = false,
                     OrganisationName = org.EndPointAssessorName,
-                    OrganisationReferenceId = org.Id.ToString()
+                    OrganisationReferenceId = org.Id.ToString(),
+                    // NOTE: Wouldn't be a good idea to include more info from the preamble search here?
+                    CompanySummary = org.CompanySummary,
+                    CharitySummary = org.CharitySummary
                 })
             };
 

@@ -1,3 +1,5 @@
+using SFA.DAS.AssessorService.ApplyTypes.CharityCommission;
+using SFA.DAS.AssessorService.ApplyTypes.CompaniesHouse;
 using System;
 using System.Collections.Generic;
 
@@ -13,6 +15,9 @@ namespace SFA.DAS.AssessorService.ApplyTypes
         public string TradingName { get; set; }
         public bool UseTradingName { get; set; }
         public string ContactGivenName { get; set; }
+
+        public CompaniesHouseSummary CompanySummary { get; set; }
+        public CharityCommissionSummary CharitySummary { get; set; }
     }
 
     public class StandardApplicationData
