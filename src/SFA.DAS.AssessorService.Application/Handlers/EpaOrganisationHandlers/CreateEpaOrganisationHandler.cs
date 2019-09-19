@@ -91,7 +91,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
 
         private static EpaOrganisation MapOrganisationRequestToOrganisation(CreateEpaOrganisationRequest request, string newOrganisationId)
         {
-            if (!String.IsNullOrWhiteSpace(request.CompanyNumber))
+            if (!string.IsNullOrWhiteSpace(request.CompanyNumber))
             {
                 request.CompanyNumber = request.CompanyNumber.ToUpper();
             }
@@ -118,7 +118,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
                     City = request.City,
                     WebsiteLink = request.WebsiteLink,
                     CompanyNumber = request.CompanyNumber,
+                    CompanySummary = request.CompanySummary,
                     CharityNumber = request.CharityNumber,
+                    CharitySummary = request.CharitySummary,
                     ProviderName = request.ProviderName,
                     OrganisationReferenceType = request.OrganisationReferenceType,
                     OrganisationReferenceId = request.OrganisationReferenceId,
