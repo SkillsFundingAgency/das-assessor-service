@@ -13,6 +13,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
     {
         Task<StartApplicationResponse> StartApplications(StartApplicationRequest startAppRequest);
         Task<ApplicationData> GetApplicationData(Guid applicationId);
+        Task<ApplicationData> UpdateApplicationData(Guid applicationId, ApplicationData applicationData);
         Task<Sequence> GetApplicationActiveSequence(Guid applicationId);
         Task<List<Section>> GetSections(Guid applicationId, Guid sequenceId);
         Task<Section> GetSection(Guid applicationId, Guid sectionId);
