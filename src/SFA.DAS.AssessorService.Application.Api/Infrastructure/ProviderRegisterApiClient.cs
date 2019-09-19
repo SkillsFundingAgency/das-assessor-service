@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Api.Infrastructure
 {
+    /// <summary>
+    /// NOTE: Provider Register here calls into Find Apprenticeship Training (FAT) and not RoATP!
+    /// </summary>
     public class ProviderRegisterApiClient
     {
         private readonly HttpClient _client;
