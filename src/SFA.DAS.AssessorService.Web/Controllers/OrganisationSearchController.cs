@@ -11,6 +11,8 @@ using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
+using SFA.DAS.AssessorService.ApplyTypes.CharityCommission;
+using SFA.DAS.AssessorService.ApplyTypes.CompaniesHouse;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Paging;
 using SFA.DAS.AssessorService.Settings;
@@ -19,7 +21,7 @@ using SFA.DAS.AssessorService.Web.ViewModels.Organisation;
 
 namespace SFA.DAS.AssessorService.Web.Controllers
 {
-    
+
 
     [Authorize]
     public class OrganisationSearchController : Controller
@@ -71,7 +73,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 return View(nameof(Index));
             }
 
-            viewModel.Organisations = await _organisationsApiClient.SearchForOrganisations(viewModel.SearchString,PageSize, SanitizePageIndex(pageIndex));
+            viewModel.Organisations = await _organisationsApiClient.SearchForOrganisations(viewModel.SearchString, PageSize, SanitizePageIndex(pageIndex));
 
             return View(viewModel);
         }
@@ -272,7 +274,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 }
                 else
                 {
-                    var request = CreateEpaOrganisationRequest(organisationSearchResult);
+                    var request = await CreateEpaOrganisationRequest(organisationSearchResult);
                     request.OrganisationTypeId = viewModel.OrganisationTypeId;
                     request.Status = OrganisationStatus.Applying;
 
@@ -324,11 +326,15 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
             return organisationSearchResult;
         }
-        
-        private CreateEpaOrganisationRequest CreateEpaOrganisationRequest(OrganisationSearchResult organisationSearchResult)
+
+        private async Task<CreateEpaOrganisationRequest> CreateEpaOrganisationRequest(OrganisationSearchResult organisationSearchResult)
         {
-           return new CreateEpaOrganisationRequest
-           {
+            // ON-2262 - Get the company & charity details from the relevant APIs
+            var companyDetails = !string.IsNullOrWhiteSpace(organisationSearchResult.CompanyNumber) ? await _organisationsApiClient.GetCompanyDetails(organisationSearchResult.CompanyNumber) : null;
+            var charityDetails = int.TryParse(organisationSearchResult.CompanyNumber, out var charityNumber) ? await _organisationsApiClient.GetCharityDetails(charityNumber) : null;
+
+            return new CreateEpaOrganisationRequest
+            {
                 Name = organisationSearchResult.Name,
                 OrganisationReferenceType = organisationSearchResult.OrganisationReferenceType,
                 OrganisationReferenceId = organisationSearchResult.OrganisationReferenceId,
@@ -336,7 +342,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 TradingName = organisationSearchResult.TradingName,
                 ProviderName = organisationSearchResult.ProviderName,
                 CompanyNumber = organisationSearchResult.CompanyNumber,
+                CompanySummary = Mapper.Map<CompaniesHouseSummary>(companyDetails),
                 CharityNumber = organisationSearchResult.CharityNumber,
+                CharitySummary = Mapper.Map<CharityCommissionSummary>(charityDetails),
                 Address1 = organisationSearchResult.Address?.Address1,
                 Address2 = organisationSearchResult.Address?.Address2,
                 Address3 = organisationSearchResult.Address?.Address3,

@@ -76,7 +76,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
                 status = "Live";
             }
 
-            if (!String.IsNullOrWhiteSpace(request.CompanyNumber))
+            if (!string.IsNullOrWhiteSpace(request.CompanyNumber))
             {
                 request.CompanyNumber = request.CompanyNumber.ToUpper();
             }
@@ -100,10 +100,12 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
                     PhoneNumber = request.PhoneNumber,
                     WebsiteLink = request.WebsiteLink,
                     CompanyNumber = request.CompanyNumber,
+                    CompanySummary = request.CompanySummary,
                     CharityNumber = request.CharityNumber,
+                    CharitySummary = request.CharitySummary,
                     FHADetails = new FHADetails { 
-                    FinancialDueDate = request.FinancialDueDate,
-                    FinancialExempt = request.FinancialExempt
+                        FinancialDueDate = request.FinancialDueDate,
+                        FinancialExempt = request.FinancialExempt
                     }
                 },
                 Status = status
