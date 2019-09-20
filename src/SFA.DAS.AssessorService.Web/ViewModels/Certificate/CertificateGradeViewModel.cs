@@ -17,6 +17,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
             new SelectListItem {Text = CertificateGrade.Merit, Value = CertificateGrade.Merit},
             new SelectListItem {Text = CertificateGrade.Distinction, Value = CertificateGrade.Distinction},
             new SelectListItem {Text = CertificateGrade.PassWithExcellence, Value = CertificateGrade.PassWithExcellence},
+            new SelectListItem {Text = CertificateGrade.Outstanding, value = CertificateGrade.Outstanding},
             new SelectListItem {Text = CertificateGrade.NoGradeAwarded, Value = CertificateGrade.NoGradeAwarded},
             new SelectListItem {Text = CertificateGrade.Fail, Value = CertificateGrade.Fail}
         };
