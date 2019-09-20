@@ -207,7 +207,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             var allApplicationSequences = await _qnaApiClient.GetAllApplicationSequences(application.ApplicationId);
             var sequence = allApplicationSequences.Single(x => x.SequenceNo == sequenceNo);
 
-            var canUpdate = CanUpdateApplication(sequence);
+            var canUpdate = CanUpdateApplication(sequence,application.ApplyData.Sequences, sequenceNo);
             if (!canUpdate)
             {
                 return RedirectToAction("Sequence", new { Id });
@@ -238,7 +238,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             var allApplicationSequences = await _qnaApiClient.GetAllApplicationSequences(application.ApplicationId);
             var sequence = allApplicationSequences.Single(x => x.SequenceNo == sequenceNo);
 
-            var canUpdate = CanUpdateApplication(sequence);
+            var canUpdate = CanUpdateApplication(sequence, application.ApplyData.Sequences, sequenceNo);
             if (!canUpdate)
             {
                 return RedirectToAction("Sequence", new { Id });
@@ -370,7 +370,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             var allApplicationSequences = await _qnaApiClient.GetAllApplicationSequences(application.ApplicationId);
             var sequence = allApplicationSequences.Single(x => x.SequenceNo == sequenceNo);
 
-            var canUpdate = CanUpdateApplication(sequence);
+            var canUpdate = CanUpdateApplication(sequence, application.ApplyData.Sequences, sequenceNo);
             if (!canUpdate)
             {
                 return RedirectToAction("Sequence", new { application.ApplicationId });
@@ -471,7 +471,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             var allApplicationSequences = await _qnaApiClient.GetAllApplicationSequences(application.ApplicationId);
             var activeSequence = allApplicationSequences.Single(x => x.SequenceNo == sequenceNo);
 
-            var canUpdate = CanUpdateApplication(activeSequence);
+            var canUpdate = CanUpdateApplication(activeSequence, application.ApplyData.Sequences,  sequenceNo);
             if (!canUpdate)
             {
                 return RedirectToAction("Sequence", new { Id });
@@ -662,13 +662,13 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             return validationErrors;
         }
 
-        private bool CanUpdateApplication(Sequence sequence)
+        private bool CanUpdateApplication(Sequence sequence, List<ApplySequence> applySequences, int sequenceNo)
         {
             bool canUpdate = false;
-
-            if (sequence?.Status != null && (int)sequence.SequenceNo == sequence.SequenceNo)
+            var seq = applySequences?.SingleOrDefault(x => x.SequenceNo == sequenceNo);
+            if (seq != null && sequence.SequenceNo == sequenceNo)
             {
-                canUpdate = sequence.Status == ApplicationSequenceStatus.Draft || sequence.Status == ApplicationSequenceStatus.FeedbackAdded;
+                canUpdate = seq.Status == ApplicationSequenceStatus.Draft || seq.Status == ApplicationSequenceStatus.FeedbackAdded;
             }
 
             return canUpdate;
