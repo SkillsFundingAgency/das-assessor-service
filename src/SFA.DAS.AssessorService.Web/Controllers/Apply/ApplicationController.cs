@@ -247,6 +247,12 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             PageViewModel viewModel = null;
             var returnUrl = Request.Headers["Referer"].ToString();
 
+            string pageContext = string.Empty;
+            if (sequence.SequenceNo == 2)
+            {
+                pageContext = $"{application?.ApplyData?.Apply?.StandardReference } {application?.ApplyData?.Apply ?.StandardName}";
+            }
+
             if (!ModelState.IsValid)
             {
                 // when the model state has errors the page will be displayed with the values which failed validation
@@ -260,7 +266,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                     })).ToList()
                     : null;
 
-                viewModel = new PageViewModel(Id, sequenceNo, sectionId, pageId, page, __redirectAction,
+                viewModel = new PageViewModel(Id, sequenceNo, sectionId, pageId, page, pageContext, __redirectAction,
                     returnUrl, errorMessages);
             }
             else
@@ -286,7 +292,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
                 //page = await GetDataFedOptions(page);
 
-                viewModel = new PageViewModel(Id, sequenceNo, sectionId, pageId, page, __redirectAction,
+                viewModel = new PageViewModel(Id, sequenceNo, sectionId, pageId, page, pageContext, __redirectAction,
                     returnUrl, null);
 
                 ProcessPageVmQuestionsForStandardName(viewModel.Questions, application);
@@ -456,13 +462,15 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             return RedirectToAction("Page", new { Id, sequenceNo, sectionId, pageId,  __redirectAction });
         }
 
-        [HttpPost("/Application/Submit")]
-        public async Task<IActionResult> Submit(Guid Id)
+        [HttpPost("/Application/Submit/{sequenceNo}")]
+        public async Task<IActionResult> Submit(Guid Id, int sequenceNo)
         {
             var signinId = User.Claims.First(c => c.Type == "sub")?.Value;
             var contact = await GetUserContact(signinId);
             var application = await _applicationApiClient.GetApplication(Id);
-            var activeSequence = await _qnaApiClient.GetApplicationActiveSequence(application.ApplicationId);
+            var allApplicationSequences = await _qnaApiClient.GetAllApplicationSequences(application.ApplicationId);
+            var activeSequence = allApplicationSequences.Single(x => x.SequenceNo == sequenceNo);
+
             var canUpdate = CanUpdateApplication(activeSequence);
             if (!canUpdate)
             {

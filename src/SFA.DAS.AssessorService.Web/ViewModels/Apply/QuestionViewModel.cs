@@ -14,6 +14,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Apply
         public string Hint { get; set; }
         public string InputClasses { get; set; }
         public string Value { get; set; }
+        public dynamic JsonValue { get; set; }
         public List<Option> Options { get; set; }
         public List<ValidationErrorDetail> ErrorMessages { get; set; }
 
@@ -25,28 +26,23 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Apply
 
         public string DisplayAnswerValue(Answer answer)
         {
-            if (Type == "Date")
+            if (Type == "Date" || Type == "DateOfBirth")
             {
                 var dateparts = answer.Value.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries);
 
-                var day = dateparts[0];
-                var month = dateparts[1];
-                var year = dateparts[2];
-
-                var datetime = DateTime.Parse($"{day}/{month}/{year}");
-                return datetime.ToString("dd/MM/yyyy");
+                string[] formats = Type == "Date" ? new string[] { "dd,MM,yyyy" } : new string[] { "M,yyyy" };
+                if (Type == "Date")
+                {
+                    var datetime = DateTime.Parse($"{dateparts[0]}/{dateparts[1]}/{dateparts[2]}");
+                    return datetime.ToString("dd/MM/yyyy");
+                }
+                else if (Type == "DateOfBirth")
+                {
+                    var datetime = DateTime.Parse($"{dateparts[0]}/{dateparts[1]}");
+                    return datetime.ToString("MM/yyyy");
+                }
             }
 
-            if (Type == "MonthAndYear")
-            {
-                var dateparts = answer.Value.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries);
-
-                var month = int.Parse(dateparts[0]);
-                var year = int.Parse(dateparts[1]);
-                
-                return $"{month:D2}/{year}";
-            }
-            
             return answer.Value;
         }
     }

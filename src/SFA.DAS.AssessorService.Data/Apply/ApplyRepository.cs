@@ -76,9 +76,9 @@ namespace SFA.DAS.AssessorService.Data.Apply
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))
             {
               var result =  await connection.ExecuteAsync(@"UPDATE Applications
-                                                SET  ApplicationStatus = @ApplicationStatus, ApplyData = @ApplyData
+                                                SET  ApplicationStatus = @ApplicationStatus, ApplyData = @ApplyData, ReviewStatus = @ReviewStatus
                                                 WHERE  (Applications.Id = @Id)",
-                  new { application.ApplicationStatus, application.ApplyData, application.Id});
+                  new { application.ApplicationStatus, application.ApplyData,application.ReviewStatus, application.Id});
             }
         }
 
