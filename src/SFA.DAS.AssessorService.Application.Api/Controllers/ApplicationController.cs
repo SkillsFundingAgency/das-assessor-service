@@ -83,5 +83,17 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             return CreatedAtRoute("SubmitApplication",
                 response);
         }
+
+        [HttpPost("updateInitialStandardData", Name = "UpdateInitialStandardData")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(bool))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<ActionResult> UpdateInitialStandardData(
+        [FromBody] UpdateInitialStandardDataRequest updateInitialStandardDataRequest)
+        {
+            _logger.LogInformation("Received Update Application Standard  Request");
+
+            return Ok(await _mediator.Send(updateInitialStandardDataRequest));
+        }
     }
 }

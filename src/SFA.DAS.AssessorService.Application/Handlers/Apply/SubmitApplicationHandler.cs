@@ -39,7 +39,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
 
                 application.ApplyData = applyData;
                 application.StandardCode = request.StandardCode;
-
+                application.ApplicationStatus = ApplicationStatus.Submitted;
+                application.ReviewStatus = ApplicationReviewStatus.Submitted;
                 await _applyRepository.SubmitApplicationSequence(application);
 
                 application = await _applyRepository.GetApplication(request.ApplicationId);

@@ -10,7 +10,7 @@
 }
 else
 {
-    <a href="@Url.Action("Sequence", "Application", new { Id = Model.Id })" class="govuk-back-link">Back to application overview</a>
+    <a href="@Url.Action("Sequence", "Application", new {id = Model.Id, sequenceNo = Model.SequenceNo})" class="govuk-back-link">Back to application overview</a>
 }
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
@@ -41,7 +41,7 @@ else
                         </ul>
                     </li>
                 </ul>
-                <a href="@Url.Action("Sequence", "Application", new {Id = Model.Id})" class="govuk-button">Return to application overview</a>
+                <a href="@Url.Action("Sequence", "Application", new {id = Model.Id, sequenceNo = Model.SequenceNo})" class="govuk-button">Return to application overview</a>
             }
         </div>
     </div>

@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity.UI;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -107,7 +106,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
             var  appResponse = await _applicationApiClient.CreateApplication(new CreateApplicationRequest
             {
-                ApplicationStatus = ApplicationStatus.InProgress,
                 OrganisationId = org.Id,
                 QnaApplicationId = qnaResponse?.ApplicationId??Guid.Empty,
                 UserId = userId
@@ -142,8 +140,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 return View("~/Views/Application/FeedbackIntro.cshtml", application.Id);
             }
 
-            var sequence = await _qnaApiClient.GetApplicationActiveSequence(application.ApplicationId);
-
             StandardApplicationData applicationData = null;
 
             if (application.ApplyData != null)
@@ -153,44 +149,53 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                     StandardName = application.ApplyData?.Apply?.StandardName
                 };
             }
-            var sequenceNo = (SequenceNo)sequence.SequenceNo;
 
-            //// Only go to search if application hasn't got a selected standard?
-            if (sequenceNo == SequenceNo.Stage1)
+            if (IsSequenceActive(application,1))
             {
-                return RedirectToAction("Sequence", new { application.ApplicationId });
+                return RedirectToAction("Sequence", new { Id , sequenceNo = 1});
             }
-            else if (sequenceNo == SequenceNo.Stage2 && string.IsNullOrWhiteSpace(applicationData?.StandardName))
+            else if (!IsSequenceActive(application, 1) && 
+                string.IsNullOrWhiteSpace(applicationData?.StandardName))
             {
                 var org = await _orgApiClient.GetOrganisationByUserId(userId);
                 if (org.RoEPAOApproved)
                 {
-                   return RedirectToAction("Index", "Standard", new { application.Id });
+                   return RedirectToAction("Index", "Standard", new { Id });
                 }
 
                 return View("~/Views/Application/Stage2Intro.cshtml", application.Id);
             }
-            else if (sequenceNo == SequenceNo.Stage2)
+            else if (!IsSequenceActive(application, 1) && 
+                !string.IsNullOrWhiteSpace(applicationData?.StandardName))
             {
-                return RedirectToAction("Sequence", new { application.Id });
+                return RedirectToAction("Sequence", new { Id, sequenceNo = 2 });
             }
 
             throw new BadRequestException("Section does not have a valid DisplayType");
         }
 
-        [HttpGet("/Application/{Id}/Sequence")]
-        public async Task<IActionResult> Sequence(Guid Id)
+
+        private bool IsSequenceActive(ApplicationResponse applicationResponse, int sequenceNo)
         {
-            var application = await _applicationApiClient.GetApplication(Id);
-            var sequence = await _qnaApiClient.GetApplicationActiveSequence(application.ApplicationId);
+            //A sequence can be considered active even if it does not exist in the ApplyData, since it has not yet been submitted and is in progress.
+            return applicationResponse.ApplyData?.Sequences?.Any(x => x.SequenceNo == sequenceNo && x.IsActive == true) ?? true;
+        }
+
+        [HttpGet("/Application/{id}/Sequence/{sequenceNo}")]
+        public async Task<IActionResult> Sequence(Guid id, int sequenceNo)
+        {
+            var application = await _applicationApiClient.GetApplication(id);
+            var allApplicationSequences = await _qnaApiClient.GetAllApplicationSequences(application.ApplicationId);
+            var sequence = allApplicationSequences.Single(x => x.SequenceNo == sequenceNo);
+
             var sections = await _qnaApiClient.GetSections(application.ApplicationId, sequence.Id);
             
             var sequenceVm = new SequenceViewModel(sequence, application.Id, sections, null);
             if(application.ApplyData != null && application.ApplyData.Sequences != null)
             {
-                var seq= application.ApplyData.Sequences.Single(x => x.SequenceId == sequence.Id && x.SequenceNo == sequence.SequenceNo);
+                var seq= application.ApplyData.Sequences.SingleOrDefault(x => x.SequenceId == sequence.Id && x.SequenceNo == sequence.SequenceNo);
                 if (seq != null && seq.Status == ApplicationSequenceStatus.Submitted)
-                    sequenceVm.Status = ApplicationSequenceStatus.Submitted;
+                    sequenceVm.Status = seq.Status;
             }
             return View(sequenceVm);
         }
@@ -199,9 +204,10 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         public async Task<IActionResult> Section(Guid Id, int sequenceNo, Guid sectionId)
         {
             var application = await _applicationApiClient.GetApplication(Id);
-            var activeSequence = await _qnaApiClient.GetApplicationActiveSequence(application.ApplicationId);
+            var allApplicationSequences = await _qnaApiClient.GetAllApplicationSequences(application.ApplicationId);
+            var sequence = allApplicationSequences.Single(x => x.SequenceNo == sequenceNo);
 
-            var canUpdate = CanUpdateApplication(activeSequence);
+            var canUpdate = CanUpdateApplication(sequence);
             if (!canUpdate)
             {
                 return RedirectToAction("Sequence", new { Id });
@@ -209,6 +215,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
             var section = await _qnaApiClient.GetSection(application.ApplicationId, sectionId);
             var applicationSection = new ApplicationSection { Section = section, Id = Id };
+            applicationSection.SequenceNo = sequenceNo;
+
             switch (section?.DisplayType)
             {
                 case null:
@@ -227,9 +235,10 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         public async Task<IActionResult> Page(Guid Id, int sequenceNo, Guid sectionId, string pageId, string __redirectAction)
         {
             var application = await _applicationApiClient.GetApplication(Id);
-            var activeSequence = await _qnaApiClient.GetApplicationActiveSequence(application.ApplicationId);
+            var allApplicationSequences = await _qnaApiClient.GetAllApplicationSequences(application.ApplicationId);
+            var sequence = allApplicationSequences.Single(x => x.SequenceNo == sequenceNo);
 
-            var canUpdate = CanUpdateApplication(activeSequence);
+            var canUpdate = CanUpdateApplication(sequence);
             if (!canUpdate)
             {
                 return RedirectToAction("Sequence", new { Id });
@@ -352,9 +361,10 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         public async Task<IActionResult> SaveAnswers(Guid Id, int sequenceNo, Guid sectionId, string pageId, string __redirectAction, string __formAction)
         {
             var application = await _applicationApiClient.GetApplication(Id);
-            var activeSequence = await _qnaApiClient.GetApplicationActiveSequence(application.ApplicationId);
+            var allApplicationSequences = await _qnaApiClient.GetAllApplicationSequences(application.ApplicationId);
+            var sequence = allApplicationSequences.Single(x => x.SequenceNo == sequenceNo);
 
-            var canUpdate = CanUpdateApplication(activeSequence);
+            var canUpdate = CanUpdateApplication(sequence);
             if (!canUpdate)
             {
                 return RedirectToAction("Sequence", new { application.ApplicationId });

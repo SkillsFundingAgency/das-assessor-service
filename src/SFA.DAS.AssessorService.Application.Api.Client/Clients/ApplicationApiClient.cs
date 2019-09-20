@@ -9,6 +9,7 @@ using SFA.DAS.AssessorService.Api.Types.Models.Apply;
 using SFA.DAS.QnA.Api.Types.Page;
 using SFA.DAS.QnA.Api.Types;
 using SFA.DAS.AssessorService.ApplyTypes;
+using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 
 namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 {
@@ -87,6 +88,27 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                         SequenceNo = sequence.SequenceNo,
                         NotRequired = sequence.NotRequired
                     }
+                });
+            }
+        }
+
+        public async Task<List<StandardCollation>> GetStandards()
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/ao/assessment-organisations/collated-standards"))
+            {
+                return (await RequestAndDeserialiseAsync<List<StandardCollation>>(request, $"Could not retrieve collated standards"));
+            }
+        }
+
+        public async Task<bool> UpdateInitialStandardData(Guid id, int standardCode, string standardName)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Post, $"api/v1/applications/updateInitialStandardData"))
+            {
+                return await PostPutRequestWithResponse<UpdateInitialStandardDataRequest, bool>(request, new UpdateInitialStandardDataRequest
+                {
+                    Id = id,
+                    StandardCode = standardCode,
+                    StandardName = standardName
                 });
             }
         }

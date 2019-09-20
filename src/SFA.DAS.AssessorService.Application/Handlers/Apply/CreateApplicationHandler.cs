@@ -19,7 +19,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
 
         public async Task<Guid> Handle(CreateApplicationRequest request, CancellationToken cancellationToken)
         {
-            var response = await _applyRepository.CreateApplication(request);
+            var response = await _applyRepository.CreateApplication(request, ApplicationStatus.InProgress);
             return response;
         }
     }

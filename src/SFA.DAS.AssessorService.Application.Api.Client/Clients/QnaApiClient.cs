@@ -139,6 +139,15 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
+        public async Task<List<Sequence>> GetAllApplicationSequences(Guid applicationId)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/applications/{applicationId}/sequences"))
+            {
+                return await RequestAndDeserialiseAsync<List<Sequence>>(request,
+                    $"Could not find all sequences");
+            }
+        }
+
         private class SetResultConverter : JsonConverter
         {
             public override bool CanConvert(Type objectType)

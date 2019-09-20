@@ -59,9 +59,8 @@ namespace SFA.DAS.AssessorService.Data.Apply
             }
         }
 
-        public async Task<Guid> CreateApplication(CreateApplicationRequest applicationRequest)
+        public async Task<Guid> CreateApplication(CreateApplicationRequest applicationRequest, string applicationStatus)
         {
-            string applicationStatus = applicationRequest.ApplicationStatus;
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))
             {
                 return await connection.QuerySingleAsync<Guid>(
@@ -80,6 +79,17 @@ namespace SFA.DAS.AssessorService.Data.Apply
                                                 SET  ApplicationStatus = @ApplicationStatus, ApplyData = @ApplyData
                                                 WHERE  (Applications.Id = @Id)",
                   new { application.ApplicationStatus, application.ApplyData, application.Id});
+            }
+        }
+
+        public async Task UpdateInitialStandardData(UpdateInitialStandardDataRequest standardRequest)
+        {
+            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            {
+                var result = await connection.ExecuteAsync(@"UPDATE Applications
+                                                SET  ApplyData = JSON_MODIFY(JSON_MODIFY(ApplyData,'$.Apply.StandardCode',@StandardCode),'$.Apply.StandardName',@StandardName)
+                                                WHERE  Id = @Id",
+                    new { standardRequest.StandardCode, standardRequest.StandardName, standardRequest.Id });
             }
         }
 
