@@ -61,12 +61,12 @@ BEGIN
 		AND
 		(
 			@SectorFiltersInternal = '' OR
-			JSON_VALUE(StandardData, '$.Category') IN (SELECT LTRIM(RTRIM(value)) FROM STRING_SPLIT ( @SectorFiltersInternal, ',' ))
+			JSON_VALUE(StandardData, '$.Category') IN (SELECT LTRIM(RTRIM(value)) FROM STRING_SPLIT ( @SectorFiltersInternal, '|' ))
 		)
 		AND
 		(
 			@LevelFiltersInternal = '' OR
-			CASE JSON_VALUE(StandardData, '$.Level') WHEN 0 THEN 'TBC' ELSE CONVERT(VARCHAR, JSON_VALUE(StandardData, '$.Level')) END IN (SELECT LTRIM(RTRIM(value)) FROM STRING_SPLIT ( @LevelFiltersInternal, ',' ))
+			CASE JSON_VALUE(StandardData, '$.Level') WHEN 0 THEN 'TBC' ELSE CONVERT(VARCHAR, JSON_VALUE(StandardData, '$.Level')) END IN (SELECT LTRIM(RTRIM(value)) FROM STRING_SPLIT ( @LevelFiltersInternal, '|' ))
 		)
 		AND IsLive = 1
 	GROUP BY 

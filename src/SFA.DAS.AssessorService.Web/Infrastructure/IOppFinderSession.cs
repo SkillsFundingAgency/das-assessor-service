@@ -7,6 +7,9 @@ namespace SFA.DAS.AssessorService.Web.Infrastructure
     {
         string SearchTerm { get; set; }
 
+        string SectorFilters { get; set; }
+        string LevelFilters { get; set; }
+
         int ApprovedPageIndex { get; set; }
         int ApprovedStandardsPerPage { get; set; }
 
@@ -47,6 +50,30 @@ namespace SFA.DAS.AssessorService.Web.Infrastructure
             set
             {
                 _sessionService.Set("SearchTerm", value);
+            }
+        }
+
+        public string SectorFilters
+        {
+            get
+            {
+                return _sessionService.Get("SectorFilters");
+            }
+            set
+            {
+                _sessionService.Set("SectorFilters", value);
+            }
+        }
+
+        public string LevelFilters
+        {
+            get
+            {
+                return _sessionService.Get("LevelFilters");
+            }
+            set
+            {
+                _sessionService.Set("LevelFilters", value);
             }
         }
 

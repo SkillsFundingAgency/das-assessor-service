@@ -7,18 +7,44 @@
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
-            <div>
-                <h1 class="govuk-heading-xl">Search</h1>
-                Search for Standard, reference or sector (route)
-                <form asp-action="Search"  asp-controller="OppFinder" method="get" asp-fragment="approved">
-                    <input type="search" asp-for="SearchTerm" id="searchTerm"/>
-                    <button class="govuk-button govuk-button--looks-like-link govuk-button--looks-like-link--inline" type="submit" id="search">
+            <fieldset class="govuk-fieldset">
+                <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
+                    <h1 class="govuk-fieldset__heading">
                         Search
-                    </button>
-                </form>
-            </div>
-            Show filters
+                    </h1>
+                </legend>
 
+                <div class="govuk-form-group">
+                    <label class="govuk-label" for="address-line-1">
+                        Search for Standard, reference or sector (route)
+                    </label>
+                    <form asp-action="Search" asp-controller="OppFinder" method="get" asp-fragment="approved">
+                        <input class="govuk-input govuk-!-width-one-half" type="search" asp-for="SearchTerm" id="search-term" />
+                        <button class="govuk-button govuk-button--start govuk-button--looks-like-search" type="submit" id="search">
+                            Search
+                        </button>
+                    </form>
+                </div>
+            </fieldset>
+
+            @* cannot use a govuk-details, as this must retain its open state after a get request for paging when javascript is disabled *@
+            <details class="govuk-details" data-module="govuk-details">
+                <summary class="govuk-details__summary">
+                    @* this need a new style which is '+ Show ' or '- Hide ' instead of the left or down arrow *@
+                    <span class="govuk-details__summary-text">
+                        filters
+                    </span>
+                </summary>
+                <form asp-action="ApplyFilters" asp-controller="OppFinder">
+                    <div id="standard-filters">
+                        @{await Html.RenderPartialAsync("_StandardFiltersPartial", @Model.ShowFiltersViewModel);}
+                    </div>
+                    <button class="govuk-button" type="submit" id="apply-filters">
+                        Apply
+                    </button>
+                    <a class="" asp-action="ResetFilters" asp-controller="OppFinder" id="reset-filters">Reset filters</a>
+                </form>
+            </details>
             <!-- tabs -->
             <div class="govuk-tabs" data-module="tabs">
                 <ul class="govuk-tabs__list">
@@ -55,7 +81,7 @@
                     <div id="in-development-standards">
                         @{await Html.RenderPartialAsync("_InDevelopmentStandardsPartial", @Model);}
                     </div>
-                    </section>
+                </section>
                 <section class="govuk-tabs__panel govuk-tabs__panel--hidden" id="proposed">
                     @if ((Model?.ProposedStandards.TotalRecordCount ?? 0) > 0)
                     {

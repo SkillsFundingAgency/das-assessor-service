@@ -2,7 +2,7 @@
 {
     public class OppFinderLevelFilterResult
     {
-        public int StandardLevel { get; set; }
+        public string StandardLevel { get; set; }
         public int MatchingLevelFilter { get; set; }
     }
 }

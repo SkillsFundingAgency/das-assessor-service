@@ -6,40 +6,26 @@ AS
 BEGIN
 	-- redeclare variables to workaround query plan caching performance issues
 	DECLARE @SearchTermInternal NVARCHAR(100) = @SearchTerm
-	DECLARE @SectorFiltersInternal NVARCHAR(MAX) = @SectorFilters
-	DECLARE @LevelFiltersInternal NVARCHAR(MAX) = @LevelFilters
+	DECLARE @SectorFiltersInternal NVARCHAR(MAX) = ISNULL(@SectorFilters, '')
+	DECLARE @LevelFiltersInternal NVARCHAR(MAX) = ISNULL(@LevelFilters, '')
 
+	-- get sector and standard level from approved standards
 	SELECT 
 		StandardReference, 
 		StandardName, 
 		Sector,
-		StandardLevel
-	INTO
-		#ApprovedResults
-	FROM 
-		StandardSummary
+		CASE StandardLevel WHEN 0 THEN 'TBC' ELSE CONVERT(VARCHAR, StandardLevel) END StandardLevel
+	INTO #ApprovedSearchResults FROM StandardSummary
 	WHERE
+		@SearchTermInternal = '' OR
 		(
-			@SearchTermInternal = '' OR
-			(
-				(StandardName LIKE '%' + @SearchTermInternal + '%' ) OR
-				(StandardReference LIKE '%' + @SearchTermInternal + '%') OR
-				(Sector LIKE '%' + @SearchTermInternal + '%')
-			)
-		)
-		AND
-		(
-			@SectorFiltersInternal = '' OR
-			Sector IN (SELECT LTRIM(RTRIM(value)) FROM STRING_SPLIT ( @SectorFiltersInternal, ',' ))
-		)
-		AND
-		(
-			@LevelFiltersInternal = '' OR
-			CASE StandardLevel WHEN 0 THEN 'TBC' ELSE CONVERT(VARCHAR, StandardLevel) END IN (SELECT LTRIM(RTRIM(value)) FROM STRING_SPLIT ( @LevelFiltersInternal, ',' ))
+			(StandardName LIKE '%' + @SearchTermInternal + '%' ) OR
+			(StandardReference LIKE '%' + @SearchTermInternal + '%') OR
+			(Sector LIKE '%' + @SearchTermInternal + '%')
 		)
 	GROUP BY 
 		StandardReference, StandardName, Sector, StandardLevel
-
+	
 	-- there are some specifically excluded non approved Standards
 	DECLARE @Exclusions TABLE
 	(
@@ -50,13 +36,14 @@ BEGIN
 	INSERT INTO @Exclusions(StandardName, StandardReference)
 	EXEC OppFinder_Exclusions 
 
+	-- get the sector and standard level from non approved standards
 	SELECT 
 		ReferenceNumber StandardReference, 
 		Title StandardName,
 		JSON_VALUE(StandardData, '$.Category') Sector,
-		JSON_VALUE(StandardData, '$.Level') StandardLevel
+		CASE JSON_VALUE(StandardData, '$.Level') WHEN 0 THEN 'TBC' ELSE CONVERT(VARCHAR, JSON_VALUE(StandardData, '$.Level')) END StandardLevel
 	INTO
-		#NonApprovedResults
+		#NonApprovedSearchResults
 	FROM 
 		StandardNonApprovedCollation
 	LEFT JOIN 
@@ -78,32 +65,65 @@ BEGIN
 				(JSON_VALUE(StandardData, '$.Category') LIKE '%' + @SearchTerm + '%')
 			)
 		)
-		AND
-		(
-			@SectorFiltersInternal = '' OR
-			JSON_VALUE(StandardData, '$.Category') IN (SELECT LTRIM(RTRIM(value)) FROM STRING_SPLIT ( @SectorFiltersInternal, ',' ))
-		)
-		AND
-		(
-			@LevelFiltersInternal = '' OR
-			CASE JSON_VALUE(StandardData, '$.Level') WHEN 0 THEN 'TBC' ELSE CONVERT(VARCHAR, JSON_VALUE(StandardData, '$.Level')) END IN (SELECT LTRIM(RTRIM(value)) FROM STRING_SPLIT ( @LevelFiltersInternal, ',' ))
-		)
-		AND IsLive = 1
 	GROUP BY 
 		ReferenceNumber, Title, StandardData
+
+	-- combine approved and non approved into a single search result
+	SELECT 
+		StandardReference, 
+		StandardName, 
+		Sector, 
+		StandardLevel
+	INTO
+		#SearchResults
+	FROM
+	(
+		(
+			SELECT StandardReference, StandardName, Sector, StandardLevel
+			FROM #ApprovedSearchResults
+		) 
+		UNION
+		(
+			SELECT StandardReference, StandardName, Sector, StandardLevel
+			FROM #NonApprovedSearchResults
+		) 
+	) [SearchResults]
+
+	-- apply a sector level filter to the search results
+	SELECT 
+		StandardReference, 
+		StandardName, 
+		Sector, 
+		StandardLevel
+	INTO 
+		#SearchResultsSectorFilter
+	FROM 
+		#SearchResults
+	WHERE
+		@SectorFiltersInternal = '' OR
+		Sector IN (SELECT LTRIM(RTRIM(value)) FROM STRING_SPLIT ( @SectorFiltersInternal, '|' ))
 	
-	-- first resultset contains the number of Standards from both approved and non approved Standards which match each sector filter
-	SELECT Sector, SUM(MatchingSectorFilter)
+	-- apply a standard level filter to the search results	
+	SELECT 
+		StandardReference, 
+		StandardName, 
+		Sector, 
+		StandardLevel
+	INTO 
+		#SearchResultsLevelFilter
+	FROM 
+		#SearchResults
+	WHERE
+		@LevelFiltersInternal = '' OR
+		StandardLevel IN (SELECT LTRIM(RTRIM(value)) FROM STRING_SPLIT ( @LevelFiltersInternal, '|' ))
+			
+	-- first resultset contains the number of Standards per Sector from both approved and non approved Standards which match each Level filter
+	SELECT Sector, SUM(MatchingSectorFilter) MatchingSectorFilter
 	FROM
 		(
 			(
 				SELECT Sector, 	COUNT(*) MatchingSectorFilter 
-				FROM #ApprovedResults GROUP BY Sector	
-			)
-			UNION ALL
-			(
-				SELECT Sector, COUNT(*) MatchingSectorFilter 
-				FROM #NonApprovedResults GROUP BY Sector
+				FROM #SearchResultsLevelFilter GROUP BY Sector	
 			)
 			UNION ALL
 			(
@@ -120,18 +140,13 @@ BEGIN
 	GROUP BY
 		[AllResults].Sector
 	
-	-- second resultset contains the number of Standards from both approved and non approved Standards which match each level filter
-	SELECT StandardLevel, SUM(MatchingLevelFilter)
+	-- second resultset contains the number of Standards per Level from both approved and non approved Standards which match each Sector filter
+	SELECT StandardLevel, SUM(MatchingLevelFilter) MatchingLevelFilter
 	FROM
 		(
 			(
-				SELECT CASE StandardLevel WHEN 0 THEN 'TBC' ELSE CONVERT(VARCHAR, StandardLevel) END StandardLevel, COUNT(*) MatchingLevelFilter 
-				FROM #ApprovedResults GROUP BY CASE StandardLevel WHEN 0 THEN 'TBC' ELSE CONVERT(VARCHAR, StandardLevel) END
-			)
-			UNION ALL
-			(
-				SELECT CASE StandardLevel WHEN 0 THEN 'TBC' ELSE CONVERT(VARCHAR, StandardLevel) END StandardLevel, COUNT(*) MatchingLevelFilter 
-				FROM #NonApprovedResults GROUP BY CASE StandardLevel WHEN 0 THEN 'TBC' ELSE CONVERT(VARCHAR, StandardLevel) END
+				SELECT StandardLevel, COUNT(*) MatchingLevelFilter 
+				FROM #SearchResultsSectorFilter GROUP BY StandardLevel
 			)
 			UNION ALL
 			(

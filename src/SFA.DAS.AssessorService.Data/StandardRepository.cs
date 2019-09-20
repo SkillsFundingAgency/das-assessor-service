@@ -314,7 +314,7 @@ namespace SFA.DAS.AssessorService.Data
             @params.Add("levelFilters", levelFilters);
 
             var filterResults = (await _unitOfWork.Connection.QueryMultipleAsync(
-                "OppFinder_List_Filter_Standards",
+                "OppFinder_Filter_Standards",
                 @params,
                 _unitOfWork.Transaction,
                 commandType: CommandType.StoredProcedure));

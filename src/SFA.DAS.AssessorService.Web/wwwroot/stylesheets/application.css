@@ -138,6 +138,21 @@
   line-height: 1.31579;
 }
 
+.govuk-button--looks-like-search {
+    position: relative;
+    padding: 0;
+    width: 40px;
+    height: 40px;
+    box-shadow: unset;
+    background-image: url(/assets/images/govuk-button-search.png);
+    background-repeat: no-repeat;
+    background-position: 2px 50%;
+    background-color: #005ea5;
+    text-indent: -5000px;
+    overflow: hidden;
+}
+
+
 .das-wrap {
   word-wrap: break-word;
   overflow-wrap: break-word;

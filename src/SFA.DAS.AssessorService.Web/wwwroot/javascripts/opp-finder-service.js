@@ -3,9 +3,36 @@
     var controller = 'apprenticeship-assessment-business-opportunity';
 
     refreshClickHandlers();
+
     $('#search').click(function (event) {
-        var searchTerm = $('#searchTerm').val();
-        initSearchPartial({ searchTerm: searchTerm }, searchPartial);
+        var searchTerm = $('#search-term').val();
+        initSearchPartial({ searchTerm: searchTerm }, '#standard-filters', searchPartial);
+        event.preventDefault();
+    });
+
+    $('#apply-filters').click(function (event) {
+        var sectorFilters = [];
+        var levelFilters = [];
+
+        $("input:checkbox[name=sectorFilters]:checked").each(function () {
+            sectorFilters.push($(this).val());
+        });
+
+        $("input:checkbox[name=levelFilters]:checked").each(function () {
+            levelFilters.push($(this).val());
+        });
+
+        let filterViewModel = {
+            "SectorFilters": sectorFilters,
+            "LevelFilters": levelFilters
+        };
+
+        applyFiltersPartial(filterViewModel, '#standard-filters', searchPartial);
+        event.preventDefault();
+    });
+
+    $('#reset-filters').click(function (event) {
+        resetFiltersPartial('#standard-filters', searchPartial);
         event.preventDefault();
     });
 
@@ -91,20 +118,57 @@
                 jqContainer.html(response);
                 refreshFunction();
             },
-            error: function (xhr) {
+            error: function () {
+                window.location = "/" + controller;
             }
         });
     }
 
-    function initSearchPartial(data, searchPartialFunction) {
+    function initSearchPartial(data, containerId, searchPartialFunction) {
         $.ajax({
             url: "/" + controller + "/SearchPartial",
             type: "get",
             data: data,
             success: function (response) {
+                var jqContainer = $(containerId);
+                jqContainer.html(response);
                 searchPartialFunction();
             },
-            error: function (xhr) {
+            error: function () {
+                window.location = "/" + controller;
+            }
+        });
+    }
+
+    function resetFiltersPartial(containerId, searchPartialFunction) {
+        $.ajax({
+            url: "/" + controller + "/ResetFiltersPartial",
+            type: "get",
+            data: null,
+            success: function (response) {
+                var jqContainer = $(containerId);
+                jqContainer.html(response);
+                searchPartialFunction();
+            },
+            error: function () {
+                window.location = "/" + controller;
+            }
+        });
+    }
+
+    function applyFiltersPartial(data, containerId, searchPartialFunction) {
+        $.ajax({
+            type: "POST",
+            contentType: "application/json; charset=utf-8",
+            url: "/" + controller + "/ApplyFiltersPartial",
+            data: JSON.stringify(data),
+            success: function (response) {
+                var jqContainer = $(containerId);
+                jqContainer.html(response);
+                searchPartialFunction();
+            },
+            error: function () {
+                window.location = "/" + controller;
             }
         });
     }

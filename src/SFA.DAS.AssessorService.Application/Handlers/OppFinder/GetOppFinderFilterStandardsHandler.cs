@@ -24,12 +24,15 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Standards
         {
             _logger.LogInformation("Retreiving filter standards results");
             var filterResult = await _standardRepository.GetOppFinderFilterStandards(request.SearchTerm, request.SectorFilters, request.LevelFilters);
-            
+
             var sectorFilterResults = filterResult.MatchingSectorFilterResults
-                .ToDictionary(key => key.Sector, value => value.MatchingSectorFilter);
+                .ToList()
+                .ConvertAll(p => new OppFinderFilterResult { Category = p.Sector, Matches = p.MatchingSectorFilter });
+                
 
             var levelFilterResults = filterResult.MatchingLevelFilterResults
-                .ToDictionary(key => key.StandardLevel, value => value.MatchingLevelFilter);
+                .ToList()
+                .ConvertAll(p => new OppFinderFilterResult { Category = p.StandardLevel, Matches = p.MatchingLevelFilter });
 
             return new GetOppFinderFilterStandardsResponse
             {
