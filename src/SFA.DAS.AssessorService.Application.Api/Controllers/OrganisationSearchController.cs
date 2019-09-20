@@ -12,7 +12,6 @@ using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Application.Api.Infrastructure;
 using SFA.DAS.AssessorService.Domain.Paging;
-using OrganisationType = SFA.DAS.AssessorService.Api.Types.Models.OrganisationType;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers
 {
@@ -21,22 +20,24 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
     public class OrganisationSearchController : Controller
     {
         private readonly ILogger<OrganisationSearchController> _logger;
+        private readonly RoatpApiClient _roatpApiClient;
         private readonly ProviderRegisterApiClient _providerRegisterApiClient;
         private readonly ReferenceDataApiClient _referenceDataApiClient;
         private readonly CompaniesHouseApiClient _companiesHouseApiClient;
         private readonly CharityCommissionApiClient _charityCommissionApiClient;
         private readonly IMediator _mediator;
 
-        public OrganisationSearchController(ILogger<OrganisationSearchController> logger, IMediator mediator,  ProviderRegisterApiClient providerRegisterApiClient, ReferenceDataApiClient referenceDataApiClient, CompaniesHouseApiClient companiesHouseApiClient, CharityCommissionApiClient charityCommissionApiClient)
+        public OrganisationSearchController(ILogger<OrganisationSearchController> logger, IMediator mediator, RoatpApiClient roatpApiClient, ProviderRegisterApiClient providerRegisterApiClient, ReferenceDataApiClient referenceDataApiClient, CompaniesHouseApiClient companiesHouseApiClient, CharityCommissionApiClient charityCommissionApiClient)
         {
             _logger = logger;
+            _roatpApiClient = roatpApiClient;
             _providerRegisterApiClient = providerRegisterApiClient;
             _referenceDataApiClient = referenceDataApiClient;
             _companiesHouseApiClient = companiesHouseApiClient;
             _charityCommissionApiClient = charityCommissionApiClient;
             _mediator = mediator;
         }
-        
+
 
         [HttpGet("organisations")]
         public async Task<PaginatedList<OrganisationSearchResult>> OrganisationSearchPaged(string searchTerm, int pageSize, int pageIndex)
@@ -44,14 +45,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             _logger.LogInformation("Handling Organisation Search Request");
             if (string.IsNullOrWhiteSpace(searchTerm) || searchTerm.Length < 2)
             {
-                return new PaginatedList<OrganisationSearchResult>(new List<OrganisationSearchResult>(),0,1,1);
+                return new PaginatedList<OrganisationSearchResult>(new List<OrganisationSearchResult>(), 0, 1, 1);
             }
 
             if (IsValidEpaOrganisationId(searchTerm))
             {
                 _logger.LogInformation($@"Searching Organisations based on EPAO ID: [{searchTerm}]");
                 var orgByEpaoSearchResult = await OrganisationSearchByEpao(searchTerm);
-                var orgByEpaoSearchResultPaged = orgByEpaoSearchResult.Skip(pageSize*(pageIndex -1)).Take(pageSize);
+                var orgByEpaoSearchResultPaged = orgByEpaoSearchResult.Skip(pageSize * (pageIndex - 1)).Take(pageSize);
                 return new PaginatedList<OrganisationSearchResult>(orgByEpaoSearchResultPaged.ToList(), orgByEpaoSearchResult.Count(), pageIndex, pageSize);
             }
 
@@ -68,11 +69,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             var resultFromName = await OrganisationSearchByNameOrCharityNumberOrCompanyNumber(searchTerm);
             if (resultFromName != null) results.AddRange(resultFromName);
 
-            var organisationSearchResultList =  Dedupe(results);
+            var organisationSearchResultList = Dedupe(results);
             organisationSearchResultList = organisationSearchResultList.OrderByDescending(x => x.OrganisationIsLive);
 
-            var organisationSearchResultListPaged = organisationSearchResultList.Skip(pageSize * (pageIndex -1)).Take(pageSize);
-            return new PaginatedList<OrganisationSearchResult>(organisationSearchResultListPaged.ToList(), organisationSearchResultList.Count(),pageIndex, pageSize);
+            var organisationSearchResultListPaged = organisationSearchResultList.Skip(pageSize * (pageIndex - 1)).Take(pageSize);
+            return new PaginatedList<OrganisationSearchResult>(organisationSearchResultListPaged.ToList(), organisationSearchResultList.Count(), pageIndex, pageSize);
         }
 
 
@@ -95,8 +96,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         private async Task<IEnumerable<OrganisationSearchResult>> OrganisationSearchByUkprn(int ukprn)
         {
             IEnumerable<OrganisationSearchResult> epaoResults = await GetEpaoRegisterResults(ukprn.ToString());
-            IEnumerable<OrganisationSearchResult> providerResults = null;
-            IEnumerable<OrganisationSearchResult> referenceResults = null;
+            IEnumerable<OrganisationSearchResult> roatpResults = await GetAtpRegisterResults(null, null, ukprn);
+            IEnumerable<OrganisationSearchResult> providerResults;
+            IEnumerable<OrganisationSearchResult> referenceResults;
 
             var providerRegisterNames = new List<string>();
             if (epaoResults?.Count() == 1)
@@ -104,10 +106,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
                 providerRegisterNames.Add(epaoResults.First().TradingName);
                 providerRegisterNames.Add(epaoResults.First().LegalName);
             }
+            if (roatpResults?.Count() == 1)
+            {
+                providerRegisterNames.Add(roatpResults.First().ProviderName);
+            }
             providerResults = await GetProviderRegisterResults(null, providerRegisterNames, ukprn);
 
             // If you try to search Reference Data API by UKPRN it interprets this as Company Number so must use actual name instead
-            var referenceDataApiNames = new List<string> (providerRegisterNames);
+            var referenceDataApiNames = new List<string>(providerRegisterNames);
             if (providerResults?.Count() == 1)
             {
                 referenceDataApiNames.Add(providerResults.First().ProviderName);
@@ -116,6 +122,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
             var results = new List<OrganisationSearchResult>();
             if (epaoResults != null) results.AddRange(epaoResults);
+            if (roatpResults != null) results.AddRange(roatpResults);
             if (providerResults != null) results.AddRange(providerResults);
             if (referenceResults != null) results.AddRange(referenceResults);
 
@@ -125,16 +132,24 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         private async Task<IEnumerable<OrganisationSearchResult>> OrganisationSearchByEpao(string epaoId)
         {
             IEnumerable<OrganisationSearchResult> epaoResults = await GetEpaoRegisterResults(epaoId);
-            IEnumerable<OrganisationSearchResult> providerResults = null;
-            IEnumerable<OrganisationSearchResult> referenceResults = null;
+            IEnumerable<OrganisationSearchResult> roatpResults;
+            IEnumerable<OrganisationSearchResult> providerResults;
+            IEnumerable<OrganisationSearchResult> referenceResults;
             int? ukprn = null;
 
-            var providerRegisterNames = new List<string>();
+            var atpRegisterNames = new List<string>();
             if (epaoResults?.Count() == 1)
             {
-                providerRegisterNames.Add(epaoResults.First().TradingName);
-                providerRegisterNames.Add(epaoResults.First().LegalName);
+                atpRegisterNames.Add(epaoResults.First().TradingName);
+                atpRegisterNames.Add(epaoResults.First().LegalName);
                 ukprn = epaoResults.First().Ukprn;
+            }
+            roatpResults = await GetAtpRegisterResults(null, atpRegisterNames, ukprn);
+
+            var providerRegisterNames = new List<string>(atpRegisterNames);
+            if (roatpResults?.Count() == 1)
+            {
+                providerRegisterNames.Add(roatpResults.First().ProviderName);
             }
             providerResults = await GetProviderRegisterResults(null, providerRegisterNames, ukprn);
 
@@ -148,6 +163,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
             var results = new List<OrganisationSearchResult>();
             if (epaoResults != null) results.AddRange(epaoResults);
+            if (roatpResults != null) results.AddRange(roatpResults);
             if (providerResults != null) results.AddRange(providerResults);
             if (referenceResults != null) results.AddRange(referenceResults);
 
@@ -157,16 +173,24 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         private async Task<IEnumerable<OrganisationSearchResult>> OrganisationSearchByNameOrCharityNumberOrCompanyNumber(string name)
         {
             IEnumerable<OrganisationSearchResult> epaoResults = await GetEpaoRegisterResults(name);
-            IEnumerable<OrganisationSearchResult> providerResults = null;
-            IEnumerable<OrganisationSearchResult> referenceResults = null;
+            IEnumerable<OrganisationSearchResult> roatpResults;
+            IEnumerable<OrganisationSearchResult> providerResults;
+            IEnumerable<OrganisationSearchResult> referenceResults;
             int? ukprn = null;
 
-            var providerRegisterNames = new List<string>();
+            var atpRegisterNames = new List<string>();
             if (epaoResults?.Count() == 1)
             {
-                providerRegisterNames.Add(epaoResults.First().TradingName);
-                providerRegisterNames.Add(epaoResults.First().LegalName);
+                atpRegisterNames.Add(epaoResults.First().TradingName);
+                atpRegisterNames.Add(epaoResults.First().LegalName);
                 ukprn = epaoResults.First().Ukprn;
+            }
+            roatpResults = await GetAtpRegisterResults(name, atpRegisterNames, ukprn);
+
+            var providerRegisterNames = new List<string>(atpRegisterNames);
+            if (roatpResults?.Count() == 1)
+            {
+                providerRegisterNames.Add(roatpResults.First().ProviderName);
             }
             providerResults = await GetProviderRegisterResults(name, providerRegisterNames, ukprn);
 
@@ -208,9 +232,71 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             return results.ToList();
         }
 
+        private async Task<IEnumerable<OrganisationSearchResult>> GetAtpRegisterResults(string name, IEnumerable<string> exactNames, int? ukprn)
+        {
+            var results = new List<OrganisationSearchResult>();
+
+            if (ukprn.HasValue)
+            {
+                try
+                {
+                    var response = await _roatpApiClient.SearchOrgansiationByUkprn(ukprn.Value);
+                    if (response != null) results.AddRange(response);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError($"Error from ATP Register. UKPRN: {ukprn} , Message: {ex.Message}");
+                }
+            }
+
+            if (!string.IsNullOrEmpty(name))
+            {
+                try
+                {
+                    var response = await _roatpApiClient.SearchOrgansiationByName(name, false);
+                    if (response != null) results.AddRange(response);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError($"Error from ATP Register. {name} , Message: {ex.Message}");
+                }
+            }
+
+            if (exactNames != null)
+            {
+                foreach (var exactName in exactNames)
+                {
+                    try
+                    {
+                        var response = await _roatpApiClient.SearchOrgansiationByName(exactName, true);
+                        if (response != null) results.AddRange(response);
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError($"Error from ATP Register. Exact Name: {exactName} , Message: {ex.Message}");
+                    }
+                }
+            }
+
+            return results.GroupBy(r => r.Ukprn).Select(group => group.First()).ToList();
+        }
+
         private async Task<IEnumerable<OrganisationSearchResult>> GetProviderRegisterResults(string name, IEnumerable<string> exactNames, int? ukprn)
         {
             var results = new List<OrganisationSearchResult>();
+
+            if (ukprn.HasValue)
+            {
+                try
+                {
+                    var ukprnResponse = await _providerRegisterApiClient.SearchOrgansiationByUkprn(ukprn.Value);
+                    if (ukprnResponse != null) results.Add(ukprnResponse);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError($"Error from Provider Register. UKPRN: {ukprn.Value} , Message: {ex.Message}");
+                }
+            }
 
             if (!string.IsNullOrEmpty(name))
             {
@@ -238,19 +324,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
                     {
                         _logger.LogError($"Error from Provider Register. Exact Name: {exactName} , Message: {ex.Message}");
                     }
-                }
-            }
-
-            if (ukprn.HasValue)
-            {
-                try
-                {
-                    var ukprnResponse = await _providerRegisterApiClient.SearchOrgansiationByUkprn(ukprn.Value);
-                    if (ukprnResponse != null) results.Add(ukprnResponse);
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError($"Error from Provider Register. UKPRN: {ukprn.Value} , Message: {ex.Message}");
                 }
             }
 
@@ -413,7 +486,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             return charityNumberMerge.OrderByDescending(org => org.Ukprn).ToList();
         }
 
-       
+
 
         [HttpGet("organisations/{companyNumber}/isActivelyTrading")]
         public async Task<bool> isCompanyActivelyTrading(string companyNumber)
