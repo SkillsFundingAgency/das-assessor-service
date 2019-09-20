@@ -31,14 +31,12 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
             await _applyRepository.UpdateApplicationSectionStatus(request.Id, "0","2", ApplicationSectionStatus.Graded);
 
             var org = await _organisationQueryRepository.Get(request.OrgId);
-            if (org.OrganisationData.RoEPAOApproved)
+
+            org.OrganisationData.FHADetails = new FHADetails()
             {
-                org.OrganisationData.FHADetails = new FHADetails()
-                {
-                    FinancialDueDate = request.UpdatedGrade.FinancialDueDate,
-                    FinancialExempt = request.UpdatedGrade.SelectedGrade == FinancialApplicationSelectedGrade.Exempt
-                };
-            }
+                FinancialDueDate = request.UpdatedGrade.FinancialDueDate,
+                FinancialExempt = request.UpdatedGrade.SelectedGrade == FinancialApplicationSelectedGrade.Exempt
+            };
 
             if (org.OrganisationData.FinancialGrades == null)
                 org.OrganisationData.FinancialGrades = new List<FinancialGrade>();
