@@ -69,13 +69,29 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                 return await RequestAndDeserialiseAsync<Organisation>(request,$"Could not find the organisation {organisationId}");
             }
         }
-
-        public async Task<OrganisationResponse> Create(CreateOrganisationRequest organisationCreateViewModel)
+        
+        public async Task<OrganisationResponse> Create(CreateOrganisationRequest createOrganisationRequest)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/v1/organisations/"))
             {
                 return await PostPutRequestWithResponse<CreateOrganisationRequest, OrganisationResponse>(request,
-                    organisationCreateViewModel);
+                    createOrganisationRequest);
+            }
+        }
+
+        public async Task Update(UpdateOrganisationRequest updateOrganisationRequest)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Put, $"/api/v1/organisations/"))
+            {
+                await PostPutRequest(request, updateOrganisationRequest);
+            }
+        }
+
+        public async Task Delete(Guid id)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Delete, $"/api/v1/organisations/"))
+            {
+                await Delete(request);
             }
         }
 
@@ -158,7 +174,61 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                     validationRequest);
             }
         }
-        
+
+        public async Task<bool> AssociateOrganisationWithEpaContact(AssociateEpaOrganisationWithEpaContactRequest associateEpaOrganisationWithEpaContactRequest)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Put, $"api/ao/assessment-organisations/contacts/associate-organisation"))
+            {
+                return await PostPutRequestWithResponse<AssociateEpaOrganisationWithEpaContactRequest, bool>(request,
+                    associateEpaOrganisationWithEpaContactRequest);
+            }
+        }
+
+        public async Task<List<ContactResponse>> UpdateEpaOrganisationPrimaryContact(UpdateEpaOrganisationPrimaryContactRequest updateEpaOrganisationPrimaryContactRequest)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Put, $"api/ao/assessment-organisations/update-primary-contact"))
+            {
+                return await PostPutRequestWithResponse<UpdateEpaOrganisationPrimaryContactRequest, List<ContactResponse>>(request,
+                    updateEpaOrganisationPrimaryContactRequest);
+            }
+        }
+
+        public async Task<List<ContactResponse>> UpdateEpaOrganisationPhoneNumber(UpdateEpaOrganisationPhoneNumberRequest updateEpaOrganisationPhoneNumberRequest)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Put, $"api/ao/assessment-organisations/update-phone-number"))
+            {
+                return await PostPutRequestWithResponse<UpdateEpaOrganisationPhoneNumberRequest, List<ContactResponse>>(request,
+                    updateEpaOrganisationPhoneNumberRequest);
+            }
+        }
+
+        public async Task<List<ContactResponse>> UpdateEpaOrganisationAddress(UpdateEpaOrganisationAddressRequest updateEpaOrganisationAddressRequest)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Put, $"api/ao/assessment-organisations/update-address"))
+            {
+                return await PostPutRequestWithResponse<UpdateEpaOrganisationAddressRequest, List<ContactResponse>>(request,
+                    updateEpaOrganisationAddressRequest);
+            }
+        }
+
+        public async Task<List<ContactResponse>> UpdateEpaOrganisationEmail(UpdateEpaOrganisationEmailRequest updateEpaOrganisationEmailRequest)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Put, $"api/ao/assessment-organisations/update-email"))
+            {
+                return await PostPutRequestWithResponse<UpdateEpaOrganisationEmailRequest, List<ContactResponse>>(request,
+                    updateEpaOrganisationEmailRequest);
+            }
+        }
+
+        public async Task<List<ContactResponse>> UpdateEpaOrganisationWebsiteLink(UpdateEpaOrganisationWebsiteLinkRequest updateEpaOrganisationWebsiteLinkRequest)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Put, $"api/ao/assessment-organisations/update-website-link"))
+            {
+                return await PostPutRequestWithResponse<UpdateEpaOrganisationWebsiteLinkRequest, List<ContactResponse>>(request,
+                    updateEpaOrganisationWebsiteLinkRequest);
+            }
+        }
+
         public async Task<ValidationResponse> ValidateSearchStandards(string searchstring)
         {
            
@@ -213,21 +283,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task Update(UpdateOrganisationRequest organisationUpdateViewModel)
-        {
-            using (var request = new HttpRequestMessage(HttpMethod.Put, $"/api/v1/organisations/"))
-            {
-                await PostPutRequest(request, organisationUpdateViewModel);
-            }
-        }
-
-        public async Task Delete(Guid id)
-        {
-            using (var request = new HttpRequestMessage(HttpMethod.Delete, $"/api/v1/organisations/"))
-            {
-                await Delete(request);
-            }
-        }
         public async Task<EpaOrganisation> GetEpaOrganisation(string endPointAssessorOrganisationId)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get,
@@ -235,6 +290,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             {
                 return await RequestAndDeserialiseAsync<EpaOrganisation>(request,
                     $"Could not retrieve details for the organisation with an Id of {endPointAssessorOrganisationId}");
+            }
+        }
+
+        public async Task UpdateEpaOrganisation(UpdateEpaOrganisationRequest updateEpaOrganisationRequest)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Put, $"/api/ao/assessment-organisations/"))
+            {
+                await PostPutRequest(request, updateEpaOrganisationRequest);
             }
         }
 
@@ -248,8 +311,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-
-      
         public async Task SendEmailsToOrganisationUserManagementUsers(NotifyUserManagementUsersRequest notifyUserManagementUsersRequest)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Put,
@@ -268,7 +329,5 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                     $"Could not retrieve standards for organisation with Id of {endPointAssessorOrganisationId}");
             }
         }
-
-
     }
 }

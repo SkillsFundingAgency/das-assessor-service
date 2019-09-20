@@ -28,7 +28,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Middleware
 
         public async Task Invoke(HttpContext context, IHeaderInfo headerInfo)
         {
-            if (context.Request.Path == "/Ping")
+            if (context.Request.Path == "/Ping" || context.Request.Path == "/favicon.ico")
             {
                 await _next(context);
             }

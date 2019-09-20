@@ -23,7 +23,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.MockedObjects
             hostMock
                 .Setup(m => m.EnvironmentName)
                 .Returns(EnvironmentName.Development);
-            var tokenServiceMock = new TokenService(webConfigMock.Object,hostMock.Object);
+            var tokenServiceMock = new TokenService(webConfigMock.Object,hostMock.Object, false);
 
             var options = Builder<Option>.CreateListOfSize(10)
                 .Build();

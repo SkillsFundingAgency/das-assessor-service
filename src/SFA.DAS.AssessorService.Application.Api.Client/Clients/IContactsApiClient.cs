@@ -27,6 +27,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 
         Task<ContactResponse> GetContactBySignInId(string signInId);
         Task<List<ContactResponse>> GetAllContactsForOrganisation(string epaoId);
+        Task<List<ContactResponse>> GetAllContactsWhoCanBePrimaryForOrganisation(string epaoId);
 
         Task<ContactResponse> UpdateOrgAndStatus(
             UpdateContactWithOrgAndStausRequest updateContactWithOrgAndStausRequest);

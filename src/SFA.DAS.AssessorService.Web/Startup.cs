@@ -116,6 +116,8 @@ namespace SFA.DAS.AssessorService.Web
                     HttpOnly = true
                 };
             });
+
+            services.AddHealthChecks();
             
             return ConfigureIoc(services);
         }        
@@ -132,7 +134,7 @@ namespace SFA.DAS.AssessorService.Web
                     _.WithDefaultConventions();
                 });
 
-                config.For<ITokenService>().Use<TokenService>();
+                config.For<ITokenService>().Use<TokenService>().Ctor<bool>("useSandbox").Is(false); // Always false unless we want to start integrating with the sandbox environment;
                 config.For<IApplyTokenService>().Add<ApplyTokenService>();                
                 config.For<IWebConfiguration>().Use(Configuration);
                 config.For<ISessionService>().Use<SessionService>().Ctor<string>().Is(_env.EnvironmentName);
@@ -144,6 +146,7 @@ namespace SFA.DAS.AssessorService.Web
                 config.For<IContactsApiClient>().Use<ContactsApiClient>().Ctor<string>().Is(Configuration.ClientApiAuthentication.ApiBaseAddress);
                 config.For<ISearchApiClient>().Use<SearchApiClient>().Ctor<string>().Is(Configuration.ClientApiAuthentication.ApiBaseAddress);
                 config.For<IEmailApiClient>().Use<EmailApiClient>().Ctor<string>().Is(Configuration.ClientApiAuthentication.ApiBaseAddress);
+                config.For<IValidationApiClient>().Use<ValidationApiClient>().Ctor<string>().Is(Configuration.ClientApiAuthentication.ApiBaseAddress);
                 config.For<ICertificateApiClient>().Use<CertificateApiClient>().Ctor<string>().Is(Configuration.ClientApiAuthentication.ApiBaseAddress);
                 config.For<IAssessmentOrgsApiClient>().Use(() => new AssessmentOrgsApiClient(Configuration.AssessmentOrgsApiClientBaseUrl));
                 config.For<IIfaStandardsApiClient>().Use(() => new IfaStandardsApiClient(Configuration.IfaApiClientBaseUrl));
@@ -174,11 +177,13 @@ namespace SFA.DAS.AssessorService.Web
             }
 
             app.UseHttpsRedirection();
+            
             app.UseSecurityHeaders()
                 .UseStaticFiles()
                 .UseSession()
                 .UseAuthentication()
                 .UseRequestLocalization()
+                .UseHealthChecks("/health")
                 .UseMvc(routes =>
                 {
                     routes.MapRoute(

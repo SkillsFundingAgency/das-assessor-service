@@ -32,6 +32,7 @@ namespace SFA.DAS.AssessorService.Data
         public virtual DbSet<ContactsPrivilege> ContactsPrivileges { get; set; }
         public virtual DbSet<Privilege> Privileges { get; set; }
         public virtual DbSet<ContactRole> ContactRoles { get; set; }
+        public virtual DbSet<ContactInvitation> ContactInvitations { get; set; }
 
         public override int SaveChanges()
         {
@@ -89,6 +90,11 @@ namespace SFA.DAS.AssessorService.Data
                     c => JsonConvert.SerializeObject(c),
                     c => JsonConvert.DeserializeObject<SearchData>(string.IsNullOrWhiteSpace(c) ? "{}" : c));
 
+            modelBuilder.Entity<Privilege>()
+                .Property(e => e.PrivilegeData)
+                .HasConversion(
+                    c => JsonConvert.SerializeObject(c),
+                    c => JsonConvert.DeserializeObject<PrivilegeData>(string.IsNullOrWhiteSpace(c) ? "{}" : c));
         }
     }
 }

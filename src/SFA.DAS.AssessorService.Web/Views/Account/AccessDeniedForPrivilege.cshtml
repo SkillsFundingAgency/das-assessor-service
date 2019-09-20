@@ -11,9 +11,15 @@
 
             <h1 class="govuk-heading-xl">@Model.Title</h1>
 
-            <p class="govuk-body">@Model.Description</p>
+            <p class="govuk-body">This permission enables you to:</p>
+            <ul class="govuk-list govuk-list--bullet">
+                @foreach (string right in Model.Rights)
+                {
+                    <li>@right</li>
+                }
+            </ul>
 
-            <form asp-controller="RequestAccess" asp-action="Request">
+            <form asp-controller="RequestAccess" asp-action="RequestAccess">
                 @Html.HiddenFor(m => m.ContactId)
                 @Html.HiddenFor(m => m.PrivilegeId)
                 @Html.HiddenFor(m => m.UserHasUserManagement)
@@ -24,19 +30,16 @@
                     <h2 class="govuk-heading-m">
                         Grant permission
                     </h2>
-                    
+
                     <p class="govuk-body">You have manage users permissions.</p>
                     <button class="govuk-button" type="submit">Access</button>
                 }
                 else
                 {
-                    
                     <p class="govuk-body">You do not have permission to view this content.</p>
                     <button class="govuk-button" type="submit">Request access</button>
                 }
-
             </form>
-
         </div>
     </div>
 </main>
