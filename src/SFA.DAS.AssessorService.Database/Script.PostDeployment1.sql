@@ -66,4 +66,8 @@ UPDATE OrganisationType SET FinancialExempt = 1 WHERE Type = 'Academy or Free Sc
 
 -- ON-2242
 :r .\Update-Staff-Reports-Config.sql
+
+-- ON-2277
+:r .\Insert-Grades-ON-2277.sql
+
 -- END
