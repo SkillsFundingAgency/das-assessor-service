@@ -10,6 +10,7 @@ using SFA.DAS.QnA.Api.Types.Page;
 using SFA.DAS.QnA.Api.Types;
 using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
+using AutoMapper;
 
 namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 {

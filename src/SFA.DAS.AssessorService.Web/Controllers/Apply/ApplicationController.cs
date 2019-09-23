@@ -290,7 +290,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                     }
                 }
 
-                //page = await GetDataFedOptions(page);
+                page = await GetDataFedOptions(page);
 
                 viewModel = new PageViewModel(Id, sequenceNo, sectionId, pageId, page, pageContext, __redirectAction,
                     returnUrl, null);
@@ -525,6 +525,25 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             });
         }
 
+        private async Task<Page> GetDataFedOptions(Page page)
+        {
+            if (page != null)
+            {
+                foreach (var question in page.Questions)
+                {
+                    if (question.Input.Type.StartsWith("DataFed_"))
+                    {
+                        var questionOptions = await _applicationApiClient.GetQuestionDataFedOptions();
+                        // Get data from API using question.Input.DataEndpoint
+                        question.Input.Options = questionOptions;
+                        question.Input.Type = question.Input.Type.Replace("DataFed_", "");
+                    }
+                }
+            }
+
+            return page;
+        }
+
         private RedirectToActionResult RedirectToNextAction(Guid Id, int sequenceNo, Guid sectionId, string redirectAction, string nextAction, string nextActionId)
         {
             if (nextAction == "NextPage")
@@ -633,6 +652,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 question.ShortLabel = question.Label?.Replace($"[{placeholderString}]", standardName);
             }
         }
+
         private List<ValidationErrorDetail> ValidateSubmit(List<Section> sections)
         {
             var validationErrors = new List<ValidationErrorDetail>();
@@ -666,8 +686,10 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         {
             bool canUpdate = false;
             var seq = applySequences?.SingleOrDefault(x => x.SequenceNo == sequenceNo);
-            if (seq != null && sequence.SequenceNo == sequenceNo)
+            if (sequence.SequenceNo == sequenceNo)
             {
+                if (seq == null)
+                    return true;
                 canUpdate = seq.Status == ApplicationSequenceStatus.Draft || seq.Status == ApplicationSequenceStatus.FeedbackAdded;
             }
 
