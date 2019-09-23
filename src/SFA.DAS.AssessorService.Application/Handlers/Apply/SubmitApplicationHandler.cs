@@ -58,9 +58,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
         {
             if (applyData.Sequences == null)
                 applyData.Sequences = new List<ApplySequence>();
-            if (applyData.Sequences.Any(x => x.SequenceId == sequence.SequenceId))
+            if (applyData.Sequences.Any(x => x.SequenceNo == sequence.SequenceNo))
             {
-                applyData.Sequences.Where(x => x.SequenceId == sequence.SequenceId)
+                applyData.Sequences.Where(x => x.SequenceNo == sequence.SequenceNo)
                    .Select(applySequence =>
                    {
                        applySequence.Status = ApplicationSequenceStatus.Resubmitted;

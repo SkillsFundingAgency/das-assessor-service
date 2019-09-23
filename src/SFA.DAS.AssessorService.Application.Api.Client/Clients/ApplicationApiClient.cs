@@ -62,34 +62,12 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task<bool> Submit(Guid id, Guid userId, string email, string contactName, Sequence sequence, List<Section> sections, string referenceFormat)
+        public async Task<bool> Submit(SubmitApplicationRequest submitApplicationRequest)
         {
-            var applySections = sections.Select(x => new ApplySection
-            {
-                SectionId = x.Id,
-                SectionNo = x.SectionNo,
-                Status = ApplicationSectionStatus.Submitted,
-                RequestedFeedbackAnswered = x.QnAData.RequestedFeedbackAnswered
-            }).ToList();
-
+          
             using (var request = new HttpRequestMessage(HttpMethod.Post, $"api/v1/applications/submitApplication"))
             {
-                return await PostPutRequestWithResponse<SubmitApplicationRequest, bool>(request, new SubmitApplicationRequest {
-                    ApplicationId = id,
-                    ReferenceFormat = referenceFormat,
-                    ContactName = contactName,
-                    Email = email,
-                    UserId = userId,
-                    Sequence = new ApplySequence
-                    {
-                        SequenceId = sequence.Id,
-                        Sections  = applySections,
-                        Status = ApplicationSequenceStatus.Submitted,
-                        IsActive = sequence.IsActive,
-                        SequenceNo = sequence.SequenceNo,
-                        NotRequired = sequence.NotRequired
-                    }
-                });
+                return await PostPutRequestWithResponse<SubmitApplicationRequest, bool>(request, submitApplicationRequest);
             }
         }
 

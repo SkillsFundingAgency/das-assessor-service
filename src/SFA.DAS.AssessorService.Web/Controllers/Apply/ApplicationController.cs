@@ -493,7 +493,13 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 }
             }
 
-            if (await _applicationApiClient.Submit(Id, contact.Id, contact?.Email, contact.GivenNames, activeSequence, sections, _config.ReferenceFormat))
+            if (await _applicationApiClient.Submit(BuildSubmitApplicationRequest(Id, contact.Id,
+                _config.ReferenceFormat,contact.GivenNames, 
+                contact?.Email, 
+                application?.ApplyData?.Apply?.StandardCode??0 , 
+                application?.ApplyData?.Apply?.StandardReference, 
+                application?.ApplyData?.Apply?.StandardName,  
+                activeSequence, sections)))
             {
                 return RedirectToAction("Submitted", new { Id });
             }
@@ -651,6 +657,40 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 question.QuestionBodyText = question.QuestionBodyText?.Replace($"[{placeholderString}]", standardName);
                 question.ShortLabel = question.Label?.Replace($"[{placeholderString}]", standardName);
             }
+        }
+
+        private SubmitApplicationRequest BuildSubmitApplicationRequest(Guid id, Guid userId,
+            string referenceFormat, string contactName, string email, int standardCode, 
+            string standardReference, string standardName, Sequence sequence, List<Section> sections)
+        {
+            var applySections = sections.Select(x => new ApplySection
+            {
+                SectionId = x.Id,
+                SectionNo = x.SectionNo,
+                Status = ApplicationSectionStatus.Submitted,
+                RequestedFeedbackAnswered = x.QnAData.RequestedFeedbackAnswered
+            }).ToList();
+
+            return new SubmitApplicationRequest
+            {
+                ApplicationId = id,
+                ReferenceFormat = referenceFormat,
+                ContactName = contactName,
+                StandardCode = standardCode,
+                StandardReference = standardReference,
+                StandardName = standardName,
+                Email = email,
+                UserId = userId,
+                Sequence = new ApplySequence
+                {
+                    SequenceId = sequence.Id,
+                    Sections = applySections,
+                    Status = ApplicationSequenceStatus.Submitted,
+                    IsActive = sequence.IsActive,
+                    SequenceNo = sequence.SequenceNo,
+                    NotRequired = sequence.NotRequired
+                }
+            };
         }
 
         private List<ValidationErrorDetail> ValidateSubmit(List<Section> sections)

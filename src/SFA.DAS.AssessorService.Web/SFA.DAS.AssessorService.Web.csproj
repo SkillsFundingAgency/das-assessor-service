@@ -4,12 +4,16 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="Services\**" />
+    <Compile Remove="Views\Application\Pages\Controls\**" />
     <Compile Remove="Views\CertificateAddressSummary\**" />
     <Content Remove="Services\**" />
+    <Content Remove="Views\Application\Pages\Controls\**" />
     <Content Remove="Views\CertificateAddressSummary\**" />
     <EmbeddedResource Remove="Services\**" />
+    <EmbeddedResource Remove="Views\Application\Pages\Controls\**" />
     <EmbeddedResource Remove="Views\CertificateAddressSummary\**" />
     <None Remove="Services\**" />
+    <None Remove="Views\Application\Pages\Controls\**" />
     <None Remove="Views\CertificateAddressSummary\**" />
   </ItemGroup>
   <ItemGroup>
@@ -34,6 +38,7 @@
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.3" />
     <PackageReference Include="NLog.Web.AspNetCore" Version="4.5.4" />
     <PackageReference Include="SFA.DAS.QnA.Api.Types" Version="0.2.3" />
+    <PackageReference Include="SFA.DAS.QnA.Api.Views" Version="0.2.25" />
     <PackageReference Include="StructureMap" Version="4.6.1" />
     <PackageReference Include="StructureMap.Microsoft.DependencyInjection" Version="1.4.0" />
     <PackageReference Include="WindowsAzure.Storage" Version="9.0.0" />
