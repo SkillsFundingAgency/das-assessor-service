@@ -195,11 +195,12 @@ namespace SFA.DAS.AssessorService.Data.Apply
                         new
                         {
                             applicationStatusInProgress = ApplicationStatus.InProgress,
-                            sequenceStatusSubmitted = ApplicationSequenceStatus.Submitted,
                             sequenceStatusFeedbackAdded = ApplicationSequenceStatus.FeedbackAdded,
                             sequenceStatusResubmitted = ApplicationSequenceStatus.Resubmitted,
                             financialStatusSubmitted = ApplicationSectionStatus.Submitted,
-                            financialStatusInProgress = ApplicationSectionStatus.InProgress
+                            financialStatusGraded = ApplicationSectionStatus.Graded,
+                            financialStatusEvaluated = ApplicationSectionStatus.Evaluated,
+                            selectedGradeInadequate = FinancialApplicationSelectedGrade.Inadequate
                         })).ToList();
             }
         }
