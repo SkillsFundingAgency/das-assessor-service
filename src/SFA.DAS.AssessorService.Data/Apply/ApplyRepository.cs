@@ -159,12 +159,52 @@ namespace SFA.DAS.AssessorService.Data.Apply
             }
         }
 
-        public Task<List<FinancialApplicationSummaryItem>> GetFeedbackAddedFinancialApplications()
+        public async Task<List<FinancialApplicationSummaryItem>> GetFeedbackAddedFinancialApplications()
         {
-            throw new NotImplementedException();
+            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            {
+                return (await connection
+                    .QueryAsync<FinancialApplicationSummaryItem>(
+                        @"SELECT 
+                            org.EndPointAssessorName as OrganisationName,
+                            ap1.Id As Id,
+                            JSON_VALUE(ap1.ApplyData, '$.Sequences[0].SequenceNo') As SequenceNo,
+                            JSON_VALUE(ap1.ApplyData, '$.Sequences[0].Sections[2].SectionNo') As SectionNo,
+                            ap1.FinancialGrade As Grade,
+                            ISNULL(JSON_VALUE(ap1.ApplyData, '$.Sequences[0].Sections[2].Feedback.FeedbackDate'),
+								   JSON_VALUE(ap1.FinancialGrade, '$.GradedDateTime')) As FeedbackAddedDate,
+                            JSON_VALUE(ap1.ApplyData, '$.Apply.LatestInitSubmissionDate') As SubmittedDate,
+                            JSON_VALUE(ap1.ApplyData, '$.Apply.InitSubmissionCount') As SubmissionCount,
+                            CASE WHEN (JSON_VALUE(ap1.ApplyData, '$.Sequences[0].Status') = @sequenceStatusFeedbackAdded) THEN @sequenceStatusFeedbackAdded
+                            WHEN (JSON_VALUE(ap1.ApplyData, '$.Apply.InitSubmissionCount') > 1 AND JSON_VALUE(ap1.ApplyData, '$.Sequences[0].Sections[2].Status') = @financialStatusSubmitted) THEN @sequenceStatusResubmitted
+                            WHEN (JSON_VALUE(ap1.ApplyData, '$.Apply.InitSubmissionCount') > 1 AND JSON_VALUE(ap1.ApplyData, '$.Sequences[0].Sections[2].RequestedFeedbackAnswered') = 'true')THEN @sequenceStatusResubmitted
+                            ELSE JSON_VALUE(ap1.ApplyData, '$.Sequences[0].Sections[2].Status')
+                            END As CurrentStatus
+                            FROM Applications ap1
+                            inner join Organisations org ON ap1.OrganisationId = org.Id
+                            WHERE JSON_VALUE(ap1.ApplyData, '$.Sequences[0].SequenceNo') = '1' AND JSON_VALUE(ap1.ApplyData, '$.Sequences[0].Sections[2].SectionNo') = '3' 
+                                AND JSON_VALUE(ap1.ApplyData, '$.Sequences[0].IsActive') = 'true'
+                                AND ap1.ApplicationStatus = @applicationStatusInProgress
+                                AND (
+                                    JSON_VALUE(ap1.ApplyData, '$.Sequences[0].Status') = @sequenceStatusFeedbackAdded
+                                    OR ( 
+                                            JSON_VALUE(ap1.ApplyData, '$.Sequences[0].Sections[2].Status') IN (@financialStatusGraded, @financialStatusEvaluated)
+                                            AND JSON_VALUE(ap1.FinancialGrade, '$.SelectedGrade') = @selectedGradeInadequate
+                                        )
+                                )",
+                        new
+                        {
+                            applicationStatusInProgress = ApplicationStatus.InProgress,
+                            sequenceStatusSubmitted = ApplicationSequenceStatus.Submitted,
+                            sequenceStatusFeedbackAdded = ApplicationSequenceStatus.FeedbackAdded,
+                            sequenceStatusResubmitted = ApplicationSequenceStatus.Resubmitted,
+                            financialStatusSubmitted = ApplicationSectionStatus.Submitted,
+                            financialStatusInProgress = ApplicationSectionStatus.InProgress
+                        })).ToList();
+            }
         }
 
-        public Task<List<FinancialApplicationSummaryItem>> GetClosedFinancialApplications()
+        public async Task<List<FinancialApplicationSummaryItem>> GetClosedFinancialApplications()
         {
             throw new NotImplementedException();
         }
