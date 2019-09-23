@@ -385,14 +385,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             if (fileupload ?? false)
             {
                 updatePageResult = await UploadFilesToStorage(application.ApplicationId, sectionId, pageId, page);
-                if(updatePageResult.ValidationErrors == null && updatePageResult.ValidationPassed == false 
-                    && answers.Any(x => string.IsNullOrEmpty(x.QuestionId)) &&  answers.Count > 0)
-                {
-                    var next = page.Next.FirstOrDefault(x => x.Action == "NextPage");
-                    if (next != null)
-                        return RedirectToNextAction(Id, sequenceNo, sectionId, __redirectAction, next.Action, next.ReturnId);
-                    return RedirectToAction("Section", new { Id, sequenceNo, sectionId });
-                }
+                if(NothingToUpload(updatePageResult,answers))
+                    return ForwardToNextSectionOrPage(page, Id, sequenceNo, sectionId, __redirectAction);
             }
             else
                 updatePageResult = await _qnaApiClient.AddPageAnswer(application.ApplicationId, sectionId, pageId, answers);
@@ -417,26 +411,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             
 
             return RedirectToAction("Page", new { Id, sequenceNo, sectionId, pageId, __redirectAction });
-        }
-
-        private Page StoreEnteredAnswers(List<Answer> answers, Page page)
-        {
-            foreach (var answer in answers)
-            {
-                if (answer.QuestionId == null) continue;
-
-                var pageAnswer = page.PageOfAnswers.Single().Answers.SingleOrDefault(a => a.QuestionId == answer.QuestionId);
-                if (pageAnswer is null)
-                {
-                    page.PageOfAnswers.Single().Answers.Add(answer);
-                }
-                else
-                {
-                    pageAnswer.Value = answer.Value;
-                }
-            }
-
-            return page;
         }
 
         [HttpPost("/Application/DeleteAnswer")]
@@ -560,6 +534,42 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             return page;
         }
 
+
+        private bool NothingToUpload(SetPageAnswersResponse updatePageResult, List<Answer> answers)
+        {
+            return updatePageResult.ValidationErrors == null && updatePageResult.ValidationPassed == false
+                    && answers.Any(x => string.IsNullOrEmpty(x.QuestionId)) && answers.Count > 0;
+        }
+
+        private RedirectToActionResult ForwardToNextSectionOrPage(Page page, Guid Id, int sequenceNo, Guid sectionId, string __redirectAction)
+        {
+            var next = page.Next.FirstOrDefault(x => x.Action == "NextPage");
+            if (next != null)
+                return RedirectToNextAction(Id, sequenceNo, sectionId, __redirectAction, next.Action, next.ReturnId);
+            return RedirectToAction("Section", new { Id, sequenceNo, sectionId });
+        }
+
+        private Page StoreEnteredAnswers(List<Answer> answers, Page page)
+        {
+            foreach (var answer in answers)
+            {
+                if (answer.QuestionId == null) continue;
+
+                var pageAnswer = page.PageOfAnswers.Single().Answers.SingleOrDefault(a => a.QuestionId == answer.QuestionId);
+                if (pageAnswer is null)
+                {
+                    page.PageOfAnswers.Single().Answers.Add(answer);
+                }
+                else
+                {
+                    pageAnswer.Value = answer.Value;
+                }
+            }
+
+            return page;
+        }
+
+
         private RedirectToActionResult RedirectToNextAction(Guid Id, int sequenceNo, Guid sectionId, string redirectAction, string nextAction, string nextActionId)
         {
             if (nextAction == "NextPage")
@@ -576,7 +586,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
             return nextAction == "ReturnToSection"
                 ? RedirectToAction("Section", "Application", new { Id, sequenceNo, sectionId })
-                : RedirectToAction("Sequence", "Application", new { Id });
+                : RedirectToAction("Sequence", "Application", new { Id, sequenceNo });
         }
 
         private void SetResponseValidationErrors(List<KeyValuePair<string, string>> validationErrors, Page page)
