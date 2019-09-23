@@ -57,7 +57,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi._HelperClasse
 
         public static string NormalizeOverallGrade(string overallGrade)
         {
-            var grades = new string[] { CertificateGrade.Pass, CertificateGrade.Credit, CertificateGrade.Merit, CertificateGrade.Distinction, CertificateGrade.PassWithExcellence, CertificateGrade.NoGradeAwarded };
+            var grades = new string[] { CertificateGrade.Pass, CertificateGrade.Credit, CertificateGrade.Merit, CertificateGrade.Distinction, CertificateGrade.PassWithExcellence, CertificateGrade.Outstanding, CertificateGrade.NoGradeAwarded };
             return grades.FirstOrDefault(g => g.Equals(overallGrade, StringComparison.InvariantCultureIgnoreCase)) ?? overallGrade;
         }
 
