@@ -87,9 +87,9 @@ namespace SFA.DAS.AssessorService.Data.Apply
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))
             {
                 var result = await connection.ExecuteAsync(@"UPDATE Applications
-                                                SET  ApplyData = JSON_MODIFY(JSON_MODIFY(ApplyData,'$.Apply.StandardCode',@StandardCode),'$.Apply.StandardName',@StandardName)
+                                                SET  ApplyData = JSON_MODIFY(JSON_MODIFY(JSON_MODIFY(ApplyData,'$.Apply.StandardReference',@ReferenceNumber),'$.Apply.StandardCode',@StandardCode),'$.Apply.StandardName',@StandardName)
                                                 WHERE  Id = @Id",
-                    new { standardRequest.StandardCode, standardRequest.StandardName, standardRequest.Id });
+                    new { standardRequest.StandardCode,standardRequest.ReferenceNumber, standardRequest.StandardName, standardRequest.Id });
             }
         }
 

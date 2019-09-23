@@ -61,7 +61,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             var application = await _apiClient.GetApplication(id);
             var results = await _apiClient.GetStandards();
             model.SelectedStandard = results.FirstOrDefault(r => r.StandardId == standardCode);
-
+            
             model.ApplicationStatus = application.ApplyData.Apply.StandardCode == standardCode ? application.ApplicationStatus : string.Empty;
 
             if (!model.IsConfirmed)
@@ -76,7 +76,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 return View("~/Views/Application/Standard/ConfirmStandard.cshtml", model);
             }
 
-            await _apiClient.UpdateInitialStandardData(id, standardCode, model.SelectedStandard.Title);
+            await _apiClient.UpdateInitialStandardData(id, standardCode,model.SelectedStandard?.ReferenceNumber, model.SelectedStandard.Title);
 
             return RedirectToAction("Applications", "Application");
         }

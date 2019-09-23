@@ -17,11 +17,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         Task<bool> Submit(SubmitApplicationRequest submitApplicationRequest);
 
         //Task DeleteAnswer(Guid applicationId, int sequenceId, int sectionId, string pageId, Guid answerId, Guid userId);
-        //Task ImportWorkflow(IFormFile file);
-        Task<bool> UpdateInitialStandardData(Guid Id, int standardCode, string standardName);
-        //Task<Domain.Entities.Application> GetApplication(Guid applicationId);
-
-        //Task<string> GetApplicationStatus(Guid applicationId, int standardCode);
+        Task<bool> UpdateInitialStandardData(Guid Id, int standardCode,string referenceNumber, string standardName);
 
         Task<List<StandardCollation>> GetStandards();
         Task<List<Option>> GetQuestionDataFedOptions();

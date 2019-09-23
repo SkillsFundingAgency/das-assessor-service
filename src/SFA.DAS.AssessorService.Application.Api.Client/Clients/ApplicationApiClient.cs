@@ -7,10 +7,7 @@ using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Apply;
 using SFA.DAS.QnA.Api.Types.Page;
-using SFA.DAS.QnA.Api.Types;
-using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
-using AutoMapper;
 
 namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 {
@@ -79,7 +76,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task<bool> UpdateInitialStandardData(Guid id, int standardCode, string standardName)
+        public async Task<bool> UpdateInitialStandardData(Guid id, int standardCode, string referenceNumber, string standardName)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Post, $"api/v1/applications/updateInitialStandardData"))
             {
@@ -87,6 +84,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                 {
                     Id = id,
                     StandardCode = standardCode,
+                    ReferenceNumber = referenceNumber,
                     StandardName = standardName
                 });
             }

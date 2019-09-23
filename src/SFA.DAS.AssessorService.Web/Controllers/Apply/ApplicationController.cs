@@ -207,10 +207,10 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             var allApplicationSequences = await _qnaApiClient.GetAllApplicationSequences(application.ApplicationId);
             var sequence = allApplicationSequences.Single(x => x.SequenceNo == sequenceNo);
 
-            var canUpdate = CanUpdateApplication(sequence,application.ApplyData.Sequences, sequenceNo);
+            var canUpdate = CanUpdateApplication(sequence,application.ApplyData?.Sequences, sequenceNo);
             if (!canUpdate)
             {
-                return RedirectToAction("Sequence", new { Id });
+                return RedirectToAction("Sequence", new { id = Id, sequenceNo });
             }
 
             var section = await _qnaApiClient.GetSection(application.ApplicationId, sectionId);
@@ -238,7 +238,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             var allApplicationSequences = await _qnaApiClient.GetAllApplicationSequences(application.ApplicationId);
             var sequence = allApplicationSequences.Single(x => x.SequenceNo == sequenceNo);
 
-            var canUpdate = CanUpdateApplication(sequence, application.ApplyData.Sequences, sequenceNo);
+            var canUpdate = CanUpdateApplication(sequence, application.ApplyData?.Sequences, sequenceNo);
             if (!canUpdate)
             {
                 return RedirectToAction("Sequence", new { Id });
@@ -364,13 +364,13 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         }
 
         [HttpPost("/Application/{Id}/Sequences/{sequenceNo}/Sections/{sectionId}/Pages/{pageId}"), ModelStatePersist(ModelStatePersist.Store)]
-        public async Task<IActionResult> SaveAnswers(Guid Id, int sequenceNo, Guid sectionId, string pageId, string __redirectAction, string __formAction)
+        public async Task<IActionResult> SaveAnswers(Guid Id, int sequenceNo, Guid sectionId, string pageId, string __redirectAction)
         {
             var application = await _applicationApiClient.GetApplication(Id);
             var allApplicationSequences = await _qnaApiClient.GetAllApplicationSequences(application.ApplicationId);
             var sequence = allApplicationSequences.Single(x => x.SequenceNo == sequenceNo);
 
-            var canUpdate = CanUpdateApplication(sequence, application.ApplyData.Sequences, sequenceNo);
+            var canUpdate = CanUpdateApplication(sequence, application.ApplyData?.Sequences, sequenceNo);
             if (!canUpdate)
             {
                 return RedirectToAction("Sequence", new { application.ApplicationId });
@@ -382,8 +382,18 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             
             SetPageAnswersResponse updatePageResult;
             var fileupload = page.Questions?.Any(q => q.Input.Type == "FileUpload");
-            if(fileupload??false)
+            if (fileupload ?? false)
+            {
                 updatePageResult = await UploadFilesToStorage(application.ApplicationId, sectionId, pageId, page);
+                if(updatePageResult.ValidationErrors == null && updatePageResult.ValidationPassed == false 
+                    && answers.Any(x => string.IsNullOrEmpty(x.QuestionId)) &&  answers.Count > 0)
+                {
+                    var next = page.Next.FirstOrDefault(x => x.Action == "NextPage");
+                    if (next != null)
+                        return RedirectToNextAction(Id, sequenceNo, sectionId, __redirectAction, next.Action, next.ReturnId);
+                    return RedirectToAction("Section", new { Id, sequenceNo, sectionId });
+                }
+            }
             else
                 updatePageResult = await _qnaApiClient.AddPageAnswer(application.ApplicationId, sectionId, pageId, answers);
 
@@ -452,7 +462,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
         }
 
-        [HttpGet("Application/{Id}/SequenceNo/{sequenceNo}Section/{sectionId}/Page/{pageId}/Question/{questionId}/download/{filename}/RedirectAction/{__redirectAction}")]
+        [HttpGet("Application/{Id}/SequenceNo/{sequenceNo}Section/{sectionId}/Page/{pageId}/Question/{questionId}/Filename/{filename}/RedirectAction/{__redirectAction}")]
         public async Task<IActionResult> DeleteFile(Guid Id, int sequenceNo, Guid sectionId, string pageId, string questionId, string filename, string __redirectAction)
         {
             var application = await _applicationApiClient.GetApplication(Id);
@@ -471,7 +481,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             var allApplicationSequences = await _qnaApiClient.GetAllApplicationSequences(application.ApplicationId);
             var activeSequence = allApplicationSequences.Single(x => x.SequenceNo == sequenceNo);
 
-            var canUpdate = CanUpdateApplication(activeSequence, application.ApplyData.Sequences,  sequenceNo);
+            var canUpdate = CanUpdateApplication(activeSequence, application.ApplyData?.Sequences,  sequenceNo);
             if (!canUpdate)
             {
                 return RedirectToAction("Sequence", new { Id });
@@ -584,11 +594,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
         private async Task<SetPageAnswersResponse> UploadFilesToStorage(Guid applicationId, Guid sectionId, string pageId, Page page)
         {
-            SetPageAnswersResponse response = null;
+            SetPageAnswersResponse response = new SetPageAnswersResponse(null);
             if (HttpContext.Request.Form.Files.Any() && page != null)
-            {
                 response = await _qnaApiClient.Upload(applicationId, sectionId, pageId, HttpContext.Request.Form.Files);
-            }
             return response;
         }
 
