@@ -207,7 +207,47 @@ namespace SFA.DAS.AssessorService.Data.Apply
 
         public async Task<List<FinancialApplicationSummaryItem>> GetClosedFinancialApplications()
         {
-            throw new NotImplementedException();
+            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            {
+                // TODO: Implement ON-2283 and amend the SQL as noted below
+                return (await connection
+                    .QueryAsync<FinancialApplicationSummaryItem>(
+                        @"SELECT 
+                            org.EndPointAssessorName as OrganisationName,
+                            ap1.Id As Id,
+                            JSON_VALUE(ap1.ApplyData, '$.Sequences[0].SequenceNo') As SequenceNo,
+                            JSON_VALUE(ap1.ApplyData, '$.Sequences[0].Sections[2].SectionNo') SectionNo,
+                            ap1.FinancialGrade As Grade,
+                            JSON_VALUE(ap1.ApplyData, '$.Apply.InitSubmissionClosedDate') As ClosedDate,
+                            JSON_VALUE(ap1.ApplyData, '$.Apply.InitSubmissionCount') As SubmissionCount,
+                            CASE WHEN (JSON_VALUE(ap1.ApplyData, '$.Sequences[0].Status') = @sequenceStatusApproved) THEN @sequenceStatusApproved
+                                 WHEN (JSON_VALUE(ap1.ApplyData, '$.Sequences[0].Status') = @sequenceStatusRejected) THEN @sequenceStatusRejected
+                                 ELSE JSON_VALUE(ap1.ApplyData, '$.Sequences[0].Sections[2].Status')
+	                        END As CurrentStatus
+                            FROM Applications ap1
+                            inner join Organisations org ON ap1.OrganisationId = org.Id
+                            WHERE JSON_VALUE(ap1.ApplyData, '$.Sequences[0].SequenceNo') = '1' AND JSON_VALUE(ap1.ApplyData, '$.Sequences[0].Sections[2].SectionNo') = '3' 
+
+                                -- NOTE: THIS PROPERTY DOES NOT EXIST AND NEEDS TO BE IMPLEMENTED AS PART OF ON-2283
+                                -- AND JSON_VALUE(ap1.ApplyData, '$.Sequences[0].Sections[2].NotRequired') = 'false'
+
+                                AND JSON_VALUE(ap1.FinancialGrade, '$.SelectedGrade') IS NOT NULL
+                                AND (
+                                    JSON_VALUE(ap1.ApplyData, '$.Sequences[0].Status') IN (@sequenceStatusApproved, @sequenceStatusRejected)
+                                    OR ( 
+                                            JSON_VALUE(ap1.ApplyData, '$.Sequences[0].Sections[2].Status') IN (@financialStatusGraded, @financialStatusEvaluated)
+                                            AND JSON_VALUE(ap1.FinancialGrade, '$.SelectedGrade') <> @selectedGradeInadequate
+                                        )
+                                )",
+                        new
+                        {
+                            sequenceStatusApproved = ApplicationSequenceStatus.Approved,
+                            sequenceStatusRejected = ApplicationSequenceStatus.Rejected,
+                            financialStatusGraded = ApplicationSectionStatus.Graded,
+                            financialStatusEvaluated = ApplicationSectionStatus.Evaluated,
+                            selectedGradeInadequate = FinancialApplicationSelectedGrade.Inadequate
+                        })).ToList();
+            }
         }
 
     }
