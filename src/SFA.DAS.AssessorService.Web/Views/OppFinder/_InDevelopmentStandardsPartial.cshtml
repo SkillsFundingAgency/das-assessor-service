@@ -45,7 +45,13 @@ else
                 @foreach (var inDevelopmentStandard in Model.InDevelopmentStandards.Items)
                 {
                     <tr class="govuk-table__row">
-                        <td class="govuk-table__cell">@inDevelopmentStandard.StandardName</td>
+                        <td class="govuk-table__cell">
+                            <a 
+                                asp-action="ShowInDevelopmentStandardDetails" 
+                                asp-controller="OppFinder" 
+                                asp-route-standardReference="@inDevelopmentStandard.StandardReference">@inDevelopmentStandard.StandardName
+                            </a>
+                        </td>
                     </tr>
                 }
             }

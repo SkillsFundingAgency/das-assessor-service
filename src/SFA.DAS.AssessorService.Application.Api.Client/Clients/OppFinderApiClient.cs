@@ -45,5 +45,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                     nonApprovedStandradsRequest);
             }
         }
+
+        public async Task<GetOppFinderNonApprovedStandardDetailsResponse> GetNonApprovedStandardDetails(GetOppFinderNonApprovedStandardDetailsRequest nonApprovedStandardDetailsRequest)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/v1/oppfinder/nonapproved-details"))
+            {
+                return await PostPutRequestWithResponse<GetOppFinderNonApprovedStandardDetailsRequest, GetOppFinderNonApprovedStandardDetailsResponse>(request,
+                    nonApprovedStandardDetailsRequest);
+            }
+        }
     }
 }

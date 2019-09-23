@@ -10,18 +10,7 @@
 
 @section ServiceHeader
 {
-    <div class="das-user-panel">
-        <div class="govuk-width-container">
-            <div class="das-user-panel__content">
-                <h1 class="govuk-heading-xl">
-                    Apprenticeship assessment business opportunity
-                </h1>
-                <p class="govuk-body">
-                    For potential and existing end-point assessment organisation (EPAOs) to understand the business opportunities for apprenticeship assessment
-                </p>
-            </div>
-        </div>
-    </div>
+    @RenderSection("ServiceHeader", required: false)
 }
 
 @section Scripts
@@ -36,4 +25,5 @@
 
 @section AdditionalFooterLinks
 {
+    @RenderSection("AdditionalFooterLinks", required: false)
 }

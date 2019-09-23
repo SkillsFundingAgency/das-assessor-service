@@ -366,6 +366,40 @@ namespace SFA.DAS.AssessorService.Web.Controllers.OppFinder
             }
         }
 
+        [HttpGet("ShowInDevelopmentStandardDetails")]
+        public async Task<IActionResult> ShowInDevelopmentStandardDetails(string standardReference)
+        {
+            return await ShowNonApprovedStandardDetails(standardReference, NonApprovedType.InDevelopment, _oppFinderSession.InDevelopmentPageIndex);
+        }
+        
+        [HttpGet("ShowProposedStandardDetails")]
+        public async Task<IActionResult> ShowProposedStandardDetails(string standardReference)
+        {
+            return await ShowNonApprovedStandardDetails(standardReference, NonApprovedType.Proposed, _oppFinderSession.ProposedPageIndex);
+        }
+
+        private async Task<IActionResult> ShowNonApprovedStandardDetails(string standardReference, NonApprovedType nonApprovedType, int pageIndex)
+        {
+            var standardDetails = await _oppFinderApiClient.
+                GetNonApprovedStandardDetails(new GetOppFinderNonApprovedStandardDetailsRequest { StandardReference = standardReference });
+
+            var vm = new OppFinderNonApprovedDetailsViewModel
+            {
+                NonApprovedType = nonApprovedType,
+                PageIndex = pageIndex,
+                Title = standardDetails.Title,
+                OverviewOfRole = standardDetails.OverviewOfRole,
+                StandardLevel = standardDetails.StandardLevel,
+                StandardReference = standardDetails.StandardReference,
+                Sector = standardDetails.Sector,
+                TypicalDuration = standardDetails.TypicalDuration,
+                Trailblazer = standardDetails.Trailblazer?.Trim().Split(" ") ?? new string[] { },
+                StandardPageUrl = standardDetails.StandardPageUrl
+            };
+
+            return View("NonApprovedDetails", vm);
+        }
+
         private async Task<GetOppFinderFilterStandardsResponse> GetFilterValues()
         {
             var filterStandardsRequest = new GetOppFinderFilterStandardsRequest

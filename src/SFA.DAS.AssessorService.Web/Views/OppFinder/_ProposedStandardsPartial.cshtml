@@ -45,8 +45,15 @@ else
                 @foreach (var proposedStandard in Model.ProposedStandards.Items)
                 {
                     <tr class="govuk-table__row">
-                        <td class="govuk-table__cell">@proposedStandard.StandardName</td>
+                        <td class="govuk-table__cell">
+                            <a  
+                               asp-action="ShowProposedStandardDetails" 
+                               asp-controller="OppFinder" 
+                               asp-route-standardReference="@proposedStandard.StandardReference">@proposedStandard.StandardName
+                            </a>
+                        </td>
                     </tr>
+
                 }
             }
         </tbody>

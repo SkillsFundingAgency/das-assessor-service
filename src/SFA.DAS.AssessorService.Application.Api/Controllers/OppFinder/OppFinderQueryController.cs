@@ -62,5 +62,16 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             _logger.LogInformation($"Received request to retrieve non approved standards {request.NonApprovedType}");
             return Ok(await _mediator.Send(request));
         }
+
+        [HttpPost("nonapproved-details", Name = "GetNonApprovedStandardDetails")]
+        [ValidateBadRequest]
+        [SwaggerResponse((int)HttpStatusCode.Created, Type = typeof(GetOppFinderNonApprovedStandardDetailsResponse))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> GetNonApprovedStandardDetails([FromBody] GetOppFinderNonApprovedStandardDetailsRequest request)
+        {
+            _logger.LogInformation($"Received request to retrieve non approved standard details {request.StandardReference}");
+            return Ok(await _mediator.Send(request));
+        }
     }
 }
