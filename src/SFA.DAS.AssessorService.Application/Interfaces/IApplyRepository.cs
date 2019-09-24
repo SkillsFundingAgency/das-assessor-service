@@ -11,7 +11,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<List<Domain.Entities.Application>> GetUserApplications(Guid userId);
         Task<List<Domain.Entities.Application>> GetOrganisationApplications(Guid userId);
         Task<Domain.Entities.Application> GetApplication(Guid applicationId);
-        Task<Guid> CreateApplication(CreateApplicationRequest applicationRequest, string applicationStatus);
+        Task<Guid> CreateApplication(Domain.Entities.Application application, string applicationStatus);
         Task SubmitApplicationSequence(Domain.Entities.Application application);
         Task<int> GetNextAppReferenceSequence();
         Task<List<FinancialApplicationSummaryItem>> GetOpenFinancialApplications();

@@ -59,15 +59,16 @@ namespace SFA.DAS.AssessorService.Data.Apply
             }
         }
 
-        public async Task<Guid> CreateApplication(CreateApplicationRequest applicationRequest, string applicationStatus)
+        public async Task<Guid> CreateApplication(Domain.Entities.Application application, string applicationStatus)
         {
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))
             {
                 return await connection.QuerySingleAsync<Guid>(
-                    @"INSERT INTO Applications (ApplicationId, OrganisationId,ApplicationStatus, CreatedAt, CreatedBy)
+                    @"INSERT INTO Applications (ApplicationId, OrganisationId,ApplicationStatus,ApplyData, ReviewStatus, CreatedAt, CreatedBy)
                                         OUTPUT INSERTED.[Id] 
-                                        VALUES (@QnaApplicationId, @OrganisationId,@applicationStatus, GETUTCDATE(), @userId)",
-                    new { applicationRequest.QnaApplicationId, applicationRequest.OrganisationId, applicationStatus, applicationRequest.UserId });
+                                        VALUES (@ApplicationId, @OrganisationId,@ApplicationStatus,@ApplyData,@ReviewStatus, GETUTCDATE(), @CreatedBy)",
+                    new { application.ApplicationId, application.OrganisationId, application.ApplicationStatus,
+                        application.ApplyData, application.ReviewStatus, application.CreatedBy });
             }
         }
 

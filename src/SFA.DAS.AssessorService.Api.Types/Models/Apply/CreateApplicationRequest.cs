@@ -1,14 +1,13 @@
 ﻿using MediatR;
+using SFA.DAS.AssessorService.ApplyTypes;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models.Apply
 {
-    public class CreateApplicationRequest: IRequest<Guid>
+    public class CreateApplicationRequest: ApplicationApplyData, IRequest<Guid>
     {
-        public Guid QnaApplicationId { get; set; }
         public Guid OrganisationId { get; set; }
-        public Guid UserId { get; set; }
+        public List<ApplySequence> listOfApplySequences { get; set; }
     }
 }

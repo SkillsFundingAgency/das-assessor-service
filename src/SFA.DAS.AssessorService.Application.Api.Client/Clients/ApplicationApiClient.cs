@@ -59,12 +59,12 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task<bool> Submit(SubmitApplicationRequest submitApplicationRequest)
+        public async Task<bool> Submit(SubmitApplyDataRequest submitApplyDataRequest)
         {
           
             using (var request = new HttpRequestMessage(HttpMethod.Post, $"api/v1/applications/submitApplication"))
             {
-                return await PostPutRequestWithResponse<SubmitApplicationRequest, bool>(request, submitApplicationRequest);
+                return await PostPutRequestWithResponse<SubmitApplyDataRequest, bool>(request, submitApplyDataRequest);
             }
         }
 

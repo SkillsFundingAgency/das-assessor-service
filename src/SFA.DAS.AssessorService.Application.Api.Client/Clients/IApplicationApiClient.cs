@@ -14,7 +14,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         Task<List<ApplicationResponse>> GetApplications(Guid userId, bool createdBy);
         Task<ApplicationResponse> GetApplication(Guid id);
         Task<Guid> CreateApplication(CreateApplicationRequest createApplicationRequest);
-        Task<bool> Submit(SubmitApplicationRequest submitApplicationRequest);
+        Task<bool> Submit(SubmitApplyDataRequest submitApplyDataRequest);
 
         //Task DeleteAnswer(Guid applicationId, int sequenceId, int sectionId, string pageId, Guid answerId, Guid userId);
         Task<bool> UpdateInitialStandardData(Guid Id, int standardCode,string referenceNumber, string standardName);

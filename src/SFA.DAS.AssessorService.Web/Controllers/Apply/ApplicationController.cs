@@ -96,7 +96,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             {
                 UserReference = contact.Id.ToString(),
                 WorkflowType = WorkflowType,
-                ApplicationData = JsonConvert.SerializeObject(new ApplicationData {
+                ApplicationData = JsonConvert.SerializeObject(new ApplicationData
+                {
                     UseTradingName = false,
                     OrganisationName = org.EndPointAssessorName,
                     OrganisationReferenceId = org.Id.ToString()
@@ -104,34 +105,18 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             };
 
             var qnaResponse = await _qnaApiClient.StartApplications(applicationStartRequest);
+            var allApplicationSequences = await _qnaApiClient.GetAllApplicationSequences(qnaResponse.ApplicationId);
+            var sections = allApplicationSequences.Select(async sequence => await _qnaApiClient.GetSections(qnaResponse.ApplicationId, sequence.Id)).Select(t => t.Result).ToList();
 
-            var  id = await _applicationApiClient.CreateApplication(new CreateApplicationRequest
-            {
-                OrganisationId = org.Id,
-                QnaApplicationId = qnaResponse?.ApplicationId??Guid.Empty,
-                UserId = contact.Id
-            });
+            var id = await _applicationApiClient.CreateApplication(BuildApplyDataForApplication(qnaResponse.ApplicationId, contact.Id, org.Id,
+             _config.ReferenceFormat, contact.GivenNames, contact.Email, 0,
+                null, null, ApplicationStatus.InProgress, ApplicationSequenceStatus.Draft,
+               allApplicationSequences, sections));
 
-            var application = await _applicationApiClient.GetApplication(id);
-            var allApplicationSequences = await _qnaApiClient.GetAllApplicationSequences(application.ApplicationId);
-            var sequence = allApplicationSequences.Single(x => x.SequenceNo == 1);
-
-            var sections = await _qnaApiClient.GetSections(application.ApplicationId, sequence.Id);
-            if (await _applicationApiClient.Submit(BuildApplicationRequest(id, contact.Id,
-               _config.ReferenceFormat, contact.GivenNames,
-               contact?.Email,
-               application?.ApplyData?.Apply?.StandardCode ?? 0,
-               application?.ApplyData?.Apply?.StandardReference,
-               application?.ApplyData?.Apply?.StandardName,
-               ApplicationStatus.InProgress,
-               ApplicationSequenceStatus.Draft,
-               sequence, sections)))
-            {
-                return RedirectToAction("SequenceSignPost", new { Id = id });
-            }
-
-            throw new BadRequestException("Failed to start application apply process.");
+            return RedirectToAction("SequenceSignPost", new { Id = id });
         }
+
+
 
         [HttpGet("/Application/{Id}")]
         public async Task<IActionResult> SequenceSignPost(Guid Id)
@@ -492,7 +477,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 }
             }
 
-            if (await _applicationApiClient.Submit(BuildApplicationRequest(Id, contact.Id,
+            if (await _applicationApiClient.Submit(BuildApplyDataForSubmission(Id, contact.Id,
                 _config.ReferenceFormat,contact.GivenNames, 
                 contact?.Email, 
                 application?.ApplyData?.Apply?.StandardCode??0 , 
@@ -703,7 +688,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             }
         }
 
-        private SubmitApplicationRequest BuildApplicationRequest(Guid id, Guid userId,
+        private SubmitApplyDataRequest BuildApplyDataForSubmission(Guid id, Guid userId,
             string referenceFormat, string contactName, string email, int standardCode, 
             string standardReference, string standardName,string applicationStatus,string sectionSequenceStatus, 
             Sequence sequence, List<Section> sections)
@@ -716,7 +701,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 RequestedFeedbackAnswered = x.QnAData.RequestedFeedbackAnswered
             }).ToList();
 
-            return new SubmitApplicationRequest
+            return new SubmitApplyDataRequest
             {
                 ApplicationId = id,
                 ReferenceFormat = referenceFormat,
@@ -738,6 +723,45 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 }
             };
         }
+
+
+
+        private CreateApplicationRequest BuildApplyDataForApplication(Guid id, Guid userId, Guid organisationId,
+           string referenceFormat, string contactName, string email, int standardCode,
+           string standardReference, string standardName, string applicationStatus, string sectionSequenceStatus,
+           List<Sequence> sequences, List<List<Section>> sections)
+        {
+            return new CreateApplicationRequest
+            {
+                ApplicationId = id,
+                OrganisationId = organisationId,
+                ReferenceFormat = referenceFormat,
+                ContactName = contactName,
+                StandardCode = standardCode,
+                StandardReference = standardReference,
+                StandardName = standardName,
+                ApplicationStatus = applicationStatus,
+                Email = email,
+                UserId = userId,
+                listOfApplySequences = sequences.Select(sequence => new ApplySequence
+                {
+                    SequenceId = sequence.Id,
+                    Sections = sections.SelectMany(y => y.Where(x => x.SequenceNo == sequence.SequenceNo).Select(x => new ApplySection
+                    {
+                        SectionId = x.Id,
+                        SectionNo = x.SectionNo,
+                        Status = sectionSequenceStatus,
+                        RequestedFeedbackAnswered = x.QnAData.RequestedFeedbackAnswered
+                    })).ToList(),
+                    Status = sectionSequenceStatus,
+                    IsActive = sequence.IsActive,
+                    SequenceNo = sequence.SequenceNo,
+                    NotRequired = sequence.NotRequired
+                }).ToList()
+            };
+        }
+
+
 
         private List<ValidationErrorDetail> ValidateSubmit(List<Section> sections)
         {

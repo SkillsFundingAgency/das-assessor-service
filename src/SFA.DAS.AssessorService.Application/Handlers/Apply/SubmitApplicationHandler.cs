@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Apply
 {
-    public class SubmitApplicationHandler : IRequestHandler<SubmitApplicationRequest, bool>
+    public class SubmitApplicationHandler : IRequestHandler<SubmitApplyDataRequest, bool>
     {
         private readonly IApplyRepository _applyRepository;
         private readonly IMediator _mediator;
@@ -24,7 +24,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
             _eMailTemplateQueryRepository = eMailTemplateQueryRepository;
         }
 
-        public async Task<bool> Handle(SubmitApplicationRequest request, CancellationToken cancellationToken)
+        public async Task<bool> Handle(SubmitApplyDataRequest request, CancellationToken cancellationToken)
         {
             var application = await _applyRepository.GetApplication(request.ApplicationId);
 
@@ -76,7 +76,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
             }
         }
 
-        private async Task AddApplyDataWithSubmissionInfo(ApplyData applyData, SubmitApplicationRequest request)
+        private async Task AddApplyDataWithSubmissionInfo(ApplyData applyData, SubmitApplyDataRequest request)
         {
             if (applyData.Apply == null)
                 applyData.Apply = new ApplyTypes.Apply();
