@@ -11,6 +11,13 @@
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
+            
+            @if (Model.PageContext != null)
+            {
+            <span class="govuk-caption-xl">
+                @Html.Raw(Model.PageContext)
+            </span>
+            }
             <h1 class="govuk-heading-xl">Application overview</h1>
 
             @if (!ViewData.ModelState.IsValid || Model.ErrorMessages?.Any() is true)
@@ -53,7 +60,7 @@
                                 @applicationSection.LinkTitle
                             </h2>
                             <span id="company-details-hint" class="govuk-hint">
-                                @applicationSection.QnAData.Pages.Count(x => x.Complete == true) of @applicationSection.QnAData.Pages.Count( x => x.Active) questions completed
+                                @applicationSection.QnAData.Pages.Count(x => x.Complete == true) of @applicationSection.QnAData.Pages.Count(x => x.Active) questions completed
                             </span>
                             @if (Model.Status != ApplicationSequenceStatus.Submitted)
                             {

@@ -8,6 +8,7 @@ namespace SFA.DAS.AssessorService.ApplyTypes
     {
         public Section Section { get; set; }
         public int SequenceNo { get; set; }
+        public string PageContext { get; set; }
 
         public bool HasNewPageFeedback => Section.QnAData.Pages.Any(p => p.HasNewFeedback);
         public bool HasCompletedPageFeedback => Section.QnAData.Pages.Any(p => p.AllFeedbackIsCompleted);

@@ -189,8 +189,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             var sequence = allApplicationSequences.Single(x => x.SequenceNo == sequenceNo);
 
             var sections = await _qnaApiClient.GetSections(application.ApplicationId, sequence.Id);
-            
-            var sequenceVm = new SequenceViewModel(sequence, application.Id, sections, null);
+
+            var sequenceVm = new SequenceViewModel(sequence, application.Id, BuildPageContext(application, sequence), sections, null);
             if(application.ApplyData != null && application.ApplyData.Sequences != null)
             {
                 var seq= application.ApplyData.Sequences.SingleOrDefault(x => x.SequenceId == sequence.Id && x.SequenceNo == sequence.SequenceNo);
@@ -216,6 +216,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             var section = await _qnaApiClient.GetSection(application.ApplicationId, sectionId);
             var applicationSection = new ApplicationSection { Section = section, Id = Id };
             applicationSection.SequenceNo = sequenceNo;
+            applicationSection.PageContext = BuildPageContext(application, sequence);
 
             switch (section?.DisplayType)
             {
@@ -246,13 +247,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
             PageViewModel viewModel = null;
             var returnUrl = Request.Headers["Referer"].ToString();
-
-            string pageContext = string.Empty;
-            if (sequence.SequenceNo == 2)
-            {
-                pageContext = $"{application?.ApplyData?.Apply?.StandardReference } {application?.ApplyData?.Apply ?.StandardName}";
-            }
-
+            var pageContext = BuildPageContext(application, sequence);
             if (!ModelState.IsValid)
             {
                 // when the model state has errors the page will be displayed with the values which failed validation
@@ -453,21 +448,22 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             var contact = await GetUserContact(signinId);
             var application = await _applicationApiClient.GetApplication(Id);
             var allApplicationSequences = await _qnaApiClient.GetAllApplicationSequences(application.ApplicationId);
-            var activeSequence = allApplicationSequences.Single(x => x.SequenceNo == sequenceNo);
+            var sequence = allApplicationSequences.Single(x => x.SequenceNo == sequenceNo);
 
-            var canUpdate = CanUpdateApplication(activeSequence, application.ApplyData?.Sequences,  sequenceNo);
+            var canUpdate = CanUpdateApplication(sequence, application.ApplyData?.Sequences,  sequenceNo);
             if (!canUpdate)
             {
                 return RedirectToAction("Sequence", new { Id });
             }
 
-            var sections = await _qnaApiClient.GetSections(application.ApplicationId, activeSequence.Id);
+            var sections = await _qnaApiClient.GetSections(application.ApplicationId, sequence.Id);
             var errors =  ValidateSubmit(sections);
             if (errors.Any())
             {
-                var sequenceVm = new SequenceViewModel(activeSequence, Id,sections, errors);
+               
+                var sequenceVm = new SequenceViewModel(sequence, Id, BuildPageContext(application,sequence),sections, errors);
 
-                if (activeSequence.Status == ApplicationSequenceStatus.FeedbackAdded)
+                if (sequence.Status == ApplicationSequenceStatus.FeedbackAdded)
                 {
                     return View("~/Views/Application/Feedback.cshtml", sequenceVm);
                 }
@@ -482,8 +478,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 contact?.Email, 
                 application?.ApplyData?.Apply?.StandardCode??0 , 
                 application?.ApplyData?.Apply?.StandardReference, 
-                application?.ApplyData?.Apply?.StandardName,  
-                activeSequence, sections)))
+                application?.ApplyData?.Apply?.StandardName,
+                sequence, sections)))
             {
                 return RedirectToAction("Submitted", new { Id });
             }
@@ -534,6 +530,15 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             return page;
         }
 
+        private string BuildPageContext(ApplicationResponse application, Sequence sequence)
+        {
+            string pageContext = string.Empty;
+            if (sequence.SequenceNo == 2)
+            {
+                pageContext = $"{application?.ApplyData?.Apply?.StandardReference } {application?.ApplyData?.Apply?.StandardName}";
+            }
+            return pageContext;
+        }
 
         private bool NothingToUpload(SetPageAnswersResponse updatePageResult, List<Answer> answers)
         {
