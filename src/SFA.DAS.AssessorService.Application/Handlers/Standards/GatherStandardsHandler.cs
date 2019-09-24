@@ -56,8 +56,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Standards
                 }
                 catch(Exception ex)
                 {
-                    _unitOfWork.Rollback();
                     _logger.LogError(ex, "Processing of Standards could not be completed");
+                    _unitOfWork.Rollback();
                     throw;
                 }
             }

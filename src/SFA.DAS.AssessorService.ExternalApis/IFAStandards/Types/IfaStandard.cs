@@ -10,6 +10,7 @@ namespace SFA.DAS.AssessorService.ExternalApis.IFAStandards.Types
         public int? TypicalDuration { get; set; }
         public int? MaxFunding { get; set; }
         public string TbMainContact { get; set; }
+        public IfaStandardEqaProvider EqaProvider { get; set; }
         public DateTime? ApprovedForDelivery { get; set; }
         public string IntegratedDegree { get; set; }
         public bool IsPublished { get; set; }
@@ -22,5 +23,14 @@ namespace SFA.DAS.AssessorService.ExternalApis.IFAStandards.Types
         public string Url { get; set; }
         public string AssessmentPlanUrl { get; set; }
         public string StandardPageUrl { get; set; }
+    }
+
+    public class IfaStandardEqaProvider
+    {
+        public string ProviderName { get; set; }
+        public string ContactName { get; set; }
+        public string ContactAddress { get; set; }
+        public string ContactEmail { get; set; }
+        public string WebLink { get; set; }
     }
 }

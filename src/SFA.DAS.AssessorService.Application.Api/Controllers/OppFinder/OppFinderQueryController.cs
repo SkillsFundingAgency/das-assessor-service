@@ -63,6 +63,17 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             return Ok(await _mediator.Send(request));
         }
 
+        [HttpPost("approved-details", Name = "GetApprovedStandardDetails")]
+        [ValidateBadRequest]
+        [SwaggerResponse((int)HttpStatusCode.Created, Type = typeof(GetOppFinderApprovedStandardDetailsResponse))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> GetApprovedStandardDetails([FromBody] GetOppFinderApprovedStandardDetailsRequest request)
+        {
+            _logger.LogInformation($"Received request to retrieve approved standard details {request.StandardCode}");
+            return Ok(await _mediator.Send(request));
+        }
+
         [HttpPost("nonapproved-details", Name = "GetNonApprovedStandardDetails")]
         [ValidateBadRequest]
         [SwaggerResponse((int)HttpStatusCode.Created, Type = typeof(GetOppFinderNonApprovedStandardDetailsResponse))]

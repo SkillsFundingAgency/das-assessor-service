@@ -140,28 +140,28 @@ namespace SFA.DAS.AssessorService.Data
                 .Where(es => !latestStandards.Select(ls => ls.StandardId).Contains(es.StandardId))
                 .ToList();
 
-            standardsDeleted.ForEach(async p =>
+            foreach (var standard in standardsDeleted)
             {
-                await UpdateExistingStandardToRemoved(p);
-            });
+                await UpdateExistingStandardToRemoved(standard);
+            }
 
             var standardsUpdated = latestStandards
                 .Where(ls => existingStandards.Any(es => es.StandardId.Equals(ls.StandardId)))
                 .ToList();
 
-            standardsUpdated.ForEach(async p =>
+            foreach(var standard in standardsUpdated)
             {
-                await UpdateExistingStandard(p, JsonConvert.SerializeObject(p.StandardData));
-            });
+                await UpdateExistingStandard(standard, JsonConvert.SerializeObject(standard.StandardData));
+            }
 
             var standardsInserted = latestStandards
                 .Where(ls => !existingStandards.Any(es => es.StandardId.Equals(ls.StandardId)))
                 .ToList();
 
-            standardsInserted.ForEach(async p =>
+            foreach (var standard in standardsInserted)
             {
-                await InsertNewStandard(p, JsonConvert.SerializeObject(p.StandardData));
-            });
+                await InsertNewStandard(standard, JsonConvert.SerializeObject(standard.StandardData));
+            }
 
             return $"details of approved update: Number of Inserts: {standardsInserted.Count}; Number of Updates: {standardsUpdated.Count}; Number of Removes: {standardsDeleted.Count}";
         }
@@ -174,28 +174,28 @@ namespace SFA.DAS.AssessorService.Data
                 .Where(es => !latestStandards.Select(ls => ls.ReferenceNumber).Contains(es.ReferenceNumber))
                 .ToList();
 
-            standardsDeleted.ForEach(async p =>
+            foreach (var standard in standardsDeleted)
             {
-                await UpdateExistingStandardToRemoved(p);
-            });
+                await UpdateExistingStandardToRemoved(standard);
+            }
 
             var standardsUpdated = latestStandards
                 .Where(ls => existingStandards.Any(es => es.ReferenceNumber.Equals(ls.ReferenceNumber, StringComparison.InvariantCultureIgnoreCase)))
                 .ToList();
 
-            standardsUpdated.ForEach(async p =>
+            foreach (var standard in standardsUpdated)
             {
-                await UpdateExistingStandard(p, JsonConvert.SerializeObject(p.StandardData));
-            });
+                await UpdateExistingStandard(standard, JsonConvert.SerializeObject(standard.StandardData));
+            }
 
             var standardsInserted = latestStandards
                 .Where(ls => !existingStandards.Any(es => es.ReferenceNumber.Equals(ls.ReferenceNumber, StringComparison.InvariantCultureIgnoreCase)))
                 .ToList();
 
-            standardsInserted.ForEach(async p =>
+            foreach (var standard in standardsInserted)
             {
-                await InsertNewStandard(p, JsonConvert.SerializeObject(p.StandardData));
-            });
+                await InsertNewStandard(standard, JsonConvert.SerializeObject(standard.StandardData));
+            }
 
             return $"details of non-approved update: Number of Inserts: {standardsInserted.Count}; Number of Updates: {standardsUpdated.Count}; Number of Removes: {standardsDeleted.Count}";
         }
@@ -304,6 +304,26 @@ namespace SFA.DAS.AssessorService.Data
                 commandType: CommandType.StoredProcedure);
 
             return result.ToList();
+        }
+
+        public async Task<OppFinderApprovedStandardDetailsResult> GetOppFinderApprovedStandardDetails(int standardCode)
+        {
+            var @params = new DynamicParameters();
+            @params.Add("standardCode", standardCode);
+            
+            var filterResults = (await _unitOfWork.Connection.QueryMultipleAsync(
+                "OppFinder_Get_Approved_Standard_Details",
+                @params,
+                _unitOfWork.Transaction,
+                commandType: CommandType.StoredProcedure));
+
+            var filterStandardsResult = new OppFinderApprovedStandardDetailsResult
+            {
+                OverviewResult = filterResults.Read<OppFinderApprovedStandardOverviewResult>().FirstOrDefault(),
+                RegionResults = filterResults.Read<OppFinderApprovedStandardRegionResult>().ToList()
+            };
+
+            return filterStandardsResult;
         }
 
         public async Task<OppFinderFilterStandardsResult> GetOppFinderFilterStandards(string searchTerm, string sectorFilters, string levelFilters)

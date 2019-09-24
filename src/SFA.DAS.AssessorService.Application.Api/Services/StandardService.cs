@@ -175,6 +175,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
                 {
                     Category = ifaStandard?.Route,
                     IfaStatus = ifaStandard?.Status,
+                    EqaProviderName = ifaStandard?.EqaProvider?.ProviderName,
+                    EqaProviderContactName = ifaStandard?.EqaProvider?.ContactName,
+                    EqaProviderContactAddress = ifaStandard?.EqaProvider?.ContactAddress,
+                    EqaProviderContactEmail = ifaStandard?.EqaProvider?.ContactEmail,
+                    EqaProviderWebLink = ifaStandard?.EqaProvider?.WebLink,
                     IntegratedDegree = ifaStandard?.IntegratedDegree,
                     EffectiveFrom = winStandard?.EffectiveFrom,
                     EffectiveTo = winStandard?.EffectiveTo,

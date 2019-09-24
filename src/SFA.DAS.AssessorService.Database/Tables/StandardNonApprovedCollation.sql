@@ -4,10 +4,10 @@
 	[ReferenceNumber] [nvarchar](10) NULL,
 	[Title] [nvarchar](500) NOT NULL,
 	[StandardData] [nvarchar](max) NULL,
-	[DateAdded] [datetime] NOT NULL,
+	[DateAdded] DateTime NOT NULL DEFAULT GETUTCDATE(),
 	[DateUpdated] [datetime] NULL,
 	[DateRemoved] [datetime] NULL,
-	[IsLive] [bit] NULL,
+	[IsLive] BIT DEFAULT 1
 	CONSTRAINT [PK_StandardNonApprovedCollation] PRIMARY KEY CLUSTERED 
 	(
 		[Id] ASC

@@ -69,7 +69,13 @@ else
         @foreach (var approvedStandard in Model.ApprovedStandards.Items.ConvertAll(x => x as OppFinderApprovedSearchResult))
         {
             <tr class="govuk-table__row">
-                <td class="govuk-table__cell">@approvedStandard.StandardName</td>
+                <td class="govuk-table__cell">
+                    <a 
+                        asp-action="ShowApprovedStandardDetails" 
+                        asp-controller="OppFinder" 
+                        asp-route-standardCode="@approvedStandard.StandardCode">@approvedStandard.StandardName
+                    </a>
+                </td>
                 <td class="govuk-table__cell">@approvedStandard.ActiveApprentices</td>
                 <td class="govuk-table__cell">@approvedStandard.RegisteredEPAOs</td>
             </tr>

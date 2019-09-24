@@ -815,6 +815,24 @@
   background: #dee0e2;
 }
 
+.das-highlight-box {
+    color: #0b0c0c;
+    font-family: nta,Arial,sans-serif;
+    border-top: 5px solid #bfc1c3;
+    border-bottom: 5px solid #bfc1c3;
+    padding: 10px 5px 10px 5px;
+    margin-bottom: 40px;
+}
+
+.das-highlight-box-heading {
+    font-weight: 700;
+    font-size: 48px;
+}
+
+.das-highlight-box-content {
+    font-size:16px;
+}
+
 .error-summary,
 .info-summary,
 .success-summary,
@@ -1243,6 +1261,11 @@ TODO: change to 'das-page-navigation' and BEM
 .govuk-details__text--no-indent {
   padding-left: 0;
   border: 0;
+}
+
+.govuk-details__text--full-width {
+    margin-right: -300%;
+    border-left: none;
 }
 
 @media (min-width: 40.0625em) {

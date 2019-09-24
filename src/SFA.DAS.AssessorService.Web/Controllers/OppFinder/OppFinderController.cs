@@ -366,6 +366,35 @@ namespace SFA.DAS.AssessorService.Web.Controllers.OppFinder
             }
         }
 
+        [HttpGet("ShowApprovedStandardDetails")]
+        public async Task<IActionResult> ShowApprovedStandardDetails(int standardCode)
+        {
+            var standardDetails = await _oppFinderApiClient.
+                GetApprovedStandardDetails(new GetOppFinderApprovedStandardDetailsRequest { StandardCode = standardCode });
+
+            var vm = new OppFinderApprovedDetailsViewModel
+            {
+                PageIndex = _oppFinderSession.ApprovedPageIndex,
+                Title = standardDetails.Title,
+                OverviewOfRole = standardDetails.OverviewOfRole,
+                StandardLevel = standardDetails.StandardLevel,
+                StandardReference = standardDetails.StandardReference,
+                TotalActiveApprentices = standardDetails.TotalActiveApprentices,
+                TotalCompletedAssessments = standardDetails.TotalCompletedAssessments,
+                Sector = standardDetails.Sector,
+                TypicalDuration = standardDetails.TypicalDuration,
+                ApprovedForDelivery = standardDetails.ApprovedForDelivery,
+                MaxFunding = standardDetails.MaxFunding,
+                Trailblazer = standardDetails.Trailblazer?.Trim().Split(" ") ?? new string[] { },
+                StandardPageUrl = standardDetails.StandardPageUrl,
+                EqaProvider = standardDetails.EqaProvider,
+                EqaProviderLink = standardDetails.EqaProviderLink,
+                RegionResults = standardDetails.RegionResults
+            };
+
+            return await Task.FromResult(View("ApprovedDetails", vm));
+        }
+
         [HttpGet("ShowInDevelopmentStandardDetails")]
         public async Task<IActionResult> ShowInDevelopmentStandardDetails(string standardReference)
         {
