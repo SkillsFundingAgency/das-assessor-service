@@ -1,11 +1,18 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Api.Types.Models.Apply;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
+using SFA.DAS.AssessorService.Application.Exceptions;
+using SFA.DAS.AssessorService.ApplyTypes;
+using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.ViewModels.Apply;
+using SFA.DAS.QnA.Api.Types;
 
 namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 {
@@ -14,10 +21,18 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
     {
         private readonly IApplicationApiClient _apiClient;
         private readonly ISessionService _sessionService;
-        public StandardController(IApplicationApiClient apiClient, ISessionService sessionService)
+        private readonly IQnaApiClient _qnaApiClient;
+        private readonly IContactsApiClient _contactsApiClient;
+        private readonly IWebConfiguration _config;
+
+        public StandardController(IApplicationApiClient apiClient, IQnaApiClient qnaApiClient, IContactsApiClient contactsApiClient, ISessionService sessionService, IWebConfiguration config)
         {
             _apiClient = apiClient;
             _sessionService = sessionService;
+            _qnaApiClient = qnaApiClient;
+            _contactsApiClient = contactsApiClient;
+            _config = config; 
+           
         }
 
         [HttpGet("Standard/{id}")]
@@ -58,6 +73,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         [HttpPost("standard/{id}/confirm-standard/{standardCode}")]
         public async Task<IActionResult> StandardConfirm(StandardViewModel model, Guid id, int standardCode)
         {
+            var signinId = User.Claims.First(c => c.Type == "sub")?.Value;
+            var contact = await GetUserContact(signinId);
             var application = await _apiClient.GetApplication(id);
             var results = await _apiClient.GetStandards();
             model.SelectedStandard = results.FirstOrDefault(r => r.StandardId == standardCode);
@@ -76,9 +93,65 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 return View("~/Views/Application/Standard/ConfirmStandard.cshtml", model);
             }
 
-            await _apiClient.UpdateInitialStandardData(id, standardCode,model.SelectedStandard?.ReferenceNumber, model.SelectedStandard.Title);
+            var allApplicationSequences = await _qnaApiClient.GetAllApplicationSequences(application.ApplicationId);
+            var sequence = allApplicationSequences.Single(x => x.SequenceNo == 2);
 
-            return RedirectToAction("Applications", "Application");
+            var sections = await _qnaApiClient.GetSections(application.ApplicationId, sequence.Id);
+            if (await _apiClient.Submit(BuildApplicationRequest(id, contact.Id,
+               _config.ReferenceFormat, contact.GivenNames,
+               contact?.Email,
+               standardCode,
+               model.SelectedStandard?.ReferenceNumber,
+               model.SelectedStandard.Title,
+               ApplicationStatus.InProgress,
+               ApplicationSequenceStatus.Draft,
+               sequence, sections)))
+            {
+                return RedirectToAction("Applications", "Application");
+            }
+
+            throw new BadRequestException("Failed to start application stage2 apply process.");
+        }
+
+        private SubmitApplicationRequest BuildApplicationRequest(Guid id, Guid userId,
+          string referenceFormat, string contactName, string email, int standardCode,
+          string standardReference, string standardName, string applicationStatus, string sectionSequenceStatus,
+          Sequence sequence, List<Section> sections)
+        {
+            var applySections = sections.Select(x => new ApplySection
+            {
+                SectionId = x.Id,
+                SectionNo = x.SectionNo,
+                Status = sectionSequenceStatus,
+                RequestedFeedbackAnswered = x.QnAData.RequestedFeedbackAnswered
+            }).ToList();
+
+            return new SubmitApplicationRequest
+            {
+                ApplicationId = id,
+                ReferenceFormat = referenceFormat,
+                ContactName = contactName,
+                StandardCode = standardCode,
+                StandardReference = standardReference,
+                StandardName = standardName,
+                ApplicationStatus = applicationStatus,
+                Email = email,
+                UserId = userId,
+                Sequence = new ApplySequence
+                {
+                    SequenceId = sequence.Id,
+                    Sections = applySections,
+                    Status = sectionSequenceStatus,
+                    IsActive = sequence.IsActive,
+                    SequenceNo = sequence.SequenceNo,
+                    NotRequired = sequence.NotRequired
+                }
+            };
+        }
+
+        private async Task<ContactResponse> GetUserContact(string signinId)
+        {
+            return await _contactsApiClient.GetContactBySignInId(signinId);
         }
     }
 }

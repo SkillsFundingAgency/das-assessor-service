@@ -88,12 +88,13 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         [HttpPost("/Application")]
         public async Task<IActionResult> StartApplication()
         {
-            var userId = await GetUserId();
-            var org = await _orgApiClient.GetOrganisationByUserId(userId);
+            var signinId = User.Claims.First(c => c.Type == "sub")?.Value;
+            var contact = await GetUserContact(signinId);
+            var org = await _orgApiClient.GetOrganisationByUserId(contact.Id);
 
             var applicationStartRequest = new StartApplicationRequest
             {
-                UserReference = userId.ToString(),
+                UserReference = contact.Id.ToString(),
                 WorkflowType = WorkflowType,
                 ApplicationData = JsonConvert.SerializeObject(new ApplicationData {
                     UseTradingName = false,
@@ -104,14 +105,32 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
             var qnaResponse = await _qnaApiClient.StartApplications(applicationStartRequest);
 
-            var  appResponse = await _applicationApiClient.CreateApplication(new CreateApplicationRequest
+            var  id = await _applicationApiClient.CreateApplication(new CreateApplicationRequest
             {
                 OrganisationId = org.Id,
                 QnaApplicationId = qnaResponse?.ApplicationId??Guid.Empty,
-                UserId = userId
+                UserId = contact.Id
             });
 
-            return RedirectToAction("SequenceSignPost", new { Id = appResponse });
+            var application = await _applicationApiClient.GetApplication(id);
+            var allApplicationSequences = await _qnaApiClient.GetAllApplicationSequences(application.ApplicationId);
+            var sequence = allApplicationSequences.Single(x => x.SequenceNo == 1);
+
+            var sections = await _qnaApiClient.GetSections(application.ApplicationId, sequence.Id);
+            if (await _applicationApiClient.Submit(BuildApplicationRequest(id, contact.Id,
+               _config.ReferenceFormat, contact.GivenNames,
+               contact?.Email,
+               application?.ApplyData?.Apply?.StandardCode ?? 0,
+               application?.ApplyData?.Apply?.StandardReference,
+               application?.ApplyData?.Apply?.StandardName,
+               ApplicationStatus.InProgress,
+               ApplicationSequenceStatus.Draft,
+               sequence, sections)))
+            {
+                return RedirectToAction("SequenceSignPost", new { Id = id });
+            }
+
+            throw new BadRequestException("Failed to start application apply process.");
         }
 
         [HttpGet("/Application/{Id}")]
@@ -473,12 +492,14 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 }
             }
 
-            if (await _applicationApiClient.Submit(BuildSubmitApplicationRequest(Id, contact.Id,
+            if (await _applicationApiClient.Submit(BuildApplicationRequest(Id, contact.Id,
                 _config.ReferenceFormat,contact.GivenNames, 
                 contact?.Email, 
                 application?.ApplyData?.Apply?.StandardCode??0 , 
                 application?.ApplyData?.Apply?.StandardReference, 
                 application?.ApplyData?.Apply?.StandardName,
+                ApplicationStatus.Submitted,
+                ApplicationSequenceStatus.Submitted,
                 sequence, sections)))
             {
                 return RedirectToAction("Submitted", new { Id });
@@ -682,15 +703,16 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             }
         }
 
-        private SubmitApplicationRequest BuildSubmitApplicationRequest(Guid id, Guid userId,
+        private SubmitApplicationRequest BuildApplicationRequest(Guid id, Guid userId,
             string referenceFormat, string contactName, string email, int standardCode, 
-            string standardReference, string standardName, Sequence sequence, List<Section> sections)
+            string standardReference, string standardName,string applicationStatus,string sectionSequenceStatus, 
+            Sequence sequence, List<Section> sections)
         {
             var applySections = sections.Select(x => new ApplySection
             {
                 SectionId = x.Id,
                 SectionNo = x.SectionNo,
-                Status = ApplicationSectionStatus.Submitted,
+                Status = sectionSequenceStatus,
                 RequestedFeedbackAnswered = x.QnAData.RequestedFeedbackAnswered
             }).ToList();
 
@@ -702,13 +724,14 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 StandardCode = standardCode,
                 StandardReference = standardReference,
                 StandardName = standardName,
+                ApplicationStatus = applicationStatus,
                 Email = email,
                 UserId = userId,
                 Sequence = new ApplySequence
                 {
                     SequenceId = sequence.Id,
                     Sections = applySections,
-                    Status = ApplicationSequenceStatus.Submitted,
+                    Status = sectionSequenceStatus,
                     IsActive = sequence.IsActive,
                     SequenceNo = sequence.SequenceNo,
                     NotRequired = sequence.NotRequired

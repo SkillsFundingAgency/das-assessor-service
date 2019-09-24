@@ -39,7 +39,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
 
                 application.ApplyData = applyData;
                 application.StandardCode = request.StandardCode;
-                application.ApplicationStatus = ApplicationStatus.Submitted;
+                application.ApplicationStatus = request.ApplicationStatus;
                 application.ReviewStatus = ApplicationReviewStatus.New;
                 await _applyRepository.SubmitApplicationSequence(application);
 
@@ -63,7 +63,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
                 applyData.Sequences.Where(x => x.SequenceNo == sequence.SequenceNo)
                    .Select(applySequence =>
                    {
-                       applySequence.Status = ApplicationSequenceStatus.Resubmitted;
+                       applySequence.Status = applySequence.Status == ApplicationSectionStatus.Submitted? ApplicationSequenceStatus.Resubmitted:sequence.Status;
                        applySequence.Sections = sequence.Sections;
                        applySequence.SequenceNo = sequence.SequenceNo;
                        applySequence.NotRequired = sequence.NotRequired;
