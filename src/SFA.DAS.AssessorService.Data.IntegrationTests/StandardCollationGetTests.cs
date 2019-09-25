@@ -109,7 +109,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         [TestCase("ST0001", true)]
         [TestCase("ST0010", true)]
         [TestCase("xyz", false)]
-        [TestCase(null, false)]
+        [TestCase(null, true)]
         public void GetStandardByReferenceNameAndCheckTheOrganisationIsReturnedIfExpected(string referenceNumber, bool expectedReturned)
         {
             var isReturned = _repository.GetStandardCollationByReferenceNumber(referenceNumber).Result != null;
