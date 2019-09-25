@@ -64,10 +64,10 @@ namespace SFA.DAS.AssessorService.Data.Apply
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))
             {
                 return await connection.QuerySingleAsync<Guid>(
-                    @"INSERT INTO Applications (ApplicationId, OrganisationId,ApplicationStatus,ApplyData, ReviewStatus, CreatedAt, CreatedBy)
+                    @"INSERT INTO Applications (ApplicationId, OrganisationId,ApplicationStatus,ApplyData, ReviewStatus,FinancialReviewStatus, CreatedAt, CreatedBy)
                                         OUTPUT INSERTED.[Id] 
-                                        VALUES (@ApplicationId, @OrganisationId,@ApplicationStatus,@ApplyData,@ReviewStatus, GETUTCDATE(), @CreatedBy)",
-                    new { application.ApplicationId, application.OrganisationId, application.ApplicationStatus,
+                                        VALUES (@ApplicationId, @OrganisationId,@ApplicationStatus,@ApplyData,@ReviewStatus,@FinancialReviewStatus,GETUTCDATE(), @CreatedBy)",
+                    new { application.ApplicationId, application.OrganisationId, application.ApplicationStatus,application.FinancialReviewStatus,
                         application.ApplyData, application.ReviewStatus, application.CreatedBy });
             }
         }
@@ -77,9 +77,9 @@ namespace SFA.DAS.AssessorService.Data.Apply
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))
             {
               var result =  await connection.ExecuteAsync(@"UPDATE Applications
-                                                SET  ApplicationStatus = @ApplicationStatus, ApplyData = @ApplyData, ReviewStatus = @ReviewStatus
+                                                SET  ApplicationStatus = @ApplicationStatus, ApplyData = @ApplyData, ReviewStatus = @ReviewStatus, UpdatedBy = @UpdatedBy, UpdatedAt = GETUTCDATE() 
                                                 WHERE  (Applications.Id = @Id)",
-                  new { application.ApplicationStatus, application.ApplyData,application.ReviewStatus, application.Id});
+                  new { application.ApplicationStatus, application.ApplyData,application.ReviewStatus, application.Id, application.UpdatedBy});
             }
         }
 

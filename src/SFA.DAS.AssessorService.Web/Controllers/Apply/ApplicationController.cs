@@ -193,8 +193,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             var sequence = allApplicationSequences.Single(x => x.SequenceNo == sequenceNo);
 
             var sections = await _qnaApiClient.GetSections(application.ApplicationId, sequence.Id);
-
-            var sequenceVm = new SequenceViewModel(sequence, application.Id, BuildPageContext(application, sequence), sections, null);
+            var applyData = application.ApplyData.Sequences.Single(x => x.SequenceNo == sequenceNo);
+            
+            var sequenceVm = new SequenceViewModel(sequence, application.Id, BuildPageContext(application, sequence), sections, applyData.Sections, null);
             if(application.ApplyData != null && application.ApplyData.Sequences != null)
             {
                 var seq= application.ApplyData.Sequences.SingleOrDefault(x => x.SequenceId == sequence.Id && x.SequenceNo == sequence.SequenceNo);
@@ -464,8 +465,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             var errors =  ValidateSubmit(sections);
             if (errors.Any())
             {
-               
-                var sequenceVm = new SequenceViewModel(sequence, Id, BuildPageContext(application,sequence),sections, errors);
+                var applyData = application.ApplyData.Sequences.Single(x => x.SequenceNo == sequenceNo);
+                var sequenceVm = new SequenceViewModel(sequence, Id, BuildPageContext(application,sequence),sections,applyData.Sections, errors);
 
                 if (sequence.Status == ApplicationSequenceStatus.FeedbackAdded)
                 {
@@ -477,7 +478,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 }
             }
 
-            if (await _applicationApiClient.Submit(BuildApplyDataForSubmission(Id, contact.Id,
+            if (await _applicationApiClient.Submit(BuildApplicationDataForSubmission(Id, contact.Id,
                 _config.ReferenceFormat,contact.GivenNames, 
                 contact?.Email, 
                 application?.ApplyData?.Apply?.StandardCode??0 , 
@@ -688,7 +689,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             }
         }
 
-        private SubmitApplyDataRequest BuildApplyDataForSubmission(Guid id, Guid userId,
+        private SubmitApplicationRequest BuildApplicationDataForSubmission(Guid id, Guid userId,
             string referenceFormat, string contactName, string email, int standardCode, 
             string standardReference, string standardName,string applicationStatus,string sectionSequenceStatus, 
             Sequence sequence, List<Section> sections)
@@ -701,7 +702,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 RequestedFeedbackAnswered = x.QnAData.RequestedFeedbackAnswered
             }).ToList();
 
-            return new SubmitApplyDataRequest
+            return new SubmitApplicationRequest
             {
                 ApplicationId = id,
                 ReferenceFormat = referenceFormat,

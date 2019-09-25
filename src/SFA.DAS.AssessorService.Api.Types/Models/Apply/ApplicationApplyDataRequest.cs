@@ -20,7 +20,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Apply
         public DateTime? StandardSubmissionClosedDate { get; set; }
     }
 
-    public class SubmitApplyDataRequest : ApplicationApplyData, IRequest<bool>
+    public class SubmitApplicationRequest : ApplicationApplyData, IRequest<bool>
     {
         public ApplySequence Sequence { get; set; }
     }

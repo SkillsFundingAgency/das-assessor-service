@@ -74,11 +74,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<ActionResult<Guid>> SubmitApplication(
-         [FromBody] SubmitApplyDataRequest submitApplyDataRequest)
+         [FromBody] SubmitApplicationRequest submitApplicationRequest)
         {
             _logger.LogInformation("Received Submit Application Request");
 
-            var response = await _mediator.Send(submitApplyDataRequest);
+            var response = await _mediator.Send(submitApplicationRequest);
 
             return CreatedAtRoute("SubmitApplication",
                 response);

@@ -12,11 +12,12 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Apply
 {
-    public class SubmitApplicationHandler : IRequestHandler<SubmitApplyDataRequest, bool>
+    public class SubmitApplicationHandler : IRequestHandler<SubmitApplicationRequest, bool>
     {
         private readonly IApplyRepository _applyRepository;
         private readonly IMediator _mediator;
         private readonly IEMailTemplateQueryRepository _eMailTemplateQueryRepository;
+
         public SubmitApplicationHandler(IApplyRepository applyRepository, IEMailTemplateQueryRepository eMailTemplateQueryRepository, IMediator mediator)
         {
             _applyRepository = applyRepository;
@@ -24,7 +25,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
             _eMailTemplateQueryRepository = eMailTemplateQueryRepository;
         }
 
-        public async Task<bool> Handle(SubmitApplyDataRequest request, CancellationToken cancellationToken)
+        public async Task<bool> Handle(SubmitApplicationRequest request, CancellationToken cancellationToken)
         {
             var application = await _applyRepository.GetApplication(request.ApplicationId);
 
@@ -41,6 +42,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
                 application.StandardCode = request.StandardCode;
                 application.ApplicationStatus = request.ApplicationStatus;
                 application.ReviewStatus = ApplicationReviewStatus.New;
+                application.UpdatedBy = request.UserId.ToString();
                 await _applyRepository.SubmitApplicationSequence(application);
 
                 application = await _applyRepository.GetApplication(request.ApplicationId);
@@ -76,7 +78,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
             }
         }
 
-        private async Task AddApplyDataWithSubmissionInfo(ApplyData applyData, SubmitApplyDataRequest request)
+        private async Task AddApplyDataWithSubmissionInfo(ApplyData applyData, SubmitApplicationRequest request)
         {
             if (applyData.Apply == null)
                 applyData.Apply = new ApplyTypes.Apply();
