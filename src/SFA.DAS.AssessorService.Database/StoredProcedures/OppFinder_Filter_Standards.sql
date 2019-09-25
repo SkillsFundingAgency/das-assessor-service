@@ -53,8 +53,8 @@ BEGIN
 		Exclusions.StandardReference IS NULL AND
 		(
 			[dbo].OppFinder_Is_InDevelopment_StandardStatus(StandardData) = 1 OR
-			[dbo].OppFinder_Is_Approved_StandardStatus(StandardData) = 1 OR
 			-- when an Approved standard is in the [StandardNonApprovedCollation] (because it has no StandardId) it is returned in results
+			[dbo].OppFinder_Is_Approved_StandardStatus(StandardData) = 1 OR
 			[dbo].OppFinder_Is_Proposed_StandardStatus(StandardData) = 1
 		)
 		AND 
@@ -65,6 +65,7 @@ BEGIN
 				(JSON_VALUE(StandardData, '$.Category') LIKE '%' + @SearchTerm + '%')
 			)
 		)
+		AND IsLive = 1
 	GROUP BY 
 		ReferenceNumber, Title, StandardData
 

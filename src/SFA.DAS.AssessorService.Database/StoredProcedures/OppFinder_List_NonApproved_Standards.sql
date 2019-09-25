@@ -45,12 +45,16 @@ BEGIN
 	WHERE
 		Exclusions.StandardReference IS NULL AND
 		(
-			(@NonApprovedType = 'InDevelopment' AND [dbo].OppFinder_Is_InDevelopment_StandardStatus(StandardData) = 1) OR
-			-- when an Approved standard is in the [StandardNonApprovedCollation] (because it has no StandardId) it counts as an InDevelopment standard
-			(@NonApprovedType = 'InDevelopment' AND [dbo].OppFinder_Is_Approved_StandardStatus(StandardData) = 1) OR
+			(@NonApprovedType = 'InDevelopment' AND
+				(
+					[dbo].OppFinder_Is_InDevelopment_StandardStatus(StandardData) = 1 OR
+					-- when an Approved standard is in the [StandardNonApprovedCollation] (because it has no StandardId) it counts as an InDevelopment standard
+					[dbo].OppFinder_Is_Approved_StandardStatus(StandardData) = 1
+				)
+			) OR
 			(@NonApprovedType = 'Proposed' AND [dbo].OppFinder_Is_Proposed_StandardStatus(StandardData) = 1)
 		)
-		AND 
+		AND
 		(	@SearchTerm = '' OR
 			(
 				(Title LIKE '%' + @SearchTerm + '%' ) OR
