@@ -3,7 +3,6 @@ using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Apply;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.ApplyTypes;
-using SFA.DAS.AssessorService.Domain.Entities.AssessmentOrganisations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -44,7 +43,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
                 StandardCode = request.StandardCode,
                 ApplicationStatus = request.ApplicationStatus,
                 ReviewStatus = ApplicationReviewStatus.Draft,
-                FinancialReviewStatus = isFinancialExempt ? FinancialReviewStatus.Exempt: FinancialReviewStatus.Required,
+                FinancialReviewStatus = isFinancialExempt ? FinancialReviewStatus.Exempt: FinancialReviewStatus.Draft,
                 OrganisationId = request.OrganisationId,
                 CreatedBy = request.UserId.ToString()
             };
