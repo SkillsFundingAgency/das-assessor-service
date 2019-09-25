@@ -29,7 +29,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
         {
             var org = await _organisationQueryRepository.Get(request.OrganisationId);
             var orgTypes = await _registerQueryRepository.GetOrganisationTypes();
-            var isFinancialExempt = DisableSequencesAndSectionsAsAppropriate(org, request.listOfApplySequences, orgTypes.FirstOrDefault(x=>x.Id == org.OrganisationTypeId));
+            var orgType = orgTypes.FirstOrDefault(x => x.Id == org.OrganisationTypeId);
+            DisableSequencesAndSectionsAsAppropriate(org, request.listOfApplySequences, orgType);
 
             var applyData = new ApplyData
             {
@@ -43,7 +44,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
                 StandardCode = request.StandardCode,
                 ApplicationStatus = request.ApplicationStatus,
                 ReviewStatus = ApplicationReviewStatus.Draft,
-                FinancialReviewStatus = isFinancialExempt ? FinancialReviewStatus.Exempt: FinancialReviewStatus.Draft,
+                FinancialReviewStatus = IsFinancialExempt(org.OrganisationData?.FHADetails, orgType) ? FinancialReviewStatus.Exempt: FinancialReviewStatus.Draft,
                 OrganisationId = request.OrganisationId,
                 CreatedBy = request.UserId.ToString()
             };
