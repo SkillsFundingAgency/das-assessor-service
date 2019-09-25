@@ -60,22 +60,27 @@ else
     </table>
     @if (Model != null)
     {
-        <form asp-action="ShowProposedStandardsPerPage" asp-controller="OppFinder" method="get" asp-fragment="proposed">
-            <select class="proposed-per-page" asp-for="ProposedStandardsPerPage" asp-items="Model.StandardsPerPage"></select>
-            <button class="govuk-button govuk-button--looks-like-link govuk-button--looks-like-link--inline js-hidden" type="submit">
-                Show
-            </button>
-            <text>Standards per page</text>
-        </form>
-
-        await Html.RenderPartialAsync("_PaginationLinksPartial", new OppFinderPaginationViewModel
-        {
-            Standards = Model.ProposedStandards,
-            PageIndex = Model.ProposedPageIndex,
-            ChangePageAction = "ChangePageProposedStandards",
-            ChangePageSetAction = "ChangePageSetProposedStandards",
-            Fragment = "proposed"
-        });
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-one-half">
+                <form asp-action="ShowProposedStandardsPerPage" asp-controller="OppFinder" method="get" asp-fragment="proposed">
+                    <select class="proposed-per-page" asp-for="ProposedStandardsPerPage" asp-items="Model.StandardsPerPage"></select>
+                    <button class="govuk-button govuk-button--looks-like-link govuk-button--looks-like-link--inline js-hidden" type="submit">
+                        Show
+                    </button>
+                    <text>Standards per page</text>
+                </form>
+            </div>
+            <div class="govuk-grid-column-one-half">
+                @{await Html.RenderPartialAsync("_PaginationLinksPartial", new OppFinderPaginationViewModel
+                {
+                    Standards = Model.ProposedStandards,
+                    PageIndex = Model.ProposedPageIndex,
+                    ChangePageAction = "ChangePageProposedStandards",
+                    ChangePageSetAction = "ChangePageSetProposedStandards",
+                    Fragment = "proposed"
+                });}
+            </div>
+        </div>
     }
 }
 

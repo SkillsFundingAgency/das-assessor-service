@@ -59,21 +59,26 @@ else
     </table>
     @if (Model != null)
     {
-        <form asp-action="ShowInDevelopmentStandardsPerPage" asp-controller="OppFinder" method="get" asp-fragment="in-development">
-            <select class="in-development-per-page" asp-for="InDevelopmentStandardsPerPage" asp-items="Model.StandardsPerPage"></select>
-            <button class="govuk-button govuk-button--looks-like-link govuk-button--looks-like-link--inline js-hidden" type="submit">
-                Show
-            </button>
-            <text>Standards per page</text>
-        </form>
-
-        await Html.RenderPartialAsync("_PaginationLinksPartial", new OppFinderPaginationViewModel
-        {
-            Standards = Model.InDevelopmentStandards,
-            PageIndex = Model.InDevelopmentPageIndex,
-            ChangePageAction = "ChangePageInDevelopmentStandards",
-            ChangePageSetAction = "ChangePageSetInDevelopmentStandards",
-            Fragment = "in-development"
-        });
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-one-half">
+                <form asp-action="ShowInDevelopmentStandardsPerPage" asp-controller="OppFinder" method="get" asp-fragment="in-development">
+                    <select class="in-development-per-page" asp-for="InDevelopmentStandardsPerPage" asp-items="Model.StandardsPerPage"></select>
+                    <button class="govuk-button govuk-button--looks-like-link govuk-button--looks-like-link--inline js-hidden" type="submit">
+                        Show
+                    </button>
+                    <text>Standards per page</text>
+                </form>
+            </div>
+            <div class="govuk-grid-column-one-half">
+                @{await Html.RenderPartialAsync("_PaginationLinksPartial", new OppFinderPaginationViewModel
+                {
+                    Standards = Model.InDevelopmentStandards,
+                    PageIndex = Model.InDevelopmentPageIndex,
+                    ChangePageAction = "ChangePageInDevelopmentStandards",
+                    ChangePageSetAction = "ChangePageSetInDevelopmentStandards",
+                    Fragment = "in-development"
+                });}
+            </div>
+        </div>
     }
 }

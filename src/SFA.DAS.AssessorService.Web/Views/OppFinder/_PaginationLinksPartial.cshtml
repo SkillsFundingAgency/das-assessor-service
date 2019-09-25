@@ -8,15 +8,18 @@
         <a class="@(Model.Fragment + "-page-set")" data-pageSetIndex="@Model.Standards.PrevPageSetIndex" asp-action="@Model.ChangePageSetAction" asp-controller="OppFinder" asp-route-pagesetindex="@Model.Standards.PrevPageSetIndex" asp-fragment="@Model.Fragment">Prev</a>
     }
 
-    for (int pageNumber = Model.Standards?.FirstPageInPageSet ?? 0; pageNumber <= (Model.Standards?.LastPageInPageSet ?? 0); pageNumber++)
+    if ((Model.Standards?.TotalPages ?? 0) > 1)
     {
-        if (pageNumber != Model.PageIndex)
+        for (int pageNumber = Model.Standards?.FirstPageInPageSet ?? 0; pageNumber <= (Model.Standards?.LastPageInPageSet ?? 0); pageNumber++)
         {
+            if (pageNumber != Model.PageIndex)
+            {
             <a class="@(Model.Fragment + "-page")" data-pageIndex="@pageNumber" asp-action="@Model.ChangePageAction" asp-controller="OppFinder" asp-route-pageindex="@pageNumber" asp-fragment="@Model.Fragment">@pageNumber</a>
-        }
-        else
-        {
+            }
+            else
+            {
             <span>@pageNumber</span>
+            }
         }
     }
 

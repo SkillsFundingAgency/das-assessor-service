@@ -32,12 +32,12 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Standards
             if (await _mediator.Send(new ValidationRequest { Type = "email", Value = result.OverviewResult?.EqaProviderContactEmail }))
             {
                 eqaProvider = result.OverviewResult?.EqaProviderContactEmail;
-                eqaProviderLink = result.OverviewResult?.EqaProviderContactEmail;
+                eqaProviderLink = $"mailto:{result.OverviewResult?.EqaProviderContactEmail}";
             }
             else if (await _mediator.Send(new ValidationRequest { Type = "email", Value = result.OverviewResult?.EqaProviderContactName }))
             {
                 eqaProvider = result.OverviewResult?.EqaProviderContactName;
-                eqaProviderLink = result.OverviewResult?.EqaProviderContactName;
+                eqaProviderLink = $"mailto:{result.OverviewResult?.EqaProviderContactName}";
             }
             else
             {

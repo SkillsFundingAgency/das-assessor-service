@@ -25,7 +25,7 @@ else
     <table class="govuk-table">
         <thead class="govuk-table__head">
         <tr class="govuk-table__row">
-            <th scope="col" class="govuk-table__header">
+            <th scope="col" class="govuk-table__header govuk-!-width-one-half">
                 <sfa-sortable-column-header class="approved-sort"
                                             data-sortColumn="@nameof(OppFinderApprovedSearchSortColumn.StandardName)"
                                             asp-action="SortApprovedStandards"
@@ -37,7 +37,7 @@ else
                     Approved Standards
                 </sfa-sortable-column-header>
             </th>
-            <th scope="col" class="govuk-table__header">
+            <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">
                 <sfa-sortable-column-header class="approved-sort"
                                             data-sortColumn="@nameof(OppFinderApprovedSearchSortColumn.ActiveApprentices)"
                                             asp-action="SortApprovedStandards"
@@ -49,7 +49,7 @@ else
                     Active apprentices
                 </sfa-sortable-column-header>
             </th>
-            <th scope="col" class="govuk-table__header">
+            <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">
                 <sfa-sortable-column-header class="approved-sort"
                                             data-sortColumn="@nameof(OppFinderApprovedSearchSortColumn.RegisteredEPAOs)"
                                             asp-action="SortApprovedStandards"
@@ -85,22 +85,27 @@ else
     </table>
     @if (Model != null)
     {
-        <form asp-action="ShowApprovedStandardsPerPage" asp-controller="OppFinder" method="get" asp-fragment="approved">
-            <select class="approved-per-page" asp-for="ApprovedStandardsPerPage" asp-items="Model.StandardsPerPage"></select>
-            <button class="govuk-button govuk-button--looks-like-link govuk-button--looks-like-link--inline js-hidden" type="submit">
-                Show
-            </button>
-            <text>Standards per page</text>
-        </form>
-
-        await Html.RenderPartialAsync("_PaginationLinksPartial", new OppFinderPaginationViewModel
-        {
-            Standards = Model.ApprovedStandards,
-            PageIndex = Model.ApprovedPageIndex,
-            ChangePageAction = "ChangePageApprovedStandards",
-            ChangePageSetAction = "ChangePageSetApprovedStandards",
-            Fragment = "approved"
-        }); 
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-one-half">
+                <form asp-action="ShowApprovedStandardsPerPage" asp-controller="OppFinder" method="get" asp-fragment="approved">
+                    <select class="approved-per-page" asp-for="ApprovedStandardsPerPage" asp-items="Model.StandardsPerPage"></select>
+                    <button class="govuk-button govuk-button--looks-like-link govuk-button--looks-like-link--inline js-hidden" type="submit">
+                        Show
+                    </button>
+                    <text>Standards per page</text>
+                </form>
+            </div>
+            <div class="govuk-grid-column-one-half">
+                @{await Html.RenderPartialAsync("_PaginationLinksPartial", new OppFinderPaginationViewModel
+                {
+                    Standards = Model.ApprovedStandards,
+                    PageIndex = Model.ApprovedPageIndex,
+                    ChangePageAction = "ChangePageApprovedStandards",
+                    ChangePageSetAction = "ChangePageSetApprovedStandards",
+                    Fragment = "approved"
+                });}
+            </div>
+        </div>
     }
 }
 
