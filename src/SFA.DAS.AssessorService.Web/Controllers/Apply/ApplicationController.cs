@@ -463,9 +463,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
             var sections = await _qnaApiClient.GetSections(application.ApplicationId, sequence.Id);
             var applySequence = application.ApplyData.Sequences.Single(x => x.SequenceNo == sequence.SequenceNo);
-            var applySectionsNotRequired = applySequence.Sections.Where(x => x.NotRequired)?.ToList();
+            var applySections = applySequence.Sections;
 
-            var errors =  ValidateSubmit(sections, applySectionsNotRequired);
+            var errors =  ValidateSubmit(sections, applySections);
             if (errors.Any())
             {
                 var applyData = application.ApplyData.Sequences.Single(x => x.SequenceNo == sequenceNo);
