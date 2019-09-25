@@ -462,7 +462,10 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             }
 
             var sections = await _qnaApiClient.GetSections(application.ApplicationId, sequence.Id);
-            var errors =  ValidateSubmit(sections);
+            var applySequence = application.ApplyData.Sequences.Single(x => x.SequenceNo == sequence.SequenceNo);
+            var applySectionsNotRequired = applySequence.Sections.Where(x => x.NotRequired)?.ToList();
+
+            var errors =  ValidateSubmit(sections, applySectionsNotRequired);
             if (errors.Any())
             {
                 var applyData = application.ApplyData.Sequences.Single(x => x.SequenceNo == sequenceNo);
@@ -486,7 +489,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 application?.ApplyData?.Apply?.StandardName,
                 ApplicationStatus.Submitted,
                 ApplicationSequenceStatus.Submitted,
-                sequence, sections)))
+                sequence, applySequence.Sections)))
             {
                 return RedirectToAction("Submitted", new { Id });
             }
@@ -692,16 +695,13 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         private SubmitApplicationRequest BuildApplicationDataForSubmission(Guid id, Guid userId,
             string referenceFormat, string contactName, string email, int standardCode, 
             string standardReference, string standardName,string applicationStatus,string sectionSequenceStatus, 
-            Sequence sequence, List<Section> sections)
+            Sequence sequence, List<ApplySection> currentApplySections)
         {
-            var applySections = sections.Select(x => new ApplySection
+            foreach( var section in currentApplySections)
             {
-                SectionId = x.Id,
-                SectionNo = x.SectionNo,
-                Status = sectionSequenceStatus,
-                RequestedFeedbackAnswered = x.QnAData.RequestedFeedbackAnswered
-            }).ToList();
-
+                section.Status = sectionSequenceStatus;
+            }
+            
             return new SubmitApplicationRequest
             {
                 ApplicationId = id,
@@ -716,7 +716,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 Sequence = new ApplySequence
                 {
                     SequenceId = sequence.Id,
-                    Sections = applySections,
+                    Sections = currentApplySections,
                     Status = sectionSequenceStatus,
                     IsActive = sequence.IsActive,
                     SequenceNo = sequence.SequenceNo,
@@ -764,11 +764,13 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
 
 
-        private List<ValidationErrorDetail> ValidateSubmit(List<Section> sections)
+        private List<ValidationErrorDetail> ValidateSubmit(List<Section> qnaSections, List<ApplySection> applySections)
         {
             var validationErrors = new List<ValidationErrorDetail>();
 
-            if (sections is null)
+            var sections = qnaSections?.Where(x => !applySections?.Any(p => p.SectionNo == x.SectionNo && p.NotRequired)??false).ToList();
+
+            if (sections is null )
             {
                 var validationError = new ValidationErrorDetail(string.Empty, $"Cannot submit empty sequence");
                 validationErrors.Add(validationError);
