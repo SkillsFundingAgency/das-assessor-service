@@ -69,7 +69,7 @@ namespace SFA.DAS.AssessorService.Data
             var standards = await _unitOfWork.Connection.QueryAsync<StandardCollation>(
                 standardsQuery, 
                 param: new { standardIdFilter, referenceNumberFilter }, 
-                _unitOfWork.Transaction);
+                transaction: _unitOfWork.Transaction);
 
             foreach (var standard in standards)
             {
@@ -86,9 +86,9 @@ namespace SFA.DAS.AssessorService.Data
             var optionsQuery = "SELECT * FROM Options WHERE StdCode IN @standardCodes";
             var standardCodes = standardsDictionary.Values.Where(v => v.StandardId.HasValue).Select(v => v.StandardId).ToList();
             var options = await _unitOfWork.Connection.QueryAsync<Option>(
-                optionsQuery, param: 
-                new { standardCodes }, 
-                _unitOfWork.Transaction);
+                optionsQuery, 
+                param: new { standardCodes }, 
+                transaction: _unitOfWork.Transaction);
 
             foreach (var option in options)
             {
@@ -114,9 +114,9 @@ namespace SFA.DAS.AssessorService.Data
             }
 
             var results = await _unitOfWork.Connection.QueryAsync<StandardNonApprovedCollation>(
-                standardsQuery, param: 
-                new { referenceNumberFilter }, 
-                _unitOfWork.Transaction);
+                standardsQuery, 
+                param: new { referenceNumberFilter }, 
+                transaction: _unitOfWork.Transaction);
 
             return results.ToList();
         }
@@ -126,8 +126,8 @@ namespace SFA.DAS.AssessorService.Data
             const string sql = "select top 1 coalesce(max(DateUpdated), max(DateAdded)) maxDate  from StandardCollation";
             var dateOfLastCollation = await _unitOfWork.Connection.QuerySingleAsync<DateTime?>(
                 sql, 
-                null, 
-                _unitOfWork.Transaction);
+                param: null, 
+                transaction: _unitOfWork.Transaction);
 
             return dateOfLastCollation;
         }
@@ -208,8 +208,8 @@ namespace SFA.DAS.AssessorService.Data
 
             await _unitOfWork.Connection.QueryAsync(
                 "EPAO_Standards_Count",
-                @params,
-                _unitOfWork.Transaction,
+                param: @params,
+                transaction: _unitOfWork.Transaction,
                 commandType: CommandType.StoredProcedure);
 
             return @params.Get<int>("Count");
@@ -226,13 +226,13 @@ namespace SFA.DAS.AssessorService.Data
             var skip = ((pageIndex ?? 1) - 1) * pageSize;
             var result = await _unitOfWork.Connection.QueryAsync<EPORegisteredStandards>(
                 "EPAO_Registered_Standards", 
-                new
+                param: new
                 {
                     EPAOId = endPointAssessorOrganisationId,
                     Skip = skip,
                     Take = pageSize
                 },
-                _unitOfWork.Transaction,
+                transaction: _unitOfWork.Transaction,
                 commandType: CommandType.StoredProcedure);
             var epoRegisteredStandards = result?.ToList();
 
@@ -256,11 +256,11 @@ namespace SFA.DAS.AssessorService.Data
             var skip = ((pageIndex ?? 1) - 1) * pageSize;
             var result = await _unitOfWork.Connection.QueryAsync<EpaoPipelineStandard>(
                 "GetEPAO_Pipelines", 
-                new
+                param: new
                 {
                     EPAOId = endPointAssessorOrganisationId
                 },
-                _unitOfWork.Transaction,
+                transaction: _unitOfWork.Transaction,
                 commandType: CommandType.StoredProcedure);
 
 
@@ -296,11 +296,11 @@ namespace SFA.DAS.AssessorService.Data
         {
             var result = await _unitOfWork.Connection.QueryAsync<EpaoPipelineStandardExtract>(
                 "GetEPAO_Pipelines_Extract", 
-                new
+                param: new
                 {
                     EPAOId = endPointAssessorOrganisationId
                 },
-                _unitOfWork.Transaction,
+                transaction: _unitOfWork.Transaction,
                 commandType: CommandType.StoredProcedure);
 
             return result.ToList();
@@ -313,8 +313,8 @@ namespace SFA.DAS.AssessorService.Data
             
             var filterResults = (await _unitOfWork.Connection.QueryMultipleAsync(
                 "OppFinder_Get_Approved_Standard_Details",
-                @params,
-                _unitOfWork.Transaction,
+                param: @params,
+                transaction: _unitOfWork.Transaction,
                 commandType: CommandType.StoredProcedure));
 
             var filterStandardsResult = new OppFinderApprovedStandardDetailsResult
@@ -335,8 +335,8 @@ namespace SFA.DAS.AssessorService.Data
 
             var filterResults = (await _unitOfWork.Connection.QueryMultipleAsync(
                 "OppFinder_Filter_Standards",
-                @params,
-                _unitOfWork.Transaction,
+                param: @params,
+                transaction: _unitOfWork.Transaction,
                 commandType: CommandType.StoredProcedure));
 
             var filterStandardsResult = new OppFinderFilterStandardsResult
@@ -363,8 +363,8 @@ namespace SFA.DAS.AssessorService.Data
 
             var approvedResults = (await _unitOfWork.Connection.QueryAsync<OppFinderApprovedStandard>(
                 "OppFinder_List_Approved_Standards",
-                @params,
-                _unitOfWork.Transaction,
+                param: @params,
+                transaction: _unitOfWork.Transaction,
                 commandType: CommandType.StoredProcedure));
 
             var approvedStandardsResult = new OppFinderApprovedStandardsResult
@@ -392,8 +392,8 @@ namespace SFA.DAS.AssessorService.Data
 
             var nonApprovedResults = (await _unitOfWork.Connection.QueryAsync<OppFinderNonApprovedStandard>(
                 "OppFinder_List_NonApproved_Standards",
-                @params,
-                _unitOfWork.Transaction,
+                param: @params,
+                transaction: _unitOfWork.Transaction,
                 commandType: CommandType.StoredProcedure));
 
             var nonApprovedStandardsResult = new OppFinderNonApprovedStandardsResult
@@ -411,8 +411,8 @@ namespace SFA.DAS.AssessorService.Data
             await _unitOfWork.Connection.ExecuteAsync(
                 "Update [StandardCollation] set ReferenceNumber = case when @referenceNumber is not null then @referenceNumber else ReferenceNumber end, Title = @Title, StandardData = @StandardData, DateUpdated=getutcdate(), DateRemoved=null, IsLive = 1 " +
                 "where StandardId = @standardId",
-                new { standard.StandardId, standard.ReferenceNumber, standard.Title, standardData },
-                _unitOfWork.Transaction
+                param: new { standard.StandardId, standard.ReferenceNumber, standard.Title, standardData },
+                transaction: _unitOfWork.Transaction
             );
         }
 
@@ -421,8 +421,8 @@ namespace SFA.DAS.AssessorService.Data
             await _unitOfWork.Connection.ExecuteAsync(
                 "Update [StandardNonApprovedCollation] set ReferenceNumber = @referenceNumber, Title = @Title, StandardData = @StandardData, DateUpdated=getutcdate(), DateRemoved=null, IsLive = 1 " +
                 "where ReferenceNumber = @referenceNumber",
-                new { standard.ReferenceNumber, standard.Title, standardData },
-                _unitOfWork.Transaction
+                param: new { standard.ReferenceNumber, standard.Title, standardData },
+                transaction: _unitOfWork.Transaction
             );
         }
 
@@ -431,8 +431,8 @@ namespace SFA.DAS.AssessorService.Data
             await _unitOfWork.Connection.ExecuteAsync(
                 "INSERT INTO [StandardCollation] ([StandardId],[ReferenceNumber] ,[Title],[StandardData]) " +
                 $@"VALUES (@standardId, @referenceNumber, @Title, @standardData)",
-                new { standard.StandardId, standard.ReferenceNumber, standard.Title, standardData },
-                _unitOfWork.Transaction
+                param: new { standard.StandardId, standard.ReferenceNumber, standard.Title, standardData },
+                transaction: _unitOfWork.Transaction
             );
         }
 
@@ -441,8 +441,8 @@ namespace SFA.DAS.AssessorService.Data
             await _unitOfWork.Connection.ExecuteAsync(
                 "INSERT INTO [StandardNonApprovedCollation] ([ReferenceNumber] ,[Title],[StandardData]) " +
                 $@"VALUES (@referenceNumber, @Title, @standardData)",
-                new { standard.ReferenceNumber, standard.Title, standardData },
-                _unitOfWork.Transaction
+                param: new { standard.ReferenceNumber, standard.Title, standardData },
+                transaction: _unitOfWork.Transaction
             );
         }
 
@@ -451,8 +451,8 @@ namespace SFA.DAS.AssessorService.Data
             await _unitOfWork.Connection.ExecuteAsync(
                 "Update [StandardCollation] set IsLive=0, DateRemoved=getutcdate() " +
                 "where StandardId = @standardId",
-                new { standard.StandardId },
-                _unitOfWork.Transaction
+                param: new { standard.StandardId },
+                transaction: _unitOfWork.Transaction
             );
         }
 
@@ -461,8 +461,8 @@ namespace SFA.DAS.AssessorService.Data
             await _unitOfWork.Connection.ExecuteAsync(
                     "Update [StandardNonApprovedCollation] set IsLive=0, DateRemoved=getutcdate() " +
                     "where ReferenceNumber = @referenceNumber",
-                    new { standard.ReferenceNumber },
-                    _unitOfWork.Transaction
+                    param: new { standard.ReferenceNumber },
+                    transaction: _unitOfWork.Transaction
                 );
         }
     }
