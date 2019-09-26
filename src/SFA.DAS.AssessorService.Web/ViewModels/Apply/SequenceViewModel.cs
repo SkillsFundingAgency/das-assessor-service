@@ -14,7 +14,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Apply
             this.Id = Id;
             Sections = sections;
             ApplySections = applySection;
-            SequenceNo = (int)sequence.SequenceNo;
+            SequenceNo = sequence.SequenceNo;
             Status = sequence.Status;
             PageContext = pageContext;
             ErrorMessages = errorMessages;
