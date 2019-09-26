@@ -1,11 +1,13 @@
 ﻿using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Mvc.TagHelpers;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Web.Extensions.TagHelpers
@@ -66,23 +68,23 @@ namespace SFA.DAS.AssessorService.Web.Extensions.TagHelpers
         {
             using (var writer = new StringWriter())
             {
-                var content = (await output.GetChildContentAsync()).GetContent();
                 if (SfaSortColumn.Equals(SfaTableSortColumn, StringComparison.InvariantCultureIgnoreCase))
                 {
-                    if (SfaSortDirection == "Asc")
-                    {
-                        var up = "&#11205;";
-                        content += up;
-                    }
-                    else
-                    {
-                        var down = "&#11206;";
-                        content += down;
-                    }
+                    var sortDirectionClass = SfaSortDirection == "Asc"
+                        ? "sorted-ascending"
+                        : "sorted-descending";
+
+                    var classes = output.Attributes.FirstOrDefault(a => a.Name == "class")?.Value.ToString();
+
+                    output.Attributes.SetAttribute("class", 
+                        string.IsNullOrEmpty(classes)
+                            ? $"{sortDirectionClass}"
+                            : $"{sortDirectionClass} {classes}");
                 }
 
                 output.Attributes.Add(DataSortDirectionName, new HtmlString(ToogleSortDirection()));
 
+                var content = (await output.GetChildContentAsync()).GetContent();
                 var link = _generator.GenerateActionLink(ViewContext, content,
                     AspAction, AspController, AspProtocol, AspHost, AspFragment,
                     new
