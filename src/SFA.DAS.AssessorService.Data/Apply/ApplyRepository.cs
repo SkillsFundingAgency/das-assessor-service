@@ -59,7 +59,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
             }
         }
 
-        public async Task<Guid> CreateApplication(Domain.Entities.Application application, string applicationStatus)
+        public async Task<Guid> CreateApplication(Domain.Entities.Application application)
         {
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))
             {
