@@ -84,5 +84,15 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             _logger.LogInformation($"Received request to retrieve non approved standard details {request.StandardReference}");
             return Ok(await _mediator.Send(request));
         }
+
+        [HttpPost("update-standard-summary", Name = "UpdateStandardSummary")]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(ApiResponse))]
+        [SwaggerResponse((int)HttpStatusCode.Conflict, Type = typeof(ApiResponse))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task UpdateStandardSummary([FromBody] UpdateStandardSummaryRequest request)
+        {
+            _logger.LogInformation($"Received request to update standard summary");
+            await _mediator.Send(request);
+        }
     }
 }

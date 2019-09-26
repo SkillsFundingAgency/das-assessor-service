@@ -132,6 +132,15 @@ namespace SFA.DAS.AssessorService.Data
             return dateOfLastCollation;
         }
 
+        public async Task UpdateStandardSummary()
+        {
+            await _unitOfWork.Connection.ExecuteAsync(
+                "OppFinder_Update_StandardSummary",
+                param: null,
+                transaction: _unitOfWork.Transaction,
+                commandType: CommandType.StoredProcedure);
+        }
+
         public async Task<string> UpsertApprovedStandards(List<StandardCollation> latestStandards)
         {
             var existingStandards = await GetStandardCollations();
