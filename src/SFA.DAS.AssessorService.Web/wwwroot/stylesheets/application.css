@@ -1371,9 +1371,9 @@ th[aria-sort="ascending"] a:after {
   line-height: 40px;
 }
 
-[data-sortdirection="Desc"]::after {
+.sorted-ascending::after {
   content: "";
-  margin: 0;
+  margin-left: 3px;
   display: inline-block;
   width: 0;
   height: 0;
@@ -1385,24 +1385,21 @@ th[aria-sort="ascending"] a:after {
   border-top-color: inherit;
 }
 
-[data-sortdirection="Asc"]::after {
+.sorted-descending::after {
   content: "";
-  margin: 0;
+  margin-left: 3px;
   display: inline-block;
   width: 0;
   height: 0;
-  /* -webkit-clip-path: polygon(0 0, 100% 50%, 0 100%);
-  clip-path: polygon(0 0, 100% 50%, 0 100%); */
   -webkit-clip-path: polygon(50% 0, 0 100%, 100% 100%);
-  clip-path: polygon(50% 0, 0 100%, 100% 100%);
+  clip-path: polygon(50% 1%, 1% 100%, 100% 100%);
   border-color: rgba(0, 0, 0, 0);
   border-style: solid;
-  /* border-width: 0 7px 12.124px; */
-  border-width: 12.124px 7px 0;
-  border-left-color: inherit;
+  border-width: 0 7px 12.124px;
+  border-bottom-color: inherit;
 }
 
-/* Search nabbed from gov.uk */
+/* Search from gov.uk */
 
 .das-icon-search {
   position: relative;
@@ -1564,4 +1561,8 @@ th[aria-sort="ascending"] a:after {
     background-size: 60px auto;
     background-position: 160% 50%;
   }
+}
+
+.govuk-link--no-decoration {
+  text-decoration: none;
 }

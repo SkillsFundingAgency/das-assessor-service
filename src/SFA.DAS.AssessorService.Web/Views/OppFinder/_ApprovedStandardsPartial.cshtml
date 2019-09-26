@@ -37,7 +37,7 @@ else
                     Approved Standards
                 </sfa-sortable-column-header>
             </th>
-            <th scope="col" class="govuk-table__header">
+            <th scope="col" class="govuk-table__header govuk-table__header--numeric" >
                 <sfa-sortable-column-header class="approved-sort govuk-link"
                                             data-sortColumn="@nameof(OppFinderApprovedSearchSortColumn.ActiveApprentices)"
                                             asp-action="SortApprovedStandards"
@@ -49,7 +49,7 @@ else
                     Active apprentices
                 </sfa-sortable-column-header>
             </th>
-            <th scope="col" class="govuk-table__header">
+            <th scope="col" class="govuk-table__header govuk-table__header--numeric">
                 <sfa-sortable-column-header class="approved-sort govuk-link"
                                             data-sortColumn="@nameof(OppFinderApprovedSearchSortColumn.RegisteredEPAOs)"
                                             asp-action="SortApprovedStandards"
@@ -77,8 +77,8 @@ else
                         asp-route-standardCode="@approvedStandard.StandardCode">@approvedStandard.StandardName
                     </a>
                 </td>
-                <td class="govuk-table__cell">@approvedStandard.ActiveApprentices</td>
-                <td class="govuk-table__cell">@approvedStandard.RegisteredEPAOs</td>
+                <td class="govuk-table__cell govuk-table__cell--numeric">@approvedStandard.ActiveApprentices</td>
+                <td class="govuk-table__cell govuk-table__cell--numeric">@approvedStandard.RegisteredEPAOs</td>
             </tr>
         }
     }
