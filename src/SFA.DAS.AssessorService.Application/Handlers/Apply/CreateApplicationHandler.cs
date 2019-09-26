@@ -44,7 +44,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
                 StandardCode = request.StandardCode,
                 ApplicationStatus = request.ApplicationStatus,
                 ReviewStatus = ApplicationReviewStatus.Draft,
-                FinancialReviewStatus = IsFinancialExempt(org.OrganisationData?.FHADetails, orgType) ? FinancialReviewStatus.Exempt: FinancialReviewStatus.Draft,
+                FinancialReviewStatus = IsFinancialExempt(org.OrganisationData?.FHADetails, orgType) ? FinancialReviewStatus.Exempt: FinancialReviewStatus.Required,
                 OrganisationId = request.OrganisationId,
                 CreatedBy = request.UserId.ToString()
             };

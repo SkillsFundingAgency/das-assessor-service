@@ -134,50 +134,98 @@ namespace SFA.DAS.AssessorService.Data.Apply
 
         public async Task<List<FinancialApplicationSummaryItem>> GetOpenFinancialApplications()
         {
-
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))
             {
                 return (await connection
                     .QueryAsync<FinancialApplicationSummaryItem>(
-                        @"SELECT 
-                            org.EndPointAssessorName as OrganisationName,
-                            ap1.Id As Id,
-                            JSON_VALUE(ap1.ApplyData, '$.Sequences[0].SequenceNo') As SequenceNo,
-                            JSON_VALUE(ap1.ApplyData, '$.Sequences[0].Sections[2].SectionNo') SectionNo,
-                            JSON_VALUE(ap1.ApplyData, '$.Apply.LatestInitSubmissionDate') As SubmittedDate,
-                            JSON_VALUE(ap1.ApplyData, '$.Apply.InitSubmissionCount') As SubmissionCount,
-                            CASE WHEN (JSON_VALUE(ap1.ApplyData, '$.Sequences[0].Status') = @sequenceStatusFeedbackAdded) THEN @sequenceStatusFeedbackAdded
-                            WHEN (JSON_VALUE(ap1.ApplyData, '$.Apply.InitSubmissionCount') > 1 AND JSON_VALUE(ap1.ApplyData, '$.Sequences[0].Sections[2].Status') = @financialStatusSubmitted) THEN @sequenceStatusResubmitted
-                            WHEN (JSON_VALUE(ap1.ApplyData, '$.Apply.InitSubmissionCount') > 1 AND JSON_VALUE(ap1.ApplyData, '$.Sequences[0].Sections[2].RequestedFeedbackAnswered') = 'true')THEN @sequenceStatusResubmitted
-                            ELSE JSON_VALUE(ap1.ApplyData, '$.Sequences[0].Sections[2].Status')
-                            END As CurrentStatus
-                            FROM Applications ap1
-                            inner join Organisations org ON ap1.OrganisationId = org.Id
-                            WHERE JSON_VALUE(ap1.ApplyData, '$.Sequences[0].SequenceNo') = '1' AND JSON_VALUE(ap1.ApplyData, '$.Sequences[0].Sections[2].SectionNo') = '3' 
-                                AND JSON_VALUE(ap1.ApplyData, '$.Sequences[0].IsActive') = 'true'
-                                AND ap1.ApplicationStatus = @applicationStatusInProgress
-                                AND JSON_VALUE(ap1.ApplyData, '$.Sequences[0].Status') = @sequenceStatusSubmitted
-                                AND JSON_VALUE(ap1.ApplyData, '$.Sequences[0].Sections[2].Status') IN (@financialStatusSubmitted, @financialStatusInProgress)",
+                        @"SELECT
+                           org.EndPointAssessorName AS OrganisationName,
+                           ap1.Id AS Id,
+	                       sequence.SequenceNo AS SequenceNo,
+                           section.SectionNo AS SectionNo, 
+                           apply.SubmittedDate AS SubmittedDate,
+                           apply.SubmissionCount AS SubmissionCount, 
+	                       ap1.ApplicationStatus AS CurrentStatus
+                        FROM Applications ap1
+                        INNER JOIN Organisations org ON ap1.OrganisationId = org.Id
+                            CROSS APPLY OPENJSON(ApplyData,'$.Sequences') WITH (SequenceNo INT, IsActive BIT, Status VARCHAR(20)) sequence
+                            CROSS APPLY OPENJSON(ApplyData,'$.Sequences[0].Sections') WITH (SectionNo INT, Status VARCHAR(20)) section
+                            CROSS APPLY OPENJSON(ApplyData,'$.Apply') WITH (SubmittedDate VARCHAR(30) '$.LatestInitSubmissionDate', SubmissionCount INT '$.InitSubmissionCount') apply
+                        WHERE sequence.SequenceNo = 1 AND section.SectionNo = 3 AND sequence.IsActive = 1
+                            AND ap1.FinancialReviewStatus = @financialReviewStatusNew -- NOTE: May need to consider Required status. Assumption is that on submit, it will be set to New
+                            AND ap1.ApplicationStatus IN (@applicationStatusSubmitted, @applicationStatusResubmitted)",
                         new
                         {
-                            applicationStatusInProgress = ApplicationStatus.InProgress,
-                            sequenceStatusSubmitted = ApplicationSequenceStatus.Submitted,
-                            sequenceStatusFeedbackAdded = ApplicationSequenceStatus.FeedbackAdded,
-                            sequenceStatusResubmitted = ApplicationSequenceStatus.Resubmitted,
-                            financialStatusSubmitted = ApplicationSectionStatus.Submitted,
-                            financialStatusInProgress = ApplicationSectionStatus.InProgress
+                            financialReviewStatusNew = FinancialReviewStatus.New,
+                            applicationStatusSubmitted = ApplicationStatus.Submitted,
+                            applicationStatusResubmitted = ApplicationStatus.Resubmitted,
                         })).ToList();
             }
         }
 
-        public Task<List<FinancialApplicationSummaryItem>> GetFeedbackAddedFinancialApplications()
+        public async Task<List<FinancialApplicationSummaryItem>> GetFeedbackAddedFinancialApplications()
         {
-            throw new NotImplementedException();
+            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            {
+                return (await connection
+                    .QueryAsync<FinancialApplicationSummaryItem>(
+                        @"SELECT org.EndPointAssessorName AS OrganisationName,
+                           ap1.Id AS Id,
+	                       sequence.SequenceNo AS SequenceNo,
+                           section.SectionNo AS SectionNo, 
+	                       ap1.FinancialGrade As Grade,
+	                       ISNULL(section.FeedbackDate, JSON_VALUE(ap1.FinancialGrade, '$.GradedDateTime')) As FeedbackAddedDate,
+                           apply.SubmittedDate AS SubmittedDate,
+                           apply.SubmissionCount AS SubmissionCount,
+	                       ap1.ApplicationStatus AS CurrentStatus
+                        FROM Applications ap1
+                        INNER JOIN Organisations org ON ap1.OrganisationId = org.Id
+                            CROSS APPLY OPENJSON(ApplyData,'$.Sequences') WITH (SequenceNo INT, IsActive BIT, Status VARCHAR(20)) sequence
+                            CROSS APPLY OPENJSON(ApplyData,'$.Sequences[0].Sections') WITH (SectionNo INT, Status VARCHAR(20), FeedbackDate VARCHAR(30) '$.Feedback.FeedbackDate') section
+                            CROSS APPLY OPENJSON(ApplyData,'$.Apply') WITH (SubmittedDate VARCHAR(30) '$.LatestInitSubmissionDate', SubmissionCount INT '$.InitSubmissionCount') apply
+                        WHERE sequence.SequenceNo = 1 AND section.SectionNo = 3 AND sequence.IsActive = 1
+                            AND ap1.FinancialReviewStatus = @financialReviewStatusRejected -- NOTE: May need to consider if only Graded and Inadequate. Assumption is that if this situation occurs, it will be set to Rejected
+                            AND ap1.ApplicationStatus IN (@applicationStatusSubmitted, @applicationStatusResubmitted)",
+                        new
+                        {
+                            financialReviewStatusRejected = FinancialReviewStatus.Rejected,
+                            applicationStatusSubmitted = ApplicationStatus.Submitted,
+                            applicationStatusResubmitted = ApplicationStatus.Resubmitted,
+                        })).ToList();
+            }
         }
 
-        public Task<List<FinancialApplicationSummaryItem>> GetClosedFinancialApplications()
+        public async Task<List<FinancialApplicationSummaryItem>> GetClosedFinancialApplications()
         {
-            throw new NotImplementedException();
+            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            {
+                return (await connection
+                    .QueryAsync<FinancialApplicationSummaryItem>(
+                        @"SELECT org.EndPointAssessorName AS OrganisationName,
+                           ap1.Id AS Id,
+	                       sequence.SequenceNo AS SequenceNo,
+                           section.SectionNo AS SectionNo, 
+	                       ap1.FinancialGrade As Grade,
+                           apply.ClosedDate AS ClosedDate,
+                           apply.SubmissionCount AS SubmissionCount,
+	                       CASE WHEN (sequence.Status = @applicationSequenceStatusApproved) THEN @applicationSequenceStatusApproved
+                                WHEN (sequence.Status = @applicationSequenceStatusRejected) THEN @applicationSequenceStatusRejected
+                                ELSE section.Status
+	                       END As CurrentStatus
+                        FROM Applications ap1
+                        INNER JOIN Organisations org ON ap1.OrganisationId = org.Id
+                            CROSS APPLY OPENJSON(ApplyData,'$.Sequences') WITH (SequenceNo INT, Status VARCHAR(20)) sequence
+                            CROSS APPLY OPENJSON(ApplyData,'$.Sequences[0].Sections') WITH (SectionNo INT, Status VARCHAR(20), NotRequired BIT) section
+                            CROSS APPLY OPENJSON(ApplyData,'$.Apply') WITH (ClosedDate VARCHAR(30) '$.InitSubmissionClosedDate', SubmissionCount INT '$.InitSubmissionCount') apply
+                        WHERE sequence.SequenceNo = 1 AND section.SectionNo = 3 AND section.NotRequired = 0
+                            AND ap1.FinancialReviewStatus = @financialReviewStatusClosed -- NOTE: Not showing Exempt",
+                        new
+                        {
+                            financialReviewStatusClosed = FinancialReviewStatus.Closed,
+                            applicationSequenceStatusApproved = ApplicationSequenceStatus.Approved,
+                            applicationSequenceStatusRejected = ApplicationSequenceStatus.Rejected                            
+                        })).ToList();
+            }
         }
 
     }
