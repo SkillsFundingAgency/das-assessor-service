@@ -100,10 +100,12 @@ namespace SFA.DAS.AssessorService.Data.Apply
             {
                 using (var connection = new SqlConnection(_configuration.SqlConnectionString))
                 {
+                    var financialReviewStatus = (financialGrade.SelectedGrade == FinancialApplicationSelectedGrade.Inadequate) ? FinancialReviewStatus.Rejected : FinancialReviewStatus.Closed;
+
                     var result = await connection.ExecuteAsync(@"UPDATE Applications
-                                                SET FinancialGrade = @financialGrade
+                                                SET FinancialGrade = @financialGrade, FinancialReviewStatus = @financialReviewStatus
                                                 WHERE Id = @id",
-                        new { id, financialGrade });
+                        new { id, financialGrade, financialReviewStatus });
                 }
             }
             else
