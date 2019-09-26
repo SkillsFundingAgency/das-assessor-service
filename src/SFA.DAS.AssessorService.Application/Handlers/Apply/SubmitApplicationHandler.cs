@@ -41,24 +41,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
                 application.ApplyData = applyData;
                 application.StandardCode = request.StandardCode;
                 application.ReviewStatus = ApplicationReviewStatus.New;
-
-                if (request.Sequence.SequenceNo == 1)
-                {
-                    application.ApplicationStatus = (applyData.Apply.InitSubmissions.Count == 1) ? ApplicationStatus.Submitted : ApplicationStatus.Resubmitted;
-
-                    var closedFinanicalStatuses = new List<string> { FinancialReviewStatus.Closed, FinancialReviewStatus.Exempt };
-
-                    if(!closedFinanicalStatuses.Contains(application.FinancialReviewStatus))
-                    {
-                        application.FinancialReviewStatus = FinancialReviewStatus.New;
-                    }
-                }
-                else if(request.Sequence.SequenceNo == 2)
-                {
-                    application.ApplicationStatus = (applyData.Apply.StandardSubmissions.Count == 1) ? ApplicationStatus.Submitted : ApplicationStatus.Resubmitted;
-                }
-
                 application.UpdatedBy = request.UserId.ToString();
+                UpdateApplicationStatus(applyData, request, application);
                 await _applyRepository.SubmitApplicationSequence(application);
 
                 application = await _applyRepository.GetApplication(request.ApplicationId);
@@ -148,6 +132,26 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
             }
 
         }
+
+        private void UpdateApplicationStatus(ApplyData applyData, SubmitApplicationRequest request, Domain.Entities.Application application)
+        {
+            if (request.Sequence.SequenceNo == 1)
+            {
+                application.ApplicationStatus = (applyData.Apply.InitSubmissions.Count == 1) ? ApplicationStatus.Submitted : ApplicationStatus.Resubmitted;
+
+                var closedFinanicalStatuses = new List<string> { FinancialReviewStatus.Closed, FinancialReviewStatus.Exempt };
+
+                if (!closedFinanicalStatuses.Contains(application.FinancialReviewStatus))
+                {
+                    application.FinancialReviewStatus = FinancialReviewStatus.New;
+                }
+            }
+            else if (request.Sequence.SequenceNo == 2)
+            {
+                application.ApplicationStatus = (applyData.Apply.StandardSubmissions.Count == 1) ? ApplicationStatus.Submitted : ApplicationStatus.Resubmitted;
+            }
+        }
+
 
         private async Task<string> CreateReferenceNumber(string referenceFormat)
         {
