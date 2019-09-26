@@ -1,4 +1,6 @@
-﻿using SFA.DAS.AssessorService.Api.Types.Models.Apply;
+﻿using SFA.DAS.AssessorService.Api.Types.Models.AO;
+using SFA.DAS.AssessorService.Api.Types.Models.Apply;
+using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.QnA.Api.Types;
 using SFA.DAS.QnA.Api.Types.Page;
 using System;
@@ -12,16 +14,12 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         Task<List<ApplicationResponse>> GetApplications(Guid userId, bool createdBy);
         Task<ApplicationResponse> GetApplication(Guid id);
         Task<Guid> CreateApplication(CreateApplicationRequest createApplicationRequest);
-        Task<bool> Submit(Guid id,Guid userId,string email,string contactName, Sequence sequence, List<Section> sections, string referenceFormat);
+        Task<bool> Submit(SubmitApplicationRequest submitApplicationRequest);
 
         //Task DeleteAnswer(Guid applicationId, int sequenceId, int sectionId, string pageId, Guid answerId, Guid userId);
-        //Task ImportWorkflow(IFormFile file);
-        //Task UpdateApplicationData<T>(T applicationData, Guid applicationId);
-        //Task<Domain.Entities.Application> GetApplication(Guid applicationId);
+        Task<bool> UpdateInitialStandardData(Guid Id, int standardCode,string referenceNumber, string standardName);
 
-        //Task<string> GetApplicationStatus(Guid applicationId, int standardCode);
-
-        //Task<List<StandardCollation>> GetStandards();
+        Task<List<StandardCollation>> GetStandards();
         Task<List<Option>> GetQuestionDataFedOptions();
         //Task DeleteFile(Guid applicationId, Guid userId, int sequenceId, int sectionId, string pageId, string questionId);
 

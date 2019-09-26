@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore.Internal;
+using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.QnA.Api.Types.Page;
 
@@ -11,12 +12,13 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Apply
     {
         public Guid Id { get; }
 
-        public PageViewModel(Guid Id, int sequenceNo, Guid sectionId, string pageId, Page page, string redirectAction, string returnUrl, List<ValidationErrorDetail> errorMessages)
+        public PageViewModel(Guid id, int sequenceNo, Guid sectionId, string pageId, Page page, string pageContext, string redirectAction, string returnUrl, List<ValidationErrorDetail> errorMessages)
         {
-            this.Id = Id;
+            Id = id;
             SequenceNo = sequenceNo.ToString();
             SectionId = sectionId;
             PageId = pageId;
+            PageContext = pageContext;
             RedirectAction = redirectAction;
             ReturnUrl = returnUrl;
             ErrorMessages = errorMessages;
@@ -33,6 +35,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Apply
         public string LinkTitle { get; set; }
 
         public string PageId { get; set; }
+        public string PageContext { get; set; }
         public string Title { get; set; }
 
         public string DisplayType { get; set; }
@@ -69,11 +72,11 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Apply
                 PageOfAnswers = page.PageOfAnswers;
             }
 
-            SectionId = SectionId;
+            SectionId= SectionId;
 
             var questions = page.Questions;
             var answers = new List<Answer>();
-            foreach(var pageAnswer in page.PageOfAnswers)
+            foreach (var pageAnswer in page.PageOfAnswers)
             {
                 answers.AddRange(pageAnswer.Answers);
             }
@@ -91,7 +94,8 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Apply
                 Hint = q.Hint,
                 Options = q.Input.Options,
                 Value = page.AllowMultipleAnswers ? GetMultipleValue(page.PageOfAnswers.LastOrDefault()?.Answers, q, errorMessages) : answers?.SingleOrDefault(a => a?.QuestionId == q.QuestionId)?.Value,
-                ErrorMessages = errorMessages?.Where(f => f.Field == q.QuestionId).ToList(),
+                JsonValue = page.AllowMultipleAnswers ? GetMultipleJsonValue(page.PageOfAnswers.LastOrDefault()?.Answers, q, errorMessages) : JsonConvert.SerializeObject(answers?.SingleOrDefault(a => a?.QuestionId == q.QuestionId)?.Value),
+                ErrorMessages = errorMessages?.Where(f => f.Field.Split("_Key_")[0] == q.QuestionId).ToList(),
                 SequenceNo = int.Parse(SequenceNo),
                 SectionId = SectionId,
                 Id = Id,
@@ -125,6 +129,16 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Apply
             if (errorMessages != null && errorMessages.Any())
             {
                 return answers?.LastOrDefault(a => a?.QuestionId == question.QuestionId)?.Value;
+            }
+
+            return null;
+        }
+
+        private dynamic GetMultipleJsonValue(List<Answer> answers, Question question, List<ValidationErrorDetail> errorMessages)
+        {
+            if (errorMessages != null && errorMessages.Any())
+            {
+                return JsonConvert.SerializeObject(answers?.LastOrDefault(a => a?.QuestionId == question.QuestionId)?.Value);
             }
 
             return null;

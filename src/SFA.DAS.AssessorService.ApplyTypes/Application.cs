@@ -65,6 +65,7 @@ namespace SFA.DAS.AssessorService.ApplyTypes
         public string ReviewedBy { get; set; }
         public DateTime? EvaluatedDate { get; set; }
         public string EvaluatedBy { get; set; }
+        public bool NotRequired { get; set; }
         public bool? RequestedFeedbackAnswered { get; set; }
     }
 
