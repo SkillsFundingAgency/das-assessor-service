@@ -59,7 +59,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
             }
         }
 
-        public async Task<Guid> CreateApplication(Domain.Entities.Application application, string applicationStatus)
+        public async Task<Guid> CreateApplication(Domain.Entities.Application application)
         {
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))
             {
@@ -77,9 +77,9 @@ namespace SFA.DAS.AssessorService.Data.Apply
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))
             {
               var result =  await connection.ExecuteAsync(@"UPDATE Applications
-                                                SET  ApplicationStatus = @ApplicationStatus, ApplyData = @ApplyData, ReviewStatus = @ReviewStatus, UpdatedBy = @UpdatedBy, UpdatedAt = GETUTCDATE() 
+                                                SET  ApplicationStatus = @ApplicationStatus, ApplyData = @ApplyData, ReviewStatus = @ReviewStatus, FinancialReviewStatus = @FinancialReviewStatus, UpdatedBy = @UpdatedBy, UpdatedAt = GETUTCDATE() 
                                                 WHERE  (Applications.Id = @Id)",
-                  new { application.ApplicationStatus, application.ApplyData,application.ReviewStatus, application.Id, application.UpdatedBy});
+                  new { application.ApplicationStatus, application.ApplyData, application.ReviewStatus, application.FinancialReviewStatus, application.Id, application.UpdatedBy});
             }
         }
 

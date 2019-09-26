@@ -42,14 +42,14 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
                 ApplyData = applyData,
                 ApplicationId = request.ApplicationId,
                 StandardCode = request.StandardCode,
-                ApplicationStatus = request.ApplicationStatus,
+                ApplicationStatus = ApplicationStatus.InProgress,
                 ReviewStatus = ApplicationReviewStatus.Draft,
                 FinancialReviewStatus = IsFinancialExempt(org.OrganisationData?.FHADetails, orgType) ? FinancialReviewStatus.Exempt: FinancialReviewStatus.Required,
                 OrganisationId = request.OrganisationId,
                 CreatedBy = request.UserId.ToString()
             };
 
-            var response = await _applyRepository.CreateApplication(application, ApplicationStatus.InProgress);
+            var response = await _applyRepository.CreateApplication(application);
             return response;
         }
 
