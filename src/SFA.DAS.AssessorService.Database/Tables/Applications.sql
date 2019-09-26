@@ -5,6 +5,7 @@ CREATE TABLE [Applications](
 	[ApplicationStatus] [nvarchar](20) NOT NULL DEFAULT 'New',
 	[ReviewStatus] [nvarchar](20) NOT NULL DEFAULT 'Draft',
 	[ApplyData] [nvarchar](max) NULL,
+	[FinancialReviewStatus] [nvarchar](20) NOT NULL DEFAULT 'Required',
 	[FinancialGrade] [nvarchar](max) NULL,
 	[StandardCode] int NULL,
 	[CreatedAt] [datetime2](7) NOT NULL,
