@@ -566,6 +566,11 @@
   border-bottom: 0;
 }
 
+.govuk-table__cell--no-border,
+.govuk-table__header--no-border {
+  border-bottom: 0;
+}
+
 .govuk-character-count {
   margin-bottom: 0;
 }
@@ -815,12 +820,12 @@
 }
 
 .das-highlight-box {
-  color: #0b0c0c;
-  font-family: nta, Arial, sans-serif;
-  border-top: 5px solid #bfc1c3;
-  border-bottom: 5px solid #bfc1c3;
-  padding: 10px 5px 10px 5px;
-  margin-bottom: 40px;
+  /* color: #0b0c0c; */
+  /* font-family: nta, Arial, sans-serif; */
+  border-top: 3px solid #dee0e2;
+  border-bottom: 3px solid #dee0e2;
+  padding: 10px 5px;
+  /* margin-bottom: 40px; */
 }
 
 .das-highlight-box-heading {
@@ -1039,6 +1044,11 @@ TODO: change to 'das-page-navigation' and BEM
   border-left-style: solid;
   border-color: #bfc1c3;
   border-left-width: 5px;
+}
+
+.expandble-cell-content--no-border {
+  padding: 0.78947em 0;
+  border: 0;
 }
 
 .expandble-cell-content .expandble-cell-content--first-heading {

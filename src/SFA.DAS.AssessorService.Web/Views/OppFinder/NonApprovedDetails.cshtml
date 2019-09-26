@@ -5,16 +5,18 @@
     Layout = "_OppFinderLayout";
 }
 
+<a 
+    class="govuk-back-link" 
+    asp-controller="OppFinder" 
+    asp-action="@(Model.NonApprovedType == NonApprovedType.InDevelopment ? "ChangePageInDevelopmentStandards" : "ChangePageProposedStandards")" 
+    asp-route-pageIndex="@Model.PageIndex" asp-fragment="@(Model.NonApprovedType == NonApprovedType.InDevelopment ? "in-development" : "proposed")"
+>
+    Back
+</a>
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
             <p>
-                <a class="govuk-back-link govuk-!-margin-top-0" 
-                   asp-controller="OppFinder" 
-                   asp-action="@(Model.NonApprovedType == NonApprovedType.InDevelopment ? "ChangePageInDevelopmentStandards" : "ChangePageProposedStandards")" 
-                   asp-route-pageIndex="@Model.PageIndex" asp-fragment="@(Model.NonApprovedType == NonApprovedType.InDevelopment ? "in-development" : "proposed")">
-                Back
-                </a>
             </p>
             <span class="govuk-caption-xl">
                 @(Model.NonApprovedType == NonApprovedType.InDevelopment ? "Standard in-development" : "Proposed Standard")
