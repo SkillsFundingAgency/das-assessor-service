@@ -17,6 +17,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
         private readonly IApplyRepository _applyRepository;
         private readonly IMediator _mediator;
         private readonly IEMailTemplateQueryRepository _eMailTemplateQueryRepository;
+
         public SubmitApplicationHandler(IApplyRepository applyRepository, IEMailTemplateQueryRepository eMailTemplateQueryRepository, IMediator mediator)
         {
             _applyRepository = applyRepository;
@@ -39,7 +40,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
 
                 application.ApplyData = applyData;
                 application.StandardCode = request.StandardCode;
-
+                application.ReviewStatus = ApplicationReviewStatus.New;
+                application.UpdatedBy = request.UserId.ToString();
+                UpdateApplicationStatus(applyData, request, application);
                 await _applyRepository.SubmitApplicationSequence(application);
 
                 application = await _applyRepository.GetApplication(request.ApplicationId);
@@ -57,12 +60,12 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
         {
             if (applyData.Sequences == null)
                 applyData.Sequences = new List<ApplySequence>();
-            if (applyData.Sequences.Any(x => x.SequenceId == sequence.SequenceId))
+            if (applyData.Sequences.Any(x => x.SequenceNo == sequence.SequenceNo))
             {
-                applyData.Sequences.Where(x => x.SequenceId == sequence.SequenceId)
+                applyData.Sequences.Where(x => x.SequenceNo == sequence.SequenceNo)
                    .Select(applySequence =>
                    {
-                       applySequence.Status = ApplicationSequenceStatus.Resubmitted;
+                       applySequence.Status = applySequence.Status == ApplicationSectionStatus.Submitted? ApplicationSequenceStatus.Resubmitted:sequence.Status;
                        applySequence.Sections = sequence.Sections;
                        applySequence.SequenceNo = sequence.SequenceNo;
                        applySequence.NotRequired = sequence.NotRequired;
@@ -129,6 +132,26 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
             }
 
         }
+
+        private void UpdateApplicationStatus(ApplyData applyData, SubmitApplicationRequest request, Domain.Entities.Application application)
+        {
+            if (request.Sequence.SequenceNo == 1)
+            {
+                application.ApplicationStatus = (applyData.Apply.InitSubmissions.Count == 1) ? ApplicationStatus.Submitted : ApplicationStatus.Resubmitted;
+
+                var closedFinanicalStatuses = new List<string> { FinancialReviewStatus.Closed, FinancialReviewStatus.Exempt };
+
+                if (!closedFinanicalStatuses.Contains(application.FinancialReviewStatus))
+                {
+                    application.FinancialReviewStatus = FinancialReviewStatus.New;
+                }
+            }
+            else if (request.Sequence.SequenceNo == 2)
+            {
+                application.ApplicationStatus = (applyData.Apply.StandardSubmissions.Count == 1) ? ApplicationStatus.Submitted : ApplicationStatus.Resubmitted;
+            }
+        }
+
 
         private async Task<string> CreateReferenceNumber(string referenceFormat)
         {

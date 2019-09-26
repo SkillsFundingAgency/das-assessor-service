@@ -8,5 +8,6 @@ namespace SFA.DAS.AssessorService.Domain.Entities
         public string Type { get; set; }
         public string Status { get; set; }
         public string TypeDescription { get; set; }
+        public bool FinancialExempt { get; set; }
     }
 }

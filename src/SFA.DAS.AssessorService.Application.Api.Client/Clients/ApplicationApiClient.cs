@@ -7,8 +7,7 @@ using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Apply;
 using SFA.DAS.QnA.Api.Types.Page;
-using SFA.DAS.QnA.Api.Types;
-using SFA.DAS.AssessorService.ApplyTypes;
+using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 
 namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 {
@@ -60,33 +59,33 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task<bool> Submit(Guid id, Guid userId, string email, string contactName, Sequence sequence, List<Section> sections, string referenceFormat)
+        public async Task<bool> Submit(SubmitApplicationRequest submitApplicationRequest)
         {
-            var applySections = sections.Select(x => new ApplySection
-            {
-                SectionId = x.Id,
-                SectionNo = x.SectionNo,
-                Status = ApplicationSectionStatus.Submitted,
-                RequestedFeedbackAnswered = x.QnAData.RequestedFeedbackAnswered
-            }).ToList();
-
+          
             using (var request = new HttpRequestMessage(HttpMethod.Post, $"api/v1/applications/submitApplication"))
             {
-                return await PostPutRequestWithResponse<SubmitApplicationRequest, bool>(request, new SubmitApplicationRequest {
-                    ApplicationId = id,
-                    ReferenceFormat = referenceFormat,
-                    ContactName = contactName,
-                    Email = email,
-                    UserId = userId,
-                    Sequence = new ApplySequence
-                    {
-                        SequenceId = sequence.Id,
-                        Sections  = applySections,
-                        Status = ApplicationSequenceStatus.Submitted,
-                        IsActive = sequence.IsActive,
-                        SequenceNo = sequence.SequenceNo,
-                        NotRequired = sequence.NotRequired
-                    }
+                return await PostPutRequestWithResponse<SubmitApplicationRequest, bool>(request, submitApplicationRequest);
+            }
+        }
+
+        public async Task<List<StandardCollation>> GetStandards()
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/ao/assessment-organisations/collated-standards"))
+            {
+                return (await RequestAndDeserialiseAsync<List<StandardCollation>>(request, $"Could not retrieve collated standards"));
+            }
+        }
+
+        public async Task<bool> UpdateInitialStandardData(Guid id, int standardCode, string referenceNumber, string standardName)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Post, $"api/v1/applications/updateInitialStandardData"))
+            {
+                return await PostPutRequestWithResponse<UpdateInitialStandardDataRequest, bool>(request, new UpdateInitialStandardDataRequest
+                {
+                    Id = id,
+                    StandardCode = standardCode,
+                    ReferenceNumber = referenceNumber,
+                    StandardName = standardName
                 });
             }
         }
