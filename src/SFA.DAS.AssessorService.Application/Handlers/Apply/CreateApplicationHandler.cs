@@ -82,7 +82,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
 
         }
 
-        private bool DisableSequencesAndSectionsAsAppropriate(Domain.Entities.Organisation org, 
+        private void DisableSequencesAndSectionsAsAppropriate(Domain.Entities.Organisation org, 
             List<ApplySequence> sequences, OrganisationType orgType)
         {
             bool isEpao = IsOrganisationOnEPAORegister(org);
@@ -101,7 +101,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
             {
                 RemoveSequenceOne(sequences);
             }
-            return isFinancialExempt;
         }
 
         private static bool IsOrganisationOnEPAORegister(Domain.Entities.Organisation org)
