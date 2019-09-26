@@ -436,7 +436,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
         }
 
-        [HttpGet("Application/{Id}/SequenceNo/{sequenceNo}Section/{sectionId}/Page/{pageId}/Question/{questionId}/Filename/{filename}/RedirectAction/{__redirectAction}")]
+        [HttpGet("Application/{Id}/SequenceNo/{sequenceNo}/Section/{sectionId}/Page/{pageId}/Question/{questionId}/Filename/{filename}/RedirectAction/{__redirectAction}")]
         public async Task<IActionResult> DeleteFile(Guid Id, int sequenceNo, Guid sectionId, string pageId, string questionId, string filename, string __redirectAction)
         {
             var application = await _applicationApiClient.GetApplication(Id);
