@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
@@ -49,6 +50,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Standards
                 }
             }
 
+            var approvedForDeliveryValidDate = DateTime
+                .TryParse(result.OverviewResult.ApprovedForDelivery, out DateTime approvedForDelivery);
+
             return new GetOppFinderApprovedStandardDetailsResponse
             {
                 Title = result.OverviewResult?.StandardName,
@@ -61,7 +65,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Standards
                 TotalCompletedAssessments = result.OverviewResult?.TotalCompletedAssessments ?? 0,
                 Sector = result.OverviewResult?.Sector,
                 TypicalDuration = result.OverviewResult?.TypicalDuration,
-                ApprovedForDelivery = result.OverviewResult.ApprovedForDelivery,
+                ApprovedForDelivery = approvedForDeliveryValidDate
+                    ? approvedForDelivery.ToString("d MMMM yyyy")
+                    : string.Empty,
                 MaxFunding = result.OverviewResult?.MaxFunding != null
                     ? int.Parse(result.OverviewResult?.MaxFunding).ToString("C", CultureInfo.CreateSpecificCulture("en-GB"))
                     : null,
