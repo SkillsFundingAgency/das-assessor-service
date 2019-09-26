@@ -4,7 +4,7 @@
 @model OppFinderSearchViewModel
 
 @{ var inDevelopmentTotalRecordCount = (Model?.InDevelopmentStandards.TotalRecordCount ?? 0); }
-    <span>
+    <p class="govuk-body">
         @if (!string.IsNullOrEmpty(Model?.SearchTerm))
         {
             <text>Showing </text>
@@ -15,7 +15,7 @@
     {
         <text>Showing <span class="govuk-!-font-weight-bold">@inDevelopmentTotalRecordCount</span> Standards in-development</text>
     }
-    </span>
+    </p>
 @if (inDevelopmentTotalRecordCount == 0)
 {
     await Html.RenderPartialAsync("_NoSearchResults");
@@ -26,7 +26,7 @@ else
         <thead class="govuk-table__head">
             <tr class="govuk-table__row">
                 <th scope="col" class="govuk-table__header">
-                    <sfa-sortable-column-header class="in-development-sort"
+                    <sfa-sortable-column-header class="in-development-sort govuk-link"
                                                 data-sortColumn="@nameof(OppFinderSearchSortColumn.StandardName)"
                                                 asp-action="SortInDevelopmentStandards"
                                                 asp-controller="OppFinder"
@@ -47,6 +47,7 @@ else
                     <tr class="govuk-table__row">
                         <td class="govuk-table__cell">
                             <a 
+                                class="govuk-link"
                                 asp-action="ShowInDevelopmentStandardDetails" 
                                 asp-controller="OppFinder" 
                                 asp-route-standardReference="@inDevelopmentStandard.StandardReference">@inDevelopmentStandard.StandardName
@@ -62,7 +63,7 @@ else
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-one-half">
                 <form asp-action="ShowInDevelopmentStandardsPerPage" asp-controller="OppFinder" method="get" asp-fragment="in-development">
-                    <select class="in-development-per-page" asp-for="InDevelopmentStandardsPerPage" asp-items="Model.StandardsPerPage"></select>
+                    <select class="in-development-per-page govuk-select" asp-for="InDevelopmentStandardsPerPage" asp-items="Model.StandardsPerPage"></select>
                     <button class="govuk-button govuk-button--looks-like-link govuk-button--looks-like-link--inline js-hidden" type="submit">
                         Show
                     </button>

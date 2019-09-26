@@ -47,7 +47,7 @@
                     <dd class="govuk-summary-list__value">@Model.MaxFunding</dd>
                 </div>
                 <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">Trailblazer</dt>
+                    <dt class="govuk-summary-list__key">Trailblazer contact</dt>
                     <dd class="govuk-summary-list__value">
                         @foreach(var trailblazer in @Model.Trailblazer)
                         {
@@ -56,7 +56,7 @@
                     </dd>
                 </div>
                 <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">EQA Provider</dt>
+                    <dt class="govuk-summary-list__key">External quality assurance (EQA) provider</dt>
                     <dd class="govuk-summary-list__value">
                         <a href="@Model.EqaProviderLink">@Model.EqaProvider</a>
                     </dd>
@@ -64,7 +64,7 @@
             </dl>
             <p class="govuk-body govuk-!-margin-top-4">
                 Full information on <a href="@Model.StandardPageUrl" target="_blank" rel="noopener noreferrer">@Model.Title</a>
-                <span class="govuk-caption-m">Source: Institute for Apprenticeships</span>
+                <span class="govuk-caption-m">Source: Institute for Apprenticeships and Technical Education</span>
             </p>
             <h2 class="govuk-heading-m">Apprentices</h2>
             <div class="govuk-grid-row">
