@@ -40,17 +40,22 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
 
                 application.ApplyData = applyData;
                 application.StandardCode = request.StandardCode;
-                application.ApplicationStatus = request.ApplicationStatus;
                 application.ReviewStatus = ApplicationReviewStatus.New;
 
                 if (request.Sequence.SequenceNo == 1)
                 {
-                    var closedStatus = new List<string> { FinancialReviewStatus.Closed, FinancialReviewStatus.Exempt };
+                    application.ApplicationStatus = (applyData.Apply.InitSubmissions.Count == 1) ? ApplicationStatus.Submitted : ApplicationStatus.Resubmitted;
 
-                    if(!closedStatus.Contains(application.FinancialReviewStatus))
+                    var closedFinanicalStatuses = new List<string> { FinancialReviewStatus.Closed, FinancialReviewStatus.Exempt };
+
+                    if(!closedFinanicalStatuses.Contains(application.FinancialReviewStatus))
                     {
                         application.FinancialReviewStatus = FinancialReviewStatus.New;
                     }
+                }
+                else if(request.Sequence.SequenceNo == 2)
+                {
+                    application.ApplicationStatus = (applyData.Apply.StandardSubmissions.Count == 1) ? ApplicationStatus.Submitted : ApplicationStatus.Resubmitted;
                 }
 
                 application.UpdatedBy = request.UserId.ToString();
