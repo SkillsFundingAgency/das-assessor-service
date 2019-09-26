@@ -42,6 +42,17 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
                 application.StandardCode = request.StandardCode;
                 application.ApplicationStatus = request.ApplicationStatus;
                 application.ReviewStatus = ApplicationReviewStatus.New;
+
+                if (request.Sequence.SequenceNo == 1)
+                {
+                    var closedStatus = new List<string> { FinancialReviewStatus.Closed, FinancialReviewStatus.Exempt };
+
+                    if(!closedStatus.Contains(application.FinancialReviewStatus))
+                    {
+                        application.FinancialReviewStatus = FinancialReviewStatus.New;
+                    }
+                }
+
                 application.UpdatedBy = request.UserId.ToString();
                 await _applyRepository.SubmitApplicationSequence(application);
 
