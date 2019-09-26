@@ -5,7 +5,7 @@
 {
     if (Model.Standards?.HasPreviousPage ?? false)
     {
-        <a class="@(Model.Fragment + "-page-set")" data-pageSetIndex="@Model.Standards.PrevPageSetIndex" asp-action="@Model.ChangePageSetAction" asp-controller="OppFinder" asp-route-pagesetindex="@Model.Standards.PrevPageSetIndex" asp-fragment="@Model.Fragment">Prev</a>
+        <a class="@(Model.Fragment + "-page-set") govuk-link govuk-!-margin-left-3" data-pageSetIndex="@Model.Standards.PrevPageSetIndex" asp-action="@Model.ChangePageSetAction" asp-controller="OppFinder" asp-route-pagesetindex="@Model.Standards.PrevPageSetIndex" asp-fragment="@Model.Fragment">Prev</a>
     }
 
     if ((Model.Standards?.TotalPages ?? 0) > 1)
@@ -14,17 +14,17 @@
         {
             if (pageNumber != Model.PageIndex)
             {
-            <a class="@(Model.Fragment + "-page")" data-pageIndex="@pageNumber" asp-action="@Model.ChangePageAction" asp-controller="OppFinder" asp-route-pageindex="@pageNumber" asp-fragment="@Model.Fragment">@pageNumber</a>
+            <a class="@(Model.Fragment + "-page") govuk-link govuk-!-margin-left-3" data-pageIndex="@pageNumber" asp-action="@Model.ChangePageAction" asp-controller="OppFinder" asp-route-pageindex="@pageNumber" asp-fragment="@Model.Fragment">@pageNumber</a>
             }
             else
             {
-            <span>@pageNumber</span>
+            <span class="govuk-link govuk-!-margin-left-3">@pageNumber</span>
             }
         }
     }
 
     if (Model.Standards?.HasNextPage ?? false)
     {
-        <a class="@(Model.Fragment + "-page-set")" data-pageSetIndex="@Model.Standards.NextPageSetIndex" asp-action="@Model.ChangePageSetAction" asp-controller="OppFinder" asp-route-pagesetindex="@Model.Standards.NextPageSetIndex" asp-fragment="@Model.Fragment">Next ></a>
+        <a class="@(Model.Fragment + "-page-set") govuk-link govuk-!-margin-left-3" data-pageSetIndex="@Model.Standards.NextPageSetIndex" asp-action="@Model.ChangePageSetAction" asp-controller="OppFinder" asp-route-pagesetindex="@Model.Standards.NextPageSetIndex" asp-fragment="@Model.Fragment">Next ></a>
     }
 }

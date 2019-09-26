@@ -4,7 +4,7 @@
 @model OppFinderSearchViewModel
 
 @{ var approvedTotalRecordCount = (Model?.ApprovedStandards.TotalRecordCount ?? 0); }
-    <span>
+    <p class="govuk-body">
         @if (!string.IsNullOrEmpty(Model?.SearchTerm))
         {
             <text>Showing </text>
@@ -15,7 +15,7 @@
         {
             <text>Showing <span class="govuk-!-font-weight-bold">@approvedTotalRecordCount</span> approved Standards</text>
         }
-    </span>
+    </p>
 @if (approvedTotalRecordCount == 0)
 {
     await Html.RenderPartialAsync("_NoSearchResults");
@@ -25,8 +25,8 @@ else
     <table class="govuk-table">
         <thead class="govuk-table__head">
         <tr class="govuk-table__row">
-            <th scope="col" class="govuk-table__header govuk-!-width-one-half">
-                <sfa-sortable-column-header class="approved-sort"
+            <th scope="col" class="govuk-table__header">
+                <sfa-sortable-column-header class="approved-sort govuk-link"
                                             data-sortColumn="@nameof(OppFinderApprovedSearchSortColumn.StandardName)"
                                             asp-action="SortApprovedStandards"
                                             asp-controller="OppFinder"
@@ -37,8 +37,8 @@ else
                     Approved Standards
                 </sfa-sortable-column-header>
             </th>
-            <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">
-                <sfa-sortable-column-header class="approved-sort"
+            <th scope="col" class="govuk-table__header">
+                <sfa-sortable-column-header class="approved-sort govuk-link"
                                             data-sortColumn="@nameof(OppFinderApprovedSearchSortColumn.ActiveApprentices)"
                                             asp-action="SortApprovedStandards"
                                             asp-controller="OppFinder"
@@ -49,8 +49,8 @@ else
                     Active apprentices
                 </sfa-sortable-column-header>
             </th>
-            <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">
-                <sfa-sortable-column-header class="approved-sort"
+            <th scope="col" class="govuk-table__header">
+                <sfa-sortable-column-header class="approved-sort govuk-link"
                                             data-sortColumn="@nameof(OppFinderApprovedSearchSortColumn.RegisteredEPAOs)"
                                             asp-action="SortApprovedStandards"
                                             asp-controller="OppFinder"
@@ -71,6 +71,7 @@ else
             <tr class="govuk-table__row">
                 <td class="govuk-table__cell">
                     <a 
+                        class="govuk-link"
                         asp-action="ShowApprovedStandardDetails" 
                         asp-controller="OppFinder" 
                         asp-route-standardCode="@approvedStandard.StandardCode">@approvedStandard.StandardName
@@ -85,17 +86,17 @@ else
     </table>
     @if (Model != null)
     {
-        <div class="govuk-grid-row">
-            <div class="govuk-grid-column-one-half">
+        <div class="das-flex-space-around">
+            <div>
                 <form asp-action="ShowApprovedStandardsPerPage" asp-controller="OppFinder" method="get" asp-fragment="approved">
-                    <select class="approved-per-page" asp-for="ApprovedStandardsPerPage" asp-items="Model.StandardsPerPage"></select>
+                    <select class="approved-per-page govuk-select govuk-!-margin-right-2" asp-for="ApprovedStandardsPerPage" asp-items="Model.StandardsPerPage"></select>
                     <button class="govuk-button govuk-button--looks-like-link govuk-button--looks-like-link--inline js-hidden" type="submit">
                         Show
                     </button>
                     <text>Standards per page</text>
                 </form>
             </div>
-            <div class="govuk-grid-column-one-half">
+            <div class="das-pagination-links">
                 @{await Html.RenderPartialAsync("_PaginationLinksPartial", new OppFinderPaginationViewModel
                 {
                     Standards = Model.ApprovedStandards,

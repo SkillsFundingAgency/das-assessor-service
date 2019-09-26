@@ -4,7 +4,7 @@
 @model OppFinderSearchViewModel
 
 @{ var proposedRecordCount = (Model?.ProposedStandards.TotalRecordCount ?? 0); }
-    <span>
+    <p class="govuk-body">
         @if (!string.IsNullOrEmpty(Model?.SearchTerm))
         {
             <text>Showing </text>
@@ -15,7 +15,7 @@
         {
             <text>Showing <span class="govuk-!-font-weight-bold">@proposedRecordCount</span> proposed Standards</text>
         }
-    </span>
+    </p>
 @if (proposedRecordCount == 0)
 {
     await Html.RenderPartialAsync("_NoSearchResults");
@@ -26,7 +26,7 @@ else
         <thead class="govuk-table__head">
             <tr class="govuk-table__row">
                 <th scope="col" class="govuk-table__header">
-                    <sfa-sortable-column-header class="proposed-sort"
+                    <sfa-sortable-column-header class="proposed-sort govuk-link"
                                                 data-sortColumn="@nameof(OppFinderSearchSortColumn.StandardName)"
                                                 asp-action="SortProposedStandards"
                                                 asp-controller="OppFinder"
@@ -46,7 +46,8 @@ else
                 {
                     <tr class="govuk-table__row">
                         <td class="govuk-table__cell">
-                            <a  
+                            <a
+                               class="govuk-link"
                                asp-action="ShowProposedStandardDetails" 
                                asp-controller="OppFinder" 
                                asp-route-standardReference="@proposedStandard.StandardReference">@proposedStandard.StandardName
@@ -63,7 +64,7 @@ else
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-one-half">
                 <form asp-action="ShowProposedStandardsPerPage" asp-controller="OppFinder" method="get" asp-fragment="proposed">
-                    <select class="proposed-per-page" asp-for="ProposedStandardsPerPage" asp-items="Model.StandardsPerPage"></select>
+                    <select class="proposed-per-page govuk-select" asp-for="ProposedStandardsPerPage" asp-items="Model.StandardsPerPage"></select>
                     <button class="govuk-button govuk-button--looks-like-link govuk-button--looks-like-link--inline js-hidden" type="submit">
                         Show
                     </button>

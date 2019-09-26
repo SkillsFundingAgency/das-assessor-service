@@ -139,19 +139,18 @@
 }
 
 .govuk-button--looks-like-search {
-    position: relative;
-    padding: 0;
-    width: 40px;
-    height: 40px;
-    box-shadow: unset;
-    background-image: url(/assets/images/govuk-button-search.png);
-    background-repeat: no-repeat;
-    background-position: 2px 50%;
-    background-color: #005ea5;
-    text-indent: -5000px;
-    overflow: hidden;
+  position: relative;
+  padding: 0;
+  width: 40px;
+  height: 40px;
+  box-shadow: unset;
+  background-image: url(/assets/images/govuk-button-search.png);
+  background-repeat: no-repeat;
+  background-position: 2px 50%;
+  background-color: #005ea5;
+  text-indent: -5000px;
+  overflow: hidden;
 }
-
 
 .das-wrap {
   word-wrap: break-word;
@@ -816,21 +815,21 @@
 }
 
 .das-highlight-box {
-    color: #0b0c0c;
-    font-family: nta,Arial,sans-serif;
-    border-top: 5px solid #bfc1c3;
-    border-bottom: 5px solid #bfc1c3;
-    padding: 10px 5px 10px 5px;
-    margin-bottom: 40px;
+  color: #0b0c0c;
+  font-family: nta, Arial, sans-serif;
+  border-top: 5px solid #bfc1c3;
+  border-bottom: 5px solid #bfc1c3;
+  padding: 10px 5px 10px 5px;
+  margin-bottom: 40px;
 }
 
 .das-highlight-box-heading {
-    font-weight: 700;
-    font-size: 48px;
+  font-weight: 700;
+  font-size: 48px;
 }
 
 .das-highlight-box-content {
-    font-size:16px;
+  font-size: 16px;
 }
 
 .error-summary,
@@ -1264,8 +1263,8 @@ TODO: change to 'das-page-navigation' and BEM
 }
 
 .govuk-details__text--full-width {
-    margin-right: -300%;
-    border-left: none;
+  margin-right: -300%;
+  border-left: none;
 }
 
 @media (min-width: 40.0625em) {
@@ -1344,4 +1343,225 @@ th[aria-sort="descending"] a:after {
 
 th[aria-sort="ascending"] a:after {
   content: "\25B2";
+}
+
+/* Opportunity finder  */
+
+.govuk-heading-xl--white,
+.govuk-body--white {
+  color: #fff;
+}
+
+.das-flex-space-around {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
+  -webkit-box-align: end;
+  -ms-flex-align: end;
+  align-items: flex-end;
+  -webkit-box-pack: space-between;
+  -ms-flex-pack: space-between;
+  justify-content: space-between;
+}
+
+.das-pagination-links {
+  height: 40px;
+  line-height: 40px;
+}
+
+[data-sortdirection="Desc"]::after {
+  content: "";
+  margin: 0;
+  display: inline-block;
+  width: 0;
+  height: 0;
+  -webkit-clip-path: polygon(0 0, 50% 100%, 100% 0);
+  clip-path: polygon(0 0, 50% 100%, 100% 0);
+  border-color: rgba(0, 0, 0, 0);
+  border-style: solid;
+  border-width: 12.124px 7px 0;
+  border-top-color: inherit;
+}
+
+[data-sortdirection="Asc"]::after {
+  content: "";
+  margin: 0;
+  display: inline-block;
+  width: 0;
+  height: 0;
+  /* -webkit-clip-path: polygon(0 0, 100% 50%, 0 100%);
+  clip-path: polygon(0 0, 100% 50%, 0 100%); */
+  -webkit-clip-path: polygon(50% 0, 0 100%, 100% 100%);
+  clip-path: polygon(50% 0, 0 100%, 100% 100%);
+  border-color: rgba(0, 0, 0, 0);
+  border-style: solid;
+  /* border-width: 0 7px 12.124px; */
+  border-width: 12.124px 7px 0;
+  border-left-color: inherit;
+}
+
+/* Search nabbed from gov.uk */
+
+.das-icon-search {
+  position: relative;
+  margin-bottom: 30px;
+}
+
+.das-icon-search__input[type="search"] {
+  font-family: "nta", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 1.4736842105;
+  padding: 6px;
+  margin: 0;
+  width: 100%;
+  height: 40px;
+  border: 2px solid #0b0c0c;
+  background: #ffffff;
+  border-radius: 0;
+  box-sizing: border-box;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+@media print {
+  .das-icon-search__input[type="search"] {
+    font-family: sans-serif;
+  }
+}
+
+@media (min-width: 40.0625em) {
+  .das-icon-search__input[type="search"] {
+    font-size: 19px;
+    line-height: 1.4736842105;
+  }
+}
+
+@media print {
+  .das-icon-search__input[type="search"] {
+    font-size: 14pt;
+    line-height: 1.4736842105;
+  }
+}
+
+.das-icon-search__input[type="search"]:focus,
+.das-icon-search__input[type="search"].focus {
+  z-index: 2;
+}
+
+.das-icon-search__input[type="search"]:focus {
+  outline: 3px solid #ffbf47;
+  outline-offset: 0;
+  box-shadow: inset 0 0 0 2px;
+}
+
+.das-icon-search__submit {
+  border: 0;
+  cursor: pointer;
+  border-radius: 0;
+  position: relative;
+  padding: 0;
+  width: 40px;
+  height: 40px;
+  background-image: url(../assets/images/govuk-search-button.png);
+  background-repeat: no-repeat;
+  background-position: 2px 50%;
+  text-indent: -5000px;
+  overflow: hidden;
+}
+
+@media only screen and (-webkit-min-device-pixel-ratio: 2),
+  only screen and (min-device-pixel-ratio: 2),
+  only screen and (min-resolution: 192dpi),
+  only screen and (min-resolution: 2dppx) {
+  .das-icon-search__submit {
+    background-size: 52.5px auto;
+    background-position: 115% 50%;
+  }
+}
+
+.das-icon-search__submit:focus {
+  z-index: 2;
+  outline: 3px solid #ffbf47;
+  outline-offset: 0;
+  box-shadow: inset 0 0 0 4px #0b0c0c;
+}
+
+.das-icon-search__submit::-moz-focus-inner {
+  border: 0;
+}
+
+.das-icon-search__item-wrapper {
+  display: table;
+  width: 100%;
+  background: #ffffff;
+}
+
+.das-icon-search__item {
+  position: relative;
+  display: table-cell;
+  vertical-align: top;
+}
+
+.das-icon-search__submit-wrapper {
+  width: 1%;
+}
+
+.das-icon-search--on-govuk-blue .das-icon-search__input {
+  border-width: 0;
+}
+
+.das-icon-search--on-govuk-blue .das-icon-search__input:focus {
+  box-shadow: none;
+}
+
+.das-icon-search--on-govuk-blue .das-icon-search__submit {
+  background-color: #0b0c0c;
+  color: #ffffff;
+}
+
+.das-icon-search--on-govuk-blue .das-icon-search__submit:hover {
+  background-color: #171919;
+}
+
+.das-icon-search--on-white .das-icon-search__submit {
+  background-color: #005ea5;
+  color: #ffffff;
+}
+
+.das-icon-search--on-white .das-icon-search__submit:hover {
+  background-color: #2b8cc4;
+}
+
+.das-icon-search--on-white .das-icon-search__input[type="search"] {
+  border-right-width: 0;
+}
+
+.das-icon-search--on-white .das-icon-search__input[type="search"]:focus {
+  border-right-width: 2px;
+}
+
+.das-icon-search--large .das-icon-search__input[type="search"] {
+  height: 50px;
+}
+
+.das-icon-search--large .das-icon-search__submit {
+  width: 50px;
+  height: 50px;
+  background-position: 8px 50%;
+}
+
+@media only screen and (-webkit-min-device-pixel-ratio: 2),
+  only screen and (min-device-pixel-ratio: 2),
+  only screen and (min-resolution: 192dpi),
+  only screen and (min-resolution: 2dppx) {
+  .das-icon-search--large .das-icon-search__submit {
+    background-size: 60px auto;
+    background-position: 160% 50%;
+  }
 }
