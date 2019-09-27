@@ -86,27 +86,27 @@ else
     </table>
     @if (Model != null)
     {
-        <div class="das-flex-space-around">
-            <div>
-                <form asp-action="ShowApprovedStandardsPerPage" asp-controller="OppFinder" method="get" asp-fragment="approved">
+        <form asp-action="ShowApprovedStandardsPerPage" asp-controller="OppFinder" method="get" asp-fragment="approved">
+            <div class="das-flex-space-around">
+                <div>
                     <select class="approved-per-page govuk-select govuk-!-margin-right-2" asp-for="ApprovedStandardsPerPage" asp-items="Model.StandardsPerPage"></select>
-                    <button class="govuk-button govuk-button--looks-like-link govuk-button--looks-like-link--inline js-hidden" type="submit">
-                        Show
-                    </button>
                     <text>Standards per page</text>
-                </form>
+                </div>
+                <div class="das-pagination-links">
+                    @{await Html.RenderPartialAsync("_PaginationLinksPartial", new OppFinderPaginationViewModel
+                    {
+                        Standards = Model.ApprovedStandards,
+                        PageIndex = Model.ApprovedPageIndex,
+                        ChangePageAction = "ChangePageApprovedStandards",
+                        ChangePageSetAction = "ChangePageSetApprovedStandards",
+                        Fragment = "approved"
+                    });}
+                </div>
             </div>
-            <div class="das-pagination-links">
-                @{await Html.RenderPartialAsync("_PaginationLinksPartial", new OppFinderPaginationViewModel
-                {
-                    Standards = Model.ApprovedStandards,
-                    PageIndex = Model.ApprovedPageIndex,
-                    ChangePageAction = "ChangePageApprovedStandards",
-                    ChangePageSetAction = "ChangePageSetApprovedStandards",
-                    Fragment = "approved"
-                });}
-            </div>
-        </div>
+            <button class="govuk-button govuk-!-margin-bottom-0 govuk-!-margin-top-3 js-hidden" type="submit">
+                Update table
+            </button>
+        </form>
     }
 }
 

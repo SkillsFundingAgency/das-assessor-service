@@ -63,10 +63,10 @@
                     </dd>
                 </div>
             </dl>
-            <p class="govuk-body-s">
+            <p class="govuk-body-s govuk-!-margin-bottom-1">
                 Full information on <a class="govuk-link" href="@Model.StandardPageUrl" target="_blank" rel="noopener noreferrer">@Model.Title</a>
             </p>
-            <p class="govuk-body-s">
+            <p class="govuk-body-s govuk-!-margin-bottom-8">
                 Source: Institute for Apprenticeships and Technical Education
             </p>
         </div>
@@ -79,18 +79,14 @@
     </div>
 
 
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-one-third">
-            <div class="das-highlight-box">
-                <span class="das-highlight-box-heading">@Model.TotalActiveApprentices</span><br />
-                <span class="das-highlight-box-content">Active</span>
-            </div>
+    <div class="govuk-grid-row das-flex">
+        <div class="govuk-grid-column-one-third das-highlight-box">
+            <h1 class="govuk-heading-xl govuk-!-margin-bottom-0">@Model.TotalActiveApprentices</h1>
+            <p class="govuk-body govuk-!-margin-bottom-0">Active</p>
         </div>
-        <div class="govuk-grid-column-one-third">
-            <div class="das-highlight-box">
-                <span class="das-highlight-box-heading">@Model.TotalCompletedAssessments</span><br />
-                <span class="das-highlight-box-content">Completed assessments</span>
-            </div>
+        <div class="govuk-grid-column-one-third das-highlight-box">
+            <h1 class="govuk-heading-xl govuk-!-margin-bottom-0">@Model.TotalCompletedAssessments</h1>
+            <p class="govuk-body govuk-!-margin-bottom-0">Completed assessments</p>
         </div>
     </div>
 
@@ -140,71 +136,20 @@
         </tbody>
     </table>
 
-
-    <!-- <div class="govuk-grid-row">
-        <div class="govuk-grid-column-one-quarter">
-            <span class="govuk-body">Regions</span>
-        </div>
-        <div class="govuk-grid-column-one-quarter">
-            <span class="govuk-body">EPAOs</span>
-        </div>
-        <div class="govuk-grid-column-one-quarter">
-            <span class="govuk-body">Active apprentices</span>
-        </div>
-        <div class="govuk-grid-column-one-quarter">
-            <span class="govuk-body">Completed assessments</span>
-        </div>
-    </div> -->
-
-    <!-- @foreach(var regionResult in @Model.RegionResults)
-    {
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-one-quarter">
-            <details class="govuk-details" data-module="govuk-details">
-                <summary class="govuk-details__summary">
-                    <span class="govuk-details__summary-text">
-                        @regionResult.Region
-                    </span>
-                </summary>
-                <div class="govuk-details__text govuk-details__text--full-width">
-                    @regionResult.EndPointAssessorsNames
-                </div>
-            </details>
-        </div>
-        <div class="govuk-grid-column-one-quarter">
-            <span class="govuk-body">@regionResult.EndPointAssessors</span>
-        </div>
-        <div class="govuk-grid-column-one-quarter">
-            <span class="govuk-body">@regionResult.ActiveApprentices</span>
-        </div>
-        <div class="govuk-grid-column-one-quarter">
-            <span class="govuk-body">@regionResult.CompletedAssessments</span>
-        </div>
-    </div>
-    } -->
-
-    <!-- <div class="govuk-grid-row">
-        <div class="govuk-grid-column-one-half"></div>
-        <div class="govuk-grid-column-one-quarter">
-            <span class="govuk-body">@Model.TotalActiveApprentices</span>
-        </div>
-        <div class="govuk-grid-column-one-quarter">
-            <span class="govuk-body">@Model.TotalCompletedAssessments</span>
-        </div>
-    </div> -->
-
-    <!-- TABLE END -->
-
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
 
-            <p class="govuk-body-s">
-                <span>Assessment numbers may vary because of data changes on the individualised learner record (ILR) and certificate service.</span>
+            <p class="govuk-body">
+                Assessment numbers may vary because of data changes on the individualised learner record (ILR) and certificate service.
             </p>
-            <p class="govuk-body-s">
-                <span>Source: ILR and Apprenticeship Service</span>
+            <p class="govuk-body-s govuk-!-margin-bottom-8">
+                Source: ILR and Apprenticeship Service
             </p>
+        </div>
+    </div>
 
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
             <h2 class="govuk-heading-m">Not ready to apply</h2>
             <p class="govuk-body">
                 If you think you are interested in assessing this Standard but not yet ready to apply, complete the

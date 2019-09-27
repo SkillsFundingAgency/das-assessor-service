@@ -820,21 +820,22 @@
 }
 
 .das-highlight-box {
-  /* color: #0b0c0c; */
-  /* font-family: nta, Arial, sans-serif; */
   border-top: 3px solid #dee0e2;
   border-bottom: 3px solid #dee0e2;
-  padding: 10px 5px;
-  /* margin-bottom: 40px; */
+  padding: 20px 0;
+  margin-bottom: 50px;
+  margin-left: 30px;
 }
 
-.das-highlight-box-heading {
-  font-weight: 700;
-  font-size: 48px;
+.das-flex > .das-highlight-box:first-child {
+  margin-left: 0;
 }
 
-.das-highlight-box-content {
-  font-size: 16px;
+.das-flex {
+  display: -ms-flex;
+  display: -webkit-flex;
+  display: flex;
+  margin: 0;
 }
 
 .error-summary,
