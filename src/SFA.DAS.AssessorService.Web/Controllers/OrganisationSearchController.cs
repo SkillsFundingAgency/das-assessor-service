@@ -21,8 +21,6 @@ using FHADetails = SFA.DAS.AssessorService.ApplyTypes.FHADetails;
 
 namespace SFA.DAS.AssessorService.Web.Controllers
 {
-    
-
     [Authorize]
     public class OrganisationSearchController : Controller
     {
@@ -34,8 +32,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         private readonly ILogger<OrganisationSearchController> _logger;
         private readonly IWebConfiguration _config;
         private readonly ISessionService _sessionService;
-
-       
 
         public OrganisationSearchController(ILogger<OrganisationSearchController> logger,
             IHttpContextAccessor contextAccessor, IOrganisationsApiClient organisationsApiClient,

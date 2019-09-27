@@ -1,0 +1,84 @@
+﻿@using SFA.DAS.AssessorService.Domain.Paging
+@using SFA.DAS.AssessorService.Api.Types.Models
+@using SFA.DAS.AssessorService.Web.ViewModels.OppFinder
+@model OppFinderSearchViewModel
+
+@{ var inDevelopmentTotalRecordCount = (Model?.InDevelopmentStandards.TotalRecordCount ?? 0); }
+    <p class="govuk-body">
+        @if (!string.IsNullOrEmpty(Model?.SearchTerm))
+        {
+            <text>Showing </text>
+            <span class="govuk-!-font-weight-bold">@inDevelopmentTotalRecordCount</span>
+            @if (inDevelopmentTotalRecordCount == 1){<text> result</text>}else{<text> results</text>}
+    }
+    else
+    {
+        <text>Showing <span class="govuk-!-font-weight-bold">@inDevelopmentTotalRecordCount</span> Standards in-development</text>
+    }
+    </p>
+@if (inDevelopmentTotalRecordCount == 0)
+{
+    await Html.RenderPartialAsync("_NoSearchResults");
+}
+else
+{
+    <table class="govuk-table">
+        <thead class="govuk-table__head">
+            <tr class="govuk-table__row">
+                <th scope="col" class="govuk-table__header">
+                    <sfa-sortable-column-header class="in-development-sort govuk-link"
+                                                data-sortColumn="@nameof(OppFinderSearchSortColumn.StandardName)"
+                                                asp-action="SortInDevelopmentStandards"
+                                                asp-controller="OppFinder"
+                                                asp-fragment="in-development"
+                                                sfa-sort-column="@nameof(OppFinderSearchSortColumn.StandardName)"
+                                                sfa-table-sort-column="@Model.InDevelopmentSortColumn"
+                                                sfa-sort-direction="@Model.InDevelopmentSortDirection">
+                        Standards In-development
+                    </sfa-sortable-column-header>
+                </th>
+            </tr>
+        </thead>
+        <tbody class="govuk-table__body">
+            @if (Model?.InDevelopmentStandards != null)
+            {
+                @foreach (var inDevelopmentStandard in Model.InDevelopmentStandards.Items)
+                {
+                    <tr class="govuk-table__row">
+                        <td class="govuk-table__cell">
+                            <a 
+                                class="govuk-link"
+                                asp-action="ShowInDevelopmentStandardDetails" 
+                                asp-controller="OppFinder" 
+                                asp-route-standardReference="@inDevelopmentStandard.StandardReference">@inDevelopmentStandard.StandardName
+                            </a>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+    @if (Model != null)
+    {
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-one-half">
+                <form asp-action="ShowInDevelopmentStandardsPerPage" asp-controller="OppFinder" method="get" asp-fragment="in-development">
+                    <select class="in-development-per-page govuk-select" asp-for="InDevelopmentStandardsPerPage" asp-items="Model.StandardsPerPage"></select>
+                    <button class="govuk-button govuk-button--looks-like-link govuk-button--looks-like-link--inline js-hidden" type="submit">
+                        Show
+                    </button>
+                    <text>Standards per page</text>
+                </form>
+            </div>
+            <div class="govuk-grid-column-one-half">
+                @{await Html.RenderPartialAsync("_PaginationLinksPartial", new OppFinderPaginationViewModel
+                {
+                    Standards = Model.InDevelopmentStandards,
+                    PageIndex = Model.InDevelopmentPageIndex,
+                    ChangePageAction = "ChangePageInDevelopmentStandards",
+                    Fragment = "in-development"
+                });}
+            </div>
+        </div>
+    }
+}

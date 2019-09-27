@@ -1,0 +1,39 @@
+﻿@using SFA.DAS.AssessorService.Web.Infrastructure
+@inject ISessionService SessionService
+
+@{
+    Layout = "~/Views/Shared/_OppFinderLayout.cshtml";
+}
+
+@RenderBody()
+
+@section ServiceHeader
+{
+    <div class="das-user-panel">
+        <div class="govuk-width-container govuk-!-margin-top-4">
+            <div class="das-user-panel__content">
+                <h1 class="govuk-heading-xl govuk-heading-xl--white">
+                    Apprenticeship assessment business opportunity
+                </h1>
+                <p class="govuk-body govuk-body--white">
+                    For potential and existing end-point assessment organisation (EPAOs) to understand the business opportunities for apprenticeship assessment
+                </p>
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts
+{
+    @RenderSection("Scripts", required: false)
+}
+
+@section Styles
+{
+    @RenderSection("Styles", required: false)
+}
+
+@section AdditionalFooterLinks
+{
+    @RenderSection("AdditionalFooterLinks", required: false)
+}

@@ -1,0 +1,30 @@
+﻿@using SFA.DAS.AssessorService.Web.Infrastructure
+@inject ISessionService SessionService
+
+@{
+    ViewBag.ServiceName = "Opportunity finder";
+    ViewBag.ServiceController = "OppFinder";
+    Layout = "~/Views/Shared/_BaseLayout.cshtml";
+}
+
+@RenderBody()
+
+@section ServiceHeader
+{
+    @RenderSection("ServiceHeader", required: false)
+}
+
+@section Scripts
+{
+    @RenderSection("Scripts", required: false)
+}
+
+@section Styles
+{
+    @RenderSection("Styles", required: false)
+}
+
+@section AdditionalFooterLinks
+{
+    @RenderSection("AdditionalFooterLinks", required: false)
+}

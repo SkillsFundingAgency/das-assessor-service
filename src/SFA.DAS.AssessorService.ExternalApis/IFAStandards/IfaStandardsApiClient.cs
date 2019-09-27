@@ -31,9 +31,10 @@ namespace SFA.DAS.AssessorService.ExternalApis.IFAStandards
             using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/apprenticeshipstandards"))
             {
                 // the list of standards returned from the api can contain null entries and entries
-                // with a LarsCode = 0; these are not standards that can be imported.
+                // with a LarsCode = 0; the ones with a LarsCode = 0 are non approved standards that are imported
+                // into a separate table from the LarsCode != 0 which are imported into [StandardCollation]
                 var allStandards = await RequestAndDeserialiseAsync<List<IfaStandard>>(request);
-                return allStandards?.FindAll(p => p != null && p.LarsCode != 0);
+                return allStandards?.FindAll(p => p != null);
             }
         }
     }

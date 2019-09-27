@@ -1,0 +1,223 @@
+﻿@using SFA.DAS.AssessorService.Web.ViewModels.OppFinder;
+@model OppFinderApprovedDetailsViewModel
+@{
+    ViewData["Title"] = "Opportunity finder - " + @Model.StandardReference;
+    Layout = "_OppFinderLayout";
+}
+
+<a 
+    class="govuk-back-link"
+    asp-controller="OppFinder"
+    asp-action="ChangePageApprovedStandards"
+    asp-route-pageIndex="@Model.PageIndex" asp-fragment="approved"
+>
+    Back
+</a>
+<main class="govuk-main-wrapper " id="main-content" role="main">
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <span class="govuk-caption-xl">
+                Approved Standard
+            </span>
+            <h1 class="govuk-heading-xl">@Model.Title</h1>
+            <p class="govuk-body">@Model.OverviewOfRole</p>
+            <dl class="govuk-summary-list">
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Level</dt>
+                    <dd class="govuk-summary-list__value">@Model.StandardLevel</dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Reference</dt>
+                    <dd class="govuk-summary-list__value">@Model.StandardReference</dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Sector</dt>
+                    <dd class="govuk-summary-list__value">@Model.Sector</dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Typical duration</dt>
+                    <dd class="govuk-summary-list__value">@string.Format("{0} months", Model.TypicalDuration)</dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Approved for delivery</dt>
+                    <dd class="govuk-summary-list__value">@Model.ApprovedForDelivery</dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Maximum funding</dt>
+                    <dd class="govuk-summary-list__value">@Model.MaxFunding</dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Trailblazer contact</dt>
+                    <dd class="govuk-summary-list__value">
+                        @foreach(var trailblazer in @Model.Trailblazer)
+                        {
+                        <a href="mailto:@trailblazer">@trailblazer</a><br />
+                        }
+                    </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">External quality assurance (EQA) provider</dt>
+                    <dd class="govuk-summary-list__value">
+                        <a href="@Model.EqaProviderLink">@Model.EqaProvider</a>
+                    </dd>
+                </div>
+            </dl>
+            <p class="govuk-body-s">
+                Full information on <a class="govuk-link" href="@Model.StandardPageUrl" target="_blank" rel="noopener noreferrer">@Model.Title</a>
+            </p>
+            <p class="govuk-body-s">
+                Source: Institute for Apprenticeships and Technical Education
+            </p>
+        </div>
+    </div>
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <h2 class="govuk-heading-l">Apprentices</h2>
+        </div>
+    </div>
+
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-one-third">
+            <div class="das-highlight-box">
+                <span class="das-highlight-box-heading">@Model.TotalActiveApprentices</span><br />
+                <span class="das-highlight-box-content">Active</span>
+            </div>
+        </div>
+        <div class="govuk-grid-column-one-third">
+            <div class="das-highlight-box">
+                <span class="das-highlight-box-heading">@Model.TotalCompletedAssessments</span><br />
+                <span class="das-highlight-box-content">Completed assessments</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <h2 class="govuk-heading-l">End-point assessment organisations</h2>
+        </div>
+    </div>
+
+    <!-- TABLE START -->
+
+    <table class="govuk-table">
+        <thead class="govuk-table__head">
+            <tr class="govuk-table__row">
+                <th scope="col" class="govuk-table__header">Regions</th>
+                <th scope="col" class="govuk-table__header govuk-table__header--numeric">EPAOs</th>
+                <th scope="col" class="govuk-table__header govuk-table__header--numeric">Active apprentices</th>
+                <th scope="col" class="govuk-table__header govuk-table__header--numeric">Completed assessments</th>
+            </tr>
+        </thead>
+        <tbody class="govuk-table__body">
+            @foreach(var regionResult in @Model.RegionResults)
+            {
+                <tr class="govuk-table__row">
+                    <td scope="row" class="govuk-table__cell">
+                        <div role="button" tabindex="0" class="js-expand-table-row expand-table-row"><i class="arrow arrow-closed">►</i> <span>@regionResult.Region</span></div>
+                    </td>
+                    <td class="govuk-table__cell govuk-table__cell--numeric">@regionResult.EndPointAssessors</td>
+                    <td class="govuk-table__cell govuk-table__cell--numeric">@regionResult.ActiveApprentices</td>
+                    <td class="govuk-table__cell govuk-table__cell--numeric">@regionResult.CompletedAssessments</td>
+                </tr>
+                <tr class="govuk-table__row js-expandble-cell expandble-cell expandble-cell--hidden" aria-hidden="true">
+                    <td class="govuk-table__cell" colspan="4">
+                        <div class="expandble-cell-content expandble-cell-content--no-border">
+                            <p class="govuk-body-s govuk-!-margin-bottom-0">@regionResult.EndPointAssessorsNames</p>
+                        </div>
+                    </td>
+                </tr>
+            }
+
+            <tr class="govuk-table__row">
+                <td scope="row" class="govuk-table__cell govuk-table__cell--no-border"></td>
+                <td class="govuk-table__cell govuk-table__cell--numeric govuk-table__cell--no-border"></td>
+                <td class="govuk-table__cell govuk-table__cell--numeric govuk-table__cell--no-border"><span class="govuk-!-font-weight-bold">@Model.TotalActiveApprentices</span></td>
+                <td class="govuk-table__cell govuk-table__cell--numeric govuk-table__cell--no-border"><span class="govuk-!-font-weight-bold">@Model.TotalCompletedAssessments</span></td>
+            </tr>
+        </tbody>
+    </table>
+
+
+    <!-- <div class="govuk-grid-row">
+        <div class="govuk-grid-column-one-quarter">
+            <span class="govuk-body">Regions</span>
+        </div>
+        <div class="govuk-grid-column-one-quarter">
+            <span class="govuk-body">EPAOs</span>
+        </div>
+        <div class="govuk-grid-column-one-quarter">
+            <span class="govuk-body">Active apprentices</span>
+        </div>
+        <div class="govuk-grid-column-one-quarter">
+            <span class="govuk-body">Completed assessments</span>
+        </div>
+    </div> -->
+
+    <!-- @foreach(var regionResult in @Model.RegionResults)
+    {
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-one-quarter">
+            <details class="govuk-details" data-module="govuk-details">
+                <summary class="govuk-details__summary">
+                    <span class="govuk-details__summary-text">
+                        @regionResult.Region
+                    </span>
+                </summary>
+                <div class="govuk-details__text govuk-details__text--full-width">
+                    @regionResult.EndPointAssessorsNames
+                </div>
+            </details>
+        </div>
+        <div class="govuk-grid-column-one-quarter">
+            <span class="govuk-body">@regionResult.EndPointAssessors</span>
+        </div>
+        <div class="govuk-grid-column-one-quarter">
+            <span class="govuk-body">@regionResult.ActiveApprentices</span>
+        </div>
+        <div class="govuk-grid-column-one-quarter">
+            <span class="govuk-body">@regionResult.CompletedAssessments</span>
+        </div>
+    </div>
+    } -->
+
+    <!-- <div class="govuk-grid-row">
+        <div class="govuk-grid-column-one-half"></div>
+        <div class="govuk-grid-column-one-quarter">
+            <span class="govuk-body">@Model.TotalActiveApprentices</span>
+        </div>
+        <div class="govuk-grid-column-one-quarter">
+            <span class="govuk-body">@Model.TotalCompletedAssessments</span>
+        </div>
+    </div> -->
+
+    <!-- TABLE END -->
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+
+            <p class="govuk-body-s">
+                <span>Assessment numbers may vary because of data changes on the individualised learner record (ILR) and certificate service.</span>
+            </p>
+            <p class="govuk-body-s">
+                <span>Source: ILR and Apprenticeship Service</span>
+            </p>
+
+            <h2 class="govuk-heading-m">Not ready to apply</h2>
+            <p class="govuk-body">
+                If you think you are interested in assessing this Standard but not yet ready to apply, complete the
+                <a class="govuk-link" href="https://www.smartsurvey.co.uk/s/which-standards/" target="_blank" rel="noopener noreferrer">expression of interest form</a>.
+            </p>
+            <a class="govuk-button" href="/" target="_blank" rel="noopener noreferrer">Apply to assess this Standard</a>
+
+            <p class="govuk-body">
+                <a class="govuk-link" href="https://www.gov.uk/guidance/how-apprentices-in-england-are-assessed" target="_blank" rel="noopener noreferrer">How apprentices in England are assessed</a>
+                <br />
+                <a class="govuk-link" href="/" target="_blank" rel="noopener noreferrer">Apply to become an End-point assessment organisation</a>
+            </p>
+        </div>
+    </div>
+
+</main>
