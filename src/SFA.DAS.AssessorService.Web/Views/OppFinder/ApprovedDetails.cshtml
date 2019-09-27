@@ -52,14 +52,14 @@
                     <dd class="govuk-summary-list__value">
                         @foreach(var trailblazer in @Model.Trailblazer)
                         {
-                        <a href="mailto:@trailblazer">@trailblazer</a><br />
+                        @trailblazer<br />
                         }
                     </dd>
                 </div>
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">External quality assurance (EQA) provider</dt>
                     <dd class="govuk-summary-list__value">
-                        <a href="@Model.EqaProviderLink">@Model.EqaProvider</a>
+                        <a class="govuk-link" href="@Model.EqaProviderLink">@Model.EqaProvider</a>
                     </dd>
                 </div>
             </dl>
@@ -121,7 +121,13 @@
                 <tr class="govuk-table__row js-expandble-cell expandble-cell expandble-cell--hidden" aria-hidden="true">
                     <td class="govuk-table__cell" colspan="4">
                         <div class="expandble-cell-content expandble-cell-content--no-border">
-                            <p class="govuk-body-s govuk-!-margin-bottom-0">@regionResult.EndPointAssessorsNames</p>
+                            @if ((regionResult.EndPointAssessorsNames?.Length ?? 0) > 0)
+                            {
+                                foreach (var region in regionResult.EndPointAssessorsNames)
+                                {
+                                    <span class="das-pill">@region</span>
+                                }
+                            }
                         </div>
                     </td>
                 </tr>
@@ -157,9 +163,10 @@
             </p>
             <a class="govuk-button" href="/" target="_blank" rel="noopener noreferrer">Apply to assess this Standard</a>
 
-            <p class="govuk-body">
+            <p class="govuk-body govuk-!-margin-bottom-1">
                 <a class="govuk-link" href="https://www.gov.uk/guidance/how-apprentices-in-england-are-assessed" target="_blank" rel="noopener noreferrer">How apprentices in England are assessed</a>
-                <br />
+            </p>
+            <p class="govuk-body">
                 <a class="govuk-link" href="/" target="_blank" rel="noopener noreferrer">Apply to become an End-point assessment organisation</a>
             </p>
         </div>
