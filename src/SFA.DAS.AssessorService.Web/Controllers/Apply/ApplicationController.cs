@@ -524,6 +524,22 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             });
         }
 
+        [HttpGet("/Application/{Id}/Feedback")]
+        public async Task<IActionResult> Feedback(Guid Id)
+        {
+            var application = await _applicationApiClient.GetApplication(Id);
+            var sequence = await _qnaApiClient.GetApplicationActiveSequence(application.ApplicationId);
+
+            // TODO: if sequence 1 section 1 has feedback then Update Company & Charity details here?
+
+            var sections = await _qnaApiClient.GetSections(application.ApplicationId, sequence.Id);
+            var applyData = application.ApplyData.Sequences.Single(x => x.SequenceNo == sequence.SequenceNo);
+
+            var sequenceVm = new SequenceViewModel(sequence, application.Id, BuildPageContext(application, sequence), sections, applyData.Sections, null);
+
+            return View("~/Views/Application/Feedback.cshtml", sequenceVm);
+        }
+
         private async Task<Page> GetDataFedOptions(Page page)
         {
             if (page != null)
