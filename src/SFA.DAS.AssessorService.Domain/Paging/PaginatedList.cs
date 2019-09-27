@@ -3,26 +3,16 @@ using System.Collections.Generic;
 
 namespace SFA.DAS.AssessorService.Domain.Paging
 {
-    public abstract class PaginatedList
-    {
-        public static int GetFirstPageOfPageSet(int pageSetIndex, int pageSetSize)
-        {
-            return (pageSetIndex * pageSetSize) - (pageSetSize - 1);
-        }
-    }
-
-    public class PaginatedList<T> : PaginatedList
+    public class PaginatedList<T>
     {
         public int PageIndex { get; }
         public int PageSize { get; }
-        public int PageSetIndex => (PageIndex / PageSetSize) + ((PageIndex % PageSetSize) > 0 ? 1 : 0);
-        public int PageSetSize { get; set; }// = 1;
+        public int PageSetSize { get; set; }
 
         public List<T> Items { get; } = new List<T>();
 
         public int TotalRecordCount { get; }
         public int TotalPages => (TotalRecordCount / PageSize) + ((TotalRecordCount % PageSize) > 0 ? 1 : 0);
-        public int TotalPageSets => (TotalPages / PageSetSize) + ((TotalPages % PageSetSize) > 0 ? 1 : 0);
 
         private PaginatedList(List<T> items, int totalRecordCount, int pageIndex, int pageSize)
         {
@@ -42,14 +32,11 @@ namespace SFA.DAS.AssessorService.Domain.Paging
             PageSetSize = pageSetSize ?? 1;
         }
 
-        public bool HasPreviousPage => (PageSetIndex > 1);
-        public bool HasNextPage => (PageSetIndex < TotalPageSets);
+        public bool HasPreviousPage => (PageIndex > 1);
+        public bool HasNextPage => (PageIndex < TotalPages);
 
-        public int? NextPageSetIndex => PageSetIndex + 1;
-        public int? PrevPageSetIndex => PageSetIndex - 1 > 0 ? PageSetIndex - 1 : (int?)null;
-
-        public int FirstPageInPageSet => ((PageSetIndex - 1) * PageSetSize) + 1;
-        public int LastPageInPageSet => Math.Min(PageSetIndex * PageSetSize, TotalPages);
+        public int FirstVisiblePage => Math.Max(Math.Min(PageIndex - (PageSetSize / 3), (TotalPages + 1) - PageSetSize), 1);
+        public int LastVisiblePage => Math.Min(Math.Max(PageIndex + (PageSetSize / 2), PageSetSize), TotalPages);
 
         public PaginatedList<T1> Convert<T1>() where T1 : class
         {
