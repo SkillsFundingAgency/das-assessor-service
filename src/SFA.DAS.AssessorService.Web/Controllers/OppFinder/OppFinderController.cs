@@ -40,7 +40,12 @@ namespace SFA.DAS.AssessorService.Web.Controllers.OppFinder
         public async Task<IActionResult> Search(string searchTerm)
         {
             _oppFinderSession.SearchTerm = searchTerm ?? string.Empty;
-            
+
+            // reset the page indexes as the new results may have less pages
+            _oppFinderSession.ApprovedPageIndex = 1;
+            _oppFinderSession.InDevelopmentPageIndex = 1;
+            _oppFinderSession.ProposedPageIndex = 1;
+
             var vm = await MapViewModelFromSession();
             return View(nameof(Index), vm);
         }
@@ -50,8 +55,10 @@ namespace SFA.DAS.AssessorService.Web.Controllers.OppFinder
         public async Task<IActionResult> SearchPartial(string searchTerm)
         {
             // multiple partial methods should be called from the view to update each of the partial results
+            // each of these will reset the page index to account for fewer results
             _oppFinderSession.SearchTerm = searchTerm ?? string.Empty;
 
+            // the selected filter do not change but their values will change for the new search
             var vm = await AddFilterViewModelValues(new OppFinderShowFiltersViewModel());
             return PartialView("_StandardFiltersPartial", vm);
         }
@@ -62,6 +69,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers.OppFinder
             _oppFinderSession.SectorFilters = string.Join("|", viewModel.SectorFilters ?? new string[] { } );
             _oppFinderSession.LevelFilters = string.Join("|", viewModel.LevelFilters ?? new string[] { });
 
+            // reset the page indexes as the new results may have less pages
+            _oppFinderSession.ApprovedPageIndex = 1;
+            _oppFinderSession.InDevelopmentPageIndex = 1;
+            _oppFinderSession.ProposedPageIndex = 1;
+
             var vm = await MapViewModelFromSession();
             return View(nameof(Index), vm);
         }
@@ -70,6 +82,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers.OppFinder
         [CheckSession(nameof(IOppFinderSession.SearchTerm), CheckSession.Error)]
         public async Task<IActionResult> ApplyFiltersPartial([FromBody] OppFinderApplyFiltersViewModel viewModel)
         {
+            // multiple partial methods should be called from the view to update each of the partial results
+            // each of these will reset the page index to account for fewer results
             _oppFinderSession.SectorFilters = string.Join("|", viewModel.SectorFilters ?? new string[] { });
             _oppFinderSession.LevelFilters = string.Join("|", viewModel.LevelFilters ?? new string[] { });
 
