@@ -8,8 +8,8 @@
 <a 
     class="govuk-back-link" 
     asp-controller="OppFinder" 
-    asp-action="@(Model.NonApprovedType == NonApprovedType.InDevelopment ? "ChangePageInDevelopmentStandards" : "ChangePageProposedStandards")" 
-    asp-route-pageIndex="@Model.PageIndex" asp-fragment="@(Model.NonApprovedType == NonApprovedType.InDevelopment ? "in-development" : "proposed")"
+    asp-action="@(Model.StandardStatus == StandardStatus.InDevelopment ? "ChangePageInDevelopmentStandards" : "ChangePageProposedStandards")" 
+    asp-route-pageIndex="@Model.PageIndex" asp-fragment="@(Model.StandardStatus == StandardStatus.InDevelopment ? "in-development" : "proposed")"
 >
     Back
 </a>
@@ -17,7 +17,7 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             <span class="govuk-caption-xl">
-                @(Model.NonApprovedType == NonApprovedType.InDevelopment ? "Standard in-development" : "Proposed Standard")
+                @(Model.StandardStatus == StandardStatus.InDevelopment ? "Standard in-development" : "Proposed Standard")
             </span>
             <h1 class="govuk-heading-xl">@Model.Title</h1>
             <p class="govuk-body">@Model.OverviewOfRole</p>
@@ -34,7 +34,7 @@
                     <dt class="govuk-summary-list__key">Sector</dt>
                     <dd class="govuk-summary-list__value">@Model.Sector</dd>
                 </div>
-                @if (Model.NonApprovedType == NonApprovedType.InDevelopment)
+                @if (Model.StandardStatus == StandardStatus.InDevelopment)
                 {
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">Typical duration</dt>
@@ -64,8 +64,8 @@
         <div class="govuk-grid-column-two-thirds">
             <h2 class="govuk-heading-m">Expression of interest</h2>
             <p class="govuk-body">
-                If you think you are interested in assessing this Standard, complete the 
-                <a class="govuk-link" href="https://www.smartsurvey.co.uk/s/which-standards/" target="_blank" rel="noopener noreferrer">Expression of interest form</a>
+                If you think you are interested in assessing this Standard, complete the
+                <a class="govuk-link" asp-controller="OppFinder" asp-action="ExpressionOfInterestNonApproved" asp-route-standardReference="@Model.StandardReference">expression of interest form</a>
             </p>
             <p class="govuk-body govuk-!-margin-bottom-1">
                 <a class="govuk-link" href="https://www.gov.uk/guidance/how-apprentices-in-england-are-assessed" target="_blank" rel="noopener noreferrer">How apprentices in England are assessed</a>

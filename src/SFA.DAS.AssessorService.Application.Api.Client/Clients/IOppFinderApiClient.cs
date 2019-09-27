@@ -13,5 +13,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 
         Task<GetOppFinderApprovedStandardDetailsResponse> GetApprovedStandardDetails(GetOppFinderApprovedStandardDetailsRequest approvedStandardDetailsRequest);
         Task<GetOppFinderNonApprovedStandardDetailsResponse> GetNonApprovedStandardDetails(GetOppFinderNonApprovedStandardDetailsRequest nonApprovedStandardDetailsRequest);
+
+        Task<bool> RecordExpresionOfInterest(OppFinderExpressionOfInterestRequest oppFinderExpressionOfInterestRequest);
     }
 }

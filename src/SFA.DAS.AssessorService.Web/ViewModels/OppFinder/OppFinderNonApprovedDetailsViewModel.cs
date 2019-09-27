@@ -2,12 +2,6 @@
 {
     public class OppFinderNonApprovedDetailsViewModel : OppFinderDetailsViewModel
     {
-        public NonApprovedType NonApprovedType { get; set; }
-    }
-
-    public enum NonApprovedType
-    {
-        InDevelopment,
-        Proposed
+        public StandardStatus StandardStatus { get; set; }
     }
 }

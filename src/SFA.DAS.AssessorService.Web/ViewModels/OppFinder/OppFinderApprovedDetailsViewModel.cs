@@ -5,6 +5,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.OppFinder
 {
     public class OppFinderApprovedDetailsViewModel : OppFinderDetailsViewModel
     {
+        public int StandardCode { get; internal set; }
         public string EQAProvider { get; set; }
         public string EqaProvider { get; set; }
         public int TotalActiveApprentices { get; set; }

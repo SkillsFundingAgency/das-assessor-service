@@ -1,0 +1,128 @@
+﻿@using  SFA.DAS.AssessorService.Web.ViewModels.OppFinder;
+@model OppFinderExpressionOfInterestViewModel
+
+@{
+    var viewTitle = "Expression of interest";
+    ViewBag.Title = (!ViewData.ModelState.IsValid ? "Error: " : "") + viewTitle;
+    Layout = "~/Views/Shared/_OppFinderServiceLayout.cshtml";
+}
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
+            <h2 class="govuk-error-summary__title" id="error-summary-title">
+                There is a problem
+            </h2>
+            <div class="govuk-error-summary__body">
+                <ul class="govuk-list govuk-error-summary__list">
+                    <li><a sfa-validation-for="Email"></a></li>
+                    <li><a sfa-validation-for="OrganisationName"></a></li>
+                    <li><a sfa-validation-for="ContactName"></a></li>
+                    <li><a sfa-validation-for="ContactNumber"></a></li>
+                </ul>
+            </div>
+        </div>
+    }
+    <h1 class="govuk-heading-xl">@viewTitle</h1>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <p class="govuk-body">
+                You can express your interest to assess a Standard if:
+                <ul class="govuk-list govuk-list--bullet">
+                    <li>you are not yet ready to do so</li>
+                    <li>the standard is not yet approved for delivery</li>
+                </ul>
+            </p>
+            <p class="govuk-body">Doing so will help us to manage End-point assessment capability for apprentices.</p>
+
+            <dl class="govuk-summary-list">
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Standard</dt>
+                    <dd class="govuk-summary-list__value">@Model.StandardName</dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Level</dt>
+                    <dd class="govuk-summary-list__value">@Model.StandardLevel</dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Reference</dt>
+                    <dd class="govuk-summary-list__value">@Model.StandardReference</dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Sector</dt>
+                    <dd class="govuk-summary-list__value">@Model.StandardSector</dd>
+                </div>
+            </dl>
+            <h2 class="govuk-heading-m">Your details</h2>
+            <form asp-controller="OppFinder" asp-action="ExpressionOfInterest">
+                <input type="hidden" asp-for="StandardCode">
+                <input type="hidden" asp-for="StandardName">
+                <input type="hidden" asp-for="StandardLevel">
+                <input type="hidden" asp-for="StandardReference">
+                <input type="hidden" asp-for="StandardSector">
+                <input type="hidden" asp-for="StandardStatus">
+
+                <div class="govuk-form-group">
+                    <div class="govuk-form-group" sfa-validation-for="Email" sfa-validationerror-class="govuk-form-group--error">
+                        <label class="govuk-label" for="Email">
+                            What is your email addresss?
+                        </label>
+                        <sfa-validationerror-detail sfa-validation-for="Email" sfa-validationerror-class="govuk-error-message"></sfa-validationerror-detail>
+                        <input class="govuk-input" name="Email" sfa-validation-for="Email" sfa-validationerror-class="govuk-input--error" asp-for="Email" type="text" maxlength="254" />
+                    </div>
+                    <div class="govuk-form-group" sfa-validation-for="OrganisationName" sfa-validationerror-class="govuk-form-group--error">
+                        <label class="govuk-label" for="OrganisationName">
+                            What is your organsiation's name?
+                        </label>
+                        <sfa-validationerror-detail sfa-validation-for="OrganisationName" sfa-validationerror-class="govuk-error-message"></sfa-validationerror-detail>
+                        <input class="govuk-input" name="OrganisationName" sfa-validation-for="OrganisationName" sfa-validationerror-class="govuk-input--error" asp-for="OrganisationName" type="text" maxlength="254" />
+                    </div>
+                    <div class="govuk-form-group" sfa-validation-for="ContactName" sfa-validationerror-class="govuk-form-group--error">
+                        <label class="govuk-label" for="ContactName">
+                            What is your name?
+                        </label>
+                        <sfa-validationerror-detail sfa-validation-for="ContactName" sfa-validationerror-class="govuk-error-message"></sfa-validationerror-detail>
+                        <input class="govuk-input" name="ContactName" sfa-validation-for="ContactName" sfa-validationerror-class="govuk-input--error" asp-for="ContactName" type="text" maxlength="254" />
+                    </div>
+                    <div class="govuk-form-group" sfa-validation-for="ContactNumber" sfa-validationerror-class="govuk-form-group--error">
+                        <label class="govuk-label" for="ContactName">
+                            What is your contact number? (optional)
+                        </label>
+                        <sfa-validationerror-detail sfa-validation-for="ContactNumber" sfa-validationerror-class="govuk-error-message"></sfa-validationerror-detail>
+                        <input class="govuk-input" name="ContactNumber" sfa-validation-for="ContactNumber" sfa-validationerror-class="govuk-input--error" asp-for="ContactNumber" type="text" maxlength="254" />
+                    </div>
+                </div>
+                <button class="govuk-button" type="submit" name="ActionChoice">Express interest</button>
+            </form>
+            @if (Model.StandardStatus == StandardStatus.Approved)
+            {
+                <p class="govuk-body">To find out how we handle your personal data, read our <a class="govuk-link" asp-controller="OppFinder" asp-action="ExpressionOfInterestPrivacyApproved" asp-route-standardCode="@Model.StandardCode">privacy notice</a>.</p>
+            }
+            else
+            {
+                <p class="govuk-body">To find out how we handle your personal data, read our <a class="govuk-link" asp-controller="OppFinder" asp-action="ExpressionOfInterestPrivacyNonApproved" asp-route-standardReference="@Model.StandardReference">privacy notice</a>.</p>
+            }
+        </div>
+    </div>
+</main>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

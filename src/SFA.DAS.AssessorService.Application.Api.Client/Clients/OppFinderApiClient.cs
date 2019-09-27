@@ -63,5 +63,10 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                     nonApprovedStandardDetailsRequest);
             }
         }
+
+        public async Task<bool> RecordExpresionOfInterest(OppFinderExpressionOfInterestRequest oppFinderExpressionOfInterestRequest)
+        {
+            return await Task.FromResult(true);
+        }
     }
 }
