@@ -530,8 +530,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             var application = await _applicationApiClient.GetApplication(Id);
             var sequence = await _qnaApiClient.GetApplicationActiveSequence(application.ApplicationId);
 
-            // TODO: if sequence 1 section 1 has feedback then Update Company & Charity details here?
-
             var sections = await _qnaApiClient.GetSections(application.ApplicationId, sequence.Id);
             var applyData = application.ApplyData.Sequences.Single(x => x.SequenceNo == sequence.SequenceNo);
 
