@@ -966,7 +966,6 @@ TODO: change to 'das-page-navigation' and BEM
   font-style: normal;
   font-weight: normal;
   speak: none;
-  display: inline-block;
   text-decoration: inherit;
   width: 1em;
   font-variant: normal;
@@ -1392,7 +1391,7 @@ th[aria-sort="ascending"] a:after {
   clip-path: polygon(0 0, 50% 100%, 100% 0);
   border-color: rgba(0, 0, 0, 0);
   border-style: solid;
-  border-width: 12.124px 7px 0;
+  border-width: 10px 5px 0;
   border-top-color: inherit;
 }
 
@@ -1406,7 +1405,7 @@ th[aria-sort="ascending"] a:after {
   clip-path: polygon(50% 1%, 1% 100%, 100% 100%);
   border-color: rgba(0, 0, 0, 0);
   border-style: solid;
-  border-width: 0 7px 12.124px;
+  border-width: 0 5px 10px;
   border-bottom-color: inherit;
 }
 
@@ -1576,4 +1575,24 @@ th[aria-sort="ascending"] a:after {
 
 .govuk-link--no-decoration {
   text-decoration: none;
+}
+
+.govuk-\!-width-one-fifth {
+  width: 100% !important;
+}
+
+@media (min-width: 40.0625em) {
+  .govuk-\!-width-one-fifth {
+    width: 20% !important;
+  }
+}
+
+.govuk-\!-width-one-sixth {
+  width: 100% !important;
+}
+
+@media (min-width: 40.0625em) {
+  .govuk-\!-width-one-sixth {
+    width: 16.66% !important;
+  }
 }

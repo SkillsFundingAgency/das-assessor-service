@@ -22,66 +22,66 @@
 }
 else
 {
-    <table class="govuk-table">
+    <table class="govuk-table govuk-table--small">
         <thead class="govuk-table__head">
         <tr class="govuk-table__row">
             <th scope="col" class="govuk-table__header">
-                <sfa-sortable-column-header class="approved-sort govuk-link"
-                                            data-sortColumn="@nameof(OppFinderApprovedSearchSortColumn.StandardName)"
-                                            asp-action="SortApprovedStandards"
-                                            asp-controller="OppFinder"
-                                            asp-fragment="approved"
-                                            sfa-sort-column="@nameof(OppFinderApprovedSearchSortColumn.StandardName)"
-                                            sfa-table-sort-column="@Model.ApprovedSortColumn"
-                                            sfa-sort-direction="@Model.ApprovedSortDirection">
-                    Approved Standards
-                </sfa-sortable-column-header>
+                <sfa-sortable-column-header 
+                    class="approved-sort govuk-link"
+                    data-sortColumn="@nameof(OppFinderApprovedSearchSortColumn.StandardName)"
+                    asp-action="SortApprovedStandards"
+                    asp-controller="OppFinder"
+                    asp-fragment="approved"
+                    sfa-sort-column="@nameof(OppFinderApprovedSearchSortColumn.StandardName)"
+                    sfa-table-sort-column="@Model.ApprovedSortColumn"
+                    sfa-sort-direction="@Model.ApprovedSortDirection"
+                >Approved Standards</sfa-sortable-column-header>
             </th>
-            <th scope="col" class="govuk-table__header govuk-table__header--numeric" >
-                <sfa-sortable-column-header class="approved-sort govuk-link"
-                                            data-sortColumn="@nameof(OppFinderApprovedSearchSortColumn.ActiveApprentices)"
-                                            asp-action="SortApprovedStandards"
-                                            asp-controller="OppFinder"
-                                            asp-fragment="approved"
-                                            sfa-sort-column="@nameof(OppFinderApprovedSearchSortColumn.ActiveApprentices)"
-                                            sfa-table-sort-column="@Model.ApprovedSortColumn"
-                                            sfa-sort-direction="@Model.ApprovedSortDirection">
-                    Active apprentices
-                </sfa-sortable-column-header>
+            <th scope="col" class="govuk-table__header govuk-table__header--numeric govuk-!-width-one-fifth">
+                <sfa-sortable-column-header 
+                    class="approved-sort govuk-link"
+                    data-sortColumn="@nameof(OppFinderApprovedSearchSortColumn.ActiveApprentices)"
+                    asp-action="SortApprovedStandards"
+                    asp-controller="OppFinder"
+                    asp-fragment="approved"
+                    sfa-sort-column="@nameof(OppFinderApprovedSearchSortColumn.ActiveApprentices)"
+                    sfa-table-sort-column="@Model.ApprovedSortColumn"
+                    sfa-sort-direction="@Model.ApprovedSortDirection"
+                >Active apprentices</sfa-sortable-column-header>
             </th>
-            <th scope="col" class="govuk-table__header govuk-table__header--numeric">
-                <sfa-sortable-column-header class="approved-sort govuk-link"
-                                            data-sortColumn="@nameof(OppFinderApprovedSearchSortColumn.RegisteredEPAOs)"
-                                            asp-action="SortApprovedStandards"
-                                            asp-controller="OppFinder"
-                                            asp-fragment="approved"
-                                            sfa-sort-column="@nameof(OppFinderApprovedSearchSortColumn.RegisteredEPAOs)"
-                                            sfa-table-sort-column="@Model.ApprovedSortColumn"
-                                            sfa-sort-direction="@Model.ApprovedSortDirection">
-                    Registered EPAO's
-                </sfa-sortable-column-header>
+            <th scope="col" class="govuk-table__header govuk-table__header--numeric govuk-!-width-one-fifth">
+                <sfa-sortable-column-header 
+                    class="approved-sort govuk-link"
+                    data-sortColumn="@nameof(OppFinderApprovedSearchSortColumn.RegisteredEPAOs)"
+                    asp-action="SortApprovedStandards"
+                    asp-controller="OppFinder"
+                    asp-fragment="approved"
+                    sfa-sort-column="@nameof(OppFinderApprovedSearchSortColumn.RegisteredEPAOs)"
+                    sfa-table-sort-column="@Model.ApprovedSortColumn"
+                    sfa-sort-direction="@Model.ApprovedSortDirection"
+                >Registered EPAO's</sfa-sortable-column-header>
             </th>
         </tr>
         </thead>
         <tbody class="govuk-table__body">
-    @if (Model?.ApprovedStandards != null)
-    {
-        @foreach (var approvedStandard in Model.ApprovedStandards.Items.ConvertAll(x => x as OppFinderApprovedSearchResult))
-        {
-            <tr class="govuk-table__row">
-                <td class="govuk-table__cell">
-                    <a 
-                        class="govuk-link"
-                        asp-action="ShowApprovedStandardDetails" 
-                        asp-controller="OppFinder" 
-                        asp-route-standardCode="@approvedStandard.StandardCode">@approvedStandard.StandardName
-                    </a>
-                </td>
-                <td class="govuk-table__cell govuk-table__cell--numeric">@approvedStandard.ActiveApprentices</td>
-                <td class="govuk-table__cell govuk-table__cell--numeric">@approvedStandard.RegisteredEPAOs</td>
-            </tr>
-        }
-    }
+            @if (Model?.ApprovedStandards != null)
+            {
+                @foreach (var approvedStandard in Model.ApprovedStandards.Items.ConvertAll(x => x as OppFinderApprovedSearchResult))
+                {
+                    <tr class="govuk-table__row">
+                        <td class="govuk-table__cell">
+                            <a 
+                                class="govuk-link"
+                                asp-action="ShowApprovedStandardDetails" 
+                                asp-controller="OppFinder" 
+                                asp-route-standardCode="@approvedStandard.StandardCode">@approvedStandard.StandardName
+                            </a>
+                        </td>
+                        <td class="govuk-table__cell govuk-table__cell--numeric">@approvedStandard.ActiveApprentices</td>
+                        <td class="govuk-table__cell govuk-table__cell--numeric">@approvedStandard.RegisteredEPAOs</td>
+                    </tr>
+                }
+            }
         </tbody>
     </table>
     @if (Model != null)
@@ -108,4 +108,3 @@ else
         </form>
     }
 }
-
