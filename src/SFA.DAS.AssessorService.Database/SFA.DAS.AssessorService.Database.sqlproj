@@ -118,7 +118,7 @@
     <Build Include="Tables\Audits.sql" />
     <None Include="PostDeploymentScripts\on-2210-dashboard_api_subscriptions.sql" />
     <Build Include="Tables\StandardNonApprovedCollation.sql" />
-    <Build Include="Tables\ExpressionOfInterest.sql" />
+    <Build Include="Tables\ExpressionsOfInterest.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="SFA.DAS.AssessorService.Database.refactorlog" />
