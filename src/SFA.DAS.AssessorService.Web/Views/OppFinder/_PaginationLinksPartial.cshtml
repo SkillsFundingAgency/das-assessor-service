@@ -5,26 +5,26 @@
 {
     if (Model.Standards?.HasPreviousPage ?? false)
     {
-        <a class="@(Model.Fragment + "-page-set") govuk-link govuk-link--no-decoration govuk-!-margin-left-3" data-pageSetIndex="@Model.Standards.PrevPageSetIndex" asp-action="@Model.ChangePageSetAction" asp-controller="OppFinder" asp-route-pagesetindex="@Model.Standards.PrevPageSetIndex" asp-fragment="@Model.Fragment">&laquo; Prev</a>
+        <a class="@(Model.Fragment + "-page") govuk-link govuk-link--no-decoration govuk-!-margin-left-3" data-pageIndex="@(Model.Standards.PageIndex-1)" asp-action="@Model.ChangePageAction" asp-controller="OppFinder" asp-route-pageIndex="@(Model.PageIndex-1)" asp-fragment="@Model.Fragment">&laquo; Prev</a>
     }
 
     if ((Model.Standards?.TotalPages ?? 0) > 1)
     {
-        for (int pageNumber = Model.Standards?.FirstPageInPageSet ?? 0; pageNumber <= (Model.Standards?.LastPageInPageSet ?? 0); pageNumber++)
+        for (int pageNumber = Model.Standards?.FirstVisiblePage ?? 0; pageNumber <= (Model.Standards?.LastVisiblePage ?? 0); pageNumber++)
         {
             if (pageNumber != Model.PageIndex)
             {
-            <a class="@(Model.Fragment + "-page") govuk-link govuk-link--no-decoration govuk-!-margin-left-3" data-pageIndex="@pageNumber" asp-action="@Model.ChangePageAction" asp-controller="OppFinder" asp-route-pageindex="@pageNumber" asp-fragment="@Model.Fragment">@pageNumber</a>
+                <a class="@(Model.Fragment + "-page") govuk-link govuk-link--no-decoration govuk-!-margin-left-3" data-pageIndex="@pageNumber" asp-action="@Model.ChangePageAction" asp-controller="OppFinder" asp-route-pageindex="@pageNumber" asp-fragment="@Model.Fragment">@pageNumber</a>
             }
             else
             {
-            <span class="govuk-link govuk-!-margin-left-3">@pageNumber</span>
+                <span class="govuk-link govuk-!-margin-left-3">@pageNumber</span>
             }
         }
     }
 
     if (Model.Standards?.HasNextPage ?? false)
     {
-        <a class="@(Model.Fragment + "-page-set") govuk-link govuk-link--no-decoration govuk-!-margin-left-3 " data-pageSetIndex="@Model.Standards.NextPageSetIndex" asp-action="@Model.ChangePageSetAction" asp-controller="OppFinder" asp-route-pagesetindex="@Model.Standards.NextPageSetIndex" asp-fragment="@Model.Fragment">Next &raquo;</a>
+        <a class="@(Model.Fragment + "-page") govuk-link govuk-link--no-decoration govuk-!-margin-left-3" data-pageIndex="@(Model.Standards.PageIndex+1)" asp-action="@Model.ChangePageAction" asp-controller="OppFinder" asp-route-pageIndex="@(Model.PageIndex+1)" asp-fragment="@Model.Fragment">Next &raquo;</a>
     }
 }

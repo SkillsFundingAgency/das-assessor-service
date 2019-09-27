@@ -115,13 +115,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers.OppFinder
             return View(nameof(Index), vm);
         }
 
-        [HttpGet(nameof(ChangePageSetApprovedStandards))]
-        public async Task<IActionResult> ChangePageSetApprovedStandards(int pageSetIndex)
-        {
-            var newPageIndex = PaginatedList.GetFirstPageOfPageSet(pageSetIndex, PageSetSize);
-            return await ChangePageApprovedStandards(newPageIndex);
-        }
-
         [HttpGet(nameof(ChangePageApprovedStandardsPartial))]
         [CheckSession(nameof(IOppFinderSession.SearchTerm), CheckSession.Error)]
         public async Task<IActionResult> ChangePageApprovedStandardsPartial(int pageIndex)
@@ -129,14 +122,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers.OppFinder
             _oppFinderSession.ApprovedPageIndex = pageIndex;
             var vm = await AddApprovedViewModelValues(new OppFinderSearchViewModel());
             return PartialView("_ApprovedStandardsPartial", vm);
-        }
-
-        [HttpGet(nameof(ChangePageSetApprovedStandardsPartial))]
-        [CheckSession(nameof(IOppFinderSession.SearchTerm), CheckSession.Error)]
-        public async Task<IActionResult> ChangePageSetApprovedStandardsPartial(int pageSetIndex)
-        {
-            var newPageIndex = PaginatedList.GetFirstPageOfPageSet(pageSetIndex, PageSetSize);
-            return await ChangePageApprovedStandardsPartial(newPageIndex);
         }
 
         [HttpGet(nameof(ShowApprovedStandardsPerPage))]
@@ -202,13 +187,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers.OppFinder
             return View(nameof(Index), vm);
         }
 
-        [HttpGet(nameof(ChangePageSetInDevelopmentStandards))]
-        public async Task<IActionResult> ChangePageSetInDevelopmentStandards(int pageSetIndex)
-        {
-            var newPageIndex = PaginatedList.GetFirstPageOfPageSet(pageSetIndex, PageSetSize);
-            return await ChangePageInDevelopmentStandards(newPageIndex);
-        }
-
         [HttpGet(nameof(ChangePageInDevelopmentStandardsPartial))]
         [CheckSession(nameof(IOppFinderSession.SearchTerm), CheckSession.Error)]
         public async Task<IActionResult> ChangePageInDevelopmentStandardsPartial(int pageIndex)
@@ -216,14 +194,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers.OppFinder
             _oppFinderSession.InDevelopmentPageIndex = pageIndex;
             var vm = await AddInDevelopmentViewModelValues(new OppFinderSearchViewModel());
             return PartialView("_InDevelopmentStandardsPartial", vm);
-        }
-
-        [HttpGet(nameof(ChangePageSetInDevelopmentStandardsPartial))]
-        [CheckSession(nameof(IOppFinderSession.SearchTerm), CheckSession.Error)]
-        public async Task<IActionResult> ChangePageSetInDevelopmentStandardsPartial(int pageSetIndex)
-        {
-            var newPageIndex = PaginatedList.GetFirstPageOfPageSet(pageSetIndex, PageSetSize);
-            return await ChangePageInDevelopmentStandardsPartial(newPageIndex);
         }
 
         [HttpGet(nameof(ShowInDevelopmentStandardsPerPage))]
@@ -289,13 +259,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers.OppFinder
             return View(nameof(Index), vm);
         }
 
-        [HttpGet(nameof(ChangePageSetProposedStandards))]
-        public async Task<IActionResult> ChangePageSetProposedStandards(int pageSetIndex)
-        {
-            var newPageIndex = PaginatedList.GetFirstPageOfPageSet(pageSetIndex, PageSetSize);
-            return await ChangePageProposedStandards(newPageIndex);
-        }
-
         [HttpGet(nameof(ChangePageProposedStandardsPartial))]
         [CheckSession(nameof(IOppFinderSession.SearchTerm), CheckSession.Error)]
         public async Task<IActionResult> ChangePageProposedStandardsPartial(int pageIndex)
@@ -303,14 +266,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers.OppFinder
             _oppFinderSession.ProposedPageIndex = pageIndex;
             var vm = await AddProposedViewModelValues(new OppFinderSearchViewModel()); 
             return PartialView("_ProposedStandardsPartial", vm);
-        }
-
-        [HttpGet(nameof(ChangePageSetProposedStandardsPartial))]
-        [CheckSession(nameof(IOppFinderSession.SearchTerm), CheckSession.Error)]
-        public async Task<IActionResult> ChangePageSetProposedStandardsPartial(int pageSetIndex)
-        {
-            var newPageIndex = PaginatedList.GetFirstPageOfPageSet(pageSetIndex, PageSetSize);
-            return await ChangePageProposedStandardsPartial(newPageIndex);
         }
 
         [HttpGet(nameof(ShowProposedStandardsPerPage))]

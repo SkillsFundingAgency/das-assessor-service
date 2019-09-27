@@ -10,7 +10,6 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.OppFinder
         public int PageIndex { get; set; }
 
         public string ChangePageAction { get; set; }
-        public string ChangePageSetAction { get; set; }
 
         public string Fragment { get; set; }
 

@@ -18,7 +18,7 @@
     var showHideFilterButton = $(this).find(".govuk-details__summary-text");
     var showHideFilterText = showHideFilterButton.text();
 
-    showHideFilterText.indexOf("Show filters") != -1
+    showHideFilterText.indexOf("Show filters") !== -1
       ? showHideFilterButton.text("Hide filters")
       : showHideFilterButton.text("Show filters");
   });
@@ -51,20 +51,20 @@
 
   function searchPartial() {
     changeStandardsPartial(
-      "ChangePageSetApprovedStandardsPartial",
-      { pageSetIndex: 1 },
+      "ChangePageApprovedStandardsPartial",
+      { pageIndex: 1 },
       "#approved-standards",
       refreshApprovedClickHandlers
     );
     changeStandardsPartial(
-      "ChangePageSetInDevelopmentStandardsPartial",
-      { pageSetIndex: 1 },
+      "ChangePageInDevelopmentStandardsPartial",
+      { pageIndex: 1 },
       "#in-development-standards",
       refreshInDevelopmentClickHandlers
     );
     changeStandardsPartial(
-      "ChangePageSetProposedStandardsPartial",
-      { pageSetIndex: 1 },
+      "ChangePageProposedStandardsPartial",
+      { pageIndex: 1 },
       "#proposed-standards",
       refreshProposedClickHandlers
     );
@@ -77,12 +77,6 @@
   }
 
   function refreshApprovedClickHandlers() {
-    onClickChangePageSet(
-      ".approved-page-set",
-      "ChangePageSetApprovedStandardsPartial",
-      "#approved-standards",
-      refreshApprovedClickHandlers
-    );
     onClickChangePage(
       ".approved-page",
       "ChangePageApprovedStandardsPartial",
@@ -104,12 +98,6 @@
   }
 
   function refreshInDevelopmentClickHandlers() {
-    onClickChangePageSet(
-      ".in-development-page-set",
-      "ChangePageSetInDevelopmentStandardsPartial",
-      "#in-development-standards",
-      refreshInDevelopmentClickHandlers
-    );
     onClickChangePage(
       ".in-development-page",
       "ChangePageInDevelopmentStandardsPartial",
@@ -131,12 +119,6 @@
   }
 
   function refreshProposedClickHandlers() {
-    onClickChangePageSet(
-      ".proposed-page-set",
-      "ChangePageSetProposedStandardsPartial",
-      "#proposed-standards",
-      refreshProposedClickHandlers
-    );
     onClickChangePage(
       ".proposed-page",
       "ChangePageProposedStandardsPartial",
@@ -155,26 +137,6 @@
       "#proposed-standards",
       refreshProposedClickHandlers
     );
-  }
-
-  function onClickChangePageSet(
-    linkClass,
-    actionMethod,
-    containerId,
-    refreshFunction
-  ) {
-    $(linkClass).each(function(i, obj) {
-      $(obj).click(function(event) {
-        var pageSetIndex = $(obj).attr("data-pageSetIndex");
-        changeStandardsPartial(
-          actionMethod,
-          { pageSetIndex: pageSetIndex },
-          containerId,
-          refreshFunction
-        );
-        event.preventDefault();
-      });
-    });
   }
 
   function onClickChangePage(
