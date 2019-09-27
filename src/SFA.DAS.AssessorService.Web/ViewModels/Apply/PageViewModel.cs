@@ -94,7 +94,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Apply
                 Hint = q.Hint,
                 Options = q.Input.Options,
                 Value = page.AllowMultipleAnswers ? GetMultipleValue(page.PageOfAnswers.LastOrDefault()?.Answers, q, errorMessages) : answers?.SingleOrDefault(a => a?.QuestionId == q.QuestionId)?.Value,
-                JsonValue = page.AllowMultipleAnswers ? GetMultipleJsonValue(page.PageOfAnswers.LastOrDefault()?.Answers, q, errorMessages) : JsonConvert.SerializeObject(answers?.SingleOrDefault(a => a?.QuestionId == q.QuestionId)?.Value),
+                JsonValue = page.AllowMultipleAnswers ? GetMultipleJsonValue(page.PageOfAnswers.LastOrDefault()?.Answers, q, errorMessages) : answers?.SingleOrDefault(a => a?.QuestionId == q.QuestionId)?.Value,
                 ErrorMessages = errorMessages?.Where(f => f.Field.Split("_Key_")[0] == q.QuestionId).ToList(),
                 SequenceNo = int.Parse(SequenceNo),
                 SectionId = SectionId,
