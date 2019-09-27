@@ -26,16 +26,16 @@ else
         <thead class="govuk-table__head">
             <tr class="govuk-table__row">
                 <th scope="col" class="govuk-table__header">
-                    <sfa-sortable-column-header class="proposed-sort govuk-link"
-                                                data-sortColumn="@nameof(OppFinderSearchSortColumn.StandardName)"
-                                                asp-action="SortProposedStandards"
-                                                asp-controller="OppFinder"
-                                                asp-fragment="proposed"
-                                                sfa-sort-column="@nameof(OppFinderSearchSortColumn.StandardName)"
-                                                sfa-table-sort-column="@Model.ProposedSortColumn"
-                                                sfa-sort-direction="@Model.ProposedSortDirection">
-                        Proposed Standards
-                    </sfa-sortable-column-header>
+                    <sfa-sortable-column-header 
+                        class="proposed-sort govuk-link"
+                        data-sortColumn="@nameof(OppFinderSearchSortColumn.StandardName)"
+                        asp-action="SortProposedStandards"
+                        asp-controller="OppFinder"
+                        asp-fragment="proposed"
+                        sfa-sort-column="@nameof(OppFinderSearchSortColumn.StandardName)"
+                        sfa-table-sort-column="@Model.ProposedSortColumn"
+                        sfa-sort-direction="@Model.ProposedSortDirection"
+                    >Proposed Standards</sfa-sortable-column-header>
                 </th>
             </tr>
         </thead>
@@ -50,37 +50,38 @@ else
                                class="govuk-link"
                                asp-action="ShowProposedStandardDetails" 
                                asp-controller="OppFinder" 
-                               asp-route-standardReference="@proposedStandard.StandardReference">@proposedStandard.StandardName
+                               asp-route-standardReference="@proposedStandard.StandardReference"
+                            >
+                               @proposedStandard.StandardName
                             </a>
                         </td>
                     </tr>
-
                 }
             }
         </tbody>
     </table>
     @if (Model != null)
     {
-        <div class="govuk-grid-row">
-            <div class="govuk-grid-column-one-half">
-                <form asp-action="ShowProposedStandardsPerPage" asp-controller="OppFinder" method="get" asp-fragment="proposed">
-                    <select class="proposed-per-page govuk-select" asp-for="ProposedStandardsPerPage" asp-items="Model.StandardsPerPage"></select>
-                    <button class="govuk-button govuk-button--looks-like-link govuk-button--looks-like-link--inline js-hidden" type="submit">
-                        Show
-                    </button>
-                    <text>Standards per page</text>
-                </form>
+        <form asp-action="ShowProposedStandardsPerPage" asp-controller="OppFinder" method="get" asp-fragment="proposed">
+            <div class="das-flex-space-around">
+                <div>
+                        <select class="proposed-per-page govuk-select" asp-for="ProposedStandardsPerPage" asp-items="Model.StandardsPerPage"></select>
+                        <text>Standards per page</text>
+                </div>
+                <div class="das-pagination-links">
+                    @{await Html.RenderPartialAsync("_PaginationLinksPartial", new OppFinderPaginationViewModel
+                    {
+                        Standards = Model.ProposedStandards,
+                        PageIndex = Model.ProposedPageIndex,
+                        ChangePageAction = "ChangePageProposedStandards",
+                        Fragment = "proposed"
+                    });}
+                </div>
             </div>
-            <div class="govuk-grid-column-one-half">
-                @{await Html.RenderPartialAsync("_PaginationLinksPartial", new OppFinderPaginationViewModel
-                {
-                    Standards = Model.ProposedStandards,
-                    PageIndex = Model.ProposedPageIndex,
-                    ChangePageAction = "ChangePageProposedStandards",
-                    Fragment = "proposed"
-                });}
-            </div>
-        </div>
+            <button class="govuk-button govuk-button--looks-like-link govuk-button--looks-like-link--inline js-hidden" type="submit">
+                Show
+            </button>
+        </form>
     }
 }
 

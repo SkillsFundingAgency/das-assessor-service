@@ -22,20 +22,20 @@
 }
 else
 {
-    <table class="govuk-table">
+    <table class="govuk-table govuk-table--small">
         <thead class="govuk-table__head">
             <tr class="govuk-table__row">
                 <th scope="col" class="govuk-table__header">
-                    <sfa-sortable-column-header class="in-development-sort govuk-link"
-                                                data-sortColumn="@nameof(OppFinderSearchSortColumn.StandardName)"
-                                                asp-action="SortInDevelopmentStandards"
-                                                asp-controller="OppFinder"
-                                                asp-fragment="in-development"
-                                                sfa-sort-column="@nameof(OppFinderSearchSortColumn.StandardName)"
-                                                sfa-table-sort-column="@Model.InDevelopmentSortColumn"
-                                                sfa-sort-direction="@Model.InDevelopmentSortDirection">
-                        Standards In-development
-                    </sfa-sortable-column-header>
+                    <sfa-sortable-column-header 
+                        class="in-development-sort govuk-link"
+                        data-sortColumn="@nameof(OppFinderSearchSortColumn.StandardName)"
+                        asp-action="SortInDevelopmentStandards"
+                        asp-controller="OppFinder"
+                        asp-fragment="in-development"
+                        sfa-sort-column="@nameof(OppFinderSearchSortColumn.StandardName)"
+                        sfa-table-sort-column="@Model.InDevelopmentSortColumn"
+                        sfa-sort-direction="@Model.InDevelopmentSortDirection"
+                    >Standards in-development</sfa-sortable-column-header>
                 </th>
             </tr>
         </thead>
@@ -50,7 +50,8 @@ else
                                 class="govuk-link"
                                 asp-action="ShowInDevelopmentStandardDetails" 
                                 asp-controller="OppFinder" 
-                                asp-route-standardReference="@inDevelopmentStandard.StandardReference">@inDevelopmentStandard.StandardName
+                                asp-route-standardReference="@inDevelopmentStandard.StandardReference">
+                                @inDevelopmentStandard.StandardName
                             </a>
                         </td>
                     </tr>
@@ -60,25 +61,25 @@ else
     </table>
     @if (Model != null)
     {
-        <div class="govuk-grid-row">
-            <div class="govuk-grid-column-one-half">
-                <form asp-action="ShowInDevelopmentStandardsPerPage" asp-controller="OppFinder" method="get" asp-fragment="in-development">
+        <form asp-action="ShowInDevelopmentStandardsPerPage" asp-controller="OppFinder" method="get" asp-fragment="in-development">
+            <div class="das-flex-space-around">
+                <div>
                     <select class="in-development-per-page govuk-select" asp-for="InDevelopmentStandardsPerPage" asp-items="Model.StandardsPerPage"></select>
-                    <button class="govuk-button govuk-button--looks-like-link govuk-button--looks-like-link--inline js-hidden" type="submit">
-                        Show
-                    </button>
                     <text>Standards per page</text>
-                </form>
+                </div>
+                <div class="das-pagination-links">
+                    @{await Html.RenderPartialAsync("_PaginationLinksPartial", new OppFinderPaginationViewModel
+                    {
+                        Standards = Model.InDevelopmentStandards,
+                        PageIndex = Model.InDevelopmentPageIndex,
+                        ChangePageAction = "ChangePageInDevelopmentStandards",
+                        Fragment = "in-development"
+                    });}
+                </div>
             </div>
-            <div class="govuk-grid-column-one-half">
-                @{await Html.RenderPartialAsync("_PaginationLinksPartial", new OppFinderPaginationViewModel
-                {
-                    Standards = Model.InDevelopmentStandards,
-                    PageIndex = Model.InDevelopmentPageIndex,
-                    ChangePageAction = "ChangePageInDevelopmentStandards",
-                    Fragment = "in-development"
-                });}
-            </div>
-        </div>
+            <button class="govuk-button govuk-button--looks-like-link govuk-button--looks-like-link--inline js-hidden" type="submit">
+                Show
+            </button>
+        </form>
     }
 }

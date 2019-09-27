@@ -1596,3 +1596,21 @@ th[aria-sort="ascending"] a:after {
     width: 16.66% !important;
   }
 }
+
+.das-pill {
+  display: inline-block;
+  overflow: hidden;
+  white-space: nowrap;
+  margin: 0;
+  padding: 4px 8px 0;
+  font-size: 12px;
+  border-radius: 20px;
+  background: #f8f8f8;
+  border: 1px solid #bfc1c3;
+}
+
+@media (min-width: 40.0625em) {
+  .das-pill {
+    font-size: 14px;
+  }
+}
