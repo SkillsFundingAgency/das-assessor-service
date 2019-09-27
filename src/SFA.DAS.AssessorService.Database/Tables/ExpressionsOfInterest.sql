@@ -1,9 +1,10 @@
 
 
-CREATE TABLE [ExpressionOfInterest](
+CREATE TABLE [ExpressionsOfInterest](
 	[Id] [uniqueidentifier] NOT NULL DEFAULT NEWID(),
 	[Email] [nvarchar](256) NOT NULL,
-	[ContactName] [nvarchar](250) NOT NULL,
+	[ContactName] [nvarchar](250) NULL,
+	[ContactPhone] [nvarchar](250) NULL,
 	[OrganisationName] [nvarchar](250) NOT NULL,
 	[StandardReference] [nvarchar](10) NULL,
 	[Status] [nvarchar](20) NOT NULL DEFAULT 'New',
