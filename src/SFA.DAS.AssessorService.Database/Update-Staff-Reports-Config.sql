@@ -13,19 +13,25 @@ UPDATE StaffReports SET ReportName = 'Batch' WHERE StoredProcedure = 'StaffRepor
 UPDATE StaffReports SET ReportName = 'EPAO' WHERE StoredProcedure = 'StaffReports_ByEpao'
 UPDATE StaffReports SET ReportName = 'Weekly summary' WHERE StoredProcedure = 'StaffReports_WeeklySummary'
 
-UPDATE StaffReports SET DisplayOrder = 8  WHERE ReportName = 'Provider and grade'
-UPDATE StaffReports SET DisplayOrder = 7  WHERE ReportName = 'Provider'
+
 UPDATE StaffReports SET DisplayOrder = 1  WHERE ReportName = 'Certificate count'
-UPDATE StaffReports SET DisplayOrder = 9  WHERE ReportName = 'Standard'
-UPDATE StaffReports SET DisplayOrder = 11 WHERE ReportName = 'EPAO Register'
-UPDATE StaffReports SET DisplayOrder = 10 WHERE ReportName = 'Monthly detailed extract'
-UPDATE StaffReports SET DisplayOrder = 13 WHERE ReportName = 'Register List of Standards'
-UPDATE StaffReports SET DisplayOrder = 6  WHERE ReportName = 'EPAO, standard and grade'
-UPDATE StaffReports SET DisplayOrder = 12 WHERE ReportName = 'Register List of Organisations'
 UPDATE StaffReports SET DisplayOrder = 2  WHERE ReportName = 'Monthly summary'
+UPDATE StaffReports SET DisplayOrder = 3  WHERE ReportName = 'Weekly summary'
 UPDATE StaffReports SET DisplayOrder = 4  WHERE ReportName = 'Batch'
 UPDATE StaffReports SET DisplayOrder = 5  WHERE ReportName = 'EPAO'
-UPDATE StaffReports SET DisplayOrder = 3  WHERE ReportName = 'Weekly summary'
+UPDATE StaffReports SET DisplayOrder = 6  WHERE ReportName = 'EPAO, standard and grade'
+UPDATE StaffReports SET DisplayOrder = 7  WHERE ReportName = 'Provider'
+UPDATE StaffReports SET DisplayOrder = 8  WHERE ReportName = 'Provider and grade'
+UPDATE StaffReports SET DisplayOrder = 9  WHERE ReportName = 'Standard'
+
+-- On-2295
+INSERT INTO [StaffReports] ([ReportName],[StoredProcedure],CreatedAt,DisplayOrder,ReportType)
+VALUES ('Expression of interest entries','StaffReports_ExpressionsOfInterest',GETDATE(),10,'ViewOnScreen')
+
+UPDATE StaffReports SET DisplayOrder = 11 WHERE ReportName = 'Monthly detailed extract'
+UPDATE StaffReports SET DisplayOrder = 12 WHERE ReportName = 'EPAO Register'
+UPDATE StaffReports SET DisplayOrder = 13 WHERE ReportName = 'Register List of Organisations'
+UPDATE StaffReports SET DisplayOrder = 14 WHERE ReportName = 'Register List of Standards'
 
 -- this changes report on screen to download only.
 update StaffReports Set Storedprocedure = '', reporttype = 'Download',
