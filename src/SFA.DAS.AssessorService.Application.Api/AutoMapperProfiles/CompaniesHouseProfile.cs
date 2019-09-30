@@ -101,6 +101,7 @@ namespace SFA.DAS.AssessorService.Application.Api.AutoMapperProfiles
         public CompaniesHousePersonWithSignificantControlProfile()
         {
             CreateMap<PersonWithSignificantControl, AssessorService.Api.Types.CompaniesHouse.PersonWithSignificantControl>()
+                .ForMember(dest => dest.Id, opt => opt.ResolveUsing(source => source.links?.self))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(source => source.name))
                 .ForMember(dest => dest.DateOfBirth, opt => opt.ResolveUsing(source => source.date_of_birth is null ? DateTime.MinValue : new DateTime(source.date_of_birth.year, source.date_of_birth.month, source.date_of_birth.day ?? 1)))
                 .ForMember(dest => dest.NaturesOfControl, opt => opt.MapFrom(source => source.natures_of_control))

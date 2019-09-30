@@ -12,6 +12,8 @@ using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Application.Api.Infrastructure;
 using SFA.DAS.AssessorService.Domain.Paging;
+using SFA.DAS.AssessorService.Api.Types.CharityCommission;
+using SFA.DAS.AssessorService.Api.Types.CompaniesHouse;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers
 {
@@ -488,7 +490,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
 
 
-        [HttpGet("organisations/{companyNumber}/isActivelyTrading")]
+        [HttpGet("company/{companyNumber}/isActivelyTrading")]
         public async Task<bool> isCompanyActivelyTrading(string companyNumber)
         {
 
@@ -507,6 +509,44 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             }
 
             return result;
+        }
+
+        [HttpGet("company/{companyNumber}")]
+        public async Task<Company> GetCompanyDetails(string companyNumber)
+        {
+            _logger.LogInformation($"GetCompanyDetails({companyNumber})");
+
+            Company company = null;
+
+            try
+            {
+                company = await _companiesHouseApiClient.GetCompany(companyNumber);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error from Companies House. Message: {ex.Message}");
+            }
+
+            return company;
+        }
+
+        [HttpGet("charity/{charityNumber}")]
+        public async Task<Charity> GetCharityDetails(int charityNumber)
+        {
+            _logger.LogInformation($"GetCharityDetails({charityNumber})");
+
+            Charity charity = null;
+
+            try
+            {
+                charity = await _charityCommissionApiClient.GetCharity(charityNumber);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error from Charity Commission. Message: {ex.Message}");
+            }
+
+            return charity;
         }
     }
 }

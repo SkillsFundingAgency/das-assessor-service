@@ -1,7 +1,7 @@
 ﻿using SFA.DAS.AssessorService.ApplyTypes;
-using System;
+using SFA.DAS.AssessorService.ApplyTypes.CharityCommission;
+using SFA.DAS.AssessorService.ApplyTypes.CompaniesHouse;
 using System.Collections.Generic;
-using System.Text;
 
 namespace SFA.DAS.AssessorService.Domain.Entities
 {
@@ -19,7 +19,9 @@ namespace SFA.DAS.AssessorService.Domain.Entities
         public string City { get; set; }
         public string Postcode { get; set; }
         public string CompanyNumber { get; set; }
+        public CompaniesHouseSummary CompanySummary { get; set; }
         public string CharityNumber { get; set; }
+        public CharityCommissionSummary CharitySummary { get; set; }
         public string ProviderName { get; set; }
         public bool RoATPApproved { get; set; }
         public bool RoEPAOApproved { get; set; }
