@@ -91,6 +91,7 @@ namespace SFA.DAS.AssessorService.Data
             var contact = await _assessorDbContext
                 .Contacts
                 .Include(c => c.Organisation)
+                .Include(c => c.Organisation.OrganisationType)
                 .FirstOrDefaultAsync(c => c.Id == contactId);
             
             return contact

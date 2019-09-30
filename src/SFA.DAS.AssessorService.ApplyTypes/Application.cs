@@ -9,6 +9,7 @@ namespace SFA.DAS.AssessorService.ApplyTypes
         public string OrganisationName { get; set; }
         public string ReferenceNumber { get; set; }
         public string StandardName { get; set; }
+        public string OrganisationType { get; set; }
         public string StandardCode { get; set; }
         public string TradingName { get; set; }
         public bool UseTradingName { get; set; }
