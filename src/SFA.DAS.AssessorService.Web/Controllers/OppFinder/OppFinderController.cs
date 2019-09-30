@@ -484,7 +484,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.OppFinder
             catch (Exception e)
             {
                 _logger.LogError(e, $"Failed to express interest {viewModel.StandardName}, {viewModel.Email}, {viewModel.OrganisationName}, {viewModel.ContactName}, {viewModel.ContactNumber}");
-                ModelState.AddModelError(nameof(OppFinderExpressionOfInterestViewModel.Email), "Unable to express interest at this time.");
+                ModelState.AddModelError(nameof(OppFinderExpressionOfInterestViewModel.StandardReference), "Unable to express interest at this time.");
 
                 if (viewModel.StandardStatus == StandardStatus.Approved)
                 {

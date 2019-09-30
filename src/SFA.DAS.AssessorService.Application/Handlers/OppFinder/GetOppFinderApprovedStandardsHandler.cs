@@ -13,17 +13,17 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Standards
     public class GetOppFinderApprovedStandardsHandler : IRequestHandler<GetOppFinderApprovedStandardsRequest, GetOppFinderApprovedStandardsResponse>
     {
         private readonly ILogger<GetOppFinderApprovedStandardsHandler> _logger;
-        private readonly IStandardRepository _standardRepository;
-        public GetOppFinderApprovedStandardsHandler(ILogger<GetOppFinderApprovedStandardsHandler> logger, IStandardRepository standardRepository)
+        private readonly IOppFinderRepository _oppFinderRepository;
+        public GetOppFinderApprovedStandardsHandler(ILogger<GetOppFinderApprovedStandardsHandler> logger, IOppFinderRepository oppFinderRepository)
         {
             _logger = logger;
-            _standardRepository = standardRepository;
+            _oppFinderRepository = oppFinderRepository;
         }
 
         public async Task<GetOppFinderApprovedStandardsResponse> Handle(GetOppFinderApprovedStandardsRequest request, CancellationToken cancellationToken)
         {
             _logger.LogInformation("Retreiving approved standards");
-            var standardResult = await _standardRepository.GetOppFinderApprovedStandards(request.SearchTerm, request.SectorFilters, request.LevelFilters, 
+            var standardResult = await _oppFinderRepository.GetOppFinderApprovedStandards(request.SearchTerm, request.SectorFilters, request.LevelFilters, 
                 request.SortColumn, request.SortAscending, request.PageSize, request.PageIndex ?? 1);
 
             var standards = standardResult.PageOfResults

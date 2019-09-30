@@ -10,18 +10,18 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Standards
     public class UpdateStandardSummaryHandler : IRequestHandler<UpdateStandardSummaryRequest>
     {
         private readonly ILogger<UpdateStandardSummaryHandler> _logger;
-        private readonly IStandardRepository _standardRepository;
+        private readonly IOppFinderRepository _oppFinderRepository;
 
-        public UpdateStandardSummaryHandler(ILogger<UpdateStandardSummaryHandler> logger, IStandardRepository standardRepository)
+        public UpdateStandardSummaryHandler(ILogger<UpdateStandardSummaryHandler> logger, IOppFinderRepository oppFinderRepository)
         {
             _logger = logger;
-            _standardRepository = standardRepository;
+            _oppFinderRepository = oppFinderRepository;
         }
 
         public async Task Handle(UpdateStandardSummaryRequest request, CancellationToken cancellationToken)
         {
             _logger.LogInformation($"Updating standard summary data");
-            await _standardRepository.UpdateStandardSummary();
+            await _oppFinderRepository.UpdateStandardSummary();
         }
     }
 }

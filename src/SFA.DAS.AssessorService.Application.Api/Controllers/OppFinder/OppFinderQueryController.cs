@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using SFA.DAS.AssessorService.Api.Types;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
@@ -20,7 +17,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
     [ValidateBadRequest]
     public class OppFinderQueryController : Controller
     {
-
         private readonly ILogger<OppFinderQueryController> _logger;
         private readonly IMediator _mediator;
 
@@ -83,16 +79,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         {
             _logger.LogInformation($"Received request to retrieve non approved standard details {request.StandardReference}");
             return Ok(await _mediator.Send(request));
-        }
-
-        [HttpPost("update-standard-summary", Name = "UpdateStandardSummary")]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(ApiResponse))]
-        [SwaggerResponse((int)HttpStatusCode.Conflict, Type = typeof(ApiResponse))]
-        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task UpdateStandardSummary([FromBody] UpdateStandardSummaryRequest request)
-        {
-            _logger.LogInformation($"Received request to update standard summary");
-            await _mediator.Send(request);
         }
     }
 }
