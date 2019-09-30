@@ -36,7 +36,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Infrastructure
             if (company != null)
             {
                 company.Officers = await GetOfficers(company.CompanyNumber);
-                company.PeopleWithSignificantControl = await GetPeopleWithSignificantControl(company.CompanyNumber);
+                company.PeopleWithSignificantControl = await GetPersonsWithSignificantControl(company.CompanyNumber);
             }
 
             return company;
@@ -144,10 +144,10 @@ namespace SFA.DAS.AssessorService.Application.Api.Infrastructure
         }
 
         private async Task<IEnumerable<AssessorService.Api.Types.CompaniesHouse.PersonWithSignificantControl>>
-            GetPeopleWithSignificantControl(string companyNumber, bool activeOnly = true)
+            GetPersonsWithSignificantControl(string companyNumber, bool activeOnly = true)
         {
             _logger.LogInformation(
-                $"Searching Companies House - People With Significant Control. Company Number: {companyNumber}");
+                $"Searching Companies House - Persons With Significant Control. Company Number: {companyNumber}");
             var apiResponse =
                 await Get<AssessorService.Api.Types.Models.CompaniesHouse.PersonWithSignificantControlList>(
                     $"/company/{companyNumber}/persons-with-significant-control?items_per_page=100");

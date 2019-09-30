@@ -100,7 +100,10 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 {
                     UseTradingName = false,
                     OrganisationName = org.EndPointAssessorName,
-                    OrganisationReferenceId = org.Id.ToString()
+                    OrganisationReferenceId = org.Id.ToString(),
+                    // NOTE: Wouldn't be a good idea to include more info from the preamble search here?
+                    CompanySummary = org.CompanySummary,
+                    CharitySummary = org.CharitySummary
                 })
             };
 
@@ -519,6 +522,20 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 FeedbackUrl = _config.FeedbackUrl,
                 StandardName = application?.ApplyData?.Apply?.StandardName
             });
+        }
+
+        [HttpGet("/Application/{Id}/Feedback")]
+        public async Task<IActionResult> Feedback(Guid Id)
+        {
+            var application = await _applicationApiClient.GetApplication(Id);
+            var sequence = await _qnaApiClient.GetApplicationActiveSequence(application.ApplicationId);
+
+            var sections = await _qnaApiClient.GetSections(application.ApplicationId, sequence.Id);
+            var applyData = application.ApplyData.Sequences.Single(x => x.SequenceNo == sequence.SequenceNo);
+
+            var sequenceVm = new SequenceViewModel(sequence, application.Id, BuildPageContext(application, sequence), sections, applyData.Sections, null);
+
+            return View("~/Views/Application/Feedback.cshtml", sequenceVm);
         }
 
         private async Task<Page> GetDataFedOptions(Page page)
