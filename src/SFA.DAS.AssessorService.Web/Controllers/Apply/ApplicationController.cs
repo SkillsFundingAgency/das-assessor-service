@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -13,6 +14,8 @@ using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Application.Exceptions;
 using SFA.DAS.AssessorService.ApplyTypes;
+using SFA.DAS.AssessorService.ApplyTypes.CharityCommission;
+using SFA.DAS.AssessorService.ApplyTypes.CompaniesHouse;
 using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.ViewModels.Apply;
@@ -419,7 +422,18 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         [HttpPost("/Application/{Id}/SequenceNo/{sequenceNo}/RefreshApplicationData")]
         public async Task<IActionResult> RefreshApplicationData(Guid Id, int sequenceNo)
         {
+            var applicationData = await _qnaApiClient.GetApplicationData(Id);
 
+            if(applicationData != null)
+            {
+                var companyDetails = !string.IsNullOrWhiteSpace(applicationData.CompanySummary?.CompanyNumber) ? await _orgApiClient.GetCompanyDetails(applicationData.CompanySummary.CompanyNumber) : null;
+                var charityDetails = int.TryParse(applicationData.CharitySummary?.CharityNumber, out var charityNumber) ? await _orgApiClient.GetCharityDetails(charityNumber) : null;
+
+                applicationData.CompanySummary = Mapper.Map<CompaniesHouseSummary>(companyDetails);
+                applicationData.CharitySummary = Mapper.Map<CharityCommissionSummary>(charityDetails);
+
+                await _qnaApiClient.UpdateApplicationData(Id, applicationData);
+            }
 
             return RedirectToAction("Sequence", new { Id, sequenceNo });
         }
