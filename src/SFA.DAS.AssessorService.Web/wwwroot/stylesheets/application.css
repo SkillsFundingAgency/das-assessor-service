@@ -1599,14 +1599,13 @@ th[aria-sort="ascending"] a:after {
 
 .das-pill {
   display: inline-block;
-  overflow: hidden;
   white-space: nowrap;
-  margin: 0;
-  padding: 4px 8px 0;
+  margin: 0 0 6px 0;
+  padding: 4px 6px 0;
   font-size: 12px;
   border-radius: 20px;
   background: #f8f8f8;
-  border: 1px solid #bfc1c3;
+  border: 2px solid #efefef;
 }
 
 @media (min-width: 40.0625em) {
