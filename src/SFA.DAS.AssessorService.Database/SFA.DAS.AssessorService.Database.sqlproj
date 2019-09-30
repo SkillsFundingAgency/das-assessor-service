@@ -143,6 +143,7 @@
   <ItemGroup>
     <None Include="DataToImport\assessmentorgs.xlsx" />
     <None Include="PostDeploymentScripts\on-2033-anytime_updates.sql" />
+    <None Include="PostDeploymentScripts\on-2295-expression-of-interest.sql" />
   </ItemGroup>
   <ItemGroup>
     <ArtifactReference Include="$(DacPacRootPath)\Extensions\Microsoft\SQLDB\Extensions\SqlServer\AzureV12\SqlSchemas\master.dacpac">
