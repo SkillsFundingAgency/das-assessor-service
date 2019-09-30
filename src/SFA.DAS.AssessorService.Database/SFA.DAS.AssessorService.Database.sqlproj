@@ -128,6 +128,8 @@
     <None Include="PostDeploymentScripts\on-2210-dashboard_api_subscriptions.sql" />
     <Build Include="StoredProcedures\OppFinder_Filter_Standards.sql" />
     <Build Include="StoredProcedures\OppFinder_Get_Approved_Standard_Details.sql" />
+    <Build Include="Tables\ExpressionsOfInterest.sql" />
+    <Build Include="StoredProcedures\StaffReports_ExpressionsOfInterest.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="SFA.DAS.AssessorService.Database.refactorlog" />
