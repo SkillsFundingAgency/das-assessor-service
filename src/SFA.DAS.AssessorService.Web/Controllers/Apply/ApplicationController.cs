@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Apply;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
@@ -91,7 +92,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             var signinId = User.Claims.First(c => c.Type == "sub")?.Value;
             var contact = await GetUserContact(signinId);
             var org = await _orgApiClient.GetOrganisationByUserId(contact.Id);
-
+          
             var applicationStartRequest = new StartApplicationRequest
             {
                 UserReference = contact.Id.ToString(),
@@ -101,6 +102,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                     UseTradingName = false,
                     OrganisationName = org.EndPointAssessorName,
                     OrganisationReferenceId = org.Id.ToString(),
+                    OrganisationType = org.OrganisationType,
                     // NOTE: Wouldn't be a good idea to include more info from the preamble search here?
                     CompanySummary = org.CompanySummary,
                     CharitySummary = org.CharitySummary
@@ -382,13 +384,13 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             var page = await _qnaApiClient.GetPage(application.ApplicationId, sectionId, pageId);
 
             var answers = GetAnswersFromForm(page);
-            
+
             SetPageAnswersResponse updatePageResult;
             var fileupload = page.Questions?.Any(q => q.Input.Type == "FileUpload");
             if (fileupload ?? false)
             {
                 updatePageResult = await UploadFilesToStorage(application.ApplicationId, sectionId, pageId, page);
-                if(NothingToUpload(updatePageResult,answers))
+                if (NothingToUpload(updatePageResult, answers))
                     return ForwardToNextSectionOrPage(page, Id, sequenceNo, sectionId, __redirectAction);
             }
             else
@@ -647,9 +649,12 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             List<Answer> answers = new List<Answer>();
             var questionId = page.Questions.Where(x => x.Input.Type == "ComplexRadio" || x.Input.Type == "Radio").Select(y => y.QuestionId).FirstOrDefault();
 
-            foreach (var keyValuePair in HttpContext.Request.Form.Where(f => !f.Key.StartsWith("__") && !f.Key.Contains("RedirectAction")))
+            foreach (var keyValuePair in HttpContext.Request.Form.Where(f => !f.Key.StartsWith("__")))
             {
-                answers.Add(new Answer() { QuestionId = keyValuePair.Key, Value = keyValuePair.Value });
+                if (!keyValuePair.Key.EndsWith("Search"))
+                {
+                    answers.Add(new Answer() { QuestionId = keyValuePair.Key, Value = keyValuePair.Value });
+                }
             }
 
             if (answers != null && (!answers.Any()))
@@ -666,7 +671,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                         break;
                     }
                 }
-                else if (answers.Count(y => y.QuestionId.Contains(questionId) && (y.Value == "" || Regex.IsMatch(y.Value, "^[,]+$"))) == 1 
+                else if (answers.Count(y => y.QuestionId.Contains(questionId) && (y.Value == "" || Regex.IsMatch(y.Value, "^[,]+$"))) == 1
                     && answers.Count(y => y.QuestionId == questionId && y.Value != "") == 0)
                 {
                     foreach (var answer in answers.Where(y => y.QuestionId.Contains(questionId + ".") && (y.Value == "" || Regex.IsMatch(y.Value, "^[,]+$"))))
@@ -675,8 +680,48 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                     }
                 }
             }
+            if(page.Questions.Any(x => x.Input.Type == "Address"))
+                return ProcessPageVmQuestionsForAddress(page,answers);
+
             return answers;
         }
+
+
+        private List<Answer> ProcessPageVmQuestionsForAddress(Page page, List<Answer> answers)
+        {
+
+            if (page.Questions.Any(x => x.Input.Type == "Address"))
+            {
+                Dictionary<string, JObject> answerValues = new Dictionary<string, JObject>();
+
+                foreach (var formVariable in answers.Where( x=> x.QuestionId.Contains("_Key_")))
+                {
+                    var answerKey = formVariable.QuestionId.Split("_Key_");
+                    if (!answerValues.ContainsKey(answerKey[0]))
+                    {
+                        answerValues.Add(answerKey[0], new JObject());
+                    }
+
+                    answerValues[answerKey[0]].Add(
+                        answerKey.Count() == 1 ? string.Empty : answerKey[1],
+                        formVariable.Value.ToString());
+                }
+
+                answers = answers.Where(x => !x.QuestionId.Contains("_Key")).ToList();
+
+                foreach (var answer in answerValues)
+                {
+                    if (answer.Value.Count > 1)
+                    {
+                        answers.Add(new Answer() { QuestionId = answer.Key, Value = answer.Value.ToString() });
+                    }
+                }
+
+            }
+
+            return answers;
+        }
+
 
         private void ProcessPageVmQuestionsForStandardName(List<QuestionViewModel> pageVmQuestions, ApplicationResponse application)
         {

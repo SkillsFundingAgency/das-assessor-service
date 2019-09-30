@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore.Internal;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.QnA.Api.Types.Page;
 
@@ -52,7 +53,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Apply
 
         public string RedirectAction { get; set; }
         public string ReturnUrl { get; set; }
-
+        
         public List<ValidationErrorDetail> ErrorMessages { get; set; }
 
         private void SetupPage(Page page, List<ValidationErrorDetail> errorMessages)
@@ -62,6 +63,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Apply
             DisplayType = page.DisplayType;
             PageId = page.PageId;
             SequenceNo = SequenceNo;
+
             AllowMultipleAnswers = page.AllowMultipleAnswers;
             if (errorMessages != null && errorMessages.Any())
             {
@@ -82,7 +84,6 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Apply
             }
 
             Questions = new List<QuestionViewModel>();
-
             Questions.AddRange(questions.Select(q => new QuestionViewModel()
             {
                 Label = q.Label,
@@ -94,7 +95,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Apply
                 Hint = q.Hint,
                 Options = q.Input.Options,
                 Value = page.AllowMultipleAnswers ? GetMultipleValue(page.PageOfAnswers.LastOrDefault()?.Answers, q, errorMessages) : answers?.SingleOrDefault(a => a?.QuestionId == q.QuestionId)?.Value,
-                JsonValue = page.AllowMultipleAnswers ? GetMultipleJsonValue(page.PageOfAnswers.LastOrDefault()?.Answers, q, errorMessages) : JsonConvert.SerializeObject(answers?.SingleOrDefault(a => a?.QuestionId == q.QuestionId)?.Value),
+                JsonValue = page.AllowMultipleAnswers ? GetMultipleJsonValue(page.PageOfAnswers.LastOrDefault()?.Answers, q, errorMessages) : GetJsonValue(answers,q),
                 ErrorMessages = errorMessages?.Where(f => f.Field.Split("_Key_")[0] == q.QuestionId).ToList(),
                 SequenceNo = int.Parse(SequenceNo),
                 SectionId = SectionId,
@@ -142,6 +143,21 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Apply
             }
 
             return null;
+        }
+
+
+        private dynamic GetJsonValue(List<Answer> answers, Question question)
+        {
+            var json = answers?.SingleOrDefault(a => a?.QuestionId == question.QuestionId)?.Value;
+            try
+            {
+                JToken.Parse(json);
+                return JsonConvert.DeserializeObject<dynamic>(json);
+
+            }catch(Exception)
+            {
+                return null;
+            }
         }
     }
 }

@@ -56,8 +56,8 @@ namespace SFA.DAS.AssessorService.Application.Api.AutoMapperProfiles
     {
         public AssessorServiceOrganisationResponse()
         {
-            CreateMap<Domain.Entities.Organisation,OrganisationResponse>()
-                .ForMember(dest => dest.Id, opt => opt.MapFrom( source => source.Id))
+            CreateMap<Domain.Entities.Organisation, OrganisationResponse>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(source => source.Id))
                 .ForMember(dest => dest.PrimaryContact, opt => opt.MapFrom(source => source.PrimaryContact))
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(source => source.Status))
                 .ForMember(dest => dest.EndPointAssessorName, opt => opt.MapFrom(source => source.EndPointAssessorName))
@@ -65,6 +65,7 @@ namespace SFA.DAS.AssessorService.Application.Api.AutoMapperProfiles
                 .ForMember(dest => dest.EndPointAssessorUkprn, opt => opt.MapFrom(source => source.EndPointAssessorUkprn))
                 .ForMember(dest => dest.RoATPApproved, opt => opt.ResolveUsing(source => source.OrganisationData?.RoATPApproved))
                 .ForMember(dest => dest.RoEPAOApproved, opt => opt.ResolveUsing(source => source.OrganisationData?.RoEPAOApproved))
+                .ForMember(dest => dest.OrganisationType, opt => opt.ResolveUsing(source => source.OrganisationType?.Type))
                 .ForMember(dest => dest.CompanySummary, opt => opt.ResolveUsing(source => source.OrganisationData?.CompanySummary))
                 .ForMember(dest => dest.CharitySummary, opt => opt.ResolveUsing(source => source.OrganisationData?.CharitySummary));
         }

@@ -13,6 +13,7 @@
         public string PrimaryContact { get; set; }
         public bool RoATPApproved { get; set; }
         public bool RoEPAOApproved { get; set; }
+        public string OrganisationType { get; set; }
         public string Status { get; set; }
 
         public CompaniesHouseSummary CompanySummary { get; set; }
