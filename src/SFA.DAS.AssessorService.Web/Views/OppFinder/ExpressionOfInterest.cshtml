@@ -76,28 +76,31 @@
                             Email address
                         </label>
                         <sfa-validationerror-detail sfa-validation-for="Email" sfa-validationerror-class="govuk-error-message"></sfa-validationerror-detail>
-                        <input class="govuk-input" name="Email" sfa-validation-for="Email" sfa-validationerror-class="govuk-input--error" asp-for="Email" type="text" maxlength="254" />
+                        <input class="govuk-input" name="Email" sfa-validation-for="Email" sfa-validationerror-class="govuk-input--error" asp-for="Email" type="email" autocomplete="email" spellcheck="false" maxlength="254" />
                     </div>
                     <div class="govuk-form-group" sfa-validation-for="OrganisationName" sfa-validationerror-class="govuk-form-group--error">
                         <label class="govuk-label" for="OrganisationName">
                             Organsiation name
                         </label>
                         <sfa-validationerror-detail sfa-validation-for="OrganisationName" sfa-validationerror-class="govuk-error-message"></sfa-validationerror-detail>
-                        <input class="govuk-input" name="OrganisationName" sfa-validation-for="OrganisationName" sfa-validationerror-class="govuk-input--error" asp-for="OrganisationName" type="text" maxlength="254" />
+                        <input class="govuk-input" name="OrganisationName" sfa-validation-for="OrganisationName" sfa-validationerror-class="govuk-input--error" asp-for="OrganisationName" type="text" spellcheck="false" autocomplete="organization" maxlength="254" />
                     </div>
                     <div class="govuk-form-group" sfa-validation-for="ContactName" sfa-validationerror-class="govuk-form-group--error">
                         <label class="govuk-label" for="ContactName">
                             Full name
                         </label>
                         <sfa-validationerror-detail sfa-validation-for="ContactName" sfa-validationerror-class="govuk-error-message"></sfa-validationerror-detail>
-                        <input class="govuk-input" name="ContactName" sfa-validation-for="ContactName" sfa-validationerror-class="govuk-input--error" asp-for="ContactName" type="text" maxlength="254" />
+                        <input class="govuk-input" name="ContactName" sfa-validation-for="ContactName" sfa-validationerror-class="govuk-input--error" asp-for="ContactName" type="text" autocomplete="name" spellcheck="false" maxlength="254" />
                     </div>
                     <div class="govuk-form-group" sfa-validation-for="ContactNumber" sfa-validationerror-class="govuk-form-group--error">
-                        <label class="govuk-label" for="ContactName">
-                            UK telephone number
+                        <label class="govuk-label" for="ContactNumber">
+                            Telephone number (optional)
                         </label>
+                        <span id="ContactNumber-hint" class="govuk-hint">
+                            For international numbers include the country code
+                        </span>
                         <sfa-validationerror-detail sfa-validation-for="ContactNumber" sfa-validationerror-class="govuk-error-message"></sfa-validationerror-detail>
-                        <input class="govuk-input govuk-input--width-20" name="ContactNumber" sfa-validation-for="ContactNumber" sfa-validationerror-class="govuk-input--error" asp-for="ContactNumber" type="text" maxlength="254" />
+                        <input class="govuk-input govuk-input--width-20" name="ContactNumber" sfa-validation-for="ContactNumber" sfa-validationerror-class="govuk-input--error" asp-for="ContactNumber" type="tel" aria-describedby="ContactNumber-hint" maxlength="254" autocomplete="tel" />
                     </div>
                 </div>
                 <button class="govuk-button" type="submit" name="ActionChoice">Express interest</button>
