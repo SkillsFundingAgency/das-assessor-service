@@ -6,7 +6,18 @@
     ViewBag.Title = (!ViewData.ModelState.IsValid ? "Error: " : "") + viewTitle;
     Layout = "_OppFinderLayout";
 }
-
+@if (Model.StandardStatus == StandardStatus.Approved)
+{
+    <a class="govuk-back-link" asp-controller="OppFinder" asp-action="ShowApprovedStandardDetails" asp-route-standardCode="@Model.StandardCode">Back</a>
+}
+else if (Model.StandardStatus == StandardStatus.InDevelopment)
+{
+    <a class="govuk-back-link" asp-controller="OppFinder" asp-action="ShowInDevelopmentStandardDetails" asp-route-standardReference="@Model.StandardReference">Back</a>
+}
+else
+{
+    <a class="govuk-back-link" asp-controller="OppFinder" asp-action="ShowProposedStandardDetails" asp-route-standardReference="@Model.StandardReference">Back</a>
+}
 <main class="govuk-main-wrapper " id="main-content" role="main">
     @if (!ViewData.ModelState.IsValid)
     {

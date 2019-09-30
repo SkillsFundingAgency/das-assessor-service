@@ -405,14 +405,14 @@ namespace SFA.DAS.AssessorService.Web.Controllers.OppFinder
 
         [HttpGet(nameof(ExpressionOfInterestNonApproved))]
         [ModelStatePersist(ModelStatePersist.RestoreEntry)]
-        public async Task<IActionResult> ExpressionOfInterestNonApproved(string standardReference)
+        public async Task<IActionResult> ExpressionOfInterestNonApproved(string standardReference, StandardStatus standardStatus)
         {
             var standardDetails = await _oppFinderApiClient.
                 GetNonApprovedStandardDetails(new GetOppFinderNonApprovedStandardDetailsRequest { StandardReference = standardReference });
 
             var viewModel = new OppFinderExpressionOfInterestViewModel
             {
-                StandardStatus = StandardStatus.NonApproved,
+                StandardStatus = standardStatus,
                 StandardName = standardDetails.Title,
                 StandardLevel = standardDetails.StandardLevel,
                 StandardReference = standardDetails.StandardReference,
