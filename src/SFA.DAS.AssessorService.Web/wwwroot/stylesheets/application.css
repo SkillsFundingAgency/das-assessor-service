@@ -69,6 +69,10 @@
   line-height: 1.25;
 }
 
+.das-inline-button-link--start {
+  padding: 9px 0;
+}
+
 @media (min-width: 40.0625em) {
   .das-inline-button-link {
     padding-left: 0.526315em;
