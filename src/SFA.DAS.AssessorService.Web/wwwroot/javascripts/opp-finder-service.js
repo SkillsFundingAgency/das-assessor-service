@@ -11,6 +11,8 @@
       "#standard-filters",
       searchPartial
     );
+    window.location =
+      window.location.origin + window.location.pathname + "#main-content";
     event.preventDefault();
   });
 
