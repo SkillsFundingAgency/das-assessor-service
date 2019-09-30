@@ -49,6 +49,19 @@ else
                     </li>
                 </ul>
                 <a href="@Url.Action("Sequence", "Application", new {id = Model.Id, sequenceNo = Model.SequenceNo})" class="govuk-button">Return to application overview</a>
+
+                @if (Model.SequenceNo == 1 && Model.Section.SectionNo == 1)
+                {
+                    <form asp-action="RefreshApplicationData" asp-controller="Application">
+                        <input type="hidden" id="Id" name="Id" value="@Model.Id" />
+                        <input type="hidden" id="sequenceNo" name="sequenceNo" value="@Model.SequenceNo" />
+                        <div class="govuk-form-group">
+                            <button type="submit" class="govuk-button">
+                                Submit
+                            </button>
+                        </div>
+                    </form>
+                }
             }
         </div>
     </div>

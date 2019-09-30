@@ -250,7 +250,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             var canUpdate = CanUpdateApplication(sequence, application.ApplyData?.Sequences, sequenceNo);
             if (!canUpdate)
             {
-                return RedirectToAction("Sequence", new { Id });
+                return RedirectToAction("Sequence", new { Id, sequenceNo });
             }
 
             PageViewModel viewModel = null;
@@ -376,7 +376,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             var canUpdate = CanUpdateApplication(sequence, application.ApplyData?.Sequences, sequenceNo);
             if (!canUpdate)
             {
-                return RedirectToAction("Sequence", new { application.ApplicationId });
+                return RedirectToAction("Sequence", new { Id, sequenceNo });
             }
 
             var page = await _qnaApiClient.GetPage(application.ApplicationId, sectionId, pageId);
@@ -449,7 +449,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             return RedirectToAction("Page", new { Id, sequenceNo, sectionId, pageId,  __redirectAction });
         }
 
-        [HttpPost("/Application/Submit/{sequenceNo}")]
+        [HttpPost("/Application/{Id}/Submit/{sequenceNo}")]
         public async Task<IActionResult> Submit(Guid Id, int sequenceNo)
         {
             var signinId = User.Claims.First(c => c.Type == "sub")?.Value;
@@ -461,7 +461,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             var canUpdate = CanUpdateApplication(sequence, application.ApplyData?.Sequences,  sequenceNo);
             if (!canUpdate)
             {
-                return RedirectToAction("Sequence", new { Id });
+                return RedirectToAction("Sequence", new { Id, sequenceNo });
             }
 
             var sections = await _qnaApiClient.GetSections(application.ApplicationId, sequence.Id);
