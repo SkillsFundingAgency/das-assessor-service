@@ -44,7 +44,7 @@ namespace SFA.DAS.AssessorService.Web.AutoMapperProfiles
             CreateMap<Officer, DirectorInformation>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(source => source.Id))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(source => source.Name))
-                .ForMember(dest => dest.DateOfBirth, opt => opt.MapFrom(source => source.DateOfBirth))
+                .ForMember(dest => dest.DateOfBirth, opt => opt.MapFrom(source => source.DateOfBirth.ToString("MM,yyyy")))
                 .ForMember(dest => dest.AppointedDate, opt => opt.MapFrom(source => source.AppointedOn))
                 .ForMember(dest => dest.ResignedDate, opt => opt.MapFrom(source => source.ResignedOn))
                 .ForAllOtherMembers(opt => opt.Ignore());
@@ -58,7 +58,7 @@ namespace SFA.DAS.AssessorService.Web.AutoMapperProfiles
             CreateMap<PersonWithSignificantControl, PersonWithSignificantControlInformation>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(source => source.Id))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(source => source.Name))
-                .ForMember(dest => dest.DateOfBirth, opt => opt.MapFrom(source => source.DateOfBirth))
+                .ForMember(dest => dest.DateOfBirth, opt => opt.MapFrom(source => source.DateOfBirth.ToString("MM,yyyy")))
                 .ForMember(dest => dest.NotifiedDate, opt => opt.MapFrom(source => source.NotifiedOn))
                 .ForMember(dest => dest.CeasedDate, opt => opt.MapFrom(source => source.CeasedOn))
                 .ForAllOtherMembers(opt => opt.Ignore());

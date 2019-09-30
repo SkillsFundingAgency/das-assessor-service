@@ -66,7 +66,7 @@ namespace SFA.DAS.AssessorService.ApplyTypes.CompaniesHouse
     {
         public string Id { get; set; }
         public string Name { get; set; }
-        public DateTime? DateOfBirth { get; set; }
+        public string DateOfBirth { get; set; }
         public DateTime? AppointedDate { get; set; }
         public DateTime? ResignedDate { get; set; }
 
@@ -80,7 +80,7 @@ namespace SFA.DAS.AssessorService.ApplyTypes.CompaniesHouse
     {
         public string Id { get; set; }
         public string Name { get; set; }
-        public DateTime? DateOfBirth { get; set; }
+        public string DateOfBirth { get; set; }
         public DateTime? NotifiedDate { get; set; }
         public DateTime? CeasedDate { get; set; }
 
