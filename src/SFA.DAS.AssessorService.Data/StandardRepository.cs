@@ -203,7 +203,7 @@ namespace SFA.DAS.AssessorService.Data
         public async Task<int> GetEpaoStandardsCount(string endPointAssessorOrganisationId)
         {
             var @params = new DynamicParameters();
-            @params.Add("EPAOId", endPointAssessorOrganisationId);
+            @params.Add("EPAO", endPointAssessorOrganisationId);
             @params.Add("Count", dbType: DbType.Int32, direction: ParameterDirection.Output);
 
             await _unitOfWork.Connection.QueryAsync(
