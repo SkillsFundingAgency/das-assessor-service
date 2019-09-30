@@ -4,7 +4,7 @@
 @{
     var viewTitle = "Expression of interest";
     ViewBag.Title = (!ViewData.ModelState.IsValid ? "Error: " : "") + viewTitle;
-    Layout = "~/Views/Shared/_OppFinderServiceLayout.cshtml";
+    Layout = "_OppFinderLayout";
 }
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
@@ -25,6 +25,7 @@
         </div>
     }
     <h1 class="govuk-heading-xl">@viewTitle</h1>
+
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             <p class="govuk-body">
@@ -36,7 +37,7 @@
             </p>
             <p class="govuk-body">Doing so will help us to manage End-point assessment capability for apprentices.</p>
 
-            <dl class="govuk-summary-list">
+            <dl class="govuk-summary-list govuk-!-margin-bottom-8">
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">Standard</dt>
                     <dd class="govuk-summary-list__value">@Model.StandardName</dd>
@@ -54,7 +55,13 @@
                     <dd class="govuk-summary-list__value">@Model.StandardSector</dd>
                 </div>
             </dl>
-            <h2 class="govuk-heading-m">Your details</h2>
+        </div>
+    </div>
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+
+            <h2 class="govuk-heading-l">Your details</h2>
             <form asp-controller="OppFinder" asp-action="ExpressionOfInterest">
                 <input type="hidden" asp-for="StandardCode">
                 <input type="hidden" asp-for="StandardName">
@@ -66,31 +73,31 @@
                 <div class="govuk-form-group">
                     <div class="govuk-form-group" sfa-validation-for="Email" sfa-validationerror-class="govuk-form-group--error">
                         <label class="govuk-label" for="Email">
-                            What is your email addresss?
+                            Email address
                         </label>
                         <sfa-validationerror-detail sfa-validation-for="Email" sfa-validationerror-class="govuk-error-message"></sfa-validationerror-detail>
                         <input class="govuk-input" name="Email" sfa-validation-for="Email" sfa-validationerror-class="govuk-input--error" asp-for="Email" type="text" maxlength="254" />
                     </div>
                     <div class="govuk-form-group" sfa-validation-for="OrganisationName" sfa-validationerror-class="govuk-form-group--error">
                         <label class="govuk-label" for="OrganisationName">
-                            What is your organsiation's name?
+                            Organsiation name
                         </label>
                         <sfa-validationerror-detail sfa-validation-for="OrganisationName" sfa-validationerror-class="govuk-error-message"></sfa-validationerror-detail>
                         <input class="govuk-input" name="OrganisationName" sfa-validation-for="OrganisationName" sfa-validationerror-class="govuk-input--error" asp-for="OrganisationName" type="text" maxlength="254" />
                     </div>
                     <div class="govuk-form-group" sfa-validation-for="ContactName" sfa-validationerror-class="govuk-form-group--error">
                         <label class="govuk-label" for="ContactName">
-                            What is your name?
+                            Full name
                         </label>
                         <sfa-validationerror-detail sfa-validation-for="ContactName" sfa-validationerror-class="govuk-error-message"></sfa-validationerror-detail>
                         <input class="govuk-input" name="ContactName" sfa-validation-for="ContactName" sfa-validationerror-class="govuk-input--error" asp-for="ContactName" type="text" maxlength="254" />
                     </div>
                     <div class="govuk-form-group" sfa-validation-for="ContactNumber" sfa-validationerror-class="govuk-form-group--error">
                         <label class="govuk-label" for="ContactName">
-                            What is your contact number? (optional)
+                            UK telephone number
                         </label>
                         <sfa-validationerror-detail sfa-validation-for="ContactNumber" sfa-validationerror-class="govuk-error-message"></sfa-validationerror-detail>
-                        <input class="govuk-input" name="ContactNumber" sfa-validation-for="ContactNumber" sfa-validationerror-class="govuk-input--error" asp-for="ContactNumber" type="text" maxlength="254" />
+                        <input class="govuk-input govuk-input--width-20" name="ContactNumber" sfa-validation-for="ContactNumber" sfa-validationerror-class="govuk-input--error" asp-for="ContactNumber" type="text" maxlength="254" />
                     </div>
                 </div>
                 <button class="govuk-button" type="submit" name="ActionChoice">Express interest</button>
