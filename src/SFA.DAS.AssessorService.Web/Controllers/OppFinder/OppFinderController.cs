@@ -405,14 +405,14 @@ namespace SFA.DAS.AssessorService.Web.Controllers.OppFinder
 
         [HttpGet(nameof(ExpressionOfInterestNonApproved))]
         [ModelStatePersist(ModelStatePersist.RestoreEntry)]
-        public async Task<IActionResult> ExpressionOfInterestNonApproved(string standardReference)
+        public async Task<IActionResult> ExpressionOfInterestNonApproved(string standardReference, StandardStatus standardStatus)
         {
             var standardDetails = await _oppFinderApiClient.
                 GetNonApprovedStandardDetails(new GetOppFinderNonApprovedStandardDetailsRequest { StandardReference = standardReference });
 
             var viewModel = new OppFinderExpressionOfInterestViewModel
             {
-                StandardStatus = StandardStatus.NonApproved,
+                StandardStatus = standardStatus,
                 StandardName = standardDetails.Title,
                 StandardLevel = standardDetails.StandardLevel,
                 StandardReference = standardDetails.StandardReference,
@@ -484,7 +484,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.OppFinder
             catch (Exception e)
             {
                 _logger.LogError(e, $"Failed to express interest {viewModel.StandardName}, {viewModel.Email}, {viewModel.OrganisationName}, {viewModel.ContactName}, {viewModel.ContactNumber}");
-                ModelState.AddModelError(nameof(OppFinderExpressionOfInterestViewModel.Email), "Unable to express interest at this time.");
+                ModelState.AddModelError(nameof(OppFinderExpressionOfInterestViewModel.StandardReference), "Unable to express interest at this time.");
 
                 if (viewModel.StandardStatus == StandardStatus.Approved)
                 {

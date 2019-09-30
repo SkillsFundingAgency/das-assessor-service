@@ -13,17 +13,17 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Standards
     public class GetOppFinderFilterStandardsHandler : IRequestHandler<GetOppFinderFilterStandardsRequest, GetOppFinderFilterStandardsResponse>
     {
         private readonly ILogger<GetOppFinderFilterStandardsHandler> _logger;
-        private readonly IStandardRepository _standardRepository;
-        public GetOppFinderFilterStandardsHandler(ILogger<GetOppFinderFilterStandardsHandler> logger, IStandardRepository standardRepository)
+        private readonly IOppFinderRepository _oppFinderRepository;
+        public GetOppFinderFilterStandardsHandler(ILogger<GetOppFinderFilterStandardsHandler> logger, IOppFinderRepository oppFinderRepository)
         {
             _logger = logger;
-            _standardRepository = standardRepository;
+            _oppFinderRepository = oppFinderRepository;
         }
 
         public async Task<GetOppFinderFilterStandardsResponse> Handle(GetOppFinderFilterStandardsRequest request, CancellationToken cancellationToken)
         {
             _logger.LogInformation("Retreiving filter standards results");
-            var filterResult = await _standardRepository.GetOppFinderFilterStandards(request.SearchTerm, request.SectorFilters, request.LevelFilters);
+            var filterResult = await _oppFinderRepository.GetOppFinderFilterStandards(request.SearchTerm, request.SectorFilters, request.LevelFilters);
 
             var sectorFilterResults = filterResult.MatchingSectorFilterResults
                 .ToList()

@@ -13,18 +13,18 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Standards
     public class GetOppFinderNonApprovedStandardsHandler : IRequestHandler<GetOppFinderNonApprovedStandardsRequest, GetOppFinderNonApprovedStandardsResponse>
     {
         private readonly ILogger<GetOppFinderNonApprovedStandardsHandler> _logger;
-        private readonly IStandardRepository _standardRepository;
+        private readonly IOppFinderRepository _oppFinderRepository;
 
-        public GetOppFinderNonApprovedStandardsHandler(ILogger<GetOppFinderNonApprovedStandardsHandler> logger, IStandardRepository standardRepository)
+        public GetOppFinderNonApprovedStandardsHandler(ILogger<GetOppFinderNonApprovedStandardsHandler> logger, IOppFinderRepository oppFinderRepository)
         {
             _logger = logger;
-            _standardRepository = standardRepository;
+            _oppFinderRepository = oppFinderRepository;
         }
 
         public async Task<GetOppFinderNonApprovedStandardsResponse> Handle(GetOppFinderNonApprovedStandardsRequest request, CancellationToken cancellationToken)
         {
             _logger.LogInformation($"Retreiving non approved standards: {request.NonApprovedType}");
-            var result = await _standardRepository.GetOppFinderNonApprovedStandards(request.SearchTerm, request.SectorFilters, request.LevelFilters, 
+            var result = await _oppFinderRepository.GetOppFinderNonApprovedStandards(request.SearchTerm, request.SectorFilters, request.LevelFilters, 
                 request.SortColumn, request.SortAscending, request.PageSize, request.PageIndex ?? 1, request.NonApprovedType);
 
             var standards = result.PageOfResults

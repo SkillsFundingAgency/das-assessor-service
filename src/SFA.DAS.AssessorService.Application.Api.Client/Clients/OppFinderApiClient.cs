@@ -66,7 +66,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 
         public async Task<bool> RecordExpresionOfInterest(OppFinderExpressionOfInterestRequest oppFinderExpressionOfInterestRequest)
         {
-            return await Task.FromResult(true);
+            using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/v1/oppfinder/expression-of-interest"))
+            {
+                return await PostPutRequestWithResponse<OppFinderExpressionOfInterestRequest, bool>(request,
+                    oppFinderExpressionOfInterestRequest);
+            }
         }
     }
 }

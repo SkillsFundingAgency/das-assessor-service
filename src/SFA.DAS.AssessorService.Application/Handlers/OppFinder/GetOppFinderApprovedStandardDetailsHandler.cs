@@ -13,20 +13,20 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Standards
   public class GetOppFinderApprovedStandardDetailsHandler : IRequestHandler<GetOppFinderApprovedStandardDetailsRequest, GetOppFinderApprovedStandardDetailsResponse>
   {
     private readonly ILogger<GetOppFinderApprovedStandardDetailsHandler> _logger;
-    private readonly IStandardRepository _standardRepository;
+    private readonly IOppFinderRepository _oppFinderRepository;
     private readonly IMediator _mediator;
 
-    public GetOppFinderApprovedStandardDetailsHandler(ILogger<GetOppFinderApprovedStandardDetailsHandler> logger, IStandardRepository standardRepository, IMediator mediator)
+    public GetOppFinderApprovedStandardDetailsHandler(ILogger<GetOppFinderApprovedStandardDetailsHandler> logger, IOppFinderRepository oppFinderRepository, IMediator mediator)
     {
       _logger = logger;
-      _standardRepository = standardRepository;
+      _oppFinderRepository = oppFinderRepository;
       _mediator = mediator;
     }
 
     public async Task<GetOppFinderApprovedStandardDetailsResponse> Handle(GetOppFinderApprovedStandardDetailsRequest request, CancellationToken cancellationToken)
     {
       _logger.LogInformation($"Retreiving approved standard details: {request.StandardCode}");
-      var result = await _standardRepository.GetOppFinderApprovedStandardDetails(request.StandardCode);
+      var result = await _oppFinderRepository.GetOppFinderApprovedStandardDetails(request.StandardCode);
 
       string eqaProvider, eqaProviderLink = string.Empty;
 
