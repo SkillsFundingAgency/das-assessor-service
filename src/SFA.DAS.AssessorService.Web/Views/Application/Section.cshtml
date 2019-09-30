@@ -1,4 +1,5 @@
 @model SFA.DAS.AssessorService.ApplyTypes.ApplicationSection
+@inject Microsoft.Extensions.Configuration.IConfiguration configuration
 @{
     ViewBag.Title = @Model?.Section.Title ?? "Section not active";
     Layout = "_Layout";
@@ -50,17 +51,21 @@ else
                 </ul>
                 <a href="@Url.Action("Sequence", "Application", new {id = Model.Id, sequenceNo = Model.SequenceNo})" class="govuk-button">Return to application overview</a>
 
-                @if (Model.SequenceNo == 1 && Model.Section.SectionNo == 1)
+                // This is Developer WIP until we get the appropraite UX/UI designs
+                @if (!configuration["EnvironmentName"].EndsWith("PROD", StringComparison.InvariantCultureIgnoreCase))
                 {
-                    <form asp-action="RefreshApplicationData" asp-controller="Application">
-                        <input type="hidden" id="Id" name="Id" value="@Model.Id" />
-                        <input type="hidden" id="sequenceNo" name="sequenceNo" value="@Model.SequenceNo" />
-                        <div class="govuk-form-group">
-                            <button type="submit" class="govuk-button">
-                                Submit
-                            </button>
-                        </div>
-                    </form>
+                    if (Model.SequenceNo == 1 && Model.Section.SectionNo == 1)
+                    {
+                        <form asp-action="RefreshApplicationData" asp-controller="Application">
+                            <input type="hidden" id="Id" name="Id" value="@Model.Id" />
+                            <input type="hidden" id="sequenceNo" name="sequenceNo" value="@Model.SequenceNo" />
+                            <div class="govuk-form-group">
+                                <button type="submit" class="govuk-button">
+                                    Refresh Application Data
+                                </button>
+                            </div>
+                        </form>
+                    }
                 }
             }
         </div>

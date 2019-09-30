@@ -416,6 +416,14 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             return RedirectToAction("Page", new { Id, sequenceNo, sectionId, pageId, __redirectAction });
         }
 
+        [HttpPost("/Application/{Id}/SequenceNo/{sequenceNo}/RefreshApplicationData")]
+        public async Task<IActionResult> RefreshApplicationData(Guid Id, int sequenceNo)
+        {
+
+
+            return RedirectToAction("Sequence", new { Id, sequenceNo });
+        }
+
         [HttpPost("/Application/DeleteAnswer")]
         public async Task<IActionResult> DeleteAnswer(Guid Id, int sequenceNo, Guid sectionId, string pageId, Guid answerId, string __redirectAction)
         {
