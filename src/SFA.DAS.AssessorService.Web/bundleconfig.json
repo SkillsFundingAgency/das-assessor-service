@@ -53,8 +53,8 @@
     }
   },
   {
-    "outputFileName": "wwwroot/javascripts/gov-uk-postcode-lookup-service.min.js",
-    "inputFiles": [ "wwwroot/javascripts/gov-uk-postcode-lookup-service.js" ],
+    "outputFileName": "wwwroot/javascripts/govuk-postcode-lookup-service.min.js",
+    "inputFiles": [ "wwwroot/javascripts/govuk-postcode-lookup-service.js" ],
     "minify": {
       "enabled": true,
       "renameLocals": true
