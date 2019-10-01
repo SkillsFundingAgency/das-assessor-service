@@ -22,7 +22,7 @@
 }
 else
 {
-    <table class="govuk-table">
+    <table class="govuk-table govuk-table--small">
         <thead class="govuk-table__head">
             <tr class="govuk-table__row">
                 <th scope="col" class="govuk-table__header">
@@ -66,7 +66,7 @@ else
             <div class="das-flex-space-around">
                 <div>
                         <select class="proposed-per-page govuk-select" asp-for="ProposedStandardsPerPage" asp-items="Model.StandardsPerPage"></select>
-                        <text>Standards per page</text>
+                        <span>Standards per page</span>
                 </div>
                 <div class="das-pagination-links">
                     @{await Html.RenderPartialAsync("_PaginationLinksPartial", new OppFinderPaginationViewModel

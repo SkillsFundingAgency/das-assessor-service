@@ -74,7 +74,7 @@ else
         <div class="govuk-grid-column-two-thirds">
 
             <h2 class="govuk-heading-l">Your details</h2>
-            <form asp-controller="OppFinder" asp-action="ExpressionOfInterest">
+            <form asp-controller="OppFinder" asp-action="ExpressionOfInterest" novalidate>
                 <input type="hidden" asp-for="StandardCode">
                 <input type="hidden" asp-for="StandardName">
                 <input type="hidden" asp-for="StandardLevel">
@@ -92,7 +92,7 @@ else
                     </div>
                     <div class="govuk-form-group" sfa-validation-for="OrganisationName" sfa-validationerror-class="govuk-form-group--error">
                         <label class="govuk-label" for="OrganisationName">
-                            Organsiation name
+                            Organisation name
                         </label>
                         <sfa-validationerror-detail sfa-validation-for="OrganisationName" sfa-validationerror-class="govuk-error-message"></sfa-validationerror-detail>
                         <input class="govuk-input" name="OrganisationName" sfa-validation-for="OrganisationName" sfa-validationerror-class="govuk-input--error" asp-for="OrganisationName" type="text" spellcheck="false" autocomplete="organization" maxlength="254" />
