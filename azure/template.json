@@ -50,7 +50,7 @@
         "storageAccountName": {
             "type": "string"
         },
-        "containerArray": {
+        "storageAccountContainerArray": {
             "type": "array"
         },
         "serviceBusName": {
