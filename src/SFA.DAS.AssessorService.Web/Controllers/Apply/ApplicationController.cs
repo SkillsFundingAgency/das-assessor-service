@@ -421,10 +421,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             return RedirectToAction("Page", new { Id, sequenceNo, sectionId, pageId, __redirectAction });
         }
 
-        [HttpPost("/Application/{Id}/SequenceNo/{sequenceNo}/RefreshApplicationData")]
-        public async Task<IActionResult> RefreshApplicationData(Guid Id, int sequenceNo)
+        [HttpPost("/Application/{Id}/RefreshApplicationData")]
+        public async Task<IActionResult> RefreshApplicationData(Guid Id)
         {
-            var applicationData = await _qnaApiClient.GetApplicationData(Id);
+            var application = await _applicationApiClient.GetApplication(Id);
+            var applicationData = await _qnaApiClient.GetApplicationData(application.ApplicationId);
 
             if(applicationData != null)
             {
@@ -434,10 +435,10 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 applicationData.CompanySummary = Mapper.Map<CompaniesHouseSummary>(companyDetails);
                 applicationData.CharitySummary = Mapper.Map<CharityCommissionSummary>(charityDetails);
 
-                await _qnaApiClient.UpdateApplicationData(Id, applicationData);
+                await _qnaApiClient.UpdateApplicationData(application.ApplicationId, applicationData);
             }
 
-            return RedirectToAction("Sequence", new { Id, sequenceNo });
+            return RedirectToAction("SequenceSignPost", new { Id });
         }
 
         [HttpPost("/Application/DeleteAnswer")]
