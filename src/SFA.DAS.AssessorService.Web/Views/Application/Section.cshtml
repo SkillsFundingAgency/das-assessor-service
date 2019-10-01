@@ -1,4 +1,5 @@
 @model SFA.DAS.AssessorService.ApplyTypes.ApplicationSection
+@inject Microsoft.Extensions.Configuration.IConfiguration configuration
 @{
     ViewBag.Title = @Model?.Section.Title ?? "Section not active";
     Layout = "_Layout";
@@ -29,6 +30,23 @@ else
                     </span>
                 }
                 <h1 class="govuk-heading-xl">@Model.Section.Title</h1>
+
+                // This is Developer WIP until we get the appropraite UX/UI designs
+                @if (!configuration["EnvironmentName"].EndsWith("PROD", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    if (Model.SequenceNo == 1 && Model.Section.SectionNo == 1)
+                    {
+                        <form asp-action="RefreshApplicationData" asp-controller="Application">
+                            <input type="hidden" id="Id" name="Id" value="@Model.Id" />
+                            <div class="govuk-form-group">
+                                <button type="submit" class="govuk-button">
+                                    Refresh Application Data
+                                </button>
+                            </div>
+                        </form>
+                    }
+                }
+
                 <ul class="app-task-list">
                     <li>
                         <ul class="app-task-list__items app-task-list__items--no-number">

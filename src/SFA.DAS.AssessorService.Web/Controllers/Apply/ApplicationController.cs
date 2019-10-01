@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -14,6 +15,8 @@ using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Application.Exceptions;
 using SFA.DAS.AssessorService.ApplyTypes;
+using SFA.DAS.AssessorService.ApplyTypes.CharityCommission;
+using SFA.DAS.AssessorService.ApplyTypes.CompaniesHouse;
 using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.ViewModels.Apply;
@@ -252,7 +255,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             var canUpdate = CanUpdateApplication(sequence, application.ApplyData?.Sequences, sequenceNo);
             if (!canUpdate)
             {
-                return RedirectToAction("Sequence", new { Id });
+                return RedirectToAction("Sequence", new { Id, sequenceNo });
             }
 
             PageViewModel viewModel = null;
@@ -378,7 +381,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             var canUpdate = CanUpdateApplication(sequence, application.ApplyData?.Sequences, sequenceNo);
             if (!canUpdate)
             {
-                return RedirectToAction("Sequence", new { application.ApplicationId });
+                return RedirectToAction("Sequence", new { Id, sequenceNo });
             }
 
             var page = await _qnaApiClient.GetPage(application.ApplicationId, sectionId, pageId);
@@ -418,6 +421,26 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             return RedirectToAction("Page", new { Id, sequenceNo, sectionId, pageId, __redirectAction });
         }
 
+        [HttpPost("/Application/{Id}/RefreshApplicationData")]
+        public async Task<IActionResult> RefreshApplicationData(Guid Id)
+        {
+            var application = await _applicationApiClient.GetApplication(Id);
+            var applicationData = await _qnaApiClient.GetApplicationData(application.ApplicationId);
+
+            if(applicationData != null)
+            {
+                var companyDetails = !string.IsNullOrWhiteSpace(applicationData.CompanySummary?.CompanyNumber) ? await _orgApiClient.GetCompanyDetails(applicationData.CompanySummary.CompanyNumber) : null;
+                var charityDetails = int.TryParse(applicationData.CharitySummary?.CharityNumber, out var charityNumber) ? await _orgApiClient.GetCharityDetails(charityNumber) : null;
+
+                applicationData.CompanySummary = Mapper.Map<CompaniesHouseSummary>(companyDetails);
+                applicationData.CharitySummary = Mapper.Map<CharityCommissionSummary>(charityDetails);
+
+                await _qnaApiClient.UpdateApplicationData(application.ApplicationId, applicationData);
+            }
+
+            return RedirectToAction("SequenceSignPost", new { Id });
+        }
+
         [HttpPost("/Application/DeleteAnswer")]
         public async Task<IActionResult> DeleteAnswer(Guid Id, int sequenceNo, Guid sectionId, string pageId, Guid answerId, string __redirectAction)
         {
@@ -451,7 +474,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             return RedirectToAction("Page", new { Id, sequenceNo, sectionId, pageId,  __redirectAction });
         }
 
-        [HttpPost("/Application/Submit/{sequenceNo}")]
+        [HttpPost("/Application/{Id}/Submit/{sequenceNo}")]
         public async Task<IActionResult> Submit(Guid Id, int sequenceNo)
         {
             var signinId = User.Claims.First(c => c.Type == "sub")?.Value;
@@ -463,7 +486,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             var canUpdate = CanUpdateApplication(sequence, application.ApplyData?.Sequences,  sequenceNo);
             if (!canUpdate)
             {
-                return RedirectToAction("Sequence", new { Id });
+                return RedirectToAction("Sequence", new { Id, sequenceNo });
             }
 
             var sections = await _qnaApiClient.GetSections(application.ApplicationId, sequence.Id);
