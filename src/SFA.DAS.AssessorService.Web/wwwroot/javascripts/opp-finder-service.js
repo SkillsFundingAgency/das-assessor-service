@@ -16,7 +16,7 @@
     event.preventDefault();
   });
 
-  $(".govuk-details__summary").on("click", function(event) {
+  $(".js-toggle-filters-button").on("click", function(event) {
     var showHideFilterButton = $(this).find(".govuk-details__summary-text");
     var showHideFilterText = showHideFilterButton.text();
 
