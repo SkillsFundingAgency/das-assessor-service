@@ -161,6 +161,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
 	                       CASE WHEN (ap1.FinancialReviewStatus = @financialReviewStatusInProgress) THEN @applicationStatusInProgress
                                 WHEN (ap1.ApplicationStatus = @applicationStatusResubmitted) THEN @applicationStatusResubmitted
                                 WHEN (ap1.ApplicationStatus = @applicationStatusSubmitted) THEN @applicationStatusSubmitted
+                                ELSE section.Status
                            END As CurrentStatus
                         FROM Applications ap1
                         INNER JOIN Organisations org ON ap1.OrganisationId = org.Id
