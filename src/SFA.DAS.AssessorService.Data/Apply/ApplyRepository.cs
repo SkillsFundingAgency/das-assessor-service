@@ -94,6 +94,17 @@ namespace SFA.DAS.AssessorService.Data.Apply
             }
         }
 
+        public async Task StartFinancialReview(Guid id)
+        {
+            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            {
+                await connection.ExecuteAsync(@"UPDATE Applications 
+                                                SET FinancialReviewStatus = @financialReviewStatusInProgress
+                                                WHERE Id = @id AND FinancialReviewStatus = @financialReviewStatusNew",
+                    new { id, financialReviewStatusInProgress = FinancialReviewStatus.InProgress, financialReviewStatusNew = FinancialReviewStatus.New });
+            }
+        }
+
         public async Task UpdateApplicationFinancialGrade(Guid id, FinancialGrade financialGrade)
         {
             if (financialGrade != null)
@@ -147,18 +158,19 @@ namespace SFA.DAS.AssessorService.Data.Apply
                            section.SectionNo AS SectionNo, 
                            apply.SubmittedDate AS SubmittedDate,
                            apply.SubmissionCount AS SubmissionCount, 
-	                       ap1.ApplicationStatus AS CurrentStatus
+	                       ap1.ApplicationStatus AS CurrentStatus -- NOTE: IS THIS THE CORRECT COLUMN???
                         FROM Applications ap1
                         INNER JOIN Organisations org ON ap1.OrganisationId = org.Id
                             CROSS APPLY OPENJSON(ApplyData,'$.Sequences') WITH (SequenceNo INT, IsActive BIT, Status VARCHAR(20)) sequence
                             CROSS APPLY OPENJSON(ApplyData,'$.Sequences[0].Sections') WITH (SectionNo INT, Status VARCHAR(20)) section
                             CROSS APPLY OPENJSON(ApplyData,'$.Apply') WITH (SubmittedDate VARCHAR(30) '$.LatestInitSubmissionDate', SubmissionCount INT '$.InitSubmissionCount') apply
                         WHERE sequence.SequenceNo = 1 AND section.SectionNo = 3 AND sequence.IsActive = 1
-                            AND ap1.FinancialReviewStatus = @financialReviewStatusNew -- NOTE: May need to consider Required status. Assumption is that on submit, it will be set to New
+                            AND ap1.FinancialReviewStatus IN (@financialReviewStatusNew, @financialReviewStatusInProgress) -- NOTE: May need to consider Required status. Assumption is that on submit, it will be set to New
                             AND ap1.ApplicationStatus IN (@applicationStatusSubmitted, @applicationStatusResubmitted)",
                         new
                         {
                             financialReviewStatusNew = FinancialReviewStatus.New,
+                            financialReviewStatusInProgress = FinancialReviewStatus.InProgress,
                             applicationStatusSubmitted = ApplicationStatus.Submitted,
                             applicationStatusResubmitted = ApplicationStatus.Resubmitted,
                         })).ToList();
