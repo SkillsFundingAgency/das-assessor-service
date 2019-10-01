@@ -50,6 +50,9 @@
         "storageAccountName": {
             "type": "string"
         },
+        "containerArray": {
+            "type": "array"
+        },
         "serviceBusName": {
             "type": "string"
         },
@@ -67,6 +70,7 @@
         }
     },
     "variables": {
+        "deploymentUrlBase": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/",
         "InstanceName": "[if(equals(toUpper(parameters('environmentName')),'PROD'),'',parameters('environmentName'))]"
     },
     "resources": [
@@ -77,7 +81,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/app-service.json",
+                    "uri": "[concat(variables('deploymentUrlBase'), 'app-service.json')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -139,7 +143,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/app-service.json",
+                    "uri": "[concat(variables('deploymentUrlBase'), 'app-service.json')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -201,7 +205,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/app-service.json",
+                    "uri": "[concat(variables('deploymentUrlBase'), 'app-service.json')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -251,7 +255,8 @@
                     }
                 }
             },
-            "dependsOn": []
+            "dependsOn": [
+            ]
         },
         {
             "apiVersion": "2017-05-10",
@@ -260,7 +265,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/app-service.json",
+                    "uri": "[concat(variables('deploymentUrlBase'), 'app-service.json')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -314,7 +319,8 @@
                     }
                 }
             },
-            "dependsOn": []
+            "dependsOn": [
+            ]
         },
         {
             "apiVersion": "2017-08-01",
@@ -323,7 +329,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/application-insights.json",
+                    "uri": "[concat(variables('deploymentUrlBase'), 'application-insights.json')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -335,7 +341,8 @@
                     }
                 }
             },
-            "dependsOn": []
+            "dependsOn": [
+            ]
         },
         {
             "apiVersion": "2017-08-01",
@@ -344,7 +351,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/application-insights.json",
+                    "uri": "[concat(variables('deploymentUrlBase'), 'application-insights.json')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -356,7 +363,8 @@
                     }
                 }
             },
-            "dependsOn": []
+            "dependsOn": [
+            ]
         },
         {
             "apiVersion": "2017-08-01",
@@ -365,7 +373,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/application-insights.json",
+                    "uri": "[concat(variables('deploymentUrlBase'), 'application-insights.json')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -377,7 +385,8 @@
                     }
                 }
             },
-            "dependsOn": []
+            "dependsOn": [
+            ]
         },
         {
             "apiVersion": "2017-08-01",
@@ -386,7 +395,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/application-insights.json",
+                    "uri": "[concat(variables('deploymentUrlBase'), 'application-insights.json')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -398,7 +407,8 @@
                     }
                 }
             },
-            "dependsOn": []
+            "dependsOn": [
+            ]
         },
         {
             "apiVersion": "2017-08-01",
@@ -407,7 +417,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/application-insights.json",
+                    "uri": "[concat(variables('deploymentUrlBase'), 'application-insights.json')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -423,7 +433,8 @@
                 "name": "AppInsightCopy",
                 "count": "[length(parameters('functionAppNames'))]"
             },
-            "dependsOn": []
+            "dependsOn": [
+            ]
         },
         {
             "name": "StorageAccount",
@@ -432,7 +443,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/storage-account-arm.json",
+                    "uri": "[concat(variables('deploymentUrlBase'), 'storage-account-arm.json')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -443,13 +454,41 @@
             }
         },
         {
+            "apiVersion": "2017-05-10",
+            "name": "[concat('StorageContainer', parameters('containerArray')[copyIndex()].name)]",
+            "type": "Microsoft.Resources/deployments",
+            "condition": "[greater(length(parameters('containerArray')), 0)]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('deploymentUrlBase'), 'storage-container.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "storageAccountName": {
+                        "value": "[parameters('storageAccountName')]"
+                    },
+                    "containerName": {
+                        "value": "[parameters('containerArray')[copyIndex()].name]"
+                    }
+                }
+            },
+            "copy": {
+                "name": "containercopy",
+                "count": "[length(parameters('containerArray'))]"
+            },
+            "dependsOn": [
+                "StorageAccount"
+            ]
+        },
+        {
             "name": "[concat('FunctionApp-', parameters('functionAppNames')[copyIndex()])]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2017-05-10",
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/function-app.json",
+                    "uri": "[concat(variables('deploymentUrlBase'), 'function-app.json')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -520,7 +559,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/function-app.json",
+                    "uri": "[concat(variables('deploymentUrlBase'), 'function-app.json')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -583,7 +622,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/service-bus.json",
+                    "uri": "[concat(variables('deploymentUrlBase'), 'service-bus.json')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -594,5 +633,6 @@
             }
         }
     ],
-    "outputs": {}
+    "outputs": {
+    }
 }
