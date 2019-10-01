@@ -470,6 +470,9 @@
                     },
                     "containerName": {
                         "value": "[parameters('containerArray')[copyIndex()].name]"
+                    },
+                    "publicAccess": {
+                        "value": "None"
                     }
                 }
             },
