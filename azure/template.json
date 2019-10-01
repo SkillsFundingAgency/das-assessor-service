@@ -455,9 +455,9 @@
         },
         {
             "apiVersion": "2017-05-10",
-            "name": "[concat('storage-container', parameters('containerArray')[copyIndex()].name)]",
+            "name": "[concat('storage-container', parameters('StorageAccountContainerArray')[copyIndex()].name)]",
             "type": "Microsoft.Resources/deployments",
-            "condition": "[greater(length(parameters('containerArray')), 0)]",
+            "condition": "[greater(length(parameters('StorageAccountContainerArray')), 0)]",
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
@@ -469,7 +469,7 @@
                         "value": "[parameters('storageAccountName')]"
                     },
                     "containerName": {
-                        "value": "[parameters('containerArray')[copyIndex()].name]"
+                        "value": "[parameters('StorageAccountContainerArray')[copyIndex()].name]"
                     },
                     "publicAccess": {
                         "value": "None"
@@ -478,7 +478,7 @@
             },
             "copy": {
                 "name": "storagecontainercopy",
-                "count": "[length(parameters('containerArray'))]"
+                "count": "[length(parameters('StorageAccountContainerArray'))]"
             },
             "dependsOn": [
                 "StorageAccount"
