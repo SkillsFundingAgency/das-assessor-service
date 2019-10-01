@@ -94,6 +94,17 @@ namespace SFA.DAS.AssessorService.Data.Apply
             }
         }
 
+        public async Task StartFinancialReview(Guid id)
+        {
+            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            {
+                await connection.ExecuteAsync(@"UPDATE Applications 
+                                                SET FinancialReviewStatus = @financialReviewStatusInProgress
+                                                WHERE Id = @id AND FinancialReviewStatus = @financialReviewStatusNew",
+                    new { id, financialReviewStatusInProgress = FinancialReviewStatus.InProgress, financialReviewStatusNew = FinancialReviewStatus.New });
+            }
+        }
+
         public async Task UpdateApplicationFinancialGrade(Guid id, FinancialGrade financialGrade)
         {
             if (financialGrade != null)
@@ -147,18 +158,24 @@ namespace SFA.DAS.AssessorService.Data.Apply
                            section.SectionNo AS SectionNo, 
                            apply.SubmittedDate AS SubmittedDate,
                            apply.SubmissionCount AS SubmissionCount, 
-	                       ap1.ApplicationStatus AS CurrentStatus
+	                       CASE WHEN (ap1.FinancialReviewStatus = @financialReviewStatusInProgress) THEN @applicationStatusInProgress
+                                WHEN (ap1.ApplicationStatus = @applicationStatusResubmitted) THEN @applicationStatusResubmitted
+                                WHEN (ap1.ApplicationStatus = @applicationStatusSubmitted) THEN @applicationStatusSubmitted
+                                ELSE section.Status
+                           END As CurrentStatus
                         FROM Applications ap1
                         INNER JOIN Organisations org ON ap1.OrganisationId = org.Id
                             CROSS APPLY OPENJSON(ApplyData,'$.Sequences') WITH (SequenceNo INT, IsActive BIT, Status VARCHAR(20)) sequence
                             CROSS APPLY OPENJSON(ApplyData,'$.Sequences[0].Sections') WITH (SectionNo INT, Status VARCHAR(20)) section
                             CROSS APPLY OPENJSON(ApplyData,'$.Apply') WITH (SubmittedDate VARCHAR(30) '$.LatestInitSubmissionDate', SubmissionCount INT '$.InitSubmissionCount') apply
                         WHERE sequence.SequenceNo = 1 AND section.SectionNo = 3 AND sequence.IsActive = 1
-                            AND ap1.FinancialReviewStatus = @financialReviewStatusNew -- NOTE: May need to consider Required status. Assumption is that on submit, it will be set to New
+                            AND ap1.FinancialReviewStatus IN (@financialReviewStatusNew, @financialReviewStatusInProgress)
                             AND ap1.ApplicationStatus IN (@applicationStatusSubmitted, @applicationStatusResubmitted)",
                         new
                         {
                             financialReviewStatusNew = FinancialReviewStatus.New,
+                            financialReviewStatusInProgress = FinancialReviewStatus.InProgress,
+                            applicationStatusInProgress = ApplicationStatus.InProgress,
                             applicationStatusSubmitted = ApplicationStatus.Submitted,
                             applicationStatusResubmitted = ApplicationStatus.Resubmitted,
                         })).ToList();
@@ -179,14 +196,14 @@ namespace SFA.DAS.AssessorService.Data.Apply
 	                       ISNULL(section.FeedbackDate, JSON_VALUE(ap1.FinancialGrade, '$.GradedDateTime')) As FeedbackAddedDate,
                            apply.SubmittedDate AS SubmittedDate,
                            apply.SubmissionCount AS SubmissionCount,
-	                       ap1.ApplicationStatus AS CurrentStatus
+	                       ap1.FinancialReviewStatus AS CurrentStatus
                         FROM Applications ap1
                         INNER JOIN Organisations org ON ap1.OrganisationId = org.Id
                             CROSS APPLY OPENJSON(ApplyData,'$.Sequences') WITH (SequenceNo INT, IsActive BIT, Status VARCHAR(20)) sequence
                             CROSS APPLY OPENJSON(ApplyData,'$.Sequences[0].Sections') WITH (SectionNo INT, Status VARCHAR(20), FeedbackDate VARCHAR(30) '$.Feedback.FeedbackDate') section
                             CROSS APPLY OPENJSON(ApplyData,'$.Apply') WITH (SubmittedDate VARCHAR(30) '$.LatestInitSubmissionDate', SubmissionCount INT '$.InitSubmissionCount') apply
                         WHERE sequence.SequenceNo = 1 AND section.SectionNo = 3 AND sequence.IsActive = 1
-                            AND ap1.FinancialReviewStatus = @financialReviewStatusRejected -- NOTE: May need to consider if only Graded and Inadequate. Assumption is that if this situation occurs, it will be set to Rejected
+                            AND ap1.FinancialReviewStatus = @financialReviewStatusRejected
                             AND ap1.ApplicationStatus IN (@applicationStatusSubmitted, @applicationStatusResubmitted)",
                         new
                         {

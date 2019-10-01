@@ -17,6 +17,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<List<FinancialApplicationSummaryItem>> GetOpenFinancialApplications();
         Task<List<FinancialApplicationSummaryItem>> GetFeedbackAddedFinancialApplications();
         Task<List<FinancialApplicationSummaryItem>> GetClosedFinancialApplications();
+        Task StartFinancialReview(Guid id);
         Task UpdateApplicationFinancialGrade(Guid id,FinancialGrade financialGrade);
         Task UpdateApplicationSectionStatus(Guid id, string sequenceNo, string sectionNo, string status);
         Task UpdateInitialStandardData(UpdateInitialStandardDataRequest standardRequest);

@@ -2,7 +2,7 @@
 using SFA.DAS.AssessorService.ApplyTypes;
 using System;
 
-namespace SFA.DAS.AssessorService.Api.Types.Models.Apply
+namespace SFA.DAS.AssessorService.Api.Types.Models.Apply.Financial.Review
 {
     public class UpdateGradeRequest : IRequest
     {

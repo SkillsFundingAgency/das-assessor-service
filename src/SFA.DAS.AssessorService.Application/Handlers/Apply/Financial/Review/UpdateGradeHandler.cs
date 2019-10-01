@@ -1,5 +1,5 @@
 ﻿using MediatR;
-using SFA.DAS.AssessorService.Api.Types.Models.Apply;
+using SFA.DAS.AssessorService.Api.Types.Models.Apply.Financial.Review;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.ApplyTypes;
 using System.Collections.Generic;
@@ -7,7 +7,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SFA.DAS.AssessorService.Application.Handlers.Apply
+namespace SFA.DAS.AssessorService.Application.Handlers.Apply.Financial.Review
 {
     public class UpdateGradeHandler : IRequestHandler<UpdateGradeRequest>
     {
