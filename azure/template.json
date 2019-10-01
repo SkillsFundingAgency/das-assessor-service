@@ -477,7 +477,7 @@
                 }
             },
             "copy": {
-                "name": "containercopy",
+                "name": "storagecontainercopy",
                 "count": "[length(parameters('containerArray'))]"
             },
             "dependsOn": [
