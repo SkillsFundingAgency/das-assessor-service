@@ -12,7 +12,7 @@ using SFA.DAS.AssessorService.Web.ViewModels.OppFinder;
 namespace SFA.DAS.AssessorService.Web.Controllers.OppFinder
 {
     [Route("apprenticeship-assessment-business-opportunity")]
-    [CheckSession(nameof(OppFinderController), nameof(Index), nameof(IOppFinderSession.SearchTerm))]
+    [CheckSession(nameof(OppFinderController), nameof(Reset), nameof(IOppFinderSession.SearchTerm))]
     public class OppFinderController : Controller
     {
         private readonly IOppFinderSession _oppFinderSession;
@@ -31,14 +31,18 @@ namespace SFA.DAS.AssessorService.Web.Controllers.OppFinder
         }
 
         [HttpGet]
-        [HttpGet(nameof(Index))]
         [CheckSession(nameof(IOppFinderSession.SearchTerm), CheckSession.Ignore)]
-        public async Task<IActionResult> Index()
+        public IActionResult Reset()
         {
             SetDefaultSession();
+            return RedirectToAction(nameof(Index));
+        }
 
+        [HttpGet(nameof(Index))]
+        public async Task<IActionResult> Index()
+        {
             var vm = await MapViewModelFromSession();
-            return View(vm);
+            return View(nameof(Index), vm);
         }
 
         [HttpGet(nameof(Search))]
