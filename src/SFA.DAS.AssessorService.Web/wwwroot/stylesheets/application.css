@@ -1038,6 +1038,10 @@ TODO: change to 'das-page-navigation' and BEM
   color: #2b8cc4;
 }
 
+.hidden-bottom-border {
+  border-color: transparent;
+}
+
 .expandble-cell-content {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
