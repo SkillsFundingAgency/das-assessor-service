@@ -229,7 +229,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
                            apply.SubmissionCount AS SubmissionCount,
 	                       CASE WHEN (sequence.Status = @applicationSequenceStatusApproved) THEN @applicationSequenceStatusApproved
                                 WHEN (sequence.Status = @applicationSequenceStatusRejected) THEN @applicationSequenceStatusRejected
-                                ELSE section.Status
+                                ELSE ap1.FinancialReviewStatus
 	                       END As CurrentStatus
                         FROM Applications ap1
                         INNER JOIN Organisations org ON ap1.OrganisationId = org.Id
