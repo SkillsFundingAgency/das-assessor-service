@@ -394,47 +394,54 @@ namespace SFA.DAS.AssessorService.Web.Controllers.OppFinder
             return await ShowNonApprovedStandardDetails(standardReference, StandardStatus.Proposed, _oppFinderSession.ProposedPageIndex);
         }
 
-        [HttpGet(nameof(ExpressionOfInterestApproved))]
+        [HttpGet(nameof(ExpressionOfInterest))]
         [ModelStatePersist(ModelStatePersist.RestoreEntry)]
-        public async Task<IActionResult> ExpressionOfInterestApproved(int standardCode)
+        [CheckSession(nameof(IOppFinderSession.SearchTerm), CheckSession.Ignore)]
+        public async Task<IActionResult> ExpressionOfInterest(string standardReference, StandardStatus? standardStatus = null, bool backLink = false)
         {
-            var standardDetails = await _oppFinderApiClient.
-                GetApprovedStandardDetails(new GetOppFinderApprovedStandardDetailsRequest { StandardCode = standardCode });
-
-            var viewModel = new OppFinderExpressionOfInterestViewModel
-            {
-                StandardStatus = StandardStatus.Approved,
-                StandardCode = standardCode,
-                StandardName = standardDetails.Title,
-                StandardLevel = standardDetails.StandardLevel,
-                StandardReference = standardDetails.StandardReference,
-                StandardSector = standardDetails.Sector
-            };
-
-            return View(nameof(ExpressionOfInterest), viewModel);
-        }
-
-        [HttpGet(nameof(ExpressionOfInterestNonApproved))]
-        [ModelStatePersist(ModelStatePersist.RestoreEntry)]
-        public async Task<IActionResult> ExpressionOfInterestNonApproved(string standardReference, StandardStatus standardStatus)
-        {
-            var standardDetails = await _oppFinderApiClient.
+            var nonApprovedStandardDetails = await _oppFinderApiClient.
                 GetNonApprovedStandardDetails(new GetOppFinderNonApprovedStandardDetailsRequest { StandardReference = standardReference });
 
-            var viewModel = new OppFinderExpressionOfInterestViewModel
-            {
-                StandardStatus = standardStatus,
-                StandardName = standardDetails.Title,
-                StandardLevel = standardDetails.StandardLevel,
-                StandardReference = standardDetails.StandardReference,
-                StandardSector = standardDetails.Sector
-            };
+            var approvedStandardDetails = await _oppFinderApiClient.
+                GetApprovedStandardDetails(new GetOppFinderApprovedStandardDetailsRequest { StandardCode = null, StandardReference = standardReference });
 
-            return View(nameof(ExpressionOfInterest), viewModel);
+            if (approvedStandardDetails != null)
+            {
+                var viewModel = new OppFinderExpressionOfInterestViewModel
+                {
+                    BackLink = backLink,
+                    StandardStatus = standardStatus ?? StandardStatus.Approved,
+                    StandardName = approvedStandardDetails.Title,
+                    StandardLevel = approvedStandardDetails.StandardLevel,
+                    StandardCode = approvedStandardDetails.StandardCode,
+                    StandardReference = approvedStandardDetails.StandardReference,
+                    StandardSector = approvedStandardDetails.Sector
+                };
+
+                return View(nameof(ExpressionOfInterest), viewModel);
+            }
+            else if(nonApprovedStandardDetails != null)
+            {
+                var viewModel = new OppFinderExpressionOfInterestViewModel
+                {
+                    BackLink = backLink,
+                    StandardStatus = standardStatus ?? StandardStatus.NonApproved,
+                    StandardName = nonApprovedStandardDetails.Title,
+                    StandardLevel = nonApprovedStandardDetails.StandardLevel,
+                    StandardReference = nonApprovedStandardDetails.StandardReference,
+                    StandardSector = nonApprovedStandardDetails.Sector
+                };
+
+                return View(nameof(ExpressionOfInterest), viewModel);
+            }
+
+            // an expression of interest was made for a non-existent standard reference
+            return RedirectToAction(nameof(Index));
         }
 
         [HttpPost(nameof(ExpressionOfInterest))]
         [ModelStatePersist(ModelStatePersist.Store)]
+        [CheckSession(nameof(IOppFinderSession.SearchTerm), CheckSession.Ignore)]
         public async Task<IActionResult> ExpressionOfInterest(OppFinderExpressionOfInterestViewModel viewModel)
         {
             try
@@ -456,14 +463,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.OppFinder
 
                 if (!ModelState.IsValid)
                 {
-                    if (viewModel.StandardStatus == StandardStatus.Approved)
-                    {
-                        return RedirectToAction(nameof(ExpressionOfInterestApproved), new { standardCode = viewModel.StandardCode });
-                    }
-                    else
-                    {
-                        return RedirectToAction(nameof(ExpressionOfInterestNonApproved), new { standardReference = viewModel.StandardReference });
-                    }
+                    return RedirectToAction(nameof(ExpressionOfInterest), new { standardReference = viewModel.StandardReference });
                 }
 
                 var request = new OppFinderExpressionOfInterestRequest
@@ -496,36 +496,18 @@ namespace SFA.DAS.AssessorService.Web.Controllers.OppFinder
             {
                 _logger.LogError(e, $"Failed to express interest {viewModel.StandardName}, {viewModel.Email}, {viewModel.OrganisationName}, {viewModel.ContactName}, {viewModel.ContactNumber}");
                 ModelState.AddModelError(nameof(OppFinderExpressionOfInterestViewModel.StandardReference), "Unable to express interest at this time");
-
-                if (viewModel.StandardStatus == StandardStatus.Approved)
-                {
-                    return RedirectToAction(nameof(ExpressionOfInterestApproved), new { standardCode = viewModel.StandardCode });
-                }
-                else
-                {
-                    return RedirectToAction(nameof(ExpressionOfInterestNonApproved), new { standardReference = viewModel.StandardReference });
-                }
+                return RedirectToAction(nameof(ExpressionOfInterest), new { standardReference = viewModel.StandardReference });
             }
         }
 
-        [HttpGet(nameof(ExpressionOfInterestPrivacyApproved))]
-        public IActionResult ExpressionOfInterestPrivacyApproved(int standardCode)
+        [HttpGet(nameof(ExpressionOfInterestPrivacy))]
+        [CheckSession(nameof(IOppFinderSession.SearchTerm), CheckSession.Ignore)]
+        public IActionResult ExpressionOfInterestPrivacy(string standardReference, StandardStatus standardStatus, bool backLink)
         {
             var viewModel = new OppFinderExpressionOfInterestPrivacyViewModel
             {
-                StandardStatus = StandardStatus.Approved,
-                StandardCode = standardCode
-            };
-
-            return View("ExpressionOfInterestPrivacy", viewModel);
-        }
-
-        [HttpGet(nameof(ExpressionOfInterestPrivacyNonApproved))]
-        public IActionResult ExpressionOfInterestPrivacyNonApproved(string standardReference)
-        {
-            var viewModel = new OppFinderExpressionOfInterestPrivacyViewModel
-            {
-                StandardStatus = StandardStatus.NonApproved,
+                BackLink = backLink,
+                StandardStatus = standardStatus,
                 StandardReference = standardReference
             };
 

@@ -1,5 +1,6 @@
 ﻿CREATE PROCEDURE [dbo].[OppFinder_Get_Approved_Standard_Details]
-	 @StandardCode AS INT
+	 @StandardCode AS INT,
+	 @StandardReference AS NVARCHAR(10)
 AS
 BEGIN
 
@@ -32,28 +33,42 @@ BEGIN
 		StandardSummary ss
 			LEFT JOIN StandardCollation sc 
 			ON ss.StandardCode = sc.StandardId
-	ORDER BY 
-		ss.StandardReference
+	WHERE 
+		(
+			StandardCode = @StandardCode OR 
+			(@StandardCode IS NULL AND StandardReference = @StandardReference)
+		) AND sc.IsLive = 1
 
-	SELECT
-		StandardName, OverviewOfRole, StandardLevel, StandardReference, 
+	-- there may be duplicates in either the StandardCode or the StandardReference in which case the Standard with the latest ApprovedForDelivery will be returned
+	SELECT TOP 1
+		StandardCode, StandardName, OverviewOfRole, StandardLevel, StandardReference, 
 		SUM(ActiveApprentices) TotalActiveApprentices, 
 		SUM(CompletedAssessments) TotalCompletedAssessments, 
 		Sector, TypicalDuration, ApprovedForDelivery, MaxFunding, Trailblazer, StandardPageUrl, EqaProviderName, EqaProviderContactEmail, EqaProviderWebLink
+	INTO
+		#Details
 	FROM 
 		#Results
-	WHERE 
-		StandardCode = @StandardCode
 	GROUP BY
-		StandardName, OverviewOfRole, StandardLevel, StandardReference, 
+		StandardCode, StandardName, OverviewOfRole, StandardLevel, StandardReference, 
 		Sector, TypicalDuration, ApprovedForDelivery, MaxFunding, Trailblazer, StandardPageUrl, EqaProviderName, EqaProviderContactEmail, EqaProviderWebLink
+	ORDER BY
+		CONVERT(DATE, ApprovedForDelivery) DESC
 
+	-- the first set is details about the standard
+	SELECT
+		StandardCode, StandardName, OverviewOfRole, StandardLevel, StandardReference, 
+		TotalActiveApprentices, TotalCompletedAssessments, 
+		Sector, TypicalDuration, ApprovedForDelivery, MaxFunding, Trailblazer, StandardPageUrl, EqaProviderName, EqaProviderContactEmail, EqaProviderWebLink
+	FROM
+		#Details
+
+	-- the second set is details about the regions for which EPAO's currently assess the standard
 	SELECT 
 		Region, EndPointAssessorsNames, EndPointAssessors, ActiveApprentices, CompletedAssessments
 	FROM 
-		#Results
-	WHERE 
-		StandardCode = @StandardCode
+		#Results [Results] INNER JOIN #Details [Details]
+		ON [Results].StandardCode = [Details].StandardCode
 	ORDER BY 
 		Ordering
 END

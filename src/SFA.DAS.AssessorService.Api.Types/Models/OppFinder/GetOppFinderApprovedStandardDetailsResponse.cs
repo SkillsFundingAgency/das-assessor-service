@@ -7,6 +7,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models
         public string Title { get; set; }
         public string OverviewOfRole { get; set; }
         public string StandardLevel { get; set; }
+        public int? StandardCode { get; set; }
         public string StandardReference { get; set; }
         public int TotalActiveApprentices { get; set; }
         public int TotalCompletedAssessments { get; set; }

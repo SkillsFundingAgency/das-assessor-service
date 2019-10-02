@@ -6,17 +6,20 @@
     ViewBag.Title = (!ViewData.ModelState.IsValid ? "Error: " : "") + viewTitle;
     Layout = "_OppFinderLayout";
 }
-@if (Model.StandardStatus == StandardStatus.Approved)
+@if (Model.BackLink)
 {
-    <a class="govuk-back-link" asp-controller="OppFinder" asp-action="ShowApprovedStandardDetails" asp-route-standardCode="@Model.StandardCode">Back</a>
-}
-else if (Model.StandardStatus == StandardStatus.InDevelopment)
-{
-    <a class="govuk-back-link" asp-controller="OppFinder" asp-action="ShowInDevelopmentStandardDetails" asp-route-standardReference="@Model.StandardReference">Back</a>
-}
-else
-{
-    <a class="govuk-back-link" asp-controller="OppFinder" asp-action="ShowProposedStandardDetails" asp-route-standardReference="@Model.StandardReference">Back</a>
+    if (Model.StandardStatus == StandardStatus.Approved)
+    {
+       <a class="govuk-back-link" asp-controller="OppFinder" asp-action="ShowApprovedStandardDetails" asp-route-standardCode="@Model.StandardCode">Back</a>
+    }
+    else if (Model.StandardStatus == StandardStatus.InDevelopment)
+    {
+        <a class="govuk-back-link" asp-controller="OppFinder" asp-action="ShowInDevelopmentStandardDetails" asp-route-standardReference="@Model.StandardReference">Back</a>
+    }
+    else if (Model.StandardStatus == StandardStatus.Proposed)
+    {
+        <a class="govuk-back-link" asp-controller="OppFinder" asp-action="ShowProposedStandardDetails" asp-route-standardReference="@Model.StandardReference">Back</a>
+    }
 }
 <main class="govuk-main-wrapper " id="main-content" role="main">
     @if (!ViewData.ModelState.IsValid)
@@ -117,14 +120,7 @@ else
                 </div>
                 <button class="govuk-button" type="submit" name="ActionChoice">Express interest</button>
             </form>
-            @if (Model.StandardStatus == StandardStatus.Approved)
-            {
-                <p class="govuk-body">To find out how we handle your personal data, read our <a class="govuk-link" asp-controller="OppFinder" asp-action="ExpressionOfInterestPrivacyApproved" asp-route-standardCode="@Model.StandardCode">privacy notice</a>.</p>
-            }
-            else
-            {
-                <p class="govuk-body">To find out how we handle your personal data, read our <a class="govuk-link" asp-controller="OppFinder" asp-action="ExpressionOfInterestPrivacyNonApproved" asp-route-standardReference="@Model.StandardReference">privacy notice</a>.</p>
-            }
+            <p class="govuk-body">To find out how we handle your personal data, read our <a class="govuk-link" asp-controller="OppFinder" asp-action="ExpressionOfInterestPrivacy" asp-route-standardReference="@Model.StandardReference" asp-route-standardStatus="@Model.StandardStatus" asp-route-backLink="@Model.BackLink">privacy notice</a>.</p>
         </div>
     </div>
 </main>

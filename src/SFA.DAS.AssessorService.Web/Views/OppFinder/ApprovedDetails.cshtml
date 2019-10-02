@@ -168,7 +168,7 @@
             <h2 class="govuk-heading-l">Not ready to apply</h2>
             <p class="govuk-body">
                 If you think you are interested in assessing this Standard but not yet ready to apply, complete the
-                <a class="govuk-link" asp-controller="OppFinder" asp-action="ExpressionOfInterestApproved" asp-route-standardCode="@Model.StandardCode">expression of interest form</a>
+                <a class="govuk-link" asp-controller="OppFinder" asp-action="ExpressionOfInterest" asp-route-standardReference="@Model.StandardReference" asp-route-standardStatus="@StandardStatus.Approved" asp-route-backLink="true">expression of interest form</a>
             </p>
             <a class="govuk-button" href="/" target="_blank" rel="noopener noreferrer">Apply to assess this Standard</a>
 

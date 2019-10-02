@@ -26,6 +26,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Standards
             _logger.LogInformation($"Retreiving non approved standard details: {request.StandardReference}");
             var result = await _standardRepository.GetStandardNonApprovedCollationByReferenceNumber(request.StandardReference);
 
+            if (result == null)
+                return null;
+
             return new GetOppFinderNonApprovedStandardDetailsResponse
             {
                 Title = result.Title,

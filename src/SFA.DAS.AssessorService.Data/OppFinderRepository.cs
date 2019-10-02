@@ -34,10 +34,11 @@ namespace SFA.DAS.AssessorService.Data
             return (rowAffected > 0);
         }
 
-        public async Task<OppFinderApprovedStandardDetailsResult> GetOppFinderApprovedStandardDetails(int standardCode)
+        public async Task<OppFinderApprovedStandardDetailsResult> GetOppFinderApprovedStandardDetails(int? standardCode, string standardReference)
         {
             var @params = new DynamicParameters();
             @params.Add("standardCode", standardCode);
+            @params.Add("standardReference", standardReference);
 
             var filterResults = (await _unitOfWork.Connection.QueryMultipleAsync(
                 "OppFinder_Get_Approved_Standard_Details",
@@ -48,7 +49,7 @@ namespace SFA.DAS.AssessorService.Data
             var filterStandardsResult = new OppFinderApprovedStandardDetailsResult
             {
                 OverviewResult = filterResults.Read<OppFinderApprovedStandardOverviewResult>().FirstOrDefault(),
-                RegionResults = filterResults.Read<OppFinderApprovedStandardRegionResult>().ToList()
+                RegionResults = filterResults.Read<OppFinderApprovedStandardRegionResult>()?.ToList()
             };
 
             return filterStandardsResult;
