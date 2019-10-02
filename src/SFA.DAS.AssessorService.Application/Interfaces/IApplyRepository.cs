@@ -8,11 +8,11 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
 {
     public interface IApplyRepository
     {
-        Task<List<Domain.Entities.Application>> GetUserApplications(Guid userId);
-        Task<List<Domain.Entities.Application>> GetOrganisationApplications(Guid userId);
-        Task<Domain.Entities.Application> GetApplication(Guid applicationId);
-        Task<Guid> CreateApplication(Domain.Entities.Application application);
-        Task SubmitApplicationSequence(Domain.Entities.Application application);
+        Task<List<Domain.Entities.Apply>> GetUserApplications(Guid userId);
+        Task<List<Domain.Entities.Apply>> GetOrganisationApplications(Guid userId);
+        Task<Domain.Entities.Apply> GetApplication(Guid applicationId);
+        Task<Guid> CreateApplication(Domain.Entities.Apply apply);
+        Task SubmitApplicationSequence(Domain.Entities.Apply apply);
         Task<int> GetNextAppReferenceSequence();
         Task<List<FinancialApplicationSummaryItem>> GetOpenFinancialApplications();
         Task<List<FinancialApplicationSummaryItem>> GetFeedbackAddedFinancialApplications();

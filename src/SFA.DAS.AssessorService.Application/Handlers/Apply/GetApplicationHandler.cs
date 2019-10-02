@@ -20,7 +20,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
         {
             var result =  await _applyRepository.GetApplication(request.ApplicationId);
 
-            return Mapper.Map<Domain.Entities.Application, ApplicationResponse>(result);
+            return Mapper.Map<Domain.Entities.Apply, ApplicationResponse>(result);
         }
     }
 }

@@ -37,7 +37,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
                 Sequences = request.listOfApplySequences
             };
             await AddApplyDataWithSubmissionInfo(applyData, request);
-            var application = new Domain.Entities.Application
+            var application = new Domain.Entities.Apply
             {
                 ApplyData = applyData,
                 ApplicationId = request.ApplicationId,

@@ -29,57 +29,57 @@ namespace SFA.DAS.AssessorService.Data.Apply
             SqlMapper.AddTypeHandler(typeof(FinancialEvidence), new FinancialEvidenceHandler());
         }
 
-        public async Task<List<Domain.Entities.Application>> GetUserApplications(Guid userId)
+        public async Task<List<Domain.Entities.Apply>> GetUserApplications(Guid userId)
         {
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))
             {
-                return (await connection.QueryAsync<Domain.Entities.Application>(@"SELECT a.* FROM Contacts c
-                                                    INNER JOIN Applications a ON a.OrganisationId = c.OrganisationId
+                return (await connection.QueryAsync<Domain.Entities.Apply>(@"SELECT a.* FROM Contacts c
+                                                    INNER JOIN Apply a ON a.OrganisationId = c.OrganisationId
                                                     WHERE c.Id = @userId AND a.CreatedBy = @userId", new { userId })).ToList();
             }
         }
 
-        public async Task<List<Domain.Entities.Application>> GetOrganisationApplications(Guid userId)
+        public async Task<List<Domain.Entities.Apply>> GetOrganisationApplications(Guid userId)
         {
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))
             {
-                return (await connection.QueryAsync<Domain.Entities.Application>(@"SELECT a.* FROM Contacts c
-                                                    INNER JOIN Applications a ON a.OrganisationId = c.OrganisationId
+                return (await connection.QueryAsync<Domain.Entities.Apply>(@"SELECT a.* FROM Contacts c
+                                                    INNER JOIN Apply a ON a.OrganisationId = c.OrganisationId
                                                     WHERE c.Id = @userId", new { userId })).ToList();
             }
         }
 
-        public async Task<Domain.Entities.Application> GetApplication(Guid applicationId)
+        public async Task<Domain.Entities.Apply> GetApplication(Guid applicationId)
         {
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))
             {
-                var application = await connection.QuerySingleOrDefaultAsync<Domain.Entities.Application>(@"SELECT * FROM Applications WHERE Id = @applicationId", new { applicationId });
+                var application = await connection.QuerySingleOrDefaultAsync<Domain.Entities.Apply>(@"SELECT * FROM Apply WHERE Id = @applicationId", new { applicationId });
 
                 return application;
             }
         }
 
-        public async Task<Guid> CreateApplication(Domain.Entities.Application application)
+        public async Task<Guid> CreateApplication(Domain.Entities.Apply apply)
         {
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))
             {
                 return await connection.QuerySingleAsync<Guid>(
-                    @"INSERT INTO Applications (ApplicationId, OrganisationId,ApplicationStatus,ApplyData, ReviewStatus,FinancialReviewStatus, CreatedAt, CreatedBy)
+                    @"INSERT INTO Apply (ApplicationId, OrganisationId,ApplicationStatus,ApplyData, ReviewStatus,FinancialReviewStatus, CreatedAt, CreatedBy)
                                         OUTPUT INSERTED.[Id] 
                                         VALUES (@ApplicationId, @OrganisationId,@ApplicationStatus,@ApplyData,@ReviewStatus,@FinancialReviewStatus,GETUTCDATE(), @CreatedBy)",
-                    new { application.ApplicationId, application.OrganisationId, application.ApplicationStatus,application.FinancialReviewStatus,
-                        application.ApplyData, application.ReviewStatus, application.CreatedBy });
+                    new { apply.ApplicationId, apply.OrganisationId, apply.ApplicationStatus,apply.FinancialReviewStatus,
+                        apply.ApplyData, apply.ReviewStatus, apply.CreatedBy });
             }
         }
 
-        public async Task SubmitApplicationSequence(Domain.Entities.Application application)
+        public async Task SubmitApplicationSequence(Domain.Entities.Apply apply)
         {
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))
             {
-              var result =  await connection.ExecuteAsync(@"UPDATE Applications
+              var result =  await connection.ExecuteAsync(@"UPDATE Apply
                                                 SET  ApplicationStatus = @ApplicationStatus, ApplyData = @ApplyData, ReviewStatus = @ReviewStatus, FinancialReviewStatus = @FinancialReviewStatus, UpdatedBy = @UpdatedBy, UpdatedAt = GETUTCDATE() 
-                                                WHERE  (Applications.Id = @Id)",
-                  new { application.ApplicationStatus, application.ApplyData, application.ReviewStatus, application.FinancialReviewStatus, application.Id, application.UpdatedBy});
+                                                WHERE  (Apply.Id = @Id)",
+                  new { apply.ApplicationStatus, apply.ApplyData, apply.ReviewStatus, apply.FinancialReviewStatus, apply.Id, apply.UpdatedBy});
             }
         }
 
@@ -87,7 +87,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
         {
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))
             {
-                var result = await connection.ExecuteAsync(@"UPDATE Applications
+                var result = await connection.ExecuteAsync(@"UPDATE Apply
                                                 SET  ApplyData = JSON_MODIFY(JSON_MODIFY(JSON_MODIFY(ApplyData,'$.Apply.StandardReference',@ReferenceNumber),'$.Apply.StandardCode',@StandardCode),'$.Apply.StandardName',@StandardName)
                                                 WHERE  Id = @Id",
                     new { standardRequest.StandardCode,standardRequest.ReferenceNumber, standardRequest.StandardName, standardRequest.Id });
@@ -98,7 +98,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
         {
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))
             {
-                await connection.ExecuteAsync(@"UPDATE Applications 
+                await connection.ExecuteAsync(@"UPDATE Apply 
                                                 SET FinancialReviewStatus = @financialReviewStatusInProgress
                                                 WHERE Id = @id AND FinancialReviewStatus = @financialReviewStatusNew",
                     new { id, financialReviewStatusInProgress = FinancialReviewStatus.InProgress, financialReviewStatusNew = FinancialReviewStatus.New });
@@ -113,7 +113,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
                 {
                     var financialReviewStatus = (financialGrade.SelectedGrade == FinancialApplicationSelectedGrade.Inadequate) ? FinancialReviewStatus.Rejected : FinancialReviewStatus.Closed;
 
-                    var result = await connection.ExecuteAsync(@"UPDATE Applications
+                    var result = await connection.ExecuteAsync(@"UPDATE Apply
                                                 SET FinancialGrade = @financialGrade, FinancialReviewStatus = @financialReviewStatus
                                                 WHERE Id = @id",
                         new { id, financialGrade, financialReviewStatus });
@@ -121,7 +121,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
             }
             else
             {
-                _logger.LogError("FinancialGrade is null therefore failed to update Applications table.");
+                _logger.LogError("FinancialGrade is null therefore failed to update Apply table.");
             }
         }
 
@@ -129,7 +129,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
         {
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))
             {
-                var result = await connection.ExecuteAsync(@"UPDATE Applications SET ApplyData = 
+                var result = await connection.ExecuteAsync(@"UPDATE Apply SET ApplyData = 
                                                 JSON_MODIFY(ApplyData, '$.Sequences['+@sequenceNo+'].Sections['+@sectionNo+'].Status',@status) 
                                                 WHERE Id = @id",
                     new { sequenceNo, sectionNo,status, id });
@@ -163,7 +163,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
                                 WHEN (ap1.ApplicationStatus = @applicationStatusSubmitted) THEN @applicationStatusSubmitted
                                 ELSE section.Status
                            END As CurrentStatus
-                        FROM Applications ap1
+                        FROM Apply ap1
                         INNER JOIN Organisations org ON ap1.OrganisationId = org.Id
                             CROSS APPLY OPENJSON(ApplyData,'$.Sequences') WITH (SequenceNo INT, IsActive BIT, Status VARCHAR(20)) sequence
                             CROSS APPLY OPENJSON(ApplyData,'$.Sequences[0].Sections') WITH (SectionNo INT, Status VARCHAR(20)) section
@@ -197,7 +197,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
                            apply.SubmittedDate AS SubmittedDate,
                            apply.SubmissionCount AS SubmissionCount,
 	                       ap1.FinancialReviewStatus AS CurrentStatus
-                        FROM Applications ap1
+                        FROM Apply ap1
                         INNER JOIN Organisations org ON ap1.OrganisationId = org.Id
                             CROSS APPLY OPENJSON(ApplyData,'$.Sequences') WITH (SequenceNo INT, IsActive BIT, Status VARCHAR(20)) sequence
                             CROSS APPLY OPENJSON(ApplyData,'$.Sequences[0].Sections') WITH (SectionNo INT, Status VARCHAR(20), FeedbackDate VARCHAR(30) '$.Feedback.FeedbackDate') section
@@ -231,7 +231,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
                                 WHEN (sequence.Status = @applicationSequenceStatusRejected) THEN @applicationSequenceStatusRejected
                                 ELSE ap1.FinancialReviewStatus
 	                       END As CurrentStatus
-                        FROM Applications ap1
+                        FROM Apply ap1
                         INNER JOIN Organisations org ON ap1.OrganisationId = org.Id
                             CROSS APPLY OPENJSON(ApplyData,'$.Sequences') WITH (SequenceNo INT, Status VARCHAR(20)) sequence
                             CROSS APPLY OPENJSON(ApplyData,'$.Sequences[0].Sections') WITH (SectionNo INT, Status VARCHAR(20), NotRequired BIT) section

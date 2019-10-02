@@ -133,22 +133,22 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
 
         }
 
-        private void UpdateApplicationStatus(ApplyData applyData, SubmitApplicationRequest request, Domain.Entities.Application application)
+        private void UpdateApplicationStatus(ApplyData applyData, SubmitApplicationRequest request, Domain.Entities.Apply apply)
         {
             if (request.Sequence.SequenceNo == 1)
             {
-                application.ApplicationStatus = (applyData.Apply.InitSubmissions.Count == 1) ? ApplicationStatus.Submitted : ApplicationStatus.Resubmitted;
+                apply.ApplicationStatus = (applyData.Apply.InitSubmissions.Count == 1) ? ApplicationStatus.Submitted : ApplicationStatus.Resubmitted;
 
                 var closedFinanicalStatuses = new List<string> { FinancialReviewStatus.Closed, FinancialReviewStatus.Exempt };
 
-                if (!closedFinanicalStatuses.Contains(application.FinancialReviewStatus))
+                if (!closedFinanicalStatuses.Contains(apply.FinancialReviewStatus))
                 {
-                    application.FinancialReviewStatus = FinancialReviewStatus.New;
+                    apply.FinancialReviewStatus = FinancialReviewStatus.New;
                 }
             }
             else if (request.Sequence.SequenceNo == 2)
             {
-                application.ApplicationStatus = (applyData.Apply.StandardSubmissions.Count == 1) ? ApplicationStatus.Submitted : ApplicationStatus.Resubmitted;
+                apply.ApplicationStatus = (applyData.Apply.StandardSubmissions.Count == 1) ? ApplicationStatus.Submitted : ApplicationStatus.Resubmitted;
             }
         }
 
