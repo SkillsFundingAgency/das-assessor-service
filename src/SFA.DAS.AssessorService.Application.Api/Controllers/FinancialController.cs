@@ -50,7 +50,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
         }
 
-        [HttpPost("/Financial/Application/{Id}/StartReview")]
+        [HttpPost("/Financial/{Id}/StartReview")]
         public async Task<ActionResult> StartReview(Guid Id)
         {
             await _mediator.Send(new StartFinancialReviewRequest(Id));
