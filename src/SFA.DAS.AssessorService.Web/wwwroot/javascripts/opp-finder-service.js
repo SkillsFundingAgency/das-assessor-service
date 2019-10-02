@@ -11,7 +11,7 @@
       "#standard-filters",
       searchPartial
     );
-    window.location = window.location.origin + window.location.pathname;
+    document.getElementById("main-content").scrollIntoView();
     event.preventDefault();
   });
 

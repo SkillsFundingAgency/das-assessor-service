@@ -20,7 +20,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers.OppFinder
         private readonly IValidationApiClient _validationApiClient;
         private readonly ILogger<OppFinderController> _logger;
 
-        private const int PageSetSize = 6;
+        private const int DefaultPageSetSize = 6;
+        private const int DefaultPageIndex = 1;
+        private const int DefaultStandardsPerPage = 100;
 
         public OppFinderController(IOppFinderSession oppFinderSession, IOppFinderApiClient oppFinderApiClient, IValidationApiClient validationApiClient, ILogger<OppFinderController> logger)
         {
@@ -137,7 +139,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.OppFinder
         }
 
         [HttpGet(nameof(ChangePageApprovedStandards))]
-        public async Task<IActionResult> ChangePageApprovedStandards(int pageIndex)
+        public async Task<IActionResult> ChangePageApprovedStandards(int pageIndex = DefaultPageIndex)
         {
             _oppFinderSession.ApprovedPageIndex = pageIndex;
 
@@ -147,7 +149,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.OppFinder
 
         [HttpGet(nameof(ChangePageApprovedStandardsPartial))]
         [CheckSession(nameof(IOppFinderSession.SearchTerm), CheckSession.Error)]
-        public async Task<IActionResult> ChangePageApprovedStandardsPartial(int pageIndex)
+        public async Task<IActionResult> ChangePageApprovedStandardsPartial(int pageIndex = DefaultPageIndex)
         {
             _oppFinderSession.ApprovedPageIndex = pageIndex;
             var vm = await AddApprovedViewModelValues(new OppFinderSearchViewModel());
@@ -155,7 +157,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.OppFinder
         }
 
         [HttpGet(nameof(ShowApprovedStandardsPerPage))]
-        public async Task<IActionResult> ShowApprovedStandardsPerPage(int approvedStandardsPerPage)
+        public async Task<IActionResult> ShowApprovedStandardsPerPage(int approvedStandardsPerPage = DefaultStandardsPerPage)
         {
             if (approvedStandardsPerPage > 0)
             {
@@ -167,7 +169,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.OppFinder
 
         [HttpGet(nameof(ShowApprovedStandardsPerPagePartial))]
         [CheckSession(nameof(IOppFinderSession.SearchTerm), CheckSession.Error)]
-        public async Task<IActionResult> ShowApprovedStandardsPerPagePartial(int standardsPerPage)
+        public async Task<IActionResult> ShowApprovedStandardsPerPagePartial(int standardsPerPage = DefaultStandardsPerPage)
         {
             if (standardsPerPage > 0)
             {
@@ -209,7 +211,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.OppFinder
         }
 
         [HttpGet(nameof(ChangePageInDevelopmentStandards))]
-        public async Task<IActionResult> ChangePageInDevelopmentStandards(int pageIndex)
+        public async Task<IActionResult> ChangePageInDevelopmentStandards(int pageIndex = DefaultPageIndex)
         {
             _oppFinderSession.InDevelopmentPageIndex = pageIndex;
 
@@ -219,7 +221,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.OppFinder
 
         [HttpGet(nameof(ChangePageInDevelopmentStandardsPartial))]
         [CheckSession(nameof(IOppFinderSession.SearchTerm), CheckSession.Error)]
-        public async Task<IActionResult> ChangePageInDevelopmentStandardsPartial(int pageIndex)
+        public async Task<IActionResult> ChangePageInDevelopmentStandardsPartial(int pageIndex = DefaultPageIndex)
         {
             _oppFinderSession.InDevelopmentPageIndex = pageIndex;
             var vm = await AddInDevelopmentViewModelValues(new OppFinderSearchViewModel());
@@ -227,7 +229,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.OppFinder
         }
 
         [HttpGet(nameof(ShowInDevelopmentStandardsPerPage))]
-        public async Task<IActionResult> ShowInDevelopmentStandardsPerPage(int inDevelopmentStandardsPerPage)
+        public async Task<IActionResult> ShowInDevelopmentStandardsPerPage(int inDevelopmentStandardsPerPage = DefaultStandardsPerPage)
         {
             if (inDevelopmentStandardsPerPage > 0)
             {
@@ -239,7 +241,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.OppFinder
 
         [HttpGet(nameof(ShowInDevelopmentStandardsPerPagePartial))]
         [CheckSession(nameof(IOppFinderSession.SearchTerm), CheckSession.Error)]
-        public async Task<IActionResult> ShowInDevelopmentStandardsPerPagePartial(int standardsPerPage)
+        public async Task<IActionResult> ShowInDevelopmentStandardsPerPagePartial(int standardsPerPage = DefaultStandardsPerPage)
         {
             if (standardsPerPage > 0)
             {
@@ -281,7 +283,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.OppFinder
         }
 
         [HttpGet(nameof(ChangePageProposedStandards))]
-        public async Task<IActionResult> ChangePageProposedStandards(int pageIndex)
+        public async Task<IActionResult> ChangePageProposedStandards(int pageIndex = DefaultPageIndex)
         {
             _oppFinderSession.ProposedPageIndex = pageIndex;
 
@@ -291,7 +293,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.OppFinder
 
         [HttpGet(nameof(ChangePageProposedStandardsPartial))]
         [CheckSession(nameof(IOppFinderSession.SearchTerm), CheckSession.Error)]
-        public async Task<IActionResult> ChangePageProposedStandardsPartial(int pageIndex)
+        public async Task<IActionResult> ChangePageProposedStandardsPartial(int pageIndex = DefaultPageIndex)
         {
             _oppFinderSession.ProposedPageIndex = pageIndex;
             var vm = await AddProposedViewModelValues(new OppFinderSearchViewModel());
@@ -299,7 +301,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.OppFinder
         }
 
         [HttpGet(nameof(ShowProposedStandardsPerPage))]
-        public async Task<IActionResult> ShowProposedStandardsPerPage(int proposedStandardsPerPage)
+        public async Task<IActionResult> ShowProposedStandardsPerPage(int proposedStandardsPerPage = DefaultStandardsPerPage)
         {
             if (proposedStandardsPerPage > 0)
             {
@@ -311,7 +313,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.OppFinder
 
         [HttpGet(nameof(ShowProposedStandardsPerPagePartial))]
         [CheckSession(nameof(IOppFinderSession.SearchTerm), CheckSession.Error)]
-        public async Task<IActionResult> ShowProposedStandardsPerPagePartial(int standardsPerPage)
+        public async Task<IActionResult> ShowProposedStandardsPerPagePartial(int standardsPerPage = DefaultStandardsPerPage)
         {
             if (standardsPerPage > 0)
             {
@@ -560,7 +562,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.OppFinder
                 SortAscending = _oppFinderSession.ApprovedSortDirection == "Asc" ? 1 : 0,
                 PageSize = _oppFinderSession.ApprovedStandardsPerPage,
                 PageIndex = pageIndex,
-                PageSetSize = PageSetSize
+                PageSetSize = DefaultPageSetSize
             };
 
             var response = await _oppFinderApiClient.GetApprovedStandards(approvedStandardsRequest);
@@ -578,7 +580,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.OppFinder
                 SortAscending = _oppFinderSession.InDevelopmentSortDirection == "Asc" ? 1 : 0,
                 PageSize = _oppFinderSession.InDevelopmentStandardsPerPage,
                 PageIndex = pageIndex,
-                PageSetSize = PageSetSize,
+                PageSetSize = DefaultPageSetSize,
                 NonApprovedType = StandardStatus.InDevelopment.ToString()
             };
 
@@ -597,7 +599,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.OppFinder
                 SortAscending = _oppFinderSession.ProposedSortDirection == "Asc" ? 1 : 0,
                 PageSize = _oppFinderSession.ProposedStandardsPerPage,
                 PageIndex = pageIndex,
-                PageSetSize = PageSetSize,
+                PageSetSize = DefaultPageSetSize,
                 NonApprovedType = StandardStatus.Proposed.ToString()
             };
 
@@ -672,12 +674,12 @@ namespace SFA.DAS.AssessorService.Web.Controllers.OppFinder
             _oppFinderSession.SectorFilters = string.Empty;
             _oppFinderSession.LevelFilters = string.Empty;
 
-            var pageIndex = 1;
+            var pageIndex = DefaultPageIndex;
             _oppFinderSession.ApprovedPageIndex = pageIndex;
             _oppFinderSession.InDevelopmentPageIndex = pageIndex;
             _oppFinderSession.ProposedPageIndex = pageIndex;
 
-            var standardsPerPage = 100;
+            var standardsPerPage = DefaultStandardsPerPage;
             _oppFinderSession.ApprovedStandardsPerPage = standardsPerPage;
             _oppFinderSession.InDevelopmentStandardsPerPage = standardsPerPage;
             _oppFinderSession.ProposedStandardsPerPage = standardsPerPage;
