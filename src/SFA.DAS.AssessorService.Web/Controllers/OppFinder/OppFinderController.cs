@@ -12,7 +12,7 @@ using SFA.DAS.AssessorService.Web.ViewModels.OppFinder;
 namespace SFA.DAS.AssessorService.Web.Controllers.OppFinder
 {
     [Route("apprenticeship-assessment-business-opportunity")]
-    [CheckSession(nameof(OppFinderController), nameof(Reset), nameof(IOppFinderSession.SearchTerm))]
+    [CheckSession(nameof(OppFinderController), nameof(Index), nameof(IOppFinderSession.SearchTerm))]
     public class OppFinderController : Controller
     {
         private readonly IOppFinderSession _oppFinderSession;
@@ -30,16 +30,23 @@ namespace SFA.DAS.AssessorService.Web.Controllers.OppFinder
             _logger = logger;
         }
 
+        /// <summary>
+        /// Handle the default route request by resetting the sesion and redirecting to the main page; this action 
+        /// is also activated when the session has expired or when Index is requested before the seesion has been
+        /// initialized.
+        /// </summary>
+        /// <returns>Redirect to the main page</returns>
         [HttpGet]
+        [HttpGet(nameof(Index))]
         [CheckSession(nameof(IOppFinderSession.SearchTerm), CheckSession.Ignore)]
-        public IActionResult Reset()
+        public IActionResult Index()
         {
             SetDefaultSession();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(IndexSearch));
         }
 
-        [HttpGet(nameof(Index))]
-        public async Task<IActionResult> Index()
+        [HttpGet(nameof(IndexSearch))]
+        public async Task<IActionResult> IndexSearch()
         {
             var vm = await MapViewModelFromSession();
             return View(nameof(Index), vm);
