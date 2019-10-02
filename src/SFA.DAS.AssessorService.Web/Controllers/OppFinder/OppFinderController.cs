@@ -11,7 +11,7 @@ using SFA.DAS.AssessorService.Web.ViewModels.OppFinder;
 
 namespace SFA.DAS.AssessorService.Web.Controllers.OppFinder
 {
-    [Route("apprenticeship-assessment-business-opportunity")]
+    [Route("find-an-assessment-opportunity")]
     [CheckSession(nameof(OppFinderController), nameof(Reset), nameof(IOppFinderSession.SearchTerm))]
     public class OppFinderController : Controller
     {
