@@ -1,4 +1,4 @@
-CREATE TABLE [Applications](
+CREATE TABLE [Apply](
 	[Id] [uniqueidentifier] NOT NULL DEFAULT NEWID(),
 	[ApplicationId] [uniqueidentifier] NOT NULL,
 	[OrganisationId] [uniqueidentifier] NOT NULL,
@@ -14,7 +14,7 @@ CREATE TABLE [Applications](
 	[UpdatedBy] [nvarchar](256) NULL,
 	[DeletedAt] [datetime2](7) NULL,
 	[DeletedBy] [nvarchar](256) NULL,
- CONSTRAINT [PK_Applications] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_Apply] PRIMARY KEY CLUSTERED 
  (
 	[Id] ASC
  )
@@ -22,7 +22,7 @@ CREATE TABLE [Applications](
 GO
 
 
-ALTER TABLE [Applications]  
-ADD CONSTRAINT [FK_Applications_Organisations_OrganisationId] 
+ALTER TABLE [Apply]  
+ADD CONSTRAINT [FK_Apply_Organisations_OrganisationId] 
 FOREIGN KEY([OrganisationId]) REFERENCES [Organisations] ([Id])
 GO
