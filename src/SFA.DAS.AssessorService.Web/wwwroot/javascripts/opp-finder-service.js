@@ -1,6 +1,6 @@
 ﻿(function($) {
   /* using the route override for the OppFinder controller */
-  var controller = "apprenticeship-assessment-business-opportunity";
+  var controller = "find-an-assessment-opportunity";
 
   refreshClickHandlers();
 
