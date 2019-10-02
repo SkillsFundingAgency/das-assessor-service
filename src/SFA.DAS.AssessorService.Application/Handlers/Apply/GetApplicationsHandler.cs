@@ -19,14 +19,14 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
 
         public async Task<List<ApplicationResponse>> Handle(GetApplicationsRequest request, CancellationToken cancellationToken)
         {
-            List<Domain.Entities.Application> result;
+            List<Domain.Entities.Apply> result;
 
             if (!request.CreatedBy)
                 result = await _applyRepository.GetOrganisationApplications(request.UserId);
             else
                 result = await _applyRepository.GetUserApplications(request.UserId);
 
-            return Mapper.Map<List<Domain.Entities.Application>, List<ApplicationResponse>>(result);
+            return Mapper.Map<List<Domain.Entities.Apply>, List<ApplicationResponse>>(result);
         }
     }
 }
