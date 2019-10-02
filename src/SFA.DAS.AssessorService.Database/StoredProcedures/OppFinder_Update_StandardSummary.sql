@@ -48,8 +48,7 @@ BEGIN
 				JOIN (SELECT StandardId, CONVERT(numeric,JSON_VALUE([StandardData],'$.Duration')) Duration 
 						FROM [StandardCollation] 
 						WHERE 1=1 
-						AND json_value(StandardData ,'$.IfaStatus') = 'Approved for delivery' 
-						AND ISNULL(json_value(StandardData ,'$.integratedDegree'),'') = '' 
+						AND [dbo].[OppFinder_Is_Approved_StandardStatus](StandardData) = 1
 						AND (
 							JSON_VALUE(StandardData,'$.EffectiveTo') IS NULL OR
 							JSON_VALUE(StandardData,'$.EffectiveTo') > GETDATE() OR
@@ -90,8 +89,7 @@ BEGIN
 			GROUP BY os1.StandardCode ,TotalEPAOs, ISNULL(Area,'Other'), de1.Ordering
 		) os1 ON sc1.StandardId = os1.StandardCode
 		WHERE 1=1 
-		AND json_value(StandardData ,'$.IfaStatus') = 'Approved for delivery' 
-		AND	ISNULL(json_value(StandardData ,'$.integratedDegree'),'') = '' 
+		AND [dbo].[OppFinder_Is_Approved_StandardStatus](StandardData) = 1
 		AND (
 			JSON_VALUE(StandardData,'$.EffectiveTo') IS NULL OR
 			JSON_VALUE(StandardData,'$.EffectiveTo') > GETDATE() OR
@@ -107,8 +105,7 @@ BEGIN
 		FROM StandardCollation sc1
 		CROSS JOIN DeliveryArea de1
 		WHERE 1=1 
-		AND	json_value(StandardData ,'$.IfaStatus') = 'Approved for delivery' 
-		AND	ISNULL(json_value(StandardData ,'$.integratedDegree'),'') = '' 
+		AND [dbo].[OppFinder_Is_Approved_StandardStatus](StandardData) = 1
 		AND (
 			JSON_VALUE(StandardData,'$.EffectiveTo') IS NULL OR
 			JSON_VALUE(StandardData,'$.EffectiveTo') > GETDATE() OR
@@ -133,8 +130,7 @@ BEGIN
 		LEFT JOIN DeliveryArea de1 on de1.Id = pc1.DeliveryAreaId
 		JOIN StandardCollation sc1 On sc1.StandardId = od1.StandardCode
 		WHERE 1=1
-		AND json_value(StandardData ,'$.IfaStatus') = 'Approved for delivery' 
-		AND	ISNULL(json_value(StandardData ,'$.integratedDegree'),'') = '' 
+		AND [dbo].[OppFinder_Is_Approved_StandardStatus](StandardData) = 1
 		AND	(
 			JSON_VALUE(StandardData,'$.EffectiveTo') IS NULL OR
 			JSON_VALUE(StandardData,'$.EffectiveTo') > GETDATE() OR
@@ -159,4 +155,4 @@ BEGIN
 	
 	IF @Error_Code <> 0 OR XACT_STATE() = -1 ROLLBACK TRANSACTION T1;
 	ELSE IF @Error_Code = 0 AND XACT_STATE() = 1 COMMIT TRANSACTION T1;
-END;	
+END
