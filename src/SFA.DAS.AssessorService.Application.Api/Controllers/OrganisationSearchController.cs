@@ -205,6 +205,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
             var results = new List<OrganisationSearchResult>();
             if (epaoResults != null) results.AddRange(epaoResults);
+            if (roatpResults != null) results.AddRange(roatpResults);
             if (providerResults != null) results.AddRange(providerResults);
             if (referenceResults != null) results.AddRange(referenceResults);
 
