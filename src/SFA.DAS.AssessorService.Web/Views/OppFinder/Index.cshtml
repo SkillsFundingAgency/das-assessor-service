@@ -1,6 +1,6 @@
 ﻿@model SFA.DAS.AssessorService.Web.ViewModels.OppFinder.OppFinderSearchViewModel
 @{
-    ViewData["Title"] = "Opportunity finder";
+    ViewData["Title"] = "Find an assessment opportunity";
     Layout = "_OppFinderServiceLayout";
 }
 
@@ -9,11 +9,11 @@
         <div class="govuk-grid-column-two-thirds">
             <form asp-action="Search" asp-controller="OppFinder" method="get" asp-fragment="approved">
                 <fieldset class="govuk-fieldset">
-                    <h1 class="govuk-label-wrapper">
-                        <label class="govuk-label govuk-label--xl" for="search-term">
+                    <h2 class="govuk-label-wrapper">
+                        <label class="govuk-label govuk-label--l" for="search-term">
                             Search
                         </label>
-                    </h1>
+                    </h2>
 
                     <div class="das-icon-search das-icon-search--on-white" data-module="gem-toggle-input-class-on-focus">
                         <span id="search-term-hint" class="govuk-hint">

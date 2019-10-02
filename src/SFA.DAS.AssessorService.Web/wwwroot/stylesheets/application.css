@@ -441,7 +441,7 @@
 
 .das-user-panel {
   margin-top: -10px;
-  padding: 25px 0 15px;
+  padding: 30px 0 20px;
   background-color: #005ea5;
 }
 
@@ -1605,8 +1605,8 @@ th[aria-sort="ascending"] a:after {
   display: inline-block;
   white-space: nowrap;
   margin: 0 0 6px 0;
-  padding: 4px 6px 0;
-  font-size: 12px;
+  padding: 4px 8px 2px;
+  font-size: 14px;
   border-radius: 20px;
   background: #f8f8f8;
   border: 2px solid #efefef;
@@ -1614,6 +1614,6 @@ th[aria-sort="ascending"] a:after {
 
 @media (min-width: 40.0625em) {
   .das-pill {
-    font-size: 14px;
+    font-size: 16px;
   }
 }

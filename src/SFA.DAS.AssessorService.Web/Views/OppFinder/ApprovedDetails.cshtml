@@ -1,7 +1,7 @@
 ﻿@using SFA.DAS.AssessorService.Web.ViewModels.OppFinder;
 @model OppFinderApprovedDetailsViewModel
 @{
-    ViewData["Title"] = "Opportunity finder - " + @Model.StandardReference;
+    ViewData["Title"] = "Find an assessment opportunity - " + @Model.StandardReference;
     Layout = "_OppFinderLayout";
 }
 
@@ -59,11 +59,11 @@
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">External quality assurance (EQA) provider</dt>
                     <dd class="govuk-summary-list__value">
-                        <a class="govuk-link" href="@Model.EqaProviderLink">@Model.EqaProvider</a>
+                        @Model.EqaProvider
                     </dd>
                 </div>
             </dl>
-            <p class="govuk-body-s govuk-!-margin-bottom-1">
+            <p class="govuk-!-margin-bottom-1">
                 Full information on <a class="govuk-link" href="@Model.StandardPageUrl" target="_blank" rel="noopener noreferrer">@Model.Title</a>
             </p>
             <p class="govuk-body-s govuk-!-margin-bottom-8">
@@ -121,13 +121,15 @@
                 <tr class="govuk-table__row js-expandble-cell expandble-cell expandble-cell--hidden" aria-hidden="true">
                     <td class="govuk-table__cell" colspan="4">
                         <div class="expandble-cell-content expandble-cell-content--no-border">
-                            @if ((regionResult.EndPointAssessorsNames?.Length ?? 0) > 0)
-                            {
-                                foreach (var region in regionResult.EndPointAssessorsNames)
+                            <ul class="govuk-list govuk-list--bullet">
+                                @if ((regionResult.EndPointAssessorsNames?.Length ?? 0) > 0)
                                 {
-                                    <span class="das-pill">@region</span>
+                                    foreach (var region in regionResult.EndPointAssessorsNames)
+                                    {
+                                        <li>@region</li>
+                                    }
                                 }
-                            }
+                            </ul>
                         </div>
                     </td>
                 </tr>

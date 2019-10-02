@@ -3,18 +3,19 @@
 @using SFA.DAS.AssessorService.Web.ViewModels.OppFinder
 @model OppFinderSearchViewModel
 
+<h2 class="govuk-heading-m">In-development Standards</h2>
 @{ var inDevelopmentTotalRecordCount = (Model?.InDevelopmentStandards.TotalRecordCount ?? 0); }
     <p class="govuk-body">
         @if (!string.IsNullOrEmpty(Model?.SearchTerm))
         {
-            <text>Showing </text>
             <span class="govuk-!-font-weight-bold">@inDevelopmentTotalRecordCount</span>
             @if (inDevelopmentTotalRecordCount == 1){<text> result</text>}else{<text> results</text>}
-    }
-    else
-    {
-        <text>Showing <span class="govuk-!-font-weight-bold">@inDevelopmentTotalRecordCount</span> Standards in-development</text>
-    }
+            <text> found</text>
+        }
+        else
+        {
+            <text><span class="govuk-!-font-weight-bold">@inDevelopmentTotalRecordCount</span> Standards in-development found</text>
+        }
     </p>
 @if (inDevelopmentTotalRecordCount == 0)
 {
