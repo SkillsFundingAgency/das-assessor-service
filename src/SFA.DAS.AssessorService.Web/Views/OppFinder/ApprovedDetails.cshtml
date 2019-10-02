@@ -63,7 +63,7 @@
                     </dd>
                 </div>
             </dl>
-            <p class="govuk-!-margin-bottom-1">
+            <p class="govuk-body govuk-!-margin-bottom-1">
                 Full information on <a class="govuk-link" href="@Model.StandardPageUrl" target="_blank" rel="noopener noreferrer">@Model.Title</a>
             </p>
             <p class="govuk-body-s govuk-!-margin-bottom-8">
@@ -112,7 +112,14 @@
             {
                 <tr class="govuk-table__row">
                     <td scope="row" class="govuk-table__cell">
-                        <div role="button" tabindex="0" class="js-expand-table-row expand-table-row"><i class="arrow arrow-closed">►</i> <span>@regionResult.Region</span></div>
+                        @if ((regionResult.EndPointAssessorsNames?.Length ?? 0) > 0)
+                        {
+                            <div role="button" tabindex="0" class="js-expand-table-row expand-table-row"><i class="arrow arrow-closed">►</i> <span>@regionResult.Region</span></div>
+                        }
+                        else
+                        {
+                            @regionResult.Region
+                        }
                     </td>
                     <td class="govuk-table__cell govuk-table__cell--numeric">@regionResult.EndPointAssessors</td>
                     <td class="govuk-table__cell govuk-table__cell--numeric">@regionResult.ActiveApprentices</td>
@@ -121,7 +128,7 @@
                 <tr class="govuk-table__row js-expandble-cell expandble-cell expandble-cell--hidden" aria-hidden="true">
                     <td class="govuk-table__cell" colspan="4">
                         <div class="expandble-cell-content expandble-cell-content--no-border">
-                            <ul class="govuk-list govuk-list--bullet">
+                            <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-0">
                                 @if ((regionResult.EndPointAssessorsNames?.Length ?? 0) > 0)
                                 {
                                     foreach (var region in regionResult.EndPointAssessorsNames)
