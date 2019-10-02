@@ -10,7 +10,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
 
         Task<OppFinderFilterStandardsResult> GetOppFinderFilterStandards(string searchTerm, string sectorFilters, string levelFilters);
         Task<OppFinderApprovedStandardsResult> GetOppFinderApprovedStandards(string searchTerm, string sectorFilters, string levelFilters, string sortColumn, int sortAscending, int pageSize, int pageIndex);
-        Task<OppFinderApprovedStandardDetailsResult> GetOppFinderApprovedStandardDetails(int standardCode);
+        Task<OppFinderApprovedStandardDetailsResult> GetOppFinderApprovedStandardDetails(int? standardCode, string standardReference);
         Task<OppFinderNonApprovedStandardsResult> GetOppFinderNonApprovedStandards(string searchTerm, string sectorFilters, string levelFilters, string sortColumn, int sortAscending, int pageSize, int pageIndex, string nonApprovedType);
 
         Task UpdateStandardSummary();       
@@ -42,6 +42,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
 
     public class OppFinderApprovedStandardOverviewResult
     {
+        public int StandardCode { get; set; }
         public string StandardName { get; set; }
         public string OverviewOfRole { get; set; }
         public int StandardLevel { get; set; }

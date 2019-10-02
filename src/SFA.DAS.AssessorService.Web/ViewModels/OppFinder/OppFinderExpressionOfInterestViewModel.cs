@@ -20,6 +20,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.OppFinder
         public string StandardReference { get; set; }
         public string StandardSector { get; set; }
 
+        public bool BackLink { get; set; }
         public StandardStatus StandardStatus { get; set; }
     }
 }

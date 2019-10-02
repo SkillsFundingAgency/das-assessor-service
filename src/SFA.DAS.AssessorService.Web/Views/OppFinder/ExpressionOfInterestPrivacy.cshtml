@@ -6,14 +6,7 @@
     ViewBag.Title = "Expression of interest - " + viewTitle;
     Layout = "_OppFinderLayout";
 }
-@if(Model.StandardStatus == StandardStatus.Approved)
-{
-    <a class="govuk-back-link" asp-controller="OppFinder" asp-action="ExpressionOfInterestApproved" asp-route-standardCode="@Model.StandardCode">Back</a>
-}
-else
-{
-    <a class="govuk-back-link" asp-controller="OppFinder" asp-action="ExpressionOfInterestNonApproved" asp-route-standardReference="@Model.StandardReference">Back</a>
-}
+<a class="govuk-back-link" asp-controller="OppFinder" asp-action="ExpressionOfInterest" asp-route-standardCode="@Model.StandardReference" asp-route-standardStatus="@Model.StandardStatus" asp-route-backLink="@Model.BackLink">Back</a>
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <h1 class="govuk-heading-xl">@viewTitle</h1>
     <p class="govuk-body">

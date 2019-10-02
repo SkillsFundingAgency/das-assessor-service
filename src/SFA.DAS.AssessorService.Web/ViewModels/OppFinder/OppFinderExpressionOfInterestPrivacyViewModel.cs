@@ -2,8 +2,8 @@
 {
     public class OppFinderExpressionOfInterestPrivacyViewModel
     {
-        public int? StandardCode { get; set; }
         public string StandardReference { get; set; }
+        public bool BackLink { get; set; }
         public StandardStatus StandardStatus { get; set; }
     }
 }
