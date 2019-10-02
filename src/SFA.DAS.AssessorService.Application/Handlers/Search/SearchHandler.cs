@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Application.Logging;
+using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using Organisation = SFA.DAS.AssessorService.Domain.Entities.Organisation;
 using SearchData = SFA.DAS.AssessorService.Domain.Entities.SearchData;
@@ -138,7 +139,16 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
             //If privately funded and uln found in ilr but due to the above check the result was empty then set uln exist flag
             if (request.IsPrivatelyFunded && ilrResults != null && !ilrResults.Any())
             {
-              return  new List<SearchResult> { new SearchResult{UlnAlreadyExits = true, Uln = request.Uln , IsPrivatelyFunded = true, IsNoMatchingFamilyName = true } };
+                var certificate = await _certificateRepository.GetCertificateByUlnLastname(request.Uln, likedSurname);
+                if (certificate?.Status == CertificateStatus.Deleted)
+                {
+                    var result = new List<SearchResult> { new SearchResult { FamilyName=likedSurname, UlnAlreadyExits = false, Uln = request.Uln,
+                        StdCode = certificate.StandardCode, IsPrivatelyFunded = true, IsNoMatchingFamilyName = true } };
+                    return result.PopulateStandards(_standardService, _logger);
+
+                }
+                return  new List<SearchResult> { new SearchResult{UlnAlreadyExits = true, Uln = request.Uln ,
+                    IsPrivatelyFunded = true, IsNoMatchingFamilyName = true } };
             }
 
             _logger.LogInformation((ilrResults != null && ilrResults.Any())? LoggingConstants.SearchSuccess : LoggingConstants.SearchFailure);
