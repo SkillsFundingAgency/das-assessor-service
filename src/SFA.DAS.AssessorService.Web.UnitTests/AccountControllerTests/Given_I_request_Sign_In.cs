@@ -21,6 +21,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.AccountControllerTests
         private Mock<IWebConfiguration> _webConfigurstionMock;
         private Mock<CreateAccountValidator> _validatorMock;
         private Mock<IContactsApiClient> _contactsApiClientMock;
+        private Mock<IOrganisationsApiClient> _organisationClientMock;
 
         [SetUp]
         public void Arrange()
@@ -29,6 +30,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.AccountControllerTests
             _webConfigurstionMock = new Mock<IWebConfiguration>();
             var mockUrlHelper = new Mock<IUrlHelper>(MockBehavior.Strict);
             _contactsApiClientMock = new Mock<IContactsApiClient>();
+            _organisationClientMock = new Mock<IOrganisationsApiClient>();
             mockUrlHelper
                 .Setup(
                     x => x.Action(
@@ -40,7 +42,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.AccountControllerTests
 
             _accountController = new AccountController(new Mock<ILogger<AccountController>>().Object,
                 new Mock<ILoginOrchestrator>().Object, new Mock<ISessionService>().Object, _webConfigurstionMock.Object, _contactsApiClientMock.Object,
-                new Mock<IHttpContextAccessor>().Object, _validatorMock.Object);
+                new Mock<IHttpContextAccessor>().Object, _validatorMock.Object, _organisationClientMock.Object);
 
             _accountController.Url = mockUrlHelper.Object;
         }
