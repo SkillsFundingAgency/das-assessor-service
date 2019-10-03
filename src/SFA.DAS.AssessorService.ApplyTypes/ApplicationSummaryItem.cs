@@ -5,7 +5,7 @@ namespace SFA.DAS.AssessorService.ApplyTypes
     public class ApplicationSummaryItem
     {
         public Guid ApplicationId { get; set; }
-        public int SequenceId { get; set; }
+        public int SequenceNo { get; set; }
         public string OrganisationName { get; set; }
         public string ApplicationType { get; set; }
         public string StandardName { get; set; }
@@ -18,5 +18,6 @@ namespace SFA.DAS.AssessorService.ApplyTypes
         public string FinancialStatus { get; set; }
         public string FinancialGrade { get; set; }
         public string CurrentStatus { get; set; }
+        public string ReviewStatus { get; set; }
     }
 }
