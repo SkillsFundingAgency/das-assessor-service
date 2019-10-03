@@ -14,6 +14,9 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<Guid> CreateApplication(Domain.Entities.Apply apply);
         Task SubmitApplicationSequence(Domain.Entities.Apply apply);
         Task<int> GetNextAppReferenceSequence();
+        Task<List<ApplicationSummaryItem>> GetOpenApplications(int sequenceId);
+        Task<List<ApplicationSummaryItem>> GetFeedbackAddedApplications();
+        Task<List<ApplicationSummaryItem>> GetClosedApplications();
         Task<List<FinancialApplicationSummaryItem>> GetOpenFinancialApplications();
         Task<List<FinancialApplicationSummaryItem>> GetFeedbackAddedFinancialApplications();
         Task<List<FinancialApplicationSummaryItem>> GetClosedFinancialApplications();

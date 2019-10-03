@@ -145,6 +145,30 @@ namespace SFA.DAS.AssessorService.Data.Apply
             }
         }
 
+        public async Task<List<ApplicationSummaryItem>> GetOpenApplications(int sequenceId)
+        {
+            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            {
+                return new List<ApplicationSummaryItem>();
+            }
+        }
+
+        public async Task<List<ApplicationSummaryItem>> GetFeedbackAddedApplications()
+        {
+            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            {
+                return new List<ApplicationSummaryItem>();
+            }
+        }
+
+        public async Task<List<ApplicationSummaryItem>> GetClosedApplications()
+        {
+            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            {
+                return new List<ApplicationSummaryItem>();
+            }
+        }
+
         public async Task<List<FinancialApplicationSummaryItem>> GetOpenFinancialApplications()
         {
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))
