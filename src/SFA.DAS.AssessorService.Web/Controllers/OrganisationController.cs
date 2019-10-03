@@ -94,6 +94,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         }
 
         [HttpGet]
+        [PrivilegeAuthorize(Privileges.ChangeOrganisationDetails)]
         [TypeFilter(typeof(MenuFilter), Arguments = new object[] { Pages.Organisations })]
         public async Task<IActionResult> OrganisationDetails()
         {

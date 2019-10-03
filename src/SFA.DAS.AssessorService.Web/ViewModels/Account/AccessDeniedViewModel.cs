@@ -11,5 +11,6 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Account
         public bool UserHasUserManagement { get; set; }
         public string ReturnController { get; set; }
         public string ReturnAction { get; set; }
+        public bool IsUsersOrganisationLive { get; set; }
     }
 }
