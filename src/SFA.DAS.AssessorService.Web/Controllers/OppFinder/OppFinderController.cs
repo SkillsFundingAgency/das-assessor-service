@@ -13,11 +13,13 @@ using SFA.DAS.AssessorService.Web.ViewModels.OppFinder;
 
 namespace SFA.DAS.AssessorService.Web.Controllers.OppFinder
 {
-    [Route("find-an-assessment-opportunity")]
-    [CheckSession(nameof(OppFinderController), nameof(Index), nameof(IOppFinderSession.SearchTerm))]
+    [Route(OppFinderRoute)]
+    [CheckSession(nameof(OppFinderController), nameof(ResetSession), nameof(IOppFinderSession.SearchTerm))]
     [TypeFilter(typeof(OppFinderExceptionFilterAttribute))]
     public class OppFinderController : Controller
     {
+        private const string OppFinderRoute = "find-an-assessment-opportunity";
+
         private readonly IOppFinderSession _oppFinderSession;
         private readonly IOppFinderApiClient _oppFinderApiClient;
         private readonly IValidationApiClient _validationApiClient;
@@ -42,25 +44,24 @@ namespace SFA.DAS.AssessorService.Web.Controllers.OppFinder
         /// </summary>
         /// <returns>Redirect to the main page</returns>
         [HttpGet]
-        [HttpGet(nameof(Index))]
+        public async Task<IActionResult> Index()
+        {
+            var vm = await MapViewModelFromSession();
+            return View(nameof(Index), vm);
+        }
+
+        [HttpGet(nameof(ResetSession))]
         [CheckSession(nameof(IOppFinderSession.SearchTerm), CheckSession.Ignore)]
-        public IActionResult Index()
+        public IActionResult ResetSession()
         {
             SetDefaultSession();
-            return RedirectToAction(nameof(IndexSearch));
+            return RedirectToAction(OppFinderRoute);
         }
 
         [HttpGet(nameof(Error))]
         public IActionResult Error()
         {
             return View("ErrorOppFinder", new ErrorViewModel { RequestId = HttpContext.TraceIdentifier });
-        }
-
-        [HttpGet(nameof(IndexSearch))]
-        public async Task<IActionResult> IndexSearch()
-        {
-            var vm = await MapViewModelFromSession();
-            return View(nameof(Index), vm);
         }
 
         [HttpGet(nameof(Search))]
@@ -370,7 +371,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.OppFinder
                 GetApprovedStandardDetails(new GetOppFinderApprovedStandardDetailsRequest { StandardCode = standardCode });
 
             if (standardDetails == null)
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(OppFinderRoute);
 
             var vm = new OppFinderApprovedDetailsViewModel
             {
@@ -450,7 +451,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.OppFinder
             }
 
             // an expression of interest was made for a non-existent standard reference
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(OppFinderRoute);
         }
 
         [HttpPost(nameof(ExpressionOfInterest))]
@@ -534,7 +535,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.OppFinder
                 GetNonApprovedStandardDetails(new GetOppFinderNonApprovedStandardDetailsRequest { StandardReference = standardReference });
 
             if (standardDetails == null)
-                return RedirectToAction(nameof(Index), nameof(OppFinderController).RemoveController(), 
+                return RedirectToAction(OppFinderRoute, nameof(OppFinderController).RemoveController(), 
                     standardStatus == StandardStatus.InDevelopment
                     ? "in-development"
                     : "proposed");
