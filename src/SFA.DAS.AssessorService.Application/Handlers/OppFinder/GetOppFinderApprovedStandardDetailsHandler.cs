@@ -63,7 +63,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Standards
                 Title = result.OverviewResult?.StandardName,
                 OverviewOfRole = result.OverviewResult?.OverviewOfRole,
                 StandardLevel = result.OverviewResult?.StandardLevel != null
-                    ? result.OverviewResult.StandardLevel > 0 ? result.OverviewResult.StandardLevel.ToString() : "TBC"
+                    ? result.OverviewResult.StandardLevel > 0 ? result.OverviewResult.StandardLevel.ToString() : "To be confirmed"
                     : null,
                 StandardReference = result.OverviewResult?.StandardReference,
                 TotalActiveApprentices = result.OverviewResult?.TotalActiveApprentices ?? 0,

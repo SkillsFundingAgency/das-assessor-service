@@ -50,7 +50,7 @@ BEGIN
 		AND
 		(
 			@LevelFiltersInternal = '' OR
-			CASE StandardLevel WHEN 0 THEN 'TBC' ELSE CONVERT(VARCHAR, StandardLevel) END IN (SELECT LTRIM(RTRIM(value)) FROM STRING_SPLIT ( @LevelFiltersInternal, '|' ))
+			CASE StandardLevel WHEN 0 THEN 'To be confirmed' ELSE CONVERT(VARCHAR, StandardLevel) END IN (SELECT LTRIM(RTRIM(value)) FROM STRING_SPLIT ( @LevelFiltersInternal, '|' ))
 		)
 	GROUP BY 
 		StandardCode, StandardReference, StandardName, Sector, StandardLevel

@@ -70,7 +70,7 @@ BEGIN
 		AND
 		(
 			@LevelFiltersInternal = '' OR
-			CASE JSON_VALUE(StandardData, '$.Level') WHEN 0 THEN 'TBC' ELSE CONVERT(VARCHAR, JSON_VALUE(StandardData, '$.Level')) END IN (SELECT LTRIM(RTRIM(value)) FROM STRING_SPLIT ( @LevelFiltersInternal, '|' ))
+			CASE JSON_VALUE(StandardData, '$.Level') WHEN 0 THEN 'To be confirmed' ELSE CONVERT(VARCHAR, JSON_VALUE(StandardData, '$.Level')) END IN (SELECT LTRIM(RTRIM(value)) FROM STRING_SPLIT ( @LevelFiltersInternal, '|' ))
 		)
 		AND IsLive = 1
 	GROUP BY 

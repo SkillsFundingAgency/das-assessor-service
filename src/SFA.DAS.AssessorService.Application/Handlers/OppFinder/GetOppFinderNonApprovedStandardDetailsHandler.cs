@@ -33,7 +33,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Standards
             {
                 Title = result.Title,
                 OverviewOfRole = result.StandardData.OverviewOfRole,
-                StandardLevel = (result.StandardData?.Level > 0 ? result.StandardData?.Level.ToString() : "TBC"),
+                StandardLevel = (result.StandardData?.Level > 0 ? result.StandardData?.Level.ToString() : "To be confirmed"),
                 StandardReference = result.ReferenceNumber,
                 Sector = result.StandardData.Category,
                 TypicalDuration = result.StandardData?.Duration ?? 0,

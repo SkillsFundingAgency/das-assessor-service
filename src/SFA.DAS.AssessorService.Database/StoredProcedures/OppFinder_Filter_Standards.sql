@@ -14,7 +14,7 @@ BEGIN
 		StandardReference, 
 		StandardName, 
 		Sector,
-		CASE StandardLevel WHEN 0 THEN 'TBC' ELSE CONVERT(VARCHAR, StandardLevel) END StandardLevel
+		CASE StandardLevel WHEN 0 THEN 'To be confirmed' ELSE CONVERT(VARCHAR, StandardLevel) END StandardLevel
 	INTO #ApprovedSearchResults FROM StandardSummary
 	WHERE
 		@SearchTermInternal = '' OR
@@ -41,7 +41,7 @@ BEGIN
 		ReferenceNumber StandardReference, 
 		Title StandardName,
 		JSON_VALUE(StandardData, '$.Category') Sector,
-		CASE JSON_VALUE(StandardData, '$.Level') WHEN 0 THEN 'TBC' ELSE CONVERT(VARCHAR, JSON_VALUE(StandardData, '$.Level')) END StandardLevel
+		CASE JSON_VALUE(StandardData, '$.Level') WHEN 0 THEN 'To be confirmed' ELSE CONVERT(VARCHAR, JSON_VALUE(StandardData, '$.Level')) END StandardLevel
 	INTO
 		#NonApprovedSearchResults
 	FROM 
@@ -151,13 +151,13 @@ BEGIN
 			)
 			UNION ALL
 			(
-				SELECT CASE StandardLevel WHEN 0 THEN 'TBC' ELSE CONVERT(VARCHAR, StandardLevel) END StandardLevel, 0 MatchingLevelFilter
-				FROM StandardSummary GROUP BY CASE StandardLevel WHEN 0 THEN 'TBC' ELSE CONVERT(VARCHAR, StandardLevel) END
+				SELECT CASE StandardLevel WHEN 0 THEN 'To be confirmed' ELSE CONVERT(VARCHAR, StandardLevel) END StandardLevel, 0 MatchingLevelFilter
+				FROM StandardSummary GROUP BY CASE StandardLevel WHEN 0 THEN 'To be confirmed' ELSE CONVERT(VARCHAR, StandardLevel) END
 			)
 			UNION ALL
 			(
-				SELECT CASE JSON_VALUE(StandardData, '$.Level') WHEN 0 THEN 'TBC' ELSE JSON_VALUE(StandardData, '$.Level') END StandardLevel, 0 MatchingLevelFilter
-				FROM StandardNonApprovedCollation GROUP BY CASE JSON_VALUE(StandardData, '$.Level') WHEN 0 THEN 'TBC' ELSE JSON_VALUE(StandardData, '$.Level') END
+				SELECT CASE JSON_VALUE(StandardData, '$.Level') WHEN 0 THEN 'To be confirmed' ELSE JSON_VALUE(StandardData, '$.Level') END StandardLevel, 0 MatchingLevelFilter
+				FROM StandardNonApprovedCollation GROUP BY CASE JSON_VALUE(StandardData, '$.Level') WHEN 0 THEN 'To be confirmed' ELSE JSON_VALUE(StandardData, '$.Level') END
 			)
 		)
 		[AllResults]
