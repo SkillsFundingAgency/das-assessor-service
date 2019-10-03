@@ -145,11 +145,33 @@ namespace SFA.DAS.AssessorService.Data.Apply
             }
         }
 
-        public async Task<List<ApplicationSummaryItem>> GetOpenApplications(int sequenceId)
+        public async Task<List<ApplicationSummaryItem>> GetOpenApplications(int sequenceNo)
         {
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))
             {
-                return new List<ApplicationSummaryItem>();
+                return (await connection
+                    .QueryAsync<ApplicationSummaryItem>(
+                        @"SELECT
+                            org.EndPointAssessorName AS OrganisationName,
+                            ap1.Id AS ApplicationId,
+                            CASE WHEN JSON_VALUE(ap1.Applydata,'$.Apply.LatestStandardSubmissionDate') IS NULL THEN 1 ELSE 2 END AS SequenceNo,
+                            CASE WHEN JSON_VALUE(ap1.Applydata,'$.Apply.LatestStandardSubmissionDate') IS NULL THEN 'Midpoint' ELSE 'Standard' END AS ApplicationType,
+                            JSON_VALUE(ap1.Applydata,'$.Apply.StandardName') AS StandardName,
+                            JSON_VALUE(ap1.Applydata,'$.Apply.StandardCode') AS StandardCode,
+                            ISNULL(JSON_VALUE(ap1.Applydata,'$.Apply.LatestStandardSubmissionDate'),JSON_VALUE(ap1.Applydata,'$.Apply.LatestInitSubmissionDate')) AS SubmittedDate,
+                            ISNULL(JSON_VALUE(ap1.Applydata,'$.Apply.StandardSubmissionsCount'),JSON_VALUE(ap1.Applydata,'$.Apply.InitSubmissionCount')) AS SubmissionCount,
+                            ap1.FinancialReviewStatus AS FinancialStatus,
+                            JSON_VALUE(ap1.FinancialGrade,'$.SelectedGrade') AS FinancialGrade,
+                            ap1.ApplicationStatus AS CurrentStatus,
+                            ap1.ReviewStatus AS ReviewStatus
+                        FROM Apply ap1
+                        INNER JOIN Organisations org ON ap1.OrganisationId = org.Id
+                        WHERE ap1.ApplicationStatus IN (@applicationStatusSubmitted, @applicationStatusResubmitted)",
+                        new
+                        {
+                            applicationStatusSubmitted = ApplicationStatus.Submitted,
+                            applicationStatusResubmitted = ApplicationStatus.Resubmitted,
+                        })).Where(item => item.SequenceNo == sequenceNo).ToList();
             }
         }
 
@@ -157,7 +179,28 @@ namespace SFA.DAS.AssessorService.Data.Apply
         {
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))
             {
-                return new List<ApplicationSummaryItem>();
+                return (await connection
+                    .QueryAsync<ApplicationSummaryItem>(
+                        @"SELECT
+                            org.EndPointAssessorName AS OrganisationName,
+                            ap1.Id AS ApplicationId,
+                            CASE WHEN JSON_VALUE(ap1.Applydata,'$.Apply.LatestStandardSubmissionDate') IS NULL THEN 1 ELSE 2 END AS SequenceNo,
+                            CASE WHEN JSON_VALUE(ap1.Applydata,'$.Apply.LatestStandardSubmissionDate') IS NULL THEN 'Midpoint' ELSE 'Standard' END AS ApplicationType,
+                            JSON_VALUE(ap1.Applydata,'$.Apply.StandardName') AS StandardName,
+                            JSON_VALUE(ap1.Applydata,'$.Apply.StandardCode') AS StandardCode,
+                            ISNULL(JSON_VALUE(ap1.Applydata,'$.Apply.LatestStandardSubmissionDate'),JSON_VALUE(ap1.Applydata,'$.Apply.LatestInitSubmissionDate')) AS SubmittedDate,
+                            ISNULL(JSON_VALUE(ap1.Applydata,'$.Apply.StandardSubmissionsCount'),JSON_VALUE(ap1.Applydata,'$.Apply.InitSubmissionCount')) AS SubmissionCount,
+                            ap1.FinancialReviewStatus AS FinancialStatus,
+                            JSON_VALUE(ap1.FinancialGrade,'$.SelectedGrade') AS FinancialGrade,
+                            ap1.ApplicationStatus AS CurrentStatus,
+                            ap1.ReviewStatus AS ReviewStatus
+                        FROM Apply ap1
+                        INNER JOIN Organisations org ON ap1.OrganisationId = org.Id
+                        WHERE ap1.ApplicationStatus IN (@applicationStatusFeedbackAdded)",
+                        new
+                        {
+                            applicationStatusFeedbackAdded = ApplicationStatus.FeedbackAdded,
+                        })).ToList();
             }
         }
 
@@ -165,7 +208,29 @@ namespace SFA.DAS.AssessorService.Data.Apply
         {
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))
             {
-                return new List<ApplicationSummaryItem>();
+                return (await connection
+                    .QueryAsync<ApplicationSummaryItem>(
+                        @"SELECT
+                            org.EndPointAssessorName AS OrganisationName,
+                            ap1.Id AS ApplicationId,
+                            CASE WHEN JSON_VALUE(ap1.Applydata,'$.Apply.LatestStandardSubmissionDate') IS NULL THEN 1 ELSE 2 END AS SequenceNo,
+                            CASE WHEN JSON_VALUE(ap1.Applydata,'$.Apply.LatestStandardSubmissionDate') IS NULL THEN 'Midpoint' ELSE 'Standard' END AS ApplicationType,
+                            JSON_VALUE(ap1.Applydata,'$.Apply.StandardName') AS StandardName,
+                            JSON_VALUE(ap1.Applydata,'$.Apply.StandardCode') AS StandardCode,
+                            ISNULL(JSON_VALUE(ap1.Applydata,'$.Apply.LatestStandardSubmissionDate'),JSON_VALUE(ap1.Applydata,'$.Apply.LatestInitSubmissionDate')) AS SubmittedDate,
+                            ISNULL(JSON_VALUE(ap1.Applydata,'$.Apply.StandardSubmissionsCount'),JSON_VALUE(ap1.Applydata,'$.Apply.InitSubmissionCount')) AS SubmissionCount,
+                            ap1.FinancialReviewStatus AS FinancialStatus,
+                            JSON_VALUE(ap1.FinancialGrade,'$.SelectedGrade') AS FinancialGrade,
+                            ap1.ApplicationStatus AS CurrentStatus,
+                            ap1.ReviewStatus AS ReviewStatus
+                        FROM Apply ap1
+                        INNER JOIN Organisations org ON ap1.OrganisationId = org.Id
+                        WHERE ap1.ApplicationStatus IN (@applicationStatusApproved, @applicationStatusRejected)",
+                        new
+                        {
+                            applicationStatusApproved = ApplicationStatus.Approved,
+                            applicationStatusRejected = ApplicationStatus.Rejected,
+                        })).ToList();
             }
         }
 
