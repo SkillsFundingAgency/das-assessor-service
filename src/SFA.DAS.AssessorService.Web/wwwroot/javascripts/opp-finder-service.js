@@ -238,7 +238,7 @@
 
                 if (fragment !== null) {
                     var nonPartialActionMethod = this.url.replace(actionMethod + "Partial", actionMethod) + fragment;
-                    history.pushState(null, null, nonPartialActionMethod);
+                    history.replaceState(null, null, nonPartialActionMethod);
                 }
 
                 refreshFunction();
@@ -265,7 +265,7 @@
                 jqContainer.html(response);
 
                 var nonPartialActionMethod = this.url.replace(actionMethod + "Partial", "Search") + fragment;
-                history.pushState(null, null, nonPartialActionMethod);
+                history.replaceState(null, null, nonPartialActionMethod);
 
                 searchPartialFunction();
             },
