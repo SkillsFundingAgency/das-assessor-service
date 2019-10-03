@@ -91,7 +91,7 @@ else
             <div class="das-flex-space-around">
                 <div>
                     <select class="approved-per-page govuk-select govuk-!-margin-right-2" asp-for="ApprovedStandardsPerPage" asp-items="Model.StandardsPerPage"></select>
-                    <span>Standards per page</span>
+                    <label for="ApprovedStandardsPerPage">Standards per page</label>
                 </div>
                 <div class="das-pagination-links">
                     @{await Html.RenderPartialAsync("_PaginationLinksPartial", new OppFinderPaginationViewModel

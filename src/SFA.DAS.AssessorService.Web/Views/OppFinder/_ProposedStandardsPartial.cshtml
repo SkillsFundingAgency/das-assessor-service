@@ -67,7 +67,7 @@ else
             <div class="das-flex-space-around">
                 <div>
                         <select class="proposed-per-page govuk-select" asp-for="ProposedStandardsPerPage" asp-items="Model.StandardsPerPage"></select>
-                        <span>Standards per page</span>
+                        <label for="ProposedStandardsPerPage">Standards per page</label>
                 </div>
                 <div class="das-pagination-links">
                     @{await Html.RenderPartialAsync("_PaginationLinksPartial", new OppFinderPaginationViewModel
