@@ -427,6 +427,10 @@ namespace SFA.DAS.AssessorService.Web.Controllers.OppFinder
             return await ShowNonApprovedStandardDetails(standardReference, StandardStatus.Proposed, _oppFinderSession.ProposedPageIndex);
         }
 
+        /*
+        
+        THE EXPRESION OF INTEREST HAS BEEN TEMPORARILY REMOVED DUE TO BUSINESS ISSUES THIS CODE IS COMMENTED OUT TO PREVENT PUBLIC ACCESS
+         
         [HttpGet(nameof(ExpressionOfInterest))]
         [ModelStatePersist(ModelStatePersist.RestoreEntry)]
         [CheckSession(nameof(IOppFinderSession.SearchTerm), CheckSession.Ignore)]
@@ -532,6 +536,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.OppFinder
                 return RedirectToAction(nameof(ExpressionOfInterest), new { standardReference = viewModel.StandardReference });
             }
         }
+        */
 
         private async Task<IActionResult> ShowNonApprovedStandardDetails(string standardReference, StandardStatus standardStatus, int pageIndex)
         {
