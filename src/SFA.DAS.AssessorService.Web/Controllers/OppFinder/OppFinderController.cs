@@ -7,12 +7,14 @@ using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Domain.Paging;
 using SFA.DAS.AssessorService.Web.Infrastructure;
+using SFA.DAS.AssessorService.Web.Models;
 using SFA.DAS.AssessorService.Web.ViewModels.OppFinder;
 
 namespace SFA.DAS.AssessorService.Web.Controllers.OppFinder
 {
     [Route("find-an-assessment-opportunity")]
     [CheckSession(nameof(OppFinderController), nameof(Index), nameof(IOppFinderSession.SearchTerm))]
+    [TypeFilter(typeof(OppFinderExceptionFilterAttribute))]
     public class OppFinderController : Controller
     {
         private readonly IOppFinderSession _oppFinderSession;
@@ -45,6 +47,12 @@ namespace SFA.DAS.AssessorService.Web.Controllers.OppFinder
         {
             SetDefaultSession();
             return RedirectToAction(nameof(IndexSearch));
+        }
+
+        [HttpGet(nameof(Error))]
+        public IActionResult Error()
+        {
+            return View("ErrorOppFinder", new ErrorViewModel { RequestId = HttpContext.TraceIdentifier });
         }
 
         [HttpGet(nameof(IndexSearch))]
