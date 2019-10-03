@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Domain.Paging;
+using SFA.DAS.AssessorService.Web.Extensions;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.Models;
 using SFA.DAS.AssessorService.Web.ViewModels.OppFinder;
@@ -368,6 +369,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers.OppFinder
             var standardDetails = await _oppFinderApiClient.
                 GetApprovedStandardDetails(new GetOppFinderApprovedStandardDetailsRequest { StandardCode = standardCode });
 
+            if (standardDetails == null)
+                return RedirectToAction(nameof(Index));
+
             var vm = new OppFinderApprovedDetailsViewModel
             {
                 PageIndex = _oppFinderSession.ApprovedPageIndex,
@@ -528,6 +532,12 @@ namespace SFA.DAS.AssessorService.Web.Controllers.OppFinder
         {
             var standardDetails = await _oppFinderApiClient.
                 GetNonApprovedStandardDetails(new GetOppFinderNonApprovedStandardDetailsRequest { StandardReference = standardReference });
+
+            if (standardDetails == null)
+                return RedirectToAction(nameof(Index), nameof(OppFinderController).RemoveController(), 
+                    standardStatus == StandardStatus.InDevelopment
+                    ? "in-development"
+                    : "proposed");
 
             var vm = new OppFinderNonApprovedDetailsViewModel
             {
