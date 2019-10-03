@@ -24,7 +24,15 @@
     @RenderSection("Styles", required: false)
 }
 
-@section AdditionalFooterLinks
+@section FooterLinks
 {
-    @RenderSection("AdditionalFooterLinks", required: false)
+    <li class="govuk-footer__inline-list-item">
+        <a class="govuk-footer__link" asp-controller="OppFinder" asp-action="Cookies">Cookies</a>
+    </li>
+    <li class="govuk-footer__inline-list-item">
+        <a class="govuk-footer__link" asp-controller="OppFinder" asp-action="Privacy">Privacy</a>
+    </li>
+    <li class="govuk-footer__inline-list-item">
+        <a class="govuk-footer__link" asp-controller="OppFinder" asp-action="ContactUs">Contact</a>
+    </li>
 }

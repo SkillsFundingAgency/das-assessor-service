@@ -1,22 +1,20 @@
-﻿@using SFA.DAS.AssessorService.Web.ViewModels.OppFinder;
-@model OppFinderExpressionOfInterestPrivacyViewModel
-
 @{
-    var viewTitle = "Privacy notice";
-    ViewBag.Title = "Expression of interest - " + viewTitle;
+    var viewTitle = "Privacy";
+    ViewData["Title"] = viewTitle;
     Layout = "_OppFinderLayout";
 }
-<a class="govuk-back-link" asp-controller="OppFinder" asp-action="ExpressionOfInterest" asp-route-standardCode="@Model.StandardReference" asp-route-standardStatus="@Model.StandardStatus" asp-route-backLink="@Model.BackLink">Back</a>
+<a class="govuk-back-link" asp-controller="OppFinder" asp-action="Index">Home</a>
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <h1 class="govuk-heading-xl">@viewTitle</h1>
+    <h2 class="govuk-heading-l">Find an assessment opportunity</h2>
     <p class="govuk-body">
-        The find an assessment opportunity service is delivered by the Education and Skills Funding Agency (ESFA), an executive agency of the Department for Education (DfE). The DfE is the data controller for personal information processed by this service.
+        The Find an assessment opportunity is delivered by the Education and Skills Funding Agency (ESFA), an executive agency of the Department for Education (DfE). The DfE is the data controller for personal information processed by this service.
     </p>
     <p class="govuk-body">
         A data controller determines how and why personal data is processed. For more detailed information about how we handle your personal information, read the
         <a class="govuk-link" href="https://www.gov.uk/government/publications/esfa-privacy-notice" target="_blank" rel="noopener noreferrer">ESFA privacy notice.</a>
     </p>
-    <h1 class="govuk-heading-l">What data we collect</h1>
+    <h3 class="govuk-heading-m">What data we collect</h3>
     <p class="govuk-body">
         The personal data we collect from you includes:
         <ul class="govuk-list govuk-list--bullet">
@@ -50,19 +48,19 @@
                 how you got to the site
             </li>
             <li>
-                what you click on while you’re visiting the site
+                what you click on while you're visiting the site
             </li>
         </ul>
     </p>
     <p class="govuk-body">
         We do not collect or store your personal information through Google Analytics (for example your name or address) so this information cannot be used to identify who you are.
     </p>
-    <h1 class="govuk-heading-l">Why we need your data</h1>
+    <h3 class="govuk-heading-m">Why we need your data</h3>
     <p class="govuk-body">
         We use your personal information so the DfE can carry out its functions.
     </p>
     <p class="govuk-body">
-        For example, when you register your interest using the find an assessment opportunity website, the personal information you give us will be used:
+        For example, when you register your interest using the Find an assessment opportunity website, the personal information you give us will be used:
         <ul class="govuk-list govuk-list--bullet">
             <li>
                 to improve your online experience
@@ -81,17 +79,17 @@
             </li>
         </ul>
     </p>
-    <h1 class="govuk-heading-l">Who we share your data with</h1>
+    <h3 class="govuk-heading-m">Who we share your data with</h3>
     <p class="govuk-body">
-        The data we collect may be shared to enable the running of the find an assessment opportunity, where the law allows us to do so. This may include sharing data with other government departments, agencies and public bodies, and our technology suppliers, for example our hosting provider.
+        The data we collect may be shared to enable the running of the Find an assessment opportunity, where the law allows us to do so. This may include sharing data with other government departments, agencies and public bodies, and our technology suppliers, for example our hosting provider.
     </p>
     <p class="govuk-body">
         Find an assessment opportunity
     </p>
     <p class="govuk-body">
-        We will share your data if we are required to do so by law – for example, by court order, or to prevent fraud or other crime.
+        We will share your data if we are required to do so by law - for example, by court order, or to prevent fraud or other crime.
     </p>
-    <h2 class="govuk-heading-m">How long we keep your data</h2>
+    <h3 class="govuk-heading-m">How long we keep your data</h3>
     <p class="govuk-body">
         We will only retain your personal data for as long as:
         <ul class="govuk-list govuk-list--bullet">
@@ -103,9 +101,9 @@
             </li>
         </ul>
     </p>
-    <h2 class="govuk-heading-m">Where your data is processed and stored</h2>
+    <h3 class="govuk-heading-m">Where your data is processed and stored</h3>
     <p class="govuk-body">
-        We design, build and run our systems to make sure that your data is as safe as possible at all stages, both while it’s processed and when it’s stored.
+        We design, build and run our systems to make sure that your data is as safe as possible at all stages, both while it's processed and when it's stored.
     </p>
     <p class="govuk-body">
         All personal data is stored in the
@@ -113,12 +111,12 @@
     </p>
     <h2 class="govuk-heading-m">How we protect your data and keep it secure</h2>
     <p class="govuk-body">
-        We are committed to doing all that we can to keep your data secure. We have set up systems and processes to prevent unauthorised access or disclosure of your data – for example, we protect your data using varying levels of encryption.
+        We are committed to doing all that we can to keep your data secure. We have set up systems and processes to prevent unauthorised access or disclosure of your data - for example, we protect your data using varying levels of encryption.
     </p>
     <p class="govuk-body">
         We also make sure that any third parties that we deal with keep all personal data they process on our behalf secure.
     </p>
-    <h2 class="govuk-heading-m">Your rights</h2>
+    <h3 class="govuk-heading-m">Your rights</h3>
     <p class="govuk-body">
         You have the right to request:
         <ul class="govuk-list govuk-list--bullet">
@@ -150,9 +148,9 @@
             </li>
         </ul>
     </p>
-    <h2 class="govuk-heading-m">Contact us or make a complaint</h2>
+    <h3 class="govuk-heading-m">Contact us or make a complaint</h3>
     <p class="govuk-body">
-        Please let us know if you’d like to make a request or you’re unhappy with how we have used your personal information. You can contact us by writing to:
+        Please let us know if you'd like to make a request or you're unhappy with how we have used your personal information. You can contact us by writing to:
     </p>
     <p class="govuk-body">
         Ministerial and Public Communications Division<br />
@@ -163,34 +161,14 @@
         M1 2WD<br />
     </p>
     <p class="govuk-body">
-        Alternatively, you can contact the helpline if you’d prefer to speak to somebody by phone or email.<br />
+        Alternatively, you can contact the helpline if you'd prefer to speak to somebody by phone or email.<br />
         Phone 0800 015 0400<br />
         Email <a class="govuk-link" href="mailto:nationalhelpdesk@findapprenticeship.service.gov.uk">nationalhelpdesk@findapprenticeship.service.gov.uk</a>
     </p>
     <p class="govuk-body">
-        If you wish to contact the DfE’s Data Protection Officer, use the <a class="govuk-link" href="https://form.education.gov.uk/fillform.php?self=1&form_id=cCCNJ1xSfBE&type=form&ShowMsg=1&form_name=Contact+the+Department+for+Education&noRegister=false&ret=%2Fmodule%2Fservices&noLoginPrompt=1" target="_blank" rel="noopener noreferrer">secure online</a> form or write to the address above.
+        If you wish to contact the DfE's Data Protection Officer, <a class="govuk-link" href="https://form.education.gov.uk/fillform.php?self=1&form_id=cCCNJ1xSfBE&type=form&ShowMsg=1&form_name=Contact+the+Department+for+Education&noRegister=false&ret=%2Fmodule%2Fservices&noLoginPrompt=1" target="_blank" rel="noopener noreferrer">use the secure online form</a> or write to the address above.
     </p>
     <p class="govuk-body">
-        You also have the right to complain to the Information Commissioner’s Office. @*Find out on their website how to report a concern. (might have to open in a new tab).*@
+        You also have the right to complain to the Information Commissioner's Office. Find out on their website how to <a class="govuk-link" href="https://ico.org.uk/concerns/" target="_blank" rel="noopener noreferrer">report a concern.</a>        
     </p>
 </main>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

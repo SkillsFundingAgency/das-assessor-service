@@ -102,16 +102,8 @@
                 <div class="govuk-footer__meta-item govuk-footer__meta-item--grow">
                     <h2 class="govuk-visually-hidden">Support links</h2>
                     <ul class="govuk-footer__inline-list">
-                        <li class="govuk-footer__inline-list-item">
-                            <a class="govuk-footer__link" asp-controller="Home" asp-action="Cookies">Cookies</a>
-                        </li>
-                        <li class="govuk-footer__inline-list-item">
-                            <a class="govuk-footer__link" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                        <li class="govuk-footer__inline-list-item">
-                            <a class="govuk-footer__link" asp-controller="Home" asp-action="ContactUs">Contact</a>
-                        </li>
-                        @RenderSection("AdditionalFooterLinks", required: false)
+                        
+                        @RenderSection("FooterLinks", required: false)
                     </ul>
                     <svg role="presentation" focusable="false" class="govuk-footer__licence-logo" xmlns="http://www.w3.org/2000/svg"
                          viewbox="0 0 483.2 195.7" height="17" width="41">

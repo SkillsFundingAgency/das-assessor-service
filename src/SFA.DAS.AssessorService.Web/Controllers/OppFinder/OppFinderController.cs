@@ -58,6 +58,24 @@ namespace SFA.DAS.AssessorService.Web.Controllers.OppFinder
             return RedirectToAction(OppFinderRoute);
         }
 
+        [HttpGet(nameof(ContactUs))]
+        public IActionResult ContactUs()
+        {
+            return View();
+        }
+
+        [HttpGet(nameof(Cookies))]
+        public IActionResult Cookies()
+        {
+            return View();
+        }
+
+        [HttpGet(nameof(Privacy))]
+        public IActionResult Privacy()
+        {
+            return View();
+        }
+
         [HttpGet(nameof(Error))]
         public IActionResult Error()
         {
@@ -513,20 +531,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers.OppFinder
                 ModelState.AddModelError(nameof(OppFinderExpressionOfInterestViewModel.StandardReference), "Unable to express interest at this time");
                 return RedirectToAction(nameof(ExpressionOfInterest), new { standardReference = viewModel.StandardReference });
             }
-        }
-
-        [HttpGet(nameof(ExpressionOfInterestPrivacy))]
-        [CheckSession(nameof(IOppFinderSession.SearchTerm), CheckSession.Ignore)]
-        public IActionResult ExpressionOfInterestPrivacy(string standardReference, StandardStatus standardStatus, bool backLink)
-        {
-            var viewModel = new OppFinderExpressionOfInterestPrivacyViewModel
-            {
-                BackLink = backLink,
-                StandardStatus = standardStatus,
-                StandardReference = standardReference
-            };
-
-            return View("ExpressionOfInterestPrivacy", viewModel);
         }
 
         private async Task<IActionResult> ShowNonApprovedStandardDetails(string standardReference, StandardStatus standardStatus, int pageIndex)
