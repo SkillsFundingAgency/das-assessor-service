@@ -14,7 +14,7 @@ using SFA.DAS.AssessorService.Web.ViewModels.OppFinder;
 namespace SFA.DAS.AssessorService.Web.Controllers.OppFinder
 {
     [Route(OppFinderRoute)]
-    [CheckSession(nameof(OppFinderController), nameof(ResetSession), nameof(IOppFinderSession.SearchTerm))]
+    [CheckSession(OppFinderRoute, nameof(ResetSession), nameof(IOppFinderSession.SearchTerm))]
     [TypeFilter(typeof(OppFinderExceptionFilterAttribute))]
     public class OppFinderController : Controller
     {
@@ -37,12 +37,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers.OppFinder
             _logger = logger;
         }
 
-        /// <summary>
-        /// Handle the default route request by resetting the sesion and redirecting to the main page; this action 
-        /// is also activated when the session has expired or when Index is requested before the seesion has been
-        /// initialized.
-        /// </summary>
-        /// <returns>Redirect to the main page</returns>
         [HttpGet]
         public async Task<IActionResult> Index()
         {
@@ -55,7 +49,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.OppFinder
         public IActionResult ResetSession()
         {
             SetDefaultSession();
-            return RedirectToAction(OppFinderRoute);
+            return RedirectToAction(string.Empty, OppFinderRoute);
         }
 
         [HttpGet(nameof(ContactUs))]
@@ -389,7 +383,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.OppFinder
                 GetApprovedStandardDetails(new GetOppFinderApprovedStandardDetailsRequest { StandardCode = standardCode });
 
             if (standardDetails == null)
-                return RedirectToAction(OppFinderRoute);
+                return RedirectToAction(string.Empty, OppFinderRoute);
 
             var vm = new OppFinderApprovedDetailsViewModel
             {
@@ -473,7 +467,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.OppFinder
             }
 
             // an expression of interest was made for a non-existent standard reference
-            return RedirectToAction(OppFinderRoute);
+            return RedirectToAction(string.Empty, OppFinderRoute);
         }
 
         [HttpPost(nameof(ExpressionOfInterest))]
@@ -544,11 +538,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers.OppFinder
                 GetNonApprovedStandardDetails(new GetOppFinderNonApprovedStandardDetailsRequest { StandardReference = standardReference });
 
             if (standardDetails == null)
-                return RedirectToAction(OppFinderRoute, nameof(OppFinderController).RemoveController(), 
+                return RedirectToAction(string.Empty, OppFinderRoute,
                     standardStatus == StandardStatus.InDevelopment
-                    ? "in-development"
-                    : "proposed");
-
+                        ? "in-development"
+                        : "proposed");
+                      
             var vm = new OppFinderNonApprovedDetailsViewModel
             {
                 StandardStatus = standardStatus,

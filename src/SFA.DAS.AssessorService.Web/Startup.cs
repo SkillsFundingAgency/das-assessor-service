@@ -190,7 +190,9 @@ namespace SFA.DAS.AssessorService.Web
                 {
                     routes.MapRoute(
                         name: "default",
-                        template: "{controller=Home}/{action=Index}/{id?}");
+                        template: "{controller=Home}/{action=Index}/{id?}",
+                        defaults: null,
+                        constraints: new { controller = new NotEqualRouteContraint("OppFinder") });
                 });
         }        
     }
