@@ -94,6 +94,17 @@ namespace SFA.DAS.AssessorService.Data.Apply
             }
         }
 
+        public async Task StartFinancialReview(Guid id, int sequenceNo)
+        {
+            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            {
+                await connection.ExecuteAsync(@"UPDATE Apply 
+                                                SET ReviewStatus = @reviewStatusInProgress
+                                                WHERE Id = @id AND ReviewStatus = @reviewStatusNew",
+                    new { id, sequenceNo, reviewStatusInProgress = ApplicationReviewStatus.InProgress, reviewStatusNew = ApplicationReviewStatus.New }) ;
+            }
+        }
+
         public async Task StartFinancialReview(Guid id)
         {
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))

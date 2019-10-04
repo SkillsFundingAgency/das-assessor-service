@@ -46,7 +46,13 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             return Ok(applications);
         }
 
-        [HttpPost("/Applications/{applicationId}/Sequences/{sequenceId}/Return")]
+        [HttpPost("Review/Applications/{applicationId}/Sequences/{sequenceNo}/StartReview")]
+        public async Task StartReview(Guid applicationId, int sequenceNo)
+        {
+            await _mediator.Send(new StartApplicationReviewRequest(applicationId, sequenceNo));
+        }
+
+        [HttpPost("Review/Applications/{applicationId}/Sequences/{sequenceId}/Return")]
         [SwaggerResponse((int)HttpStatusCode.OK)]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task ReturnApplication(Guid applicationId, int sequenceId, [FromBody] ReturnApplicationRequest request)
