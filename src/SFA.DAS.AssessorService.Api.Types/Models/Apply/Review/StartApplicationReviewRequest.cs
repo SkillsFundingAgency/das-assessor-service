@@ -15,4 +15,3 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Apply.Review
         }
     }
 }
-}
