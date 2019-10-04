@@ -100,8 +100,8 @@ namespace SFA.DAS.AssessorService.Data.Apply
             {
                 await connection.ExecuteAsync(@"UPDATE Apply 
                                                 SET ReviewStatus = @reviewStatusInProgress
-                                                WHERE Id = @id AND ReviewStatus = @reviewStatusNew",
-                    new { id, sequenceNo, reviewStatusInProgress = ApplicationReviewStatus.InProgress, reviewStatusNew = ApplicationReviewStatus.New }) ;
+                                                WHERE Id = @id",
+                    new { id, sequenceNo, reviewStatusInProgress = ApplicationReviewStatus.InProgress }) ;
             }
         }
 
@@ -111,8 +111,8 @@ namespace SFA.DAS.AssessorService.Data.Apply
             {
                 await connection.ExecuteAsync(@"UPDATE Apply 
                                                 SET FinancialReviewStatus = @financialReviewStatusInProgress
-                                                WHERE Id = @id AND FinancialReviewStatus = @financialReviewStatusNew",
-                    new { id, financialReviewStatusInProgress = FinancialReviewStatus.InProgress, financialReviewStatusNew = FinancialReviewStatus.New });
+                                                WHERE Id = @id",
+                    new { id, financialReviewStatusInProgress = FinancialReviewStatus.InProgress });
             }
         }
 
