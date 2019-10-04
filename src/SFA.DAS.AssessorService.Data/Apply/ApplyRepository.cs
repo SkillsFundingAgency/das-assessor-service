@@ -178,7 +178,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
                         FROM Apply ap1
                         INNER JOIN Organisations org ON ap1.OrganisationId = org.Id
                         WHERE ap1.ApplicationStatus IN (@applicationStatusSubmitted, @applicationStatusResubmitted)
-                        AND @SequenceNo = CASE WHEN JSON_VALUE(ap1.Applydata,'$.Apply.LatestStandardSubmissionDate') IS NULL THEN 1 ELSE 2",
+                        AND @SequenceNo = CASE WHEN JSON_VALUE(ap1.Applydata,'$.Apply.LatestStandardSubmissionDate') IS NULL THEN 1 ELSE 2 END",
                         new
                         {
                             SequenceNo = sequenceNo,
