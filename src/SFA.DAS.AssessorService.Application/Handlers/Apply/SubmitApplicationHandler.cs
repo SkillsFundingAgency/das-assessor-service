@@ -129,6 +129,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
                 applyData.Apply.LatestStandardSubmissionDate = submission.SubmittedAt;
                 applyData.Apply.StandardSubmissionClosedDate = request.StandardSubmissionClosedDate;
                 applyData.Apply.StandardSubmissionFeedbackAddedDate = request.StandardSubmissionFeedbackAddedDate;
+
             }
 
         }
