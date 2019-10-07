@@ -29,11 +29,12 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         private readonly IWebConfiguration _config;
         private readonly IContactsApiClient _contactsApiClient;
         private readonly IHttpContextAccessor _contextAccessor;
+        private readonly IOrganisationsApiClient _organisationsApiClient;
         private readonly CreateAccountValidator _createAccountValidator;
 
         public AccountController(ILogger<AccountController> logger, ILoginOrchestrator loginOrchestrator,
             ISessionService sessionService, IWebConfiguration config, IContactsApiClient contactsApiClient,
-            IHttpContextAccessor contextAccessor, CreateAccountValidator createAccountValidator)
+            IHttpContextAccessor contextAccessor, CreateAccountValidator createAccountValidator, IOrganisationsApiClient organisationsApiClient)
         {
             _logger = logger;
             _loginOrchestrator = loginOrchestrator;
@@ -42,6 +43,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             _contactsApiClient = contactsApiClient;
             _contextAccessor = contextAccessor;
             _createAccountValidator = createAccountValidator;
+            _organisationsApiClient = organisationsApiClient;
         }
 
         [HttpGet]
@@ -127,6 +129,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 var deniedPrivilegeContext = JsonConvert.DeserializeObject<DeniedPrivilegeContext>(TempData["DeniedPrivilegeContext"].ToString());
 
                 var userId = Guid.Parse(User.FindFirst("UserId").Value);
+                var organisation = await _organisationsApiClient.GetOrganisationByUserId(userId);
+
                 var privilege = (await _contactsApiClient.GetPrivileges()).Single(p => p.Id == deniedPrivilegeContext.PrivilegeId);
 
                 var usersPrivileges = await _contactsApiClient.GetContactPrivileges(userId);
@@ -139,7 +143,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                     ContactId = userId,
                     UserHasUserManagement = usersPrivileges.Any(up => up.Privilege.Key == Privileges.ManageUsers),
                     ReturnController = deniedPrivilegeContext.Controller,
-                    ReturnAction = deniedPrivilegeContext.Action
+                    ReturnAction = deniedPrivilegeContext.Action,
+                    IsUsersOrganisationLive = organisation?.Status == OrganisationStatus.Live
                 });
             }
             else if (TempData.Keys.Contains("UnavailableFeatureContext"))
