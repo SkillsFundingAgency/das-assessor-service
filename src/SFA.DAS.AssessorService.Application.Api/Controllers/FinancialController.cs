@@ -44,10 +44,10 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
         }
 
-        [HttpPost("/Financial/{id}/Organisation/{orgId}/UpdateGrade")]
-        public async Task<ActionResult> UpdateGrade(Guid id, Guid orgId, [FromBody] FinancialGrade updatedGrade)
+        [HttpPost("/Financial/{Id}/Return")]
+        public async Task<ActionResult> ReturnReview(Guid Id, [FromBody] FinancialGrade updatedGrade)
         {
-            await _mediator.Send(new UpdateGradeRequest(id, orgId,updatedGrade));
+            await _mediator.Send(new ReturnFinancialReviewRequest(Id, updatedGrade));
             return Ok();
 
         }

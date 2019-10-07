@@ -120,13 +120,13 @@ namespace SFA.DAS.AssessorService.Data.Apply
             }
         }
 
-        public async Task UpdateApplicationFinancialGrade(Guid id, FinancialGrade financialGrade)
+        public async Task ReturnFinancialReview(Guid id, FinancialGrade financialGrade)
         {
             if (financialGrade != null)
             {
                 using (var connection = new SqlConnection(_configuration.SqlConnectionString))
                 {
-                    var financialReviewStatus = (financialGrade.SelectedGrade == FinancialApplicationSelectedGrade.Inadequate) ? FinancialReviewStatus.Rejected : FinancialReviewStatus.Approved;
+                    var financialReviewStatus = (financialGrade.SelectedGrade == FinancialApplicationSelectedGrade.Inadequate) ? FinancialReviewStatus.Rejected : FinancialReviewStatus.Graded;
                     var finanicalSectionStatus = ApplicationSectionStatus.Graded;
 
                     await connection.ExecuteAsync(@"UPDATE Apply
