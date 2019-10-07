@@ -46,22 +46,28 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             return Ok(applications);
         }
 
-        [HttpPost("Review/Applications/{applicationId}/Sequences/{sequenceNo}/StartReview")]
-        public async Task StartReview(Guid applicationId, int sequenceNo)
+        [HttpPost("Review/Applications/{Id}/Sequences/{sequenceNo}/StartReview")]
+        public async Task StartReview(Guid Id, int sequenceNo, [FromBody] StartApplicationSequenceReviewRequest request)
         {
-            await _mediator.Send(new StartApplicationReviewRequest(applicationId, sequenceNo));
+            _logger.LogInformation($"Received request to start application review");
+            await _mediator.Send(new AssessorService.Api.Types.Models.Apply.Review.StartApplicationSequenceReviewRequest(Id, sequenceNo, request.StartedBy));
         }
 
-        [HttpPost("Review/Applications/{applicationId}/Sequences/{sequenceId}/Return")]
+        [HttpPost("Review/Applications/{Id}/Sequences/{sequenceId}/Return")]
         [SwaggerResponse((int)HttpStatusCode.OK)]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task ReturnApplication(Guid applicationId, int sequenceId, [FromBody] ReturnApplicationSequenceRequest request)
+        public async Task ReturnReview(Guid Id, int sequenceId, [FromBody] ReturnApplicationSequenceReviewRequest request)
         {
-            _logger.LogInformation($"Received request to return application");
-            await _mediator.Send(new AssessorService.Api.Types.Models.Apply.Review.ReturnApplicationSequenceRequest(applicationId, sequenceId, request.ReturnType, request.ReturnedBy));
+            _logger.LogInformation($"Received request to return application review");
+            await _mediator.Send(new AssessorService.Api.Types.Models.Apply.Review.ReturnApplicationSequenceReviewRequest(Id, sequenceId, request.ReturnType, request.ReturnedBy));
         }
 
-        public class ReturnApplicationSequenceRequest
+        public class StartApplicationSequenceReviewRequest
+        {
+            public string StartedBy { get; set; }
+        }
+
+        public class ReturnApplicationSequenceReviewRequest
         {
             public string ReturnType { get; set; }
             public string ReturnedBy { get; set; }

@@ -12,16 +12,16 @@ using System.Linq;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Apply.Review
 {
-    public class StartApplicationReviewHandler : IRequestHandler<StartApplicationReviewRequest>
+    public class StartApplicationSequenceReviewHandler : IRequestHandler<StartApplicationSequenceReviewRequest>
     {
         private readonly IApplyRepository _applyRepository;
 
-        public StartApplicationReviewHandler(IApplyRepository applyRepository)
+        public StartApplicationSequenceReviewHandler(IApplyRepository applyRepository)
         {
             _applyRepository = applyRepository;
         }
 
-        public async Task<Unit> Handle(StartApplicationReviewRequest request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(StartApplicationSequenceReviewRequest request, CancellationToken cancellationToken)
         {
             var application = await _applyRepository.GetApplication(request.ApplicationId);
 
@@ -31,7 +31,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply.Review
 
                 if (sequence != null)
                 {
-                    await _applyRepository.StartApplicationReview(application.Id, sequence.SequenceNo);
+                    await _applyRepository.StartApplicationSequenceReview(application.Id, sequence.SequenceNo);
 
                     if (sequence.SequenceNo == 1)
                     {

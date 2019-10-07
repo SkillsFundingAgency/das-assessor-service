@@ -94,7 +94,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
             }
         }
 
-        public async Task StartApplicationReview(Guid id, int sequenceNo)
+        public async Task StartApplicationSequenceReview(Guid id, int sequenceNo)
         {
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))
             {

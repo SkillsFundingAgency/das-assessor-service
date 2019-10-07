@@ -3,15 +3,17 @@ using System;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models.Apply.Review
 {
-    public class StartApplicationReviewRequest : IRequest
+    public class StartApplicationSequenceReviewRequest : IRequest
     {
         public Guid ApplicationId { get; }
         public int SequenceNo { get; }
+        public string StartedBy { get; set; }
 
-        public StartApplicationReviewRequest(Guid applicationId, int sequenceNo)
+        public StartApplicationSequenceReviewRequest(Guid applicationId, int sequenceNo, string startedBy)
         {
             ApplicationId = applicationId;
             SequenceNo = sequenceNo;
+            StartedBy = startedBy;
         }
     }
 }

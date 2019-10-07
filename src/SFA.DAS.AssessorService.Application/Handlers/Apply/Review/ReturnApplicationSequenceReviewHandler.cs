@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Apply.Review
 {
-    public class ReturnApplicationSequenceHandler : IRequestHandler<ReturnApplicationSequenceRequest>
+    public class ReturnApplicationSequenceReviewHandler : IRequestHandler<ReturnApplicationSequenceReviewRequest>
     {
         private readonly IApplyRepository _applyRepository;
         private readonly IMediator _mediator;
@@ -23,7 +23,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply.Review
         private const string SERVICE_NAME = "Apprenticeship assessment service";
         private const string SERVICE_TEAM = "Apprenticeship assessment service team";
 
-        public ReturnApplicationSequenceHandler(IApplyRepository applyRepository, IEMailTemplateQueryRepository eMailTemplateQueryRepository, IContactRepository contactRepository, IWebConfiguration config, IMediator mediator)
+        public ReturnApplicationSequenceReviewHandler(IApplyRepository applyRepository, IEMailTemplateQueryRepository eMailTemplateQueryRepository, IContactRepository contactRepository, IWebConfiguration config, IMediator mediator)
         {
             _applyRepository = applyRepository;
             _mediator = mediator;
@@ -32,19 +32,19 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply.Review
             _config = config;
         }
 
-        public async Task<Unit> Handle(ReturnApplicationSequenceRequest request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(ReturnApplicationSequenceReviewRequest request, CancellationToken cancellationToken)
         {
             switch (request.ReturnType)
             {
                 case "ReturnWithFeedback":
-                    await ReturnApplicationWithFeedback(request);
+                    await ReturnSequenceWithFeedback(request);
                     break;
                 case "Approve":
                 case "ApproveWithFeedback":
-                    await ApproveApplication(request);
+                    await ApproveSequence(request);
                     break;
                 default:
-                    await DeclineApplication(request);
+                    await DeclineSequence(request);
                     break;
             }
 
@@ -53,17 +53,17 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply.Review
             return Unit.Value;
         }
 
-        private async Task ReturnApplicationWithFeedback(ReturnApplicationSequenceRequest request)
+        private async Task ReturnSequenceWithFeedback(ReturnApplicationSequenceReviewRequest request)
         {
             await _applyRepository.UpdateApplicationSequenceStatus(request.ApplicationId, request.SequenceId, ApplicationSequenceStatus.FeedbackAdded, request.ReturnedBy);
         }
 
-        private async Task ApproveApplication(ReturnApplicationSequenceRequest request)
+        private async Task ApproveSequence(ReturnApplicationSequenceReviewRequest request)
         {
             await _applyRepository.UpdateApplicationSequenceStatus(request.ApplicationId, request.SequenceId, ApplicationSequenceStatus.Approved, request.ReturnedBy);
         }
 
-        private async Task DeclineApplication(ReturnApplicationSequenceRequest request)
+        private async Task DeclineSequence(ReturnApplicationSequenceReviewRequest request)
         {
             await _applyRepository.UpdateApplicationSequenceStatus(request.ApplicationId, request.SequenceId, ApplicationSequenceStatus.Declined, request.ReturnedBy);
         }
