@@ -44,7 +44,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply.Review
                     await ApproveApplication(request);
                     break;
                 default:
-                    await RejectApplication(request);
+                    await DeclineApplication(request);
                     break;
             }
 
@@ -63,9 +63,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply.Review
             await _applyRepository.UpdateApplicationSequenceStatus(request.ApplicationId, request.SequenceId, ApplicationSequenceStatus.Approved, request.ReturnedBy);
         }
 
-        private async Task RejectApplication(ReturnApplicationSequenceRequest request)
+        private async Task DeclineApplication(ReturnApplicationSequenceRequest request)
         {
-            await _applyRepository.UpdateApplicationSequenceStatus(request.ApplicationId, request.SequenceId, ApplicationSequenceStatus.Rejected, request.ReturnedBy);
+            await _applyRepository.UpdateApplicationSequenceStatus(request.ApplicationId, request.SequenceId, ApplicationSequenceStatus.Declined, request.ReturnedBy);
         }
 
         private async Task NotifyContact(Guid applicationId, int sequenceNo, CancellationToken cancellationToken)

@@ -55,7 +55,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             var userId = await GetUserId();
             var org = await _orgApiClient.GetOrganisationByUserId(userId);
             var applications = await _applicationApiClient.GetApplications(userId, false);
-            applications = applications.Where(app => app.ApplicationStatus != ApplicationStatus.Rejected).ToList();
+            applications = applications.Where(app => app.ApplicationStatus != ApplicationStatus.Declined).ToList();
 
             if (!applications.Any())
             {
@@ -80,7 +80,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             {
                 case ApplicationStatus.FeedbackAdded:
                     return View("~/Views/Application/FeedbackIntro.cshtml", application.Id);
-                case ApplicationStatus.Rejected:
+                case ApplicationStatus.Declined:
                 case ApplicationStatus.Approved:
                     return View(applications);
                 default:
@@ -142,7 +142,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 return View("~/Views/Application/Approved.cshtml", application);
             }
 
-            if (application.ApplicationStatus == ApplicationStatus.Rejected)
+            if (application.ApplicationStatus == ApplicationStatus.Declined)
             {
                 return View("~/Views/Application/Rejected.cshtml", application);
             }

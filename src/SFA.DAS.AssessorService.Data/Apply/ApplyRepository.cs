@@ -173,9 +173,9 @@ namespace SFA.DAS.AssessorService.Data.Apply
                             applyData.Apply.StandardSubmissionFeedbackAddedDate = DateTime.UtcNow;
                         }
                         break;
-                    case ApplicationSequenceStatus.Rejected:
+                    case ApplicationSequenceStatus.Declined:
                         application.ReviewStatus = ApplicationReviewStatus.Declined;
-                        application.ApplicationStatus = ApplicationStatus.Rejected;
+                        application.ApplicationStatus = ApplicationStatus.Declined;
                         if (sequenceNo == 1)
                         {
                             applyData.Apply.InitSubmissionClosedDate = DateTime.UtcNow;
@@ -234,18 +234,18 @@ namespace SFA.DAS.AssessorService.Data.Apply
                                                                                                          WHERE a.ApplyingOrganisationId = (SELECT ApplyingOrganisationId FROM Applications WHERE Applications.Id = @applicationId)
                                                                                                          AND a.Id <> @applicationId
                                                                                                          AND a.ApplicationStatus NOT IN (@approvedStatus, @rejectedStatus)",
-                                                                                                         new { applicationId, approvedStatus = ApplicationStatus.Approved, rejectedStatus = ApplicationStatus.Rejected });
+                                                                                                         new { applicationId, approvedStatus = ApplicationStatus.Approved, rejectedStatus = ApplicationStatus.Declined });
 
                 foreach (var application in inProgressRelatedApplications)
                 {
-                    application.ApplicationStatus = ApplicationStatus.Rejected;
+                    application.ApplicationStatus = ApplicationStatus.Declined;
                     application.ReviewStatus = ApplicationReviewStatus.Deleted;
                     application.DeletedBy = deletedBy;
 
                     foreach (var sequence in application.ApplyData?.Sequences)
                     {
                         sequence.IsActive = false;
-                        sequence.Status = ApplicationSequenceStatus.Rejected;
+                        sequence.Status = ApplicationSequenceStatus.Declined;
                     }
 
                     await connection.ExecuteAsync(@"UPDATE Apply
@@ -347,11 +347,11 @@ namespace SFA.DAS.AssessorService.Data.Apply
                             ap1.ReviewStatus AS ReviewStatus
                         FROM Apply ap1
                         INNER JOIN Organisations org ON ap1.OrganisationId = org.Id
-                        WHERE ap1.ApplicationStatus IN (@applicationStatusApproved, @applicationStatusRejected)",
+                        WHERE ap1.ApplicationStatus IN (@applicationStatusApproved, @applicationStatusDeclined)",
                         new
                         {
                             applicationStatusApproved = ApplicationStatus.Approved,
-                            applicationStatusRejected = ApplicationStatus.Rejected,
+                            applicationStatusDeclined = ApplicationStatus.Declined,
                         })).ToList();
             }
         }
@@ -439,7 +439,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
                            apply.ClosedDate AS ClosedDate,
                            apply.SubmissionCount AS SubmissionCount,
 	                       CASE WHEN (sequence.Status = @applicationSequenceStatusApproved) THEN @applicationSequenceStatusApproved
-                                WHEN (sequence.Status = @applicationSequenceStatusRejected) THEN @applicationSequenceStatusRejected
+                                WHEN (sequence.Status = @applicationSequenceStatusRejected) THEN @applicationSequenceStatusDeclined
                                 ELSE ap1.FinancialReviewStatus
 	                       END As CurrentStatus
                         FROM Apply ap1
@@ -453,7 +453,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
                         {
                             financialReviewStatusClosed = FinancialReviewStatus.Closed,
                             applicationSequenceStatusApproved = ApplicationSequenceStatus.Approved,
-                            applicationSequenceStatusRejected = ApplicationSequenceStatus.Rejected                            
+                            applicationSequenceStatusDeclined = ApplicationSequenceStatus.Declined                            
                         })).ToList();
             }
         }
