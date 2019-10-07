@@ -113,10 +113,9 @@
     <Build Include="StoredProcedures\GetEPAO_DashboardCounts.sql" />
     <Build Include="StoredProcedures\GetEPAO_Pipelines_Extract.sql" />
     <Build Include="StoredProcedures\StaffSearchCertificates_Count.sql" />
-    <Build Include="Tables\Applications.sql" />
+    <Build Include="Tables\Apply.sql" />
     <Build Include="Tables\StandardSummary.sql" />
     <Build Include="StoredProcedures\Data_Summaries.sql" />
-    <Build Include="Tables\Applications.sql" />
     <Build Include="Sequences\AppRefSequence.sql" />
     <Build Include="Tables\Audits.sql" />
     <None Include="PostDeploymentScripts\on-2210-dashboard_api_subscriptions.sql" />
