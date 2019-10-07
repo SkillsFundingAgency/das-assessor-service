@@ -19,7 +19,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply.Financial.Review
 
         public async Task<Unit> Handle(StartFinancialReviewRequest request, CancellationToken cancellationToken)
         {
-            var application = await _applyRepository.GetApplication(request.ApplicationId);
+            var application = await _applyRepository.GetApplication(request.Id);
 
             if (application != null && application.FinancialReviewStatus == FinancialReviewStatus.New)
             {
