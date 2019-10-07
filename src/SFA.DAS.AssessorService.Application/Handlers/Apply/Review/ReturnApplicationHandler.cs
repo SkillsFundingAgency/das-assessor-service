@@ -33,11 +33,66 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply.Review
 
         public async Task<Unit> Handle(ReturnApplicationRequest request, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException("Migrate code over");
+            switch (request.ReturnType)
+            {
+                case "ReturnWithFeedback":
+                    await ReturnApplication(request.ApplicationId, request.SequenceId);
+                    break;
+                case "Approve":
+                case "ApproveWithFeedback":
+                    await ApproveApplication(request.ApplicationId, request.SequenceId);
+                    break;
+                default:
+                    await RejectApplication(request.ApplicationId, request.SequenceId);
+                    break;
+            }
 
             await NotifyContact(request.ApplicationId, request.SequenceId, cancellationToken);
 
             return Unit.Value;
+        }
+
+        private async Task ReturnApplication(Guid applicationId, int sequenceNo)
+        {
+            throw new NotImplementedException("Migrate code over");
+
+            // await _applyRepository.UpdateSequenceStatus(request.ApplicationId, request.SequenceId, ApplicationSequenceStatus.FeedbackAdded, ApplicationStatus.FeedbackAdded);
+        }
+
+        private async Task ApproveApplication(Guid applicationId, int sequenceNo)
+        {
+            throw new NotImplementedException("Migrate code over");
+
+            // await _applyRepository.UpdateSequenceStatus(request.ApplicationId, request.SequenceId, ApplicationSequenceStatus.Approved, ApplicationStatus.InProgress);
+            // await _applyRepository.CloseSequence(request.ApplicationId, request.SequenceId);
+
+            // See if there's a next sequence and open it, else approve the application and delete any related ones if all sections were required
+            //var sequences = await _applyRepository.GetSequences(request.ApplicationId);
+            //var nextSequence = sequences.FirstOrDefault(seq => (int)seq.SequenceId == request.SequenceId + 1);
+
+            //if (nextSequence != null)
+            //{
+            //    await _applyRepository.OpenSequence(request.ApplicationId, (int)nextSequence.SequenceId);
+            //}
+            //else
+            //{
+            //    // This is the last sequence, so approve the whole application
+            //    await _applyRepository.UpdateApplicationStatus(request.ApplicationId, ApplicationStatus.Approved);
+
+            //    // Delete any related applications if this one was an initial application
+            //    // (i.e all sequences are required, and thus, not on EPAO Register)
+            //    if (sequences.All(seq => !seq.NotRequired))
+            //    {
+            //        await _applyRepository.DeleteRelatedApplications(request.ApplicationId);
+            //    }
+            //}
+        }
+
+        private async Task RejectApplication(Guid applicationId, int sequenceNo)
+        {
+            throw new NotImplementedException("Migrate code over");
+
+            // await _applyRepository.UpdateSequenceStatus(request.ApplicationId, request.SequenceId, ApplicationSequenceStatus.Rejected, ApplicationStatus.Rejected);
         }
 
         private async Task NotifyContact(Guid applicationId, int sequenceNo, CancellationToken cancellationToken)
@@ -51,11 +106,11 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply.Review
                 var lastInitSubmission = application.ApplyData?.Apply.InitSubmissions.OrderByDescending(sub => sub.SubmittedAt).FirstOrDefault();
 
                 if (lastInitSubmission != null)
-                {                 
+                {
                     var contactToNotify = await _contactRepository.GetContact(lastInitSubmission.SubmittedByEmail);
 
                     var emailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.APPLY_EPAO_UPDATE);
-                    await _mediator.Send(new SendEmailRequest(contactToNotify.Email , emailTemplate, 
+                    await _mediator.Send(new SendEmailRequest(contactToNotify.Email, emailTemplate,
                         new { ServiceName = SERVICE_NAME, ServiceTeam = SERVICE_TEAM, Contact = contactToNotify.GivenNames, LoginLink = loginLink }), cancellationToken);
                 }
             }
@@ -66,7 +121,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply.Review
                 if (lastStandardSubmission != null)
                 {
                     var contactToNotify = await _contactRepository.GetContact(lastStandardSubmission.SubmittedByEmail);
-                    
+
                     var emailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.APPLY_EPAO_RESPONSE);
                     await _mediator.Send(new SendEmailRequest(contactToNotify.Email, emailTemplate,
                         new { ServiceName = SERVICE_NAME, ServiceTeam = SERVICE_TEAM, Contact = contactToNotify.GivenNames, standard, LoginLink = loginLink }), cancellationToken);
