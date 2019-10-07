@@ -109,10 +109,14 @@ namespace SFA.DAS.AssessorService.Data.Apply
         {
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))
             {
+                var financialReviewStatus = FinancialReviewStatus.InProgress;
+                var finanicalSectionStatus = ApplicationSectionStatus.InProgress;
+
                 await connection.ExecuteAsync(@"UPDATE Apply 
-                                                SET FinancialReviewStatus = @financialReviewStatusInProgress
+                                                SET FinancialReviewStatus = @financialReviewStatus
+                                                    ApplyData = JSON_MODIFY(ApplyData, '$.Sequences[0].Sections[2].Status', @finanicalSectionStatus)
                                                 WHERE Id = @id",
-                    new { id, financialReviewStatusInProgress = FinancialReviewStatus.InProgress });
+                    new { id, financialReviewStatus, finanicalSectionStatus });
             }
         }
 

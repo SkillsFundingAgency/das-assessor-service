@@ -29,7 +29,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply.Financial.Review
                 if (sequence != null)
                 {
                     await _applyRepository.StartFinancialReview(application.Id);
-                    await _applyRepository.UpdateApplicationSectionStatus(application.Id, "0", "2", ApplicationSectionStatus.InProgress);
                 }
             }
 
