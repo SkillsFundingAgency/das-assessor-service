@@ -139,7 +139,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
             {
                 apply.ApplicationStatus = (applyData.Apply.InitSubmissions.Count == 1) ? ApplicationStatus.Submitted : ApplicationStatus.Resubmitted;
 
-                var closedFinanicalStatuses = new List<string> { FinancialReviewStatus.Closed, FinancialReviewStatus.Exempt };
+                var closedFinanicalStatuses = new List<string> { FinancialReviewStatus.Approved, FinancialReviewStatus.Exempt };
 
                 if (!closedFinanicalStatuses.Contains(apply.FinancialReviewStatus))
                 {

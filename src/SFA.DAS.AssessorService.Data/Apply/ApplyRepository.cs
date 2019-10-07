@@ -122,7 +122,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
             {
                 using (var connection = new SqlConnection(_configuration.SqlConnectionString))
                 {
-                    var financialReviewStatus = (financialGrade.SelectedGrade == FinancialApplicationSelectedGrade.Inadequate) ? FinancialReviewStatus.Rejected : FinancialReviewStatus.Closed;
+                    var financialReviewStatus = (financialGrade.SelectedGrade == FinancialApplicationSelectedGrade.Inadequate) ? FinancialReviewStatus.Rejected : FinancialReviewStatus.Approved;
 
                     var result = await connection.ExecuteAsync(@"UPDATE Apply
                                                 SET FinancialGrade = @financialGrade, FinancialReviewStatus = @financialReviewStatus
@@ -448,10 +448,10 @@ namespace SFA.DAS.AssessorService.Data.Apply
                             CROSS APPLY OPENJSON(ApplyData,'$.Sequences[0].Sections') WITH (SectionNo INT, Status VARCHAR(20), NotRequired BIT) section
                             CROSS APPLY OPENJSON(ApplyData,'$.Apply') WITH (ClosedDate VARCHAR(30) '$.InitSubmissionClosedDate', SubmissionCount INT '$.InitSubmissionCount') apply
                         WHERE sequence.SequenceNo = 1 AND section.SectionNo = 3 AND section.NotRequired = 0
-                            AND ap1.FinancialReviewStatus = @financialReviewStatusClosed -- NOTE: Not showing Exempt",
+                            AND ap1.FinancialReviewStatus = @financialReviewStatusApproved -- NOTE: Not showing Exempt",
                         new
                         {
-                            financialReviewStatusClosed = FinancialReviewStatus.Closed,
+                            financialReviewStatusApproved = FinancialReviewStatus.Approved,
                             applicationSequenceStatusApproved = ApplicationSequenceStatus.Approved,
                             applicationSequenceStatusDeclined = ApplicationSequenceStatus.Declined                            
                         })).ToList();
