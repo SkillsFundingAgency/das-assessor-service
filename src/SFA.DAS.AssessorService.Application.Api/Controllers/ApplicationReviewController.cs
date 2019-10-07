@@ -55,15 +55,16 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [HttpPost("Review/Applications/{applicationId}/Sequences/{sequenceId}/Return")]
         [SwaggerResponse((int)HttpStatusCode.OK)]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task ReturnApplication(Guid applicationId, int sequenceId, [FromBody] ReturnApplicationRequest request)
+        public async Task ReturnApplication(Guid applicationId, int sequenceId, [FromBody] ReturnApplicationSequenceRequest request)
         {
             _logger.LogInformation($"Received request to return application");
-            await _mediator.Send(new AssessorService.Api.Types.Models.Apply.Review.ReturnApplicationRequest(applicationId, sequenceId, request.ReturnType));
+            await _mediator.Send(new AssessorService.Api.Types.Models.Apply.Review.ReturnApplicationSequenceRequest(applicationId, sequenceId, request.ReturnType, request.ReturnedBy));
         }
 
-        public class ReturnApplicationRequest
+        public class ReturnApplicationSequenceRequest
         {
             public string ReturnType { get; set; }
+            public string ReturnedBy { get; set; }
         }
     }
 }

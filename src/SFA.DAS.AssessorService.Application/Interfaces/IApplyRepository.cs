@@ -24,6 +24,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task StartFinancialReview(Guid id);
         Task UpdateApplicationFinancialGrade(Guid id,FinancialGrade financialGrade);
         Task UpdateApplicationSectionStatus(Guid id, string sequenceNo, string sectionNo, string status);
+        Task UpdateApplicationSequenceStatus(Guid id, int sequenceNo, string sequenceStatus, string updatedBy);
         Task UpdateInitialStandardData(UpdateInitialStandardDataRequest standardRequest);
     }
 }

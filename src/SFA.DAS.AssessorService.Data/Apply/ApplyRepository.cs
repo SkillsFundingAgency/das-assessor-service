@@ -147,6 +147,115 @@ namespace SFA.DAS.AssessorService.Data.Apply
             }
         }
 
+        public async Task UpdateApplicationSequenceStatus(Guid id, int sequenceNo, string sequenceStatus, string updatedBy)
+        {
+            var application = await GetApplication(id);
+            var applyData = application?.ApplyData;
+            var sequence = applyData?.Sequences.SingleOrDefault(seq => seq.SequenceNo == sequenceNo);
+            var nextSequence = applyData?.Sequences.Where(seq => seq.SequenceNo > sequenceNo && !seq.NotRequired).OrderBy(seq => seq.SequenceNo).FirstOrDefault();
+
+            if (application != null && applyData != null && sequence !=null)
+            { 
+                application.UpdatedBy = updatedBy;
+                sequence.Status = sequenceStatus;
+
+                switch (sequenceStatus)
+                {
+                    case ApplicationSequenceStatus.FeedbackAdded:
+                        application.ReviewStatus = ApplicationReviewStatus.HasFeedback;
+                        application.ApplicationStatus = ApplicationStatus.FeedbackAdded;
+                        if (sequenceNo == 1)
+                        {
+                            applyData.Apply.InitSubmissionFeedbackAddedDate = DateTime.UtcNow;
+                        }
+                        else if (sequenceNo == 2)
+                        {
+                            applyData.Apply.StandardSubmissionFeedbackAddedDate = DateTime.UtcNow;
+                        }
+                        break;
+                    case ApplicationSequenceStatus.Rejected:
+                        application.ReviewStatus = ApplicationReviewStatus.Declined;
+                        application.ApplicationStatus = ApplicationStatus.Rejected;
+                        if (sequenceNo == 1)
+                        {
+                            applyData.Apply.InitSubmissionClosedDate = DateTime.UtcNow;
+                        }
+                        else if (sequenceNo == 2)
+                        {
+                            applyData.Apply.StandardSubmissionClosedDate = DateTime.UtcNow;
+                        }
+                        break;
+                    case ApplicationSequenceStatus.Approved:
+                        application.ReviewStatus = ApplicationReviewStatus.Approved;
+                        if (sequenceNo == 1)
+                        {
+                            applyData.Apply.InitSubmissionClosedDate = DateTime.UtcNow;
+                        }
+                        else if (sequenceNo == 2)
+                        {
+                            applyData.Apply.StandardSubmissionClosedDate = DateTime.UtcNow;
+                        }
+
+                        if(nextSequence != null)
+                        {
+                            sequence.IsActive = false;
+                            nextSequence.IsActive = true;
+                            application.ApplicationStatus = ApplicationStatus.InProgress;
+                        }
+                        else
+                        {
+                            application.ApplicationStatus = ApplicationStatus.Approved;
+
+                            // Delete any related applications if this one was an initial application
+                            // (i.e all sequences are required, and thus, not on EPAO Register)
+                            if (applyData.Sequences.All(seq => !seq.NotRequired) && !application.Organisation.OrganisationData.RoEPAOApproved)
+                            {
+                                await RejectAllRelatedApplications(application.Id, application.UpdatedBy);
+                            }
+                        }
+                        break;
+                }
+
+                using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+                {
+                    await connection.ExecuteAsync(@"UPDATE Apply
+                                                    SET  ApplicationStatus = @ApplicationStatus, ReviewStatus = @ReviewStatus, ApplyData = @ApplyData, UpdatedBy = @UpdatedBy, UpdatedAt = GETUTCDATE() 
+                                                    WHERE  (Apply.Id = @Id)",
+                                                    new { application.Id, application.ApplicationStatus, application.ReviewStatus, application.ApplyData, application.UpdatedBy });
+                }
+            }
+        }
+
+        private async Task RejectAllRelatedApplications(Guid applicationId, string deletedBy)
+        {
+            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            {
+                var inProgressRelatedApplications = await connection.QueryAsync<Domain.Entities.Apply>(@"SELECT * FROM Apply a
+                                                                                                         WHERE a.ApplyingOrganisationId = (SELECT ApplyingOrganisationId FROM Applications WHERE Applications.Id = @applicationId)
+                                                                                                         AND a.Id <> @applicationId
+                                                                                                         AND a.ApplicationStatus NOT IN (@approvedStatus, @rejectedStatus)",
+                                                                                                         new { applicationId, approvedStatus = ApplicationStatus.Approved, rejectedStatus = ApplicationStatus.Rejected });
+
+                foreach (var application in inProgressRelatedApplications)
+                {
+                    application.ApplicationStatus = ApplicationStatus.Rejected;
+                    application.ReviewStatus = ApplicationReviewStatus.Deleted;
+                    application.DeletedBy = deletedBy;
+
+                    foreach (var sequence in application.ApplyData?.Sequences)
+                    {
+                        sequence.IsActive = false;
+                        sequence.Status = ApplicationSequenceStatus.Rejected;
+                    }
+
+                    await connection.ExecuteAsync(@"UPDATE Apply
+                                                    SET  ApplicationStatus = @ApplicationStatus, ReviewStatus = @ReviewStatus, ApplyData = @ApplyData, DeletedBy = @UpdatedBy, DeletedAt = GETUTCDATE() 
+                                                    WHERE  (Apply.Id = @Id)",
+                                                    new { application.Id, application.ApplicationStatus, application.ReviewStatus, application.ApplyData, application.DeletedBy });
+                }
+            }
+        }
+
         public async Task<int> GetNextAppReferenceSequence()
         {
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))
