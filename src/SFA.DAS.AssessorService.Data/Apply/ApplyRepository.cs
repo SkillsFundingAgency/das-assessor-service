@@ -123,11 +123,13 @@ namespace SFA.DAS.AssessorService.Data.Apply
                 using (var connection = new SqlConnection(_configuration.SqlConnectionString))
                 {
                     var financialReviewStatus = (financialGrade.SelectedGrade == FinancialApplicationSelectedGrade.Inadequate) ? FinancialReviewStatus.Rejected : FinancialReviewStatus.Approved;
+                    var finanicalSectionStatus = ApplicationSectionStatus.Graded;
 
-                    var result = await connection.ExecuteAsync(@"UPDATE Apply
-                                                SET FinancialGrade = @financialGrade, FinancialReviewStatus = @financialReviewStatus
-                                                WHERE Id = @id",
-                        new { id, financialGrade, financialReviewStatus });
+                    await connection.ExecuteAsync(@"UPDATE Apply
+                                                    SET FinancialGrade = @financialGrade, FinancialReviewStatus = @financialReviewStatus,
+                                                        ApplyData = JSON_MODIFY(ApplyData, '$.Sequences[0].Sections[2].Status', @finanicalSectionStatus)
+                                                    WHERE Id = @id",
+                        new { id, financialGrade, financialReviewStatus, finanicalSectionStatus });
                 }
             }
             else

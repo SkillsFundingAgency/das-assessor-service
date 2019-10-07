@@ -24,11 +24,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply.Financial.Review
         }
 
         public async Task<Unit> Handle(UpdateGradeRequest request, CancellationToken cancellationToken)
-        {
-           
+        {           
             await _applyRepository.UpdateApplicationFinancialGrade(request.Id, request.UpdatedGrade);
-
-            await _applyRepository.UpdateApplicationSectionStatus(request.Id, "0","2", ApplicationSectionStatus.Graded);
 
             var org = await _organisationQueryRepository.Get(request.OrgId);
 
