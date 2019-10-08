@@ -189,8 +189,8 @@ namespace SFA.DAS.AssessorService.Web
                     routes.MapRoute(
                         name: "default",
                         template: "{controller}/{action}/{id?}",
-                        defaults: new { controller = "Home", action = "Index" },
-                        constraints: new { controller = new NotEqualRouteContraint("OppFinder") }
+                        defaults: new { controller = "Home", action = "Index" }
+                        //,constraints: new { controller = new NotEqualRouteContraint("find-an-assessment-opportunity") }
                         );
                 });
         }        
