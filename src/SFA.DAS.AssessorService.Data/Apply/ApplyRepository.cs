@@ -458,8 +458,9 @@ namespace SFA.DAS.AssessorService.Data.Apply
                            section.SectionNo AS SectionNo, 
                            apply.SubmittedDate AS SubmittedDate,
                            apply.SubmissionCount AS SubmissionCount, 
-	                       CASE WHEN (ap1.FinancialReviewStatus = @financialReviewStatusInProgress) THEN @applicationStatusInProgress
+	                       CASE WHEN (ap1.FinancialReviewStatus = @financialReviewStatusInProgress) THEN @financialReviewStatusInProgress
                                 WHEN (ap1.ApplicationStatus = @applicationStatusResubmitted) THEN @applicationStatusResubmitted
+                                WHEN (ap1.FinancialReviewStatus = @financialReviewStatusNew) THEN @financialReviewStatusNew 
                                 WHEN (ap1.ApplicationStatus = @applicationStatusSubmitted) THEN @applicationStatusSubmitted
                                 ELSE section.Status
                            END As CurrentStatus
