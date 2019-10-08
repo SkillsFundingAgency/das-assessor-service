@@ -6,16 +6,16 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Apply.Review
 {
-    public class EvaluateSectionHandler : IRequestHandler<EvaluateSectionRequest>
+    public class EvaluateApplicationSectionHandler : IRequestHandler<EvaluateApplicationSectionRequest>
     {
         private readonly IApplyRepository _applyRepository;
 
-        public EvaluateSectionHandler(IApplyRepository applyRepository)
+        public EvaluateApplicationSectionHandler(IApplyRepository applyRepository)
         {
             _applyRepository = applyRepository;
         }
 
-        public async Task<Unit> Handle(EvaluateSectionRequest request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(EvaluateApplicationSectionRequest request, CancellationToken cancellationToken)
         {
             await _applyRepository.EvaluateApplicationSection(request.ApplicationId, request.SequenceNo, request.SectionNo, request.IsSectionComplete, request.EvaluatedBy);
 

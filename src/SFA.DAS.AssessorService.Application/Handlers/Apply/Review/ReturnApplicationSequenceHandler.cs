@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Apply.Review
 {
-    public class ReturnApplicationSequenceReviewHandler : IRequestHandler<ReturnApplicationSequenceReviewRequest>
+    public class ReturnApplicationSequenceHandler : IRequestHandler<ReturnApplicationSequenceRequest>
     {
         private readonly IApplyRepository _applyRepository;
         private readonly IMediator _mediator;
@@ -23,7 +23,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply.Review
         private const string SERVICE_NAME = "Apprenticeship assessment service";
         private const string SERVICE_TEAM = "Apprenticeship assessment service team";
 
-        public ReturnApplicationSequenceReviewHandler(IApplyRepository applyRepository, IEMailTemplateQueryRepository eMailTemplateQueryRepository, IContactRepository contactRepository, IWebConfiguration config, IMediator mediator)
+        public ReturnApplicationSequenceHandler(IApplyRepository applyRepository, IEMailTemplateQueryRepository eMailTemplateQueryRepository, IContactRepository contactRepository, IWebConfiguration config, IMediator mediator)
         {
             _applyRepository = applyRepository;
             _mediator = mediator;
@@ -32,7 +32,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply.Review
             _config = config;
         }
 
-        public async Task<Unit> Handle(ReturnApplicationSequenceReviewRequest request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(ReturnApplicationSequenceRequest request, CancellationToken cancellationToken)
         {
             switch (request.ReturnType)
             {
@@ -53,19 +53,19 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply.Review
             return Unit.Value;
         }
 
-        private async Task ReturnSequenceWithFeedback(ReturnApplicationSequenceReviewRequest request)
+        private async Task ReturnSequenceWithFeedback(ReturnApplicationSequenceRequest request)
         {
-            await _applyRepository.UpdateApplicationSequenceStatus(request.ApplicationId, request.SequenceId, ApplicationSequenceStatus.FeedbackAdded, request.ReturnedBy);
+            await _applyRepository.ReturnApplicationSequence(request.ApplicationId, request.SequenceId, ApplicationSequenceStatus.FeedbackAdded, request.ReturnedBy);
         }
 
-        private async Task ApproveSequence(ReturnApplicationSequenceReviewRequest request)
+        private async Task ApproveSequence(ReturnApplicationSequenceRequest request)
         {
-            await _applyRepository.UpdateApplicationSequenceStatus(request.ApplicationId, request.SequenceId, ApplicationSequenceStatus.Approved, request.ReturnedBy);
+            await _applyRepository.ReturnApplicationSequence(request.ApplicationId, request.SequenceId, ApplicationSequenceStatus.Approved, request.ReturnedBy);
         }
 
-        private async Task DeclineSequence(ReturnApplicationSequenceReviewRequest request)
+        private async Task DeclineSequence(ReturnApplicationSequenceRequest request)
         {
-            await _applyRepository.UpdateApplicationSequenceStatus(request.ApplicationId, request.SequenceId, ApplicationSequenceStatus.Declined, request.ReturnedBy);
+            await _applyRepository.ReturnApplicationSequence(request.ApplicationId, request.SequenceId, ApplicationSequenceStatus.Declined, request.ReturnedBy);
         }
 
         private async Task NotifyContact(Guid applicationId, int sequenceNo, CancellationToken cancellationToken)

@@ -20,12 +20,11 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<List<FinancialApplicationSummaryItem>> GetOpenFinancialApplications();
         Task<List<FinancialApplicationSummaryItem>> GetFeedbackAddedFinancialApplications();
         Task<List<FinancialApplicationSummaryItem>> GetClosedFinancialApplications();
-        Task StartApplicationSequenceReview(Guid id, int sequenceNo);
-        Task StartFinancialReview(Guid id);
-        Task ReturnFinancialReview(Guid id,FinancialGrade financialGrade);
+        Task StartFinancialReview(Guid id, string reviewer);
+        Task ReturnFinancialReview(Guid id, FinancialGrade financialGrade);
+        Task StartApplicationSectionReview(Guid id, int sequenceNo, int sectionNo, string reviewer);
         Task EvaluateApplicationSection(Guid id, int sequenceNo, int sectionNo, bool isSectionComplete, string evaluatedBy);
-        Task UpdateApplicationSectionStatus(Guid id, string sequenceNo, string sectionNo, string status);
-        Task UpdateApplicationSequenceStatus(Guid id, int sequenceNo, string sequenceStatus, string updatedBy);
+        Task ReturnApplicationSequence(Guid id, int sequenceNo, string sequenceStatus, string returnedBy);
         Task UpdateInitialStandardData(UpdateInitialStandardDataRequest standardRequest);
     }
 }

@@ -46,40 +46,38 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             return Ok(applications);
         }
 
-        [HttpPost("Review/Applications/{Id}/Sequences/{sequenceNo}/StartReview")]
-        public async Task StartReview(Guid Id, int sequenceNo, [FromBody] StartApplicationSequenceReviewRequest request)
-        {
-            _logger.LogInformation($"Received request to start application review");
-            await _mediator.Send(new AssessorService.Api.Types.Models.Apply.Review.StartApplicationSequenceReviewRequest(Id, sequenceNo, request.StartedBy));
-        }
-
         [HttpPost("Review/Applications/{Id}/Sequences/{sequenceId}/Return")]
         [SwaggerResponse((int)HttpStatusCode.OK)]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task ReturnReview(Guid Id, int sequenceId, [FromBody] ReturnApplicationSequenceReviewRequest request)
+        public async Task ReturnApplicationSequence(Guid Id, int sequenceId, [FromBody] ReturnApplicationSequenceRequest request)
         {
-            _logger.LogInformation($"Received request to return application review");
-            await _mediator.Send(new AssessorService.Api.Types.Models.Apply.Review.ReturnApplicationSequenceReviewRequest(Id, sequenceId, request.ReturnType, request.ReturnedBy));
+            await _mediator.Send(new AssessorService.Api.Types.Models.Apply.Review.ReturnApplicationSequenceRequest(Id, sequenceId, request.ReturnType, request.ReturnedBy));
+        }
+
+        [HttpPost("Review/Applications/{Id}/Sequences/{sequenceNo}/Sections/{sectionNo}/StartReview")]
+        public async Task StartSectionReview(Guid Id, int sequenceNo, int sectionNo, [FromBody] StartApplicationSectionReviewRequest request)
+        {
+            await _mediator.Send(new AssessorService.Api.Types.Models.Apply.Review.StartApplicationSectionReviewRequest(Id, sequenceNo, sectionNo, request.Reviewer));
         }
 
         [HttpPost("Review/Applications/{Id}/Sequences/{sequenceNo}/Sections/{sectionNo}/Evaluate")]
-        public async Task EvaluateSection(Guid Id, int sequenceNo, int sectionNo, [FromBody] EvaluateSectionRequest request)
+        public async Task EvaluateSection(Guid Id, int sequenceNo, int sectionNo, [FromBody] EvaluateApplicationSectionRequest request)
         {
-            await _mediator.Send(new AssessorService.Api.Types.Models.Apply.Review.EvaluateSectionRequest(Id, sequenceNo, sectionNo, request.IsSectionComplete, request.EvaluatedBy));
+            await _mediator.Send(new AssessorService.Api.Types.Models.Apply.Review.EvaluateApplicationSectionRequest(Id, sequenceNo, sectionNo, request.IsSectionComplete, request.EvaluatedBy));
         }
 
-        public class StartApplicationSequenceReviewRequest
+        public class StartApplicationSectionReviewRequest
         {
-            public string StartedBy { get; set; }
+            public string Reviewer { get; set; }
         }
 
-        public class ReturnApplicationSequenceReviewRequest
+        public class ReturnApplicationSequenceRequest
         {
             public string ReturnType { get; set; }
             public string ReturnedBy { get; set; }
         }
 
-        public class EvaluateSectionRequest
+        public class EvaluateApplicationSectionRequest
         {
             public bool IsSectionComplete { get; set; }
             public string EvaluatedBy { get; set; }

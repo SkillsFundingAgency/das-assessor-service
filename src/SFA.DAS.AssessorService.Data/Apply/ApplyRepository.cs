@@ -16,6 +16,10 @@ namespace SFA.DAS.AssessorService.Data.Apply
 {
     public class ApplyRepository : IApplyRepository
     {
+        // NOTE: Should the Financial Section move; then these need to be updated
+        private const int FINANCIAL_SEQUENCE = 1;
+        private const int FINANCIAL_SECTION = 3;
+
         private readonly IWebConfiguration _configuration;
         private readonly ILogger<ApplyRepository> _logger;
 
@@ -94,29 +98,30 @@ namespace SFA.DAS.AssessorService.Data.Apply
             }
         }
 
-        public async Task StartApplicationSequenceReview(Guid id, int sequenceNo)
+        public async Task StartFinancialReview(Guid id, string reviewer)
         {
-            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
-            {
-                await connection.ExecuteAsync(@"UPDATE Apply 
-                                                SET ReviewStatus = @reviewStatusInProgress
-                                                WHERE Id = @id",
-                    new { id, sequenceNo, reviewStatusInProgress = ApplicationReviewStatus.InProgress }) ;
-            }
-        }
+            var application = await GetApplication(id);
+            var applyData = application?.ApplyData;
+            var sequence = applyData?.Sequences.SingleOrDefault(seq => seq.SequenceNo == FINANCIAL_SEQUENCE);
+            var section = sequence?.Sections.SingleOrDefault(sec => sec.SectionNo == FINANCIAL_SECTION);
 
-        public async Task StartFinancialReview(Guid id)
-        {
-            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            if (application != null && section != null && sequence?.IsActive == true && application.FinancialReviewStatus == FinancialReviewStatus.New)
             {
-                var financialReviewStatus = FinancialReviewStatus.InProgress;
-                var finanicalSectionStatus = ApplicationSectionStatus.InProgress;
+                application.FinancialReviewStatus = FinancialReviewStatus.InProgress;
+                application.UpdatedBy = reviewer;
+                application.UpdatedAt = DateTime.UtcNow;
 
-                await connection.ExecuteAsync(@"UPDATE Apply 
-                                                SET FinancialReviewStatus = @financialReviewStatus,
-                                                    ApplyData = JSON_MODIFY(ApplyData, '$.Sequences[0].Sections[2].Status', @finanicalSectionStatus)
-                                                WHERE Id = @id",
-                    new { id, financialReviewStatus, finanicalSectionStatus });
+                section.Status = ApplicationSectionStatus.InProgress;
+                section.ReviewedBy = reviewer;
+                section.ReviewStartDate = DateTime.UtcNow;
+
+                using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+                {
+                    await connection.ExecuteAsync(@"UPDATE Apply
+                                                    SET  ApplyData = @ApplyData, FinancialReviewStatus = @FinancialReviewStatus, UpdatedBy = @UpdatedBy, UpdatedAt = GETUTCDATE() 
+                                                    WHERE Apply.Id = @Id",
+                                                    new { application.Id, application.ApplyData, application.FinancialReviewStatus, application.UpdatedBy });
+                }
             }
         }
 
@@ -124,21 +129,63 @@ namespace SFA.DAS.AssessorService.Data.Apply
         {
             if (financialGrade != null)
             {
-                using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+                var application = await GetApplication(id);
+                var applyData = application?.ApplyData;
+                var sequence = applyData?.Sequences.SingleOrDefault(seq => seq.SequenceNo == FINANCIAL_SEQUENCE);
+                var section = sequence?.Sections.SingleOrDefault(sec => sec.SectionNo == FINANCIAL_SECTION);
+
+                if (application != null && section != null && sequence?.IsActive == true && application.FinancialReviewStatus == FinancialReviewStatus.InProgress)
                 {
                     var financialReviewStatus = (financialGrade.SelectedGrade == FinancialApplicationSelectedGrade.Inadequate) ? FinancialReviewStatus.Rejected : FinancialReviewStatus.Graded;
-                    var finanicalSectionStatus = ApplicationSectionStatus.Graded;
 
-                    await connection.ExecuteAsync(@"UPDATE Apply
-                                                    SET FinancialGrade = @financialGrade, FinancialReviewStatus = @financialReviewStatus,
-                                                        ApplyData = JSON_MODIFY(ApplyData, '$.Sequences[0].Sections[2].Status', @finanicalSectionStatus)
-                                                    WHERE Id = @id",
-                        new { id, financialGrade, financialReviewStatus, finanicalSectionStatus });
+                    application.FinancialReviewStatus = financialReviewStatus;
+                    application.FinancialGrade = financialGrade;
+                    application.UpdatedBy = financialGrade.GradedBy;
+                    application.UpdatedAt = DateTime.UtcNow;
+
+                    section.Status = ApplicationSectionStatus.Graded;
+                    section.ReviewedBy = financialGrade.GradedBy;
+                    section.ReviewStartDate = DateTime.UtcNow;
+
+                    using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+                    {
+                        await connection.ExecuteAsync(@"UPDATE Apply
+                                                    SET  ApplyData = @ApplyData, FinancialGrade = @FinancialGrade, FinancialReviewStatus = @FinancialReviewStatus, UpdatedBy = @UpdatedBy, UpdatedAt = GETUTCDATE()  
+                                                    WHERE Apply.Id = @Id",
+                                                        new { application.Id, application.ApplyData, application.FinancialGrade, application.FinancialReviewStatus, application.UpdatedBy });
+                    }
                 }
             }
             else
             {
                 _logger.LogError("FinancialGrade is null therefore failed to update Apply table.");
+            }
+        }
+
+        public async Task StartApplicationSectionReview(Guid id, int sequenceNo, int sectionNo, string reviewer)
+        {
+            var application = await GetApplication(id);
+            var applyData = application?.ApplyData;
+            var sequence = applyData?.Sequences.SingleOrDefault(seq => seq.SequenceNo == sequenceNo);
+            var section = sequence?.Sections.SingleOrDefault(sec => sec.SectionNo == sectionNo);
+
+            if (application != null && section != null && sequence?.IsActive == true)
+            {
+                application.ReviewStatus = ApplicationReviewStatus.InProgress;
+                application.UpdatedBy = reviewer;
+                application.UpdatedAt = DateTime.UtcNow;
+
+                section.Status = ApplicationSectionStatus.InProgress;
+                section.ReviewedBy = reviewer;
+                section.ReviewStartDate = DateTime.UtcNow;
+
+                using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+                {
+                    await connection.ExecuteAsync(@"UPDATE Apply
+                                                    SET  ApplyData = @ApplyData, ReviewStatus = @ReviewStatus, UpdatedBy = @UpdatedBy, UpdatedAt = GETUTCDATE() 
+                                                    WHERE Apply.Id = @Id",
+                                                    new { application.Id, application.ApplyData, application.ReviewStatus, application.UpdatedBy });
+                }
             }
         }
 
@@ -149,7 +196,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
             var sequence = applyData?.Sequences.SingleOrDefault(seq => seq.SequenceNo == sequenceNo);
             var section = sequence?.Sections.SingleOrDefault(sec => sec.SectionNo == sectionNo);
 
-            if (application != null && section != null)
+            if (application != null && section != null && sequence?.IsActive == true)
             {
                 application.UpdatedBy = evaluatedBy;
                 application.UpdatedAt = DateTime.UtcNow;
@@ -160,9 +207,21 @@ namespace SFA.DAS.AssessorService.Data.Apply
                     section.EvaluatedDate = DateTime.UtcNow;
                     section.EvaluatedBy = evaluatedBy;
                 }
+                else if (sequence.SequenceNo == FINANCIAL_SEQUENCE && section.SectionNo == FINANCIAL_SECTION)
+                {
+                    section.Status = ApplicationSectionStatus.Graded;
+                    section.EvaluatedDate = null;
+                    section.EvaluatedBy = null;
+
+                    if(application.FinancialGrade != null)
+                    {
+                        section.ReviewStartDate = application.FinancialGrade.GradedDateTime;
+                        section.ReviewedBy = application.FinancialGrade.GradedBy;
+                    }
+                }
                 else
                 {
-                    section.Status = (section.SectionNo == 3) ? ApplicationSectionStatus.Graded : ApplicationSectionStatus.InProgress;
+                    section.Status = ApplicationSectionStatus.InProgress;
                     section.EvaluatedDate = null;
                     section.EvaluatedBy = null;
                 }
@@ -177,18 +236,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
             }
         }
 
-        public async Task UpdateApplicationSectionStatus(Guid id, string sequenceNo, string sectionNo, string status)
-        {
-            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
-            {
-                var result = await connection.ExecuteAsync(@"UPDATE Apply SET ApplyData = 
-                                                JSON_MODIFY(ApplyData, '$.Sequences['+@sequenceNo+'].Sections['+@sectionNo+'].Status',@status) 
-                                                WHERE Id = @id",
-                    new { sequenceNo, sectionNo,status, id });
-            }
-        }
-
-        public async Task UpdateApplicationSequenceStatus(Guid id, int sequenceNo, string sequenceStatus, string updatedBy)
+        public async Task ReturnApplicationSequence(Guid id, int sequenceNo, string sequenceStatus, string returnedBy)
         {
             var application = await GetApplication(id);
             var applyData = application?.ApplyData;
@@ -197,10 +245,10 @@ namespace SFA.DAS.AssessorService.Data.Apply
 
             if (application != null && applyData != null && sequence !=null)
             { 
-                application.UpdatedBy = updatedBy;
+                application.UpdatedBy = returnedBy;
                 application.UpdatedAt = DateTime.UtcNow;
                 sequence.Status = sequenceStatus;
-                sequence.ApprovedBy = updatedBy;
+                sequence.ApprovedBy = returnedBy;
                 sequence.ApprovedDate = DateTime.UtcNow;
 
                 switch (sequenceStatus)

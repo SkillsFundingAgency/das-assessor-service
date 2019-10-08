@@ -55,13 +55,13 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [HttpPost("/Financial/{Id}/StartReview")]
         public async Task<ActionResult> StartReview(Guid Id, [FromBody] StartFinancialReviewRequest request)
         {
-            await _mediator.Send(new AssessorService.Api.Types.Models.Apply.Financial.Review.StartFinancialReviewRequest(Id, request.StartedBy));
+            await _mediator.Send(new AssessorService.Api.Types.Models.Apply.Financial.Review.StartFinancialReviewRequest(Id, request.Reviewer));
             return Ok();
         }
 
         public class StartFinancialReviewRequest
         {
-            public string StartedBy { get; set; }
+            public string Reviewer { get; set; }
         }
     }
 }

@@ -6,12 +6,12 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Apply.Financial.Review
     public class StartFinancialReviewRequest : IRequest
     {
         public Guid Id { get; }
-        public string StartedBy { get; set; }
+        public string Reviewer { get; }
 
-        public StartFinancialReviewRequest(Guid id, string startedBy)
+        public StartFinancialReviewRequest(Guid id, string reviewer)
         {
             Id = id;
-            StartedBy = startedBy;
+            Reviewer = reviewer;
         }
     }
 }
