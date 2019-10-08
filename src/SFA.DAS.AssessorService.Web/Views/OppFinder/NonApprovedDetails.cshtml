@@ -1,0 +1,81 @@
+﻿@using SFA.DAS.AssessorService.Web.ViewModels.OppFinder;
+@model OppFinderNonApprovedDetailsViewModel
+@{
+    ViewData["Title"] = "Find an assessment opportunity - " + @Model.StandardReference;
+    Layout = "_OppFinderLayout";
+}
+
+<a 
+    class="govuk-back-link" 
+    asp-controller="OppFinder" 
+    asp-action="@(Model.StandardStatus == StandardStatus.InDevelopment ? "ChangePageInDevelopmentStandards" : "ChangePageProposedStandards")" 
+    asp-route-pageIndex="@Model.PageIndex" asp-fragment="@(Model.StandardStatus == StandardStatus.InDevelopment ? "in-development" : "proposed")"
+>
+    Back
+</a>
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <span class="govuk-caption-xl">
+                @(Model.StandardStatus == StandardStatus.InDevelopment ? "Standard in-development" : "Proposed Standard")
+            </span>
+            <h1 class="govuk-heading-xl">@Model.Title</h1>
+            <p class="govuk-body">@Model.OverviewOfRole</p>
+            <dl class="govuk-summary-list">
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Level</dt>
+                    <dd class="govuk-summary-list__value">@Model.StandardLevel</dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Reference</dt>
+                    <dd class="govuk-summary-list__value">@Model.StandardReference</dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Sector</dt>
+                    <dd class="govuk-summary-list__value">@Model.Sector</dd>
+                </div>
+                @if (Model.StandardStatus == StandardStatus.InDevelopment)
+                {
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Typical duration</dt>
+                    <dd class="govuk-summary-list__value">@string.Format("{0} months", Model.TypicalDuration)</dd>
+                </div>
+                }
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Trailblazer contact</dt>
+                    <dd class="govuk-summary-list__value">
+                    @foreach(var trailblazer in @Model.Trailblazer)
+                    {
+                        @trailblazer<br/>
+                    }
+                    </dd>
+                </div>
+            </dl>
+            <p class="govuk-body govuk-!-margin-bottom-1">
+                Full information on <a class="govuk-link" href="@Model.StandardPageUrl" target="_blank" rel="noopener noreferrer">@Model.Title</a>
+            </p>
+            <p class="govuk-body-s govuk-!-margin-bottom-8">
+                Source: Institute for Apprenticeships and Technical Education
+            </p>
+        </div>
+    </div>
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            @* THE EXPRESION OF INTEREST HAS BEEN TEMPORARILY REMOVED DUE TO BUSINESS ISSUES THIS CODE IS COMMENTED OUT TO PREVENT ACCESS
+            <h2 class="govuk-heading-l">Expression of interest</h2>
+            <p class="govuk-body">
+                If you think you are interested in assessing this Standard, complete the
+                <a class="govuk-link" asp-controller="OppFinder" asp-action="ExpressionOfInterest" asp-route-standardReference="@Model.StandardReference" asp-route-standardStatus="@Model.StandardStatus" asp-route-backLink="true">expression of interest form</a>
+            </p>
+            *@
+            <p class="govuk-body govuk-!-margin-bottom-1">
+                <a class="govuk-link" href="https://www.gov.uk/guidance/how-apprentices-in-england-are-assessed" target="_blank" rel="noopener noreferrer">How apprentices in England are assessed</a>
+            </p>
+            <p class="govuk-body">
+                <a class="govuk-link" href="/" target="_blank" rel="noopener noreferrer">Apply to become an End-point assessment organisation</a>
+            </p>
+        </div>
+    </div>
+
+</main>
