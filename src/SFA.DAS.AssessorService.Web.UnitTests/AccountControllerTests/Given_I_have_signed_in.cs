@@ -1,8 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Security.Claims;
-using System.Threading;
-using System.Threading.Tasks;
-using FluentAssertions;
+﻿using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -15,6 +11,7 @@ using SFA.DAS.AssessorService.Web.Controllers;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.Orchestrators.Login;
 using SFA.DAS.AssessorService.Web.Validators;
+using System.Security.Claims;
 
 namespace SFA.DAS.AssessorService.Web.UnitTests.AccountControllerTests
 {

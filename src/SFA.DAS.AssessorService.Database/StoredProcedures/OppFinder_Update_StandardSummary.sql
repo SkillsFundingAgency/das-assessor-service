@@ -6,7 +6,7 @@
 --	c. List of EPAOS by region, Active Learners by Region and Completed Assessments by Region 
 --	   with details of all EPAOs (can be over 30!)
 --
-CREATE PROCEDURE [Data_Summaries]
+CREATE PROCEDURE [OppFinder_Update_StandardSummary]
 AS
 
 SET NOCOUNT ON;
@@ -18,26 +18,14 @@ BEGIN
 	BEGIN TRANSACTION T1;
 	
 	-- there are some specifically excluded Standards
-	CREATE TABLE #Exclusions
+	DECLARE @Exclusions TABLE
 	(
 		[StandardName] nvarchar(500),
 		[StandardReference] nvarchar(10)
 	) 
 	
-	INSERT INTO #Exclusions 
-	SELECT * FROM 
-	(VALUES 
-		('Able Seafarer (Deck)','ST0274'),
-		('Aviation maintenance mechanic (military)','ST0014'),
-		('Chartered Surveyor (degree)','ST0331'),
-		('HM Forces Service person (Public Services)','ST0222'),
-		('Installation Electrician/Maintenance Electrician','ST0152'),
-		('Maritime Electrical / Mechanical Mechanic','ST0276'),
-		('Maritime Operations Officer','ST0394'),
-		('Military construction engineering technician','ST0414'),
-		('Solicitor','ST0246'),
-		('Surveying Technician','ST0332'),
-		('Survival Equipment Fitter','ST0015')) AS excluded(StandardName, StandardReference);
+	INSERT INTO @Exclusions(StandardName, StandardReference)
+	EXEC OppFinder_Exclusions 
 
 	BEGIN TRY;
 	
@@ -60,8 +48,7 @@ BEGIN
 				JOIN (SELECT StandardId, CONVERT(numeric,JSON_VALUE([StandardData],'$.Duration')) Duration 
 						FROM [StandardCollation] 
 						WHERE 1=1 
-						AND json_value(StandardData ,'$.IfaStatus') = 'Approved for delivery' 
-						AND ISNULL(json_value(StandardData ,'$.integratedDegree'),'') = '' 
+						AND [dbo].[OppFinder_Is_Approved_StandardStatus](StandardData) = 1
 						AND (
 							JSON_VALUE(StandardData,'$.EffectiveTo') IS NULL OR
 							JSON_VALUE(StandardData,'$.EffectiveTo') > GETDATE() OR
@@ -102,8 +89,7 @@ BEGIN
 			GROUP BY os1.StandardCode ,TotalEPAOs, ISNULL(Area,'Other'), de1.Ordering
 		) os1 ON sc1.StandardId = os1.StandardCode
 		WHERE 1=1 
-		AND json_value(StandardData ,'$.IfaStatus') = 'Approved for delivery' 
-		AND	ISNULL(json_value(StandardData ,'$.integratedDegree'),'') = '' 
+		AND [dbo].[OppFinder_Is_Approved_StandardStatus](StandardData) = 1
 		AND (
 			JSON_VALUE(StandardData,'$.EffectiveTo') IS NULL OR
 			JSON_VALUE(StandardData,'$.EffectiveTo') > GETDATE() OR
@@ -119,8 +105,7 @@ BEGIN
 		FROM StandardCollation sc1
 		CROSS JOIN DeliveryArea de1
 		WHERE 1=1 
-		AND	json_value(StandardData ,'$.IfaStatus') = 'Approved for delivery' 
-		AND	ISNULL(json_value(StandardData ,'$.integratedDegree'),'') = '' 
+		AND [dbo].[OppFinder_Is_Approved_StandardStatus](StandardData) = 1
 		AND (
 			JSON_VALUE(StandardData,'$.EffectiveTo') IS NULL OR
 			JSON_VALUE(StandardData,'$.EffectiveTo') > GETDATE() OR
@@ -145,8 +130,7 @@ BEGIN
 		LEFT JOIN DeliveryArea de1 on de1.Id = pc1.DeliveryAreaId
 		JOIN StandardCollation sc1 On sc1.StandardId = od1.StandardCode
 		WHERE 1=1
-		AND json_value(StandardData ,'$.IfaStatus') = 'Approved for delivery' 
-		AND	ISNULL(json_value(StandardData ,'$.integratedDegree'),'') = '' 
+		AND [dbo].[OppFinder_Is_Approved_StandardStatus](StandardData) = 1
 		AND	(
 			JSON_VALUE(StandardData,'$.EffectiveTo') IS NULL OR
 			JSON_VALUE(StandardData,'$.EffectiveTo') > GETDATE() OR
@@ -157,7 +141,7 @@ BEGIN
 
 	) Total
 	-- exclude specific standard references
-	LEFT JOIN #Exclusions ex1 ON ex1.StandardReference = Total.StandardReference
+	LEFT JOIN @Exclusions ex1 ON ex1.StandardReference = Total.StandardReference
 	WHERE NOT (Region = 'Other' AND Learners = 0)
 	AND ex1.StandardName IS NULL
 	GROUP BY StandardCode, Total.StandardReference, Total.StandardName, Sector, StandardLevel, Region,Ordering 
@@ -171,6 +155,4 @@ BEGIN
 	
 	IF @Error_Code <> 0 OR XACT_STATE() = -1 ROLLBACK TRANSACTION T1;
 	ELSE IF @Error_Code = 0 AND XACT_STATE() = 1 COMMIT TRANSACTION T1;
-	
-	DROP TABLE #Exclusions;
-END;	
+END

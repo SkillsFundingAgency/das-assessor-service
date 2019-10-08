@@ -63,6 +63,8 @@
     <Folder Include="Tables\" />
     <Folder Include="PostDeploymentScripts" />
     <Folder Include="Sequences" />
+    <Folder Include="Functions" />
+    <Folder Include="Functions\Scalar-valued Functions" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Tables\CertificateLogs.sql" />
@@ -115,11 +117,21 @@
     <Build Include="StoredProcedures\StaffSearchCertificates_Count.sql" />
     <Build Include="Tables\Apply.sql" />
     <Build Include="Tables\StandardSummary.sql" />
-    <Build Include="StoredProcedures\Data_Summaries.sql" />
     <Build Include="Sequences\AppRefSequence.sql" />
+    <Build Include="StoredProcedures\OppFinder_Update_StandardSummary.sql" />
+    <Build Include="StoredProcedures\OppFinder_List_Approved_Standards.sql" />
+    <Build Include="StoredProcedures\OppFinder_Exclusions.sql" />
+    <Build Include="Functions\Scalar-valued Functions\OppFinder_Is_Approved_StandardStatus.sql" />
+    <Build Include="Functions\Scalar-valued Functions\OppFinder_Is_InDevelopment_StandardStatus.sql" />
+    <Build Include="Tables\StandardNonApprovedCollation.sql" />
+    <Build Include="Functions\Scalar-valued Functions\OppFinder_Is_Proposed_StandardStatus.sql" />
+    <Build Include="StoredProcedures\OppFinder_List_NonApproved_Standards.sql" />
     <Build Include="Tables\Audits.sql" />
     <None Include="PostDeploymentScripts\on-2210-dashboard_api_subscriptions.sql" />
-    <Build Include="Tables\StandardNonApprovedCollation.sql" />
+    <Build Include="StoredProcedures\OppFinder_Filter_Standards.sql" />
+    <Build Include="StoredProcedures\OppFinder_Get_Approved_Standard_Details.sql" />
+    <Build Include="Tables\ExpressionsOfInterest.sql" />
+    <Build Include="StoredProcedures\StaffReports_ExpressionsOfInterest.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="SFA.DAS.AssessorService.Database.refactorlog" />
@@ -133,6 +145,7 @@
   <ItemGroup>
     <None Include="DataToImport\assessmentorgs.xlsx" />
     <None Include="PostDeploymentScripts\on-2033-anytime_updates.sql" />
+    <None Include="PostDeploymentScripts\on-2295-expression-of-interest.sql" />
   </ItemGroup>
   <ItemGroup>
     <ArtifactReference Include="$(DacPacRootPath)\Extensions\Microsoft\SQLDB\Extensions\SqlServer\AzureV12\SqlSchemas\master.dacpac">

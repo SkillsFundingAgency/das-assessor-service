@@ -2,11 +2,11 @@
 {
     public class GatherStandardsResponse
     {
-        public GatherStandardsResponse(string details)
+        public GatherStandardsResponse(string[] details)
         {
             Details = details;
         }
 
-        public string Details { get; set; }
+        public string[] Details { get; set; }
     }
 }

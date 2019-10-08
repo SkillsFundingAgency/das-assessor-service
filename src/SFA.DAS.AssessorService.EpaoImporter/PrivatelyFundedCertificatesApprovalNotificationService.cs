@@ -4,17 +4,17 @@ using SFA.DAS.AssessorService.EpaoImporter.Startup;
 
 namespace SFA.DAS.AssessorService.EpaoImporter
 {
-    public static class PrivatelyFundedCertificatesApprovalNotificationService
+  public static class PrivatelyFundedCertificatesApprovalNotificationService
+  {
+    [FunctionName("PrivatelyFundedCertificatesApprovalNotificationService")]
+    public static void Run([TimerTrigger("0 0 8 4 * *")] TimerInfo myTimer, TraceWriter functionLogger,
+        ExecutionContext context)
     {
-        [FunctionName("PrivatelyFundedCertificatesApprovalNotificationService")]
-        public static void Run([TimerTrigger("0 0 8 4 * *")] TimerInfo myTimer, TraceWriter functionLogger,
-            ExecutionContext context)
-        {
-            var privatelyFundedCertificateApprovalsBootstrapper = new PrivatelyFundedCertificateApprovalsBootstrapper(functionLogger, context);
+      var privatelyFundedCertificateApprovalsBootstrapper = new PrivatelyFundedCertificateApprovalsBootstrapper(functionLogger, context);
 
-            var command = privatelyFundedCertificateApprovalsBootstrapper.GetInstance<PrivatelyFundedCertificatesApprovalCommand>();
-            command.Execute().GetAwaiter().GetResult();
-        }
+      var command = privatelyFundedCertificateApprovalsBootstrapper.GetInstance<PrivatelyFundedCertificatesApprovalCommand>();
+      // command.Execute().GetAwaiter().GetResult();
     }
+  }
 }
 
