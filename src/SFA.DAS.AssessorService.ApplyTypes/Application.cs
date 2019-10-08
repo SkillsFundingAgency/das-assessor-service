@@ -64,8 +64,8 @@ namespace SFA.DAS.AssessorService.ApplyTypes
         public string Status { get; set; }
         public DateTime? ReviewStartDate { get; set; } // TODO: POPULATE on Review Section (currently this is on Review Sequence)
         public string ReviewedBy { get; set; } // TODO: POPULATE on Review Section (currently this is on Review Sequence)
-        public DateTime? EvaluatedDate { get; set; } // TODO: POPULATE on Evaluate Section
-        public string EvaluatedBy { get; set; } // TODO: POPULATE on Evaluate Section
+        public DateTime? EvaluatedDate { get; set; }
+        public string EvaluatedBy { get; set; }
         public bool NotRequired { get; set; }
         public bool? RequestedFeedbackAnswered { get; set; }
     }

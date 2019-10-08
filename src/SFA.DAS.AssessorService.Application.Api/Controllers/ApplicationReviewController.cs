@@ -62,6 +62,12 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             await _mediator.Send(new AssessorService.Api.Types.Models.Apply.Review.ReturnApplicationSequenceReviewRequest(Id, sequenceId, request.ReturnType, request.ReturnedBy));
         }
 
+        [HttpPost("Review/Applications/{Id}/Sequences/{sequenceNo}/Sections/{sectionNo}/Evaluate")]
+        public async Task EvaluateSection(Guid Id, int sequenceNo, int sectionNo, [FromBody] EvaluateSectionRequest request)
+        {
+            await _mediator.Send(new AssessorService.Api.Types.Models.Apply.Review.EvaluateSectionRequest(Id, sequenceNo, sectionNo, request.IsSectionComplete, request.EvaluatedBy));
+        }
+
         public class StartApplicationSequenceReviewRequest
         {
             public string StartedBy { get; set; }
@@ -72,5 +78,10 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             public string ReturnType { get; set; }
             public string ReturnedBy { get; set; }
         }
+
+        public class EvaluateSectionRequest
+        {
+            public bool IsSectionComplete { get; set; }
+            public string EvaluatedBy { get; set; }
     }
 }

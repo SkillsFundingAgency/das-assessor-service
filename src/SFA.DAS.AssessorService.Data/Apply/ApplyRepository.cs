@@ -142,6 +142,41 @@ namespace SFA.DAS.AssessorService.Data.Apply
             }
         }
 
+        public async Task EvaluateApplicationSection(Guid id, int sequenceNo, int sectionNo, bool isSectionComplete, string evaluatedBy)
+        {
+            var application = await GetApplication(id);
+            var applyData = application?.ApplyData;
+            var sequence = applyData?.Sequences.SingleOrDefault(seq => seq.SequenceNo == sequenceNo);
+            var section = sequence?.Sections.SingleOrDefault(sec => sec.SectionNo == sectionNo);
+
+            if (application != null && section != null)
+            {
+                application.UpdatedBy = evaluatedBy;
+                application.UpdatedAt = DateTime.UtcNow;
+
+                if (isSectionComplete)
+                {
+                    section.Status = ApplicationSectionStatus.Evaluated;
+                    section.EvaluatedDate = DateTime.UtcNow;
+                    section.EvaluatedBy = evaluatedBy;
+                }
+                else
+                {
+                    section.Status = (section.SectionNo == 3) ? ApplicationSectionStatus.Graded : ApplicationSectionStatus.InProgress;
+                    section.EvaluatedDate = null;
+                    section.EvaluatedBy = null;
+                }
+
+                using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+                {
+                    await connection.ExecuteAsync(@"UPDATE Apply
+                                                    SET  ApplyData = @ApplyData, UpdatedBy = @UpdatedBy, UpdatedAt = GETUTCDATE() 
+                                                    WHERE  (Apply.Id = @Id)",
+                                                    new { application.ApplyData, application.UpdatedBy });
+                }
+            }
+        }
+
         public async Task UpdateApplicationSectionStatus(Guid id, string sequenceNo, string sectionNo, string status)
         {
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))
