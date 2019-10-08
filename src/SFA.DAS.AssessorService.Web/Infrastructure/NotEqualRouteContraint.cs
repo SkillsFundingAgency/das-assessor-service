@@ -1,12 +1,11 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
-using System;
 
 namespace SFA.DAS.AssessorService.Web.Infrastructure
 {
     public class NotEqualRouteContraint : IRouteConstraint
     {
-        private string _match = string.Empty;
+        private readonly string _match;
 
         public NotEqualRouteContraint(string match)
         {
@@ -15,7 +14,7 @@ namespace SFA.DAS.AssessorService.Web.Infrastructure
 
         public bool Match(HttpContext httpContext, IRouter route, string routeKey, RouteValueDictionary values, RouteDirection routeDirection)
         {
-            return String.Compare(values[routeKey].ToString(), _match, true) != 0;
+            return string.Compare(values[routeKey].ToString(), _match, true) != 0;
         }
     }
 }
