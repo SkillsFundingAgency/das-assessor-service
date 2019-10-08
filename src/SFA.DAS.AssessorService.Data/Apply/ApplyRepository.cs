@@ -163,7 +163,10 @@ namespace SFA.DAS.AssessorService.Data.Apply
             if (application != null && applyData != null && sequence !=null)
             { 
                 application.UpdatedBy = updatedBy;
+                application.UpdatedAt = DateTime.UtcNow;
                 sequence.Status = sequenceStatus;
+                sequence.ApprovedBy = updatedBy;
+                sequence.ApprovedDate = DateTime.UtcNow;
 
                 switch (sequenceStatus)
                 {

@@ -62,10 +62,10 @@ namespace SFA.DAS.AssessorService.ApplyTypes
         public Guid SectionId { get; set; }
         public int SectionNo { get; set; }
         public string Status { get; set; }
-        public DateTime? ReviewStartDate { get; set; }
-        public string ReviewedBy { get; set; }
-        public DateTime? EvaluatedDate { get; set; }
-        public string EvaluatedBy { get; set; }
+        public DateTime? ReviewStartDate { get; set; } // TODO: POPULATE on Review Section (currently this is on Review Sequence)
+        public string ReviewedBy { get; set; } // TODO: POPULATE on Review Section (currently this is on Review Sequence)
+        public DateTime? EvaluatedDate { get; set; } // TODO: POPULATE on Evaluate Section
+        public string EvaluatedBy { get; set; } // TODO: POPULATE on Evaluate Section
         public bool NotRequired { get; set; }
         public bool? RequestedFeedbackAnswered { get; set; }
     }
