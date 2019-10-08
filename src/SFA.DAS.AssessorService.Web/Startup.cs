@@ -137,8 +137,10 @@ namespace SFA.DAS.AssessorService.Web
                 config.For<IQnaApiClient>().Use<QnaApiClient>()
                   .Ctor<ITokenService>("qnaTokenService").Is(c => c.GetInstance<ITokenService>("qnaTokenService")).Ctor<string>().Is(Configuration.QnaApiAuthentication.ApiBaseAddress);
                 config.For<ISessionService>().Use<SessionService>().Ctor<string>().Is(_env.EnvironmentName);
+                config.For<IOppFinderSession>().Use<OppFinderSession>();
                 config.For<IOrganisationsApiClient>().Use<OrganisationsApiClient>().Ctor<string>().Is(Configuration.ClientApiAuthentication.ApiBaseAddress);
                 config.For<IStandardsApiClient>().Use<StandardsApiClient>().Ctor<string>().Is(Configuration.ClientApiAuthentication.ApiBaseAddress);
+                config.For<IOppFinderApiClient>().Use<OppFinderApiClient>().Ctor<string>().Is(Configuration.ClientApiAuthentication.ApiBaseAddress);
                 config.For<IDashboardApiClient>().Use<DashboardApiClient>().Ctor<string>().Is(Configuration.ClientApiAuthentication.ApiBaseAddress);
                 config.For<IContactsApiClient>().Use<ContactsApiClient>().Ctor<string>().Is(Configuration.ClientApiAuthentication.ApiBaseAddress);
                 config.For<ISearchApiClient>().Use<SearchApiClient>().Ctor<string>().Is(Configuration.ClientApiAuthentication.ApiBaseAddress);
@@ -186,7 +188,9 @@ namespace SFA.DAS.AssessorService.Web
                 {
                     routes.MapRoute(
                         name: "default",
-                        template: "{controller=Home}/{action=Index}/{id?}");
+                        template: "{controller=Home}/{action=Index}/{id?}",
+                        defaults: null,
+                        constraints: new { controller = new NotEqualRouteContraint("OppFinder") });
                 });
         }        
     }
