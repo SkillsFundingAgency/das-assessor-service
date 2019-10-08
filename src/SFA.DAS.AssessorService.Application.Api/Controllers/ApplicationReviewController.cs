@@ -83,5 +83,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         {
             public bool IsSectionComplete { get; set; }
             public string EvaluatedBy { get; set; }
+        }
     }
 }
