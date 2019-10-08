@@ -8,7 +8,7 @@ using SFA.DAS.AssessorService.Api.Types.Models.Apply.Financial.Review;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
 using SFA.DAS.AssessorService.ApplyTypes;
 
-namespace SFA.DAS.AssessorService.Application.Api.Controllers
+namespace SFA.DAS.AssessorService.Application.Api.Controllers.Apply
 {
     [Authorize(Roles = "AssessorServiceInternalAPI")]
     [ValidateBadRequest]

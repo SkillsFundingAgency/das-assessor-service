@@ -11,7 +11,7 @@ using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-namespace SFA.DAS.AssessorService.Application.Api.Controllers
+namespace SFA.DAS.AssessorService.Application.Api.Controllers.Apply
 {
     [Authorize(Roles = "AssessorServiceInternalAPI")]
     [Route("api/v1/applications")]

@@ -10,7 +10,7 @@ using System;
 using System.Net;
 using System.Threading.Tasks;
 
-namespace SFA.DAS.AssessorService.Application.Api.Controllers
+namespace SFA.DAS.AssessorService.Application.Api.Controllers.Apply
 {
     [Authorize(Roles = "AssessorServiceInternalAPI")]
     [ValidateBadRequest]
