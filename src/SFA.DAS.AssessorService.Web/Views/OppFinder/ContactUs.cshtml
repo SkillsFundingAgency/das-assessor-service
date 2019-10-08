@@ -1,0 +1,6 @@
+@{
+    ViewData["Title"] = "Contact the National Apprenticeship Helpdesk";
+    Layout = "_OppFinderLayout";
+}
+<a class="govuk-back-link" asp-controller="OppFinder" asp-action="Index">Home</a>
+@{await Html.RenderPartialAsync("_ContactUsPartial");}
