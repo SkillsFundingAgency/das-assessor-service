@@ -181,9 +181,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
 
         private List<SearchResult> GetDeletedCertificateResult(Certificate certificate, SearchQuery request, string likedSurname)
         {
-            var result = new List<SearchResult> { new SearchResult { FamilyName=likedSurname, UlnAlreadyExits = false, Uln = request.Uln,
-                    StdCode = certificate.StandardCode, IsPrivatelyFunded = true, IsNoMatchingFamilyName = true } };
-            return result.PopulateStandards(_standardService, _logger);
+            return new List<SearchResult> { new SearchResult {  UlnAlreadyExits = false, Uln = request.Uln,
+                     IsPrivatelyFunded = true, IsNoMatchingFamilyName = true } };
         }
 
         private string DealWithSpecialCharactersAndSpaces(SearchQuery request, string likedSurname, IEnumerable<Ilr> ilrResults)
