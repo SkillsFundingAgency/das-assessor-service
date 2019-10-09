@@ -446,9 +446,9 @@ namespace SFA.DAS.AssessorService.Data.Apply
 	                        END As SubmissionCount,
                             ap1.ApplicationStatus As ApplicationStatus,
                             ap1.ReviewStatus As ReviewStatus,
-                            ap1.FinancialStatus As FinancialStatus,
+                            ap1.FinancialReviewStatus As FinancialStatus,
                             JSON_VALUE(ap1.FinancialGrade,'$.SelectedGrade') AS FinancialGrade,
-                            seq.SequenceStatus As SequenceStatus
+                            seq.Status As SequenceStatus
 	                     FROM Apply ap1
 					        INNER JOIN Organisations org ON ap1.OrganisationId = org.Id
                             CROSS APPLY OPENJSON(ApplyData,'$.Sequences') WITH (SequenceNo INT, Status VARCHAR(20), NotRequired BIT) seq
@@ -506,7 +506,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
                             apply.SubmissionCount AS SubmissionCount,
                             ap1.ApplicationStatus AS ApplicationStatus,
                             ap1.ReviewStatus AS ReviewStatus,
-                            ap1.FinancialStatus AS FinancialStatus
+                            ap1.FinancialReviewStatus AS FinancialStatus
                         FROM Apply ap1
                         INNER JOIN Organisations org ON ap1.OrganisationId = org.Id
                             CROSS APPLY OPENJSON(ApplyData,'$.Sequences') WITH (SequenceNo INT, IsActive BIT, Status VARCHAR(20)) sequence
@@ -542,7 +542,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
                             ISNULL(section.FeedbackDate, JSON_VALUE(ap1.FinancialGrade, '$.GradedDateTime')) As FeedbackAddedDate,
                             ap1.ApplicationStatus AS ApplicationStatus,
                             ap1.ReviewStatus AS ReviewStatus,
-                            ap1.FinancialStatus AS FinancialStatus,
+                            ap1.FinancialReviewStatus AS FinancialStatus,
 	                        ap1.FinancialGrade As Grade
                         FROM Apply ap1
                         INNER JOIN Organisations org ON ap1.OrganisationId = org.Id
@@ -577,7 +577,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
                             apply.SubmissionCount AS SubmissionCount,
                             ap1.ApplicationStatus AS ApplicationStatus,
                             ap1.ReviewStatus AS ReviewStatus,
-                            ap1.FinancialStatus AS FinancialStatus,
+                            ap1.FinancialReviewStatus AS FinancialStatus,
 	                        ap1.FinancialGrade As Grade
                         FROM Apply ap1
                         INNER JOIN Organisations org ON ap1.OrganisationId = org.Id
