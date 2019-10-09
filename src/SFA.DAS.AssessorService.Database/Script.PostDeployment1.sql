@@ -64,6 +64,9 @@ UPDATE OrganisationType SET FinancialExempt = 1 WHERE Type = 'Academy or Free Sc
 :r .\PostDeploymentScripts\on-2210-dashboard_api_subscriptions.sql
 /* END OF ON-2210 */
 
--- ON-2242
+/* START OF ON-2295 */
+:r .\PostDeploymentScripts\on-2295-expression-of-interest.sql
+/* END OF ON-2295 */
+
+/* UPDATE THE STAFF REPORT CONFIGURATION FOR EXISTING REPORTS */
 :r .\Update-Staff-Reports-Config.sql
--- END
