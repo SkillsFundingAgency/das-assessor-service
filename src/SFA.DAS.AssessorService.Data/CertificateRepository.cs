@@ -70,7 +70,7 @@ namespace SFA.DAS.AssessorService.Data
                 .FirstOrDefaultAsync(c =>
                     c.Uln == certificate.Uln &&
                     c.Organisation.EndPointAssessorOrganisationId == endpointOrganisationId &&
-                    c.IsPrivatelyFunded && c.Status != CertificateStatus.Deleted);
+                    c.IsPrivatelyFunded);
 
             if (existingCert != null)
                 return existingCert;
@@ -119,7 +119,7 @@ namespace SFA.DAS.AssessorService.Data
                 .FirstOrDefaultAsync(c =>
                     c.Uln == uln &&
                     c.Organisation.EndPointAssessorOrganisationId == endpointOrganisationId &&
-                    c.IsPrivatelyFunded && c.Status != CertificateStatus.Deleted);
+                    c.IsPrivatelyFunded);
             return existingCert;
         }
 
@@ -131,7 +131,7 @@ namespace SFA.DAS.AssessorService.Data
                 .FirstOrDefaultAsync(c =>
                     c.Uln == uln &&
                     c.Organisation.EndPointAssessorOrganisationId == endpointOrganisationId &&
-                    CheckCertificateData(c, lastName) && c.Status != CertificateStatus.Deleted);
+                    CheckCertificateData(c, lastName));
             return existingCert;
         }
 
@@ -142,7 +142,7 @@ namespace SFA.DAS.AssessorService.Data
                 .Include(q => q.Organisation)
                 .FirstOrDefaultAsync(c =>
                     c.Uln == uln &&
-                    CheckCertificateData(c, lastName) && c.Status != CertificateStatus.Deleted);
+                    CheckCertificateData(c, lastName));
 
             return existingCert;
         }
@@ -152,7 +152,7 @@ namespace SFA.DAS.AssessorService.Data
         {
             var existingCert = await _context.Certificates
                 .AnyAsync(c =>
-                    c.Uln == uln && c.Status != CertificateStatus.Deleted);
+                    c.Uln == uln);
 
             return existingCert;
         }
