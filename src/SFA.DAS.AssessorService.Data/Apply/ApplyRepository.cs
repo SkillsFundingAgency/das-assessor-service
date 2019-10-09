@@ -364,20 +364,20 @@ namespace SFA.DAS.AssessorService.Data.Apply
                 return (await connection
                     .QueryAsync<ApplicationSummaryItem>(
                         @"SELECT
-                            OrganisationName,
                             ApplicationId,
                             SequenceNo,
+                            OrganisationName,
                             ApplicationType,
                             StandardName,
                             StandardCode,
                             SubmittedDate,
                             SubmissionCount,
+                            ApplicationStatus,
+                            ReviewStatus,
                             FinancialStatus,
-                            FinancialGrade,
-                            CurrentStatus,
-                            ReviewStatus
+                            FinancialGrade
                         FROM ApplicationSummary 
-                        WHERE CurrentStatus IN (@applicationStatusSubmitted, @applicationStatusResubmitted)
+                        WHERE ApplicationStatus IN (@applicationStatusSubmitted, @applicationStatusResubmitted)
                         AND SequenceNo = @SequenceNo",
                         new
                         {
@@ -395,20 +395,20 @@ namespace SFA.DAS.AssessorService.Data.Apply
                 return (await connection
                     .QueryAsync<ApplicationSummaryItem>(
                         @"SELECT
-                            OrganisationName,
                             ApplicationId,
                             SequenceNo,
+                            OrganisationName,
                             ApplicationType,
                             StandardName,
                             StandardCode,
-                            SubmittedDate,
+                            FeedbackAddedDate,
                             SubmissionCount,
+                            ApplicationStatus,
+                            ReviewStatus,
                             FinancialStatus,
-                            FinancialGrade,
-                            CurrentStatus,
-                            ReviewStatus
+                            FinancialGrade
                         FROM ApplicationSummary 
-                        WHERE CurrentStatus IN (@applicationStatusFeedbackAdded)",
+                        WHERE ApplicationStatus IN (@applicationStatusFeedbackAdded)",
                         new
                         {
                             applicationStatusFeedbackAdded = ApplicationStatus.FeedbackAdded,
@@ -423,9 +423,9 @@ namespace SFA.DAS.AssessorService.Data.Apply
                 return (await connection
                     .QueryAsync<ApplicationSummaryItem>(
                         @"SELECT 
-                            org.EndPointAssessorName AS OrganisationName,
-                            ap1.id AS Id,
+                            ap1.id AS ApplicationId,
                             seq.SequenceNo AS SequenceNo,
+                            org.EndPointAssessorName AS OrganisationName,
                             CASE WHEN seq.SequenceNo = 1 THEN 'Midpoint'
 		                         WHEN seq.SequenceNo = 2 THEN 'Standard'
 		                         ELSE 'Unknown'
@@ -444,7 +444,11 @@ namespace SFA.DAS.AssessorService.Data.Apply
 		                         WHEN seq.SequenceNo = 2 THEN JSON_VALUE(ap1.Applydata, '$.Apply.StandardSubmissionsCount')
 		                         ELSE 0
 	                        END As SubmissionCount,
-                            seq.Status As CurrentStatus
+                            ap1.ApplicationStatus As ApplicationStatus,
+                            ap1.ReviewStatus As ReviewStatus,
+                            ap1.FinancialStatus As FinancialStatus,
+                            JSON_VALUE(ap1.FinancialGrade,'$.SelectedGrade') AS FinancialGrade,
+                            seq.SequenceStatus As SequenceStatus
 	                     FROM Apply ap1
 					        INNER JOIN Organisations org ON ap1.OrganisationId = org.Id
                             CROSS APPLY OPENJSON(ApplyData,'$.Sequences') WITH (SequenceNo INT, Status VARCHAR(20), NotRequired BIT) seq
@@ -460,25 +464,25 @@ namespace SFA.DAS.AssessorService.Data.Apply
                             applicationReviewStatusDeleted = ApplicationReviewStatus.Deleted
                         })).ToList();
 
-                
+
                 //This has been commented out as Alan seems to think we'll be able to move back to this at a later date
                 //return (await connection
                 //    .QueryAsync<ApplicationSummaryItem>(
                 //        @"SELECT
-                //            OrganisationName,
                 //            ApplicationId,
                 //            SequenceNo,
+                //            OrganisationName,
                 //            ApplicationType,
                 //            StandardName,
                 //            StandardCode,
-                //            SubmittedDate,
+                //            ClosedDate,
                 //            SubmissionCount,
+                //            ApplicationStatus,
+                //            ReviewStatus,
                 //            FinancialStatus,
-                //            FinancialGrade,
-                //            CurrentStatus,
-                //            ReviewStatus
+                //            FinancialGrade
                 //        FROM ApplicationSummary 
-                //        WHERE CurrentStatus IN (@applicationStatusApproved, @applicationStatusDeclined)",
+                //        WHERE ApplicationStatus IN (@applicationStatusApproved, @applicationStatusDeclined)",
                 //        new
                 //        {
                 //            applicationStatusApproved = ApplicationStatus.Approved,
