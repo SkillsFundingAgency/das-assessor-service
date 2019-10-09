@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace SFA.DAS.AssessorService.ApplyTypes
+﻿namespace SFA.DAS.AssessorService.ApplyTypes
 {
     public static class ApplicationReviewStatus
     {
         public const string Draft = "Draft";
         public const string New = "New";
-        public const string Submitted = "Submitted";
         public const string InProgress = "In Progress";
         public const string HasFeedback = "Has Feedback";
         public const string Approved = "Approved";
