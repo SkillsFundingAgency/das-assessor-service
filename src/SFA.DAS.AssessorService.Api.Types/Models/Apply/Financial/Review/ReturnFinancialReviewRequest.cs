@@ -4,16 +4,14 @@ using System;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models.Apply.Financial.Review
 {
-    public class UpdateGradeRequest : IRequest
+    public class ReturnFinancialReviewRequest : IRequest
     {
         public Guid Id { get; }
-        public Guid OrgId { get; }
         public FinancialGrade UpdatedGrade { get; }
 
-        public UpdateGradeRequest(Guid id, Guid orgId, FinancialGrade updatedGrade)
+        public ReturnFinancialReviewRequest(Guid id, FinancialGrade updatedGrade)
         {
             Id = id;
-            OrgId = orgId;
             UpdatedGrade = updatedGrade;
         }
     }

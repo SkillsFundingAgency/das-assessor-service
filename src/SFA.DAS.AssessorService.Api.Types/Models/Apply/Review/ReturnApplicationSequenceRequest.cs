@@ -3,17 +3,19 @@ using System;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models.Apply.Review
 {
-    public class ReturnApplicationRequest : IRequest
+    public class ReturnApplicationSequenceRequest : IRequest
     {
         public Guid ApplicationId { get; }
         public int SequenceId { get; }
         public string ReturnType { get; }
+        public string ReturnedBy { get; }
 
-        public ReturnApplicationRequest(Guid applicationId, int sequenceId, string returnType)
+        public ReturnApplicationSequenceRequest(Guid applicationId, int sequenceId, string returnType, string returnedBy)
         {
             ApplicationId = applicationId;
             SequenceId = sequenceId;
             ReturnType = returnType;
+            ReturnedBy = returnedBy;
         }
     }
 }

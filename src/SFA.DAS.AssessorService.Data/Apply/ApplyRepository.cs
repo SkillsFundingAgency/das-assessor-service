@@ -16,6 +16,10 @@ namespace SFA.DAS.AssessorService.Data.Apply
 {
     public class ApplyRepository : IApplyRepository
     {
+        // NOTE: Should the Financial Section move; then these need to be updated
+        private const int FINANCIAL_SEQUENCE = 1;
+        private const int FINANCIAL_SECTION = 3;
+
         private readonly IWebConfiguration _configuration;
         private readonly ILogger<ApplyRepository> _logger;
 
@@ -76,10 +80,10 @@ namespace SFA.DAS.AssessorService.Data.Apply
         {
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))
             {
-              var result =  await connection.ExecuteAsync(@"UPDATE Apply
-                                                SET  ApplicationStatus = @ApplicationStatus, ApplyData = @ApplyData, ReviewStatus = @ReviewStatus, FinancialReviewStatus = @FinancialReviewStatus, UpdatedBy = @UpdatedBy, UpdatedAt = GETUTCDATE() 
+                await connection.ExecuteAsync(@"UPDATE Apply
+                                                SET  ApplicationStatus = @ApplicationStatus, ApplyData = @ApplyData, StandardCode = @StandardCode, ReviewStatus = @ReviewStatus, FinancialReviewStatus = @FinancialReviewStatus, UpdatedBy = @UpdatedBy, UpdatedAt = GETUTCDATE() 
                                                 WHERE  (Apply.Id = @Id)",
-                  new { apply.ApplicationStatus, apply.ApplyData, apply.ReviewStatus, apply.FinancialReviewStatus, apply.Id, apply.UpdatedBy});
+                                                new { apply.ApplicationStatus, apply.ApplyData, apply.StandardCode, apply.ReviewStatus, apply.FinancialReviewStatus, apply.Id, apply.UpdatedBy});
             }
         }
 
@@ -87,36 +91,69 @@ namespace SFA.DAS.AssessorService.Data.Apply
         {
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))
             {
-                var result = await connection.ExecuteAsync(@"UPDATE Apply
-                                                SET  ApplyData = JSON_MODIFY(JSON_MODIFY(JSON_MODIFY(ApplyData,'$.Apply.StandardReference',@ReferenceNumber),'$.Apply.StandardCode',@StandardCode),'$.Apply.StandardName',@StandardName)
+                await connection.ExecuteAsync(@"UPDATE Apply
+                                                SET  ApplyData = JSON_MODIFY(JSON_MODIFY(JSON_MODIFY(ApplyData,'$.Apply.StandardReference',@ReferenceNumber),'$.Apply.StandardCode',@StandardCode),'$.Apply.StandardName',@StandardName), StandardCode = @StandardCode
                                                 WHERE  Id = @Id",
-                    new { standardRequest.StandardCode,standardRequest.ReferenceNumber, standardRequest.StandardName, standardRequest.Id });
+                                                new { standardRequest.StandardCode,standardRequest.ReferenceNumber, standardRequest.StandardName, standardRequest.Id });
             }
         }
 
-        public async Task StartFinancialReview(Guid id)
+        public async Task StartFinancialReview(Guid id, string reviewer)
         {
-            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            var application = await GetApplication(id);
+            var applyData = application?.ApplyData;
+            var sequence = applyData?.Sequences.SingleOrDefault(seq => seq.SequenceNo == FINANCIAL_SEQUENCE);
+            var section = sequence?.Sections.SingleOrDefault(sec => sec.SectionNo == FINANCIAL_SECTION);
+
+            if (application != null && section != null && sequence?.IsActive == true && application.FinancialReviewStatus == FinancialReviewStatus.New)
             {
-                await connection.ExecuteAsync(@"UPDATE Apply 
-                                                SET FinancialReviewStatus = @financialReviewStatusInProgress
-                                                WHERE Id = @id AND FinancialReviewStatus = @financialReviewStatusNew",
-                    new { id, financialReviewStatusInProgress = FinancialReviewStatus.InProgress, financialReviewStatusNew = FinancialReviewStatus.New });
+                application.FinancialReviewStatus = FinancialReviewStatus.InProgress;
+                application.UpdatedBy = reviewer;
+                application.UpdatedAt = DateTime.UtcNow;
+
+                section.Status = ApplicationSectionStatus.InProgress;
+                section.ReviewedBy = reviewer;
+                section.ReviewStartDate = DateTime.UtcNow;
+
+                using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+                {
+                    await connection.ExecuteAsync(@"UPDATE Apply
+                                                    SET  ApplyData = @ApplyData, FinancialReviewStatus = @FinancialReviewStatus, UpdatedBy = @UpdatedBy, UpdatedAt = GETUTCDATE() 
+                                                    WHERE Apply.Id = @Id",
+                                                    new { application.Id, application.ApplyData, application.FinancialReviewStatus, application.UpdatedBy });
+                }
             }
         }
 
-        public async Task UpdateApplicationFinancialGrade(Guid id, FinancialGrade financialGrade)
+        public async Task ReturnFinancialReview(Guid id, FinancialGrade financialGrade)
         {
             if (financialGrade != null)
             {
-                using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+                var application = await GetApplication(id);
+                var applyData = application?.ApplyData;
+                var sequence = applyData?.Sequences.SingleOrDefault(seq => seq.SequenceNo == FINANCIAL_SEQUENCE);
+                var section = sequence?.Sections.SingleOrDefault(sec => sec.SectionNo == FINANCIAL_SECTION);
+
+                if (application != null && section != null && sequence?.IsActive == true && application.FinancialReviewStatus == FinancialReviewStatus.InProgress)
                 {
                     var financialReviewStatus = (financialGrade.SelectedGrade == FinancialApplicationSelectedGrade.Inadequate) ? FinancialReviewStatus.Rejected : FinancialReviewStatus.Graded;
 
-                    var result = await connection.ExecuteAsync(@"UPDATE Apply
-                                                SET FinancialGrade = @financialGrade, FinancialReviewStatus = @financialReviewStatus
-                                                WHERE Id = @id",
-                        new { id, financialGrade, financialReviewStatus });
+                    application.FinancialReviewStatus = financialReviewStatus;
+                    application.FinancialGrade = financialGrade;
+                    application.UpdatedBy = financialGrade.GradedBy;
+                    application.UpdatedAt = DateTime.UtcNow;
+
+                    section.Status = ApplicationSectionStatus.Graded;
+                    section.ReviewedBy = financialGrade.GradedBy;
+                    section.ReviewStartDate = DateTime.UtcNow;
+
+                    using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+                    {
+                        await connection.ExecuteAsync(@"UPDATE Apply
+                                                    SET  ApplyData = @ApplyData, FinancialGrade = @FinancialGrade, FinancialReviewStatus = @FinancialReviewStatus, UpdatedBy = @UpdatedBy, UpdatedAt = GETUTCDATE()  
+                                                    WHERE Apply.Id = @Id",
+                                                        new { application.Id, application.ApplyData, application.FinancialGrade, application.FinancialReviewStatus, application.UpdatedBy });
+                    }
                 }
             }
             else
@@ -125,14 +162,189 @@ namespace SFA.DAS.AssessorService.Data.Apply
             }
         }
 
-        public async Task UpdateApplicationSectionStatus(Guid id, string sequenceNo, string sectionNo, string status)
+        public async Task StartApplicationSectionReview(Guid id, int sequenceNo, int sectionNo, string reviewer)
+        {
+            var application = await GetApplication(id);
+            var applyData = application?.ApplyData;
+            var sequence = applyData?.Sequences.SingleOrDefault(seq => seq.SequenceNo == sequenceNo);
+            var section = sequence?.Sections.SingleOrDefault(sec => sec.SectionNo == sectionNo);
+
+            if (application != null && section != null && sequence?.IsActive == true)
+            {
+                application.ReviewStatus = ApplicationReviewStatus.InProgress;
+                application.UpdatedBy = reviewer;
+                application.UpdatedAt = DateTime.UtcNow;
+
+                section.Status = ApplicationSectionStatus.InProgress;
+                section.ReviewedBy = reviewer;
+                section.ReviewStartDate = DateTime.UtcNow;
+
+                using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+                {
+                    await connection.ExecuteAsync(@"UPDATE Apply
+                                                    SET  ApplyData = @ApplyData, ReviewStatus = @ReviewStatus, UpdatedBy = @UpdatedBy, UpdatedAt = GETUTCDATE() 
+                                                    WHERE Apply.Id = @Id",
+                                                    new { application.Id, application.ApplyData, application.ReviewStatus, application.UpdatedBy });
+                }
+            }
+        }
+
+        public async Task EvaluateApplicationSection(Guid id, int sequenceNo, int sectionNo, bool isSectionComplete, string evaluatedBy)
+        {
+            var application = await GetApplication(id);
+            var applyData = application?.ApplyData;
+            var sequence = applyData?.Sequences.SingleOrDefault(seq => seq.SequenceNo == sequenceNo);
+            var section = sequence?.Sections.SingleOrDefault(sec => sec.SectionNo == sectionNo);
+
+            if (application != null && section != null && sequence?.IsActive == true)
+            {
+                application.UpdatedBy = evaluatedBy;
+                application.UpdatedAt = DateTime.UtcNow;
+
+                if (isSectionComplete)
+                {
+                    section.Status = ApplicationSectionStatus.Evaluated;
+                    section.EvaluatedDate = DateTime.UtcNow;
+                    section.EvaluatedBy = evaluatedBy;
+                }
+                else if (sequence.SequenceNo == FINANCIAL_SEQUENCE && section.SectionNo == FINANCIAL_SECTION)
+                {
+                    section.Status = ApplicationSectionStatus.Graded;
+                    section.EvaluatedDate = null;
+                    section.EvaluatedBy = null;
+
+                    if(application.FinancialGrade != null)
+                    {
+                        section.ReviewStartDate = application.FinancialGrade.GradedDateTime;
+                        section.ReviewedBy = application.FinancialGrade.GradedBy;
+                    }
+                }
+                else
+                {
+                    section.Status = ApplicationSectionStatus.InProgress;
+                    section.EvaluatedDate = null;
+                    section.EvaluatedBy = null;
+                }
+
+                using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+                {
+                    await connection.ExecuteAsync(@"UPDATE Apply
+                                                    SET  ApplyData = @ApplyData, UpdatedBy = @UpdatedBy, UpdatedAt = GETUTCDATE() 
+                                                    WHERE  (Apply.Id = @Id)",
+                                                    new { application.ApplyData, application.UpdatedBy });
+                }
+            }
+        }
+
+        public async Task ReturnApplicationSequence(Guid id, int sequenceNo, string sequenceStatus, string returnedBy)
+        {
+            var application = await GetApplication(id);
+            var applyData = application?.ApplyData;
+            var sequence = applyData?.Sequences.SingleOrDefault(seq => seq.SequenceNo == sequenceNo);
+            var nextSequence = applyData?.Sequences.Where(seq => seq.SequenceNo > sequenceNo && !seq.NotRequired).OrderBy(seq => seq.SequenceNo).FirstOrDefault();
+
+            if (application != null && applyData != null && sequence !=null)
+            { 
+                application.UpdatedBy = returnedBy;
+                application.UpdatedAt = DateTime.UtcNow;
+                sequence.Status = sequenceStatus;
+                sequence.ApprovedBy = returnedBy;
+                sequence.ApprovedDate = DateTime.UtcNow;
+
+                switch (sequenceStatus)
+                {
+                    case ApplicationSequenceStatus.FeedbackAdded:
+                        application.ReviewStatus = ApplicationReviewStatus.HasFeedback;
+                        application.ApplicationStatus = ApplicationStatus.FeedbackAdded;
+                        if (sequenceNo == 1)
+                        {
+                            applyData.Apply.InitSubmissionFeedbackAddedDate = DateTime.UtcNow;
+                        }
+                        else if (sequenceNo == 2)
+                        {
+                            applyData.Apply.StandardSubmissionFeedbackAddedDate = DateTime.UtcNow;
+                        }
+                        break;
+                    case ApplicationSequenceStatus.Declined:
+                        application.ReviewStatus = ApplicationReviewStatus.Declined;
+                        application.ApplicationStatus = ApplicationStatus.Declined;
+                        if (sequenceNo == 1)
+                        {
+                            applyData.Apply.InitSubmissionClosedDate = DateTime.UtcNow;
+                        }
+                        else if (sequenceNo == 2)
+                        {
+                            applyData.Apply.StandardSubmissionClosedDate = DateTime.UtcNow;
+                        }
+                        break;
+                    case ApplicationSequenceStatus.Approved:
+                        application.ReviewStatus = ApplicationReviewStatus.Approved;
+                        if (sequenceNo == 1)
+                        {
+                            applyData.Apply.InitSubmissionClosedDate = DateTime.UtcNow;
+                        }
+                        else if (sequenceNo == 2)
+                        {
+                            applyData.Apply.StandardSubmissionClosedDate = DateTime.UtcNow;
+                        }
+
+                        if(nextSequence != null)
+                        {
+                            sequence.IsActive = false;
+                            nextSequence.IsActive = true;
+                            application.ApplicationStatus = ApplicationStatus.InProgress;
+                        }
+                        else
+                        {
+                            application.ApplicationStatus = ApplicationStatus.Approved;
+
+                            // Delete any related applications if this one was an initial application
+                            // (i.e all sequences are required, and thus, not on EPAO Register)
+                            if (applyData.Sequences.All(seq => !seq.NotRequired) && !application.Organisation.OrganisationData.RoEPAOApproved)
+                            {
+                                await RejectAllRelatedApplications(application.Id, application.UpdatedBy);
+                            }
+                        }
+                        break;
+                }
+
+                using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+                {
+                    await connection.ExecuteAsync(@"UPDATE Apply
+                                                    SET  ApplicationStatus = @ApplicationStatus, ReviewStatus = @ReviewStatus, ApplyData = @ApplyData, UpdatedBy = @UpdatedBy, UpdatedAt = GETUTCDATE() 
+                                                    WHERE  (Apply.Id = @Id)",
+                                                    new { application.Id, application.ApplicationStatus, application.ReviewStatus, application.ApplyData, application.UpdatedBy });
+                }
+            }
+        }
+
+        private async Task RejectAllRelatedApplications(Guid applicationId, string deletedBy)
         {
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))
             {
-                var result = await connection.ExecuteAsync(@"UPDATE Apply SET ApplyData = 
-                                                JSON_MODIFY(ApplyData, '$.Sequences['+@sequenceNo+'].Sections['+@sectionNo+'].Status',@status) 
-                                                WHERE Id = @id",
-                    new { sequenceNo, sectionNo,status, id });
+                var inProgressRelatedApplications = await connection.QueryAsync<Domain.Entities.Apply>(@"SELECT * FROM Apply a
+                                                                                                         WHERE a.ApplyingOrganisationId = (SELECT ApplyingOrganisationId FROM Applications WHERE Applications.Id = @applicationId)
+                                                                                                         AND a.Id <> @applicationId
+                                                                                                         AND a.ApplicationStatus NOT IN (@approvedStatus, @rejectedStatus)",
+                                                                                                         new { applicationId, approvedStatus = ApplicationStatus.Approved, rejectedStatus = ApplicationStatus.Declined });
+
+                foreach (var application in inProgressRelatedApplications)
+                {
+                    application.ApplicationStatus = ApplicationStatus.Declined;
+                    application.ReviewStatus = ApplicationReviewStatus.Deleted;
+                    application.DeletedBy = deletedBy;
+
+                    foreach (var sequence in application.ApplyData?.Sequences)
+                    {
+                        sequence.IsActive = false;
+                        sequence.Status = ApplicationSequenceStatus.Declined;
+                    }
+
+                    await connection.ExecuteAsync(@"UPDATE Apply
+                                                    SET  ApplicationStatus = @ApplicationStatus, ReviewStatus = @ReviewStatus, ApplyData = @ApplyData, DeletedBy = @UpdatedBy, DeletedAt = GETUTCDATE() 
+                                                    WHERE  (Apply.Id = @Id)",
+                                                    new { application.Id, application.ApplicationStatus, application.ReviewStatus, application.ApplyData, application.DeletedBy });
+                }
             }
         }
 
@@ -145,6 +357,140 @@ namespace SFA.DAS.AssessorService.Data.Apply
             }
         }
 
+        public async Task<List<ApplicationSummaryItem>> GetOpenApplications(int sequenceNo)
+        {
+            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            {
+                return (await connection
+                    .QueryAsync<ApplicationSummaryItem>(
+                        @"SELECT
+                            ApplicationId,
+                            SequenceNo,
+                            OrganisationName,
+                            ApplicationType,
+                            StandardName,
+                            StandardCode,
+                            SubmittedDate,
+                            SubmissionCount,
+                            ApplicationStatus,
+                            ReviewStatus,
+                            FinancialStatus,
+                            FinancialGrade
+                        FROM ApplicationSummary 
+                        WHERE ApplicationStatus IN (@applicationStatusSubmitted, @applicationStatusResubmitted)
+                        AND SequenceNo = @SequenceNo",
+                        new
+                        {
+                            SequenceNo = sequenceNo,
+                            applicationStatusSubmitted = ApplicationStatus.Submitted,
+                            applicationStatusResubmitted = ApplicationStatus.Resubmitted,
+                        })).ToList();
+            }
+        }
+
+        public async Task<List<ApplicationSummaryItem>> GetFeedbackAddedApplications()
+        {
+            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            {
+                return (await connection
+                    .QueryAsync<ApplicationSummaryItem>(
+                        @"SELECT
+                            ApplicationId,
+                            SequenceNo,
+                            OrganisationName,
+                            ApplicationType,
+                            StandardName,
+                            StandardCode,
+                            FeedbackAddedDate,
+                            SubmissionCount,
+                            ApplicationStatus,
+                            ReviewStatus,
+                            FinancialStatus,
+                            FinancialGrade
+                        FROM ApplicationSummary 
+                        WHERE ApplicationStatus IN (@applicationStatusFeedbackAdded)",
+                        new
+                        {
+                            applicationStatusFeedbackAdded = ApplicationStatus.FeedbackAdded,
+                        })).ToList();
+            }
+        }
+
+        public async Task<List<ApplicationSummaryItem>> GetClosedApplications()
+        {
+            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            {
+                return (await connection
+                    .QueryAsync<ApplicationSummaryItem>(
+                        @"SELECT 
+                            ap1.id AS ApplicationId,
+                            seq.SequenceNo AS SequenceNo,
+                            org.EndPointAssessorName AS OrganisationName,
+                            CASE WHEN seq.SequenceNo = 1 THEN 'Midpoint'
+		                         WHEN seq.SequenceNo = 2 THEN 'Standard'
+		                         ELSE 'Unknown'
+	                        END As ApplicationType,
+                            CASE WHEN seq.SequenceNo = 1 THEN NULL
+		                         ELSE JSON_VALUE(ap1.Applydata, '$.Apply.StandardName')
+                            END As StandardName,
+                            CASE WHEN seq.SequenceNo = 1 THEN NULL
+		                         ELSE JSON_VALUE(ap1.Applydata, '$.Apply.StandardCode')
+                            END As StandardCode,
+                            CASE WHEN seq.SequenceNo = 1 THEN JSON_VALUE(ap1.Applydata, '$.Apply.InitSubmissionClosedDate')
+		                         WHEN seq.SequenceNo = 2 THEN JSON_VALUE(ap1.Applydata, '$.Apply.StandardSubmissionClosedDate')
+		                         ELSE NULL
+	                        END As ClosedDate,
+                            CASE WHEN seq.SequenceNo = 1 THEN JSON_VALUE(ap1.Applydata, '$.Apply.InitSubmissionCount')
+		                         WHEN seq.SequenceNo = 2 THEN JSON_VALUE(ap1.Applydata, '$.Apply.StandardSubmissionsCount')
+		                         ELSE 0
+	                        END As SubmissionCount,
+                            ap1.ApplicationStatus As ApplicationStatus,
+                            ap1.ReviewStatus As ReviewStatus,
+                            ap1.FinancialReviewStatus As FinancialStatus,
+                            JSON_VALUE(ap1.FinancialGrade,'$.SelectedGrade') AS FinancialGrade,
+                            seq.Status As SequenceStatus
+	                     FROM Apply ap1
+					        INNER JOIN Organisations org ON ap1.OrganisationId = org.Id
+                            CROSS APPLY OPENJSON(ApplyData,'$.Sequences') WITH (SequenceNo INT, Status VARCHAR(20), NotRequired BIT) seq
+	                     WHERE seq.Status IN (@sequenceStatusApproved, @sequenceStatusDeclined) AND seq.NotRequired = 0
+                            AND ap1.DeletedAt IS NULL
+                            AND ap1.ApplicationStatus <> @applicationStatusDeclined
+                            AND ap1.ReviewStatus <> @applicationReviewStatusDeleted",
+                        new
+                        {
+                            sequenceStatusApproved = ApplicationSequenceStatus.Approved,
+                            sequenceStatusDeclined = ApplicationSequenceStatus.Declined,
+                            applicationStatusDeclined = ApplicationStatus.Declined,
+                            applicationReviewStatusDeleted = ApplicationReviewStatus.Deleted
+                        })).ToList();
+
+
+                //This has been commented out as Alan seems to think we'll be able to move back to this at a later date
+                //return (await connection
+                //    .QueryAsync<ApplicationSummaryItem>(
+                //        @"SELECT
+                //            ApplicationId,
+                //            SequenceNo,
+                //            OrganisationName,
+                //            ApplicationType,
+                //            StandardName,
+                //            StandardCode,
+                //            ClosedDate,
+                //            SubmissionCount,
+                //            ApplicationStatus,
+                //            ReviewStatus,
+                //            FinancialStatus,
+                //            FinancialGrade
+                //        FROM ApplicationSummary 
+                //        WHERE ApplicationStatus IN (@applicationStatusApproved, @applicationStatusDeclined)",
+                //        new
+                //        {
+                //            applicationStatusApproved = ApplicationStatus.Approved,
+                //            applicationStatusDeclined = ApplicationStatus.Declined,
+                //        })).ToList();
+            }
+        }
+
         public async Task<List<FinancialApplicationSummaryItem>> GetOpenFinancialApplications()
         {
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))
@@ -152,17 +498,15 @@ namespace SFA.DAS.AssessorService.Data.Apply
                 return (await connection
                     .QueryAsync<FinancialApplicationSummaryItem>(
                         @"SELECT
-                           org.EndPointAssessorName AS OrganisationName,
-                           ap1.Id AS Id,
-	                       sequence.SequenceNo AS SequenceNo,
-                           section.SectionNo AS SectionNo, 
-                           apply.SubmittedDate AS SubmittedDate,
-                           apply.SubmissionCount AS SubmissionCount, 
-	                       CASE WHEN (ap1.FinancialReviewStatus = @financialReviewStatusInProgress) THEN @applicationStatusInProgress
-                                WHEN (ap1.ApplicationStatus = @applicationStatusResubmitted) THEN @applicationStatusResubmitted
-                                WHEN (ap1.ApplicationStatus = @applicationStatusSubmitted) THEN @applicationStatusSubmitted
-                                ELSE section.Status
-                           END As CurrentStatus
+                            ap1.Id AS ApplicationId,
+                            sequence.SequenceNo AS SequenceNo,
+                            section.SectionNo AS SectionNo, 
+                            org.EndPointAssessorName AS OrganisationName, 
+                            apply.SubmittedDate AS SubmittedDate,
+                            apply.SubmissionCount AS SubmissionCount,
+                            ap1.ApplicationStatus AS ApplicationStatus,
+                            ap1.ReviewStatus AS ReviewStatus,
+                            ap1.FinancialReviewStatus AS FinancialStatus
                         FROM Apply ap1
                         INNER JOIN Organisations org ON ap1.OrganisationId = org.Id
                             CROSS APPLY OPENJSON(ApplyData,'$.Sequences') WITH (SequenceNo INT, IsActive BIT, Status VARCHAR(20)) sequence
@@ -170,12 +514,12 @@ namespace SFA.DAS.AssessorService.Data.Apply
                             CROSS APPLY OPENJSON(ApplyData,'$.Apply') WITH (SubmittedDate VARCHAR(30) '$.LatestInitSubmissionDate', SubmissionCount INT '$.InitSubmissionCount') apply
                         WHERE sequence.SequenceNo = 1 AND section.SectionNo = 3 AND sequence.IsActive = 1
                             AND ap1.FinancialReviewStatus IN (@financialReviewStatusNew, @financialReviewStatusInProgress)
-                            AND ap1.ApplicationStatus IN (@applicationStatusSubmitted, @applicationStatusResubmitted)",
+                            AND ap1.ApplicationStatus IN (@applicationStatusSubmitted, @applicationStatusResubmitted)
+                            AND ap1.DeletedAt IS NULL",
                         new
                         {
                             financialReviewStatusNew = FinancialReviewStatus.New,
                             financialReviewStatusInProgress = FinancialReviewStatus.InProgress,
-                            applicationStatusInProgress = ApplicationStatus.InProgress,
                             applicationStatusSubmitted = ApplicationStatus.Submitted,
                             applicationStatusResubmitted = ApplicationStatus.Resubmitted,
                         })).ToList();
@@ -188,15 +532,18 @@ namespace SFA.DAS.AssessorService.Data.Apply
             {
                 return (await connection
                     .QueryAsync<FinancialApplicationSummaryItem>(
-                        @"SELECT org.EndPointAssessorName AS OrganisationName,
-                           ap1.Id AS Id,
-	                       sequence.SequenceNo AS SequenceNo,
-                           section.SectionNo AS SectionNo, 
-	                       ap1.FinancialGrade As Grade,
-	                       ISNULL(section.FeedbackDate, JSON_VALUE(ap1.FinancialGrade, '$.GradedDateTime')) As FeedbackAddedDate,
-                           apply.SubmittedDate AS SubmittedDate,
-                           apply.SubmissionCount AS SubmissionCount,
-	                       ap1.FinancialReviewStatus AS CurrentStatus
+                        @"SELECT
+                            ap1.Id AS ApplicationId,
+                            sequence.SequenceNo AS SequenceNo,
+                            section.SectionNo AS SectionNo, 
+                            org.EndPointAssessorName AS OrganisationName,
+                            apply.SubmittedDate AS SubmittedDate,
+                            apply.SubmissionCount AS SubmissionCount,
+                            ISNULL(section.FeedbackDate, JSON_VALUE(ap1.FinancialGrade, '$.GradedDateTime')) As FeedbackAddedDate,
+                            ap1.ApplicationStatus AS ApplicationStatus,
+                            ap1.ReviewStatus AS ReviewStatus,
+                            ap1.FinancialReviewStatus AS FinancialStatus,
+	                        ap1.FinancialGrade As Grade
                         FROM Apply ap1
                         INNER JOIN Organisations org ON ap1.OrganisationId = org.Id
                             CROSS APPLY OPENJSON(ApplyData,'$.Sequences') WITH (SequenceNo INT, IsActive BIT, Status VARCHAR(20)) sequence
@@ -204,7 +551,8 @@ namespace SFA.DAS.AssessorService.Data.Apply
                             CROSS APPLY OPENJSON(ApplyData,'$.Apply') WITH (SubmittedDate VARCHAR(30) '$.LatestInitSubmissionDate', SubmissionCount INT '$.InitSubmissionCount') apply
                         WHERE sequence.SequenceNo = 1 AND section.SectionNo = 3 AND sequence.IsActive = 1
                             AND ap1.FinancialReviewStatus = @financialReviewStatusRejected
-                            AND ap1.ApplicationStatus IN (@applicationStatusSubmitted, @applicationStatusResubmitted)",
+                            AND ap1.ApplicationStatus IN (@applicationStatusSubmitted, @applicationStatusResubmitted)
+                            AND ap1.DeletedAt IS NULL",
                         new
                         {
                             financialReviewStatusRejected = FinancialReviewStatus.Rejected,
@@ -220,30 +568,29 @@ namespace SFA.DAS.AssessorService.Data.Apply
             {
                 return (await connection
                     .QueryAsync<FinancialApplicationSummaryItem>(
-                        @"SELECT org.EndPointAssessorName AS OrganisationName,
-                           ap1.Id AS Id,
-	                       sequence.SequenceNo AS SequenceNo,
-                           section.SectionNo AS SectionNo, 
-	                       ap1.FinancialGrade As Grade,
-                           apply.ClosedDate AS ClosedDate,
-                           apply.SubmissionCount AS SubmissionCount,
-	                       CASE WHEN (sequence.Status = @applicationSequenceStatusApproved) THEN @applicationSequenceStatusApproved
-                                WHEN (sequence.Status = @applicationSequenceStatusRejected) THEN @applicationSequenceStatusRejected
-                                ELSE ap1.FinancialReviewStatus
-	                       END As CurrentStatus
+                        @"SELECT
+                            ap1.Id AS ApplicationId,
+                            sequence.SequenceNo AS SequenceNo,
+                            section.SectionNo AS SectionNo, 
+                            org.EndPointAssessorName AS OrganisationName,
+                            apply.ClosedDate AS ClosedDate,
+                            apply.SubmissionCount AS SubmissionCount,
+                            ap1.ApplicationStatus AS ApplicationStatus,
+                            ap1.ReviewStatus AS ReviewStatus,
+                            ap1.FinancialReviewStatus AS FinancialStatus,
+	                        ap1.FinancialGrade As Grade
                         FROM Apply ap1
                         INNER JOIN Organisations org ON ap1.OrganisationId = org.Id
                             CROSS APPLY OPENJSON(ApplyData,'$.Sequences') WITH (SequenceNo INT, Status VARCHAR(20)) sequence
                             CROSS APPLY OPENJSON(ApplyData,'$.Sequences[0].Sections') WITH (SectionNo INT, Status VARCHAR(20), NotRequired BIT) section
                             CROSS APPLY OPENJSON(ApplyData,'$.Apply') WITH (ClosedDate VARCHAR(30) '$.InitSubmissionClosedDate', SubmissionCount INT '$.InitSubmissionCount') apply
                         WHERE sequence.SequenceNo = 1 AND section.SectionNo = 3 AND section.NotRequired = 0
-                            AND ap1.FinancialReviewStatus IN (@financialReviewStatusGraded, @financialReviewStatusClosed) -- NOTE: Not showing Exempt",
+                            AND ap1.FinancialReviewStatus IN (@financialReviewStatusGraded, @financialReviewStatusApproved) -- NOTE: Not showing Exempt
+                            AND ap1.DeletedAt IS NULL",
                         new
                         {
                             financialReviewStatusGraded = FinancialReviewStatus.Graded,
-                            financialReviewStatusClosed = FinancialReviewStatus.Closed,
-                            applicationSequenceStatusApproved = ApplicationSequenceStatus.Approved,
-                            applicationSequenceStatusRejected = ApplicationSequenceStatus.Rejected                            
+                            financialReviewStatusApproved = FinancialReviewStatus.Approved                            
                         })).ToList();
             }
         }

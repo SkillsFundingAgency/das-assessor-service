@@ -5,11 +5,13 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.AssessorService.Api.Types.Models.Apply.Financial;
 using SFA.DAS.AssessorService.Api.Types.Models.Apply.Financial.Review;
+using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
 using SFA.DAS.AssessorService.ApplyTypes;
 
-namespace SFA.DAS.AssessorService.Application.Api.Controllers
+namespace SFA.DAS.AssessorService.Application.Api.Controllers.Apply
 {
     [Authorize(Roles = "AssessorServiceInternalAPI")]
+    [ValidateBadRequest]
     public class FinancialController : Controller
     {
         private readonly IMediator _mediator;
@@ -42,19 +44,24 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
         }
 
-        [HttpPost("/Financial/{id}/Organisation/{orgId}/UpdateGrade")]
-        public async Task<ActionResult> UpdateGrade(Guid id, Guid orgId, [FromBody] FinancialGrade updatedGrade)
+        [HttpPost("/Financial/{Id}/Return")]
+        public async Task<ActionResult> ReturnReview(Guid Id, [FromBody] FinancialGrade updatedGrade)
         {
-            await _mediator.Send(new UpdateGradeRequest(id, orgId,updatedGrade));
+            await _mediator.Send(new ReturnFinancialReviewRequest(Id, updatedGrade));
             return Ok();
 
         }
 
         [HttpPost("/Financial/{Id}/StartReview")]
-        public async Task<ActionResult> StartReview(Guid Id)
+        public async Task<ActionResult> StartReview(Guid Id, [FromBody] StartFinancialReviewRequest request)
         {
-            await _mediator.Send(new StartFinancialReviewRequest(Id));
+            await _mediator.Send(new AssessorService.Api.Types.Models.Apply.Financial.Review.StartFinancialReviewRequest(Id, request.Reviewer));
             return Ok();
+        }
+
+        public class StartFinancialReviewRequest
+        {
+            public string Reviewer { get; set; }
         }
     }
 }

@@ -17,7 +17,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply.Financial.Review
 
         public async Task<Unit> Handle(StartFinancialReviewRequest request, CancellationToken cancellationToken)
         {
-            await _applyRepository.StartFinancialReview(request.ApplicationId);
+            await _applyRepository.StartFinancialReview(request.Id, request.Reviewer);
 
             return Unit.Value;
         }

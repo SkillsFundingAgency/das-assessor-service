@@ -63,6 +63,7 @@
     <Folder Include="Tables\" />
     <Folder Include="PostDeploymentScripts" />
     <Folder Include="Sequences" />
+    <Folder Include="Views\" />
     <Folder Include="Functions" />
     <Folder Include="Functions\Scalar-valued Functions" />
   </ItemGroup>
@@ -124,6 +125,7 @@
     <Build Include="Functions\Scalar-valued Functions\OppFinder_Is_Approved_StandardStatus.sql" />
     <Build Include="Functions\Scalar-valued Functions\OppFinder_Is_InDevelopment_StandardStatus.sql" />
     <Build Include="Tables\StandardNonApprovedCollation.sql" />
+    <Build Include="Views\ApplicationSummary.sql" />
     <Build Include="Functions\Scalar-valued Functions\OppFinder_Is_Proposed_StandardStatus.sql" />
     <Build Include="StoredProcedures\OppFinder_List_NonApproved_Standards.sql" />
     <Build Include="Tables\Audits.sql" />
