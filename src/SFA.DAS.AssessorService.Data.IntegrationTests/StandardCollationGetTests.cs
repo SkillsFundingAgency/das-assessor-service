@@ -19,6 +19,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         private readonly DatabaseService _databaseService = new DatabaseService();
         private SqlConnection _databaseConnection;
         private StandardRepository _repository;
+        private UnitOfWork _unitOfWork;
         private int _standardId1;
         private int _standardId2;
         private int _standardId3;
@@ -34,7 +35,8 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         public void SetupOrganisationTests()
         {
             _databaseConnection = new SqlConnection(_databaseService.WebConfiguration.SqlConnectionString);
-            _repository = new StandardRepository(null, _databaseConnection);
+            _unitOfWork = new UnitOfWork(_databaseConnection);            
+            _repository = new StandardRepository(_unitOfWork);
             _standardId1 = 1;
             _standardId2 = 10;
             _standardId3 = 100;
@@ -107,7 +109,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         [TestCase("ST0001", true)]
         [TestCase("ST0010", true)]
         [TestCase("xyz", false)]
-        [TestCase(null, false)]
+        [TestCase(null, true)]
         public void GetStandardByReferenceNameAndCheckTheOrganisationIsReturnedIfExpected(string referenceNumber, bool expectedReturned)
         {
             var isReturned = _repository.GetStandardCollationByReferenceNumber(referenceNumber).Result != null;
