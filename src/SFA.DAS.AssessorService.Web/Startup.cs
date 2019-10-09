@@ -138,10 +138,12 @@ namespace SFA.DAS.AssessorService.Web
                 config.For<IApplyTokenService>().Add<ApplyTokenService>();                
                 config.For<IWebConfiguration>().Use(Configuration);
                 config.For<ISessionService>().Use<SessionService>().Ctor<string>().Is(_env.EnvironmentName);
+                config.For<IOppFinderSession>().Use<OppFinderSession>();
                 config.For<IOrganisationsApiClient>().Use<OrganisationsApiClient>().Ctor<string>().Is(Configuration.ClientApiAuthentication.ApiBaseAddress);
                 config.For<IOrganisationsApplyApiClient>().Use<OrganisationsApplyApiClient>().Ctor<string>().Is(Configuration.ApplyApiAuthentication.ApiBaseAddress);
                 config.For<IContactApplyClient>().Use<ContactApplyClient>().Ctor<string>().Is(Configuration.ApplyApiAuthentication.ApiBaseAddress);
                 config.For<IStandardsApiClient>().Use<StandardsApiClient>().Ctor<string>().Is(Configuration.ClientApiAuthentication.ApiBaseAddress);
+                config.For<IOppFinderApiClient>().Use<OppFinderApiClient>().Ctor<string>().Is(Configuration.ClientApiAuthentication.ApiBaseAddress);
                 config.For<IDashboardApiClient>().Use<DashboardApiClient>().Ctor<string>().Is(Configuration.ClientApiAuthentication.ApiBaseAddress);
                 config.For<IContactsApiClient>().Use<ContactsApiClient>().Ctor<string>().Is(Configuration.ClientApiAuthentication.ApiBaseAddress);
                 config.For<ISearchApiClient>().Use<SearchApiClient>().Ctor<string>().Is(Configuration.ClientApiAuthentication.ApiBaseAddress);
@@ -188,7 +190,9 @@ namespace SFA.DAS.AssessorService.Web
                 {
                     routes.MapRoute(
                         name: "default",
-                        template: "{controller=Home}/{action=Index}/{id?}");
+                        template: "{controller=Home}/{action=Index}/{id?}",
+                        defaults: null,
+                        constraints: new { controller = new NotEqualRouteContraint("OppFinder") });
                 });
         }        
     }

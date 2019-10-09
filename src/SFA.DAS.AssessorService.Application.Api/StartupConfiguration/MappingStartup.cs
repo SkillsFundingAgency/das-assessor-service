@@ -42,6 +42,7 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                 cfg.CreateMap<Certificate, CertificateSummaryResponse>();
 
                 cfg.AddProfile<EpaOrganisationProfile>();
+                cfg.AddProfile<OppFinderProfile>();
 
                 cfg.CreateMap<CreateEpaOrganisationRequest, EpaOrganisationResponse>(); 
                 cfg.CreateMap<UpdateEpaOrganisationRequest, EpaOrganisationResponse>(); 

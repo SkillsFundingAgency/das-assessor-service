@@ -47,6 +47,7 @@
     <ProjectReference Include="..\SFA.DAS.AssessorService.Application\SFA.DAS.AssessorService.Application.csproj" />
     <ProjectReference Include="..\SFA.DAS.AssessorService.ApplyTypes\SFA.DAS.AssessorService.ApplyTypes.csproj" />
     <ProjectReference Include="..\SFA.DAS.AssessorService.ExternalApis\SFA.DAS.AssessorService.ExternalApis.csproj" />
+    <ProjectReference Include="..\SFA.DAS.AssessorService.Session\SFA.DAS.AssessorService.Session.csproj" />
     <ProjectReference Include="..\SFA.DAS.AssessorService.Settings\SFA.DAS.AssessorService.Settings.csproj" />
   </ItemGroup>
   <ItemGroup>
@@ -151,6 +152,9 @@
     </Content>
     <Content Update="Views\Shared\_DashboardLayout.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="wwwroot\javascripts\opp-finder-service.min.js">
+      <DependentUpon>opp-finder-service.js</DependentUpon>
     </Content>
   </ItemGroup>
   <ItemGroup>

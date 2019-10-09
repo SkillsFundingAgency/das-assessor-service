@@ -9,6 +9,9 @@
       // loop over table row and add relevant attributes
       $(".js-expand-table-row").each(function() {
         var ariaControlId = "table-content-" + $(this).data("expand-id");
+        var $columnsAboveRow = $(this)
+          .closest("tr")
+          .find("td");
         var $expandable = $(this)
           .closest("tr")
           .nextAll("tr.js-expandble-cell:first");
@@ -36,6 +39,7 @@
             $arrow
               .attr({ class: "arrow arrow-open", "aria-hidden": "false" })
               .text("\u25bc");
+            $columnsAboveRow.addClass("hidden-bottom-border");
           } else {
             // HIDE CONTENT
             $(this).attr("aria-expanded", "false");
@@ -45,6 +49,7 @@
             $arrow
               .attr({ class: "arrow arrow-closed", "aria-hidden": "true" })
               .text("\u25ba");
+            $columnsAboveRow.removeClass("hidden-bottom-border");
           }
         });
       });
