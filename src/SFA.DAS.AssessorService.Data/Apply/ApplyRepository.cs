@@ -422,26 +422,68 @@ namespace SFA.DAS.AssessorService.Data.Apply
             {
                 return (await connection
                     .QueryAsync<ApplicationSummaryItem>(
-                        @"SELECT
-                            OrganisationName,
-                            ApplicationId,
-                            SequenceNo,
-                            ApplicationType,
-                            StandardName,
-                            StandardCode,
-                            SubmittedDate,
-                            SubmissionCount,
-                            FinancialStatus,
-                            FinancialGrade,
-                            CurrentStatus,
-                            ReviewStatus
-                        FROM ApplicationSummary 
-                        WHERE CurrentStatus IN (@applicationStatusApproved, @applicationStatusDeclined)",
+                        @"SELECT 
+                            org.EndPointAssessorName AS OrganisationName,
+                            ap1.id AS Id,
+                            seq.SequenceNo AS SequenceNo,
+                            CASE WHEN seq.SequenceNo = 1 THEN 'Midpoint'
+		                         WHEN seq.SequenceNo = 2 THEN 'Standard'
+		                         ELSE 'Unknown'
+	                        END As ApplicationType,
+                            CASE WHEN seq.SequenceNo = 1 THEN NULL
+		                         ELSE JSON_VALUE(ap1.Applydata, '$.Apply.StandardName')
+                            END As StandardName,
+                            CASE WHEN seq.SequenceNo = 1 THEN NULL
+		                         ELSE JSON_VALUE(ap1.Applydata, '$.Apply.StandardCode')
+                            END As StandardCode,
+                            CASE WHEN seq.SequenceNo = 1 THEN JSON_VALUE(ap1.Applydata, '$.Apply.InitSubmissionClosedDate')
+		                         WHEN seq.SequenceNo = 2 THEN JSON_VALUE(ap1.Applydata, '$.Apply.StandardSubmissionClosedDate')
+		                         ELSE NULL
+	                        END As ClosedDate,
+                            CASE WHEN seq.SequenceNo = 1 THEN JSON_VALUE(ap1.Applydata, '$.Apply.InitSubmissionCount')
+		                         WHEN seq.SequenceNo = 2 THEN JSON_VALUE(ap1.Applydata, '$.Apply.StandardSubmissionsCount')
+		                         ELSE 0
+	                        END As SubmissionCount,
+                            seq.Status As CurrentStatus
+	                     FROM Apply ap1
+					        INNER JOIN Organisations org ON ap1.OrganisationId = org.Id
+                            CROSS APPLY OPENJSON(ApplyData,'$.Sequences') WITH (SequenceNo INT, Status VARCHAR(20), NotRequired BIT) seq
+	                     WHERE seq.Status IN (@sequenceStatusApproved, @sequenceStatusDeclined) AND seq.NotRequired = 0
+                            AND ap1.DeletedAt IS NULL
+                            AND ap1.ApplicationStatus <> @applicationStatusDeclined
+                            AND ap1.ReviewStatus <> @applicationReviewStatusDeleted",
                         new
                         {
-                            applicationStatusApproved = ApplicationStatus.Approved,
+                            sequenceStatusApproved = ApplicationSequenceStatus.Approved,
+                            sequenceStatusDeclined = ApplicationSequenceStatus.Declined,
                             applicationStatusDeclined = ApplicationStatus.Declined,
+                            applicationReviewStatusDeleted = ApplicationReviewStatus.Deleted
                         })).ToList();
+
+                
+                //This has been commented out as Alan seems to think we'll be able to move back to this at a later date
+                //return (await connection
+                //    .QueryAsync<ApplicationSummaryItem>(
+                //        @"SELECT
+                //            OrganisationName,
+                //            ApplicationId,
+                //            SequenceNo,
+                //            ApplicationType,
+                //            StandardName,
+                //            StandardCode,
+                //            SubmittedDate,
+                //            SubmissionCount,
+                //            FinancialStatus,
+                //            FinancialGrade,
+                //            CurrentStatus,
+                //            ReviewStatus
+                //        FROM ApplicationSummary 
+                //        WHERE CurrentStatus IN (@applicationStatusApproved, @applicationStatusDeclined)",
+                //        new
+                //        {
+                //            applicationStatusApproved = ApplicationStatus.Approved,
+                //            applicationStatusDeclined = ApplicationStatus.Declined,
+                //        })).ToList();
             }
         }
 
