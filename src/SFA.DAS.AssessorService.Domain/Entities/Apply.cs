@@ -13,7 +13,7 @@ namespace SFA.DAS.AssessorService.Domain.Entities
         public string FinancialReviewStatus { get; set; }
         public string ReviewStatus { get; set; }
         public FinancialGrade FinancialGrade { get; set; }
-        public int StandardCode { get; set; }
+        public int? StandardCode { get; set; }
         public ApplyData ApplyData { get; set; }
         public string CreatedBy { get; set; }
         public string UpdatedBy { get; set; }

@@ -512,7 +512,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             if (await _applicationApiClient.Submit(BuildApplicationDataForSubmission(Id, contact.Id,
                 _config.ReferenceFormat,contact.GivenNames, 
                 contact?.Email, 
-                application?.ApplyData?.Apply?.StandardCode??0 , 
+                application?.ApplyData?.Apply?.StandardCode , 
                 application?.ApplyData?.Apply?.StandardReference, 
                 application?.ApplyData?.Apply?.StandardName,
                 ApplicationStatus.Submitted,
@@ -778,7 +778,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         }
 
         private SubmitApplicationRequest BuildApplicationDataForSubmission(Guid id, Guid userId,
-            string referenceFormat, string contactName, string email, int standardCode, 
+            string referenceFormat, string contactName, string email, int? standardCode, 
             string standardReference, string standardName,string applicationStatus,string sectionSequenceStatus, 
             Sequence sequence, List<ApplySection> currentApplySections)
         {

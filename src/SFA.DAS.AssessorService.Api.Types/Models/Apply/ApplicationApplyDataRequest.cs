@@ -13,7 +13,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Apply
         public string Email { get; set; }
         public string StandardReference { get; set; }
         public string StandardName { get; set; }
-        public int StandardCode { get; set; }
+        public int? StandardCode { get; set; }
         public string ApplicationStatus { get; set; }
         public DateTime? LatestStandardSubmissionDate { get; set; }
         public DateTime? StandardSubmissionFeedbackAddedDate { get; set; }
