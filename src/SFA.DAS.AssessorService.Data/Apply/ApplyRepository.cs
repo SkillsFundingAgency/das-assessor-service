@@ -229,7 +229,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
                     await connection.ExecuteAsync(@"UPDATE Apply
                                                     SET  ApplyData = @ApplyData, UpdatedBy = @UpdatedBy, UpdatedAt = GETUTCDATE() 
                                                     WHERE  (Apply.Id = @Id)",
-                                                    new { application.ApplyData, application.UpdatedBy });
+                                                    new { application.Id, application.ApplyData, application.UpdatedBy });
                 }
             }
         }
