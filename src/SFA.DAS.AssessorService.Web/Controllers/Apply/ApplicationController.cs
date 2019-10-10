@@ -116,10 +116,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             var allApplicationSequences = await _qnaApiClient.GetAllApplicationSequences(qnaResponse.ApplicationId);
             var sections = allApplicationSequences.Select(async sequence => await _qnaApiClient.GetSections(qnaResponse.ApplicationId, sequence.Id)).Select(t => t.Result).ToList();
 
-            var id = await _applicationApiClient.CreateApplication(BuildApplyDataForApplication(qnaResponse.ApplicationId, contact.Id, org.Id,
-             _config.ReferenceFormat, contact.GivenNames, contact.Email, 0,
-                null, null, ApplicationStatus.InProgress, ApplicationSequenceStatus.Draft,
-               allApplicationSequences, sections));
+            var id = await _applicationApiClient.CreateApplication(BuildCreateApplicationRequest(qnaResponse.ApplicationId, contact, org, _config.ReferenceFormat, allApplicationSequences, sections));
 
             return RedirectToAction("SequenceSignPost", new { Id = id });
         }
@@ -812,23 +809,22 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
 
 
-        private CreateApplicationRequest BuildApplyDataForApplication(Guid id, Guid userId, Guid organisationId,
-           string referenceFormat, string contactName, string email, int standardCode,
-           string standardReference, string standardName, string applicationStatus, string sectionSequenceStatus,
-           List<Sequence> sequences, List<List<Section>> sections)
+        private CreateApplicationRequest BuildCreateApplicationRequest(Guid id, ContactResponse contact, OrganisationResponse org,
+           string referenceFormat, List<Sequence> sequences, List<List<Section>> sections)
         {
+
             return new CreateApplicationRequest
             {
                 ApplicationId = id,
-                OrganisationId = organisationId,
+                OrganisationId = org.Id,
                 ReferenceFormat = referenceFormat,
-                ContactName = contactName,
-                StandardCode = standardCode,
-                StandardReference = standardReference,
-                StandardName = standardName,
-                ApplicationStatus = applicationStatus,
-                Email = email,
-                UserId = userId,
+                ContactName = contact.DisplayName,
+                StandardCode = null,
+                StandardReference = null,
+                StandardName = null,
+                ApplicationStatus = ApplicationStatus.InProgress,
+                Email = contact.Email,
+                UserId = contact.Id,
                 listOfApplySequences = sequences.Select(sequence => new ApplySequence
                 {
                     SequenceId = sequence.Id,
@@ -836,10 +832,10 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                     {
                         SectionId = x.Id,
                         SectionNo = x.SectionNo,
-                        Status = sectionSequenceStatus,
+                        Status = ApplicationSectionStatus.Draft,
                         RequestedFeedbackAnswered = x.QnAData.RequestedFeedbackAnswered
                     })).ToList(),
-                    Status = sectionSequenceStatus,
+                    Status = ApplicationSequenceStatus.Draft,
                     IsActive = sequence.IsActive,
                     SequenceNo = sequence.SequenceNo,
                     NotRequired = sequence.NotRequired

@@ -1,5 +1,4 @@
 ﻿using SFA.DAS.QnA.Api.Types;
-using System;
 using System.Linq;
 
 namespace SFA.DAS.AssessorService.ApplyTypes
@@ -14,15 +13,16 @@ namespace SFA.DAS.AssessorService.ApplyTypes
         public bool HasCompletedPageFeedback => Section.QnAData.Pages.Any(p => p.AllFeedbackIsCompleted);
     }
 
-    public class ApplicationSectionStatus
+    public static class ApplicationSectionStatus
     {
+        public const string Draft = "Draft";
         public const string Submitted = "Submitted";
         public const string InProgress = "In Progress";
         public const string Graded = "Graded";
         public const string Evaluated = "Evaluated";
     }
 
-    public class SectionDisplayType
+    public static class SectionDisplayType
     {
         public const string Pages = "Pages";
         public const string Questions = "Questions";
