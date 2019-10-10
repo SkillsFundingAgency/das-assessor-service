@@ -61,17 +61,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Login
 
             if (contact.OrganisationId == null)
             {
-                var userStatus = contact.Status;// await GetUserStatus(null, request.SignInId);
-                if (userStatus != ContactStatus.Applying)
-                {
-                    response.Result = LoginResult.NotRegistered;
-                    return response;
-                }
-                else
-                {
-                    response.Result = LoginResult.Applying;
-                    return response;
-                }
+                // This user has no organisation... send them off to find one.
+                response.Result = LoginResult.NotRegistered;
+                return response;
             }
 
             var organisation = await _organisationQueryRepository.Get(contact.OrganisationId.Value);

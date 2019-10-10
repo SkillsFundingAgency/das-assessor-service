@@ -60,7 +60,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         public async Task<IActionResult> PostSignIn()
         { 
             var loginResult = await _loginOrchestrator.Login();
-            var orgName = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/orgname")?.Value;
+//            var orgName = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/orgname")?.Value;
             var epaoId = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/epaoid")?.Value;
 
             _logger.LogInformation($"  returned from LoginOrchestrator: {loginResult.Result}");
@@ -68,7 +68,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             switch (loginResult.Result)
             {
                 case LoginResult.Valid:
-                    _sessionService.Set("OrganisationName", orgName);
+                    
                     _sessionService.Set("EndPointAssessorOrganisationId", epaoId);
                     return RedirectToAction("Index", "Dashboard");
                 case LoginResult.NotRegistered:
@@ -80,15 +80,12 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                     return RedirectToAction("InvalidRole", "Home");
                 case LoginResult.InvitePending:
                     ResetCookies();
-                    _sessionService.Set("OrganisationName", orgName);
                     _sessionService.Set("EndPointAssessorOrganisationId", epaoId);
                     return RedirectToAction("InvitePending", "Home");
                 case LoginResult.Applying:
-                    _sessionService.Set("OrganisationName", orgName);
                     return RedirectToAction("Applications", "Application");
                 case LoginResult.Rejected:
                     ResetCookies();
-                    _sessionService.Set("OrganisationName", orgName);
                     _sessionService.Set("EndPointAssessorOrganisationId", epaoId);
                     return RedirectToAction("Rejected", "Home");
                 case LoginResult.ContactDoesNotExist:
