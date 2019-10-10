@@ -4,6 +4,7 @@
 @model OppFinderSearchViewModel
 
 <h2 class="govuk-heading-m">In-development Standards</h2>
+<p class="govuk-body">Standards in development are being created by a Trailblazer group and are not yet approved for delivery.</p>
 @{ var inDevelopmentTotalRecordCount = (Model?.InDevelopmentStandards.TotalRecordCount ?? 0); }
     <p class="govuk-body">
         @if (!string.IsNullOrEmpty(Model?.SearchTerm))

@@ -77,29 +77,11 @@
                     </div>
                 </section>
                 <section class="govuk-tabs__panel govuk-tabs__panel--hidden" id="in-development">
-                    @if ((Model?.InDevelopmentStandards.TotalRecordCount ?? 0) > 0)
-                    {
-                        <p class="govuk-body">
-                            Standards in development are being created by a Trailblazer group and are not yet approved
-                            for delivery. If you are interested in assessing one or more of these Standards, complete the
-                            expression of interest form.
-                        </p>
-                    }
                     <div id="in-development-standards">
                         @{await Html.RenderPartialAsync("_InDevelopmentStandardsPartial", @Model);}
                     </div>
                 </section>
                 <section class="govuk-tabs__panel govuk-tabs__panel--hidden" id="proposed">
-                    @if ((Model?.ProposedStandards.TotalRecordCount ?? 0) > 0)
-                    {
-                        <p class="govuk-body">
-                            A proposal to develop an apprenticeship Standard means that a Trailblazer group of
-                            employers are preparing to submit a proposal to develop an apprenticeship standard for this
-                            occupation. This proposal will be subject to Institute for Apprenticeships and Technical
-                            Education approval process and if agreed, will appear on the Institute for Apprenticeships
-                            and Technical Education's list of standards in development.
-                        </p>
-                    }
                     <div id="proposed-standards">
                         @{await Html.RenderPartialAsync("_ProposedStandardsPartial", @Model);}
                     </div>
@@ -111,13 +93,20 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             <p class="govuk-body-s">
-                Source: ILR and Apprenticeship Service
+                Source: Institute for Apprenticeships and Technical Education (IfATE), Individualised Learner Record (ILR) and Apprenticeship Service
             </p>
             <p class="govuk-body">
-                The information on this page is for illustration purposes only. Actual numbers may vary.
+                We update this information daily from the sources named above.
             </p>
             <p class="govuk-body govuk-!-margin-bottom-8">
-                End point assessment for integrated degrees is restricted to degree awarding institutions. EPA for these Standards is not available to all potential EPAOs to assess.
+                End point assessment (EPA) for integrated degrees is restricted to degree awarding institutions. EPA for these standards is not available to all potential EPAOs to assess.
+            </p>
+
+            <p class="govuk-body govuk-!-margin-bottom-1">
+                <a class="govuk-link" href="https://www.gov.uk/guidance/how-apprentices-in-england-are-assessed" target="_blank" rel="noopener noreferrer">How apprentices in England are assessed</a>
+            </p>
+            <p class="govuk-body">
+                <a class="govuk-link" href="/" target="_blank" rel="noopener noreferrer">Apply to become an End-point assessment organisation</a>
             </p>
         </div>
     </div>
