@@ -77,29 +77,11 @@
                     </div>
                 </section>
                 <section class="govuk-tabs__panel govuk-tabs__panel--hidden" id="in-development">
-                    @if ((Model?.InDevelopmentStandards.TotalRecordCount ?? 0) > 0)
-                    {
-                        <p class="govuk-body">
-                            Standards in development are being created by a Trailblazer group and are not yet approved
-                            for delivery. If you are interested in assessing one or more of these Standards, complete the
-                            expression of interest form.
-                        </p>
-                    }
                     <div id="in-development-standards">
                         @{await Html.RenderPartialAsync("_InDevelopmentStandardsPartial", @Model);}
                     </div>
                 </section>
                 <section class="govuk-tabs__panel govuk-tabs__panel--hidden" id="proposed">
-                    @if ((Model?.ProposedStandards.TotalRecordCount ?? 0) > 0)
-                    {
-                        <p class="govuk-body">
-                            A proposal to develop an apprenticeship Standard means that a Trailblazer group of
-                            employers are preparing to submit a proposal to develop an apprenticeship standard for this
-                            occupation. This proposal will be subject to Institute for Apprenticeships and Technical
-                            Education approval process and if agreed, will appear on the Institute for Apprenticeships
-                            and Technical Education's list of standards in development.
-                        </p>
-                    }
                     <div id="proposed-standards">
                         @{await Html.RenderPartialAsync("_ProposedStandardsPartial", @Model);}
                     </div>
