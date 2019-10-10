@@ -167,7 +167,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
             var sequence = applyData?.Sequences.SingleOrDefault(seq => seq.SequenceNo == sequenceNo);
             var section = sequence?.Sections.SingleOrDefault(sec => sec.SectionNo == sectionNo);
 
-            if (application != null && section != null && sequence?.IsActive == true)
+            if (application != null && section != null && sequence?.IsActive == true && section.Status != ApplicationSectionStatus.Evaluated)
             {
                 application.ReviewStatus = ApplicationReviewStatus.InProgress;
                 application.UpdatedBy = reviewer;
@@ -204,6 +204,13 @@ namespace SFA.DAS.AssessorService.Data.Apply
                     section.Status = ApplicationSectionStatus.Evaluated;
                     section.EvaluatedDate = DateTime.UtcNow;
                     section.EvaluatedBy = evaluatedBy;
+
+                    if(section.ReviewedBy != section.EvaluatedBy)
+                    {
+                        // Note: If it's a different person who has evaluated from the person who started the review then update the review information!
+                        section.ReviewStartDate = section.EvaluatedDate;
+                        section.ReviewedBy = section.EvaluatedBy;
+                    }
                 }
                 else if (sequence.SequenceNo == FINANCIAL_SEQUENCE && section.SectionNo == FINANCIAL_SECTION)
                 {
