@@ -125,7 +125,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
 
                 if (certificate?.Status == CertificateStatus.Deleted)
                 {
-                    var result = GetDeletedCertificateResult(certificate, request, likedSurname);
+                    var result = GetDeletedCertificateResult(certificate, request);
                     if (result.Any())
                         return result;
                 }
@@ -152,7 +152,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
 
                 if (certificate?.Status == CertificateStatus.Deleted)
                 {
-                    var result = GetDeletedCertificateResult(certificate, request, likedSurname);
+                    var result = GetDeletedCertificateResult(certificate, request);
                     if (result.Any())
                         return result;
                 }
@@ -179,10 +179,11 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
             return filteredStandardCodes;
         }
 
-        private List<SearchResult> GetDeletedCertificateResult(Certificate certificate, SearchQuery request, string likedSurname)
+        private List<SearchResult> GetDeletedCertificateResult(Certificate certificate, SearchQuery request)
         {
-            return new List<SearchResult> { new SearchResult {  UlnAlreadyExits = false, Uln = request.Uln,
-                     IsPrivatelyFunded = true, IsNoMatchingFamilyName = true } };
+            return new List<SearchResult> { new SearchResult { CertificateId=certificate.Id,
+                CertificateReference =certificate.CertificateReference,  UlnAlreadyExits = false, Uln = request.Uln,
+                     IsPrivatelyFunded = certificate.IsPrivatelyFunded, IsNoMatchingFamilyName = true } };
         }
 
         private string DealWithSpecialCharactersAndSpaces(SearchQuery request, string likedSurname, IEnumerable<Ilr> ilrResults)

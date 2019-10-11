@@ -118,8 +118,7 @@ namespace SFA.DAS.AssessorService.Data
                 .Include(q => q.Organisation)
                 .FirstOrDefaultAsync(c =>
                     c.Uln == uln &&
-                    c.Organisation.EndPointAssessorOrganisationId == endpointOrganisationId &&
-                    c.IsPrivatelyFunded);
+                    c.Organisation.EndPointAssessorOrganisationId == endpointOrganisationId);
             return existingCert;
         }
 
