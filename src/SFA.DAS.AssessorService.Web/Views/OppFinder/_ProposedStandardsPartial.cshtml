@@ -4,6 +4,7 @@
 @model OppFinderSearchViewModel
 
 <h2 class="govuk-heading-m">Proposed Standards</h2>
+<p class="govuk-body">A proposal to develop an apprenticeship Standard means that a Trailblazer group of employers are preparing to submit a proposal to develop an apprenticeship standard for this occupation. This proposal will be subject to Institute for Apprenticeships and Technical Education (IfATE) approval process and if agreed, will appear on the IfATE list of standards in development.</p>
 @{ var proposedRecordCount = (Model?.ProposedStandards.TotalRecordCount ?? 0); }
     <p class="govuk-body">
         @if (!string.IsNullOrEmpty(Model?.SearchTerm))
