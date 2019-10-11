@@ -73,8 +73,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
                 OrganisationId = epao.EndPointAssessorOrganisationId,
                 CertificateLogs = logs,
                 FundingModel = learner?.FundingModel,
-                CompletionStatusId = learner?.CompletionStatus,
-                CompletionStatus = FormatCompletionStatus(learner?.CompletionStatus),
+                CompletionStatus = learner?.CompletionStatus,
+                CompletionStatusDescription = FormatCompletionStatusDescription(learner?.CompletionStatus),
                 IsPrivatelyFunded = certificate?.IsPrivatelyFunded,
                 CertificateId = certificate?.Id
             };
@@ -82,21 +82,21 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
             return learnerDetail;
         }
 
-        private string FormatCompletionStatus(int? completionStatusId)
+        private string FormatCompletionStatusDescription(int? completionStatus)
         {
-            switch(completionStatusId)
+            switch(completionStatus)
             {
                 case 1:
-                    return $"{completionStatusId} - Continuing";
+                    return $"{completionStatus} - Continuing";
 
                 case 2:
-                    return $"{completionStatusId} - Completed";
+                    return $"{completionStatus} - Completed";
 
                 case 3:
-                    return $"{completionStatusId} - Withdrawn";
+                    return $"{completionStatus} - Withdrawn";
 
                 case 6:
-                    return $"{completionStatusId} - Temporarily withdrawn";
+                    return $"{completionStatus} - Temporarily withdrawn";
 
                 default:
                     return string.Empty;
