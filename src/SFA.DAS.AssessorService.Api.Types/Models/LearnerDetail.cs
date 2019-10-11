@@ -14,6 +14,8 @@ namespace SFA.DAS.AssessorService.Api.Types.Models
         public string Standard { get; set; }
         public int Level { get; set; }
         public int? FundingModel { get; set; }
+        public int? CompletionStatusId { get; set; }
+        public string CompletionStatus { get; set; }
         public bool? IsPrivatelyFunded { get; set; }
         public string Option { get; set; }
         public string OrganisationName { get; set; }
