@@ -112,14 +112,14 @@
             {
                 <tr class="govuk-table__row">
                     <td scope="row" class="govuk-table__cell">
-                        @if ((regionResult.EndPointAssessorsNames?.Length ?? 0) > 0)
+                        <div role="button" tabindex="0" class="js-expand-table-row expand-table-row"><i class="arrow arrow-closed">►</i> <span>@regionResult.Region</span></div>
+                        <!-- @if ((regionResult.EndPointAssessorsNames?.Length ?? 0) > 0)
                         {
-                            <div role="button" tabindex="0" class="js-expand-table-row expand-table-row"><i class="arrow arrow-closed">►</i> <span>@regionResult.Region</span></div>
                         }
                         else
                         {
                             @regionResult.Region
-                        }
+                        } -->
                     </td>
                     <td class="govuk-table__cell govuk-table__cell--numeric">@regionResult.EndPointAssessors</td>
                     <td class="govuk-table__cell govuk-table__cell--numeric">@regionResult.ActiveApprentices</td>
@@ -128,15 +128,24 @@
                 <tr class="govuk-table__row js-expandble-cell expandble-cell expandble-cell--hidden" aria-hidden="true">
                     <td class="govuk-table__cell" colspan="4">
                         <div class="expandble-cell-content expandble-cell-content--no-border">
-                            <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-0">
-                                @if ((regionResult.EndPointAssessorsNames?.Length ?? 0) > 0)
-                                {
-                                    foreach (var region in regionResult.EndPointAssessorsNames)
+                            @if (regionResult.Region == "Other")
+                            {
+                                <p class="govuk-body-s">Other includes learners from the rest of the UK including the Channel Islands and self directed distance learning, for example eLearning and webinars.</p>
+                            }
+
+                            @if ((regionResult.EndPointAssessorsNames?.Length ?? 0) > 0)
+                            {
+                                <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-0">
+                                    @foreach (var region in regionResult.EndPointAssessorsNames)
                                     {
                                         <li>@region</li>
                                     }
-                                }
-                            </ul>
+                                </ul>
+                            }
+                            else
+                            {
+                                <p class="govuk-body govuk-!-margin-bottom-0">Currently no EPAOs</p>
+                            }
                         </div>
                     </td>
                 </tr>
@@ -162,11 +171,8 @@
             *@
             <a class="govuk-button" href="/" target="_blank" rel="noopener noreferrer">Apply to assess this Standard</a>
 
-            <p class="govuk-body govuk-!-margin-bottom-1">
-                <a class="govuk-link" href="https://www.gov.uk/guidance/how-apprentices-in-england-are-assessed" target="_blank" rel="noopener noreferrer">How apprentices in England are assessed</a>
-            </p>
             <p class="govuk-body">
-                <a class="govuk-link" href="/" target="_blank" rel="noopener noreferrer">Apply to become an End-point assessment organisation</a>
+                <a class="govuk-link" href="https://www.gov.uk/guidance/how-apprentices-in-england-are-assessed" target="_blank" rel="noopener noreferrer">How apprentices in England are assessed</a>
             </p>
         </div>
     </div>
