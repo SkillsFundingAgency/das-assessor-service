@@ -9,7 +9,8 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
     {
         Task<bool> CheckContactExists(string userName);
 
-        Task<IEnumerable<Contact>> GetContacts(string endPointAssessorOrganisationId);
+        Task<IEnumerable<Contact>> GetContactsForOrganisation(Guid organisationId);
+        Task<IEnumerable<Contact>> GetContactsForEpao(string endPointAssessorOrganisationId);
         Task<Contact> GetContact(string userName);
         Task<Contact> GetContactFromEmailAddress(string email);
         Task<IEnumerable<Contact>> GetAllContacts(string endPointAssessorOrganisationId);

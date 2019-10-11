@@ -66,6 +66,12 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.Apply
             await _mediator.Send(new AssessorService.Api.Types.Models.Apply.Review.EvaluateApplicationSectionRequest(Id, sequenceNo, sectionNo, request.IsSectionComplete, request.EvaluatedBy));
         }
 
+        [HttpPost("Review/Applications/{Id}/Organisation/{organisationId}/RoEpaoApproved")]
+        public async Task SetOrganisationAsRoEpaoApproved(Guid Id, Guid organisationId)
+        {
+            await _mediator.Send(new SetOrganisationAsRoEpaoApprovedRequest(Id, organisationId));
+        }
+
         public class StartApplicationSectionReviewRequest
         {
             public string Reviewer { get; set; }

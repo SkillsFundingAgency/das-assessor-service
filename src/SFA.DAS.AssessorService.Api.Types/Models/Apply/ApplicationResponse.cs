@@ -12,5 +12,8 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Apply
         public string ApplicationStatus { get; set; }
         public string FinancialReviewStatus { get; set; }
         public ApplyData ApplyData { get; set; }
+
+        public int? StandardCode { get; set; }
+        public string CreatedBy { get; set; }
     }
 }
