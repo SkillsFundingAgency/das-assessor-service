@@ -425,16 +425,15 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
                 if (vm.ActionChoice == "Save")
                 {
-                    if (ModelState.IsValid)
+                    // regardless of whether the model is invalid, when the values have not been changed do not update
+                    if (string.Equals(vm.AddressLine1, organisation.OrganisationData?.Address1) &&
+                        string.Equals(vm.AddressLine2, organisation.OrganisationData?.Address2) &&
+                        string.Equals(vm.AddressLine3, organisation.OrganisationData?.Address3) &&
+                        string.Equals(vm.AddressLine4, organisation.OrganisationData?.Address4) &&
+                        string.Equals(vm.Postcode, organisation.OrganisationData?.Postcode))
                     {
-                        if (string.Equals(vm.AddressLine1, organisation.OrganisationData?.Address1) &&
-                            string.Equals(vm.AddressLine2, organisation.OrganisationData?.Address2) &&
-                            string.Equals(vm.AddressLine3, organisation.OrganisationData?.Address3) &&
-                            string.Equals(vm.AddressLine4, organisation.OrganisationData?.Address4) &&
-                            string.Equals(vm.Postcode, organisation.OrganisationData?.Postcode))
-                        {
-                            return RedirectToAction(nameof(OrganisationDetails));
-                        }
+                        ModelState.Clear();
+                        return RedirectToAction(nameof(OrganisationDetails));
                     }
 
                     if (!ModelState.IsValid)
