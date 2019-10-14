@@ -103,6 +103,13 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
                     certificate = await _certificateRepository.GetCertificateByUlnLastname(request.Uln, likedSurname);
                     if (certificate != null)
                     {
+                        if (certificate?.Status == CertificateStatus.Deleted)
+                        {
+                            var result = GetDeletedCertificateResult(certificate, request);
+                            if (result.Any())
+                                return result;
+                        }
+
                         if (intStandards?.Contains(certificate.StandardCode) ?? false)
                         {
                             var standard = await  _standardService.GetStandard(certificate.StandardCode);
@@ -113,9 +120,17 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
                         }
                         return new List<SearchResult> { new SearchResult { UlnAlreadyExits = true, Uln = request.Uln, IsPrivatelyFunded = true, IsNoMatchingFamilyName = true } };
                     }
-
                     //If we got here then certifcate does not exist with uln and surename so
                     //lastly check if there is a certificate that exist with the given uln only disregarding org and surname
+
+                    var deletedCert = await _certificateRepository.GetCertificateDeletedByUln(request.Uln);
+                    if (deletedCert != null)
+                    {
+                        var result = GetDeletedCertificateResult(deletedCert, request);
+                        if (result.Any())
+                            return result;
+                    }
+
                     var certificateExist = await _certificateRepository.CertifciateExistsForUln(request.Uln);
                     return certificateExist
                         ? new List<SearchResult> {new SearchResult {UlnAlreadyExits = true, Uln = request.Uln, IsPrivatelyFunded = true, IsNoMatchingFamilyName = true } }

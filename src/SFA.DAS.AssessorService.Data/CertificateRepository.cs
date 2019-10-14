@@ -156,6 +156,17 @@ namespace SFA.DAS.AssessorService.Data
             return existingCert;
         }
 
+        public async Task<Certificate> GetCertificateDeletedByUln(long uln)
+        {
+            var existingCert = await _context.Certificates
+                .Include(q => q.Organisation)
+                .FirstOrDefaultAsync(c =>
+                    c.Uln == uln &&
+                    c.Status == CertificateStatus.Deleted);
+
+            return existingCert;
+        }
+
         private bool CheckCertificateData(Certificate certificate, string lastName)
         {
             var certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);

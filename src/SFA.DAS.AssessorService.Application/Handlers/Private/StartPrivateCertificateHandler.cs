@@ -39,16 +39,12 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Private
                 organisation.EndPointAssessorOrganisationId);
             if (certificate != null)
             {
-                var certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
-                if (certificateData.LearnerFamilyName == request.LastName)
+                if (certificate.Status == Domain.Consts.CertificateStatus.Deleted)
                 {
-                    if (certificate.Status == Domain.Consts.CertificateStatus.Deleted)
-                    {
-                        certificate.IsPrivatelyFunded = true;
-                        await _certificateRepository.Update(certificate, request.Username, string.Empty, false);
-                    }
-                    return certificate;
+                    certificate.IsPrivatelyFunded = true;
+                    await _certificateRepository.Update(certificate, request.Username, string.Empty, false);
                 }
+                return certificate;
             }
 
             return await CreateNewCertificate(request);
