@@ -1,4 +1,6 @@
 -- Soft Delete a certificates Record
+-- this is for manual use only, and not for programatic use
+-- as will need to know the user that is deleting the certificate
 CREATE PROCEDURE [Delete_Certificate] 
 @CertificateID Int
 AS
