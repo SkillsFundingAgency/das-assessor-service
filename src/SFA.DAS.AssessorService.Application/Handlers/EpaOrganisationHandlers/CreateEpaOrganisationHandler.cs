@@ -69,6 +69,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
             request.Name = _cleanser.CleanseStringForSpecialCharacters(request.Name);           
             request.LegalName = _cleanser.CleanseStringForSpecialCharacters(request.LegalName);
             request.TradingName = _cleanser.CleanseStringForSpecialCharacters(request.TradingName);
+            request.ProviderName = _cleanser.CleanseStringForSpecialCharacters(request.ProviderName);
             request.Email = _cleanser.CleanseStringForSpecialCharacters(request.Email);
             request.PhoneNumber = _cleanser.CleanseStringForSpecialCharacters(request.PhoneNumber);
             request.WebsiteLink = _cleanser.CleanseStringForSpecialCharacters(request.WebsiteLink);
@@ -79,8 +80,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
             request.Postcode = _cleanser.CleanseStringForSpecialCharacters(request.Postcode);
             request.CompanyNumber = _cleanser.CleanseStringForSpecialCharacters(request.CompanyNumber);
             request.CharityNumber = _cleanser.CleanseStringForSpecialCharacters(request.CharityNumber);
-            request.ProviderName = _cleanser.CleanseStringForSpecialCharacters(request.ProviderName);
-            request.City = _cleanser.CleanseStringForSpecialCharacters(request.City);
+            
             request.OrganisationReferenceType =
                 _cleanser.CleanseStringForSpecialCharacters(request.OrganisationReferenceType);
             request.OrganisationReferenceId =
@@ -94,6 +94,11 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
             if (!string.IsNullOrWhiteSpace(request.CompanyNumber))
             {
                 request.CompanyNumber = request.CompanyNumber.ToUpper();
+            }
+
+            if (!string.IsNullOrWhiteSpace(request.CharityNumber))
+            {
+                request.CompanyNumber = request.CharityNumber.ToUpper();
             }
 
             var organisation = new EpaOrganisation
@@ -110,18 +115,17 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
                     Address2 = request.Address2,
                     Address3 = request.Address3,
                     Address4 = request.Address4,
+                    Postcode = request.Postcode,
                     LegalName = request.LegalName,
                     TradingName = request.TradingName,
-                    Postcode = request.Postcode,
+                    ProviderName = request.ProviderName,
                     Email = request.Email,
                     PhoneNumber = request.PhoneNumber,
-                    City = request.City,
                     WebsiteLink = request.WebsiteLink,
                     CompanyNumber = request.CompanyNumber,
                     CompanySummary = request.CompanySummary,
                     CharityNumber = request.CharityNumber,
-                    CharitySummary = request.CharitySummary,
-                    ProviderName = request.ProviderName,
+                    CharitySummary = request.CharitySummary,                    
                     OrganisationReferenceType = request.OrganisationReferenceType,
                     OrganisationReferenceId = request.OrganisationReferenceId,
                     RoATPApproved = request.RoATPApproved,
