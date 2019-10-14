@@ -347,7 +347,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 Address1 = organisationSearchResult.Address?.Address1,
                 Address2 = organisationSearchResult.Address?.Address2,
                 Address3 = organisationSearchResult.Address?.Address3,
-                City = organisationSearchResult.Address?.City,
+                Address4 = organisationSearchResult.Address?.City,
                 Postcode = organisationSearchResult.Address?.Postcode,
                 RoATPApproved =  organisationSearchResult.RoATPApproved,
                 RoEPAOApproved= false,
