@@ -38,8 +38,25 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
 
         public async Task<Certificate> Handle(StartCertificateRequest request, CancellationToken cancellationToken)
         {
-            return await _certificateRepository.GetCertificate(request.Uln, request.StandardCode) ??
-                   await CreateNewCertificate(request);
+            var certificate = await _certificateRepository.GetCertificate(request.Uln, request.StandardCode);
+            if (certificate == null)
+                await CreateNewCertificate(request);
+            else if(certificate.Status == Domain.Consts.CertificateStatus.Deleted)
+            {
+                _logger.LogInformation("CreateNewCertificate Before Get Ilr from db");
+                var ilr = await _ilrRepository.Get(request.Uln, request.StandardCode);
+                if (ilr != null)
+                {
+                    var certData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
+                    certData.LearnerGivenNames = ilr.GivenNames;
+                    certData.LearnerFamilyName = ilr.FamilyName;
+                    certData.LearningStartDate = ilr.LearnStartDate;
+                    certificate.CertificateData = JsonConvert.SerializeObject(certData);
+                    certificate.IsPrivatelyFunded = false;
+                    await _certificateRepository.Update(certificate, request.Username, null);
+                }
+            }
+            return certificate;
         }
 
         private async Task<Certificate> CreateNewCertificate(StartCertificateRequest request)
