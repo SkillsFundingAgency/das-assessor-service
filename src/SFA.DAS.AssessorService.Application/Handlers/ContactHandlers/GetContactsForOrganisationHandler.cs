@@ -10,20 +10,21 @@ using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using AutoMapper;
 
-namespace SFA.DAS.AssessorService.Application.Handlers.OrganisationHandlers
+
+namespace SFA.DAS.AssessorService.Application.Handlers.ContactHandlers
 {
-    public class GetContactsWhoCanBePrimaryForOrganisationHandler : IRequestHandler<GetContactsWhoCanBePrimaryForOrganisationRequest, List<ContactResponse>>
+    public class GetContactsForOrganisationHandler : IRequestHandler<GetContactsForOrganisationRequest, List<ContactResponse>>
     {
         private readonly IContactQueryRepository _contactQueryRepository;
-        public GetContactsWhoCanBePrimaryForOrganisationHandler(IContactQueryRepository contactQueryRepository)
+        public GetContactsForOrganisationHandler(IContactQueryRepository contactQueryRepository)
         {
             _contactQueryRepository = contactQueryRepository;
         }
 
-        public async Task<List<ContactResponse>> Handle(GetContactsWhoCanBePrimaryForOrganisationRequest request, CancellationToken cancellationToken)
+        public async Task<List<ContactResponse>> Handle(GetContactsForOrganisationRequest request, CancellationToken cancellationToken)
         {
             var response = new List<ContactResponse>();
-            var contacts = await _contactQueryRepository.GetContactsForEpao(request.EndPointAssessorOrganisationId);
+            var contacts = await _contactQueryRepository.GetContactsForOrganisation(request.OrganisationId);
             if (contacts == null)
                 return response;
             return Mapper.Map<List<ContactResponse>>(
@@ -31,5 +32,3 @@ namespace SFA.DAS.AssessorService.Application.Handlers.OrganisationHandlers
         }
     }
 }
-
-

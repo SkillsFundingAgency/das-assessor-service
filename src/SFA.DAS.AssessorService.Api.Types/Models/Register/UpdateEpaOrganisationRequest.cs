@@ -14,6 +14,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Register
         public string Status { get; set; }
         public string LegalName { get; set; }
         public string TradingName { get; set; }
+        public string ProviderName { get; set; }
         public string Email { get; set; }
         public string PhoneNumber { get; set; }
         public string WebsiteLink { get; set; }

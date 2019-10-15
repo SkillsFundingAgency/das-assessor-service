@@ -304,8 +304,14 @@ namespace SFA.DAS.AssessorService.Data.Apply
                             application.ApplicationStatus = ApplicationStatus.Approved;
 
                             // Delete any related applications if this one was an initial application
-                            // (i.e all sequences are required, and thus, not on EPAO Register)
-                            if (applyData.Sequences.All(seq => !seq.NotRequired) && !application.Organisation.OrganisationData.RoEPAOApproved)
+                            // (i.e all sequences are required, section 1 & 2 are required, hence not on EPAO Register)
+                            var sequenceOneSections = applyData.Sequences.Where(seq => seq.SequenceNo == 1).SelectMany(seq => seq.Sections);
+                            var initialSections = sequenceOneSections.Where(sec => sec.SectionNo == 1 || sec.SectionNo == 2);
+
+                            bool initialSectionsRequired = initialSections.All(sec => !sec.NotRequired);
+                            bool allSequencesRequired = applyData.Sequences.All(seq => !seq.NotRequired);
+
+                            if (allSequencesRequired && initialSectionsRequired)
                             {
                                 await RejectAllRelatedApplications(application.Id, application.UpdatedBy);
                             }
@@ -328,7 +334,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))
             {
                 var inProgressRelatedApplications = await connection.QueryAsync<Domain.Entities.Apply>(@"SELECT * FROM Apply a
-                                                                                                         WHERE a.ApplyingOrganisationId = (SELECT ApplyingOrganisationId FROM Applications WHERE Applications.Id = @applicationId)
+                                                                                                         WHERE a.OrganisationId = (SELECT OrganisationId FROM Apply WHERE Id = @applicationId)
                                                                                                          AND a.Id <> @applicationId
                                                                                                          AND a.ApplicationStatus NOT IN (@approvedStatus, @rejectedStatus)",
                                                                                                          new { applicationId, approvedStatus = ApplicationStatus.Approved, rejectedStatus = ApplicationStatus.Declined });

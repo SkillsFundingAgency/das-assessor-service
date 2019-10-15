@@ -18,7 +18,18 @@ namespace SFA.DAS.AssessorService.Data
             _assessorDbContext = assessorDbContext;
         }
 
-        public async Task<IEnumerable<Contact>> GetContacts(string endPointAssessorOrganisationId)
+        public async Task<IEnumerable<Contact>> GetContactsForOrganisation(Guid organisationId)
+        {
+            var contacts = await _assessorDbContext.Organisations
+                .Include(organisation => organisation.Contacts)
+                .Where(organisation => organisation.Id == organisationId
+                                       && organisation.Status != OrganisationStatus.Deleted)
+                .SelectMany(q => q.Contacts).ToListAsync();
+
+            return contacts;
+        }
+
+        public async Task<IEnumerable<Contact>> GetContactsForEpao(string endPointAssessorOrganisationId)
         {
             var contacts = await _assessorDbContext.Organisations
                 .Include(organisation => organisation.Contacts)
