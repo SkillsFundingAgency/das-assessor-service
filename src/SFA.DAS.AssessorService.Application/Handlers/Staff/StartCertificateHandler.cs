@@ -40,7 +40,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
         {
             var certificate = await _certificateRepository.GetCertificate(request.Uln, request.StandardCode);
             if (certificate == null)
-                await CreateNewCertificate(request);
+                certificate = await CreateNewCertificate(request);
             else if(certificate.Status == Domain.Consts.CertificateStatus.Deleted)
             {
                 _logger.LogInformation("CreateNewCertificate Before Get Ilr from db");
