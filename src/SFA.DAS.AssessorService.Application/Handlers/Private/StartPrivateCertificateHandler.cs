@@ -41,6 +41,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Private
             {
                 if (certificate.Status == Domain.Consts.CertificateStatus.Deleted)
                 {
+                    var certData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
+                    certData.LearnerFamilyName = request.LastName;
+                    certificate.CertificateData = JsonConvert.SerializeObject(certData);
                     certificate.IsPrivatelyFunded = true;
                     await _certificateRepository.Update(certificate, request.Username, string.Empty, false);
                 }
