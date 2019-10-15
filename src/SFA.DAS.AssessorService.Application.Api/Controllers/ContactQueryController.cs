@@ -71,7 +71,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
                 throw new ResourceNotFoundException(result.Errors[0].ErrorMessage);
 
             var contacts =
-                Mapper.Map<List<ContactResponse>>(await _contactQueryRepository.GetContacts(endPointAssessorOrganisationId)).ToList();
+                Mapper.Map<List<ContactResponse>>(await _contactQueryRepository.GetContactsForEpao(endPointAssessorOrganisationId)).ToList();
             return Ok(contacts);
         }
 

@@ -19,13 +19,13 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Contacts
             MappingBootstrapper.Initialize();
             var contacts = Builder<Contact>.CreateListOfSize(10).Build().AsEnumerable();
 
-            ContactQueryRepositoryMock.Setup(q => q.GetContacts(Moq.It.IsAny<string>()))
+            ContactQueryRepositoryMock.Setup(q => q.GetContactsForEpao(Moq.It.IsAny<string>()))
                 .Returns(Task.FromResult((contacts)));
 
             OrganisationQueryRepositoryMock.Setup(q => q.CheckIfAlreadyExists(Moq.It.IsAny<string>()))
                 .Returns(Task.FromResult<bool>(true));
 
-            var endPointAssessorOrganisationId = "1234";
+            var endPointAssessorOrganisationId = "EPA1234";
             _result = ContactQueryController.SearchContactsForAnOrganisation(endPointAssessorOrganisationId).Result;
         }
 

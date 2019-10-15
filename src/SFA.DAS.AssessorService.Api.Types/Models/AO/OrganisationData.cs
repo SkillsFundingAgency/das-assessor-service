@@ -23,7 +23,6 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.AO
         public string CharityNumber { get; set; }
         public CharityCommissionSummary CharitySummary { get; set; } // Summary of Charity info from Charity Commission. Similar format to that used in RoATP.
         public string ProviderName { get; set; }
-        public string City { get; set; }
         public string OrganisationReferenceType { get; set; } // "RoEPAO", "RoATP", "UKRLP" or "EASAPI"
         public string OrganisationReferenceId { get; set; } // CSV list of known id's
         public bool RoATPApproved { get; set; }
