@@ -135,6 +135,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
 
         private void UpdateApplicationStatus(ApplyData applyData, SubmitApplicationRequest request, Domain.Entities.Apply apply)
         {
+            // Always default it to submitted
+            apply.ApplicationStatus = ApplicationStatus.Submitted;
+
             if (request.Sequence.SequenceNo == 1)
             {
                 apply.ApplicationStatus = (applyData.Apply.InitSubmissions.Count == 1) ? ApplicationStatus.Submitted : ApplicationStatus.Resubmitted;
