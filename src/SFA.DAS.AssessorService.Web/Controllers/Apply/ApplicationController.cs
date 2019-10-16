@@ -551,7 +551,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         {
             var application = await _applicationApiClient.GetApplication(id);
             var allApplicationSequences = await _qnaApiClient.GetAllApplicationSequences(application.ApplicationId);
-            var sequenceNo = application.ApplyData.Sequences.SingleOrDefault(x => x.IsActive && x.Status == ApplicationSequenceStatus.Submitted)?.SequenceNo;
+            var sequenceNo = application.ApplyData.Sequences.SingleOrDefault(x => x.IsActive && x.Status == ApplicationSequenceStatus.FeedbackAdded)?.SequenceNo;
             var sequence = allApplicationSequences.Single(x => x.SequenceNo == sequenceNo);
 
             var sections = await _qnaApiClient.GetSections(application.ApplicationId, sequence.Id);
