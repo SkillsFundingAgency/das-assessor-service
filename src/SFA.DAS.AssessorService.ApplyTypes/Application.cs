@@ -27,15 +27,7 @@ namespace SFA.DAS.AssessorService.ApplyTypes
         public int StandardCode { get; set; }
         public Guid UserId { get; set; }
         public string UserEmail { get; set; }
-    }
-
-    public class Submission
-    {
-        public DateTime SubmittedAt { get; set; }
-        public Guid SubmittedBy { get; set; }
-        public string SubmittedByEmail { get; set; }
-    }
-    
+    }   
 
     public class ApplyData
     {
@@ -85,30 +77,22 @@ namespace SFA.DAS.AssessorService.ApplyTypes
         public int? StandardCode { get; set; }
         public string StandardReference { get; set; }
         public string StandardName { get; set; }
-        public List<InitSubmission> InitSubmissions { get; set; }
-        public List<StandardSubmission> StandardSubmissions { get; set; }
+        public List<Submission> InitSubmissions { get; set; }
         public int InitSubmissionCount { get; set; }
         public DateTime? LatestInitSubmissionDate { get; set; }
         public DateTime? InitSubmissionFeedbackAddedDate { get; set; }
         public DateTime? InitSubmissionClosedDate { get; set; }
+        public List<Submission> StandardSubmissions { get; set; }
         public int StandardSubmissionsCount { get; set; }
         public DateTime? LatestStandardSubmissionDate { get; set; }
         public DateTime? StandardSubmissionFeedbackAddedDate { get; set; }
         public DateTime? StandardSubmissionClosedDate { get; set; }
     }
 
-    public class InitSubmission
+    public class Submission
     {
         public DateTime SubmittedAt { get; set; }
         public Guid SubmittedBy { get; set; }
         public string SubmittedByEmail { get; set; }
     }
-
-    public class StandardSubmission
-    {
-        public DateTime SubmittedAt { get; set; }
-        public Guid SubmittedBy { get; set; }
-        public string SubmittedByEmail { get; set; }
-    }
-
 }
