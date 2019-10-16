@@ -13,7 +13,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter
       new Bootstrapper().StartUp(functionLogger, context);
 
       var command = Bootstrapper.Container.GetInstance<PrintProcessCommand>();
-      // command.Execute().GetAwaiter().GetResult();
+      command.Execute().GetAwaiter().GetResult();
     }
   }
 }
