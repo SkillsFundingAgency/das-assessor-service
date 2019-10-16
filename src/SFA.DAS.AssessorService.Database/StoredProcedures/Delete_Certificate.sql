@@ -22,6 +22,10 @@ UPDATE certificates SET [CertificateData] = JSON_MODIFY([CertificateData],'stric
 UPDATE certificates SET [CertificateData] = JSON_MODIFY([CertificateData],'strict $.OverallGrade',null) WHERE [certificatereferenceid] = @CertificateID;
 UPDATE certificates SET [CertificateData] = JSON_MODIFY([CertificateData],'strict $.Department',null) WHERE [certificatereferenceid] = @CertificateID;
 UPDATE certificates SET [CertificateData] = JSON_MODIFY([CertificateData],'strict $.EpaDetails',null) WHERE [certificatereferenceid] = @CertificateID;
+-- learner details
+UPDATE certificates SET [CertificateData] = JSON_MODIFY([CertificateData],'strict $.LearnerGivenNames',null) WHERE [certificatereferenceid] = @CertificateID;
+UPDATE certificates SET [CertificateData] = JSON_MODIFY([CertificateData],'strict $.LearnerFamilyName',null) WHERE [certificatereferenceid] = @CertificateID;
+UPDATE certificates SET [CertificateData] = JSON_MODIFY([CertificateData],'strict $.FullName',null) WHERE [certificatereferenceid] = @CertificateID;
 
 
 -- log diffs since last change - these will have been manually amended
