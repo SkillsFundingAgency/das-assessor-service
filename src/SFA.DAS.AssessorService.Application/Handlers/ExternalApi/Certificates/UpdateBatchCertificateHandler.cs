@@ -83,7 +83,12 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
                 var record = new EpaRecord { EpaDate = requestData.AchievementDate.Value, EpaOutcome = epaOutcome };
                 epaDetails.Epas.Add(record);
 
-                var latestRecord = epaDetails.Epas.OrderByDescending(epa => epa.EpaDate).First();
+                // sort pass outcomes before fail outcomes as pass is the final state even if earlier than the fail
+                var latestRecord = epaDetails.Epas
+                            .OrderByDescending(epa => epa.EpaOutcome != EpaOutcome.Fail ? 1 : 0)
+                            .ThenByDescending(epa => epa.EpaDate)
+                            .First();
+
                 epaDetails.LatestEpaDate = latestRecord.EpaDate;
                 epaDetails.LatestEpaOutcome = latestRecord.EpaOutcome;
             }
