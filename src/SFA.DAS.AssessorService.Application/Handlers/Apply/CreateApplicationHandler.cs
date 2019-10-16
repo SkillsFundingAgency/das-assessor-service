@@ -30,13 +30,20 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
             var org = await _organisationQueryRepository.Get(request.OrganisationId);
             var orgTypes = await _registerQueryRepository.GetOrganisationTypes();
             var orgType = orgTypes.FirstOrDefault(x => x.Id == org.OrganisationTypeId);
-            DisableSequencesAndSectionsAsAppropriate(org, request.listOfApplySequences, orgType);
+
+            var sequences = request.listOfApplySequences;
+            DisableSequencesAndSectionsAsAppropriate(sequences, org, orgType);
 
             var applyData = new ApplyData
             {
-                Sequences = request.listOfApplySequences
+                Sequences = sequences,
+                Apply = new ApplyTypes.Apply
+                {
+                    ReferenceNumber = await CreateReferenceNumber(request.ReferenceFormat)
+                }
             };
-            await AddApplyDataWithSubmissionInfo(applyData, request);
+
+            AddApplyDataWithSubmissionInfo(applyData, request);
             var application = new Domain.Entities.Apply
             {
                 ApplyData = applyData,
@@ -52,11 +59,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
             return await _applyRepository.CreateApplication(application);
         }
 
-        private async Task AddApplyDataWithSubmissionInfo(ApplyData applyData, CreateApplicationRequest request)
+        private void AddApplyDataWithSubmissionInfo(ApplyData applyData, CreateApplicationRequest request)
         {
-            applyData.Apply = new ApplyTypes.Apply();
-            applyData.Apply.ReferenceNumber = await CreateReferenceNumber(request.ReferenceFormat);
-
             foreach (var sequence in applyData.Sequences)
             {
                 if (sequence.SequenceNo == 1)
@@ -83,8 +87,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
             }
         }
 
-        private void DisableSequencesAndSectionsAsAppropriate(Domain.Entities.Organisation org,
-            List<ApplySequence> sequences, OrganisationType orgType)
+        private void DisableSequencesAndSectionsAsAppropriate(List<ApplySequence> sequences, Domain.Entities.Organisation org, OrganisationType orgType)
         {
             bool isEpao = IsOrganisationOnEPAORegister(org);
             if (isEpao)
@@ -113,16 +116,20 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
 
         private void RemoveSequenceOne(List<ApplySequence> sequences)
         {
-            var sequence1 = sequences.Single(seq => seq.SequenceNo == 1);
-            sequence1.IsActive = false;
-            sequence1.NotRequired = true;
-            sequence1.Status = ApplicationSequenceStatus.Approved;
-
-            var sequence2 = sequences.Single(seq => seq.SequenceNo == 2);
-            if (!sequence2.NotRequired)
+            foreach (var sequence1 in sequences.Where(seq => seq.SequenceNo == 1))
             {
-                sequence2.IsActive = true;
-                sequence2.Status = ApplicationSequenceStatus.Draft;
+                sequence1.IsActive = false;
+                sequence1.NotRequired = true;
+                sequence1.Status = ApplicationSequenceStatus.Approved;
+            }
+
+            foreach (var sequence2 in sequences.Where(seq => seq.SequenceNo == 2))
+            {
+                if (!sequence2.NotRequired)
+                {
+                    sequence2.IsActive = true;
+                    sequence2.Status = ApplicationSequenceStatus.Draft;
+                }
             }
         }
 
