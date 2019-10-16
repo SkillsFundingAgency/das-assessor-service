@@ -73,11 +73,34 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
                 OrganisationId = epao.EndPointAssessorOrganisationId,
                 CertificateLogs = logs,
                 FundingModel = learner?.FundingModel,
+                CompletionStatus = learner?.CompletionStatus,
+                CompletionStatusDescription = FormatCompletionStatusDescription(learner?.CompletionStatus),
                 IsPrivatelyFunded = certificate?.IsPrivatelyFunded,
                 CertificateId = certificate?.Id
             };
 
             return learnerDetail;
+        }
+
+        private string FormatCompletionStatusDescription(int? completionStatus)
+        {
+            switch(completionStatus)
+            {
+                case 1:
+                    return $"{completionStatus} - Continuing";
+
+                case 2:
+                    return $"{completionStatus} - Completed";
+
+                case 3:
+                    return $"{completionStatus} - Withdrawn";
+
+                case 6:
+                    return $"{completionStatus} - Temporarily withdrawn";
+
+                default:
+                    return string.Empty;
+            }
         }
 
         private void CalculateDifferences(List<CertificateLogSummary> logs)
