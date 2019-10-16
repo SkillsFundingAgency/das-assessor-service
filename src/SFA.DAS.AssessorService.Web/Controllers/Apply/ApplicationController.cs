@@ -546,11 +546,13 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             });
         }
 
-        [HttpGet("/Application/{Id}/Feedback")]
-        public async Task<IActionResult> Feedback(Guid Id)
+        [HttpGet("/Application/{id}/Feedback")]
+        public async Task<IActionResult> Feedback(Guid id)
         {
-            var application = await _applicationApiClient.GetApplication(Id);
-            var sequence = await _qnaApiClient.GetApplicationActiveSequence(application.ApplicationId);
+            var application = await _applicationApiClient.GetApplication(id);
+            var allApplicationSequences = await _qnaApiClient.GetAllApplicationSequences(application.ApplicationId);
+            var sequenceNo = application.ApplyData.Sequences.SingleOrDefault(x => x.IsActive && x.Status == ApplicationSequenceStatus.FeedbackAdded)?.SequenceNo;
+            var sequence = allApplicationSequences.Single(x => x.SequenceNo == sequenceNo);
 
             var sections = await _qnaApiClient.GetSections(application.ApplicationId, sequence.Id);
             var applyData = application.ApplyData.Sequences.Single(x => x.SequenceNo == sequence.SequenceNo);
