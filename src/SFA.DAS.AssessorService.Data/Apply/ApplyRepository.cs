@@ -74,6 +74,35 @@ namespace SFA.DAS.AssessorService.Data.Apply
             }
         }
 
+        public async Task<bool> CanSubmitApplication(Guid applicationId)
+        {
+            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            {
+                // Prevent submission if Sequence 1 is required and another user has submitted theirs
+                var otherAppsInProgress = await connection.QueryAsync<Domain.Entities.Apply>(@"
+                                                        SELECT a.*
+                                                        FROM Apply a
+                                                        INNER JOIN Organisations o ON o.Id = a.OrganisationId
+														INNER JOIN Contacts con ON a.OrganisationId = con.OrganisationID
+                                                        CROSS APPLY OPENJSON(a.ApplyData,'$.Sequences') WITH (SequenceNo INT, IsActive BIT, NotRequired BIT, Status VARCHAR(20)) sequence
+                                                        WHERE a.OrganisationId = (SELECT OrganisationId FROM Apply WHERE Id = @applicationId)
+														AND a.CreatedBy <> (SELECT CreatedBy FROM Apply WHERE Id = @applicationId)
+                                                        AND a.ApplicationStatus NOT IN (@applicationStatusApproved, @applicationStatusApprovedDeclined)
+                                                        AND sequence.NotRequired = 0 AND sequence.SequenceNo = 1
+                                                        AND sequence.Status IN (@applicationSequenceStatusSubmitted, @applicationSequenceStatusResubmitted)",
+                                                        new
+                                                        {
+                                                            applicationId,
+                                                            applicationStatusApproved = ApplicationStatus.Approved,
+                                                            applicationStatusApprovedDeclined = ApplicationStatus.Declined,
+                                                            applicationSequenceStatusSubmitted = ApplicationSequenceStatus.Submitted,
+                                                            applicationSequenceStatusResubmitted = ApplicationSequenceStatus.Resubmitted
+                                                        });
+
+                return !otherAppsInProgress.Any();
+            }
+        }
+
         public async Task SubmitApplicationSequence(Domain.Entities.Apply apply)
         {
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))

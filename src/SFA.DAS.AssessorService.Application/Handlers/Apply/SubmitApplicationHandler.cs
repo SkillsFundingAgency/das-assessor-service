@@ -29,33 +29,37 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
 
         public async Task<bool> Handle(SubmitApplicationRequest request, CancellationToken cancellationToken)
         {
-            var application = await _applyRepository.GetApplication(request.ApplicationId);
-            var submittingContact = await _contactQueryRepository.GetContactById(request.SubmittingContactId);
-
-            if (application?.ApplyData != null && submittingContact != null)
+            // CanSubmitApplication was migrated over from Apply Service. If this causes issues then remove it
+            if (await _applyRepository.CanSubmitApplication(request.ApplicationId))
             {
-                if(application.ApplyData.Apply == null)
+                var application = await _applyRepository.GetApplication(request.ApplicationId);
+                var submittingContact = await _contactQueryRepository.GetContactById(request.SubmittingContactId);
+
+                if (application?.ApplyData != null && submittingContact != null)
                 {
-                    application.ApplyData.Apply = new ApplyTypes.Apply();
+                    if (application.ApplyData.Apply == null)
+                    {
+                        application.ApplyData.Apply = new ApplyTypes.Apply();
+                    }
+
+                    if (string.IsNullOrWhiteSpace(application.ApplyData.Apply.ReferenceNumber))
+                    {
+                        application.ApplyData.Apply.ReferenceNumber = await CreateReferenceNumber(request.ApplicationReferenceFormat);
+                    }
+
+                    AddSubmissionInfoToApplyData(application.ApplyData, request.SequenceNo, submittingContact);
+                    UpdateSequenceInformation(application.ApplyData, request.SequenceNo);
+                    UpdateApplicationStatus(application, request.SequenceNo);
+
+                    application.UpdatedBy = submittingContact.Id.ToString();
+                    application.UpdatedAt = DateTime.UtcNow;
+
+                    await _applyRepository.SubmitApplicationSequence(application);
+
+                    await NotifyContact(submittingContact, application.ApplyData, request.SequenceNo, cancellationToken);
+
+                    return true;
                 }
-
-                if (string.IsNullOrWhiteSpace(application.ApplyData.Apply.ReferenceNumber))
-                {
-                    application.ApplyData.Apply.ReferenceNumber = await CreateReferenceNumber(request.ApplicationReferenceFormat);
-                }
-
-                AddSubmissionInfoToApplyData(application.ApplyData, request.SequenceNo, submittingContact);
-                UpdateSequenceInformation(application.ApplyData, request.SequenceNo);
-                UpdateApplicationStatus(application, request.SequenceNo);
-
-                application.UpdatedBy = submittingContact.Id.ToString();
-                application.UpdatedAt = DateTime.UtcNow;
- 
-                await _applyRepository.SubmitApplicationSequence(application);
-
-                await NotifyContact(submittingContact, application.ApplyData, request.SequenceNo, cancellationToken);
-
-                return true;
             }
 
             return false;
