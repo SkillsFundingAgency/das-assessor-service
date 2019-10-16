@@ -67,10 +67,10 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             }
             //ON-2068 If there is an existing application for an org that is registered then display it
             //in a list of application screen
-            if (applications.Count() == 1 && (org != null && org.RoEPAOApproved))
+            if (applications.Count == 1 && (org != null && org.RoEPAOApproved))
                 return View(applications);
 
-            if (applications.Count() > 1)
+            if (applications.Count > 1)
                 return View(applications);
 
             //This always return one record otherwise the previous logic would have handled the response
@@ -84,7 +84,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 case ApplicationStatus.Approved:
                     return View(applications);
                 default:
-                    return RedirectToAction("SequenceSignPost", new { Id = application.Id });
+                    return RedirectToAction("SequenceSignPost", new { application.Id });
             }
 
         }
@@ -106,7 +106,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                     OrganisationName = org.EndPointAssessorName,
                     OrganisationReferenceId = org.Id.ToString(),
                     OrganisationType = org.OrganisationType,
-                    // NOTE: Wouldn't be a good idea to include more info from the preamble search here?
+                    // NOTE: Surely it would be a good idea to include more info from the preamble search here?? Not been spec'ed at this point though :(
                     CompanySummary = org.CompanySummary,
                     CharitySummary = org.CharitySummary
                 })
@@ -187,7 +187,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         private bool IsSequenceActive(ApplicationResponse applicationResponse, int sequenceNo)
         {
             //A sequence can be considered active even if it does not exist in the ApplyData, since it has not yet been submitted and is in progress.
-            return applicationResponse.ApplyData?.Sequences?.Any(x => x.SequenceNo == sequenceNo && x.IsActive == true) ?? true;
+            return applicationResponse.ApplyData?.Sequences?.Any(x => x.SequenceNo == sequenceNo && x.IsActive) ?? true;
         }
 
         [HttpGet("/Application/{id}/Sequence/{sequenceNo}")]
@@ -387,7 +387,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
             SetPageAnswersResponse updatePageResult;
             var fileupload = page.Questions?.Any(q => q.Input.Type == "FileUpload");
-            if (fileupload ?? false)
+            if (fileupload == true)
             {
                 updatePageResult = await UploadFilesToStorage(application.ApplicationId, sectionId, pageId, page);
                 if (NothingToUpload(updatePageResult, answers))
@@ -396,7 +396,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             else
                 updatePageResult = await _qnaApiClient.AddPageAnswer(application.ApplicationId, sectionId, pageId, answers);
 
-            if (updatePageResult?.ValidationPassed ?? false)
+            if (updatePageResult?.ValidationPassed == true)
             {
                 if (__redirectAction == "Feedback")
                     return RedirectToAction("Feedback", new { Id });
@@ -587,7 +587,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
         private bool NothingToUpload(SetPageAnswersResponse updatePageResult, List<Answer> answers)
         {
-            return updatePageResult.ValidationErrors == null && updatePageResult.ValidationPassed == false
+            return updatePageResult.ValidationErrors == null && !updatePageResult.ValidationPassed
                     && answers.Any(x => string.IsNullOrEmpty(x.QuestionId)) && answers.Count > 0;
         }
 
@@ -673,7 +673,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 }
             }
 
-            if (answers != null && (!answers.Any()))
+            if (!answers.Any())
             {
                 answers.Add(new Answer { QuestionId = questionId, Value = "" });
             }
@@ -822,15 +822,15 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 var validationError = new ValidationErrorDetail(string.Empty, $"Cannot submit empty sequence");
                 validationErrors.Add(validationError);
             }
-            else if (sections.Where(sec => sec.QnAData.Pages.Count(x => x.Complete == true) != sec.QnAData.Pages.Count(x => x.Active)).Any())
+            else if (sections.Any(sec => sec.QnAData.Pages.Count(x => x.Complete) != sec.QnAData.Pages.Count(x => x.Active)))
             {
-                foreach (var sectionQuestionsNotYetCompleted in sections.Where(sec => sec.QnAData.Pages.Count(x => x.Complete == true) != sec.QnAData.Pages.Count(x => x.Active)))
+                foreach (var sectionQuestionsNotYetCompleted in sections.Where(sec => sec.QnAData.Pages.Count(x => x.Complete) != sec.QnAData.Pages.Count(x => x.Active)))
                 {
                     var validationError = new ValidationErrorDetail(sectionQuestionsNotYetCompleted.Id.ToString(), $"You need to complete the '{sectionQuestionsNotYetCompleted.LinkTitle}' section");
                     validationErrors.Add(validationError);
                 }
             }
-            else if (sections.Where(sec => sec.QnAData.RequestedFeedbackAnswered is false || sec.QnAData.Pages.Any(p => !p.AllFeedbackIsCompleted)).Any())
+            else if (sections.Any(sec => sec.QnAData.RequestedFeedbackAnswered is false || sec.QnAData.Pages.Any(p => !p.AllFeedbackIsCompleted)))
             {
                 foreach (var sectionFeedbackNotYetCompleted in sections.Where(sec => sec.QnAData.RequestedFeedbackAnswered is false || sec.QnAData.Pages.Any(p => !p.AllFeedbackIsCompleted)))
                 {
