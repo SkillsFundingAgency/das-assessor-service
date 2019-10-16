@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
+using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Web.Constants;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.ViewModels.Dashboard;
@@ -19,17 +20,20 @@ namespace SFA.DAS.AssessorService.Web.Controllers
     {
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly IContactsApiClient _contactsApiClient;
+        private readonly IOrganisationsApiClient _organisationApiClient;
         private readonly IDashboardApiClient _dashboardApiClient;
         private readonly ILogger<DashboardController> _logger;
 
         public DashboardController(
             IHttpContextAccessor contextAccessor,
             IContactsApiClient contactsApiClient,
+            IOrganisationsApiClient organisationApiClient,
             IDashboardApiClient dashboardApiClient,
             ILogger<DashboardController> logger)
         {
             _contextAccessor = contextAccessor;
             _contactsApiClient = contactsApiClient;
+            _organisationApiClient = organisationApiClient;
             _dashboardApiClient = dashboardApiClient;
             _logger = logger;
         }
@@ -40,10 +44,19 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         public async Task<IActionResult> Index()
         {
             var user = await GetUser();
+            var organisation = await _organisationApiClient.GetEpaOrganisationById(user?.OrganisationId?.ToString());
 
             if (user is null)
             {
                 return RedirectToAction("Index", "Home");
+            }
+            else if(organisation is null)
+            {
+                return RedirectToAction("Index", "OrganisationSearch");
+            }
+            else if(user.Status == ContactStatus.Applying || organisation.Status == OrganisationStatus.Applying)
+            {
+                return RedirectToAction("Applications", "Application");
             }
             else if (user.EndPointAssessorOrganisationId is null)
             {
