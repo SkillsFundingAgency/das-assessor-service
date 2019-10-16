@@ -51,6 +51,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
                     certData.LearnerGivenNames = ilr.GivenNames;
                     certData.LearnerFamilyName = ilr.FamilyName;
                     certData.LearningStartDate = ilr.LearnStartDate;
+                    certData.FullName = $"{ilr.GivenNames} {ilr.FamilyName}";
                     certificate.CertificateData = JsonConvert.SerializeObject(certData);
                     certificate.IsPrivatelyFunded = false;
                     await _certificateRepository.Update(certificate, request.Username, null);
