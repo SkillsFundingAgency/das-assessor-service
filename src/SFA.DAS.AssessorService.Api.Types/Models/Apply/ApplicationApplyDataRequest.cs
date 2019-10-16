@@ -1,6 +1,4 @@
-﻿using MediatR;
-using SFA.DAS.AssessorService.ApplyTypes;
-using System;
+﻿using System;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models.Apply
 {
@@ -18,10 +16,5 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Apply
         public DateTime? LatestStandardSubmissionDate { get; set; }
         public DateTime? StandardSubmissionFeedbackAddedDate { get; set; }
         public DateTime? StandardSubmissionClosedDate { get; set; }
-    }
-
-    public class SubmitApplicationRequest : ApplicationApplyData, IRequest<bool>
-    {
-        public ApplySequence Sequence { get; set; }
     }
 }

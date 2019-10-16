@@ -15,27 +15,25 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
     public class SubmitApplicationHandler : IRequestHandler<SubmitApplicationRequest, bool>
     {
         private readonly IApplyRepository _applyRepository;
-        private readonly IMediator _mediator;
+        private readonly IContactQueryRepository _contactQueryRepository;     
         private readonly IEMailTemplateQueryRepository _eMailTemplateQueryRepository;
+        private readonly IMediator _mediator;
 
-        public SubmitApplicationHandler(IApplyRepository applyRepository, IEMailTemplateQueryRepository eMailTemplateQueryRepository, IMediator mediator)
+        public SubmitApplicationHandler(IApplyRepository applyRepository, IContactQueryRepository contactQueryRepository, IEMailTemplateQueryRepository eMailTemplateQueryRepository, IMediator mediator)
         {
             _applyRepository = applyRepository;
-            _mediator = mediator;
+            _contactQueryRepository = contactQueryRepository;
             _eMailTemplateQueryRepository = eMailTemplateQueryRepository;
+            _mediator = mediator;
         }
 
         public async Task<bool> Handle(SubmitApplicationRequest request, CancellationToken cancellationToken)
         {
             var application = await _applyRepository.GetApplication(request.ApplicationId);
+            var submittingContact = await _contactQueryRepository.GetContactById(request.SubmittingContactId);
 
-            if(application != null)
+            if (application?.ApplyData != null && submittingContact != null)
             {
-                if(application.ApplyData == null)
-                {
-                    application.ApplyData = new ApplyData();
-                }
-
                 if(application.ApplyData.Apply == null)
                 {
                     application.ApplyData.Apply = new ApplyTypes.Apply();
@@ -43,24 +41,19 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
 
                 if (string.IsNullOrWhiteSpace(application.ApplyData.Apply.ReferenceNumber))
                 {
-                    application.ApplyData.Apply.ReferenceNumber = await CreateReferenceNumber(request.ReferenceFormat);
+                    application.ApplyData.Apply.ReferenceNumber = await CreateReferenceNumber(request.ApplicationReferenceFormat);
                 }
 
-                AddSequenceToApplyData(application.ApplyData, request.Sequence); // NOTE: Find out why we are doing this
-                AddSubmissionInfoToApplyData(application.ApplyData, request);
+                AddSubmissionInfoToApplyData(application.ApplyData, request.SequenceNo, submittingContact);
+                UpdateSequenceInformation(application.ApplyData, request.SequenceNo);
+                UpdateApplicationStatus(application, request.SequenceNo);
 
-                application.StandardCode = request.StandardCode;
-                application.ReviewStatus = ApplicationReviewStatus.New;
-                application.UpdatedBy = request.UserId.ToString();
+                application.UpdatedBy = submittingContact.Id.ToString();
                 application.UpdatedAt = DateTime.UtcNow;
-
-                UpdateApplicationStatus(application, request);
+ 
                 await _applyRepository.SubmitApplicationSequence(application);
 
-                application = await _applyRepository.GetApplication(request.ApplicationId);
-                var reference = application.ApplyData.Apply.ReferenceNumber;
-                var standard = application.ApplyData.Apply.StandardName;
-                await NotifyContact(request.Email, request.ContactName, request.Sequence.SequenceNo, reference, standard, cancellationToken);
+                await NotifyContact(submittingContact, application.ApplyData, request.SequenceNo, cancellationToken);
 
                 return true;
             }
@@ -68,89 +61,77 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
             return false;
         }
 
-        private void AddSequenceToApplyData(ApplyData applyData, ApplySequence sequence)
+        private void UpdateSequenceInformation(ApplyData applyData, int sequenceNo)
         {
-            if (applyData.Sequences == null)
-                applyData.Sequences = new List<ApplySequence>();
-
-            if (applyData.Sequences.Any(x => x.SequenceNo == sequence.SequenceNo))
+            if (applyData.Sequences != null)
             {
-                foreach (var applySequence in applyData.Sequences.Where(x => x.SequenceNo == sequence.SequenceNo))
+                foreach (var sequence in applyData.Sequences.Where(seq => seq.SequenceNo == sequenceNo && !seq.NotRequired))
                 {
-                    applySequence.Status = applySequence.Status == ApplicationSectionStatus.Submitted ? ApplicationSequenceStatus.Resubmitted : sequence.Status;
-                    applySequence.Sections = sequence.Sections;
-                    applySequence.SequenceNo = sequence.SequenceNo;
-                    applySequence.NotRequired = sequence.NotRequired;
+                    var resubmittedStatues = new string[] { ApplicationSequenceStatus.Submitted, ApplicationSequenceStatus.FeedbackAdded };
+
+                    sequence.Status = resubmittedStatues.Contains(sequence.Status) ? ApplicationSequenceStatus.Resubmitted : sequence.Status;
+
+                    // NOTE: Must update Required Sections within too!
+                    if (sequence.Sections != null)
+                    {
+                        foreach (var section in sequence.Sections.Where(sec => !sec.NotRequired))
+                        {
+                            if (section.Status == ApplicationSectionStatus.Draft)
+                            {
+                                section.Status = ApplicationSectionStatus.Submitted;
+                            }
+                            else if (section.RequestedFeedbackAnswered == true)
+                            {
+                                section.Status = ApplicationSectionStatus.Submitted;
+                            }
+                        }
+                    }
                 }
-            }
-            else
-            {
-                applyData.Sequences.Add(sequence);
             }
         }
 
-        private void AddSubmissionInfoToApplyData(ApplyData applyData, SubmitApplicationRequest request)
+        private void AddSubmissionInfoToApplyData(ApplyData applyData, int sequenceNo, Domain.Entities.Contact submittingContact)
         {
-            if (applyData.Apply == null)
-                applyData.Apply = new ApplyTypes.Apply();
+            var submission = new Submission
+            {
+                SubmittedAt = DateTime.UtcNow,
+                SubmittedBy = submittingContact.Id,
+                SubmittedByEmail = submittingContact.Email
+            };
 
-            if (request.Sequence.SequenceNo == 1)
+            if (sequenceNo == 1)
             {
                 if (applyData.Apply.InitSubmissions == null)
                 {
                     applyData.Apply.InitSubmissions = new List<Submission>();
                 }
 
-                var initSubmission = new Submission
-                {
-                    SubmittedAt = DateTime.UtcNow,
-                    SubmittedBy = request.UserId,
-                    SubmittedByEmail = request.Email
-                };
-
-                applyData.Apply.InitSubmissions.Add(initSubmission);
+                applyData.Apply.InitSubmissions.Add(submission);
                 applyData.Apply.InitSubmissionCount = applyData.Apply.InitSubmissions.Count;
-                applyData.Apply.LatestInitSubmissionDate = initSubmission.SubmittedAt;
-                // TODO: why these???
-                //applyData.Apply.InitSubmissionClosedDate = request.StandardSubmissionClosedDate;
-                //applyData.Apply.InitSubmissionFeedbackAddedDate = request.StandardSubmissionFeedbackAddedDate;
+                applyData.Apply.LatestInitSubmissionDate = submission.SubmittedAt;
             }
-            else if (request.Sequence.SequenceNo == 2)
+            else if (sequenceNo == 2)
             {
-                applyData.Apply.StandardCode = request.StandardCode;
-                applyData.Apply.StandardName = request.StandardName;
-                applyData.Apply.StandardReference = request.StandardReference;
-
                 if (applyData.Apply.StandardSubmissions == null)
                 {
                     applyData.Apply.StandardSubmissions = new List<Submission>();
                 }
 
-                var standardSubmission = new Submission
-                {
-                    SubmittedAt = DateTime.UtcNow,
-                    SubmittedBy = request.UserId,
-                    SubmittedByEmail = request.Email
-                };
-
-                applyData.Apply.StandardSubmissions.Add(standardSubmission);
+                applyData.Apply.StandardSubmissions.Add(submission);
                 applyData.Apply.StandardSubmissionsCount = applyData.Apply.StandardSubmissions.Count;
-                applyData.Apply.LatestStandardSubmissionDate = standardSubmission.SubmittedAt;
-                // TODO: why these???
-                //applyData.Apply.StandardSubmissionClosedDate = request.StandardSubmissionClosedDate;
-                //applyData.Apply.StandardSubmissionFeedbackAddedDate = request.StandardSubmissionFeedbackAddedDate;
+                applyData.Apply.LatestStandardSubmissionDate = submission.SubmittedAt;
             }
-
         }
 
-        private void UpdateApplicationStatus(Domain.Entities.Apply application, SubmitApplicationRequest request)
+        private void UpdateApplicationStatus(Domain.Entities.Apply application, int sequenceNo)
         {
             // Always default it to submitted
             application.ApplicationStatus = ApplicationStatus.Submitted;
+            application.ReviewStatus = ApplicationReviewStatus.New;
 
             var applyData = application.ApplyData;
 
-            if (request.Sequence.SequenceNo == 1)
+            if (sequenceNo == 1)
             {
                 application.ApplicationStatus = (applyData.Apply.InitSubmissions.Count == 1) ? ApplicationStatus.Submitted : ApplicationStatus.Resubmitted;
 
@@ -161,12 +142,11 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
                     application.FinancialReviewStatus = FinancialReviewStatus.New;
                 }
             }
-            else if (request.Sequence.SequenceNo == 2)
+            else if (sequenceNo == 2)
             {
                 application.ApplicationStatus = (applyData.Apply.StandardSubmissions.Count == 1) ? ApplicationStatus.Submitted : ApplicationStatus.Resubmitted;
             }
         }
-
 
         private async Task<string> CreateReferenceNumber(string referenceFormat)
         {
@@ -182,13 +162,17 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
             return referenceNumber;
         }
 
-        private async Task NotifyContact(string email, string contactname, int sequenceNo, string reference, string standard, CancellationToken cancellationToken)
+        private async Task NotifyContact(Domain.Entities.Contact contactToNotify, ApplyData applyData, int sequenceNo, CancellationToken cancellationToken)
         {
+            var email = contactToNotify.Email;
+            var contactname = contactToNotify.DisplayName;
+            var reference = applyData.Apply.ReferenceNumber;
+            var standard = applyData.Apply.StandardName;
+
             if (sequenceNo == 1)
             {
                 var emailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.ApplyEPAOInitialSubmission);
                 await _mediator.Send(new SendEmailRequest(email, emailTemplate, new { contactname, reference }), cancellationToken);
-
             }
             else if (sequenceNo == 2)
             {

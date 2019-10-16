@@ -506,15 +506,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 }
             }
 
-            if (await _applicationApiClient.Submit(BuildApplicationDataForSubmission(Id, contact.Id,
-                _config.ReferenceFormat,contact.GivenNames, 
-                contact?.Email, 
-                application?.ApplyData?.Apply?.StandardCode , 
-                application?.ApplyData?.Apply?.StandardReference, 
-                application?.ApplyData?.Apply?.StandardName,
-                ApplicationStatus.Submitted,
-                ApplicationSequenceStatus.Submitted,
-                sequence, applySequence.Sections)))
+            var submitApplicationRequest = BuildSubmitApplicationRequest(application.Id, _config.ReferenceFormat, sequence.SequenceNo, contact.Id);
+
+            if (await _applicationApiClient.Submit(submitApplicationRequest))
             {
                 return RedirectToAction("Submitted", new { Id });
             }
@@ -776,40 +770,16 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             }
         }
 
-        private SubmitApplicationRequest BuildApplicationDataForSubmission(Guid id, Guid userId,
-            string referenceFormat, string contactName, string email, int? standardCode, 
-            string standardReference, string standardName,string applicationStatus,string sectionSequenceStatus, 
-            Sequence sequence, List<ApplySection> currentApplySections)
-        {
-            foreach( var section in currentApplySections)
-            {
-                section.Status = sectionSequenceStatus;
-            }
-            
+        private SubmitApplicationRequest BuildSubmitApplicationRequest(Guid applicationId, string referenceFormat, int sequenceNo, Guid userId)
+        {  
             return new SubmitApplicationRequest
             {
-                ApplicationId = id,
-                ReferenceFormat = referenceFormat,
-                ContactName = contactName,
-                StandardCode = standardCode,
-                StandardReference = standardReference,
-                StandardName = standardName,
-                ApplicationStatus = applicationStatus,
-                Email = email,
-                UserId = userId,
-                Sequence = new ApplySequence
-                {
-                    SequenceId = sequence.Id,
-                    Sections = currentApplySections,
-                    Status = sectionSequenceStatus,
-                    IsActive = sequence.IsActive,
-                    SequenceNo = sequence.SequenceNo,
-                    NotRequired = sequence.NotRequired
-                }
+                ApplicationId = applicationId,
+                ApplicationReferenceFormat = referenceFormat,
+                SequenceNo = sequenceNo,
+                SubmittingContactId = userId
             };
         }
-
-
 
         private CreateApplicationRequest BuildCreateApplicationRequest(Guid id, ContactResponse contact, OrganisationResponse org,
            string referenceFormat, List<Sequence> sequences, List<List<Section>> sections)
