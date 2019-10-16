@@ -1,0 +1,50 @@
+﻿@model SFA.DAS.AssessorService.Web.ViewModels.OppFinder.OppFinderShowFiltersViewModel
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-one-half">
+        <div class="govuk-form-group">
+            <fieldset class="govuk-fieldset">
+                <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
+                    <h3 class="govuk-fieldset__heading">
+                        Sectors
+                    </h3>
+                </legend>
+                <div class="govuk-checkboxes govuk-checkboxes--small">
+                    @{ var filterId = 0;}
+                    @foreach (var sectorFilter in Model.SectorFilters)
+                    {
+                        <div class="govuk-checkboxes__item">
+                            <input class="govuk-checkboxes__input" id=@("sectorFilter"+filterId) name="sectorFilters" type="checkbox" value="@sectorFilter.Category" checked="@sectorFilter.Selected">
+                            <label class="govuk-label govuk-checkboxes__label" for=@("sectorFilter"+filterId++)>
+                                <span>@sectorFilter.Category</span>&nbsp;(@sectorFilter.Matches)
+                            </label>
+                        </div>
+                    }
+                </div>
+            </fieldset>
+        </div>
+    </div>
+    <div class="govuk-grid-column-one-half">
+        <div class="govuk-form-group">
+            <fieldset class="govuk-fieldset">
+                <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
+                    <h3 class="govuk-fieldset__heading">
+                        Levels
+                    </h3>
+                </legend>
+                <div class="govuk-checkboxes govuk-checkboxes--small">
+                    @{ filterId = 0;}
+                    @foreach (var levelFilter in Model.LevelFilters)
+                    {
+                        <div class="govuk-checkboxes__item">
+                            <input class="govuk-checkboxes__input" id=@("levelFiler"+filterId) name="levelFilters" type="checkbox" value="@levelFilter.Category" checked="@levelFilter.Selected">
+                            <label class="govuk-label govuk-checkboxes__label" for=@("levelFiler"+filterId++)>
+                                <span>@levelFilter.Category</span>&nbsp;(@levelFilter.Matches)
+                            </label>
+                        </div>
+                    }
+                </div>
+            </fieldset>
+        </div>
+    </div>
+</div>

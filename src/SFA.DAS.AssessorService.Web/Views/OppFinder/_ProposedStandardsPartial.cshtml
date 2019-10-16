@@ -1,0 +1,89 @@
+﻿@using SFA.DAS.AssessorService.Domain.Paging
+@using SFA.DAS.AssessorService.Api.Types.Models
+@using SFA.DAS.AssessorService.Web.ViewModels.OppFinder
+@model OppFinderSearchViewModel
+
+<h2 class="govuk-heading-m">Proposed Standards</h2>
+<p class="govuk-body">A proposal to develop an apprenticeship Standard means that a Trailblazer group of employers are preparing to submit a proposal to develop an apprenticeship standard for this occupation. This proposal will be subject to Institute for Apprenticeships and Technical Education (IfATE) approval process and if agreed, will appear on the IfATE list of standards in development.</p>
+@{ var proposedRecordCount = (Model?.ProposedStandards.TotalRecordCount ?? 0); }
+    <p class="govuk-body">
+        @if (!string.IsNullOrEmpty(Model?.SearchTerm))
+        {
+            <span class="govuk-!-font-weight-bold">@proposedRecordCount</span>
+            @if (proposedRecordCount == 1){<text> result</text>}else{<text> results</text>}
+            <text> found</text>
+        }
+        else
+        {
+            <text><span class="govuk-!-font-weight-bold">@proposedRecordCount</span> proposed Standards found</text>
+        }
+    </p>
+@if (proposedRecordCount == 0)
+{
+    await Html.RenderPartialAsync("_NoSearchResults");
+}
+else
+{
+    <table class="govuk-table govuk-table--small">
+        <thead class="govuk-table__head">
+            <tr class="govuk-table__row">
+                <th scope="col" class="govuk-table__header">
+                    <sfa-sortable-column-header 
+                        class="proposed-sort govuk-link"
+                        data-sortColumn="@nameof(OppFinderSearchSortColumn.StandardName)"
+                        asp-action="SortProposedStandards"
+                        asp-controller="OppFinder"
+                        asp-fragment="proposed"
+                        sfa-sort-column="@nameof(OppFinderSearchSortColumn.StandardName)"
+                        sfa-table-sort-column="@Model.ProposedSortColumn"
+                        sfa-sort-direction="@Model.ProposedSortDirection"
+                    >Proposed Standards</sfa-sortable-column-header>
+                </th>
+            </tr>
+        </thead>
+        <tbody class="govuk-table__body">
+            @if (Model?.ProposedStandards != null)
+            {
+                @foreach (var proposedStandard in Model.ProposedStandards.Items)
+                {
+                    <tr class="govuk-table__row">
+                        <td class="govuk-table__cell">
+                            <a
+                               class="govuk-link"
+                               asp-action="ShowProposedStandardDetails" 
+                               asp-controller="OppFinder" 
+                               asp-route-standardReference="@proposedStandard.StandardReference"
+                            >
+                               @proposedStandard.StandardName
+                            </a>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+    @if (Model != null)
+    {
+        <form asp-action="ShowProposedStandardsPerPage" asp-controller="OppFinder" method="get" asp-fragment="proposed">
+            <div class="das-flex-space-around">
+                <div>
+                        <select class="proposed-per-page govuk-select" asp-for="ProposedStandardsPerPage" asp-items="Model.StandardsPerPage"></select>
+                        <label for="ProposedStandardsPerPage">Standards per page</label>
+                </div>
+                <div class="das-pagination-links">
+                    @{await Html.RenderPartialAsync("_PaginationLinksPartial", new OppFinderPaginationViewModel
+                    {
+                        Standards = Model.ProposedStandards,
+                        PageIndex = Model.ProposedPageIndex,
+                        ChangePageAction = "ChangePageProposedStandards",
+                        Fragment = "proposed"
+                    });}
+                </div>
+            </div>
+            <button class="govuk-button govuk-button--secondary govuk-!-margin-bottom-0 govuk-!-margin-top-3 js-hidden" type="submit">
+                Update table
+            </button>
+        </form>
+    }
+}
+

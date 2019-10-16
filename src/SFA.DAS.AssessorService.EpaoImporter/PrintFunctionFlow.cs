@@ -4,17 +4,17 @@ using SFA.DAS.AssessorService.EpaoImporter.Startup;
 
 namespace SFA.DAS.AssessorService.EpaoImporter
 {
-    public static class PrintFunctionFlow
+  public static class PrintFunctionFlow
+  {
+    [FunctionName("PrintFunctionFlow")]
+    public static void Run([TimerTrigger("0 */15 * * * *", RunOnStartup = true)] TimerInfo myTimer, TraceWriter functionLogger,
+        ExecutionContext context)
     {
-        [FunctionName("PrintFunctionFlow")]
-        public static void Run([TimerTrigger("0 */3 * * * *", RunOnStartup = true)] TimerInfo myTimer, TraceWriter functionLogger,
-            ExecutionContext context)
-        {
-            new Bootstrapper().StartUp(functionLogger, context);
+      new Bootstrapper().StartUp(functionLogger, context);
 
-            var command = Bootstrapper.Container.GetInstance<PrintProcessCommand>();
-            command.Execute().GetAwaiter().GetResult();
-        }
+      var command = Bootstrapper.Container.GetInstance<PrintProcessCommand>();
+      command.Execute().GetAwaiter().GetResult();
     }
+  }
 }
 
