@@ -1,7 +1,6 @@
 ﻿using MediatR;
 using SFA.DAS.AssessorService.Api.Types.Models.Apply;
 using SFA.DAS.AssessorService.Application.Interfaces;
-using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -18,14 +17,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
 
         public async Task<bool> Handle(UpdateInitialStandardDataRequest request, CancellationToken cancellationToken)
         {
-            var application = await _applyRepository.GetApplication(request.Id);
-
-            if (application != null)
-            {
-                await _applyRepository.UpdateInitialStandardData(request);
-                return true;
-            }
-            return false;
+            return await _applyRepository.UpdateStandardData(request.Id, request.StandardCode, request.ReferenceNumber, request.StandardName);
         }
     }
 }

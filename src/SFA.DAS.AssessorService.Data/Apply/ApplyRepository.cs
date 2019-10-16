@@ -85,15 +85,36 @@ namespace SFA.DAS.AssessorService.Data.Apply
             }
         }
 
-        public async Task UpdateInitialStandardData(UpdateInitialStandardDataRequest standardRequest)
+        public async Task<bool> UpdateStandardData(Guid id, int standardCode, string referenceNumber, string standardName)
         {
-            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            var application = await GetApplication(id);
+            var applyData = application?.ApplyData;
+
+            if(application != null && applyData != null)
             {
-                await connection.ExecuteAsync(@"UPDATE Apply
-                                                SET  ApplyData = JSON_MODIFY(JSON_MODIFY(JSON_MODIFY(ApplyData,'$.Apply.StandardReference',@ReferenceNumber),'$.Apply.StandardCode',@StandardCode),'$.Apply.StandardName',@StandardName), StandardCode = @StandardCode
-                                                WHERE  Id = @Id",
-                                                new { standardRequest.StandardCode,standardRequest.ReferenceNumber, standardRequest.StandardName, standardRequest.Id });
+                application.StandardCode = standardCode;
+
+                if (applyData.Apply == null)
+                {
+                    applyData.Apply = new ApplyTypes.Apply();
+                }
+
+                applyData.Apply.StandardCode = standardCode;
+                applyData.Apply.StandardReference = referenceNumber;
+                applyData.Apply.StandardName = standardName;
+
+                using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+                {
+                    await connection.ExecuteAsync(@"UPDATE Apply
+                                                    SET  ApplyData = @ApplyData, StandardCode = @StandardCode
+                                                    WHERE  Id = @Id",
+                                                    new { application.Id, application.ApplyData, application.StandardCode });
+                }
+
+                return true;
             }
+
+            return false;
         }
 
         public async Task StartFinancialReview(Guid id, string reviewer)

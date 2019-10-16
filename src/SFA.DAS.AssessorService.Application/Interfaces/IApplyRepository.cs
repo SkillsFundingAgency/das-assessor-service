@@ -25,6 +25,6 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task StartApplicationSectionReview(Guid id, int sequenceNo, int sectionNo, string reviewer);
         Task EvaluateApplicationSection(Guid id, int sequenceNo, int sectionNo, bool isSectionComplete, string evaluatedBy);
         Task ReturnApplicationSequence(Guid id, int sequenceNo, string sequenceStatus, string returnedBy);
-        Task UpdateInitialStandardData(UpdateInitialStandardDataRequest standardRequest);
+        Task<bool> UpdateStandardData(Guid id, int standardCode, string referenceNumber, string standardName);
     }
 }
