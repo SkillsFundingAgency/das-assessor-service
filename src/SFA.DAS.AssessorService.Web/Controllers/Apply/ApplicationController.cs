@@ -781,23 +781,17 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             };
         }
 
-        private CreateApplicationRequest BuildCreateApplicationRequest(Guid id, ContactResponse contact, OrganisationResponse org,
+        private CreateApplicationRequest BuildCreateApplicationRequest(Guid qnaApplicationId, ContactResponse contact, OrganisationResponse org,
            string referenceFormat, List<Sequence> sequences, List<List<Section>> sections)
         {
 
             return new CreateApplicationRequest
             {
-                ApplicationId = id,
+                QnaApplicationId = qnaApplicationId,
                 OrganisationId = org.Id,
-                ReferenceFormat = referenceFormat,
-                ContactName = contact.DisplayName,
-                StandardCode = null,
-                StandardReference = null,
-                StandardName = null,
-                ApplicationStatus = ApplicationStatus.InProgress,
-                Email = contact.Email,
-                UserId = contact.Id,
-                listOfApplySequences = sequences.Select(sequence => new ApplySequence
+                ApplicationReferenceFormat = referenceFormat,
+                CreatingContactId = contact.Id,
+                ApplySequences = sequences.Select(sequence => new ApplySequence
                 {
                     SequenceId = sequence.Id,
                     Sections = sections.SelectMany(y => y.Where(x => x.SequenceNo == sequence.SequenceNo).Select(x => new ApplySection

@@ -16,75 +16,60 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
         private readonly IApplyRepository _applyRepository;
         private readonly IOrganisationQueryRepository _organisationQueryRepository;
         private readonly IRegisterQueryRepository _registerQueryRepository;
+        private readonly IContactQueryRepository _contactQueryRepository;
 
         public CreateApplicationHandler(IOrganisationQueryRepository organisationQueryRepository,
-            IRegisterQueryRepository registerQueryRepository, IApplyRepository applyRepository)
+            IRegisterQueryRepository registerQueryRepository, IContactQueryRepository contactQueryRepository,
+            IApplyRepository applyRepository)
         {
             _applyRepository = applyRepository;
             _organisationQueryRepository = organisationQueryRepository;
             _registerQueryRepository = registerQueryRepository;
+            _contactQueryRepository = contactQueryRepository;
         }
 
         public async Task<Guid> Handle(CreateApplicationRequest request, CancellationToken cancellationToken)
         {
             var org = await _organisationQueryRepository.Get(request.OrganisationId);
             var orgTypes = await _registerQueryRepository.GetOrganisationTypes();
-            var orgType = orgTypes.FirstOrDefault(x => x.Id == org.OrganisationTypeId);
+            var creatingContact = await _contactQueryRepository.GetContactById(request.CreatingContactId);
 
-            var sequences = request.listOfApplySequences;
-            DisableSequencesAndSectionsAsAppropriate(sequences, org, orgType);
-
-            var applyData = new ApplyData
+            if (org != null && orgTypes != null && creatingContact != null)
             {
-                Sequences = sequences,
-                Apply = new ApplyTypes.Apply
+                var orgType = orgTypes.FirstOrDefault(x => x.Id == org.OrganisationTypeId);
+
+                var sequences = request.ApplySequences;
+                DisableSequencesAndSectionsAsAppropriate(sequences, org, orgType);
+
+                var applyData = new ApplyData
                 {
-                    ReferenceNumber = await CreateReferenceNumber(request.ReferenceFormat)
-                }
-            };
+                    Sequences = sequences,
+                    Apply = new ApplyTypes.Apply
+                    {
+                        ReferenceNumber = await CreateReferenceNumber(request.ApplicationReferenceFormat),
+                        InitSubmissions = new List<Submission>(),
+                        InitSubmissionCount = 0,
+                        StandardSubmissions = new List<Submission>(),
+                        StandardSubmissionsCount = 0
+                    }
+                };
 
-            AddApplyDataWithSubmissionInfo(applyData, request);
-            var application = new Domain.Entities.Apply
-            {
-                ApplyData = applyData,
-                ApplicationId = request.ApplicationId,
-                StandardCode = request.StandardCode,
-                ApplicationStatus = ApplicationStatus.InProgress,
-                ReviewStatus = ApplicationReviewStatus.Draft,
-                FinancialReviewStatus = IsFinancialExempt(org.OrganisationData?.FHADetails, orgType) ? FinancialReviewStatus.Exempt : FinancialReviewStatus.Required,
-                OrganisationId = request.OrganisationId,
-                CreatedBy = request.UserId.ToString()
-            };
-
-            return await _applyRepository.CreateApplication(application);
-        }
-
-        private void AddApplyDataWithSubmissionInfo(ApplyData applyData, CreateApplicationRequest request)
-        {
-            foreach (var sequence in applyData.Sequences)
-            {
-                if (sequence.SequenceNo == 1)
+                var application = new Domain.Entities.Apply
                 {
-                    applyData.Apply.InitSubmissions = new List<Submission>();
-                    applyData.Apply.InitSubmissionCount = applyData.Apply.InitSubmissions.Count;
+                    ApplyData = applyData,
+                    ApplicationId = request.QnaApplicationId,
+                    ApplicationStatus = ApplicationStatus.InProgress,
+                    ReviewStatus = ApplicationReviewStatus.Draft,
+                    FinancialReviewStatus = IsFinancialExempt(org.OrganisationData?.FHADetails, orgType) ? FinancialReviewStatus.Exempt : FinancialReviewStatus.Required,
+                    OrganisationId = org.Id,
+                    CreatedBy = creatingContact.Id.ToString(),
+                    CreatedAt = DateTime.UtcNow
+                };
 
-                    applyData.Apply.LatestInitSubmissionDate = null;
-                    applyData.Apply.InitSubmissionClosedDate = null;
-                    applyData.Apply.InitSubmissionFeedbackAddedDate = null;
-                }
-                else if (sequence.SequenceNo == 2)
-                {
-                    applyData.Apply.StandardSubmissions = new List<Submission>();
-                    applyData.Apply.StandardSubmissionsCount = applyData.Apply.StandardSubmissions.Count;
-                    applyData.Apply.StandardName = request.StandardName;
-                    applyData.Apply.StandardCode = request.StandardCode;
-                    applyData.Apply.StandardReference = request.StandardReference;
-
-                    applyData.Apply.LatestStandardSubmissionDate = null;
-                    applyData.Apply.StandardSubmissionClosedDate = null;
-                    applyData.Apply.StandardSubmissionFeedbackAddedDate = null;
-                }
+                return await _applyRepository.CreateApplication(application);
             }
+
+            return Guid.Empty;
         }
 
         private void DisableSequencesAndSectionsAsAppropriate(List<ApplySequence> sequences, Domain.Entities.Organisation org, OrganisationType orgType)
