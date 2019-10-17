@@ -12,6 +12,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<List<Domain.Entities.Apply>> GetOrganisationApplications(Guid userId);
         Task<Domain.Entities.Apply> GetApplication(Guid applicationId);
         Task<Guid> CreateApplication(Domain.Entities.Apply apply);
+        Task<bool> CanSubmitApplication(Guid applicationId);
         Task SubmitApplicationSequence(Domain.Entities.Apply apply);
         Task<int> GetNextAppReferenceSequence();
         Task<List<ApplicationSummaryItem>> GetOpenApplications(int sequenceNo);
@@ -25,6 +26,6 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task StartApplicationSectionReview(Guid id, int sequenceNo, int sectionNo, string reviewer);
         Task EvaluateApplicationSection(Guid id, int sequenceNo, int sectionNo, bool isSectionComplete, string evaluatedBy);
         Task ReturnApplicationSequence(Guid id, int sequenceNo, string sequenceStatus, string returnedBy);
-        Task UpdateInitialStandardData(UpdateInitialStandardDataRequest standardRequest);
+        Task<bool> UpdateStandardData(Guid id, int standardCode, string referenceNumber, string standardName);
     }
 }

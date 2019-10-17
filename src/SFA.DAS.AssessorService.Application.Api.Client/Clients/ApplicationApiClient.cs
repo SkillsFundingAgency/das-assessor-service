@@ -1,13 +1,11 @@
-﻿using System;
-using System.Linq;
+﻿using Microsoft.Extensions.Logging;
+using SFA.DAS.AssessorService.Api.Types.Models.AO;
+using SFA.DAS.AssessorService.Api.Types.Models.Apply;
+using SFA.DAS.AssessorService.Api.Types.Models.Standards;
+using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
-using SFA.DAS.AssessorService.Api.Types.Models.AO;
-using SFA.DAS.AssessorService.Api.Types.Models.Apply;
-using SFA.DAS.QnA.Api.Types.Page;
-using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 
 namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 {
@@ -51,20 +49,26 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task<List<Option>> GetQuestionDataFedOptions()
+        public async Task<bool> SubmitApplicationSequence(SubmitApplicationSequenceRequest submitApplicationRequest)
         {
-            using (var request = new HttpRequestMessage(HttpMethod.Get, $"api/ao/delivery-areas"))
+          
+            using (var request = new HttpRequestMessage(HttpMethod.Post, $"api/v1/applications/submitApplicationSequence"))
             {
-                return (await RequestAndDeserialiseAsync<IEnumerable<DeliveryArea>>(request, $"Could not retrieve applications")).Select(da => new Option() { Label = da.Area, Value = da.Area }).ToList(); 
+                return await PostPutRequestWithResponse<SubmitApplicationSequenceRequest, bool>(request, submitApplicationRequest);
             }
         }
 
-        public async Task<bool> Submit(SubmitApplicationRequest submitApplicationRequest)
+        public async Task<bool> UpdateStandardData(Guid Id, int standardCode, string referenceNumber, string standardName)
         {
-          
-            using (var request = new HttpRequestMessage(HttpMethod.Post, $"api/v1/applications/submitApplication"))
+            using (var request = new HttpRequestMessage(HttpMethod.Post, $"api/v1/applications/updateStandardData"))
             {
-                return await PostPutRequestWithResponse<SubmitApplicationRequest, bool>(request, submitApplicationRequest);
+                return await PostPutRequestWithResponse<UpdateStandardDataRequest, bool>(request, new UpdateStandardDataRequest
+                {
+                    Id = Id,
+                    StandardCode = standardCode,
+                    ReferenceNumber = referenceNumber,
+                    StandardName = standardName
+                });
             }
         }
 
@@ -76,18 +80,13 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task<bool> UpdateInitialStandardData(Guid id, int standardCode, string referenceNumber, string standardName)
+        public async Task<List<DeliveryArea>> GetQuestionDataFedOptions()
         {
-            using (var request = new HttpRequestMessage(HttpMethod.Post, $"api/v1/applications/updateInitialStandardData"))
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"api/ao/delivery-areas"))
             {
-                return await PostPutRequestWithResponse<UpdateInitialStandardDataRequest, bool>(request, new UpdateInitialStandardDataRequest
-                {
-                    Id = id,
-                    StandardCode = standardCode,
-                    ReferenceNumber = referenceNumber,
-                    StandardName = standardName
-                });
+                return await RequestAndDeserialiseAsync<List<DeliveryArea>>(request, $"Could not retrieve applications");
             }
         }
+
     }
 }

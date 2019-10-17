@@ -17,18 +17,18 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply.Review
         private readonly IApplyRepository _applyRepository;
         private readonly IMediator _mediator;
         private readonly IEMailTemplateQueryRepository _eMailTemplateQueryRepository;
-        private readonly IContactRepository _contactRepository;
+        private readonly IContactQueryRepository _contactQueryRepository;
         private readonly IWebConfiguration _config;
 
         private const string SERVICE_NAME = "Apprenticeship assessment service";
         private const string SERVICE_TEAM = "Apprenticeship assessment service team";
 
-        public ReturnApplicationSequenceHandler(IApplyRepository applyRepository, IEMailTemplateQueryRepository eMailTemplateQueryRepository, IContactRepository contactRepository, IWebConfiguration config, IMediator mediator)
+        public ReturnApplicationSequenceHandler(IApplyRepository applyRepository, IEMailTemplateQueryRepository eMailTemplateQueryRepository, IContactQueryRepository contactQueryRepository, IWebConfiguration config, IMediator mediator)
         {
             _applyRepository = applyRepository;
             _mediator = mediator;
             _eMailTemplateQueryRepository = eMailTemplateQueryRepository;
-            _contactRepository = contactRepository;
+            _contactQueryRepository = contactQueryRepository;
             _config = config;
         }
 
@@ -71,33 +71,37 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply.Review
         private async Task NotifyContact(Guid applicationId, int sequenceNo, CancellationToken cancellationToken)
         {
             var application = await _applyRepository.GetApplication(applicationId);
-            var standard = application.ApplyData?.Apply.StandardName ?? string.Empty;
-            var loginLink = $"{_config.ServiceLink}/Account/SignIn";
 
-            if (sequenceNo == 1)
+            if (application != null)
             {
-                var lastInitSubmission = application.ApplyData?.Apply.InitSubmissions.OrderByDescending(sub => sub.SubmittedAt).FirstOrDefault();
+                var loginLink = $"{_config.ServiceLink}/Account/SignIn";
 
-                if (lastInitSubmission != null)
+                if (sequenceNo == 1)
                 {
-                    var contactToNotify = await _contactRepository.GetContact(lastInitSubmission.SubmittedByEmail);
+                    var lastInitSubmission = application.ApplyData?.Apply.InitSubmissions.OrderByDescending(sub => sub.SubmittedAt).FirstOrDefault();
 
-                    var emailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.APPLY_EPAO_UPDATE);
-                    await _mediator.Send(new SendEmailRequest(contactToNotify.Email, emailTemplate,
-                        new { ServiceName = SERVICE_NAME, ServiceTeam = SERVICE_TEAM, Contact = contactToNotify.GivenNames, LoginLink = loginLink }), cancellationToken);
+                    if (lastInitSubmission != null)
+                    {
+                        var contactToNotify = await _contactQueryRepository.GetContactById(lastInitSubmission.SubmittedBy);
+
+                        var emailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.APPLY_EPAO_UPDATE);
+                        await _mediator.Send(new SendEmailRequest(contactToNotify.Email, emailTemplate,
+                            new { ServiceName = SERVICE_NAME, ServiceTeam = SERVICE_TEAM, Contact = contactToNotify.DisplayName, LoginLink = loginLink }), cancellationToken);
+                    }
                 }
-            }
-            else if (sequenceNo == 2)
-            {
-                var lastStandardSubmission = application.ApplyData?.Apply.StandardSubmissions.OrderByDescending(sub => sub.SubmittedAt).FirstOrDefault();
-
-                if (lastStandardSubmission != null)
+                else if (sequenceNo == 2)
                 {
-                    var contactToNotify = await _contactRepository.GetContact(lastStandardSubmission.SubmittedByEmail);
+                    var standardName = application.ApplyData?.Apply.StandardName ?? string.Empty;
+                    var lastStandardSubmission = application.ApplyData?.Apply.StandardSubmissions.OrderByDescending(sub => sub.SubmittedAt).FirstOrDefault();
 
-                    var emailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.APPLY_EPAO_RESPONSE);
-                    await _mediator.Send(new SendEmailRequest(contactToNotify.Email, emailTemplate,
-                        new { ServiceName = SERVICE_NAME, ServiceTeam = SERVICE_TEAM, Contact = contactToNotify.GivenNames, standard, LoginLink = loginLink }), cancellationToken);
+                    if (lastStandardSubmission != null)
+                    {
+                        var contactToNotify = await _contactQueryRepository.GetContactById(lastStandardSubmission.SubmittedBy);
+
+                        var emailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.APPLY_EPAO_RESPONSE);
+                        await _mediator.Send(new SendEmailRequest(contactToNotify.Email, emailTemplate,
+                            new { ServiceName = SERVICE_NAME, ServiceTeam = SERVICE_TEAM, Contact = contactToNotify.DisplayName, standard = standardName, LoginLink = loginLink }), cancellationToken);
+                    }
                 }
             }
         }

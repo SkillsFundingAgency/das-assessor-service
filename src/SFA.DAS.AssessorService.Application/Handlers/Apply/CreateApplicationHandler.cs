@@ -16,74 +16,63 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
         private readonly IApplyRepository _applyRepository;
         private readonly IOrganisationQueryRepository _organisationQueryRepository;
         private readonly IRegisterQueryRepository _registerQueryRepository;
+        private readonly IContactQueryRepository _contactQueryRepository;
 
-        public CreateApplicationHandler(IOrganisationQueryRepository organisationQueryRepository, 
-            IRegisterQueryRepository registerQueryRepository, IApplyRepository applyRepository)
+        public CreateApplicationHandler(IOrganisationQueryRepository organisationQueryRepository,
+            IRegisterQueryRepository registerQueryRepository, IContactQueryRepository contactQueryRepository,
+            IApplyRepository applyRepository)
         {
             _applyRepository = applyRepository;
             _organisationQueryRepository = organisationQueryRepository;
             _registerQueryRepository = registerQueryRepository;
+            _contactQueryRepository = contactQueryRepository;
         }
 
         public async Task<Guid> Handle(CreateApplicationRequest request, CancellationToken cancellationToken)
         {
             var org = await _organisationQueryRepository.Get(request.OrganisationId);
             var orgTypes = await _registerQueryRepository.GetOrganisationTypes();
-            var orgType = orgTypes.FirstOrDefault(x => x.Id == org.OrganisationTypeId);
-            DisableSequencesAndSectionsAsAppropriate(org, request.listOfApplySequences, orgType);
+            var creatingContact = await _contactQueryRepository.GetContactById(request.CreatingContactId);
 
-            var applyData = new ApplyData
+            if (org != null && orgTypes != null && creatingContact != null)
             {
-                Sequences = request.listOfApplySequences
-            };
-            await AddApplyDataWithSubmissionInfo(applyData, request);
-            var application = new Domain.Entities.Apply
-            {
-                ApplyData = applyData,
-                ApplicationId = request.ApplicationId,
-                StandardCode = request.StandardCode,
-                ApplicationStatus = ApplicationStatus.InProgress,
-                ReviewStatus = ApplicationReviewStatus.Draft,
-                FinancialReviewStatus = IsFinancialExempt(org.OrganisationData?.FHADetails, orgType) ? FinancialReviewStatus.Exempt: FinancialReviewStatus.Required,
-                OrganisationId = request.OrganisationId,
-                CreatedBy = request.UserId.ToString()
-            };
+                var orgType = orgTypes.FirstOrDefault(x => x.Id == org.OrganisationTypeId);
 
-            var response = await _applyRepository.CreateApplication(application);
-            return response;
-        }
+                var sequences = request.ApplySequences;
+                DisableSequencesAndSectionsAsAppropriate(sequences, org, orgType);
 
-        private async Task AddApplyDataWithSubmissionInfo(ApplyData applyData, CreateApplicationRequest request)
-        {
-            applyData.Apply = new ApplyTypes.Apply();
-            applyData.Apply.ReferenceNumber = await CreateReferenceNumber(request.ReferenceFormat);
-            foreach (var sequence in applyData.Sequences)
-            {
-
-                if (sequence.SequenceNo == 1)
+                var applyData = new ApplyData
                 {
-                    applyData.Apply.InitSubmissions = new List<InitSubmission>();
-                    applyData.Apply.InitSubmissionCount = 0;
-                    applyData.Apply.LatestInitSubmissionDate = null;
-                }
-                else if (sequence.SequenceNo == 2)
-                {
-                    applyData.Apply.StandardCode = request.StandardCode;
-                    applyData.Apply.StandardName = request.StandardName;
-                    applyData.Apply.StandardReference = request.StandardReference;
+                    Sequences = sequences,
+                    Apply = new ApplyTypes.Apply
+                    {
+                        ReferenceNumber = await CreateReferenceNumber(request.ApplicationReferenceFormat),
+                        InitSubmissions = new List<Submission>(),
+                        InitSubmissionCount = 0,
+                        StandardSubmissions = new List<Submission>(),
+                        StandardSubmissionsCount = 0
+                    }
+                };
 
-                   
-                    applyData.Apply.StandardSubmissionsCount = 0;
-                    applyData.Apply.LatestStandardSubmissionDate = null;
-                    applyData.Apply.StandardSubmissionClosedDate = null;
-                    applyData.Apply.StandardSubmissionFeedbackAddedDate = null;
-                }
+                var application = new Domain.Entities.Apply
+                {
+                    ApplyData = applyData,
+                    ApplicationId = request.QnaApplicationId,
+                    ApplicationStatus = ApplicationStatus.InProgress,
+                    ReviewStatus = ApplicationReviewStatus.Draft,
+                    FinancialReviewStatus = IsFinancialExempt(org.OrganisationData?.FHADetails, orgType) ? FinancialReviewStatus.Exempt : FinancialReviewStatus.Required,
+                    OrganisationId = org.Id,
+                    CreatedBy = creatingContact.Id.ToString(),
+                    CreatedAt = DateTime.UtcNow
+                };
+
+                return await _applyRepository.CreateApplication(application);
             }
 
+            return Guid.Empty;
         }
 
-        private void DisableSequencesAndSectionsAsAppropriate(Domain.Entities.Organisation org, 
-            List<ApplySequence> sequences, OrganisationType orgType)
+        private void DisableSequencesAndSectionsAsAppropriate(List<ApplySequence> sequences, Domain.Entities.Organisation org, OrganisationType orgType)
         {
             bool isEpao = IsOrganisationOnEPAORegister(org);
             if (isEpao)
@@ -91,7 +80,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
                 RemoveSectionsOneAndTwo(sequences.Single(x => x.SequenceNo == 1));
             }
 
-            bool isFinancialExempt = IsFinancialExempt(org.OrganisationData?.FHADetails,orgType);
+            bool isFinancialExempt = IsFinancialExempt(org.OrganisationData?.FHADetails, orgType);
             if (isFinancialExempt)
             {
                 RemoveSectionThree(sequences.Single(x => x.SequenceNo == 1));
@@ -105,45 +94,54 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
 
         private static bool IsOrganisationOnEPAORegister(Domain.Entities.Organisation org)
         {
-            if (org is null) return false;
+            if (org?.OrganisationData == null) return false;
 
             return org.OrganisationData.RoEPAOApproved;
         }
 
         private void RemoveSequenceOne(List<ApplySequence> sequences)
         {
-            var stage1 = sequences.Single(seq => seq.SequenceNo == 1);
-            stage1.IsActive = false;
-            stage1.NotRequired = true;
-            stage1.Status = ApplicationSequenceStatus.Approved;
-
-            sequences.Single(seq => seq.SequenceNo == 2).IsActive = true;
-        }
-
-        private void RemoveSectionThree(ApplySequence applySequence)
-        {
-            foreach (var applySection in applySequence.Sections.Where( x=> x.SectionNo == 3))
+            foreach (var sequence1 in sequences.Where(seq => seq.SequenceNo == 1))
             {
-                applySection.NotRequired = true;
-                applySection.Status = ApplicationSectionStatus.Evaluated;
+                sequence1.IsActive = false;
+                sequence1.NotRequired = true;
+                sequence1.Status = ApplicationSequenceStatus.Approved;
+            }
+
+            foreach (var sequence2 in sequences.Where(seq => seq.SequenceNo == 2))
+            {
+                if (!sequence2.NotRequired)
+                {
+                    sequence2.IsActive = true;
+                    sequence2.Status = ApplicationSequenceStatus.Draft;
+                }
             }
         }
 
-        private void RemoveSectionsOneAndTwo(ApplySequence applySequence)
+        private void RemoveSectionThree(ApplySequence sequence)
         {
-            foreach (var applySection in applySequence.Sections.Where(s => s.SectionNo == 1 || s.SectionNo == 2))
+            foreach (var section in sequence.Sections.Where(sec => sec.SectionNo == 3))
             {
-                applySection.NotRequired = true;
-                applySection.Status = ApplicationSectionStatus.Evaluated;
+                section.NotRequired = true;
+                section.Status = ApplicationSectionStatus.Evaluated;
+            }
+        }
+
+        private void RemoveSectionsOneAndTwo(ApplySequence sequence)
+        {
+            foreach (var section in sequence.Sections.Where(s => s.SectionNo == 1 || s.SectionNo == 2))
+            {
+                section.NotRequired = true;
+                section.Status = ApplicationSectionStatus.Evaluated;
             }
         }
 
         private static bool IsFinancialExempt(ApplyTypes.FHADetails financials, OrganisationType orgType)
         {
-            if (financials is null) return false;
+            if (financials == null) return false;
 
             bool financialExempt = financials.FinancialExempt ?? false;
-            bool orgTypeFinancialExempt = orgType == null ? false : orgType.FinancialExempt;
+            bool orgTypeFinancialExempt = (orgType != null) && orgType.FinancialExempt;
 
             bool financialIsNotDue = (financials.FinancialDueDate?.Date ?? DateTime.MinValue) > DateTime.Today;
 
@@ -158,7 +156,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
 
             if (seq > 0 && !string.IsNullOrEmpty(referenceFormat))
             {
-                referenceNumber = string.Format($"{referenceFormat}{seq:D6}");
+                referenceNumber = $"{referenceFormat}{seq:D6}";
             }
 
             return referenceNumber;

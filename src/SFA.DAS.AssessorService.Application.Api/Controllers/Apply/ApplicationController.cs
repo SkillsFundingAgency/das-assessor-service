@@ -59,7 +59,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.Apply
         [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<ActionResult<Guid>> CreateApplication(
-          [FromBody] CreateApplicationRequest createApplicationRequest)
+            [FromBody] CreateApplicationRequest createApplicationRequest)
         {
             _logger.LogInformation("Received Create Application Request");
 
@@ -69,31 +69,30 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.Apply
                 applicationResponse);
         }
 
-        [HttpPost("submitApplication", Name = "SubmitApplication")]
+        [HttpPost("submitApplicationSequence", Name = "SubmitApplicationSequence")]
         [SwaggerResponse((int)HttpStatusCode.Created, Type = typeof(bool))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<ActionResult<Guid>> SubmitApplication(
-         [FromBody] SubmitApplicationRequest submitApplicationRequest)
+        public async Task<ActionResult<Guid>> SubmitApplicationSequence(
+            [FromBody] SubmitApplicationSequenceRequest submitApplicationSequenceRequest)
         {
-            _logger.LogInformation("Received Submit Application Request");
+            _logger.LogInformation("Received Submit Application Sequence Request");
 
-            var response = await _mediator.Send(submitApplicationRequest);
+            var response = await _mediator.Send(submitApplicationSequenceRequest);
 
-            return CreatedAtRoute("SubmitApplication",
-                response);
+            return CreatedAtRoute("SubmitApplication", response);
         }
 
-        [HttpPost("updateInitialStandardData", Name = "UpdateInitialStandardData")]
+        [HttpPost("updateStandardData", Name = "UpdateStandardData")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(bool))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<ActionResult> UpdateInitialStandardData(
-        [FromBody] UpdateInitialStandardDataRequest updateInitialStandardDataRequest)
+        public async Task<ActionResult> UpdateStandardData(
+            [FromBody] UpdateStandardDataRequest updateStandardDataRequest)
         {
-            _logger.LogInformation("Received Update Application Standard  Request");
+            _logger.LogInformation("Received Update Application Standard Request");
 
-            return Ok(await _mediator.Send(updateInitialStandardDataRequest));
+            return Ok(await _mediator.Send(updateStandardDataRequest));
         }
     }
 }

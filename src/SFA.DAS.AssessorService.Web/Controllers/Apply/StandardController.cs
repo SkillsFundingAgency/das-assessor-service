@@ -75,7 +75,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 return View("~/Views/Application/Standard/ConfirmStandard.cshtml", model);
             }
 
-            await _apiClient.UpdateInitialStandardData(id, standardCode, model.SelectedStandard?.ReferenceNumber, model.SelectedStandard.Title);
+            await _apiClient.UpdateStandardData(id, standardCode, model.SelectedStandard?.ReferenceNumber, model.SelectedStandard.Title);
 
             return RedirectToAction("Applications", "Application");
         }
