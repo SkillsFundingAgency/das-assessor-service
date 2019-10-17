@@ -78,23 +78,33 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             return Ok(contacts);
         }
 
-        [HttpGet("get-all/{endPointAssessorOrganisationId}", Name = "GetAllContactsForOrganisation")]
+        [HttpPost("getAll", Name = "GetAllContactsForOrganisation")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<ContactResponse>))]
         [SwaggerResponse((int)HttpStatusCode.NotFound)]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> GetAllContactsForOrganisation(string endPointAssessorOrganisationId)
+        public async Task<IActionResult> GetAllContactsForOrganisation([FromBody] GetAllContactsRequest request)
         {
             _logger.LogInformation(
-                $"Received Search for Contacts using endPointAssessorOrganisationId = {endPointAssessorOrganisationId}");
+                $"Received Search for Contacts using epaoId = {request.EndPointAssessorOrganisationId}");
 
-            var result = _searchOrganisationForContactsValidator.Validate(endPointAssessorOrganisationId);
-            if (!result.IsValid)
-                throw new ResourceNotFoundException(result.Errors[0].ErrorMessage);
+            ValidateEndPointAssessorOrganisation(request.EndPointAssessorOrganisationId);
 
-            var contacts =
-                Mapper.Map<List<ContactResponse>>(await _contactQueryRepository.GetAllContacts(endPointAssessorOrganisationId)).ToList();
-            return Ok(contacts);
+            return Ok(await _mediator.Send(request));
         }
+
+        [HttpPost("getAll/includePrivileges", Name = "GetAllContactsForOrganisationIncludePrivileges")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<ContactIncludePrivilegesResponse>))]
+        [SwaggerResponse((int)HttpStatusCode.NotFound)]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> GetAllContactsForOrganisationIncludePrivileges([FromBody] GetAllContactsIncludePrivilegesRequest request)
+        {
+            _logger.LogInformation(
+                $"Received Search for Contacts and their Privileges using epaoId = {request.EndPointAssessorOrganisationId}");
+
+            ValidateEndPointAssessorOrganisation(request.EndPointAssessorOrganisationId);
+
+            return Ok(await _mediator.Send(request));
+        }        
 
         [HttpGet("getAllWhoCanBePrimary/{endPointAssessorOrganisationId}", Name = "GetAllContactsWhoCanBePrimaryForOrganisation")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<ContactResponse>))]
@@ -124,18 +134,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             if (contact == null)
                 throw new ResourceNotFoundException();
             return Ok(Mapper.Map<ContactResponse>(contact));
-        }
-
-        [HttpGet("{organisationId}/withprivileges", Name = "GetAllContactsWithTheirPrivileges")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<ContactsWithPrivilegesResponse>))]
-        [SwaggerResponse((int)HttpStatusCode.NotFound)]
-        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> GetAllContactsWithTheirPrivileges(Guid organisationId)
-        {
-            _logger.LogInformation(
-                $"Received Search for Contacts and their Privileges using endPointAssessorOrganisationId = {organisationId}");
-
-            return Ok(await _mediator.Send(new GetContactsWithPrivilegesRequest(organisationId)));
         }
 
         [HttpGet("user/{id}", Name = "GetContactById")]
@@ -336,6 +334,13 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
                 || "College".Equals(organisationType, StringComparison.InvariantCultureIgnoreCase)
                 || "Public Sector".Equals(organisationType, StringComparison.InvariantCultureIgnoreCase)
                 || "Academy or Free School".Equals(organisationType, StringComparison.InvariantCultureIgnoreCase);
+        }
+
+        private void ValidateEndPointAssessorOrganisation(string endPointAssessorOrganisationId)
+        {
+            var result = _searchOrganisationForContactsValidator.Validate(endPointAssessorOrganisationId);
+            if (!result.IsValid)
+                throw new ResourceNotFoundException(result.Errors[0].ErrorMessage);
         }
     }
 

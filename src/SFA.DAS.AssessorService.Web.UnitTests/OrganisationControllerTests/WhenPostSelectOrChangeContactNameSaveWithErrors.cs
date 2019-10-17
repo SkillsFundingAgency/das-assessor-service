@@ -38,7 +38,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.OrganisationControllerTests
                     ChangeOrganisationDetailsContactsPrivilege
                 });
 
-            ContactsApiClient.Setup(c => c.GetAllContactsForOrganisation(EpaoId))
+            ContactsApiClient.Setup(c => c.GetAllContactsForOrganisation(EpaoId, null))
                 .ReturnsAsync(new List<ContactResponse>());
 
             ContactsApiClient.Setup(c => c.GetByUsername(ValidPrimaryContact))

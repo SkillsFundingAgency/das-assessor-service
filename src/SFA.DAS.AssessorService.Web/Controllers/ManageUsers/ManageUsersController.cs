@@ -42,7 +42,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.ManageUsers
             var userId = _contextAccessor.HttpContext.User.FindFirst("UserId")?.Value;
             var organisation = await _organisationsApiClient.GetOrganisationByUserId(Guid.Parse(userId));
 
-            var response = await _contactsApiClient.GetContactsWithPrivileges(organisation.Id);
+            var response = await _contactsApiClient.GetAllContactsForOrganisationIncludePrivileges(organisation.EndPointAssessorOrganisationId);
 
             return View(response);
         }

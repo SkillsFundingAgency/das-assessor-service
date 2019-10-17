@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -41,15 +42,25 @@ namespace SFA.DAS.AssessorService.Application.Handlers.UserManagement
             await _contactRepository.RemoveAllPrivileges(request.ContactId);
             
             await _applyContactsApiClient.RemoveContactFromOrganisation(request.ContactId);
-            
-            await _contactRepository.CreateContactLog(request.RequestingUserId, request.ContactId, ContactLogType.UserRemoved, 
-                null);
-            
+
+            await LogContactRemovedChanges(request);
+
             return new RemoveContactFromOrganisationResponse()
             {
                 Success = true,
                 SelfRemoved = request.ContactId == request.RequestingUserId
             };
+        }
+
+        private async Task LogContactRemovedChanges(RemoveContactFromOrganisationRequest request)
+        {
+            await _contactRepository.CreateContactLog(
+                request.RequestingUserId,
+                request.ContactId,
+                request.RequestingUserId.Equals(Guid.Empty)
+                    ? ContactLogType.UserRemovedByStaff
+                    : ContactLogType.UserRemoved,
+                 null);
         }
     }
 }
