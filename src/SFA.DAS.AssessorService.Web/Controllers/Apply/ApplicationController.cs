@@ -506,9 +506,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 }
             }
 
-            var submitApplicationRequest = BuildSubmitApplicationRequest(application.Id, _config.ReferenceFormat, sequence.SequenceNo, contact.Id);
+            var submitRequest = BuildSubmitApplicationSequenceRequest(application.Id, _config.ReferenceFormat, sequence.SequenceNo, contact.Id);
 
-            if (await _applicationApiClient.Submit(submitApplicationRequest))
+            if (await _applicationApiClient.SubmitApplicationSequence(submitRequest))
             {
                 return RedirectToAction("Submitted", new { Id });
             }
@@ -564,8 +564,13 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 {
                     if (question.Input.Type.StartsWith("DataFed_"))
                     {
-                        var questionOptions = await _applicationApiClient.GetQuestionDataFedOptions();
                         // Get data from API using question.Input.DataEndpoint
+                        // var questionOptions = await _applicationApiClient.GetQuestionDataFedOptions();
+
+                        // NOTE: For now it seems the only DataFed type is delivery areas and someone has coded it that way in the api client
+                        var deliveryAreas = await _applicationApiClient.GetQuestionDataFedOptions();
+                        var questionOptions = deliveryAreas.Select(da => new Option() { Label = da.Area, Value = da.Area }).ToList();
+
                         question.Input.Options = questionOptions;
                         question.Input.Type = question.Input.Type.Replace("DataFed_", "");
                     }
@@ -770,9 +775,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             }
         }
 
-        private static SubmitApplicationRequest BuildSubmitApplicationRequest(Guid applicationId, string referenceFormat, int sequenceNo, Guid userId)
+        private static SubmitApplicationSequenceRequest BuildSubmitApplicationSequenceRequest(Guid applicationId, string referenceFormat, int sequenceNo, Guid userId)
         {  
-            return new SubmitApplicationRequest
+            return new SubmitApplicationSequenceRequest
             {
                 ApplicationId = applicationId,
                 ApplicationReferenceFormat = referenceFormat,

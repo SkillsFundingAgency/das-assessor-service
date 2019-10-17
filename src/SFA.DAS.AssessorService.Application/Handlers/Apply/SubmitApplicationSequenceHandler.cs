@@ -12,14 +12,14 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Apply
 {
-    public class SubmitApplicationHandler : IRequestHandler<SubmitApplicationRequest, bool>
+    public class SubmitApplicationSequenceHandler : IRequestHandler<SubmitApplicationSequenceRequest, bool>
     {
         private readonly IApplyRepository _applyRepository;
         private readonly IContactQueryRepository _contactQueryRepository;     
         private readonly IEMailTemplateQueryRepository _eMailTemplateQueryRepository;
         private readonly IMediator _mediator;
 
-        public SubmitApplicationHandler(IApplyRepository applyRepository, IContactQueryRepository contactQueryRepository, IEMailTemplateQueryRepository eMailTemplateQueryRepository, IMediator mediator)
+        public SubmitApplicationSequenceHandler(IApplyRepository applyRepository, IContactQueryRepository contactQueryRepository, IEMailTemplateQueryRepository eMailTemplateQueryRepository, IMediator mediator)
         {
             _applyRepository = applyRepository;
             _contactQueryRepository = contactQueryRepository;
@@ -27,7 +27,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
             _mediator = mediator;
         }
 
-        public async Task<bool> Handle(SubmitApplicationRequest request, CancellationToken cancellationToken)
+        public async Task<bool> Handle(SubmitApplicationSequenceRequest request, CancellationToken cancellationToken)
         {
             // CanSubmitApplication was migrated over from Apply Service. If this causes issues then remove it
             if (await _applyRepository.CanSubmitApplication(request.ApplicationId))

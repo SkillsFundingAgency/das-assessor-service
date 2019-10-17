@@ -3,7 +3,7 @@ using System;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models.Apply
 {
-    public class SubmitApplicationRequest : IRequest<bool>
+    public class SubmitApplicationSequenceRequest : IRequest<bool>
     {
         public Guid ApplicationId { get; set; }
         public string ApplicationReferenceFormat { get; set; }
