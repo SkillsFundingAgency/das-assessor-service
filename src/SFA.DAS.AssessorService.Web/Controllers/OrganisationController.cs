@@ -140,21 +140,75 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         {
             var ukprn = _contextAccessor.HttpContext.User.Claims.FirstOrDefault(c => c.Type == "http://schemas.portal.com/ukprn")?.Value;
 
-            if (vm.ActionChoice == "Enable" || vm.ActionChoice == "Renew")
+            if (vm.ActionChoice == "Enable")
             {
-                if (vm.ActionChoice == "Enable")
-                {        
-                    await _externalApiClient.CreateUser(ukprn);
-                }
-                else
-                {
-                    await _externalApiClient.RegeneratePrimarySubscriptionKey(vm.SubscriptionId);
-                }
-
+                await _externalApiClient.CreateUser(ukprn);
                 return RedirectToAction(nameof(OrganisationDetails), nameof(OrganisationController).RemoveController(), "api-subscription");
             }
 
             return RedirectToAction(nameof(OrganisationDetails), nameof(OrganisationController).RemoveController(), "register-details");
+        }
+
+        [HttpGet]
+        [ModelStatePersist(ModelStatePersist.RestoreEntry)]
+        [TypeFilter(typeof(MenuFilter), Arguments = new object[] { Pages.Organisations })]
+        [PrivilegeAuthorize(Privileges.ChangeOrganisationDetails)]
+        public async Task<IActionResult> RenewApiKey(Guid subscriptionId)
+        {
+            var ukprn = _contextAccessor.HttpContext.User.Claims.FirstOrDefault(c => c.Type == "http://schemas.portal.com/ukprn")?.Value;
+
+            try
+            {
+                var externalApiSubscriptions = await GetExternalApiSubscriptions(_webConfiguration.AzureApiAuthentication.ProductId, ukprn);
+                var subscription = externalApiSubscriptions?.Where(p => p.Id == subscriptionId.ToString()).FirstOrDefault();
+
+                if (subscription == null)
+                    throw new Exception($"The subscription {subscriptionId} is invalid or does not belong to organsiation identified by {ukprn}");
+
+                var viewModel = new RenewApiKeyViewModel
+                {
+                    SubscriptionId = subscription.Id,
+                    CurrentKey = subscription.PrimaryKey,
+                    LastRenewedDate = subscription.CreatedDate,
+                    LastRenewedTicks = subscription.CreatedDate.Ticks
+                };
+
+                return View(viewModel);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Unable to renew API key");
+            }
+
+            return RedirectToAction(nameof(OrganisationDetails), nameof(OrganisationController).RemoveController(), "api-subscription");
+        }
+
+        [HttpPost]
+        [ModelStatePersist(ModelStatePersist.Store)]
+        [PrivilegeAuthorize(Privileges.ChangeOrganisationDetails)]
+        public async Task<IActionResult> RenewApiKey(RenewApiKeyViewModel vm)
+        {
+            var ukprn = _contextAccessor.HttpContext.User.Claims.FirstOrDefault(c => c.Type == "http://schemas.portal.com/ukprn")?.Value;
+            try
+            {
+                var externalApiSubscriptions = await GetExternalApiSubscriptions(_webConfiguration.AzureApiAuthentication.ProductId, ukprn);
+                var subscription = externalApiSubscriptions?.Where(p => p.Id == vm.SubscriptionId.ToString()).FirstOrDefault();
+
+                if (subscription == null || !subscription.CreatedDate.Ticks.Equals(vm.LastRenewedTicks) || !subscription.PrimaryKey.Equals(vm.CurrentKey))
+                {
+                    TempData.SetAlert(new Alert { Message = "Your API key could not be renewed, please check the current value and retry if necessary.", Type = AlertType.Warning });
+                    return RedirectToAction(nameof(RenewApiKey), nameof(OrganisationController).RemoveController(), "api-subscription");
+                }
+
+                await _externalApiClient.RegeneratePrimarySubscriptionKey(vm.SubscriptionId);
+                TempData.SetAlert(new Alert { Message = "Your API key has been renewed", Type = AlertType.Success });
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Unable to renew API key");
+            }
+
+            return RedirectToAction(nameof(OrganisationDetails), nameof(OrganisationController).RemoveController(), "api-subscription");
         }
 
         [HttpGet]

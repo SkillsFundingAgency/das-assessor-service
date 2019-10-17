@@ -8,6 +8,7 @@
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-full">
                 <h1 class="govuk-heading-xl">Organisation details</h1>
+                <sfa-alert/>
                 <!-- tabs -->
                 <div class="govuk-tabs" data-module="tabs">
                     <h2 class="govuk-tabs__title">
@@ -206,21 +207,28 @@
                             }
                             else
                             {
-                                <h2 class="govuk-heading-l">Subscriptions</h2>
+                                <h2 class="govuk-heading-l">API subscription</h2>
                                 @foreach (var subscription in Model.ExternalApiSubscriptions)
                                 {
                                     <h2 class="govuk-heading-m">@subscription.ProductId</h2>
+
+                                    <p>
+                                        <dl class="govuk-summary-list govuk-summary-list--top-border govuk-!-margin-bottom-0">
+                                            <div class="govuk-summary-list__row">
+                                                <dt class="govuk-summary-list__key">Last renewed</dt>
+                                                <dd class="govuk-summary-list__value">@subscription.CreatedDate.ToString("dd MMM yyyy")</dd>
+                                            </div>
+                                        </dl>
+                                    </p>
 
                                     <h3 class="govuk-heading-s govuk-!-margin-bottom-0">API endpoint</h3>
                                     <p class="das-code">@subscription.ApiEndPointUrl</p>
 
                                     <h3 class="govuk-heading-s govuk-!-margin-bottom-0">Subscription key</h3>
                                     <p class="das-code">@subscription.PrimaryKey</p>
-
-                                    <form asp-controller="Organisation" asp-action="OrganisationDetails">
-                                        @Html.Hidden("SubscriptionId", @subscription.Id)
-                                        <button class="govuk-button" type="submit" name="ActionChoice" value="Renew">Renew</button>
-                                    </form>
+                                    <p>
+                                        <a class="govuk-button" asp-controller="Organisation" asp-action="RenewApiKey" asp-route-subscriptionId="@subscription.Id">Renew key</a>
+                                    </p>
                                 }
                             }
                         </div>

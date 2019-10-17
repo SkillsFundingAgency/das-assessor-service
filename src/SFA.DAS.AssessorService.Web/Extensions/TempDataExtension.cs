@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Newtonsoft.Json;
+using SFA.DAS.AssessorService.Web.Infrastructure;
+using System;
 
 namespace SFA.DAS.AssessorService.Web.Extensions
 {
@@ -15,6 +17,21 @@ namespace SFA.DAS.AssessorService.Web.Extensions
             object o;
             tempData.TryGetValue(key, out o);
             return o == null ? null : JsonConvert.DeserializeObject<T>((string)o);
+        }
+    }
+
+    public static class TempDataAlertExtensions
+    {
+        public const string _ALERT = "D31B2AA5-6B8B-4332-ABBD-E16C7C1BEAFA";
+
+        public static void SetAlert(this ITempDataDictionary tempData, Alert alert)
+        {
+            tempData.Put(_ALERT, alert);
+        }
+
+        public static Alert GetAlert(this ITempDataDictionary tempData)
+        {
+            return tempData.Get<Alert>(_ALERT);
         }
     }
 }

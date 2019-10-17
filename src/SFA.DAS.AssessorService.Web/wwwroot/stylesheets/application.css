@@ -902,6 +902,18 @@
   margin-bottom: 10px;
 }
 
+.success-summary {
+    border-color: #00823b;
+}
+
+.warning-summary {
+    border-color: #cd4c0b;
+}
+
+.success-summary p {
+    color: #00823b;
+}
+
 .info-summary {
   border-color: #2b8cc4;
 }
@@ -1620,4 +1632,8 @@ th[aria-sort="ascending"] a:after {
   .das-pill {
     font-size: 16px;
   }
+}
+
+.govuk-summary-list--top-border {
+    border-top: 1px solid #bfc1c3;
 }
