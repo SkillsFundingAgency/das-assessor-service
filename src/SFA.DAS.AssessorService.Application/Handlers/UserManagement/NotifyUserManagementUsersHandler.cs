@@ -31,7 +31,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.UserManagement
 
             var organisation = await _organisationQueryRepository.Get(message.EndPointAssessorOrganisationId);
             
-            var contactsWithUserManagementPrivilege = (await _contactQueryRepository.GetAllContactsWithPrivileges(organisation.Id))
+            var contactsWithUserManagementPrivilege = (await _contactQueryRepository.GetAllContactsIncludePrivileges(organisation.EndPointAssessorOrganisationId))
                 .Where(c => c.ContactsPrivileges.Any(cp => cp.Privilege.Key == Privileges.ManageUsers && 
                     cp.Contact.Status == ContactStatus.Live)).ToList();
             

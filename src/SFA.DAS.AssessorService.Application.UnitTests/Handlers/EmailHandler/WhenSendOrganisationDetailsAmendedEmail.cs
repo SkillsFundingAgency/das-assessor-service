@@ -37,10 +37,10 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.EmailHandler
         private Guid ManageUsersPrivilegeId = Guid.NewGuid();
         private Guid ChangeOrganisationPrivilegeId = Guid.NewGuid();
 
-        private ContactsWithPrivilegesResponse _firstLiveContact;
-        private ContactsWithPrivilegesResponse _secondLiveContact;
-        private ContactsWithPrivilegesResponse _thirdLiveContact;
-        private ContactsWithPrivilegesResponse _firstPendingContact;
+        private ContactIncludePrivilegesResponse _firstLiveContact;
+        private ContactIncludePrivilegesResponse _secondLiveContact;
+        private ContactIncludePrivilegesResponse _thirdLiveContact;
+        private ContactIncludePrivilegesResponse _firstPendingContact;
 
         private List<ContactResponse> _result;
         private string PropertyChangedName = "PropertyName";
@@ -97,7 +97,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.EmailHandler
                 It.IsAny<CancellationToken>()))
                 .ReturnsAsync(EpaOrganisation);
 
-            _firstLiveContact = new ContactsWithPrivilegesResponse()
+            _firstLiveContact = new ContactIncludePrivilegesResponse()
             {
                 Contact = new ContactResponse
                 {
@@ -111,7 +111,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.EmailHandler
                 Key = ChangeOrganisationDetailsContactsPrivilege.Privilege.Key
             });
 
-            _secondLiveContact = new ContactsWithPrivilegesResponse()
+            _secondLiveContact = new ContactIncludePrivilegesResponse()
             {
                 Contact = new ContactResponse
                 {
@@ -130,7 +130,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.EmailHandler
                 Key = ManageUsersContactsPrivilege.Privilege.Key
             });
 
-            _thirdLiveContact = new ContactsWithPrivilegesResponse()
+            _thirdLiveContact = new ContactIncludePrivilegesResponse()
             {
                 Contact = new ContactResponse
                 {
@@ -145,7 +145,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.EmailHandler
                 Key = ManageUsersContactsPrivilege.Privilege.Key
             });
 
-            _firstPendingContact = new ContactsWithPrivilegesResponse()
+            _firstPendingContact = new ContactIncludePrivilegesResponse()
             {
                 Contact = new ContactResponse
                 {
@@ -161,10 +161,10 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.EmailHandler
             });
 
             _mediator.Setup(c => c.Send(
-                    It.IsAny<GetContactsWithPrivilegesRequest>(),
+                    It.IsAny<GetAllContactsIncludePrivilegesRequest>(),
                     It.IsAny<CancellationToken>())
                 )
-                .ReturnsAsync(new List<ContactsWithPrivilegesResponse>
+                .ReturnsAsync(new List<ContactIncludePrivilegesResponse>
                 {
                     _firstLiveContact,
                     _secondLiveContact,
@@ -223,7 +223,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.EmailHandler
             await Act();
 
             _mediator.Verify(p => p.Send(
-                It.Is<GetContactsWithPrivilegesRequest>(c => c.OrganisationId == EpaOrganisation.Id), 
+                It.Is<GetAllContactsIncludePrivilegesRequest>(c => c.EndPointAssessorOrganisationId == EpaOrganisation.OrganisationId), 
                 It.IsAny<CancellationToken>()), Times.Once);
         }
 
