@@ -184,7 +184,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         }
 
 
-        private bool IsSequenceActive(ApplicationResponse applicationResponse, int sequenceNo)
+        private static bool IsSequenceActive(ApplicationResponse applicationResponse, int sequenceNo)
         {
             //A sequence can be considered active even if it does not exist in the ApplyData, since it has not yet been submitted and is in progress.
             return applicationResponse.ApplyData?.Sequences?.Any(x => x.SequenceNo == sequenceNo && x.IsActive) ?? true;
@@ -575,7 +575,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             return page;
         }
 
-        private string BuildPageContext(ApplicationResponse application, Sequence sequence)
+        private static string BuildPageContext(ApplicationResponse application, Sequence sequence)
         {
             string pageContext = string.Empty;
             if (sequence.SequenceNo == 2)
@@ -585,7 +585,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             return pageContext;
         }
 
-        private bool NothingToUpload(SetPageAnswersResponse updatePageResult, List<Answer> answers)
+        private static bool NothingToUpload(SetPageAnswersResponse updatePageResult, List<Answer> answers)
         {
             return updatePageResult.ValidationErrors == null && !updatePageResult.ValidationPassed
                     && answers.Any(x => string.IsNullOrEmpty(x.QuestionId)) && answers.Count > 0;
@@ -599,7 +599,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             return RedirectToAction("Section", new { Id, sequenceNo, sectionId });
         }
 
-        private Page StoreEnteredAnswers(List<Answer> answers, Page page)
+        private static Page StoreEnteredAnswers(List<Answer> answers, Page page)
         {
             foreach (var answer in answers)
             {
@@ -703,7 +703,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         }
 
 
-        private List<Answer> ProcessPageVmQuestionsForAddress(Page page, List<Answer> answers)
+        private static List<Answer> ProcessPageVmQuestionsForAddress(Page page, List<Answer> answers)
         {
 
             if (page.Questions.Any(x => x.Input.Type == "Address"))
@@ -739,7 +739,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         }
 
 
-        private void ProcessPageVmQuestionsForStandardName(List<QuestionViewModel> pageVmQuestions, ApplicationResponse application)
+        private static void ProcessPageVmQuestionsForStandardName(List<QuestionViewModel> pageVmQuestions, ApplicationResponse application)
         {
             if (pageVmQuestions == null) return;
 
@@ -770,7 +770,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             }
         }
 
-        private SubmitApplicationRequest BuildSubmitApplicationRequest(Guid applicationId, string referenceFormat, int sequenceNo, Guid userId)
+        private static SubmitApplicationRequest BuildSubmitApplicationRequest(Guid applicationId, string referenceFormat, int sequenceNo, Guid userId)
         {  
             return new SubmitApplicationRequest
             {
@@ -781,7 +781,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             };
         }
 
-        private CreateApplicationRequest BuildCreateApplicationRequest(Guid qnaApplicationId, ContactResponse contact, OrganisationResponse org,
+        private static CreateApplicationRequest BuildCreateApplicationRequest(Guid qnaApplicationId, ContactResponse contact, OrganisationResponse org,
            string referenceFormat, List<Sequence> sequences, List<List<Section>> sections)
         {
 
@@ -811,7 +811,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
 
 
-        private List<ValidationErrorDetail> ValidateSubmit(List<Section> qnaSections, List<ApplySection> applySections)
+        private static List<ValidationErrorDetail> ValidateSubmit(List<Section> qnaSections, List<ApplySection> applySections)
         {
             var validationErrors = new List<ValidationErrorDetail>();
 
@@ -842,7 +842,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             return validationErrors;
         }
 
-        private bool CanUpdateApplication(Sequence sequence, List<ApplySequence> applySequences, int sequenceNo)
+        private static bool CanUpdateApplication(Sequence sequence, List<ApplySequence> applySequences, int sequenceNo)
         {
             bool canUpdate = false;
             var seq = applySequences?.SingleOrDefault(x => x.SequenceNo == sequenceNo);
