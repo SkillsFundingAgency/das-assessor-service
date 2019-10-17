@@ -9,24 +9,27 @@ using SFA.DAS.AssessorService.Domain.Consts;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.ContactHandlers
 {
-    public class RetrieveContactsWithPrivilegesHandler : IRequestHandler<GetContactsWithPrivilegesRequest, List<ContactsWithPrivilegesResponse>>
+    public class GetAllContactsIncludePrivilegesHandler : IRequestHandler<GetAllContactsIncludePrivilegesRequest, List<ContactIncludePrivilegesResponse>>
     {
         private readonly IContactQueryRepository _contactQueryRepository;
-        public RetrieveContactsWithPrivilegesHandler(IContactQueryRepository contactQueryRepository)
+
+        public GetAllContactsIncludePrivilegesHandler(IContactQueryRepository contactQueryRepository)
         {
             _contactQueryRepository = contactQueryRepository;
         }
 
-        public async Task<List<ContactsWithPrivilegesResponse>> Handle(GetContactsWithPrivilegesRequest request,
+        public async Task<List<ContactIncludePrivilegesResponse>> Handle(GetAllContactsIncludePrivilegesRequest request,
             CancellationToken cancellationToken)
         {
-            var response = new List<ContactsWithPrivilegesResponse>();
-            var results = await _contactQueryRepository.GetAllContactsWithPrivileges(request.OrganisationId);
+            var response = new List<ContactIncludePrivilegesResponse>();
+            var results = await _contactQueryRepository.GetAllContactsIncludePrivileges(request.EndPointAssessorOrganisationId, request.WithUser);
+
             if (results == null)
                 return response;
+
             foreach (var result in results)
             {
-                var contactsWithPrivilegesResponse = new ContactsWithPrivilegesResponse
+                var contactsWithPrivilegesResponse = new ContactIncludePrivilegesResponse
                 {
                     Contact = Mapper.Map<ContactResponse>(result)
                 };

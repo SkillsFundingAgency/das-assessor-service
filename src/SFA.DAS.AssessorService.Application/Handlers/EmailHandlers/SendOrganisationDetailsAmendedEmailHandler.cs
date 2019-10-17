@@ -32,9 +32,11 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EmailHandlers
 
             try
             {
-                var contactsWithPrivileges = await _mediator.Send(new GetContactsWithPrivilegesRequest(organisation.Id));
+                var contactsWithPrivileges = await _mediator.Send(new GetAllContactsIncludePrivilegesRequest(organisation.OrganisationId));
                 var contactsWithManageUserPrivilege = contactsWithPrivileges?
-                    .Where(c => c.Privileges.Any(p => p.Key == Privileges.ManageUsers))
+                    .Where(c => 
+                        c.Privileges.Any(p => p.Key == Privileges.ManageUsers) && 
+                        (c.Contact.Status == ContactStatus.Live || c.Contact.Status == ContactStatus.Active))
                     .ToList();
 
                 var organisationDetailsAmendedEmailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.EPAOOrganisationDetailsAmended);
