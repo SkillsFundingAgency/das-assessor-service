@@ -28,7 +28,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
 
         public async Task<Certificate> Handle(UpdateCertificateRequest request, CancellationToken cancellationToken)
         {
-            if (request.Certificate.Status == Domain.Consts.CertificateStatus.Submitted)
+            if (request.Certificate.Status == Domain.Consts.CertificateStatus.Submitted ||
+                request.Certificate.Status == Domain.Consts.CertificateStatus.ToBeApproved)
             {
                 _logger.LogInformation(LoggingConstants.CertificateSubmitted);
                 _logger.LogInformation($"Certificate with ID: {request.Certificate.Id} Submitted with reference of {request.Certificate.CertificateReference}");

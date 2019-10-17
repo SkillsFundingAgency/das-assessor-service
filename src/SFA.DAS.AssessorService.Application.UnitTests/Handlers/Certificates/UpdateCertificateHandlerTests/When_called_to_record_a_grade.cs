@@ -28,18 +28,20 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
 
         [TestCase(null, null, null, CertificateGrade.Pass, CertificateStatus.Draft, null, null, null, null, null, null, null, null, 0)]
         [TestCase(2019, 10, 1, CertificateGrade.Pass, CertificateStatus.Draft, null, null, null, null, null, null, null, null, 0)]
-        [TestCase(2019, 10, 1, CertificateGrade.Pass, CertificateStatus.Submitted, 2019, 10, 1, EpaOutcome.Pass, 2019, 10, 1, EpaOutcome.Pass, 1)]
+        [TestCase(2019, 10, 1, CertificateGrade.Pass, CertificateStatus.Submitted, null, null, null, null, 2019, 10, 1, EpaOutcome.Pass, 1)]
+        [TestCase(2019, 10, 1, CertificateGrade.Pass, CertificateStatus.ToBeApproved, null, null, null, null, 2019, 10, 1, EpaOutcome.Pass, 1)]
         [TestCase(null, null, null, CertificateGrade.Fail, CertificateStatus.Draft, null, null, null, null, null, null, null, null, 0)]
         [TestCase(2019, 10, 2, CertificateGrade.Fail, CertificateStatus.Draft, null, null, null, null, null, null, null, null, 0)]
-        [TestCase(2019, 10, 2, CertificateGrade.Fail, CertificateStatus.Submitted, 2019, 10, 2, EpaOutcome.Fail, 2019, 10, 2, EpaOutcome.Fail, 1)]
-        [TestCase(2019, 10, 2, CertificateGrade.Pass, CertificateStatus.Draft, 2019, 10, 2, EpaOutcome.Fail, 2019, 10, 2, EpaOutcome.Fail, 1)]
-        [TestCase(2019, 10, 3, CertificateGrade.Pass, CertificateStatus.Draft, 2019, 10, 2, EpaOutcome.Fail, 2019, 10, 2, EpaOutcome.Fail, 1)]
+        [TestCase(2019, 10, 2, CertificateGrade.Fail, CertificateStatus.Submitted, null, null, null, null, 2019, 10, 2, EpaOutcome.Fail, 1)]
+        [TestCase(2019, 10, 2, CertificateGrade.Fail, CertificateStatus.ToBeApproved, null, null, null, null, 2019, 10, 2, EpaOutcome.Fail, 1)]
         [TestCase(2019, 10, 3, CertificateGrade.Pass, CertificateStatus.Submitted, 2019, 10, 2, EpaOutcome.Fail, 2019, 10, 3, EpaOutcome.Pass, 2)]
-        [TestCase(2019, 10, 9, CertificateGrade.Pass, CertificateStatus.Draft, 2019, 10, 9, EpaOutcome.Fail, 2019, 10, 9, EpaOutcome.Fail, 1)]
-        [TestCase(2019, 10, 8, CertificateGrade.Pass, CertificateStatus.Draft, 2019, 10, 9, EpaOutcome.Fail, 2019, 10, 9, EpaOutcome.Fail, 1)]
+        [TestCase(2019, 10, 3, CertificateGrade.Pass, CertificateStatus.ToBeApproved, 2019, 10, 2, EpaOutcome.Fail, 2019, 10, 3, EpaOutcome.Pass, 2)]
         [TestCase(2019, 10, 8, CertificateGrade.Pass, CertificateStatus.Submitted, 2019, 10, 8, EpaOutcome.Fail, 2019, 10, 8, EpaOutcome.Pass, 2)]
+        [TestCase(2019, 10, 8, CertificateGrade.Pass, CertificateStatus.ToBeApproved, 2019, 10, 8, EpaOutcome.Fail, 2019, 10, 8, EpaOutcome.Pass, 2)]
         [TestCase(2019, 10, 2, CertificateGrade.Pass, CertificateStatus.Submitted, 2019, 10, 2, "pass", 2019, 10, 2, EpaOutcome.Pass, 1)]
         [TestCase(2019, 10, 2, CertificateGrade.Pass, CertificateStatus.Submitted, 2019, 10, 2, EpaOutcome.Pass, 2019, 10, 2, "pass", 1)]
+        [TestCase(2019, 10, 2, CertificateGrade.Pass, CertificateStatus.ToBeApproved, 2019, 10, 2, "pass", 2019, 10, 2, EpaOutcome.Pass, 1)]
+        [TestCase(2019, 10, 2, CertificateGrade.Pass, CertificateStatus.ToBeApproved, 2019, 10, 2, EpaOutcome.Pass, 2019, 10, 2, "pass", 1)]
         public async Task Then_the_certificate_is_updated(
             int? updatedAchievementYear, int? updatedAchievementMonth, int? updatedAchievementDay, string updatedCertificateGrade, string updateCertificateStatus,
             int? currentLatestEpaYear, int? currentLatestEpaMonth, int? currentLastestEpaDay, string currentLatestEpaOutcome,
