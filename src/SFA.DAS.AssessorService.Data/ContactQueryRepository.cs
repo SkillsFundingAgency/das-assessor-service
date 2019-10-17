@@ -30,21 +30,28 @@ namespace SFA.DAS.AssessorService.Data
         }
         
 
-        public async Task<IEnumerable<Contact>> GetAllContacts(string endPointAssessorOrganisationId)
+        public async Task<IEnumerable<Contact>> GetAllContacts(string endPointAssessorOrganisationId, bool? withUser = null)
         {
-            var contacts = await _assessorDbContext.Organisations
-                .Include(organisation => organisation.Contacts)
-                .Where(organisation => organisation.EndPointAssessorOrganisationId == endPointAssessorOrganisationId)
-                .SelectMany(q => q.Contacts).ToListAsync();
+            var contacts = await _assessorDbContext.Contacts
+                .Include(contact => contact.Organisation)
+                .Where(contact =>
+                    contact.Organisation.EndPointAssessorOrganisationId == endPointAssessorOrganisationId &&
+                    (!withUser.HasValue || (withUser.Value && contact.SignInId != null) || (!withUser.Value && contact.SignInId == null)))
+                .ToListAsync();
 
             return contacts;
         }
 
-        public async Task<List<Contact>> GetAllContactsWithPrivileges(Guid organisationId)
+        public async Task<IEnumerable<Contact>> GetAllContactsIncludePrivileges(string endPointAssessorOrganisationId, bool? withUser = null)
         {
             var contacts = await _assessorDbContext.Contacts
+                .Include(contact => contact.Organisation)
                 .Include("ContactsPrivileges.Privilege")
-                .Where(contact => contact.OrganisationId == organisationId).OrderBy(c => c.FamilyName).ThenBy(c => c.GivenNames).ToListAsync();
+                .Where(contact =>
+                    contact.Organisation.EndPointAssessorOrganisationId == endPointAssessorOrganisationId &&
+                    (!withUser.HasValue || (withUser.Value && contact.SignInId != null) || (!withUser.Value && contact.SignInId == null)))
+                .OrderBy(c => c.FamilyName).ThenBy(c => c.GivenNames)
+                .ToListAsync();
             
             return contacts;
         }

@@ -5,9 +5,9 @@ using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models
 {
-    public class ContactsWithPrivilegesResponse
+    public class ContactIncludePrivilegesResponse
     {
-        public ContactsWithPrivilegesResponse()
+        public ContactIncludePrivilegesResponse()
         {
             Privileges = new List<PrivilegeResponse>();
         }
