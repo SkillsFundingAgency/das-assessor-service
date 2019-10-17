@@ -37,9 +37,10 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.EmailHandler
         private Guid ManageUsersPrivilegeId = Guid.NewGuid();
         private Guid ChangeOrganisationPrivilegeId = Guid.NewGuid();
 
-        private ContactsWithPrivilegesResponse _firstContact;
-        private ContactsWithPrivilegesResponse _secondContact;
-        private ContactsWithPrivilegesResponse _thirdContact;
+        private ContactsWithPrivilegesResponse _firstLiveContact;
+        private ContactsWithPrivilegesResponse _secondLiveContact;
+        private ContactsWithPrivilegesResponse _thirdLiveContact;
+        private ContactsWithPrivilegesResponse _firstPendingContact;
 
         private List<ContactResponse> _result;
         private string PropertyChangedName = "PropertyName";
@@ -96,47 +97,65 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.EmailHandler
                 It.IsAny<CancellationToken>()))
                 .ReturnsAsync(EpaOrganisation);
 
-            _firstContact = new ContactsWithPrivilegesResponse()
+            _firstLiveContact = new ContactsWithPrivilegesResponse()
             {
                 Contact = new ContactResponse
                 {
-                    Email = "first@organisation.com",
-                    DisplayName = "First Person"
+                    Email = "firstlive@organisation.com",
+                    DisplayName = "First Live Person",
+                    Status = ContactStatus.Live
                 }
             };
-            _firstContact.Privileges.Add(new PrivilegeResponse
+            _firstLiveContact.Privileges.Add(new PrivilegeResponse
             {
                 Key = ChangeOrganisationDetailsContactsPrivilege.Privilege.Key
             });
 
-            _secondContact = new ContactsWithPrivilegesResponse()
+            _secondLiveContact = new ContactsWithPrivilegesResponse()
             {
                 Contact = new ContactResponse
                 {
-                    Email = "second@organisation.com",
-                    DisplayName = "Second Person",
-                    GivenNames = "Second"
+                    Email = "secondlive@organisation.com",
+                    DisplayName = "Second Live Person",
+                    GivenNames = "Second Live",
+                    Status = ContactStatus.Live
                 }
             };
-            _secondContact.Privileges.Add(new PrivilegeResponse
+            _secondLiveContact.Privileges.Add(new PrivilegeResponse
             {
                 Key = ChangeOrganisationDetailsContactsPrivilege.Privilege.Key
             });
-            _secondContact.Privileges.Add(new PrivilegeResponse
+            _secondLiveContact.Privileges.Add(new PrivilegeResponse
             {
                 Key = ManageUsersContactsPrivilege.Privilege.Key
             });
 
-            _thirdContact = new ContactsWithPrivilegesResponse()
+            _thirdLiveContact = new ContactsWithPrivilegesResponse()
             {
                 Contact = new ContactResponse
                 {
-                    Email = "third@organisation.com",
-                    DisplayName = "Third Person",
-                    GivenNames = "Third"
+                    Email = "thirdliveorganisation.com",
+                    DisplayName = "Third Live Person",
+                    GivenNames = "Third Live",
+                    Status = ContactStatus.Live
                 }
             };
-            _thirdContact.Privileges.Add(new PrivilegeResponse
+            _thirdLiveContact.Privileges.Add(new PrivilegeResponse
+            {
+                Key = ManageUsersContactsPrivilege.Privilege.Key
+            });
+
+            _firstPendingContact = new ContactsWithPrivilegesResponse()
+            {
+                Contact = new ContactResponse
+                {
+                    Email = "firstpending@organisation.com",
+                    DisplayName = "First Pending Person",
+                    GivenNames = "First Pending",
+                    Status = ContactStatus.InvitePending
+                }
+            };
+            _firstPendingContact.Privileges.Add(new PrivilegeResponse
             {
                 Key = ManageUsersContactsPrivilege.Privilege.Key
             });
@@ -147,12 +166,13 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.EmailHandler
                 )
                 .ReturnsAsync(new List<ContactsWithPrivilegesResponse>
                 {
-                    _firstContact,
-                    _secondContact,
-                    _thirdContact
+                    _firstLiveContact,
+                    _secondLiveContact,
+                    _thirdLiveContact,
+                    _firstPendingContact
                 });
 
-            EditorCommon = _thirdContact.Contact.DisplayName;
+            EditorCommon = _thirdLiveContact.Contact.DisplayName;
 
             _logger = new Mock<ILogger<SendOrganisationDetailsAmendedEmailHandler>>();
 
@@ -214,8 +234,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.EmailHandler
 
             _result.Count.Should().Be(2);
             _result.Should().OnlyContain(p => 
-                p.Email == _secondContact.Contact.Email ||
-                p.Email == _thirdContact.Contact.Email);
+                p.Email == _secondLiveContact.Contact.Email ||
+                p.Email == _thirdLiveContact.Contact.Email);
         }
 
         [Test]
@@ -229,11 +249,11 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.EmailHandler
             // expression tree must not contain anonymous types exceptions
             var expectedSecondContactEmail = JsonConvert.SerializeObject(new
             {
-                _secondContact.Contact.Email,
+                _secondLiveContact.Contact.Email,
                 EmailTemplate = _eMailTemplate.TemplateName,
                 Tokens = new
                 {
-                    Contact = _secondContact.Contact.GivenNames,
+                    Contact = _secondLiveContact.Contact.GivenNames,
                     Organisation = EpaOrganisation.Name,
                     PropertyChanged = PropertyChangedName,
                     ValueAdded = ValueAddedValue,
@@ -244,11 +264,26 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.EmailHandler
 
             var expectedThirdContactEmail = JsonConvert.SerializeObject(new
             {
-                _thirdContact.Contact.Email,
+                _thirdLiveContact.Contact.Email,
                 EmailTemplate = _eMailTemplate.TemplateName,
                 Tokens = new
                 {
-                    Contact = _thirdContact.Contact.GivenNames,
+                    Contact = _thirdLiveContact.Contact.GivenNames,
+                    Organisation = EpaOrganisation.Name,
+                    PropertyChanged = PropertyChangedName,
+                    ValueAdded = ValueAddedValue,
+                    ServiceTeam = "Apprenticeship assessment services team",
+                    Editor = EditorCommon
+                }
+            });
+
+            var notExpectedFirstContactEmail = JsonConvert.SerializeObject(new
+            {
+                _firstPendingContact.Contact.Email,
+                EmailTemplate = _eMailTemplate.TemplateName,
+                Tokens = new
+                {
+                    Contact = _firstPendingContact.Contact.GivenNames,
                     Organisation = EpaOrganisation.Name,
                     PropertyChanged = PropertyChangedName,
                     ValueAdded = ValueAddedValue,
@@ -264,6 +299,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.EmailHandler
             // types for the Token collection to succeed when those anonymous types are generated
             // from different assemblies
             _emailRequestsSent.Should().Contain(new List<string> { expectedSecondContactEmail, expectedThirdContactEmail });
+            _emailRequestsSent.Should().NotContain(new List<string> { notExpectedFirstContactEmail });
         }
     }
 }
