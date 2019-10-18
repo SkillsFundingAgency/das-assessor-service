@@ -4,7 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SFA.DAS.AssessorService.Api.Types.Models.Apply;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
+using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.Web.ViewModels.Apply;
 
 namespace SFA.DAS.AssessorService.Web.Controllers.Apply
@@ -36,9 +38,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 return RedirectToAction(nameof(Index), new { model.Id });
             }
 
-            var results = await _apiClient.GetStandards();
+            var standards = await _apiClient.GetStandards();
 
-            model.Results = results.Where(r => r.Title.ToLower().Contains(model.StandardToFind.ToLower())).ToList();
+            model.Results = standards.Where(s => string.Equals(s.Title, model.StandardToFind, StringComparison.InvariantCultureIgnoreCase)).ToList();
 
             return View("~/Views/Application/Standard/FindStandardResults.cshtml", model);
         }
@@ -47,9 +49,15 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         public async Task<IActionResult> ConfirmStandard(Guid id, int standardCode)
         {
             var application = await _apiClient.GetApplication(id);
-            var standardViewModel = new StandardViewModel { Id = id, StandardCode = standardCode};
-            var results = await _apiClient.GetStandards();
-            standardViewModel.SelectedStandard = results.FirstOrDefault(r => r.StandardId == standardCode);
+            if(!CanUpdateApplication(application))
+            {
+                return RedirectToAction("Applications", "Application");
+            }
+
+            var standards = await _apiClient.GetStandards();
+
+            var standardViewModel = new StandardViewModel { Id = id, StandardCode = standardCode };
+            standardViewModel.SelectedStandard = standards.FirstOrDefault(s => s.StandardId == standardCode);
             standardViewModel.ApplicationStatus = application.ApplyData.Apply.StandardCode == standardCode ? application.ApplicationStatus : string.Empty;
             return View("~/Views/Application/Standard/ConfirmStandard.cshtml", standardViewModel);
         }
@@ -58,9 +66,13 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         public async Task<IActionResult> ConfirmStandard(StandardViewModel model, Guid id, int standardCode)
         {
             var application = await _apiClient.GetApplication(id);
-            var results = await _apiClient.GetStandards();
-            model.SelectedStandard = results.FirstOrDefault(r => r.StandardId == standardCode);
+            if (!CanUpdateApplication(application))
+            {
+                return RedirectToAction("Applications", "Application");
+            }
 
+            var standards = await _apiClient.GetStandards();
+            model.SelectedStandard = standards.FirstOrDefault(s => s.StandardId == standardCode);
             model.ApplicationStatus = application.ApplyData.Apply.StandardCode == standardCode ? application.ApplicationStatus : string.Empty;
 
             if (!model.IsConfirmed)
@@ -80,5 +92,26 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             return RedirectToAction("Applications", "Application");
         }
 
+        private static bool CanUpdateApplication(ApplicationResponse application)
+        {
+            const int STANDARD_SEQUENCE_NO = 2;
+
+            bool canUpdate = false;
+
+            var validApplicationStatuses = new string[] { ApplicationStatus.InProgress };
+            var validApplicationSequenceStatuses = new string[] { ApplicationSequenceStatus.Draft };
+
+            if (application?.ApplyData != null && validApplicationStatuses.Contains(application.ApplicationStatus))
+            {
+                var sequence = application.ApplyData.Sequences?.FirstOrDefault(seq => seq.IsActive && seq.SequenceNo == STANDARD_SEQUENCE_NO);
+
+                if (sequence != null && validApplicationSequenceStatuses.Contains(sequence.Status))
+                {
+                    canUpdate = true;
+                }
+            }
+
+            return canUpdate;
+        }
     }
 }
