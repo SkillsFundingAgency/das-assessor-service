@@ -190,13 +190,16 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             return applicationResponse.ApplyData?.Sequences?.Any(x => x.SequenceNo == sequenceNo && x.IsActive) ?? true;
         }
 
-        [HttpGet("/Application/{id}/Sequence/{sequenceNo}")]
-        public async Task<IActionResult> Sequence(Guid id, int sequenceNo)
+        [HttpGet("/Application/{Id}/Sequence/{sequenceNo}")]
+        public async Task<IActionResult> Sequence(Guid Id, int sequenceNo)
         {
-            var application = await _applicationApiClient.GetApplication(id);
-            var allApplicationSequences = await _qnaApiClient.GetAllApplicationSequences(application.ApplicationId);
-            var sequence = allApplicationSequences.Single(x => x.SequenceNo == sequenceNo);
+            var application = await _applicationApiClient.GetApplication(Id);
+            if (!CanUpdateApplication(application, sequenceNo))
+            {
+                return RedirectToAction("Applications");
+            }
 
+            var sequence = await _qnaApiClient.GetSequenceBySequenceNo(application.ApplicationId, sequenceNo);
             var sections = await _qnaApiClient.GetSections(application.ApplicationId, sequence.Id);
             var applyData = application.ApplyData.Sequences.Single(x => x.SequenceNo == sequenceNo);
             
@@ -213,16 +216,14 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         [HttpGet("/Application/{Id}/Sequences/{sequenceNo}/Sections/{sectionId}")]
         public async Task<IActionResult> Section(Guid Id, int sequenceNo, Guid sectionId)
         {
+            // TODO : Passing sectionId is dubious, should ideally be using sectionNo !!
             var application = await _applicationApiClient.GetApplication(Id);
-            var allApplicationSequences = await _qnaApiClient.GetAllApplicationSequences(application.ApplicationId);
-            var sequence = allApplicationSequences.Single(x => x.SequenceNo == sequenceNo);
-
-            var canUpdate = CanUpdateApplication(sequence,application.ApplyData?.Sequences, sequenceNo);
-            if (!canUpdate)
+            if (!CanUpdateApplication(application, sequenceNo, sectionId))
             {
-                return RedirectToAction("Sequence", new { id = Id, sequenceNo });
+                return RedirectToAction("Sequence", new { Id, sequenceNo });
             }
 
+            var sequence = await _qnaApiClient.GetSequenceBySequenceNo(application.ApplicationId, sequenceNo);
             var section = await _qnaApiClient.GetSection(application.ApplicationId, sectionId);
             var applicationSection = new ApplicationSection { Section = section, Id = Id };
             applicationSection.SequenceNo = sequenceNo;
@@ -246,14 +247,12 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         public async Task<IActionResult> Page(Guid Id, int sequenceNo, Guid sectionId, string pageId, string __redirectAction)
         {
             var application = await _applicationApiClient.GetApplication(Id);
-            var allApplicationSequences = await _qnaApiClient.GetAllApplicationSequences(application.ApplicationId);
-            var sequence = allApplicationSequences.Single(x => x.SequenceNo == sequenceNo);
-
-            var canUpdate = CanUpdateApplication(sequence, application.ApplyData?.Sequences, sequenceNo);
-            if (!canUpdate)
+            if (!CanUpdateApplication(application, sequenceNo, sectionId))
             {
                 return RedirectToAction("Sequence", new { Id, sequenceNo });
             }
+
+            var sequence = await _qnaApiClient.GetSequenceBySequenceNo(application.ApplicationId, sequenceNo);
 
             PageViewModel viewModel = null;
             var returnUrl = Request.Headers["Referer"].ToString();
@@ -315,6 +314,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         public async Task<IActionResult> SaveMultiplePageAnswers(Guid Id, int sequenceNo, Guid sectionId, string pageId, string __redirectAction, string __formAction)
         {
             var application = await _applicationApiClient.GetApplication(Id);
+            if (!CanUpdateApplication(application, sequenceNo, sectionId))
+            {
+                return RedirectToAction("Sequence", new { Id, sequenceNo });
+            }
+
             var page = await _qnaApiClient.GetPage(application.ApplicationId, sectionId, pageId);
            
             if (page.AllowMultipleAnswers)
@@ -372,17 +376,12 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         public async Task<IActionResult> SaveAnswers(Guid Id, int sequenceNo, Guid sectionId, string pageId, string __redirectAction)
         {
             var application = await _applicationApiClient.GetApplication(Id);
-            var allApplicationSequences = await _qnaApiClient.GetAllApplicationSequences(application.ApplicationId);
-            var sequence = allApplicationSequences.Single(x => x.SequenceNo == sequenceNo);
-
-            var canUpdate = CanUpdateApplication(sequence, application.ApplyData?.Sequences, sequenceNo);
-            if (!canUpdate)
+            if (!CanUpdateApplication(application, sequenceNo, sectionId))
             {
                 return RedirectToAction("Sequence", new { Id, sequenceNo });
             }
 
             var page = await _qnaApiClient.GetPage(application.ApplicationId, sectionId, pageId);
-
             var answers = GetAnswersFromForm(page);
 
             SetPageAnswersResponse updatePageResult;
@@ -442,6 +441,10 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         public async Task<IActionResult> DeleteAnswer(Guid Id, int sequenceNo, Guid sectionId, string pageId, Guid answerId, string __redirectAction)
         {
             var application = await _applicationApiClient.GetApplication(Id);
+            if (!CanUpdateApplication(application, sequenceNo, sectionId))
+            {
+                return RedirectToAction("Sequence", new { Id, sequenceNo });
+            }
 
             await _qnaApiClient.RemovePageAnswer(application.ApplicationId, sectionId, pageId, answerId);
 
@@ -465,6 +468,10 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         public async Task<IActionResult> DeleteFile(Guid Id, int sequenceNo, Guid sectionId, string pageId, string questionId, string filename, string __redirectAction)
         {
             var application = await _applicationApiClient.GetApplication(Id);
+            if (!CanUpdateApplication(application, sequenceNo, sectionId))
+            {
+                return RedirectToAction("Sequence", new { Id, sequenceNo });
+            }
 
             await _qnaApiClient.DeleteFile(application.ApplicationId, sectionId, pageId, questionId, filename);
 
@@ -474,18 +481,13 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         [HttpPost("/Application/{Id}/Submit/{sequenceNo}")]
         public async Task<IActionResult> Submit(Guid Id, int sequenceNo)
         {
-            var signinId = User.Claims.First(c => c.Type == "sub")?.Value;
-            var contact = await GetUserContact(signinId);
             var application = await _applicationApiClient.GetApplication(Id);
-            var allApplicationSequences = await _qnaApiClient.GetAllApplicationSequences(application.ApplicationId);
-            var sequence = allApplicationSequences.Single(x => x.SequenceNo == sequenceNo);
-
-            var canUpdate = CanUpdateApplication(sequence, application.ApplyData?.Sequences,  sequenceNo);
-            if (!canUpdate)
+            if (!CanUpdateApplication(application, sequenceNo))
             {
-                return RedirectToAction("Sequence", new { Id, sequenceNo });
+                return RedirectToAction("Applications");
             }
 
+            var sequence = await _qnaApiClient.GetSequenceBySequenceNo(application.ApplicationId, sequenceNo);
             var sections = await _qnaApiClient.GetSections(application.ApplicationId, sequence.Id);
             var applySequence = application.ApplyData.Sequences.Single(x => x.SequenceNo == sequence.SequenceNo);
             var applySections = applySequence.Sections;
@@ -502,7 +504,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 }).ToList();
             }
 
-
             var errors =  ValidateSubmit(sections, applySections);
             if (errors.Any())
             {
@@ -518,6 +519,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                     return View("~/Views/Application/Sequence.cshtml", sequenceVm);
                 }
             }
+
+            var signinId = User.Claims.First(c => c.Type == "sub")?.Value;
+            var contact = await GetUserContact(signinId);
 
             var submitRequest = BuildSubmitApplicationSequenceRequest(application.Id, _config.ReferenceFormat, sequence.SequenceNo, contact.Id);
 
@@ -848,7 +852,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                     validationErrors.Add(validationError);
                 }
             }
-            else if (applySections.Where(sec => sec.RequestedFeedbackAnswered is false).Any())
+            else if (applySections.Any(sec => sec.RequestedFeedbackAnswered is false))
             {
                 
                 foreach (var sectionFeedbackNotYetCompleted in applySections.Where(sec => sec.RequestedFeedbackAnswered is false))
@@ -865,20 +869,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             return validationErrors;
         }
 
-        private static bool CanUpdateApplication(Sequence sequence, List<ApplySequence> applySequences, int sequenceNo)
-        {
-            bool canUpdate = false;
-            var seq = applySequences?.SingleOrDefault(x => x.SequenceNo == sequenceNo);
-            if (sequence.SequenceNo == sequenceNo)
-            {
-                if (seq == null)
-                    return true;
-                canUpdate = seq.Status == ApplicationSequenceStatus.Draft || seq.Status == ApplicationSequenceStatus.FeedbackAdded;
-            }
-
-            return canUpdate;
-        }
-
         private async Task<Guid> GetUserId()
         {
             var signinId = User.Claims.First(c => c.Type == "sub")?.Value;
@@ -890,6 +880,39 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         private async Task<ContactResponse> GetUserContact(string signinId)
         {
             return await _contactsApiClient.GetContactBySignInId(signinId);
+        }
+
+        private static bool CanUpdateApplication(ApplicationResponse application, int sequenceNo, Guid? sectionId = null)
+        {
+            bool canUpdate = false;
+
+            var validApplicationStatuses = new string[] { ApplicationStatus.InProgress, ApplicationStatus.FeedbackAdded };
+            var validApplicationSequenceStatuses = new string[] { ApplicationSequenceStatus.Draft, ApplicationSequenceStatus.FeedbackAdded };
+
+            if (application?.ApplyData != null && validApplicationStatuses.Contains(application.ApplicationStatus))
+            {
+                var sequence = application.ApplyData.Sequences?.FirstOrDefault(seq => seq.IsActive && seq.SequenceNo == sequenceNo);
+
+                if (sequence != null && validApplicationSequenceStatuses.Contains(sequence.Status))
+                {
+                    if (sectionId.HasValue)
+                    {
+                        var section = sequence.Sections.FirstOrDefault(sec => sec.SectionId == sectionId);
+
+                        if (section != null)
+                        {
+                            canUpdate = true;
+                        }
+                    }
+                    else
+                    {
+                        // No need to check the section
+                        canUpdate = true;
+                    }
+                }
+            }
+
+            return canUpdate;
         }
     }
 }
