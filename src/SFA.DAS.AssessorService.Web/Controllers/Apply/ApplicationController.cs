@@ -62,9 +62,13 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 //ON-2068 Registered org  with no application created via digital service then
                 //display empty list of application screen
                 if (org != null)
+                {
                     return org.RoEPAOApproved ? View(applications) : View("~/Views/Application/Declaration.cshtml");
+                }
 
+                return RedirectToAction("Index", "OrganisationSearch");
             }
+
             //ON-2068 If there is an existing application for an org that is registered then display it
             //in a list of application screen
             if (applications.Count == 1 && (org != null && org.RoEPAOApproved))
