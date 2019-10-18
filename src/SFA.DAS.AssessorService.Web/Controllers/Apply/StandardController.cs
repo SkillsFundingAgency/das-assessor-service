@@ -44,7 +44,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         }
 
         [HttpGet("standard/{id}/confirm-standard/{standardCode}")]
-        public async Task<IActionResult> StandardConfirm(Guid id, int standardCode)
+        public async Task<IActionResult> ConfirmStandard(Guid id, int standardCode)
         {
             var application = await _apiClient.GetApplication(id);
             var standardViewModel = new StandardViewModel { Id = id, StandardCode = standardCode};
@@ -55,7 +55,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         }
 
         [HttpPost("standard/{id}/confirm-standard/{standardCode}")]
-        public async Task<IActionResult> StandardConfirm(StandardViewModel model, Guid id, int standardCode)
+        public async Task<IActionResult> ConfirmStandard(StandardViewModel model, Guid id, int standardCode)
         {
             var application = await _apiClient.GetApplication(id);
             var results = await _apiClient.GetStandards();
