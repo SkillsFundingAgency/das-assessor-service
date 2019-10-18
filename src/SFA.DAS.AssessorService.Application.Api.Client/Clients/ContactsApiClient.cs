@@ -16,12 +16,10 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
     public class ContactsApiClient : ApiClientBase, IContactsApiClient
     {
         private readonly ILogger<ContactsApiClient> _logger;
-        private readonly IContactApplyClient _contactApplyClient;
 
         public ContactsApiClient(string baseUri, ITokenService tokenService, ILogger<ContactsApiClient> logger, IContactApplyClient contactApplyClient) : base(baseUri, tokenService, logger)
         {
             _logger = logger;
-            _contactApplyClient = contactApplyClient;
         }
 
         public ContactsApiClient(HttpClient httpClient, ITokenService tokenService, ILogger<ApiClientBase> logger) : base(httpClient, tokenService, logger)
@@ -77,14 +75,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task<List<ContactsWithPrivilegesResponse>> GetContactsWithPrivileges(Guid organisationId)
-        {
-            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/contacts/{organisationId}/withprivileges"))
-            {
-                return await RequestAndDeserialiseAsync<List<ContactsWithPrivilegesResponse>>(request, $"Could not find contacts for {organisationId}");
-            }
-        }
-
         public async Task<ContactBoolResponse> DoesContactHavePrivileges(string userId)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/contacts/user/{userId}/haveprivileges"))
@@ -102,11 +92,25 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task<List<ContactResponse>> GetAllContactsForOrganisation(string epaoId)
+        public async Task<List<ContactResponse>> GetAllContactsForOrganisation(string epaoId, bool? withUser = null)
         {
-            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/contacts/get-all/{epaoId}"))
+            using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/v1/contacts/getAll"))
             {
-                return await RequestAndDeserialiseAsync<List<ContactResponse>>(request, $"Could not find contact with organisation {epaoId}");
+                var response = await PostPutRequestWithResponse<GetAllContactsRequest, List<ContactResponse>>(request,
+                        new GetAllContactsRequest(epaoId, withUser));
+
+                return response;
+            }
+        }
+
+        public async Task<List<ContactIncludePrivilegesResponse>> GetAllContactsForOrganisationIncludePrivileges(string epaoId, bool? withUser = null)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/v1/contacts/getAll/includePrivileges"))
+            {
+                var response = await PostPutRequestWithResponse<GetAllContactsIncludePrivilegesRequest, List<ContactIncludePrivilegesResponse>>(request,
+                        new GetAllContactsIncludePrivilegesRequest(epaoId, withUser));
+
+                return response;
             }
         }
 

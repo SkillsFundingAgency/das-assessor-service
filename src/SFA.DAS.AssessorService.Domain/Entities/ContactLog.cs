@@ -14,6 +14,8 @@ namespace SFA.DAS.AssessorService.Domain.Entities
     public class ContactLogType
     {
         public const string PrivilegesAmended = "PrivilegesAmended";
+        public const string PrivilegesAmendedByStaff = "PrivilegesAmendedByStaff";
         public const string UserRemoved = "UserRemoved";
+        public const string UserRemovedByStaff = "UserRemovedByStaff";
     }
 }
