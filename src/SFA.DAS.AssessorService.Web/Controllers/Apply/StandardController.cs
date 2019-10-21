@@ -40,7 +40,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
             var standards = await _apiClient.GetStandards();
 
-            model.Results = standards.Where(s => string.Equals(s.Title, model.StandardToFind, StringComparison.InvariantCultureIgnoreCase)).ToList();
+            model.Results = standards.Where(s => s.Title.Contains(model.StandardToFind, StringComparison.InvariantCultureIgnoreCase)).ToList();
 
             return View("~/Views/Application/Standard/FindStandardResults.cshtml", model);
         }
