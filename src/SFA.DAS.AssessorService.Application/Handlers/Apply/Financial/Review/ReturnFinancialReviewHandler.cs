@@ -13,11 +13,13 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply.Financial.Review
     public class ReturnFinancialReviewHandler : IRequestHandler<ReturnFinancialReviewRequest>
     {
         private readonly IApplyRepository _applyRepository;
+        private readonly IOrganisationQueryRepository _organisationQueryRepository;
         private readonly IOrganisationRepository _organisationRepository;
 
-        public ReturnFinancialReviewHandler(IApplyRepository applyRepository, IOrganisationRepository organisationRepository)
+        public ReturnFinancialReviewHandler(IApplyRepository applyRepository, IOrganisationQueryRepository organisationQueryRepository, IOrganisationRepository organisationRepository)
         {
             _applyRepository = applyRepository;
+            _organisationQueryRepository = organisationQueryRepository;
             _organisationRepository = organisationRepository;
         }
 
@@ -32,7 +34,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply.Financial.Review
         private async Task UpdateOrganisationWithUpdatedGrade(Guid applicationId, FinancialGrade grade)
         {
             var application = await _applyRepository.GetApplication(applicationId);
-            var org = application?.Organisation;
+            var org = await _organisationQueryRepository.Get(application.OrganisationId);
 
             if (org != null)
             {

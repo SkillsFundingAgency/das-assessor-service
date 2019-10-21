@@ -80,7 +80,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.Apply
 
             var response = await _mediator.Send(submitApplicationSequenceRequest);
 
-            return CreatedAtRoute("SubmitApplication", response);
+            return CreatedAtRoute("SubmitApplicationSequence", response);
         }
 
         [HttpPost("updateStandardData", Name = "UpdateStandardData")]

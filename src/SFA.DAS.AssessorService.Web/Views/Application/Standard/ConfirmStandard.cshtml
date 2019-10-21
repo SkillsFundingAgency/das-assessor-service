@@ -59,7 +59,7 @@
                 </tbody>
             </table>
 
-            <form asp-action="StandardConfirm" asp-controller="Standard" asp-route-applicationId="@Model.Id">
+            <form asp-action="ConfirmStandard" asp-controller="Standard" asp-route-applicationId="@Model.Id">
                 <input asp-for="@Model.StandardCode" value="@standardCode" type="hidden" />
 
                 @if (string.IsNullOrEmpty(Model.ApplicationStatus))
