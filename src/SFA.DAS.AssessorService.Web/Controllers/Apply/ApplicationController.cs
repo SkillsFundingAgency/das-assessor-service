@@ -394,7 +394,12 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             {
                 updatePageResult = await UploadFilesToStorage(application.ApplicationId, sectionId, pageId, page);
                 if (NothingToUpload(updatePageResult, answers))
+                {
+                    if (__redirectAction == "Feedback")
+                        return RedirectToAction("Feedback", new { Id });
+
                     return ForwardToNextSectionOrPage(page, Id, sequenceNo, sectionId, __redirectAction);
+                }
             }
             else
                 updatePageResult = await _qnaApiClient.AddPageAnswer(application.ApplicationId, sectionId, pageId, answers);

@@ -73,7 +73,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
                 {
                     var resubmittedStatues = new string[] { ApplicationSequenceStatus.Submitted, ApplicationSequenceStatus.FeedbackAdded };
 
-                    sequence.Status = resubmittedStatues.Contains(sequence.Status) ? ApplicationSequenceStatus.Resubmitted : sequence.Status;
+                    sequence.Status = resubmittedStatues.Contains(sequence.Status) ? ApplicationSequenceStatus.Resubmitted : ApplicationSequenceStatus.Submitted;
 
                     // NOTE: Must update Required Sections within too!
                     if (sequence.Sections != null)
