@@ -14,14 +14,14 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             <p>
-                <dl class="govuk-summary-list govuk-!-margin-bottom-0">
+                <dl class="govuk-summary-list govuk-summary-list--top-border govuk-!-margin-bottom-0">
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">Current key</dt>
                         <dd class="govuk-summary-list__value">@Model.CurrentKey</dd>
                     </div>
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">Last renewed</dt>
-                        <dd class="govuk-summary-list__value">@Model.LastRenewedDate.ToString("dd MMM yyyy")</dd>
+                        <dd class="govuk-summary-list__value">@Model.LastRenewedDate.ToString("dd MMMM yyyy")</dd>
                     </div>
                 </dl>
             </p>
