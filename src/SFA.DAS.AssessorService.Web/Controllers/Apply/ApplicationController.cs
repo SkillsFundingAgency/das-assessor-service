@@ -490,18 +490,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             var applySequence = application.ApplyData.Sequences.Single(x => x.SequenceNo == sequence.SequenceNo);
             var applySections = applySequence.Sections;
 
-            var filteredSections = sections?.Where(x => !applySections?.Any(p => p.SectionNo == x.SectionNo && p.NotRequired) ?? false).ToList();
-            var sectionsCompletedFeedback = filteredSections?.Where(x => x.QnAData.Pages.All(y => y.AllFeedbackIsCompleted));
-            if (sectionsCompletedFeedback != null)
-            {
-                applySections = applySequence.Sections.Select(x =>
-                {
-                    if (sectionsCompletedFeedback.Any(y => y.SectionNo == x.SectionNo))
-                        x.RequestedFeedbackAnswered = true;
-                    return x;
-                }).ToList();
-            }
-
+          //  await _qnaApiClient.AllFeedbackCompleted(application.ApplicationId, sequence.Id);
 
             var errors =  ValidateSubmit(sections, applySections);
             if (errors.Any())
@@ -523,7 +512,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
             if (await _applicationApiClient.SubmitApplicationSequence(submitRequest))
             {
-                return RedirectToAction("Submitted", new { Id });
+             
+               return RedirectToAction("Submitted", new { Id });
             }
 
             return RedirectToAction("NotSubmitted", new { Id });
@@ -848,17 +838,12 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                     validationErrors.Add(validationError);
                 }
             }
-            else if (applySections.Where(sec => sec.RequestedFeedbackAnswered is false).Any())
+            else if (sections.Where(sec => sec.QnAData.RequestedFeedbackAnswered is false || sec.QnAData.Pages.Any(p => !p.AllFeedbackIsCompleted)).Any())
             {
-                
-                foreach (var sectionFeedbackNotYetCompleted in applySections.Where(sec => sec.RequestedFeedbackAnswered is false))
+                foreach (var sectionFeedbackNotYetCompleted in sections.Where(sec => sec.QnAData.RequestedFeedbackAnswered is false || sec.QnAData.Pages.Any(p => !p.AllFeedbackIsCompleted)))
                 {
-                    var sec = sections.SingleOrDefault(x => x.SectionNo == sectionFeedbackNotYetCompleted.SectionNo);
-                    if (sec != null)
-                    {
-                        var validationError = new ValidationErrorDetail(sec.Id.ToString(), $"You need to complete the '{sec.LinkTitle}' section");
-                        validationErrors.Add(validationError);
-                    }
+                    var validationError = new ValidationErrorDetail(sectionFeedbackNotYetCompleted.Id.ToString(), $"You need to complete the '{sectionFeedbackNotYetCompleted.LinkTitle}' section");
+                    validationErrors.Add(validationError);
                 }
             }
 

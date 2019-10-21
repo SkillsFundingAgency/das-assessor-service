@@ -156,6 +156,15 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
+        public async Task<bool> AllFeedbackCompleted(Guid applicationId, Guid sequenceId)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Post, $"/applications/{applicationId}/sequence/{sequenceId}/feedback/completed"))
+            {
+                return await RequestAndDeserialiseAsync<bool>(request,
+                     $"Could not find the sections");
+            }
+        }
+
         private class SetResultConverter : JsonConverter
         {
             public override bool CanConvert(Type objectType)
