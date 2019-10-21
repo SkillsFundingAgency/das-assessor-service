@@ -483,7 +483,11 @@ namespace SFA.DAS.AssessorService.Data
                         var certLog = await _context.CertificateLogs.FirstOrDefaultAsync(x =>
                             x.CertificateId == certificate.Id && x.Action == CertificateStatus.SentForApproval &&
                             x.Status == CertificateStatus.ToBeApproved);
-                        if (certLog != null) continue;
+                        if (certLog != null) {
+                            var deleted =  _context.CertificateLogs.Any(x => x.CertificateId == certificate.Id && x.Status == CertificateStatus.Deleted);
+                            if (!deleted)
+                                continue;
+                        }
                     }
 
                     certificate.Status = approvalResult.IsApproved;
