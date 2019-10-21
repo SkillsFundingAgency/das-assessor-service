@@ -17,7 +17,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         
         Task<ContactResponse> Update(UpdateContactRequest updateContactRequest);
 
-        Task<List<ContactsWithPrivilegesResponse>> GetContactsWithPrivileges(Guid organisationId);
+        
 
         Task<ContactBoolResponse> DoesContactHavePrivileges(string userId);
 
@@ -26,9 +26,12 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         Task<ContactResponse> GetById(Guid id);
 
         Task<ContactResponse> GetContactBySignInId(string signInId);
-        Task<List<ContactResponse>> GetAllContactsForOrganisation(string epaoId);
-        Task<List<ContactResponse>> GetAllContactsWhoCanBePrimaryForOrganisation(string epaoId);
 
+        Task<List<ContactResponse>> GetAllContactsForOrganisation(string epaoId, bool? withUser = null);
+        Task<List<ContactIncludePrivilegesResponse>> GetAllContactsForOrganisationIncludePrivileges(string epaoId, bool? withUser = null);
+
+        Task<List<ContactResponse>> GetAllContactsWhoCanBePrimaryForOrganisation(string epaoId);
+        
         Task<ContactResponse> UpdateOrgAndStatus(
             UpdateContactWithOrgAndStausRequest updateContactWithOrgAndStausRequest);
 
