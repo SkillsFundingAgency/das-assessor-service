@@ -498,18 +498,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             var applySequence = application.ApplyData.Sequences.Single(x => x.SequenceNo == sequence.SequenceNo);
             var applySections = applySequence.Sections;
 
-            var filteredSections = sections?.Where(x => !applySections?.Any(p => p.SectionNo == x.SectionNo && p.NotRequired) ?? false).ToList();
-            var sectionsCompletedFeedback = filteredSections?.Where(x => x.QnAData.Pages.All(y => y.AllFeedbackIsCompleted));
-            if (sectionsCompletedFeedback != null)
-            {
-                applySections = applySequence.Sections.Select(x =>
-                {
-                    if (sectionsCompletedFeedback.Any(y => y.SectionNo == x.SectionNo))
-                        x.RequestedFeedbackAnswered = true;
-                    return x;
-                }).ToList();
-            }
-
             var errors =  ValidateSubmit(sections, applySections);
             if (errors.Any())
             {
@@ -533,6 +521,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
             if (await _applicationApiClient.SubmitApplicationSequence(submitRequest))
             {
+                await _qnaApiClient.AllFeedbackCompleted(application.ApplicationId, sequence.Id);
                 return RedirectToAction("Submitted", new { Id });
             }
 
