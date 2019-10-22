@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -29,6 +30,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
     public class ApplicationController : Controller
     {
         private readonly ILogger<ApplicationController> _logger;
+        private readonly IApiValidationService _apiValidationService;
         private readonly IOrganisationsApiClient _orgApiClient;
         private readonly IContactsApiClient _contactsApiClient;
         private readonly IApplicationApiClient _applicationApiClient;
@@ -37,9 +39,10 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         private const string WorkflowType = "EPAO";
 
         public ApplicationController(IOrganisationsApiClient orgApiClient, IQnaApiClient qnaApiClient, IWebConfiguration config,
-            IContactsApiClient contactsApiClient, IApplicationApiClient applicationApiClient, ILogger<ApplicationController> logger)
+            IContactsApiClient contactsApiClient, IApplicationApiClient applicationApiClient, ILogger<ApplicationController> logger, IApiValidationService apiValidationService)
         {
             _logger = logger;
+            _apiValidationService = apiValidationService;
             _orgApiClient = orgApiClient;
             _contactsApiClient = contactsApiClient;
             _applicationApiClient = applicationApiClient;
@@ -387,7 +390,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
             var page = await _qnaApiClient.GetPage(application.ApplicationId, sectionId, pageId);
             var answers = GetAnswersFromForm(page);
-
+            
             SetPageAnswersResponse updatePageResult;
             var fileupload = page.Questions?.Any(q => q.Input.Type == "FileUpload");
             if (fileupload == true)
@@ -403,6 +406,18 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             }
             else
                 updatePageResult = await _qnaApiClient.AddPageAnswer(application.ApplicationId, sectionId, pageId, answers);
+
+            var apiValidationResult = await _apiValidationService.CallApiValidation(page, answers);
+            if (!apiValidationResult.IsValid)
+            {
+                updatePageResult.ValidationPassed = false;
+                if (updatePageResult.ValidationErrors == null)
+                {
+                    updatePageResult.ValidationErrors = new List<KeyValuePair<string, string>>();
+                }
+                
+                updatePageResult.ValidationErrors.AddRange(apiValidationResult.ErrorMessages);
+            }
 
             if (updatePageResult?.ValidationPassed == true)
             {

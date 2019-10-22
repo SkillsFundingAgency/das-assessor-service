@@ -18,6 +18,7 @@ using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
 using SFA.DAS.AssessorService.ExternalApis.IFAStandards;
 using SFA.DAS.AssessorService.Settings;
+using SFA.DAS.AssessorService.Web.Controllers.Apply;
 using SFA.DAS.AssessorService.Web.Extensions;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.StartupConfiguration;
@@ -157,6 +158,8 @@ namespace SFA.DAS.AssessorService.Web
 
                 config.For<IStandardServiceClient>().Use<StandardServiceClient>().Ctor<string>().Is(Configuration.ClientApiAuthentication.ApiBaseAddress);
 
+                config.For<IApiValidationService>().Use<ApiValidationService>();
+                
                 config.Populate(services);
             });
 
