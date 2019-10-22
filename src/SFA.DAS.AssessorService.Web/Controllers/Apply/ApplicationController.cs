@@ -847,17 +847,12 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                     validationErrors.Add(validationError);
                 }
             }
-            else if (applySections.Any(sec => sec.RequestedFeedbackAnswered is false))
+            else if (sections.Any(sec => sec.QnAData.RequestedFeedbackAnswered is false || sec.QnAData.Pages.Any(p => !p.AllFeedbackIsCompleted)))
             {
-                
-                foreach (var sectionFeedbackNotYetCompleted in applySections.Where(sec => sec.RequestedFeedbackAnswered is false))
+                foreach (var sectionFeedbackNotYetCompleted in sections.Where(sec => sec.QnAData.RequestedFeedbackAnswered is false || sec.QnAData.Pages.Any(p => !p.AllFeedbackIsCompleted)))
                 {
-                    var sec = sections.SingleOrDefault(x => x.SectionNo == sectionFeedbackNotYetCompleted.SectionNo);
-                    if (sec != null)
-                    {
-                        var validationError = new ValidationErrorDetail(sec.Id.ToString(), $"You need to complete the '{sec.LinkTitle}' section");
-                        validationErrors.Add(validationError);
-                    }
+                    var validationError = new ValidationErrorDetail(sectionFeedbackNotYetCompleted.Id.ToString(), $"You need to complete the '{sectionFeedbackNotYetCompleted.LinkTitle}' section");
+                    validationErrors.Add(validationError);
                 }
             }
 
