@@ -232,9 +232,6 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
                 if (certificateData.ContactPostCode != null)
                     worksheet.Cells[row, 18].Value = certificateData.ContactPostCode;
 
-                _aggregateLogger.LogInfo(
-                    $"Processing Certificate For IFA Certificate - {certificate.CertificateReference}");
-
                 row++;
             }
         }
