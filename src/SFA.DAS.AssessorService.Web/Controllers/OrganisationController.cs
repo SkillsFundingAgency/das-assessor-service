@@ -200,7 +200,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                     return RedirectToAction(nameof(RenewApiKey), nameof(OrganisationController).RemoveController(), "api-subscription");
                 }
 
-                await _externalApiClient.RegeneratePrimarySubscriptionKey(vm.SubscriptionId);
+                // delete and re-subscribe so that the created date can be used to track a 'renewed' key
+                await _externalApiClient.DeleteSubscriptionAndResubscribe(ukprn, vm.SubscriptionId);
                 TempData.SetAlert(new Alert { Message = "Your API key has been renewed", Type = AlertType.Success });
             }
             catch (Exception e)

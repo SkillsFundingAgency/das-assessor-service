@@ -210,6 +210,21 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Azure
             return user;
         }
 
+        public async Task DeleteSubscriptionAndResubscribe(string ukprn, string subscriptionId)
+        {
+            var users = await GetUserDetailsByUkprn(ukprn, true);
+            var subscription = users?.Select(u => u.Subscriptions.FirstOrDefault(s => s.Id == subscriptionId)).FirstOrDefault();
+            
+            if(subscription != null)
+            {
+                var userId = subscription.UserId;
+                var productId = subscription.ProductId;
+
+                await DeleteSubscription(subscription.Id);
+                await SubscribeUserToProduct(userId, productId);
+            }
+        }
+
         private async Task UpdateUserNote(string userId, string note)
         {
             var request = new UpdateAzureUserNoteRequest { Note = note };
