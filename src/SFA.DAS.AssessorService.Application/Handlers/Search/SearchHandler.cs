@@ -181,7 +181,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
             if (request.IsPrivatelyFunded)
             {
                 var certificate = await _certificateRepository.GetCertificateByUlnLastname(request.Uln, likedSurname);
-                if (certificate?.IsPrivatelyFunded == true && (certificate?.Status != CertificateStatus.Deleted || certificate?.Status != CertificateStatus.Draft))
+                if (certificate?.IsPrivatelyFunded == true && certificate?.Status != CertificateStatus.Deleted && certificate?.Status != CertificateStatus.Draft)
                 {
                     return new List<SearchResult> { new SearchResult{FamilyName=likedSurname,UlnAlreadyExits = true, Uln = request.Uln ,
                     IsPrivatelyFunded = true, IsNoMatchingFamilyName = false, StdCode = certificate.StandardCode} }.PopulateStandards(_standardService,_logger);
