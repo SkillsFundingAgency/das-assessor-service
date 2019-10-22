@@ -177,6 +177,17 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
                     IsPrivatelyFunded = true, IsNoMatchingFamilyName = true } };
             }
 
+            
+            if (request.IsPrivatelyFunded)
+            {
+                var certificate = await _certificateRepository.GetCertificateByUlnLastname(request.Uln, likedSurname);
+                if (certificate?.IsPrivatelyFunded == true && (certificate?.Status != CertificateStatus.Deleted || certificate?.Status != CertificateStatus.Draft))
+                {
+                    return new List<SearchResult> { new SearchResult{FamilyName=likedSurname,UlnAlreadyExits = true, Uln = request.Uln ,
+                    IsPrivatelyFunded = true, IsNoMatchingFamilyName = false, StdCode = certificate.StandardCode} }.PopulateStandards(_standardService,_logger);
+                }
+            }
+
             _logger.LogInformation((ilrResults != null && ilrResults.Any())? LoggingConstants.SearchSuccess : LoggingConstants.SearchFailure);
 
             var searchResults = Mapper.Map<List<SearchResult>>(ilrResults)
