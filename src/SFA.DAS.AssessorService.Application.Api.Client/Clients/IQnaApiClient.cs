@@ -22,6 +22,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         Task<Section> GetSection(Guid applicationId, Guid sectionId);
         Task<Section> GetSectionBySectionNo(Guid applicationId, int sequenceNo, int sectionNo);
         Task<Page> GetPage(Guid applicationId, Guid sectionId, string pageId);
+        Task<Page> GetPageBySectionNo(Guid applicationId, int sequenceNo, int sectionNo, string pageId);
         Task<SetPageAnswersResponse> AddPageAnswer(Guid applicationId, Guid sectionId, string pageId, List<Answer> answer);
         Task<AddPageAnswerResponse> AddAnswersToMultipleAnswerPage(Guid applicationId, Guid sectionId, string pageId, List<Answer> answer);
         Task<SetPageAnswersResponse> Upload(Guid applicationId, Guid sectionId, string pageId, IFormFileCollection files);
