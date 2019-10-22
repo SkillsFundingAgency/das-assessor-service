@@ -39,8 +39,6 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Notification
             var personalisation = CreatePersonalisationTokens(certificateResponses);
 
             _aggregateLogger.LogInfo("Send Email");
-            _aggregateLogger.LogInfo($"Base Url = {_webConfiguration.NotificationsApiClientConfiguration.ApiBaseUrl}");
-            _aggregateLogger.LogInfo($"Client Token = {_webConfiguration.NotificationsApiClientConfiguration.ClientToken}");
 
             var recipients = emailTemplate.Recipients.Split(';').Select(x => x.Trim());
             foreach (var recipient in recipients)

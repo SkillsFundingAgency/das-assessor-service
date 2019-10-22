@@ -284,3 +284,4 @@ src/SFA.DAS.AssessorService.Web.Specflow.Tests/Project/**/*.*
 
 #Redundant specflow project
 src/SFA.DAS.AssessorService.Application.Api.Specflow.Tests/**/*.*
+src/global.json
