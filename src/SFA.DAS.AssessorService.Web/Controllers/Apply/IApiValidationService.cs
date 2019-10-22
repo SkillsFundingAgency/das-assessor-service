@@ -1,0 +1,11 @@
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using SFA.DAS.QnA.Api.Types.Page;
+
+namespace SFA.DAS.AssessorService.Web.Controllers.Apply
+{
+    public interface IApiValidationService
+    {
+        Task<ApiValidationResult> CallApiValidation(Page page, List<Answer> answers);
+    }
+}
