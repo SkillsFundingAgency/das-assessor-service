@@ -25,9 +25,6 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Startup
 
             var configuration = ConfigurationHelper.GetConfiguration();
 
-            _logger.LogInfo("Initialising bootstrapper ....");
-            _logger.LogInfo("Config Received");
-
             Container = new Container(configure =>
             {
                 configure.Scan(x =>
@@ -47,7 +44,6 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Startup
                         configuration.Sftp.Username, configuration.Sftp.Password));
                 configure.AddRegistry<NotificationsRegistry>();
 
-                _logger.LogInfo("Calling http registry and getting the token ....");
                 configure.AddRegistry<HttpRegistry>();
             });
 
