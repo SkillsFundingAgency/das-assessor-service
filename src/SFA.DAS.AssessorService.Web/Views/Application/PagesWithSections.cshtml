@@ -6,7 +6,7 @@
     var pageTitle = "";
     var isSamePage = false;
     var nextPageTitle = "";
-    var pagesToCheck = Model.Section.QnAData.Pages.Where(p => p.Active && !p.NotRequired).ToList();
+    var pagesToCheck = Model.Section.QnAData.Pages.Where(p => p.Active).ToList();
 }
 
 <a href="@Url.Action("Sequence", "Application", new {Id = Model.Id, sequenceNo= Model.SequenceNo})" class="govuk-back-link">Back to application overview</a>
@@ -48,7 +48,7 @@
 
                                 <li class="app-task-list__item">
                                     <a class="govuk-link app-task-list__task-name"
-                                       href="@Url.Action("Page", "Application", new {Id = Model.Id, sequenceNo = Model.Section.SequenceNo, sectionId = Model.Section.Id, pageId = pg.PageId, __redirectAction="Section"})">
+                                       href="@Url.Action("Page", "Application", new {Id = Model.Id, sequenceNo = Model.Section.SequenceNo, sectionNo = Model.Section.SectionNo, pageId = pg.PageId, __redirectAction="Section"})">
                                         @pg.LinkTitle
                                     </a>
                                     @if (pg.Complete)

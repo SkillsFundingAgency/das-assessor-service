@@ -20,6 +20,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Apply
 
         public Guid Id { get; set; }
         public int SequenceNo { get; set; }
+        public int SectionNo { get; set; }
         public Guid SectionId { get; set; }
         public string PageId { get; set; }
         public string RedirectAction { get; set; }

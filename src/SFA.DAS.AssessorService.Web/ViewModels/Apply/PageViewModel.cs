@@ -13,11 +13,11 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Apply
     {
         public Guid Id { get; }
 
-        public PageViewModel(Guid id, int sequenceNo, Guid sectionId, string pageId, Page page, string pageContext, string redirectAction, string returnUrl, List<ValidationErrorDetail> errorMessages)
+        public PageViewModel(Guid id, int sequenceNo, int sectionNo, string pageId, Page page, string pageContext, string redirectAction, string returnUrl, List<ValidationErrorDetail> errorMessages)
         {
             Id = id;
-            SequenceNo = sequenceNo.ToString();
-            SectionId = sectionId;
+            SequenceNo = sequenceNo;
+            SectionNo = sectionNo;
             PageId = pageId;
             PageContext = pageContext;
             RedirectAction = redirectAction;
@@ -42,7 +42,9 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Apply
         public string DisplayType { get; set; }
 
         public List<QuestionViewModel> Questions { get; set; }
-        public string SequenceNo { get; set; }
+
+        public int SequenceNo { get; set; }
+        public int SectionNo { get; set; }
         public Guid SectionId { get; set; }
 
         public bool AllowMultipleAnswers { get; set; }
@@ -62,7 +64,6 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Apply
             LinkTitle = page.LinkTitle;
             DisplayType = page.DisplayType;
             PageId = page.PageId;
-            SequenceNo = SequenceNo;
 
             AllowMultipleAnswers = page.AllowMultipleAnswers;
             if (errorMessages != null && errorMessages.Any())
@@ -74,7 +75,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Apply
                 PageOfAnswers = page.PageOfAnswers;
             }
 
-            SectionId= SectionId;
+            SectionId = page.SectionId;
 
             var questions = page.Questions;
             var answers = new List<Answer>();
@@ -97,7 +98,8 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Apply
                 Value = page.AllowMultipleAnswers ? GetMultipleValue(page.PageOfAnswers.LastOrDefault()?.Answers, q, errorMessages) : answers?.SingleOrDefault(a => a?.QuestionId == q.QuestionId)?.Value,
                 JsonValue = page.AllowMultipleAnswers ? GetMultipleJsonValue(page.PageOfAnswers.LastOrDefault()?.Answers, q, errorMessages) : GetJsonValue(answers,q),
                 ErrorMessages = errorMessages?.Where(f => f.Field.Split("_Key_")[0] == q.QuestionId).ToList(),
-                SequenceNo = int.Parse(SequenceNo),
+                SequenceNo = SequenceNo,
+                SectionNo = SectionNo,
                 SectionId = SectionId,
                 Id = Id,
                 PageId = PageId,
