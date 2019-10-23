@@ -189,7 +189,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
                 if (certificateData.StandardName != null)
                     worksheet.Cells[row, 3].Value = certificateData.StandardName.ToUpper();
 
-                if (certificateData.CourseOption != null)
+                if (!string.IsNullOrWhiteSpace(certificateData.CourseOption))
                     worksheet.Cells[row, 4].Value = "(" + certificateData.CourseOption.ToUpper() + "):";
 
                 worksheet.Cells[row, 5].Value = $"Level {certificateData.StandardLevel}".ToUpper();
@@ -231,9 +231,6 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
 
                 if (certificateData.ContactPostCode != null)
                     worksheet.Cells[row, 18].Value = certificateData.ContactPostCode;
-
-                _aggregateLogger.LogInfo(
-                    $"Processing Certificate For IFA Certificate - {certificate.CertificateReference}");
 
                 row++;
             }

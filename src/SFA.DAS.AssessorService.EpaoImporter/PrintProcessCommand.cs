@@ -123,7 +123,6 @@ namespace SFA.DAS.AssessorService.EpaoImporter
             try
             {
                 _aggregateLogger.LogInfo("Print Process Function Started");
-                _aggregateLogger.LogInfo($"Process Environment = {EnvironmentVariableTarget.Process}");
 
                 var scheduleRun = await _assessorServiceApi.GetSchedule(ScheduleType.PrintRun);
                 if (scheduleRun == null)
