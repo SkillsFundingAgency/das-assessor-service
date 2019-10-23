@@ -75,7 +75,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Apply
                 PageOfAnswers = page.PageOfAnswers;
             }
 
-            SectionId = page.SectionId;
+            SectionId = page.SectionId ?? Guid.Empty;
 
             var questions = page.Questions;
             var answers = new List<Answer>();

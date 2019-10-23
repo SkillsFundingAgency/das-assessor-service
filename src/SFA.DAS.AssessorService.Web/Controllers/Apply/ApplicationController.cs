@@ -331,7 +331,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             if (page.AllowMultipleAnswers)
             {
                 var answers = GetAnswersFromForm(page);
-                var pageAddResponse = await _qnaApiClient.AddAnswersToMultipleAnswerPage(application.ApplicationId, page.SectionId, page.PageId, answers);
+                var pageAddResponse = await _qnaApiClient.AddAnswersToMultipleAnswerPage(application.ApplicationId, page.SectionId.Value, page.PageId, answers);
                 if (pageAddResponse?.Success != null && pageAddResponse.Success)
                 {
                     if (__formAction == "Add")
@@ -395,12 +395,12 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             var fileupload = page.Questions?.Any(q => q.Input.Type == "FileUpload");
             if (fileupload == true)
             {
-                updatePageResult = await UploadFilesToStorage(application.ApplicationId, page.SectionId, page.PageId, page);
+                updatePageResult = await UploadFilesToStorage(application.ApplicationId, page.SectionId.Value, page.PageId, page);
                 if (NothingToUpload(updatePageResult, answers))
                     return ForwardToNextSectionOrPage(page, Id, sequenceNo, sectionNo, __redirectAction);
             }
             else
-                updatePageResult = await _qnaApiClient.AddPageAnswer(application.ApplicationId, page.SectionId, page.PageId, answers);
+                updatePageResult = await _qnaApiClient.AddPageAnswer(application.ApplicationId, page.SectionId.Value, page.PageId, answers);
 
             var apiValidationResult = await _apiValidationService.CallApiValidation(page, answers);
             if (!apiValidationResult.IsValid)
@@ -466,7 +466,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             }
 
             var page = await _qnaApiClient.GetPageBySectionNo(application.ApplicationId, sequenceNo, sectionNo, pageId);
-            await _qnaApiClient.RemovePageAnswer(application.ApplicationId, page.SectionId, page.PageId, answerId);
+            await _qnaApiClient.RemovePageAnswer(application.ApplicationId, page.SectionId.Value, page.PageId, answerId);
 
             return RedirectToAction("Page", new { Id, sequenceNo, sectionNo, pageId, __redirectAction });
         }
