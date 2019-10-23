@@ -903,19 +903,33 @@
 }
 
 .success-summary {
-    border-color: #00823b;
+    border-color: #00703c;
 }
 
 .warning-summary {
-    border-color: #cd4c0b;
-}
-
-.success-summary p {
-    color: #00823b;
+    border-color: #f47738;
 }
 
 .info-summary {
-  border-color: #2b8cc4;
+    border-color: #1d70b8;
+}
+
+.success-summary p {
+    color: #00703c;
+}
+
+.warning-summary p {
+    color: #f47738;
+}
+
+.info-summary p {
+    color: #1d70b8;
+}
+
+.success-summary p,
+.warning-summary p,
+.info-summary p {
+    font:bold;
 }
 
 .info-highlighted {
