@@ -243,7 +243,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             {
                 try
                 {
-                    var response = await _roatpApiClient.SearchOrgansiationByUkprn(ukprn.Value);
+                    var response = await _roatpApiClient.SearchOrganisationByUkprn(ukprn.Value);
                     if (response != null) results.AddRange(response);
                 }
                 catch (Exception ex)
@@ -256,7 +256,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             {
                 try
                 {
-                    var response = await _roatpApiClient.SearchOrgansiationByName(name, false);
+                    var response = await _roatpApiClient.SearchOrganisationByName(name, false);
                     if (response != null) results.AddRange(response);
                 }
                 catch (Exception ex)
@@ -271,7 +271,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
                 {
                     try
                     {
-                        var response = await _roatpApiClient.SearchOrgansiationByName(exactName, true);
+                        var response = await _roatpApiClient.SearchOrganisationByName(exactName, true);
                         if (response != null) results.AddRange(response);
                     }
                     catch (Exception ex)

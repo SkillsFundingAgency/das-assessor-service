@@ -12,7 +12,7 @@ using AutoMapper;
 
 namespace SFA.DAS.AssessorService.Application.Api.Infrastructure
 {
-    public class RoatpApiClient
+    public class RoatpApiClient : IRoatpApiClient
     {
         private readonly HttpClient _client;
         private readonly ILogger<RoatpApiClient> _logger;
@@ -25,7 +25,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Infrastructure
             _config = configurationService;
         }
 
-        public async Task<IEnumerable<OrganisationSearchResult>> SearchOrgansiationByName(string searchTerm, bool exactMatch)
+        public async Task<IEnumerable<OrganisationSearchResult>> SearchOrganisationByName(string searchTerm, bool exactMatch)
         {
             _logger.LogInformation($"Searching RoATP. Search Term: {searchTerm}");
             var apiResponse = await Get<AssessorService.Api.Types.Models.Roatp.OrganisationSearchResults>($"/api/v1/search?searchTerm={searchTerm}");
@@ -38,10 +38,10 @@ namespace SFA.DAS.AssessorService.Application.Api.Infrastructure
             return Mapper.Map<IEnumerable<SFA.DAS.AssessorService.Api.Types.Models.Roatp.Organisation>, IEnumerable<OrganisationSearchResult>>(apiResponse?.SearchResults);
         }
 
-        public async Task<IEnumerable<OrganisationSearchResult>> SearchOrgansiationByUkprn(int ukprn)
+        public async Task<IEnumerable<OrganisationSearchResult>> SearchOrganisationByUkprn(int ukprn)
         {
             // Search directly in UKRLP first as there will be more information about the Organisation if it is there.
-            var ukrlpResult = await SearchOrgansiationInUkrlp(ukprn);
+            var ukrlpResult = await SearchOrganisationInUkrlp(ukprn);
 
             if (ukrlpResult != null && ukrlpResult.Any())
             {
@@ -62,7 +62,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Infrastructure
             }
         }
 
-        private async Task<IEnumerable<OrganisationSearchResult>> SearchOrgansiationInUkrlp(int ukprn)
+        public async Task<IEnumerable<OrganisationSearchResult>> SearchOrganisationInUkrlp(int ukprn)
         {
             _logger.LogInformation($"Searching UKRLP. Ukprn: {ukprn}");
             var apiResponse = await Get<AssessorService.Api.Types.Models.UKRLP.UkprnLookupResponse>($"/api/v1/ukrlp/lookup/{ukprn}");
