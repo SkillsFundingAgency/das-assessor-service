@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.QnA.Api.Types.Page;
@@ -45,7 +46,10 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                             if (!result.IsValid)
                             {
                                 validationResult.IsValid = false;
-                                validationResult.ErrorMessages.AddRange(result.ErrorMessages);
+                                result.ErrorMessages.ForEach(m =>
+                                {
+                                    validationResult.ErrorMessages.Add(new KeyValuePair<string, string>(questionWithClientApiCall.QuestionId, m.Value));
+                                });
                             }
                         }
                     }
@@ -58,9 +62,5 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         }
     }
     
-    public class ApiValidationResult
-    {
-        public bool IsValid { get; set; }
-        public List<KeyValuePair<string, string>> ErrorMessages { get; set; }
-    }
+    
 }
