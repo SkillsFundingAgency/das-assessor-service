@@ -118,8 +118,7 @@ namespace SFA.DAS.AssessorService.Data
                 .Include(q => q.Organisation)
                 .FirstOrDefaultAsync(c =>
                     c.Uln == uln &&
-                    c.Organisation.EndPointAssessorOrganisationId == endpointOrganisationId &&
-                    c.IsPrivatelyFunded);
+                    c.Organisation.EndPointAssessorOrganisationId == endpointOrganisationId);
             return existingCert;
         }
 
@@ -153,6 +152,17 @@ namespace SFA.DAS.AssessorService.Data
             var existingCert = await _context.Certificates
                 .AnyAsync(c =>
                     c.Uln == uln);
+
+            return existingCert;
+        }
+
+        public async Task<Certificate> GetCertificateDeletedByUln(long uln)
+        {
+            var existingCert = await _context.Certificates
+                .Include(q => q.Organisation)
+                .FirstOrDefaultAsync(c =>
+                    c.Uln == uln &&
+                    c.Status == CertificateStatus.Deleted);
 
             return existingCert;
         }
@@ -473,7 +483,11 @@ namespace SFA.DAS.AssessorService.Data
                         var certLog = await _context.CertificateLogs.FirstOrDefaultAsync(x =>
                             x.CertificateId == certificate.Id && x.Action == CertificateStatus.SentForApproval &&
                             x.Status == CertificateStatus.ToBeApproved);
-                        if (certLog != null) continue;
+                        if (certLog != null) {
+                            var deleted =  _context.CertificateLogs.Any(x => x.CertificateId == certificate.Id && x.Status == CertificateStatus.Deleted);
+                            if (!deleted)
+                                continue;
+                        }
                     }
 
                     certificate.Status = approvalResult.IsApproved;
