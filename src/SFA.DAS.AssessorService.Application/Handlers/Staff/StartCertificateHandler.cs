@@ -12,7 +12,7 @@ using SFA.DAS.AssessorService.Application.Logging;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
-using SFA.DAS.AssessorService.ExternalApis.Services;
+using CertificateStatus = SFA.DAS.AssessorService.Domain.Consts.CertificateStatus;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Staff
 {
@@ -38,8 +38,15 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
 
         public async Task<Certificate> Handle(StartCertificateRequest request, CancellationToken cancellationToken)
         {
-            return await _certificateRepository.GetCertificate(request.Uln, request.StandardCode) ??
-                   await CreateNewCertificate(request);
+            var existingCertificate = await _certificateRepository.GetCertificate(request.Uln, request.StandardCode);
+            if(existingCertificate != null)
+            {
+                _logger.LogInformation("Handle Before Update Cert in db");
+                existingCertificate.Status = CertificateStatus.Draft;
+                await _certificateRepository.Update(existingCertificate, request.Username, null);
+            }
+
+            return existingCertificate ?? await CreateNewCertificate(request);
         }
 
         private async Task<Certificate> CreateNewCertificate(StartCertificateRequest request)
@@ -77,7 +84,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
                     OrganisationId = organisation.Id,
                     CreatedBy = request.Username,
                     CertificateData = JsonConvert.SerializeObject(certData),
-                    Status = Domain.Consts.CertificateStatus.Draft,
+                    Status = CertificateStatus.Draft,
                     CertificateReference = "",
                     LearnRefNumber = ilr.LearnRefNumber,
                     CreateDay = DateTime.UtcNow.Date
