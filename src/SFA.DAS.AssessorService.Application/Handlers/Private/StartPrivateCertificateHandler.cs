@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Runtime.ConstrainedExecution;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
@@ -10,10 +9,9 @@ using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Application.Handlers.Staff;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Application.Logging;
-using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
-using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
+using CertificateStatus = SFA.DAS.AssessorService.Domain.Consts.CertificateStatus;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Private
 {
@@ -73,7 +71,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Private
                         OrganisationId = organisation.Id,
                         CreatedBy = request.Username,
                         CertificateData = JsonConvert.SerializeObject(certData),
-                        Status = Domain.Consts.CertificateStatus.Draft,
+                        Status = CertificateStatus.Draft,
                         CertificateReference = "",
                         CreateDay = DateTime.UtcNow.Date,
                         IsPrivatelyFunded = true

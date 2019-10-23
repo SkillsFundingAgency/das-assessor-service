@@ -12,7 +12,7 @@ using SFA.DAS.AssessorService.Application.Logging;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
-using SFA.DAS.AssessorService.ExternalApis.Services;
+using CertificateStatus = SFA.DAS.AssessorService.Domain.Consts.CertificateStatus;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Staff
 {
@@ -95,7 +95,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
                     OrganisationId = organisation.Id,
                     CreatedBy = request.Username,
                     CertificateData = JsonConvert.SerializeObject(certData),
-                    Status = Domain.Consts.CertificateStatus.Draft,
+                    Status = CertificateStatus.Draft,
                     CertificateReference = "",
                     LearnRefNumber = ilr.LearnRefNumber,
                     CreateDay = DateTime.UtcNow.Date

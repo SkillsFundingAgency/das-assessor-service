@@ -28,36 +28,49 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
 
         public async Task<Certificate> Handle(UpdateCertificateRequest request, CancellationToken cancellationToken)
         {
-            if (request.Certificate.Status == Domain.Consts.CertificateStatus.Submitted)
+            if (request.Certificate.Status == Domain.Consts.CertificateStatus.Submitted ||
+                request.Certificate.Status == Domain.Consts.CertificateStatus.ToBeApproved)
             {
                 _logger.LogInformation(LoggingConstants.CertificateSubmitted);
                 _logger.LogInformation($"Certificate with ID: {request.Certificate.Id} Submitted with reference of {request.Certificate.CertificateReference}");
-            }
 
-            // Need to update the EPA record
-            var certData = JsonConvert.DeserializeObject<CertificateData>(request.Certificate.CertificateData);
-            if(certData != null)
-            {
-                var epaDetails = certData.EpaDetails ?? new EpaDetails();
-                if (epaDetails.Epas is null) epaDetails.Epas = new List<EpaRecord>();
-
-                var epaOutcome = certData.OverallGrade == CertificateGrade.Fail ? EpaOutcome.Fail : EpaOutcome.Pass;
-                if (certData.AchievementDate != null && !epaDetails.Epas.Any(rec => rec.EpaDate == certData.AchievementDate.Value && rec.EpaOutcome == epaOutcome))
+                var certData = JsonConvert.DeserializeObject<CertificateData>(request.Certificate.CertificateData);
+                if (certData != null)
                 {
-                    var record = new EpaRecord { EpaDate = certData.AchievementDate.Value, EpaOutcome = epaOutcome };
-                    epaDetails.Epas.Add(record);
+                    var epaDetails = certData.EpaDetails ??
+                        new EpaDetails
+                        {
+                            Epas = new List<EpaRecord>()
+                        };
 
-                    var latestRecord = epaDetails.Epas.OrderByDescending(epa => epa.EpaDate).First();
-                    epaDetails.LatestEpaDate = latestRecord.EpaDate;
-                    epaDetails.LatestEpaOutcome = latestRecord.EpaOutcome;
-                    epaDetails.EpaReference = request.Certificate.CertificateReference;
+                    var epaOutcome = certData.OverallGrade == CertificateGrade.Fail ? EpaOutcome.Fail : EpaOutcome.Pass;
+
+                    if (certData.AchievementDate != null && 
+                        !epaDetails.Epas.Any(rec => rec.EpaDate == certData.AchievementDate.Value && rec.EpaOutcome.Equals(epaOutcome, StringComparison.InvariantCultureIgnoreCase)))
+                    {
+                        epaDetails.Epas.Add(new EpaRecord
+                        {
+                            EpaDate = certData.AchievementDate.Value,
+                            EpaOutcome = epaOutcome
+                        });
+
+                        // sort pass outcomes before fail outcomes as pass is the final state even if earlier than the fail
+                        var latestRecord = epaDetails.Epas
+                            .OrderByDescending(epa => epa.EpaOutcome != EpaOutcome.Fail ? 1 : 0)
+                            .ThenByDescending(epa => epa.EpaDate)
+                            .First();
+
+                        epaDetails.LatestEpaDate = latestRecord.EpaDate;
+                        epaDetails.LatestEpaOutcome = latestRecord.EpaOutcome;
+                        epaDetails.EpaReference = request.Certificate.CertificateReference;
+                    }
+
+                    certData.EpaDetails = epaDetails;
+                    request.Certificate.CertificateData = JsonConvert.SerializeObject(certData);
                 }
-
-                certData.EpaDetails = epaDetails;
-                request.Certificate.CertificateData = JsonConvert.SerializeObject(certData);
             }
 
-            // NOTE: In UpdateBatchCertificateHandler we update the status if it's a Fail or Deleted. Here we don't do it as it'll be done in Web app.
+            // NOTE: Unlike UpdateBatchCertificateHandler (External API) the status is altered from the UI in all cases
 
             var logs = await _certificateRepository.GetCertificateLogsFor(request.Certificate.Id);
             var latestLogEntry = logs.OrderByDescending(l => l.EventTime).FirstOrDefault();
@@ -65,6 +78,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
             {
                 return await _certificateRepository.Update(request.Certificate, request.Username, request.Action, updateLog:false);
             }
+
             return await _certificateRepository.Update(request.Certificate, request.Username, request.Action, updateLog: true, reasonForChange: request.ReasonForChange);
         }
     }
