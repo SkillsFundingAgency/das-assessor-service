@@ -83,6 +83,11 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
                 status = "Live";
                 roEPAOApproved = true;
             }
+            else if (status == "New" && request.ActionChoice == "ApproveApplication")
+            {
+                status = "New";
+                roEPAOApproved = true;
+            }
             else if(status == "Applying" && request.ActionChoice == "ApproveApplication")
             {
                 roEPAOApproved = true;
