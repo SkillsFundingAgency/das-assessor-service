@@ -55,9 +55,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             var userId = await GetUserId();
             var org = await _orgApiClient.GetOrganisationByUserId(userId);
             var applications = await _applicationApiClient.GetApplications(userId, false);
-            applications = applications.Where(app => app.ApplicationStatus != ApplicationStatus.Declined).ToList();
+            applications = applications?.Where(app => app.ApplicationStatus != ApplicationStatus.Declined).ToList();
 
-            if (!applications.Any())
+            if (applications is null || applications.Count == 0)
             {
                 //ON-2068 Registered org  with no application created via digital service then
                 //display empty list of application screen
@@ -68,14 +68,16 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
                 return RedirectToAction("Index", "OrganisationSearch");
             }
-
-            //ON-2068 If there is an existing application for an org that is registered then display it
-            //in a list of application screen
-            if (applications.Count == 1 && (org != null && org.RoEPAOApproved))
+            else if (applications.Count == 1 && org?.RoEPAOApproved is true)
+            {
+                //ON-2068 If there is an existing application for an org that is registered then display it
+                //in a list of application screen
                 return View(applications);
-
-            if (applications.Count > 1)
+            }
+            else if (applications.Count > 1)
+            {
                 return View(applications);
+            }
 
             //This always return one record otherwise the previous logic would have handled the response
             var application = applications.First();
@@ -87,6 +89,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 case ApplicationStatus.Declined:
                 case ApplicationStatus.Approved:
                     return View(applications);
+                case ApplicationStatus.Submitted:
+                case ApplicationStatus.Resubmitted:
+                    return RedirectToAction("Submitted", new { application.Id });
                 default:
                     return RedirectToAction("SequenceSignPost", new { application.Id });
             }
@@ -125,8 +130,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             return RedirectToAction("SequenceSignPost", new { Id = id });
         }
 
-
-
         [HttpGet("/Application/{Id}")]
         public async Task<IActionResult> SequenceSignPost(Guid Id)
         {
@@ -138,19 +141,19 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 return RedirectToAction("Applications");
             }
 
-            if (application.ApplicationStatus == ApplicationStatus.Approved)
+            switch(application.ApplicationStatus)
             {
-                return View("~/Views/Application/Approved.cshtml", application);
-            }
-
-            if (application.ApplicationStatus == ApplicationStatus.Declined)
-            {
-                return View("~/Views/Application/Rejected.cshtml", application);
-            }
-
-            if (application.ApplicationStatus == ApplicationStatus.FeedbackAdded)
-            {
-                return View("~/Views/Application/FeedbackIntro.cshtml", application.Id);
+                case ApplicationStatus.Approved:
+                    return View("~/Views/Application/Approved.cshtml", application);
+                case ApplicationStatus.Declined:
+                    return View("~/Views/Application/Rejected.cshtml", application);
+                case ApplicationStatus.FeedbackAdded:
+                    return View("~/Views/Application/FeedbackIntro.cshtml", application.Id);
+                case ApplicationStatus.Submitted:
+                case ApplicationStatus.Resubmitted:
+                    return RedirectToAction("Submitted", new { application.Id });
+                default:
+                    break;
             }
 
             StandardApplicationData applicationData = null;
@@ -167,8 +170,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             {
                 return RedirectToAction("Sequence", new { Id , sequenceNo = 1});
             }
-            else if (!IsSequenceActive(application, 1) && 
-                string.IsNullOrWhiteSpace(applicationData?.StandardName))
+            else if (!IsSequenceActive(application, 1) && string.IsNullOrWhiteSpace(applicationData?.StandardName))
             {
                 var org = await _orgApiClient.GetOrganisationByUserId(userId);
                 if (org.RoEPAOApproved)
@@ -178,8 +180,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
                 return View("~/Views/Application/Stage2Intro.cshtml", application.Id);
             }
-            else if (!IsSequenceActive(application, 1) && 
-                !string.IsNullOrWhiteSpace(applicationData?.StandardName))
+            else if (!IsSequenceActive(application, 1) && !string.IsNullOrWhiteSpace(applicationData?.StandardName))
             {
                 return RedirectToAction("Sequence", new { Id, sequenceNo = 2 });
             }
