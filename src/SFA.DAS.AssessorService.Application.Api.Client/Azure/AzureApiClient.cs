@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -96,7 +97,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Azure
 
             if (!string.IsNullOrWhiteSpace(email))
             {
-                using (var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"/users?api-version=2017-03-01&expandGroups={includeGroups}&$top=1&$filter=email eq '{email}'"))
+                using (var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"/users?api-version=2017-03-01&expandGroups={includeGroups}&$top=1&$filter=email eq '{WebUtility.UrlEncode(email)}'"))
                 {
                     var response = await RequestAndDeserialiseAsync<AzureUserResponse>(httpRequest, "Could not get User");
                     user = response.Users.FirstOrDefault();
