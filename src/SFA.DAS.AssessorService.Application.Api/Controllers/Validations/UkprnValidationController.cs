@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.Application.Api.Infrastructure;
@@ -8,6 +9,7 @@ using SFA.DAS.AssessorService.Application.Interfaces;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers.Validations
 {
+    [Authorize(Roles = "AssessorServiceInternalAPI")]
     [Route("Validations/UkPrn")]
     public class UkprnValidationController : Controller
     {
