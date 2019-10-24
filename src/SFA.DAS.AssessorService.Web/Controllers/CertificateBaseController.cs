@@ -95,6 +95,12 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             }
 
             var updatedCertificate = vm.GetCertificateFromViewModel(certificate, certData);
+            if (updatedCertificate.Status == Domain.Consts.CertificateStatus.Deleted)
+            {
+                updatedCertificate.Status = Domain.Consts.CertificateStatus.Draft;
+                if (updatedCertificate.IsPrivatelyFunded)
+                    updatedCertificate.PrivatelyFundedStatus = null;
+            }
 
             await CertificateApiClient.UpdateCertificate(new UpdateCertificateRequest(updatedCertificate) { Username = username, Action = action});
 

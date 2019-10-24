@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Application.Logging;
+using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using Organisation = SFA.DAS.AssessorService.Domain.Entities.Organisation;
 using SearchData = SFA.DAS.AssessorService.Domain.Entities.SearchData;
@@ -102,6 +103,13 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
                     certificate = await _certificateRepository.GetCertificateByUlnLastname(request.Uln, likedSurname);
                     if (certificate != null)
                     {
+                        if (certificate?.Status == CertificateStatus.Deleted)
+                        {
+                            var result = GetDeletedCertificateResult(certificate, request);
+                            if (result.Any())
+                                return result;
+                        }
+
                         if (intStandards?.Contains(certificate.StandardCode) ?? false)
                         {
                             var standard = await  _standardService.GetStandard(certificate.StandardCode);
@@ -112,15 +120,31 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
                         }
                         return new List<SearchResult> { new SearchResult { UlnAlreadyExits = true, Uln = request.Uln, IsPrivatelyFunded = true, IsNoMatchingFamilyName = true } };
                     }
-
                     //If we got here then certifcate does not exist with uln and surename so
                     //lastly check if there is a certificate that exist with the given uln only disregarding org and surname
+
+                    var deletedCert = await _certificateRepository.GetCertificateDeletedByUln(request.Uln);
+                    if (deletedCert != null)
+                    {
+                        var result = GetDeletedCertificateResult(deletedCert, request);
+                        if (result.Any())
+                            return result;
+                    }
+
                     var certificateExist = await _certificateRepository.CertifciateExistsForUln(request.Uln);
                     return certificateExist
                         ? new List<SearchResult> {new SearchResult {UlnAlreadyExits = true, Uln = request.Uln, IsPrivatelyFunded = true, IsNoMatchingFamilyName = true } }
                         : new List<SearchResult>();
                 }
-                
+
+
+                if (certificate?.Status == CertificateStatus.Deleted)
+                {
+                    var result = GetDeletedCertificateResult(certificate, request);
+                    if (result.Any())
+                        return result;
+                }
+
                 //We found the certifate, check if standard in certificate exists in standards registered by calling org
                 if (intStandards?.Contains(certificate.StandardCode)??false)
                     listOfIlrResults[0].StdCode = certificate.StandardCode;
@@ -135,10 +159,33 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
                 (r.EpaOrgId != thisEpao.EndPointAssessorOrganisationId && intStandards.Contains(r.StdCode)))
             && string.Equals(r.FamilyNameForSearch.Trim(), likedSurname.Trim(), StringComparison.CurrentCultureIgnoreCase)).ToList();
 
-            //If privately funded and uln found in ilr but due to the above check the result was empty then set uln exist flag
+          
             if (request.IsPrivatelyFunded && ilrResults != null && !ilrResults.Any())
             {
-              return  new List<SearchResult> { new SearchResult{UlnAlreadyExits = true, Uln = request.Uln , IsPrivatelyFunded = true, IsNoMatchingFamilyName = true } };
+                //If privately funded and uln found in ilr but existing certificate is marked as deleted
+                var certificate = await _certificateRepository.GetCertificateByUlnLastname(request.Uln, likedSurname);
+
+                if (certificate?.Status == CertificateStatus.Deleted)
+                {
+                    var result = GetDeletedCertificateResult(certificate, request);
+                    if (result.Any())
+                        return result;
+                }
+                
+                //If privately funded and uln found in ilr but due to the previous checks the result was empty then set uln exist flag
+                return  new List<SearchResult> { new SearchResult{UlnAlreadyExits = true, Uln = request.Uln ,
+                    IsPrivatelyFunded = true, IsNoMatchingFamilyName = true } };
+            }
+
+            
+            if (request.IsPrivatelyFunded)
+            {
+                var certificate = await _certificateRepository.GetCertificateByUlnLastname(request.Uln, likedSurname);
+                if (certificate?.IsPrivatelyFunded == true && certificate?.Status != CertificateStatus.Deleted && certificate?.Status != CertificateStatus.Draft)
+                {
+                    return new List<SearchResult> { new SearchResult{FamilyName=likedSurname,UlnAlreadyExits = true, Uln = request.Uln ,
+                    IsPrivatelyFunded = true, IsNoMatchingFamilyName = false, StdCode = certificate.StandardCode} }.PopulateStandards(_standardService,_logger);
+                }
             }
 
             _logger.LogInformation((ilrResults != null && ilrResults.Any())? LoggingConstants.SearchSuccess : LoggingConstants.SearchFailure);
@@ -156,6 +203,13 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
                 .EndPointAssessorOrganisationId)).Select(q => q.StandardCode).ToList(); 
 
             return filteredStandardCodes;
+        }
+
+        private List<SearchResult> GetDeletedCertificateResult(Certificate certificate, SearchQuery request)
+        {
+            return new List<SearchResult> { new SearchResult { CertificateId=certificate.Id,
+                CertificateReference =certificate.CertificateReference,  UlnAlreadyExits = false, Uln = request.Uln,
+                     IsPrivatelyFunded = certificate.IsPrivatelyFunded, IsNoMatchingFamilyName = true } };
         }
 
         private string DealWithSpecialCharactersAndSpaces(SearchQuery request, string likedSurname, IEnumerable<Ilr> ilrResults)

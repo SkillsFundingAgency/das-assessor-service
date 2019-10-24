@@ -38,15 +38,26 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
 
         public async Task<Certificate> Handle(StartCertificateRequest request, CancellationToken cancellationToken)
         {
-            var existingCertificate = await _certificateRepository.GetCertificate(request.Uln, request.StandardCode);
-            if(existingCertificate != null)
+            var certificate = await _certificateRepository.GetCertificate(request.Uln, request.StandardCode);
+            if (certificate == null)
+                certificate = await CreateNewCertificate(request);
+            else if(certificate.Status == Domain.Consts.CertificateStatus.Deleted)
             {
-                _logger.LogInformation("Handle Before Update Cert in db");
-                existingCertificate.Status = CertificateStatus.Draft;
-                await _certificateRepository.Update(existingCertificate, request.Username, null);
+                _logger.LogInformation("CreateNewCertificate Before Get Ilr from db");
+                var ilr = await _ilrRepository.Get(request.Uln, request.StandardCode);
+                if (ilr != null)
+                {
+                    var certData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
+                    certData.LearnerGivenNames = ilr.GivenNames;
+                    certData.LearnerFamilyName = ilr.FamilyName;
+                    certData.LearningStartDate = ilr.LearnStartDate;
+                    certData.FullName = $"{ilr.GivenNames} {ilr.FamilyName}";
+                    certificate.CertificateData = JsonConvert.SerializeObject(certData);
+                    certificate.IsPrivatelyFunded = false;
+                    await _certificateRepository.Update(certificate, request.Username, null);
+                }
             }
-
-            return existingCertificate ?? await CreateNewCertificate(request);
+            return certificate;
         }
 
         private async Task<Certificate> CreateNewCertificate(StartCertificateRequest request)

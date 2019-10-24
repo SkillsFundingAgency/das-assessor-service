@@ -4,15 +4,19 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="Services\**" />
+    <Compile Remove="TagHelpers\**" />
     <Compile Remove="Views\Application\Pages\Controls\**" />
     <Compile Remove="Views\CertificateAddressSummary\**" />
     <Content Remove="Services\**" />
+    <Content Remove="TagHelpers\**" />
     <Content Remove="Views\Application\Pages\Controls\**" />
     <Content Remove="Views\CertificateAddressSummary\**" />
     <EmbeddedResource Remove="Services\**" />
+    <EmbeddedResource Remove="TagHelpers\**" />
     <EmbeddedResource Remove="Views\Application\Pages\Controls\**" />
     <EmbeddedResource Remove="Views\CertificateAddressSummary\**" />
     <None Remove="Services\**" />
+    <None Remove="TagHelpers\**" />
     <None Remove="Views\Application\Pages\Controls\**" />
     <None Remove="Views\CertificateAddressSummary\**" />
   </ItemGroup>
@@ -276,9 +280,6 @@
     <EmbeddedResource Update="Resources\Views\Search\Index.en.resx">
       <Generator>ResXFileCodeGenerator</Generator>
     </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="TagHelpers" />
   </ItemGroup>
   <Target Name="ChangeAliasesOfStrongNameAssemblies" BeforeTargets="FindReferenceAssembliesForReferences;ResolveReferences">
     <ItemGroup>
