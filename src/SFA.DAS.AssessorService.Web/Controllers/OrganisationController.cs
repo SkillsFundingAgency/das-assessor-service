@@ -203,8 +203,14 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 }
 
                 // delete and re-subscribe so that the created date can be used to track a 'renewed' key
-                await _externalApiClient.DeleteSubscriptionAndResubscribe(ukprn, subscription.Id);
-                TempData.SetAlert(new Alert { Message = "Your API key has been renewed", Type = AlertType.Success });
+                if (await _externalApiClient.DeleteSubscriptionAndResubscribe(ukprn, subscription.Id))
+                {
+                    TempData.SetAlert(new Alert { Message = "Your API key has been renewed", Type = AlertType.Success });
+                }
+                else
+                {
+                    TempData.SetAlert(new Alert { Message = "Your API key could not be renewed, please check the current value and retry if necessary.", Type = AlertType.Warning });
+                }
             }
             catch (Exception e)
             {
