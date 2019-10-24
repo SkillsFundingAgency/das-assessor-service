@@ -902,8 +902,34 @@
   margin-bottom: 10px;
 }
 
+.success-summary {
+    border-color: #00703c;
+}
+
+.warning-summary {
+    border-color: #f47738;
+}
+
 .info-summary {
-  border-color: #2b8cc4;
+    border-color: #1d70b8;
+}
+
+.success-summary p {
+    color: #00703c;
+}
+
+.warning-summary p {
+    color: #f47738;
+}
+
+.info-summary p {
+    color: #1d70b8;
+}
+
+.success-summary p,
+.warning-summary p,
+.info-summary p {
+    font:bold;
 }
 
 .info-highlighted {
@@ -1620,4 +1646,8 @@ th[aria-sort="ascending"] a:after {
   .das-pill {
     font-size: 16px;
   }
+}
+
+.govuk-summary-list--top-border {
+    border-top: 1px solid #bfc1c3;
 }

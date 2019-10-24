@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -96,7 +97,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Azure
 
             if (!string.IsNullOrWhiteSpace(email))
             {
-                using (var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"/users?api-version=2017-03-01&expandGroups={includeGroups}&$top=1&$filter=email eq '{email}'"))
+                using (var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"/users?api-version=2017-03-01&expandGroups={includeGroups}&$top=1&$filter=email eq '{WebUtility.UrlEncode(email)}'"))
                 {
                     var response = await RequestAndDeserialiseAsync<AzureUserResponse>(httpRequest, "Could not get User");
                     user = response.Users.FirstOrDefault();
@@ -208,6 +209,25 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Azure
             }
 
             return user;
+        }
+
+        public async Task<bool> DeleteSubscriptionAndResubscribe(string ukprn, string subscriptionId)
+        {
+            var users = await GetUserDetailsByUkprn(ukprn, true);
+            var subscription = users?.Select(u => u.Subscriptions.FirstOrDefault(s => s.Id == subscriptionId)).FirstOrDefault();
+            
+            if(subscription != null)
+            {
+                var userId = subscription.UserId;
+                var productId = subscription.ProductId;
+
+                await DeleteSubscription(subscription.Id);
+                await SubscribeUserToProduct(userId, productId);
+
+                return true;
+            }
+
+            return false;
         }
 
         private async Task UpdateUserNote(string userId, string note)

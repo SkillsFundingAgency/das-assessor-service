@@ -1,0 +1,51 @@
+﻿@model SFA.DAS.AssessorService.Web.ViewModels.RenewApiKeyViewModel
+
+@{
+    var viewTitle = "Confirm key renewal";
+    ViewBag.Title = (!ViewData.ModelState.IsValid ? "Error: " : "") + viewTitle;
+    Layout = "_DashboardLayout";
+}
+
+<a class="govuk-back-link" asp-controller="Organisation" asp-action="OrganisationDetails" asp-fragment="api-subscription">Back</a>
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <h1 class="govuk-caption-xl">API subscription</h1>
+    <h1 class="govuk-heading-xl">@viewTitle</h1>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <p>
+                <dl class="govuk-summary-list govuk-summary-list--top-border govuk-!-margin-bottom-0">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Current key</dt>
+                        <dd class="govuk-summary-list__value">@Model.CurrentKey</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Last renewed</dt>
+                        <dd class="govuk-summary-list__value">@Model.LastRenewedDate.ToString("dd MMMM yyyy")</dd>
+                    </div>
+                </dl>
+            </p>
+            <p class="govuk-body">Renewing the API key will impact on any software that you have integrated with the Record a grade API.</p>
+
+            <div class="govuk-warning-text">
+                <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                <strong class="govuk-warning-text__text">
+                    <span class="govuk-warning-text__assistive">Warning</span>
+                    Ensure you understand the impact of renewing the key
+                </strong>
+            </div>
+
+            <form asp-controller="Organisation" asp-action="RenewApiKey">
+                @Html.HiddenFor(m => m.SubscriptionId)
+                @Html.HiddenFor(m => m.CurrentKey)
+                @Html.HiddenFor(m => m.LastRenewedDate)
+                @Html.HiddenFor(m => m.LastRenewedTicks)
+                <button class="govuk-button" type="submit">Yes, renew key</button>
+            </form>
+
+            <p class="govuk-body">
+                <a class="govuk-link" asp-controller="Organisation" asp-action="OrganisationDetails" asp-fragment="api-subscription">Cancel and return</a>
+            </p>
+        </div>
+    </div>
+</main>
