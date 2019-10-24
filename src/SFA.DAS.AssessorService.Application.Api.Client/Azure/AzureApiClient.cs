@@ -211,7 +211,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Azure
             return user;
         }
 
-        public async Task DeleteSubscriptionAndResubscribe(string ukprn, string subscriptionId)
+        public async Task<bool> DeleteSubscriptionAndResubscribe(string ukprn, string subscriptionId)
         {
             var users = await GetUserDetailsByUkprn(ukprn, true);
             var subscription = users?.Select(u => u.Subscriptions.FirstOrDefault(s => s.Id == subscriptionId)).FirstOrDefault();
@@ -223,7 +223,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Azure
 
                 await DeleteSubscription(subscription.Id);
                 await SubscribeUserToProduct(userId, productId);
+
+                return true;
             }
+
+            return false;
         }
 
         private async Task UpdateUserNote(string userId, string note)
