@@ -192,7 +192,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             try
             {
                 var externalApiSubscriptions = await GetExternalApiSubscriptions(_webConfiguration.AzureApiAuthentication.ProductId, ukprn);
-                var subscription = externalApiSubscriptions?.Where(p => p.Id == vm.SubscriptionId.ToString()).FirstOrDefault();
+                var subscription = externalApiSubscriptions?.FirstOrDefault(p => p.Id == vm.SubscriptionId.ToString());
 
                 if (subscription == null || !subscription.CreatedDate.Ticks.Equals(vm.LastRenewedTicks) || !subscription.PrimaryKey.Equals(vm.CurrentKey))
                 {
@@ -201,7 +201,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 }
 
                 // delete and re-subscribe so that the created date can be used to track a 'renewed' key
-                await _externalApiClient.DeleteSubscriptionAndResubscribe(ukprn, vm.SubscriptionId);
+                await _externalApiClient.DeleteSubscriptionAndResubscribe(ukprn, subscription.Id);
                 TempData.SetAlert(new Alert { Message = "Your API key has been renewed", Type = AlertType.Success });
             }
             catch (Exception e)
