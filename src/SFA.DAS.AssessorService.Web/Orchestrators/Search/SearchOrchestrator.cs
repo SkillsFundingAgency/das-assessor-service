@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
@@ -63,7 +64,10 @@ namespace SFA.DAS.AssessorService.Web.Orchestrators.Search
                 });
             }
 
+          
             vm.SearchResults = viewModelSearchResults;
+            if (vm.SearchResults != null && vm.SearchResults.ToList().Any(x => x.IsPrivatelyFunded == false))
+                vm.IsPrivatelyFunded = false;
             return vm;
         }
     }

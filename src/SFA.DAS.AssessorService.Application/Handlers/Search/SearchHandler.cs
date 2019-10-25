@@ -73,6 +73,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
             return searchResults;
         }
 
+        //Todo: This function has gone to large needs refactoring
         private async Task<List<SearchResult>> Search(SearchQuery request, CancellationToken cancellationToken)
         { 
             _logger.LogInformation($"Search for surname: {request.Surname} uln: {request.Uln} made by {request.EpaOrgId}");
@@ -179,8 +180,13 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
                     IsPrivatelyFunded = request.IsPrivatelyFunded, IsNoMatchingFamilyName = true } };
             }
 
-            
-            if (request.IsPrivatelyFunded)
+            if(request.IsPrivatelyFunded && ilrResults != null && ilrResults.Any())
+            {
+                //If certificate is marked as privately funded and  uln also exists in ILR than redirect to normal flow and mark as not privately funded
+                if (ilrResults.Any(x => x.FundingModel.HasValue && (x.FundingModel == 36 || x.FundingModel == 81)))
+                    request.IsPrivatelyFunded = false;
+            }
+            else if (request.IsPrivatelyFunded)
             {
                 var certificate = await _certificateRepository.GetCertificateByUlnLastname(request.Uln, likedSurname);
                 if (certificate?.IsPrivatelyFunded == true &&
