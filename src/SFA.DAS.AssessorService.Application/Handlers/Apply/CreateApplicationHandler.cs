@@ -96,7 +96,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
         {
             if (org?.OrganisationData == null) return false;
 
-            return org.OrganisationData.RoEPAOApproved || org.Status == OrganisationStatus.Live;
+            return org.OrganisationData.RoEPAOApproved || org.Status == "Live";
         }
 
         private void RemoveSequenceOne(List<ApplySequence> sequences)
