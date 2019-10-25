@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Application.Logging;
@@ -105,7 +106,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
                     {
                         if (certificate?.Status == CertificateStatus.Deleted)
                         {
-                            var result = GetDeletedCertificateResult(certificate, request);
+                            var result = GetDeletedOrFailedCertificateResult(certificate, request);
                             if (result.Any())
                                 return result;
                         }
@@ -126,7 +127,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
                     var deletedCert = await _certificateRepository.GetCertificateDeletedByUln(request.Uln);
                     if (deletedCert != null)
                     {
-                        var result = GetDeletedCertificateResult(deletedCert, request);
+                        var result = GetDeletedOrFailedCertificateResult(deletedCert, request);
                         if (result.Any())
                             return result;
                     }
@@ -140,7 +141,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
 
                 if (certificate?.Status == CertificateStatus.Deleted)
                 {
-                    var result = GetDeletedCertificateResult(certificate, request);
+                    var result = GetDeletedOrFailedCertificateResult(certificate, request);
                     if (result.Any())
                         return result;
                 }
@@ -162,29 +163,42 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
           
             if (request.IsPrivatelyFunded && ilrResults != null && !ilrResults.Any())
             {
-                //If privately funded and uln found in ilr but existing certificate is marked as deleted
+               
                 var certificate = await _certificateRepository.GetCertificateByUlnLastname(request.Uln, likedSurname);
 
+                //If privately funded and uln found in ilr but existing certificate is marked as deleted
                 if (certificate?.Status == CertificateStatus.Deleted)
                 {
-                    var result = GetDeletedCertificateResult(certificate, request);
+                    var result = GetDeletedOrFailedCertificateResult(certificate, request);
                     if (result.Any())
                         return result;
                 }
                 
                 //If privately funded and uln found in ilr but due to the previous checks the result was empty then set uln exist flag
                 return  new List<SearchResult> { new SearchResult{UlnAlreadyExits = true, Uln = request.Uln ,
-                    IsPrivatelyFunded = true, IsNoMatchingFamilyName = true } };
+                    IsPrivatelyFunded = request.IsPrivatelyFunded, IsNoMatchingFamilyName = true } };
             }
 
             
             if (request.IsPrivatelyFunded)
             {
                 var certificate = await _certificateRepository.GetCertificateByUlnLastname(request.Uln, likedSurname);
-                if (certificate?.IsPrivatelyFunded == true && certificate?.Status != CertificateStatus.Deleted && certificate?.Status != CertificateStatus.Draft)
+                if (certificate?.IsPrivatelyFunded == true &&
+                    certificate?.Status != CertificateStatus.Deleted &&
+                    certificate?.Status != CertificateStatus.Draft)
                 {
-                    return new List<SearchResult> { new SearchResult{FamilyName=likedSurname,UlnAlreadyExits = true, Uln = request.Uln ,
-                    IsPrivatelyFunded = true, IsNoMatchingFamilyName = false, StdCode = certificate.StandardCode} }.PopulateStandards(_standardService,_logger);
+                    var certData = JsonConvert.DeserializeObject<Domain.JsonData.CertificateData>(certificate?.CertificateData);
+                    if (certData != null && certData.OverallGrade != CertificateGrade.Fail)
+                    {
+                        return new List<SearchResult> { new SearchResult{FamilyName=likedSurname,UlnAlreadyExits = true, Uln = request.Uln ,
+                    IsPrivatelyFunded = true, IsNoMatchingFamilyName = false, StdCode = certificate.StandardCode} }.PopulateStandards(_standardService, _logger);
+                    }
+                    else
+                    {
+                        var result = GetDeletedOrFailedCertificateResult(certificate, request);
+                        if (result.Any())
+                            return result;
+                    }
                 }
             }
 
@@ -205,7 +219,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
             return filteredStandardCodes;
         }
 
-        private List<SearchResult> GetDeletedCertificateResult(Certificate certificate, SearchQuery request)
+        private List<SearchResult> GetDeletedOrFailedCertificateResult(Certificate certificate, SearchQuery request)
         {
             return new List<SearchResult> { new SearchResult { CertificateId=certificate.Id,
                 CertificateReference =certificate.CertificateReference,  UlnAlreadyExits = false, Uln = request.Uln,
