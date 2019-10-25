@@ -186,7 +186,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
                 if (ilrResults.Any(x => x.FundingModel.HasValue && (x.FundingModel == 36 || x.FundingModel == 81)))
                     request.IsPrivatelyFunded = false;
             }
-            else if (request.IsPrivatelyFunded)
+            
+            if (request.IsPrivatelyFunded)
             {
                 var certificate = await _certificateRepository.GetCertificateByUlnLastname(request.Uln, likedSurname);
                 if (certificate?.IsPrivatelyFunded == true &&
