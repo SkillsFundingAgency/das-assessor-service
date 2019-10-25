@@ -25,6 +25,13 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.Apply
             _mediator = mediator;
         }
 
+        [HttpGet("Review/ApplicationReviewStatusCounts")]
+        public async Task<ActionResult> ApplicationReviewStatusCounts()
+        {
+            var applicationReviewStatusCounts = await _mediator.Send(new ApplicationReviewStatusCountsRequest());
+            return Ok(applicationReviewStatusCounts);
+        }
+
         [HttpGet("Review/OpenApplications")]
         public async Task<ActionResult> OpenApplications(int sequenceNo = 1)
         {
