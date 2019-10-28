@@ -520,7 +520,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 var applyData = application.ApplyData.Sequences.Single(x => x.SequenceNo == sequenceNo);
                 var sequenceVm = new SequenceViewModel(sequence, Id, BuildPageContext(application,sequence),sections,applyData.Sections, errors);
 
-                if (sequence.Status == ApplicationSequenceStatus.FeedbackAdded)
+                if (applyData.Status == ApplicationSequenceStatus.FeedbackAdded)
                 {
                     return View("~/Views/Application/Feedback.cshtml", sequenceVm);
                 }

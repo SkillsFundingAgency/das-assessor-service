@@ -40,6 +40,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
 
                 var sequences = request.ApplySequences;
                 DisableSequencesAndSectionsAsAppropriate(sequences, org, orgType);
+                MakeLowerSequenceActive(sequences);
 
                 var applyData = new ApplyData
                 {
@@ -97,6 +98,16 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
             if (org?.OrganisationData == null) return false;
 
             return org.OrganisationData.RoEPAOApproved || org.Status == "Live";
+        }
+
+        private void MakeLowerSequenceActive(List<ApplySequence> sequences)
+        {
+            int minsequence = sequences.Where(seq => seq.IsActive).Min(seq => seq.SequenceNo);
+
+            foreach (var sequence in sequences.Where(seq => seq.SequenceNo != minsequence))
+            {
+                sequence.IsActive = false;
+            }
         }
 
         private void RemoveSequenceOne(List<ApplySequence> sequences)
