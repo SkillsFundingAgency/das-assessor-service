@@ -354,7 +354,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                     if (!string.IsNullOrEmpty(nextAction.Action))
                         return RedirectToNextAction(Id, sequenceNo, sectionNo, __redirectAction, nextAction.Action, nextAction.ReturnId);
                 }
-                else if(page.PageOfAnswers?.Count > 0)
+                else if(page.PageOfAnswers?.Count > 0 && __formAction != "Add")
                 {
                     var nextAction = page.Next.SingleOrDefault(x => x.Action == "NextPage");
 
@@ -482,7 +482,13 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             }
 
             var page = await _qnaApiClient.GetPageBySectionNo(application.ApplicationId, sequenceNo, sectionNo, pageId);
-            await _qnaApiClient.RemovePageAnswer(application.ApplicationId, page.SectionId.Value, page.PageId, answerId);
+            try
+            {
+                await _qnaApiClient.RemovePageAnswer(application.ApplicationId, page.SectionId.Value, page.PageId, answerId);
+            }
+            catch (HttpRequestException ex) {
+                _logger.LogError($"Page answer removal errored : {ex} ");
+            }
 
             return RedirectToAction("Page", new { Id, sequenceNo, sectionNo, pageId, __redirectAction });
         }
