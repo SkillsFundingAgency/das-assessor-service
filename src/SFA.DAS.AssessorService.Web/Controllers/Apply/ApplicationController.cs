@@ -268,6 +268,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             {
                 // when the model state has errors the page will be displayed with the values which failed validation
                 var page = JsonConvert.DeserializeObject<Page>((string)TempData["InvalidPage"]);
+                
+                page = await GetDataFedOptions(page);
 
                 var errorMessages = !ModelState.IsValid
                     ? ModelState.SelectMany(k => k.Value.Errors.Select(e => new ValidationErrorDetail()
