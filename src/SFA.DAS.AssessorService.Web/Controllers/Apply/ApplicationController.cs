@@ -409,10 +409,16 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 }
             }
 
-            if (HttpContext.Request.Form.Files.Count == 0)
-                updatePageResult = await _qnaApiClient.AddPageAnswer(application.ApplicationId, page.SectionId.Value, page.PageId, answers);
-
             var fileupload = page.Questions?.Any(q => q.Input.Type == "FileUpload");
+            if (HttpContext.Request.Form.Files.Count == 0)
+            {
+                if (fileupload == true && NothingToUpload(updatePageResult, answers))
+                    return ForwardToNextSectionOrPage(page, Id, sequenceNo, sectionNo, __redirectAction);
+
+                updatePageResult = await _qnaApiClient.AddPageAnswer(application.ApplicationId, page.SectionId.Value, page.PageId, answers);
+            }
+
+          
             if (fileupload == true && HttpContext.Request.Form.Files.Count > 0)
             {
                 updatePageResult = new SetPageAnswersResponse();
@@ -679,6 +685,20 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             }
 
             return atLeastOneAnswerChanged;
+        }
+
+        private static bool NothingToUpload(SetPageAnswersResponse updatePageResult, List<Answer> answers)
+        {
+            return updatePageResult.ValidationErrors == null && !updatePageResult.ValidationPassed
+                    && answers.Any(x => string.IsNullOrEmpty(x.QuestionId)) && answers.Count > 0;
+        }
+
+        private RedirectToActionResult ForwardToNextSectionOrPage(Page page, Guid Id, int sequenceNo, int sectionNo, string __redirectAction)
+        {
+            var next = page.Next.FirstOrDefault(x => x.Action == "NextPage");
+            if (next != null)
+                return RedirectToNextAction(Id, sequenceNo, sectionNo, __redirectAction, next.Action, next.ReturnId);
+            return RedirectToAction("Section", new { Id, sequenceNo, sectionNo });
         }
 
         private static string BuildPageContext(ApplicationResponse application, Sequence sequence)
