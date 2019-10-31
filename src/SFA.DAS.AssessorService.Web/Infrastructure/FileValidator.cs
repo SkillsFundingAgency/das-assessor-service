@@ -18,7 +18,7 @@ namespace SFA.DAS.AssessorService.Web.Infrastructure
             foreach (var file in files)
             {
 
-                var typeValidation = page.Questions.First(q => q.QuestionId == file.Name).Input.Validations.FirstOrDefault(v => v.Name == "FileType");
+                var typeValidation = page.Questions.FirstOrDefault(q => q.QuestionId == file.Name)?.Input.Validations.FirstOrDefault(v => v.Name == "FileType");
                 if (typeValidation != null)
                 {
                     var allowedExtension = typeValidation.Value.ToString().Split(",", StringSplitOptions.RemoveEmptyEntries)[0];
@@ -35,8 +35,18 @@ namespace SFA.DAS.AssessorService.Web.Infrastructure
                     }
                     else
                     {
-                        // Only add to answers if type validation passes.
-                        answers.Add(new Answer() { QuestionId = file.Name, Value = file.FileName });
+                        var size = (file.Length / 1024f) / 1024f;
+                        if (size > 5d)
+                        {
+                            modelState.AddModelError(file.Name, "The PDF file must be smaller than 5MB.");
+                            errorMessages.Add(new ValidationErrorDetail(file.Name, "The PDF file must be smaller than 5MB."));
+                            fileValidationPassed = false;
+                        }
+                        else
+                        {
+                            // Only add to answers if type validation passes.
+                            answers.Add(new Answer() { QuestionId = file.Name, Value = file.FileName });
+                        }
                     }
                 }
                 else

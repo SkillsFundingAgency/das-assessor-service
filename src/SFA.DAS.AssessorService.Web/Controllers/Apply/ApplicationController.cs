@@ -384,7 +384,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         [HttpPost("/Application/{Id}/Sequences/{sequenceNo}/Sections/{sectionNo}/Pages/{pageId}"), ModelStatePersist(ModelStatePersist.Store)]
         public async Task<IActionResult> SaveAnswers(Guid Id, int sequenceNo, int sectionNo, string pageId, string __redirectAction)
         { 
-            SetPageAnswersResponse updatePageResult;
+            var updatePageResult = new SetPageAnswersResponse();
             var application = await _applicationApiClient.GetApplication(Id);
 
             if (!CanUpdateApplication(application, sequenceNo, sectionNo))
@@ -409,16 +409,18 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 }
             }
 
-           
-            var fileupload = page.Questions?.Any(q => q.Input.Type == "FileUpload");
-            if (fileupload == true)
-            {
-                updatePageResult = await UploadFilesToStorage(application.ApplicationId, page.SectionId.Value, page.PageId, page);
-                if (NothingToUpload(updatePageResult, answers))
-                    return ForwardToNextSectionOrPage(page, Id, sequenceNo, sectionNo, __redirectAction);
-            }
-            else
+            if (HttpContext.Request.Form.Files.Count == 0)
                 updatePageResult = await _qnaApiClient.AddPageAnswer(application.ApplicationId, page.SectionId.Value, page.PageId, answers);
+
+            var fileupload = page.Questions?.Any(q => q.Input.Type == "FileUpload");
+            if (fileupload == true && HttpContext.Request.Form.Files.Count > 0)
+            {
+                updatePageResult = new SetPageAnswersResponse();
+                var errorMessages = new List<ValidationErrorDetail>();
+                if (FileValidator.FileValidationPassed(answers, page, errorMessages, ModelState, HttpContext.Request.Form.Files))
+                    updatePageResult = await UploadFilesToStorage(application.ApplicationId, page.SectionId.Value, page.PageId, page);
+
+            }
 
             var apiValidationResult = await _apiValidationService.CallApiValidation(page, answers);
             if (!apiValidationResult.IsValid)
@@ -428,7 +430,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 {
                     updatePageResult.ValidationErrors = new List<KeyValuePair<string, string>>();
                 }
-                
+
                 updatePageResult.ValidationErrors.AddRange(apiValidationResult.ErrorMessages);
             }
 
@@ -443,13 +445,13 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
             if (!page.PageOfAnswers.Any())
             {
-                page.PageOfAnswers = new List<PageOfAnswers>() {new PageOfAnswers(){Answers = new List<Answer>()}};
+                page.PageOfAnswers = new List<PageOfAnswers>() { new PageOfAnswers() { Answers = new List<Answer>() } };
             }
-            
+
             page = StoreEnteredAnswers(answers, page);
 
             SetResponseValidationErrors(updatePageResult?.ValidationErrors, page);
-            
+           
 
             return RedirectToAction("Page", new { Id, sequenceNo, sectionNo, pageId, __redirectAction });
         }
@@ -689,20 +691,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             return pageContext;
         }
 
-        private static bool NothingToUpload(SetPageAnswersResponse updatePageResult, List<Answer> answers)
-        {
-            return updatePageResult.ValidationErrors == null && !updatePageResult.ValidationPassed
-                    && answers.Any(x => string.IsNullOrEmpty(x.QuestionId)) && answers.Count > 0;
-        }
-
-        private RedirectToActionResult ForwardToNextSectionOrPage(Page page, Guid Id, int sequenceNo, int sectionNo, string __redirectAction)
-        {
-            var next = page.Next.FirstOrDefault(x => x.Action == "NextPage");
-            if (next != null)
-                return RedirectToNextAction(Id, sequenceNo, sectionNo, __redirectAction, next.Action, next.ReturnId);
-            return RedirectToAction("Section", new { Id, sequenceNo, sectionNo });
-        }
-
         private static Page StoreEnteredAnswers(List<Answer> answers, Page page)
         {
             foreach (var answer in answers)
@@ -767,6 +755,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         private List<Answer> GetAnswersFromForm(Page page)
         {
             List<Answer> answers = new List<Answer>();
+
             var questionId = page.Questions.Where(x => x.Input.Type == "ComplexRadio" || x.Input.Type == "Radio").Select(y => y.QuestionId).FirstOrDefault();
 
             foreach (var keyValuePair in HttpContext.Request.Form.Where(f => !f.Key.StartsWith("__")))
