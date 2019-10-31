@@ -356,8 +356,10 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                     if (!string.IsNullOrEmpty(nextAction.Action))
                         return RedirectToNextAction(Id, sequenceNo, sectionNo, __redirectAction, nextAction.Action, nextAction.ReturnId);
                 }
-                else if(page.PageOfAnswers?.Count > 0 && __formAction != "Add")
+                else if(page.PageOfAnswers?.Count > 0 && __formAction != "Add" && 
+                    (pageAddResponse.ValidationErrors?.Count == 0 || answers.All(x => x.Value == string.Empty || Regex.IsMatch(x.Value, "^[,]+$"))))
                 {
+
                     var nextAction = page.Next.SingleOrDefault(x => x.Action == "NextPage");
 
                     if (!string.IsNullOrEmpty(nextAction.Action))
@@ -717,7 +719,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             {
                 if (answer.QuestionId == null) continue;
 
-                var pageAnswer = page.PageOfAnswers.Single().Answers.SingleOrDefault(a => a.QuestionId == answer.QuestionId);
+                if(page.PageOfAnswers.Count > 1)
+                    page.PageOfAnswers.RemoveRange(0, page.PageOfAnswers.Count-1);
+                var pageAnswer = page.PageOfAnswers.Last().Answers.SingleOrDefault(a => a.QuestionId == answer.QuestionId);
                 if (pageAnswer is null)
                 {
                     page.PageOfAnswers.Single().Answers.Add(answer);
