@@ -356,7 +356,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             try
             {
                 using (var request = new HttpRequestMessage(HttpMethod.Get,
-                    $"/api/v1/search/organisations?searchTerm={searchTerm}&pageSize={pageSize}&pageIndex={pageIndex}"))
+                    $"/api/v1/organisationsearch/organisations?searchTerm={searchTerm}&pageSize={pageSize}&pageIndex={pageIndex}"))
                 {
                     return await RequestAndDeserialiseAsync<PaginatedList<OrganisationSearchResult>>(request,
                         $"Could not retrieve organisations for search {searchTerm}.");
@@ -377,7 +377,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 
         public async Task<bool> IsCompanyActivelyTrading(string companyNumber)
         {
-            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/search/company/{companyNumber}/isActivelyTrading"))
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/organisationsearch/company/{companyNumber}/isActivelyTrading"))
             {
                 return await RequestAndDeserialiseAsync<bool>(request, $"Could not retrieve trading details for the organisation with a company number of {companyNumber}");
             }
@@ -387,7 +387,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         {
             try
             {
-                using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/search/company/{companyNumber}"))
+                using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/organisationsearch/company/{companyNumber}"))
                 {
                     return await RequestAndDeserialiseAsync<Company>(request, $"Could not retrieve details for the organisation with a company number of {companyNumber}");
                 }
@@ -409,7 +409,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         {
             try
             {
-                using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/search/charity/{charityNumber}"))
+                using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/organisationsearch/charity/{charityNumber}"))
                 {
                     return await RequestAndDeserialiseAsync<Charity>(request, $"Could not retrieve details for the organisation with a charity number of {charityNumber}");
                 }
