@@ -393,30 +393,39 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 return RedirectToAction("Sequence", new { Id, sequenceNo });
 
             var page = await _qnaApiClient.GetPageBySectionNo(application.ApplicationId, sequenceNo, sectionNo, pageId);
+            var fileupload = page.Questions?.Any(q => q.Input.Type == "FileUpload");
             var answers = GetAnswersFromForm(page);
 
             if (page.HasFeedback && page.HasNewFeedback && __redirectAction == "Feedback")
             {
-                var validationErrors = new List<KeyValuePair<string, string>>();
-                if (!HasAtLeastOneAnswerChanged(page,answers))
+                if (!HasAtLeastOneAnswerChanged(page,answers) ||
+                    HttpContext.Request.Form.Files.Count == 0 && fileupload == true && NothingToUpload(updatePageResult, answers))
                 {
-                    foreach (var question in page.Questions)
-                        validationErrors.Add(new KeyValuePair<string, string>(question.QuestionId, "Unable to save as you have not updated your answer"));
-                    updatePageResult = new SetPageAnswersResponse();
-                    updatePageResult.ValidationPassed = false;
-                    updatePageResult.ValidationErrors = validationErrors;
-                    SetResponseValidationErrors(updatePageResult?.ValidationErrors, page);
-
+                    SetAnswerNotUpdated(page);
                     return RedirectToAction("Page", new { Id, sequenceNo, sectionNo, pageId, __redirectAction });
                 }
             }
 
-            var fileupload = page.Questions?.Any(q => q.Input.Type == "FileUpload");
+          
             if (HttpContext.Request.Form.Files.Count == 0)
             {
                 if (fileupload == true && NothingToUpload(updatePageResult, answers))
                     return ForwardToNextSectionOrPage(page, Id, sequenceNo, sectionNo, __redirectAction);
 
+                if (fileupload == true)
+                {
+                    foreach (var question in page.Questions)
+                    {
+                        if (!answers.Any(x => x.QuestionId == question.QuestionId))
+                        {
+                            answers.Add(new Answer
+                            {
+                                QuestionId = question.QuestionId,
+                                Value = page.PageOfAnswers.SelectMany(x => x.Answers).SingleOrDefault(x => x.QuestionId == question.QuestionId)?.Value ?? ""
+                            });
+                        }
+                    }
+                }
                 updatePageResult = await _qnaApiClient.AddPageAnswer(application.ApplicationId, page.SectionId.Value, page.PageId, answers);
             }
 
@@ -644,6 +653,18 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             }
 
             return page;
+        }
+
+
+        private void SetAnswerNotUpdated(Page page)
+        {
+            var validationErrors = new List<KeyValuePair<string, string>>();
+            var updatePageResult = new SetPageAnswersResponse();
+            foreach (var question in page.Questions)
+                validationErrors.Add(new KeyValuePair<string, string>(question.QuestionId, "Unable to save as you have not updated your answer"));
+            updatePageResult.ValidationPassed = false;
+            updatePageResult.ValidationErrors = validationErrors;
+            SetResponseValidationErrors(updatePageResult?.ValidationErrors, page);
         }
 
         private static bool HasAtLeastOneAnswerChanged(Page page,List<Answer> answers)

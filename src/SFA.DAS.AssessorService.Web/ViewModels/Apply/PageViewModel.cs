@@ -81,7 +81,13 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Apply
             var answers = new List<Answer>();
             foreach (var pageAnswer in page.PageOfAnswers)
             {
-                answers.AddRange(pageAnswer.Answers);
+                foreach(var ans in pageAnswer.Answers)
+                {
+                    if (!answers.Exists(x =>ans.QuestionId == x.QuestionId))
+                    {
+                        answers.Add(ans);
+                    }
+                }
             }
 
             Questions = new List<QuestionViewModel>();

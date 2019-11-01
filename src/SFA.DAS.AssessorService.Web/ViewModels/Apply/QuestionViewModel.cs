@@ -38,7 +38,8 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Apply
                 }
                 else if (Type == "MonthAndYear")
                 {
-                    var datetime = DateTime.Parse($"{dateparts[0]}/{dateparts[1]}");
+                    DateTime datetime;
+                    DateTime.TryParse($"{dateparts[0]}/{dateparts[1]}", out datetime);
                     return datetime.ToString("MM/yyyy");
                 }
             }
