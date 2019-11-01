@@ -18,7 +18,7 @@ using SFA.DAS.AssessorService.Api.Types.CompaniesHouse;
 namespace SFA.DAS.AssessorService.Application.Api.Controllers
 {
     [Authorize(Roles = "AssessorServiceInternalAPI")]
-    [Route("api/v1/search")]
+    [Route("api/v1/organisationsearch")]
     public class OrganisationSearchController : Controller
     {
         private readonly ILogger<OrganisationSearchController> _logger;
