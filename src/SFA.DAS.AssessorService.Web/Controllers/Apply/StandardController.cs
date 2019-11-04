@@ -15,10 +15,14 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
     public class StandardController : Controller
     {
         private readonly IApplicationApiClient _apiClient;
+        private readonly IOrganisationsApiClient _orgApiClient;
+        private readonly IQnaApiClient _qnaApiClient;
 
-        public StandardController(IApplicationApiClient apiClient)
+        public StandardController(IApplicationApiClient apiClient, IOrganisationsApiClient orgApiClient, IQnaApiClient qnaApiClient)
         {
             _apiClient = apiClient;
+            _orgApiClient = orgApiClient;
+            _qnaApiClient = qnaApiClient;
         }
 
         [HttpGet("Standard/{id}")]
@@ -49,7 +53,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         public async Task<IActionResult> ConfirmStandard(Guid id, int standardCode)
         {
             var application = await _apiClient.GetApplication(id);
-            if(!CanUpdateApplication(application))
+            if(! await CanUpdateApplicationAsync(application, standardCode))
             {
                 return RedirectToAction("Applications", "Application");
             }
@@ -66,7 +70,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         public async Task<IActionResult> ConfirmStandard(StandardViewModel model, Guid id, int standardCode)
         {
             var application = await _apiClient.GetApplication(id);
-            if (!CanUpdateApplication(application))
+            if (!await CanUpdateApplicationAsync(application, standardCode))
             {
                 return RedirectToAction("Applications", "Application");
             }
@@ -92,7 +96,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             return RedirectToAction("Applications", "Application");
         }
 
-        private static bool CanUpdateApplication(ApplicationResponse application)
+        private  async Task<bool> CanUpdateApplicationAsync(ApplicationResponse application, int standardCode )
         {
             const int STANDARD_SEQUENCE_NO = 2;
 
@@ -101,7 +105,16 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             var validApplicationStatuses = new string[] { ApplicationStatus.InProgress };
             var validApplicationSequenceStatuses = new string[] { ApplicationSequenceStatus.Draft };
 
-            if (application?.ApplyData != null && validApplicationStatuses.Contains(application.ApplicationStatus))
+            var applicationData = await _qnaApiClient.GetApplicationData(application.ApplicationId);
+            var org = await  _orgApiClient.GetEpaOrganisationById(applicationData.OrganisationReferenceId);
+            var standards = await _orgApiClient.GetOrganisationStandardsByOrganisation(org.OrganisationId);
+            var standard = standards?.SingleOrDefault(x => x.StandardCode == standardCode);
+
+            if(standard?.DateStandardApprovedOnRegister != null)
+            {
+                canUpdate = false;
+            }
+            else if (application?.ApplyData != null && validApplicationStatuses.Contains(application.ApplicationStatus))
             {
                 var sequence = application.ApplyData.Sequences?.FirstOrDefault(seq => seq.IsActive && seq.SequenceNo == STANDARD_SEQUENCE_NO);
 
