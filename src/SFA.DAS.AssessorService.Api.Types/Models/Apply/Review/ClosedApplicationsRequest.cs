@@ -6,5 +6,11 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Apply.Review
 {
     public class ClosedApplicationsRequest : IRequest<List<ApplicationSummaryItem>>
     {
+        public int SequenceNo { get; }
+
+        public ClosedApplicationsRequest(int sequenceNo)
+        {
+            SequenceNo = sequenceNo;
+        }
     }
 }

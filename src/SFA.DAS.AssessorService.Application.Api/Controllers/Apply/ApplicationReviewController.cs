@@ -32,24 +32,31 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.Apply
             return Ok(applicationReviewStatusCounts);
         }
 
+        [HttpPost("Review/OrganisationApplications")]
+        public async Task<ActionResult> OrganisationApplications([FromBody] OrganisationApplicationsRequest organisationApplicationsRequest)
+        {
+            var applications = await _mediator.Send(organisationApplicationsRequest);
+            return Ok(applications);
+        }
+
         [HttpGet("Review/OpenApplications")]
-        public async Task<ActionResult> OpenApplications(int sequenceNo = 1)
+        public async Task<ActionResult> OpenApplications(int sequenceNo)
         {
             var applications = await _mediator.Send(new OpenApplicationsRequest(sequenceNo));
             return Ok(applications);
         }
 
         [HttpGet("Review/FeedbackAddedApplications")]
-        public async Task<ActionResult> FeedbackAddedApplications()
+        public async Task<ActionResult> FeedbackAddedApplications(int sequenceNo)
         {
-            var applications = await _mediator.Send(new FeedbackAddedApplicationsRequest());
+            var applications = await _mediator.Send(new FeedbackAddedApplicationsRequest(sequenceNo));
             return Ok(applications);
         }
 
         [HttpGet("Review/ClosedApplications")]
-        public async Task<ActionResult> ClosedApplications()
+        public async Task<ActionResult> ClosedApplications(int sequenceNo)
         {
-            var applications = await _mediator.Send(new ClosedApplicationsRequest());
+            var applications = await _mediator.Send(new ClosedApplicationsRequest(sequenceNo));
             return Ok(applications);
         }
 

@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using Microsoft.Extensions.Logging;
+using SFA.DAS.AssessorService.Api.Types.Models.Apply.Review;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.Data.DapperTypeHandlers;
@@ -15,6 +16,8 @@ namespace SFA.DAS.AssessorService.Data.Apply
     public class ApplyRepository : Repository, IApplyRepository
     {
         // NOTE: Should the Financial Section move; then these need to be updated
+        private const int ORGANISATION_SEQUENCE = 1;
+        private const int STANDARD_SEQUENCE = 2;
         private const int FINANCIAL_SEQUENCE = 1;
         private const int FINANCIAL_SECTION = 3;
 
@@ -408,7 +411,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
             @params.Add("excludedReviewStatus", string.Join("|", new List<string> { ApplicationReviewStatus.Deleted })); 
 
             var reviewStatusCountResults = (await _unitOfWork.Connection.QueryMultipleAsync(
-                "GetApply_ReviewStatusCounts",
+                "Apply_Get_ReviewStatusCounts",
                 param: @params,
                 transaction: _unitOfWork.Transaction,
                 commandType: CommandType.StoredProcedure));
@@ -431,6 +434,52 @@ namespace SFA.DAS.AssessorService.Data.Apply
             return applicationReviewStatusCounts;
         }
 
+        public async Task<OrganisationApplicationsResult> GetOrganisationApplications(string reviewStatus, string sortColumn, int sortAscending, int pageSize, int pageIndex)
+        {
+            var @params = new DynamicParameters();
+            @params.Add("sequenceNo", ORGANISATION_SEQUENCE);
+            @params.Add("sequenceStatus", GetSequenceStatus(reviewStatus));
+            @params.Add("excludedApplicationStatus", string.Join("|", new List<string> { ApplicationStatus.Declined }));
+            @params.Add("excludedReviewStatus", string.Join("|", new List<string> { ApplicationReviewStatus.Deleted }));
+            @params.Add("includedReviewStatus", string.Join("|", reviewStatus));
+            @params.Add("sortColumn", sortColumn);
+            @params.Add("sortAscending", sortAscending);
+            @params.Add("pageSize", pageSize);
+            @params.Add("pageIndex", pageIndex);
+            @params.Add("totalCount", dbType: DbType.Int32, direction: ParameterDirection.Output);
+
+            var results = await _unitOfWork.Connection.QueryAsync<ApplicationSummaryItem>(
+                "Apply_List_Applications",
+                param: @params,
+                transaction: _unitOfWork.Transaction,
+                commandType: CommandType.StoredProcedure);
+
+            var result = new OrganisationApplicationsResult
+            {
+                PageOfResults = results?.ToList() ?? new List<ApplicationSummaryItem>(),
+                TotalCount = @params.Get<int?>("totalCount") ?? 0
+            };
+
+            return result;
+        }
+
+        private string GetSequenceStatus(string reviewStatus)
+        {
+            switch (reviewStatus)
+            {
+                case ApplicationReviewStatus.New:
+                    return string.Join("|", new List<string> { ApplicationSequenceStatus.Submitted, ApplicationSequenceStatus.Resubmitted });
+                case ApplicationReviewStatus.InProgress:
+                    return string.Join("|", new List<string> { ApplicationSequenceStatus.Submitted, ApplicationSequenceStatus.Resubmitted });
+                case ApplicationReviewStatus.HasFeedback:
+                    return string.Join("|", new List<string> { ApplicationSequenceStatus.FeedbackAdded });
+                case ApplicationReviewStatus.Approved:
+                    return string.Join("|", new List<string> { ApplicationSequenceStatus.Approved });
+            }
+
+            return string.Empty;
+        }
+
         public async Task<List<ApplicationSummaryItem>> GetOpenApplications(int sequenceNo)
         {
             var @params = new DynamicParameters();
@@ -438,39 +487,57 @@ namespace SFA.DAS.AssessorService.Data.Apply
             @params.Add("sequenceStatus", string.Join("|", new List<string> { ApplicationSequenceStatus.Submitted, ApplicationSequenceStatus.Resubmitted }));
             @params.Add("excludedApplicationStatus", string.Join("|", new List<string> { ApplicationStatus.Declined }));
             @params.Add("excludedReviewStatus", string.Join("|", new List<string> { ApplicationReviewStatus.Deleted }));
+            @params.Add("includedReviewStatus", null);
+            @params.Add("sortColumn", null);
+            @params.Add("sortAscending", null);
+            @params.Add("pageSize", short.MaxValue);
+            @params.Add("pageIndex", 1);
+            @params.Add("totalCount", dbType: DbType.Int32, direction: ParameterDirection.Output);
 
             return (await _unitOfWork.Connection.QueryAsync<ApplicationSummaryItem>(
-                "GetApply_Applications",
+                "Apply_List_Applications",
                 param: @params,
                 transaction: _unitOfWork.Transaction,
                 commandType: CommandType.StoredProcedure)).ToList();
         }
 
-        public async Task<List<ApplicationSummaryItem>> GetFeedbackAddedApplications(int? sequenceNo = null)
+        public async Task<List<ApplicationSummaryItem>> GetFeedbackAddedApplications(int sequenceNo)
         {
             var @params = new DynamicParameters();
             @params.Add("sequenceNo", sequenceNo);
             @params.Add("sequenceStatus", string.Join("|", new List<string> { ApplicationSequenceStatus.FeedbackAdded }));
             @params.Add("excludedApplicationStatus", string.Join("|", new List<string> { ApplicationStatus.Declined }));
             @params.Add("excludedReviewStatus", string.Join("|", new List<string> { ApplicationReviewStatus.Deleted }));
+            @params.Add("includedReviewStatus", null);
+            @params.Add("sortColumn", null);
+            @params.Add("sortAscending", null);
+            @params.Add("pageSize", short.MaxValue);
+            @params.Add("pageIndex", 1);
+            @params.Add("totalCount", dbType: DbType.Int32, direction: ParameterDirection.Output);
 
             return (await _unitOfWork.Connection.QueryAsync<ApplicationSummaryItem>(
-                "GetApply_Applications",
+                "Apply_List_Applications",
                 param: @params,
                 transaction: _unitOfWork.Transaction,
                 commandType: CommandType.StoredProcedure)).ToList();
         }
 
-        public async Task<List<ApplicationSummaryItem>> GetClosedApplications(int? sequenceNo = null)
+        public async Task<List<ApplicationSummaryItem>> GetClosedApplications(int sequenceNo)
         {
             var @params = new DynamicParameters();
             @params.Add("sequenceNo", sequenceNo);
             @params.Add("sequenceStatus", string.Join("|", new List<string> { ApplicationSequenceStatus.Approved, ApplicationSequenceStatus.Declined }));
             @params.Add("excludedApplicationStatus", string.Join("|", new List<string> { ApplicationStatus.Declined }));
             @params.Add("excludedReviewStatus", string.Join("|", new List<string> { ApplicationReviewStatus.Deleted }));
+            @params.Add("includedReviewStatus", null);
+            @params.Add("sortColumn", null);
+            @params.Add("sortAscending", null);
+            @params.Add("pageSize", short.MaxValue);
+            @params.Add("pageIndex", 1);
+            @params.Add("totalCount", dbType: DbType.Int32, direction: ParameterDirection.Output);
 
             return (await _unitOfWork.Connection.QueryAsync<ApplicationSummaryItem>(
-                "GetApply_Applications",
+                "Apply_List_Applications",
                 param: @params,
                 transaction: _unitOfWork.Transaction,
                 commandType: CommandType.StoredProcedure)).ToList();    

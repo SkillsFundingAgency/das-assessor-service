@@ -1,4 +1,4 @@
-﻿using SFA.DAS.AssessorService.Api.Types.Models.Apply;
+﻿using SFA.DAS.AssessorService.Api.Types.Models.Apply.Review;
 using SFA.DAS.AssessorService.ApplyTypes;
 using System;
 using System.Collections.Generic;
@@ -16,9 +16,10 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task SubmitApplicationSequence(Domain.Entities.Apply apply);
         Task<int> GetNextAppReferenceSequence();
         Task<ApplicationReviewStatusCounts> GetApplicationReviewStatusCounts();
+        Task<OrganisationApplicationsResult> GetOrganisationApplications(string reviewStatus, string sortColumn, int sortAscending, int pageSize, int pageIndex);
         Task<List<ApplicationSummaryItem>> GetOpenApplications(int sequenceNo);
-        Task<List<ApplicationSummaryItem>> GetFeedbackAddedApplications(int? sequenceNo = null);
-        Task<List<ApplicationSummaryItem>> GetClosedApplications(int? sequenceNo = null);
+        Task<List<ApplicationSummaryItem>> GetFeedbackAddedApplications(int sequenceNo);
+        Task<List<ApplicationSummaryItem>> GetClosedApplications(int sequenceNo);
         Task<List<FinancialApplicationSummaryItem>> GetOpenFinancialApplications();
         Task<List<FinancialApplicationSummaryItem>> GetFeedbackAddedFinancialApplications();
         Task<List<FinancialApplicationSummaryItem>> GetClosedFinancialApplications();
@@ -28,5 +29,11 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task EvaluateApplicationSection(Guid id, int sequenceNo, int sectionNo, bool isSectionComplete, string evaluatedBy);
         Task ReturnApplicationSequence(Guid id, int sequenceNo, string sequenceStatus, string returnedBy);
         Task<bool> UpdateStandardData(Guid id, int standardCode, string referenceNumber, string standardName);
+    }
+
+    public class OrganisationApplicationsResult
+    {
+        public IEnumerable<ApplicationSummaryItem> PageOfResults { get; set; }
+        public int TotalCount { get; set; }
     }
 }

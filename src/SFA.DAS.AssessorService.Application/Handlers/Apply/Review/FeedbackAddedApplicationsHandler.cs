@@ -19,7 +19,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply.Review
 
         public async Task<List<ApplicationSummaryItem>> Handle(FeedbackAddedApplicationsRequest request, CancellationToken cancellationToken)
         {
-            return await _repository.GetFeedbackAddedApplications();
+            return await _repository.GetFeedbackAddedApplications(request.SequenceNo);
         }
     }
 }
