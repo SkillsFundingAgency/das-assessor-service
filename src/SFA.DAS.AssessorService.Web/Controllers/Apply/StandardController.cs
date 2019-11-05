@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.AssessorService.Api.Types.Models.Apply;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.ApplyTypes;
+using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Web.ViewModels.Apply;
 
 namespace SFA.DAS.AssessorService.Web.Controllers.Apply
@@ -151,9 +152,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                     }
                 }
             }
-            else if (standard?.DateStandardApprovedOnRegister != null && 
-                org != null && org.OrganisationData.RoEPAOApproved)
-                return "Approved";
+            else if ((standard.EffectiveTo == null || standard.EffectiveTo > DateTime.UtcNow) && org.Status == OrganisationStatus.Live)
+                return ApplicationStatus.Approved;
 
             return string.Empty;
         }
