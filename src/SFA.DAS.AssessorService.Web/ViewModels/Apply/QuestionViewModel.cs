@@ -27,19 +27,19 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Apply
 
         public string DisplayAnswerValue(Answer answer)
         {
-            if (Type == "Date" || Type == "DateOfBirth")
+            if (Type == "Date" || Type == "MonthAndYear")
             {
                 var dateparts = answer.Value.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries);
 
-                string[] formats = Type == "Date" ? new string[] { "dd,MM,yyyy" } : new string[] { "M,yyyy" };
                 if (Type == "Date")
                 {
                     var datetime = DateTime.Parse($"{dateparts[0]}/{dateparts[1]}/{dateparts[2]}");
                     return datetime.ToString("dd/MM/yyyy");
                 }
-                else if (Type == "DateOfBirth")
+                else if (Type == "MonthAndYear")
                 {
-                    var datetime = DateTime.Parse($"{dateparts[0]}/{dateparts[1]}");
+                    DateTime datetime;
+                    DateTime.TryParse($"{dateparts[0]}/{dateparts[1]}", out datetime);
                     return datetime.ToString("MM/yyyy");
                 }
             }
