@@ -152,8 +152,8 @@
     <None Include="DataToImport\assessmentorgs.xlsx" />
     <None Include="PostDeploymentScripts\on-2033-anytime_updates.sql" />
     <None Include="PostDeploymentScripts\on-2295-expression-of-interest.sql" />
-    <None Include="Functions\Table-valued Functions\Apply_Func_Get_Applications.sql" />
-    <None Include="Functions\Scalar-valued Functions\ToTicks.sql" />
+    <Build Include="Functions\Table-valued Functions\Apply_Func_Get_Applications.sql" />
+    <Build Include="Functions\Scalar-valued Functions\ToTicks.sql" />
   </ItemGroup>
   <ItemGroup>
     <ArtifactReference Include="$(DacPacRootPath)\Extensions\Microsoft\SQLDB\Extensions\SqlServer\AzureV12\SqlSchemas\master.dacpac">
