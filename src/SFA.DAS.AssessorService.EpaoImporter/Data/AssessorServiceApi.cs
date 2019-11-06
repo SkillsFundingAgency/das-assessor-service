@@ -101,6 +101,9 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Data
 
         public async Task ChangeStatusToPrinted(int batchNumber, IEnumerable<CertificateResponse> responses)
         {
+            // the batch printed status will updated in chunks to stay within the WAF message size limits
+            const int chunkSize = 100; 
+            
             var certificateStatuses = responses.Select(
                 q => new CertificateStatus
                 {
@@ -108,13 +111,22 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Data
                     Status = Domain.Consts.CertificateStatus.Printed
                 }).ToList();
 
-            var updateCertificatesBatchToIndicatePrintedRequest = new UpdateCertificatesBatchToIndicatePrintedRequest
-            {
-                BatchNumber = batchNumber,
-                CertificateStatuses = certificateStatuses
-            };
+            var chunkedCertficateStatuses = certificateStatuses
+                    .Select((x, i) => new { Index = i, Value = x })
+                    .GroupBy(x => x.Index / chunkSize)
+                    .Select(x => x.Select(v => v.Value).ToList())
+                    .ToList();
 
-            await _httpClient.PutAsJsonAsync($"/api/v1/certificates/{batchNumber}", updateCertificatesBatchToIndicatePrintedRequest);
+            foreach(var certificateStatusesChunk in chunkedCertficateStatuses)
+            {
+                var updateCertificatesBatchToIndicatePrintedRequest = new UpdateCertificatesBatchToIndicatePrintedRequest
+                {
+                    BatchNumber = batchNumber,
+                    CertificateStatuses = certificateStatusesChunk
+                };
+
+                await _httpClient.PutAsJsonAsync($"/api/v1/certificates/{batchNumber}", updateCertificatesBatchToIndicatePrintedRequest);
+            }            
         }
 
         public async Task UpdateBatchDataInBatchLog(Guid batchId, BatchData batchData)
