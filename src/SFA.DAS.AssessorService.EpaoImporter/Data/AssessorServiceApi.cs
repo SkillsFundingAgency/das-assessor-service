@@ -8,7 +8,7 @@ using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData.Printing;
-using SFA.DAS.AssessorService.EpaoImporter.Const;
+using SFA.DAS.AssessorService.EpaoImporter.Extensions;
 using SFA.DAS.AssessorService.EpaoImporter.Logger;
 
 namespace SFA.DAS.AssessorService.EpaoImporter.Data
@@ -111,13 +111,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Data
                     Status = Domain.Consts.CertificateStatus.Printed
                 }).ToList();
 
-            var chunkedCertficateStatuses = certificateStatuses
-                    .Select((x, i) => new { Index = i, Value = x })
-                    .GroupBy(x => x.Index / chunkSize)
-                    .Select(x => x.Select(v => v.Value).ToList())
-                    .ToList();
-
-            foreach(var certificateStatusesChunk in chunkedCertficateStatuses)
+            foreach(var certificateStatusesChunk in certificateStatuses.ChunkBy(chunkSize))
             {
                 var updateCertificatesBatchToIndicatePrintedRequest = new UpdateCertificatesBatchToIndicatePrintedRequest
                 {
