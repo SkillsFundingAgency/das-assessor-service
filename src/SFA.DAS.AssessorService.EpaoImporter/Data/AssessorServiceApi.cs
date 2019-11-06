@@ -101,7 +101,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Data
 
         public async Task ChangeStatusToPrinted(int batchNumber, IEnumerable<CertificateResponse> responses)
         {
-            // the batch printed status will updated in chunks to stay within the WAF message size limits
+            // the batch printed status be will updated in chunks to stay within the WAF message size limits
             const int chunkSize = 100; 
             
             var certificateStatuses = responses.Select(
