@@ -868,7 +868,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 {
                     if (answer.Value.Count > 1)
                     {
-                        answers.Add(new Answer() {QuestionId = answer.Key, Value = new[] {answer.Value.ToString()}});
+                        answers.Add(new Answer() {QuestionId = answer.Key, Value = new[] {answer.Value[0].ToString()}});
                     }
                 }
 
