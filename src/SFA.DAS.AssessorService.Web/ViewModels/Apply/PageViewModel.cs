@@ -101,7 +101,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Apply
                 InputClasses = q.Input.InputClasses,
                 Hint = q.Hint,
                 Options = q.Input.Options,
-                Value = page.AllowMultipleAnswers ? GetMultipleValue(page.PageOfAnswers.LastOrDefault()?.Answers, q, errorMessages) : answers?.SingleOrDefault(a => a?.QuestionId == q.QuestionId)?.Value,
+                Value = page.AllowMultipleAnswers ? GetMultipleValue(page.PageOfAnswers.LastOrDefault()?.Answers, q, errorMessages) : answers?.SingleOrDefault(a => a?.QuestionId == q.QuestionId)?.Value[0],
                 JsonValue = page.AllowMultipleAnswers ? GetMultipleJsonValue(page.PageOfAnswers.LastOrDefault()?.Answers, q, errorMessages) : GetJsonValue(answers,q),
                 ErrorMessages = errorMessages?.Where(f => f.Field.Split("_Key_")[0] == q.QuestionId).ToList(),
                 SequenceNo = SequenceNo,
@@ -127,7 +127,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Apply
                     foreach (var furtherQuestion in option.FurtherQuestions)
                     {
                         furtherQuestion.Value = answers
-                            ?.SingleOrDefault(a => a?.QuestionId == furtherQuestion.QuestionId.ToString())?.Value;
+                            ?.SingleOrDefault(a => a?.QuestionId == furtherQuestion.QuestionId.ToString())?.Value[0];
                     }
                 }
             }
@@ -137,7 +137,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Apply
         {
             if (errorMessages != null && errorMessages.Any())
             {
-                return answers?.LastOrDefault(a => a?.QuestionId == question.QuestionId)?.Value;
+                return answers?.LastOrDefault(a => a?.QuestionId == question.QuestionId)?.Value[0];
             }
 
             return null;
@@ -156,7 +156,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Apply
 
         private dynamic GetJsonValue(List<Answer> answers, Question question)
         {
-            var json = answers?.SingleOrDefault(a => a?.QuestionId == question.QuestionId)?.Value;
+            var json = answers?.SingleOrDefault(a => a?.QuestionId == question.QuestionId)?.Value[0];
             try
             {
                 JToken.Parse(json);

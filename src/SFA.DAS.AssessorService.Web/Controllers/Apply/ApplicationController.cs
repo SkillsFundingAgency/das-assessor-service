@@ -357,7 +357,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                         return RedirectToNextAction(Id, sequenceNo, sectionNo, __redirectAction, nextAction.Action, nextAction.ReturnId);
                 }
                 else if(page.PageOfAnswers?.Count > 0 && __formAction != "Add" && 
-                    (pageAddResponse.ValidationErrors?.Count == 0 || answers.All(x => x.Value == string.Empty || Regex.IsMatch(x.Value, "^[,]+$"))))
+                    (pageAddResponse.ValidationErrors?.Count == 0 || answers.All(x => x.Value[0] == string.Empty || Regex.IsMatch(x.Value[0], "^[,]+$"))))
                 {
 
                     var nextAction = page.Next.SingleOrDefault(x => x.Action == "NextPage");
@@ -421,7 +421,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                             answers.Add(new Answer
                             {
                                 QuestionId = question.QuestionId,
-                                Value = page.PageOfAnswers.SelectMany(x => x.Answers).SingleOrDefault(x => x.QuestionId == question.QuestionId)?.Value ?? ""
+                                Value = new []{ page.PageOfAnswers.SelectMany(x => x.Answers).SingleOrDefault(x => x.QuestionId == question.QuestionId)?.Value[0] ?? ""}
                             });
                         }
                     }
@@ -678,13 +678,13 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
                 atLeastOneAnswerChanged = atLeastOneAnswerChanged
                     ? true
-                    : !answer?.Value.Equals(existingAnswer.Value, StringComparison.OrdinalIgnoreCase) ?? answer != existingAnswer;
+                    : !answer?.Value[0].Equals(existingAnswer.Value[0], StringComparison.OrdinalIgnoreCase) ?? answer != existingAnswer;
 
                 if (question.Input.Options != null)
                 {
                     foreach (var option in question.Input.Options)
                     {
-                        if (answer?.Value == option.Value.ToString())
+                        if (answer?.Value[0] == option.Value.ToString())
                         {
                             if (option.FurtherQuestions != null)
                             {
@@ -697,7 +697,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
                                     atLeastOneFutherQuestionAnswerChanged = atLeastOneFutherQuestionAnswerChanged
                                         ? true
-                                        : !furtherAnswer?.Value.Equals(existingFutherAnswer.Value, StringComparison.OrdinalIgnoreCase) ?? furtherAnswer != existingFutherAnswer;
+                                        : !furtherAnswer?.Value[0].Equals(existingFutherAnswer.Value[0], StringComparison.OrdinalIgnoreCase) ?? furtherAnswer != existingFutherAnswer;
                                 }
 
                                 atLeastOneAnswerChanged = atLeastOneAnswerChanged ? true : atLeastOneFutherQuestionAnswerChanged;
@@ -807,28 +807,29 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             {
                 if (!keyValuePair.Key.EndsWith("Search"))
                 {
-                    answers.Add(new Answer() { QuestionId = keyValuePair.Key, Value = keyValuePair.Value });
+                    answers.Add(new Answer() { QuestionId = keyValuePair.Key, Value = new []{ keyValuePair.Value.ToString() }});
                 }
             }
 
             if (!answers.Any())
             {
-                answers.Add(new Answer { QuestionId = questionId, Value = "" });
+                answers.Add(new Answer { QuestionId = questionId, Value = new []{ "" } });
             }
             else if (questionId != null && answers.Any(y => y.QuestionId.Contains(questionId)))
             {
-                if (answers.All(x => x.Value == "" || Regex.IsMatch(x.Value, "^[,]+$")))
+                if (answers.All(x => x.Value[0] == "" || Regex.IsMatch(x.Value[0], "^[,]+$")))
                 {
-                    foreach (var answer in answers.Where(y => y.QuestionId.Contains(questionId + ".") && (y.Value == "" || Regex.IsMatch(y.Value, "^[,]+$"))))
+                    foreach (var answer in answers.Where(y => y.QuestionId.Contains(questionId + ".") && (y.Value[0] == "" || Regex.IsMatch(y.Value[0], "^[,]+$"))))
                     {
                         answer.QuestionId = questionId;
                         break;
+                        
                     }
                 }
-                else if (answers.Count(y => y.QuestionId.Contains(questionId) && (y.Value == "" || Regex.IsMatch(y.Value, "^[,]+$"))) == 1
-                    && answers.Count(y => y.QuestionId == questionId && y.Value != "") == 0)
+                else if (answers.Count(y => y.QuestionId.Contains(questionId) && (y.Value[0] == "" || Regex.IsMatch(y.Value[0], "^[,]+$"))) == 1
+                    && answers.Count(y => y.QuestionId == questionId && y.Value[0] != "") == 0)
                 {
-                    foreach (var answer in answers.Where(y => y.QuestionId.Contains(questionId + ".") && (y.Value == "" || Regex.IsMatch(y.Value, "^[,]+$"))))
+                    foreach (var answer in answers.Where(y => y.QuestionId.Contains(questionId + ".") && (y.Value[0] == "" || Regex.IsMatch(y.Value[0], "^[,]+$"))))
                     {
                         answer.QuestionId = questionId;
                     }
@@ -867,7 +868,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 {
                     if (answer.Value.Count > 1)
                     {
-                        answers.Add(new Answer() { QuestionId = answer.Key, Value = answer.Value.ToString() });
+                        answers.Add(new Answer() {QuestionId = answer.Key, Value = new[] {answer.Value.ToString()}});
                     }
                 }
 

@@ -45,14 +45,14 @@ namespace SFA.DAS.AssessorService.Web.Infrastructure
                         else
                         {
                             // Only add to answers if type validation passes.
-                            answers.Add(new Answer() { QuestionId = file.Name, Value = file.FileName });
+                            answers.Add(new Answer() { QuestionId = file.Name, Value = new []{ file.FileName }});
                         }
                     }
                 }
                 else
                 {
                     // Only add to answers if type validation passes.
-                    answers.Add(new Answer() { QuestionId = file.Name, Value = file.FileName });
+                    answers.Add(new Answer() { QuestionId = file.Name, Value = new []{ file.FileName }});
                 }
             }
 

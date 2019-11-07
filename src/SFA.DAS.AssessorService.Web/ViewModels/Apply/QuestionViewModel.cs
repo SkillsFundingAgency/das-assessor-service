@@ -29,7 +29,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Apply
         {
             if (Type == "Date" || Type == "MonthAndYear")
             {
-                var dateparts = answer.Value.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries);
+                var dateparts = answer.Value[0].Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries);
 
                 if (Type == "Date")
                 {
@@ -44,7 +44,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Apply
                 }
             }
 
-            return answer.Value;
+            return answer.Value[0];
         }
     }
 }
