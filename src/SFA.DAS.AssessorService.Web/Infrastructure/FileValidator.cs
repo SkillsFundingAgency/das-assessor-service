@@ -12,13 +12,24 @@ namespace SFA.DAS.AssessorService.Web.Infrastructure
     {
         public static bool FileValidationPassed(List<Answer> answers, Page page, List<ValidationErrorDetail> errorMessages, ModelStateDictionary modelState, IFormFileCollection files)
         {
+            ValidationDefinition typeValidation = null;
             var fileValidationPassed = true;
             if (!files.Any()) return true;
 
+            if (answers != null && answers.Count == 1 && answers[0].Value == string.Empty)
+            {
+                typeValidation = page.Questions.FirstOrDefault(q => q.QuestionId == answers[0].QuestionId)?.Input.Validations.FirstOrDefault(v => v.Name == "Required");
+                if (typeValidation != null)
+                {
+                    modelState.AddModelError(answers[0].QuestionId, typeValidation.ErrorMessage);
+                    errorMessages.Add(new ValidationErrorDetail(answers[0].QuestionId, typeValidation.ErrorMessage));
+                    fileValidationPassed = false;
+                }
+            }
             foreach (var file in files)
             {
 
-                var typeValidation = page.Questions.FirstOrDefault(q => q.QuestionId == file.Name)?.Input.Validations.FirstOrDefault(v => v.Name == "FileType");
+                typeValidation = page.Questions.FirstOrDefault(q => q.QuestionId == file.Name)?.Input.Validations.FirstOrDefault(v => v.Name == "FileType");
                 if (typeValidation != null)
                 {
                     var allowedExtension = typeValidation.Value.ToString().Split(",", StringSplitOptions.RemoveEmptyEntries)[0];

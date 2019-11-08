@@ -432,7 +432,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
           
             if (fileupload == true && HttpContext.Request.Form.Files.Count > 0)
-            {
+            { 
                 updatePageResult = new SetPageAnswersResponse();
                 var errorMessages = new List<ValidationErrorDetail>();
                 if (FileValidator.FileValidationPassed(answers, page, errorMessages, ModelState, HttpContext.Request.Form.Files))
