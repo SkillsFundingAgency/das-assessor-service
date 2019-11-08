@@ -16,10 +16,10 @@ namespace SFA.DAS.AssessorService.Data.Apply
     public class ApplyRepository : Repository, IApplyRepository
     {
         // NOTE: Should the Financial Section move; then these need to be updated
-        private const int ORGANISATION_SEQUENCE = 1;
-        private const int STANDARD_SEQUENCE = 2;
-        private const int FINANCIAL_SEQUENCE = 1;
-        private const int FINANCIAL_SECTION = 3;
+        private const int ORGANISATION_SEQUENCE_NO = 1;
+        private const int STANDARD_SEQUENCE_NO = 2;
+        private const int FINANCIAL_SEQUENCE_NO = 1;
+        private const int FINANCIAL_SECTION_NO = 3;
 
         private readonly ILogger<ApplyRepository> _logger;
 
@@ -72,9 +72,9 @@ namespace SFA.DAS.AssessorService.Data.Apply
 
         public async Task<bool> CanSubmitApplication(Guid applicationId)
         {
-            // Prevent submission if Sequence 1 is required and another user has submitted theirs
+            // Prevent submission if Organisation Sequence is required and another user has submitted theirs
             var otherAppsInProgress = await _unitOfWork.Connection.QueryAsync<Domain.Entities.Apply>(
-                @"SELECT a.*
+                $@"SELECT a.*
                     FROM Apply a
                     INNER JOIN Organisations o ON o.Id = a.OrganisationId
                     INNER JOIN Contacts con ON a.OrganisationId = con.OrganisationID
@@ -82,7 +82,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
                     WHERE a.OrganisationId = (SELECT OrganisationId FROM Apply WHERE Id = @applicationId)
                     AND a.CreatedBy <> (SELECT CreatedBy FROM Apply WHERE Id = @applicationId)
                     AND a.ApplicationStatus NOT IN (@applicationStatusApproved, @applicationStatusApprovedDeclined)
-                    AND sequence.NotRequired = 0 AND sequence.SequenceNo = 1
+                    AND sequence.NotRequired = 0 AND sequence.SequenceNo = {ORGANISATION_SEQUENCE_NO}
                     AND sequence.Status IN (@applicationSequenceStatusSubmitted, @applicationSequenceStatusResubmitted)",
                 param: new
                 {
@@ -142,8 +142,8 @@ namespace SFA.DAS.AssessorService.Data.Apply
         {
             var application = await GetApplication(id);
             var applyData = application?.ApplyData;
-            var sequence = applyData?.Sequences.SingleOrDefault(seq => seq.SequenceNo == FINANCIAL_SEQUENCE);
-            var section = sequence?.Sections.SingleOrDefault(sec => sec.SectionNo == FINANCIAL_SECTION);
+            var sequence = applyData?.Sequences.SingleOrDefault(seq => seq.SequenceNo == FINANCIAL_SEQUENCE_NO);
+            var section = sequence?.Sections.SingleOrDefault(sec => sec.SectionNo == FINANCIAL_SECTION_NO);
 
             if (application != null && section != null && sequence?.IsActive == true && application.FinancialReviewStatus == FinancialReviewStatus.New)
             {
@@ -170,8 +170,8 @@ namespace SFA.DAS.AssessorService.Data.Apply
             {
                 var application = await GetApplication(id);
                 var applyData = application?.ApplyData;
-                var sequence = applyData?.Sequences.SingleOrDefault(seq => seq.SequenceNo == FINANCIAL_SEQUENCE);
-                var section = sequence?.Sections.SingleOrDefault(sec => sec.SectionNo == FINANCIAL_SECTION);
+                var sequence = applyData?.Sequences.SingleOrDefault(seq => seq.SequenceNo == FINANCIAL_SEQUENCE_NO);
+                var section = sequence?.Sections.SingleOrDefault(sec => sec.SectionNo == FINANCIAL_SECTION_NO);
 
                 if (application != null && section != null && sequence?.IsActive == true && application.FinancialReviewStatus == FinancialReviewStatus.InProgress)
                 {
@@ -250,7 +250,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
                         section.ReviewedBy = section.EvaluatedBy;
                     }
                 }
-                else if (sequence.SequenceNo == FINANCIAL_SEQUENCE && section.SectionNo == FINANCIAL_SECTION)
+                else if (sequence.SequenceNo == FINANCIAL_SEQUENCE_NO && section.SectionNo == FINANCIAL_SECTION_NO)
                 {
                     section.Status = ApplicationSectionStatus.Graded;
                     section.EvaluatedDate = null;
@@ -298,11 +298,11 @@ namespace SFA.DAS.AssessorService.Data.Apply
                     case ApplicationSequenceStatus.FeedbackAdded:
                         application.ReviewStatus = ApplicationReviewStatus.HasFeedback;
                         application.ApplicationStatus = ApplicationStatus.FeedbackAdded;
-                        if (sequenceNo == 1)
+                        if (sequenceNo == ORGANISATION_SEQUENCE_NO)
                         {
                             applyData.Apply.InitSubmissionFeedbackAddedDate = DateTime.UtcNow;
                         }
-                        else if (sequenceNo == 2)
+                        else if (sequenceNo == STANDARD_SEQUENCE_NO)
                         {
                             applyData.Apply.StandardSubmissionFeedbackAddedDate = DateTime.UtcNow;
                         }
@@ -310,22 +310,22 @@ namespace SFA.DAS.AssessorService.Data.Apply
                     case ApplicationSequenceStatus.Declined:
                         application.ReviewStatus = ApplicationReviewStatus.Declined;
                         application.ApplicationStatus = ApplicationStatus.Declined;
-                        if (sequenceNo == 1)
+                        if (sequenceNo == ORGANISATION_SEQUENCE_NO)
                         {
                             applyData.Apply.InitSubmissionClosedDate = DateTime.UtcNow;
                         }
-                        else if (sequenceNo == 2)
+                        else if (sequenceNo == STANDARD_SEQUENCE_NO)
                         {
                             applyData.Apply.StandardSubmissionClosedDate = DateTime.UtcNow;
                         }
                         break;
                     case ApplicationSequenceStatus.Approved:
                         application.ReviewStatus = ApplicationReviewStatus.Approved;
-                        if (sequenceNo == 1)
+                        if (sequenceNo == ORGANISATION_SEQUENCE_NO)
                         {
                             applyData.Apply.InitSubmissionClosedDate = DateTime.UtcNow;
                         }
-                        else if (sequenceNo == 2)
+                        else if (sequenceNo == STANDARD_SEQUENCE_NO)
                         {
                             applyData.Apply.StandardSubmissionClosedDate = DateTime.UtcNow;
                         }
@@ -342,8 +342,8 @@ namespace SFA.DAS.AssessorService.Data.Apply
 
                             // Delete any related applications if this one was an initial application
                             // (i.e all sequences are required, section 1 & 2 are required, hence not on EPAO Register)
-                            var sequenceOneSections = applyData.Sequences.Where(seq => seq.SequenceNo == 1).SelectMany(seq => seq.Sections);
-                            var initialSections = sequenceOneSections.Where(sec => sec.SectionNo == 1 || sec.SectionNo == 2);
+                            var sequenceOneSections = applyData.Sequences.Where(seq => seq.SequenceNo == ORGANISATION_SEQUENCE_NO).SelectMany(seq => seq.Sections);
+                            var initialSections = sequenceOneSections.Where(sec => sec.SectionNo == ORGANISATION_SEQUENCE_NO || sec.SectionNo == STANDARD_SEQUENCE_NO);
 
                             bool initialSectionsRequired = initialSections.All(sec => !sec.NotRequired);
                             bool allSequencesRequired = applyData.Sequences.All(seq => !seq.NotRequired);
@@ -436,8 +436,18 @@ namespace SFA.DAS.AssessorService.Data.Apply
 
         public async Task<OrganisationApplicationsResult> GetOrganisationApplications(string reviewStatus, string sortColumn, int sortAscending, int pageSize, int pageIndex)
         {
+            return await GetApplications(ORGANISATION_SEQUENCE_NO, reviewStatus, sortColumn, sortAscending, pageSize, pageIndex);
+        }
+
+        public async Task<OrganisationApplicationsResult> GetStandardApplications(string reviewStatus, string sortColumn, int sortAscending, int pageSize, int pageIndex)
+        {
+            return await GetApplications(STANDARD_SEQUENCE_NO, reviewStatus, sortColumn, sortAscending, pageSize, pageIndex);
+        }
+
+        private async Task<OrganisationApplicationsResult> GetApplications(int sequenceNo, string reviewStatus, string sortColumn, int sortAscending, int pageSize, int pageIndex)
+        {
             var @params = new DynamicParameters();
-            @params.Add("sequenceNo", ORGANISATION_SEQUENCE);
+            @params.Add("sequenceNo", sequenceNo);
             @params.Add("sequenceStatus", GetSequenceStatus(reviewStatus));
             @params.Add("excludedApplicationStatus", string.Join("|", new List<string> { ApplicationStatus.Declined }));
             @params.Add("excludedReviewStatus", string.Join("|", new List<string> { ApplicationReviewStatus.Deleted }));
@@ -480,73 +490,10 @@ namespace SFA.DAS.AssessorService.Data.Apply
             return string.Empty;
         }
 
-        public async Task<List<ApplicationSummaryItem>> GetOpenApplications(int sequenceNo)
-        {
-            var @params = new DynamicParameters();
-            @params.Add("sequenceNo", sequenceNo);
-            @params.Add("sequenceStatus", string.Join("|", new List<string> { ApplicationSequenceStatus.Submitted, ApplicationSequenceStatus.Resubmitted }));
-            @params.Add("excludedApplicationStatus", string.Join("|", new List<string> { ApplicationStatus.Declined }));
-            @params.Add("excludedReviewStatus", string.Join("|", new List<string> { ApplicationReviewStatus.Deleted }));
-            @params.Add("includedReviewStatus", null);
-            @params.Add("sortColumn", null);
-            @params.Add("sortAscending", null);
-            @params.Add("pageSize", short.MaxValue);
-            @params.Add("pageIndex", 1);
-            @params.Add("totalCount", dbType: DbType.Int32, direction: ParameterDirection.Output);
-
-            return (await _unitOfWork.Connection.QueryAsync<ApplicationSummaryItem>(
-                "Apply_List_Applications",
-                param: @params,
-                transaction: _unitOfWork.Transaction,
-                commandType: CommandType.StoredProcedure)).ToList();
-        }
-
-        public async Task<List<ApplicationSummaryItem>> GetFeedbackAddedApplications(int sequenceNo)
-        {
-            var @params = new DynamicParameters();
-            @params.Add("sequenceNo", sequenceNo);
-            @params.Add("sequenceStatus", string.Join("|", new List<string> { ApplicationSequenceStatus.FeedbackAdded }));
-            @params.Add("excludedApplicationStatus", string.Join("|", new List<string> { ApplicationStatus.Declined }));
-            @params.Add("excludedReviewStatus", string.Join("|", new List<string> { ApplicationReviewStatus.Deleted }));
-            @params.Add("includedReviewStatus", null);
-            @params.Add("sortColumn", null);
-            @params.Add("sortAscending", null);
-            @params.Add("pageSize", short.MaxValue);
-            @params.Add("pageIndex", 1);
-            @params.Add("totalCount", dbType: DbType.Int32, direction: ParameterDirection.Output);
-
-            return (await _unitOfWork.Connection.QueryAsync<ApplicationSummaryItem>(
-                "Apply_List_Applications",
-                param: @params,
-                transaction: _unitOfWork.Transaction,
-                commandType: CommandType.StoredProcedure)).ToList();
-        }
-
-        public async Task<List<ApplicationSummaryItem>> GetClosedApplications(int sequenceNo)
-        {
-            var @params = new DynamicParameters();
-            @params.Add("sequenceNo", sequenceNo);
-            @params.Add("sequenceStatus", string.Join("|", new List<string> { ApplicationSequenceStatus.Approved, ApplicationSequenceStatus.Declined }));
-            @params.Add("excludedApplicationStatus", string.Join("|", new List<string> { ApplicationStatus.Declined }));
-            @params.Add("excludedReviewStatus", string.Join("|", new List<string> { ApplicationReviewStatus.Deleted }));
-            @params.Add("includedReviewStatus", null);
-            @params.Add("sortColumn", null);
-            @params.Add("sortAscending", null);
-            @params.Add("pageSize", short.MaxValue);
-            @params.Add("pageIndex", 1);
-            @params.Add("totalCount", dbType: DbType.Int32, direction: ParameterDirection.Output);
-
-            return (await _unitOfWork.Connection.QueryAsync<ApplicationSummaryItem>(
-                "Apply_List_Applications",
-                param: @params,
-                transaction: _unitOfWork.Transaction,
-                commandType: CommandType.StoredProcedure)).ToList();    
-        }
-
         public async Task<List<FinancialApplicationSummaryItem>> GetOpenFinancialApplications()
         {
             return (await _unitOfWork.Connection.QueryAsync<FinancialApplicationSummaryItem>(
-                @"SELECT
+                $@"SELECT
                     ap1.Id AS ApplicationId,
                     sequence.SequenceNo AS SequenceNo,
                     section.SectionNo AS SectionNo, 
@@ -561,7 +508,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
                     CROSS APPLY OPENJSON(ApplyData,'$.Sequences') WITH (SequenceNo INT, IsActive BIT, Status VARCHAR(20)) sequence
                     CROSS APPLY OPENJSON(ApplyData,'$.Sequences[0].Sections') WITH (SectionNo INT, Status VARCHAR(20)) section
                     CROSS APPLY OPENJSON(ApplyData,'$.Apply') WITH (SubmittedDate VARCHAR(30) '$.LatestInitSubmissionDate', SubmissionCount INT '$.InitSubmissionCount') apply
-                WHERE sequence.SequenceNo = 1 AND section.SectionNo = 3 AND sequence.IsActive = 1
+                WHERE sequence.SequenceNo = {FINANCIAL_SEQUENCE_NO} AND section.SectionNo = {FINANCIAL_SECTION_NO} AND sequence.IsActive = 1
                     AND ap1.FinancialReviewStatus IN (@financialReviewStatusNew, @financialReviewStatusInProgress)
                     AND ap1.ApplicationStatus IN (@applicationStatusSubmitted, @applicationStatusResubmitted)
                     AND ap1.DeletedAt IS NULL",
@@ -578,7 +525,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
         public async Task<List<FinancialApplicationSummaryItem>> GetFeedbackAddedFinancialApplications()
         {
             return (await _unitOfWork.Connection.QueryAsync<FinancialApplicationSummaryItem>(
-                @"SELECT
+                $@"SELECT
                     ap1.Id AS ApplicationId,
                     sequence.SequenceNo AS SequenceNo,
                     section.SectionNo AS SectionNo, 
@@ -595,7 +542,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
                     CROSS APPLY OPENJSON(ApplyData,'$.Sequences') WITH (SequenceNo INT, IsActive BIT, Status VARCHAR(20)) sequence
                     CROSS APPLY OPENJSON(ApplyData,'$.Sequences[0].Sections') WITH (SectionNo INT, Status VARCHAR(20), FeedbackDate VARCHAR(30) '$.Feedback.FeedbackDate') section
                     CROSS APPLY OPENJSON(ApplyData,'$.Apply') WITH (SubmittedDate VARCHAR(30) '$.LatestInitSubmissionDate', SubmissionCount INT '$.InitSubmissionCount') apply
-                WHERE sequence.SequenceNo = 1 AND section.SectionNo = 3 AND sequence.IsActive = 1
+                WHERE sequence.SequenceNo = {FINANCIAL_SEQUENCE_NO} AND section.SectionNo = {FINANCIAL_SECTION_NO} AND sequence.IsActive = 1
                     AND ap1.FinancialReviewStatus = @financialReviewStatusRejected
                     AND ap1.ApplicationStatus IN (@applicationStatusSubmitted, @applicationStatusResubmitted)
                     AND ap1.DeletedAt IS NULL",
@@ -611,7 +558,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
         public async Task<List<FinancialApplicationSummaryItem>> GetClosedFinancialApplications()
         {
             return (await _unitOfWork.Connection.QueryAsync<FinancialApplicationSummaryItem>(
-                @"SELECT
+                $@"SELECT
                     ap1.Id AS ApplicationId,
                     sequence.SequenceNo AS SequenceNo,
                     section.SectionNo AS SectionNo, 
@@ -627,7 +574,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
                     CROSS APPLY OPENJSON(ApplyData,'$.Sequences') WITH (SequenceNo INT, Status VARCHAR(20)) sequence
                     CROSS APPLY OPENJSON(ApplyData,'$.Sequences[0].Sections') WITH (SectionNo INT, Status VARCHAR(20), NotRequired BIT) section
                     CROSS APPLY OPENJSON(ApplyData,'$.Apply') WITH (ClosedDate VARCHAR(30) '$.InitSubmissionClosedDate', SubmissionCount INT '$.InitSubmissionCount') apply
-                WHERE sequence.SequenceNo = 1 AND section.SectionNo = 3 AND section.NotRequired = 0
+                WHERE sequence.SequenceNo = {FINANCIAL_SEQUENCE_NO} AND section.SectionNo = {FINANCIAL_SECTION_NO} AND section.NotRequired = 0
                     AND ap1.FinancialReviewStatus IN (@financialReviewStatusGraded, @financialReviewStatusApproved) -- NOTE: Not showing Exempt
                     AND ap1.DeletedAt IS NULL",
                 param: new
