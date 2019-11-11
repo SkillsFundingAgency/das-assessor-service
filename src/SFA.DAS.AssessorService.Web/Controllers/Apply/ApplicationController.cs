@@ -838,11 +838,19 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
             var questionId = page.Questions.Where(x => x.Input.Type == "ComplexRadio" || x.Input.Type == "Radio").Select(y => y.QuestionId).FirstOrDefault();
 
-            foreach (var keyValuePair in HttpContext.Request.Form.Where(f => !f.Key.StartsWith("__")))
+            foreach (var keyValuePair in HttpContext.Request.Form.Where(f => !f.Key.StartsWith("__") && f.Key != "allAreas"))
             {
                 if (!keyValuePair.Key.EndsWith("Search"))
                 {
                     answers.Add(new Answer() { QuestionId = keyValuePair.Key, Value = keyValuePair.Value });
+                }
+            }
+
+            foreach (var checkboxListQuestion in page.Questions.Where(q => q.Input.Type == "CheckboxList"))
+            {
+                if (!HttpContext.Request.Form.ContainsKey(checkboxListQuestion.QuestionId))
+                {
+                    answers.Add(new Answer{ QuestionId = checkboxListQuestion.QuestionId, Value = "" });
                 }
             }
 
