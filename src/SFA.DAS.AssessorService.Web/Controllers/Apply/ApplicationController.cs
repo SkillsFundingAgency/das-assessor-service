@@ -361,12 +361,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 else if(page.PageOfAnswers?.Count > 0 && __formAction != "Add")
                 {
                     if (page.HasFeedback && page.HasNewFeedback && __redirectAction == "Feedback")
-                    {
-                        if (!page.AllFeedbackIsCompleted)
+                    {   
+                        page = StoreEnteredAnswers(answers, page);
+                        SetResponseValidationErrors(pageAddResponse?.ValidationErrors, page);
+                        if (!page.AllFeedbackIsCompleted || pageAddResponse?.ValidationErrors.Count > 0)
                         {
-                            page = StoreEnteredAnswers(answers, page);
-                            SetResponseValidationErrors(pageAddResponse?.ValidationErrors, page);
-
                             return RedirectToAction("Page", new { Id, sequenceNo, sectionNo, pageId, __redirectAction });
                         }
                         return RedirectToAction("Feedback", new { Id });
@@ -786,22 +785,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
         private static Page StoreEnteredAnswers(List<Answer> answers, Page page)
         {
-            foreach (var answer in answers)
-            {
-                if (answer.QuestionId == null) continue;
-
-                if(page.PageOfAnswers.Count > 1)
-                    page.PageOfAnswers.RemoveRange(0, page.PageOfAnswers.Count-1);
-                var pageAnswer = page.PageOfAnswers.Last().Answers.SingleOrDefault(a => a.QuestionId == answer.QuestionId);
-                if (pageAnswer is null)
-                {
-                    page.PageOfAnswers.Single().Answers.Add(answer);
-                }
-                else
-                {
-                    pageAnswer.Value = answer.Value;
-                }
-            }
+            if(answers != null && answers.Any() && page.PageOfAnswers != null &&  page.PageOfAnswers.Any( x => x.Answers?.Count > 0))
+                page.PageOfAnswers.Add(new PageOfAnswers { Answers = answers });
 
             return page;
         }
