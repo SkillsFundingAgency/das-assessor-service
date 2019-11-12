@@ -184,7 +184,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
 
                 if (application != null && section != null && sequence?.IsActive == true && application.FinancialReviewStatus == FinancialReviewStatus.InProgress)
                 {
-                    var financialReviewStatus = FinancialReviewStatus.Graded;
+                    var financialReviewStatus = (financialGrade.SelectedGrade == FinancialApplicationSelectedGrade.Inadequate) ? FinancialReviewStatus.Rejected : FinancialReviewStatus.Graded;
 
                     application.FinancialReviewStatus = financialReviewStatus;
                     application.FinancialGrade = financialGrade;
