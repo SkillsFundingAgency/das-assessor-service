@@ -475,6 +475,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
                 if (updatePageResult?.ValidationPassed == true)
                 {
+                    // TODO: Update section.AllRequestedFeedback to the value of that currently held in QnA
+                    // applySection.RequestedFeedbackAnswered = qnaSection.QnAData.RequestedFeedbackAnswered
+
                     if (__redirectAction == "Feedback")
                         return RedirectToAction("Feedback", new { Id });
 
