@@ -7,9 +7,12 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.DateTime;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.Text;
 using SFA.DAS.Apprenticeships.Api.Types.Exceptions;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Apply;
@@ -362,9 +365,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                         }
 
                         if (__redirectAction == "Feedback")
-                        {
                             return RedirectToAction("Feedback", new { Id });
-                        }
 
                         var nextAction = pageAddResponse.Page.Next.SingleOrDefault(x => x.Action == "NextPage");
 
@@ -388,7 +389,23 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                             var nextAction = page.Next.SingleOrDefault(x => x.Action == "NextPage");
 
                             if (!string.IsNullOrEmpty(nextAction.Action))
+                            {
+                                if (__redirectAction == "Feedback")
+                                {
+                                    foreach (var answer in answers)
+                                    {
+                                        if (page.Next.Exists(y => y.Conditions.Exists(x => x.QuestionId == answer.QuestionId || x.QuestionTag == answer.QuestionId)))
+                                        {
+                                            return RedirectToNextAction(Id, sequenceNo, sectionNo, __redirectAction, nextAction.Action, nextAction.ReturnId);
+                                        }
+                                        break;
+                                    }
+
+                                    return RedirectToAction("Feedback", new { Id });
+                                }
+
                                 return RedirectToNextAction(Id, sequenceNo, sectionNo, __redirectAction, nextAction.Action, nextAction.ReturnId);
+                            }
                         }
                     }
 
@@ -435,7 +452,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 {
                     if (!page.AllFeedbackIsCompleted)
                     {
-                        if (await ProcessFeedBackAnswers(application.ApplicationId, fileupload, page, answers))
+                        if (await ProcessFeedBackAnswers(application.ApplicationId, fileupload, page, answers)) 
                             return RedirectToAction("Page", new { Id, sequenceNo, sectionNo, pageId, __redirectAction });
                     }
                 }
@@ -479,7 +496,18 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                     // applySection.RequestedFeedbackAnswered = qnaSection.QnAData.RequestedFeedbackAnswered
 
                     if (__redirectAction == "Feedback")
+                    { 
+                        foreach( var answer in answers)
+                        {
+                            if (page.Next.Exists(y => y.Conditions.Exists(x => x.QuestionId == answer.QuestionId || x.QuestionTag == answer.QuestionId)))
+                            {
+                                return RedirectToNextAction(Id, sequenceNo, sectionNo, __redirectAction, updatePageResult.NextAction, updatePageResult.NextActionId);
+                            }
+                            break;
+                        }
+
                         return RedirectToAction("Feedback", new { Id });
+                    }
 
                     if (!string.IsNullOrEmpty(updatePageResult.NextAction))
                         return RedirectToNextAction(Id, sequenceNo, sectionNo, __redirectAction, updatePageResult.NextAction, updatePageResult.NextActionId);
@@ -605,11 +633,13 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                     return View("~/Views/Application/Sequence.cshtml", sequenceVm);
                 }
             }
+      
+            var dictRequestedFeedbackAnswered = sections.Select(t => new { t.SectionNo, t.QnAData.RequestedFeedbackAnswered })
+               .ToDictionary(t => t.SectionNo, t => t.RequestedFeedbackAnswered);
 
             var signinId = User.Claims.First(c => c.Type == "sub")?.Value;
             var contact = await GetUserContact(signinId);
-
-            var submitRequest = BuildSubmitApplicationSequenceRequest(application.Id, _config.ReferenceFormat, sequence.SequenceNo, contact.Id);
+            var submitRequest = BuildSubmitApplicationSequenceRequest(application.Id, dictRequestedFeedbackAnswered,_config.ReferenceFormat, sequence.SequenceNo, contact.Id);
 
             if (await _applicationApiClient.SubmitApplicationSequence(submitRequest))
             {
@@ -805,7 +835,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             return RedirectToAction("Section", new { Id, sequenceNo, sectionNo });
         }
 
-        private static string BuildPageContext(ApplicationResponse application, Sequence sequence)
+        private static string BuildPageContext(ApplicationResponse application, QnA.Api.Types.Sequence sequence)
         {
             string pageContext = string.Empty;
             if (sequence.SequenceNo == 2)
@@ -976,19 +1006,20 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             }
         }
 
-        private static SubmitApplicationSequenceRequest BuildSubmitApplicationSequenceRequest(Guid applicationId, string referenceFormat, int sequenceNo, Guid userId)
+        private static SubmitApplicationSequenceRequest BuildSubmitApplicationSequenceRequest(Guid applicationId, Dictionary<int,bool?> dictRequestedFeedbackAnswered, string referenceFormat, int sequenceNo, Guid userId)
         {  
             return new SubmitApplicationSequenceRequest
             {
                 ApplicationId = applicationId,
                 ApplicationReferenceFormat = referenceFormat,
                 SequenceNo = sequenceNo,
-                SubmittingContactId = userId
+                SubmittingContactId = userId,
+                RequestedFeedbackAnswered = dictRequestedFeedbackAnswered
             };
         }
 
         private static CreateApplicationRequest BuildCreateApplicationRequest(Guid qnaApplicationId, ContactResponse contact, OrganisationResponse org,
-           string referenceFormat, List<Sequence> sequences, List<List<Section>> sections)
+           string referenceFormat, List<QnA.Api.Types.Sequence> sequences, List<List<Section>> sections)
         {
 
             return new CreateApplicationRequest
