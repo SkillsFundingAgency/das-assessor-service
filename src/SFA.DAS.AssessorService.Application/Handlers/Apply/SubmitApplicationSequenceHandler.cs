@@ -86,6 +86,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
                             }
                             else if (section.RequestedFeedbackAnswered == true)
                             {
+                                // TODO: This is dependant on QnA notifying us that the RequestedFeedbackAnswered has been answered
+                                // otherwise section.Status will remain as is (most likely Evaluated)
                                 section.Status = ApplicationSectionStatus.Submitted;
                             }
                         }
