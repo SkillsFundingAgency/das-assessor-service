@@ -264,6 +264,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             }
 
             var sequence = await _qnaApiClient.GetSequenceBySequenceNo(application.ApplicationId, sequenceNo);
+            var section = await _qnaApiClient.GetSectionBySectionNo(application.ApplicationId, sequenceNo, sectionNo);
 
             PageViewModel viewModel = null;
             var returnUrl = Request.Headers["Referer"].ToString();
@@ -283,6 +284,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                     })).ToList()
                     : null;
 
+                if (page.ShowTitleAsCaption)
+                {
+                    page.Title = section.Title;
+                }
+                
                 viewModel = new PageViewModel(Id, sequenceNo, sectionNo, pageId, page, pageContext, __redirectAction,
                     returnUrl, errorMessages);
             }
@@ -311,6 +317,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
                     page = await GetDataFedOptions(page);
 
+                    if (page.ShowTitleAsCaption)
+                    {
+                        page.Title = section.Title;
+                    }
+                    
                     viewModel = new PageViewModel(Id, sequenceNo, sectionNo, page.PageId, page, pageContext, __redirectAction,
                         returnUrl, null);
 
