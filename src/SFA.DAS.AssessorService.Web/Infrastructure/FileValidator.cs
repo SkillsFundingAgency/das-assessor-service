@@ -14,9 +14,9 @@ namespace SFA.DAS.AssessorService.Web.Infrastructure
         {
             ValidationDefinition typeValidation = null;
             var fileValidationPassed = true;
-            if (!files.Any()) return true;
+            //if (!files.Any()) return true;
 
-            if (answers != null && answers.Count == 1 && answers[0].Value == string.Empty)
+            if (answers != null && answers[0]?.Value == string.Empty)
             {
                 typeValidation = page.Questions.FirstOrDefault(q => q.QuestionId == answers[0].QuestionId)?.Input.Validations.FirstOrDefault(v => v.Name == "Required");
                 if (typeValidation != null)

@@ -448,34 +448,45 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 var fileupload = page.Questions?.Any(q => q.Input.Type == "FileUpload");
                 var answers = GetAnswersFromForm(page);
 
-                if (page.HasFeedback && page.HasNewFeedback && __redirectAction == "Feedback")
+
+                if (HttpContext.Request.Form.Files.Count == 0 && fileupload == false)
                 {
-                    if (!page.AllFeedbackIsCompleted)
-                    {
-                        if (await ProcessFeedBackAnswers(application.ApplicationId, fileupload, page, answers)) 
-                            return RedirectToAction("Page", new { Id, sequenceNo, sectionNo, pageId, __redirectAction });
-                    }
-                }
-
-                if (HttpContext.Request.Form.Files.Count == 0)
-                {
-                    if (fileupload == true && NothingToUpload(updatePageResult, answers))
-                        return ForwardToNextSectionOrPage(page, Id, sequenceNo, sectionNo, __redirectAction);
-
-                    if (fileupload == true)
-                        AddAllFileUploadAnswers(page, answers);
-
-                    updatePageResult = await _qnaApiClient.AddPageAnswer(application.ApplicationId, page.SectionId.Value, page.PageId, answers);
+                    if (__redirectAction == "Feedback" && !HasAtLeastOneAnswerChanged(page, answers) && !page.AllFeedbackIsCompleted)
+                        SetAnswerNotUpdated(page);
+                    else
+                        updatePageResult = await _qnaApiClient.AddPageAnswer(application.ApplicationId, page.SectionId.Value, page.PageId, answers);
                 }
 
 
-                if (fileupload == true && HttpContext.Request.Form.Files.Count > 0)
-                {
+                if (fileupload == true)
+                { 
                     updatePageResult = new SetPageAnswersResponse();
                     var errorMessages = new List<ValidationErrorDetail>();
-                    if (FileValidator.FileValidationPassed(answers, page, errorMessages, ModelState, HttpContext.Request.Form.Files))
-                        updatePageResult = await UploadFilesToStorage(application.ApplicationId, page.SectionId.Value, page.PageId, page);
+                    if (HttpContext.Request.Form.Files.Count == 0 && NothingToUpload(updatePageResult, answers))
+                    {
 
+                        if (__redirectAction == "Feedback")
+                        {
+                            if (page.HasFeedback && page.HasNewFeedback && !page.AllFeedbackIsCompleted)
+                            {
+                                SetAnswerNotUpdated(page);
+                                return RedirectToAction("Page", new { Id, sequenceNo, sectionNo, pageId, __redirectAction });
+                            }
+                            if (FileValidator.FileValidationPassed(answers, page, errorMessages, ModelState, HttpContext.Request.Form.Files))
+                                return RedirectToAction("Feedback", new { Id });
+                        }
+                        else
+                        {
+                            if (FileValidator.FileValidationPassed(answers, page, errorMessages, ModelState, HttpContext.Request.Form.Files))
+                                return ForwardToNextSectionOrPage(page, Id, sequenceNo, sectionNo, __redirectAction);
+                        }
+                    }
+                    else
+                    {
+                        if (FileValidator.FileValidationPassed(answers, page, errorMessages, ModelState, HttpContext.Request.Form.Files))
+                            updatePageResult = await UploadFilesToStorage(application.ApplicationId, page.SectionId.Value, page.PageId, page);
+                    }
+                  
                 }
 
                 var apiValidationResult = await _apiValidationService.CallApiValidation(page, answers);
@@ -694,54 +705,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             return View("~/Views/Application/Feedback.cshtml", sequenceVm);
         }
 
-        private async Task<bool> ProcessFeedBackAnswers(Guid applicationId, bool? fileupload, Page page, List<Answer> answers)
-        {
-            var processed = false;
-            if (HttpContext.Request.Form.Files.Count == 0 && fileupload == true ||
-                        (!HasAtLeastOneAnswerChanged(page, answers) && fileupload == false))
-            {
-                if (fileupload == true)
-                {
-                    AddAllFileUploadAnswers(page, answers);
-                    var updatePageResult = await _qnaApiClient.AddPageAnswer(applicationId, page.SectionId.Value, page.PageId, answers);
-                    if (updatePageResult?.ValidationPassed != true)
-                    {
-                        if (!page.PageOfAnswers.Any())
-                            page.PageOfAnswers = new List<PageOfAnswers>() { new PageOfAnswers() { Answers = new List<Answer>() } };
-
-                        page = StoreEnteredAnswers(answers, page);
-                        SetResponseValidationErrors(updatePageResult?.ValidationErrors, page);
-                    }
-                    else
-                        SetAnswerNotUpdated(page);
-
-                    processed = true;
-                }
-                else
-                {
-                    SetAnswerNotUpdated(page);
-                    processed = true;
-                }
-            }
-
-            return processed;
-        }
-
-        private void AddAllFileUploadAnswers(Page page, List<Answer> answers)
-        {
-            foreach (var question in page.Questions)
-            {
-                if (!answers.Any(x => x.QuestionId == question.QuestionId))
-                {
-                    answers.Add(new Answer
-                    {
-                        QuestionId = question.QuestionId,
-                        Value = page.PageOfAnswers.SelectMany(x => x.Answers).SingleOrDefault(x => x.QuestionId == question.QuestionId)?.Value ?? ""
-                    });
-                }
-            }
-        }
-
         private async Task<Page> GetDataFedOptions(Page page)
         {
             if (page != null)
@@ -773,6 +736,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             var updatePageResult = new SetPageAnswersResponse();
             foreach (var question in page.Questions)
                 validationErrors.Add(new KeyValuePair<string, string>(question.QuestionId, "Unable to save as you have not updated your answer"));
+
             updatePageResult.ValidationPassed = false;
             updatePageResult.ValidationErrors = validationErrors;
             SetResponseValidationErrors(updatePageResult?.ValidationErrors, page);
@@ -824,7 +788,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         private static bool NothingToUpload(SetPageAnswersResponse updatePageResult, List<Answer> answers)
         {
             return updatePageResult.ValidationErrors == null && !updatePageResult.ValidationPassed
-                    && answers.Any(x => string.IsNullOrEmpty(x.QuestionId)) && answers.Count > 0;
+                    && answers.Count > 0;
         }
 
         private RedirectToActionResult ForwardToNextSectionOrPage(Page page, Guid Id, int sequenceNo, int sectionNo, string __redirectAction)
