@@ -374,7 +374,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                     }
                     else if (page.PageOfAnswers?.Count > 0 && __formAction != "Add")
                     {
-                        if (page.HasFeedback && page.HasNewFeedback && __redirectAction == "Feedback")
+                        if (page.HasFeedback && page.HasNewFeedback && !page.AllFeedbackIsCompleted && __redirectAction == "Feedback")
                         {
                             page = StoreEnteredAnswers(answers, page);
                             SetResponseValidationErrors(pageAddResponse?.ValidationErrors, page);
