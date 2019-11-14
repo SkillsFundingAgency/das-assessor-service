@@ -15,10 +15,6 @@ RETURN
         ap1.id AS ApplicationId,
         seq.SequenceNo AS SequenceNo,
         org.EndPointAssessorName AS OrganisationName,
-        CASE WHEN seq.SequenceNo = 1 THEN 'Midpoint'
-		        WHEN seq.SequenceNo = 2 THEN 'Standard'
-		        ELSE 'Unknown'
-	    END As ApplicationType,
         CASE WHEN seq.SequenceNo = 1 THEN NULL
 		        ELSE JSON_VALUE(ap1.Applydata, '$.Apply.StandardName')
         END As StandardName,

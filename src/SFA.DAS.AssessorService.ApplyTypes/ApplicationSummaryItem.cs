@@ -7,7 +7,6 @@ namespace SFA.DAS.AssessorService.ApplyTypes
         public Guid ApplicationId { get; set; }
         public int SequenceNo { get; set; }
         public string OrganisationName { get; set; }
-        public string ApplicationType { get; set; }
         public string StandardName { get; set; }
         public int? StandardCode { get; set; }
         public string StandardReference { get; set; }
