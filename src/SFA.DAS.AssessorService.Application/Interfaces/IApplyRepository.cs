@@ -17,7 +17,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<int> GetNextAppReferenceSequence();
         Task<ApplicationReviewStatusCounts> GetApplicationReviewStatusCounts();
         Task<OrganisationApplicationsResult> GetOrganisationApplications(string reviewStatus, string sortColumn, int sortAscending, int pageSize, int pageIndex);
-        Task<OrganisationApplicationsResult> GetStandardApplications(string reviewStatus, string sortColumn, int sortAscending, int pageSize, int pageIndex);
+        Task<OrganisationApplicationsResult> GetStandardApplications(string organisationId, string reviewStatus, string sortColumn, int sortAscending, int pageSize, int pageIndex);
         
         Task<List<FinancialApplicationSummaryItem>> GetOpenFinancialApplications();
         Task<List<FinancialApplicationSummaryItem>> GetFeedbackAddedFinancialApplications();

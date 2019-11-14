@@ -436,18 +436,19 @@ namespace SFA.DAS.AssessorService.Data.Apply
 
         public async Task<OrganisationApplicationsResult> GetOrganisationApplications(string reviewStatus, string sortColumn, int sortAscending, int pageSize, int pageIndex)
         {
-            return await GetApplications(ORGANISATION_SEQUENCE_NO, reviewStatus, sortColumn, sortAscending, pageSize, pageIndex);
+            return await GetApplications(ORGANISATION_SEQUENCE_NO, null, reviewStatus, sortColumn, sortAscending, pageSize, pageIndex);
         }
 
-        public async Task<OrganisationApplicationsResult> GetStandardApplications(string reviewStatus, string sortColumn, int sortAscending, int pageSize, int pageIndex)
+        public async Task<OrganisationApplicationsResult> GetStandardApplications(string organisationId, string reviewStatus, string sortColumn, int sortAscending, int pageSize, int pageIndex)
         {
-            return await GetApplications(STANDARD_SEQUENCE_NO, reviewStatus, sortColumn, sortAscending, pageSize, pageIndex);
+            return await GetApplications(STANDARD_SEQUENCE_NO, organisationId, reviewStatus, sortColumn, sortAscending, pageSize, pageIndex);
         }
 
-        private async Task<OrganisationApplicationsResult> GetApplications(int sequenceNo, string reviewStatus, string sortColumn, int sortAscending, int pageSize, int pageIndex)
+        private async Task<OrganisationApplicationsResult> GetApplications(int sequenceNo, string organisationId, string reviewStatus, string sortColumn, int sortAscending, int pageSize, int pageIndex)
         {
             var @params = new DynamicParameters();
             @params.Add("sequenceNo", sequenceNo);
+            @params.Add("organisationId", organisationId);
             @params.Add("sequenceStatus", GetSequenceStatus(reviewStatus));
             @params.Add("excludedApplicationStatus", string.Join("|", new List<string> { ApplicationStatus.Declined }));
             @params.Add("excludedReviewStatus", string.Join("|", new List<string> { ApplicationReviewStatus.Deleted }));

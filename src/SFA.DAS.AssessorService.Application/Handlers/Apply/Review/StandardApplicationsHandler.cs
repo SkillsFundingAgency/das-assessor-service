@@ -25,7 +25,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply.Review
         {
             _logger.LogInformation("Retrieving standard applications");
 
-            var standardApplicationsResult = await _repository.GetStandardApplications(request.ReviewStatus, request.SortColumn, request.SortAscending,
+            var standardApplicationsResult = await _repository.GetStandardApplications(request.OrgansiationId, request.ReviewStatus, request.SortColumn, request.SortAscending,
                 request.PageSize, request.PageIndex);
 
             return new PaginatedList<ApplicationSummaryItem>(standardApplicationsResult.PageOfResults.ToList(),

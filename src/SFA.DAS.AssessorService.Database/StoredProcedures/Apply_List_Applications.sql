@@ -1,5 +1,6 @@
 ﻿CREATE PROCEDURE [dbo].[Apply_List_Applications]
 	@sequenceNo INT,
+	@organisationId AS NVARCHAR(12),
 	@sequenceStatus AS NVARCHAR(MAX),
 	@excludedApplicationStatus AS NVARCHAR(MAX),
 	@excludedReviewStatus AS NVARCHAR(MAX),
@@ -13,6 +14,7 @@ AS
 BEGIN
 	-- redeclare variables to workaround query plan caching performance issues
 	DECLARE @SequenceNoInternal INT = @sequenceNo
+	DECLARE @OrganisationIdInternal INT = @organisationId
 	DECLARE @SequenceStatusInternal AS NVARCHAR(MAX) = @sequenceStatus
 	DECLARE @ExcludedApplicationStatusInternal AS NVARCHAR(MAX) = @excludedApplicationStatus
 	DECLARE @ExcludedReviewStatusInternal AS NVARCHAR(MAX) = @excludedReviewStatus
@@ -31,6 +33,7 @@ BEGIN
 		ApplicationType,
 		StandardName,
 		StandardCode,
+		StandardReference,
 		SubmittedDate,
 		FeedbackAddedDate,
 		ClosedDate,
@@ -44,7 +47,7 @@ BEGIN
 	INTO 
 		#Results
 	FROM
-		[dbo].[Apply_Func_Get_Applications] (@SequenceNoInternal, @SequenceStatusInternal, @ExcludedApplicationStatusInternal, @ExcludedReviewStatusInternal, @IncludedReviewStatusInternal)
+		[dbo].[Apply_Func_Get_Applications] (@SequenceNoInternal, @OrganisationIdInternal, @SequenceStatusInternal, @ExcludedApplicationStatusInternal, @ExcludedReviewStatusInternal, @IncludedReviewStatusInternal)
 	
 	-- the total number of results is returned as an out parameter
 	SELECT @totalCount = (SELECT MAX(TotalCount) FROM #Results)
@@ -56,6 +59,7 @@ BEGIN
 		ApplicationType,
 		StandardName,
 		StandardCode,
+		StandardReference,
 		SubmittedDate,
 		FeedbackAddedDate,
 		ClosedDate,
@@ -72,6 +76,8 @@ BEGIN
 		ELSE
            CASE 
 				WHEN @SortColumnInternal = 'OrganisationName' THEN OrganisationName
+				WHEN @SortColumnInternal = 'StandardReference' THEN StandardReference
+				WHEN @SortColumnInternal = 'StandardName' THEN StandardName
 				WHEN @SortColumnInternal = 'FinancialStatus' THEN FinancialStatus
 				WHEN @SortColumnInternal = 'Status' THEN ApplicationStatus
 				-- all dynamic order by columns must be the same type and using right aligned zero padded strings to sort as natural numbers
@@ -85,6 +91,8 @@ BEGIN
 		ELSE
            CASE 
 				WHEN @SortColumnInternal = 'OrganisationName' THEN OrganisationName
+				WHEN @SortColumnInternal = 'StandardReference' THEN StandardReference
+				WHEN @SortColumnInternal = 'StandardName' THEN StandardName
 				WHEN @SortColumnInternal = 'FinancialStatus' THEN FinancialStatus
 				WHEN @SortColumnInternal = 'Status' THEN ApplicationStatus
 				-- all dynamic order by columns must be the same type and using right aligned zero padded strings to sort as natural numbers

@@ -1,6 +1,7 @@
 ﻿CREATE FUNCTION [dbo].[Apply_Func_Get_Applications]
 (	
 	@sequenceNo INT,
+	@organisationId AS NVARCHAR(12),
 	@sequenceStatus AS NVARCHAR(MAX),
 	@excludedApplicationStatus AS NVARCHAR(MAX),
 	@excludedReviewStatus AS NVARCHAR(MAX),
@@ -24,6 +25,9 @@ RETURN
         CASE WHEN seq.SequenceNo = 1 THEN NULL
 		        ELSE JSON_VALUE(ap1.Applydata, '$.Apply.StandardCode')
         END As StandardCode,
+		CASE WHEN seq.SequenceNo = 1 THEN NULL
+		        ELSE JSON_VALUE(ap1.Applydata, '$.Apply.StandardReference')
+        END As StandardReference,
 		CASE WHEN seq.SequenceNo = 1 THEN JSON_VALUE(ap1.Applydata, '$.Apply.LatestInitSubmissionDate')
 		        WHEN seq.SequenceNo = 2 THEN JSON_VALUE(ap1.Applydata, '$.Apply.LatestStandardSubmissionDate')
 		        ELSE NULL
@@ -51,8 +55,9 @@ RETURN
 		INNER JOIN Organisations org ON ap1.OrganisationId = org.Id
         CROSS APPLY OPENJSON(ApplyData,'$.Sequences') WITH (SequenceNo INT, Status VARCHAR(20), NotRequired BIT) seq
 	WHERE 
-		seq.Status IN (SELECT LTRIM(RTRIM(value)) FROM STRING_SPLIT ( @sequenceStatus, '|' ))	AND seq.NotRequired = 0
-		AND (seq.SequenceNo = @sequenceNo OR @sequenceNo IS NULL) -- allow null temporarily so that current views will work in the admin service
+		seq.SequenceNo = @sequenceNo AND seq.NotRequired = 0
+		AND (org.EndPointAssessorOrganisationId = @organisationId OR @organisationId IS NULL)
+		AND seq.Status IN (SELECT LTRIM(RTRIM(value)) FROM STRING_SPLIT ( @sequenceStatus, '|' )) 
         AND ap1.DeletedAt IS NULL
         AND ap1.ApplicationStatus NOT IN (SELECT LTRIM(RTRIM(value)) FROM STRING_SPLIT ( @excludedApplicationStatus, '|' )) 
         AND ap1.ReviewStatus NOT IN (SELECT LTRIM(RTRIM(value)) FROM STRING_SPLIT ( @excludedReviewStatus, '|' ))
