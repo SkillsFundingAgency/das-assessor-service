@@ -111,7 +111,15 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             var signinId = User.Claims.First(c => c.Type == "sub")?.Value;
             var contact = await GetUserContact(signinId);
             var org = await _orgApiClient.GetOrganisationByUserId(contact.Id);
-          
+
+            var existingApplications = (await _applicationApiClient.GetApplications(contact.Id, false))?.Where( x=> x.OrganisationId == org.Id);
+            if(existingApplications != null)
+            {
+                var existingEmptyApplication = existingApplications.SingleOrDefault(x => x.StandardCode == null);
+                if(existingEmptyApplication != null)
+                    return RedirectToAction("SequenceSignPost", new { existingEmptyApplication.Id });
+            }
+
             var applicationStartRequest = new StartApplicationRequest
             {
                 UserReference = contact.Id.ToString(),
@@ -546,9 +554,12 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
             }
             catch (Exception ex)
-            {
+            {  
                 if (ex.Message.Equals("Could not find the page", StringComparison.OrdinalIgnoreCase))
                     return RedirectToAction("Applications");
+
+                _logger.LogError(ex, ex.Message);
+
                 throw ex;
             }
 
