@@ -5,7 +5,7 @@
     var searchContext = "";
     var findAddressVal = $("#postcode-search").val();
 
-    var hasAddressValidationErrors = ($(".address-manual-input span.govuk-error-message").length > 0);
+    var hasAddressValidationErrors = ($("div.govuk-form-group--error").length > 0);
 
     // when errors present from previous selection the manual input must be used
     if ((restorePreviousAddress() === true && hasAddressValidationErrors) || hasAddressValidationErrors) {
