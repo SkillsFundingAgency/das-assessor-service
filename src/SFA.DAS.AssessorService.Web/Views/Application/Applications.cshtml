@@ -24,6 +24,8 @@
 
                     @foreach (var application in Model)
                     {
+                        if (!string.IsNullOrEmpty(application.ApplyData?.Apply?.StandardName))
+                        {
                         <tr>
                             <th class="govuk-table__header" scope="row">
                                 @application.ApplyData?.Apply?.StandardName
@@ -31,9 +33,10 @@
                             <!--<td class="govuk-table__cell">@application.ApplicationId</td>-->
                             <td class="govuk-table__cell govuk-table__cell--numeric">@application.ApplicationStatus</td>
                             <td class="govuk-table__cell govuk-table__cell--numeric">
-                                <a class="govuk-link" href="@Url.Action("SequenceSignPost", "Application", new {Id = application.Id})">View</a>
+                                <a class="govuk-link" href="@Url.Action("SequenceSignPost", "Application", new { Id = application.Id })">View</a>
                             </td>
                         </tr>
+                        }
                     }
                 </tbody>
             </table>
