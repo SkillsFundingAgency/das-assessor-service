@@ -38,7 +38,7 @@ namespace SFA.DAS.AssessorService.Web.Infrastructure
                     var fileNameParts = file.FileName.Split(".", StringSplitOptions.RemoveEmptyEntries);
                     var fileNameExtension = fileNameParts[fileNameParts.Length - 1];
 
-                    if (fileNameExtension != allowedExtension || file.ContentType.ToLower() != mimeType)
+                    if (fileNameExtension.Equals(allowedExtension,StringComparison.OrdinalIgnoreCase) || file.ContentType.ToLower() != mimeType)
                     {
                         modelState.AddModelError(file.Name, typeValidation.ErrorMessage);
                         errorMessages.Add(new ValidationErrorDetail(file.Name, typeValidation.ErrorMessage));
