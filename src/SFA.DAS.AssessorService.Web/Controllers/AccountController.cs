@@ -79,7 +79,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 case LoginResult.InvalidRole:
                     return RedirectToAction("InvalidRole", "Home");
                 case LoginResult.InvitePending:
-                    ResetCookies();
+                    //ResetCookies();
                     _sessionService.Set("EndPointAssessorOrganisationId", epaoId);
                     return RedirectToAction("InvitePending", "Home");
                 case LoginResult.Applying:
