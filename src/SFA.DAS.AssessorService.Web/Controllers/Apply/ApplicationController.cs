@@ -24,6 +24,7 @@ using SFA.DAS.AssessorService.ApplyTypes.CharityCommission;
 using SFA.DAS.AssessorService.ApplyTypes.CompaniesHouse;
 using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Web.Infrastructure;
+using SFA.DAS.AssessorService.Web.Resources.Views.Certificate;
 using SFA.DAS.AssessorService.Web.ViewModels.Apply;
 using SFA.DAS.QnA.Api.Types;
 using SFA.DAS.QnA.Api.Types.Page;
@@ -279,9 +280,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             var pageContext = BuildPageContext(application, sequence);
             if (!ModelState.IsValid)
             {
+
                 // when the model state has errors the page will be displayed with the values which failed validation
                 var page = JsonConvert.DeserializeObject<Page>((string)TempData["InvalidPage"]);
-                
                 page = await GetDataFedOptions(page);
 
                 var errorMessages = !ModelState.IsValid
@@ -296,7 +297,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 {
                     page.Title = section.Title;
                 }
-                
+
+                UpdateValidationDetailsForAddress(page, errorMessages);
                 viewModel = new PageViewModel(Id, sequenceNo, sectionNo, pageId, page, pageContext, __redirectAction,
                     returnUrl, errorMessages, __summaryLink);
             }
@@ -1113,6 +1115,33 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             }
 
             return canUpdate;
+        }
+
+        //Todo: Remove this function if and when the _Address.cshtml is refactored or the qna modelstate 
+        //reflects the keys that are set in the _Address.cshtml. Currently the ValidationErrorDetailTagHelper will not 
+        //update the address fields because of the keys mismatch.
+        private static void UpdateValidationDetailsForAddress(Page page, List<ValidationErrorDetail> errorMessages)
+        {
+            var question = page.Questions.SingleOrDefault(x => x.Input.Type == "Address");
+            if (question != null)
+            {
+                foreach (var error in errorMessages)
+                {
+                    switch (error.ErrorMessage)
+                    {
+                        case "Enter building and street":
+                            error.Field = $"{question.QuestionId}_Key_AddressLine1";
+                            break;
+                        case "Enter town or city":
+                            error.Field = $"{question.QuestionId}_Key_AddressLine3";
+                            break;
+                        case "Enter postcode":
+                            error.Field = $"{question.QuestionId}_Key_Postcode";
+                            break;
+                    }
+                }
+            }
+
         }
     }
 }
