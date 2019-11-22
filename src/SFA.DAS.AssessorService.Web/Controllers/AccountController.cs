@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -8,6 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using SFA.DAS.Apprenticeships.Api.Types.Exceptions;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Domain.Consts;
@@ -126,7 +128,24 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 var deniedPrivilegeContext = JsonConvert.DeserializeObject<DeniedPrivilegeContext>(TempData["DeniedPrivilegeContext"].ToString());
 
                 var userId = Guid.Parse(User.FindFirst("UserId").Value);
-                var organisation = await _organisationsApiClient.GetOrganisationByUserId(userId);
+                var user = await _contactsApiClient.GetById(userId);
+                OrganisationResponse organisation = null;
+                try
+                {
+                    organisation = await _organisationsApiClient.GetOrganisationByUserId(userId);
+
+                }catch(Exception ex)
+                {
+                    _logger.LogWarning(ex.Message, ex);
+                    if(user.OrganisationId == null && user.Status == ContactStatus.Live) {
+                        return RedirectToAction("Index","OrganisationSearch");
+                    }
+                }
+
+                if(user.OrganisationId != null && user.Status == ContactStatus.InvitePending)
+                {
+                    return RedirectToAction("InvitePending", "Home");
+                }
 
                 var privilege = (await _contactsApiClient.GetPrivileges()).Single(p => p.Id == deniedPrivilegeContext.PrivilegeId);
 
