@@ -65,6 +65,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             else if (user.EndPointAssessorOrganisationId is null)
             {
                 return RedirectToAction("NotRegistered", "Home");
+            }else if( user.EndPointAssessorOrganisationId != null && user.Status == ContactStatus.Live && organisation.Status != OrganisationStatus.Live)
+            {
+                return RedirectToAction("NotActivated", "Home");
             }
 
             var dashboardViewModel = new DashboardViewModel();
