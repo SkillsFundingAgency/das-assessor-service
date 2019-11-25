@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -9,7 +8,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using SFA.DAS.Apprenticeships.Api.Types.Exceptions;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Domain.Consts;
@@ -145,6 +143,12 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 if(user.OrganisationId != null && user.Status == ContactStatus.InvitePending)
                 {
                     return RedirectToAction("InvitePending", "Home");
+                }
+
+                if(organisation != null && organisation.Status == OrganisationStatus.Applying || 
+                    organisation.Status == OrganisationStatus.New)
+                {
+                    return RedirectToAction("Index", "Dashboard");
                 }
 
                 var privilege = (await _contactsApiClient.GetPrivileges()).Single(p => p.Id == deniedPrivilegeContext.PrivilegeId);
