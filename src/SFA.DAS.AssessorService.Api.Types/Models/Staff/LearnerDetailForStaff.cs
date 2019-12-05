@@ -5,7 +5,7 @@ using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models
 {
-    public class LearnerDetail
+    public class LearnerDetailForStaff
     {
         public long Uln { get; set; }
         public string GivenNames { get; set; }
