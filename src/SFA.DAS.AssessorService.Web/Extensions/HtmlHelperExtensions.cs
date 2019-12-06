@@ -17,10 +17,13 @@ namespace SFA.DAS.AssessorService.Web.Extensions
             var first = true;
             foreach (var label in labels)
             {
-                if (!first) apiCallString += ",";
-                first = false;
+                if (!CheckLabel(label))
+                { 
+                    if (!first) apiCallString += ",";
+                    first = false;
 
-                apiCallString += $"'{ EscapeApostrophes(label) }'";
+                    apiCallString += $"'{ EscapeApostrophes(label) }'";
+                }
             }
 
             apiCallString += "] });</script>";
@@ -31,6 +34,11 @@ namespace SFA.DAS.AssessorService.Web.Extensions
         private static string EscapeApostrophes(string input)
         {
             return input.Replace("'", @"\'");
+        }
+
+        public static bool CheckLabel(string s)
+        {
+            return (s == null || s == string.Empty) ? true : false;
         }
     }
 }
