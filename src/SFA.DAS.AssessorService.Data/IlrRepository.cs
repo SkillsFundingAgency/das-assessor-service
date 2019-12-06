@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using Microsoft.EntityFrameworkCore;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Data.DapperTypeHandlers;
 using SFA.DAS.AssessorService.Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -14,6 +15,7 @@ namespace SFA.DAS.AssessorService.Data
         public IlrRepository(IUnitOfWork unitOfWork)
             : base(unitOfWork)
         {
+            SqlMapper.AddTypeHandler(typeof(SearchData), new SearchDataHandler());
         }
 
         public async Task<IEnumerable<Ilr>> SearchForLearnerByUln(long uln)
@@ -33,20 +35,12 @@ namespace SFA.DAS.AssessorService.Data
         }
 
         public async Task StoreSearchLog(SearchLog log)
-        {
+        {            
             await _unitOfWork.Connection.ExecuteAsync(
                 @"INSERT INTO SearchLogs (Surname, Uln, SearchTime, SearchData, NumberOfResults, Username) 
                   VALUES (@surname, @uln, @searchTime, @searchData, @numberOfResults, @username)", 
                   param: new { log.Surname, log.Uln, log.SearchTime, log.SearchData, log.NumberOfResults, log.Username },
                   transaction: _unitOfWork.Transaction);
-        }
-
-        public async Task<IEnumerable<Ilr>> Search(string searchQuery)
-        {            
-            return (await _unitOfWork.Connection.QueryAsync<Ilr>(
-                @"SELECT * FROM Ilrs WHERE [FamilyName] = @searchQuery OR [GivenNames] = @searchQuery OR [Uln] = CAST(bigint, @searchQuery)",
-                  param: new { searchQuery },
-                  transaction: _unitOfWork.Transaction)).ToList();
         }
 
         public async Task Create(string source, long ukprn, long uln, int stdCode, int? fundingModel, string givenNames, string familyName,

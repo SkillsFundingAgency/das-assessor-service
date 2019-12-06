@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace SFA.DAS.AssessorService.Application.Handlers.Learner
+namespace SFA.DAS.AssessorService.Api.Types.Models
 {
     public class ImportLearnerDetailResponse
     {

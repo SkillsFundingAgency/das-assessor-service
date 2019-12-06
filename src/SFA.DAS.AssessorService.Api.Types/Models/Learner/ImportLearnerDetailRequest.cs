@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using System;
 
-namespace SFA.DAS.AssessorService.Application.Handlers.Learner
+namespace SFA.DAS.AssessorService.Api.Types.Models
 {
     public class ImportLearnerDetailRequest : IRequest<ImportLearnerDetailResponse>
     {
