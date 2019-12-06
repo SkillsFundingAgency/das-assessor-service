@@ -17,7 +17,7 @@ namespace SFA.DAS.AssessorService.Web.Extensions
             var first = true;
             foreach (var label in labels)
             {
-                if (!CheckLabel(label))
+                if (!string.IsNullOrEmpty(label))
                 { 
                     if (!first) apiCallString += ",";
                     first = false;
@@ -34,11 +34,6 @@ namespace SFA.DAS.AssessorService.Web.Extensions
         private static string EscapeApostrophes(string input)
         {
             return input.Replace("'", @"\'");
-        }
-
-        public static bool CheckLabel(string s)
-        {
-            return (s == null || s == string.Empty) ? true : false;
-        }
+        }        
     }
 }
