@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -16,12 +17,12 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
             BaseArrange();
         }
 
-        [TestCase(null, "31-12-9999", 99, 9, "31-12-1111", "New")]
-        [TestCase("EPA009999", null, 99, 9, "31-12-1111", "New")]
-        [TestCase("EPA009999", "31-12-9999", null, 9, "31-12-1111", "New")]
-        [TestCase("EPA009999", "31-12-9999", 99, null, "31-12-1111", "New")]
-        [TestCase("EPA009999", "31-12-9999", 99, 9, null, "New")]
-        [TestCase("EPA009999", "31-12-9999", 99, 9, "31-12-1111", null)]
+        [TestCase(null, "12/31/9999", 99, 9, "12/31/1111", "New")]
+        [TestCase("EPA009999", null, 99, 9, "12/31/1111", "New")]
+        [TestCase("EPA009999", "12/31/9999", null, 9, "12/31/1111", "New")]
+        [TestCase("EPA009999", "12/31/9999", 99, null, "12/31/1111", "New")]
+        [TestCase("EPA009999", "12/31/9999", 99, 9, null, "New")]
+        [TestCase("EPA009999", "12/31/9999", 99, 9, "12/31/1111", null)]
         public async Task Then_an_existing_learner_record_is_updated(string epaOrgId, string learnActEndDate, int? withdrawReason,
             int? outcome, string achDate, string outGrade)
         {
@@ -29,9 +30,9 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
             Request = CreateImportLearnerDetailRequest(LearnerOne.Source, LearnerOne.UkPrn, LearnerOne.Uln, LearnerOne.StdCode, 
                 55, "NewFirstName", "NewFamilyName", epaOrgId, LearnerOne.LearnStartDate, 
                 LearnerOne.PlannedEndDate, 55, "55555555", "55POST55",
-                learnActEndDate == null ? (DateTime?)null : DateTime.Parse(learnActEndDate),
+                learnActEndDate == null ? (DateTime?)null : DateTime.Parse(learnActEndDate, CultureInfo.InvariantCulture),
                 withdrawReason, outcome,
-                achDate == null ? (DateTime?)null : DateTime.Parse(achDate),
+                achDate == null ? (DateTime?)null : DateTime.Parse(achDate, CultureInfo.InvariantCulture),
                 outGrade);
 
             // Act
@@ -42,20 +43,20 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
                 Request.FundingModel, Request.GivenNames, Request.FamilyName, 
                 epaOrgId == null ? LearnerOne.EpaOrgId : epaOrgId, // keep current when null
                 Request.LearnStartDate, Request.PlannedEndDate, Request.CompletionStatus, Request.LearnRefNumber, Request.DelLocPostCode, 
-                learnActEndDate == null ? LearnerOne.LearnActEndDate : DateTime.Parse(learnActEndDate), // keep current when null
+                learnActEndDate == null ? LearnerOne.LearnActEndDate : DateTime.Parse(learnActEndDate, CultureInfo.InvariantCulture), // keep current when null
                 withdrawReason == null ? LearnerOne.WithdrawReason : withdrawReason, // keep current when null
                 outcome == null ? LearnerOne.Outcome : outcome, // keep current when null
-                achDate == null ? LearnerOne.AchDate : DateTime.Parse(achDate), // keep current when null
+                achDate == null ? LearnerOne.AchDate : DateTime.Parse(achDate, CultureInfo.InvariantCulture), // keep current when null
                 outGrade == null ? LearnerOne.OutGrade : outGrade), // keep current when null
                 Times.Once);
         }
 
-        [TestCase(null, "31-12-9999", 99, 9, "31-12-1111", "New")]
-        [TestCase("EPA009999", null, 99, 9, "31-12-1111", "New")]
-        [TestCase("EPA009999", "31-12-9999", null, 9, "31-12-1111", "New")]
-        [TestCase("EPA009999", "31-12-9999", 99, null, "31-12-1111", "New")]
-        [TestCase("EPA009999", "31-12-9999", 99, 9, null, "New")]
-        [TestCase("EPA009999", "31-12-9999", 99, 9, "31-12-1111", null)]
+        [TestCase(null, "12/31/9999", 99, 9, "12/31/1111", "New")]
+        [TestCase("EPA009999", null, 99, 9, "12/31/1111", "New")]
+        [TestCase("EPA009999", "12/31/9999", null, 9, "12/31/1111", "New")]
+        [TestCase("EPA009999", "12/31/9999", 99, null, "12/31/1111", "New")]
+        [TestCase("EPA009999", "12/31/9999", 99, 9, null, "New")]
+        [TestCase("EPA009999", "12/31/9999", 99, 9, "12/31/1111", null)]
         public async Task Then_result_is_update(string epaOrgId, string learnActEndDate, int? withdrawReason,
             int? outcome, string achDate, string outGrade)
         {
@@ -63,9 +64,9 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
             Request = CreateImportLearnerDetailRequest(LearnerOne.Source, LearnerOne.UkPrn, LearnerOne.Uln, LearnerOne.StdCode,
                 LearnerOne.FundingModel, LearnerOne.GivenNames, LearnerOne.FamilyName, epaOrgId, LearnerOne.LearnStartDate,
                 LearnerOne.PlannedEndDate, LearnerOne.CompletionStatus, LearnerOne.LearnRefNumber, LearnerOne.DelLocPostCode,
-                learnActEndDate == null ? (DateTime?)null : DateTime.Parse(learnActEndDate),
+                learnActEndDate == null ? (DateTime?)null : DateTime.Parse(learnActEndDate, CultureInfo.InvariantCulture),
                 withdrawReason, outcome,
-                achDate == null ? (DateTime?)null : DateTime.Parse(achDate),
+                achDate == null ? (DateTime?)null : DateTime.Parse(achDate, CultureInfo.InvariantCulture),
                 outGrade);
 
             // Act

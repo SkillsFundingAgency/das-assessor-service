@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -16,12 +17,12 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
             BaseArrange();
         }
 
-        [TestCase(null, "31-12-9999", 99, 9, "31-12-1111", "New")]
-        [TestCase("EPA009999", null, 99, 9, "31-12-1111", "New")]
-        [TestCase("EPA009999", "31-12-9999", null, 9, "31-12-1111", "New")]
-        [TestCase("EPA009999", "31-12-9999", 99, null, "31-12-1111", "New")]
-        [TestCase("EPA009999", "31-12-9999", 99, 9, null, "New")]
-        [TestCase("EPA009999", "31-12-9999", 99, 9, "31-12-1111", null)]
+        [TestCase(null, "12/31/9999", 99, 9, "12/31/1111", "New")]
+        [TestCase("EPA009999", null, 99, 9, "12/31/1111", "New")]
+        [TestCase("EPA009999", "12/31/9999", null, 9, "12/31/1111", "New")]
+        [TestCase("EPA009999", "12/31/9999", 99, null, "12/31/1111", "New")]
+        [TestCase("EPA009999", "12/31/9999", 99, 9, null, "New")]
+        [TestCase("EPA009999", "12/31/9999", 99, 9, "12/31/1111", null)]
         public async Task Then_an_existing_learner_record_is_replaced(string epaOrgId, string learnActEndDate, int? withdrawReason,
             int? outcome, string achDate, string outGrade)
         {
@@ -30,9 +31,9 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
                 LearnerOne.FundingModel, LearnerOne.GivenNames, LearnerOne.FamilyName, epaOrgId,
                 LearnerOne.LearnStartDate.AddDays(10), // add 10 days to the start date
                 LearnerOne.PlannedEndDate, LearnerOne.CompletionStatus, LearnerOne.LearnRefNumber, LearnerOne.DelLocPostCode,
-                learnActEndDate == null ? (DateTime?)null : DateTime.Parse(learnActEndDate),
+                learnActEndDate == null ? (DateTime?)null : DateTime.Parse(learnActEndDate, CultureInfo.InvariantCulture),
                 withdrawReason, outcome,
-                achDate == null ? (DateTime?)null : DateTime.Parse(achDate),
+                achDate == null ? (DateTime?)null : DateTime.Parse(achDate, CultureInfo.InvariantCulture),
                 outGrade);
 
             // Act
@@ -45,12 +46,12 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
                 Request.LearnActEndDate, Request.WithdrawReason, Request.Outcome, Request.AchDate, Request.OutGrade), Times.Once);
         }
 
-        [TestCase(null, "31-12-9999", 99, 9, "31-12-1111", "New")]
-        [TestCase("EPA009999", null, 99, 9, "31-12-1111", "New")]
-        [TestCase("EPA009999", "31-12-9999", null, 9, "31-12-1111", "New")]
-        [TestCase("EPA009999", "31-12-9999", 99, null, "31-12-1111", "New")]
-        [TestCase("EPA009999", "31-12-9999", 99, 9, null, "New")]
-        [TestCase("EPA009999", "31-12-9999", 99, 9, "31-12-1111", null)]
+        [TestCase(null, "12/31/9999", 99, 9, "12/31/1111", "New")]
+        [TestCase("EPA009999", null, 99, 9, "12/31/1111", "New")]
+        [TestCase("EPA009999", "12/31/9999", null, 9, "12/31/1111", "New")]
+        [TestCase("EPA009999", "12/31/9999", 99, null, "12/31/1111", "New")]
+        [TestCase("EPA009999", "12/31/9999", 99, 9, null, "New")]
+        [TestCase("EPA009999", "12/31/9999", 99, 9, "12/31/1111", null)]
         public async Task Then_result_is_replace(string epaOrgId, string learnActEndDate, int? withdrawReason,
             int? outcome, string achDate, string outGrade)
         {
@@ -59,9 +60,9 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
                 LearnerOne.FundingModel, LearnerOne.GivenNames, LearnerOne.FamilyName, epaOrgId, 
                 LearnerOne.LearnStartDate.AddDays(10), // add 10 days to the start date
                 LearnerOne.PlannedEndDate, LearnerOne.CompletionStatus, LearnerOne.LearnRefNumber, LearnerOne.DelLocPostCode,
-                learnActEndDate == null ? (DateTime?)null : DateTime.Parse(learnActEndDate),
+                learnActEndDate == null ? (DateTime?)null : DateTime.Parse(learnActEndDate, CultureInfo.InvariantCulture),
                 withdrawReason, outcome,
-                achDate == null ? (DateTime?)null : DateTime.Parse(achDate),
+                achDate == null ? (DateTime?)null : DateTime.Parse(achDate, CultureInfo.InvariantCulture),
                 outGrade);
 
             // Act
