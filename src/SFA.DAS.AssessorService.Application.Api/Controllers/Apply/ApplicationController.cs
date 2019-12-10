@@ -50,7 +50,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.Apply
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<ActionResult<ApplicationResponse>> GetApplication(string Id)
         {
-            _logger.LogInformation($"Received request to retrieve application for user");
+            _logger.LogInformation($"Received request to retrieve application for ApplicationId {Id}");
             return Ok(await _mediator.Send(new GetApplicationRequest(Guid.Parse(Id))));
         }
 
