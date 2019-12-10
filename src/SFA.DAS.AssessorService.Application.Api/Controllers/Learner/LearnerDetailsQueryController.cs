@@ -24,7 +24,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             long uln,
             bool allLogs = false)
         {
-            return Ok(await _mediator.Send(new LearnerDetailForStaffRequest(stdCode, uln,
+            return Ok(await _mediator.Send(new GetLearnerDetailRequest(stdCode, uln,
                 allLogs)));
         }
     }

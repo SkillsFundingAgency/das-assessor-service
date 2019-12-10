@@ -3,13 +3,13 @@ using SFA.DAS.AssessorService.Api.Types.Models;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Staff
 {
-    public class LearnerDetailForStaffRequest : IRequest<LearnerDetailForStaff>
+    public class GetLearnerDetailRequest : IRequest<LearnerDetailResult>
     {
         public int StdCode { get; }
         public long Uln { get; }
         public bool AllRecords { get; }
 
-        public LearnerDetailForStaffRequest(int stdCode,
+        public GetLearnerDetailRequest(int stdCode,
             long uln,
             bool allRecords
             )
