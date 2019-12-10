@@ -20,12 +20,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get(int stdCode,
-            long uln,
-            bool allLogs = false)
+        public async Task<IActionResult> Get(int stdCode, long uln, bool allLogs = false)
         {
-            return Ok(await _mediator.Send(new GetLearnerDetailRequest(stdCode, uln,
-                allLogs)));
+            return Ok(await _mediator.Send(new GetLearnerDetailRequest(stdCode, uln, allLogs)));
         }
     }
 }
