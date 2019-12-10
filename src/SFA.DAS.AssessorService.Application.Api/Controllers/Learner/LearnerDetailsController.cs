@@ -3,6 +3,7 @@ using System.Net;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
@@ -47,8 +48,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError($@"Bad request, Message: [{ex.Message}]");
-                return BadRequest();
+                _logger.LogError($@"Internal server error, Message: [{ex.Message}]");
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
     }
