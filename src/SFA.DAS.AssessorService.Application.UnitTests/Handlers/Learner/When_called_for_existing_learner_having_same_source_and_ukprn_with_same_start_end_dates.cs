@@ -39,7 +39,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
             Response = await Sut.Handle(Request, new CancellationToken());
 
             // Assert
-            IlrRepository.Verify(r => r.Update(Request.Source, Request.Ukprn.Value, Request.Uln.Value, Request.StdCode.Value,
+            VerifyIlrUpdated(Request.Source, Request.Ukprn.Value, Request.Uln.Value, Request.StdCode.Value,
                 Request.FundingModel, Request.GivenNames, Request.FamilyName, 
                 epaOrgId == null ? LearnerOne.EpaOrgId : epaOrgId, // keep current when null
                 Request.LearnStartDate, Request.PlannedEndDate, Request.CompletionStatus, Request.LearnRefNumber, Request.DelLocPostCode, 
@@ -47,7 +47,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
                 withdrawReason == null ? LearnerOne.WithdrawReason : withdrawReason, // keep current when null
                 outcome == null ? LearnerOne.Outcome : outcome, // keep current when null
                 achDate == null ? LearnerOne.AchDate : DateTime.Parse(achDate, CultureInfo.InvariantCulture), // keep current when null
-                outGrade == null ? LearnerOne.OutGrade : outGrade), // keep current when null
+                outGrade == null ? LearnerOne.OutGrade : outGrade, // keep current when null
                 Times.Once);
         }
 

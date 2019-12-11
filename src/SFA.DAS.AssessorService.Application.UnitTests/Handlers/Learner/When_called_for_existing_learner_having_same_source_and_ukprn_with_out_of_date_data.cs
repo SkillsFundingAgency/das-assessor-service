@@ -1,9 +1,9 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
+using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
 {
@@ -21,7 +21,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
         [TestCase(-1, -1)]
         [TestCase(0, -1)]
         [TestCase(0, 1)]
-        public async Task Then_learner_records_are_unchanged(int learnStartDateAddDays, int plannedEndDateAddDays)
+        public async Task Then_learner_records_are_not_created(int learnStartDateAddDays, int plannedEndDateAddDays)
         {
             // Arrange
             Request = CreateImportLearnerDetailRequest(LearnerOne.Source, LearnerOne.UkPrn, LearnerOne.Uln, LearnerOne.StdCode,
@@ -35,16 +35,30 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
             Response = await Sut.Handle(Request, new CancellationToken());
 
             // Assert
-            IlrRepository.Verify(r => r.Create(It.IsAny<string>(), It.IsAny<long>(), It.IsAny<long>(), It.IsAny<int>(), It.IsAny<int?>(),
-                It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTime?>(), It.IsAny<DateTime?>(), It.IsAny<int?>(), It.IsAny<string>(),
-                It.IsAny<string>(), It.IsAny<DateTime?>(), It.IsAny<int?>(), It.IsAny<int?>(), It.IsAny<DateTime?>(), It.IsAny<string>()), Times.Never);
-
-            // Assert
-            IlrRepository.Verify(r => r.Update(It.IsAny<string>(), It.IsAny<long>(), It.IsAny<long>(), It.IsAny<int>(), It.IsAny<int?>(),
-                It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTime?>(), It.IsAny<DateTime?>(), It.IsAny<int?>(), It.IsAny<string>(),
-                It.IsAny<string>(), It.IsAny<DateTime?>(), It.IsAny<int?>(), It.IsAny<int?>(), It.IsAny<DateTime?>(), It.IsAny<string>()), Times.Never);
+            IlrRepository.Verify(r => r.Create(It.IsAny<Ilr>()), Times.Never);
         }
 
+        [TestCase(-1, 0)]
+        [TestCase(-1, 1)]
+        [TestCase(-1, -1)]
+        [TestCase(0, -1)]
+        [TestCase(0, 1)]
+        public async Task Then_learner_records_are_not_updated(int learnStartDateAddDays, int plannedEndDateAddDays)
+        {
+            // Arrange
+            Request = CreateImportLearnerDetailRequest(LearnerOne.Source, LearnerOne.UkPrn, LearnerOne.Uln, LearnerOne.StdCode,
+                LearnerOne.FundingModel, LearnerOne.GivenNames, LearnerOne.FamilyName, LearnerOne.EpaOrgId,
+                LearnerOne.LearnStartDate.AddDays(learnStartDateAddDays),
+                LearnerOne.PlannedEndDate.Value.AddDays(plannedEndDateAddDays),
+                LearnerOne.CompletionStatus, LearnerOne.LearnRefNumber, LearnerOne.DelLocPostCode,
+                LearnerOne.LearnActEndDate, LearnerOne.WithdrawReason, LearnerOne.Outcome, LearnerOne.AchDate, LearnerOne.OutGrade);
+
+            // Act
+            Response = await Sut.Handle(Request, new CancellationToken());
+
+            // Assert
+            IlrRepository.Verify(r => r.Update(It.IsAny<Ilr>()), Times.Never);
+        }
 
         [TestCase(-1, 0)]
         [TestCase(-1, 1)]

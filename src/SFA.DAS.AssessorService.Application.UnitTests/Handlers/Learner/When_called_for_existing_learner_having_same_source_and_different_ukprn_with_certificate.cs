@@ -1,9 +1,9 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
+using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
 {
@@ -17,10 +17,10 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
         }
 
         [Test]
-        public async Task Then_learner_records_are_unchanged()
+        public async Task Then_learner_records_are_not_created()
         {
             // Arrange
-            Request = CreateImportLearnerDetailRequest(LearnerThree.Source, 44444444444, LearnerThree.Uln, LearnerThree.StdCode,
+            Request = CreateImportLearnerDetailRequest(LearnerThree.Source, 444444444, LearnerThree.Uln, LearnerThree.StdCode,
                 LearnerThree.FundingModel, LearnerThree.GivenNames, LearnerThree.FamilyName, LearnerThree.EpaOrgId,
                 LearnerThree.LearnStartDate, LearnerThree.PlannedEndDate,
                 LearnerThree.CompletionStatus, LearnerThree.LearnRefNumber, LearnerThree.DelLocPostCode,
@@ -30,14 +30,24 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
             Response = await Sut.Handle(Request, new CancellationToken());
 
             // Assert
-            IlrRepository.Verify(r => r.Create(It.IsAny<string>(), It.IsAny<long>(), It.IsAny<long>(), It.IsAny<int>(), It.IsAny<int?>(),
-                It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTime?>(), It.IsAny<DateTime?>(), It.IsAny<int?>(), It.IsAny<string>(),
-                It.IsAny<string>(), It.IsAny<DateTime?>(), It.IsAny<int?>(), It.IsAny<int?>(), It.IsAny<DateTime?>(), It.IsAny<string>()), Times.Never);
+            IlrRepository.Verify(r => r.Create(It.IsAny<Ilr>()), Times.Never);
+        }
+
+        [Test]
+        public async Task Then_learner_records_are_not_updated()
+        {
+            // Arrange
+            Request = CreateImportLearnerDetailRequest(LearnerThree.Source, 444444444, LearnerThree.Uln, LearnerThree.StdCode,
+                LearnerThree.FundingModel, LearnerThree.GivenNames, LearnerThree.FamilyName, LearnerThree.EpaOrgId,
+                LearnerThree.LearnStartDate, LearnerThree.PlannedEndDate,
+                LearnerThree.CompletionStatus, LearnerThree.LearnRefNumber, LearnerThree.DelLocPostCode,
+                LearnerThree.LearnActEndDate, LearnerThree.WithdrawReason, LearnerThree.Outcome, LearnerThree.AchDate, LearnerThree.OutGrade);
+
+            // Act
+            Response = await Sut.Handle(Request, new CancellationToken());
 
             // Assert
-            IlrRepository.Verify(r => r.Update(It.IsAny<string>(), It.IsAny<long>(), It.IsAny<long>(), It.IsAny<int>(), It.IsAny<int?>(),
-                It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTime?>(), It.IsAny<DateTime?>(), It.IsAny<int?>(), It.IsAny<string>(),
-                It.IsAny<string>(), It.IsAny<DateTime?>(), It.IsAny<int?>(), It.IsAny<int?>(), It.IsAny<DateTime?>(), It.IsAny<string>()), Times.Never);
+            IlrRepository.Verify(r => r.Update(It.IsAny<Ilr>()), Times.Never);
         }
 
 
@@ -45,7 +55,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
         public async Task Then_result_is_ignore_ukprn_changed_but_certificate_exists()
         {
             // Arrange
-            Request = CreateImportLearnerDetailRequest(LearnerThree.Source, 4444444444, LearnerThree.Uln, LearnerThree.StdCode,
+            Request = CreateImportLearnerDetailRequest(LearnerThree.Source, 444444444, LearnerThree.Uln, LearnerThree.StdCode,
                 LearnerThree.FundingModel, LearnerThree.GivenNames, LearnerThree.FamilyName, LearnerThree.EpaOrgId,
                 LearnerThree.LearnStartDate, LearnerThree.PlannedEndDate,
                 LearnerThree.CompletionStatus, LearnerThree.LearnRefNumber, LearnerThree.DelLocPostCode,

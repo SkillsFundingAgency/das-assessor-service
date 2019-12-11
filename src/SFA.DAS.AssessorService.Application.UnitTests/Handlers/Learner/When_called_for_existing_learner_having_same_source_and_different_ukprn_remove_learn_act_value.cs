@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Moq;
@@ -28,10 +27,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
             Response = await Sut.Handle(Request, new CancellationToken());
 
             // Assert
-            IlrRepository.Verify(r => r.Update(Request.Source, Request.Ukprn.Value, Request.Uln.Value, Request.StdCode.Value,
-                Request.FundingModel, Request.GivenNames, Request.FamilyName, Request.EpaOrgId, Request.LearnStartDate, 
-                Request.PlannedEndDate, Request.CompletionStatus, Request.LearnRefNumber, Request.DelLocPostCode,
-                Request.LearnActEndDate, Request.WithdrawReason, Request.Outcome, Request.AchDate, Request.OutGrade), Times.Once);
+            VerifyIlrReplaced(Request, Times.Once);
         }
 
         [Test]

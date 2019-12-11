@@ -6,7 +6,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models
     public class ImportLearnerDetailRequest : IRequest<ImportLearnerDetailResponse>
     {
         public string Source { get; set; }
-        public long? Ukprn { get; set; }
+        public int? Ukprn { get; set; }
         public long? Uln { get; set; }
         public int? StdCode { get; set; }
         public int? FundingModel { get; set; }

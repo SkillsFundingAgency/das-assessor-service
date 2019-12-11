@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
-using SFA.DAS.AssessorService.Application.Handlers.Learner;
+using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
 {
@@ -26,9 +26,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
             Response = await Sut.Handle(Request, new CancellationToken());
 
             // Assert
-            IlrRepository.Verify(r => r.Create(It.IsAny<string>(), It.IsAny<long>(), Request.Uln.Value, Request.StdCode.Value, It.IsAny<int?>(),
-                It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTime?>(), It.IsAny<DateTime?>(), It.IsAny<int?>(), It.IsAny<string>(),
-                It.IsAny<string>(), It.IsAny<DateTime?>(), It.IsAny<int?>(), It.IsAny<int?>(), It.IsAny<DateTime?>(), It.IsAny<string>()), Times.Once);
+            IlrRepository.Verify(r => r.Create(It.Is<Ilr>(p => p.Uln == Request.Uln.Value && p.StdCode == Request.StdCode.Value)), Times.Once);
         }
 
         [Test]

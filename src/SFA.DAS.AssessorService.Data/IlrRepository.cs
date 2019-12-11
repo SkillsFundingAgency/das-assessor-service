@@ -43,9 +43,7 @@ namespace SFA.DAS.AssessorService.Data
                   transaction: _unitOfWork.Transaction);
         }
 
-        public async Task Create(string source, long ukprn, long uln, int stdCode, int? fundingModel, string givenNames, string familyName,
-                string epaOrgId, DateTime? learnStartDate, DateTime? plannedEndDate, int? completionStatus, string learnRefNumber, string delLocPostCode,
-                DateTime? learnActEndDate, int? withdrawReason, int? outcome, DateTime? achDate, string outGrade)
+        public async Task Create(Ilr ilr)
         {
             await _unitOfWork.Connection.ExecuteAsync(
                 @"INSERT INTO [Ilrs] (Uln, GivenNames, FamilyName, UkPrn, StdCode, LearnStartDate, EpaOrgId, FundingModel, 
@@ -56,32 +54,30 @@ namespace SFA.DAS.AssessorService.Data
                         @learnActEndDate, @withdrawReason, @outcome, @achDate, @outGrade )",
                   param: new
                   {
-                      uln,
-                      givenNames,
-                      familyName,
-                      ukprn,
-                      stdCode,
-                      learnStartDate,
-                      epaOrgId,
-                      fundingModel,
-                      source,
+                      ilr.Uln,
+                      ilr.GivenNames,
+                      ilr.FamilyName,
+                      ilr.UkPrn,
+                      ilr.StdCode,
+                      ilr.LearnStartDate,
+                      ilr.EpaOrgId,
+                      ilr.FundingModel,
+                      ilr.Source,
                       createdAt = DateTime.UtcNow,
-                      learnRefNumber,
-                      completionStatus,
-                      plannedEndDate,
-                      delLocPostCode,
-                      learnActEndDate,
-                      withdrawReason,
-                      outcome,
-                      achDate,
-                      outGrade
+                      ilr.LearnRefNumber,
+                      ilr.CompletionStatus,
+                      ilr.PlannedEndDate,
+                      ilr.DelLocPostCode,
+                      ilr.LearnActEndDate,
+                      ilr.WithdrawReason,
+                      ilr.Outcome,
+                      ilr.AchDate,
+                      ilr.OutGrade
                   },
                   transaction: _unitOfWork.Transaction);
         }
 
-        public async Task Update(string source, long ukprn, long uln, int stdCode, int? fundingModel, string givenNames, string familyName,
-                string epaOrgId, DateTime? learnStartDate, DateTime? plannedEndDate, int? completionStatus, string learnRefNumber, string delLocPostCode,
-                DateTime? learnActEndDate, int? withdrawReason, int? outcome, DateTime? achDate, string outGrade)
+        public async Task Update(Ilr ilr)
         {
             await _unitOfWork.Connection.ExecuteAsync(
                 @"UPDATE [Ilrs] SET [GivenNames] = @givenNames, [FamilyName] = @familyName, [UkPrn] = @ukprn, 
@@ -94,25 +90,25 @@ namespace SFA.DAS.AssessorService.Data
                                     [Uln] = @uln AND [StdCode] = @stdCode",
                   param: new
                   {
-                      uln,
-                      givenNames,
-                      familyName,
-                      ukprn,
-                      stdCode,
-                      learnStartDate,
-                      epaOrgId,
-                      fundingModel,
-                      source,
+                      ilr.Uln,
+                      ilr.GivenNames,
+                      ilr.FamilyName,
+                      ilr.UkPrn,
+                      ilr.StdCode,
+                      ilr.LearnStartDate,
+                      ilr.EpaOrgId,
+                      ilr.FundingModel,
+                      ilr.Source,
                       updatedAt = DateTime.UtcNow,
-                      learnRefNumber,
-                      completionStatus,
-                      plannedEndDate,
-                      delLocPostCode,
-                      learnActEndDate,
-                      withdrawReason,
-                      outcome,
-                      achDate,
-                      outGrade
+                      ilr.LearnRefNumber,
+                      ilr.CompletionStatus,
+                      ilr.PlannedEndDate,
+                      ilr.DelLocPostCode,
+                      ilr.LearnActEndDate,
+                      ilr.WithdrawReason,
+                      ilr.Outcome,
+                      ilr.AchDate,
+                      ilr.OutGrade
                   },
                   transaction: _unitOfWork.Transaction);
         }

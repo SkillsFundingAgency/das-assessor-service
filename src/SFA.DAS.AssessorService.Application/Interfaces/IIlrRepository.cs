@@ -13,12 +13,8 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         
         Task StoreSearchLog(SearchLog log);
         
-        Task Create(string source, long ukprn, long uln, int stdCode, int? fundingModel, string givenNames, string familyName,
-                string epaOrgId, DateTime? learnStartDate, DateTime? plannedEndDate, int? completionStatus, string learnRefNumber, string delLocPostCode,
-                DateTime? learnActEndDate, int? withdrawReason, int? outcome, DateTime? achDate, string outGrade);
+        Task Create(Ilr ilr);
 
-        Task Update(string source, long ukprn, long uln, int stdCode, int? fundingModel, string givenNames, string familyName,
-                string epaOrgId, DateTime? learnStartDate, DateTime? plannedEndDate, int? completionStatus, string learnRefNumber, string delLocPostCode,
-                DateTime? learnActEndDate, int? withdrawReason, int? outcome, DateTime? achDate, string outGrade);
+        Task Update(Ilr ilr);
     }
 }

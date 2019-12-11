@@ -1,9 +1,9 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
+using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
 {
@@ -18,7 +18,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
 
         [TestCase(9999999999)]
         [TestCase(1000000000)]
-        public async Task Then_learner_records_are_unchanged(long uln)
+        public async Task Then_no_learner_records_are_created(long uln)
         {
             // Arrange
             Request = CreateImportLearnerDetailRequest(LearnerOne);
@@ -28,14 +28,22 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
             Response = await Sut.Handle(Request, new CancellationToken());
 
             // Assert
-            IlrRepository.Verify(r => r.Create(It.IsAny<string>(), It.IsAny<long>(), It.IsAny<long>(), It.IsAny<int>(), It.IsAny<int?>(),
-                It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTime?>(), It.IsAny<DateTime?>(), It.IsAny<int?>(), It.IsAny<string>(),
-                It.IsAny<string>(), It.IsAny<DateTime?>(), It.IsAny<int?>(), It.IsAny<int?>(), It.IsAny<DateTime?>(), It.IsAny<string>()), Times.Never);
+            IlrRepository.Verify(r => r.Create(It.IsAny<Ilr>()), Times.Never);
+        }
+
+        [TestCase(9999999999)]
+        [TestCase(1000000000)]
+        public async Task Then_no_learner_records_are_updated(long uln)
+        {
+            // Arrange
+            Request = CreateImportLearnerDetailRequest(LearnerOne);
+            Request.Uln = uln;
+
+            // Act
+            Response = await Sut.Handle(Request, new CancellationToken());
 
             // Assert
-            IlrRepository.Verify(r => r.Update(It.IsAny<string>(), It.IsAny<long>(), It.IsAny<long>(), It.IsAny<int>(), It.IsAny<int?>(),
-                It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTime?>(), It.IsAny<DateTime?>(), It.IsAny<int?>(), It.IsAny<string>(),
-                It.IsAny<string>(), It.IsAny<DateTime?>(), It.IsAny<int?>(), It.IsAny<int?>(), It.IsAny<DateTime?>(), It.IsAny<string>()), Times.Never);
+            IlrRepository.Verify(r => r.Update(It.IsAny<Ilr>()), Times.Never);
         }
 
         [TestCase(9999999999)]

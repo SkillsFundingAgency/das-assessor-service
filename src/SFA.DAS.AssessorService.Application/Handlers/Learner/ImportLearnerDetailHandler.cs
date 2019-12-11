@@ -14,7 +14,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Learner
         private readonly IIlrRepository _ilrRepository;
         private readonly ICertificateRepository _certificateRepository;
         private readonly ILogger<ImportLearnerDetailHandler> _logger;
-        
+
         public ImportLearnerDetailHandler(IIlrRepository ilrRepository, ICertificateRepository certificateRepository, ILogger<ImportLearnerDetailHandler> logger)
         {
             _ilrRepository = ilrRepository;
@@ -97,9 +97,27 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Learner
         {
             _logger.LogInformation("Handling Import Learner Detail Request - Create Ilr");
 
-            _ilrRepository.Create(request.Source, request.Ukprn.Value, request.Uln.Value, request.StdCode.Value, request.FundingModel, request.GivenNames, request.FamilyName,
-                request.EpaOrgId, request.LearnStartDate, request.PlannedEndDate, request.CompletionStatus, request.LearnRefNumber, request.DelLocPostCode,
-                request.LearnActEndDate, request.WithdrawReason, request.Outcome, request.AchDate, request.OutGrade);
+            _ilrRepository.Create(new Ilr
+            {
+                Source = request.Source,
+                UkPrn = request.Ukprn.Value,
+                Uln = request.Uln.Value,
+                StdCode = request.StdCode.Value,
+                FundingModel = request.FundingModel,
+                GivenNames = request.GivenNames,
+                FamilyName = request.FamilyName,
+                EpaOrgId = request.EpaOrgId,
+                LearnStartDate = request.LearnStartDate.Value,
+                PlannedEndDate = request.PlannedEndDate,
+                CompletionStatus = request.CompletionStatus,
+                LearnRefNumber = request.LearnRefNumber,
+                DelLocPostCode = request.DelLocPostCode,
+                LearnActEndDate = request.LearnActEndDate,
+                WithdrawReason = request.WithdrawReason,
+                Outcome = request.Outcome,
+                AchDate = request.AchDate,
+                OutGrade = request.OutGrade
+            });
 
             return "CreatedLearnerDetail";
         }
@@ -108,18 +126,36 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Learner
         {
             _logger.LogInformation("Handling Import Learner Detail Request - Update Ilr");
 
-            // for an update to certain fields if the request is null then the currrent value will 
+            // for an update to certain fields if the request is null then the currrent value will be
             // retained, otherwise the request value will be used
-            _ilrRepository.Update(request.Source, request.Ukprn.Value, request.Uln.Value, request.StdCode.Value, request.FundingModel, request.GivenNames, request.FamilyName,
-                isUpdate ? request.EpaOrgId ?? currentLearner.EpaOrgId : request.EpaOrgId,
-                request.LearnStartDate, request.PlannedEndDate, request.CompletionStatus, request.LearnRefNumber, request.DelLocPostCode,
-                isUpdate ? request.LearnActEndDate ?? currentLearner.LearnActEndDate : request.LearnActEndDate, 
-                isUpdate ? request.WithdrawReason ?? currentLearner.WithdrawReason : request.WithdrawReason, 
-                isUpdate ? request.Outcome ?? currentLearner.Outcome : request.Outcome, 
-                isUpdate ? request.AchDate ?? currentLearner.AchDate : request.AchDate, 
-                isUpdate ? request.OutGrade ?? currentLearner.OutGrade : request.OutGrade);
+            _ilrRepository.Update(new Ilr
+            {
+                Source = request.Source,
+                UkPrn = request.Ukprn.Value,
+                Uln = request.Uln.Value,
+                StdCode = request.StdCode.Value,
+                FundingModel = request.FundingModel,
+                GivenNames = request.GivenNames,
+                FamilyName = request.FamilyName,
+                EpaOrgId = RetainCurrentValueForNullUpdate(currentLearner?.EpaOrgId, request.EpaOrgId, isUpdate),
+                LearnStartDate = request.LearnStartDate.Value,
+                PlannedEndDate = request.PlannedEndDate,
+                CompletionStatus = request.CompletionStatus,
+                LearnRefNumber = request.LearnRefNumber,
+                DelLocPostCode = request.DelLocPostCode,
+                LearnActEndDate = RetainCurrentValueForNullUpdate(currentLearner?.LearnActEndDate, request.LearnActEndDate, isUpdate),
+                WithdrawReason = RetainCurrentValueForNullUpdate(currentLearner?.WithdrawReason, request.WithdrawReason, isUpdate),
+                Outcome = RetainCurrentValueForNullUpdate(currentLearner?.Outcome, request.Outcome, isUpdate),
+                AchDate = RetainCurrentValueForNullUpdate(currentLearner?.AchDate, request.AchDate, isUpdate),
+                OutGrade = RetainCurrentValueForNullUpdate(currentLearner?.OutGrade, request.OutGrade, isUpdate)
+            });
 
             return $"{(isUpdate ? "Updated" : "Replaced")}LearnerDetail";
+        }
+
+        private T RetainCurrentValueForNullUpdate<T>(T currentValue, T newValue, bool isUpdate)
+        {
+            return isUpdate && newValue == null ? currentValue : newValue;
         }
 
         private ImportLearnerDetailResponse CheckMissingMandatoryFields(ImportLearnerDetailRequest request)

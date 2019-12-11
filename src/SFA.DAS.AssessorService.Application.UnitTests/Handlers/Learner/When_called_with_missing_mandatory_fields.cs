@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
+using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
 {
@@ -30,7 +31,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
         [TestCase("1920", 111111, 11111, 1111, 11, "given", "family", "01/01/2000", "01/01/2000", 1, null, "1")]
         [TestCase("1920", 111111, 11111, 1111, 11, "given", "family", "01/01/2000", "01/01/2000", 1, "1", null)]
         [TestCase("1920", 111111, 11111, 1111, 11, null, "family", null, "01/01/2000", 1, "1", "1")]
-        public async Task Then_learner_records_are_unchanged(string source, long? ukprn, long? uln, int? stdCode,
+        public async Task Then_learner_records_are_not_created(string source, int? ukprn, long? uln, int? stdCode,
             int? fundingModel, string givenNames, string familyName, string learnStartDate, string plannedEndDate,
             int? completionStatus, string learnRefNumber, string delLocPostCode)
         {
@@ -44,14 +45,37 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
             Response = await Sut.Handle(Request, new CancellationToken());
 
             // Assert
-            IlrRepository.Verify(r => r.Create(It.IsAny<string>(), It.IsAny<long>(), It.IsAny<long>(), It.IsAny<int>(), It.IsAny<int?>(),
-                It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTime?>(), It.IsAny<DateTime?>(), It.IsAny<int?>(), It.IsAny<string>(),
-                It.IsAny<string>(), It.IsAny<DateTime?>(), It.IsAny<int?>(), It.IsAny<int?>(), It.IsAny<DateTime?>(), It.IsAny<string>()), Times.Never);
+            IlrRepository.Verify(r => r.Create(It.IsAny<Ilr>()), Times.Never);
+        }
+
+        [TestCase(null, 111111, 111111, 11, 11, "given", "family", "01/01/2000", "01/01/2000", 1, "1", "1")]
+        [TestCase("1920", null, 111111, 11, 11, "given", "family", "01/01/2000", "01/01/2000", 1, "1", "1")]
+        [TestCase("1920", 111111, null, 11, 11, "given", "family", "01/01/2000", "01/01/2000", 1, "1", "1")]
+        [TestCase("1920", 111111, 11111, null, 11, "given", "family", "01/01/2000", "01/01/2000", 1, "1", "1")]
+        [TestCase("1920", 111111, 11111, 1111, null, "given", "family", "01/01/2000", "01/01/2000", 1, "1", "1")]
+        [TestCase("1920", 111111, 11111, 1111, 11, null, "family", "01/01/2000", "01/01/2000", 1, "1", "1")]
+        [TestCase("1920", 111111, 11111, 1111, 11, "given", null, "01/01/2000", "01/01/2000", 1, "1", "1")]
+        [TestCase("1920", 111111, 11111, 1111, 11, "given", "family", null, "01/01/2000", 1, "1", "1")]
+        [TestCase("1920", 111111, 11111, 1111, 11, "given", "family", "01/01/2000", null, 1, "1", "1")]
+        [TestCase("1920", 111111, 11111, 1111, 11, "given", "family", "01/01/2000", "01/01/2000", null, "1", "1")]
+        [TestCase("1920", 111111, 11111, 1111, 11, "given", "family", "01/01/2000", "01/01/2000", 1, null, "1")]
+        [TestCase("1920", 111111, 11111, 1111, 11, "given", "family", "01/01/2000", "01/01/2000", 1, "1", null)]
+        [TestCase("1920", 111111, 11111, 1111, 11, null, "family", null, "01/01/2000", 1, "1", "1")]
+        public async Task Then_learner_records_are_not_updated(string source, int? ukprn, long? uln, int? stdCode,
+            int? fundingModel, string givenNames, string familyName, string learnStartDate, string plannedEndDate,
+            int? completionStatus, string learnRefNumber, string delLocPostCode)
+        {
+            // Arrange
+            Request = CreateImportLearnerDetailRequest(source, ukprn, uln, stdCode, fundingModel, givenNames, familyName,
+                (learnStartDate == null ? (DateTime?)null : DateTime.Parse(learnStartDate, CultureInfo.InvariantCulture)),
+                (plannedEndDate == null ? (DateTime?)null : DateTime.Parse(plannedEndDate, CultureInfo.InvariantCulture)),
+                completionStatus, learnRefNumber, delLocPostCode);
+
+            // Act
+            Response = await Sut.Handle(Request, new CancellationToken());
 
             // Assert
-            IlrRepository.Verify(r => r.Update(It.IsAny<string>(), It.IsAny<long>(), It.IsAny<long>(), It.IsAny<int>(), It.IsAny<int?>(),
-                It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTime?>(), It.IsAny<DateTime?>(), It.IsAny<int?>(), It.IsAny<string>(),
-                It.IsAny<string>(), It.IsAny<DateTime?>(), It.IsAny<int?>(), It.IsAny<int?>(), It.IsAny<DateTime?>(), It.IsAny<string>()), Times.Never);
+            IlrRepository.Verify(r => r.Update(It.IsAny<Ilr>()), Times.Never);
         }
 
         [TestCase(null, 111111, 111111, 11, 11, "given", "family", "01/01/2000", "01/01/2000", 1, "1", "1", "Source")]
@@ -67,7 +91,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
         [TestCase("1920", 111111, 11111, 1111, 11, "given", "family", "01/01/2000", "01/01/2000", 1, null, "1", "LearnRefNumber")]
         [TestCase("1920", 111111, 11111, 1111, 11, "given", "family", "01/01/2000", "01/01/2000", 1, "1", null, "DelLocPostCode")]
         [TestCase("1920", 111111, 11111, 1111, 11, null, "family", null, "01/01/2000", 1, "1", "1", "GivenNames,LearnStartDate")]
-        public async Task Then_result_is_error_missing_mandatory_field(string source, long? ukprn, long? uln, int? stdCode,
+        public async Task Then_result_is_error_missing_mandatory_field(string source, int? ukprn, long? uln, int? stdCode,
             int? fundingModel, string givenNames, string familyName, string learnStartDate, string plannedEndDate,
             int? completionStatus, string learnRefNumber, string delLocPostCode, string missingFieldNames)
         {
