@@ -2,6 +2,11 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <RepositoryUrl>https://github.com/SkillsFundingAgency/das-assessor-service/tree/master/src/SFA.DAS.AssessorService.Application.Api.Client</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/SkillsFundingAgency/das-assessor-service/tree/master/src/SFA.DAS.AssessorService.Application.Api.Client</PackageProjectUrl>
+    <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+    <RepositoryType>git</RepositoryType>
   </PropertyGroup>
 
   <ItemGroup>
@@ -20,6 +25,13 @@
     <ProjectReference Include="..\SFA.DAS.AssessorService.Api.Types\SFA.DAS.AssessorService.Api.Types.csproj" />
     <ProjectReference Include="..\SFA.DAS.AssessorService.ApplyTypes\SFA.DAS.AssessorService.ApplyTypes.csproj" />
     <ProjectReference Include="..\SFA.DAS.AssessorService.Settings\SFA.DAS.AssessorService.Settings.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\LICENSE.txt">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
 
 
