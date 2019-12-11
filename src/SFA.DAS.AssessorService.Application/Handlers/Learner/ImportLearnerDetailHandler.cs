@@ -45,11 +45,15 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Learner
             }
             else
             {
-                if (int.Parse(request.Source) < int.Parse(learner.Source))
+                // the source represents an academic year which should be compared as a number
+                var requestSource = int.Parse(request.Source);
+                var learnerSource = int.Parse(learner.Source);
+
+                if (requestSource < learnerSource)
                 {
                     return "IgnoreSourcePriorToCurrentSource";
                 }
-                if (int.Parse(request.Source) > int.Parse(learner.Source))
+                if (requestSource > learnerSource)
                 {
                     return UpdateIlrRecord(request, false);
                 }
