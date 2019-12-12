@@ -26,8 +26,9 @@
 
 - Open Visual studio as an administrator
 - Open the solution
-- Set SFA.DAS.AssessorService.Web and SFA.DAS.AssessorService.Api as startup projects
+- Set SFA.DAS.AssessorService.Web and SFA.DAS.AssessorService.Application.Api as startup projects
 - Running the solution will launch the site and API in your browser
+- JSON configuration was created to work with dotnet run
 
 -or-
 
@@ -35,6 +36,10 @@
 - run `dotnet restore`
 - run `dotnet run`
 - Open https://localhost:5015
+
+- Navigate to src/SFA.DAS.AssessorService.Application.Api/
+- run `dotnet restore`
+- run `dotnet run`
 
 Running Specflow
 
@@ -50,7 +55,10 @@ As such it requires
 3). The BaseAddress in the app.config to be set to the base address of the running 
 SFA.DAS.AssessorService.Application.Api project.
 
+#### To run local copy you will also require 
 
+- https://github.com/SkillsFundingAgency/das-login-service
+- https://github.com/SkillsFundingAgency/das-apply-service
 
      
 	 
