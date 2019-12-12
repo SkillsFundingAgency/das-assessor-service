@@ -11,7 +11,7 @@ SELECT
     ISNULL(JSON_VALUE(ap1.Applydata,'$.Apply.LatestStandardSubmissionDate'),JSON_VALUE(ap1.Applydata,'$.Apply.LatestInitSubmissionDate')) AS SubmittedDate,
 	ISNULL(JSON_VALUE(ap1.Applydata,'$.Apply.StandardSubmissionFeedbackAddedDate'),JSON_VALUE(ap1.Applydata,'$.Apply.InitSubmissionFeedbackAddedDate')) AS FeedbackAddedDate,
 	ISNULL(JSON_VALUE(ap1.Applydata,'$.Apply.StandardSubmissionClosedDate'),JSON_VALUE(ap1.Applydata,'$.Apply.InitSubmissionClosedDate')) AS ClosedDate,
-    ISNULL(JSON_VALUE(ap1.Applydata,'$.Apply.StandardSubmissionsCount'),JSON_VALUE(ap1.Applydata,'$.Apply.InitSubmissionCount')) AS SubmissionCount,
+    ISNULL(JSON_VALUE(ap1.Applydata,'$.Apply.StandardSubmissionsCount'),JSON_VALUE(ap1.Applydata,'$.Apply.InitSubmissionsCount')) AS SubmissionCount,
     ap1.ApplicationStatus AS ApplicationStatus,
 	ap1.ReviewStatus AS ReviewStatus,
 	ap1.FinancialReviewStatus AS FinancialStatus,

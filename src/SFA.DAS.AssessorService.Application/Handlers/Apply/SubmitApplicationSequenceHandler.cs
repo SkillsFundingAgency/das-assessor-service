@@ -113,7 +113,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
                 }
 
                 applyData.Apply.InitSubmissions.Add(submission);
-                applyData.Apply.InitSubmissionCount = applyData.Apply.InitSubmissions.Count;
+                applyData.Apply.InitSubmissionsCount = applyData.Apply.InitSubmissions.Count;
                 applyData.Apply.LatestInitSubmissionDate = submission.SubmittedAt;
             }
             else if (sequenceNo == 2)
