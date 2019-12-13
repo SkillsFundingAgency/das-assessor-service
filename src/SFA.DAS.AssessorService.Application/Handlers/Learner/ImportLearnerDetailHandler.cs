@@ -35,67 +35,71 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Learner
         private async Task<string> HandleRequest(ImportLearnerDetailRequest request, CancellationToken cancellationToken)
         {
             if (request.Uln == 9999999999 || request.Uln == 1000000000)
+            {
                 return "IgnoreUlnDummyValue";
+            }
 
             var learner = await _ilrRepository.Get(request.Uln.Value, request.StdCode.Value);
-
-            if (learner == null)
+            if (learner != null)
             {
-                return CreateIlrRecord(request);
+                return await HandleExistingLearnerRequest(learner, request, cancellationToken);
+            }
+            
+            return CreateIlrRecord(request);
+        }
+
+        private async Task<string> HandleExistingLearnerRequest(Ilr learner, ImportLearnerDetailRequest request, CancellationToken cancellationToken)
+        {
+            // the source represents an academic year which should be compared as a number
+            var requestSource = int.Parse(request.Source);
+            var learnerSource = int.Parse(learner.Source);
+
+            if (requestSource < learnerSource)
+            {
+                return "IgnoreSourcePriorToCurrentSource";
+            }
+            else if (requestSource > learnerSource)
+            {
+                return UpdateIlrRecord(request, false);
+            }
+            
+            return await HandleSameSourceRequest(learner, request, cancellationToken);
+        }
+
+        private async Task<string> HandleSameSourceRequest(Ilr learner, ImportLearnerDetailRequest request, CancellationToken cancellationToken)
+        {
+            if (request.Ukprn == learner.UkPrn)
+            {
+                if (request.LearnActEndDate != null && request.LearnStartDate == request.LearnActEndDate)
+                    return "IgnoreLearnActEndDateSameAsLearnStartDate";
+
+                if (request.PlannedEndDate == learner.PlannedEndDate && request.LearnStartDate == learner.LearnStartDate)
+                    return UpdateIlrRecord(request, true, learner);
+
+                if (request.LearnStartDate > learner.LearnStartDate)
+                    return UpdateIlrRecord(request, false);
             }
             else
             {
-                // the source represents an academic year which should be compared as a number
-                var requestSource = int.Parse(request.Source);
-                var learnerSource = int.Parse(learner.Source);
+                var certificate = await _certificateRepository.GetCertificate(request.Uln.Value, request.StdCode.Value);
 
-                if (requestSource < learnerSource)
-                {
-                    return "IgnoreSourcePriorToCurrentSource";
-                }
-                if (requestSource > learnerSource)
-                {
+                if (certificate != null)
+                    return "IgnoreUkprnChangedButCertficateAlreadyExists";
+
+                if (request.FundingModel == 99 && learner.FundingModel != 99)
+                    return "IgnoreFundingModelChangedTo99WhenPrevioulsyNot99";
+
+                if (request.LearnActEndDate == null && learner.LearnActEndDate != null)
                     return UpdateIlrRecord(request, false);
-                }
-                else
-                {
-                    if (request.Ukprn == learner.UkPrn)
-                    {
-                        if (request.LearnActEndDate != null && request.LearnStartDate == request.LearnActEndDate)
-                            return "IgnoreLearnActEndDateSameAsLearnStartDate";
 
-                        if (request.PlannedEndDate == learner.PlannedEndDate && request.LearnStartDate == learner.LearnStartDate)
-                            return UpdateIlrRecord(request, true, learner);
+                if (request.LearnActEndDate != null && request.PlannedEndDate > learner.PlannedEndDate)
+                    return UpdateIlrRecord(request, false);
 
-                        if (request.LearnStartDate > learner.LearnStartDate)
-                            return UpdateIlrRecord(request, false);
-
-                        // if the request.LearnStartDate < current.LearnStartDate or PlannedEndDate
-                        return "IgnoreOutOfDate";
-                    }
-                    else
-                    {
-                        var certificate = await _certificateRepository.GetCertificate(request.Uln.Value, request.StdCode.Value);
-
-                        if (certificate != null)
-                            return "IgnoreUkprnChangedButCertficateAlreadyExists";
-
-                        if (request.FundingModel == 99 && learner.FundingModel != 99)
-                            return "IgnoreFundingModelChangedTo99WhenPrevioulsyNot99";
-
-                        if (request.LearnActEndDate == null && learner.LearnActEndDate != null)
-                            return UpdateIlrRecord(request, false);
-
-                        if (request.LearnActEndDate != null && request.PlannedEndDate > learner.PlannedEndDate)
-                            return UpdateIlrRecord(request, false);
-
-                        if (request.LearnStartDate > learner.LearnStartDate)
-                            return UpdateIlrRecord(request, false);
-
-                        return "IgnoreOutOfDate";
-                    }
-                }
+                if (request.LearnStartDate > learner.LearnStartDate)
+                    return UpdateIlrRecord(request, false);    
             }
+
+            return "IgnoreOutOfDate";
         }
 
         private string CreateIlrRecord(ImportLearnerDetailRequest request)

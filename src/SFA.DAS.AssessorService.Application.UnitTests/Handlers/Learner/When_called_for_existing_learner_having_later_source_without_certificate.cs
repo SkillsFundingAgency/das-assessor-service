@@ -16,13 +16,14 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
 
             Request = CreateImportLearnerDetailRequest(LearnerTwo);
 
+            // a later source to which should trigger a replacement, the replacement values are null
             Request.Source = "2021";
-            Request.EpaOrgId = null; // replacement null value
-            Request.LearnActEndDate = null; // replacement null value
-            Request.WithdrawReason = null; // replacement null value
-            Request.Outcome = null; // replacement null value
-            Request.AchDate = null; // replacement null value
-            Request.OutGrade = null; // replacement null value    
+            Request.EpaOrgId = null;
+            Request.LearnActEndDate = null;
+            Request.WithdrawReason = null;
+            Request.Outcome = null;
+            Request.AchDate = null;
+            Request.OutGrade = null;
         }
 
         [Test]
