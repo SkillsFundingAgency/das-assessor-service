@@ -612,13 +612,14 @@ namespace SFA.DAS.AssessorService.Data.Apply
                             CROSS APPLY OPENJSON(ApplyData,'$.Apply') WITH (SubmittedDate VARCHAR(30) '$.LatestInitSubmissionDate', SubmissionCount INT '$.InitSubmissionsCount') apply
                         WHERE sequence.SequenceNo = 1 AND section.SectionNo = 3 AND sequence.IsActive = 1
                             AND ap1.FinancialReviewStatus = @financialReviewStatusRejected
-                            AND ap1.ApplicationStatus IN (@applicationStatusSubmitted, @applicationStatusResubmitted)
+                            AND ap1.ApplicationStatus IN (@applicationStatusSubmitted, @applicationStatusResubmitted, @applicationStatusFeedbackAdded)
                             AND ap1.DeletedAt IS NULL",
                         new
                         {
                             financialReviewStatusRejected = FinancialReviewStatus.Rejected,
                             applicationStatusSubmitted = ApplicationStatus.Submitted,
                             applicationStatusResubmitted = ApplicationStatus.Resubmitted,
+                            applicationStatusFeedbackAdded = ApplicationStatus.FeedbackAdded,
                         })).ToList();
             }
         }
