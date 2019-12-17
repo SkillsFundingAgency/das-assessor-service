@@ -186,6 +186,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Learner
 
             var result = new ImportLearnerDetailResult
             {
+                Uln = request.Uln,
+                StdCode = request.StdCode,
                 Outcome = "ErrorMissingMandatoryField",
                 Errors = new List<string>()
             };
