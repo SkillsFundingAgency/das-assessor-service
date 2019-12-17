@@ -1,8 +1,10 @@
-﻿using System.Threading;
+﻿using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
+using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
@@ -24,15 +26,23 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
         public async Task Then_learner_records_are_not_created(int learnStartDateAddDays, int plannedEndDateAddDays)
         {
             // Arrange
-            Request = CreateImportLearnerDetailRequest(LearnerOne.Source, LearnerOne.UkPrn, LearnerOne.Uln, LearnerOne.StdCode,
+            ImportLearnerDetail = CreateImportLearnerDetail(LearnerOne.Source, LearnerOne.UkPrn, LearnerOne.Uln, LearnerOne.StdCode,
                 LearnerOne.FundingModel, LearnerOne.GivenNames, LearnerOne.FamilyName, LearnerOne.EpaOrgId,
                 LearnerOne.LearnStartDate.AddDays(learnStartDateAddDays),
                 LearnerOne.PlannedEndDate.Value.AddDays(plannedEndDateAddDays),
                 LearnerOne.CompletionStatus, LearnerOne.LearnRefNumber, LearnerOne.DelLocPostCode,
                 LearnerOne.LearnActEndDate, LearnerOne.WithdrawReason, LearnerOne.Outcome, LearnerOne.AchDate, LearnerOne.OutGrade);
 
+            ImportLearnerDetailRequest request = new ImportLearnerDetailRequest
+            {
+                ImportLearnerDetails = new List<ImportLearnerDetail>
+                {
+                    ImportLearnerDetail
+                }
+            };
+
             // Act
-            Response = await Sut.Handle(Request, new CancellationToken());
+            Response = await Sut.Handle(request, new CancellationToken());
 
             // Assert
             IlrRepository.Verify(r => r.Create(It.IsAny<Ilr>()), Times.Never);
@@ -46,15 +56,23 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
         public async Task Then_learner_records_are_not_updated(int learnStartDateAddDays, int plannedEndDateAddDays)
         {
             // Arrange
-            Request = CreateImportLearnerDetailRequest(LearnerOne.Source, LearnerOne.UkPrn, LearnerOne.Uln, LearnerOne.StdCode,
+            ImportLearnerDetail = CreateImportLearnerDetail(LearnerOne.Source, LearnerOne.UkPrn, LearnerOne.Uln, LearnerOne.StdCode,
                 LearnerOne.FundingModel, LearnerOne.GivenNames, LearnerOne.FamilyName, LearnerOne.EpaOrgId,
                 LearnerOne.LearnStartDate.AddDays(learnStartDateAddDays),
                 LearnerOne.PlannedEndDate.Value.AddDays(plannedEndDateAddDays),
                 LearnerOne.CompletionStatus, LearnerOne.LearnRefNumber, LearnerOne.DelLocPostCode,
                 LearnerOne.LearnActEndDate, LearnerOne.WithdrawReason, LearnerOne.Outcome, LearnerOne.AchDate, LearnerOne.OutGrade);
 
+            ImportLearnerDetailRequest request = new ImportLearnerDetailRequest
+            {
+                ImportLearnerDetails = new List<ImportLearnerDetail>
+                {
+                    ImportLearnerDetail
+                }
+            };
+
             // Act
-            Response = await Sut.Handle(Request, new CancellationToken());
+            Response = await Sut.Handle(request, new CancellationToken());
 
             // Assert
             IlrRepository.Verify(r => r.Update(It.IsAny<Ilr>()), Times.Never);
@@ -68,18 +86,27 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
         public async Task Then_result_is_ignore_out_date(int learnStartDateAddDays, int plannedEndDateAddDays)
         {
             // Arrange
-            Request = CreateImportLearnerDetailRequest(LearnerOne.Source, LearnerOne.UkPrn, LearnerOne.Uln, LearnerOne.StdCode,
+            ImportLearnerDetail = CreateImportLearnerDetail(LearnerOne.Source, LearnerOne.UkPrn, LearnerOne.Uln, LearnerOne.StdCode,
                 LearnerOne.FundingModel, LearnerOne.GivenNames, LearnerOne.FamilyName, LearnerOne.EpaOrgId,
                 LearnerOne.LearnStartDate.AddDays(learnStartDateAddDays),
                 LearnerOne.PlannedEndDate.Value.AddDays(plannedEndDateAddDays),
                 LearnerOne.CompletionStatus, LearnerOne.LearnRefNumber, LearnerOne.DelLocPostCode,
                 LearnerOne.LearnActEndDate, LearnerOne.WithdrawReason, LearnerOne.Outcome, LearnerOne.AchDate, LearnerOne.OutGrade);
 
+            ImportLearnerDetailRequest request = new ImportLearnerDetailRequest
+            {
+                ImportLearnerDetails = new List<ImportLearnerDetail>
+                {
+                    ImportLearnerDetail
+                }
+            };
+
             // Act
-            Response = await Sut.Handle(Request, new CancellationToken());
+            Response = await Sut.Handle(request, new CancellationToken());
 
             // Assert
-            Response.Result.Should().Be("IgnoreOutOfDate");
+            Response.LearnerDetailResults.Count.Should().Be(1);
+            Response.LearnerDetailResults[0].Outcome.Should().Be("IgnoreOutOfDate");
         }
     }
 }

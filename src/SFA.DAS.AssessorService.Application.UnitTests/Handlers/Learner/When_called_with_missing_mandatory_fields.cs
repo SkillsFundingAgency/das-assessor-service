@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
+using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
@@ -36,13 +38,22 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
             int? completionStatus, string learnRefNumber, string delLocPostCode)
         {
             // Arrange
-            Request = CreateImportLearnerDetailRequest(source, ukprn, uln, stdCode, fundingModel, givenNames, familyName,
+            ImportLearnerDetail = CreateImportLearnerDetailRequest(source, ukprn, uln, stdCode, fundingModel, givenNames, familyName,
                 (learnStartDate == null ? (DateTime?)null : DateTime.Parse(learnStartDate, CultureInfo.InvariantCulture)),
                 (plannedEndDate == null ? (DateTime?)null : DateTime.Parse(plannedEndDate, CultureInfo.InvariantCulture)),
                 completionStatus, learnRefNumber, delLocPostCode);
 
+            // Arrange
+            ImportLearnerDetailRequest request = new ImportLearnerDetailRequest
+            {
+                ImportLearnerDetails = new List<ImportLearnerDetail>
+                {
+                    ImportLearnerDetail
+                }
+            };
+
             // Act
-            Response = await Sut.Handle(Request, new CancellationToken());
+            Response = await Sut.Handle(request, new CancellationToken());
 
             // Assert
             IlrRepository.Verify(r => r.Create(It.IsAny<Ilr>()), Times.Never);
@@ -66,13 +77,21 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
             int? completionStatus, string learnRefNumber, string delLocPostCode)
         {
             // Arrange
-            Request = CreateImportLearnerDetailRequest(source, ukprn, uln, stdCode, fundingModel, givenNames, familyName,
+            ImportLearnerDetail = CreateImportLearnerDetailRequest(source, ukprn, uln, stdCode, fundingModel, givenNames, familyName,
                 (learnStartDate == null ? (DateTime?)null : DateTime.Parse(learnStartDate, CultureInfo.InvariantCulture)),
                 (plannedEndDate == null ? (DateTime?)null : DateTime.Parse(plannedEndDate, CultureInfo.InvariantCulture)),
                 completionStatus, learnRefNumber, delLocPostCode);
+            
+            ImportLearnerDetailRequest request = new ImportLearnerDetailRequest
+            {
+                ImportLearnerDetails = new List<ImportLearnerDetail>
+                {
+                    ImportLearnerDetail
+                }
+            };
 
             // Act
-            Response = await Sut.Handle(Request, new CancellationToken());
+            Response = await Sut.Handle(request, new CancellationToken());
 
             // Assert
             IlrRepository.Verify(r => r.Update(It.IsAny<Ilr>()), Times.Never);
@@ -96,19 +115,29 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
             int? completionStatus, string learnRefNumber, string delLocPostCode, string missingFieldNames)
         {
             // Arrange
-            Request = CreateImportLearnerDetailRequest(source, ukprn, uln, stdCode, fundingModel, givenNames, familyName,
+            ImportLearnerDetail = CreateImportLearnerDetailRequest(source, ukprn, uln, stdCode, fundingModel, givenNames, familyName,
                 (learnStartDate == null ? (DateTime?)null : DateTime.Parse(learnStartDate, CultureInfo.InvariantCulture)), 
                 (plannedEndDate == null ? (DateTime?)null : DateTime.Parse(plannedEndDate, CultureInfo.InvariantCulture)), 
                 completionStatus, learnRefNumber, delLocPostCode);
 
+            // Arrange
+            ImportLearnerDetailRequest request = new ImportLearnerDetailRequest
+            {
+                ImportLearnerDetails = new List<ImportLearnerDetail>
+                {
+                    ImportLearnerDetail
+                }
+            };
+
             // Act
-            Response = await Sut.Handle(Request, new CancellationToken());
+            Response = await Sut.Handle(request, new CancellationToken());
 
             // Assert
-            Response.Result.Should().Be("ErrorMissingMandatoryField");
+            Response.LearnerDetailResults.Count.Should().Be(1);
+            Response.LearnerDetailResults[0].Outcome.Should().Be("ErrorMissingMandatoryField");
             foreach (string missingFieldName in missingFieldNames.Split(','))
             {
-                Response.Errors.Should().Contain(p => p.Contains(missingFieldName));
+                Response.LearnerDetailResults[0].Errors.Should().Contain(p => p.Contains(missingFieldName));
             }
         }
     }

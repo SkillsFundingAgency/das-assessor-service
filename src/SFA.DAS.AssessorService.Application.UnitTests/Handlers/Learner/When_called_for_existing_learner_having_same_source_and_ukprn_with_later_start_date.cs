@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
+using SFA.DAS.AssessorService.Api.Types.Models;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
 {
@@ -27,7 +29,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
             int? outcome, string achDate, string outGrade)
         {
             // Arrange
-            Request = CreateImportLearnerDetailRequest(LearnerOne.Source, LearnerOne.UkPrn, LearnerOne.Uln, LearnerOne.StdCode,
+            ImportLearnerDetail = CreateImportLearnerDetail(LearnerOne.Source, LearnerOne.UkPrn, LearnerOne.Uln, LearnerOne.StdCode,
                 LearnerOne.FundingModel, LearnerOne.GivenNames, LearnerOne.FamilyName, epaOrgId,
                 LearnerOne.LearnStartDate.AddDays(10), // add 10 days to the start date
                 LearnerOne.PlannedEndDate, LearnerOne.CompletionStatus, LearnerOne.LearnRefNumber, LearnerOne.DelLocPostCode,
@@ -36,11 +38,19 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
                 achDate == null ? (DateTime?)null : DateTime.Parse(achDate, CultureInfo.InvariantCulture),
                 outGrade);
 
+            ImportLearnerDetailRequest request = new ImportLearnerDetailRequest
+            {
+                ImportLearnerDetails = new List<ImportLearnerDetail>
+                {
+                    ImportLearnerDetail
+                }
+            };
+
             // Act
-            Response = await Sut.Handle(Request, new CancellationToken());
+            Response = await Sut.Handle(request, new CancellationToken());
 
             // Assert
-            VerifyIlrReplaced(Request, Times.Once);
+            VerifyIlrReplaced(ImportLearnerDetail, Times.Once);
         }
 
         [TestCase(null, "12/31/9999", 99, 9, "12/31/1111", "New")]
@@ -53,7 +63,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
             int? outcome, string achDate, string outGrade)
         {
             // Arrange
-            Request = CreateImportLearnerDetailRequest(LearnerOne.Source, LearnerOne.UkPrn, LearnerOne.Uln, LearnerOne.StdCode,
+            ImportLearnerDetail = CreateImportLearnerDetail(LearnerOne.Source, LearnerOne.UkPrn, LearnerOne.Uln, LearnerOne.StdCode,
                 LearnerOne.FundingModel, LearnerOne.GivenNames, LearnerOne.FamilyName, epaOrgId, 
                 LearnerOne.LearnStartDate.AddDays(10), // add 10 days to the start date
                 LearnerOne.PlannedEndDate, LearnerOne.CompletionStatus, LearnerOne.LearnRefNumber, LearnerOne.DelLocPostCode,
@@ -62,11 +72,20 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
                 achDate == null ? (DateTime?)null : DateTime.Parse(achDate, CultureInfo.InvariantCulture),
                 outGrade);
 
+            ImportLearnerDetailRequest request = new ImportLearnerDetailRequest
+            {
+                ImportLearnerDetails = new List<ImportLearnerDetail>
+                {
+                    ImportLearnerDetail
+                }
+            };
+
             // Act
-            Response = await Sut.Handle(Request, new CancellationToken());
+            Response = await Sut.Handle(request, new CancellationToken());
 
             // Assert
-            Response.Result.Should().Be("ReplacedLearnerDetail");
+            Response.LearnerDetailResults.Count.Should().Be(1);
+            Response.LearnerDetailResults[0].Outcome.Should().Be("ReplacedLearnerDetail");
         }
     }
 }

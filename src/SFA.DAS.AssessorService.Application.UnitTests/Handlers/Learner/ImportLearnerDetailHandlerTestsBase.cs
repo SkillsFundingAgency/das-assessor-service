@@ -6,6 +6,7 @@ using SFA.DAS.AssessorService.Application.Handlers.Learner;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
 using System;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
 {
@@ -148,11 +149,11 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
             StandardCode = LearnerThree.StdCode
         };
 
-        protected ImportLearnerDetailRequest CreateImportLearnerDetailRequest(string source, int? ukprn, long? uln, int? stdCode,
+        protected ImportLearnerDetail CreateImportLearnerDetailRequest(string source, int? ukprn, long? uln, int? stdCode,
             int? fundingModel, string givenNames, string familyName, DateTime? learnStartDate, DateTime? plannedEndDate,
             int? completionStatus, string learnRefNumber, string delLocPostCode)
         {
-            return new ImportLearnerDetailRequest
+            return new ImportLearnerDetail
             {
                 Source = source,
                 Ukprn = ukprn,
@@ -169,12 +170,12 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
             };
         }
 
-        protected ImportLearnerDetailRequest CreateImportLearnerDetailRequest(string source, int? ukprn, long? uln, int? stdCode,
+        protected ImportLearnerDetail CreateImportLearnerDetail(string source, int? ukprn, long? uln, int? stdCode,
             int? fundingModel, string givenNames, string familyName, string epaOrgId, DateTime? learnStartDate, DateTime? plannedEndDate,
             int? completionStatus, string learnRefNumber, string delLocPostCode, DateTime? learnActEndDate, int? withdrawReason,
             int? outcome, DateTime? achDate, string outGrade)
         {
-            return new ImportLearnerDetailRequest
+            return new ImportLearnerDetail
             {
                 Source = source,
                 Ukprn = ukprn,
@@ -197,47 +198,45 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
             };
         }
 
-        protected ImportLearnerDetailRequest CreateImportLearnerDetailRequest(Ilr ilr)
+        protected ImportLearnerDetail CreateImportLearnerDetail(Ilr ilr)
         {
-            if(ilr != null)
+            return new ImportLearnerDetail
             {
-                return new ImportLearnerDetailRequest
-                {
-                    Source = ilr.Source,
-                    Ukprn = ilr.UkPrn,
-                    Uln = ilr.Uln,
-                    StdCode = ilr.StdCode,
-                    FundingModel = ilr.FundingModel,
-                    GivenNames = ilr.GivenNames,
-                    FamilyName = ilr.FamilyName,
-                    LearnStartDate = ilr.LearnStartDate,
-                    PlannedEndDate = ilr.PlannedEndDate,
-                    CompletionStatus = ilr.CompletionStatus,
-                    LearnRefNumber = ilr.LearnRefNumber,
-                    DelLocPostCode = ilr.DelLocPostCode
-                };
-            }
-            else
-            {
-                return new ImportLearnerDetailRequest
-                {
-                    Source = "2021",
-                    Ukprn = 44444444,
-                    Uln = 444444444444,
-                    StdCode = 44,
-                    FundingModel = 99,
-                    GivenNames = "Four",
-                    FamilyName = "Four",
-                    LearnStartDate = DateTime.Now.AddDays(-50),
-                    PlannedEndDate = DateTime.Now.AddDays(50),
-                    CompletionStatus = 0,
-                    LearnRefNumber = "44444",
-                    DelLocPostCode = "44FOUR44"
-                };
-            }
+                Source = ilr.Source,
+                Ukprn = ilr.UkPrn,
+                Uln = ilr.Uln,
+                StdCode = ilr.StdCode,
+                FundingModel = ilr.FundingModel,
+                GivenNames = ilr.GivenNames,
+                FamilyName = ilr.FamilyName,
+                LearnStartDate = ilr.LearnStartDate,
+                PlannedEndDate = ilr.PlannedEndDate,
+                CompletionStatus = ilr.CompletionStatus,
+                LearnRefNumber = ilr.LearnRefNumber,
+                DelLocPostCode = ilr.DelLocPostCode
+            };
         }
 
-        protected ImportLearnerDetailRequest Request;
+        protected ImportLearnerDetail CreateImportLearnerDetail(int uknprn)
+        {
+            return new ImportLearnerDetail
+            {
+                Source = "2021",
+                Ukprn = uknprn,
+                Uln = uknprn * 11,
+                StdCode = uknprn / 11,
+                FundingModel = 99,
+                GivenNames = "Other",
+                FamilyName = "Other",
+                LearnStartDate = DateTime.Now.AddDays(-50),
+                PlannedEndDate = DateTime.Now.AddDays(50),
+                CompletionStatus = 0,
+                LearnRefNumber = "Other",
+                DelLocPostCode = "OTHER"
+            };
+        }
+
+        protected ImportLearnerDetail ImportLearnerDetail;
 
         protected void BaseArrange()
         {
@@ -247,7 +246,10 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
             IlrRepository.Setup(r => r.Get(LearnerThree.Uln, LearnerThree.StdCode)).ReturnsAsync(LearnerThree);
             IlrRepository.Setup(r => r.Get(LearnerFive.Uln, LearnerFive.StdCode)).ReturnsAsync(LearnerFive);
 
-            IlrRepository.Setup(c => c.Update(It.IsAny<Ilr>())).Callback<Ilr>((ilr) => ModifiedIlr = ilr);
+            IlrRepository
+                .Setup(c => c.Update(It.IsAny<Ilr>()))
+                .Returns(Task.CompletedTask) // Handle null returning async for Moq callback
+                .Callback<Ilr>((ilr) => ModifiedIlr = ilr);
 
             CertificateRepository = new Mock<ICertificateRepository>();
             CertificateRepository.Setup(r => r.GetCertificate(LearnerOne.Uln, LearnerOne.StdCode)).ReturnsAsync(LearnerOneCertificate);
@@ -286,28 +288,28 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
             ModifiedIlr.OutGrade.Should().Be(outGrade);
         }
 
-        protected void VerifyIlrReplaced(ImportLearnerDetailRequest request, Func<Times> times)
+        protected void VerifyIlrReplaced(ImportLearnerDetail importLearnerDetail, Func<Times> times)
         {
             IlrRepository.Verify(r => r.Update(It.IsAny<Ilr>()), times);
 
-            ModifiedIlr.Source.Should().Be(request.Source);
-            ModifiedIlr.UkPrn.Should().Be(request.Ukprn.Value);
-            ModifiedIlr.Uln.Should().Be(request.Uln.Value);
-            ModifiedIlr.StdCode.Should().Be(request.StdCode.Value);
-            ModifiedIlr.FundingModel.Should().Be(request.FundingModel);
-            ModifiedIlr.GivenNames.Should().Be(request.GivenNames);
-            ModifiedIlr.FamilyName.Should().Be(request.FamilyName);
-            ModifiedIlr.EpaOrgId.Should().Be(request.EpaOrgId);
-            ModifiedIlr.LearnStartDate.Should().Be(request.LearnStartDate.Value);
-            ModifiedIlr.PlannedEndDate.Should().Be(request.PlannedEndDate);
-            ModifiedIlr.CompletionStatus.Should().Be(request.CompletionStatus);
-            ModifiedIlr.LearnRefNumber.Should().Be(request.LearnRefNumber);
-            ModifiedIlr.DelLocPostCode.Should().Be(request.DelLocPostCode);
-            ModifiedIlr.LearnActEndDate.Should().Be(request.LearnActEndDate);
-            ModifiedIlr.WithdrawReason.Should().Be(request.WithdrawReason);
-            ModifiedIlr.Outcome.Should().Be(request.Outcome);
-            ModifiedIlr.AchDate.Should().Be(request.AchDate);
-            ModifiedIlr.OutGrade.Should().Be(request.OutGrade);
+            ModifiedIlr.Source.Should().Be(importLearnerDetail.Source);
+            ModifiedIlr.UkPrn.Should().Be(importLearnerDetail.Ukprn.Value);
+            ModifiedIlr.Uln.Should().Be(importLearnerDetail.Uln.Value);
+            ModifiedIlr.StdCode.Should().Be(importLearnerDetail.StdCode.Value);
+            ModifiedIlr.FundingModel.Should().Be(importLearnerDetail.FundingModel);
+            ModifiedIlr.GivenNames.Should().Be(importLearnerDetail.GivenNames);
+            ModifiedIlr.FamilyName.Should().Be(importLearnerDetail.FamilyName);
+            ModifiedIlr.EpaOrgId.Should().Be(importLearnerDetail.EpaOrgId);
+            ModifiedIlr.LearnStartDate.Should().Be(importLearnerDetail.LearnStartDate.Value);
+            ModifiedIlr.PlannedEndDate.Should().Be(importLearnerDetail.PlannedEndDate);
+            ModifiedIlr.CompletionStatus.Should().Be(importLearnerDetail.CompletionStatus);
+            ModifiedIlr.LearnRefNumber.Should().Be(importLearnerDetail.LearnRefNumber);
+            ModifiedIlr.DelLocPostCode.Should().Be(importLearnerDetail.DelLocPostCode);
+            ModifiedIlr.LearnActEndDate.Should().Be(importLearnerDetail.LearnActEndDate);
+            ModifiedIlr.WithdrawReason.Should().Be(importLearnerDetail.WithdrawReason);
+            ModifiedIlr.Outcome.Should().Be(importLearnerDetail.Outcome);
+            ModifiedIlr.AchDate.Should().Be(importLearnerDetail.AchDate);
+            ModifiedIlr.OutGrade.Should().Be(importLearnerDetail.OutGrade);
         }
     }
 }

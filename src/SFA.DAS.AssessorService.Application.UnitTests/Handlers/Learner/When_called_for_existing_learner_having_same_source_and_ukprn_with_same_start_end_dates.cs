@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
+using SFA.DAS.AssessorService.Api.Types.Models;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
 {
@@ -27,7 +29,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
             int? outcome, string achDate, string outGrade)
         {
             // Arrange
-            Request = CreateImportLearnerDetailRequest(LearnerOne.Source, LearnerOne.UkPrn, LearnerOne.Uln, LearnerOne.StdCode, 
+            ImportLearnerDetail = CreateImportLearnerDetail(LearnerOne.Source, LearnerOne.UkPrn, LearnerOne.Uln, LearnerOne.StdCode, 
                 55, "NewFirstName", "NewFamilyName", epaOrgId, LearnerOne.LearnStartDate, 
                 LearnerOne.PlannedEndDate, 55, "55555555", "55POST55",
                 learnActEndDate == null ? (DateTime?)null : DateTime.Parse(learnActEndDate, CultureInfo.InvariantCulture),
@@ -35,14 +37,22 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
                 achDate == null ? (DateTime?)null : DateTime.Parse(achDate, CultureInfo.InvariantCulture),
                 outGrade);
 
+            ImportLearnerDetailRequest request = new ImportLearnerDetailRequest
+            {
+                ImportLearnerDetails = new List<ImportLearnerDetail>
+                {
+                    ImportLearnerDetail
+                }
+            };
+
             // Act
-            Response = await Sut.Handle(Request, new CancellationToken());
+            Response = await Sut.Handle(request, new CancellationToken());
 
             // Assert
-            VerifyIlrUpdated(Request.Source, Request.Ukprn.Value, Request.Uln.Value, Request.StdCode.Value,
-                Request.FundingModel, Request.GivenNames, Request.FamilyName, 
+            VerifyIlrUpdated(ImportLearnerDetail.Source, ImportLearnerDetail.Ukprn.Value, ImportLearnerDetail.Uln.Value, ImportLearnerDetail.StdCode.Value,
+                ImportLearnerDetail.FundingModel, ImportLearnerDetail.GivenNames, ImportLearnerDetail.FamilyName, 
                 epaOrgId == null ? LearnerOne.EpaOrgId : epaOrgId, // keep current when null
-                Request.LearnStartDate, Request.PlannedEndDate, Request.CompletionStatus, Request.LearnRefNumber, Request.DelLocPostCode, 
+                ImportLearnerDetail.LearnStartDate, ImportLearnerDetail.PlannedEndDate, ImportLearnerDetail.CompletionStatus, ImportLearnerDetail.LearnRefNumber, ImportLearnerDetail.DelLocPostCode, 
                 learnActEndDate == null ? LearnerOne.LearnActEndDate : DateTime.Parse(learnActEndDate, CultureInfo.InvariantCulture), // keep current when null
                 withdrawReason == null ? LearnerOne.WithdrawReason : withdrawReason, // keep current when null
                 outcome == null ? LearnerOne.Outcome : outcome, // keep current when null
@@ -61,7 +71,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
             int? outcome, string achDate, string outGrade)
         {
             // Arrange
-            Request = CreateImportLearnerDetailRequest(LearnerOne.Source, LearnerOne.UkPrn, LearnerOne.Uln, LearnerOne.StdCode,
+            ImportLearnerDetail = CreateImportLearnerDetail(LearnerOne.Source, LearnerOne.UkPrn, LearnerOne.Uln, LearnerOne.StdCode,
                 LearnerOne.FundingModel, LearnerOne.GivenNames, LearnerOne.FamilyName, epaOrgId, LearnerOne.LearnStartDate,
                 LearnerOne.PlannedEndDate, LearnerOne.CompletionStatus, LearnerOne.LearnRefNumber, LearnerOne.DelLocPostCode,
                 learnActEndDate == null ? (DateTime?)null : DateTime.Parse(learnActEndDate, CultureInfo.InvariantCulture),
@@ -69,11 +79,20 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
                 achDate == null ? (DateTime?)null : DateTime.Parse(achDate, CultureInfo.InvariantCulture),
                 outGrade);
 
+            ImportLearnerDetailRequest request = new ImportLearnerDetailRequest
+            {
+                ImportLearnerDetails = new List<ImportLearnerDetail>
+                {
+                    ImportLearnerDetail
+                }
+            };
+
             // Act
-            Response = await Sut.Handle(Request, new CancellationToken());
+            Response = await Sut.Handle(request, new CancellationToken());
 
             // Assert
-            Response.Result.Should().Be("UpdatedLearnerDetail");
+            Response.LearnerDetailResults.Count.Should().Be(1);
+            Response.LearnerDetailResults[0].Outcome.Should().Be("UpdatedLearnerDetail");
         }
     }
 }

@@ -24,34 +24,47 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Learner
 
         public async Task<ImportLearnerDetailResponse> Handle(ImportLearnerDetailRequest request, CancellationToken cancellationToken)
         {
-            _logger.LogInformation("Handling Import Learner Detail Request");
-
-            return CheckMissingMandatoryFields(request) ?? new ImportLearnerDetailResponse
+            ImportLearnerDetailResponse response = new ImportLearnerDetailResponse
             {
-                Result = await HandleRequest(request, cancellationToken)
+                LearnerDetailResults = new List<ImportLearnerDetailResult>()
             };
+
+            foreach (var importLearnerDetail in request.ImportLearnerDetails)
+            {
+                _logger.LogDebug($"Handling Import Learner Detail Request Uln:{importLearnerDetail.Uln}, StdCode:{importLearnerDetail.StdCode}");
+
+                response.LearnerDetailResults.Add(
+                    CheckMissingMandatoryFields(importLearnerDetail) ?? new ImportLearnerDetailResult
+                    {
+                        Uln = importLearnerDetail.Uln,
+                        StdCode = importLearnerDetail.StdCode,
+                        Outcome = await HandleRequest(importLearnerDetail, cancellationToken)
+                    });
+            }
+
+            return response;
         }
 
-        private async Task<string> HandleRequest(ImportLearnerDetailRequest request, CancellationToken cancellationToken)
+        private async Task<string> HandleRequest(ImportLearnerDetail importLearnerDetail, CancellationToken cancellationToken)
         {
-            if (request.Uln == 9999999999 || request.Uln == 1000000000)
+            if (importLearnerDetail.Uln == 9999999999 || importLearnerDetail.Uln == 1000000000)
             {
                 return "IgnoreUlnDummyValue";
             }
 
-            var learner = await _ilrRepository.Get(request.Uln.Value, request.StdCode.Value);
+            var learner = await _ilrRepository.Get(importLearnerDetail.Uln.Value, importLearnerDetail.StdCode.Value);
             if (learner != null)
             {
-                return await HandleExistingLearnerRequest(learner, request, cancellationToken);
+                return await HandleExistingLearnerRequest(learner, importLearnerDetail, cancellationToken);
             }
             
-            return CreateIlrRecord(request);
+            return await CreateIlrRecord(importLearnerDetail);
         }
 
-        private async Task<string> HandleExistingLearnerRequest(Ilr learner, ImportLearnerDetailRequest request, CancellationToken cancellationToken)
+        private async Task<string> HandleExistingLearnerRequest(Ilr learner, ImportLearnerDetail importLearnerDetail, CancellationToken cancellationToken)
         {
             // the source represents an academic year which should be compared as a number
-            var requestSource = int.Parse(request.Source);
+            var requestSource = int.Parse(importLearnerDetail.Source);
             var learnerSource = int.Parse(learner.Source);
 
             if (requestSource < learnerSource)
@@ -60,103 +73,103 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Learner
             }
             else if (requestSource > learnerSource)
             {
-                return UpdateIlrRecord(request, false);
+                return await UpdateIlrRecord(importLearnerDetail, false);
             }
             
-            return await HandleSameSourceRequest(learner, request, cancellationToken);
+            return await HandleSameSourceRequest(learner, importLearnerDetail, cancellationToken);
         }
 
-        private async Task<string> HandleSameSourceRequest(Ilr learner, ImportLearnerDetailRequest request, CancellationToken cancellationToken)
+        private async Task<string> HandleSameSourceRequest(Ilr learner, ImportLearnerDetail importLearnerDetail, CancellationToken cancellationToken)
         {
-            if (request.Ukprn == learner.UkPrn)
+            if (importLearnerDetail.Ukprn == learner.UkPrn)
             {
-                if (request.LearnActEndDate != null && request.LearnStartDate == request.LearnActEndDate)
+                if (importLearnerDetail.LearnActEndDate != null && importLearnerDetail.LearnStartDate == importLearnerDetail.LearnActEndDate)
                     return "IgnoreLearnActEndDateSameAsLearnStartDate";
 
-                if (request.PlannedEndDate == learner.PlannedEndDate && request.LearnStartDate == learner.LearnStartDate)
-                    return UpdateIlrRecord(request, true, learner);
+                if (importLearnerDetail.PlannedEndDate == learner.PlannedEndDate && importLearnerDetail.LearnStartDate == learner.LearnStartDate)
+                    return await UpdateIlrRecord(importLearnerDetail, true, learner);
 
-                if (request.LearnStartDate > learner.LearnStartDate)
-                    return UpdateIlrRecord(request, false);
+                if (importLearnerDetail.LearnStartDate > learner.LearnStartDate)
+                    return await UpdateIlrRecord(importLearnerDetail, false);
             }
             else
             {
-                var certificate = await _certificateRepository.GetCertificate(request.Uln.Value, request.StdCode.Value);
+                var certificate = await _certificateRepository.GetCertificate(importLearnerDetail.Uln.Value, importLearnerDetail.StdCode.Value);
 
                 if (certificate != null)
                     return "IgnoreUkprnChangedButCertficateAlreadyExists";
 
-                if (request.FundingModel == 99 && learner.FundingModel != 99)
+                if (importLearnerDetail.FundingModel == 99 && learner.FundingModel != 99)
                     return "IgnoreFundingModelChangedTo99WhenPrevioulsyNot99";
 
-                if (request.LearnActEndDate == null && learner.LearnActEndDate != null)
-                    return UpdateIlrRecord(request, false);
+                if (importLearnerDetail.LearnActEndDate == null && learner.LearnActEndDate != null)
+                    return await UpdateIlrRecord(importLearnerDetail, false);
 
-                if (request.LearnActEndDate != null && request.PlannedEndDate > learner.PlannedEndDate)
-                    return UpdateIlrRecord(request, false);
+                if (importLearnerDetail.LearnActEndDate != null && importLearnerDetail.PlannedEndDate > learner.PlannedEndDate)
+                    return await UpdateIlrRecord(importLearnerDetail, false);
 
-                if (request.LearnStartDate > learner.LearnStartDate)
-                    return UpdateIlrRecord(request, false);    
+                if (importLearnerDetail.LearnStartDate > learner.LearnStartDate)
+                    return await UpdateIlrRecord(importLearnerDetail, false);    
             }
 
             return "IgnoreOutOfDate";
         }
 
-        private string CreateIlrRecord(ImportLearnerDetailRequest request)
+        private async Task<string> CreateIlrRecord(ImportLearnerDetail importLearnerDetail)
         {
-            _logger.LogInformation("Handling Import Learner Detail Request - Create Ilr");
+            _logger.LogDebug("Handling Import Learner Detail Request - Create Ilr");
 
-            _ilrRepository.Create(new Ilr
+            await _ilrRepository.Create(new Ilr
             {
-                Source = request.Source,
-                UkPrn = request.Ukprn.Value,
-                Uln = request.Uln.Value,
-                StdCode = request.StdCode.Value,
-                FundingModel = request.FundingModel,
-                GivenNames = request.GivenNames,
-                FamilyName = request.FamilyName,
-                EpaOrgId = request.EpaOrgId,
-                LearnStartDate = request.LearnStartDate.Value,
-                PlannedEndDate = request.PlannedEndDate,
-                CompletionStatus = request.CompletionStatus,
-                LearnRefNumber = request.LearnRefNumber,
-                DelLocPostCode = request.DelLocPostCode,
-                LearnActEndDate = request.LearnActEndDate,
-                WithdrawReason = request.WithdrawReason,
-                Outcome = request.Outcome,
-                AchDate = request.AchDate,
-                OutGrade = request.OutGrade
+                Source = importLearnerDetail.Source,
+                UkPrn = importLearnerDetail.Ukprn.Value,
+                Uln = importLearnerDetail.Uln.Value,
+                StdCode = importLearnerDetail.StdCode.Value,
+                FundingModel = importLearnerDetail.FundingModel,
+                GivenNames = importLearnerDetail.GivenNames,
+                FamilyName = importLearnerDetail.FamilyName,
+                EpaOrgId = importLearnerDetail.EpaOrgId,
+                LearnStartDate = importLearnerDetail.LearnStartDate.Value,
+                PlannedEndDate = importLearnerDetail.PlannedEndDate,
+                CompletionStatus = importLearnerDetail.CompletionStatus,
+                LearnRefNumber = importLearnerDetail.LearnRefNumber,
+                DelLocPostCode = importLearnerDetail.DelLocPostCode,
+                LearnActEndDate = importLearnerDetail.LearnActEndDate,
+                WithdrawReason = importLearnerDetail.WithdrawReason,
+                Outcome = importLearnerDetail.Outcome,
+                AchDate = importLearnerDetail.AchDate,
+                OutGrade = importLearnerDetail.OutGrade
             });
 
             return "CreatedLearnerDetail";
         }
 
-        private string UpdateIlrRecord(ImportLearnerDetailRequest request, bool isUpdate, Ilr currentLearner = null)
+        private async Task<string> UpdateIlrRecord(ImportLearnerDetail importLearnerDetail, bool isUpdate, Ilr currentLearner = null)
         {
-            _logger.LogInformation("Handling Import Learner Detail Request - Update Ilr");
+            _logger.LogDebug("Handling Import Learner Detail Request - Update Ilr");
 
             // for an update to certain fields if the request is null then the currrent value will be
             // retained, otherwise the request value will be used
-            _ilrRepository.Update(new Ilr
+            await _ilrRepository.Update(new Ilr
             {
-                Source = request.Source,
-                UkPrn = request.Ukprn.Value,
-                Uln = request.Uln.Value,
-                StdCode = request.StdCode.Value,
-                FundingModel = request.FundingModel,
-                GivenNames = request.GivenNames,
-                FamilyName = request.FamilyName,
-                EpaOrgId = RetainCurrentValueForNullUpdate(currentLearner?.EpaOrgId, request.EpaOrgId, isUpdate),
-                LearnStartDate = request.LearnStartDate.Value,
-                PlannedEndDate = request.PlannedEndDate,
-                CompletionStatus = request.CompletionStatus,
-                LearnRefNumber = request.LearnRefNumber,
-                DelLocPostCode = request.DelLocPostCode,
-                LearnActEndDate = RetainCurrentValueForNullUpdate(currentLearner?.LearnActEndDate, request.LearnActEndDate, isUpdate),
-                WithdrawReason = RetainCurrentValueForNullUpdate(currentLearner?.WithdrawReason, request.WithdrawReason, isUpdate),
-                Outcome = RetainCurrentValueForNullUpdate(currentLearner?.Outcome, request.Outcome, isUpdate),
-                AchDate = RetainCurrentValueForNullUpdate(currentLearner?.AchDate, request.AchDate, isUpdate),
-                OutGrade = RetainCurrentValueForNullUpdate(currentLearner?.OutGrade, request.OutGrade, isUpdate)
+                Source = importLearnerDetail.Source,
+                UkPrn = importLearnerDetail.Ukprn.Value,
+                Uln = importLearnerDetail.Uln.Value,
+                StdCode = importLearnerDetail.StdCode.Value,
+                FundingModel = importLearnerDetail.FundingModel,
+                GivenNames = importLearnerDetail.GivenNames,
+                FamilyName = importLearnerDetail.FamilyName,
+                EpaOrgId = RetainCurrentValueForNullUpdate(currentLearner?.EpaOrgId, importLearnerDetail.EpaOrgId, isUpdate),
+                LearnStartDate = importLearnerDetail.LearnStartDate.Value,
+                PlannedEndDate = importLearnerDetail.PlannedEndDate,
+                CompletionStatus = importLearnerDetail.CompletionStatus,
+                LearnRefNumber = importLearnerDetail.LearnRefNumber,
+                DelLocPostCode = importLearnerDetail.DelLocPostCode,
+                LearnActEndDate = RetainCurrentValueForNullUpdate(currentLearner?.LearnActEndDate, importLearnerDetail.LearnActEndDate, isUpdate),
+                WithdrawReason = RetainCurrentValueForNullUpdate(currentLearner?.WithdrawReason, importLearnerDetail.WithdrawReason, isUpdate),
+                Outcome = RetainCurrentValueForNullUpdate(currentLearner?.Outcome, importLearnerDetail.Outcome, isUpdate),
+                AchDate = RetainCurrentValueForNullUpdate(currentLearner?.AchDate, importLearnerDetail.AchDate, isUpdate),
+                OutGrade = RetainCurrentValueForNullUpdate(currentLearner?.OutGrade, importLearnerDetail.OutGrade, isUpdate)
             });
 
             return $"{(isUpdate ? "Updated" : "Replaced")}LearnerDetail";
@@ -167,37 +180,37 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Learner
             return isUpdate && newValue == null ? currentValue : newValue;
         }
 
-        private ImportLearnerDetailResponse CheckMissingMandatoryFields(ImportLearnerDetailRequest request)
+        private ImportLearnerDetailResult CheckMissingMandatoryFields(ImportLearnerDetail request)
         {
-            _logger.LogInformation("Handling Import Learner Detail Request - Checking for missing mandatory fields");
+            _logger.LogDebug("Handling Import Learner Detail Request - Checking for missing mandatory fields");
 
-            var response = new ImportLearnerDetailResponse
+            var result = new ImportLearnerDetailResult
             {
-                Result = "ErrorMissingMandatoryField",
+                Outcome = "ErrorMissingMandatoryField",
                 Errors = new List<string>()
             };
 
-            AddMissingMandatoryFieldError(response, request.Source, nameof(request.Source));
-            AddMissingMandatoryFieldError(response, request.Ukprn, nameof(request.Ukprn));
-            AddMissingMandatoryFieldError(response, request.Uln, nameof(request.Uln));
-            AddMissingMandatoryFieldError(response, request.StdCode, nameof(request.StdCode));
-            AddMissingMandatoryFieldError(response, request.FundingModel, nameof(request.FundingModel));
-            AddMissingMandatoryFieldError(response, request.GivenNames, nameof(request.GivenNames));
-            AddMissingMandatoryFieldError(response, request.FamilyName, nameof(request.FamilyName));
-            AddMissingMandatoryFieldError(response, request.LearnStartDate, nameof(request.LearnStartDate));
-            AddMissingMandatoryFieldError(response, request.PlannedEndDate, nameof(request.PlannedEndDate));
-            AddMissingMandatoryFieldError(response, request.CompletionStatus, nameof(request.CompletionStatus));
-            AddMissingMandatoryFieldError(response, request.LearnRefNumber, nameof(request.LearnRefNumber));
-            AddMissingMandatoryFieldError(response, request.DelLocPostCode, nameof(request.DelLocPostCode));
+            AddMissingMandatoryFieldError(result, request.Source, nameof(request.Source));
+            AddMissingMandatoryFieldError(result, request.Ukprn, nameof(request.Ukprn));
+            AddMissingMandatoryFieldError(result, request.Uln, nameof(request.Uln));
+            AddMissingMandatoryFieldError(result, request.StdCode, nameof(request.StdCode));
+            AddMissingMandatoryFieldError(result, request.FundingModel, nameof(request.FundingModel));
+            AddMissingMandatoryFieldError(result, request.GivenNames, nameof(request.GivenNames));
+            AddMissingMandatoryFieldError(result, request.FamilyName, nameof(request.FamilyName));
+            AddMissingMandatoryFieldError(result, request.LearnStartDate, nameof(request.LearnStartDate));
+            AddMissingMandatoryFieldError(result, request.PlannedEndDate, nameof(request.PlannedEndDate));
+            AddMissingMandatoryFieldError(result, request.CompletionStatus, nameof(request.CompletionStatus));
+            AddMissingMandatoryFieldError(result, request.LearnRefNumber, nameof(request.LearnRefNumber));
+            AddMissingMandatoryFieldError(result, request.DelLocPostCode, nameof(request.DelLocPostCode));
 
-            return response.Errors.Count > 0 ? response : null;
+            return result.Errors.Count > 0 ? result : null;
         }
 
-        private void AddMissingMandatoryFieldError<T>(ImportLearnerDetailResponse response, T fieldValue, string fieldName)
+        private void AddMissingMandatoryFieldError<T>(ImportLearnerDetailResult result, T fieldValue, string fieldName)
         {
             if(fieldValue == null)
             {
-                response.Errors.Add($"Missing mandatory field {fieldName}.");
+                result.Errors.Add($"Missing mandatory field {fieldName}.");
             }
         }
     }

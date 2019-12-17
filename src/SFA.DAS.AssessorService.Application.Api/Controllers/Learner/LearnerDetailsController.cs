@@ -16,6 +16,7 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 namespace SFA.DAS.AssessorService.Application.Api.Controllers
 {
     [Authorize(Roles = "AssessorServiceInternalAPI")]
+    [Produces("application/json")]
     [Route("api/v1/learnerdetails")]
     [ValidateBadRequest]
     public class LearnerDetailsController : Controller
@@ -30,11 +31,10 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         }
 
         [HttpPost("import", Name = "ImportLearnerDetail")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(bool))]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(ApiResponse))]
-        [SwaggerResponse((int)HttpStatusCode.Conflict, Type = typeof(ApiResponse))]
-        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> ImportLearnerDetail([FromBody] ImportLearnerDetailRequest request)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [SwaggerResponse(StatusCodes.Status400BadRequest, typeof(ApiResponse))]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<ActionResult<ImportLearnerDetailResponse>> ImportLearnerDetail([FromBody] ImportLearnerDetailRequest request)
         {
             try
             {
