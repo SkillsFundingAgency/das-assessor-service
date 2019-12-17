@@ -1,4 +1,5 @@
 ﻿@using SFA.DAS.AssessorService.Web.Extensions
+@inject SFA.DAS.AssessorService.Settings.IWebConfiguration webConfiguration
 
 <script type="text/javascript">
     window.zESettings = {
@@ -12,12 +13,12 @@
                 }
             },
             helpCenter: {
-               filter: {
-                  section: '360002445879' // EPAO
-               }
+                filter: {
+                    section: '360002445879' // EPAO
+                }
             }
         }
     };
 </script>
-<script id="ze-snippet" src="https://static.zdassets.com/ekr/snippet.js?key=1b1ce288-39ea-4d40-a5e1-3a5e08aadd89"></script>
+<script id="ze-snippet" src="https://static.zdassets.com/ekr/snippet.js?key=@webConfiguration.ZenDeskSnippetKey"></script>
 @Html.SetZenDeskLabels(new string[] { ViewBag.ZenDeskLabel })

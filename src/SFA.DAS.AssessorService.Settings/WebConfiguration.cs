@@ -44,5 +44,7 @@ namespace SFA.DAS.AssessorService.Settings
         [JsonRequired] public ApiAuthentication SandboxApiAuthentication { get; set; }
         [JsonRequired] public ClientApiAuthentication SandboxClientApiAuthentication { get; set; }
         #endregion
+
+        [JsonRequired] public string ZenDeskSnippetKey { get; set; }
     }
 }
