@@ -764,8 +764,19 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             SetResponseValidationErrors(updatePageResult?.ValidationErrors, page);
         }
 
-        private static bool HasAtLeastOneAnswerChanged(Page page,List<Answer> answers)
+        private bool HasAtLeastOneAnswerChanged(Page page,List<Answer> answers)
         {
+            _logger.LogInformation($"HasAtLeastOneAnswerChanged -> Is page null? {(page == null ? "Yes": "No")}");
+            _logger.LogInformation($"HasAtLeastOneAnswerChanged -> page.Questions null? {(page.Questions == null ? "Yes": "No")}");
+
+            foreach (var pageQuestion in page.Questions)
+            {
+                _logger.LogInformation($"HasAtLeastOneAnswerChanged -> page.Question.Id {pageQuestion.QuestionId} Input null? {(pageQuestion.Input == null ? "Yes": "No")}");
+                _logger.LogInformation($"HasAtLeastOneAnswerChanged -> page.Question.Id {pageQuestion.QuestionId} Input.Type null? {(pageQuestion.Input.Type == null ? "Yes": "No")}");
+            }
+            
+            _logger.LogInformation($"HasAtLeastOneAnswerChanged -> Checks ok.  Page JSON: {JsonConvert.SerializeObject(page)}");
+            
             var atLeastOneAnswerChanged = page.Questions.Any(q => q.Input.Type == "FileUpload" );
 
             foreach (var question in page.Questions)
