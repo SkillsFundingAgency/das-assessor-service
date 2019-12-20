@@ -31,5 +31,6 @@
         #endregion
 
         string ZenDeskSnippetKey { get; set; }
+        string ZenDeskSectionId { get; set; }
     }
 }

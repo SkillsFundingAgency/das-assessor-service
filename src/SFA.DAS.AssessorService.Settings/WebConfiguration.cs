@@ -46,5 +46,6 @@ namespace SFA.DAS.AssessorService.Settings
         #endregion
 
         [JsonRequired] public string ZenDeskSnippetKey { get; set; }
+        [JsonRequired] public string ZenDeskSectionId { get; set; }
     }
 }

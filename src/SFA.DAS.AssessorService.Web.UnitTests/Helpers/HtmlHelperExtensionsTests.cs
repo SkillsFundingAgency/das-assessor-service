@@ -28,7 +28,6 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.Helpers
         public void WhenICallSetZenDeskLabelsWithLabels_ThenTheOutputIsCorrect(string[] labels)
         {
             //Arrange
-            var test = labels;
             var actualOutput = "<script type=\"text/javascript\">zE('webWidget', 'helpCenter:setSuggestions', { labels: [";
 
             var first = true;
