@@ -5,7 +5,6 @@ using SFA.DAS.AssessorService.Api.Types.Models.ExternalApi.Epas;
 using SFA.DAS.AssessorService.Application.Handlers.ExternalApi._HelperClasses;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
-using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using System.Collections.Generic;
 using System.Threading;
@@ -27,9 +26,10 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Epas
             _logger = logger;
         }
 
-        public async Task Handle(DeleteBatchEpaRequest request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(DeleteBatchEpaRequest request, CancellationToken cancellationToken)
         {
             await DeleteEpaDetails(request);
+            return Unit.Value;
         }
 
         private async Task DeleteEpaDetails(DeleteBatchEpaRequest request)

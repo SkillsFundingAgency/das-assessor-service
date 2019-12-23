@@ -22,7 +22,7 @@ using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
-using SFA.DAS.AssessorService.Application.Api.Extensions;
+using SFA.DAS.AssessorService.Application.Api.Infrastructure;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Services;
 using SFA.DAS.AssessorService.Application.Interfaces;
@@ -128,6 +128,34 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                     }
                 });
 
+                services.AddHttpClient<ProviderRegisterApiClient>("ProviderRegisterApiClient", config =>
+                    {
+                        config.BaseAddress = new Uri(Configuration.ProviderRegisterApiAuthentication.ApiBaseAddress); //  "https://findapprenticeshiptraining-api.sfa.bis.gov.uk"
+                        config.DefaultRequestHeaders.Add("Accept", "Application/json");
+                    })
+                    .SetHandlerLifetime(TimeSpan.FromMinutes(5));
+
+                services.AddHttpClient<ReferenceDataApiClient>("ReferenceDataApiClient", config =>
+                    {
+                        config.BaseAddress = new Uri(Configuration.ReferenceDataApiAuthentication.ApiBaseAddress); //  "https://at-refdata.apprenticeships.sfa.bis.gov.uk/api"
+                        config.DefaultRequestHeaders.Add("Accept", "Application/json");
+                    })
+                    .SetHandlerLifetime(TimeSpan.FromMinutes(5));
+
+                services.AddHttpClient<CompaniesHouseApiClient>("CompaniesHouseApiClient", config =>
+                    {
+                        config.BaseAddress = new Uri(Configuration.CompaniesHouseApiAuthentication.ApiBaseAddress); //  "https://api.companieshouse.gov.uk"
+                        config.DefaultRequestHeaders.Add("Accept", "Application/json");
+                    })
+                    .SetHandlerLifetime(TimeSpan.FromMinutes(5));
+
+                services.AddHttpClient<RoatpApiClient>("RoatpApiClient", config =>
+                    {
+                        config.BaseAddress = new Uri(Configuration.RoatpApiAuthentication.ApiBaseAddress); //  "https://at-providers-api.apprenticeships.education.gov.uk"
+                        config.DefaultRequestHeaders.Add("Accept", "Application/json");
+                    })
+                    .SetHandlerLifetime(TimeSpan.FromMinutes(5));
+
                 services.AddHealthChecks();
 
                 serviceProvider = ConfigureIOC(services);
@@ -136,6 +164,8 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                 {
                     TestDataService.AddTestData(serviceProvider.GetService<AssessorDbContext>());
                 }
+                
+                
             }
             catch (Exception e)
             {
@@ -164,8 +194,7 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                 });
 
                 config.For<IWebConfiguration>().Use(Configuration);
-                config.For<SingleInstanceFactory>().Use<SingleInstanceFactory>(ctx => t => ctx.GetInstance(t));
-                config.For<MultiInstanceFactory>().Use<MultiInstanceFactory>(ctx => t => ctx.GetAllInstances(t));
+                config.For<ServiceFactory>().Use<ServiceFactory>(ctx => t => ctx.GetInstance(t));
                 config.For<IMediator>().Use<Mediator>();
                 config.For<IAssessmentOrgsApiClient>().Use(() => new AssessmentOrgsApiClient(Configuration.AssessmentOrgsApiClientBaseUrl));  
                 config.For<IIfaStandardsApiClient>().Use(() => new IfaStandardsApiClient(Configuration.IfaApiClientBaseUrl));
@@ -186,11 +215,12 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                     : new HttpClientBuilder().WithBearerAuthorisationHeader(new AzureADBearerTokenGenerator(NotificationConfiguration())).Build());
 
                 config.For<Notifications.Api.Client.Configuration.INotificationsApiClientConfiguration>().Use(NotificationConfiguration());
-                
-                
-                config.For<ITokenService>().Use<ApplyTokenService>();
-                config.For<IContactApplyClient>().Use<ContactApplyClient>().Ctor<string>().Is(Configuration.ApplyApiAuthentication.ApiBaseAddress);
-                
+
+                // NOTE: These are SOAP Services. Their client interfaces are contained within the generated Proxy code.
+                config.For<CharityCommissionService.ISearchCharitiesV1SoapClient>().Use<CharityCommissionService.SearchCharitiesV1SoapClient>();
+                config.For<CharityCommissionApiClient>().Use<CharityCommissionApiClient>();
+                // End of SOAP Services
+
                 config.Populate(services);
             });
 

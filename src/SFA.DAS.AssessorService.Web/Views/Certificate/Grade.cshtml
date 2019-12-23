@@ -67,13 +67,13 @@ else
                     <div class="govuk-radios">
                         @foreach (var grade in Model.Grades)
                         {
-                            @if (@grade.Text == CertificateGrade.Fail)
+                            @if (@grade.Value == CertificateGrade.Fail)
                             {
                                 <div class="govuk-radios__divider">or</div>
                             }
                             <div class="govuk-radios__item">
-                                <input class="govuk-radios__input" asp-for="SelectedGrade" id="@grade.Text.Replace(" ", "_")" type="radio" value="@grade.Text" />
-                                <label class="govuk-label govuk-radios__label" for="@grade.Text.Replace(" ", "_")">
+                                <input class="govuk-radios__input" asp-for="SelectedGrade" id="@grade.Value.Replace(" ", "_")" type="radio" value="@grade.Value" />
+                                <label class="govuk-label govuk-radios__label" for="@grade.Value.Replace(" ", "_")">
                                     @grade.Text
                                 </label>
                             </div>
