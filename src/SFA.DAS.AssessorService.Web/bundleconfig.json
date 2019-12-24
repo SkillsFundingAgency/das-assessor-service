@@ -44,12 +44,20 @@
   {
     "outputFileName": "wwwroot/javascripts/govuk-postcode-lookup-service.min.js",
     "inputFiles": [
-        "wwwroot/javascripts/lib/jquery-ui/dist/jquery-ui.min.js",
-        "wwwroot/javascripts/govuk-postcode-lookup-service.js"
+      "wwwroot/javascripts/lib/jquery-ui/dist/jquery-ui.min.js",
+      "wwwroot/javascripts/govuk-postcode-lookup-service.js"
     ],
     "minify": {
-        "enabled": true,
-        "renameLocals": true
+      "enabled": true,
+      "renameLocals": true
+    }
+  },
+  {
+    "outputFileName": "wwwroot/javascripts/govuk-postcode-lookup-service.min.js",
+    "inputFiles": [ "wwwroot/javascripts/govuk-postcode-lookup-service.js" ],
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
     }
   },
   {

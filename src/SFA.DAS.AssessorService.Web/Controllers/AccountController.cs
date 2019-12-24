@@ -29,11 +29,12 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         private readonly IWebConfiguration _config;
         private readonly IContactsApiClient _contactsApiClient;
         private readonly IHttpContextAccessor _contextAccessor;
+        private readonly IOrganisationsApiClient _organisationsApiClient;
         private readonly CreateAccountValidator _createAccountValidator;
 
         public AccountController(ILogger<AccountController> logger, ILoginOrchestrator loginOrchestrator,
             ISessionService sessionService, IWebConfiguration config, IContactsApiClient contactsApiClient,
-            IHttpContextAccessor contextAccessor, CreateAccountValidator createAccountValidator)
+            IHttpContextAccessor contextAccessor, CreateAccountValidator createAccountValidator, IOrganisationsApiClient organisationsApiClient)
         {
             _logger = logger;
             _loginOrchestrator = loginOrchestrator;
@@ -42,6 +43,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             _contactsApiClient = contactsApiClient;
             _contextAccessor = contextAccessor;
             _createAccountValidator = createAccountValidator;
+            _organisationsApiClient = organisationsApiClient;
         }
 
         [HttpGet]
@@ -58,7 +60,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         public async Task<IActionResult> PostSignIn()
         { 
             var loginResult = await _loginOrchestrator.Login();
-            var orgName = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/orgname")?.Value;
+//            var orgName = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/orgname")?.Value;
             var epaoId = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/epaoid")?.Value;
 
             _logger.LogInformation($"  returned from LoginOrchestrator: {loginResult.Result}");
@@ -66,7 +68,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             switch (loginResult.Result)
             {
                 case LoginResult.Valid:
-                    _sessionService.Set("OrganisationName", orgName);
+                    
                     _sessionService.Set("EndPointAssessorOrganisationId", epaoId);
                     return RedirectToAction("Index", "Dashboard");
                 case LoginResult.NotRegistered:
@@ -77,15 +79,13 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 case LoginResult.InvalidRole:
                     return RedirectToAction("InvalidRole", "Home");
                 case LoginResult.InvitePending:
-                    ResetCookies();
-                    _sessionService.Set("OrganisationName", orgName);
+                    //ResetCookies();
                     _sessionService.Set("EndPointAssessorOrganisationId", epaoId);
                     return RedirectToAction("InvitePending", "Home");
                 case LoginResult.Applying:
-                    return Redirect($"{_config.ApplyBaseAddress}/Applications");
+                    return RedirectToAction("Applications", "Application");
                 case LoginResult.Rejected:
                     ResetCookies();
-                    _sessionService.Set("OrganisationName", orgName);
                     _sessionService.Set("EndPointAssessorOrganisationId", epaoId);
                     return RedirectToAction("Rejected", "Home");
                 case LoginResult.ContactDoesNotExist:
@@ -126,6 +126,31 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 var deniedPrivilegeContext = JsonConvert.DeserializeObject<DeniedPrivilegeContext>(TempData["DeniedPrivilegeContext"].ToString());
 
                 var userId = Guid.Parse(User.FindFirst("UserId").Value);
+                var user = await _contactsApiClient.GetById(userId);
+                OrganisationResponse organisation = null;
+                try
+                {
+                    organisation = await _organisationsApiClient.GetOrganisationByUserId(userId);
+
+                }catch(Exception ex)
+                {
+                    _logger.LogWarning(ex.Message, ex);
+                    if(user.OrganisationId == null && user.Status == ContactStatus.Live) {
+                        return RedirectToAction("Index","OrganisationSearch");
+                    }
+                }
+
+                if(user.OrganisationId != null && user.Status == ContactStatus.InvitePending)
+                {
+                    return RedirectToAction("InvitePending", "Home");
+                }
+
+                if(organisation != null && organisation.Status == OrganisationStatus.Applying || 
+                    organisation.Status == OrganisationStatus.New)
+                {
+                    return RedirectToAction("Index", "Dashboard");
+                }
+
                 var privilege = (await _contactsApiClient.GetPrivileges()).Single(p => p.Id == deniedPrivilegeContext.PrivilegeId);
 
                 var usersPrivileges = await _contactsApiClient.GetContactPrivileges(userId);
@@ -138,7 +163,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                     ContactId = userId,
                     UserHasUserManagement = usersPrivileges.Any(up => up.Privilege.Key == Privileges.ManageUsers),
                     ReturnController = deniedPrivilegeContext.Controller,
-                    ReturnAction = deniedPrivilegeContext.Action
+                    ReturnAction = deniedPrivilegeContext.Action,
+                    IsUsersOrganisationLive = organisation?.Status == OrganisationStatus.Live
                 });
             }
             else if (TempData.Keys.Contains("UnavailableFeatureContext"))
@@ -178,8 +204,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             var inviteSuccess =
                 await _contactsApiClient.InviteUser(new CreateContactRequest(vm.GivenName, vm.FamilyName, vm.Email,null,vm.Email));
 
-            TempData["NewAccount"] = JsonConvert.SerializeObject(vm);
-
+            _sessionService.Set("NewAccount", JsonConvert.SerializeObject(vm));
             return inviteSuccess.Result ? RedirectToAction("InviteSent") : RedirectToAction("Error", "Home");
             
         }
@@ -187,13 +212,14 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         public IActionResult InviteSent()
         {
             CreateAccountViewModel viewModel;
-            if (TempData["NewAccount"] is null)
+            var newAccount = _sessionService.Get("NewAccount");
+            if (string.IsNullOrEmpty(newAccount))
             {
                 viewModel = new CreateAccountViewModel() { Email = "[email placeholder]" };
             }
             else
             {
-                viewModel = JsonConvert.DeserializeObject<CreateAccountViewModel>(TempData["NewAccount"].ToString());
+                viewModel = JsonConvert.DeserializeObject<CreateAccountViewModel>(newAccount);
             }
 
             return View(viewModel);

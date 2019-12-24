@@ -19,6 +19,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
     [TestFixture]
     public class RegisterUpdateOrganisationHandlerTests
     {
+        private Mock<IRegisterQueryRepository> _registerQueryRepository;
         private Mock<IRegisterRepository> _registerRepository;
         private UpdateEpaOrganisationHandler _updateEpaOrganisationHandler;
         private string _returnedOrganisationId;
@@ -32,6 +33,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
         [SetUp]
         public void Setup()
         {
+            _registerQueryRepository = new Mock<IRegisterQueryRepository>();
             _registerRepository = new Mock<IRegisterRepository>();
             _cleanserService = new Mock<ISpecialCharacterCleanserService>();
             _validator = new Mock<IEpaOrganisationValidator>();
@@ -41,13 +43,14 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
             _requestNoIssues = BuildRequest("name 1", _organisationId, 123321);
             _expectedOrganisationNoIssues = BuildOrganisation(_requestNoIssues);
 
+            _registerQueryRepository.Setup(rq => rq.GetEpaOrganisationByOrganisationId(_organisationId)).ReturnsAsync(new EpaOrganisation());
             _registerRepository.Setup(r => r.UpdateEpaOrganisation(It.IsAny<EpaOrganisation>()))
-                .Returns(Task.FromResult(_expectedOrganisationNoIssues.OrganisationId));
+                .ReturnsAsync(_expectedOrganisationNoIssues.OrganisationId);
 
             _cleanserService.Setup(c => c.CleanseStringForSpecialCharacters(It.IsAny<string>()))
                 .Returns((string s) => s);
             
-            _updateEpaOrganisationHandler = new UpdateEpaOrganisationHandler(_registerRepository.Object, _logger.Object, _cleanserService.Object, _validator.Object);
+            _updateEpaOrganisationHandler = new UpdateEpaOrganisationHandler(_registerQueryRepository.Object, _registerRepository.Object, _logger.Object, _cleanserService.Object, _validator.Object);
         }
 
         [Test]

@@ -36,11 +36,10 @@ namespace SFA.DAS.AssessorService.Data
                     await connection.OpenAsync();
 
                 var orgData = JsonConvert.SerializeObject(org.OrganisationData);
-
                 connection.Execute(
                     "INSERT INTO [Organisations] ([Id],[CreatedAt],[EndPointAssessorName],[EndPointAssessorOrganisationId], " +
                     "[EndPointAssessorUkprn],[Status],[OrganisationTypeId],[OrganisationData]) " +
-                    $@"VALUES (@id, GetUtcDate(), @name, @organisationId, @ukprn, 'New', @organisationTypeId,  @orgData)",
+                    $@"VALUES (@id, GetUtcDate(), @name, @organisationId, @ukprn, @status, @organisationTypeId,  @orgData)",
                     new {org.Id, org.Name, org.OrganisationId, org.Ukprn, org.Status, org.OrganisationTypeId, orgData}
                 );
 

@@ -50,7 +50,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Organisa
 
             SetupControllerMocks();
 
-            OrganisationQueryController = new OrganisationQueryController(ControllerLoggerMock.Object, OrganisationQueryRepositoryMock.Object, UkPrnValidator, OrganisationControllerLocaliserMock.Object, ConfigMock.Object);
+            OrganisationQueryController = new OrganisationQueryController(ControllerLoggerMock.Object, Mediator.Object, OrganisationQueryRepositoryMock.Object, UkPrnValidator, OrganisationControllerLocaliserMock.Object, ConfigMock.Object);
         }
 
         private void SetupControllerMocks()

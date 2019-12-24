@@ -18,7 +18,18 @@ namespace SFA.DAS.AssessorService.Data
             _assessorDbContext = assessorDbContext;
         }
 
-        public async Task<IEnumerable<Contact>> GetContacts(string endPointAssessorOrganisationId)
+        public async Task<IEnumerable<Contact>> GetContactsForOrganisation(Guid organisationId)
+        {
+            var contacts = await _assessorDbContext.Organisations
+                .Include(organisation => organisation.Contacts)
+                .Where(organisation => organisation.Id == organisationId
+                                       && organisation.Status != OrganisationStatus.Deleted)
+                .SelectMany(q => q.Contacts).ToListAsync();
+
+            return contacts;
+        }
+
+        public async Task<IEnumerable<Contact>> GetContactsForEpao(string endPointAssessorOrganisationId)
         {
             var contacts = await _assessorDbContext.Organisations
                 .Include(organisation => organisation.Contacts)
@@ -112,26 +123,12 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<List<Contact>> GetUsersToMigrate()
         {
-            return await _assessorDbContext.Contacts.Where(c => 
-                c.SignInId == null 
-                && c.Status == "Live" 
+            return await _assessorDbContext.Contacts.Where(c =>
+                c.SignInId == null
+                && c.Status == "Live"
                 && !c.Username.StartsWith("unknown")
-                && c.Organisation != null 
-                && c.Organisation.Status == "Live").ToListAsync();
-        }
-
-        public async Task<List<Contact>> GetExsitingContactsToMigrateToApply()
-        {
-            return await _assessorDbContext.Contacts.Include( x => x.Organisation).Include(x => x.Organisation.OrganisationType).Where(c =>
-                c.SignInId != null
                 && c.Organisation != null
-                && c.Organisation.OrganisationType != null).ToListAsync();
-        }
-
-        public async Task<Contact> GetSingleContactsToMigrateToApply(Guid requestSignInId)
-        {
-            return await _assessorDbContext.Contacts.Include(x => x.Organisation).Include(x => x.Organisation.OrganisationType).
-                FirstOrDefaultAsync(c => c.SignInId == requestSignInId);
+                && c.Organisation.Status == "Live").ToListAsync();
         }
 
         public async Task UpdateMigratedContact(Guid contactId, Guid signInId)

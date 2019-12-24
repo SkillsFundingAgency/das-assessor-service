@@ -20,9 +20,10 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
             _logger = logger;
         }
 
-        public async Task Handle(CertificateApprovalRequest request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(CertificateApprovalRequest request, CancellationToken cancellationToken)
         {
             await _certificateRepository.ApproveCertificates(request.ApprovalResults.ToList(), request.userName);
+            return Unit.Value;
         }
     }
 }
