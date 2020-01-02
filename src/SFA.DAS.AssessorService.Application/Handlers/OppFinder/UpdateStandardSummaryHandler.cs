@@ -18,10 +18,11 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Standards
             _oppFinderRepository = oppFinderRepository;
         }
 
-        public async Task Handle(UpdateStandardSummaryRequest request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(UpdateStandardSummaryRequest request, CancellationToken cancellationToken)
         {
             _logger.LogInformation($"Updating standard summary data");
             await _oppFinderRepository.UpdateStandardSummary();
-        }
+			return Unit.Value;
+		}
     }
 }

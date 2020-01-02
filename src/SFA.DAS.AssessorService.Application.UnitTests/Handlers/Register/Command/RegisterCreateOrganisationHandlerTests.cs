@@ -19,6 +19,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
     public class RegisterCreateOrganisationHandlerTests
     {
         private Mock<IRegisterRepository> _registerRepository;
+        private Mock<IRegisterQueryRepository> _registerQueryRepository;
         private Mock<ISpecialCharacterCleanserService> _cleanserService;
         private CreateEpaOrganisationHandler _createEpaOrganisationHandler;
         private string _returnedOrganisationId;
@@ -37,6 +38,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
             _logger = new Mock<ILogger<CreateEpaOrganisationHandler>>();
             _idGenerator = new Mock<IEpaOrganisationIdGenerator>();
             _validator = new Mock<IEpaOrganisationValidator>();
+            _registerQueryRepository = new Mock<IRegisterQueryRepository>();
             _organisationId = "EPA999";
 
             _requestNoIssues = BuildRequest("name 1",123321);
@@ -44,6 +46,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
      
             _registerRepository.Setup(r => r.CreateEpaOrganisation(It.IsAny<EpaOrganisation>()))
                 .Returns(Task.FromResult(_expectedOrganisationNoIssues.OrganisationId));
+            _registerQueryRepository.Setup(x => x.GetEpaOrgIdByEndPointAssessmentName(It.IsAny<string>())).Returns(Task.FromResult("EPA0001"));
 
             _cleanserService.Setup(c => c.CleanseStringForSpecialCharacters(It.IsAny<string>()))
                 .Returns((string s) => s);
@@ -52,7 +55,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
             _validator.Setup(x => x.ValidatorCreateEpaOrganisationRequest(It.IsAny<CreateEpaOrganisationRequest>()))
                 .Returns(validationResponse);
 
-            _createEpaOrganisationHandler = new CreateEpaOrganisationHandler(_registerRepository.Object, _idGenerator.Object,_logger.Object, _cleanserService.Object, _validator.Object);
+            _createEpaOrganisationHandler = new CreateEpaOrganisationHandler(_registerRepository.Object, _registerQueryRepository.Object, _idGenerator.Object,_logger.Object, _cleanserService.Object, _validator.Object);
           }
 
         [Test]

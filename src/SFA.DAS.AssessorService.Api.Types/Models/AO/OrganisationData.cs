@@ -1,4 +1,8 @@
-﻿using System;
+﻿using SFA.DAS.AssessorService.ApplyTypes;
+using SFA.DAS.AssessorService.ApplyTypes.CharityCommission;
+using SFA.DAS.AssessorService.ApplyTypes.CompaniesHouse;
+using System;
+using System.Collections.Generic;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models.AO
 {
@@ -15,7 +19,16 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.AO
         public string Address4 { get; set; }
         public string Postcode { get; set; }
         public string CompanyNumber { get; set; }
+        public CompaniesHouseSummary CompanySummary { get; set; } // Summary of Company info from Companies House. Similar format to that used in RoATP.
         public string CharityNumber { get; set; }
+        public CharityCommissionSummary CharitySummary { get; set; } // Summary of Charity info from Charity Commission. Similar format to that used in RoATP.
+        public string ProviderName { get; set; }
+        public string OrganisationReferenceType { get; set; } // "RoEPAO", "RoATP", "UKRLP" or "EASAPI"
+        public string OrganisationReferenceId { get; set; } // CSV list of known id's
+        public bool RoATPApproved { get; set; }
+        public bool RoEPAOApproved { get; set; }
+        public string EndPointAssessmentOrgId { get; set; }
+        public List<FinancialGrade> FinancialGrades { get; set; }
         public FHADetails FHADetails { get; set; }
     }
 

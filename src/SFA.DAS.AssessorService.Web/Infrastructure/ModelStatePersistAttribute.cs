@@ -47,7 +47,7 @@ namespace SFA.DAS.AssessorService.Web.Infrastructure
                             StoreModelState(controller, filterContext.ModelState);
                         }
                     }
-                    else if (filterContext.Result is ViewResult && _modelStatePersist == ModelStatePersist.RestoreExit)
+                    else if(filterContext.Result is ViewResult && _modelStatePersist == ModelStatePersist.RestoreExit)
                     {
                         // by default the PRG pattern should restore the model state after refreshing 
                         // the view model to restore the previously entered invalid values
