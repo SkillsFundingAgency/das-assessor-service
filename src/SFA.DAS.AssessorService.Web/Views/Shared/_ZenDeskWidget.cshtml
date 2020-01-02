@@ -1,0 +1,24 @@
+﻿@using SFA.DAS.AssessorService.Web.Extensions
+@inject SFA.DAS.AssessorService.Settings.IWebConfiguration webConfiguration
+
+<script type="text/javascript">
+    window.zESettings = {
+        webWidget: {
+            contactForm: {
+                attachments: false
+            },
+            chat: {
+                menuOptions: {
+                    emailTranscript: false
+                }
+            },
+            helpCenter: {
+                filter: {
+                    section: @webConfiguration.ZenDeskSectionId
+                }
+            }
+        }
+    };
+</script>
+<script id="ze-snippet" src="https://static.zdassets.com/ekr/snippet.js?key=@webConfiguration.ZenDeskSnippetKey"></script>
+@Html.SetZenDeskLabels(new string[] { ViewBag.ZenDeskLabel })

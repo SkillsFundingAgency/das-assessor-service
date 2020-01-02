@@ -51,6 +51,9 @@ namespace SFA.DAS.AssessorService.Settings
 
         [JsonRequired] public CompaniesHouseApiAuthentication CompaniesHouseApiAuthentication { get; set; }
         [JsonRequired] public CharityCommissionApiAuthentication CharityCommissionApiAuthentication { get; set; }
-       
+
+        [JsonRequired] public string ZenDeskSnippetKey { get; set; }
+        [JsonRequired] public string ZenDeskSectionId { get; set; }
+
     }
 }

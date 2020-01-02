@@ -36,5 +36,8 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Services
         public ApiAuthentication SandboxApiAuthentication { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public ClientApiAuthentication SandboxClientApiAuthentication { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         #endregion
+
+        public string ZenDeskSnippetKey { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public string ZenDeskSectionId { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
     }
 }
