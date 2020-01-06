@@ -5,11 +5,12 @@
     var searchContext = "";
     var findAddressVal = $("#postcode-search").val();
 
-    var hasAddressValidationErrors = ($(".address-manual-input span.govuk-error-message").length > 0);
+    var hasAddressValidationErrors = ($("div.govuk-form-group--error").length > 0);
 
     // when errors present from previous selection the manual input must be used
     if ((restorePreviousAddress() === true && hasAddressValidationErrors) || hasAddressValidationErrors) {
         enableEnterAddressManually();
+        highlightAddressIfNotSet();
         return;
     }
 
@@ -225,6 +226,15 @@
         $("#addressLookupWrapper").removeClass("hide-nojs");
         $(".address-manual-input").removeClass("js-hidden");
         $(".address-manual-input-focus").focus();
+    }
+
+    function highlightAddressIfNotSet() {
+        if ($(".address-manual-input-address-line-1").val().length === 0)
+            $(".address-manual-input-address-line-1").addClass("govuk-input--error");
+        if ($(".address-manual-input-address-line-3").val().length === 0)
+            $(".address-manual-input-address-line-3").addClass("govuk-input--error");
+        if ($(".address-manual-input-postcode").val().length === 0)
+            $(".address-manual-input-postcode").addClass("govuk-input--error");
     }
 
     function searchAgain() {

@@ -8,7 +8,7 @@ using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData.Printing;
-using SFA.DAS.AssessorService.EpaoImporter.Const;
+using SFA.DAS.AssessorService.EpaoImporter.Extensions;
 using SFA.DAS.AssessorService.EpaoImporter.Logger;
 
 namespace SFA.DAS.AssessorService.EpaoImporter.Data
@@ -101,6 +101,9 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Data
 
         public async Task ChangeStatusToPrinted(int batchNumber, IEnumerable<CertificateResponse> responses)
         {
+            // the certificate printed status be will updated in chunks to stay within the WAF message size limits
+            const int chunkSize = 100; 
+            
             var certificateStatuses = responses.Select(
                 q => new CertificateStatus
                 {
@@ -108,13 +111,16 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Data
                     Status = Domain.Consts.CertificateStatus.Printed
                 }).ToList();
 
-            var updateCertificatesBatchToIndicatePrintedRequest = new UpdateCertificatesBatchToIndicatePrintedRequest
+            foreach(var certificateStatusesChunk in certificateStatuses.ChunkBy(chunkSize))
             {
-                BatchNumber = batchNumber,
-                CertificateStatuses = certificateStatuses
-            };
+                var updateCertificatesBatchToIndicatePrintedRequest = new UpdateCertificatesBatchToIndicatePrintedRequest
+                {
+                    BatchNumber = batchNumber,
+                    CertificateStatuses = certificateStatusesChunk
+                };
 
-            await _httpClient.PutAsJsonAsync($"/api/v1/certificates/{batchNumber}", updateCertificatesBatchToIndicatePrintedRequest);
+                await _httpClient.PutAsJsonAsync($"/api/v1/certificates/{batchNumber}", updateCertificatesBatchToIndicatePrintedRequest);
+            }            
         }
 
         public async Task UpdateBatchDataInBatchLog(Guid batchId, BatchData batchData)

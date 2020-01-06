@@ -32,17 +32,16 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<Organisation> Get(string endPointAssessorOrganisationId)
         {
-            var organisation = await _assessorDbContext.Organisations
-                .FirstAsync(q =>
-                    q.EndPointAssessorOrganisationId == endPointAssessorOrganisationId);
-
-            //var organisationUpdateDomainModel = Mapper.Map<OrganisationDomainModel>(organisation);
-            return organisation;
+            return await _assessorDbContext.Organisations
+                .Include(o => o.OrganisationType)
+                .FirstOrDefaultAsync(q => q.EndPointAssessorOrganisationId == endPointAssessorOrganisationId);
         }
 
         public async Task<Organisation> Get(Guid id)
         {
-            return await _assessorDbContext.Organisations.SingleAsync(o => o.Id == id);
+            return await _assessorDbContext.Organisations
+                .Include(o => o.OrganisationType)
+                .SingleOrDefaultAsync(o => o.Id == id);
         }
 
         public async Task<bool> CheckIfAlreadyExists(string endPointAssessorOrganisationId)
@@ -82,8 +81,9 @@ namespace SFA.DAS.AssessorService.Data
         public async Task<Organisation> GetOrganisationByName(string name)
         {
 
-            return await _assessorDbContext.Organisations.Include(x => x.OrganisationType).
-                FirstOrDefaultAsync(x => x.OrganisationDataFromJson.LegalName == name);
+            return await _assessorDbContext.Organisations
+                .Include(x => x.OrganisationType)
+                .FirstOrDefaultAsync(x => x.OrganisationData.LegalName == name);
         }
 
         public async Task<Organisation> GetOrganisationByContactId(Guid contactId)
@@ -91,10 +91,10 @@ namespace SFA.DAS.AssessorService.Data
             var contact = await _assessorDbContext
                 .Contacts
                 .Include(c => c.Organisation)
+                .Include(c => c.Organisation.OrganisationType)
                 .FirstOrDefaultAsync(c => c.Id == contactId);
             
-            return contact
-                .Organisation;
+            return contact.Organisation;
         }
     }
 }

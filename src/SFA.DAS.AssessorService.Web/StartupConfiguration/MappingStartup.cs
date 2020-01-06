@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using SFA.DAS.AssessorService.Api.Types.AutoMapperProfiles;
 using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Web.AutoMapperProfiles;
 using SFA.DAS.AssessorService.Web.Controllers.ManageUsers.ViewModels;
 using SFA.DAS.AssessorService.Web.ViewModels.Organisation;
 using SFA.DAS.AssessorService.Web.ViewModels.Search;
@@ -11,6 +12,8 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
     {
         public static void AddMappings()
         {
+            Mapper.Reset();
+
             Mapper.Initialize(cfg =>
             {
                 cfg.CreateMap<ResultViewModel, SearchResult>();
@@ -23,6 +26,12 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
                 cfg.CreateMap<ContactResponse, UserViewModel>();
 
                 cfg.AddProfile<EpaOrganisationProfile>();
+
+                cfg.AddProfile<CompaniesHouseSummaryProfile>();
+                cfg.AddProfile<DirectorInformationProfile>();
+                cfg.AddProfile<PersonSignificantControlInformationProfile>();
+                cfg.AddProfile<CharityCommissionSummaryProfile>();
+                cfg.AddProfile<CharityTrusteeProfile>();
             });
         }
     }

@@ -13,13 +13,11 @@ namespace SFA.DAS.AssessorService.Application.Handlers.UserManagement
     {
         private readonly IContactQueryRepository _contactQueryRepository;
         private readonly IContactRepository _contactRepository;
-        private readonly IContactApplyClient _applyContactsApiClient;
 
-        public RemoveContactFromOrganisationHandler(IContactQueryRepository contactQueryRepository, IContactRepository contactRepository, IContactApplyClient applyContactsApiClient) 
+        public RemoveContactFromOrganisationHandler(IContactQueryRepository contactQueryRepository, IContactRepository contactRepository) 
         {
             _contactQueryRepository = contactQueryRepository;
             _contactRepository = contactRepository;
-            _applyContactsApiClient = applyContactsApiClient;
         }
 
         public async Task<RemoveContactFromOrganisationResponse> Handle(RemoveContactFromOrganisationRequest request, CancellationToken cancellationToken)
@@ -40,9 +38,10 @@ namespace SFA.DAS.AssessorService.Application.Handlers.UserManagement
 
             await _contactRepository.RemoveContactFromOrganisation(request.ContactId);
             await _contactRepository.RemoveAllPrivileges(request.ContactId);
+            await _contactRepository.CreateContactLog(request.RequestingUserId, request.ContactId, ContactLogType.UserRemoved, 
+                null);
             
-            await _applyContactsApiClient.RemoveContactFromOrganisation(request.ContactId);
-
+            
             await LogContactRemovedChanges(request);
 
             return new RemoveContactFromOrganisationResponse()

@@ -58,8 +58,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ao
             var result = resultMain.ToList();
             if (resultFromUkprn != null)    
                 result.AddRange(resultFromUkprn);
-        
-            return result.Distinct(new AssessmentOrganisationSummaryEqualityComparer()).ToList();
+
+            return result.Distinct(new AssessmentOrganisationSummaryEqualityComparer()).Where(x => x.Status != "Applying").ToList();
         }
 
     }

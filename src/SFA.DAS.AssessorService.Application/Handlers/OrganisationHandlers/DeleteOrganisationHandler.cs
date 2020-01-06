@@ -16,9 +16,10 @@ namespace SFA.DAS.AssessorService.Application.Handlers.OrganisationHandlers
             _organisationRepository = organisationRepository;
         }
 
-        public async Task Handle(DeleteOrganisationRequest deleteOrganisationRequest, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(DeleteOrganisationRequest deleteOrganisationRequest, CancellationToken cancellationToken)
         {
             await _organisationRepository.Delete(deleteOrganisationRequest.EndPointAssessorOrganisationId);
+            return Unit.Value;
         }
     }
 }
