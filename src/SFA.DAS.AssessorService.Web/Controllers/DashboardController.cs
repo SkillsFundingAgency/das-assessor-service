@@ -58,9 +58,16 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             {
                 return RedirectToAction("Applications", "Application");
             }
+            else if (user.EndPointAssessorOrganisationId is null && user.Status == "Invite Pending")
+            {
+                return RedirectToAction("InvitePending", "Home");
+            }
             else if (user.EndPointAssessorOrganisationId is null)
             {
                 return RedirectToAction("NotRegistered", "Home");
+            }else if( user.EndPointAssessorOrganisationId != null && user.Status == ContactStatus.Live && organisation.Status != OrganisationStatus.Live)
+            {
+                return RedirectToAction("NotActivated", "Home");
             }
 
             var dashboardViewModel = new DashboardViewModel();

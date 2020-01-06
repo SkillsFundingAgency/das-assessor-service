@@ -49,7 +49,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
                     {
                         ReferenceNumber = await CreateReferenceNumber(request.ApplicationReferenceFormat),
                         InitSubmissions = new List<Submission>(),
-                        InitSubmissionCount = 0,
+                        InitSubmissionsCount = 0,
                         StandardSubmissions = new List<Submission>(),
                         StandardSubmissionsCount = 0
                     }

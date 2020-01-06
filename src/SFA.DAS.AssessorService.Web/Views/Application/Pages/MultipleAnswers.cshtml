@@ -73,17 +73,18 @@
                             </div>
                         }
 
-                        <form asp-action="DeleteAnswer" asp-controller="Application">
-                            <input type="hidden" id="AnswerId" name="AnswerId" value="@answerPage.Id" />
-                            <input type="hidden" id="Id" name="Id" value="@Model.Id" />
-                            <input type="hidden" id="SectionNo" name="SectionNo" value="@Model.SectionNo" />
-                            <input type="hidden" id="SequenceNo" name="SequenceNo" value="@Model.SequenceNo" />
-                            <input type="hidden" id="PageId" name="PageId" value="@Model.PageId" />
-                            <input type="hidden" id="__redirectAction" name="__redirectAction" value="@Model.RedirectAction" />
-                            <div class="govuk-!-margin-top-4">
-                                <button class="govuk-button govuk-button--looks-like-link" type="submit">Delete</button>
-                            </div>
-                        </form>
+                    <form asp-action="DeleteAnswer" asp-controller="Application">
+                        <input type="hidden" id="AnswerId" name="AnswerId" value="@answerPage.Id" />
+                        <input type="hidden" id="Id" name="Id" value="@Model.Id" />
+                        <input type="hidden" id="SectionNo" name="SectionNo" value="@Model.SectionNo" />
+                        <input type="hidden" id="SequenceNo" name="SequenceNo" value="@Model.SequenceNo" />
+                        <input type="hidden" id="PageId" name="PageId" value="@Model.PageId" />
+                        <input type="hidden" id="__redirectAction" name="__redirectAction" value="@Model.RedirectAction" />
+                        <input type="hidden" id="__summaryLink" name="__summaryLink" value="@Model.SummaryLink" />
+                        <div class="govuk-!-margin-top-4">
+                            <button class="govuk-button govuk-button--looks-like-link" type="submit">Delete</button>
+                        </div>
+                    </form>
                     </dl>
                 }
             }
@@ -97,6 +98,7 @@
                   asp-action="SaveMultiplePageAnswers" asp-route-Id="@Model.Id" asp-route-sequenceNo="@Model.SequenceNo" 
                   asp-route-sectionNo="@Model.SectionNo" asp-route-pageId="@Model.PageId" asp-route-__redirectAction="@Model.RedirectAction">
                 <input type="hidden" id="__redirectAction" name="__redirectAction" value="@Model.RedirectAction" />
+                <input type="hidden" id="__summaryLink" name="__summaryLink" value="@Model.SummaryLink"/>
                 @if (Model.Questions.Count() == 1)
                 {
                     foreach (var question in Model.Questions)
@@ -171,11 +173,17 @@
             <p class="govuk-body">
                 @if (Model.RedirectAction == "Feedback")
                 {
-                    <a class="govuk-link" href="@Url.Action("Feedback", "Application", new {Model.Id})">Return to summary</a>
+                    @if (Model.SummaryLink == "Show")
+                    {
+                        <a class="govuk-link" href="@Url.Action("Feedback", "Application", new { Model.Id })">Return to summary</a>
+                    }
                 }
                 else
                 {
-                    <a class="govuk-link" href="@Url.Action("Section", "Application", new {Model.Id, Model.SequenceNo, Model.SectionNo})">Return to summary</a>
+                    @if (Model.SummaryLink == "Show")
+                    {
+                    <a class="govuk-link" href="@Url.Action("Section", "Application", new { Model.Id, Model.SequenceNo, Model.SectionNo })">Return to summary</a>
+                    }
                 }
             </p>
         </div>

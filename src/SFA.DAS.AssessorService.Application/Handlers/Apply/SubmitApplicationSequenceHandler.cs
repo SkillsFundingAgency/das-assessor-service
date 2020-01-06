@@ -48,7 +48,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
                     }
 
                     AddSubmissionInfoToApplyData(application.ApplyData, request.SequenceNo, submittingContact);
-                    UpdateSequenceInformation(application.ApplyData, request.SequenceNo);
+                    UpdateSequenceInformation(application.ApplyData, request.SequenceNo, request.RequestedFeedbackAnswered);
                     UpdateApplicationStatus(application, request.SequenceNo);
 
                     application.UpdatedBy = submittingContact.Id.ToString();
@@ -65,7 +65,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
             return false;
         }
 
-        private void UpdateSequenceInformation(ApplyData applyData, int sequenceNo)
+        private void UpdateSequenceInformation(ApplyData applyData, int sequenceNo, Dictionary<int,bool?> dictOfRequestedFeedbackAnswered)
         {
             if (applyData.Sequences != null)
             {
@@ -84,8 +84,10 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
                             {
                                 section.Status = ApplicationSectionStatus.Submitted;
                             }
-                            else if (section.RequestedFeedbackAnswered == true)
+                            else if (dictOfRequestedFeedbackAnswered[section.SectionNo] == true)
                             {
+                                // TODO: This is dependant on QnA notifying us that the RequestedFeedbackAnswered has been answered
+                                // otherwise section.Status will remain as is (most likely Evaluated)
                                 section.Status = ApplicationSectionStatus.Submitted;
                             }
                         }
@@ -111,7 +113,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
                 }
 
                 applyData.Apply.InitSubmissions.Add(submission);
-                applyData.Apply.InitSubmissionCount = applyData.Apply.InitSubmissions.Count;
+                applyData.Apply.InitSubmissionsCount = applyData.Apply.InitSubmissions.Count;
                 applyData.Apply.LatestInitSubmissionDate = submission.SubmittedAt;
             }
             else if (sequenceNo == 2)

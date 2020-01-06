@@ -13,7 +13,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Apply
     {
         public Guid Id { get; }
 
-        public PageViewModel(Guid id, int sequenceNo, int sectionNo, string pageId, Page page, string pageContext, string redirectAction, string returnUrl, List<ValidationErrorDetail> errorMessages)
+        public PageViewModel(Guid id, int sequenceNo, int sectionNo, string pageId, Page page, string pageContext, string redirectAction, string returnUrl, List<ValidationErrorDetail> errorMessages, string summaryLink = "Show")
         {
             Id = id;
             SequenceNo = sequenceNo;
@@ -23,6 +23,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Apply
             RedirectAction = redirectAction;
             ReturnUrl = returnUrl;
             ErrorMessages = errorMessages;
+            SummaryLink = summaryLink;
 
             if (page != null)
             {
@@ -56,6 +57,8 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Apply
         public string RedirectAction { get; set; }
         public string ReturnUrl { get; set; }
         
+        public string SummaryLink { get; set; }
+
         public List<ValidationErrorDetail> ErrorMessages { get; set; }
 
         private void SetupPage(Page page, List<ValidationErrorDetail> errorMessages)
