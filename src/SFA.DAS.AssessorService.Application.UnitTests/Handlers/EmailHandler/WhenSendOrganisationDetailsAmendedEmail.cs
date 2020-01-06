@@ -188,7 +188,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.EmailHandler
                     c.Send(
                         It.IsAny<SendEmailRequest>(),
                         It.IsAny<CancellationToken>()))
-                .Returns(Task.CompletedTask)
+                .ReturnsAsync(new Unit())
                 .Callback<IRequest, CancellationToken>((request, token) =>
                 {
                     var sendEmailRequest = request as SendEmailRequest;

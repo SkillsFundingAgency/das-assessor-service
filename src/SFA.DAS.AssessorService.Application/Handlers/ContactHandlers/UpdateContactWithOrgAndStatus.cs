@@ -22,26 +22,26 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ContactHandlers
             _organisationQueryRepository = organisationQueryRepository;
         }
 
-        public async Task Handle(UpdateContactWithOrgAndStausRequest updateContactStatusRequest, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(UpdateContactWithOrgAndStausRequest updateContactStatusRequest, CancellationToken cancellationToken)
         {
            var contact =  await _contactRepository.UpdateContactWithOrganisationData(updateContactStatusRequest);
             if (contact
                     .EndPointAssessorOrganisationId != null && !(await _organisationQueryRepository.CheckIfOrganisationHasContacts(contact
                     .EndPointAssessorOrganisationId)))
             {
-                await SetOrganisationStatusToLiveAndSetPrimaryContact(contact
+                await SetOrganisationStatusToApplyAndSetPrimaryContact(contact
                     .EndPointAssessorOrganisationId, contact);
             }
-
+            return Unit.Value;
         }
 
-        private async Task SetOrganisationStatusToLiveAndSetPrimaryContact(string endPointAssessorOrganisationId, Contact contact)
+        private async Task SetOrganisationStatusToApplyAndSetPrimaryContact(string endPointAssessorOrganisationId, Contact contact)
         {
             var organisation =
                 await _organisationQueryRepository.Get(endPointAssessorOrganisationId);
 
             organisation.PrimaryContact = contact.Username;
-            organisation.Status = OrganisationStatus.Live;
+            organisation.Status = OrganisationStatus.Applying;
 
             await _organisationRepository.UpdateOrganisation(organisation);
         }

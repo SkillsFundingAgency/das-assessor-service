@@ -25,7 +25,7 @@
                 @Html.HiddenFor(m => m.UserHasUserManagement)
                 @Html.HiddenFor(m => m.ReturnController)
                 @Html.HiddenFor(m => m.ReturnAction)
-                @if (Model.UserHasUserManagement)
+                @if (Model.UserHasUserManagement && Model.IsUsersOrganisationLive)
                 {
                     <h2 class="govuk-heading-m">
                         Grant permission
@@ -37,7 +37,10 @@
                 else
                 {
                     <p class="govuk-body">You do not have permission to view this content.</p>
-                    <button class="govuk-button" type="submit">Request access</button>
+                    if (Model.IsUsersOrganisationLive)
+                    {
+                        <button class="govuk-button" type="submit">Request access</button>
+                    }
                 }
             </form>
         </div>

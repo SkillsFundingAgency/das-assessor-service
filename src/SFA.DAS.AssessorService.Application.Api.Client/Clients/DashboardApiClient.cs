@@ -8,12 +8,10 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
     public class DashboardApiClient : ApiClientBase, IDashboardApiClient
     {
         private readonly ILogger<DashboardApiClient> _logger;
-        private readonly IContactApplyClient _dashboardApiClient;
 
-        public DashboardApiClient(string baseUri, ITokenService tokenService, ILogger<DashboardApiClient> logger, IContactApplyClient dashboardApiClient) : base(baseUri, tokenService, logger)
+        public DashboardApiClient(string baseUri, ITokenService tokenService, ILogger<DashboardApiClient> logger) : base(baseUri, tokenService, logger)
         {
             _logger = logger;
-            _dashboardApiClient = dashboardApiClient;
         }
 
         public async Task<GetEpaoDashboardResponse> GetEpaoDashboard(string epaoId)

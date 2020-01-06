@@ -20,9 +20,10 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
             _logger = logger;
         }
 
-        public async Task Handle(DeleteBatchCertificateRequest request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(DeleteBatchCertificateRequest request, CancellationToken cancellationToken)
         {
             await DeleteCertificate(request);
+            return Unit.Value;
         }
 
         private async Task DeleteCertificate(DeleteBatchCertificateRequest request)
