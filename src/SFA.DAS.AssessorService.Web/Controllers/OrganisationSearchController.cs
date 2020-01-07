@@ -9,18 +9,19 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Api.Types.Models.Register;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
-using SFA.DAS.AssessorService.Application.Api.Client.Exceptions;
-using SFA.DAS.AssessorService.ApplyTypes;
+using SFA.DAS.AssessorService.ApplyTypes.CharityCommission;
+using SFA.DAS.AssessorService.ApplyTypes.CompaniesHouse;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Paging;
 using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.ViewModels.Organisation;
-using FHADetails = SFA.DAS.AssessorService.ApplyTypes.FHADetails;
 
 namespace SFA.DAS.AssessorService.Web.Controllers
 {
+
     [Authorize]
     public class OrganisationSearchController : Controller
     {
@@ -28,24 +29,21 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         private readonly IContactsApiClient _contactsApiClient;
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly IOrganisationsApiClient _organisationsApiClient;
-        private readonly IOrganisationsApplyApiClient _organisationsApplyApiClient;
         private readonly ILogger<OrganisationSearchController> _logger;
         private readonly IWebConfiguration _config;
         private readonly ISessionService _sessionService;
 
         public OrganisationSearchController(ILogger<OrganisationSearchController> logger,
             IHttpContextAccessor contextAccessor, IOrganisationsApiClient organisationsApiClient,
-            IContactsApiClient contactApiClient,
+            IContactsApiClient contactsApiClient,
             IWebConfiguration config,
-            IOrganisationsApplyApiClient organisationApplyApiClient,
             ISessionService sessionService)
         {
             _logger = logger;
             _contextAccessor = contextAccessor;
             _organisationsApiClient = organisationsApiClient;
-            _contactsApiClient = contactApiClient;
+            _contactsApiClient = contactsApiClient;
             _config = config;
-            _organisationsApplyApiClient = organisationApplyApiClient;
             _sessionService = sessionService;
         }
 
@@ -58,21 +56,24 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Results(OrganisationSearchViewModel viewModel, int? pageIndex)
         {
-            var signinId = _contextAccessor.HttpContext.User.Claims.First(c => c.Type == "sub")?.Value;
-            var user = await _contactsApiClient.GetContactBySignInId(signinId);
+            var user = await GetUser();
 
-            if (!string.IsNullOrEmpty(user.EndPointAssessorOrganisationId) && user.OrganisationId != null &&
-                user.Status == ContactStatus.Live)
+            if(user is null)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            else if(user.OrganisationId != null && user.Status == ContactStatus.Live)
+            {
                 return RedirectToAction("Index", "Dashboard");
-
-            if (string.IsNullOrEmpty(viewModel.SearchString) || viewModel.SearchString.Length < 2)
+            }               
+            else if (string.IsNullOrEmpty(viewModel.SearchString) || viewModel.SearchString.Length < 2)
             {
                 ModelState.AddModelError(nameof(viewModel.SearchString), "Enter a valid search string");
                 TempData["ShowErrors"] = true;
                 return View(nameof(Index));
             }
 
-            viewModel.Organisations = await _organisationsApplyApiClient.SearchForOrganisations(viewModel.SearchString,PageSize, SanitizePageIndex(pageIndex));
+            viewModel.Organisations = await _organisationsApiClient.SearchForOrganisations(viewModel.SearchString, PageSize, SanitizePageIndex(pageIndex));
 
             return View(viewModel);
         }
@@ -80,21 +81,24 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> FromResults(OrganisationSearchViewModel viewModel, int? pageIndex)
         {
-            var signinId = _contextAccessor.HttpContext.User.Claims.First(c => c.Type == "sub")?.Value;
-            var user = await _contactsApiClient.GetContactBySignInId(signinId);
+            var user = await GetUser();
 
-            if (!string.IsNullOrEmpty(user.EndPointAssessorOrganisationId) && user.OrganisationId != null &&
-                user.Status == ContactStatus.Live)
+            if (user is null)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            else if (user.OrganisationId != null && user.Status == ContactStatus.Live)
+            {
                 return RedirectToAction("Index", "Dashboard");
-
-            if (string.IsNullOrEmpty(viewModel.SearchString) || viewModel.SearchString.Length < 2)
+            }
+            else if (string.IsNullOrEmpty(viewModel.SearchString) || viewModel.SearchString.Length < 2)
             {
                 ModelState.AddModelError(nameof(viewModel.SearchString), "Enter a valid search string");
                 TempData["ShowErrors"] = true;
                 return View(nameof(Results), viewModel);
             }
 
-            viewModel.Organisations = await _organisationsApplyApiClient.SearchForOrganisations(viewModel.SearchString, PageSize, SanitizePageIndex(pageIndex));
+            viewModel.Organisations = await _organisationsApiClient.SearchForOrganisations(viewModel.SearchString, PageSize, SanitizePageIndex(pageIndex));
 
             return View(nameof(Results), viewModel);
         }
@@ -102,6 +106,17 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> NextResults(string searchString, int? pageIndex)
         {
+            var user = await GetUser();
+
+            if (user is null)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            else if (user.OrganisationId != null && user.Status == ContactStatus.Live)
+            {
+                return RedirectToAction("Index", "Dashboard");
+            }
+
             var viewModel = new OrganisationSearchViewModel
             {
                 SearchString = searchString
@@ -114,7 +129,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 return View(nameof(Results), viewModel);
             }
             
-            viewModel.Organisations = await _organisationsApplyApiClient.SearchForOrganisations(viewModel.SearchString, PageSize, SanitizePageIndex(pageIndex));
+            viewModel.Organisations = await _organisationsApiClient.SearchForOrganisations(viewModel.SearchString, PageSize, SanitizePageIndex(pageIndex));
 
             return View(nameof(Results), viewModel);
         }
@@ -123,27 +138,35 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Confirm(OrganisationSearchViewModel viewModel)
         {
+            var user = await GetUser();
 
-            var signinId = _contextAccessor.HttpContext.User.Claims.First(c => c.Type == "sub")?.Value;
-            var user = await _contactsApiClient.GetContactBySignInId(signinId);
-
-            if (!string.IsNullOrEmpty(user.EndPointAssessorOrganisationId) && user.OrganisationId != null &&
-                user.Status == ContactStatus.Live)
+            if (user is null)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            else if (user.OrganisationId != null && user.Status == ContactStatus.Live)
+            {
                 return RedirectToAction("Index", "Dashboard");
-
-            if (string.IsNullOrEmpty(viewModel.Name) || viewModel.SearchString.Length < 2)
+            }
+            else if (string.IsNullOrEmpty(viewModel.Name) || viewModel.SearchString.Length < 2)
             {
                 ModelState.AddModelError(nameof(viewModel.Name), "Enter a valid search string");
                 TempData["ShowErrors"] = true;
                 return RedirectToAction(nameof(Index));
             }
-
-            if(string.IsNullOrEmpty(viewModel.OrganisationType))
+            else if(string.IsNullOrEmpty(viewModel.OrganisationType))
             {
                 ModelState.AddModelError(nameof(viewModel.OrganisationType), "Select an organisation type");
                 TempData["ShowErrors"] = true;
                 viewModel.OrganisationTypes = await _organisationsApiClient.GetOrganisationTypes();
                 return View("Type", viewModel);
+            }
+
+            if(!string.IsNullOrEmpty(viewModel.OrganisationType))
+            {
+                viewModel.OrganisationTypes = await _organisationsApiClient.GetOrganisationTypes();
+                viewModel.OrganisationTypeId = viewModel.OrganisationTypes.Any()? viewModel.OrganisationTypes
+                    .First(x => viewModel.OrganisationType != null && x.Type == viewModel.OrganisationType).Id:0;
             }
            
 
@@ -154,7 +177,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             {
                 if (organisationSearchResult.CompanyNumber != null)
                 {
-                    var isActivelyTrading = await _organisationsApplyApiClient.IsCompanyActivelyTrading(organisationSearchResult.CompanyNumber);
+                    var isActivelyTrading = await _organisationsApiClient.IsCompanyActivelyTrading(organisationSearchResult.CompanyNumber);
 
                     if (!isActivelyTrading)
                     {
@@ -179,8 +202,17 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> OrganisationChosen()
         {
-            var signinId = _contextAccessor.HttpContext.User.Claims.First(c => c.Type == "sub")?.Value;
-            var user = await _contactsApiClient.GetContactBySignInId(signinId);
+            var user = await GetUser();
+
+            if (user is null)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            else if (user.OrganisationId != null && user.Status == ContactStatus.Live)
+            {
+                return RedirectToAction("Index", "Dashboard");
+            }
+
             var sessionString = _sessionService.Get("OrganisationSearchViewModel");
             if (sessionString == null)
             {
@@ -201,6 +233,17 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> OrganisationChosen(OrganisationSearchViewModel viewModel)
         {
+            var user = await GetUser();
+
+            if (user is null)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            else if (user.OrganisationId != null && user.Status == ContactStatus.Live)
+            {
+                return RedirectToAction("Index", "Dashboard");
+            }
+
             var organisationSearchResult = await GetOrganisation(viewModel.SearchString, viewModel.Name,
                 viewModel.Ukprn, viewModel.OrganisationType, viewModel.Postcode, viewModel.PageIndex);
             if (organisationSearchResult != null)
@@ -231,13 +274,16 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> DealingWithRequest(OrganisationSearchViewModel viewModel)
         {
-            var signinId = _contextAccessor.HttpContext.User.Claims.First(c => c.Type == "sub")?.Value;
-            var user = await _contactsApiClient.GetContactBySignInId(signinId);
+            var user = await GetUser();
 
-            // Why would a new user searching for an Organisation have an EPAOrgId or an OrganisationId?
-            if (!string.IsNullOrEmpty(user.EndPointAssessorOrganisationId) && user.OrganisationId != null &&
-                user.Status == ContactStatus.Live)
+            if (user is null)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            else if (user.OrganisationId != null && user.Status == ContactStatus.Live)
+            {
                 return RedirectToAction("Index", "Dashboard");
+            }
 
             var sessionString = _sessionService.Get("OrganisationSearchViewModel");
             if (sessionString != null)
@@ -246,10 +292,10 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             var organisationSearchResult = await GetOrganisation(viewModel.SearchString, viewModel.Name,
                 viewModel.Ukprn, viewModel.OrganisationType, viewModel.Postcode, viewModel.PageIndex);
             if (organisationSearchResult != null)
-            {
+            { 
                 if (organisationSearchResult.CompanyNumber != null)
                 {
-                    var isActivelyTrading = await _organisationsApplyApiClient.IsCompanyActivelyTrading(organisationSearchResult.CompanyNumber);
+                    var isActivelyTrading = await _organisationsApiClient.IsCompanyActivelyTrading(organisationSearchResult.CompanyNumber);
 
                     if (!isActivelyTrading)
                     {
@@ -257,31 +303,38 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                     }
                 }
 
-                var request = CreateAnApplyOrganisationRequest(organisationSearchResult, user);
                 if (organisationSearchResult.OrganisationReferenceType == "RoEPAO")
                 {
-                    //Update assessor organisation status and notify org users (ON-1972 fix was applied here)
-                    await UpdateOrganisationStatus(organisationSearchResult, user);
-                    await NotifyOrganisationUsers(organisationSearchResult, user);
+                    if (organisationSearchResult.OrganisationIsLive)
+                        //Update assessor organisation status
+                        await UpdateOrganisationStatusAndInvite(organisationSearchResult, user);
                 }
                 else
                 {
-                    //Try creating a contact and an organisation in apply
-                    await _contactsApiClient.MigrateSingleContactToApply(Guid.Parse(signinId));
-                    await _contactsApiClient.UpdateStatus(new UpdateContactStatusRequest(user.Id, ContactStatus.Applying));
-                    await _organisationsApplyApiClient.ConfirmSearchedOrganisation(request);
-                    return Redirect($"{_config.ApplyBaseAddress}/Applications");
+                    var request = await CreateEpaOrganisationRequest(organisationSearchResult);
+                    request.OrganisationTypeId = viewModel.OrganisationTypeId;
+                    request.Status = OrganisationStatus.Applying;
+
+                    var epaoId = await _organisationsApiClient.CreateEpaOrganisation(request);
+                    _logger.LogInformation($"Organisation with Organisation Id {epaoId.Details} created.");
+
+                    var newOrg = await _organisationsApiClient.GetEpaOrganisation(epaoId.Details);
+                    await _contactsApiClient.UpdateOrgAndStatus(new UpdateContactWithOrgAndStausRequest(user.Id.ToString(),
+                        newOrg.Id.ToString(), newOrg.OrganisationData?.EndPointAssessmentOrgId, ContactStatus.Live));
+                    _logger.LogInformation($"Contact with display name {user.DisplayName} is associated with organisation {epaoId.Details}.");
+
+                    _sessionService.Set("OrganisationName", newOrg.Name);
+                    
+                    return RedirectToAction("Applications", "Application");
                 }
             }
-
-
             return View(viewModel);
         }  
      
         private async Task<OrganisationSearchResult> GetOrganisation(string searchString, string name, int? ukprn,
             string organisationType, string postcode, int? pageIndex)
         {
-            var searchResultsReturned = await _organisationsApplyApiClient.SearchForOrganisations(searchString,PageSize, SanitizePageIndex(pageIndex));
+            var searchResultsReturned = await _organisationsApiClient.SearchForOrganisations(searchString,PageSize, SanitizePageIndex(pageIndex));
             var searchResults = searchResultsReturned.Items == null ? 
                 new List<OrganisationSearchResult>().AsEnumerable() : searchResultsReturned.Items.AsEnumerable();
 
@@ -313,23 +366,33 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             return organisationSearchResult;
         }
 
-        private OrganisationDetails MapToOrganisationDetails(OrganisationSearchResult organisationSearchResult)
+        private async Task<CreateEpaOrganisationRequest> CreateEpaOrganisationRequest(OrganisationSearchResult organisationSearchResult)
         {
-           return new OrganisationDetails
+            // ON-2262 - Get the company & charity details from the relevant APIs
+            var companyDetails = !string.IsNullOrWhiteSpace(organisationSearchResult.CompanyNumber) ? await _organisationsApiClient.GetCompanyDetails(organisationSearchResult.CompanyNumber) : null;
+            var charityDetails = int.TryParse(organisationSearchResult.CompanyNumber, out var charityNumber) ? await _organisationsApiClient.GetCharityDetails(charityNumber) : null;
+
+            return new CreateEpaOrganisationRequest
             {
+                Name = organisationSearchResult.Name,
                 OrganisationReferenceType = organisationSearchResult.OrganisationReferenceType,
                 OrganisationReferenceId = organisationSearchResult.OrganisationReferenceId,
                 LegalName = organisationSearchResult.LegalName,
                 TradingName = organisationSearchResult.TradingName,
                 ProviderName = organisationSearchResult.ProviderName,
                 CompanyNumber = organisationSearchResult.CompanyNumber,
+                CompanySummary = Mapper.Map<CompaniesHouseSummary>(companyDetails),
                 CharityNumber = organisationSearchResult.CharityNumber,
+                CharitySummary = Mapper.Map<CharityCommissionSummary>(charityDetails),
                 Address1 = organisationSearchResult.Address?.Address1,
                 Address2 = organisationSearchResult.Address?.Address2,
                 Address3 = organisationSearchResult.Address?.Address3,
-                City = organisationSearchResult.Address?.City,
+                Address4 = organisationSearchResult.Address?.City,
                 Postcode = organisationSearchResult.Address?.Postcode,
-                FHADetails = new FHADetails()
+                RoATPApproved =  organisationSearchResult.RoATPApproved,
+                RoEPAOApproved= false,
+                EndPointAssessmentOrgId = null,
+                FHADetails = new Api.Types.Models.AO.FHADetails
                 {
                     FinancialDueDate = organisationSearchResult.FinancialDueDate,
                     FinancialExempt = organisationSearchResult.FinancialExempt
@@ -337,60 +400,18 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             };
         }
 
-        private ApplyTypes.CreateOrganisationRequest CreateAnApplyOrganisationRequest(OrganisationSearchResult organisationSearchResult,
-            ContactResponse user)
+        private async Task UpdateOrganisationStatusAndInvite(OrganisationSearchResult organisationSearchResult, ContactResponse user)
         {
-            var orgDetails = MapToOrganisationDetails(organisationSearchResult);
-            return  new ApplyTypes.CreateOrganisationRequest
+            var registeredOrganisation = await _organisationsApiClient.GetEpaOrganisation(organisationSearchResult.Id);
+            if (registeredOrganisation.Status == OrganisationStatus.Live || registeredOrganisation.Status == OrganisationStatus.New)
             {
-                Name = organisationSearchResult.Name,
-                OrganisationType = organisationSearchResult.OrganisationType,
-                OrganisationUkprn = organisationSearchResult.Ukprn,
-                RoEPAOApproved = organisationSearchResult.RoEPAOApproved,
-                RoATPApproved = organisationSearchResult.RoATPApproved,
-                OrganisationDetails = orgDetails,
-                CreatedBy = user.Id,
-                PrimaryContactEmail = organisationSearchResult.Email
-            };
+                await _contactsApiClient.UpdateOrgAndStatus(new UpdateContactWithOrgAndStausRequest(
+                    user.Id.ToString(),
+                    registeredOrganisation?.Id.ToString(),
+                    registeredOrganisation?.OrganisationData?.EndPointAssessmentOrgId,
+                    ContactStatus.InvitePending));
 
-        }
-
-        private async Task UpdateOrganisationStatus(OrganisationSearchResult organisationSearchResult, ContactResponse user)
-        {
-            OrganisationResponse registeredOrganisation;
-
-            if (organisationSearchResult.Ukprn != null)
-                registeredOrganisation =
-                    await _organisationsApiClient.Get(organisationSearchResult.Ukprn.ToString());
-            else
-            {
-                var result =
-                     await _organisationsApiClient.GetEpaOrganisation(organisationSearchResult.Id);
-                registeredOrganisation = new OrganisationResponse
-                {
-                    Id = result.Id
-                };
-            }
-
-            await _contactsApiClient.UpdateOrgAndStatus(new UpdateContactWithOrgAndStausRequest(
-                     user.Id.ToString(),
-                     registeredOrganisation.Id.ToString(),
-                     organisationSearchResult.Id,
-                     ContactStatus.InvitePending));
-        }
-
-        private async Task TryToCreateOrganisationInApply(ApplyTypes.CreateOrganisationRequest request)
-        {
-            try
-            {
-                //Check if orgnisation exists on apply
-                await _organisationsApplyApiClient.DoesOrganisationExist(request.Name);
-            }
-            catch (EntityNotFoundException e)
-            {
-                _logger.LogInformation($"{e.Message}");
-                //Try creating an organisation in apply
-                await _organisationsApplyApiClient.CreateNewOrganisation(request);
+                await NotifyOrganisationUsers(organisationSearchResult, user);
             }
         }
 
@@ -427,6 +448,12 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         private int SanitizePageIndex(int? pageIndex)
         {
             return (pageIndex ?? 1) < 0 ? 1 : pageIndex ?? 1;
+        }
+
+        private async Task<ContactResponse> GetUser()
+        {
+            var signinId = _contextAccessor.HttpContext.User.Claims.First(c => c.Type == "sub")?.Value;
+            return await _contactsApiClient.GetContactBySignInId(signinId ?? Guid.Empty.ToString());
         }
     }
 }

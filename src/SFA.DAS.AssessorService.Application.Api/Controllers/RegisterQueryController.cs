@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using System;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -11,6 +12,7 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
+using OrganisationType = SFA.DAS.AssessorService.Api.Types.Models.AO.OrganisationType;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers
 {
@@ -67,7 +69,13 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         public async Task<IActionResult> GetAssessmentOrganisation(string organisationId)
         {
             _logger.LogInformation($@"Get Assessment Organisation [{organisationId}]");
-            var result = await _mediator.Send(new GetAssessmentOrganisationRequest {OrganisationId = organisationId});
+            bool isValid = Guid.TryParse(organisationId, out Guid guid);
+            EpaOrganisation result;
+            if (isValid)
+                result = await _mediator.Send(new GetAssessmentOrganisationByIdRequest { Id = guid });
+            else
+                result = await _mediator.Send(new GetAssessmentOrganisationRequest {OrganisationId = organisationId});
+
             if (result == null) return NotFound();
             return Ok(result);
         }

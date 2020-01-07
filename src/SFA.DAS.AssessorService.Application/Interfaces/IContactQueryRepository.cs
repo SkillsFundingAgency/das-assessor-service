@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using SFA.DAS.AssessorService.Domain.Entities;
 
@@ -10,7 +9,8 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
     {
         Task<bool> CheckContactExists(string userName);
 
-        Task<IEnumerable<Contact>> GetContacts(string endPointAssessorOrganisationId);
+        Task<IEnumerable<Contact>> GetContactsForOrganisation(Guid organisationId);
+        Task<IEnumerable<Contact>> GetContactsForEpao(string endPointAssessorOrganisationId);
         Task<Contact> GetContact(string userName);
         Task<Contact> GetContactFromEmailAddress(string email);
         Task<IEnumerable<Contact>> GetAllContacts(string endPointAssessorOrganisationId, bool? withUser = null);
@@ -23,8 +23,5 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<Contact> GetContactById(Guid id);
         Task<List<Contact>> GetUsersToMigrate();
         Task UpdateMigratedContact(Guid contactId, Guid signInId);
-        Task<List<Contact>> GetExsitingContactsToMigrateToApply();
-
-        Task<Contact> GetSingleContactsToMigrateToApply(Guid requestSignInId);
     }
 }

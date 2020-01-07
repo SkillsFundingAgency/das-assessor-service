@@ -20,17 +20,24 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Services
         public string SpecflowDBTestConnectionString { get; set; }
         public string SessionRedisConnectionString { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public AuthSettings StaffAuthentication { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public ClientApiAuthentication ApplyApiAuthentication { get; set; }
-        public string ApplyBaseAddress { get; set; }
+        public ClientApiAuthentication QnaApiAuthentication { get; set; }
         public string ServiceLink { get; set; }
         public DfeSignInConfig DfeSignIn { get; set; }
         public string RoatpApiClientBaseUrl { get; set; }
         public ClientApiAuthentication RoatpApiAuthentication { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-
+        public ProviderRegisterApiAuthentication ProviderRegisterApiAuthentication { get; set; }
+        public ReferenceDataApiAuthentication ReferenceDataApiAuthentication { get; set; }
+        public CompaniesHouseApiAuthentication CompaniesHouseApiAuthentication { get; set; }
+        public CharityCommissionApiAuthentication CharityCommissionApiAuthentication { get; set; }
+        public string ReferenceFormat { get; set; }
+        public string FeedbackUrl { get; set; }
         #region For External API Sandbox
         public string SandboxSqlConnectionString { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public ApiAuthentication SandboxApiAuthentication { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public ClientApiAuthentication SandboxClientApiAuthentication { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         #endregion
+
+        public string ZenDeskSnippetKey { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public string ZenDeskSectionId { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
     }
 }

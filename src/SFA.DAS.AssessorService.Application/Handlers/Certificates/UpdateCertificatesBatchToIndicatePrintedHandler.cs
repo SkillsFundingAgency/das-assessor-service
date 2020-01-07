@@ -20,7 +20,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
             _logger = logger;
         }
 
-        public async Task Handle(UpdateCertificatesBatchToIndicatePrintedRequest updateCertificatesBatchToIndicatePrintedRequest, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(UpdateCertificatesBatchToIndicatePrintedRequest updateCertificatesBatchToIndicatePrintedRequest, CancellationToken cancellationToken)
         {
             updateCertificatesBatchToIndicatePrintedRequest.CertificateStatuses.ForEach(s =>
             {
@@ -29,6 +29,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
             });
 
             await _certificateRepository.UpdateStatuses(updateCertificatesBatchToIndicatePrintedRequest);
+
+            return Unit.Value;
         }
     } 
 }

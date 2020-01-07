@@ -26,7 +26,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.UserManagement
             _contactRepository = contactRepository;
         }
 
-        public async Task Handle(RejectContactRequest message, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(RejectContactRequest message, CancellationToken cancellationToken)
         {
             const string epaoUserReject = "EPAOUserApproveReject";
 
@@ -46,6 +46,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.UserManagement
                     Organisation = organisation.EndPointAssessorName,
                     ServiceTeam = "Apprenticeship assessment services team"
                 }), cancellationToken);
+
+            return Unit.Value;
         }
     }
 }
