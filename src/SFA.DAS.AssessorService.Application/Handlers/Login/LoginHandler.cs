@@ -61,17 +61,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Login
 
             if (contact.OrganisationId == null)
             {
-                var userStatus = contact.Status;// await GetUserStatus(null, request.SignInId);
-                if (userStatus != ContactStatus.Applying)
-                {
-                    response.Result = LoginResult.NotRegistered;
-                    return response;
-                }
-                else
-                {
-                    response.Result = LoginResult.Applying;
-                    return response;
-                }
+                // This user has no organisation... send them off to find one.
+                response.Result = LoginResult.NotRegistered;
+                return response;
             }
 
             var organisation = await _organisationQueryRepository.Get(contact.OrganisationId.Value);
@@ -108,6 +100,13 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Login
 
                 // Only show true status if contact is marked as being Live
                 response.Result = (contact.Status is ContactStatus.Live) ? LoginResult.NotActivated : LoginResult.InvitePending;
+                return response;
+            }
+            else if (organisation.Status == OrganisationStatus.Applying)
+            {
+                _logger.LogInformation(LoggingConstants.SignInEpaoNew);
+
+                response.Result = (contact.Status is ContactStatus.Live) ? LoginResult.Applying : LoginResult.NotActivated;
                 return response;
             }
             else

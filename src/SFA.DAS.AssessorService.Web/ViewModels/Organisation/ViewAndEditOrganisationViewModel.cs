@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using SFA.DAS.Apprenticeships.Api.Types;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Azure;
@@ -7,7 +6,7 @@ using SFA.DAS.AssessorService.Api.Types.Models.Azure;
 
 using SFA.DAS.AssessorService.Web.ViewModels.Account;
 
-namespace SFA.DAS.AssessorService.Web.ViewModels
+namespace SFA.DAS.AssessorService.Web.ViewModels.Organisation
 {
     public class ViewAndEditOrganisationViewModel
     {
@@ -27,8 +26,14 @@ namespace SFA.DAS.AssessorService.Web.ViewModels
         public string ContactsCount { get; set; }
         public bool UserHasChangeOrganisationPrivilege { get; set; }
         public AccessDeniedViewModel AccessDeniedViewModel { get; set; }
-        public List<AzureSubscription> ExternalApiSubscriptions { get; set; }
+        public string StandardsCount { get; set; }
+        public List<OrganisationStandardSummary> OrganisationStandards { get; set; }
+        public List<Api.Types.Models.AO.OrganisationType> OrganisationTypes { get; set; }
+        public string CompanyNumber { get; set; }
+        public string CharityNumber { get; set; }
+
         public string ActionChoice { get; set; }
+        public List<AzureSubscription> ExternalApiSubscriptions { get; set; }
         public string SubscriptionId { get; set; }
     }
 }

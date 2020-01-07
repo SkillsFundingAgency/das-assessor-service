@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using AutoMapper;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
@@ -26,17 +27,19 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
     public class OrganisationQueryController : Controller
     {
         private readonly ILogger<OrganisationQueryController> _logger;
+        private readonly IMediator _mediator;
         private readonly IOrganisationQueryRepository _organisationQueryRepository;
         private readonly UkPrnValidator _ukPrnValidator;
         private readonly IStringLocalizer<OrganisationQueryController> _localizer;
         private readonly IWebConfiguration _config;
 
         public OrganisationQueryController(
-            ILogger<OrganisationQueryController> logger, IOrganisationQueryRepository organisationQueryRepository, UkPrnValidator ukPrnValidator, IStringLocalizer<OrganisationQueryController> localizer,
+            ILogger<OrganisationQueryController> logger, IMediator mediator, IOrganisationQueryRepository organisationQueryRepository, UkPrnValidator ukPrnValidator, IStringLocalizer<OrganisationQueryController> localizer,
             IWebConfiguration config
         )
         {
             _logger = logger;
+            _mediator = mediator;
             _organisationQueryRepository = organisationQueryRepository;
             _ukPrnValidator = ukPrnValidator;
             _localizer = localizer;
@@ -93,6 +96,16 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             return Ok(organisation);
         }
 
+        [HttpGet("organisation/{id}/contacts", Name = "GetOrganisationContacts")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<ContactResponse>))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> GetOrganisationContacts(Guid id)
+        {
+            _logger.LogInformation($"Received request to retrieve contacts for Organisation: {id}");
+
+            return Ok(await _mediator.Send(new GetContactsForOrganisationRequest(id)));
+        }
+
         [HttpGet("{*name}", Name = "GetOrganisationByName")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(OrganisationResponse))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
@@ -122,7 +135,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
                 throw new ResourceNotFoundException(userId.ToString());
             }
             
-            return Ok(Mapper.Map<OrganisationResponse>(organisation));
+            return Ok(Mapper.Map<Organisation,OrganisationResponse>(organisation));
         }
     }
 }

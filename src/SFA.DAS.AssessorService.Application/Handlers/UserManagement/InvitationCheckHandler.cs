@@ -28,10 +28,10 @@ namespace SFA.DAS.AssessorService.Application.Handlers.UserManagement
             _organisationQueryRepository = organisationQueryRepository;
             _eMailTemplateQueryRepository = eMailTemplateQueryRepository;
         }
-        public async Task Handle(InvitationCheckRequest message, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(InvitationCheckRequest message, CancellationToken cancellationToken)
         {
             var contactInvitation = await _contactRepository.GetContactInvitation(message.ContactId);
-            if (contactInvitation is null || contactInvitation.IsAccountCreated) return;
+            if (contactInvitation is null || contactInvitation.IsAccountCreated) return Unit.Value;
 
             var acceptedContact = await _contactQueryRepository.GetContactById(contactInvitation.InviteeContactId);
             var invitingContact = await _contactQueryRepository.GetContactById(contactInvitation.InvitorContactId);
@@ -48,6 +48,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.UserManagement
             }), cancellationToken);
 
             await _contactRepository.SetInvitationAccepted(contactInvitation);
+            
+            return Unit.Value;
         }
     }
 }

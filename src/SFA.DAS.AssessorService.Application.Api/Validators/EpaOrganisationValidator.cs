@@ -583,10 +583,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
 
             RunValidationCheckAndAppendAnyError("CharityNumber", CheckCharityNumberIsValid(request.CharityNumber), validationResult, ValidationStatusCode.BadRequest);
             RunValidationCheckAndAppendAnyError("CharityNumber", CheckIfOrganisationCharityNumberExists(request.OrganisationId, request.CharityNumber), validationResult, ValidationStatusCode.BadRequest);
-            
-            var contacts = _registerQueryRepository.GetAssessmentOrganisationContacts(request.OrganisationId).Result;
-            var standards = _registerQueryRepository.GetOrganisationStandardByOrganisationId(request.OrganisationId).Result;
-
             RunValidationCheckAndAppendAnyError("OrganisationId", CheckOrganisationIdIsPresentAndValid(request.OrganisationId), validationResult, ValidationStatusCode.BadRequest);
             RunValidationCheckAndAppendAnyError("Name", CheckOrganisationName(request.Name), validationResult, ValidationStatusCode.BadRequest);
             RunValidationCheckAndAppendAnyError("Ukprn", CheckIfOrganisationUkprnExistsForOtherOrganisations(request.Ukprn, request.OrganisationId), validationResult, ValidationStatusCode.BadRequest);
@@ -594,17 +590,21 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             RunValidationCheckAndAppendAnyError("Ukprn", CheckUkprnIsValid(request.Ukprn), validationResult, ValidationStatusCode.BadRequest);
 
             if (!doLiveValidation)
-                {
-                    RunValidationCheckAndAppendAnyError("OrganisationTypeId", CheckOrganisationTypeIsNullOrExists(request.OrganisationTypeId), validationResult, ValidationStatusCode.BadRequest);
-                    return validationResult;
-                }
+            {
+                RunValidationCheckAndAppendAnyError("OrganisationTypeId", CheckOrganisationTypeIsNullOrExists(request.OrganisationTypeId), validationResult, ValidationStatusCode.BadRequest);
+            }
+            else
+            {
+                var contacts = _registerQueryRepository.GetAssessmentOrganisationContacts(request.OrganisationId).Result;
+                var standards = _registerQueryRepository.GetOrganisationStandardByOrganisationId(request.OrganisationId).Result;
 
-            RunValidationCheckAndAppendAnyError("OrganisationTypeId", CheckOrganisationTypeExists(request.OrganisationTypeId), validationResult, ValidationStatusCode.BadRequest);
-            RunValidationCheckAndAppendAnyError("Address", CheckAddressDetailsForOrganisation(request.Address1,request.Address2,request.Address3,request.Address4), validationResult, ValidationStatusCode.BadRequest);
-            RunValidationCheckAndAppendAnyError("Postcode", CheckPostcodeIsPresentForOrganisation(request.Postcode), validationResult, ValidationStatusCode.BadRequest);
-            RunValidationCheckAndAppendAnyError("Ukprn", CheckUkprnForOrganisation(request.Ukprn), validationResult, ValidationStatusCode.BadRequest);
-            RunValidationCheckAndAppendAnyError("ContactsCount", CheckContactCountForOrganisation(contacts?.Count()), validationResult, ValidationStatusCode.BadRequest);
-            RunValidationCheckAndAppendAnyError("StandardsCount", CheckStandardCountForOrganisation(standards?.Count()), validationResult, ValidationStatusCode.BadRequest);
+                RunValidationCheckAndAppendAnyError("OrganisationTypeId", CheckOrganisationTypeExists(request.OrganisationTypeId), validationResult, ValidationStatusCode.BadRequest);
+                RunValidationCheckAndAppendAnyError("Address", CheckAddressDetailsForOrganisation(request.Address1, request.Address2, request.Address3, request.Address4), validationResult, ValidationStatusCode.BadRequest);
+                RunValidationCheckAndAppendAnyError("Postcode", CheckPostcodeIsPresentForOrganisation(request.Postcode), validationResult, ValidationStatusCode.BadRequest);
+                RunValidationCheckAndAppendAnyError("Ukprn", CheckUkprnForOrganisation(request.Ukprn), validationResult, ValidationStatusCode.BadRequest);
+                RunValidationCheckAndAppendAnyError("ContactsCount", CheckContactCountForOrganisation(contacts?.Count()), validationResult, ValidationStatusCode.BadRequest);
+                RunValidationCheckAndAppendAnyError("StandardsCount", CheckStandardCountForOrganisation(standards?.Count()), validationResult, ValidationStatusCode.BadRequest);
+            }
 
             return validationResult;
         }

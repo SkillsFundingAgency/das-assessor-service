@@ -7,11 +7,13 @@ using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.Domain.Entities;
-using OrganisationType = SFA.DAS.AssessorService.Api.Types.Models.AO.OrganisationType;
+using SFA.DAS.AssessorService.Domain.Paging;
 
 namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 {
     using AssessorService.Api.Types.Models;
+    using SFA.DAS.AssessorService.Api.Types.CharityCommission;
+    using SFA.DAS.AssessorService.Api.Types.CompaniesHouse;
     using SFA.DAS.AssessorService.Api.Types.Models.Register;
     using System.Net;
 
@@ -92,6 +94,15 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             using (var request = new HttpRequestMessage(HttpMethod.Delete, $"/api/v1/organisations/"))
             {
                 await Delete(request);
+            }
+        }
+
+        public async Task<EpaOrganisationResponse> CreateEpaOrganisation(CreateEpaOrganisationRequest epaoOrganisationModel)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/ao/assessment-organisations/"))
+            {
+                return await PostPutRequestWithResponse<CreateEpaOrganisationRequest, EpaOrganisationResponse>(request,
+                    epaoOrganisationModel);
             }
         }
 
@@ -293,6 +304,16 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
+        public async Task<EpaOrganisation> GetEpaOrganisationById(string Id)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get,
+                $"/api/ao/assessment-organisations/{Id}"))
+            {
+                return await RequestAndDeserialiseAsync<EpaOrganisation>(request,
+                    $"Could not retrieve details for the organisation with an Id of {Id}");
+            }
+        }
+
         public async Task UpdateEpaOrganisation(UpdateEpaOrganisationRequest updateEpaOrganisationRequest)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Put, $"/api/ao/assessment-organisations/"))
@@ -301,12 +322,12 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task<List<OrganisationType>> GetOrganisationTypes()
+        public async Task<List<AssessorService.Api.Types.Models.AO.OrganisationType>> GetOrganisationTypes()
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get,
                 $"/api/ao/organisation-types"))
             {
-                return await RequestAndDeserialiseAsync<List<OrganisationType>>(request,
+                return await RequestAndDeserialiseAsync<List<AssessorService.Api.Types.Models.AO.OrganisationType>>(request,
                     $"Could not retrieve organisation types.");
             }
         }
@@ -327,6 +348,82 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             {
                 return await RequestAndDeserialiseAsync<List<OrganisationStandardSummary>>(request,
                     $"Could not retrieve standards for organisation with Id of {endPointAssessorOrganisationId}");
+            }
+        }
+
+        public async Task<PaginatedList<OrganisationSearchResult>> SearchForOrganisations(string searchTerm, int pageSize, int pageIndex)
+        {
+            try
+            {
+                using (var request = new HttpRequestMessage(HttpMethod.Get,
+                    $"/api/v1/organisationsearch/organisations?searchTerm={searchTerm}&pageSize={pageSize}&pageIndex={pageIndex}"))
+                {
+                    return await RequestAndDeserialiseAsync<PaginatedList<OrganisationSearchResult>>(request,
+                        $"Could not retrieve organisations for search {searchTerm}.");
+                }
+            }
+            catch (HttpRequestException err)
+            {
+                if (err.Message.Contains("204"))
+                {
+                    return null;
+                }
+                else
+                {
+                    throw;
+                }
+            }
+        }
+
+        public async Task<bool> IsCompanyActivelyTrading(string companyNumber)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/organisationsearch/company/{companyNumber}/isActivelyTrading"))
+            {
+                return await RequestAndDeserialiseAsync<bool>(request, $"Could not retrieve trading details for the organisation with a company number of {companyNumber}");
+            }
+        }
+
+        public async Task<Company> GetCompanyDetails(string companyNumber)
+        {
+            try
+            {
+                using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/organisationsearch/company/{companyNumber}"))
+                {
+                    return await RequestAndDeserialiseAsync<Company>(request, $"Could not retrieve details for the organisation with a company number of {companyNumber}");
+                }
+            }
+            catch (HttpRequestException err)
+            {
+                if (err.Message.Contains("204"))
+                {
+                    return null;
+                }
+                else
+                {
+                    throw;
+                }
+            }
+        }
+
+        public async Task<Charity> GetCharityDetails(int charityNumber)
+        {
+            try
+            {
+                using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/organisationsearch/charity/{charityNumber}"))
+                {
+                    return await RequestAndDeserialiseAsync<Charity>(request, $"Could not retrieve details for the organisation with a charity number of {charityNumber}");
+                }
+            }
+            catch (HttpRequestException err)
+            {
+                if (err.Message.Contains("204"))
+                {
+                    return null;
+                }
+                else
+                {
+                    throw;
+                }
             }
         }
     }

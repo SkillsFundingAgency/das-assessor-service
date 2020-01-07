@@ -23,7 +23,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.OrganisationHandlers
         public async Task<List<ContactResponse>> Handle(GetContactsWhoCanBePrimaryForOrganisationRequest request, CancellationToken cancellationToken)
         {
             var response = new List<ContactResponse>();
-            var contacts = await _contactQueryRepository.GetContacts(request.EndPointAssessorOrganisationId);
+            var contacts = await _contactQueryRepository.GetContactsForEpao(request.EndPointAssessorOrganisationId);
             if (contacts == null)
                 return response;
             return Mapper.Map<List<ContactResponse>>(

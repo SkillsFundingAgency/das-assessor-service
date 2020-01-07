@@ -24,6 +24,7 @@ using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.StartupConfiguration;
 using SFA.DAS.AssessorService.Web.ViewModels;
 using SFA.DAS.AssessorService.Web.ViewModels.Account;
+using SFA.DAS.AssessorService.Web.ViewModels.Organisation;
 
 namespace SFA.DAS.AssessorService.Web.Controllers
 {
@@ -93,6 +94,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         }
 
         [HttpGet]
+        [PrivilegeAuthorize(Privileges.ChangeOrganisationDetails)]
         [TypeFilter(typeof(MenuFilter), Arguments = new object[] { Pages.Organisations })]
         public async Task<IActionResult> OrganisationDetails()
         {

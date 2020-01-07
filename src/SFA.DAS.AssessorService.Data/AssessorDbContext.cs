@@ -75,10 +75,6 @@ namespace SFA.DAS.AssessorService.Data
                 .WithMany(s => s.ContactsPrivileges)
                 .HasForeignKey(sc => sc.ContactId);
 
-            modelBuilder.Entity<Organisation>()
-                .Property<string>("OrganisationData")
-                .HasField("_extendedOrgData");
-
             SetUpJsonToEntityTypeHandlers(modelBuilder);
         }
 
@@ -95,6 +91,13 @@ namespace SFA.DAS.AssessorService.Data
                 .HasConversion(
                     c => JsonConvert.SerializeObject(c),
                     c => JsonConvert.DeserializeObject<PrivilegeData>(string.IsNullOrWhiteSpace(c) ? "{}" : c));
+            modelBuilder.Entity<Organisation>()
+               .Property(e => e.OrganisationData)
+               .HasConversion(
+                   c => JsonConvert.SerializeObject(c),
+                   c => JsonConvert.DeserializeObject<OrganisationData>(string.IsNullOrWhiteSpace(c) ? "{}" : c));
+
+           
         }
     }
 }

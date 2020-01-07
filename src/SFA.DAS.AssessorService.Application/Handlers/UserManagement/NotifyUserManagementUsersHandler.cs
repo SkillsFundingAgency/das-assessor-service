@@ -23,7 +23,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.UserManagement
             _organisationQueryRepository = organisationQueryRepository;
         }
         
-        public async Task Handle(NotifyUserManagementUsersRequest message, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(NotifyUserManagementUsersRequest message, CancellationToken cancellationToken)
         {
             const string epaoUserApproveRequestTemplate = "EPAOUserApproveRequest";
 
@@ -47,6 +47,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.UserManagement
                     Organisation = organisation.EndPointAssessorName
                 }), cancellationToken);
             }
+            return Unit.Value;
         }
     }
 }
