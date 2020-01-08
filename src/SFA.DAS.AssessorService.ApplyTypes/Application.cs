@@ -1,22 +1,81 @@
+using SFA.DAS.AssessorService.ApplyTypes.CharityCommission;
+using SFA.DAS.AssessorService.ApplyTypes.CompaniesHouse;
 using System;
 using System.Collections.Generic;
 
 namespace SFA.DAS.AssessorService.ApplyTypes
 {
-    public class Application : ApplyTypeBase
-    {
-        public Organisation ApplyingOrganisation { get; set; }
-        public Guid ApplyingOrganisationId { get; set; }
-        public DateTime WithdrawnAt { get; set; }
-        public string WithdrawnBy { get; set; }
-        public string ApplicationStatus { get; set; }
-        public ApplicationData ApplicationData { get; set; }
-    }
-
     public class ApplicationData
     {
+        public string OrganisationReferenceId { get; set; }
+        public string OrganisationName { get; set; }
         public string ReferenceNumber { get; set; }
+        public string StandardName { get; set; }
+        public string OrganisationType { get; set; }
+        public int? StandardCode { get; set; }
+        public string TradingName { get; set; }
+        public bool UseTradingName { get; set; }
+        public string ContactGivenName { get; set; }
+
+        public CompaniesHouseSummary CompanySummary { get; set; }
+        public CharityCommissionSummary CharitySummary { get; set; }
+    }
+
+    public class StandardApplicationData
+    {
+        public string StandardName { get; set; }
         public int StandardCode { get; set; }
+        public Guid UserId { get; set; }
+        public string UserEmail { get; set; }
+    }   
+
+    public class ApplyData
+    {
+        public List<ApplySequence> Sequences { get; set; }
+        public Apply Apply { get; set; }
+    }
+
+
+    public class ApplySequence
+    {
+        public Guid SequenceId { get; set; }
+        public List<ApplySection> Sections { get; set; }
+        public string Status { get; set; }
+        public int SequenceNo { get; set; }
+        public bool IsActive { get; set; }
+        public bool NotRequired { get; set; }
+        public DateTime? ApprovedDate { get; set; }
+        public string ApprovedBy { get; set; }
+
+    }
+
+    public class ApplySection
+    {
+        public Guid SectionId { get; set; }
+        public int SectionNo { get; set; }
+        public string Status { get; set; }
+        public DateTime? ReviewStartDate { get; set; }
+        public string ReviewedBy { get; set; }
+        public DateTime? EvaluatedDate { get; set; }
+        public string EvaluatedBy { get; set; }
+        public bool NotRequired { get; set; }
+        public bool? RequestedFeedbackAnswered { get; set; }
+    }
+
+    public class Feedback
+    {
+        public DateTime? Feedbackdate { get; set; }
+        public string FeedbackBy { get; set; }
+        public bool FeedbackAnswered { get; set; }
+        public DateTime? FeedbackAnsweredDate { get; set; }
+        public string FeedbackAnsweredBy { get; set; }
+    }
+
+    public class Apply
+    {
+        public string ReferenceNumber { get; set; }
+        public int? StandardCode { get; set; }
+        public string StandardReference { get; set; }
         public string StandardName { get; set; }
         public List<Submission> InitSubmissions { get; set; }
         public int InitSubmissionsCount { get; set; }
@@ -36,117 +95,4 @@ namespace SFA.DAS.AssessorService.ApplyTypes
         public Guid SubmittedBy { get; set; }
         public string SubmittedByEmail { get; set; }
     }
-
-
-    public class DisplayAnswerPage
-    {
-        public List<IDisplayAnswer> DisplayAnswers { get; set; }
-    }
-
-    public class DisplayAnswer : IDisplayAnswer
-    {
-        public string Label { get; set; }
-        string IDisplayAnswer.Answer()
-        {
-            return Answer;
-        }
-
-        public string QuestionId { get; set; }
-
-        public string Answer { private get; set; }
-    }
-
-    public class FileUploadDisplayAnswer : IDisplayAnswer
-    {
-        public string Label { get; set; }
-        public Guid ApplicationId { get; set; }
-        public int SequenceId { get; set; }
-        public int SectionId { get; set; }
-        public string PageId { get; set; }
-        public string QuestionId { get; set; }
-        public string FileName { get; set; }
-        public string Answer()
-        {
-            return "";
-        }
-    }
-    
-    public interface IDisplayAnswer
-    {
-        string Label { get; set; }
-        string Answer();
-        string QuestionId { get; set; }
-    }
-
-
-    public class Question
-    {
-        public string QuestionId { get; set; }
-        public string Label { get; set; }
-        public string Hint { get; set; }
-        public Input Input { get; set; }
-        public int? Order { get; set; }
-        public string PageId { get; set; }
-        public string QuestionBodyText { get; set; }
-    }
-    
-    public class Feedback
-    {
-        public Guid Id { get; set; }
-        public string From { get; set; }
-        public string Message { get; set; }
-        public DateTime Date { get; set; }
-        public bool IsCompleted { get; set; }
-        public bool IsNew { get; set; }
-    }
-    
-    public class PageOfAnswers
-    {
-        public Guid Id { get; set; }
-        public List<Answer> Answers { get; set; }
-    }
-    
-    public class Next
-    {
-        public string Action { get; set; }
-        public string ReturnId { get; set; }
-        public Condition Condition { get; set; }
-        public bool ConditionMet { get; set; }
-    }
-    
-    public class Input
-    {
-        public string Type { get; set; }
-        public List<InputOptions> Options { get; set; }
-        public List<ValidationDefinition> Validations { get; set; }
-    }
-
-    public class InputOptions
-    {
-        public string Label { get; set; }
-        public string Value { get; set; }
-        public List<Question> FurtherQuestions { get; set; }
-    }
-
-    public class Answer
-    {
-        public string QuestionId { get; set; }
-        public string Value { get; set; }
-    }
-    
-    public class Condition
-    {
-        public string QuestionId { get; set; }
-        public string MustEqual { get; set; }
-    }
-    
-    public class ValidationDefinition
-    {
-        public string Name { get; set; }
-        public object Value { get; set; }
-        public string ErrorMessage { get; set; }
-    }
 }
-
-
-// 

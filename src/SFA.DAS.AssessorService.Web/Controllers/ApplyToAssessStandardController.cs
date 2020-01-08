@@ -19,21 +19,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers
     [CheckSession]
     public class ApplyToAssessStandardController : Controller
     {
-
-        private readonly IWebConfiguration _webConfiguration;
-        private readonly IContactApplyClient _contactApplyContact;
-        private readonly IContactsApiClient _contactsApiClient;
-        private readonly IHttpContextAccessor _contextAccessor;
-        private readonly IOrganisationsApiClient _organisationsApiClient;
-
-        public ApplyToAssessStandardController(IWebConfiguration webConfiguration, IContactApplyClient contactApplyContact, 
-            IHttpContextAccessor contextAccessor, IContactsApiClient contactsApiClient, IOrganisationsApiClient organisationsApiClient)
+        public ApplyToAssessStandardController()
         {
-            _webConfiguration = webConfiguration;
-            _contactApplyContact = contactApplyContact;
-            _contextAccessor = contextAccessor;
-            _contactsApiClient = contactsApiClient;
-            _organisationsApiClient = organisationsApiClient;
         }
 
         [HttpGet]
@@ -46,16 +33,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [HttpGet]
         [Route("GoToApplyToAssessStandard")]
         [TypeFilter(typeof(MenuFilter), Arguments = new object[] { Pages.Standards })]
-        public async Task<IActionResult> GoToApplyToAssessStandard()
+        public IActionResult GoToApplyToAssessStandard()
         {
-            var signinId = _contextAccessor.HttpContext.User?.Claims.FirstOrDefault(c => c.Type == "sub")?.Value;
-            var applyContact = await _contactApplyContact.GetApplyContactBySignInId(Guid.Parse(signinId));
-            if (applyContact == null)
-            {
-                await _contactsApiClient.MigrateSingleContactToApply(Guid.Parse(signinId));
-            }
-            
-            return Redirect($"{_webConfiguration.ApplyBaseAddress}/Applications");
+            return Redirect($"/Application");
         }
     }
 }

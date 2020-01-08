@@ -4,8 +4,9 @@
 <html lang="en" class="govuk-template ">
 <head>
     <environment exclude="Development">
-        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-120145707-1"></script>
-        <script>window.dataLayer = window.dataLayer || []; function gtag() { dataLayer.push(arguments); } gtag('js', new Date()); gtag('config', 'UA-120145707-1');</script>
+        <!-- Google Tag Manager -->
+         <script>(function (w, d, s, l, i) { w[l] = w[l] || []; w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' }); var f = d.getElementsByTagName(s)[0], j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.async = true; j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl; f.parentNode.insertBefore(j, f); })(window, document, 'script', 'dataLayer', 'GTM-MKHR6KG');</script>        
+        <!-- End Google Tag Manager -->
     </environment>
     <title>@ViewData["Title"]</title>
 
@@ -37,20 +38,23 @@
     </environment>
 
     <meta property="og:image" content="/assets/images/govuk-opengraph-image.png">
+    
+    @{await Html.RenderPartialAsync("_ZenDeskWidget"); }
 
 </head>
 
-<body class="govuk-template__body ">
-
+<body class="govuk-template__body ">    
+    
     <script>
         document.body.className = ((document.body.className) ? document.body.className + ' js-enabled' : 'js-enabled');
     </script>
 
     <environment exclude="Development">
-        <script>(function (w, d, s, l, i) { w[l] = w[l] || []; w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' }); var f = d.getElementsByTagName(s)[0], j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.async = true; j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl; f.parentNode.insertBefore(j, f); })(window, document, 'script', 'dataLayer', 'GTM-MKHR6KG');</script>
+        <!-- Google Tag Manager (noscript) -->
         <noscript>
             <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MKHR6KG" height="0" width="0" style="display:none;visibility:hidden"></iframe>
         </noscript>
+        <!-- End Google Tag Manager (noscript) -->
     </environment>
 
     <a href="#main-content" class="govuk-skip-link">Skip to main content</a>
@@ -102,7 +106,7 @@
                 <div class="govuk-footer__meta-item govuk-footer__meta-item--grow">
                     <h2 class="govuk-visually-hidden">Support links</h2>
                     <ul class="govuk-footer__inline-list">
-                        
+
                         @RenderSection("FooterLinks", required: false)
                     </ul>
                     <svg role="presentation" focusable="false" class="govuk-footer__licence-logo" xmlns="http://www.w3.org/2000/svg"
