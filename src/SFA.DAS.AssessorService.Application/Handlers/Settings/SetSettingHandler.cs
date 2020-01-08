@@ -15,9 +15,10 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Standards
             _settingRepository = settingRepository;
         }
 
-        public async Task Handle(SetSettingRequest request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(SetSettingRequest request, CancellationToken cancellationToken)
         {
             await _settingRepository.SetSetting(request.Name, request.Value);
+            return Unit.Value;
         }
     }
 }
