@@ -29,15 +29,16 @@ namespace SFA.DAS.AssessorService.Application.Handlers.UserManagement
             _organisationQueryRepository = organisationQueryRepository;
         }
 
-        public async Task Handle(ApproveContactRequest message, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(ApproveContactRequest message, CancellationToken cancellationToken)
         {
             const string epaoApproveConfirmTemplate = "EPAOUserApproveConfirm";
-
-            await _contactRepository.UpdateStatus(message.ContactId, ContactStatus.Live);
 
             var contact = await _contactQueryRepository.GetContactById(message.ContactId);
             var organisation = await _organisationQueryRepository.Get(contact.OrganisationId.Value);
 
+            await _contactRepository.UpdateContactWithOrganisationData(new UpdateContactWithOrgAndStausRequest(message.ContactId.ToString(),
+                organisation.Id.ToString(), organisation.EndPointAssessorOrganisationId, ContactStatus.Live));
+            
             var emailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(epaoApproveConfirmTemplate);
 
             await _mediator.Send(new SendEmailRequest(contact.Email,
@@ -49,6 +50,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.UserManagement
                     LoginLink = _config.ServiceLink,
                     ServiceTeam = "Apprenticeship assessment services team"
                 }), cancellationToken);
+            return Unit.Value;
         }
     }
 }

@@ -15,9 +15,11 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ContactHandlers
             _contactRepository = contactRepository;
         }
 
-        public async Task Handle(UpdateContactRequest updateContactRequest, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(UpdateContactRequest updateContactRequest, CancellationToken cancellationToken)
         {           
-            await _contactRepository.Update(updateContactRequest);            
+            await _contactRepository.Update(updateContactRequest);
+
+            return Unit.Value;
         }      
     }
 }

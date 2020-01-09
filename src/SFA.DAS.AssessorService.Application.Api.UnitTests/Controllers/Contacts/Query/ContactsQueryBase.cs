@@ -17,7 +17,6 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Contacts
         protected UkPrnValidator UkPrnValidator;
 
         protected Mock<IContactQueryRepository> ContactQueryRepositoryMock;
-        protected Mock<IContactApplyClient> ContactApplyClientMock;
         protected Mock<IOrganisationQueryRepository> OrganisationQueryRepositoryMock;
 
         protected Mock<IStringLocalizer<ContactQueryController>> ContactControllerLocaliserMock;
@@ -41,7 +40,6 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Contacts
 
             ContactQueryController = new ContactQueryController(
                 ContactQueryRepositoryMock.Object,
-                ContactApplyClientMock.Object,
                 _searchOrganisationForContactsValidator,
                 MediatorMock.Object,
                 ControllerLoggerMock.Object, new Mock<IWebConfiguration>().Object);
@@ -60,7 +58,6 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Contacts
         private void SetupOrchestratorMocks()
         {
             ContactQueryRepositoryMock = new Mock<IContactQueryRepository>();
-            ContactApplyClientMock = new Mock<IContactApplyClient>();
 
             _mockStringLocaliserBuilder = new MockStringLocaliserBuilder();
 

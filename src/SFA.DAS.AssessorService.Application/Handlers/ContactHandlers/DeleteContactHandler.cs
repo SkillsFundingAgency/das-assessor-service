@@ -16,9 +16,11 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ContactHandlers
             _contactRepository = contactRepository;
         }
 
-        public async Task Handle(DeleteContactRequest deleteContactRequest, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(DeleteContactRequest deleteContactRequest, CancellationToken cancellationToken)
         {
             await _contactRepository.Delete(deleteContactRequest.UserName);
+
+            return Unit.Value;
         }
     }
 }

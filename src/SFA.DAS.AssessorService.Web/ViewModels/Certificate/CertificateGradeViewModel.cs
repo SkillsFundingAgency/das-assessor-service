@@ -25,6 +25,13 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
         {
             base.FromCertificate(cert);
             SelectedGrade = CertificateData.OverallGrade;
+
+            if(cert?.StandardCode == 201)
+            {
+                // ON-2352
+                int index = Grades.FindIndex(g => g.Value == CertificateGrade.Fail);
+                Grades[index].Text = "Inadequate";
+            }
         }
 
         public Domain.Entities.Certificate GetCertificateFromViewModel(Domain.Entities.Certificate certificate, CertificateData data)
