@@ -896,8 +896,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         {
             List<Answer> answers = new List<Answer>();
 
-            var questionId = page.Questions.Where(x => x.Input.Type == "ComplexRadio" || x.Input.Type == "Radio").Select(y => y.QuestionId).FirstOrDefault();
-
+            // Add answers from the Form post
             foreach (var keyValuePair in HttpContext.Request.Form.Where(f => !f.Key.StartsWith("__")))
             {
                 if (!keyValuePair.Key.EndsWith("Search"))
@@ -906,32 +905,40 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 }
             }
 
-            if (!answers.Any())
+            // Check if any Page Question is missing and add the default answer
+            foreach(var questionId in page.Questions.Select(q => q.QuestionId))
             {
-                answers.Add(new Answer { QuestionId = questionId, Value = "" });
-            }
-            else if (questionId != null && answers.Any(y => y.QuestionId.Contains(questionId)))
-            {
-                if (answers.All(x => x.Value == "" || Regex.IsMatch(x.Value, "^[,]+$")))
+                if(!answers.Any(a => a.QuestionId == questionId))
                 {
-                    foreach (var answer in answers.Where(y => y.QuestionId.Contains(questionId + ".") && (y.Value == "" || Regex.IsMatch(y.Value, "^[,]+$"))))
-                    {
-                        answer.QuestionId = questionId;
-                        break;
-                    }
-                }
-                else if (answers.Count(y => y.QuestionId.Contains(questionId) && (y.Value == "" || Regex.IsMatch(y.Value, "^[,]+$"))) == 1
-                    && answers.Count(y => y.QuestionId == questionId && y.Value != "") == 0)
-                {
-                    foreach (var answer in answers.Where(y => y.QuestionId.Contains(questionId + ".") && (y.Value == "" || Regex.IsMatch(y.Value, "^[,]+$"))))
-                    {
-                        answer.QuestionId = questionId;
-                    }
+                    // Add default answer if it's missing
+                    answers.Add(new Answer { QuestionId = questionId, Value = string.Empty });
                 }
             }
 
+            #region FurtherQuestion_Processing
+            // Get all questions that have FurtherQuestions in a ComplexRadio
+            var questionsWithFutherQuestions = page.Questions.Where(x => x.Input.Type == "ComplexRadio" && x.Input.Options != null && x.Input.Options.Any(o => o.FurtherQuestions.Any()));
+
+            foreach (var question in questionsWithFutherQuestions)
+            {
+                var answerForQuestion = answers.FirstOrDefault(a => a.QuestionId == question.QuestionId);
+
+                // Remove FurtherQuestion answers to all other Options as they were not selected and thus should not be stored
+                foreach (var furtherQuestion in question.Input.Options.Where(opt => opt.Value != answerForQuestion?.Value && opt.FurtherQuestions != null).SelectMany(opt => opt.FurtherQuestions))
+                {
+                    foreach (var answer in answers.Where(a => a.QuestionId == furtherQuestion.QuestionId))
+                    {
+                        answer.Value = string.Empty;
+                    }
+                }
+            }
+            #endregion FurtherQuestion_Processing
+
+            // Address inputs require special processing
             if (page.Questions.Any(x => x.Input.Type == "Address"))
-                return ProcessPageVmQuestionsForAddress(page,answers);
+            {
+                answers = ProcessPageVmQuestionsForAddress(page, answers);
+            }
 
             return answers;
         }
