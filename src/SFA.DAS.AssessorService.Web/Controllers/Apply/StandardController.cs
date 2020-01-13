@@ -95,7 +95,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
             await _apiClient.UpdateStandardData(id, standardCode, model.SelectedStandard?.ReferenceNumber, model.SelectedStandard.Title);
 
-            return RedirectToAction("Applications", "Application");
+            return RedirectToAction("SequenceSignPost","Application", new { Id = id });
         }
 
         private  bool CanUpdateApplicationAsync(ApplicationResponse application)

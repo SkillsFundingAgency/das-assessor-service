@@ -7,13 +7,9 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using OfficeOpenXml.FormulaParsing.Excel.Functions.DateTime;
-using OfficeOpenXml.FormulaParsing.Excel.Functions.Text;
-using SFA.DAS.Apprenticeships.Api.Types.Exceptions;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Apply;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
@@ -111,7 +107,15 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             var signinId = User.Claims.First(c => c.Type == "sub")?.Value;
             var contact = await GetUserContact(signinId);
             var org = await _orgApiClient.GetOrganisationByUserId(contact.Id);
-          
+
+            var existingApplications = (await _applicationApiClient.GetApplications(contact.Id, false))?.Where( x=> x.OrganisationId == org.Id);
+            if(existingApplications != null)
+            {
+                var existingEmptyApplication = existingApplications.SingleOrDefault(x => x.StandardCode == null);
+                if(existingEmptyApplication != null)
+                    return RedirectToAction("SequenceSignPost", new { existingEmptyApplication.Id });
+            }
+
             var applicationStartRequest = new StartApplicationRequest
             {
                 UserReference = contact.Id.ToString(),
@@ -255,7 +259,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         }
 
         [HttpGet("/Application/{Id}/Sequences/{sequenceNo}/Sections/{sectionNo}/Pages/{pageId}"), ModelStatePersist(ModelStatePersist.RestoreEntry)]
-        public async Task<IActionResult> Page(Guid Id, int sequenceNo, int sectionNo, string pageId, string __redirectAction)
+        public async Task<IActionResult> Page(Guid Id, int sequenceNo, int sectionNo, string pageId, string __redirectAction, string __summaryLink = "Show")
         {
             var application = await _applicationApiClient.GetApplication(Id);
             if (!CanUpdateApplication(application, sequenceNo, sectionNo))
@@ -271,9 +275,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             var pageContext = BuildPageContext(application, sequence);
             if (!ModelState.IsValid)
             {
+
                 // when the model state has errors the page will be displayed with the values which failed validation
                 var page = JsonConvert.DeserializeObject<Page>((string)TempData["InvalidPage"]);
-                
                 page = await GetDataFedOptions(page);
 
                 var errorMessages = !ModelState.IsValid
@@ -288,9 +292,10 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 {
                     page.Title = section.Title;
                 }
-                
+
+                UpdateValidationDetailsForAddress(page, errorMessages);
                 viewModel = new PageViewModel(Id, sequenceNo, sectionNo, pageId, page, pageContext, __redirectAction,
-                    returnUrl, errorMessages);
+                    returnUrl, errorMessages, __summaryLink);
             }
             else
             {
@@ -323,7 +328,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                     }
                     
                     viewModel = new PageViewModel(Id, sequenceNo, sectionNo, page.PageId, page, pageContext, __redirectAction,
-                        returnUrl, null);
+                        returnUrl, null, __summaryLink);
 
                 }
                 catch (Exception ex)
@@ -355,6 +360,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
             try
             {
+                string __summaryLink = HttpContext.Request.Form["__summaryLink"];
+
                 var page = await _qnaApiClient.GetPageBySectionNo(application.ApplicationId, sequenceNo, sectionNo, pageId);
 
                 if (page.AllowMultipleAnswers)
@@ -371,7 +378,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                                 sequenceNo,
                                 sectionNo,
                                 pageId = pageAddResponse.Page.PageId,
-                                __redirectAction
+                                __redirectAction,
+                                __summaryLink
                             });
                         }
 
@@ -391,7 +399,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                             SetResponseValidationErrors(pageAddResponse?.ValidationErrors, page);
                             if (!page.AllFeedbackIsCompleted || pageAddResponse?.ValidationErrors.Count > 0)
                             {
-                                return RedirectToAction("Page", new { Id, sequenceNo, sectionNo, pageId, __redirectAction });
+                                return RedirectToAction("Page", new { Id, sequenceNo, sectionNo, pageId, __redirectAction, __summaryLink });
                             }
                             return RedirectToAction("Feedback", new { Id });
                         }
@@ -407,7 +415,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                                     {
                                         if (page.Next.Exists(y => y.Conditions.Exists(x => x.QuestionId == answer.QuestionId || x.QuestionTag == answer.QuestionId)))
                                         {
-                                            return RedirectToNextAction(Id, sequenceNo, sectionNo, __redirectAction, nextAction.Action, nextAction.ReturnId);
+                                            return RedirectToNextAction(Id, sequenceNo, sectionNo, __redirectAction, nextAction.Action, nextAction.ReturnId, "Hide");
                                         }
                                         break;
                                     }
@@ -434,6 +442,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 {
                     return BadRequest("Page is not of a type of Multiple Answers");
                 }
+                
+                return RedirectToAction("Page", new { Id, sequenceNo, sectionNo, pageId, __redirectAction, __summaryLink });
             }
             catch (Exception ex)
             {
@@ -441,8 +451,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                     return RedirectToAction("Applications");
                 throw ex;
             }
-
-            return RedirectToAction("Page", new { Id, sequenceNo, sectionNo, pageId, __redirectAction });
         }
 
         [HttpPost("/Application/{Id}/Sequences/{sequenceNo}/Sections/{sectionNo}/Pages/{pageId}"), ModelStatePersist(ModelStatePersist.Store)]
@@ -455,6 +463,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 return RedirectToAction("Sequence", new { Id, sequenceNo });
             try
             {
+                string __summaryLink = HttpContext.Request.Form["__summaryLink"];
                 var page = await _qnaApiClient.GetPageBySectionNo(application.ApplicationId, sequenceNo, sectionNo, pageId);
                 var fileupload = page.Questions?.Any(q => q.Input.Type == "FileUpload");
                 var answers = GetAnswersFromForm(page);
@@ -481,7 +490,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                             if (page.HasFeedback && page.HasNewFeedback && !page.AllFeedbackIsCompleted)
                             {
                                 SetAnswerNotUpdated(page);
-                                return RedirectToAction("Page", new { Id, sequenceNo, sectionNo, pageId, __redirectAction });
+                                return RedirectToAction("Page", new { Id, sequenceNo, sectionNo, pageId, __redirectAction, __summaryLink });
                             }
                             if (FileValidator.FileValidationPassed(answers, page, errorMessages, ModelState, HttpContext.Request.Form.Files))
                                 return RedirectToAction("Feedback", new { Id });
@@ -523,7 +532,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                         {
                             if (page.Next.Exists(y => y.Conditions.Exists(x => x.QuestionId == answer.QuestionId || x.QuestionTag == answer.QuestionId)))
                             {
-                                return RedirectToNextAction(Id, sequenceNo, sectionNo, __redirectAction, updatePageResult.NextAction, updatePageResult.NextActionId);
+                                return RedirectToNextAction(Id, sequenceNo, sectionNo, __redirectAction, updatePageResult.NextAction, updatePageResult.NextActionId, "Hide");
                             }
                             break;
                         }
@@ -544,15 +553,17 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
                 SetResponseValidationErrors(updatePageResult?.ValidationErrors, page);
 
+                return RedirectToAction("Page", new { Id, sequenceNo, sectionNo, pageId, __redirectAction, __summaryLink });
             }
             catch (Exception ex)
-            {
+            {  
                 if (ex.Message.Equals("Could not find the page", StringComparison.OrdinalIgnoreCase))
                     return RedirectToAction("Applications");
+
+                _logger.LogError(ex, ex.Message);
+
                 throw ex;
             }
-
-            return RedirectToAction("Page", new { Id, sequenceNo, sectionNo, pageId, __redirectAction });
         }
 
 
@@ -577,7 +588,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         }
 
         [HttpPost("/Application/DeleteAnswer")]
-        public async Task<IActionResult> DeleteAnswer(Guid Id, int sequenceNo, int sectionNo, string pageId, Guid answerId, string __redirectAction)
+        public async Task<IActionResult> DeleteAnswer(Guid Id, int sequenceNo, int sectionNo, string pageId, Guid answerId, string __redirectAction, string __summaryLink = "False")
         {
             var application = await _applicationApiClient.GetApplication(Id);
             if (!CanUpdateApplication(application, sequenceNo, sectionNo))
@@ -594,7 +605,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 _logger.LogError($"Page answer removal errored : {ex} ");
             }
 
-            return RedirectToAction("Page", new { Id, sequenceNo, sectionNo, pageId, __redirectAction });
+            return RedirectToAction("Page", new { Id, sequenceNo, sectionNo, pageId, __redirectAction, __summaryLink });
         }
 
         [HttpGet("Application/{Id}/Section/{sectionId}/Page/{pageId}/Question/{questionId}/{filename}/Download")]
@@ -753,8 +764,19 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             SetResponseValidationErrors(updatePageResult?.ValidationErrors, page);
         }
 
-        private static bool HasAtLeastOneAnswerChanged(Page page,List<Answer> answers)
+        private bool HasAtLeastOneAnswerChanged(Page page,List<Answer> answers)
         {
+            _logger.LogInformation($"HasAtLeastOneAnswerChanged -> Is page null? {(page == null ? "Yes": "No")}");
+            _logger.LogInformation($"HasAtLeastOneAnswerChanged -> page.Questions null? {(page.Questions == null ? "Yes": "No")}");
+
+            foreach (var pageQuestion in page.Questions)
+            {
+                _logger.LogInformation($"HasAtLeastOneAnswerChanged -> page.Question.Id {pageQuestion.QuestionId} Input null? {(pageQuestion.Input == null ? "Yes": "No")}");
+                _logger.LogInformation($"HasAtLeastOneAnswerChanged -> page.Question.Id {pageQuestion.QuestionId} Input.Type null? {(pageQuestion.Input.Type == null ? "Yes": "No")}");
+            }
+            
+            _logger.LogInformation($"HasAtLeastOneAnswerChanged -> Checks ok.  Page JSON: {JsonConvert.SerializeObject(page)}");
+            
             var atLeastOneAnswerChanged = page.Questions.Any(q => q.Input.Type == "FileUpload" );
 
             foreach (var question in page.Questions)
@@ -822,14 +844,14 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
         private static Page StoreEnteredAnswers(List<Answer> answers, Page page)
         {
-            if(answers != null && answers.Any() && page.PageOfAnswers != null &&  page.PageOfAnswers.Any( x => x.Answers?.Count > 0))
+            if(answers != null && answers.Any() && page.PageOfAnswers != null)
                 page.PageOfAnswers.Add(new PageOfAnswers { Answers = answers });
 
             return page;
         }
 
 
-        private RedirectToActionResult RedirectToNextAction(Guid Id, int sequenceNo, int sectionNo, string redirectAction, string nextAction, string nextActionId)
+        private RedirectToActionResult RedirectToNextAction(Guid Id, int sequenceNo, int sectionNo, string redirectAction, string nextAction, string nextActionId, string __summaryLink = "Show")
         {
             if (nextAction == "NextPage")
             {
@@ -839,7 +861,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                     sequenceNo,
                     sectionNo,
                     pageId = nextActionId,
-                    __redirectAction = redirectAction
+                    __redirectAction = redirectAction,
+                    __summaryLink
                 });
             }
 
@@ -1098,6 +1121,33 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             }
 
             return canUpdate;
+        }
+
+        //Todo: Remove this function if and when the _Address.cshtml is refactored or the qna modelstate 
+        //reflects the keys that are set in the _Address.cshtml. Currently the ValidationErrorDetailTagHelper will not 
+        //update the address fields because of the keys mismatch.
+        private static void UpdateValidationDetailsForAddress(Page page, List<ValidationErrorDetail> errorMessages)
+        {
+            var question = page.Questions.SingleOrDefault(x => x.Input.Type == "Address");
+            if (question != null)
+            {
+                foreach (var error in errorMessages)
+                {
+                    switch (error.ErrorMessage)
+                    {
+                        case "Enter building and street":
+                            error.Field = $"{question.QuestionId}_Key_AddressLine1";
+                            break;
+                        case "Enter town or city":
+                            error.Field = $"{question.QuestionId}_Key_AddressLine3";
+                            break;
+                        case "Enter postcode":
+                            error.Field = $"{question.QuestionId}_Key_Postcode";
+                            break;
+                    }
+                }
+            }
+
         }
     }
 }

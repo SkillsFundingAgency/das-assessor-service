@@ -79,7 +79,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 case LoginResult.InvalidRole:
                     return RedirectToAction("InvalidRole", "Home");
                 case LoginResult.InvitePending:
-                    ResetCookies();
+                    //ResetCookies();
                     _sessionService.Set("EndPointAssessorOrganisationId", epaoId);
                     return RedirectToAction("InvitePending", "Home");
                 case LoginResult.Applying:
@@ -126,7 +126,30 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 var deniedPrivilegeContext = JsonConvert.DeserializeObject<DeniedPrivilegeContext>(TempData["DeniedPrivilegeContext"].ToString());
 
                 var userId = Guid.Parse(User.FindFirst("UserId").Value);
-                var organisation = await _organisationsApiClient.GetOrganisationByUserId(userId);
+                var user = await _contactsApiClient.GetById(userId);
+                OrganisationResponse organisation = null;
+                try
+                {
+                    organisation = await _organisationsApiClient.GetOrganisationByUserId(userId);
+
+                }catch(Exception ex)
+                {
+                    _logger.LogWarning(ex.Message, ex);
+                    if(user.OrganisationId == null && user.Status == ContactStatus.Live) {
+                        return RedirectToAction("Index","OrganisationSearch");
+                    }
+                }
+
+                if(user.OrganisationId != null && user.Status == ContactStatus.InvitePending)
+                {
+                    return RedirectToAction("InvitePending", "Home");
+                }
+
+                if(organisation != null && organisation.Status == OrganisationStatus.Applying || 
+                    organisation.Status == OrganisationStatus.New)
+                {
+                    return RedirectToAction("Index", "Dashboard");
+                }
 
                 var privilege = (await _contactsApiClient.GetPrivileges()).Single(p => p.Id == deniedPrivilegeContext.PrivilegeId);
 

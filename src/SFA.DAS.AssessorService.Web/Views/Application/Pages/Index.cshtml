@@ -72,7 +72,7 @@
                 @* no action is specified for the form, post back to the get url to preserve the page hierarchy parameters *@
         <form method="post" novalidate enctype="multipart/form-data">
             <input type="hidden" id="__redirectAction" name="__redirectAction" value="@Model.RedirectAction" />
-
+            <input type="hidden" id="__summaryLink" name="__summaryLink" value="@Model.SummaryLink" />
             @if (Model.Questions.Count() == 1)
             {
                 foreach (var question in Model.Questions)
@@ -196,23 +196,27 @@
             }
 
 
-
-
             <button type="submit" class="govuk-button">Save and continue</button>
 
             <partial name="~/Views/Application/Pages/DetailsComponent.cshtml" for="Details" />
         </form>
             }
 
-            <p class="govuk-body">
-                @if (Model.RedirectAction == "Feedback")
+        <p class="govuk-body">
+            @if (Model.RedirectAction == "Feedback")
+            {
+                @if (Model.SummaryLink == "Show")
                 {
                     <a class="govuk-link" href="@Url.Action("Feedback", "Application", new { Model.Id })">Return to summary</a>
                 }
-                else
+            }
+            else
+            {
+                @if (Model.SummaryLink == "Show")
                 {
                     <a class="govuk-link" href="@Url.Action("Section", "Application", new { Model.Id, Model.SequenceNo, Model.SectionNo })">Return to summary</a>
                 }
+            }
             </p>
         </div>
     </div>

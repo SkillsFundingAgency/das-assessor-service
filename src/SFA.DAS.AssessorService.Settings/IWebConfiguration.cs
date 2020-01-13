@@ -19,7 +19,7 @@
         ClientApiAuthentication QnaApiAuthentication { get; set; }
         string ServiceLink { get; set; }
         DfeSignInConfig DfeSignIn { get; set; }
-
+        
         string RoatpApiClientBaseUrl { get; set; }
         ClientApiAuthentication RoatpApiAuthentication { get; set; }
 
@@ -38,5 +38,8 @@
         ClientApiAuthentication SandboxClientApiAuthentication { get; set; }
 
         #endregion
+
+        string ZenDeskSnippetKey { get; set; }
+        string ZenDeskSectionId { get; set; }
     }
 }
