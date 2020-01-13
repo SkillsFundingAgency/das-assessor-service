@@ -1,0 +1,57 @@
+@model SFA.DAS.AssessorService.Web.ViewModels.Apply.SubmittedViewModel
+@{
+    ViewBag.Title = "Application submitted";
+    Layout = "_Layout";
+}
+
+<main class="govuk-main-wrapper govuk-main-wrapper--l" id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+
+            <div class="govuk-panel govuk-panel--confirmation">
+                <h1 class="govuk-panel__title">
+                    @if (string.IsNullOrEmpty(Model.StandardName))
+                    {
+                        <text>Stage 1 of your application has been submitted</text>
+                    }
+                    else
+                    {
+                        <text>Stage 2 of your application has been submitted</text>
+                    }
+                </h1>
+                <div class="govuk-panel__body">
+                    @if (!string.IsNullOrEmpty(Model.StandardName))
+                    {
+                        <div class="govuk-!-margin-bottom-4">
+                            <span class="govuk-!-font-size-24">Standard applied for</span>
+                            <br />
+                            <strong>@Model.StandardName</strong>
+                        </div>
+                    }
+                    @if (!string.IsNullOrEmpty(Model.ReferenceNumber))
+                    {
+                        <div>
+                            <span class="govuk-!-font-size-24">Your reference number</span>
+                            <br />
+                            <strong>@Model.ReferenceNumber</strong>
+                        </div>
+                    }
+                </div>
+            </div>
+            
+            <p class="govuk-body">We have sent you a confirmation email.</p>
+
+            <h3 class="govuk-heading-m">What happens next</h3>
+
+            <p class="govuk-body">We will email the outcome to you within 2 weeks.</p>
+
+            <p class="govuk-body"><a href="@Model.FeedbackUrl" target="_blank" class="govuk-link">What do you think of this service?</a> (takes 60 seconds)</p>
+            @* LINK BELOW REMOVED FOR PRIVATE BETA *@
+            @*
+            <p class="govuk-body">
+                <a asp-action="Applications" asp-controller="Application" class="govuk-link">Return to application overview</a>
+            </p>
+            *@
+        </div>
+    </div>
+</main>

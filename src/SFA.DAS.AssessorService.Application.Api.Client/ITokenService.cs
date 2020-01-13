@@ -5,7 +5,7 @@
         string GetToken();
     }
     
-    public interface IApplyTokenService : ITokenService
+    public interface IQnaTokenService : ITokenService
     {
     }
 }
