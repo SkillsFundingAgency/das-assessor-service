@@ -30,7 +30,13 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> GetAssessorSetting(string name)
         {
-            return Ok(await _mediator.Send(new GetSettingRequest { Name = name }));
+            var value = await _mediator.Send(new GetSettingRequest { Name = name });
+            if (value == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(value);
         }
     }
 }

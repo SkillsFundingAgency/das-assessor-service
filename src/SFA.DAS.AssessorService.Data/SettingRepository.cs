@@ -26,7 +26,7 @@ namespace SFA.DAS.AssessorService.Data
             return value;
         }
 
-        public async Task SetSetting(string name, string value)
+        public async Task<bool> SetSetting(string name, string value)
         {
             const string sql = "SELECT [Name] FROM [Settings] WHERE [Name] = @Name";
             var existingName = await _unitOfWork.Connection.QueryFirstOrDefaultAsync<string>(
@@ -44,15 +44,17 @@ namespace SFA.DAS.AssessorService.Data
                     $@"VALUES (@value, @name)",
                     param: new { value, name },
                     transaction: _unitOfWork.Transaction);
+                
+                return true;
             }
-            else
-            {
-                await _unitOfWork.Connection.ExecuteAsync(
+         
+            await _unitOfWork.Connection.ExecuteAsync(
                 "UPDATE [Settings] SET [Value] = @value " +
                 "WHERE [Name] = @name",
                 param: new { value, name },
                 transaction: _unitOfWork.Transaction);
-            }
+            
+            return false;
         }
     }
 }

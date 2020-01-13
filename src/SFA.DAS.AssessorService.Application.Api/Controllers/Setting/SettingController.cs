@@ -29,7 +29,17 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [SwaggerResponse((int) HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> SetAssessorSetting(string name, string value)
         {
-            await _mediator.Send(new SetSettingRequest { Name = name, Value = value });
+            var result = await _mediator.Send(new SetSettingRequest { Name = name, Value = value });
+
+            if(result.SettingResult == SettingResult.Invalid)
+            {
+                return BadRequest(result.ValidationMessage);
+            }
+            if (result.SettingResult == SettingResult.Created)
+            {
+                return CreatedAtRoute(nameof(SettingQueryController.GetAssessorSetting), new { name });
+            }
+
             return Ok();
         }        
     }
