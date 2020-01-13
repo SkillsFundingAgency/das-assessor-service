@@ -1,0 +1,13 @@
+﻿CREATE TABLE [dbo].[Settings]
+(
+	[Id] UNIQUEIDENTIFIER NOT NULL PRIMARY KEY DEFAULT NEWID(), 
+    [Name] VARCHAR(50) NOT NULL, 
+    [Value] NVARCHAR(256) NULL
+)
+GO
+
+CREATE UNIQUE NONCLUSTERED INDEX [IXU_Settings_Name] ON [dbo].[Settings]
+(
+	[Name] ASC
+)
+INCLUDE ([Value]) ON [PRIMARY]
