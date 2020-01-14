@@ -897,16 +897,13 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             List<Answer> answers = new List<Answer>();
 
             // Add answers from the Form post
-            foreach (var keyValuePair in HttpContext.Request.Form.Where(f => !f.Key.StartsWith("__")))
+            foreach (var keyValuePair in HttpContext.Request.Form.Where(f => !f.Key.StartsWith("__") && !f.Key.EndsWith("postcodeSearch")))
             {
-                if (!keyValuePair.Key.EndsWith("Search"))
-                {
-                    answers.Add(new Answer() { QuestionId = keyValuePair.Key, Value = keyValuePair.Value });
-                }
+                answers.Add(new Answer() { QuestionId = keyValuePair.Key, Value = keyValuePair.Value });
             }
 
             // Check if any Page Question is missing and add the default answer
-            foreach(var questionId in page.Questions.Select(q => q.QuestionId))
+            foreach (var questionId in page.Questions.Select(q => q.QuestionId))
             {
                 if(!answers.Any(a => a.QuestionId == questionId))
                 {
@@ -981,7 +978,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                         formVariable.Value.ToString());
                 }
 
-                // Remove anything that contains _Key_
+                // Remove anything that contains _Key_ as it has now been processed correctly
                 answers = answers.Where(x => !x.QuestionId.Contains("_Key_")).ToList();
 
                 foreach (var answerValue in answerValueDictionary)
