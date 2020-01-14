@@ -17,28 +17,15 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Standards
 
         public async Task<SetSettingResult> Handle(SetSettingRequest request, CancellationToken cancellationToken)
         {
-            var result = new SetSettingResult();
-            if(request.Name.Length == 0 || request.Name.Length > 50)
+            var settingExists = (await _settingRepository.GetSetting(request.Name) != null);
+            if (settingExists)
             {
-                result.ValidationMessage = "The name of a setting must be between 1 and 50 characters";
+                await _settingRepository.UpdateSetting(request.Name, request.Value);
+                return SetSettingResult.Updated;
             }
 
-            if (request.Value.Length == 0 || request.Value.Length > 256)
-            {
-                result.ValidationMessage = "The value of a setting must be between 1 and 256 characters";
-            }
-
-            if (string.IsNullOrEmpty(result.ValidationMessage))
-            {
-                result.SettingResult =
-                    await _settingRepository.SetSetting(request.Name, request.Value) ? SettingResult.Created : SettingResult.Updated;
-            }
-            else
-            {
-                result.SettingResult = SettingResult.Invalid;
-            }
-
-            return result;
+            await _settingRepository.CreateSetting(request.Name, request.Value);
+            return SetSettingResult.Created;
         }
     }
 }

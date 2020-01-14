@@ -8,16 +8,9 @@ namespace SFA.DAS.AssessorService.Api.Types.Models
         public string Value { get; set; }
     }
 
-    public class SetSettingResult
-    {
-        public SettingResult SettingResult { get; set; }
-        public string ValidationMessage { get; set; }
-    }
-
-    public enum SettingResult
+    public enum SetSettingResult
     {
         Created,
-        Updated,
-        Invalid
+        Updated
     }
 }

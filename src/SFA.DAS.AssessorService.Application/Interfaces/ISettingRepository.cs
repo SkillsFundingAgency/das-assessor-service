@@ -5,6 +5,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
     public interface ISettingRepository
     {
         Task<string> GetSetting(string name);
-        Task <bool> SetSetting(string name, string value);
+        Task CreateSetting(string name, string value);
+        Task UpdateSetting(string name, string value);
     }
 }
