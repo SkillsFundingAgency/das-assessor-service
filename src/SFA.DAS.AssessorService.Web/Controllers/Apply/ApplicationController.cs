@@ -785,7 +785,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
                 atLeastOneAnswerChanged = atLeastOneAnswerChanged
                     ? true
-                    : !answer?.Value.Equals(existingAnswer.Value, StringComparison.OrdinalIgnoreCase) ?? answer != existingAnswer;
+                    : !answer?.Value.Equals(existingAnswer?.Value, StringComparison.OrdinalIgnoreCase) ?? answer != existingAnswer;
 
                 if (question.Input.Options != null)
                 {
@@ -804,7 +804,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
                                     atLeastOneFutherQuestionAnswerChanged = atLeastOneFutherQuestionAnswerChanged
                                         ? true
-                                        : !furtherAnswer?.Value.Equals(existingFutherAnswer.Value, StringComparison.OrdinalIgnoreCase) ?? furtherAnswer != existingFutherAnswer;
+                                        : !furtherAnswer?.Value.Equals(existingFutherAnswer?.Value, StringComparison.OrdinalIgnoreCase) ?? furtherAnswer != existingFutherAnswer;
                                 }
 
                                 atLeastOneAnswerChanged = atLeastOneAnswerChanged ? true : atLeastOneFutherQuestionAnswerChanged;
