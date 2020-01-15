@@ -67,34 +67,41 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Apply
             LinkTitle = page.LinkTitle;
             DisplayType = page.DisplayType;
             PageId = page.PageId;
+            SectionId = page.SectionId ?? Guid.Empty;
+
+            Feedback = page.Feedback;
+            HasFeedback = page.HasFeedback;
+
+            BodyText = page.BodyText;
+            Details = page.Details;
 
             AllowMultipleAnswers = page.AllowMultipleAnswers;
-            if (errorMessages != null && errorMessages.Any())
+            PageOfAnswers = page.PageOfAnswers ?? new List<PageOfAnswers>();
+
+            // MultipleAnswer questions stores the last failed attempt as a previous answer so it needs to be removed
+            if (AllowMultipleAnswers && errorMessages != null && errorMessages.Any())
             {
                 PageOfAnswers = page.PageOfAnswers.Take(page.PageOfAnswers.Count - 1).ToList();
             }
-            else
-            {
-                PageOfAnswers = page.PageOfAnswers;
-            }
 
-            SectionId = page.SectionId ?? Guid.Empty;
-
-            var questions = page.Questions;
             var answers = new List<Answer>();
-            foreach (var pageAnswer in page.PageOfAnswers)
+
+            // Grab the latest answer for each question stored within the page
+            foreach (var pageAnswer in page.PageOfAnswers.SelectMany(poa => poa.Answers))
             {
-                foreach(var ans in pageAnswer.Answers)
+                var currentAnswer = answers.FirstOrDefault(a => a.QuestionId == pageAnswer.QuestionId);
+                if (currentAnswer is null)
                 {
-                    if (!answers.Exists(x =>ans.QuestionId == x.QuestionId))
-                    {
-                        answers.Add(ans);
-                    }
+                    answers.Add(new Answer() { QuestionId = pageAnswer.QuestionId, Value = pageAnswer.Value });
+                }
+                else
+                {
+                    currentAnswer.Value = pageAnswer.Value;
                 }
             }
 
             Questions = new List<QuestionViewModel>();
-            Questions.AddRange(questions.Select(q => new QuestionViewModel()
+            Questions.AddRange(page.Questions.Select(q => new QuestionViewModel()
             {
                 Label = q.Label,
                 ShortLabel = q.ShortLabel,
@@ -117,12 +124,6 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Apply
                 PageId = PageId,
                 RedirectAction = RedirectAction
             }));
-
-            Feedback = page.Feedback;
-            HasFeedback = page.HasFeedback;
-            BodyText = page.BodyText;
-
-            Details = page.Details;
 
             foreach (var question in Questions)
             {
@@ -168,7 +169,8 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Apply
                 JToken.Parse(json);
                 return JsonConvert.DeserializeObject<dynamic>(json);
 
-            }catch(Exception)
+            }
+            catch(Exception)
             {
                 return null;
             }
