@@ -30,24 +30,29 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Apply
 
         public string DisplayAnswerValue(Answer answer)
         {
-            if (Type == "Date" || Type == "MonthAndYear")
+            var answerValue = string.Empty;
+
+            if (!string.IsNullOrWhiteSpace(answer?.Value))
             {
                 var dateparts = answer.Value.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries);
 
-                if (Type == "Date")
+                if ("Date".Equals(Type, StringComparison.InvariantCultureIgnoreCase) && dateparts.Length == 3)
                 {
-                    var datetime = DateTime.Parse($"{dateparts[0]}/{dateparts[1]}/{dateparts[2]}");
-                    return datetime.ToString("dd/MM/yyyy");
+                    if (DateTime.TryParse($"{dateparts[0]}/{dateparts[1]}/{dateparts[2]}", out var datetime))
+                    {
+                        answerValue = datetime.ToString("dd/MM/yyyy");
+                    }
                 }
-                else if (Type == "MonthAndYear")
+                else if ("MonthAndYear".Equals(Type, StringComparison.InvariantCultureIgnoreCase) && dateparts.Length == 2)
                 {
-                    DateTime datetime;
-                    DateTime.TryParse($"{dateparts[0]}/{dateparts[1]}", out datetime);
-                    return datetime.ToString("MM/yyyy");
+                    if (DateTime.TryParse($"{dateparts[0]}/{dateparts[1]}", out var datetime))
+                    {
+                        answerValue = datetime.ToString("MM/yyyy");
+                    }
                 }
             }
 
-            return answer.Value;
+            return answerValue;
         }
     }
 }
