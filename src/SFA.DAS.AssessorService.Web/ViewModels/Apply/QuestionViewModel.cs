@@ -30,7 +30,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Apply
 
         public string DisplayAnswerValue(Answer answer)
         {
-            var answerValue = string.Empty;
+            var answerValue = answer?.Value;
 
             if (!string.IsNullOrWhiteSpace(answer?.Value))
             {
@@ -52,7 +52,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Apply
                 }
             }
 
-            return answerValue;
+            return answerValue ?? string.Empty;
         }
     }
 }
