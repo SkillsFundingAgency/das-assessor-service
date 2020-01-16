@@ -100,7 +100,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
 
             if (!string.IsNullOrWhiteSpace(request.CharityNumber))
             {
-                request.CompanyNumber = request.CharityNumber.ToUpper();
+                request.CharityNumber = request.CharityNumber.ToUpper();
             }
 
             var organisation = new EpaOrganisation
