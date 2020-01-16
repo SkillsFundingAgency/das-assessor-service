@@ -1,5 +1,5 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
         "environmentName": {
@@ -9,6 +9,9 @@
             "type": "string"
         },
         "apiAppServiceName": {
+            "type": "string"
+        },
+        "appServicePlanName": {
             "type": "string"
         },
         "externalApiAppServiceName": {
@@ -56,7 +59,10 @@
         "serviceBusName": {
             "type": "string"
         },
-        "sharedAppServicePlanName": {
+        "sharedFrontendAppServicePlanName": {
+            "type": "string"
+        },
+        "sharedBackendAppServicePlanName": {
             "type": "string"
         },
         "sharedAppServicePlanResourceGroup": {
@@ -73,6 +79,18 @@
         },
         "keyVaultName": {
             "type": "string"
+        },
+        "appServicePlanInstances": {
+            "type": "int",
+            "defaultValue": 1
+        },
+        "appServicePlanSize": {
+            "type": "string",
+            "defaultValue": "1"
+        },
+        "appServicePlanTier": {
+            "type": "string",
+            "defaultValue": "Basic"
         }
     },
     "variables": {
@@ -80,6 +98,34 @@
         "InstanceName": "[if(equals(toUpper(parameters('environmentName')),'PROD'),'',parameters('environmentName'))]"
     },
     "resources": [
+        {
+            "condition": "[greater(length(parameters('uiCustomHostname')), 0)]",
+            "apiVersion": "2017-05-10",
+            "name": "ui-app-service-certificate",
+            "resourceGroup": "[parameters('sharedAppServicePlanResourceGroup')]",
+            "type": "Microsoft.Resources/deployments",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('deploymentUrlBase'),'app-service-certificate.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "keyVaultCertificateName": {
+                        "value": "[parameters('uiKeyvaultCertificateName')]"
+                    },
+                    "keyVaultName": {
+                        "value": "[parameters('keyVaultName')]"
+                    },
+                    "keyVaultResourceGroup": {
+                        "value": "[parameters('keyVaultResourceGroupName')]"
+                    },
+                    "serverFarmId": {
+                        "value": "[resourceId(parameters('sharedAppServicePlanResourceGroup'), 'Microsoft.Web/serverfarms', parameters('sharedFrontendAppServicePlanName'))]"
+                    }
+                }
+            }
+        },
         {
             "name": "[concat('AppService-', parameters('uiAppServiceName'))]",
             "type": "Microsoft.Resources/deployments",
@@ -95,7 +141,7 @@
                         "value": "[parameters('uiAppServiceName')]"
                     },
                     "appServicePlanName": {
-                        "value": "[parameters('sharedAppServicePlanName')]"
+                        "value": "[parameters('sharedFrontendAppServicePlanName')]"
                     },
                     "appServicePlanResourceGroup": {
                         "value": "[parameters('sharedAppServicePlanResourceGroup')]"
@@ -129,7 +175,7 @@
                         "value": "[parameters('uiCustomHostname')]"
                     },
                     "certificateThumbprint": {
-                        "value": "[reference(resourceId(parameters('sharedAppServicePlanResourceGroup'), 'Microsoft.Web/certificates', parameters('uiKeyvaultCertificateName')), '2016-03-01').Thumbprint]"
+                        "value": "[reference('ui-app-service-certificate').outputs.certificateThumbprint.value]"
                     }
                 }
             }
@@ -157,7 +203,7 @@
                         "value": "[parameters('keyVaultResourceGroupName')]"
                     },
                     "serverFarmId": {
-                        "value": "[resourceId(parameters('sharedAppServicePlanResourceGroup'), 'Microsoft.Web/serverfarms', parameters('sharedAppServicePlanName'))]"
+                        "value": "[resourceId(parameters('sharedAppServicePlanResourceGroup'), 'Microsoft.Web/serverfarms', parameters('sharedBackendAppServicePlanName'))]"
                     }
                 }
             }
@@ -177,7 +223,7 @@
                         "value": "[parameters('apiAppServiceName')]"
                     },
                     "appServicePlanName": {
-                        "value": "[parameters('sharedAppServicePlanName')]"
+                        "value": "[parameters('sharedBackendAppServicePlanName')]"
                     },
                     "appServicePlanResourceGroup": {
                         "value": "[parameters('sharedAppServicePlanResourceGroup')]"
@@ -219,13 +265,38 @@
                         "value": "[parameters('apiCustomHostname')]"
                     },
                     "certificateThumbprint": {
-                        "value": "[if(greater(length(parameters('apiCustomHostname')), 0), reference('api-app-service-certificate', '2018-11-01').outputs.certificateThumbprint.value, '')]"
+                        "value": "[reference('api-app-service-certificate').outputs.certificateThumbprint.value]"
                     }
                 }
-            },
-            "dependsOn": [
-                "api-app-service-certificate"
-            ]
+            }
+        },
+        {
+            "condition": "[greater(length(parameters('externalApiCustomHostname')), 0)]",
+            "apiVersion": "2017-05-10",
+            "name": "external-api-app-service-certificate",
+            "resourceGroup": "[parameters('sharedAppServicePlanResourceGroup')]",
+            "type": "Microsoft.Resources/deployments",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('deploymentUrlBase'),'app-service-certificate.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "keyVaultCertificateName": {
+                        "value": "[parameters('externalAPiKeyvaultCertificateName')]"
+                    },
+                    "keyVaultName": {
+                        "value": "[parameters('keyVaultName')]"
+                    },
+                    "keyVaultResourceGroup": {
+                        "value": "[parameters('keyVaultResourceGroupName')]"
+                    },
+                    "serverFarmId": {
+                        "value": "[resourceId(parameters('sharedAppServicePlanResourceGroup'), 'Microsoft.Web/serverfarms', parameters('sharedBackendAppServicePlanName'))]"
+                    }
+                }
+            }
         },
         {
             "apiVersion": "2017-05-10",
@@ -242,7 +313,7 @@
                         "value": "[parameters('externalApiAppServiceName')]"
                     },
                     "appServicePlanName": {
-                        "value": "[parameters('sharedAppServicePlanName')]"
+                        "value": "[parameters('sharedBackendAppServicePlanName')]"
                     },
                     "appServicePlanResourceGroup": {
                         "value": "[parameters('sharedAppServicePlanResourceGroup')]"
@@ -280,12 +351,38 @@
                         "value": "[parameters('externalApiCustomHostname')]"
                     },
                     "certificateThumbprint": {
-                        "value": "[reference(resourceId(parameters('sharedAppServicePlanResourceGroup'), 'Microsoft.Web/certificates', parameters('externalApiKeyvaultCertificateName')), '2016-03-01').Thumbprint]"
+                        "value": "[reference('external-api-app-service-certificate').outputs.certificateThumbprint.value]"
                     }
                 }
-            },
-            "dependsOn": [
-            ]
+            }
+        },
+        {
+            "condition": "[greater(length(parameters('externalApiSandboxCustomHostname')), 0)]",
+            "apiVersion": "2017-05-10",
+            "name": "external-api-sandbox-app-service-certificate",
+            "resourceGroup": "[parameters('sharedAppServicePlanResourceGroup')]",
+            "type": "Microsoft.Resources/deployments",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('deploymentUrlBase'),'app-service-certificate.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "keyVaultCertificateName": {
+                        "value": "[parameters('externalAPiSandboxKeyvaultCertificateName')]"
+                    },
+                    "keyVaultName": {
+                        "value": "[parameters('keyVaultName')]"
+                    },
+                    "keyVaultResourceGroup": {
+                        "value": "[parameters('keyVaultResourceGroupName')]"
+                    },
+                    "serverFarmId": {
+                        "value": "[resourceId(parameters('sharedAppServicePlanResourceGroup'), 'Microsoft.Web/serverfarms', parameters('sharedBackendAppServicePlanName'))]"
+                    }
+                }
+            }
         },
         {
             "apiVersion": "2017-05-10",
@@ -302,7 +399,7 @@
                         "value": "[parameters('externalApiSandboxAppServiceName')]"
                     },
                     "appServicePlanName": {
-                        "value": "[parameters('sharedAppServicePlanName')]"
+                        "value": "[parameters('sharedBackendAppServicePlanName')]"
                     },
                     "appServicePlanResourceGroup": {
                         "value": "[parameters('sharedAppServicePlanResourceGroup')]"
@@ -344,12 +441,10 @@
                         "value": "[parameters('externalApiSandboxCustomHostname')]"
                     },
                     "certificateThumbprint": {
-                        "value": "[reference(resourceId(parameters('sharedAppServicePlanResourceGroup'), 'Microsoft.Web/certificates', parameters('externalApiSandboxKeyvaultCertificateName')), '2016-03-01').Thumbprint]"
+                        "value": "[reference('external-api-sandbox-app-service-certificate').outputs.certificateThumbprint.value]"
                     }
                 }
-            },
-            "dependsOn": [
-            ]
+            }
         },
         {
             "apiVersion": "2017-08-01",
@@ -369,9 +464,7 @@
                         "value": "[parameters('externalApiAppServiceName')]"
                     }
                 }
-            },
-            "dependsOn": [
-            ]
+            }
         },
         {
             "apiVersion": "2017-08-01",
@@ -391,9 +484,7 @@
                         "value": "[parameters('externalApiSandboxAppServiceName')]"
                     }
                 }
-            },
-            "dependsOn": [
-            ]
+            }
         },
         {
             "apiVersion": "2017-08-01",
@@ -413,9 +504,7 @@
                         "value": "[parameters('uiAppServiceName')]"
                     }
                 }
-            },
-            "dependsOn": [
-            ]
+            }
         },
         {
             "apiVersion": "2017-08-01",
@@ -435,9 +524,7 @@
                         "value": "[parameters('apiAppServiceName')]"
                     }
                 }
-            },
-            "dependsOn": [
-            ]
+            }
         },
         {
             "apiVersion": "2017-08-01",
@@ -461,9 +548,7 @@
             "copy": {
                 "name": "AppInsightCopy",
                 "count": "[length(parameters('functionAppNames'))]"
-            },
-            "dependsOn": [
-            ]
+            }
         },
         {
             "name": "StorageAccount",
@@ -514,6 +599,32 @@
             ]
         },
         {
+            "apiVersion": "2017-05-10",
+            "name": "function-app-service-plan",
+            "type": "Microsoft.Resources/deployments",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('deploymentUrlBase'),'app-service-plan.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "appServicePlanName": {
+                        "value": "[parameters('appServicePlanName')]"
+                    },
+                    "aspSize": {
+                        "value": "[parameters('appServicePlanSize')]"
+                    },
+                    "aspInstances": {
+                        "value": "[parameters('appServicePlanInstances')]"
+                    },
+                    "nonASETier": {
+                        "value": "[parameters('appServicePlanTier')]"
+                    }
+                }
+            }
+        },
+        {
             "name": "[concat('FunctionApp-', parameters('functionAppNames')[copyIndex()])]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2017-05-10",
@@ -528,10 +639,10 @@
                         "value": "[parameters('functionAppNames')[copyIndex()]]"
                     },
                     "appServicePlanName": {
-                        "value": "[parameters('sharedAppServicePlanName')]"
+                        "value": "[parameters('appServicePlanName')]"
                     },
                     "appServicePlanResourceGroup": {
-                        "value": "[parameters('sharedAppServicePlanResourceGroup')]"
+                        "value": "[resourceGroup().name]"
                     },
                     "functionAppAppSettings": {
                         "value": [
@@ -599,10 +710,10 @@
                         "value": "[parameters('dataSyncFunctionAppName')]"
                     },
                     "appServicePlanName": {
-                        "value": "[parameters('sharedAppServicePlanName')]"
+                        "value": "[parameters('appServicePlanName')]"
                     },
                     "appServicePlanResourceGroup": {
-                        "value": "[parameters('sharedAppServicePlanResourceGroup')]"
+                        "value": "[resourceGroup().name]"
                     },
                     "functionAppAppSettings": {
                         "value": [
