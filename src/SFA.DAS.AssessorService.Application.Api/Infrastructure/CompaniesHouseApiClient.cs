@@ -50,8 +50,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Infrastructure
 
             if (company != null)
             {
-                isTrading = "active".Equals(company.Status, StringComparison.InvariantCultureIgnoreCase) &&
-                            company.DissolvedOn == null && company.IsLiquidated != true;
+                if(company.Status is null && company.Type == "charitable-incorporated-organisation")
+                {
+                    isTrading = company.DissolvedOn == null && company.IsLiquidated != true;
+                }
+                else if("active".Equals(company.Status, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    isTrading = company.DissolvedOn == null && company.IsLiquidated != true;
+                } 
             }
 
             return isTrading;
