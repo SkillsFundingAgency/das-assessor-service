@@ -428,11 +428,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                         }
                     }
 
-                    if (!page.PageOfAnswers.Any())
-                    {
-                        page.PageOfAnswers = new List<PageOfAnswers>() { new PageOfAnswers() { Answers = new List<Answer>() } };
-                    }
-
                     page = StoreEnteredAnswers(answers, page);
 
                     SetResponseValidationErrors(pageAddResponse?.ValidationErrors, page);
@@ -456,35 +451,40 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         [HttpPost("/Application/{Id}/Sequences/{sequenceNo}/Sections/{sectionNo}/Pages/{pageId}"), ModelStatePersist(ModelStatePersist.Store)]
         public async Task<IActionResult> SaveAnswers(Guid Id, int sequenceNo, int sectionNo, string pageId, string __redirectAction)
         { 
-            var updatePageResult = new SetPageAnswersResponse();
             var application = await _applicationApiClient.GetApplication(Id);
 
             if (!CanUpdateApplication(application, sequenceNo, sectionNo))
                 return RedirectToAction("Sequence", new { Id, sequenceNo });
+
             try
             {
+                var updatePageResult = default(SetPageAnswersResponse);
+
                 string __summaryLink = HttpContext.Request.Form["__summaryLink"];
                 var page = await _qnaApiClient.GetPageBySectionNo(application.ApplicationId, sequenceNo, sectionNo, pageId);
-                var fileupload = page.Questions?.Any(q => q.Input.Type == "FileUpload");
-                var answers = GetAnswersFromForm(page);
+                var isFileUploadPage = page.Questions?.Any(q => q.Input.Type == "FileUpload");
 
+                var answers = new List<Answer>();
 
-                if (HttpContext.Request.Form.Files.Count == 0 && fileupload == false)
+                // NOTE: QnA API stipulates that a Page cannot contain a mixture of FileUploads and other Question Types
+                if (isFileUploadPage == false)
                 {
+                    answers = GetAnswersFromForm(page);
+
                     if (__redirectAction == "Feedback" && !HasAtLeastOneAnswerChanged(page, answers) && !page.AllFeedbackIsCompleted)
                         SetAnswerNotUpdated(page);
                     else
-                        updatePageResult = await _qnaApiClient.AddPageAnswer(application.ApplicationId, page.SectionId.Value, page.PageId, answers);
+                        updatePageResult = await _qnaApiClient.SetPageAnswers(application.ApplicationId, page.SectionId.Value, page.PageId, answers);
                 }
-
-
-                if (fileupload == true)
-                { 
-                    updatePageResult = new SetPageAnswersResponse();
+                else if (isFileUploadPage == true)
+                {
                     var errorMessages = new List<ValidationErrorDetail>();
-                    if (HttpContext.Request.Form.Files.Count == 0 && NothingToUpload(updatePageResult, answers))
-                    {
 
+                    answers = GetAnswersFromFiles();
+
+                    if (answers.Count < 1)
+                    {
+                        // Nothing to upload
                         if (__redirectAction == "Feedback")
                         {
                             if (page.HasFeedback && page.HasNewFeedback && !page.AllFeedbackIsCompleted)
@@ -492,27 +492,28 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                                 SetAnswerNotUpdated(page);
                                 return RedirectToAction("Page", new { Id, sequenceNo, sectionNo, pageId, __redirectAction, __summaryLink });
                             }
-                            if (FileValidator.FileValidationPassed(answers, page, errorMessages, ModelState, HttpContext.Request.Form.Files))
+                            else if (FileValidator.AllRequiredFilesArePresent(page, errorMessages, ModelState))
+                            {
                                 return RedirectToAction("Feedback", new { Id });
+                            }
                         }
-                        else
+                        else if (FileValidator.AllRequiredFilesArePresent(page, errorMessages, ModelState))
                         {
-                            if (FileValidator.FileValidationPassed(answers, page, errorMessages, ModelState, HttpContext.Request.Form.Files))
-                                return ForwardToNextSectionOrPage(page, Id, sequenceNo, sectionNo, __redirectAction);
+                            return ForwardToNextSectionOrPage(page, Id, sequenceNo, sectionNo, __redirectAction);
                         }
                     }
                     else
                     {
                         if (FileValidator.FileValidationPassed(answers, page, errorMessages, ModelState, HttpContext.Request.Form.Files))
                             updatePageResult = await UploadFilesToStorage(application.ApplicationId, page.SectionId.Value, page.PageId, page);
-                    }
-                  
+                    }                  
                 }
 
                 var apiValidationResult = await _apiValidationService.CallApiValidation(page, answers);
                 if (!apiValidationResult.IsValid)
                 {
-                    updatePageResult.ValidationPassed = false;
+                    if (updatePageResult is null) updatePageResult = new SetPageAnswersResponse { ValidationPassed = false };
+
                     if (updatePageResult.ValidationErrors == null)
                     {
                         updatePageResult.ValidationErrors = new List<KeyValuePair<string, string>>();
@@ -544,12 +545,10 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                         return RedirectToNextAction(Id, sequenceNo, sectionNo, __redirectAction, updatePageResult.NextAction, updatePageResult.NextActionId);
                 }
 
-                if (!page.PageOfAnswers.Any())
+                if (isFileUploadPage != true)
                 {
-                    page.PageOfAnswers = new List<PageOfAnswers>() { new PageOfAnswers() { Answers = new List<Answer>() } };
+                    page = StoreEnteredAnswers(answers, page);
                 }
-
-                page = StoreEnteredAnswers(answers, page);
 
                 SetResponseValidationErrors(updatePageResult?.ValidationErrors, page);
 
@@ -786,7 +785,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
                 atLeastOneAnswerChanged = atLeastOneAnswerChanged
                     ? true
-                    : !answer?.Value.Equals(existingAnswer.Value, StringComparison.OrdinalIgnoreCase) ?? answer != existingAnswer;
+                    : !answer?.Value.Equals(existingAnswer?.Value, StringComparison.OrdinalIgnoreCase) ?? answer != existingAnswer;
 
                 if (question.Input.Options != null)
                 {
@@ -805,7 +804,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
                                     atLeastOneFutherQuestionAnswerChanged = atLeastOneFutherQuestionAnswerChanged
                                         ? true
-                                        : !furtherAnswer?.Value.Equals(existingFutherAnswer.Value, StringComparison.OrdinalIgnoreCase) ?? furtherAnswer != existingFutherAnswer;
+                                        : !furtherAnswer?.Value.Equals(existingFutherAnswer?.Value, StringComparison.OrdinalIgnoreCase) ?? furtherAnswer != existingFutherAnswer;
                                 }
 
                                 atLeastOneAnswerChanged = atLeastOneAnswerChanged ? true : atLeastOneFutherQuestionAnswerChanged;
@@ -816,12 +815,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             }
 
             return atLeastOneAnswerChanged;
-        }
-
-        private static bool NothingToUpload(SetPageAnswersResponse updatePageResult, List<Answer> answers)
-        {
-            return updatePageResult.ValidationErrors == null && !updatePageResult.ValidationPassed
-                    && answers.Count > 0;
         }
 
         private RedirectToActionResult ForwardToNextSectionOrPage(Page page, Guid Id, int sequenceNo, int sectionNo, string __redirectAction)
@@ -844,8 +837,15 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
         private static Page StoreEnteredAnswers(List<Answer> answers, Page page)
         {
-            if(answers != null && answers.Any() && page.PageOfAnswers != null)
+            if (answers != null && answers.Any())
+            {
+                if (page.PageOfAnswers is null || !page.PageOfAnswers.Any())
+                {
+                    page.PageOfAnswers = new List<PageOfAnswers> { new PageOfAnswers { Answers = new List<Answer>() } };
+                }
+
                 page.PageOfAnswers.Add(new PageOfAnswers { Answers = answers });
+            }
 
             return page;
         }
@@ -896,74 +896,108 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         {
             List<Answer> answers = new List<Answer>();
 
-            var questionId = page.Questions.Where(x => x.Input.Type == "ComplexRadio" || x.Input.Type == "Radio").Select(y => y.QuestionId).FirstOrDefault();
+            // These are special in that they drive other things and thus should not be deemed as an answer
+            var exludedInputs = new List<string> { "postcodeSearch", "checkAll" };
 
-            foreach (var keyValuePair in HttpContext.Request.Form.Where(f => !f.Key.StartsWith("__")))
+            // Add answers from the Form post
+            foreach (var keyValuePair in HttpContext.Request.Form.Where(f => !f.Key.StartsWith("__") && !exludedInputs.Contains(f.Key, StringComparer.InvariantCultureIgnoreCase)))
             {
-                if (!keyValuePair.Key.EndsWith("Search"))
+                answers.Add(new Answer() { QuestionId = keyValuePair.Key, Value = keyValuePair.Value });
+            }
+
+            // Check if any Page Question is missing and add the default answer
+            foreach (var questionId in page.Questions.Select(q => q.QuestionId))
+            {
+                if(!answers.Any(a => a.QuestionId == questionId))
                 {
-                    answers.Add(new Answer() { QuestionId = keyValuePair.Key, Value = keyValuePair.Value });
+                    // Add default answer if it's missing
+                    answers.Add(new Answer { QuestionId = questionId, Value = string.Empty });
                 }
             }
 
-            if (!answers.Any())
+            #region FurtherQuestion_Processing
+            // Get all questions that have FurtherQuestions in a ComplexRadio
+            var questionsWithFutherQuestions = page.Questions.Where(x => x.Input.Type == "ComplexRadio" && x.Input.Options != null && x.Input.Options.Any(o => o.FurtherQuestions != null && o.FurtherQuestions.Any()));
+
+            foreach (var question in questionsWithFutherQuestions)
             {
-                answers.Add(new Answer { QuestionId = questionId, Value = "" });
-            }
-            else if (questionId != null && answers.Any(y => y.QuestionId.Contains(questionId)))
-            {
-                if (answers.All(x => x.Value == "" || Regex.IsMatch(x.Value, "^[,]+$")))
+                var answerForQuestion = answers.FirstOrDefault(a => a.QuestionId == question.QuestionId);
+
+                // Remove FurtherQuestion answers to all other Options as they were not selected and thus should not be stored
+                foreach (var furtherQuestion in question.Input.Options.Where(opt => opt.Value != answerForQuestion?.Value && opt.FurtherQuestions != null).SelectMany(opt => opt.FurtherQuestions))
                 {
-                    foreach (var answer in answers.Where(y => y.QuestionId.Contains(questionId + ".") && (y.Value == "" || Regex.IsMatch(y.Value, "^[,]+$"))))
+                    foreach (var answer in answers.Where(a => a.QuestionId == furtherQuestion.QuestionId))
                     {
-                        answer.QuestionId = questionId;
-                        break;
+                        answer.Value = string.Empty;
                     }
                 }
-                else if (answers.Count(y => y.QuestionId.Contains(questionId) && (y.Value == "" || Regex.IsMatch(y.Value, "^[,]+$"))) == 1
-                    && answers.Count(y => y.QuestionId == questionId && y.Value != "") == 0)
-                {
-                    foreach (var answer in answers.Where(y => y.QuestionId.Contains(questionId + ".") && (y.Value == "" || Regex.IsMatch(y.Value, "^[,]+$"))))
-                    {
-                        answer.QuestionId = questionId;
-                    }
-                }
             }
+            #endregion FurtherQuestion_Processing
 
+            // Address inputs require special processing
             if (page.Questions.Any(x => x.Input.Type == "Address"))
-                return ProcessPageVmQuestionsForAddress(page,answers);
+            {
+                answers = ProcessPageVmQuestionsForAddress(page, answers);
+            }
 
             return answers;
         }
 
+        private List<Answer> GetAnswersFromFiles()
+        {
+            List<Answer> answers = new List<Answer>();
+
+            // Add answers from the Files sent within the Form post
+            if (HttpContext.Request.Form.Files != null)
+            {
+                foreach (var file in HttpContext.Request.Form.Files)
+                {
+                    answers.Add(new Answer() { QuestionId = file.Name, Value = file.FileName });
+                }
+
+            }
+
+            return answers;
+        }
 
         private static List<Answer> ProcessPageVmQuestionsForAddress(Page page, List<Answer> answers)
         {
 
             if (page.Questions.Any(x => x.Input.Type == "Address"))
             {
-                Dictionary<string, JObject> answerValues = new Dictionary<string, JObject>();
+                Dictionary<string, JObject> answerValueDictionary = new Dictionary<string, JObject>();
 
-                foreach (var formVariable in answers.Where( x=> x.QuestionId.Contains("_Key_")))
+                // Address input fields will contain _Key_
+                foreach (var formVariable in answers.Where(x => x.QuestionId.Contains("_Key_")))
                 {
                     var answerKey = formVariable.QuestionId.Split("_Key_");
-                    if (!answerValues.ContainsKey(answerKey[0]))
+                    if (!answerValueDictionary.ContainsKey(answerKey[0]))
                     {
-                        answerValues.Add(answerKey[0], new JObject());
+                        answerValueDictionary.Add(answerKey[0], new JObject());
                     }
 
-                    answerValues[answerKey[0]].Add(
+                    answerValueDictionary[answerKey[0]].Add(
                         answerKey.Count() == 1 ? string.Empty : answerKey[1],
                         formVariable.Value.ToString());
                 }
 
-                answers = answers.Where(x => !x.QuestionId.Contains("_Key")).ToList();
+                // Remove anything that contains _Key_ as it has now been processed correctly
+                answers = answers.Where(x => !x.QuestionId.Contains("_Key_")).ToList();
 
-                foreach (var answer in answerValues)
+                foreach (var answerValue in answerValueDictionary)
                 {
-                    if (answer.Value.Count > 1)
+                    if (answerValue.Value.Count > 1)
                     {
-                        answers.Add(new Answer() { QuestionId = answer.Key, Value = answer.Value.ToString() });
+                        var answer = answers.FirstOrDefault(a => a.QuestionId == answerValue.Key);
+
+                        if (answer is null)
+                        {
+                            answers.Add(new Answer() { QuestionId = answerValue.Key, Value = answerValue.Value.ToString() });
+                        }
+                        else
+                        {
+                            answer.Value = answerValue.Value.ToString();
+                        }
                     }
                 }
 
