@@ -6,7 +6,7 @@ RETURNS BIT
 AS
 BEGIN
 	IF (ISNULL(JSON_VALUE(@StandardData, '$.IfaStatus'), '') = 'In development') 
-	   AND -- standards which are integrated degrees are not valid in development standards
+	   AND -- standards which have exactly the text 'integrated degree' are not valid in development standards in opp finder
 	   (ISNULL(JSON_VALUE(@StandardData, '$.IntegratedDegree'), '') <> 'integrated degree')
 
 	BEGIN
