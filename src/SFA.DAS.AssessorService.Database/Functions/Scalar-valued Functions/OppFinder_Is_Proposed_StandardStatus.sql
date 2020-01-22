@@ -6,8 +6,8 @@ RETURNS BIT
 AS
 BEGIN
 	IF (ISNULL(JSON_VALUE(@StandardData, '$.IfaStatus'), '') = 'Proposal in development') 
-	   AND -- if there is any value in IntegratedDegree it is not a valid proposed standard
-	   (ISNULL(JSON_VALUE(@StandardData, '$.IntegratedDegree'), '') = '')
+	   AND -- standards which are integrated degrees are not valid proposed standards
+	   (ISNULL(JSON_VALUE(@StandardData, '$.IntegratedDegree'), '') <> 'integrated degree')
 	BEGIN
 		RETURN 1
 	END
