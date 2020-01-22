@@ -124,6 +124,15 @@ namespace SFA.DAS.AssessorService.EpaoImporter
             {
                 _aggregateLogger.LogInfo("Print Process Function Started");
 
+                //var scheduleRun = new ScheduleRun()
+                //{
+                //    Id = Guid.NewGuid(),
+                //    IsComplete = false,
+                //    IsRecurring = true,
+                //    Interval = 10080,
+                //    ScheduleType = ScheduleType.PrintRun,
+                //    RunTime = DateTime.Now
+                //};
                 var scheduleRun = await _assessorServiceApi.GetSchedule(ScheduleType.PrintRun);
                 if (scheduleRun == null)
                 {
