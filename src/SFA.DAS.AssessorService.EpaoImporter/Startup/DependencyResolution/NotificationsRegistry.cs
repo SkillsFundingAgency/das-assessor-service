@@ -28,7 +28,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Startup.DependencyResolution
 
             var httpClient = string.IsNullOrWhiteSpace(clientConfiguration.ClientId)
                 ? new HttpClientBuilder().WithBearerAuthorisationHeader(new JwtBearerTokenGenerator(clientConfiguration)).Build()
-                : new HttpClientBuilder().WithBearerAuthorisationHeader(new AzureADBearerTokenGenerator(clientConfiguration)).Build();
+                : new HttpClientBuilder().WithBearerAuthorisationHeader(new AzureActiveDirectoryBearerTokenGenerator(clientConfiguration)).Build();
 
             For<INotificationsApi>().Use<NotificationsApi>().Ctor<HttpClient>().Is(httpClient);
             For<INotificationsApiClientConfiguration>().Use(clientConfiguration);
