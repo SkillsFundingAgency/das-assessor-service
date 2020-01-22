@@ -8,7 +8,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter
     {
         [FunctionName("StandardCollationFlow")]
         public static void Run(
-            //[TimerTrigger("0 30 6 * * *", RunOnStartup = true)] TimerInfo myTimer, 
+            [TimerTrigger("0 30 6 * * *", RunOnStartup = true)] TimerInfo myTimer, 
             TraceWriter functionLogger,
             ExecutionContext context)
         {
