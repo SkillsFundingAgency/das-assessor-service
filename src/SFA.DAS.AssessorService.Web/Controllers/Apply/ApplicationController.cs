@@ -108,7 +108,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             var contact = await GetUserContact(signinId);
             var org = await _orgApiClient.GetOrganisationByUserId(contact.Id);
 
-            var existingApplications = (await _applicationApiClient.GetApplications(contact.Id, false))?.Where( x=> x.OrganisationId == org.Id);
+            var existingApplications = (await _applicationApiClient.GetApplications(contact.Id, false))?.Where( x=> x.OrganisationId == org.Id && x.ApplicationStatus != ApplicationStatus.Declined);
             if(existingApplications != null)
             {
                 var existingEmptyApplication = existingApplications.SingleOrDefault(x => x.StandardCode == null);
