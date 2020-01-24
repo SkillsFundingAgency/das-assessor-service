@@ -370,7 +370,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         {
             // ON-2262 - Get the company & charity details from the relevant APIs
             var companyDetails = !string.IsNullOrWhiteSpace(organisationSearchResult.CompanyNumber) ? await _organisationsApiClient.GetCompanyDetails(organisationSearchResult.CompanyNumber) : null;
-            var charityDetails = int.TryParse(organisationSearchResult.CompanyNumber, out var charityNumber) ? await _organisationsApiClient.GetCharityDetails(charityNumber) : null;
+            var charityDetails = int.TryParse(organisationSearchResult.CharityNumber, out var charityNumber) ? await _organisationsApiClient.GetCharityDetails(charityNumber) : null;
 
             return new CreateEpaOrganisationRequest
             {

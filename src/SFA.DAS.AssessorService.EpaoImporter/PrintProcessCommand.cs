@@ -125,6 +125,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter
                 _aggregateLogger.LogInfo("Print Process Function Started");
 
                 var scheduleRun = await _assessorServiceApi.GetSchedule(ScheduleType.PrintRun);
+
                 if (scheduleRun == null)
                 {
                     _aggregateLogger.LogInfo("Print Function not scheduled to run at this time.");
@@ -161,12 +162,12 @@ namespace SFA.DAS.AssessorService.EpaoImporter
                     if (configuration.Sftp.UseJson)
                     {
                         _printingJsonCreator.Create(batchNumber, certificates, certificateFileName);
-                        await _notificationService.Send(batchNumber, certificates, certificateFileName);
+                        //await _notificationService.Send(batchNumber, certificates, certificateFileName);
                     }
                     else
                     {
                         _printingSpreadsheetCreator.Create(batchNumber, certificates);
-                        await _notificationService.Send(batchNumber, certificates, excelFileName);
+                        // await _notificationService.Send(batchNumber, certificates, excelFileName);
                     }
 
                     batchLogRequest.FileUploadEndTime = DateTime.UtcNow;
