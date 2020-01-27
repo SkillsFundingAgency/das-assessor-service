@@ -692,7 +692,8 @@
                 "count": "[length(parameters('functionAppNames'))]"
             },
             "dependsOn": [
-                "StorageAccount"
+                "StorageAccount",
+                "function-app-service-plan"
             ]
         },
         {
