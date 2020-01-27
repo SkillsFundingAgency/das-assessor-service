@@ -756,7 +756,8 @@
                 }
             },
             "dependsOn": [
-                "StorageAccount"
+                "StorageAccount",
+                "function-app-service-plan"
             ]
         },
         {
