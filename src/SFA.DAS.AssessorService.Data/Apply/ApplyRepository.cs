@@ -439,7 +439,8 @@ namespace SFA.DAS.AssessorService.Data.Apply
                             FinancialGrade
                         FROM ApplicationSummary 
                         WHERE ApplicationStatus IN (@applicationStatusSubmitted, @applicationStatusResubmitted)
-                        AND SequenceNo = @SequenceNo",
+                        AND SequenceNo = @SequenceNo
+                        ORDER BY SubmittedDate DESC",
                         new
                         {
                             SequenceNo = sequenceNo,
@@ -469,7 +470,8 @@ namespace SFA.DAS.AssessorService.Data.Apply
                             FinancialStatus,
                             FinancialGrade
                         FROM ApplicationSummary 
-                        WHERE ApplicationStatus IN (@applicationStatusFeedbackAdded)",
+                        WHERE ApplicationStatus IN (@applicationStatusFeedbackAdded)
+                        ORDER BY FeedbackAddedDate DESC",
                         new
                         {
                             applicationStatusFeedbackAdded = ApplicationStatus.FeedbackAdded,
@@ -516,7 +518,8 @@ namespace SFA.DAS.AssessorService.Data.Apply
 	                     WHERE seq.Status IN (@sequenceStatusApproved, @sequenceStatusDeclined) AND seq.NotRequired = 0
                             AND ap1.DeletedAt IS NULL
                             AND ap1.ApplicationStatus <> @applicationStatusDeclined
-                            AND ap1.ReviewStatus <> @applicationReviewStatusDeleted",
+                            AND ap1.ReviewStatus <> @applicationReviewStatusDeleted
+	                     ORDER BY ClosedDate DESC",
                         new
                         {
                             sequenceStatusApproved = ApplicationSequenceStatus.Approved,
@@ -576,7 +579,8 @@ namespace SFA.DAS.AssessorService.Data.Apply
                         WHERE sequence.SequenceNo = 1 AND section.SectionNo = 3 AND sequence.IsActive = 1
                             AND ap1.FinancialReviewStatus IN (@financialReviewStatusNew, @financialReviewStatusInProgress)
                             AND ap1.ApplicationStatus IN (@applicationStatusSubmitted, @applicationStatusResubmitted)
-                            AND ap1.DeletedAt IS NULL",
+                            AND ap1.DeletedAt IS NULL
+                        ORDER BY SubmittedDate DESC",
                         new
                         {
                             financialReviewStatusNew = FinancialReviewStatus.New,
@@ -613,7 +617,8 @@ namespace SFA.DAS.AssessorService.Data.Apply
                         WHERE sequence.SequenceNo = 1 AND section.SectionNo = 3 AND sequence.IsActive = 1
                             AND ap1.FinancialReviewStatus = @financialReviewStatusRejected
                             AND ap1.ApplicationStatus IN (@applicationStatusSubmitted, @applicationStatusResubmitted, @applicationStatusFeedbackAdded)
-                            AND ap1.DeletedAt IS NULL",
+                            AND ap1.DeletedAt IS NULL
+                        ORDER BY FeedbackAddedDate DESC",
                         new
                         {
                             financialReviewStatusRejected = FinancialReviewStatus.Rejected,
@@ -648,7 +653,8 @@ namespace SFA.DAS.AssessorService.Data.Apply
                             CROSS APPLY OPENJSON(ApplyData,'$.Apply') WITH (ClosedDate VARCHAR(30) '$.InitSubmissionClosedDate', SubmissionCount INT '$.InitSubmissionsCount') apply
                         WHERE sequence.SequenceNo = 1 AND section.SectionNo = 3 AND section.NotRequired = 0
                             AND ap1.FinancialReviewStatus IN (@financialReviewStatusGraded, @financialReviewStatusApproved) -- NOTE: Not showing Exempt
-                            AND ap1.DeletedAt IS NULL",
+                            AND ap1.DeletedAt IS NULL
+                        ORDER BY ClosedDate DESC",
                         new
                         {
                             financialReviewStatusGraded = FinancialReviewStatus.Graded,
