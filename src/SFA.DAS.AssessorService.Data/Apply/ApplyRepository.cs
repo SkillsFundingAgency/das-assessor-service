@@ -440,7 +440,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
                         FROM ApplicationSummary 
                         WHERE ApplicationStatus IN (@applicationStatusSubmitted, @applicationStatusResubmitted)
                         AND SequenceNo = @SequenceNo
-                        ORDER BY SubmittedDate DESC",
+                        ORDER BY OrganisationName, SubmittedDate DESC",
                         new
                         {
                             SequenceNo = sequenceNo,
@@ -471,7 +471,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
                             FinancialGrade
                         FROM ApplicationSummary 
                         WHERE ApplicationStatus IN (@applicationStatusFeedbackAdded)
-                        ORDER BY FeedbackAddedDate DESC",
+                        ORDER BY OrganisationName, FeedbackAddedDate DESC",
                         new
                         {
                             applicationStatusFeedbackAdded = ApplicationStatus.FeedbackAdded,
@@ -519,7 +519,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
                             AND ap1.DeletedAt IS NULL
                             AND ap1.ApplicationStatus <> @applicationStatusDeclined
                             AND ap1.ReviewStatus <> @applicationReviewStatusDeleted
-	                     ORDER BY ClosedDate DESC",
+	                     ORDER BY OrganisationName, ClosedDate DESC",
                         new
                         {
                             sequenceStatusApproved = ApplicationSequenceStatus.Approved,
@@ -580,7 +580,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
                             AND ap1.FinancialReviewStatus IN (@financialReviewStatusNew, @financialReviewStatusInProgress)
                             AND ap1.ApplicationStatus IN (@applicationStatusSubmitted, @applicationStatusResubmitted)
                             AND ap1.DeletedAt IS NULL
-                        ORDER BY SubmittedDate DESC",
+                        ORDER BY OrganisationName, SubmittedDate DESC",
                         new
                         {
                             financialReviewStatusNew = FinancialReviewStatus.New,
@@ -618,7 +618,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
                             AND ap1.FinancialReviewStatus = @financialReviewStatusRejected
                             AND ap1.ApplicationStatus IN (@applicationStatusSubmitted, @applicationStatusResubmitted, @applicationStatusFeedbackAdded)
                             AND ap1.DeletedAt IS NULL
-                        ORDER BY FeedbackAddedDate DESC",
+                        ORDER BY OrganisationName, FeedbackAddedDate DESC",
                         new
                         {
                             financialReviewStatusRejected = FinancialReviewStatus.Rejected,
@@ -654,7 +654,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
                         WHERE sequence.SequenceNo = 1 AND section.SectionNo = 3 AND section.NotRequired = 0
                             AND ap1.FinancialReviewStatus IN (@financialReviewStatusGraded, @financialReviewStatusApproved) -- NOTE: Not showing Exempt
                             AND ap1.DeletedAt IS NULL
-                        ORDER BY ClosedDate DESC",
+                        ORDER BY OrganisationName, ClosedDate DESC",
                         new
                         {
                             financialReviewStatusGraded = FinancialReviewStatus.Graded,
