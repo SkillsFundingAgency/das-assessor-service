@@ -11,7 +11,7 @@ SELECT
     ISNULL(JSON_VALUE(ap1.Applydata,'$.Apply.LatestStandardSubmissionDate'),JSON_VALUE(ap1.Applydata,'$.Apply.LatestInitSubmissionDate')) AS SubmittedDate,
 	ISNULL(JSON_VALUE(ap1.Applydata,'$.Apply.StandardSubmissionFeedbackAddedDate'),JSON_VALUE(ap1.Applydata,'$.Apply.InitSubmissionFeedbackAddedDate')) AS FeedbackAddedDate,
 	ISNULL(JSON_VALUE(ap1.Applydata,'$.Apply.StandardSubmissionClosedDate'),JSON_VALUE(ap1.Applydata,'$.Apply.InitSubmissionClosedDate')) AS ClosedDate,
-    ISNULL(JSON_VALUE(ap1.Applydata,'$.Apply.StandardSubmissionsCount'),JSON_VALUE(ap1.Applydata,'$.Apply.InitSubmissionsCount')) AS SubmissionCount,
+    CASE WHEN JSON_VALUE(ap1.Applydata,'$.Apply.StandardSubmissionsCount') = 0 THEN JSON_VALUE(ap1.Applydata,'$.Apply.InitSubmissionsCount') ELSE JSON_VALUE(ap1.Applydata,'$.Apply.StandardSubmissionsCount') END AS SubmissionCount,
     ap1.ApplicationStatus AS ApplicationStatus,
 	ap1.ReviewStatus AS ReviewStatus,
 	ap1.FinancialReviewStatus AS FinancialStatus,
@@ -19,5 +19,6 @@ SELECT
 FROM Apply ap1
 INNER JOIN Organisations org ON ap1.OrganisationId = org.Id
 WHERE ap1.DeletedAt IS NULL
+
 
 
