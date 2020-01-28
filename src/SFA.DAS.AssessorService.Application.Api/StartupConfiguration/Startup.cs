@@ -19,6 +19,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.OpenApi.Models;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
@@ -35,6 +36,7 @@ using SFA.DAS.Http;
 using SFA.DAS.Http.TokenGenerators;
 using SFA.DAS.Notifications.Api.Client;
 using StructureMap;
+using Swashbuckle.AspNetCore.Filters;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
@@ -116,18 +118,32 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                     .AddControllersAsServices()
                     .AddFluentValidation(fvc => fvc.RegisterValidatorsFromAssemblyContaining<Startup>());
 
-                services.AddSwaggerGen(c =>
-                {
-                    c.SwaggerDoc("v1", new Info { Title = "SFA.DAS.AssessorService.Application.Api", Version = "v1" });
-                    c.CustomSchemaIds(i => i.FullName);
-                    if (_env.IsDevelopment())
+                services.AddSwaggerGen(config =>
                     {
-                        var basePath = AppContext.BaseDirectory;
-                        var xmlPath = Path.Combine(basePath, "SFA.DAS.AssessorService.Application.Api.xml");
-                        c.IncludeXmlComments(xmlPath);
-                    }
-                });
+                        config.SwaggerDoc("v1", new OpenApiInfo { Title = "SFA.DAS.AssessorService.Application.Api", Version = "v1" });
+                        config.CustomSchemaIds(i => i.FullName);
+                        
+                        if (_env.IsDevelopment())
+                        {
+                            var basePath = AppContext.BaseDirectory;
+                            var xmlPath = Path.Combine(basePath, "SFA.DAS.AssessorService.Application.Api.xml");
+                            config.IncludeXmlComments(xmlPath);
+                        }
 
+                        if (!_env.IsDevelopment())
+                        {
+                            config.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
+                            {
+                                Description = "Standard Authorization header using the Bearer scheme. Example: \"bearer {token}\"",
+                                In = ParameterLocation.Header,
+                                Name = "Authorization",
+                                Type = SecuritySchemeType.ApiKey
+                            });
+
+                            config.OperationFilter<SecurityRequirementsOperationFilter>();
+                        }
+                    });
+ 
                 services.AddHttpClient<ProviderRegisterApiClient>("ProviderRegisterApiClient", config =>
                     {
                         config.BaseAddress = new Uri(Configuration.ProviderRegisterApiAuthentication.ApiBaseAddress); //  "https://findapprenticeshiptraining-api.sfa.bis.gov.uk"
