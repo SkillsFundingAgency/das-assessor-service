@@ -1,5 +1,5 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
         "environmentName": {
@@ -21,12 +21,6 @@
             "type": "bool"
         },
         "activeSandboxAppServicePlanName": {
-            "type": "string"
-        },
-        "aseHostingEnvironmentName": {
-            "type": "string"
-        },
-        "aseResourceGroup": {
             "type": "string"
         },
         "aspSize": {
@@ -106,12 +100,6 @@
                 "parameters": {
                     "appServicePlanName": {
                         "value": "[parameters('activeSandboxAppServicePlanName')]"
-                    },
-                    "aseHostingEnvironmentName": {
-                        "value": "[parameters('aseHostingEnvironmentName')]"
-                    },
-                    "aseResourceGroup": {
-                        "value": "[parameters('aseResourceGroup')]"
                     },
                     "aspSize": {
                         "value": "[parameters('aspSize')]"
