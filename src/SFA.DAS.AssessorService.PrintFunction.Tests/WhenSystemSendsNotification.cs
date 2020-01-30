@@ -10,7 +10,6 @@ using SFA.DAS.AssessorService.EpaoImporter.Logger;
 using SFA.DAS.AssessorService.EpaoImporter.Notification;
 using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.Notifications.Api.Client;
-using SFA.DAS.Notifications.Api.Types;
 
 namespace SFA.DAS.AssessorService.PrintFunction.Tests
 {
