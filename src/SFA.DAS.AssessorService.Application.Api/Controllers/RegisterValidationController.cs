@@ -9,7 +9,7 @@ using SFA.DAS.AssessorService.Api.Types.Models.Register;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
-using Swashbuckle.AspNetCore.SwaggerGen;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers
 {
@@ -29,7 +29,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
         [HttpPost("validate-new", Name = "CreateEpaOrganisationValidate")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(ValidationResponse))]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(ApiResponse))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(ApiResponse))]
         [SwaggerResponse((int)HttpStatusCode.Conflict, Type = typeof(ApiResponse))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> CreateOrganisationValidate([FromBody] CreateEpaOrganisationValidationRequest request)
@@ -49,7 +49,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
         [HttpPost("validate-existing", Name = "UpdateEpaOrganisationValidate")]
         [SwaggerResponse((int) HttpStatusCode.OK, Type = typeof(ValidationResponse))]
-        [SwaggerResponse((int) HttpStatusCode.BadRequest, typeof(ApiResponse))]
+        [SwaggerResponse((int) HttpStatusCode.BadRequest, Type = typeof(ApiResponse))]
         [SwaggerResponse((int) HttpStatusCode.Conflict, Type = typeof(ApiResponse))]
         [SwaggerResponse((int) HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> UpdateOrganisationValidate([FromBody] UpdateEpaOrganisationValidationRequest request)
@@ -69,7 +69,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
         [HttpPost("contacts/validate-new", Name = "CreateEpaContactValidate")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(ValidationResponse))]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(ApiResponse))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(ApiResponse))]
         [SwaggerResponse((int)HttpStatusCode.Conflict, Type = typeof(ApiResponse))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> CreateEpaContactValidate([FromBody] CreateEpaContactValidationRequest request)
@@ -89,7 +89,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
         [HttpPut("contacts/validate-existing", Name = "UpdateEpaContactValidate")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(ValidationResponse))]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(ApiResponse))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(ApiResponse))]
         [SwaggerResponse((int)HttpStatusCode.Conflict, Type = typeof(ApiResponse))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> UpdateEpaContactValidate([FromBody] UpdateEpaOrganisationContactValidationRequest request)

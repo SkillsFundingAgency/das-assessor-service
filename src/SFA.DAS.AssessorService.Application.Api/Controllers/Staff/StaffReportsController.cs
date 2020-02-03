@@ -6,7 +6,7 @@ using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
-using Swashbuckle.AspNetCore.SwaggerGen;
+using Swashbuckle.AspNetCore.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -31,7 +31,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.Staff
 
         [HttpGet()]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(IEnumerable<StaffReport>))]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> GetReportList()
         {
@@ -44,7 +44,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.Staff
 
         [HttpGet("{reportId}/report-type")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(ReportType))]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> GetReportTypeFromId(Guid reportId)
         {
@@ -63,7 +63,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.Staff
 
         [HttpGet("{reportId}/report-details")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(ReportDetails))]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> GetReportDetailsFromId(Guid reportId)
         {
@@ -82,7 +82,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.Staff
 
         [HttpGet("report-content/{storedProcedure}")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(IEnumerable<IDictionary<string, object>>))]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> GetWorksheetContent(string storedProcedure)
         {
@@ -102,7 +102,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.Staff
 
         [HttpGet("{reportId}")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(IEnumerable<IDictionary<string, object>>))]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> GetReport(Guid reportId)
         {

@@ -16,7 +16,7 @@ using SFA.DAS.AssessorService.Application.Exceptions;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.Settings;
-using Swashbuckle.AspNetCore.SwaggerGen;
+using Swashbuckle.AspNetCore.Annotations;
 using Contact = SFA.DAS.AssessorService.Domain.Entities.Contact;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers

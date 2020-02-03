@@ -10,7 +10,7 @@ using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
 using SFA.DAS.AssessorService.ExternalApis.IFAStandards.Types;
-using Swashbuckle.AspNetCore.SwaggerGen;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers
 {
@@ -29,7 +29,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         }
         [HttpPost("update-standards",Name = "update-standards/GatherAndStoreStandards")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(GatherStandardsResponse))]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(ApiResponse))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(ApiResponse))]
         [SwaggerResponse((int)HttpStatusCode.Conflict, Type = typeof(ApiResponse))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> GatherAndStoreStandards([FromBody] GatherStandardsRequest request)
@@ -41,7 +41,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
         [HttpGet("assessment-organisations/collated-standards", Name = "GetCollatedStandards")]
         [SwaggerResponse((int) HttpStatusCode.OK, Type = typeof(List<StandardCollation>))]
-        [SwaggerResponse((int) HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int) HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int) HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> GetCollatedStandards()
         {
@@ -50,7 +50,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
         [HttpGet("assessment-organisations/collated-standards/{standardId}", Name = "GetCollatedStandard")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(StandardCollation))]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> GetCollatedStandard(int standardId)
         {
@@ -59,7 +59,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
         [HttpGet("assessment-organisations/collated-standards/by-reference/{*referenceNumber}", Name = "GetCollatedStandardByReferenceNumber")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(StandardCollation))]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> GetCollatedStandardByReferenceNumber(string referenceNumber)
         {

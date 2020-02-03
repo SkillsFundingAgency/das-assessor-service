@@ -18,7 +18,7 @@ using SFA.DAS.AssessorService.Application.Exceptions;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Settings;
-using Swashbuckle.AspNetCore.SwaggerGen;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers
 {
@@ -48,7 +48,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         
         [HttpGet("ukprn/{ukprn}", Name = "SearchOrganisation")]
         [SwaggerResponse((int) HttpStatusCode.OK, Type = typeof(OrganisationResponse))]
-        [SwaggerResponse((int) HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int) HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int) HttpStatusCode.NotFound, Type = typeof(string))]
         [SwaggerResponse((int) HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> SearchOrganisation(int ukprn)
@@ -108,7 +108,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
         [HttpGet("{*name}", Name = "GetOrganisationByName")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(OrganisationResponse))]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.NotFound, Type = typeof(string))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> GetOrganisationByName(string name)
