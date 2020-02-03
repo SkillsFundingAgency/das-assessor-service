@@ -8,11 +8,11 @@ using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
-using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 using OrganisationType = SFA.DAS.AssessorService.Api.Types.Models.AO.OrganisationType;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers
 {
@@ -33,7 +33,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
         [HttpGet("organisation-types", Name = "GetOrganisationTypes")]
         [SwaggerResponse((int) HttpStatusCode.OK, Type = typeof(List<OrganisationType>))]
-        [SwaggerResponse((int) HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int) HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int) HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> GetOrganisationTypes()
         {
@@ -43,7 +43,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
         [HttpGet("delivery-areas", Name = "GetDeliveryAreas")]
         [SwaggerResponse((int) HttpStatusCode.OK, Type = typeof(List<DeliveryArea>))]
-        [SwaggerResponse((int) HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int) HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int) HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> GetDeliveryAreas()
         {
@@ -53,7 +53,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
         [HttpGet("assessment-organisations", Name = "GetAssessmentOrganisations")]
         [SwaggerResponse((int) HttpStatusCode.OK, Type = typeof(List<AssessmentOrganisationSummary>))]
-        [SwaggerResponse((int) HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int) HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int) HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> GetAssessmentOrganisations()
         {
@@ -64,7 +64,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [HttpGet("assessment-organisations/{organisationId}", Name = "GetAssessmentOrganisation")]
         [SwaggerResponse((int) HttpStatusCode.OK, Type = typeof(EpaOrganisation))]
         [SwaggerResponse((int) HttpStatusCode.NotFound, null)]
-        [SwaggerResponse((int) HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int) HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int) HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> GetAssessmentOrganisation(string organisationId)
         {
@@ -83,7 +83,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [HttpGet("assessment-organisations/standards/{standardId}", Name = "GetAssessmentOrganisationsByStandard")]
         [SwaggerResponse((int) HttpStatusCode.OK, Type = typeof(List<EpaOrganisation>))]
         [SwaggerResponse((int) HttpStatusCode.NotFound, null)]
-        [SwaggerResponse((int) HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int) HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int) HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> GetAssessmentOrganisationsByStandard(int standardId)
         {
@@ -98,7 +98,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             "GetOrganisationStandardsByOrganisation")]
         [SwaggerResponse((int) HttpStatusCode.OK, Type = typeof(List<OrganisationStandardSummary>))]
         [SwaggerResponse((int) HttpStatusCode.NotFound, null)]
-        [SwaggerResponse((int) HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int) HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int) HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> GetOrganisationStandardsByOrganisation(string organisationId)
         {
@@ -111,7 +111,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [HttpGet("assessment-organisations/contacts/{contactId}", Name = "GetContact")]
         [SwaggerResponse((int) HttpStatusCode.OK, Type = typeof(AssessmentOrganisationContact))]
         [SwaggerResponse((int) HttpStatusCode.NotFound, null)]
-        [SwaggerResponse((int) HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int) HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int) HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> GetContact(string contactId)
         {
@@ -124,7 +124,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [HttpGet("assessment-organisations/contacts/signInId/{signInId}", Name = "GetEpaContactBySignInId")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(EpaContact))]
         [SwaggerResponse((int)HttpStatusCode.NotFound, null)]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> GetEpaContactBySignInId(string signInId)
         {
@@ -137,7 +137,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [HttpGet("assessment-organisations/contacts/email/{email}", Name = "GetEpaContactByEmail")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(EpaContact))]
         [SwaggerResponse((int)HttpStatusCode.NotFound, null)]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> GetEpaContactByEmail(string email)
         {
@@ -150,7 +150,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [HttpGet("assessment-organisations/organisation-standard/{organisationStandardId}", Name = "GetOrganisationStandard")]
         [SwaggerResponse((int) HttpStatusCode.OK, Type = typeof(OrganisationStandard))]
         [SwaggerResponse((int) HttpStatusCode.NotFound, null)]
-        [SwaggerResponse((int) HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int) HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int) HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> GetOrganisationStandard(int organisationStandardId)
         {
@@ -173,7 +173,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
         [HttpGet("assessment-organisations/search/{*searchstring}", Name = "SearchAssessmentOrganisations")]
         [SwaggerResponse((int) HttpStatusCode.OK, Type = typeof(List<AssessmentOrganisationSummary>))]
-        [SwaggerResponse((int) HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int) HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int) HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> SearchAssessmentOrganisations(string searchstring)
         {
@@ -183,7 +183,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
         [HttpGet("assessment-organisations/email/{emailAddress}", Name = "GetAssessmentOrganisationFromEmail")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<AssessmentOrganisationSummary>))]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> GetAssessmentOrganisationFromEmail(string emailAddress)
         {
@@ -193,7 +193,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
         [HttpGet("assessment-organisations/standards/search/{*searchstring}", Name = "SearchStandards")]
         [SwaggerResponse((int) HttpStatusCode.OK, Type = typeof(List<StandardCollation>))]
-        [SwaggerResponse((int) HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int) HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int) HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> SearchStandards(string searchstring)
         {

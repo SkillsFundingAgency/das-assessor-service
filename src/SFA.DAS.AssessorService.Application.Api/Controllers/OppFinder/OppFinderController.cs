@@ -9,7 +9,7 @@ using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
 using SFA.DAS.AssessorService.Application.Exceptions;
-using Swashbuckle.AspNetCore.SwaggerGen;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers
 {
@@ -30,7 +30,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
         [HttpPost("expression-of-interest", Name = "CreateExpressionOfInterest")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(bool))]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(ApiResponse))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(ApiResponse))]
         [SwaggerResponse((int)HttpStatusCode.Conflict, Type = typeof(ApiResponse))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> CreateExpressionOfInterest([FromBody] OppFinderExpressionOfInterestRequest request)
@@ -53,7 +53,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         }
 
         [HttpPost("update-standard-summary", Name = "UpdateStandardSummary")]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(ApiResponse))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(ApiResponse))]
         [SwaggerResponse((int)HttpStatusCode.Conflict, Type = typeof(ApiResponse))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task UpdateStandardSummary([FromBody] UpdateStandardSummaryRequest request)

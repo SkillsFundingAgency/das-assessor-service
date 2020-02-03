@@ -9,7 +9,7 @@ using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
 using SFA.DAS.AssessorService.Application.Exceptions;
 using SFA.DAS.AssessorService.Domain.Entities;
-using Swashbuckle.AspNetCore.SwaggerGen;
+using Swashbuckle.AspNetCore.Annotations;
 using NotFound = SFA.DAS.AssessorService.Domain.Exceptions.NotFound;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers
@@ -28,7 +28,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
         [HttpPost("start", Name = "Start")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(Certificate))]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> Start([FromBody] StartCertificateRequest request)
         {
@@ -37,7 +37,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
         [HttpPost("startprivate", Name = "StartPrivate")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(Certificate))]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> StartPrivate([FromBody] StartCertificatePrivateRequest request)
         {
@@ -46,7 +46,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
         [HttpPut("update", Name = "Update")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(Certificate))]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> Update([FromBody] UpdateCertificateRequest certificate)
         {
@@ -55,7 +55,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
         [HttpPut("{batchNumber}", Name = "UpdateCertificatesBatchToIndicatePrinted")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(Certificate))]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> UpdateCertificatesBatchToIndicatePrinted(int batchNumber, [FromBody] UpdateCertificatesBatchToIndicatePrintedRequest updateCertificatesBatchToIndicatePrintedRequest)
         {
@@ -65,7 +65,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
         [HttpPost("requestreprint", Name = "RequestReprint")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(Certificate))]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> RequestReprint([FromBody] CertificateReprintRequest certificateReprintRequest)
         {
@@ -92,7 +92,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         
         [HttpPost("approvals", Name = "Approvals")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(Certificate))]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> Approvals([FromBody] CertificateApprovalRequest certificateApprovalRequest)
         {

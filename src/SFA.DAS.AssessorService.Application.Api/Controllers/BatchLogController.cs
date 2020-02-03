@@ -8,7 +8,7 @@ using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
-using Swashbuckle.AspNetCore.SwaggerGen;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers
 {
@@ -26,8 +26,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
         [HttpPost(Name = "CreateBatchLog")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(BatchLogResponse))]
-        [SwaggerResponse((int)HttpStatusCode.NotFound, typeof(ApiResponse))]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(ApiResponse))]
+        [SwaggerResponse((int)HttpStatusCode.NotFound, Type = typeof(ApiResponse))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(ApiResponse))]
         [SwaggerResponse((int)HttpStatusCode.Gone, Type = typeof(ApiResponse))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> CreateBatchLog([FromBody] CreateBatchLogRequest request)
@@ -37,8 +37,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
         [HttpPut("update-batch-data",Name="UpdateBatchDataBatchLog")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(ValidationResponse))]
-        [SwaggerResponse((int)HttpStatusCode.NotFound, typeof(ApiResponse))]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(ApiResponse))]
+        [SwaggerResponse((int)HttpStatusCode.NotFound, Type = typeof(ApiResponse))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(ApiResponse))]
         [SwaggerResponse((int)HttpStatusCode.Gone, Type = typeof(ApiResponse))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> UpdateBatchLogWithBatchData([FromBody] UpdateBatchLogBatchDataRequest request)
