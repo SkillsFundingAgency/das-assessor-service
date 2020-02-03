@@ -15,8 +15,8 @@
       "wwwroot/javascripts/application.js"
     ],
     "minify": {
-        "enabled": true,
-        "renameLocals": true
+      "enabled": true,
+      "renameLocals": true
     },
     "sourceMap": false
   },
@@ -26,19 +26,8 @@
       "wwwroot/javascripts/epao-validation.js"
     ],
     "minify": {
-        "enabled": true,
-        "renameLocals": true
-    }
-  },
-  {
-    "outputFileName": "wwwroot/javascripts/postcode-lookup-service.min.js",
-    "inputFiles": [
-      "wwwroot/javascripts/lib/jquery-ui/dist/jquery-ui.min.js",
-      "wwwroot/javascripts/postcode-lookup-service.js"
-    ],
-    "minify": {
-        "enabled": true,
-        "renameLocals": true
+      "enabled": true,
+      "renameLocals": true
     }
   },
   {
@@ -53,8 +42,11 @@
     }
   },
   {
-    "outputFileName": "wwwroot/javascripts/govuk-postcode-lookup-service.min.js",
-    "inputFiles": [ "wwwroot/javascripts/govuk-postcode-lookup-service.js" ],
+    "outputFileName": "wwwroot/javascripts/postcode-lookup-service.min.js",
+    "inputFiles": [
+      "wwwroot/javascripts/lib/jquery-ui/dist/jquery-ui.min.js",
+      "wwwroot/javascripts/postcode-lookup-service.js"
+    ],
     "minify": {
       "enabled": true,
       "renameLocals": true
@@ -63,11 +55,11 @@
   {
     "outputFileName": "wwwroot/javascripts/opp-finder-service.min.js",
     "inputFiles": [
-        "wwwroot/javascripts/opp-finder-service.js"
+      "wwwroot/javascripts/opp-finder-service.js"
     ],
     "minify": {
-        "enabled": true,
-        "renameLocals": true
+      "enabled": true,
+      "renameLocals": true
     }
   }
 ]
