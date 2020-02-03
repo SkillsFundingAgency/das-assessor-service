@@ -15,7 +15,7 @@ using SFA.DAS.AssessorService.Application.Exceptions;
 using SFA.DAS.AssessorService.Application.Handlers.UserManagement;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
-using Swashbuckle.AspNetCore.SwaggerGen;
+using Swashbuckle.AspNetCore.Annotations;
 using NotFound = SFA.DAS.AssessorService.Domain.Exceptions.NotFound;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers
@@ -40,7 +40,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
         [HttpPost(Name = "CreateContact")]
         [SwaggerResponse((int) HttpStatusCode.Created, Type = typeof(ContactBoolResponse))]
-        [SwaggerResponse((int) HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int) HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int) HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> CreateContact(
             [FromBody] CreateContactRequest createContactRequest)
@@ -55,7 +55,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
         [HttpPut(Name = "UpdateContact")]
         [SwaggerResponse((int) HttpStatusCode.NoContent)]
-        [SwaggerResponse((int) HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int) HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int) HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> UpdateContact([FromBody] UpdateContactRequest updateContactRequest)
         {
@@ -68,7 +68,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
         [HttpPut("status", Name = "UpdateContactStatus")]
         [SwaggerResponse((int) HttpStatusCode.NoContent)]
-        [SwaggerResponse((int) HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int) HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int) HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> UpdateContactStatus([FromBody] UpdateContactStatusRequest updateContactStatusRequest)
         {
@@ -106,7 +106,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
         [HttpPut("updateContactWithOrgAndStatus", Name = "UpdateContactWithOrgAndStatus")]
         [SwaggerResponse((int) HttpStatusCode.NoContent)]
-        [SwaggerResponse((int) HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int) HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int) HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> UpdateContactWithOrgAndStatus([FromBody] UpdateContactWithOrgAndStausRequest updateContactWithOrgAndStausRequest)
         {
@@ -129,7 +129,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
         [HttpPost("createNewContactWithGivenId", Name = "CreateNewContactWithGivenId")]
         [SwaggerResponse((int) HttpStatusCode.Created, Type = typeof(Contact))]
-        [SwaggerResponse((int) HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int) HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int) HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<ActionResult<Contact>> CreateNewContactWithGivenId([FromBody] Contact contact)
         {
@@ -140,7 +140,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
         [HttpPost("associateDefaultRolesAndPrivileges", Name = "AssociateDefaultRolesAndPrivileges")]
         [SwaggerResponse((int) HttpStatusCode.NoContent)]
-        [SwaggerResponse((int) HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int) HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int) HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> AssociateDefaultRolesAndPrivileges([FromBody] Contact contact)
         {

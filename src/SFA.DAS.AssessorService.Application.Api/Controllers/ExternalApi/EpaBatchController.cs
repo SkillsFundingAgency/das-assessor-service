@@ -7,7 +7,7 @@ using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
 using SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Epas;
-using Swashbuckle.AspNetCore.SwaggerGen;
+using Swashbuckle.AspNetCore.Annotations;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -36,7 +36,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.ExternalApi
 
         [HttpPost]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(IEnumerable<BatchEpaResponse>))]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> Create([FromBody] IEnumerable<CreateBatchEpaRequest> batchRequest)
         {
@@ -89,7 +89,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.ExternalApi
 
         [HttpPut]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(IEnumerable<BatchEpaResponse>))]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> Update([FromBody] IEnumerable<UpdateBatchEpaRequest> batchRequest)
         {
@@ -141,7 +141,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.ExternalApi
         [SwaggerResponse((int)HttpStatusCode.NoContent)]
         [SwaggerResponse((int)HttpStatusCode.NotFound)]
         [SwaggerResponse((int)HttpStatusCode.Forbidden, Type = typeof(ApiResponse))]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> Delete(long uln, string lastname, string standard, string epaReference, int ukPrn)
         {

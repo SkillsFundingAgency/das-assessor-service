@@ -7,7 +7,7 @@ using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
 using SFA.DAS.AssessorService.Application.Handlers.Staff;
 using SFA.DAS.AssessorService.Domain.Paging;
-using Swashbuckle.AspNetCore.SwaggerGen;
+using Swashbuckle.AspNetCore.Annotations;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
@@ -29,7 +29,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.Staff
 
         [HttpGet(Name="StaffSearch")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(PaginatedList<StaffSearchItems>))]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> StaffSearch(string searchQuery, int? page = 1)
         {            
@@ -38,7 +38,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.Staff
 
         [HttpGet("batch", Name = "StaffBatchSearch")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(PaginatedList<StaffBatchSearchResult>))]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> StaffBatchSearch(int batchNumber, int? page = 1)
         {
@@ -47,7 +47,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.Staff
 
         [HttpGet("batchlog", Name = "StaffBatchLog")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(PaginatedList<StaffBatchLogResult>))]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> StaffBatchLog(int? page = 1)
         {
