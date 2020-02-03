@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Net;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -10,8 +9,7 @@ using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
 using SFA.DAS.AssessorService.Application.Exceptions;
-using SFA.DAS.AssessorService.Application.Handlers.Learner;
-using Swashbuckle.AspNetCore.SwaggerGen;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers
 {
@@ -32,7 +30,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
         [HttpPost("import", Name = "ImportLearnerDetail")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [SwaggerResponse(StatusCodes.Status400BadRequest, typeof(ApiResponse))]
+        [SwaggerResponse(StatusCodes.Status400BadRequest, Type = typeof(ApiResponse))]
         [SwaggerResponse(StatusCodes.Status500InternalServerError, Type = typeof(ApiResponse))]
         public async Task<ActionResult<ImportLearnerDetailResponse>> ImportLearnerDetail([FromBody] ImportLearnerDetailRequest request)
         {
