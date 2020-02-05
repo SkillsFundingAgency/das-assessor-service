@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models.Dashboard;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
-using Swashbuckle.AspNetCore.SwaggerGen;
+using Swashbuckle.AspNetCore.Annotations;
 using System.Net;
 using System.Threading.Tasks;
 

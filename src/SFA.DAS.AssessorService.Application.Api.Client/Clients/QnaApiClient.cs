@@ -139,7 +139,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task<SetPageAnswersResponse> AddPageAnswer(Guid applicationId, Guid sectionId, string pageId, List<Answer> answer)
+        public async Task<SetPageAnswersResponse> SetPageAnswers(Guid applicationId, Guid sectionId, string pageId, List<Answer> answer)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Post, $"/applications/{applicationId}/sections/{sectionId}/pages/{pageId}"))
             {

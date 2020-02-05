@@ -13,49 +13,71 @@ namespace SFA.DAS.AssessorService.Web.Infrastructure
     {
         public static bool FileValidationPassed(List<Answer> answers, Page page, List<ValidationErrorDetail> errorMessages, ModelStateDictionary modelState, IFormFileCollection files)
         {
-            ValidationDefinition typeValidation = null;
             var fileValidationPassed = true;
 
-            if (answers != null && answers[0]?.Value == string.Empty)
+            if (answers != null)
             {
-                typeValidation = page.Questions.FirstOrDefault(q => q.QuestionId == answers[0].QuestionId)?.Input.Validations.FirstOrDefault(v => v.Name == "Required");
-                if (typeValidation != null)
+                foreach (var fileAnswer in answers)
                 {
-                    modelState.AddModelError(answers[0].QuestionId, typeValidation.ErrorMessage);
-                    errorMessages.Add(new ValidationErrorDetail(answers[0].QuestionId, typeValidation.ErrorMessage));
-                    fileValidationPassed = false;
-                }
-            }
-            foreach (var file in files)
-            {
-
-                typeValidation = page.Questions.FirstOrDefault(q => q.QuestionId == file.Name)?.Input.Validations.FirstOrDefault(v => v.Name == "FileType");
-                if (typeValidation != null)
-                {
-                    if(file.Length > 0)
+                    // Check if it's a required answer
+                    var typeValidation = page.Questions.FirstOrDefault(q => q.QuestionId == fileAnswer.QuestionId)?.Input.Validations.FirstOrDefault(v => v.Name == "Required");
+                    if (typeValidation != null && string.IsNullOrWhiteSpace(fileAnswer.Value))
                     {
-                        var size = (file.Length / 1024f) / 1024f;
-                        if (size > 5d)
-                        {
-                            modelState.AddModelError(file.Name, "The PDF file must be smaller than 5MB.");
-                            errorMessages.Add(new ValidationErrorDetail(file.Name, "The PDF file must be smaller than 5MB."));
-                            fileValidationPassed = false;
-                        }
-                        else
-                        {
-                            // Only add to answers if type validation passes.
-                            answers.Add(new Answer() { QuestionId = file.Name, Value = file.FileName });
-                        }
+                        modelState.AddModelError(answers[0].QuestionId, typeValidation.ErrorMessage);
+                        errorMessages.Add(new ValidationErrorDetail(answers[0].QuestionId, typeValidation.ErrorMessage));
+                        fileValidationPassed = false;
                     }
                 }
-                else
+            }
+
+            if (files != null)
+            {
+                foreach (var file in files)
                 {
-                    // Only add to answers if type validation passes.
-                    answers.Add(new Answer() { QuestionId = file.Name, Value = file.FileName });
+                    // Check if needs to be smaller than 5MB
+                    var typeValidation = page.Questions.FirstOrDefault(q => q.QuestionId == file.Name)?.Input.Validations.FirstOrDefault(v => v.Name == "FileType");
+                    if (typeValidation != null)
+                    {
+                        if (file.Length > 0)
+                        {
+                            var size = (file.Length / 1024f) / 1024f;
+                            if (size > 5d)
+                            {
+                                fileValidationPassed = false;
+
+                                modelState.AddModelError(file.Name, "The PDF file must be smaller than 5MB.");
+                                errorMessages.Add(new ValidationErrorDetail(file.Name, "The PDF file must be smaller than 5MB."));
+                            }
+                        }
+                    }
                 }
             }
 
             return fileValidationPassed;
+        }
+
+        public static bool AllRequiredFilesArePresent(Page page, List<ValidationErrorDetail> errorMessages, ModelStateDictionary modelState)
+        {
+            var allRequiredFilesArePresent = true;
+
+            var requiredFileUploads = page.Questions.Where(q => q.Input.Type == "FileUpload" && q.Input.Validations.Any(v => v.Name == "Required"));
+
+            // Check an answer has been supplied for the required file upload
+            foreach (var requiredUpload in requiredFileUploads)
+            {
+                // Search through answers for the question and check it's not null or empty
+                var hasRequiredUpload = page.PageOfAnswers.SelectMany(pao => pao.Answers).Any(a => a.QuestionId == requiredUpload.QuestionId && !string.IsNullOrEmpty(a.Value));
+
+                if (!hasRequiredUpload)
+                {
+                    var typeValidation = requiredUpload.Input.Validations.First(v => v.Name == "Required");
+                    modelState.AddModelError(requiredUpload.QuestionId, typeValidation.ErrorMessage);
+                    errorMessages.Add(new ValidationErrorDetail(requiredUpload.QuestionId, typeValidation.ErrorMessage));
+                    allRequiredFilesArePresent = false;
+                }
+            }
+
+            return allRequiredFilesArePresent;
         }
 
     }

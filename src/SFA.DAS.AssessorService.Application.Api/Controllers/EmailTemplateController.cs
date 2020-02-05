@@ -9,8 +9,7 @@ using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
-
-using Swashbuckle.AspNetCore.SwaggerGen;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers
 {
@@ -30,7 +29,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
         [HttpPost(Name = "SendEmailToContact")]
         [SwaggerResponse((int) HttpStatusCode.NoContent)]
-        [SwaggerResponse((int) HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int) HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int) HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> SendEmailToContact(
             [FromBody] SendEmailRequest sendEmailRequest)

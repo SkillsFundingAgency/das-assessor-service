@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
-using Swashbuckle.AspNetCore.SwaggerGen;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers
 {
@@ -29,7 +29,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
         [HttpGet("is-phonenumber-format/{*phoneNumberToValidate}", Name = "ValidatePhoneNumber")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(bool))]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> ValidatePhoneNumber(string phoneNumberToValidate)
         {
@@ -38,7 +38,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
         [HttpGet("is-email-format/{*emailToValidate}", Name = "ValidateEmail")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(bool))]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> ValidateEmail(string emailToValidate)
         {
@@ -47,7 +47,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
         [HttpGet("is-websitelink-format", Name = "ValidateWebsiteLink")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(bool))]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> ValidateWebsiteLink(string websiteLinkToValidate)
         {
@@ -58,7 +58,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
         [HttpGet("is-not-empty/{stringToValidate}", Name = "ValidateRequired")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(bool))]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> ValidateRequired(string stringToValidate)
         {
@@ -67,7 +67,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
         [HttpGet("is-ukprn-format/{ukprnToValidate}", Name = "ValidateUkprn")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(bool))]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> ValidateUkprn(string ukprnToValidate)
         {
@@ -76,7 +76,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
         [HttpGet("is-uln-format/{ulnToValidate}", Name = "ValidateUln")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(bool))]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> ValidateUln(string ulnToValidate)
         {
@@ -85,7 +85,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
         [HttpGet("is-minimum-length-or-more/{stringToValidate}/{minimumLength}", Name = "ValidateMinimumLength")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(bool))]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> ValidateMinimumLength(string stringToValidate, int minimumLength)
         {
@@ -94,7 +94,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
         [HttpGet("is-maximum-length-or-less/{stringToValidate}/{maximumLength}", Name = "ValidateMaximumLength")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(bool))]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> ValidateMaximumLength(string stringToValidate, int maximumLength)
         {
@@ -103,7 +103,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
         [HttpGet("is-valid-date/{dateToCheck}", Name = "ValidateDate")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(bool))]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> ValidateDate(string dateToCheck)
         {
@@ -112,7 +112,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
         [HttpGet("is-date-today-or-in-future/{dateToCheck}", Name = "ValidateDateTodayOrInFuture")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(bool))]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> ValidateDateTodayOrInFuture(string dateToCheck)
         {
@@ -121,7 +121,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
         [HttpGet("is-date-today-or-in-past/{dateToCheck}", Name = "ValidateDateTodayOrInPast")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(bool))]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> ValidateDateTodayOrInPast(string dateToCheck)
         {
@@ -130,7 +130,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
         [HttpGet("is-organisation-id-format/{organisationIdToValidate}", Name = "ValidateOrganisationId")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(bool))]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> ValidateOrganisationId(string organisationIdToValidate)
         {
@@ -139,7 +139,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
         [HttpGet("is-company-number-format/{companyNumberToCheck}", Name = "ValidateCompanyNumber")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(bool))]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> ValidateCompanyNumber(string companyNumberToCheck)
         {
@@ -148,7 +148,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
         [HttpGet("is-charity-number-format/{charityNumberToCheck}", Name = "ValidateCharityNumber")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(bool))]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> ValidateCharityNumber(string charityNumberToCheck)
         {

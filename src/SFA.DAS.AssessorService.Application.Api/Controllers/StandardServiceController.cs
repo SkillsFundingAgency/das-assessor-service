@@ -5,11 +5,11 @@ using SFA.DAS.Apprenticeships.Api.Types;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
 using SFA.DAS.AssessorService.Application.Interfaces;
-using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers
 {
@@ -29,7 +29,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
         [HttpGet("standards", Name = "GetAllStandards")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(IEnumerable<StandardCollation>))]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> GetAllStandards()
         {
@@ -40,7 +40,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
         [HttpGet("standards/{standardCode}", Name = "GetStandard")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(StandardCollation))]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> GetStandard(int standardCode)
         {
