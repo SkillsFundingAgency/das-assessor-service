@@ -508,7 +508,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
                 INNER JOIN Organisations org ON ap1.OrganisationId = org.Id
                     CROSS APPLY OPENJSON(ApplyData,'$.Sequences') WITH (SequenceNo INT, IsActive BIT, Status VARCHAR(20)) sequence
                     CROSS APPLY OPENJSON(ApplyData,'$.Sequences[0].Sections') WITH (SectionNo INT, Status VARCHAR(20)) section
-                    CROSS APPLY OPENJSON(ApplyData,'$.Apply') WITH (SubmittedDate VARCHAR(30) '$.LatestInitSubmissionDate', SubmissionCount INT '$.InitSubmissionCount') apply
+                    CROSS APPLY OPENJSON(ApplyData,'$.Apply') WITH (SubmittedDate VARCHAR(30) '$.LatestInitSubmissionDate', SubmissionCount INT '$.InitSubmissionsCount') apply
                 WHERE sequence.SequenceNo = {FINANCIAL_SEQUENCE_NO} AND section.SectionNo = {FINANCIAL_SECTION_NO} AND sequence.IsActive = 1
                     AND ap1.FinancialReviewStatus IN (@financialReviewStatusNew, @financialReviewStatusInProgress)
                     AND ap1.ApplicationStatus IN (@applicationStatusSubmitted, @applicationStatusResubmitted)
@@ -542,7 +542,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
                 INNER JOIN Organisations org ON ap1.OrganisationId = org.Id
                     CROSS APPLY OPENJSON(ApplyData,'$.Sequences') WITH (SequenceNo INT, IsActive BIT, Status VARCHAR(20)) sequence
                     CROSS APPLY OPENJSON(ApplyData,'$.Sequences[0].Sections') WITH (SectionNo INT, Status VARCHAR(20), FeedbackDate VARCHAR(30) '$.Feedback.FeedbackDate') section
-                    CROSS APPLY OPENJSON(ApplyData,'$.Apply') WITH (SubmittedDate VARCHAR(30) '$.LatestInitSubmissionDate', SubmissionCount INT '$.InitSubmissionCount') apply
+                    CROSS APPLY OPENJSON(ApplyData,'$.Apply') WITH (SubmittedDate VARCHAR(30) '$.LatestInitSubmissionDate', SubmissionCount INT '$.InitSubmissionsCount') apply
                 WHERE sequence.SequenceNo = {FINANCIAL_SEQUENCE_NO} AND section.SectionNo = {FINANCIAL_SECTION_NO} AND sequence.IsActive = 1
                     AND ap1.FinancialReviewStatus = @financialReviewStatusRejected
                     AND ap1.ApplicationStatus IN (@applicationStatusSubmitted, @applicationStatusResubmitted, @applicationStatusFeedbackAdded)
@@ -575,7 +575,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
                 INNER JOIN Organisations org ON ap1.OrganisationId = org.Id
                     CROSS APPLY OPENJSON(ApplyData,'$.Sequences') WITH (SequenceNo INT, Status VARCHAR(20)) sequence
                     CROSS APPLY OPENJSON(ApplyData,'$.Sequences[0].Sections') WITH (SectionNo INT, Status VARCHAR(20), NotRequired BIT) section
-                    CROSS APPLY OPENJSON(ApplyData,'$.Apply') WITH (ClosedDate VARCHAR(30) '$.InitSubmissionClosedDate', SubmissionCount INT '$.InitSubmissionCount') apply
+                    CROSS APPLY OPENJSON(ApplyData,'$.Apply') WITH (ClosedDate VARCHAR(30) '$.InitSubmissionClosedDate', SubmissionCount INT '$.InitSubmissionsCount') apply
                 WHERE sequence.SequenceNo = {FINANCIAL_SEQUENCE_NO} AND section.SectionNo = {FINANCIAL_SECTION_NO} AND section.NotRequired = 0
                     AND ap1.FinancialReviewStatus IN (@financialReviewStatusGraded, @financialReviewStatusApproved) -- NOTE: Not showing Exempt
                     AND ap1.DeletedAt IS NULL",
