@@ -4,7 +4,8 @@
 	 @LevelFilters AS NVARCHAR(MAX)
 AS
 BEGIN
-	-- redeclare variables to workaround query plan caching performance issues
+	-- variables redeclared to workaround query plan parameter sniffing performance issues
+	-- this is now regarded as bad practice and should be removed
 	DECLARE @SearchTermInternal NVARCHAR(100) = @SearchTerm
 	DECLARE @SectorFiltersInternal NVARCHAR(MAX) = ISNULL(@SectorFilters, '')
 	DECLARE @LevelFiltersInternal NVARCHAR(MAX) = ISNULL(@LevelFilters, '')
