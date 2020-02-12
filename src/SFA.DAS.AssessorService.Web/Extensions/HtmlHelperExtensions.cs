@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Linq;
 
 namespace SFA.DAS.AssessorService.Web.Extensions
 {
@@ -12,21 +13,14 @@ namespace SFA.DAS.AssessorService.Web.Extensions
 
         public static IHtmlContent SetZenDeskLabels(this IHtmlHelper html, params string[] labels)
         {
-            var apiCallString = "<script type=\"text/javascript\">zE('webWidget', 'helpCenter:setSuggestions', { labels: [";
+            var keywords = string.Join(',', labels
+                .Where(label => !string.IsNullOrEmpty(label))
+                .Select(label => $"'{EscapeApostrophes(label)}'"));
 
-            var first = true;
-            foreach (var label in labels)
-            {
-                if (!string.IsNullOrEmpty(label))
-                { 
-                    if (!first) apiCallString += ",";
-                    first = false;
-
-                    apiCallString += $"'{ EscapeApostrophes(label) }'";
-                }
-            }
-
-            apiCallString += "] });</script>";
+            // when there are no keywords default to empty string to prevent zen desk matching articles from the url
+            var apiCallString = "<script type=\"text/javascript\">zE('webWidget', 'helpCenter:setSuggestions', { labels: ["
+                + (!string.IsNullOrEmpty(keywords) ? keywords : "''")
+                + "] });</script>";
 
             return new HtmlString(apiCallString);
         }

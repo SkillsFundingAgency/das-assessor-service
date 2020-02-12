@@ -129,6 +129,25 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
             }
         }
 
+        private string CheckFinancialStatus(ApplyData applyData)
+        {
+            if (applyData.Sequences != null)
+            {
+                foreach (var sequence in applyData.Sequences.Where(seq => seq.SequenceNo == 1 && !seq.NotRequired))
+                {
+                    // NOTE: Get Status for a required Section 3 - Financial
+                    if (sequence.Sections != null)
+                    {
+                        foreach (var section in sequence.Sections.Where(sec => sec.SectionNo == 3 && !sec.NotRequired))
+                        {
+                            return section.Status;
+                        }
+                    }
+                }
+            }
+            return null;
+        }
+
         private void UpdateApplicationStatus(Domain.Entities.Apply application, int sequenceNo)
         {
             // Always default it to submitted
@@ -145,7 +164,10 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
 
                 if (!closedFinanicalStatuses.Contains(application.FinancialReviewStatus))
                 {
-                    application.FinancialReviewStatus = FinancialReviewStatus.New;
+                    if (CheckFinancialStatus(applyData) != ApplicationSectionStatus.Evaluated)
+                    {
+                        application.FinancialReviewStatus = FinancialReviewStatus.New;
+                    }
                 }
             }
             else if (sequenceNo == 2)
