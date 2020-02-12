@@ -38,6 +38,11 @@
         "internalApiSandboxCustomHostName": {
             "type": "string"
         },
+        "appServiceAllowedIPs": {
+            "type": "array",
+            "defaultValue": [
+            ]
+        },
         "sandboxFunctionAppNames": {
             "type": "array"
         },
@@ -226,6 +231,9 @@
                     },
                     "certificateThumbprint": {
                         "value": "[if(greater(length(parameters('externalApiSandboxAppServiceCertificateName')), 0), reference('sandbox-external-app-service-certificate').outputs.certificateThumbprint.value, '')]"
+                    },
+                    "ipSecurityRestrictions": {
+                        "value": "[parameters('appServiceAllowedIPs')]"
                     }
                 }
             },
@@ -301,6 +309,9 @@
                     },
                     "certificateThumbprint": {
                         "value": "[if(greater(length(parameters('internalApiSandboxAppServiceCertificateName')), 0), reference('sandbox-internal-app-service-certificate').outputs.certificateThumbprint.value, '')]"
+                    },
+                    "ipSecurityRestrictions": {
+                        "value": "[parameters('appServiceAllowedIPs')]"
                     }
                 }
             },
