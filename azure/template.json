@@ -44,6 +44,16 @@
         "externalApiSandboxCustomHostname": {
             "type": "string"
         },
+        "appServiceAllowedIPs": {
+            "type": "array",
+            "defaultValue": [
+            ]
+        },
+        "externalApiAppServiceAllowedIPs": {
+            "type": "array",
+            "defaultValue": [
+            ]
+        },
         "functionAppNames": {
             "type": "array"
         },
@@ -176,6 +186,9 @@
                     },
                     "certificateThumbprint": {
                         "value": "[reference('ui-app-service-certificate').outputs.certificateThumbprint.value]"
+                    },
+                    "ipSecurityRestrictions": {
+                        "value": "[parameters('appServiceAllowedIPs')]"
                     }
                 }
             }
@@ -266,6 +279,9 @@
                     },
                     "certificateThumbprint": {
                         "value": "[reference('api-app-service-certificate').outputs.certificateThumbprint.value]"
+                    },
+                    "ipSecurityRestrictions": {
+                        "value": "[parameters('appServiceAllowedIPs')]"
                     }
                 }
             }
@@ -352,6 +368,9 @@
                     },
                     "certificateThumbprint": {
                         "value": "[reference('external-api-app-service-certificate').outputs.certificateThumbprint.value]"
+                    },
+                    "ipSecurityRestrictions": {
+                        "value": "[parameters('externalApiAppServiceAllowedIPs')]"
                     }
                 }
             }
@@ -442,6 +461,9 @@
                     },
                     "certificateThumbprint": {
                         "value": "[reference('external-api-sandbox-app-service-certificate').outputs.certificateThumbprint.value]"
+                    },
+                    "ipSecurityRestrictions": {
+                        "value": "[parameters('externalApiAppServiceAllowedIPs')]"
                     }
                 }
             }
