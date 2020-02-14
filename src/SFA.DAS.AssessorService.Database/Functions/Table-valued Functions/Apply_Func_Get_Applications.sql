@@ -2,7 +2,7 @@
 (	
 	@sequenceNo INT,
 	@organisationId AS NVARCHAR(12),
-	@sequenceStatus AS NVARCHAR(MAX),
+	@includedApplicationSequenceStatus AS NVARCHAR(MAX),
 	@excludedApplicationStatus AS NVARCHAR(MAX),
 	@excludedReviewStatus AS NVARCHAR(MAX),
 	@includedReviewStatus AS NVARCHAR(MAX)
@@ -53,7 +53,7 @@ RETURN
 	WHERE 
 		seq.SequenceNo = @sequenceNo AND seq.NotRequired = 0
 		AND (org.EndPointAssessorOrganisationId = @organisationId OR @organisationId IS NULL)
-		AND seq.Status IN (SELECT LTRIM(RTRIM(value)) FROM STRING_SPLIT ( @sequenceStatus, '|' )) 
+		AND seq.Status IN (SELECT LTRIM(RTRIM(value)) FROM STRING_SPLIT ( @includedApplicationSequenceStatus, '|' )) 
         AND ap1.DeletedAt IS NULL
         AND ap1.ApplicationStatus NOT IN (SELECT LTRIM(RTRIM(value)) FROM STRING_SPLIT ( @excludedApplicationStatus, '|' )) 
         AND ap1.ReviewStatus NOT IN (SELECT LTRIM(RTRIM(value)) FROM STRING_SPLIT ( @excludedReviewStatus, '|' ))

@@ -150,10 +150,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
 
         private void UpdateApplicationStatus(Domain.Entities.Apply application, int sequenceNo)
         {
-            // Always default it to submitted
-            application.ApplicationStatus = ApplicationStatus.Submitted;
-            application.ReviewStatus = ApplicationReviewStatus.New;
-
             var applyData = application.ApplyData;
 
             if (sequenceNo == 1)
@@ -173,6 +169,10 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
             else if (sequenceNo == 2)
             {
                 application.ApplicationStatus = (applyData.Apply.StandardSubmissions.Count == 1) ? ApplicationStatus.Submitted : ApplicationStatus.Resubmitted;
+            }
+            else
+            {
+                application.ApplicationStatus = ApplicationStatus.Submitted;
             }
         }
 

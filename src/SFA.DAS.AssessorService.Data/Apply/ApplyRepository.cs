@@ -404,9 +404,13 @@ namespace SFA.DAS.AssessorService.Data.Apply
         public async Task<ApplicationReviewStatusCounts> GetApplicationReviewStatusCounts()
         {
             var @params = new DynamicParameters();
-            @params.Add("openSequenceStatus", string.Join("|", new List<string> { ApplicationSequenceStatus.Submitted, ApplicationSequenceStatus.Resubmitted }));
-            @params.Add("feedbackSequenceStatus", string.Join("|", new List<string> { ApplicationSequenceStatus.FeedbackAdded }));
-            @params.Add("closedSequenceStatus", string.Join("|", new List<string> { ApplicationSequenceStatus.Approved, ApplicationSequenceStatus.Declined }));
+            @params.Add("includedApplicationSequenceStatus", string.Join("|", new List<string> 
+            { 
+                ApplicationSequenceStatus.Submitted, 
+                ApplicationSequenceStatus.Resubmitted, 
+                ApplicationSequenceStatus.FeedbackAdded, 
+                ApplicationSequenceStatus.Approved
+            }));
             @params.Add("excludedApplicationStatus", string.Join("|", new List<string> { ApplicationStatus.Declined }));
             @params.Add("excludedReviewStatus", string.Join("|", new List<string> { ApplicationReviewStatus.Deleted })); 
 
@@ -449,7 +453,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
             var @params = new DynamicParameters();
             @params.Add("sequenceNo", sequenceNo);
             @params.Add("organisationId", organisationId);
-            @params.Add("sequenceStatus", GetSequenceStatus(reviewStatus));
+            @params.Add("includedApplicationSequenceStatus", GetApplicationSequenceStatus(reviewStatus));
             @params.Add("excludedApplicationStatus", string.Join("|", new List<string> { ApplicationStatus.Declined }));
             @params.Add("excludedReviewStatus", string.Join("|", new List<string> { ApplicationReviewStatus.Deleted }));
             @params.Add("includedReviewStatus", string.Join("|", reviewStatus));
@@ -474,7 +478,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
             return result;
         }
 
-        private string GetSequenceStatus(string reviewStatus)
+        private string GetApplicationSequenceStatus(string reviewStatus)
         {
             switch (reviewStatus)
             {
@@ -483,7 +487,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
                 case ApplicationReviewStatus.InProgress:
                     return string.Join("|", new List<string> { ApplicationSequenceStatus.Submitted, ApplicationSequenceStatus.Resubmitted });
                 case ApplicationReviewStatus.HasFeedback:
-                    return string.Join("|", new List<string> { ApplicationSequenceStatus.FeedbackAdded });
+                    return string.Join("|", new List<string> { ApplicationSequenceStatus.FeedbackAdded, ApplicationSequenceStatus.Resubmitted });
                 case ApplicationReviewStatus.Approved:
                     return string.Join("|", new List<string> { ApplicationSequenceStatus.Approved });
             }
