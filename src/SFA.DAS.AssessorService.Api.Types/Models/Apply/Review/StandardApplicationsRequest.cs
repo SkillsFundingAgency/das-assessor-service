@@ -6,7 +6,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Apply.Review
 {
     public class StandardApplicationsRequest : IRequest<PaginatedList<ApplicationSummaryItem>>
     {
-        public string OrgansiationId { get; }
+        public string OrganisationId { get; }
         public string ReviewStatus { get; }
         public string SortColumn { get; }
         public int SortAscending { get; }
@@ -16,7 +16,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Apply.Review
 
         public StandardApplicationsRequest(string organisationId, string reviewStatus, string sortColumn, int sortAscending, int pageSize, int pageIndex, int pageSetSize)
         {
-            OrgansiationId = organisationId;
+            OrganisationId = organisationId;
             ReviewStatus = reviewStatus;
             SortColumn = sortColumn;
             SortAscending = sortAscending;
