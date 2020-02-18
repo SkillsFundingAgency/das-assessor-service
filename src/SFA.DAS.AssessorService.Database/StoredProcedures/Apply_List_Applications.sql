@@ -58,7 +58,7 @@ BEGIN
 	FROM
 		#Results
 	ORDER BY
-		CASE WHEN @SortAscending = 1 THEN ''
+		CASE WHEN @SortAscending = 0 THEN ''
 		ELSE
            CASE 
 				WHEN @SortColumn = 'OrganisationName' THEN OrganisationName
@@ -73,7 +73,7 @@ BEGIN
 				ELSE CAST(ApplicationId AS VARCHAR(36))
 			END
 		END ASC,
-		CASE WHEN @SortAscending = 0 THEN ''
+		CASE WHEN @SortAscending = 1 THEN ''
 		ELSE
            CASE 
 				WHEN @SortColumn = 'OrganisationName' THEN OrganisationName
