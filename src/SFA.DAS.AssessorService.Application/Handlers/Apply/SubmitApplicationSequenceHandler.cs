@@ -210,7 +210,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
             else if (sequenceNo == 2)
             {
                 var emailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.ApplyEPAOStandardSubmission);
-                await _mediator.Send(new SendEmailRequest(email, emailTemplate, new { reference, standard }), cancellationToken);
+                await _mediator.Send(new SendEmailRequest(email, emailTemplate, new { contactname, reference, standard }), cancellationToken);
             }
         }
 
