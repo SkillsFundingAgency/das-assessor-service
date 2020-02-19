@@ -403,16 +403,17 @@ namespace SFA.DAS.AssessorService.Data.Apply
 
         public async Task<ApplicationReviewStatusCounts> GetApplicationReviewStatusCounts()
         {
-            var @params = new DynamicParameters();
-            @params.Add("includedApplicationSequenceStatus", string.Join("|", new List<string> 
-            { 
-                ApplicationSequenceStatus.Submitted, 
-                ApplicationSequenceStatus.Resubmitted, 
-                ApplicationSequenceStatus.FeedbackAdded, 
-                ApplicationSequenceStatus.Approved
-            }));
+            var @params = new DynamicParameters();          
+            @params.Add("includedNewApplicationSequenceStatus", GetApplicationSequenceStatus(ApplicationReviewStatus.New));
+            @params.Add("includedInProgressApplicationSequenceStatus", GetApplicationSequenceStatus(ApplicationReviewStatus.InProgress));
+            @params.Add("includedHasFeedbackApplicationSequenceStatus", GetApplicationSequenceStatus(ApplicationReviewStatus.HasFeedback));
+            @params.Add("includedApprovedApplicationSequenceStatus", GetApplicationSequenceStatus(ApplicationReviewStatus.Approved));
             @params.Add("excludedApplicationStatus", string.Join("|", new List<string> { ApplicationStatus.Declined }));
-            @params.Add("excludedReviewStatus", string.Join("|", new List<string> { ApplicationReviewStatus.Deleted })); 
+            @params.Add("excludedReviewStatus", string.Join("|", new List<string> { ApplicationReviewStatus.Deleted }));
+            @params.Add("includedNewReviewStatus", ApplicationReviewStatus.New);
+            @params.Add("includedInProgressReviewStatus", ApplicationReviewStatus.InProgress);
+            @params.Add("includedHasFeedbackReviewStatus", ApplicationReviewStatus.HasFeedback);
+            @params.Add("includedApprovedReviewStatus", ApplicationReviewStatus.Approved);
 
             var reviewStatusCountResults = (await _unitOfWork.Connection.QueryMultipleAsync(
                 "Apply_Get_ReviewStatusCounts",
