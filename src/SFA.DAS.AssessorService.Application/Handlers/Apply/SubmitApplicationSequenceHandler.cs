@@ -150,7 +150,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
 
         private void UpdateApplicationAndReviewStatus(Domain.Entities.Apply application, int sequenceNo)
         {
-            if (application.ReviewStatus == ApplicationReviewStatus.Draft)
+            if (application.ReviewStatus != ApplicationReviewStatus.HasFeedback)
             {
                 application.ReviewStatus = ApplicationReviewStatus.New;
             }
