@@ -673,12 +673,12 @@
                                 "value": "[reference('StorageAccount').outputs.StorageConnectionString.value]"
                             },
                             {
-                                "name": "AzureWebJobsDashboard",
-                                "value": "[reference('StorageAccount').outputs.StorageConnectionString.value]"
-                            },
-                            {
                                 "name": "FUNCTIONS_EXTENSION_VERSION",
                                 "value": "~1"
+                            },
+                            {
+                                "name": "FUNCTIONS_WORKER_RUNTIME",
+                                "value": "dotnet"
                             },
                             {
                                 "name": "MSDEPLOY_RENAME_LOCKED_FILES",
@@ -751,6 +751,10 @@
                             {
                                 "name": "FUNCTIONS_EXTENSION_VERSION",
                                 "value": "~1"
+                            },
+                            {
+                                "name": "FUNCTIONS_WORKER_RUNTIME",
+                                "value": "dotnet"
                             },
                             {
                                 "name": "MSDEPLOY_RENAME_LOCKED_FILES",
