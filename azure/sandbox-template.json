@@ -365,10 +365,6 @@
                                 "value": "[reference('sandbox-storage-account').outputs.StorageConnectionString.value]"
                             },
                             {
-                                "name": "AzureWebJobsDashboard",
-                                "value": "[reference('sandbox-storage-account').outputs.StorageConnectionString.value]"
-                            },
-                            {
                                 "name": "FUNCTIONS_EXTENSION_VERSION",
                                 "value": "~2"
                             },
@@ -387,6 +383,10 @@
                             {
                                 "name": "EnvironmentName",
                                 "value": "[toUpper(parameters('environmentName'))]"
+                            },
+                            {
+                                "name": "FUNCTIONS_WORKER_RUNTIME",
+                                "value": "dotnet"
                             }
                         ]
                     },
