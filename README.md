@@ -60,9 +60,19 @@ See [Support Site](https://skillsfundingagency.atlassian.net/wiki/spaces/NDL/pag
 
 ##### Complete Data Setup
 
-Follow the [EPAO Data Setup Guide](https://skillsfundingagency.atlassian.net/wiki/spaces/NDL/pages/1731395918/EPAO+-+Data+Setup+Guide) to populate local database test data.
+Follow the [EPAO Data Setup Guide](https://skillsfundingagency.atlassian.net/wiki/spaces/NDL/pages/1731395918/EPAO+-+Data+Setup+Guide#Assessor-Service---Initial-Setup) to populate local database test data.
 
-##### Run the solution
+#### To run a local copy you will also require 
+
+- [Login Service](https://github.com/SkillsFundingAgency/das-login-service)
+- [QnA API](https://github.com/SkillsFundingAgency/das-qna-api)
+- [Admin Service](https://github.com/SkillsFundingAgency/das-admin-service)
+
+##### And you may also require 
+
+- [Assessor Functions](https://github.com/SkillsFundingAgency/das-assessor-functions)     
+
+#### Run the solution
 
 - Set SFA.DAS.AssessorService.Web and SFA.DAS.AssessorService.Application.Api as startup projects
 - Running the solution will launch the site and API in your browser
@@ -92,17 +102,6 @@ As such it requires
 
 3). The BaseAddress in the app.config to be set to the base address of the running 
 SFA.DAS.AssessorService.Application.Api project.
-
-#### To run a local copy you will also require 
-
-- [Login Service](https://github.com/SkillsFundingAgency/das-login-service)
-- [QnA API](https://github.com/SkillsFundingAgency/das-qna-api)
-- [Admin Service](https://github.com/SkillsFundingAgency/das-admin-service)
-
-
-##### And you may also require 
-
-- [Assessor Functions](https://github.com/SkillsFundingAgency/das-assessor-functions)     
 	 
 #### Getting Started
    
