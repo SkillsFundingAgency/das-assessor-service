@@ -1,6 +1,5 @@
 // Application javascript
 window.GOVUKFrontend.initAll();
-window.DASFrontend.addCookieMessage();
 window.DASFrontend.expandableTable.init();
 
 (function(global) {
@@ -87,6 +86,19 @@ window.DASFrontend.expandableTable.init();
       document.addEventListener("change", GOVUK.checkAll.handleClick);
     }
   };
+
+  var $cookieBanner = document.querySelector('[data-module="cookie-banner"]');
+  if ($cookieBanner != null) {
+    new CookieBanner($cookieBanner);
+  }
+
+  var $cookieSettings = document.querySelector(
+    '[data-module="cookie-settings"]'
+  );
+  if ($cookieSettings != null) {
+    var $cookieSettingsOptions = $cookieSettings.dataset.options;
+    new CookieSettings($cookieSettings, $cookieSettingsOptions);
+  }
 
   global.GOVUK = GOVUK;
 })(window);
