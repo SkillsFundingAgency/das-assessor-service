@@ -4,8 +4,32 @@
 <html lang="en" class="govuk-template ">
 <head>
     <environment exclude="Development">
+        <!-- Data Layer  -->
+        <script>
+            dataLayer = [{
+                'vpv': '@Context.Request.Path'
+            }];
+        </script>
+        <!-- End Data Layer  -->
+
         <!-- Google Tag Manager -->
-         <script>(function (w, d, s, l, i) { w[l] = w[l] || []; w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' }); var f = d.getElementsByTagName(s)[0], j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.async = true; j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl; f.parentNode.insertBefore(j, f); })(window, document, 'script', 'dataLayer', 'GTM-MKHR6KG');</script>        
+        <script>
+            (function (w, d, s, l, i) {
+                w[l] = w[l] || [];
+                w[l].push({
+                    'gtm.start':
+                        new Date().getTime(),
+                    event: 'gtm.js'
+                });
+                var f = d.getElementsByTagName(s)[0],
+                    j = d.createElement(s),
+                    dl = l !== 'dataLayer' ? '&l=' + l : '';
+                j.async = true;
+                j.src =
+                    'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+                f.parentNode.insertBefore(j, f);
+            })(window, document, 'script', 'dataLayer', 'GTM-MKHR6KG');
+        </script>
         <!-- End Google Tag Manager -->
     </environment>
     <title>@ViewData["Title"]</title>
@@ -52,7 +76,7 @@
     <environment exclude="Development">
         <!-- Google Tag Manager (noscript) -->
         <noscript>
-            <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MKHR6KG" height="0" width="0" style="display:none;visibility:hidden"></iframe>
+            <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MKHR6KG" height="0" width="0" style="display: none; visibility: hidden"></iframe>
         </noscript>
         <!-- End Google Tag Manager (noscript) -->
     </environment>
