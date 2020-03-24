@@ -3,7 +3,7 @@
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iisExpress": {
-      "applicationUrl": "http://localhost:59021/",
+      "applicationUrl": "http://localhost:59022/",
       "sslPort": 0
     }
   },
@@ -13,11 +13,11 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
-      "launchUrl": "http://localhost:59021/swagger"
+      "launchUrl": "http://localhost:59022/swagger"
     },
     "SFA.DAS.AssessorService.Application.Api": {
       "commandName": "Project",
-      "launchUrl": "http://localhost:59021/swagger",
+      "launchUrl": "http://localhost:59022/swagger",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },

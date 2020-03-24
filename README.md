@@ -74,11 +74,7 @@ Follow the [EPAO Data Setup Guide](https://skillsfundingagency.atlassian.net/wik
 
 #### Run the solution
 
-- Set SFA.DAS.AssessorService.Web and SFA.DAS.AssessorService.Application.Api as startup projects
-- Running the solution will launch the site and API in your browser
-- JSON configuration was created to work with dotnet run
-
--or-
+The default JSON configuration was created to work with dotnet run:
 
 - Navigate to src/SFA.DAS.AssessorService.Web/
 - run `dotnet restore`
@@ -88,6 +84,8 @@ Follow the [EPAO Data Setup Guide](https://skillsfundingagency.atlassian.net/wik
 - Navigate to src/SFA.DAS.AssessorService.Application.Api/
 - run `dotnet restore`
 - run `dotnet run`
+
+**Note:** Running the solution from VS2019 is not supported currently as the Login Service (OpenId Identity Server 4) is configured by default for the client end point to originate at https://localhost:5015 which is not a valid port for IIS Express; altering the Login Service configuration is out of scope for this Readme.
 
 #### Running Specflow
 
