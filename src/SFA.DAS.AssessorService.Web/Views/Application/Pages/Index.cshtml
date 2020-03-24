@@ -71,8 +71,8 @@
 
                 @* no action is specified for the form, post back to the get url to preserve the page hierarchy parameters *@
         <form method="post" novalidate enctype="multipart/form-data">
-            <input type="hidden" id="__redirectAction" name="__redirectAction" value="@Model.RedirectAction" />
-            <input type="hidden" id="__summaryLink" name="__summaryLink" value="@Model.SummaryLink" />
+            <input type="hidden" id="redirectAction" name="redirectAction" value="@Model.RedirectAction" />
+            <input type="hidden" id="summaryLink" name="summaryLink" value="@Model.SummaryLink" />
             @if (Model.Questions.Count() == 1)
             {
                 foreach (var question in Model.Questions)
