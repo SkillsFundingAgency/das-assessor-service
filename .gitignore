@@ -289,3 +289,9 @@ src/SFA.DAS.AssessorService.Web/wwwroot/javascripts/**/*.min.js
 #Redundant specflow project
 src/SFA.DAS.AssessorService.Application.Api.Specflow.Tests/**/*.*
 src/global.json
+
+#SonarCloud
+
+.sonarqube/
+SonarQube.Analysis.xml
+**/*.slconfig
