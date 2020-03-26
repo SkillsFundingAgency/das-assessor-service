@@ -1,36 +1,80 @@
-# ![crest](https://assets.publishing.service.gov.uk/government/assets/crests/org_crest_27px-916806dcf065e7273830577de490d5c7c42f36ddec83e907efe62086785f24fb.png) Digital Apprenticeships Service
+# Digital Apprenticeships Service
 
-##  EPAO Onboarding and Certification
+## EPAO Onboarding and Certification
 
-![Build Status](https://sfa-gov-uk.visualstudio.com/_apis/public/build/definitions/c39e0c0b-7aff-4606-b160-3566f3bbce23/831/badge)
+Licensed under the [MIT license](https://github.com/SkillsFundingAgency/das-assessor-service/blob/master/LICENSE.txt)
+
+|               |               |
+| ------------- | ------------- |
+|![crest](https://assets.publishing.service.gov.uk/government/assets/crests/org_crest_27px-916806dcf065e7273830577de490d5c7c42f36ddec83e907efe62086785f24fb.png)|Assessor Service Web|
+| Info | A service which allows an End Point Assessment Organisation (EPAO) to register and assess standards |
+| Build | [![Build Status](https://sfa-gov-uk.visualstudio.com/Digital%20Apprenticeship%20Service/_apis/build/status/Endpoint%20Assessment%20Organisation/das-assessor-service?branchName=master)](https://sfa-gov-uk.visualstudio.com/Digital%20Apprenticeship%20Service/_build/latest?definitionId=831&branchName=master) |
+| Web  | https://localhost:5015/  |
+|      | https://localhost:5015/find-an-assessment-opportunity  |
+
+|               |               |
+| ------------- | ------------- |
+|![crest](https://assets.publishing.service.gov.uk/government/assets/crests/org_crest_27px-916806dcf065e7273830577de490d5c7c42f36ddec83e907efe62086785f24fb.png)|Assessor External API |
+| Info | An API which allows an EPAO to access Record a grade functionality programmatically |
+| Build | [![Build Status](https://sfa-gov-uk.visualstudio.com/Digital%20Apprenticeship%20Service/_apis/build/status/Endpoint%20Assessment%20Organisation/das-assessor-service?branchName=master)](https://sfa-gov-uk.visualstudio.com/Digital%20Apprenticeship%20Service/_build/latest?definitionId=831&branchName=master) |
+| Api  | https://www.gov.uk/guidance/record-a-grade-api  |
+
+See [Support Site](https://skillsfundingagency.atlassian.net/wiki/spaces/NDL/pages/1731559639/Login+Service+-+Developer+Overview) for EFSA developer details.
 
 ### Developer Setup
 
 #### Requirements
 
-- Install [Visual Studio 2017 Enterprise](https://www.visualstudio.com/downloads/) with these workloads:
+- Install [.NET Core 2.2 SDK](https://www.microsoft.com/net/download)
+- Install [Visual Studio 2019](https://www.visualstudio.com/downloads/) with these workloads:
     - ASP.NET and web development
     - Azure development
+- Install [SQL Server 2017 Developer Edition](https://go.microsoft.com/fwlink/?linkid=853016)
 - Install [SQL Management Studio](https://docs.microsoft.com/en-us/sql/ssms/download-sql-server-management-studio-ssms)
-- Install [Azure Storage Emulator](https://go.microsoft.com/fwlink/?linkid=717179&clcid=0x409) (Make sure you are on v5.3)
-- Install [Azure Storage Explorer](http://storageexplorer.com/)
-- Install [Specflow](http://specflow.org/documentation/Installation/)
+- Install [Azure Storage Emulator](https://go.microsoft.com/fwlink/?linkid=717179&clcid=0x409) (Make sure you are on atleast v5.3)
+- Install [Azure Storage Explorer](http://storageexplorer.com/) 
 - Administrator Access
+
+- Optionally Install [Specflow](http://specflow.org/documentation/Installation/)
 
 #### Setup
 
-- Create a Configuration table in your (Development) local storage account.
-- Add a row to the Configuration table with fields: PartitionKey: LOCAL, RowKey: SFA.DAS.AssessorService_1.0, Data: {The contents of the local config json file}.
+- Clone this repository
+- Open Visual Studio as an administrator
 
-##### Open the solution
+##### Publish Database
 
-- Open Visual studio as an administrator
-- Open the solution
-- Set SFA.DAS.AssessorService.Web and SFA.DAS.AssessorService.Application.Api as startup projects
-- Running the solution will launch the site and API in your browser
-- JSON configuration was created to work with dotnet run
+- Build the solution SFA.DAS.AssessorService.sln
+- Either use Visual Studio's `Publish Database` tool to publish the database project SFA.DAS.AssessorService.Database to name {{database name}} on {{local instance name}}
 
--or-
+	or
+
+- Create a database manually named {{database name}} on {{local instance name}} and run each of the `.sql` scripts in the SFA.DAS.AssessorService.Database project.
+
+##### Config
+
+- Get the das-assessor-service configuration json file from [das-employer-config](https://github.com/SkillsFundingAgency/das-employer-config/blob/master/das-assessor-service/SFA.DAS.AssessorService.json); which is a non-public repository.
+- Create a Configuration table in your (Development) local Azure Storage account.
+- Add a row to the Configuration table with fields: PartitionKey: LOCAL, RowKey: SFA.DAS.AssessorService_1.0, Data: {{The contents of the local config json file}}.
+- Update Configuration SFA.DAS.AssessorService_1.0, Data { "SqlConnectionstring":"Server={{local instance name}};Initial Catalog={{database name}};Trusted_Connection=True;" }
+
+##### Complete Data Setup
+
+Follow the [EPAO Data Setup Guide](https://skillsfundingagency.atlassian.net/wiki/spaces/NDL/pages/1731395918/EPAO+-+Data+Setup+Guide#Assessor-Service---Initial-Setup) to populate local database test data.
+
+#### To run a local copy you will also require 
+
+- [Login Service](https://github.com/SkillsFundingAgency/das-login-service)
+- [QnA API](https://github.com/SkillsFundingAgency/das-qna-api)
+- [Admin Service](https://github.com/SkillsFundingAgency/das-admin-service)
+
+##### And you may also require 
+
+- [Assessor Functions](https://github.com/SkillsFundingAgency/das-assessor-functions)     
+
+#### Run the solution
+
+The default JSON configuration was created to work with dotnet run:
 
 - Navigate to src/SFA.DAS.AssessorService.Web/
 - run `dotnet restore`
@@ -41,7 +85,9 @@
 - run `dotnet restore`
 - run `dotnet run`
 
-Running Specflow
+**Note:** Running the solution from VS2019 is not supported currently as the Login Service (OpenId Identity Server 4) is configured by default for the client end point to originate at https://localhost:5015 which is not a valid port for IIS Express; altering the Login Service configuration is out of scope for this Readme.
+
+#### Testing using Specflow (Optional)
 
 Specflow is currently used for integrations testing the Internal API.
 It is configured to run using the NUnit Test runner. 
@@ -55,12 +101,7 @@ As such it requires
 3). The BaseAddress in the app.config to be set to the base address of the running 
 SFA.DAS.AssessorService.Application.Api project.
 
-#### To run local copy you will also require 
-
-- https://github.com/SkillsFundingAgency/das-login-service
-- https://github.com/SkillsFundingAgency/das-apply-service
-
-## SonarCloud Analysis
+#### SonarCloud Analysis (Optional)
 
 SonarCloud analysis can be performed using a docker container which can be built from the included dockerfile.
 
@@ -82,7 +123,7 @@ This file takes the format:
 </SonarQubeAnalysisProperties>
 ```     
 
-### Example:
+##### Example:
 
 _docker run [OPTIONS] IMAGE COMMAND_
 
@@ -90,7 +131,7 @@ _docker run [OPTIONS] IMAGE COMMAND_
 
 ```docker run --rm -v c:/projects/das-assessor-service:c:/projects/das-assessor-service -w c:/projects/das-assessor-service 3d9151a444b2 powershell -F c:/projects/das-assessor-service/sonarcloud/analyse.ps1```
 
-#### Options:
+###### Options:
 
 |Option|Description|
 |---|---|
@@ -98,8 +139,10 @@ _docker run [OPTIONS] IMAGE COMMAND_
 |-v| Bind the current directory of the host to the given directory in the container ($PWD may be different on your platform). This should be the folder where the code to be analysed is
 |-w| Set the working directory
 
-#### Command:
+###### Command:
 
 Execute the analyse.ps1 PowerShell script	    
 
+### Getting Started
+Please follow the [Walkthrough](https://skillsfundingagency.atlassian.net/wiki/spaces/NDL/pages/1533345867/EPAO+-+Walkthrough); which is a non-public Wiki.
 
