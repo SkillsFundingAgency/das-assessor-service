@@ -87,7 +87,7 @@ The default JSON configuration was created to work with dotnet run:
 
 **Note:** Running the solution from VS2019 is not supported currently as the Login Service (OpenId Identity Server 4) is configured by default for the client end point to originate at https://localhost:5015 which is not a valid port for IIS Express; altering the Login Service configuration is out of scope for this Readme.
 
-#### Running Specflow
+#### Testing using Specflow (Optional)
 
 Specflow is currently used for integrations testing the Internal API.
 It is configured to run using the NUnit Test runner. 
@@ -100,9 +100,49 @@ As such it requires
 
 3). The BaseAddress in the app.config to be set to the base address of the running 
 SFA.DAS.AssessorService.Application.Api project.
-	 
-#### Getting Started
-   
-Please follow the [Walkthrough](https://skillsfundingagency.atlassian.net/wiki/spaces/NDL/pages/1533345867/EPAO+-+Walkthrough); which is a non-public Wiki.
 
+#### SonarCloud Analysis (Optional)
+
+SonarCloud analysis can be performed using a docker container which can be built from the included dockerfile.
+
+    Docker must be running Windows containers in this instance
+
+An example of the docker run command to analyse the code base can be found below. 
+
+For this docker container to be successfully created you will need:
+* docker running Windows containers
+* a user on SonarCloud.io with permission to run analysis
+* a SonarQube.Analysis.xml file in the root of the git repository.
+
+This file takes the format:
+
+```xml
+<SonarQubeAnalysisProperties  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.sonarsource.com/msbuild/integration/2015/1">
+<Property Name="sonar.host.url">https://sonarcloud.io</Property>
+<Property Name="sonar.login">[Your SonarCloud user token]</Property>
+</SonarQubeAnalysisProperties>
+```     
+
+##### Example:
+
+_docker run [OPTIONS] IMAGE COMMAND_
+
+[Docker run documentation](https://docs.docker.com/engine/reference/commandline/run/)
+
+```docker run --rm -v c:/projects/das-assessor-service:c:/projects/das-assessor-service -w c:/projects/das-assessor-service 3d9151a444b2 powershell -F c:/projects/das-assessor-service/sonarcloud/analyse.ps1```
+
+###### Options:
+
+|Option|Description|
+|---|---|
+|--rm| Remove any existing containers for this image
+|-v| Bind the current directory of the host to the given directory in the container ($PWD may be different on your platform). This should be the folder where the code to be analysed is
+|-w| Set the working directory
+
+###### Command:
+
+Execute the analyse.ps1 PowerShell script	    
+
+### Getting Started
+Please follow the [Walkthrough](https://skillsfundingagency.atlassian.net/wiki/spaces/NDL/pages/1533345867/EPAO+-+Walkthrough); which is a non-public Wiki.
 
