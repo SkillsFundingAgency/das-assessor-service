@@ -350,7 +350,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         }
 
         [HttpPost("/Application/{Id}/Sequences/{sequenceNo}/Sections/{sectionNo}/Pages/{pageId}/multiple"), ModelStatePersist(ModelStatePersist.Store)]
-        public async Task<IActionResult> SaveMultiplePageAnswers(Guid Id, int sequenceNo, int sectionNo, string pageId, string __redirectAction, string __formAction)
+        public async Task<IActionResult> SaveMultiplePageAnswers(Guid Id, int sequenceNo, int sectionNo, string pageId, string formAction, string __redirectAction, string __summaryLink)
         {
             var application = await _applicationApiClient.GetApplication(Id);
             if (!CanUpdateApplication(application, sequenceNo, sectionNo))
@@ -360,8 +360,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
             try
             {
-                string __summaryLink = HttpContext.Request.Form["__summaryLink"];
-
                 var page = await _qnaApiClient.GetPageBySectionNo(application.ApplicationId, sequenceNo, sectionNo, pageId);
 
                 if (page.AllowMultipleAnswers)
@@ -370,7 +368,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                     var pageAddResponse = await _qnaApiClient.AddAnswersToMultipleAnswerPage(application.ApplicationId, page.SectionId.Value, page.PageId, answers);
                     if (pageAddResponse?.Success != null && pageAddResponse.Success)
                     {
-                        if (__formAction == "Add")
+                        if (formAction == "Add")
                         {
                             return RedirectToAction("Page", new
                             {
@@ -389,9 +387,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                         var nextAction = pageAddResponse.Page.Next.SingleOrDefault(x => x.Action == "NextPage");
 
                         if (!string.IsNullOrEmpty(nextAction.Action))
-                            return RedirectToNextAction(Id, sequenceNo, sectionNo, __redirectAction, nextAction.Action, nextAction.ReturnId);
+                            return RedirectToNextAction(Id, sequenceNo, sectionNo, nextAction.Action, nextAction.ReturnId, __redirectAction);
                     }
-                    else if (page.PageOfAnswers?.Count > 0 && __formAction != "Add")
+                    else if (page.PageOfAnswers?.Count > 0 && formAction != "Add")
                     {
                         if (page.HasFeedback && page.HasNewFeedback && !page.AllFeedbackIsCompleted && __redirectAction == "Feedback")
                         {
@@ -415,7 +413,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                                     {
                                         if (page.Next.Exists(y => y.Conditions.Exists(x => x.QuestionId == answer.QuestionId || x.QuestionTag == answer.QuestionId)))
                                         {
-                                            return RedirectToNextAction(Id, sequenceNo, sectionNo, __redirectAction, nextAction.Action, nextAction.ReturnId, "Hide");
+                                            return RedirectToNextAction(Id, sequenceNo, sectionNo, nextAction.Action, nextAction.ReturnId, __redirectAction, "Hide");
                                         }
                                         break;
                                     }
@@ -423,7 +421,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                                     return RedirectToAction("Feedback", new { Id });
                                 }
 
-                                return RedirectToNextAction(Id, sequenceNo, sectionNo, __redirectAction, nextAction.Action, nextAction.ReturnId);
+                                return RedirectToNextAction(Id, sequenceNo, sectionNo, nextAction.Action, nextAction.ReturnId, __redirectAction);
                             }
                         }
                     }
@@ -449,7 +447,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         }
 
         [HttpPost("/Application/{Id}/Sequences/{sequenceNo}/Sections/{sectionNo}/Pages/{pageId}"), ModelStatePersist(ModelStatePersist.Store)]
-        public async Task<IActionResult> SaveAnswers(Guid Id, int sequenceNo, int sectionNo, string pageId, string __redirectAction)
+        public async Task<IActionResult> SaveAnswers(Guid Id, int sequenceNo, int sectionNo, string pageId, string __redirectAction, string __summaryLink)
         { 
             var application = await _applicationApiClient.GetApplication(Id);
 
@@ -459,8 +457,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             try
             {
                 var updatePageResult = default(SetPageAnswersResponse);
-
-                string __summaryLink = HttpContext.Request.Form["__summaryLink"];
                 var page = await _qnaApiClient.GetPageBySectionNo(application.ApplicationId, sequenceNo, sectionNo, pageId);
                 var isFileUploadPage = page.Questions?.Any(q => q.Input.Type == "FileUpload");
 
@@ -533,7 +529,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                         {
                             if (page.Next.Exists(y => y.Conditions.Exists(x => x.QuestionId == answer.QuestionId || x.QuestionTag == answer.QuestionId)))
                             {
-                                return RedirectToNextAction(Id, sequenceNo, sectionNo, __redirectAction, updatePageResult.NextAction, updatePageResult.NextActionId, "Hide");
+                                return RedirectToNextAction(Id, sequenceNo, sectionNo, updatePageResult.NextAction, updatePageResult.NextActionId, __redirectAction, "Hide");
                             }
                             break;
                         }
@@ -542,7 +538,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                     }
 
                     if (!string.IsNullOrEmpty(updatePageResult.NextAction))
-                        return RedirectToNextAction(Id, sequenceNo, sectionNo, __redirectAction, updatePageResult.NextAction, updatePageResult.NextActionId);
+                        return RedirectToNextAction(Id, sequenceNo, sectionNo, updatePageResult.NextAction, updatePageResult.NextActionId, __redirectAction);
                 }
 
                 if (isFileUploadPage != true)
@@ -821,7 +817,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         {
             var next = page.Next.FirstOrDefault(x => x.Action == "NextPage");
             if (next != null)
-                return RedirectToNextAction(Id, sequenceNo, sectionNo, __redirectAction, next.Action, next.ReturnId);
+                return RedirectToNextAction(Id, sequenceNo, sectionNo, next.Action, next.ReturnId, __redirectAction);
             return RedirectToAction("Section", new { Id, sequenceNo, sectionNo });
         }
 
@@ -851,7 +847,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         }
 
 
-        private RedirectToActionResult RedirectToNextAction(Guid Id, int sequenceNo, int sectionNo, string redirectAction, string nextAction, string nextActionId, string __summaryLink = "Show")
+        private RedirectToActionResult RedirectToNextAction(Guid Id, int sequenceNo, int sectionNo, string nextAction, string nextActionId, string __redirectAction, string __summaryLink = "Show")
         {
             if (nextAction == "NextPage")
             {
@@ -861,7 +857,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                     sequenceNo,
                     sectionNo,
                     pageId = nextActionId,
-                    __redirectAction = redirectAction,
+                    __redirectAction,
                     __summaryLink
                 });
             }
@@ -897,10 +893,10 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             List<Answer> answers = new List<Answer>();
 
             // These are special in that they drive other things and thus should not be deemed as an answer
-            var exludedInputs = new List<string> { "postcodeSearch", "checkAll" };
+            var excludedInputs = new List<string> { "formAction", "postcodeSearch", "checkAll" };
 
             // Add answers from the Form post
-            foreach (var keyValuePair in HttpContext.Request.Form.Where(f => !f.Key.StartsWith("__") && !exludedInputs.Contains(f.Key, StringComparer.InvariantCultureIgnoreCase)))
+            foreach (var keyValuePair in HttpContext.Request.Form.Where(f => !f.Key.StartsWith("__") && !excludedInputs.Contains(f.Key, StringComparer.InvariantCultureIgnoreCase)))
             {
                 answers.Add(new Answer() { QuestionId = keyValuePair.Key, Value = keyValuePair.Value });
             }
