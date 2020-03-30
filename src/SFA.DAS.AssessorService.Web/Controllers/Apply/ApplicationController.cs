@@ -259,7 +259,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         }
 
         [HttpGet("/Application/{Id}/Sequences/{sequenceNo}/Sections/{sectionNo}/Pages/{pageId}"), ModelStatePersist(ModelStatePersist.RestoreEntry)]
-        public async Task<IActionResult> Page(Guid Id, int sequenceNo, int sectionNo, string pageId, string __redirectAction, string __summaryLink = "Show")
+        public async Task<IActionResult> Page(Guid Id, int sequenceNo, int sectionNo, string pageId, string redirectAction, string summaryLink = "Show")
         {
             var application = await _applicationApiClient.GetApplication(Id);
             if (!CanUpdateApplication(application, sequenceNo, sectionNo))
@@ -294,8 +294,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 }
 
                 UpdateValidationDetailsForAddress(page, errorMessages);
-                viewModel = new PageViewModel(Id, sequenceNo, sectionNo, pageId, page, pageContext, __redirectAction,
-                    returnUrl, errorMessages, __summaryLink);
+                viewModel = new PageViewModel(Id, sequenceNo, sectionNo, pageId, page, pageContext, redirectAction,
+                    returnUrl, errorMessages, summaryLink);
             }
             else
             {
@@ -312,7 +312,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                         {
                             pageId = nextPage.ReturnId;
                             return RedirectToAction("Page",
-                                new { Id, sequenceNo, sectionNo, pageId, __redirectAction });
+                                new { Id, sequenceNo, sectionNo, pageId, redirectAction });
                         }
                         else
                         {
@@ -327,8 +327,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                         page.Title = section.Title;
                     }
                     
-                    viewModel = new PageViewModel(Id, sequenceNo, sectionNo, page.PageId, page, pageContext, __redirectAction,
-                        returnUrl, null, __summaryLink);
+                    viewModel = new PageViewModel(Id, sequenceNo, sectionNo, page.PageId, page, pageContext, redirectAction,
+                        returnUrl, null, summaryLink);
 
                 }
                 catch (Exception ex)
@@ -350,7 +350,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         }
 
         [HttpPost("/Application/{Id}/Sequences/{sequenceNo}/Sections/{sectionNo}/Pages/{pageId}/multiple"), ModelStatePersist(ModelStatePersist.Store)]
-        public async Task<IActionResult> SaveMultiplePageAnswers(Guid Id, int sequenceNo, int sectionNo, string pageId, string __redirectAction, string __formAction)
+        public async Task<IActionResult> SaveMultiplePageAnswers(Guid Id, int sequenceNo, int sectionNo, string pageId, string redirectAction, string formAction)
         {
             var application = await _applicationApiClient.GetApplication(Id);
             if (!CanUpdateApplication(application, sequenceNo, sectionNo))
@@ -360,7 +360,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
             try
             {
-                string __summaryLink = HttpContext.Request.Form["__summaryLink"];
+                string summaryLink = HttpContext.Request.Form["summaryLink"];
 
                 var page = await _qnaApiClient.GetPageBySectionNo(application.ApplicationId, sequenceNo, sectionNo, pageId);
 
@@ -370,7 +370,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                     var pageAddResponse = await _qnaApiClient.AddAnswersToMultipleAnswerPage(application.ApplicationId, page.SectionId.Value, page.PageId, answers);
                     if (pageAddResponse?.Success != null && pageAddResponse.Success)
                     {
-                        if (__formAction == "Add")
+                        if (formAction == "Add")
                         {
                             return RedirectToAction("Page", new
                             {
@@ -378,28 +378,28 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                                 sequenceNo,
                                 sectionNo,
                                 pageId = pageAddResponse.Page.PageId,
-                                __redirectAction,
-                                __summaryLink
+                                redirectAction = redirectAction,
+                                summaryLink = summaryLink
                             });
                         }
 
-                        if (__redirectAction == "Feedback")
+                        if (redirectAction == "Feedback")
                             return RedirectToAction("Feedback", new { Id });
 
                         var nextAction = pageAddResponse.Page.Next.SingleOrDefault(x => x.Action == "NextPage");
 
                         if (!string.IsNullOrEmpty(nextAction.Action))
-                            return RedirectToNextAction(Id, sequenceNo, sectionNo, __redirectAction, nextAction.Action, nextAction.ReturnId);
+                            return RedirectToNextAction(Id, sequenceNo, sectionNo, redirectAction, nextAction.Action, nextAction.ReturnId);
                     }
-                    else if (page.PageOfAnswers?.Count > 0 && __formAction != "Add")
+                    else if (page.PageOfAnswers?.Count > 0 && formAction != "Add")
                     {
-                        if (page.HasFeedback && page.HasNewFeedback && !page.AllFeedbackIsCompleted && __redirectAction == "Feedback")
+                        if (page.HasFeedback && page.HasNewFeedback && !page.AllFeedbackIsCompleted && redirectAction == "Feedback")
                         {
                             page = StoreEnteredAnswers(answers, page);
                             SetResponseValidationErrors(pageAddResponse?.ValidationErrors, page);
                             if (!page.AllFeedbackIsCompleted || pageAddResponse?.ValidationErrors.Count > 0)
                             {
-                                return RedirectToAction("Page", new { Id, sequenceNo, sectionNo, pageId, __redirectAction, __summaryLink });
+                                return RedirectToAction("Page", new { Id, sequenceNo, sectionNo, pageId, redirectAction = redirectAction, summaryLink = summaryLink });
                             }
                             return RedirectToAction("Feedback", new { Id });
                         }
@@ -409,13 +409,13 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
                             if (!string.IsNullOrEmpty(nextAction.Action))
                             {
-                                if (__redirectAction == "Feedback")
+                                if (redirectAction == "Feedback")
                                 {
                                     foreach (var answer in answers)
                                     {
                                         if (page.Next.Exists(y => y.Conditions.Exists(x => x.QuestionId == answer.QuestionId || x.QuestionTag == answer.QuestionId)))
                                         {
-                                            return RedirectToNextAction(Id, sequenceNo, sectionNo, __redirectAction, nextAction.Action, nextAction.ReturnId, "Hide");
+                                            return RedirectToNextAction(Id, sequenceNo, sectionNo, redirectAction, nextAction.Action, nextAction.ReturnId, "Hide");
                                         }
                                         break;
                                     }
@@ -423,7 +423,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                                     return RedirectToAction("Feedback", new { Id });
                                 }
 
-                                return RedirectToNextAction(Id, sequenceNo, sectionNo, __redirectAction, nextAction.Action, nextAction.ReturnId);
+                                return RedirectToNextAction(Id, sequenceNo, sectionNo, redirectAction, nextAction.Action, nextAction.ReturnId);
                             }
                         }
                     }
@@ -438,7 +438,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                     return BadRequest("Page is not of a type of Multiple Answers");
                 }
                 
-                return RedirectToAction("Page", new { Id, sequenceNo, sectionNo, pageId, __redirectAction, __summaryLink });
+                return RedirectToAction("Page", new { Id, sequenceNo, sectionNo, pageId, redirectAction = redirectAction, summaryLink = summaryLink });
             }
             catch (Exception ex)
             {
@@ -449,7 +449,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         }
 
         [HttpPost("/Application/{Id}/Sequences/{sequenceNo}/Sections/{sectionNo}/Pages/{pageId}"), ModelStatePersist(ModelStatePersist.Store)]
-        public async Task<IActionResult> SaveAnswers(Guid Id, int sequenceNo, int sectionNo, string pageId, string __redirectAction)
+        public async Task<IActionResult> SaveAnswers(Guid Id, int sequenceNo, int sectionNo, string pageId, string redirectAction)
         { 
             var application = await _applicationApiClient.GetApplication(Id);
 
@@ -460,7 +460,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             {
                 var updatePageResult = default(SetPageAnswersResponse);
 
-                string __summaryLink = HttpContext.Request.Form["__summaryLink"];
+                string summaryLink = HttpContext.Request.Form["summaryLink"];
                 var page = await _qnaApiClient.GetPageBySectionNo(application.ApplicationId, sequenceNo, sectionNo, pageId);
                 var isFileUploadPage = page.Questions?.Any(q => q.Input.Type == "FileUpload");
 
@@ -471,7 +471,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 {
                     answers = GetAnswersFromForm(page);
 
-                    if (__redirectAction == "Feedback" && !HasAtLeastOneAnswerChanged(page, answers) && !page.AllFeedbackIsCompleted)
+                    if (redirectAction == "Feedback" && !HasAtLeastOneAnswerChanged(page, answers) && !page.AllFeedbackIsCompleted)
                         SetAnswerNotUpdated(page);
                     else
                         updatePageResult = await _qnaApiClient.SetPageAnswers(application.ApplicationId, page.SectionId.Value, page.PageId, answers);
@@ -485,12 +485,12 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                     if (answers.Count < 1)
                     {
                         // Nothing to upload
-                        if (__redirectAction == "Feedback")
+                        if (redirectAction == "Feedback")
                         {
                             if (page.HasFeedback && page.HasNewFeedback && !page.AllFeedbackIsCompleted)
                             {
                                 SetAnswerNotUpdated(page);
-                                return RedirectToAction("Page", new { Id, sequenceNo, sectionNo, pageId, __redirectAction, __summaryLink });
+                                return RedirectToAction("Page", new { Id, sequenceNo, sectionNo, pageId, redirectAction, summaryLink = summaryLink });
                             }
                             else if (FileValidator.AllRequiredFilesArePresent(page, errorMessages, ModelState))
                             {
@@ -499,7 +499,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                         }
                         else if (FileValidator.AllRequiredFilesArePresent(page, errorMessages, ModelState))
                         {
-                            return ForwardToNextSectionOrPage(page, Id, sequenceNo, sectionNo, __redirectAction);
+                            return ForwardToNextSectionOrPage(page, Id, sequenceNo, sectionNo, redirectAction);
                         }
                     }
                     else
@@ -527,13 +527,13 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                     // TODO: Update section.AllRequestedFeedback to the value of that currently held in QnA
                     // applySection.RequestedFeedbackAnswered = qnaSection.QnAData.RequestedFeedbackAnswered
 
-                    if (__redirectAction == "Feedback")
+                    if (redirectAction == "Feedback")
                     { 
                         foreach( var answer in answers)
                         {
                             if (page.Next.Exists(y => y.Conditions.Exists(x => x.QuestionId == answer.QuestionId || x.QuestionTag == answer.QuestionId)))
                             {
-                                return RedirectToNextAction(Id, sequenceNo, sectionNo, __redirectAction, updatePageResult.NextAction, updatePageResult.NextActionId, "Hide");
+                                return RedirectToNextAction(Id, sequenceNo, sectionNo, redirectAction, updatePageResult.NextAction, updatePageResult.NextActionId, "Hide");
                             }
                             break;
                         }
@@ -542,7 +542,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                     }
 
                     if (!string.IsNullOrEmpty(updatePageResult.NextAction))
-                        return RedirectToNextAction(Id, sequenceNo, sectionNo, __redirectAction, updatePageResult.NextAction, updatePageResult.NextActionId);
+                        return RedirectToNextAction(Id, sequenceNo, sectionNo, redirectAction, updatePageResult.NextAction, updatePageResult.NextActionId);
                 }
 
                 if (isFileUploadPage != true)
@@ -552,7 +552,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
                 SetResponseValidationErrors(updatePageResult?.ValidationErrors, page);
 
-                return RedirectToAction("Page", new { Id, sequenceNo, sectionNo, pageId, __redirectAction, __summaryLink });
+                return RedirectToAction("Page", new { Id, sequenceNo, sectionNo, pageId, redirectAction, summaryLink = summaryLink });
             }
             catch (Exception ex)
             {  
@@ -587,7 +587,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         }
 
         [HttpPost("/Application/DeleteAnswer")]
-        public async Task<IActionResult> DeleteAnswer(Guid Id, int sequenceNo, int sectionNo, string pageId, Guid answerId, string __redirectAction, string __summaryLink = "False")
+        public async Task<IActionResult> DeleteAnswer(Guid Id, int sequenceNo, int sectionNo, string pageId, Guid answerId, string redirectAction, string summaryLink = "False")
         {
             var application = await _applicationApiClient.GetApplication(Id);
             if (!CanUpdateApplication(application, sequenceNo, sectionNo))
@@ -604,7 +604,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 _logger.LogError($"Page answer removal errored : {ex} ");
             }
 
-            return RedirectToAction("Page", new { Id, sequenceNo, sectionNo, pageId, __redirectAction, __summaryLink });
+            return RedirectToAction("Page", new { Id, sequenceNo, sectionNo, pageId, redirectAction, summaryLink });
         }
 
         [HttpGet("Application/{Id}/Section/{sectionId}/Page/{pageId}/Question/{questionId}/{filename}/Download")]
@@ -620,8 +620,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
         }
 
-        [HttpGet("Application/{Id}/SequenceNo/{sequenceNo}/Section/{sectionId}/Page/{pageId}/Question/{questionId}/Filename/{filename}/RedirectAction/{__redirectAction}")]
-        public async Task<IActionResult> DeleteFile(Guid Id, int sequenceNo, Guid sectionId, string pageId, string questionId, string filename, string __redirectAction)
+        [HttpGet("Application/{Id}/SequenceNo/{sequenceNo}/Section/{sectionId}/Page/{pageId}/Question/{questionId}/Filename/{filename}/RedirectAction/{redirectAction}")]
+        public async Task<IActionResult> DeleteFile(Guid Id, int sequenceNo, Guid sectionId, string pageId, string questionId, string filename, string redirectAction)
         {
             var application = await _applicationApiClient.GetApplication(Id);
             var section = await _qnaApiClient.GetSection(application.ApplicationId, sectionId);
@@ -633,7 +633,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
             await _qnaApiClient.DeleteFile(application.ApplicationId, section.Id, pageId, questionId, filename);
 
-            return RedirectToAction("Page", new { Id, sequenceNo, section.SectionNo, pageId, __redirectAction });
+            return RedirectToAction("Page", new { Id, sequenceNo, section.SectionNo, pageId, redirectAction });
         }
 
         [HttpPost("/Application/{Id}/Submit/{sequenceNo}")]
@@ -817,11 +817,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             return atLeastOneAnswerChanged;
         }
 
-        private RedirectToActionResult ForwardToNextSectionOrPage(Page page, Guid Id, int sequenceNo, int sectionNo, string __redirectAction)
+        private RedirectToActionResult ForwardToNextSectionOrPage(Page page, Guid Id, int sequenceNo, int sectionNo, string redirectAction)
         {
             var next = page.Next.FirstOrDefault(x => x.Action == "NextPage");
             if (next != null)
-                return RedirectToNextAction(Id, sequenceNo, sectionNo, __redirectAction, next.Action, next.ReturnId);
+                return RedirectToNextAction(Id, sequenceNo, sectionNo, redirectAction, next.Action, next.ReturnId);
             return RedirectToAction("Section", new { Id, sequenceNo, sectionNo });
         }
 
@@ -851,7 +851,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         }
 
 
-        private RedirectToActionResult RedirectToNextAction(Guid Id, int sequenceNo, int sectionNo, string redirectAction, string nextAction, string nextActionId, string __summaryLink = "Show")
+        private RedirectToActionResult RedirectToNextAction(Guid Id, int sequenceNo, int sectionNo, string redirectAction, string nextAction, string nextActionId, string summaryLink = "Show")
         {
             if (nextAction == "NextPage")
             {
@@ -861,8 +861,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                     sequenceNo,
                     sectionNo,
                     pageId = nextActionId,
-                    __redirectAction = redirectAction,
-                    __summaryLink
+                    redirectAction = redirectAction,
+                    summaryLink
                 });
             }
 
@@ -897,10 +897,10 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             List<Answer> answers = new List<Answer>();
 
             // These are special in that they drive other things and thus should not be deemed as an answer
-            var exludedInputs = new List<string> { "postcodeSearch", "checkAll" };
+            var excludedInputs = new List<string> { "postcodeSearch", "checkAll", "formAction", "redirectAction", "summaryLink" };
 
             // Add answers from the Form post
-            foreach (var keyValuePair in HttpContext.Request.Form.Where(f => !f.Key.StartsWith("__") && !exludedInputs.Contains(f.Key, StringComparer.InvariantCultureIgnoreCase)))
+            foreach (var keyValuePair in HttpContext.Request.Form.Where(f => !f.Key.StartsWith("__") && !excludedInputs.Contains(f.Key, StringComparer.InvariantCultureIgnoreCase)))
             {
                 answers.Add(new Answer() { QuestionId = keyValuePair.Key, Value = keyValuePair.Value });
             }
