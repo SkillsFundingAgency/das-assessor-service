@@ -63,7 +63,7 @@
                                     {
                                         <li class="app-task-list__item">
                                             <a aria-describedby="feedback-completed" class="app-task-list__task-name"
-                                               href="@Url.Action("Page", "Application", new { Id = Model.Id, sequenceNo = applicationSection.SequenceNo, sectionNo = applicationSection.SectionNo, pageId = pg.PageId, redirectAction = "Feedback" })">@pg.LinkTitle</a>
+                                               href="@Url.Action("Page", "Application", new { Id = Model.Id, sequenceNo = applicationSection.SequenceNo, sectionNo = applicationSection.SectionNo, pageId = pg.PageId, __redirectAction = "Feedback" })">@pg.LinkTitle</a>
                                             @if (pg.AllFeedbackIsCompleted)
                                             {
                                                 <strong class="govuk-tag app-task-list__task-completed" id="feedback-completed">Completed</strong>
