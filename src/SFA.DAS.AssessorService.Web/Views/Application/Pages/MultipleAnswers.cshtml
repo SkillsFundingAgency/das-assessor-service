@@ -73,14 +73,14 @@
                             </div>
                         }
 
-                    <form asp-action="DeleteAnswer" asp-controller="Application">
-                        <input type="hidden" id="AnswerId" name="AnswerId" value="@answerPage.Id" />
-                        <input type="hidden" id="Id" name="Id" value="@Model.Id" />
-                        <input type="hidden" id="SectionNo" name="SectionNo" value="@Model.SectionNo" />
-                        <input type="hidden" id="SequenceNo" name="SequenceNo" value="@Model.SequenceNo" />
-                        <input type="hidden" id="PageId" name="PageId" value="@Model.PageId" />
-                        <input type="hidden" id="__redirectAction" name="__redirectAction" value="@Model.RedirectAction" />
-                        <input type="hidden" id="__summaryLink" name="__summaryLink" value="@Model.SummaryLink" />
+                    <form asp-action="DeleteAnswer" asp-controller="Application" 
+                          asp-route-id="@Model.Id"
+                          asp-route-sequenceNo="@Model.SequenceNo"
+                          asp-route-sectionNo="@Model.SectionNo"
+                          asp-route-pageId="@Model.PageId"
+                          asp-route-answerId="@answerPage.Id"
+                          asp-route-__redirectAction="@Model.RedirectAction"
+                          asp-route-__summaryLink="@Model.SummaryLink">
                         <div class="govuk-!-margin-top-4">
                             <button class="govuk-button govuk-button--looks-like-link" type="submit">Delete</button>
                         </div>
@@ -94,11 +94,14 @@
     
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <form method="post" novalidate enctype="multipart/form-data" 
-                  asp-action="SaveMultiplePageAnswers" asp-route-Id="@Model.Id" asp-route-sequenceNo="@Model.SequenceNo" 
-                  asp-route-sectionNo="@Model.SectionNo" asp-route-pageId="@Model.PageId" asp-route-__redirectAction="@Model.RedirectAction">
-                <input type="hidden" id="__redirectAction" name="__redirectAction" value="@Model.RedirectAction" />
-                <input type="hidden" id="__summaryLink" name="__summaryLink" value="@Model.SummaryLink"/>
+            <form method="post" novalidate enctype="multipart/form-data" asp-action="SaveMultiplePageAnswers" 
+                  asp-route-Id="@Model.Id" 
+                  asp-route-sequenceNo="@Model.SequenceNo" 
+                  asp-route-sectionNo="@Model.SectionNo" 
+                  asp-route-pageId="@Model.PageId" 
+                  asp-route-__redirectAction="@Model.RedirectAction"
+                  asp-route-__summaryLink="@Model.SummaryLink">
+                
                 @if (Model.Questions.Count() == 1)
                 {
                     foreach (var question in Model.Questions)
@@ -162,12 +165,12 @@
                 }
 
                 <div class="govuk-form-group">
-                    <button type="submit" class="govuk-button govuk-button--looks-like-link" name="__formAction" value="Add">Save and add another</button>
+                    <button type="submit" class="govuk-button govuk-button--looks-like-link" name="formAction" value="Add">Save and add another</button>
                 </div>
 
                 <partial name="~/Views/Application/Pages/DetailsComponent.cshtml" for="Details"/>
                 
-                <button type="submit" class="govuk-button" name="__formAction" value="Save">Save and continue</button>
+                <button type="submit" class="govuk-button" name="formAction" value="Save">Save and continue</button>
             </form>
 
             <p class="govuk-body">

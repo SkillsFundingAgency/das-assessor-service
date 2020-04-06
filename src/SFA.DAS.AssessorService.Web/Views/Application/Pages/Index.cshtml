@@ -69,10 +69,10 @@
                     </div>
                 }
 
-                @* no action is specified for the form, post back to the get url to preserve the page hierarchy parameters *@
-        <form method="post" novalidate enctype="multipart/form-data">
-            <input type="hidden" id="__redirectAction" name="__redirectAction" value="@Model.RedirectAction" />
-            <input type="hidden" id="__summaryLink" name="__summaryLink" value="@Model.SummaryLink" />
+        @* no action is specified for the form, post back to the get url to preserve the page hierarchy parameters *@
+        <form method="post" novalidate enctype="multipart/form-data"
+              asp-route-__redirectAction="@Model.RedirectAction"
+              asp-route-__summaryLink="@Model.SummaryLink">
             @if (Model.Questions.Count() == 1)
             {
                 foreach (var question in Model.Questions)
