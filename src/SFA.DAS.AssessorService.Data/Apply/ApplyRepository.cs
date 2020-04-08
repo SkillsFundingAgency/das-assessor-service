@@ -561,8 +561,8 @@ namespace SFA.DAS.AssessorService.Data.Apply
             {
                 return (await connection
                     .QueryAsync<FinancialApplicationSummaryItem>(
-                        @"SELECT
-                            ap1.Id AS ApplicationId,
+                        @"SELECT 
+	                        ap1.Id AS ApplicationId,
                             sequence.SequenceNo AS SequenceNo,
                             section.SectionNo AS SectionNo, 
                             org.EndPointAssessorName AS OrganisationName, 
@@ -573,9 +573,9 @@ namespace SFA.DAS.AssessorService.Data.Apply
                             ap1.FinancialReviewStatus AS FinancialStatus
                         FROM Apply ap1
                         INNER JOIN Organisations org ON ap1.OrganisationId = org.Id
-                            CROSS APPLY OPENJSON(ApplyData,'$.Sequences') WITH (SequenceNo INT, IsActive BIT, Status VARCHAR(20)) sequence
-                            CROSS APPLY OPENJSON(ApplyData,'$.Sequences[0].Sections') WITH (SectionNo INT, Status VARCHAR(20)) section
-                            CROSS APPLY OPENJSON(ApplyData,'$.Apply') WITH (SubmittedDate VARCHAR(30) '$.LatestInitSubmissionDate', SubmissionCount INT '$.InitSubmissionsCount') apply
+	                        CROSS APPLY OPENJSON(ApplyData,'$.Sequences') WITH (SequenceNo INT, IsActive BIT, Sections NVARCHAR(MAX) AS JSON) sequence
+	                        CROSS APPLY OPENJSON(sequence.Sections) WITH (SectionNo INT) section
+	                        CROSS APPLY OPENJSON(ApplyData,'$.Apply') WITH (SubmittedDate VARCHAR(30) '$.LatestInitSubmissionDate', SubmissionCount INT '$.InitSubmissionsCount') apply
                         WHERE sequence.SequenceNo = 1 AND section.SectionNo = 3 AND sequence.IsActive = 1
                             AND ap1.FinancialReviewStatus IN (@financialReviewStatusNew, @financialReviewStatusInProgress)
                             AND ap1.ApplicationStatus IN (@applicationStatusSubmitted, @applicationStatusResubmitted)
