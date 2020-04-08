@@ -17,7 +17,7 @@ namespace SFA.DAS.AssessorService.Web.Extensions
                 "script-src 'self' 'unsafe-inline' " +
                 "*.googletagmanager.com *.postcodeanywhere.co.uk *.google-analytics.com *.googleapis.com https://*.zdassets.com https://*.zendesk.com wss://*.zendesk.com wss://*.zopim.com; " +
                 "font-src 'self' data:;";
-                context.Response.Headers["Referrer-Policy"] = "strict-origin";
+                context.Response.Headers["Referrer-Policy"] = "strict-origin-when-cross-origin";
                 context.Response.Headers["Cache-Control"] = "no-cache, no-store, must-revalidate";
                 context.Response.Headers["Pragma"] = "no-cache";
                 await next();
