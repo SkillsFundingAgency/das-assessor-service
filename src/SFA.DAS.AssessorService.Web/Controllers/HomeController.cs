@@ -84,6 +84,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             return View();
         }
 
+        public IActionResult CookieDetails()
+        {
+            return View();
+        }
+
         public IActionResult Privacy()
         {
             return View();
