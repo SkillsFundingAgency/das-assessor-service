@@ -48,8 +48,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
                     }
 
                     AddSubmissionInfoToApplyData(application.ApplyData, request.SequenceNo, submittingContact);
-                    UpdateSequenceInformation(application.ApplyData, request.SequenceNo, request.RequestedFeedbackAnswered);
-                    UpdateApplicationStatus(application, request.SequenceNo);
+                    UpdateSequenceAndSectionStatus(application.ApplyData, request.SequenceNo, request.RequestedFeedbackAnswered);
+                    UpdateApplicationAndReviewStatus(application, request.SequenceNo);
 
                     application.UpdatedBy = submittingContact.Id.ToString();
                     application.UpdatedAt = DateTime.UtcNow;
@@ -65,7 +65,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
             return false;
         }
 
-        private void UpdateSequenceInformation(ApplyData applyData, int sequenceNo, Dictionary<int,bool?> dictOfRequestedFeedbackAnswered)
+        private void UpdateSequenceAndSectionStatus(ApplyData applyData, int sequenceNo, Dictionary<int,bool?> dictOfRequestedFeedbackAnswered)
         {
             if (applyData.Sequences != null)
             {
@@ -129,7 +129,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
             }
         }
 
-        private string CheckFinancialStatus(ApplyData applyData)
+        private string GetFinancialStatus(ApplyData applyData)
         {
             if (applyData.Sequences != null)
             {
@@ -148,11 +148,12 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
             return null;
         }
 
-        private void UpdateApplicationStatus(Domain.Entities.Apply application, int sequenceNo)
+        private void UpdateApplicationAndReviewStatus(Domain.Entities.Apply application, int sequenceNo)
         {
-            // Always default it to submitted
-            application.ApplicationStatus = ApplicationStatus.Submitted;
-            application.ReviewStatus = ApplicationReviewStatus.New;
+            if (application.ReviewStatus != ApplicationReviewStatus.HasFeedback)
+            {
+                application.ReviewStatus = ApplicationReviewStatus.New;
+            }
 
             var applyData = application.ApplyData;
 
@@ -164,7 +165,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
 
                 if (!closedFinanicalStatuses.Contains(application.FinancialReviewStatus))
                 {
-                    if (CheckFinancialStatus(applyData) != ApplicationSectionStatus.Evaluated)
+                    if (GetFinancialStatus(applyData) != ApplicationSectionStatus.Evaluated)
                     {
                         application.FinancialReviewStatus = FinancialReviewStatus.New;
                     }
@@ -173,6 +174,10 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
             else if (sequenceNo == 2)
             {
                 application.ApplicationStatus = (applyData.Apply.StandardSubmissions.Count == 1) ? ApplicationStatus.Submitted : ApplicationStatus.Resubmitted;
+            }
+            else
+            {
+                application.ApplicationStatus = ApplicationStatus.Submitted;
             }
         }
 
