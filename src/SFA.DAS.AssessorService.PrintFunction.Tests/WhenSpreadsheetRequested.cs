@@ -17,18 +17,70 @@ namespace SFA.DAS.AssessorService.PrintFunction.Tests
     [TestFixture]
     public class WhenSpreadsheetRequested
     {
-        [TestCase("JAMES SMITH", "James Smith")]
-        [TestCase("JAMES O'SMITH", "James O'Smith")]
-        [TestCase("James O'Smith", "James O'Smith")]
-        [TestCase("Oscar de la Hoya", "Oscar de la Hoya")]
-        [TestCase("abram aramot", "Abram Aramot")]
-        [TestCase("Abram ARAMOT", "Abram Aramot")]
-        [TestCase("JAMES OSMITH'", "James Osmith'")]
-        [TestCase("Aarhus-terry o'Sullivan", "Aarhus-Terry O'Sullivan")]
-        [TestCase("abigantus-liam' o'hara", "Abigantus-Liam' O'Hara")]
-        [TestCase("Bartley Mac o'Donnell", "Bartley Mac O'Donnell")]
-        [TestCase("Bartley Mac o’donnell", "Bartley Mac O'Donnell")]
-        public void ThenLearnerNameCasesAreStandardised(string inputName, string expected)
+        [TestCase("JAMES", "SMITH", "James Smith")]
+        [TestCase("JAMES", "O'SMITH", "James O'Smith")]
+        [TestCase("James", "O'Smith", "James O'Smith")]
+        [TestCase("OSCAR", "de la Hoya", "Oscar de la Hoya")]
+        [TestCase("abram", "aramot", "Abram Aramot")]
+        [TestCase("Abram", "ARAMOT", "Abram Aramot")]
+        [TestCase("JAMES", "OSMITH'", "James Osmith'")]
+        [TestCase("Aarhus-TERRY", "o'Sullivan", "Aarhus-Terry O'Sullivan")]
+        [TestCase("abigantus-liam'", "o'hara", "Abigantus-Liam' O'Hara")]
+        [TestCase("Bartley", "Mac o'Donnell", "Bartley Mac O'Donnell")]
+        [TestCase("Bartley", "Mac o’donnell", "Bartley Mac O'Donnell")]
+        [TestCase("Del", "Stanley", "Del Stanley")]
+        [TestCase("Ben", "Bridgehouse", "Ben Bridgehouse")]
+        [TestCase("Keith", "KEITH", "Keith Keith")]
+        [TestCase("Katie", "Leigh-WILLIAMS", "Katie Leigh-Williams")]
+        [TestCase("ADARIA", "Mccarthy", "Adaria McCarthy")]
+        [TestCase("Alastair", "MACHIN", "Alastair Machin")]
+        [TestCase("ALEC", "Machlin", "Alec Machlin")]
+        [TestCase("Angus", "Machar", "Angus Machar")]
+        [TestCase("Andrew", "mackle", "Andrew Mackle")]
+        [TestCase("ANNabel", "Macklin", "Annabel Macklin")]
+        [TestCase("Ansely", "Mackie", "Ansely Mackie")]
+        [TestCase("Archibald", "MACquarie", "Archibald Macquarie")]
+        [TestCase("Allister", "Machado", "Allister Machado")]
+        [TestCase("Alistaire", "Macevicius", "Alistaire Macevicius")]
+        [TestCase("Black", "Maciulis", "Black Maciulis")]
+        [TestCase("Bonny-LEE", "Macias", "Bonny-Lee Macias")]
+        [TestCase("Brodric", "MacMurdo", "Brodric MacMurdo")]
+        [TestCase("Camron", "O'Callaghan", "Camron O'Callaghan")]
+        [TestCase("Carmichael", "St. John", "Carmichael St. John")]
+        [TestCase("Moritz", "von Streit", "Moritz von Streit")]
+        [TestCase("MILAN", "van Dyke", "Milan van Dyke")]
+        [TestCase("Van", "De-Ville", "Van De-Ville")]
+        [TestCase("Gwendolyn", "ap Llwyd Dafydd", "Gwendolyn ap Llwyd Dafydd")]
+        [TestCase("Nayef", "al Fahd", "Nayef al Fahd")]
+        [TestCase("Al", "GIORDANO", "Al Giordano")]
+        [TestCase("Pablo", "el Grecco", "Pablo el Grecco")]
+        [TestCase("Doménikos", "Theotokópoulos", "Doménikos Theotokópoulos")]
+        [TestCase("David", "ben Gurion", "David ben Gurion")]
+        [TestCase("David", "Ben-Gurion", "David Ben-Gurion")]
+        [TestCase("Ben", "Disraeli", "Ben Disraeli")]
+        [TestCase("Leo", "da Vinci", "Leo da Vinci")]
+        [TestCase("Leonardo", "di Caprio", "Leonardo di Caprio")]
+        [TestCase("Pierre", "du Pont", "Pierre du Pont")]
+        [TestCase("Anthony", "De Legate", "Anthony de Legate")]
+        [TestCase("Alessandro", "Del Crond", "Alessandro del Crond")]
+        [TestCase("Jan", "der Sind", "Jan der Sind")]
+        [TestCase("Arthur", "van Der Post", "Arthur van der Post")]
+        [TestCase("Michael", "van den Thillart", "Michael van den Thillart")]
+        [TestCase("Max", "VON Trapp", "Max von Trapp")]
+        [TestCase("Carl", "la Poisson", "Carl la Poisson")]
+        [TestCase("Shamus", "le Figaro", "Shamus le Figaro")]
+        [TestCase("Peter", "Mack Knife", "Peter Mack Knife")]
+        [TestCase("Alex", "Dougal MacDonald", "Alex Dougal MacDonald")]
+        [TestCase("Simon", "Ruiz y Picasso", "Simon Ruiz y Picasso")]
+        [TestCase("Javier", "Dato e Iradier", "Javier Dato e Iradier")]
+        [TestCase("Ark", "Mas I Gavarró", "Ark Mas i Gavarró")]
+        [TestCase("His Majesty", "Henry VIII", "His Majesty Henry VIII")]
+        [TestCase("Louis III", "PAR la grâce de Dieu", "Louis III par la grâce de Dieu")]
+        [TestCase("Louis XIV", "par la grâce de DIEU", "Louis XIV par la grâce de Dieu")]
+        [TestCase("His Majesty","Charles II", "His Majesty Charles II")]
+        [TestCase("HER Highness", "Fredrika XLIX", "Her Highness Fredrika XLIX")]
+        [TestCase("Yang Amat Berbahagia tun Haji", "Yusof BIN Ishak", "Yang Amat Berbahagia Tun Haji Yusof bin Ishak")]
+        public void ThenLearnerNameCasesAreStandardised(string givenNames, string familyName, string expected)
         {
             var worksheet = GenerateWorksheet(new List<CertificateResponse>()
             {
@@ -36,7 +88,9 @@ namespace SFA.DAS.AssessorService.PrintFunction.Tests
                 {
                     CertificateData = new CertificateDataResponse()
                     {
-                        FullName = inputName
+                        LearnerGivenNames = givenNames,
+                        LearnerFamilyName = familyName,
+                        FullName = $"{givenNames} {familyName}"
                     }
                 }
             });
