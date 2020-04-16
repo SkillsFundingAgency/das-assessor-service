@@ -8,7 +8,7 @@
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <h1 class="govuk-heading-xl">Create an account</h1>
+            
 
             <form class="new-account-form js-disable-on-submit" id="account-setup" asp-action="CreateAnAccount" asp-controller="Account" method="post" novalidate="">
                 
@@ -36,6 +36,8 @@
                         </div>
                     </div>
                 }
+
+                <h1 class="govuk-heading-xl">Create an account</h1>
 
                 <div class="govuk-form-group" sfa-validation-for="GivenName" sfa-validationerror-class="govuk-form-group--error">
                     <label class="govuk-label govuk-label--m" for="GivenName">
