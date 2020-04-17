@@ -20,48 +20,48 @@ namespace SFA.DAS.AssessorService.Web.Infrastructure
 
         public void OnActionExecuting(ActionExecutingContext context)
         {
-            CheckSessionAttribute checkSession = null;
+            CheckSessionAttribute checkSessionAttribute = null;
 
             var controllerActionDescriptor = context.ActionDescriptor as ControllerActionDescriptor;
             if (controllerActionDescriptor != null)
             {
-                checkSession = controllerActionDescriptor
+                checkSessionAttribute = controllerActionDescriptor
                     .MethodInfo
                     .GetCustomAttribute<CheckSessionAttribute>();
             }
 
-            if(checkSession == null)
+            if(checkSessionAttribute == null)
             {
-                checkSession = context.Controller.GetType()
+                checkSessionAttribute = context.Controller.GetType()
                     .GetTypeInfo()
                     .GetCustomAttribute<CheckSessionAttribute>();
             }
 
-            if (checkSession == null || checkSession.CheckSession == CheckSession.Ignore)
+            if (checkSessionAttribute == null || checkSessionAttribute.CheckSession == CheckSession.Ignore)
             {
                 return;
             }
 
-            if (_sessionService.Get(checkSession.Key) == null)
+            if (_sessionService.Get(checkSessionAttribute.Key) == null)
             {
-                if (checkSession.CheckSession == CheckSession.Error)
+                if (checkSessionAttribute.CheckSession == CheckSession.Error)
                 {
                     context.Result = 
                         new BadRequestObjectResult("Session lost");
 
                     _logger.LogInformation($"Session lost, error result");
                 }
-                else if (checkSession.CheckSession == CheckSession.Redirect)
+                else if (checkSessionAttribute.CheckSession == CheckSession.Redirect)
                 {
 
                     context.Result =
                         new RedirectToRouteResult(new RouteValueDictionary(new
                         {
-                            controller = checkSession.Controller,
-                            action = checkSession.Action
+                            controller = checkSessionAttribute.Controller,
+                            action = checkSessionAttribute.Action
                         }));
 
-                    _logger.LogInformation($"Session lost, redirecting to {checkSession.Action}");
+                    _logger.LogInformation($"Session lost, redirecting to {checkSessionAttribute.Action}");
                 }
             }
             else
