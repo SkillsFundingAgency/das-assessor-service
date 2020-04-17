@@ -665,7 +665,7 @@
 }
 
 .app-task-list__item {
-  border-bottom: 1px solid #bfc1c3;
+  border-bottom: 1px solid #b1b4b6;
   margin-bottom: 0 !important;
   padding-top: 10px;
   padding-bottom: 10px;
@@ -677,6 +677,10 @@
   clear: both;
 }
 
+.app-task-list__item:first-child {
+  border-top: 1px solid #b1b4b6;
+}
+
 .app-task-list__task-name {
   display: block;
 }
@@ -684,7 +688,6 @@
 @media (min-width: 28.125em) {
   .app-task-list__task-name {
     float: left;
-    width: 75%;
   }
 }
 

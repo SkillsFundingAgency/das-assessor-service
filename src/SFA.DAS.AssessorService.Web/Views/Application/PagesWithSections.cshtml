@@ -27,28 +27,25 @@
                     </span>
                 }
                 <h1 class="govuk-heading-xl">@Model.Section.Title</h1>
-                <ul class="govuk-list">
+                <ol class="app-task-list">
                     <li>
-                        <ul class="app-task-list govuk-!-margin-bottom-7">
+                        <h2 class="app-task-list__section">@Html.Raw(pagesToCheck[0].Title)</h2>
+                        <ul class="app-task-list__items app-task-list__items--no-number">
                             @for (var i = 0; i < pagesToCheck.Count; i++)
                             {
                                 var pg = pagesToCheck[i];
                                 isSamePage = pageTitle == pg.Title;
                                 pageTitle = pg.Title;
                                 nextPageTitle = "";
+
                                 if (i < pagesToCheck.Count - 1)
                                 {
                                     nextPageTitle = (pagesToCheck[i + 1]).Title;
                                 }
 
-                                @if (!isSamePage)
-                                {
-                                    <h2 class="govuk-heading-m">@Html.Raw(pg.Title)</h2>
-                                }
-
                                 <li class="app-task-list__item">
                                     <a class="govuk-link app-task-list__task-name"
-                                       href="@Url.Action("Page", "Application", new {Id = Model.Id, sequenceNo = Model.Section.SequenceNo, sectionNo = Model.Section.SectionNo, pageId = pg.PageId, __redirectAction="Section"})">
+                                    href="@Url.Action("Page", "Application", new {Id = Model.Id, sequenceNo = Model.Section.SequenceNo, sectionNo = Model.Section.SectionNo, pageId = pg.PageId, __redirectAction="Section"})">
                                         @pg.LinkTitle
                                     </a>
                                     @if (pg.Complete)
@@ -59,17 +56,19 @@
 
                                 @if (nextPageTitle != pageTitle)
                                 {
-                                    @Html.Raw("</ul>");
+                                    @Html.Raw("</ul></li>");
                                     if (i < pagesToCheck.Count - 1)
                                     {
-                                        @Html.Raw("<ul class=\"app-task-list govuk-!-margin-bottom-7\">")
+                                        @Html.Raw("<li><h2 class=\"app-task-list__section\">")
+                                        @nextPageTitle
+                                        @Html.Raw("</h2><ul class=\"app-task-list__items app-task-list__items--no-number\">")
                                     }
                                 }
 
                             }
                         </ul>
                     </li>
-                </ul>
+                </ol>
                 <a href="@Url.Action("Sequence", "Application", new {id = Model.Id, sequenceNo=Model.SequenceNo })" class="govuk-button">Return to application overview</a>
             }
         </div>
