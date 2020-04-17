@@ -1,6 +1,11 @@
 ﻿@using SFA.DAS.AssessorService.Web.Extensions
 @inject SFA.DAS.AssessorService.Settings.IWebConfiguration webConfiguration
 
+@{
+    var snippetUrl = $"https://static.zdassets.com/ekr/snippet.js?key={webConfiguration.ZenDeskSnippetKey}";
+    var cobrowsingSnippetUrl = $"https://embed-euw1.rcrsv.io/{webConfiguration.ZenDeskCobrowsingSnippetKey}?zwwi=1";   
+}
+
 <script type="text/javascript">
     window.zESettings = {
         webWidget: {
@@ -20,6 +25,6 @@
         }
     };
 </script>
-<script id="ze-snippet" src="https://static.zdassets.com/ekr/snippet.js?key=@webConfiguration.ZenDeskSnippetKey"></script>
-<script id="co-snippet" src="https://embed-euw1.rcrsv.io/@webConfiguration.ZenDeskCobrowsingSnippetKey?zwwi=1"></script>
+<script id="ze-snippet" src="@snippetUrl"></script>
+<script id="co-snippet" src="@cobrowsingSnippetUrl"></script>
 @Html.SetZenDeskLabels(new string[] { ViewBag.ZenDeskLabel })
