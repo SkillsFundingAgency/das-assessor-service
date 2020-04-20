@@ -28,17 +28,6 @@ namespace SFA.DAS.AssessorService.Data
             return await GetStandardCollationsInternal();
         }
 
-        public async Task<List<StandardNonApprovedCollation>> GetStandardNonApprovedCollations()
-        {
-            return await GetStandardNonApprovedCollationsInternal();
-        }
-
-        public async Task<StandardNonApprovedCollation> GetStandardNonApprovedCollationByReferenceNumber(string referenceNumber)
-        {
-            var standards = await GetStandardNonApprovedCollationsInternal(referenceNumberFilter: referenceNumber);
-            return standards.FirstOrDefault();
-        }
-
         public async Task<StandardCollation> GetStandardCollationByStandardId(int standardId)
         {
             var standards = await GetStandardCollationsInternal(standardIdFilter: standardId);
@@ -51,24 +40,58 @@ namespace SFA.DAS.AssessorService.Data
             return standards.FirstOrDefault();
         }
 
+        public async Task<List<StandardNonApprovedCollation>> GetStandardNonApprovedCollations()
+        {
+            return await GetStandardNonApprovedCollationsInternal();
+        }
+
+        public async Task<StandardNonApprovedCollation> GetStandardNonApprovedCollationByReferenceNumber(string referenceNumber)
+        {
+            var standards = await GetStandardNonApprovedCollationsInternal(referenceNumberFilter: referenceNumber);
+            return standards.FirstOrDefault();
+        }
+
+        public async Task<List<Option>> GetOptions(int stdCode)
+        {
+            var sql = "SELECT * FROM [Options] WHERE IsLive = @isLive AND StdCode = @stdCode";
+
+            var results = await _unitOfWork.Connection.QueryAsync<Option>(
+                sql,
+                param: new { isLive = 1, stdCode },
+                transaction: _unitOfWork.Transaction);
+
+            return results.ToList();
+        }
+
+        public async Task<List<Option>> GetOptions(List<int> stdCodes)
+        {
+            var sql = "SELECT * FROM [Options] WHERE IsLive = @isLive AND StdCode IN @stdCodes";
+
+            var results = await _unitOfWork.Connection.QueryAsync<Option>(
+                sql,
+                param: new { isLive = 1, stdCodes },
+                transaction: _unitOfWork.Transaction);
+
+            return results.ToList();
+        }
+
         private async Task<List<StandardCollation>> GetStandardCollationsInternal(int? standardIdFilter = null, string referenceNumberFilter = null)
         {
             var standardsDictionary = new Dictionary<string, StandardCollation>();
 
-            string standardsQuery = @"SELECT * FROM StandardCollation";
-
-            if (standardIdFilter != null)
+            var sql = "SELECT * FROM [StandardCollation] WHERE IsLive = @isLive";
+            if (standardIdFilter.HasValue)
             {
-                standardsQuery += " WHERE StandardId = @standardIdFilter";
+                sql += " AND StandardId = @standardIdFilter";
             }
             else if (referenceNumberFilter != null)
             {
-                standardsQuery += " WHERE ReferenceNumber = @referenceNumberFilter";
+                sql += " AND ReferenceNumber = @referenceNumberFilter";
             }
 
             var standards = await _unitOfWork.Connection.QueryAsync<StandardCollation>(
-                standardsQuery, 
-                param: new { standardIdFilter, referenceNumberFilter }, 
+                sql, 
+                param: new { isLive = 1, standardIdFilter, referenceNumberFilter }, 
                 transaction: _unitOfWork.Transaction);
 
             foreach (var standard in standards)
@@ -83,12 +106,8 @@ namespace SFA.DAS.AssessorService.Data
                 }
             }
 
-            var optionsQuery = "SELECT * FROM Options WHERE StdCode IN @standardCodes";
-            var standardCodes = standardsDictionary.Values.Where(v => v.StandardId.HasValue).Select(v => v.StandardId).ToList();
-            var options = await _unitOfWork.Connection.QueryAsync<Option>(
-                optionsQuery, 
-                param: new { standardCodes }, 
-                transaction: _unitOfWork.Transaction);
+            var standardCodes = standardsDictionary.Values.Where(v => v.StandardId.HasValue).Select(v => v.StandardId.Value).ToList();
+            var options = await GetOptions(standardCodes);
 
             foreach (var option in options)
             {
@@ -106,16 +125,15 @@ namespace SFA.DAS.AssessorService.Data
 
         private async Task<List<StandardNonApprovedCollation>> GetStandardNonApprovedCollationsInternal(string referenceNumberFilter = null)
         {
-            string standardsQuery = @"SELECT * FROM StandardNonApprovedCollation";
-
+            var sql = "SELECT * FROM StandardNonApprovedCollation WHERE IsLive = @isLive";
             if (referenceNumberFilter != null)
             {
-                standardsQuery += " WHERE ReferenceNumber = @referenceNumberFilter";
+                sql += " AND ReferenceNumber = @referenceNumberFilter";
             }
 
             var results = await _unitOfWork.Connection.QueryAsync<StandardNonApprovedCollation>(
-                standardsQuery, 
-                param: new { referenceNumberFilter }, 
+                sql,
+                param: new { isLive = 1, referenceNumberFilter}, 
                 transaction: _unitOfWork.Transaction);
 
             return results.ToList();
@@ -123,7 +141,7 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<DateTime?> GetDateOfLastStandardCollation()
         {
-            const string sql = "select top 1 coalesce(max(DateUpdated), max(DateAdded)) maxDate  from StandardCollation";
+            const string sql = "SELECT TOP 1 COALESCE(MAX(DateUpdated), MAX(DateAdded)) MaxDate FROM [StandardCollation]";
             var dateOfLastCollation = await _unitOfWork.Connection.QuerySingleAsync<DateTime?>(
                 sql, 
                 param: null, 
@@ -134,36 +152,36 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<string> UpsertApprovedStandards(List<StandardCollation> latestStandards)
         {
-            var existingStandards = await GetStandardCollations();
+            var existingStandards = await GetStandardCollationsInternal();
 
-            var standardsDeleted = existingStandards
-                .Where(es => !latestStandards.Select(ls => ls.StandardId).Contains(es.StandardId))
+            var standardsRemoved = existingStandards
+                .Where(existingLiveStandard => !latestStandards.Select(latestStandard => latestStandard.StandardId).Contains(existingLiveStandard.StandardId))
                 .ToList();
 
-            foreach (var standard in standardsDeleted)
+            foreach (var standard in standardsRemoved)
             {
                 await UpdateExistingStandardToRemoved(standard);
             }
 
             var standardsUpdated = latestStandards
-                .Where(ls => existingStandards.Any(es => es.StandardId.Equals(ls.StandardId)))
+                .Where(latestStandard => existingStandards.Any(es => es.StandardId.Equals(latestStandard.StandardId)))
                 .ToList();
 
             foreach(var standard in standardsUpdated)
             {
-                await UpdateExistingStandard(standard, JsonConvert.SerializeObject(standard.StandardData));
+                await UpdateExistingStandard(standard);
             }
 
             var standardsInserted = latestStandards
-                .Where(ls => !existingStandards.Any(es => es.StandardId.Equals(ls.StandardId)))
+                .Where(latestStandard => !existingStandards.Any(existingStandard => existingStandard.StandardId.Equals(latestStandard.StandardId)))
                 .ToList();
 
             foreach (var standard in standardsInserted)
             {
-                await InsertNewStandard(standard, JsonConvert.SerializeObject(standard.StandardData));
+                await InsertNewStandard(standard);
             }
 
-            return $"details of approved update: Number of Inserts: {standardsInserted.Count}; Number of Updates: {standardsUpdated.Count}; Number of Removes: {standardsDeleted.Count}";
+            return $"Approved Standard: Added: {standardsInserted.Count}; Updated: {standardsUpdated.Count}; Removed: {standardsRemoved.Count}";
         }
 
         public async Task<string> UpsertNonApprovedStandards(List<StandardNonApprovedCollation> latestStandards)
@@ -185,7 +203,7 @@ namespace SFA.DAS.AssessorService.Data
 
             foreach (var standard in standardsUpdated)
             {
-                await UpdateExistingStandard(standard, JsonConvert.SerializeObject(standard.StandardData));
+                await UpdateExistingStandard(standard);
             }
 
             var standardsInserted = latestStandards
@@ -194,10 +212,10 @@ namespace SFA.DAS.AssessorService.Data
 
             foreach (var standard in standardsInserted)
             {
-                await InsertNewStandard(standard, JsonConvert.SerializeObject(standard.StandardData));
+                await InsertNewStandard(standard);
             }
 
-            return $"details of non-approved update: Number of Inserts: {standardsInserted.Count}; Number of Updates: {standardsUpdated.Count}; Number of Removes: {standardsDeleted.Count}";
+            return $"Non-approved Standards: Inserted: {standardsInserted.Count}; Updated: {standardsUpdated.Count}; Removed: {standardsDeleted.Count}";
         }
 
         public async Task<int> GetEpaoStandardsCount(string endPointAssessorOrganisationId)
@@ -263,7 +281,6 @@ namespace SFA.DAS.AssessorService.Data
                 transaction: _unitOfWork.Transaction,
                 commandType: CommandType.StoredProcedure);
 
-
             if (!string.IsNullOrEmpty(orderBy) || pageSize <= 0)
             {
                 if (string.IsNullOrEmpty(orderBy) && pageSize == 0)
@@ -288,7 +305,6 @@ namespace SFA.DAS.AssessorService.Data
             epaoPipelineStandardsResult.TotalCount = epaoPipelines.Select(x => x.TotalRows).First();
             epaoPipelineStandardsResult.PageOfResults = epaoPipelines;
 
-
             return epaoPipelineStandardsResult;
         }
 
@@ -306,43 +322,59 @@ namespace SFA.DAS.AssessorService.Data
             return result.ToList();
         }
 
-        private async Task UpdateExistingStandard(StandardCollation standard, string standardData)
+        private async Task UpdateExistingStandard(StandardCollation standard)
         {
-            // when new ReferenceNumber is null (IFA has not supplied one) retain the current ReferenceNumber
             await _unitOfWork.Connection.ExecuteAsync(
-                "Update [StandardCollation] set ReferenceNumber = case when @referenceNumber is not null then @referenceNumber else ReferenceNumber end, Title = @Title, StandardData = @StandardData, DateUpdated=getutcdate(), DateRemoved=null, IsLive = 1 " +
-                "where StandardId = @standardId",
-                param: new { standard.StandardId, standard.ReferenceNumber, standard.Title, standardData },
+                "UPDATE [StandardCollation] SET " +
+                    // when new ReferenceNumber is null (IFA has not supplied one) retain the current ReferenceNumber    
+                    "ReferenceNumber = CASE WHEN @referenceNumber IS NOT NULL THEN @referenceNumber ELSE ReferenceNumber END, " + 
+                    "Title = @title, " + 
+                    "StandardData = @StandardData, " + 
+                    "DateUpdated = GETUTCDATE(), " + 
+                    "DateRemoved = NULL, " + 
+                    "IsLive = 1 " +
+                "WHERE StandardId = @standardId",
+                param: new { standard.StandardId, standard.ReferenceNumber, standard.Title, standard.StandardData },
+                transaction: _unitOfWork.Transaction
+            );
+
+            await UpsertOptions(standard);
+        }
+
+        private async Task UpdateExistingStandard(StandardNonApprovedCollation standard)
+        {
+            await _unitOfWork.Connection.ExecuteAsync(
+                "UPDATE [StandardNonApprovedCollation] SET " + 
+                    "ReferenceNumber = @referenceNumber, " + 
+                    "Title = @title, " + 
+                    "StandardData = @standardData, " + 
+                    "DateUpdated = GETUTCDATE(), " + 
+                    "DateRemoved = NULL, " + 
+                    "IsLive = 1 " +
+                "WHERE ReferenceNumber = @referenceNumber",
+                param: new { standard.ReferenceNumber, standard.Title, standard.StandardData },
                 transaction: _unitOfWork.Transaction
             );
         }
 
-        private async Task UpdateExistingStandard(StandardNonApprovedCollation standard, string standardData)
-        {
-            await _unitOfWork.Connection.ExecuteAsync(
-                "Update [StandardNonApprovedCollation] set ReferenceNumber = @referenceNumber, Title = @Title, StandardData = @StandardData, DateUpdated=getutcdate(), DateRemoved=null, IsLive = 1 " +
-                "where ReferenceNumber = @referenceNumber",
-                param: new { standard.ReferenceNumber, standard.Title, standardData },
-                transaction: _unitOfWork.Transaction
-            );
-        }
-
-        private async Task InsertNewStandard(StandardCollation standard, string standardData)
+        private async Task InsertNewStandard(StandardCollation standard)
         {
             await _unitOfWork.Connection.ExecuteAsync(
                 "INSERT INTO [StandardCollation] ([StandardId],[ReferenceNumber] ,[Title],[StandardData]) " +
-                $@"VALUES (@standardId, @referenceNumber, @Title, @standardData)",
-                param: new { standard.StandardId, standard.ReferenceNumber, standard.Title, standardData },
+                "VALUES (@standardId, @referenceNumber, @title, @standardData)",
+                param: new { standard.StandardId, standard.ReferenceNumber, standard.Title, standard.StandardData },
                 transaction: _unitOfWork.Transaction
             );
+
+            await UpsertOptions(standard);
         }
 
-        private async Task InsertNewStandard(StandardNonApprovedCollation standard, string standardData)
+        private async Task InsertNewStandard(StandardNonApprovedCollation standard)
         {
             await _unitOfWork.Connection.ExecuteAsync(
                 "INSERT INTO [StandardNonApprovedCollation] ([ReferenceNumber] ,[Title],[StandardData]) " +
-                $@"VALUES (@referenceNumber, @Title, @standardData)",
-                param: new { standard.ReferenceNumber, standard.Title, standardData },
+                "VALUES (@referenceNumber, @title, @standardData)",
+                param: new { standard.ReferenceNumber, standard.Title, standard.StandardData },
                 transaction: _unitOfWork.Transaction
             );
         }
@@ -350,21 +382,96 @@ namespace SFA.DAS.AssessorService.Data
         private async Task UpdateExistingStandardToRemoved(StandardCollation standard)
         {
             await _unitOfWork.Connection.ExecuteAsync(
-                "Update [StandardCollation] set IsLive=0, DateRemoved=getutcdate() " +
-                "where StandardId = @standardId",
+                "UPDATE [StandardCollation] SET " + 
+                    "IsLive = 0, " + 
+                    "DateRemoved = GETUTCDATE() " +
+                "WHERE StandardId = @standardId",
                 param: new { standard.StandardId },
                 transaction: _unitOfWork.Transaction
             );
+
+            await UpsertOptions(standard, true);
         }
 
         private async Task UpdateExistingStandardToRemoved(StandardNonApprovedCollation standard)
         {
             await _unitOfWork.Connection.ExecuteAsync(
-                    "Update [StandardNonApprovedCollation] set IsLive=0, DateRemoved=getutcdate() " +
-                    "where ReferenceNumber = @referenceNumber",
+                    "UPDATE [StandardNonApprovedCollation] SET " + 
+                        "IsLive = 0, " + 
+                        "DateRemoved = GETUTCDATE() " +
+                    "WHERE ReferenceNumber = @referenceNumber",
                     param: new { standard.ReferenceNumber },
                     transaction: _unitOfWork.Transaction
                 );
+        }
+
+        private async Task UpsertOptions(StandardCollation standard, bool removingStandard = false)
+        {
+            var existingOptions = (await GetStandardCollationsInternal(standard.StandardId.Value))?.SingleOrDefault()?.Options;
+
+            var optionsRemoved = removingStandard 
+                ? existingOptions
+                : existingOptions
+                    .Where(existingOptionName => !standard.Options.Exists(optionName => optionName == existingOptionName));
+
+            foreach (var optionName in optionsRemoved)
+            {
+                await UpdateExistingOptionToRemoved(standard, optionName);
+            }
+
+            // the OptionName is a natural key, the Id is created in assessor as the IFATE id of an option does not always exist
+            // therefore updates are to add previously removed options back for a standard
+            var optionsUpdated = standard.Options
+                .Where(latestOptionName => existingOptions.Exists(existingOptionName => existingOptionName == latestOptionName));
+
+            foreach (var optionName in optionsUpdated)
+            {
+                await UpdateExistingOption(standard, optionName);
+            }
+
+            var optionsInserted = standard.Options
+                .Where(latestOptionName => !existingOptions.Exists(existingOptionName => existingOptionName == latestOptionName));
+                
+            foreach (var optionName in optionsInserted)
+            {
+                await InsertNewOption(standard, optionName);
+            }
+        }
+
+        private async Task UpdateExistingOption(StandardCollation standard, string optionName)
+        {
+            await _unitOfWork.Connection.ExecuteAsync(
+                "UPDATE [Options] SET " +
+                    // the OptionName is a natural key and cannot be updated
+                    "DateUpdated = GETUTCDATE(), " +
+                    "DateRemoved = NULL, " +
+                    "IsLive = 1 " +
+                "WHERE StdCode = @stdCode AND OptionName = @optionName",
+                param: new { StdCode = standard.StandardId, optionName },
+                transaction: _unitOfWork.Transaction
+            );
+        }
+
+        private async Task InsertNewOption(StandardCollation standard, string optionName)
+        {
+            await _unitOfWork.Connection.ExecuteAsync(
+                "INSERT INTO [Options] ([StdCode] ,[OptionName]) " +
+                "VALUES (@stdCode, @optionName)",
+                param: new { StdCode = standard.StandardId, optionName },
+                transaction: _unitOfWork.Transaction
+            );
+        }
+
+        private async Task UpdateExistingOptionToRemoved(StandardCollation standard, string optionName)
+        {
+            await _unitOfWork.Connection.ExecuteAsync(
+                "UPDATE [Options] SET " +
+                    "IsLive = 0, " +
+                    "DateRemoved = GETUTCDATE() " +
+                "WHERE StdCode = @stdCode AND OptionName = @optionName",
+                param: new { StdCode = standard.StandardId, optionName },
+                transaction: _unitOfWork.Transaction
+            );
         }
     }
 }

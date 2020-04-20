@@ -76,6 +76,22 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
             return standardCollation;
         }
 
+        public async Task<List<Option>> GetOptions(int stdCode)
+        {
+            List<Option> options = null;
+
+            try
+            {
+                options = await _standardRepository.GetOptions(stdCode);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"OPTION: Failed to get for options for stdcode: {stdCode}");
+            }
+
+            return options;
+        }
+
         public async Task<IEnumerable<IfaStandard>> GetIfaStandards()
         {
             try
@@ -94,6 +110,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
         public async Task<IEnumerable<StandardCollation>> GatherAllApprovedStandardDetails(List<IfaStandard> approvedIfaStandards)
         {
             _logger.LogInformation("STANDARD COLLATION: Starting gathering of all WIN Standard details");
+            
+            // get all the standards from the apprenticeship programs api - formally known as WIN aka provider api 
             var winResults = await _assessmentOrgsApiClient.GetAllStandardsV2();
 
             _logger.LogInformation("STANDARD COLLATION: Start collating approved IFA and WIN standards");
@@ -171,6 +189,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
                 StandardId = standardId,
                 ReferenceNumber = ifaStandard?.ReferenceNumber,
                 Title = ifaStandard?.Title ?? winStandard?.Title,
+                Options = MapIfaStandardOptions(ifaStandard),
                 StandardData = new StandardData
                 {
                     Category = ifaStandard?.Route,
@@ -201,6 +220,22 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
                     StandardPageUrl = ifaStandard?.StandardPageUrl
                 }
             };
+        }
+
+        private List<string> MapIfaStandardOptions(IfaStandard ifaStandard)
+        {
+            var options = new List<string>();
+
+            if ((ifaStandard?.OptionsUnstructuredTemplate?.Length ?? 0) > 0)
+            {
+                options.AddRange(ifaStandard.OptionsUnstructuredTemplate.ToList());
+            }
+            else if((ifaStandard?.Options?.Count() ?? 0) > 0)
+            {
+                options.AddRange(ifaStandard.Options.ConvertAll(p => p.Title));
+            }
+
+            return options;
         }
 
         private StandardNonApprovedCollation MapDataToStandardNonApprovedCollation(IfaStandard ifaStandard)

@@ -11,7 +11,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Certifi
 {
     public class BatchCertificateRequestValidator : AbstractValidator<BatchCertificateRequest>
     {
-        public BatchCertificateRequestValidator(IStringLocalizer<BatchCertificateRequestValidator> localiser, IOrganisationQueryRepository organisationQueryRepository, IIlrRepository ilrRepository, ICertificateRepository certificateRepository, IStandardService standardService)
+        public BatchCertificateRequestValidator(
+            IStringLocalizer<BatchCertificateRequestValidator> localiser, 
+            IOrganisationQueryRepository organisationQueryRepository, 
+            IIlrRepository ilrRepository,  
+            IStandardService standardService)
         {
             RuleFor(m => m.UkPrn).InclusiveBetween(10000000, 99999999).WithMessage("The UKPRN should contain exactly 8 numbers");
 
@@ -35,7 +39,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Certifi
                     // NOTE: This is not a nice way to do this BUT we cannot use another DependantRules()
                     if (sameStandard)
                     {
-                        var courseOptions = await certificateRepository.GetOptions(m.StandardCode);
+                        var courseOptions = await standardService.GetOptions(m.StandardCode);
 
                         if (!courseOptions.Any() && !string.IsNullOrEmpty(m.CertificateData?.CourseOption))
                         {

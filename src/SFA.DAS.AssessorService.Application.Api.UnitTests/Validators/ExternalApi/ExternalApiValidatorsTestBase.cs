@@ -44,16 +44,6 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
             certificateRepositoryMock.Setup(q => q.GetCertificate(1234567890, 101)).ReturnsAsync(GenerateEpaCertificate(1234567890, 101, "test", new Guid("12345678123456781234567812345678"), true));
             certificateRepositoryMock.Setup(q => q.GetCertificate(9999999999, 101)).ReturnsAsync(GenerateEpaCertificate(9999999999, 101, "test", new Guid("99999999999999999999999999999999"), false));
 
-            certificateRepositoryMock.Setup(q => q.GetOptions(1)).ReturnsAsync(new List<Option>());
-            certificateRepositoryMock.Setup(q => q.GetOptions(98)).ReturnsAsync(new List<Option>());
-            certificateRepositoryMock.Setup(q => q.GetOptions(101)).ReturnsAsync(new List<Option>());
-
-            certificateRepositoryMock.Setup(q => q.GetOptions(99))
-                .ReturnsAsync(new List<Option>
-                {
-                   GenerateOption(99, "English"),
-                   GenerateOption(99, "French")
-                });
 
             return certificateRepositoryMock;
         }
@@ -101,6 +91,18 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
                     GenerateEPORegisteredStandard(99),
                     GenerateEPORegisteredStandard(101)
                 });
+
+            standardServiceMock.Setup(q => q.GetOptions(1)).ReturnsAsync(new List<Option>());
+            standardServiceMock.Setup(q => q.GetOptions(98)).ReturnsAsync(new List<Option>());
+            standardServiceMock.Setup(q => q.GetOptions(101)).ReturnsAsync(new List<Option>());
+
+            standardServiceMock.Setup(q => q.GetOptions(99))
+                .ReturnsAsync(new List<Option>
+                {
+                   GenerateOption(99, "English"),
+                   GenerateOption(99, "French")
+                });
+
 
             return standardServiceMock;
         }
