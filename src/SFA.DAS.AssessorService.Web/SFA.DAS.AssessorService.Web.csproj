@@ -163,9 +163,6 @@
     <Content Update="Views\Shared\_DashboardLayout.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
-    <Content Update="wwwroot\javascripts\opp-finder-service.min.js">
-      <DependentUpon>opp-finder-service.js</DependentUpon>
-    </Content>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Update="Resources\Validators\CertificateCheckViewModelValidator.resx">
