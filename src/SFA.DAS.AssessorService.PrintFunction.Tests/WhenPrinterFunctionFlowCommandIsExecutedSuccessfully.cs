@@ -119,6 +119,7 @@ namespace SFA.DAS.AssessorService.PrintFunction.Tests
         }
 
         [Test]
+        [Ignore("The notification after SFTP has been disabled")]
         public void ItShouldSendANotification()
         {
             _notificationService.Verify(q =>
