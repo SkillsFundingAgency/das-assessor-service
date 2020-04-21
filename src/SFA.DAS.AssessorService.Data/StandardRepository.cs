@@ -25,18 +25,18 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<List<StandardCollation>> GetStandardCollations()
         {
-            return await GetStandardCollationsInternal();
+            return await GetStandardCollationsInternal(isLive: true);
         }
 
         public async Task<StandardCollation> GetStandardCollationByStandardId(int standardId)
         {
-            var standards = await GetStandardCollationsInternal(standardIdFilter: standardId);
+            var standards = await GetStandardCollationsInternal(standardIdFilter: standardId, isLive: true);
             return standards.FirstOrDefault();
         }
 
         public async Task<StandardCollation> GetStandardCollationByReferenceNumber(string referenceNumber)
         {
-            var standards = await GetStandardCollationsInternal(referenceNumberFilter: referenceNumber);
+            var standards = await GetStandardCollationsInternal(referenceNumberFilter: referenceNumber, isLive: true);
             return standards.FirstOrDefault();
         }
 
@@ -53,45 +53,53 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<List<Option>> GetOptions(int stdCode)
         {
-            var sql = "SELECT * FROM [Options] WHERE IsLive = @isLive AND StdCode = @stdCode";
-
-            var results = await _unitOfWork.Connection.QueryAsync<Option>(
-                sql,
-                param: new { isLive = 1, stdCode },
-                transaction: _unitOfWork.Transaction);
-
-            return results.ToList();
+            return await GetOptionsInternal(new List<int> { stdCode }, true);
         }
 
         public async Task<List<Option>> GetOptions(List<int> stdCodes)
         {
-            var sql = "SELECT * FROM [Options] WHERE IsLive = @isLive AND StdCode IN @stdCodes";
+            return await GetOptionsInternal(stdCodes, true);
+        }
+
+        private async Task<List<Option>> GetOptionsInternal(List<int> stdCodes, bool? isLive = null)
+        {
+            var sql = "SELECT * FROM [Options] WHERE StdCode IN @stdCodes";
+            if(isLive.HasValue)
+            {
+                sql += " AND IsLive = @isLive";
+            }
 
             var results = await _unitOfWork.Connection.QueryAsync<Option>(
                 sql,
-                param: new { isLive = 1, stdCodes },
+                param: new { stdCodes, isLive = (isLive ?? true) ? 1 : 0 },
                 transaction: _unitOfWork.Transaction);
 
             return results.ToList();
         }
 
-        private async Task<List<StandardCollation>> GetStandardCollationsInternal(int? standardIdFilter = null, string referenceNumberFilter = null)
+        private async Task<List<StandardCollation>> GetStandardCollationsInternal(int? standardIdFilter = null, string referenceNumberFilter = null, bool? isLive = null)
         {
             var standardsDictionary = new Dictionary<string, StandardCollation>();
 
-            var sql = "SELECT * FROM [StandardCollation] WHERE IsLive = @isLive";
+            var sql = new SqlQuery($"SELECT * FROM [StandardCollation] {SqlQuery.PredicatePlaceholder}");
+            
             if (standardIdFilter.HasValue)
             {
-                sql += " AND StandardId = @standardIdFilter";
+                sql.Predicates.Add("StandardId = @standardIdFilter");
             }
             else if (referenceNumberFilter != null)
             {
-                sql += " AND ReferenceNumber = @referenceNumberFilter";
+                sql.Predicates.Add("ReferenceNumber = @referenceNumberFilter");
+            }
+
+            if(isLive.HasValue)
+            {
+                sql.Predicates.Add("IsLive = @isLive");
             }
 
             var standards = await _unitOfWork.Connection.QueryAsync<StandardCollation>(
-                sql, 
-                param: new { isLive = 1, standardIdFilter, referenceNumberFilter }, 
+                sql.SqlWithOptionalPredicates(), 
+                param: new { standardIdFilter, referenceNumberFilter, isLive = (isLive ?? true) ? 1 : 0 }, 
                 transaction: _unitOfWork.Transaction);
 
             foreach (var standard in standards)
@@ -107,7 +115,7 @@ namespace SFA.DAS.AssessorService.Data
             }
 
             var standardCodes = standardsDictionary.Values.Where(v => v.StandardId.HasValue).Select(v => v.StandardId.Value).ToList();
-            var options = await GetOptions(standardCodes);
+            var options = await GetOptionsInternal(standardCodes, isLive);
 
             foreach (var option in options)
             {
@@ -123,17 +131,22 @@ namespace SFA.DAS.AssessorService.Data
             return standardsDictionary.Values.ToList();
         }
 
-        private async Task<List<StandardNonApprovedCollation>> GetStandardNonApprovedCollationsInternal(string referenceNumberFilter = null)
+        private async Task<List<StandardNonApprovedCollation>> GetStandardNonApprovedCollationsInternal(string referenceNumberFilter = null, bool? isLive = null)
         {
-            var sql = "SELECT * FROM StandardNonApprovedCollation WHERE IsLive = @isLive";
+            var sql = new SqlQuery($"SELECT * FROM StandardNonApprovedCollation {SqlQuery.PredicatePlaceholder}");
             if (referenceNumberFilter != null)
             {
-                sql += " AND ReferenceNumber = @referenceNumberFilter";
+                sql.Predicates.Add("ReferenceNumber = @referenceNumberFilter");
+            }
+
+            if(isLive.HasValue)
+            {
+                sql.Predicates.Add("IsLive = @isLive");
             }
 
             var results = await _unitOfWork.Connection.QueryAsync<StandardNonApprovedCollation>(
-                sql,
-                param: new { isLive = 1, referenceNumberFilter}, 
+                sql.SqlWithOptionalPredicates(),
+                param: new { referenceNumberFilter, isLive = (isLive ?? true) ? 1 : 0 }, 
                 transaction: _unitOfWork.Transaction);
 
             return results.ToList();
@@ -152,70 +165,72 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<string> UpsertApprovedStandards(List<StandardCollation> latestStandards)
         {
-            var existingStandards = await GetStandardCollationsInternal();
+            // retrieving both live and non-live, so that an existing non-live approved standard can be re-activated
+            var existingStandards = await GetStandardCollationsInternal(isLive: null);
 
-            var standardsRemoved = existingStandards
-                .Where(existingLiveStandard => !latestStandards.Select(latestStandard => latestStandard.StandardId).Contains(existingLiveStandard.StandardId))
+            var standardsToBeRemoved = existingStandards
+                .Where(existingStandard => !latestStandards.Any(latestStandard => existingStandard.StandardId.Equals(latestStandard.StandardId)))
                 .ToList();
 
-            foreach (var standard in standardsRemoved)
+            foreach (var standard in standardsToBeRemoved)
             {
                 await UpdateExistingStandardToRemoved(standard);
             }
 
-            var standardsUpdated = latestStandards
-                .Where(latestStandard => existingStandards.Any(es => es.StandardId.Equals(latestStandard.StandardId)))
+            var standardsToBeUpdated = latestStandards
+                .Where(latestStandard => existingStandards.Any(existingStandard => existingStandard.StandardId.Equals(latestStandard.StandardId)))
                 .ToList();
 
-            foreach(var standard in standardsUpdated)
+            foreach(var standard in standardsToBeUpdated)
             {
                 await UpdateExistingStandard(standard);
             }
 
-            var standardsInserted = latestStandards
+            var standardsToBeAdded = latestStandards
                 .Where(latestStandard => !existingStandards.Any(existingStandard => existingStandard.StandardId.Equals(latestStandard.StandardId)))
                 .ToList();
 
-            foreach (var standard in standardsInserted)
+            foreach (var standard in standardsToBeAdded)
             {
                 await InsertNewStandard(standard);
             }
 
-            return $"Approved Standard: Added: {standardsInserted.Count}; Updated: {standardsUpdated.Count}; Removed: {standardsRemoved.Count}";
+            return $"Approved Standards: Added: {standardsToBeAdded.Count}; Updated: {standardsToBeUpdated.Count}; Removed: {standardsToBeRemoved.Count}";
         }
 
         public async Task<string> UpsertNonApprovedStandards(List<StandardNonApprovedCollation> latestStandards)
         {
-            var existingStandards = await GetStandardNonApprovedCollations();
+            // retrieving both live and non-live, so that an existing non-live non-approved standard can be re-activated
+            var existingStandards = await GetStandardNonApprovedCollationsInternal(isLive: null);
 
-            var standardsDeleted = existingStandards
-                .Where(es => !latestStandards.Select(ls => ls.ReferenceNumber).Contains(es.ReferenceNumber))
+            var standardsToBeRemoved = existingStandards
+                .Where(existingStandard => !latestStandards.Any(latestStandard => existingStandard.ReferenceNumber.Equals(latestStandard.ReferenceNumber, StringComparison.InvariantCultureIgnoreCase)))
                 .ToList();
 
-            foreach (var standard in standardsDeleted)
+            foreach (var standard in standardsToBeRemoved)
             {
                 await UpdateExistingStandardToRemoved(standard);
             }
 
-            var standardsUpdated = latestStandards
-                .Where(ls => existingStandards.Any(es => es.ReferenceNumber.Equals(ls.ReferenceNumber, StringComparison.InvariantCultureIgnoreCase)))
+            var standardsToBeUpdated = latestStandards
+                .Where(latestStandard => existingStandards.Any(existingStandard => existingStandard.ReferenceNumber.Equals(latestStandard.ReferenceNumber, StringComparison.InvariantCultureIgnoreCase)))
                 .ToList();
 
-            foreach (var standard in standardsUpdated)
+            foreach (var standard in standardsToBeUpdated)
             {
                 await UpdateExistingStandard(standard);
             }
 
-            var standardsInserted = latestStandards
+            var standardsToBeAdded = latestStandards
                 .Where(ls => !existingStandards.Any(es => es.ReferenceNumber.Equals(ls.ReferenceNumber, StringComparison.InvariantCultureIgnoreCase)))
                 .ToList();
 
-            foreach (var standard in standardsInserted)
+            foreach (var standard in standardsToBeAdded)
             {
                 await InsertNewStandard(standard);
             }
 
-            return $"Non-approved Standards: Inserted: {standardsInserted.Count}; Updated: {standardsUpdated.Count}; Removed: {standardsDeleted.Count}";
+            return $"Non-approved Standards: Added: {standardsToBeAdded.Count}; Updated: {standardsToBeUpdated.Count}; Removed: {standardsToBeRemoved.Count}";
         }
 
         public async Task<int> GetEpaoStandardsCount(string endPointAssessorOrganisationId)
@@ -407,32 +422,33 @@ namespace SFA.DAS.AssessorService.Data
 
         private async Task UpsertOptions(StandardCollation standard, bool removingStandard = false)
         {
-            var existingOptions = (await GetStandardCollationsInternal(standard.StandardId.Value))?.SingleOrDefault()?.Options;
-
-            var optionsRemoved = removingStandard 
+            // retrieving both live and non-live, so that an existing non-live option can be re-activated
+            var existingOptions = await GetOptionsInternal(new List<int> { standard.StandardId.Value }, isLive: null);
+                
+            var optionsToBeRemoved = removingStandard 
                 ? existingOptions
                 : existingOptions
-                    .Where(existingOptionName => !standard.Options.Exists(optionName => optionName == existingOptionName));
+                    .Where(existingOptionName => !standard.Options.Exists(optionName => optionName == existingOptionName.OptionName));
 
-            foreach (var optionName in optionsRemoved)
+            foreach (var option in optionsToBeRemoved)
             {
-                await UpdateExistingOptionToRemoved(standard, optionName);
+                await UpdateExistingOptionToRemoved(standard, option.OptionName);
             }
 
             // the OptionName is a natural key, the Id is created in assessor as the IFATE id of an option does not always exist
             // therefore updates are to add previously removed options back for a standard
-            var optionsUpdated = standard.Options
-                .Where(latestOptionName => existingOptions.Exists(existingOptionName => existingOptionName == latestOptionName));
+            var optionsToBeUpdated = standard.Options
+                .Where(latestOptionName => existingOptions.Exists(existingOptionName => existingOptionName.OptionName == latestOptionName));
 
-            foreach (var optionName in optionsUpdated)
+            foreach (var optionName in optionsToBeUpdated)
             {
                 await UpdateExistingOption(standard, optionName);
             }
 
-            var optionsInserted = standard.Options
-                .Where(latestOptionName => !existingOptions.Exists(existingOptionName => existingOptionName == latestOptionName));
+            var optionsToBeInserted = standard.Options
+                .Where(latestOptionName => !existingOptions.Exists(existingOptionName => existingOptionName.OptionName == latestOptionName));
                 
-            foreach (var optionName in optionsInserted)
+            foreach (var optionName in optionsToBeInserted)
             {
                 await InsertNewOption(standard, optionName);
             }
