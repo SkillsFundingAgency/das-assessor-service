@@ -10,17 +10,36 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
 
         public static void InsertRecord(StandardCollationModel standardCollation)
         {
-            var sqlToInsert = @"INSERT INTO [dbo].[StandardCollation]
-                    ([StandardId]
-                ,[ReferenceNumber]
-                ,[Title]
-                ,[StandardData])
-            VALUES
-                (@standardId
-                ,@referenceNumber
-                ,@Title
-                ,@standardData);";
-            DatabaseService.Execute(sqlToInsert, standardCollation);
+            var sqlToInsertStandardCollation = 
+                "INSERT INTO [dbo].[StandardCollation]" + 
+                    "([StandardId]" + 
+                    ",[ReferenceNumber]" + 
+                    ",[Title]" + 
+                    ",[StandardData]" + 
+                    ",[IsLIve])" + 
+                "VALUES" + 
+                    "(@standardId" + 
+                    ",@referenceNumber" + 
+                    ",@Title" + 
+                    ",@standardData" +
+                    ",@isLive);";
+
+            DatabaseService.Execute(sqlToInsertStandardCollation, standardCollation);
+
+            var sqlToInsertOption =
+                "INSERT INTO [dbo].[Options]" +
+                    "([StdCode]" +
+                    ",[OptionName]" +
+                    ",[IsLive])" +
+                "VALUES" +
+                    "(@stdCode" +
+                    ",@optionName" +
+                    ",@isLive);";
+
+            foreach (var optionDataModel in standardCollation.Options)
+            {
+                DatabaseService.Execute(sqlToInsertOption, optionDataModel);
+            }
         }
 
         public static void InsertRecords(List<StandardCollationModel> standardCollations)
