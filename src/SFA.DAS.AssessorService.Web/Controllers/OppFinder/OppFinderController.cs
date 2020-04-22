@@ -64,6 +64,18 @@ namespace SFA.DAS.AssessorService.Web.Controllers.OppFinder
             return View();
         }
 
+        [HttpGet(nameof(CookieDetails))]
+        public IActionResult CookieDetails()
+        {
+            return View();
+        }
+
+        [HttpGet(nameof(Accessibility))]
+        public IActionResult Accessibility()
+        {
+            return View();
+        }
+
         [HttpGet(nameof(Privacy))]
         public IActionResult Privacy()
         {
