@@ -5,13 +5,11 @@ using System.Text.RegularExpressions;
 
 namespace SFA.DAS.AssessorService.EpaoImporter.Extensions
 {
-    public static class StringNameCaseExtension
+    public static class StringProperCaseExtensions
     {
-        private static Dictionary<NameOptions, bool> Options = new Dictionary<NameOptions, bool>();
-        private static readonly Dictionary<string, string> Exceptions = new Dictionary<string, string>();
-        private static readonly Dictionary<string, string> Replacements = new Dictionary<string, string>();
+        private static readonly Dictionary<string, string> MacMcFamilyNameExceptions = new Dictionary<string, string>();
+        private static readonly Dictionary<string, string> NonEnglishFamilyNameReplacements = new Dictionary<string, string>();
         private static readonly string[] Conjunctions = new string[] { "Y", "E", "I" };
-        // Roman letters regexp.
         private static readonly string RomanRegex = @"\b((?:[Xx]{1,3}|[Xx][Ll]|[Ll][Xx]{0,3})?(?:[Ii]{1,3}|[Ii][VvXx]|[Vv][Ii]{0,3})?)\b";
         private static readonly Dictionary<char, char> AlternateCharacters = new Dictionary<char, char>() {
                 {'’', '\''},
@@ -23,101 +21,85 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Extensions
                 {'%', ' '}
         };
 
-        public enum NameOptions
+        static StringProperCaseExtensions()
         {
-            lazy,
-            spanish
+            MacMcFamilyNameExceptions.Add(@"\bMacEvicius", "Macevicius");
+            MacMcFamilyNameExceptions.Add(@"\bMacHado", "Machado");
+            MacMcFamilyNameExceptions.Add(@"\bMacHar", "Machar");
+            MacMcFamilyNameExceptions.Add(@"\bMacHin", "Machin");
+            MacMcFamilyNameExceptions.Add(@"\bMacHlin", "Machlin");
+            MacMcFamilyNameExceptions.Add(@"\bMacIas", "Macias");
+            MacMcFamilyNameExceptions.Add(@"\bMacIulis", "Maciulis");
+            MacMcFamilyNameExceptions.Add(@"\bMacKie", "Mackie");
+            MacMcFamilyNameExceptions.Add(@"\bMacKle", "Mackle");
+            MacMcFamilyNameExceptions.Add(@"\bMacKlin", "Macklin");
+            MacMcFamilyNameExceptions.Add(@"\bMacQuarie", "Macquarie");
+            MacMcFamilyNameExceptions.Add(@"\bMacOmber", "Macomber");
+            MacMcFamilyNameExceptions.Add(@"\bMacIn", "Macin");
+            MacMcFamilyNameExceptions.Add(@"\bMacKintosh", "Mackintosh");
+            MacMcFamilyNameExceptions.Add(@"\bMacKen", "Macken");
+            MacMcFamilyNameExceptions.Add(@"\bMacHen", "Machen");
+            MacMcFamilyNameExceptions.Add(@"\bMacHiel", "Machiel");
+            MacMcFamilyNameExceptions.Add(@"\bMacIol", "Maciol");
+            MacMcFamilyNameExceptions.Add(@"\bMacKell", "Mackell");
+            MacMcFamilyNameExceptions.Add(@"\bMacKlem", "Macklem");
+            MacMcFamilyNameExceptions.Add(@"\bMacKrell", "Mackrell");
+            MacMcFamilyNameExceptions.Add(@"\bMacLin", "Maclin");
+            MacMcFamilyNameExceptions.Add(@"\bMacKey", "Mackey");
+            MacMcFamilyNameExceptions.Add(@"\bMacKley", "Mackley");
+            MacMcFamilyNameExceptions.Add(@"\bMacHon", "Machon");
+
+            NonEnglishFamilyNameReplacements.Add(@"\bAl(?=\s+\w)", "al");               // al Arabic or forename Al.
+            NonEnglishFamilyNameReplacements.Add(@"\b(Bin|Binti|Binte)\b", "bin");      // bin, binti, binte Arabic
+            NonEnglishFamilyNameReplacements.Add(@"\bAp\b", "ap");                      // ap Welsh.
+            NonEnglishFamilyNameReplacements.Add(@"\bBen(?=\s+\w)", "ben");             // ben Hebrew or forename Ben.
+            NonEnglishFamilyNameReplacements.Add(@"\bDell([ae])\b", "dell$1");          // della and delle Italian.
+            NonEnglishFamilyNameReplacements.Add(@"\bD([aeiou])(?!-)\b", "d$1");        // da, de, di Italian; du French; do Brasil
+            NonEnglishFamilyNameReplacements.Add(@"\bD([ao]s)\b", "d$1");               // das, dos Brasileiros
+            NonEnglishFamilyNameReplacements.Add(@"\bDe([lrn])(?=\s+\w)", "de$1");      // del Italian; der/den Dutch/Flemish or forename Del.
+            NonEnglishFamilyNameReplacements.Add(@"\bEl\b", "el");                      // el Greek or El Spanish.
+            NonEnglishFamilyNameReplacements.Add(@"\bLa\b", "la");                      // la French or La Spanish.
+            NonEnglishFamilyNameReplacements.Add(@"\bPar La Grâce\b", "par la grâce");  // par la grâce French.
+            NonEnglishFamilyNameReplacements.Add(@"\bL([eo])\b", "l$1");                // lo Italian; le French.
+            NonEnglishFamilyNameReplacements.Add(@"\bVan(?=\s+\w)", "van");             // van German or forename Van.
+            NonEnglishFamilyNameReplacements.Add(@"\bVon\b", "von");                    // von Dutch/Flemish
+            NonEnglishFamilyNameReplacements.Add(@"\bThe\b", "the");                    // The to the
+            NonEnglishFamilyNameReplacements.Add(@"\bOf\b", "of");                      // Of to of
+            NonEnglishFamilyNameReplacements.Add(@"\bAnd\b", "and");                    // And to and
+            NonEnglishFamilyNameReplacements.Add(@"\bSon\b", "son");                    // Son to son
         }
-
-        static StringNameCaseExtension()
-        {
-            Options.Add(NameOptions.lazy, false);
-            Options.Add(NameOptions.spanish, false);
-
-
-            Exceptions.Add("\bMacEvicius", "Macevicius");
-            Exceptions.Add("\bMacHado", "Machado");
-            Exceptions.Add("\bMacHar", "Machar");
-            Exceptions.Add("\bMacHin", "Machin");
-            Exceptions.Add("\bMacHlin", "Machlin");
-            Exceptions.Add("\bMacIas", "Macias");
-            Exceptions.Add("\bMacIulis", "Maciulis");
-            Exceptions.Add("\bMacKie", "Mackie");
-            Exceptions.Add("\bMacKle", "Mackle");
-            Exceptions.Add("\bMacKlin", "Macklin");
-            Exceptions.Add("\bMacQuarie", "Macquarie");
-            Exceptions.Add("\bMacOmber", "Macomber");
-            Exceptions.Add("\bMacIn", "Macin");
-            Exceptions.Add("\bMacKintosh", "Mackintosh");
-            Exceptions.Add("\bMacKen", "Macken");
-            Exceptions.Add("\bMacHen", "Machen");
-            Exceptions.Add("\bMacHiel", "Machiel");
-            Exceptions.Add("\bMacIol", "Maciol");
-            Exceptions.Add("\bMacKell", "Mackell");
-            Exceptions.Add("\bMacKlem", "Macklem");
-            Exceptions.Add("\bMacKrell", "Mackrell");
-            Exceptions.Add("\bMacLin", "Maclin");
-            Exceptions.Add("\bMacKey", "Mackey");
-            Exceptions.Add("\bMacKley", "Mackley");
-            Exceptions.Add("\bMacHon", "Machon");
-
-            Replacements.Add(@"\bAl(?=\s+\w)", "al");       // al Arabic or forename Al.
-            Replacements.Add(@"\b(Bin|Binti|Binte)\b", "bin");      // bin, binti, binte Arabic
-            Replacements.Add(@"\bAp\b", "ap");       // ap Welsh.
-           // Replacements.Add(@"\bBen(?=\s+\w)", "ben");      // ben Hebrew or forename Ben.
-            Replacements.Add(@"\bDell([ae])\b", "dell$1");   // della and delle Italian.
-            Replacements.Add(@"\bD([aeiou])\b", "d$1");      // da, de, di Italian; du French; do Brasil
-            Replacements.Add(@"\bD([ao]s)\b", "d$1");      // das, dos Brasileiros
-            Replacements.Add(@"\bDe([lrn])\b", "de$1");     // del Italian; der/den Dutch/Flemish.
-            Replacements.Add(@"\bEl\b", "el");       // el Greek or El Spanish.
-            Replacements.Add(@"\bLa\b", "la");       // la French or La Spanish.
-            Replacements.Add(@"\bL([eo])\b", "l$1");      // lo Italian; le French.
-            Replacements.Add(@"\bVan(?=\s+\w)", "van");      // van German or forename Van.
-            Replacements.Add(@"\bVon\b", "von");      // von Dutch/Flemish
-            Replacements.Add(@"\bThe\b", "the");   //The to the
-            Replacements.Add(@"\bOf\b", "of");    //Of to of
-            Replacements.Add(@"\bAnd\b", "and");  //And to and
-            Replacements.Add(@"\bSon\b", "son");  //Son to son
-        }
-
 
         /// <summary>
-        /// Main function for NameCase.
+        /// Replace characters in a name part with colloquial upper or lower case letters
         /// </summary>
-        /// <param name="source"></param>
-        /// <param name="options"></param>
+        /// <param name="namePart">A part of name e.g. Given Name or Family Name</param>
+        /// <param name="familyNamePart">Indicates whether special rules apply for a Family Name</param>
         /// <returns></returns>
-        public static string NameCase(this string source, IDictionary<NameOptions, bool> options = null)
+        public static string ProperCase(this string namePart, bool familyNamePart = false)
         {
+            if (string.IsNullOrEmpty(namePart))
+                return namePart;
 
-            if (string.IsNullOrEmpty(source))
-                return source;
+            CleanseStringForSpecialCharacters(ref namePart);
 
-            //Merge provided options with default options
-            MergeOptions(options);
+            Capitalize(ref namePart);
 
-            Options.TryGetValue(NameOptions.lazy, out var lazy);
-            CleanseStringForSpecialCharacters(ref source);
-            // Do not do anything if string is mixed and lazy option is true.
-            if (lazy && SkipMixed(ref source))
-                return source;
+            UpdateRoman(ref namePart);
 
-            // Capitalize handles Irish names too
-            Capitalize(ref source);
-
-            // Fixes for "son (daughter) of" etc
-            foreach (KeyValuePair<string, string> replacement in Replacements)
+            if (familyNamePart)
             {
-                string pattern = replacement.Key;
-                source = Regex.Replace(source, pattern, replacement.Value);
+                UpdateMac(ref namePart);
+
+                foreach (KeyValuePair<string, string> replacement in NonEnglishFamilyNameReplacements)
+                {
+                    string pattern = replacement.Key;
+                    namePart = Regex.Replace(namePart, pattern, replacement.Value, RegexOptions.IgnoreCase);
+                }
+
+                FixConjunction(ref namePart);
             }
 
-            UpdateRoman(ref source);
-
-            //For spanish names
-            FixConjunction(ref source);
-
-            return source;
+            return namePart;
         }
 
         /// <summary>
@@ -127,7 +109,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Extensions
         public static void CleanseStringForSpecialCharacters(ref string inputString)
         {
             if (string.IsNullOrEmpty(inputString)) return;
-                inputString.Trim();
+            inputString.Trim();
 
             var specialCharacters = SpecialCharactersInString(inputString);
 
@@ -152,36 +134,6 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Extensions
         }
 
         /// <summary>
-        /// Merge default options with provided optional options
-        /// </summary>
-        /// <param name="options"></param>
-        private static void MergeOptions(IDictionary<NameOptions, bool> options)
-        {
-            if (options != null)
-            {
-                var tmpOptions = new Dictionary<NameOptions, bool>(Options);
-                foreach (KeyValuePair<NameOptions, bool> kvp in options)
-                {
-                    tmpOptions[kvp.Key] = kvp.Value;
-                }
-                Options = tmpOptions;
-            }
-        }
-
-
-        /// <summary>
-        /// Skip if string is mixed case.
-        /// </summary>
-        /// <param name="source"></param>
-        /// <returns></returns>
-        private static bool SkipMixed(ref string source)
-        {
-            var firstLetterLower = source[0] == char.ToLower(source[0]);
-            var allLowerOrUpper = ((source.ToLower()) == source || (source.ToUpper()) == source);
-            return !(firstLetterLower || allLowerOrUpper);
-        }
-
-        /// <summary>
         /// Capitalize first letters.
         /// </summary>
         /// <param name="source"></param>
@@ -192,13 +144,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Extensions
             source = Regex.Replace(source, @"(?:(M|m)(c)|(\b))([a-z])", delegate (Match m) {
                 return String.Concat(m.Groups[1].Value.ToUpper(), m.Groups[2].Value, m.Groups[3].Value, m.Groups[4].Value.ToUpper());
             });
-
-            UpdateMac(ref source);
-
-            source.Replace("Macmurdo", "MacMurdo");
-            source.Replace("MacIsaac", "MacIsaac");
         }
-
 
         /// <summary>
         /// Fix Spanish conjunctions.
@@ -206,10 +152,6 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Extensions
         /// <param name="source"></param>
         private static void FixConjunction(ref string source)
         {
-            Options.TryGetValue(NameOptions.spanish, out var spanish);
-            if (!spanish)
-                return;
-
             foreach (var conjunction in Conjunctions)
             {
                 string pattern = @"\b" + conjunction + @"\b";
@@ -231,20 +173,28 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Extensions
             });
         }
 
-
         /// <summary>
-        ///  Updates irish Mac & Mc.
+        /// Updates irish/scottish Mac & Mc.
         /// </summary>
         /// <param name="source"></param>
+        /// <returns></returns>
         private static void UpdateMac(ref string source)
         {
-            foreach (KeyValuePair<string, string> exception in Exceptions)
+            // default to capital letter following 'c' as in "MacDonald"
+            foreach (Match match in Regex.Matches(source, @"\b(Ma?c)([A-Za-z]{1})([A-Za-z]+)"))
             {
-                var pattern = exception.Key;
-                var rgx = new Regex(pattern);
+                if (match.Groups.Count == 4)
+                {
+                    source = Regex.Replace(source,
+                        $@"\b{match.Groups[0]}",
+                        $@"{match.Groups[1]}{match.Groups[2].ToString().ToUpper()}{match.Groups[3]}");
+                }
+            }
 
-                foreach (Match match in rgx.Matches(source))
-                    source = source.Replace(match.Value, exception.Value);
+            // now fix "Mac" exceptions with a lower case letter following 'c' e.g. "Macevicius"
+            foreach (var exception in MacMcFamilyNameExceptions.Keys)
+            {
+                source = Regex.Replace(source, exception, MacMcFamilyNameExceptions[exception]);
             }
         }
     }
