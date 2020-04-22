@@ -50,23 +50,15 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
             }
         }
 
-        public static void DeleteRecord(int idToDelete)
-        {
-            var sql = $@"DELETE from StandardCollation where id = {idToDelete}; ";
-            DatabaseService.Execute(sql);
-        }
-
         public static void DeleteAllRecords()
         {
-            var sql = $@"DELETE from StandardCollation";
-            DatabaseService.Execute(sql);
-        }
-
-        public static void DeleteRecords(List<int> ids)
-        {
-            foreach (var id in ids)
+            foreach (string sql in new List<string>
             {
-                DeleteRecord(id);
+                "DELETE FROM [StandardCollation]",
+                "DELETE FROM [Options]"
+            })
+            {
+                DatabaseService.Execute(sql);
             }
         }
     }
