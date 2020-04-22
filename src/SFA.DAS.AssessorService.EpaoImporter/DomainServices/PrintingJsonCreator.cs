@@ -89,11 +89,6 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
 
                 g.ToList().ForEach(c =>
                 {
-                    var learnerName  = 
-                        !string.IsNullOrEmpty(c.CertificateData.FullName)
-                            ? c.CertificateData.FullName
-                            : $"{c.CertificateData.LearnerGivenNames} {c.CertificateData.LearnerFamilyName}";
-
                     var gradeText = string.Empty;
                     var grade = string.Empty;
 
@@ -106,8 +101,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
                     printData.Certificates.Add(new PrintCertificate
                     {
                         CertificateNumber = c.CertificateReference,
-                        ApprenticeName =
-                            learnerName.NameCase(),
+                        ApprenticeName = $"{c.CertificateData.LearnerGivenNames.ProperCase()} {c.CertificateData.LearnerFamilyName.ProperCase(true)}",
                         LearningDetails = new LearningDetails()
                         {
                             StandardTitle = c.CertificateData.StandardName,
