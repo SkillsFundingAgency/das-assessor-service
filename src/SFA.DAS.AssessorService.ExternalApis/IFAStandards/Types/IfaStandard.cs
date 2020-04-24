@@ -26,6 +26,23 @@ namespace SFA.DAS.AssessorService.ExternalApis.IFAStandards.Types
         public IfaStandardEqaProvider EqaProvider { get; set; }
         public string StandardPageUrl { get; set; }
         public bool IsPublished { get; set; }
+
+        public List<string> GetOptionTitles()
+        {
+            var options = new List<string>();
+
+            // the options are being migrated from the unstructured array to a list however EPAO only requires the title 
+            if ((OptionsUnstructuredTemplate?.Length ?? 0) > 0)
+            {
+                options.AddRange(OptionsUnstructuredTemplate);
+            }
+            else if ((Options?.Count ?? 0) > 0)
+            {
+                options.AddRange(Options.ConvertAll(p => p.Title));
+            }
+
+            return options;
+        }
     }
 
     public class IfaStandardEqaProvider

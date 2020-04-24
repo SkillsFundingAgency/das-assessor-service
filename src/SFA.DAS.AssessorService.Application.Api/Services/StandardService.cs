@@ -189,7 +189,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
                 StandardId = standardId,
                 ReferenceNumber = ifaStandard?.ReferenceNumber,
                 Title = ifaStandard?.Title ?? winStandard?.Title,
-                Options = MapIfaStandardOptions(ifaStandard),
+                Options = ifaStandard?.GetOptionTitles(),
                 StandardData = new StandardData
                 {
                     Category = ifaStandard?.Route,
@@ -220,22 +220,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
                     StandardPageUrl = ifaStandard?.StandardPageUrl
                 }
             };
-        }
-
-        private List<string> MapIfaStandardOptions(IfaStandard ifaStandard)
-        {
-            var options = new List<string>();
-
-            if ((ifaStandard?.OptionsUnstructuredTemplate?.Length ?? 0) > 0)
-            {
-                options.AddRange(ifaStandard.OptionsUnstructuredTemplate.ToList());
-            }
-            else if((ifaStandard?.Options?.Count() ?? 0) > 0)
-            {
-                options.AddRange(ifaStandard.Options.ConvertAll(p => p.Title));
-            }
-
-            return options;
         }
 
         private StandardNonApprovedCollation MapDataToStandardNonApprovedCollation(IfaStandard ifaStandard)
