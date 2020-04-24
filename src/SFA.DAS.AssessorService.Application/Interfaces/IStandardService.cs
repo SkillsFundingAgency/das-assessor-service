@@ -12,7 +12,6 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
 
         Task<StandardCollation> GetStandard(int standardId);
         Task<StandardCollation> GetStandard(string referenceNumber);
-        Task<List<Option>> GetOptions(int stdCode);
 
         Task<IEnumerable<IfaStandard>> GetIfaStandards();
         Task<IEnumerable<StandardCollation>> GatherAllApprovedStandardDetails(List<IfaStandard> approvedIfaStandards);

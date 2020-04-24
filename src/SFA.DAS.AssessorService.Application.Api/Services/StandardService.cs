@@ -76,22 +76,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
             return standardCollation;
         }
 
-        public async Task<List<Option>> GetOptions(int stdCode)
-        {
-            List<Option> options = null;
-
-            try
-            {
-                options = await _standardRepository.GetOptions(stdCode);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"OPTION: Failed to get for options for stdcode: {stdCode}");
-            }
-
-            return options;
-        }
-
         public async Task<IEnumerable<IfaStandard>> GetIfaStandards()
         {
             try
