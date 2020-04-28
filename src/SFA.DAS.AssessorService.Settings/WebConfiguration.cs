@@ -54,6 +54,7 @@ namespace SFA.DAS.AssessorService.Settings
 
         [JsonRequired] public string ZenDeskSnippetKey { get; set; }
         [JsonRequired] public string ZenDeskSectionId { get; set; }
+        [JsonRequired] public string ZenDeskCobrowsingSnippetKey { get; set; }
 
     }
 }
