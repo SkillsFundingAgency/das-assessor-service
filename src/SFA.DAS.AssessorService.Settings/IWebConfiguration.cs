@@ -41,5 +41,6 @@
 
         string ZenDeskSnippetKey { get; set; }
         string ZenDeskSectionId { get; set; }
+        string ZenDeskCobrowsingSnippetKey { get; set; }
     }
 }
