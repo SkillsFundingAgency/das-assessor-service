@@ -173,7 +173,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
                 StandardId = standardId,
                 ReferenceNumber = ifaStandard?.ReferenceNumber,
                 Title = ifaStandard?.Title ?? winStandard?.Title,
-                Options = ifaStandard?.GetOptionTitles(),
+                Options = ifaStandard?.GetOptionTitles() ?? new List<string>(),
                 StandardData = new StandardData
                 {
                     Category = ifaStandard?.Route,
