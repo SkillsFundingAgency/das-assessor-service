@@ -428,7 +428,7 @@ namespace SFA.DAS.AssessorService.Data
             var optionsToBeRemoved = removingStandard 
                 ? existingOptions
                 : existingOptions
-                    .Where(existingOptionName => !standard.Options.Exists(optionName => optionName == existingOptionName.OptionName));
+                    .Where(existingOptionName => !standard.Options.Any(optionName => optionName.Equals(existingOptionName.OptionName, StringComparison.InvariantCulture)));
 
             foreach (var option in optionsToBeRemoved)
             {
@@ -438,7 +438,7 @@ namespace SFA.DAS.AssessorService.Data
             // the OptionName is a natural key, the Id is created in assessor as the IFATE id of an option does not always exist
             // therefore updates are to add previously removed options back for a standard
             var optionsToBeUpdated = standard.Options
-                .Where(latestOptionName => existingOptions.Exists(existingOptionName => existingOptionName.OptionName == latestOptionName));
+                .Where(latestOptionName => existingOptions.Any(existingOptionName => existingOptionName.OptionName.Equals(latestOptionName, StringComparison.InvariantCulture)));
 
             foreach (var optionName in optionsToBeUpdated)
             {
@@ -446,7 +446,7 @@ namespace SFA.DAS.AssessorService.Data
             }
 
             var optionsToBeInserted = standard.Options
-                .Where(latestOptionName => !existingOptions.Exists(existingOptionName => existingOptionName.OptionName == latestOptionName));
+                .Where(latestOptionName => !existingOptions.Any(existingOptionName => existingOptionName.OptionName.Equals(latestOptionName, StringComparison.InvariantCulture)));
                 
             foreach (var optionName in optionsToBeInserted)
             {
@@ -462,7 +462,7 @@ namespace SFA.DAS.AssessorService.Data
                     "DateUpdated = GETUTCDATE(), " +
                     "DateRemoved = NULL, " +
                     "IsLive = 1 " +
-                "WHERE StdCode = @stdCode AND OptionName = @optionName",
+                "WHERE StdCode = @stdCode AND OptionName = @optionName COLLATE SQL_Latin1_General_CP1_CS_AS",
                 param: new { StdCode = standard.StandardId, optionName },
                 transaction: _unitOfWork.Transaction
             );
@@ -484,7 +484,7 @@ namespace SFA.DAS.AssessorService.Data
                 "UPDATE [Options] SET " +
                     "IsLive = 0, " +
                     "DateRemoved = GETUTCDATE() " +
-                "WHERE StdCode = @stdCode AND OptionName = @optionName",
+                "WHERE StdCode = @stdCode AND OptionName = @optionName COLLATE SQL_Latin1_General_CP1_CS_AS",
                 param: new { StdCode = standard.StandardId, optionName },
                 transaction: _unitOfWork.Transaction
             );
