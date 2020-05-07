@@ -107,5 +107,23 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
             return Ok();
         }
+
+        [HttpDelete("deletecertificate", Name = "DeleteCertificate")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(Certificate))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> Delete([FromBody] DeleteCertificateRequest deleteCertificateRequest)
+        {  
+            try
+            {
+                await _mediator.Send(deleteCertificateRequest);                
+            }
+            catch (NotFound)
+            {
+                throw new ResourceNotFoundException();
+            }
+            
+            return Ok();
+        }
     }
 } 

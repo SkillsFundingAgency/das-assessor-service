@@ -313,7 +313,7 @@ namespace SFA.DAS.AssessorService.Data
             return cert;
         }
 
-        public async Task Delete(long uln, int standardCode, string username, string action, bool updateLog = true)
+        public async Task Delete(long uln, int standardCode, string username, string action, bool updateLog = true, string reasonForChange = null, string incidentNumber = null)
         {
             var cert = await GetCertificate(uln, standardCode);
 
@@ -326,10 +326,13 @@ namespace SFA.DAS.AssessorService.Data
             cert.Status = CertificateStatus.Deleted;
             cert.DeletedBy = username;
             cert.DeletedAt = DateTime.UtcNow;
+            var certificateData = JsonConvert.DeserializeObject<CertificateData>(cert.CertificateData);
+            certificateData.IncidentNumber = incidentNumber;
+            cert.CertificateData = JsonConvert.SerializeObject(certificateData);
 
             if (updateLog)
             {
-                await UpdateCertificateLog(cert, action, username);
+                await UpdateCertificateLog(cert, action, username, reasonForChange);
             }
 
             await _context.SaveChangesAsync();
