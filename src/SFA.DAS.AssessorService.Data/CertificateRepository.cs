@@ -326,9 +326,11 @@ namespace SFA.DAS.AssessorService.Data
             cert.Status = CertificateStatus.Deleted;
             cert.DeletedBy = username;
             cert.DeletedAt = DateTime.UtcNow;
-            var certificateData = JsonConvert.DeserializeObject<CertificateData>(cert.CertificateData);
-            certificateData.IncidentNumber = incidentNumber;
-            cert.CertificateData = JsonConvert.SerializeObject(certificateData);
+
+            if (incidentNumber != null)
+            {
+                UpdateIncidentNumber(incidentNumber, cert);
+            }
 
             if (updateLog)
             {
@@ -336,6 +338,13 @@ namespace SFA.DAS.AssessorService.Data
             }
 
             await _context.SaveChangesAsync();
+        }
+
+        private static void UpdateIncidentNumber(string incidentNumber, Certificate cert)
+        {
+            var certificateData = JsonConvert.DeserializeObject<CertificateData>(cert.CertificateData);
+            certificateData.IncidentNumber = incidentNumber;
+            cert.CertificateData = JsonConvert.SerializeObject(certificateData);
         }
 
         public async Task<Certificate> UpdateProviderName(Guid id, string providerName)
