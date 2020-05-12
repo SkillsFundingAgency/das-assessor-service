@@ -12,9 +12,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Certifi
 {
     public class UpdateBatchCertificateRequestValidator : AbstractValidator<BatchCertificateRequest>
     {
-        public UpdateBatchCertificateRequestValidator(IStringLocalizer<BatchCertificateRequestValidator> localiser, IOrganisationQueryRepository organisationQueryRepository, IIlrRepository ilrRepository, ICertificateRepository certificateRepository, IStandardService standardService)
+        public UpdateBatchCertificateRequestValidator(
+            IStringLocalizer<BatchCertificateRequestValidator> localiser, 
+            IOrganisationQueryRepository organisationQueryRepository, 
+            IIlrRepository ilrRepository, 
+            ICertificateRepository certificateRepository, 
+            IStandardService standardService)
         {
-            Include(new BatchCertificateRequestValidator(localiser, organisationQueryRepository, ilrRepository, certificateRepository, standardService));
+            Include(new BatchCertificateRequestValidator(localiser, organisationQueryRepository, ilrRepository, standardService));
 
             RuleFor(m => m.CertificateReference).NotEmpty().WithMessage("Provide the certificate reference").DependentRules(() =>
             {

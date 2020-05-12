@@ -96,10 +96,8 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
             Assert.IsTrue(isOrgByUkprnPresentAfterInsert);
             Assert.AreEqual(_ukprnCreated, returnedOrganisationByGetById.Ukprn);
             Assert.AreEqual(_ukprnCreated, returnedOrganisationByGetByOrganisationId.Ukprn);
-            Assert.AreEqual(maxOrgWithData, _organisationIdCreated);
+            StringAssert.Contains(maxOrgWithData, _organisationIdCreated);
         }
-
-
 
         [OneTimeTearDown]
         public void TearDownOrganisationTests()

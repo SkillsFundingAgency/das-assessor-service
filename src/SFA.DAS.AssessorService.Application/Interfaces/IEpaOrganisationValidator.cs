@@ -18,7 +18,6 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         string CheckOrganisationTypeExists(int? organisationTypeId);
         string CheckIfOrganisationNotFound(string organisationId); 
         string CheckUkprnIsValid(long? ukprn);
-        Task<StandardCollation> GetStandard(int standardCode);
         string CheckIfOrganisationStandardAlreadyExists(string organisationId, int standardCode);
         string CheckOrganisationNameNotUsed(string name);
         string CheckOrganisationNameNotUsedForOtherOrganisations(string name, string organisationIdToIgnore);
