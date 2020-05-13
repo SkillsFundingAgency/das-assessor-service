@@ -5,11 +5,11 @@
 	[EventTime] [datetime2](7) NOT NULL,
 	[Status] [nvarchar](20) NOT NULL,
 	[CertificateData] NVARCHAR(MAX) NOT NULL, 
-    [Username] NVARCHAR(256) NOT NULL,
+	[Username] NVARCHAR(256) NOT NULL,
 	[BatchNumber] [int] NULL,
-    [ReasonForChange] NVARCHAR(MAX) NULL,
+	[ReasonForChange] NVARCHAR(MAX) NULL,
 	[LatestEpaOutcome] AS JSON_VALUE([CertificateData],'$.EpaDetails.LatestEpaOutcome'),
-    CONSTRAINT [PK_CertificateLogs] PRIMARY KEY NONCLUSTERED 
+	CONSTRAINT [PK_CertificateLogs] PRIMARY KEY NONCLUSTERED 
 	(
 		[Id] ASC
 	) WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY],

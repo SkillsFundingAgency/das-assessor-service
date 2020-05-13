@@ -6,19 +6,19 @@ AS
 
 	SELECT 
 		CAST(@FromTime AS DATE) 'Month', 
-        [Certificates].[Uln] 'Apprentice ULN',
-        UPPER(JSON_VALUE([Certificates].[CertificateData], '$.FullName')) 'Apprentice Names',
+		[Certificates].[Uln] 'Apprentice ULN',
+		UPPER(JSON_VALUE([Certificates].[CertificateData], '$.FullName')) 'Apprentice Names',
 		CAST(JSON_VALUE([Certificates].[CertificateData], '$.AchievementDate') AS DATE) 'Achievement Date',
 		UPPER(JSON_VALUE([Certificates].[CertificateData], '$.StandardName')) 'Standard Name',
-        [Certificates].[StandardCode] 'Standard Code',
-        [Organisations].[EndPointAssessorOrganisationId] 'EPAO ID',
-        [Organisations].[EndPointAssessorName] 'EPAO Name',
-        [Certificates].[ProviderUkPrn] 'Provider UkPrn',
-        UPPER(JSON_VALUE([Certificates].[CertificateData], '$.ProviderName')) 'Provider Name',
-        CASE
+		[Certificates].[StandardCode] 'Standard Code',
+		[Organisations].[EndPointAssessorOrganisationId] 'EPAO ID',
+		[Organisations].[EndPointAssessorName] 'EPAO Name',
+		[Certificates].[ProviderUkPrn] 'Provider UkPrn',
+		UPPER(JSON_VALUE([Certificates].[CertificateData], '$.ProviderName')) 'Provider Name',
+		CASE
 			WHEN [LatestSubmittedPassesBetweenReportDates].[EventTime] IS NULL THEN [Certificates].[Status]
-            ELSE [LatestSubmittedPassesBetweenReportDates].[Status]
-        END AS 'Status'
+			ELSE [LatestSubmittedPassesBetweenReportDates].[Status]
+			END AS 'Status'
 	FROM
 		[Certificates] INNER JOIN [Organisations]
 		ON [Certificates].OrganisationId = [Organisations].Id INNER JOIN
