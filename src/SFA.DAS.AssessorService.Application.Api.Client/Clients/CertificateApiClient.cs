@@ -85,11 +85,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task<Certificate> Delete(DeleteCertificateRequest deleteCertificateRequest)
+        public async Task Delete(DeleteCertificateRequest deleteCertificateRequest)
         {
             using (var httpRequest = new HttpRequestMessage(HttpMethod.Delete, "api/v1/certificates/DeleteCertificate"))
             {
-                return await PostPutRequestWithResponse<DeleteCertificateRequest, Certificate>(httpRequest, deleteCertificateRequest);
+                await PostPutRequest(httpRequest, deleteCertificateRequest);
             }
         }        
     }

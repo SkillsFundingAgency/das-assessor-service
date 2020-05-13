@@ -29,21 +29,21 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.De
             {
                 Uln = 1111111111,
                 StandardCode = 30,
-                ReasonForChange = "Reason for Change",
                 UserName = "User Name",
+                ReasonForChange = "Reason for Change",                
                 IncidentNumber = "12345"
             };
         }
 
         [Test]
-        public async Task Then_soft_delte_certificate()
+        public async Task Then_soft_delete_certificate()
         {
             //Act
             var result = await _deleteCertificateHandler.Handle(_deleteCertificateRequest, CancellationToken.None);
 
             //Assert
             Assert.IsNotNull(result);
-            _certificateRepository.Verify(c => c.Delete(It.IsAny<long>(), It.IsAny<int>(), It.IsAny<string>(), CertificateActions.Delete, true, It.IsAny<string>(), It.IsAny<string>()), Times.Once);
+            _certificateRepository.Verify(c => c.Delete(_deleteCertificateRequest.Uln, _deleteCertificateRequest.StandardCode, _deleteCertificateRequest.UserName, CertificateActions.Delete, true, _deleteCertificateRequest.ReasonForChange, _deleteCertificateRequest.IncidentNumber), Times.Once);
         }
         
     }

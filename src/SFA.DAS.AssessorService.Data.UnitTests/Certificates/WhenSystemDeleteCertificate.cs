@@ -12,6 +12,8 @@ using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using Newtonsoft.Json;
+using System.Threading;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
 {
@@ -41,25 +43,7 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
 
             _certificateRepository = new CertificateRepository(_mockDbContext.Object,  _mockDbConnection.Object);
         }
-        
 
-        [Test]
-        public async Task Then_Delete()
-        {
-            //Act
-            try
-            {
-                await _certificateRepository.Delete(1111111111, 93, "UserName", CertificateActions.Delete);
-            }
-            catch (Exception exception)
-            {
-                _exception = exception;
-            }
-
-
-            //Assert
-            _exception.Should().BeNull();            
-        }
 
         [Test]
         public async Task Then_Delete_With_ReasonForChange()
@@ -69,7 +53,8 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
            
             //Assert
             var result = _certificateRepository.GetCertificateLogsFor(_certificateId);
-            Assert.AreEqual(result.Result.First().ReasonForChange, _reasonForChange);
+            Assert.AreEqual(_reasonForChange, result.Result.First().ReasonForChange);
+            Assert.AreEqual(2, result.Result.Count());
         }
 
         [Test]
@@ -127,34 +112,38 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
 
         private Mock<DbSet<CertificateLog>> MockDbSetCreateCertificateLog()
         {
-            var certificateLog = Builder<CertificateLog>.CreateListOfSize(1)
+            var certificateLogs = Builder<CertificateLog>.CreateListOfSize(1)
                 .TheFirst(1)
                 .With(x => x.Id = Guid.NewGuid())
                 .With(x => x.CertificateId = _certificateId)
                 .With(x => x.Action = CertificateActions.Delete)
                 .With(x => x.EventTime = DateTime.UtcNow)
-                .With(x => x.ReasonForChange = _reasonForChange)
-                .Build()
-                .AsQueryable();
+                .With(x => x.ReasonForChange = "Test")
+                .Build();                
 
             var mockCertificateLog = new Mock<DbSet<CertificateLog>>();
 
             mockCertificateLog.As<IQueryable<CertificateLog>>()
                 .Setup(m => m.Provider)
-                .Returns(new TestAsyncQueryProvider<CertificateLog>(certificateLog.Provider));
+                .Returns(new TestAsyncQueryProvider<CertificateLog>(certificateLogs.AsQueryable().Provider));
 
             mockCertificateLog.As<IQueryable<CertificateLog>>()
                 .Setup(m => m.Expression)
-                .Returns(certificateLog.Expression);
+                .Returns(certificateLogs.AsQueryable().Expression);
 
             mockCertificateLog.As<IQueryable<CertificateLog>>()
                 .Setup(m => m.ElementType)
-                .Returns(certificateLog.ElementType);
+                .Returns(certificateLogs.AsQueryable().ElementType);
 
 
             mockCertificateLog.As<IQueryable<CertificateLog>>()
                 .Setup(m => m.GetEnumerator())
-                .Returns(() => certificateLog.GetEnumerator());
+                .Returns(() => certificateLogs.GetEnumerator());
+
+            mockCertificateLog
+               .Setup(m => m.AddAsync(It.IsAny<CertificateLog>(), It.IsAny<CancellationToken>()))
+               .Callback((CertificateLog entity, CancellationToken token) => { certificateLogs.Add(entity); })
+               .Returns((CertificateLog entity, CancellationToken token) => Task.FromResult((EntityEntry<CertificateLog>)null));           
 
             return mockCertificateLog;
         }
