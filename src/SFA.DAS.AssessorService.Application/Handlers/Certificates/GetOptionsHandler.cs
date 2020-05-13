@@ -9,9 +9,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
 {
     public class GetOptionsHandler : IRequestHandler<GetOptionsRequest, List<Option>>
     {
-        private readonly ICertificateRepository _repository;
+        private readonly IStandardRepository _repository;
 
-        public GetOptionsHandler(ICertificateRepository repository)
+        public GetOptionsHandler(IStandardRepository repository)
         {
             _repository = repository;
         }
