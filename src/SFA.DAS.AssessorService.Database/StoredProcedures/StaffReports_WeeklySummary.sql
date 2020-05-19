@@ -1,55 +1,64 @@
 ﻿CREATE PROCEDURE [dbo].[StaffReports_WeeklySummary]
 AS
 	SELECT 
-		CONVERT(VARCHAR(10), DATEADD(wk, DATEDIFF(wk, 0, DATEADD(day, -1, cl.[EventTime])), 4), 120) AS 'To Date', 
-		SUM(CASE WHEN cl.[Action] = 'Submit' THEN 1 ELSE 0 END) AS 'Submitted',
-		SUM(CASE WHEN cl.[Action] = 'Submit' AND ce.[CreatedBy] <> 'manual' THEN 1 ELSE 0 END) AS 'EPA Submitted',
-		SUM(CASE WHEN cl.[Action] = 'Submit' AND ce.[CreatedBy] = 'manual' THEN 1 ELSE 0 END) AS 'Manual Submitted',
-		SUM(CASE WHEN cl.[Action] = 'Printed' THEN 1 ELSE 0 END) AS 'Printed',
-		SUM(CASE WHEN cl.[Action] = 'Printed' AND ce.[CreatedBy] <> 'manual' THEN 1 ELSE 0 END) AS 'EPA Printed',
-		SUM(CASE WHEN cl.[Action] = 'Printed' AND ce.[CreatedBy] = 'manual' THEN 1 ELSE 0 END) AS 'Manual Printed',
-		SUM(CASE WHEN cl.[Action] = 'Reprint' THEN 1 ELSE 0 END) AS 'Reprint'
+		CAST(DATEADD(wk, DATEDIFF(wk, 0, DATEADD(day, -1, [FirstSubmitOrPrintedPassEvent].[EventTime])), 4) AS DATE) ToDate, 
+		SUM(CASE WHEN [FirstSubmitOrPrintedPassEvent].[Action] = 'Submit' THEN 1 ELSE 0 END) Submitted,
+		SUM(CASE WHEN [FirstSubmitOrPrintedPassEvent].[Action] = 'Submit' AND [Certificates].[CreatedBy] <> 'manual' THEN 1 ELSE 0 END) EPASubmitted,
+		SUM(CASE WHEN [FirstSubmitOrPrintedPassEvent].[Action] = 'Submit' AND [Certificates].[CreatedBy] = 'manual' THEN 1 ELSE 0 END) ManualSubmitted,
+		SUM(CASE WHEN [FirstSubmitOrPrintedPassEvent].[Action] = 'Printed' THEN 1 ELSE 0 END) Printed,
+		SUM(CASE WHEN [FirstSubmitOrPrintedPassEvent].[Action] = 'Printed' AND [Certificates].[CreatedBy] <> 'manual' THEN 1 ELSE 0 END) EPAPrinted,
+		SUM(CASE WHEN [FirstSubmitOrPrintedPassEvent].[Action] = 'Printed' AND [Certificates].[CreatedBy] = 'manual' THEN 1 ELSE 0 END) ManualPrinted,
+		SUM(CASE WHEN [FirstSubmitOrPrintedPassEvent].[Action] = 'Reprint' THEN 1 ELSE 0 END) Reprint
+	INTO
+		#WeeklySummary
 	FROM 
 	(
 		SELECT [Action], [CertificateId], [EventTime]
 		FROM
 		(
-			SELECT [Action], [CertificateId], [EventTime], row_number() OVER (partition by [CertificateId], [Action] ORDER BY [EventTime]) rownumber
-			FROM [dbo].[CertificateLogs]
-			WHERE [Action] IN ('submit', 'printed') 
-			AND ISNULL(JSON_VALUE([CertificateData],'$.EpaDetails.LatestEpaOutcome'),'Pass') != 'Fail'			
-		) ab 
-		WHERE ab.rownumber = 1
-	) cl
-	JOIN [dbo].[Certificates] ce ON ce.[Id] = cl.[CertificateId]
-	WHERE cl.[Action] IN ('Submit', 'Printed', 'Reprint')
-	GROUP BY CONVERT(VARCHAR(10), DATEADD(wk, DATEDIFF(wk, 0, DATEADD(day, -1, cl.[EventTime])), 4), 120)
+			SELECT 
+				[Action], [CertificateId], [EventTime], 
+				ROW_NUMBER() OVER (PARTITION BY [CertificateId], [Action] ORDER BY [EventTime]) RowNumber
+			FROM 
+				[dbo].[CertificateLogs]
+			WHERE 
+				[Action] IN ('Submit', 'Printed', 'Reprint')
+				AND ISNULL(LatestEpaOutcome,'Pass') != 'Fail'
+		) [SubmitOrPrintedPassEvents]
+		WHERE [SubmitOrPrintedPassEvents].RowNumber = 1
+	) 
+	[FirstSubmitOrPrintedPassEvent] JOIN [dbo].[Certificates] [Certificates] 
+		ON [Certificates].[Id] = [FirstSubmitOrPrintedPassEvent].[CertificateId]
+	GROUP BY 
+		-- the week ending date (Friday)
+		CAST(DATEADD(wk, DATEDIFF(wk, 0, DATEADD(day, -1, [FirstSubmitOrPrintedPassEvent].[EventTime])), 4) AS DATE)
 
-	UNION 
+	SELECT
+		CAST(ToDate AS VARCHAR) 'To Date', 
+		Submitted,
+		EPASubmitted 'EPA Submitted',
+		ManualSubmitted 'Manual Submitted',
+		Printed,
+		EPAPrinted 'EPA Printed',
+		ManualPrinted 'Manual Printed',
+		Reprint
+	FROM
+		#WeeklySummary
 
-	SELECT 
-		' Summary' AS 'To Date', 
-		SUM(CASE WHEN cl.[Action] = 'Submit' THEN 1 ELSE 0 END) AS 'Submitted',
-		SUM(CASE WHEN cl.[Action] = 'Submit' AND ce.CreatedBy <> 'manual' THEN 1 ELSE 0 END) AS 'EPA Submitted',
-		SUM(CASE WHEN cl.[Action] = 'Submit' AND ce.CreatedBy = 'manual' THEN 1 ELSE 0 END) AS 'Manual Submitted',
-		SUM(CASE WHEN cl.[Action] = 'Printed' THEN 1 ELSE 0 END) AS 'Printed',
-		SUM(CASE WHEN cl.[Action] = 'Printed' AND ce.CreatedBy <> 'manual' THEN 1 ELSE 0 END) AS 'EPA Printed',
-		SUM(CASE WHEN cl.[Action] = 'Printed' AND ce.CreatedBy = 'manual' THEN 1 ELSE 0 END) AS 'Manual Printed',
-		SUM(CASE WHEN cl.[Action] = 'Reprint' THEN 1 ELSE 0 END) AS 'Reprint'
-	FROM 
-	(
-		SELECT [Action], [CertificateId], [EventTime]
-		FROM
-		(
-			SELECT [Action], [CertificateId], [EventTime], row_number() OVER (partition by [CertificateId], [Action] ORDER BY [EventTime]) rownumber
-			FROM [dbo].[CertificateLogs]
-			WHERE [Action] IN ('submit', 'printed') 
-			AND ISNULL(JSON_VALUE([CertificateData],'$.EpaDetails.LatestEpaOutcome'),'Pass') != 'Fail'			
-		) ab 
-		WHERE ab.rownumber = 1
-	) cl
-	JOIN [dbo].[Certificates] ce ON ce.[Id] = cl.[CertificateId]
-	WHERE cl.[Action] IN ('Submit', 'Printed', 'Reprint')
+	UNION
 
-	ORDER BY 1 
+	SELECT
+		' Summary' 'To Date', 
+		SUM(Submitted) 'Submitted',
+		SUM(EPASubmitted) 'EPA Submitted',
+		SUM(ManualSubmitted) 'Manual Submitted',
+		SUM(Printed) 'Printed',
+		SUM(EPAPrinted) 'EPA Printed',
+		SUM(ManualPrinted) 'Manual Printed',
+		SUM(Reprint) 'Reprint'
+	FROM
+		#WeeklySummary
+
+	ORDER BY 
+		'To Date' 
 RETURN 0
