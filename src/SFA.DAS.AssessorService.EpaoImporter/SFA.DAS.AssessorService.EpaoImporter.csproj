@@ -26,7 +26,6 @@
     <PackageReference Include="DapperExtensions" Version="1.6.3" />
     <PackageReference Include="EPPlus" Version="4.5.2.1" />
     <PackageReference Include="FreeSpire.Doc" Version="5.7.0" />
-    <PackageReference Include="Renci.SshNet.Async" Version="1.2.0" />
     <PackageReference Include="NBuilder" Version="5.0.0" />
     <PackageReference Include="WindowsAzure.Storage" Version="8.7.0" />
   </ItemGroup>
@@ -43,9 +42,6 @@
     <None Update="nlog.approvals.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="nlog.printing.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Update="host.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -58,9 +54,6 @@
     </None>
     <None Update="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
-    </None>
-    <None Update="IFATemplateDocument.docx">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 </Project>
