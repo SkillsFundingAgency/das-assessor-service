@@ -39,5 +39,6 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Services
 
         public string ZenDeskSnippetKey { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public string ZenDeskSectionId { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public string ZenDeskCobrowsingSnippetKey { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
     }
 }

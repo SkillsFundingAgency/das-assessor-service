@@ -119,6 +119,7 @@ namespace SFA.DAS.AssessorService.PrintFunction.Tests
         }
 
         [Test]
+        [Ignore("The notification has been disabled on smtp print send")]
         public void ItShouldSendANotification()
         {
             _notificationService.Verify(q =>

@@ -84,7 +84,7 @@ END
 :r .\Insert-Postcode-to-Regions.sql
 
 -- ON-2222 - remove duplicated certs
-:r .\Delete-Duplicated-Certs.sql
+--:r .\Delete-Duplicated-Certs.sql
 
 /* START OF ON-2033 */
 :r .\PostDeploymentScripts\on-2033-anytime_updates.sql

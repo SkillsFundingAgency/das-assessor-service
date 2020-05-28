@@ -161,12 +161,6 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
             worksheet.Cells["A1:J1"].Merge = true;
             worksheet.Cells["A1:J1"].Value = monthYear + " Print Data - Batch " + batchNumber.ToString();
         }
-
-        private static string NameToTitleCase(string name)
-        {
-            name = name.NameCase();
-            return name;
-        }
         
         private void CreateWorksheetData(ExcelWorksheet worksheet)
         {
@@ -178,13 +172,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
                 if (certificateData.AchievementDate.HasValue)
                     worksheet.Cells[row, 1].Value = certificateData.AchievementDate.Value.ToString("dd MMMM yyyy");
 
-                var learnerName = $"{certificateData.LearnerGivenNames} {certificateData.LearnerFamilyName}";
-
-                worksheet.Cells[row, 2].Value = NameToTitleCase(
-                    !string.IsNullOrEmpty(certificateData.FullName) 
-                        ? certificateData.FullName 
-                        : learnerName
-                );
+                worksheet.Cells[row, 2].Value = $"{certificateData.LearnerGivenNames.ProperCase()} {certificateData.LearnerFamilyName.ProperCase(true)}";
 
                 if (certificateData.StandardName != null)
                     worksheet.Cells[row, 3].Value = certificateData.StandardName.ToUpper();

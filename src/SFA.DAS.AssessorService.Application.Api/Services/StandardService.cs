@@ -94,6 +94,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
         public async Task<IEnumerable<StandardCollation>> GatherAllApprovedStandardDetails(List<IfaStandard> approvedIfaStandards)
         {
             _logger.LogInformation("STANDARD COLLATION: Starting gathering of all WIN Standard details");
+            
+            // get all the standards from the apprenticeship programs api - formally known as WIN aka provider api 
             var winResults = await _assessmentOrgsApiClient.GetAllStandardsV2();
 
             _logger.LogInformation("STANDARD COLLATION: Start collating approved IFA and WIN standards");
@@ -171,6 +173,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
                 StandardId = standardId,
                 ReferenceNumber = ifaStandard?.ReferenceNumber,
                 Title = ifaStandard?.Title ?? winStandard?.Title,
+                Options = ifaStandard?.GetOptionTitles() ?? new List<string>(),
                 StandardData = new StandardData
                 {
                     Category = ifaStandard?.Route,

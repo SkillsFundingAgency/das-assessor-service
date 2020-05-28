@@ -511,12 +511,6 @@ namespace SFA.DAS.AssessorService.Data
             return certificateData.LearnerFamilyName == lastName;
         }
 
-        public async Task<List<Option>> GetOptions(int stdCode)
-        {
-            return (await _connection.QueryAsync<Option>("SELECT * FROM Options WHERE StdCode = @stdCode",
-                new {stdCode})).ToList();
-        }
-
         private bool CheckLastNameExists(Certificate certificate, Certificate c)
         {
             var certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
