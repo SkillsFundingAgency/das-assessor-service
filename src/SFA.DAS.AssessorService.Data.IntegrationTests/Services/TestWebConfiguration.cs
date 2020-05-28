@@ -12,7 +12,6 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Services
         public ClientApiAuthentication ClientApiAuthentication { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public NotificationsApiClientConfiguration NotificationsApiClientConfiguration { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public CertificateDetails CertificateDetails { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public SftpSettings Sftp { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public string AssessmentOrgsApiClientBaseUrl { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public string IfaApiClientBaseUrl { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public string IFATemplateStorageConnectionString { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
