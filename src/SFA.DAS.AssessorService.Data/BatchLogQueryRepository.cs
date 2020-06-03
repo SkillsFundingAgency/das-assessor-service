@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -22,6 +23,17 @@ namespace SFA.DAS.AssessorService.Data
                 .FirstOrDefaultAsync(b => b.BatchNumber == batchNumber);
 
             return batchLog;
+        }
+
+        public async Task<List<Certificate>> GetCertificates(int batchNumber)
+        {
+            var certificaes =  await (from certificateBatchLog in _assessorDbContext.CertificateBatchLogs
+                          join certificate in _assessorDbContext.Certificates on
+                               certificateBatchLog.CertificateReference equals certificate.CertificateReference
+                          where certificateBatchLog.BatchNumber == batchNumber
+                          select certificate).ToListAsync();
+
+            return certificaes;
         }
 
         public async Task<BatchLog> GetLastBatchLog()

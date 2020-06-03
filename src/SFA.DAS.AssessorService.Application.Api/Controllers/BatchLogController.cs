@@ -28,25 +28,34 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(BatchLogResponse))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(ApiResponse))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> CreateBatchLog([FromBody] CreateBatchLogRequest request)
+        public async Task<IActionResult> Create([FromBody] CreateBatchLogRequest request)
         {
             return Ok(await _mediator.Send(request));
         }
 
-        [HttpPut("update-sent-to-printer", Name = "UpdateBatchLogSentToPrinter")]
+        [HttpPut("sent-to-printer", Name = "SentToPrinter")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(ValidationResponse))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(ApiResponse))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> UpdateBatchLogSentToPrinter([FromBody] UpdateBatchLogSentToPrinterRequest request)
+        public async Task<IActionResult> SentToPrinter([FromBody] SentToPrinterBatchLogRequest request)
         {
             return Ok(await _mediator.Send(request));
         }
 
-        [HttpPut("update-batch-data",Name="UpdateBatchDataBatchLog")]
+        [HttpPut("printed", Name = "Printed")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(ValidationResponse))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(ApiResponse))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> UpdateBatchLogWithBatchData([FromBody] UpdateBatchLogBatchDataRequest request)
+        public async Task<IActionResult> Printed([FromBody] PrintedBatchLogRequest request)
+        {
+            return Ok(await _mediator.Send(request));
+        }
+
+        [HttpPut("update-batch-data",Name= "UpdateBatchData")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(ValidationResponse))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(ApiResponse))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> UpdateBatchData([FromBody] UpdateBatchDataBatchLogRequest request)
         {
             return Ok(await _mediator.Send(request));
         }

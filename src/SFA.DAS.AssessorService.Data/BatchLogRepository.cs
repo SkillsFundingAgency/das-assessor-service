@@ -34,21 +34,6 @@ namespace SFA.DAS.AssessorService.Data
             return batchLog;
         }
 
-        public async Task<BatchLogResponse> GetBatchLogFromBatchNumber(string batchNumber)
-        {
-            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
-            {
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
-                var sqlForMainDetails =
-                    "select * FROM BatchLogs " +
-                    "WHERE BatchNumber = @batchNumber";
-                var orgs = await connection.QueryAsync<BatchLogResponse>(sqlForMainDetails, new { batchNumber });
-                var org = orgs.FirstOrDefault();
-                return org;
-            }
-        }
-
         public async Task<ValidationResponse> UpdateBatchLogBatchWithDataRequest(Guid id, BatchData batchData)
         {
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))

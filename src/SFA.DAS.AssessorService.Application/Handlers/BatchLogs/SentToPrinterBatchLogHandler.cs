@@ -10,20 +10,20 @@ using SFA.DAS.AssessorService.Domain.Consts;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
 {
-    public class UpdateBatchLogSentToPrinterHandler : IRequestHandler<UpdateBatchLogSentToPrinterRequest, ValidationResponse>
+    public class SentToPrinterBatchLogHandler : IRequestHandler<SentToPrinterBatchLogRequest, ValidationResponse>
     {
         private readonly IBatchLogQueryRepository _batchLogQueryRepository;
         private readonly ICertificateRepository _certificateRepository;
-        private readonly ILogger<UpdateBatchLogSentToPrinterHandler> _logger;
+        private readonly ILogger<SentToPrinterBatchLogHandler> _logger;
 
-        public UpdateBatchLogSentToPrinterHandler(ICertificateRepository certificateRepository, IBatchLogQueryRepository batchLogQueryRepository, ILogger<UpdateBatchLogSentToPrinterHandler> logger)
+        public SentToPrinterBatchLogHandler(ICertificateRepository certificateRepository, IBatchLogQueryRepository batchLogQueryRepository, ILogger<SentToPrinterBatchLogHandler> logger)
         {             
             _certificateRepository = certificateRepository;
             _batchLogQueryRepository = batchLogQueryRepository;
             _logger = logger;
         }
 
-        public async Task<ValidationResponse> Handle(UpdateBatchLogSentToPrinterRequest request, CancellationToken cancellationToken)
+        public async Task<ValidationResponse> Handle(SentToPrinterBatchLogRequest request, CancellationToken cancellationToken)
         {
             var validationResult = new ValidationResponse();
             var sentToPrinterDate = DateTime.UtcNow;
