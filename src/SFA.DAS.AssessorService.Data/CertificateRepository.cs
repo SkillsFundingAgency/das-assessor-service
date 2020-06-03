@@ -395,7 +395,9 @@ namespace SFA.DAS.AssessorService.Data
             certificateBatchLog.StatusAt = statusAt;
             certificateBatchLog.UpdatedBy = SystemUsers.PrintFunction;
 
-            await AddCertificateLog(certificate, certificateBatchLog.CertificateData, status, statusAt, SystemUsers.PrintFunction);
+            var action = (status == CertificateStatus.Printed ? CertificateActions.Printed : CertificateActions.Status);
+            await AddCertificateLog(certificate, certificateBatchLog.CertificateData, action, statusAt, SystemUsers.PrintFunction);
+            
             await _context.SaveChangesAsync();
         }
 
@@ -421,7 +423,7 @@ namespace SFA.DAS.AssessorService.Data
                 certificate.ToBePrinted = sentToPrinterDate;
                 certificate.UpdatedBy = SystemUsers.PrintFunction;
 
-                await AddCertificateLog(certificate, certificate.CertificateData, CertificateActions.SentToPrinter, sentToPrinterDate, SystemUsers.PrintFunction);
+                await AddCertificateLog(certificate, certificate.CertificateData, CertificateActions.Status, sentToPrinterDate, SystemUsers.PrintFunction);
                 await _context.SaveChangesAsync();
             }            
         }
