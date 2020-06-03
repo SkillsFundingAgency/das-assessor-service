@@ -1,6 +1,6 @@
 ﻿namespace SFA.DAS.AssessorService.Domain.Consts
 {
-    public static class UpdatedBy
+    public static class SystemUsers
     {
         public const string PrintFunction = "PrintFunction";      
     }

@@ -9,7 +9,10 @@
         public const string SentForApproval = "SentForApproval";
         public const string Approved = "Approved";
         public const string Rejected = "Rejected";
+        public const string SentToPrinter = "SentToPrinter";
         public const string Printed = "Printed";
+        public const string Delivered = "Delivered";
+        public const string NotDelivered = "NotDelivered";
         public const string Cancelled = "Cancelled";
         public const string NoCertificate = "NoCertificate";
         public const string Deleted = "Deleted";

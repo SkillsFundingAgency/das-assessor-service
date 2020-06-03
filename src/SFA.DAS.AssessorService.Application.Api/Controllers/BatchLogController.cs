@@ -24,22 +24,27 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             _mediator = mediator;
         }
 
-        [HttpPost(Name = "CreateBatchLog")]
+        [HttpPost("create", Name = "CreateBatchLog")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(BatchLogResponse))]
-        [SwaggerResponse((int)HttpStatusCode.NotFound, Type = typeof(ApiResponse))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(ApiResponse))]
-        [SwaggerResponse((int)HttpStatusCode.Gone, Type = typeof(ApiResponse))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> CreateBatchLog([FromBody] CreateBatchLogRequest request)
         {
             return Ok(await _mediator.Send(request));
         }
 
+        [HttpPut("update-sent-to-printer", Name = "UpdateBatchLogSentToPrinter")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(ValidationResponse))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(ApiResponse))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> UpdateBatchLogSentToPrinter([FromBody] UpdateBatchLogSentToPrinterRequest request)
+        {
+            return Ok(await _mediator.Send(request));
+        }
+
         [HttpPut("update-batch-data",Name="UpdateBatchDataBatchLog")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(ValidationResponse))]
-        [SwaggerResponse((int)HttpStatusCode.NotFound, Type = typeof(ApiResponse))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(ApiResponse))]
-        [SwaggerResponse((int)HttpStatusCode.Gone, Type = typeof(ApiResponse))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> UpdateBatchLogWithBatchData([FromBody] UpdateBatchLogBatchDataRequest request)
         {

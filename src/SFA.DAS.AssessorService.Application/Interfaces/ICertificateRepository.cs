@@ -11,23 +11,24 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
     {
         Task<Certificate> New(Certificate certificate);
         Task<Certificate> NewPrivate(Certificate certificate, string endpointOrganisationId);
+        
         Task<Certificate> GetCertificate(Guid id);
         Task<Certificate> GetCertificate(long uln, int standardCode);
+        Task<Certificate> GetCertificate(string certificateReference);
         Task<Certificate> GetPrivateCertificate(long uln, string endpointOrganisationId);
-        Task<Certificate> GetCertificateByOrgIdLastname(long uln,
-            string endpointOrganisationId, string lastName);
-
-        Task<Certificate> GetCertificateByUlnLastname(long uln,
-            string lastName);
+        Task<Certificate> GetCertificateByOrgIdLastname(long uln, string endpointOrganisationId, string lastName);
+        Task<Certificate> GetCertificateByUlnLastname(long uln, string lastName);
         Task<Certificate> GetCertificate(string certificateReference, string lastName, DateTime? achievementDate);
+
         Task<List<Certificate>> GetCompletedCertificatesFor(long uln);
         Task<List<Certificate>> GetCertificates(List<string> statuses);
+        
         Task<Certificate> Update(Certificate certificate, string username, string action, bool updateLog = true, string reasonForChange = null);
         Task Delete(long uln, int standardCode, string username, string action, bool updateLog = true);
         Task<Certificate> UpdateProviderName(Guid id, string providerName);
 
-        Task UpdateStatuses(
-            UpdateCertificatesBatchToIndicatePrintedRequest updateCertificatesBatchToIndicatePrintedRequest);
+        Task UpdateSentToPrinter(string certificateReference, int batchNumber, DateTime sentToPrinterDate);
+        Task UpdatePrintStatus(string certificateReference, int batchNumber, string status, DateTime statusAt, bool logOnly);
 
         Task UpdatePrivatelyFundedCertificatesToBeApproved();
         Task<List<CertificateLog>> GetCertificateLogsFor(Guid certificateId);

@@ -22,6 +22,7 @@ namespace SFA.DAS.AssessorService.Data
 
         public virtual DbSet<Certificate> Certificates { get; set; }
         public virtual DbSet<CertificateLog> CertificateLogs { get; set; }
+        public virtual DbSet<CertificateBatchLog> CertificateBatchLogs { get; set; }
         public virtual DbSet<Contact> Contacts { get; set; }
         public virtual DbSet<Organisation> Organisations { get; set; }
         public virtual DbSet<Ilr> Ilrs { get; set; }
