@@ -16,6 +16,14 @@ namespace SFA.DAS.AssessorService.Data
             _assessorDbContext = assessorDbContext;
         }
 
+        public async Task<BatchLog> Get(int batchNumber)
+        {
+            var batchLog = await _assessorDbContext.BatchLogs
+                .FirstOrDefaultAsync(b => b.BatchNumber == batchNumber);
+
+            return batchLog;
+        }
+
         public async Task<BatchLog> GetLastBatchLog()
         {
             var batchLog = await _assessorDbContext.BatchLogs

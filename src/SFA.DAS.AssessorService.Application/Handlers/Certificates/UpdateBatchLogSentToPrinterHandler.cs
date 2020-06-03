@@ -4,34 +4,53 @@ using System.Threading.Tasks;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
 {
-    public class UpdateBatchLogSentToPrinterHandler : IRequestHandler<UpdateBatchLogSentToPrinterRequest>
+    public class UpdateBatchLogSentToPrinterHandler : IRequestHandler<UpdateBatchLogSentToPrinterRequest, ValidationResponse>
     {
+        private readonly IBatchLogQueryRepository _batchLogQueryRepository;
         private readonly ICertificateRepository _certificateRepository;
         private readonly ILogger<UpdateBatchLogSentToPrinterHandler> _logger;
 
-        public UpdateBatchLogSentToPrinterHandler(ICertificateRepository certificateRepository, ILogger<UpdateBatchLogSentToPrinterHandler> logger)
-        {
+        public UpdateBatchLogSentToPrinterHandler(ICertificateRepository certificateRepository, IBatchLogQueryRepository batchLogQueryRepository, ILogger<UpdateBatchLogSentToPrinterHandler> logger)
+        {             
             _certificateRepository = certificateRepository;
+            _batchLogQueryRepository = batchLogQueryRepository;
             _logger = logger;
         }
 
-        public async Task<Unit> Handle(UpdateBatchLogSentToPrinterRequest request, CancellationToken cancellationToken)
+        public async Task<ValidationResponse> Handle(UpdateBatchLogSentToPrinterRequest request, CancellationToken cancellationToken)
         {
+            var validationResult = new ValidationResponse();
             var sentToPrinterDate = DateTime.UtcNow;
 
-            foreach(var certificateReference in request.CertificateReferences)
+            if(await _batchLogQueryRepository.Get(request.BatchNumber) == null)
             {
-                _logger.LogInformation($"Certificate reference {certificateReference} set as {CertificateStatus.SentToPrinter} in batch {request.BatchNumber}");
-
-                await _certificateRepository.UpdateSentToPrinter(certificateReference, request.BatchNumber, sentToPrinterDate);
+                validationResult.Errors.Add(new ValidationErrorDetail(nameof(request.BatchNumber), $"The {nameof(request.BatchNumber)} {request.BatchNumber} was not found.", ValidationStatusCode.NotFound));
             }
 
-            return Unit.Value;
+            if (validationResult.IsValid)
+            {
+                foreach (var certificateReference in request.CertificateReferences)
+                {
+                    var certificate = await _certificateRepository.GetCertificate(certificateReference);
+                    if (certificate == null)
+                    {
+                        validationResult.Errors.Add(new ValidationErrorDetail(nameof(request.CertificateReferences), $"The certificate reference {certificateReference} was not found.", ValidationStatusCode.NotFound));
+                    }
+                    else
+                    {
+                        await _certificateRepository.UpdateSentToPrinter(certificate, request.BatchNumber, sentToPrinterDate);
+                        _logger.LogInformation($"Certificate reference {certificateReference} set as {CertificateStatus.SentToPrinter} in batch {request.BatchNumber}");
+                    }
+                }
+            }
+
+            return validationResult;
         }
     } 
 }

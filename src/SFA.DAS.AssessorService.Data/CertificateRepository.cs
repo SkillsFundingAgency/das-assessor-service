@@ -376,41 +376,38 @@ namespace SFA.DAS.AssessorService.Data
             }
         }
 
-        public async Task UpdatePrintStatus(string certificateReference, int batchNumber, string status, DateTime statusAt, bool logOnly)
+        public async Task UpdatePrintStatus(Certificate certificate, int batchNumber, string status, DateTime statusAt, bool logOnly)
         {
-            var certificate =
-                    await _context.Certificates.FirstOrDefaultAsync(q => q.CertificateReference == certificateReference);
-
             var certificateBatchLog =
-                await _context.CertificateBatchLogs.FirstOrDefaultAsync(q => q.CertificateReference == certificateReference && q.BatchNumber == batchNumber);
+                await _context.CertificateBatchLogs.FirstOrDefaultAsync(q => q.CertificateReference == certificate.CertificateReference && q.BatchNumber == batchNumber);
 
-            if(!logOnly)
+            if (certificateBatchLog != null)
             {
-                certificate.BatchNumber = batchNumber;
-                certificate.Status = status;
-                certificate.UpdatedBy = SystemUsers.PrintFunction;
+                if (!logOnly)
+                {
+                    certificate.BatchNumber = batchNumber;
+                    certificate.Status = status;
+                    certificate.UpdatedBy = SystemUsers.PrintFunction;
+                }
+
+                certificateBatchLog.Status = status;
+                certificateBatchLog.StatusAt = statusAt;
+                certificateBatchLog.UpdatedBy = SystemUsers.PrintFunction;
+
+                var action = (status == CertificateStatus.Printed ? CertificateActions.Printed : CertificateActions.Status);
+                await AddCertificateLog(certificate, certificateBatchLog.CertificateData, action, statusAt, SystemUsers.PrintFunction);
+
+                await _context.SaveChangesAsync();
             }
-
-            certificateBatchLog.Status = status;
-            certificateBatchLog.StatusAt = statusAt;
-            certificateBatchLog.UpdatedBy = SystemUsers.PrintFunction;
-
-            var action = (status == CertificateStatus.Printed ? CertificateActions.Printed : CertificateActions.Status);
-            await AddCertificateLog(certificate, certificateBatchLog.CertificateData, action, statusAt, SystemUsers.PrintFunction);
-            
-            await _context.SaveChangesAsync();
         }
 
-        public async Task UpdateSentToPrinter(string certificateReference, int batchNumber, DateTime sentToPrinterDate)
+        public async Task UpdateSentToPrinter(Certificate certificate, int batchNumber, DateTime sentToPrinterDate)
         {
-            var certificate =
-                await _context.Certificates.FirstOrDefaultAsync(q => q.CertificateReference == certificateReference);
-
             if (certificate != null)
             {
                 await _context.CertificateBatchLogs.AddAsync(new CertificateBatchLog
                 {
-                    CertificateReference = certificateReference,
+                    CertificateReference = certificate.CertificateReference,
                     BatchNumber = batchNumber,
                     CertificateData = certificate.CertificateData,
                     Status = CertificateStatus.SentToPrinter,

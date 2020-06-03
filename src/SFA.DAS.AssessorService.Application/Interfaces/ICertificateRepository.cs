@@ -27,8 +27,8 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task Delete(long uln, int standardCode, string username, string action, bool updateLog = true);
         Task<Certificate> UpdateProviderName(Guid id, string providerName);
 
-        Task UpdateSentToPrinter(string certificateReference, int batchNumber, DateTime sentToPrinterDate);
-        Task UpdatePrintStatus(string certificateReference, int batchNumber, string status, DateTime statusAt, bool logOnly);
+        Task UpdateSentToPrinter(Certificate certificate, int batchNumber, DateTime sentToPrinterDate);
+        Task UpdatePrintStatus(Certificate certificate, int batchNumber, string status, DateTime statusAt, bool logOnly);
 
         Task UpdatePrivatelyFundedCertificatesToBeApproved();
         Task<List<CertificateLog>> GetCertificateLogsFor(Guid certificateId);
