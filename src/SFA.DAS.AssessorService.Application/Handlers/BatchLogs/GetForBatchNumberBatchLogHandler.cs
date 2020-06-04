@@ -7,18 +7,18 @@ using SFA.DAS.AssessorService.Application.Interfaces;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.BatchLogs
 {
-    public class GetBatchFromPeriodAndBatchNumberHandler : IRequestHandler<GetBatchFromBatchNumberRequest, BatchLogResponse>
+    public class GetForBatchNumberBatchLogHandler : IRequestHandler<GetForBatchNumberBatchLogRequest, BatchLogResponse>
     {
         private readonly IBatchLogQueryRepository _batchLogQueryRepository;
 
-        public GetBatchFromPeriodAndBatchNumberHandler(IBatchLogQueryRepository batchLogQueryRepository)
+        public GetForBatchNumberBatchLogHandler(IBatchLogQueryRepository batchLogQueryRepository)
         {
             _batchLogQueryRepository = batchLogQueryRepository;
         }
 
-        public async Task<BatchLogResponse> Handle(GetBatchFromBatchNumberRequest request, CancellationToken cancellationToken)
+        public async Task<BatchLogResponse> Handle(GetForBatchNumberBatchLogRequest request, CancellationToken cancellationToken)
         {
-            var batchLog = await _batchLogQueryRepository.Get(int.Parse(request.BatchNumber));
+            var batchLog = await _batchLogQueryRepository.GetForBatchNumber(request.BatchNumber);
             return Mapper.Map<BatchLogResponse>(batchLog);
         }
     }

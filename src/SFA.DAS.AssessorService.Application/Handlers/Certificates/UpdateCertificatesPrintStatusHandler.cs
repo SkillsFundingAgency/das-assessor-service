@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.Application.Interfaces;
@@ -14,13 +15,13 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
     public class UpdateCertificatesPrintStatusHandler : IRequestHandler<UpdateCertificatesPrintStatusRequest, ValidationResponse>
     {
         private readonly ICertificateRepository _certificateRepository;
-        private readonly IBatchLogQueryRepository _batchLogQueryRepository;
+        private readonly IMediator _mediator;
         private readonly ILogger<UpdateCertificatesPrintStatusHandler> _logger;
 
-        public UpdateCertificatesPrintStatusHandler(ICertificateRepository certificateRepository, IBatchLogQueryRepository batchLogQueryRepository, ILogger<UpdateCertificatesPrintStatusHandler> logger)
+        public UpdateCertificatesPrintStatusHandler(ICertificateRepository certificateRepository, IMediator mediator, ILogger<UpdateCertificatesPrintStatusHandler> logger)
         {
             _certificateRepository = certificateRepository;
-            _batchLogQueryRepository = batchLogQueryRepository;
+            _mediator = mediator;
             _logger = logger;
         }
 
@@ -35,7 +36,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
             {
                 if (!notFoundBatches.Contains(certificatePrintStatus.BatchNumber))
                 {
-                    if (await _batchLogQueryRepository.Get(certificatePrintStatus.BatchNumber) == null)
+                    if(await _mediator.Send(new GetForBatchNumberBatchLogRequest { BatchNumber = certificatePrintStatus.BatchNumber }) == null)
                     {
                         validationResult.Errors.Add(new ValidationErrorDetail(nameof(request.CertificatePrintStatuses), $"The batch number {certificatePrintStatus.BatchNumber} was not found.", ValidationStatusCode.NotFound));
                         notFoundBatches.Add(certificatePrintStatus.BatchNumber);

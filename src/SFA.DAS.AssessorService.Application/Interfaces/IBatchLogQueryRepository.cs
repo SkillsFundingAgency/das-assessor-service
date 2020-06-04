@@ -6,7 +6,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
 {
     public interface IBatchLogQueryRepository
     {
-        Task<BatchLog> Get(int batchNumber);
+        Task<BatchLog> GetForBatchNumber(int batchNumber);
 
         Task<List<Certificate>> GetCertificates(int batchNumber);
 

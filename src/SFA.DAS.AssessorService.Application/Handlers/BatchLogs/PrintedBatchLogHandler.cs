@@ -10,7 +10,7 @@ using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 
-namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
+namespace SFA.DAS.AssessorService.Application.Handlers.BatchLogs
 {
     public class PrintedBatchLogHandler : IRequestHandler<PrintedBatchLogRequest, ValidationResponse>
     {
@@ -30,7 +30,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
             var validationResult = new ValidationResponse();
             var sentToPrinterDate = DateTime.UtcNow;
 
-            if(await _batchLogQueryRepository.Get(request.BatchNumber) == null)
+            if(await _batchLogQueryRepository.GetForBatchNumber(request.BatchNumber) == null)
             {
                 validationResult.Errors.Add(new ValidationErrorDetail(nameof(request.BatchNumber), $"The {nameof(request.BatchNumber)} {request.BatchNumber} was not found.", ValidationStatusCode.NotFound));
             }
