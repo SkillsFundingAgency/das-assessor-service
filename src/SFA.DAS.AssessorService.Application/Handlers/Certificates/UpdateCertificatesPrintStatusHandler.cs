@@ -52,8 +52,11 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
                     }
                     else
                     {
-                        var logOnly = certificate.LatestChange().Value > certificatePrintStatus.StatusChangedAt ||
-                            certificate.Status == CertificateStatus.Deleted;
+                        // when the certificate batch number is not set then a reprint has been requested but not sent to printer
+                        // any print status update would be for a prior batch number and would not update the certificate status
+                        var changesCertificateStatus = certificatePrintStatus.BatchNumber >= (certificate.BatchNumber ?? int.MaxValue) &&
+                            certificatePrintStatus.StatusChangedAt > certificate.LatestChange().Value &&
+                            certificate.Status != CertificateStatus.Deleted;
 
                         if (!validPrintStatus.Contains(certificatePrintStatus.Status))
                         {
@@ -62,7 +65,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
                         else
                         {
                             await _certificateRepository.UpdatePrintStatus(certificate,
-                                certificatePrintStatus.BatchNumber, certificatePrintStatus.Status, certificatePrintStatus.StatusChangedAt, logOnly);
+                                certificatePrintStatus.BatchNumber, certificatePrintStatus.Status, certificatePrintStatus.StatusChangedAt, changesCertificateStatus);
 
                             _logger.LogInformation($"Certificate reference {certificatePrintStatus.CertificateReference} set as {certificatePrintStatus.Status} in batch {certificatePrintStatus.BatchNumber}");
                         }

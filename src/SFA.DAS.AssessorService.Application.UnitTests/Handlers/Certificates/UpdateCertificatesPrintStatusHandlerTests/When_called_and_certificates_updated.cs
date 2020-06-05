@@ -28,14 +28,14 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
                 new CertificatePrintStatus
                 {
                     BatchNumber = _batchNumber,
-                    CertificateReference = _certificateReferenceUpdateAfterSentToPrinter,
+                    CertificateReference = _certificateReferenceUpdateAfterPrinted,
                     Status = CertificateStatus.Printed,
                     StatusChangedAt = _statusChangedAt
                 },
                 new CertificatePrintStatus
                 {
                     BatchNumber = _batchNumber,
-                    CertificateReference = _certificateReferenceDeletedAfterSentToPrinter,
+                    CertificateReference = _certificateReferenceDeletedAfterPrinted,
                     Status = CertificateStatus.Delivered,
                     StatusChangedAt = _statusChangedAt
                 }
@@ -59,11 +59,11 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
         public void Then_repository_update_print_status_is_called()
         {
             _certificateRepository.Verify(r => r.UpdatePrintStatus(
-                It.Is<Certificate>(c => c.CertificateReference == _certificateReferenceUpdateAfterSentToPrinter), _batchNumber, CertificateStatus.Printed, _statusChangedAt, true),
+                It.Is<Certificate>(c => c.CertificateReference == _certificateReferenceUpdateAfterPrinted), _batchNumber, CertificateStatus.Printed, _statusChangedAt, false),
                 Times.Once());
 
             _certificateRepository.Verify(r => r.UpdatePrintStatus(
-                It.Is<Certificate>(c => c.CertificateReference == _certificateReferenceDeletedAfterSentToPrinter), _batchNumber, CertificateStatus.Delivered, _statusChangedAt, true),
+                It.Is<Certificate>(c => c.CertificateReference == _certificateReferenceDeletedAfterPrinted), _batchNumber, CertificateStatus.Delivered, _statusChangedAt, false),
                 Times.Once());
         }
     }

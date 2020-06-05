@@ -4,6 +4,7 @@ using AutoMapper;
 using MediatR;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.BatchLogs
 {
@@ -19,7 +20,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.BatchLogs
         public async Task<BatchLogResponse> Handle(GetForBatchNumberBatchLogRequest request, CancellationToken cancellationToken)
         {
             var batchLog = await _batchLogQueryRepository.GetForBatchNumber(request.BatchNumber);
-            return Mapper.Map<BatchLogResponse>(batchLog);
+            return Mapper.Map<BatchLog, BatchLogResponse>(batchLog);
         }
     }
 }

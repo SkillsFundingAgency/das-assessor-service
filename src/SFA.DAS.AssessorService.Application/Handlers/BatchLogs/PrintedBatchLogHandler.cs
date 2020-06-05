@@ -15,12 +15,14 @@ namespace SFA.DAS.AssessorService.Application.Handlers.BatchLogs
     public class PrintedBatchLogHandler : IRequestHandler<PrintedBatchLogRequest, ValidationResponse>
     {
         private readonly IBatchLogQueryRepository _batchLogQueryRepository;
+        private readonly ICertificateRepository _certificateRepository;
         private readonly IMediator _mediator;
         private readonly ILogger<PrintedBatchLogHandler> _logger;
 
-        public PrintedBatchLogHandler(IBatchLogQueryRepository batchLogQueryRepository, IMediator mediator, ILogger<PrintedBatchLogHandler> logger)
+        public PrintedBatchLogHandler(IBatchLogQueryRepository batchLogQueryRepository, ICertificateRepository certificateRepository, IMediator mediator, ILogger<PrintedBatchLogHandler> logger)
         {             
             _batchLogQueryRepository = batchLogQueryRepository;
+            _certificateRepository = certificateRepository;
             _mediator = mediator;
             _logger = logger;
         }
@@ -37,7 +39,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.BatchLogs
 
             if (validationResult.IsValid)
             {
-                var certficates = await _batchLogQueryRepository.GetCertificates(request.BatchNumber);
+                var certficates = await _certificateRepository.GetCertificatesForBatchLog(request.BatchNumber);
                 var result = await _mediator.Send(new UpdateCertificatesPrintStatusRequest
                 {
                     CertificatePrintStatuses = certficates.ConvertAll(p => new CertificatePrintStatus

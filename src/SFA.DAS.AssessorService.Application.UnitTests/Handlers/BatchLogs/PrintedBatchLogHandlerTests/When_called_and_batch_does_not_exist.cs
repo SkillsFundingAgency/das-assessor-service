@@ -17,6 +17,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.BatchLogs.Print
     public class When_called_and_batch_does_not_exist
     {
         private Mock<IBatchLogQueryRepository> _batchLogQueryRepository;
+        private Mock<ICertificateRepository> _certificateRepository;
         private Mock<IMediator> _mediator;
         private Mock<ILogger<PrintedBatchLogHandler>> _logger;
 
@@ -36,10 +37,12 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.BatchLogs.Print
             _batchLogQueryRepository.Setup(r => r.GetForBatchNumber(It.IsIn(_batchNumber))).Returns(Task.FromResult(_batchLog));
             _batchLogQueryRepository.Setup(r => r.GetForBatchNumber(It.IsNotIn(_batchNumber))).Returns(Task.FromResult<BatchLog>(null));
 
+            _certificateRepository = new Mock<ICertificateRepository>();
+
             _mediator = new Mock<IMediator>();
             _logger = new Mock<ILogger<PrintedBatchLogHandler>>();
 
-            var sut = new PrintedBatchLogHandler(_batchLogQueryRepository.Object, _mediator.Object, _logger.Object);
+            var sut = new PrintedBatchLogHandler(_batchLogQueryRepository.Object, _certificateRepository.Object, _mediator.Object, _logger.Object);
 
             _response = await sut.Handle(new PrintedBatchLogRequest { BatchNumber = _batchNumber + 999, PrintedAt = _printedAt }, new CancellationToken());
         }

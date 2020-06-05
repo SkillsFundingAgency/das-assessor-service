@@ -20,6 +20,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.BatchLogs.Print
     public class When_called_and_batch_does_exist
     {
         private Mock<IBatchLogQueryRepository> _batchLogQueryRepository;
+        private Mock<ICertificateRepository> _certificateRepository;
         private Mock<IMediator> _mediator;
         private Mock<ILogger<PrintedBatchLogHandler>> _logger;
 
@@ -54,13 +55,15 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.BatchLogs.Print
 
             _batchLogQueryRepository = new Mock<IBatchLogQueryRepository>();
             _batchLogQueryRepository.Setup(r => r.GetForBatchNumber(It.IsAny<int>())).Returns(Task.FromResult(_batchLog));
-            _batchLogQueryRepository.Setup(r => r.GetCertificates(It.IsAny<int>())).Returns(Task.FromResult(_certificates));
+
+            _certificateRepository = new Mock<ICertificateRepository>();
+            _certificateRepository.Setup(r => r.GetCertificatesForBatchLog(It.IsAny<int>())).Returns(Task.FromResult(_certificates));
 
             _mediator = new Mock<IMediator>();
             _mediator.Setup(r => r.Send(It.IsAny<UpdateCertificatesPrintStatusRequest>(), It.IsAny<CancellationToken>())).Returns(Task.FromResult(_updateCertificatesPrintStatusRequestResponse));
             _logger = new Mock<ILogger<PrintedBatchLogHandler>>();
 
-            var sut = new PrintedBatchLogHandler(_batchLogQueryRepository.Object, _mediator.Object, _logger.Object);
+            var sut = new PrintedBatchLogHandler(_batchLogQueryRepository.Object, _certificateRepository.Object, _mediator.Object, _logger.Object);
 
             _response = await sut.Handle(new PrintedBatchLogRequest { BatchNumber = _batchNumber, PrintedAt = _printedAt }, new CancellationToken());
         }

@@ -28,9 +28,11 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<Certificate> UpdateProviderName(Guid id, string providerName);
 
         Task UpdateSentToPrinter(Certificate certificate, int batchNumber, DateTime sentToPrinterDate);
-        Task UpdatePrintStatus(Certificate certificate, int batchNumber, string status, DateTime statusAt, bool logOnly);
+        Task UpdatePrintStatus(Certificate certificate, int batchNumber, string status, DateTime statusAt, bool changesCertificateStatus);
 
         Task UpdatePrivatelyFundedCertificatesToBeApproved();
+        
+        Task<List<Certificate>> GetCertificatesForBatchLog(int batchNumber);
         Task<List<CertificateLog>> GetCertificateLogsFor(Guid certificateId);
         Task<PaginatedList<Certificate>> GetCertificateHistory(string endPointAssessorOrganisationId, int pageIndex, int pageSize, List<string> statuses);
         Task<string> GetPreviousProviderName(int providerUkPrn);
