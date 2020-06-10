@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoFixture.NUnit3;
@@ -9,6 +7,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
+using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Application.Api.Controllers;
 using SFA.DAS.AssessorService.Application.Handlers.ao.GetEpaOrganisationsByStandard;
@@ -44,7 +43,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Standard
                     It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new GetEpaOrganisationsByStandardResponse
                 {
-                    EpaOrganisations = new List<EpaOrganisation>()
+                    EpaOrganisations = new List<OrganisationResponse>()
                 });
 
             //Act
@@ -59,7 +58,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Standard
         [Test, MoqAutoData]
         public async Task Then_If_There_Is_Data_It_Is_Returned_In_Response(
             int standardCode,
-            List<EpaOrganisation> epaOrganisations,
+            List<OrganisationResponse> epaOrganisations,
             [Frozen] Mock<IMediator> mediator,
             StandardQueryController controller)
         {
@@ -80,7 +79,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Standard
             Assert.IsNotNull(actual);
             var actualResult = actual as OkObjectResult;
             Assert.IsNotNull(actualResult);
-            var actualModel = actualResult.Value as List<EpaOrganisation>;
+            var actualModel = actualResult.Value as List<OrganisationResponse>;
             actualModel.Should().BeEquivalentTo(epaOrganisations);
         }
     }

@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
-using SFA.DAS.AssessorService.Api.Types.Models.AO;
+using SFA.DAS.AssessorService.Api.Types.Models;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.ao.GetEpaOrganisationsByStandard
 {
     public class GetEpaOrganisationsByStandardResponse
     {
-        public List<EpaOrganisation> EpaOrganisations { get; set; }
+        public List<OrganisationResponse> EpaOrganisations { get; set; }
     }
 }
