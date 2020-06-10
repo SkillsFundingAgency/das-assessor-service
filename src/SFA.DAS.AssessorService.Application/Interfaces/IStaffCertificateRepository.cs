@@ -9,8 +9,10 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
     public interface IStaffCertificateRepository
     {
         Task<List<CertificateForSearch>> GetCertificatesFor(long[] ulns);
-        Task<List<CertificateLogSummary>> GetCertificateLogsFor(Guid certificateId,
-            bool allRecords);
+        
+        Task<List<CertificateLogSummary>> GetAllCertificateLogs(Guid certificateId);
+        Task<List<CertificateLogSummary>> GetSummaryCertificateLogs(Guid certificateId);
+        Task<CertificateLogSummary> GetLatestCertificateLog(Guid certificateId);
 
         Task<StaffReposBatchSearchResult> GetCertificateLogsForBatch(int batchNumber, int page, int pageSize);
         Task<StaffReposBatchLogResult> GetBatchLogs(int page, int pageSize);

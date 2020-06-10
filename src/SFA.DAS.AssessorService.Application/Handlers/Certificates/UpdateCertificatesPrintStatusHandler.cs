@@ -28,9 +28,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
         public async Task<ValidationResponse> Handle(UpdateCertificatesPrintStatusRequest request, CancellationToken cancellationToken)
         {
             var validationResult = new ValidationResponse();
-
             var notFoundBatches = new List<int>();
-            var validPrintStatus = new List<string> { CertificateStatus.Printed, CertificateStatus.Delivered, CertificateStatus.NotDelivered };
             
             foreach (var certificatePrintStatus in request.CertificatePrintStatuses)
             {
@@ -58,9 +56,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
                             certificatePrintStatus.StatusChangedAt > certificate.LatestChange().Value &&
                             certificate.Status != CertificateStatus.Deleted;
 
-                        if (!validPrintStatus.Contains(certificatePrintStatus.Status))
+                        if(!CertificateStatus.HasPrintNotificateStatus(certificatePrintStatus.Status))
                         {
-                            validationResult.Errors.Add(new ValidationErrorDetail(nameof(request.CertificatePrintStatuses), $"The certificate status {certificatePrintStatus.Status} is not a valid print status.", ValidationStatusCode.BadRequest));
+                            validationResult.Errors.Add(new ValidationErrorDetail(nameof(request.CertificatePrintStatuses), $"The certificate status {certificatePrintStatus.Status} is not a valid print notification status.", ValidationStatusCode.BadRequest));
                         }
                         else
                         {

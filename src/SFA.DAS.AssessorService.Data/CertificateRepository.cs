@@ -203,7 +203,8 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<List<Certificate>> GetCompletedCertificatesFor(long uln)
         {
-            return await _context.Certificates.Where(c => c.Uln == uln && (c.Status == CertificateStatus.Reprint || c.Status == CertificateStatus.Printed || c.Status == CertificateStatus.Submitted || c.Status == CertificateStatus.ToBeApproved))
+            var statuses = new[] { CertificateStatus.Submitted, CertificateStatus.ToBeApproved }.Concat(CertificateStatus.PrintProcessStatus).ToList();
+            return await _context.Certificates.Where(c => c.Uln == uln && statuses.Contains(c.Status))
                 .ToListAsync();
         }
 
@@ -464,12 +465,7 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<CertificateAddress> GetContactPreviousAddress(string userName, bool isPrivatelyFunded)
         {
-            var statuses = new List<string>
-            {
-                CertificateStatus.Submitted,
-                CertificateStatus.Printed,
-                CertificateStatus.Reprint
-            };
+            var statuses = new[] { CertificateStatus.Submitted }.Concat(CertificateStatus.PrintProcessStatus).ToList();
 
             var certificateAddress = await (from certificateLog in _context.CertificateLogs
                 join certificate in _context.Certificates on certificateLog.CertificateId equals certificate.Id
