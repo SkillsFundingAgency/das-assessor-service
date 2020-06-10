@@ -78,6 +78,11 @@ namespace SFA.DAS.AssessorService.Data
              return organisation.Contacts?.Any(x => x.SignInId != null && x.Id != contactId) ?? false;
         }
 
+        public Task<IEnumerable<Organisation>> GetOrganisationsByStandard(int standard)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<Organisation> GetOrganisationByName(string name)
         {
 
