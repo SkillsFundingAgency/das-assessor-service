@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
@@ -28,50 +29,77 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
         public async Task<ValidationResponse> Handle(UpdateCertificatesPrintStatusRequest request, CancellationToken cancellationToken)
         {
             var validationResult = new ValidationResponse();
-            var notFoundBatches = new List<int>();
-            
-            foreach (var certificatePrintStatus in request.CertificatePrintStatuses)
+
+            var validatedCertificatePrintStatuses = await Validate(request.CertificatePrintStatuses, validationResult);
+            validatedCertificatePrintStatuses.ForEach(async validatedCertificatePrintStatus => 
             {
-                if (!notFoundBatches.Contains(certificatePrintStatus.BatchNumber))
+                var certificate = await _certificateRepository.GetCertificate(validatedCertificatePrintStatus.CertificateReference);
+                if (certificate == null)
                 {
-                    if(await _mediator.Send(new GetForBatchNumberBatchLogRequest { BatchNumber = certificatePrintStatus.BatchNumber }) == null)
-                    {
-                        validationResult.Errors.Add(new ValidationErrorDetail(nameof(request.CertificatePrintStatuses), $"The batch number {certificatePrintStatus.BatchNumber} was not found.", ValidationStatusCode.NotFound));
-                        notFoundBatches.Add(certificatePrintStatus.BatchNumber);
-                    }
+                    validationResult.Errors.Add(
+                        new ValidationErrorDetail("CertificatePrintStatuses", $"The certificate reference {validatedCertificatePrintStatus.CertificateReference} was not found.", ValidationStatusCode.NotFound));
                 }
-
-                if (!notFoundBatches.Contains(certificatePrintStatus.BatchNumber))
+                else
                 {
-                    var certificate = await _certificateRepository.GetCertificate(certificatePrintStatus.CertificateReference);
-                    if (certificate == null)
-                    {
-                        validationResult.Errors.Add(new ValidationErrorDetail(nameof(request.CertificatePrintStatuses), $"The certificate reference {certificatePrintStatus.CertificateReference} was not found.", ValidationStatusCode.NotFound));
-                    }
-                    else
-                    {
-                        // when the certificate batch number is not set then a reprint has been requested but not sent to printer
-                        // any print status update would be for a prior batch number and would not update the certificate status
-                        var changesCertificateStatus = certificatePrintStatus.BatchNumber >= (certificate.BatchNumber ?? int.MaxValue) &&
-                            certificatePrintStatus.StatusChangedAt > certificate.LatestChange().Value &&
-                            certificate.Status != CertificateStatus.Deleted;
+                    // when the certificate batch number is not set then a reprint has been requested but not sent to printer
+                    // any print status update would be for a prior batch number and would not update the certificate status
+                    var changesCertificateStatus = validatedCertificatePrintStatus.BatchNumber >= (certificate.BatchNumber ?? int.MaxValue) &&
+                        validatedCertificatePrintStatus.StatusChangedAt > certificate.LatestChange().Value &&
+                        certificate.Status != CertificateStatus.Deleted;
 
-                        if(!CertificateStatus.HasPrintNotificateStatus(certificatePrintStatus.Status))
-                        {
-                            validationResult.Errors.Add(new ValidationErrorDetail(nameof(request.CertificatePrintStatuses), $"The certificate status {certificatePrintStatus.Status} is not a valid print notification status.", ValidationStatusCode.BadRequest));
-                        }
-                        else
-                        {
-                            await _certificateRepository.UpdatePrintStatus(certificate,
-                                certificatePrintStatus.BatchNumber, certificatePrintStatus.Status, certificatePrintStatus.StatusChangedAt, changesCertificateStatus);
+                    await _certificateRepository.UpdatePrintStatus(certificate,
+                            validatedCertificatePrintStatus.BatchNumber, validatedCertificatePrintStatus.Status, validatedCertificatePrintStatus.StatusChangedAt, changesCertificateStatus);
 
-                            _logger.LogInformation($"Certificate reference {certificatePrintStatus.CertificateReference} set as {certificatePrintStatus.Status} in batch {certificatePrintStatus.BatchNumber}");
-                        }
-                    }
+                    _logger.LogInformation($"Certificate reference {validatedCertificatePrintStatus.CertificateReference} set as {validatedCertificatePrintStatus.Status} in batch {validatedCertificatePrintStatus.BatchNumber}");
                 }
-            }
+            });
 
             return validationResult;
         }
-    } 
+
+        private async Task<List<CertificatePrintStatus>> Validate(List<CertificatePrintStatus> certificatePrintStatuses, ValidationResponse validationResult)
+        {
+            var invalidPrintStatuses = certificatePrintStatuses
+                    .GroupBy(certificatePrintStatus => certificatePrintStatus.Status)
+                    .Select(certificatePrintStatus => certificatePrintStatus.Key)
+                    .Where(printStatus => !CertificateStatus.HasPrintNotificateStatus(printStatus))
+                    .ToList();
+
+            var invalidBatchNumbers = await GetInvalidBatchNumbers(certificatePrintStatuses
+                    .GroupBy(certificatePrintStatus => certificatePrintStatus.BatchNumber)
+                    .Select(certificatePrintStatus => certificatePrintStatus.Key)
+                    .ToList());
+
+            invalidPrintStatuses.ForEach(invalidPrintStatus =>
+            {
+                validationResult.Errors.Add(
+                    new ValidationErrorDetail("CertificatePrintStatuses", $"The certificate status {invalidPrintStatus} is not a valid print notification status.", ValidationStatusCode.BadRequest));
+            });
+            
+            invalidBatchNumbers.ForEach(invalidBatchNumber => 
+            {
+                validationResult.Errors.Add(
+                    new ValidationErrorDetail("CertificatePrintStatuses", $"The batch number {invalidBatchNumber} was not found.", ValidationStatusCode.NotFound));
+            });
+
+            return certificatePrintStatuses
+                .Where(certificatePrintStatus => !invalidBatchNumbers.Contains(certificatePrintStatus.BatchNumber) && !invalidPrintStatuses.Contains(certificatePrintStatus.Status))
+                .ToList();
+        }
+
+        private async Task<List<int>> GetInvalidBatchNumbers(List<int> batchNumbers)
+        {
+            var invalidBatchNumbers = new List<int>();
+
+            foreach (var batchNumber in batchNumbers)
+            {
+                if (await _mediator.Send(new GetForBatchNumberBatchLogRequest { BatchNumber = batchNumber }) == null)
+                {
+                    invalidBatchNumbers.Add(batchNumber);
+                }
+            }
+
+            return invalidBatchNumbers;
+        }
+    }
 }
