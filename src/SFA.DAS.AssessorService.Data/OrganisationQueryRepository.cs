@@ -78,9 +78,17 @@ namespace SFA.DAS.AssessorService.Data
              return organisation.Contacts?.Any(x => x.SignInId != null && x.Id != contactId) ?? false;
         }
 
-        public Task<IEnumerable<Organisation>> GetOrganisationsByStandard(int standard)
+        public async Task<IEnumerable<Organisation>> GetOrganisationsByStandard(int standard)
         {
-            throw new NotImplementedException();
+            var organisations = await _assessorDbContext
+                .OrganisationStandard
+                .Include(c => c.Organisation)
+                .Include(c=>c.OrganisationStandardDeliveryAreas)
+                .ThenInclude(c=>c.DeliveryArea)
+                .Where(c => c.StandardCode == standard)
+                .ToListAsync();
+
+            return organisations.Select(c=>c.Organisation);
         }
 
         public async Task<Organisation> GetOrganisationByName(string name)
