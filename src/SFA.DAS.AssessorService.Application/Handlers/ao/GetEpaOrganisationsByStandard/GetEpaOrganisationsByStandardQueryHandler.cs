@@ -12,19 +12,18 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ao.GetEpaOrganisationsByS
     public class GetEpaOrganisationsByStandardQueryHandler : IRequestHandler<GetEpaOrganisationsByStandardQuery, GetEpaOrganisationsByStandardResponse>
     {
         private readonly IOrganisationQueryRepository _repository;
-        private readonly IMapper _mapper;
-
-        public GetEpaOrganisationsByStandardQueryHandler(IOrganisationQueryRepository repository, IMapper mapper)
+        
+        public GetEpaOrganisationsByStandardQueryHandler(IOrganisationQueryRepository repository)
         {
             _repository = repository;
-            _mapper = mapper;
+            
         }
 
         public async Task<GetEpaOrganisationsByStandardResponse> Handle(GetEpaOrganisationsByStandardQuery request, CancellationToken cancellationToken)
         {
             var organisationsByStandard = await _repository.GetOrganisationsByStandard(request.Standard);
 
-            var result = organisationsByStandard.Select(_mapper.Map<OrganisationResponse>).ToList();
+            var result = organisationsByStandard.Select(Mapper.Map<OrganisationResponse>).ToList();
             return new GetEpaOrganisationsByStandardResponse{
                 EpaOrganisations = result
             };

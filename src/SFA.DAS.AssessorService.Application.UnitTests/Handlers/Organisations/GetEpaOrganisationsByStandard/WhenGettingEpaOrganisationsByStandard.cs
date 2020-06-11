@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoFixture.NUnit3;
@@ -19,25 +20,22 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Organisations.G
         [Test, RecursiveMoqAutoData]
         public async Task Then_The_Repositroy_Is_Called_And_Data_Returned_In_Response(
             GetEpaOrganisationsByStandardQuery query,
-            OrganisationResponse organisation,
             Organisation entityOrganisation,
-            [Frozen] Mock<IMapper> mapper,
             [Frozen] Mock<IOrganisationQueryRepository> repository,
             GetEpaOrganisationsByStandardQueryHandler handler)
         {
             //Arrange
             var entityOrganisations = new List<Organisation> {entityOrganisation};
-            var organisations = new List<OrganisationResponse> {organisation};
             repository.Setup(x => x.GetOrganisationsByStandard(query.Standard)).ReturnsAsync(entityOrganisations);
-            mapper.Setup(x => x.Map<OrganisationResponse>(entityOrganisation)).Returns(organisation);
-
+            Mapper.Initialize(cfg => { cfg.CreateMap<Organisation, OrganisationResponse>();});
+            
             //Act
             var actual = await handler.Handle(query, It.IsAny<CancellationToken>());
-
+            
             //Assert
             Assert.IsNotNull(actual);
             Assert.IsAssignableFrom<GetEpaOrganisationsByStandardResponse>(actual);
-            actual.EpaOrganisations.Should().BeEquivalentTo(organisations);
+            actual.EpaOrganisations.Should().BeEquivalentTo(entityOrganisations.Select(Mapper.Map<OrganisationResponse>).ToList());
         }
 
     }
