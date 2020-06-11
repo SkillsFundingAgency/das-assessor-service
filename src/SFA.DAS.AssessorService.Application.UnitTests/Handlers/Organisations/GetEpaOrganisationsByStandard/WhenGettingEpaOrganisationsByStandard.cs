@@ -27,7 +27,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Organisations.G
             //Arrange
             var entityOrganisations = new List<Organisation> {entityOrganisation};
             repository.Setup(x => x.GetOrganisationsByStandard(query.Standard)).ReturnsAsync(entityOrganisations);
-            Mapper.Initialize(cfg => { cfg.CreateMap<Organisation, OrganisationResponse>();});
+            
             
             //Act
             var actual = await handler.Handle(query, It.IsAny<CancellationToken>());
@@ -35,7 +35,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Organisations.G
             //Assert
             Assert.IsNotNull(actual);
             Assert.IsAssignableFrom<GetEpaOrganisationsByStandardResponse>(actual);
-            actual.EpaOrganisations.Should().BeEquivalentTo(entityOrganisations.Select(Mapper.Map<OrganisationResponse>).ToList());
+            actual.EpaOrganisations.Should().BeEquivalentTo(entityOrganisations);
         }
 
     }

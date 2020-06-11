@@ -23,9 +23,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ao.GetEpaOrganisationsByS
         {
             var organisationsByStandard = await _repository.GetOrganisationsByStandard(request.Standard);
 
-            var result = organisationsByStandard.Select(Mapper.Map<OrganisationResponse>).ToList();
             return new GetEpaOrganisationsByStandardResponse{
-                EpaOrganisations = result
+                EpaOrganisations = organisationsByStandard
             };
         }
     }
