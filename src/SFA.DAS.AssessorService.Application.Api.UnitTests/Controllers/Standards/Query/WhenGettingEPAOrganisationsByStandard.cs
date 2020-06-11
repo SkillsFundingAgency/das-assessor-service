@@ -1,17 +1,22 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoFixture.NUnit3;
+using AutoMapper;
 using FluentAssertions;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models;
-using SFA.DAS.AssessorService.Api.Types.Models.AO;
+using SFA.DAS.AssessorService.Application.Api.AutoMapperProfiles;
 using SFA.DAS.AssessorService.Application.Api.Controllers;
 using SFA.DAS.AssessorService.Application.Handlers.ao.GetEpaOrganisationsByStandard;
+using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.Testing.AutoFixture;
+using OrganisationStandard = SFA.DAS.AssessorService.Api.Types.Models.AO.OrganisationStandard;
+using OrganisationStandardDeliveryArea = SFA.DAS.AssessorService.Api.Types.Models.AO.OrganisationStandardDeliveryArea;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Standards.Query
 {
@@ -43,7 +48,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Standard
                     It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new GetEpaOrganisationsByStandardResponse
                 {
-                    EpaOrganisations = new List<OrganisationResponse>()
+                    EpaOrganisations = new List<Organisation>()
                 });
 
             //Act
@@ -55,14 +60,20 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Standard
             Assert.IsNotNull(actualResult);
         }
 
-        [Test, MoqAutoData]
+        [Test, RecursiveMoqAutoData]
         public async Task Then_If_There_Is_Data_It_Is_Returned_In_Response(
             int standardCode,
-            List<OrganisationResponse> epaOrganisations,
+            List<Organisation> epaOrganisations,
             [Frozen] Mock<IMediator> mediator,
             StandardQueryController controller)
         {
             //Arrange
+            Mapper.Reset();
+            Mapper.Initialize(cfg =>
+            {
+                cfg.AddProfile<OrganisationWithStandardResponseMapper>();
+                cfg.AddProfile<OrganisationStandardDeliveryAreaMapper>();
+            });
             mediator
                 .Setup(x => x.Send(
                     It.Is<GetEpaOrganisationsByStandardQuery>(c => c.Standard.Equals(standardCode)),
@@ -79,8 +90,8 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Standard
             Assert.IsNotNull(actual);
             var actualResult = actual as OkObjectResult;
             Assert.IsNotNull(actualResult);
-            var actualModel = actualResult.Value as List<OrganisationResponse>;
-            actualModel.Should().BeEquivalentTo(epaOrganisations);
+            var actualModel = actualResult.Value as List<OrganisationStandardResponse>;
+            actualModel.Should().BeEquivalentTo(epaOrganisations.Select(Mapper.Map<OrganisationStandardResponse>).ToList());
         }
     }
 }

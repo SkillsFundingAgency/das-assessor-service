@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -80,7 +81,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
                 return NotFound();
             }
 
-            return Ok(epaOrganisationResponse.EpaOrganisations);
+            var result = epaOrganisationResponse.EpaOrganisations.Select(Mapper.Map<OrganisationStandardResponse>).ToList();
+
+            return Ok(result);
 
         }
     }

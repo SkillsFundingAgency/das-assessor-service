@@ -7,7 +7,6 @@ using SFA.DAS.AssessorService.Application.Api.AutoMapperProfiles;
 using SFA.DAS.AssessorService.Application.Mapping.CustomResolvers;
 using SFA.DAS.AssessorService.Domain.Entities;
 using Contact = SFA.DAS.AssessorService.Domain.Entities.Contact;
-using Organisation = SFA.DAS.AssessorService.Domain.Entities.Organisation;
 
 namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
 {
@@ -18,6 +17,7 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
             Mapper.Initialize(cfg =>
             {
                 cfg.CreateMap<Organisation, OrganisationResponse>();
+
                 cfg.CreateMap<CreateOrganisationRequest, Organisation>();
                 cfg.CreateMap<UpdateOrganisationRequest, Organisation>();
 
@@ -78,6 +78,9 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                 cfg.AddProfile<CharityCommissionAddressProfile>();
                 cfg.AddProfile<CharityCommissionAccountsProfile>();
                 cfg.AddProfile<CharityCommissionTrusteeProfile>();
+
+                cfg.AddProfile<OrganisationWithStandardResponseMapper>();
+                cfg.AddProfile<OrganisationStandardDeliveryAreaMapper>();
             });
         }
     }
