@@ -258,19 +258,6 @@ namespace SFA.DAS.AssessorService.Data.TestData
                     context.Ilrs.Add(ilr);
                     context.SaveChanges();
                 }
-
-                var emailTemplate = new EMailTemplate
-                {
-                    Id = Guid.NewGuid(),
-                    Recipients = "alan.burns@digital.education.gov.uk",
-                    TemplateId = "5b171b91-d406-402a-a651-081cce820acb",
-                    TemplateName = "PrintAssessorCoverLetters",
-                };
-
-                context.EMailTemplates.Add(emailTemplate);
-                context.SaveChanges();
-
-                context.SaveChanges();
             }
         }
     }

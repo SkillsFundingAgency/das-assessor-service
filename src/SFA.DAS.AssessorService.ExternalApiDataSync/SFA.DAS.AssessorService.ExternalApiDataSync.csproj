@@ -6,7 +6,7 @@
   <ItemGroup>
     <PackageReference Include="Dapper" Version="1.60.6" />
     <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="1.0.29" />
-    <PackageReference Include="NewtonSoft.Json" Version="12.0.2" />
+    <PackageReference Include="NewtonSoft.Json" Version="12.0.3" />
     <PackageReference Include="NLog.Extensions.Logging" Version="1.5.2" />
     <PackageReference Include="StructureMap" Version="4.7.1" />
     <PackageReference Include="System.Data.SqlClient" Version="4.6.1" />

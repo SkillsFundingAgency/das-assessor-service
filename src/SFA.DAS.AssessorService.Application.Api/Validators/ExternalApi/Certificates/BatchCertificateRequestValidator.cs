@@ -11,7 +11,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Certifi
 {
     public class BatchCertificateRequestValidator : AbstractValidator<BatchCertificateRequest>
     {
-        public BatchCertificateRequestValidator(IStringLocalizer<BatchCertificateRequestValidator> localiser, IOrganisationQueryRepository organisationQueryRepository, IIlrRepository ilrRepository, ICertificateRepository certificateRepository, IStandardService standardService)
+        public BatchCertificateRequestValidator(
+            IStringLocalizer<BatchCertificateRequestValidator> localiser, 
+            IOrganisationQueryRepository organisationQueryRepository, 
+            IIlrRepository ilrRepository,  
+            IStandardService standardService)
         {
             RuleFor(m => m.UkPrn).InclusiveBetween(10000000, 99999999).WithMessage("The UKPRN should contain exactly 8 numbers");
 
@@ -20,30 +24,28 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Certifi
             {
                 RuleFor(m => m).CustomAsync(async (m, context, cancellation) =>
                 {
-                    bool sameStandard = true;
+                    bool validateCourseOption = true;
 
+                    var collatedStandard = await standardService.GetStandard(m.StandardCode);
                     if (!string.IsNullOrEmpty(m.StandardReference))
                     {
-                        var collatedStandard = await standardService.GetStandard(m.StandardReference);
-                        if (m.StandardCode != collatedStandard?.StandardId)
+                        if (m.StandardReference != collatedStandard?.ReferenceNumber)
                         {
-                            sameStandard = false;
+                            validateCourseOption = false;
                             context.AddFailure("StandardReference and StandardCode must be for the same Standard");
                         }
                     }
 
                     // NOTE: This is not a nice way to do this BUT we cannot use another DependantRules()
-                    if (sameStandard)
+                    if (validateCourseOption)
                     {
-                        var courseOptions = await certificateRepository.GetOptions(m.StandardCode);
-
-                        if (!courseOptions.Any() && !string.IsNullOrEmpty(m.CertificateData?.CourseOption))
+                        if (!collatedStandard.Options.Any() && !string.IsNullOrEmpty(m.CertificateData?.CourseOption))
                         {
                             context.AddFailure(new ValidationFailure("CourseOption", $"No course option available for this Standard. Must be empty"));
                         }
-                        else if (courseOptions.Any() && !courseOptions.Any(o => o.OptionName.Equals(m.CertificateData?.CourseOption, StringComparison.InvariantCultureIgnoreCase)))
+                        else if (collatedStandard.Options.Any() && !collatedStandard.Options.Any(o => o.Equals(m.CertificateData?.CourseOption, StringComparison.InvariantCultureIgnoreCase)))
                         {
-                            string courseOptionsString = string.Join(", ", courseOptions.Select(o => o.OptionName));
+                            string courseOptionsString = string.Join(", ", collatedStandard.Options);
                             context.AddFailure(new ValidationFailure("CourseOption", $"Invalid course option for this Standard. Must be one of the following: {courseOptionsString}"));
                         }
                     }

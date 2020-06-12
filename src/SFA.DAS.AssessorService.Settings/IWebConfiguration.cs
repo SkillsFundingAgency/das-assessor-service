@@ -8,7 +8,6 @@
         ClientApiAuthentication ClientApiAuthentication { get; set; }
         NotificationsApiClientConfiguration NotificationsApiClientConfiguration { get; set; }
         CertificateDetails CertificateDetails { get; set; }
-        SftpSettings Sftp { get; set; }
         string AssessmentOrgsApiClientBaseUrl { get; set; }
         string IfaApiClientBaseUrl { get; set; }
         string IFATemplateStorageConnectionString { get; set; }
@@ -41,5 +40,6 @@
 
         string ZenDeskSnippetKey { get; set; }
         string ZenDeskSectionId { get; set; }
+        string ZenDeskCobrowsingSnippetKey { get; set; }
     }
 }

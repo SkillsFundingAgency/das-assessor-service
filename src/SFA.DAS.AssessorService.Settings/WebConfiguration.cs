@@ -16,8 +16,6 @@ namespace SFA.DAS.AssessorService.Settings
 
         [JsonRequired] public CertificateDetails CertificateDetails { get; set; }
 
-        [JsonRequired] public SftpSettings Sftp { get; set; }
-
         [JsonRequired] public string AssessmentOrgsApiClientBaseUrl { get; set; }
 
         [JsonRequired] public string IfaApiClientBaseUrl { get; set; }
@@ -54,6 +52,7 @@ namespace SFA.DAS.AssessorService.Settings
 
         [JsonRequired] public string ZenDeskSnippetKey { get; set; }
         [JsonRequired] public string ZenDeskSectionId { get; set; }
+        [JsonRequired] public string ZenDeskCobrowsingSnippetKey { get; set; }
 
     }
 }

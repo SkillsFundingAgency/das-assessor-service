@@ -10,7 +10,7 @@ using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
 using SFA.DAS.AssessorService.Application.Exceptions;
-using Swashbuckle.AspNetCore.SwaggerGen;
+using Swashbuckle.AspNetCore.Annotations;
 using CreateOrganisationRequest = SFA.DAS.AssessorService.Api.Types.Models.CreateOrganisationRequest;
 using NotFound = SFA.DAS.AssessorService.Domain.Exceptions.NotFound;
 
@@ -35,7 +35,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [HttpPost(Name = "CreateOrganisation")]
         [ValidateBadRequest]
         [SwaggerResponse((int) HttpStatusCode.Created, Type = typeof(OrganisationResponse))]
-        [SwaggerResponse((int) HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int) HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int) HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> CreateOrganisation(
             [FromBody] CreateOrganisationRequest createOrganisationRequest)
@@ -52,7 +52,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [HttpPut(Name = "UpdateOrganisation")]
         [ValidateBadRequest]
         [SwaggerResponse((int) HttpStatusCode.NoContent)]
-        [SwaggerResponse((int) HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int) HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int) HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> UpdateOrganisation(
             [FromBody] UpdateOrganisationRequest updateOrganisationRequest)
@@ -93,7 +93,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [HttpPut("NotifyUserManagementUsers", Name = "NotifyUserManagementUsers")]
         [ValidateBadRequest]
         [SwaggerResponse((int)HttpStatusCode.OK)]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> NotifyUserManagementUsers([FromBody]NotifyUserManagementUsersRequest notifyUserManagementUsersRequest)
         {

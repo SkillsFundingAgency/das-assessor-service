@@ -13,7 +13,7 @@ using SFA.DAS.AssessorService.Application.Exceptions;
 using SFA.DAS.AssessorService.Application.Handlers.Certificates;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Paging;
-using Swashbuckle.AspNetCore.SwaggerGen;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers
 {
@@ -31,7 +31,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
         [HttpGet("{id}", Name = "GetCertificate")]
         [SwaggerResponse((int) HttpStatusCode.OK, Type = typeof(Certificate))]
-        [SwaggerResponse((int) HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int) HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int) HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> GetCertificate(Guid id)
         {
@@ -40,7 +40,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
         [HttpGet("{uln}/{standardCode}", Name = "GetCertificateForUln")]
         [SwaggerResponse((int) HttpStatusCode.OK, Type = typeof(Certificate))]
-        [SwaggerResponse((int) HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int) HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int) HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> GetCertificateForUln(long uln, int standardCode)
         {

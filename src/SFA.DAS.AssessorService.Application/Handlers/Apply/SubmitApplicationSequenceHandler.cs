@@ -48,8 +48,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
                     }
 
                     AddSubmissionInfoToApplyData(application.ApplyData, request.SequenceNo, submittingContact);
-                    UpdateSequenceInformation(application.ApplyData, request.SequenceNo, request.RequestedFeedbackAnswered);
-                    UpdateApplicationStatus(application, request.SequenceNo);
+                    UpdateSequenceAndSectionStatus(application.ApplyData, request.SequenceNo, request.RequestedFeedbackAnswered);
+                    UpdateApplicationAndReviewStatus(application, request.SequenceNo);
 
                     application.UpdatedBy = submittingContact.Id.ToString();
                     application.UpdatedAt = DateTime.UtcNow;
@@ -65,7 +65,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
             return false;
         }
 
-        private void UpdateSequenceInformation(ApplyData applyData, int sequenceNo, Dictionary<int,bool?> dictOfRequestedFeedbackAnswered)
+        private void UpdateSequenceAndSectionStatus(ApplyData applyData, int sequenceNo, Dictionary<int,bool?> dictOfRequestedFeedbackAnswered)
         {
             if (applyData.Sequences != null)
             {
@@ -129,11 +129,31 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
             }
         }
 
-        private void UpdateApplicationStatus(Domain.Entities.Apply application, int sequenceNo)
+        private string GetFinancialStatus(ApplyData applyData)
         {
-            // Always default it to submitted
-            application.ApplicationStatus = ApplicationStatus.Submitted;
-            application.ReviewStatus = ApplicationReviewStatus.New;
+            if (applyData.Sequences != null)
+            {
+                foreach (var sequence in applyData.Sequences.Where(seq => seq.SequenceNo == 1 && !seq.NotRequired))
+                {
+                    // NOTE: Get Status for a required Section 3 - Financial
+                    if (sequence.Sections != null)
+                    {
+                        foreach (var section in sequence.Sections.Where(sec => sec.SectionNo == 3 && !sec.NotRequired))
+                        {
+                            return section.Status;
+                        }
+                    }
+                }
+            }
+            return null;
+        }
+
+        private void UpdateApplicationAndReviewStatus(Domain.Entities.Apply application, int sequenceNo)
+        {
+            if (application.ReviewStatus != ApplicationReviewStatus.HasFeedback)
+            {
+                application.ReviewStatus = ApplicationReviewStatus.New;
+            }
 
             var applyData = application.ApplyData;
 
@@ -145,12 +165,19 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
 
                 if (!closedFinanicalStatuses.Contains(application.FinancialReviewStatus))
                 {
-                    application.FinancialReviewStatus = FinancialReviewStatus.New;
+                    if (GetFinancialStatus(applyData) != ApplicationSectionStatus.Evaluated)
+                    {
+                        application.FinancialReviewStatus = FinancialReviewStatus.New;
+                    }
                 }
             }
             else if (sequenceNo == 2)
             {
                 application.ApplicationStatus = (applyData.Apply.StandardSubmissions.Count == 1) ? ApplicationStatus.Submitted : ApplicationStatus.Resubmitted;
+            }
+            else
+            {
+                application.ApplicationStatus = ApplicationStatus.Submitted;
             }
         }
 
@@ -183,7 +210,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
             else if (sequenceNo == 2)
             {
                 var emailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.ApplyEPAOStandardSubmission);
-                await _mediator.Send(new SendEmailRequest(email, emailTemplate, new { reference, standard }), cancellationToken);
+                await _mediator.Send(new SendEmailRequest(email, emailTemplate, new { contactname, reference, standard }), cancellationToken);
             }
         }
 

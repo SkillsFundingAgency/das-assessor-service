@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models.Apply.Review;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
-using Swashbuckle.AspNetCore.SwaggerGen;
+using Swashbuckle.AspNetCore.Annotations;
 using System;
 using System.Net;
 using System.Threading.Tasks;
@@ -25,24 +25,24 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.Apply
             _mediator = mediator;
         }
 
-        [HttpGet("Review/OpenApplications")]
-        public async Task<ActionResult> OpenApplications(int sequenceNo = 1)
+        [HttpGet("Review/ApplicationReviewStatusCounts")]
+        public async Task<ActionResult> ApplicationReviewStatusCounts()
         {
-            var applications = await _mediator.Send(new OpenApplicationsRequest(sequenceNo));
+            var applicationReviewStatusCounts = await _mediator.Send(new ApplicationReviewStatusCountsRequest());
+            return Ok(applicationReviewStatusCounts);
+        }
+
+        [HttpPost("Review/OrganisationApplications")]
+        public async Task<ActionResult> OrganisationApplications([FromBody] OrganisationApplicationsRequest organisationApplicationsRequest)
+        {
+            var applications = await _mediator.Send(organisationApplicationsRequest);
             return Ok(applications);
         }
 
-        [HttpGet("Review/FeedbackAddedApplications")]
-        public async Task<ActionResult> FeedbackAddedApplications()
+        [HttpPost("Review/StandardApplications")]
+        public async Task<ActionResult> StandardApplications([FromBody] StandardApplicationsRequest standardApplicationsRequest)
         {
-            var applications = await _mediator.Send(new FeedbackAddedApplicationsRequest());
-            return Ok(applications);
-        }
-
-        [HttpGet("Review/ClosedApplications")]
-        public async Task<ActionResult> ClosedApplications()
-        {
-            var applications = await _mediator.Send(new ClosedApplicationsRequest());
+            var applications = await _mediator.Send(standardApplicationsRequest);
             return Ok(applications);
         }
 

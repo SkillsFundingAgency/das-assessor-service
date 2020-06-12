@@ -63,9 +63,9 @@
     <Folder Include="Tables\" />
     <Folder Include="PostDeploymentScripts" />
     <Folder Include="Sequences" />
-    <Folder Include="Views\" />
     <Folder Include="Functions" />
     <Folder Include="Functions\Scalar-valued Functions" />
+    <Folder Include="Functions\Table-valued Functions" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Tables\CertificateLogs.sql" />
@@ -125,7 +125,6 @@
     <Build Include="Functions\Scalar-valued Functions\OppFinder_Is_Approved_StandardStatus.sql" />
     <Build Include="Functions\Scalar-valued Functions\OppFinder_Is_InDevelopment_StandardStatus.sql" />
     <Build Include="Tables\StandardNonApprovedCollation.sql" />
-    <Build Include="Views\ApplicationSummary.sql" />
     <Build Include="Functions\Scalar-valued Functions\OppFinder_Is_Proposed_StandardStatus.sql" />
     <Build Include="StoredProcedures\OppFinder_List_NonApproved_Standards.sql" />
     <Build Include="Tables\Audits.sql" />
@@ -135,6 +134,9 @@
     <Build Include="Tables\ExpressionsOfInterest.sql" />
     <Build Include="StoredProcedures\StaffReports_ExpressionsOfInterest.sql" />
     <Build Include="StoredProcedures\Delete_Certificate.sql" />
+    <Build Include="StoredProcedures\Apply_Get_ReviewStatusCounts.sql" />
+    <Build Include="StoredProcedures\Apply_List_Applications.sql" />
+    <Build Include="Tables\Settings.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="SFA.DAS.AssessorService.Database.refactorlog" />
@@ -149,6 +151,8 @@
     <None Include="DataToImport\assessmentorgs.xlsx" />
     <None Include="PostDeploymentScripts\on-2033-anytime_updates.sql" />
     <None Include="PostDeploymentScripts\on-2295-expression-of-interest.sql" />
+    <Build Include="Functions\Table-valued Functions\Apply_Func_Get_Applications.sql" />
+    <Build Include="Functions\Scalar-valued Functions\ToTicks.sql" />
   </ItemGroup>
   <ItemGroup>
     <ArtifactReference Include="$(DacPacRootPath)\Extensions\Microsoft\SQLDB\Extensions\SqlServer\AzureV12\SqlSchemas\master.dacpac">

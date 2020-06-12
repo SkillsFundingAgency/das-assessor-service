@@ -1,5 +1,5 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
         "environmentName": {
@@ -23,12 +23,6 @@
         "activeSandboxAppServicePlanName": {
             "type": "string"
         },
-        "aseHostingEnvironmentName": {
-            "type": "string"
-        },
-        "aseResourceGroup": {
-            "type": "string"
-        },
         "aspSize": {
             "type": "string"
         },
@@ -43,6 +37,11 @@
         },
         "internalApiSandboxCustomHostName": {
             "type": "string"
+        },
+        "appServiceAllowedIPs": {
+            "type": "array",
+            "defaultValue": [
+            ]
         },
         "sandboxFunctionAppNames": {
             "type": "array"
@@ -106,12 +105,6 @@
                 "parameters": {
                     "appServicePlanName": {
                         "value": "[parameters('activeSandboxAppServicePlanName')]"
-                    },
-                    "aseHostingEnvironmentName": {
-                        "value": "[parameters('aseHostingEnvironmentName')]"
-                    },
-                    "aseResourceGroup": {
-                        "value": "[parameters('aseResourceGroup')]"
                     },
                     "aspSize": {
                         "value": "[parameters('aspSize')]"
@@ -238,6 +231,9 @@
                     },
                     "certificateThumbprint": {
                         "value": "[if(greater(length(parameters('externalApiSandboxAppServiceCertificateName')), 0), reference('sandbox-external-app-service-certificate').outputs.certificateThumbprint.value, '')]"
+                    },
+                    "ipSecurityRestrictions": {
+                        "value": "[parameters('appServiceAllowedIPs')]"
                     }
                 }
             },
@@ -313,6 +309,9 @@
                     },
                     "certificateThumbprint": {
                         "value": "[if(greater(length(parameters('internalApiSandboxAppServiceCertificateName')), 0), reference('sandbox-internal-app-service-certificate').outputs.certificateThumbprint.value, '')]"
+                    },
+                    "ipSecurityRestrictions": {
+                        "value": "[parameters('appServiceAllowedIPs')]"
                     }
                 }
             },
@@ -366,10 +365,6 @@
                                 "value": "[reference('sandbox-storage-account').outputs.StorageConnectionString.value]"
                             },
                             {
-                                "name": "AzureWebJobsDashboard",
-                                "value": "[reference('sandbox-storage-account').outputs.StorageConnectionString.value]"
-                            },
-                            {
                                 "name": "FUNCTIONS_EXTENSION_VERSION",
                                 "value": "~2"
                             },
@@ -388,6 +383,10 @@
                             {
                                 "name": "EnvironmentName",
                                 "value": "[toUpper(parameters('environmentName'))]"
+                            },
+                            {
+                                "name": "FUNCTIONS_WORKER_RUNTIME",
+                                "value": "dotnet"
                             }
                         ]
                     },

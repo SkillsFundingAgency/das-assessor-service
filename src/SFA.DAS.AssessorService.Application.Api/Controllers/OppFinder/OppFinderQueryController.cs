@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
-using Swashbuckle.AspNetCore.SwaggerGen;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers
 {
@@ -29,7 +29,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [HttpPost("filter", Name = "GetFilterStandards")]
         [ValidateBadRequest]
         [SwaggerResponse((int)HttpStatusCode.Created, Type = typeof(GetOppFinderFilterStandardsResponse))]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> GetFilterStandards([FromBody] GetOppFinderFilterStandardsRequest request)
         {
@@ -40,7 +40,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [HttpPost("approved", Name = "GetApprovedStandards")]
         [ValidateBadRequest]
         [SwaggerResponse((int)HttpStatusCode.Created, Type = typeof(GetOppFinderApprovedStandardsResponse))]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> GetApprovedStandards([FromBody] GetOppFinderApprovedStandardsRequest request)
         {
@@ -51,7 +51,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [HttpPost("nonapproved", Name = "GetNonApprovedStandards")]
         [ValidateBadRequest]
         [SwaggerResponse((int)HttpStatusCode.Created, Type = typeof(GetOppFinderNonApprovedStandardsResponse))]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> GetNonApprovedStandards([FromBody] GetOppFinderNonApprovedStandardsRequest request)
         {
@@ -62,7 +62,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [HttpPost("approved-details", Name = "GetApprovedStandardDetails")]
         [ValidateBadRequest]
         [SwaggerResponse((int)HttpStatusCode.Created, Type = typeof(GetOppFinderApprovedStandardDetailsResponse))]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> GetApprovedStandardDetails([FromBody] GetOppFinderApprovedStandardDetailsRequest request)
         {
@@ -73,7 +73,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [HttpPost("nonapproved-details", Name = "GetNonApprovedStandardDetails")]
         [ValidateBadRequest]
         [SwaggerResponse((int)HttpStatusCode.Created, Type = typeof(GetOppFinderNonApprovedStandardDetailsResponse))]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> GetNonApprovedStandardDetails([FromBody] GetOppFinderNonApprovedStandardDetailsRequest request)
         {

@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models.Apply;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
-using Swashbuckle.AspNetCore.SwaggerGen;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers.Apply
 {
@@ -56,7 +56,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.Apply
 
         [HttpPost("createApplication", Name = "CreateApplication")]
         [SwaggerResponse((int)HttpStatusCode.Created, Type = typeof(Guid))]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<ActionResult<Guid>> CreateApplication(
             [FromBody] CreateApplicationRequest createApplicationRequest)
@@ -71,7 +71,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.Apply
 
         [HttpPost("submitApplicationSequence", Name = "SubmitApplicationSequence")]
         [SwaggerResponse((int)HttpStatusCode.Created, Type = typeof(bool))]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<ActionResult<Guid>> SubmitApplicationSequence(
             [FromBody] SubmitApplicationSequenceRequest submitApplicationSequenceRequest)
@@ -85,7 +85,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.Apply
 
         [HttpPost("updateStandardData", Name = "UpdateStandardData")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(bool))]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<ActionResult> UpdateStandardData(
             [FromBody] UpdateStandardDataRequest updateStandardDataRequest)
