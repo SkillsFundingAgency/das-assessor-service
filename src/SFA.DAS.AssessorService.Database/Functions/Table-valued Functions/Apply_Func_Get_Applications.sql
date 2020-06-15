@@ -12,32 +12,32 @@ AS
 RETURN 
 (
 	SELECT 
-        ap1.id AS ApplicationId,
+        ap1.Id AS ApplicationId,
         seq.SequenceNo AS SequenceNo,
         org.EndPointAssessorName AS OrganisationName,
         CASE WHEN seq.SequenceNo = 1 THEN NULL
-		        ELSE JSON_VALUE(ap1.Applydata, '$.Apply.StandardName')
+		        ELSE JSON_VALUE(ap1.ApplyData, '$.Apply.StandardName')
         END As StandardName,
         CASE WHEN seq.SequenceNo = 1 THEN NULL
-		        ELSE JSON_VALUE(ap1.Applydata, '$.Apply.StandardCode')
+		        ELSE JSON_VALUE(ap1.ApplyData, '$.Apply.StandardCode')
         END As StandardCode,
 		CASE WHEN seq.SequenceNo = 1 THEN NULL
-		        ELSE JSON_VALUE(ap1.Applydata, '$.Apply.StandardReference')
+		        ELSE JSON_VALUE(ap1.ApplyData, '$.Apply.StandardReference')
         END As StandardReference,
-		CASE WHEN seq.SequenceNo = 1 THEN JSON_VALUE(ap1.Applydata, '$.Apply.LatestInitSubmissionDate')
-		        WHEN seq.SequenceNo = 2 THEN JSON_VALUE(ap1.Applydata, '$.Apply.LatestStandardSubmissionDate')
+		CASE WHEN seq.SequenceNo = 1 THEN JSON_VALUE(ap1.ApplyData, '$.Apply.LatestInitSubmissionDate')
+		        WHEN seq.SequenceNo = 2 THEN JSON_VALUE(ap1.ApplyData, '$.Apply.LatestStandardSubmissionDate')
 		        ELSE NULL
 		END As SubmittedDate,
-        CASE WHEN seq.SequenceNo = 1 THEN JSON_VALUE(ap1.Applydata, '$.Apply.InitSubmissionFeedbackAddedDate')
-		        WHEN seq.SequenceNo = 2 THEN JSON_VALUE(ap1.Applydata, '$.Apply.StandardSubmissionFeedbackAddedDate')
+        CASE WHEN seq.SequenceNo = 1 THEN JSON_VALUE(ap1.ApplyData, '$.Apply.InitSubmissionFeedbackAddedDate')
+		        WHEN seq.SequenceNo = 2 THEN JSON_VALUE(ap1.ApplyData, '$.Apply.StandardSubmissionFeedbackAddedDate')
 		        ELSE NULL
 		END As FeedbackAddedDate,
-		CASE WHEN seq.SequenceNo = 1 THEN JSON_VALUE(ap1.Applydata, '$.Apply.InitSubmissionClosedDate')
-		        WHEN seq.SequenceNo = 2 THEN JSON_VALUE(ap1.Applydata, '$.Apply.StandardSubmissionClosedDate')
+		CASE WHEN seq.SequenceNo = 1 THEN JSON_VALUE(ap1.ApplyData, '$.Apply.InitSubmissionClosedDate')
+		        WHEN seq.SequenceNo = 2 THEN JSON_VALUE(ap1.ApplyData, '$.Apply.StandardSubmissionClosedDate')
 		        ELSE NULL
 	    END As ClosedDate,
-        CASE WHEN seq.SequenceNo = 1 THEN JSON_VALUE(ap1.Applydata, '$.Apply.InitSubmissionCount')
-		        WHEN seq.SequenceNo = 2 THEN JSON_VALUE(ap1.Applydata, '$.Apply.StandardSubmissionsCount')
+        CASE WHEN seq.SequenceNo = 1 THEN JSON_VALUE(ap1.ApplyData, '$.Apply.InitSubmissionCount')
+		        WHEN seq.SequenceNo = 2 THEN JSON_VALUE(ap1.ApplyData, '$.Apply.StandardSubmissionsCount')
 		        ELSE 0
 		END As SubmissionCount,
         ap1.ApplicationStatus As ApplicationStatus,
