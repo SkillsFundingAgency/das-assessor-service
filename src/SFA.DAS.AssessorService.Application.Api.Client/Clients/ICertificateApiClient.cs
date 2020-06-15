@@ -17,5 +17,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         Task<CertificateAddress> GetContactPreviousAddress(string userName, bool isPrivatelyFunded);
         Task<List<CertificateAddress>> GetPreviousAddressess(string userName);
         Task<List<Option>> GetOptions(int stdCode);
+        Task Delete(DeleteCertificateRequest deleteCertificateRequest);
     }
 }
