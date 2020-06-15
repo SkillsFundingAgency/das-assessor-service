@@ -344,7 +344,7 @@ namespace SFA.DAS.AssessorService.Data
 
             if (incidentNumber != null)
             {
-                UpdateIncidentNumber(incidentNumber, cert);
+                UpdateIncidentNumber(incidentNumber, certificate);
             }
 
             if (updateLog)
