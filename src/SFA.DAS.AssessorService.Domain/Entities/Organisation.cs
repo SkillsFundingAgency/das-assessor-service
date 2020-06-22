@@ -28,5 +28,7 @@ namespace SFA.DAS.AssessorService.Domain.Entities
 
         public virtual ICollection<Certificate> Certificates { get; set; } = new List<Certificate>();
         public virtual ICollection<Contact> Contacts { get; set; } = new List<Contact>();
+
+        public virtual ICollection<OrganisationStandard> OrganisationStandards { get; set; } = new List<OrganisationStandard>();
     }
 }
