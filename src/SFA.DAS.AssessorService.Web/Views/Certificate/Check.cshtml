@@ -272,7 +272,14 @@ else
                             Department
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            @Model.Dept
+                            @if (string.IsNullOrEmpty(Model.Dept))
+                            {
+                                <span>Not Applicable</span>
+                            }
+                            else
+                            {
+                                @Model.Dept
+                            }
                         </dd>
                         <dd class="govuk-summary-list__actions">
                             <a class="govuk-link" asp-controller="CertificateRecipient" asp-action="Recipient" asp-route-redirecttocheck="true">
@@ -285,7 +292,14 @@ else
                             Organisation
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            @Model.Employer
+                            @if (string.IsNullOrEmpty(@Model.Employer))
+                            {
+                                <span>Not Applicable</span>
+                            }
+                            else
+                            {
+                                @Model.Employer
+                            }
                         </dd>
                         <dd class="govuk-summary-list__actions">
                             @if (string.IsNullOrEmpty(@Model.AddressLine1) || string.IsNullOrEmpty(@Model.Postcode))
