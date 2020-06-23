@@ -31,7 +31,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
             var validationResult = new ValidationResponse();
 
             var validatedCertificatePrintStatuses = await Validate(request.CertificatePrintStatuses, validationResult);
-            validatedCertificatePrintStatuses.ForEach(async validatedCertificatePrintStatus => 
+            foreach(var validatedCertificatePrintStatus in validatedCertificatePrintStatuses)
             {
                 var certificate = await _certificateRepository.GetCertificate(validatedCertificatePrintStatus.CertificateReference);
                 if (certificate == null)
@@ -52,8 +52,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
 
                     _logger.LogInformation($"Certificate reference {validatedCertificatePrintStatus.CertificateReference} set as {validatedCertificatePrintStatus.Status} in batch {validatedCertificatePrintStatus.BatchNumber}");
                 }
-            });
-
+            }
+            
             return validationResult;
         }
 
