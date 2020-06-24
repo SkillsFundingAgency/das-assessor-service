@@ -113,8 +113,3 @@ END
 
 /* UPDATE THE STAFF REPORT CONFIGURATION FOR EXISTING REPORTS */
 :r .\Update-Staff-Reports-Config.sql
-
-/* START OF CON-1950 */
-:r .\PostDeploymentScripts\con-1950-update-print-recipient.sql
-/* END OF CON-1950 */
-
