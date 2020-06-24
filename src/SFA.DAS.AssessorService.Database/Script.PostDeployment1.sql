@@ -10,6 +10,18 @@ Post-Deployment Script Template
 --------------------------------------------------------------------------------------
 */
 
+/*
+  This is typically used to manipulate the data after running the DAC PAC scripts, where this
+  is required to allow constraints.
+
+  Each script should be stored under the PostDeploymentScripts folder and will be run on each deployment,
+  so all scripts should be written as IDEMPOTENT.
+  
+  When a script has been deployed to PROD it can be disabled by removing the reference below and optionally retained
+  under the PostDeploymentScripts folder for future reference.
+*/
+
+:r .\PostDeploymentScripts\con-1834-add_certificatebatchlogs_data.sql
 
 -- START OF ON-2193
 IF NOT EXISTS (SELECT * FROM EMailTemplates WHERE TemplateName = N'EPAOLoginAccountCreated')

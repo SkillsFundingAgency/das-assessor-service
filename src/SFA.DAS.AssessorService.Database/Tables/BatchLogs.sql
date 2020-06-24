@@ -14,3 +14,5 @@
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
 
+CREATE UNIQUE NONCLUSTERED INDEX [UX_BatchLogs_BatchNumber] ON [dbo].[BatchLogs]([BatchNumber]) 
+GO
