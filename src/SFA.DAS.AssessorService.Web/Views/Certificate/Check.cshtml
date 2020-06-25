@@ -272,7 +272,7 @@ else
                             Department
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            @if (string.IsNullOrEmpty(Model.Dept))
+                            @if (string.IsNullOrEmpty(@Model.Dept))
                             {
                                 <span>Not Applicable</span>
                             }
