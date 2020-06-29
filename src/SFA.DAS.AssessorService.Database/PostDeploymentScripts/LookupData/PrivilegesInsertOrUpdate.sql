@@ -5,7 +5,7 @@
 
 	1) This script uses a temporary table, insert or update the values in the temporary table to apply changes; removed values will
 	not take affect (by design); values which are removed should also be written into the PrivilegesDelete.sql script to remove
-	manually any dependencies, but they must also be removed from the tempoaray table.
+	manually any dependencies, but they must also be removed from the temporary table.
 
 	2) The [Privileges] table has an [Enabled] column which can be used to prevent the privilege allowing access to a feature; this
 	may be preferable to actually deleting the [Privilege]; however the privilege would still be assignable to users in this case.
