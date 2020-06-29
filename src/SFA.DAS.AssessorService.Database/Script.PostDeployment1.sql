@@ -20,6 +20,13 @@ Post-Deployment Script Template
   When a script has been deployed to PROD it can be disabled by removing the reference below and optionally retained
   under the PostDeploymentScripts folder for future reference.
 */
+/*
+	KEEP SECTION FIRST - START DATABASE LOOKUP
+*/
+:r .\PostDeploymentScripts\LookupData\SynchronizeLookupData.sql
+/*
+	KEEP SECTION FIRST - END DATABASE LOOKUP
+*/
 
 :r .\PostDeploymentScripts\con-1834-add_certificatebatchlogs_data.sql
 

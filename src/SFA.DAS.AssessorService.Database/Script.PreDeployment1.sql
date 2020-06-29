@@ -22,6 +22,7 @@ Pre-Deployment Script Template
   under the PreDeploymentScripts folder for future reference.
 */
 
+:r .\PreDeploymentScripts\con-1561_update_privilege_id.sql
 
 
 
