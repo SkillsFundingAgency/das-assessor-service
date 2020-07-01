@@ -36,7 +36,7 @@ namespace SFA.DAS.AssessorService.Domain.Consts
 
         public static bool CanRequestDuplicateCertificate(string status)
         {
-            var allowed = new[] { Reprint, Printed, Delivered, NotDelivered };
+            var allowed = PrintProcessStatus;
             return allowed.Contains(status);
         }
 

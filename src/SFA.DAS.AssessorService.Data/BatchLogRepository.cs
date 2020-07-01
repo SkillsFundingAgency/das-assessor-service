@@ -47,7 +47,7 @@ namespace SFA.DAS.AssessorService.Data
         public async Task<ValidationResponse> UpdateBatchLogBatchWithDataRequest(Guid id, BatchData batchData)
         {
             await _unitOfWork.Connection.ExecuteAsync(
-                "UPDATE[BatchLogs] SET[BatchData] = @batchData WHERE[Id] = @id",
+                "UPDATE [BatchLogs] SET [BatchData] = @batchData WHERE [Id] = @id",
                 param: new
                 {
                     batchData,

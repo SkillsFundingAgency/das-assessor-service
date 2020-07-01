@@ -23,6 +23,7 @@ namespace SFA.DAS.AssessorService.Data
         {
             var batchLog = await _unitOfWork.Connection.QueryAsync<BatchLog>(
                 "SELECT TOP 1 " +
+                    "[Id]," + 
                     "[Period], " +
                     "[BatchCreated], " +
                     "[ScheduledDate], " +

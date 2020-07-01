@@ -319,8 +319,8 @@ namespace SFA.DAS.AssessorService.Data
 
             if (updateLog)
             {
-                await AddCertificateLog(certificate.Id, action, certificate.Status, DateTime.UtcNow,
-                    certificate.CertificateData, certificate.CreatedBy, null, reasonForChange);
+                await AddCertificateLog(cert.Id, action, cert.Status, cert.UpdatedAt.Value,
+                    cert.CertificateData, cert.UpdatedBy, cert.BatchNumber, reasonForChange);
             }
             
             await _context.SaveChangesAsync();
@@ -349,8 +349,8 @@ namespace SFA.DAS.AssessorService.Data
 
             if (updateLog)
             {
-                await AddCertificateLog(certificate.Id, action, certificate.Status, DateTime.UtcNow,
-                    certificate.CertificateData, username, certificate.BatchNumber, reasonForChange);
+                await AddCertificateLog(certificate.Id, action, certificate.Status, certificate.DeletedAt.Value,
+                    certificate.CertificateData, certificate.DeletedBy, certificate.BatchNumber, reasonForChange);
             }
 
             await _context.SaveChangesAsync();
@@ -412,14 +412,17 @@ namespace SFA.DAS.AssessorService.Data
                     certificate.UpdatedBy = SystemUsers.PrintFunction;
                 }
 
-                certificateBatchLog.Status = printStatus;
-                certificateBatchLog.StatusAt = statusAt;
-                certificateBatchLog.UpdatedBy = SystemUsers.PrintFunction;
+                if (statusAt >= certificateBatchLog.StatusAt)
+                {
+                    certificateBatchLog.Status = printStatus;
+                    certificateBatchLog.StatusAt = statusAt;
+                    certificateBatchLog.UpdatedBy = SystemUsers.PrintFunction;
+                }
 
-                var logAction = (printStatus == CertificateStatus.Printed ? CertificateActions.Printed : CertificateActions.Status);
+                var action = (printStatus == CertificateStatus.Printed ? CertificateActions.Printed : CertificateActions.Status);
                 
-                await AddCertificateLog(certificate.Id, logAction, certificateBatchLog.Status, certificateBatchLog.StatusAt,
-                    certificateBatchLog.CertificateData, certificateBatchLog.UpdatedBy, certificateBatchLog.BatchNumber);
+                await AddCertificateLog(certificate.Id, action, printStatus, statusAt,
+                    certificateBatchLog.CertificateData, SystemUsers.PrintFunction, certificateBatchLog.BatchNumber);
                 
                 await _context.SaveChangesAsync();
             }
@@ -527,7 +530,7 @@ namespace SFA.DAS.AssessorService.Data
             }
         }
 
-        public async Task ApproveCertificates(List<ApprovalResult> approvalResults, string userName)
+        public async Task ApproveCertificates(List<ApprovalResult> approvalResults, string username)
         {
             var certificateReferences =
                 approvalResults.Select(q => q.CertificateReference).ToList();
@@ -564,7 +567,7 @@ namespace SFA.DAS.AssessorService.Data
                     certificate.PrivatelyFundedStatus = approvalResult.PrivatelyFundedStatus;
 
                     await AddCertificateLog(certificate.Id, certificate.PrivatelyFundedStatus, certificate.Status, DateTime.UtcNow,
-                        certificate.CertificateData, userName, certificate.BatchNumber, approvalResult.ReasonForChange);
+                        certificate.CertificateData, username, certificate.BatchNumber, approvalResult.ReasonForChange);
                 }
 
                 await _context.SaveChangesAsync();
