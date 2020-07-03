@@ -21,14 +21,17 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
 
     public class StaffReposBatchSearchResult
     {
-        public IEnumerable<CertificateLog> PageOfResults { get; set; }
+        public DateTime SentToPrinterAt { get; set; }
+        public DateTime? PrintedAt { get; set; }
+
+        public IEnumerable<CertificateBatchLogSummary> PageOfResults { get; set; }
 
         public int TotalCount { get; set; }
     }
 
     public class StaffReposBatchLogResult
     {
-        public IEnumerable<BatchLog> PageOfResults { get; set; }
+        public IEnumerable<BatchLogSummary> PageOfResults { get; set; }
 
         public int TotalCount { get; set; }
     }
