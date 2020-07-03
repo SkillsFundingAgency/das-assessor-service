@@ -61,14 +61,6 @@ SELECT ce1.[Id],JSON_MODIFY([CertificateData],'$.StandardReference',st1.Referenc
 ON (ma1.id = up1.id)
 WHEN MATCHED THEN UPDATE SET ma1.[CertificateData] = up1.[newData];
 
-
--- START OF ON-1952
-UPDATE OrganisationType SET FinancialExempt = 1 WHERE Type = 'HEI' AND FinancialExempt = 0
-UPDATE OrganisationType SET FinancialExempt = 1 WHERE Type = 'Public Sector' AND FinancialExempt = 0
-UPDATE OrganisationType SET FinancialExempt = 1 WHERE Type = 'College' AND FinancialExempt = 0 
-UPDATE OrganisationType SET FinancialExempt = 1 WHERE Type = 'Academy or Free School' AND FinancialExempt = 0
--- END OF ON-1952
-
 -- START OF ON-2089
 IF NOT EXISTS (SELECT * FROM EMailTemplates WHERE TemplateName = N'ApplyEPAOResponse')
 BEGIN
@@ -95,33 +87,7 @@ BEGIN
 INSERT [dbo].[EmailTemplates] ([Id],  [TemplateName], [TemplateId], [Recipients], [RecipientTemplate], [CreatedAt],  [UpdatedAt], [DeletedAt]) 
 VALUES (N'a701f4a4-2672-4da9-8005-e6eef10455D0',  N'ApplyEPAOAlertSubmission', N'a56c47c8-6310-4f5c-a3f6-9e996c375557', N'PRA.financialhealth@education.gov.uk', NULL, CAST(N'2019-01-08T11:52:09.2430000' AS DateTime2), NULL, NULL)
 END
-
-
 -- END OF ON-2089
-
--- ON-2197 - PostCode to Region Mapping 
-:r .\Insert-Postcode-to-Regions.sql
 
 -- ON-2222 - remove duplicated certs
 --:r .\Delete-Duplicated-Certs.sql
-
-/* START OF ON-2033 */
-:r .\PostDeploymentScripts\on-2033-anytime_updates.sql
-/* END OF ON-2033 */
-
-/* START OF ON-2210 */
-:r .\PostDeploymentScripts\on-2210-dashboard_api_subscriptions.sql
-/* END OF ON-2210 */
-
-
-/* START OF ON-2295 */
-:r .\PostDeploymentScripts\on-2295-expression-of-interest.sql
-/* END OF ON-2295 */
-
-/* UPDATE THE STAFF REPORT CONFIGURATION FOR EXISTING REPORTS */
-:r .\Update-Staff-Reports-Config.sql
-
-/* START OF CON-1950 */
-:r .\PostDeploymentScripts\con-1950-update-print-recipient.sql
-/* END OF CON-1950 */
-

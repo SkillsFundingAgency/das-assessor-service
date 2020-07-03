@@ -48,5 +48,5 @@ BEGIN TRANSACTION
 		[Certificates].ToBePrinted IS NOT NULL AND [Certificates].BatchNumber IS NOT NULL
 		-- only add the data if it is currently missing
 		AND [CertificateBatchLogs].CertificateReference IS NULL AND [CertificateBatchLogs].BatchNumber IS NULL
-COMMIT TRANSACTION
 
+COMMIT TRANSACTION
