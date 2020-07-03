@@ -22,3 +22,12 @@
 
 :r .\DeliveryAreaDelete.sql
 :r .\DeliveryAreaInsertOrUpdate.sql
+
+:r .\OrganisationTypeDelete.sql
+:r .\OrganisationTypeInsertOrUpdate.sql
+
+:r .\PostCodeRegionDelete.sql
+:r .\PostCodeRegionInsertOrUpdate.sql
+
+:r .\StaffReportsDelete.sql
+:r .\StaffReportsInsertOrUpdate.sql

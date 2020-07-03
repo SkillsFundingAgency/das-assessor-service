@@ -164,6 +164,12 @@
     <None Include="PreDeploymentScripts\con-1561_update_privilege_id.sql" />
     <None Include="PostDeploymentScripts\LookupData\PrivilegesDelete.sql" />
     <None Include="PostDeploymentScripts\LookupData\SynchronizeLookupData.sql" />
+    <None Include="PostDeploymentScripts\LookupData\OrganisationTypeInsertOrUpdate.sql" />
+    <None Include="PostDeploymentScripts\LookupData\OrganisationTypeDelete.sql" />
+    <None Include="PostDeploymentScripts\LookupData\PostCodeRegionInsertOrUpdate.sql" />
+    <None Include="PostDeploymentScripts\LookupData\PostCodeRegionDelete.sql" />
+    <None Include="PostDeploymentScripts\LookupData\StaffReportsInsertOrUpdate.sql" />
+    <None Include="PostDeploymentScripts\LookupData\StaffReportsDelete.sql" />
   </ItemGroup>
   <ItemGroup>
     <ArtifactReference Include="$(DacPacRootPath)\Extensions\Microsoft\SQLDB\Extensions\SqlServer\AzureV12\SqlSchemas\master.dacpac">
