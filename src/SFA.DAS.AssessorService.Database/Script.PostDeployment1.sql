@@ -111,5 +111,10 @@ END
 :r .\PostDeploymentScripts\on-2295-expression-of-interest.sql
 /* END OF ON-2295 */
 
+/* START OF QUAL-39 */
+/* REMOVE CONTACTROLES TABLE */
+:r .\PostDeploymentScripts\qual-39-remove-contact-roles.sql
+/* END OF QUAL-39 */
+
 /* UPDATE THE STAFF REPORT CONFIGURATION FOR EXISTING REPORTS */
 :r .\Update-Staff-Reports-Config.sql

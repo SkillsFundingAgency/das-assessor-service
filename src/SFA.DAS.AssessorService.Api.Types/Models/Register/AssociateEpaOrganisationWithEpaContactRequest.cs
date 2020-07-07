@@ -9,7 +9,6 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Register
         public string OrganisationId { get; set; }
         public string ContactStatus { get; set; }
         public bool MakePrimaryContact { get; set; }
-        public bool AddDefaultRoles { get; set; }
         public bool AddDefaultPrivileges { get; set; }
     }
 }

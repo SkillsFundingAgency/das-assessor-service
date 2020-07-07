@@ -32,13 +32,6 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Login
             OrgQueryRepository = new Mock<IOrganisationQueryRepository>();
 
             ContactQueryRepository = new Mock<IContactQueryRepository>();
-            var roles = new List<ContactRole>
-            {
-                new ContactRole
-                {
-                    RoleName = "SuperUser"
-                }
-            };
             ContactQueryRepository.Setup(r => r.GetBySignInId(It.IsNotIn(Guid.Empty)))
                 .Returns(Task.FromResult(new Contact() {Id = It.IsAny<Guid>(), Status = ContactStatus.Live,
                     OrganisationId = It.IsAny<Guid>(), Username = "Test", Email = "test@email.com" }));
@@ -46,7 +39,6 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Login
                 .Returns(Task.FromResult(new Contact() { Id = Guid.Empty, Status = ContactStatus.InvitePending,
                     OrganisationId = It.IsAny<Guid>(), Username = "Test", Email = "test@email.com" }));
 
-            ContactQueryRepository.Setup(r => r.GetRolesFor(It.IsAny<Guid>())).ReturnsAsync(roles);
             OrgQueryRepository.Setup(r => r.Get(It.IsAny<Guid>())).ReturnsAsync(new Organisation
             {
                 EndPointAssessorName = "SomeName",
