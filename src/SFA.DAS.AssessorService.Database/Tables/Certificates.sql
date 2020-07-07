@@ -30,6 +30,15 @@ GO
  ALTER TABLE [dbo].[Certificates] CHECK CONSTRAINT [FK_Certificates_Organisations_OrganisationId]
 GO
 
+/* REMOVED ON THE MASTER BRANCH PRIOR TO CON-1834 AS THERE WILL BE NO DATA IN [CertificateBatchLogs]
+
+ALTER TABLE [dbo].[Certificates]  ADD  CONSTRAINT [FK_Certificates_CertificateBatchLogs] FOREIGN KEY([CertificateReference], [BatchNumber])
+REFERENCES [dbo].[CertificateBatchLogs] ([CertificateReference], [BatchNumber])
+GO
+
+ALTER TABLE [dbo].[Certficates] CHECK CONSTRAINT [FK_Certificates_CertificateBatchLogs]
+GO
+*/
 
 CREATE UNIQUE INDEX [IXU_Certificates] ON [Certificates] ([Uln], [StandardCode])
 GO

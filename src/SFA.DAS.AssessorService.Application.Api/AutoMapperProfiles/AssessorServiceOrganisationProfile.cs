@@ -1,6 +1,10 @@
 ﻿using AutoMapper;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Api.Types.Models.AO;
+using OrganisationType = SFA.DAS.AssessorService.Api.Types.Models.OrganisationType;
 
 namespace SFA.DAS.AssessorService.Application.Api.AutoMapperProfiles
 {
@@ -68,6 +72,37 @@ namespace SFA.DAS.AssessorService.Application.Api.AutoMapperProfiles
                 .ForMember(dest => dest.OrganisationType, opt => opt.ResolveUsing(source => source.OrganisationType?.Type))
                 .ForMember(dest => dest.CompanySummary, opt => opt.ResolveUsing(source => source.OrganisationData?.CompanySummary))
                 .ForMember(dest => dest.CharitySummary, opt => opt.ResolveUsing(source => source.OrganisationData?.CharitySummary));
+        }
+    }
+
+    public class OrganisationWithStandardResponseMapper : Profile
+    {
+        public OrganisationWithStandardResponseMapper()
+        {
+            CreateMap<Domain.Entities.Organisation, OrganisationStandardResponse>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(source => source.Id))
+                .ForMember(dest => dest.PrimaryContact, opt => opt.MapFrom(source => source.PrimaryContact))
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(source => source.Status))
+                .ForMember(dest => dest.EndPointAssessorName, opt => opt.MapFrom(source => source.EndPointAssessorName))
+                .ForMember(dest => dest.EndPointAssessorOrganisationId, opt => opt.MapFrom(source => source.EndPointAssessorOrganisationId))
+                .ForMember(dest => dest.EndPointAssessorUkprn, opt => opt.MapFrom(source => source.EndPointAssessorUkprn))
+                .ForMember(dest => dest.OrganisationType, opt => opt.ResolveUsing(source => source.OrganisationType?.Type))
+                .ForMember(dest => dest.DeliveryAreasDetails,
+                    opt => opt.MapFrom(src => src.OrganisationStandards.FirstOrDefault().OrganisationStandardDeliveryAreas
+                        .Select(Mapper.Map<Domain.Entities.OrganisationStandardDeliveryArea, OrganisationStandardDeliveryArea>).ToList()))
+                .ForAllOtherMembers(dest => dest.Ignore());
+        }
+    }
+
+    public class OrganisationStandardDeliveryAreaMapper : Profile
+    {
+        public OrganisationStandardDeliveryAreaMapper()
+        {
+            CreateMap<Domain.Entities.OrganisationStandardDeliveryArea, OrganisationStandardDeliveryArea>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(source => source.Id))
+                .ForMember(dest => dest.DeliveryArea, opt => opt.MapFrom(source => source.DeliveryArea.Area))
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(source => source.Status))
+                .ForAllOtherMembers(dest => dest.Ignore());
         }
     }
 }
