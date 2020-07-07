@@ -145,7 +145,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         public async Task<IActionResult> AssociateDefaultRolesAndPrivileges([FromBody] Contact contact)
         {
             _logger.LogInformation($"Associating roles and privileges to a contact");
-            await _contactRepository.AssociateRoleWithContact("SuperUser", contact);
             var privileges = await _contactQueryRepository.GetAllPrivileges();
             await _contactRepository.AssociatePrivilegesWithContact(contact.Id, privileges);
             return NoContent();

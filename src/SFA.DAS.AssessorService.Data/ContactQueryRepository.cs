@@ -99,11 +99,6 @@ namespace SFA.DAS.AssessorService.Data
             return await _assessorDbContext.Contacts.FirstOrDefaultAsync(c => c.SignInId == requestSignInId);
         }
 
-        public async Task<IList<ContactRole>> GetRolesFor(Guid contactId)
-        {
-            return await _assessorDbContext.ContactRoles.Where(cr => cr.ContactId == contactId).ToListAsync();
-        }
-
         public async Task<IList<ContactsPrivilege>> GetPrivilegesFor(Guid contactId)
         {
             return await _assessorDbContext.ContactsPrivileges.Where(cr => cr.ContactId == contactId).Include(cp => cp.Privilege).ToListAsync();   
