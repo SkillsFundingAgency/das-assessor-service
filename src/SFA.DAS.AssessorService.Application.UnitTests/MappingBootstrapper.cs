@@ -1,5 +1,6 @@
 ﻿using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
+using SFA.DAS.AssessorService.Application.Api.AutoMapperProfiles;
 using SFA.DAS.AssessorService.Application.Mapping.CustomResolvers;
 using SFA.DAS.AssessorService.Domain.Entities;
 
@@ -18,7 +19,6 @@ namespace SFA.DAS.AssessorService.Application.UnitTests
 
             AutoMapper.Mapper.Initialize(cfg =>
             {
-                cfg.CreateMap<Organisation, OrganisationResponse>();
                 cfg.CreateMap<CreateOrganisationRequest, Organisation>();
                 cfg.CreateMap<UpdateOrganisationRequest, Organisation>();
                 cfg.CreateMap<CreateContactRequest, Contact>().ReverseMap();
@@ -30,6 +30,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests
 
                 cfg.CreateMap<string, CertificateDataResponse>()
                     .ConvertUsing<JsonMappingConverter<CertificateDataResponse>>();
+                cfg.AddProfile<AssessorServiceOrganisationResponse>();
             });
         }
     }

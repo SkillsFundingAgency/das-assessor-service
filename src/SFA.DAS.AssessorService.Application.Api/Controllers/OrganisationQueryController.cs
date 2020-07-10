@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net;
-using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using AutoMapper;
 using MediatR;
@@ -59,7 +57,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             if (!result.IsValid)
                 throw new BadRequestException(result.Errors[0].ErrorMessage);
 
-            var organisation = Mapper.Map<OrganisationResponse>(await _organisationQueryRepository.GetByUkPrn(ukprn));
+            var organisation = await _mediator.Send(new GetOrganisationByUkprnRequest(ukprn));
             if (organisation == null)
             {
                 var ex = new ResourceNotFoundException(

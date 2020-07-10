@@ -17,8 +17,6 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
         {
             Mapper.Initialize(cfg =>
             {
-                cfg.CreateMap<Organisation, OrganisationResponse>();
-
                 cfg.CreateMap<CreateOrganisationRequest, Organisation>();
                 cfg.CreateMap<UpdateOrganisationRequest, Organisation>();
 
