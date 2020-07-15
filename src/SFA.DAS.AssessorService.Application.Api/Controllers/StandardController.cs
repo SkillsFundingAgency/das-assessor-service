@@ -28,15 +28,13 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             _mediator = mediator;
         }
         [HttpPost("update-standards",Name = "update-standards/GatherAndStoreStandards")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(GatherStandardsResponse))]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(ApiResponse))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(ApiResponse))]
         [SwaggerResponse((int)HttpStatusCode.Conflict, Type = typeof(ApiResponse))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> GatherAndStoreStandards([FromBody] GatherStandardsRequest request)
         {
-            var processDetails = await _mediator.Send(request);
-            _logger.LogInformation(processDetails.ToString());
-            return Ok(new GatherStandardsResponse(processDetails));
+            return Ok(await _mediator.Send(request));
         }
 
         [HttpGet("assessment-organisations/collated-standards", Name = "GetCollatedStandards")]
