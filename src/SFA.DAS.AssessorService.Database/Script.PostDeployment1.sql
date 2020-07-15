@@ -118,3 +118,7 @@ END
 
 /* UPDATE THE STAFF REPORT CONFIGURATION FOR EXISTING REPORTS */
 :r .\Update-Staff-Reports-Config.sql
+
+/* START OF CON-2061-Extract [Recipients] column from [EmailTemplates]*/
+:r .\PostDeploymentScripts\con-2061-email-templates-recipients.sql
+/* END OF CON-2061-Extract [Recipients] column from [EmailTemplates] */

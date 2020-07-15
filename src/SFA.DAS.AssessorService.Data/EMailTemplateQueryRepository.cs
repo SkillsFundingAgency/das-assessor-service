@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
 using SFA.DAS.AssessorService.Application.Interfaces;
@@ -9,11 +8,8 @@ namespace SFA.DAS.AssessorService.Data
 {
     public class EMailTemplateQueryRepository : Repository, IEMailTemplateQueryRepository
     {
-        private readonly AssessorDbContext _assessorDbContext;     
-
-        public EMailTemplateQueryRepository(AssessorDbContext assessorDbContext, IUnitOfWork unitOfWork) : base(unitOfWork)
-        {
-            _assessorDbContext = assessorDbContext;
+        public EMailTemplateQueryRepository(IUnitOfWork unitOfWork) : base(unitOfWork)
+        {            
         }       
 
         public async Task<EmailTemplateSummary> GetEmailTemplate(string templateName)
