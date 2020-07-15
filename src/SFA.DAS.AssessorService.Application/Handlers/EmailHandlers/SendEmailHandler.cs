@@ -32,7 +32,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EmailHandlers
       
         public async Task<Unit> Handle(SendEmailRequest message, CancellationToken cancellationToken)
         {
-            var emailTemplate = message.EmailTemplate;
+            var emailTemplate = message.EmailTemplateSummary;
 
             if (emailTemplate != null && !string.IsNullOrWhiteSpace(message.Email))
             {

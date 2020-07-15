@@ -1,13 +1,10 @@
 ﻿using System;
 using NUnit.Framework;
 using System.Threading;
-using FizzWare.NBuilder;
 using Moq;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Domain.Entities;
-using SFA.DAS.Notifications.Api.Client;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Internal;
 using SFA.DAS.AssessorService.Application.Handlers.EmailHandlers;
 using MediatR;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
@@ -17,6 +14,7 @@ using SFA.DAS.AssessorService.Application.Interfaces;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Newtonsoft.Json;
+using SFA.DAS.AssessorService.Domain.DTOs;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.EmailHandler
 {
@@ -31,7 +29,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.EmailHandler
         private EpaOrganisation EpaOrganisation;
         private ContactsPrivilege ChangeOrganisationDetailsContactsPrivilege;
         private ContactsPrivilege ManageUsersContactsPrivilege;
-        private EMailTemplate _eMailTemplate;
+        private EmailTemplateSummary _eMailTemplateSummary;
 
         private Guid UserId = Guid.NewGuid();
         private Guid ManageUsersPrivilegeId = Guid.NewGuid();
@@ -81,14 +79,14 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.EmailHandler
                 OrganisationId = "EPA0001"
             };
 
-            _eMailTemplate = new EMailTemplate
+            _eMailTemplateSummary = new EmailTemplateSummary
             {
                 TemplateName = "EmailTemplate"
             };
 
             _eMailTemplateQueryRepository = new Mock<IEMailTemplateQueryRepository>();
             _eMailTemplateQueryRepository.Setup(c => c.GetEmailTemplate(It.IsAny<string>()))
-                .ReturnsAsync(_eMailTemplate);
+                .ReturnsAsync(_eMailTemplateSummary);
 
             _mediator = new Mock<IMediator>();
 
@@ -195,7 +193,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.EmailHandler
                     _emailRequestsSent.Add(JsonConvert.SerializeObject(new
                     {
                         sendEmailRequest.Email,
-                        EmailTemplate = sendEmailRequest.EmailTemplate.TemplateName,
+                        EmailTemplate = sendEmailRequest.EmailTemplateSummary.TemplateName,
                         sendEmailRequest.Tokens
                     }));
                 });
@@ -250,7 +248,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.EmailHandler
             var expectedSecondContactEmail = JsonConvert.SerializeObject(new
             {
                 _secondLiveContact.Contact.Email,
-                EmailTemplate = _eMailTemplate.TemplateName,
+                EmailTemplate = _eMailTemplateSummary.TemplateName,
                 Tokens = new
                 {
                     Contact = _secondLiveContact.Contact.GivenNames,
@@ -265,7 +263,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.EmailHandler
             var expectedThirdContactEmail = JsonConvert.SerializeObject(new
             {
                 _thirdLiveContact.Contact.Email,
-                EmailTemplate = _eMailTemplate.TemplateName,
+                EmailTemplate = _eMailTemplateSummary.TemplateName,
                 Tokens = new
                 {
                     Contact = _thirdLiveContact.Contact.GivenNames,
@@ -280,7 +278,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.EmailHandler
             var notExpectedFirstContactEmail = JsonConvert.SerializeObject(new
             {
                 _firstPendingContact.Contact.Email,
-                EmailTemplate = _eMailTemplate.TemplateName,
+                EmailTemplate = _eMailTemplateSummary.TemplateName,
                 Tokens = new
                 {
                     Contact = _firstPendingContact.Contact.GivenNames,
