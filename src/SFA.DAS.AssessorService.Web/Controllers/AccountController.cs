@@ -101,6 +101,12 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         {
             ResetCookies();
 
+            if(!User.Identity.IsAuthenticated)
+            {
+                // If they are no longer authenticated then the cookie has expired. Don't try to signout.
+                return RedirectToAction(nameof(HomeController.Index), "Home");
+            }
+
             return SignOut(
                 CookieAuthenticationDefaults.AuthenticationScheme, OpenIdConnectDefaults.AuthenticationScheme);
         }

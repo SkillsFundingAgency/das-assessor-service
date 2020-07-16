@@ -84,5 +84,13 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                 return await RequestAndDeserialiseAsync<List<Option>>(httpRequest, "Could not get Options");
             }
         }
+
+        public async Task Delete(DeleteCertificateRequest deleteCertificateRequest)
+        {
+            using (var httpRequest = new HttpRequestMessage(HttpMethod.Delete, "api/v1/certificates/DeleteCertificate"))
+            {
+                await PostPutRequest(httpRequest, deleteCertificateRequest);
+            }
+        }        
     }
 }

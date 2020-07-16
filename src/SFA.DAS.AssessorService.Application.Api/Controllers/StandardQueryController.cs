@@ -1,16 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using SFA.DAS.AssessorService.Api.Types;
 using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
+using SFA.DAS.AssessorService.Application.Handlers.ao.GetEpaOrganisationsByStandard;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers
@@ -57,6 +58,33 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         {
             _logger.LogInformation($"Received request to extract pipeline for standards of the organisation {epaoId}");
             return Ok(await _mediator.Send(new EpaoPipelineStandardsExtractRequest(epaoId)));
+        }
+
+        [HttpGet("{standardCode}/organisations")]
+        [ProducesResponseType(typeof(List<EpaOrganisation>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async  Task<IActionResult> GetEpaosByStandard(int standardCode)
+        {
+            if (standardCode == 0)
+            {
+                return BadRequest();
+            }
+
+            var epaOrganisationResponse = await _mediator.Send(new GetEpaOrganisationsByStandardQuery
+            {
+                Standard = standardCode
+            });
+
+            if (!epaOrganisationResponse.EpaOrganisations.Any())
+            {
+                return NotFound();
+            }
+
+            var result = epaOrganisationResponse.EpaOrganisations.Select(Mapper.Map<OrganisationStandardResponse>).ToList();
+
+            return Ok(result);
+
         }
     }
 }

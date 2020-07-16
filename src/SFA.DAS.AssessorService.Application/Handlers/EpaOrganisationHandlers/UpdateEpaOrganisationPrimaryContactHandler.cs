@@ -40,7 +40,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
                 OrganisationId = organisation.OrganisationId,
                 ContactStatus = ContactStatus.Live,
                 MakePrimaryContact = true,
-                AddDefaultRoles = false,
                 AddDefaultPrivileges = false
             });
 
