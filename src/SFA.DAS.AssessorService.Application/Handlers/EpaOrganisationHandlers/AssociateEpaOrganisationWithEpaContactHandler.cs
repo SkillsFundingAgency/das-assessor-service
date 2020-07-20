@@ -28,11 +28,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
             {
                 await _registerRepository.AssociateOrganisationWithContact(contact.Id, organisation, request.ContactStatus, request.MakePrimaryContact ? "MakePrimaryContact" : string.Empty);
 
-                if (request.AddDefaultRoles)
-                {
-                    await _registerRepository.AssociateDefaultRoleWithContact(contact);
-                }
-
                 if (request.AddDefaultPrivileges)
                 {
                     await _registerRepository.AssociateDefaultPrivilegesWithContact(contact);

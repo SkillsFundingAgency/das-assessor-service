@@ -28,6 +28,8 @@ namespace SFA.DAS.AssessorService.Domain.JsonData
         public string Department { get; set; }
         public string FullName { get; set; }
 
+        public string IncidentNumber { get; set; }
+
         public EpaDetails EpaDetails { get; set; }
     }
 

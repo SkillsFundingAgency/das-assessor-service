@@ -185,28 +185,6 @@ namespace SFA.DAS.AssessorService.Data
             }
         }
 
-        public async Task<string> AssociateDefaultRoleWithContact(EpaContact contact)
-        {
-            using(var connection = new SqlConnection(_configuration.SqlConnectionString))
-            {
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
-                
-                connection.Execute(
-                    @"INSERT INTO[ContactRoles] SELECT ab1.*, co1.id contactid FROM( SELECT newid() Id, 'SuperUser' Rolename) ab1 CROSS JOIN[Contacts] co1 WHERE co1.[Status] = 'Live'" +
-                    @" AND EXISTS(SELECT NULL FROM Organisations og1 WHERE og1.id = co1.OrganisationId AND og1.[Status] != 'Deleted')" +
-                    @" AND NOT EXISTS(SELECT NULL FROM[ContactRoles] co2 WHERE co2.ContactId = @Id)" +
-                    @" AND co1.Id = @Id",
-                    new
-                    {
-                        contact.Id,
-                    });
-
-                
-                return contact.Id.ToString();
-            }
-        }
-
         public async Task<string> AssociateAllPrivilegesWithContact(EpaContact contact)
         {
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))
