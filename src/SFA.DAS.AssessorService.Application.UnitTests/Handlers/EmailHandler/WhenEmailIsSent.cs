@@ -11,6 +11,7 @@ using Microsoft.Extensions.Logging.Internal;
 using SFA.DAS.AssessorService.Application.Handlers.EmailHandlers;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.Notifications.Api.Types;
+using SFA.DAS.AssessorService.Domain.DTOs;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.EmailHandler
 {
@@ -35,7 +36,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.EmailHandler
         public void Then_Should_Have_Invoked_NotificationApi_Successfully()
         {
             //arrange
-            var firstEmailTemplate = Builder<EMailTemplate>.CreateNew().Build();
+            var firstEmailTemplate = Builder<EmailTemplateSummary>.CreateNew().Build();
             firstEmailTemplate.TemplateId = "FirstTemplateId"; 
                 
             _message = Builder<SendEmailRequest>.CreateNew().WithConstructor(() =>
@@ -43,8 +44,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.EmailHandler
                     ,
                     new { key = "value" })).Build();
 
-            var secondEmailTemplate = Builder<EMailTemplate>.CreateNew().Build();
-            secondEmailTemplate.RecipientTemplate = null;
+            var secondEmailTemplate = Builder<EmailTemplateSummary>.CreateNew().Build();            
             
             _emailTemplateQueryRepository.Setup(x => x.GetEmailTemplate(firstEmailTemplate.TemplateId)).ReturnsAsync(secondEmailTemplate);
             
@@ -60,23 +60,22 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.EmailHandler
         [Test]
         public void Then_RecipientTemplate_should_be_used_to_send_subsequent_emails()
         {
-            var eMailTemplate1 = Builder<EMailTemplate>.CreateNew().Build();
-            eMailTemplate1.RecipientTemplate = "SecondTemplateId";
+            var eMailTemplate1 = Builder<EmailTemplateSummary>.CreateNew().Build();
+            
             //arrange
             var request = Builder<SendEmailRequest>.CreateNew().WithConstructor(() =>
                 new SendEmailRequest("test@test.com", 
                     eMailTemplate1,
                     new { key = "value" })).Build();
             
-            var secondEmailTemplate = Builder<EMailTemplate>.CreateNew().Build();
+            var secondEmailTemplate = Builder<EmailTemplateSummary>.CreateNew().Build();
             secondEmailTemplate.TemplateId = "SecondTemplateId";
-            secondEmailTemplate.RecipientTemplate = "ThirdTemplateId";
+            
             
             _emailTemplateQueryRepository.Setup(x => x.GetEmailTemplate("SecondTemplateId")).ReturnsAsync(secondEmailTemplate);
             
-            var thirdEmailTemplate = Builder<EMailTemplate>.CreateNew().Build();
-            thirdEmailTemplate.TemplateId = "ThirdTemplateId";
-            thirdEmailTemplate.RecipientTemplate = null;
+            var thirdEmailTemplate = Builder<EmailTemplateSummary>.CreateNew().Build();
+            thirdEmailTemplate.TemplateId = "ThirdTemplateId";            
             
             _emailTemplateQueryRepository.Setup(x => x.GetEmailTemplate("ThirdTemplateId")).ReturnsAsync(thirdEmailTemplate);
             
@@ -91,7 +90,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.EmailHandler
         public void Then_Should_Have_Invoked_NotificationApi_Successfully_With_No_Personalisation_Tokens()
         {
             //arrange
-            var firstEmailTemplate = Builder<EMailTemplate>.CreateNew().Build();
+            var firstEmailTemplate = Builder<EmailTemplateSummary>.CreateNew().Build();
             firstEmailTemplate.TemplateId = "FirstTemplateId"; 
             
             _message = Builder<SendEmailRequest>.CreateNew().WithConstructor(() =>
@@ -99,8 +98,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.EmailHandler
                     firstEmailTemplate,
                     new {})).Build();
 
-            var secondEmailTemplate = Builder<EMailTemplate>.CreateNew().Build();
-            secondEmailTemplate.RecipientTemplate = null;
+            var secondEmailTemplate = Builder<EmailTemplateSummary>.CreateNew().Build();            
             
             _emailTemplateQueryRepository.Setup(x => x.GetEmailTemplate(firstEmailTemplate.TemplateId)).ReturnsAsync(secondEmailTemplate);
 
@@ -118,9 +116,9 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.EmailHandler
             //arrange
             _message = Builder<SendEmailRequest>.CreateNew().WithConstructor(() =>
                 new SendEmailRequest("",
-                    Builder<EMailTemplate>.CreateNew().Build(),
+                    Builder<EmailTemplateSummary>.CreateNew().Build(),
                     new { })).Build();
-            _emailTemplateQueryRepository.Setup(x => x.GetEmailTemplate(It.IsAny<string>())).ReturnsAsync(Builder<EMailTemplate>.CreateNew().Build());
+            _emailTemplateQueryRepository.Setup(x => x.GetEmailTemplate(It.IsAny<string>())).ReturnsAsync(Builder<EmailTemplateSummary>.CreateNew().Build());
             _sendEmailHandler = new SendEmailHandler(_notificationApiMock.Object, _emailTemplateQueryRepository.Object, _loggerMock.Object);
 
             //act
