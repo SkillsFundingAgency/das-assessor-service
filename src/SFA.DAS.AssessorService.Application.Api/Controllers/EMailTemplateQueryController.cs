@@ -7,7 +7,7 @@ using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
 using SFA.DAS.AssessorService.Application.Exceptions;
-using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.AssessorService.Domain.DTOs;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers
@@ -25,7 +25,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         }
 
         [HttpGet("{templateName}", Name = "GetEMailTemplate")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(EMailTemplate))]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(EmailTemplateSummary))]
         [SwaggerResponse((int)HttpStatusCode.NotFound)]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> GetEMailTemplate(string templateName)

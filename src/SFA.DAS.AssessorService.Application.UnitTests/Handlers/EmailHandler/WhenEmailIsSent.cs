@@ -44,7 +44,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.EmailHandler
                     new { key = "value" })).Build();
 
             var secondEmailTemplate = Builder<EmailTemplateSummary>.CreateNew().Build();
-            secondEmailTemplate.RecipientTemplate = null;
+            //secondEmailTemplate.RecipientTemplate = null;
             
             _emailTemplateQueryRepository.Setup(x => x.GetEmailTemplate(firstEmailTemplate.TemplateId)).ReturnsAsync(secondEmailTemplate);
             
@@ -61,7 +61,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.EmailHandler
         public void Then_RecipientTemplate_should_be_used_to_send_subsequent_emails()
         {
             var eMailTemplate1 = Builder<EmailTemplateSummary>.CreateNew().Build();
-            eMailTemplate1.RecipientTemplate = "SecondTemplateId";
+           // eMailTemplate1.RecipientTemplate = "SecondTemplateId";
             //arrange
             var request = Builder<SendEmailRequest>.CreateNew().WithConstructor(() =>
                 new SendEmailRequest("test@test.com", 
@@ -70,13 +70,13 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.EmailHandler
             
             var secondEmailTemplate = Builder<EmailTemplateSummary>.CreateNew().Build();
             secondEmailTemplate.TemplateId = "SecondTemplateId";
-            secondEmailTemplate.RecipientTemplate = "ThirdTemplateId";
+            //secondEmailTemplate.RecipientTemplate = "ThirdTemplateId";
             
             _emailTemplateQueryRepository.Setup(x => x.GetEmailTemplate("SecondTemplateId")).ReturnsAsync(secondEmailTemplate);
             
             var thirdEmailTemplate = Builder<EmailTemplateSummary>.CreateNew().Build();
             thirdEmailTemplate.TemplateId = "ThirdTemplateId";
-            thirdEmailTemplate.RecipientTemplate = null;
+            //thirdEmailTemplate.RecipientTemplate = null;
             
             _emailTemplateQueryRepository.Setup(x => x.GetEmailTemplate("ThirdTemplateId")).ReturnsAsync(thirdEmailTemplate);
             
@@ -100,7 +100,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.EmailHandler
                     new {})).Build();
 
             var secondEmailTemplate = Builder<EmailTemplateSummary>.CreateNew().Build();
-            secondEmailTemplate.RecipientTemplate = null;
+            //secondEmailTemplate.RecipientTemplate = null;
             
             _emailTemplateQueryRepository.Setup(x => x.GetEmailTemplate(firstEmailTemplate.TemplateId)).ReturnsAsync(secondEmailTemplate);
 

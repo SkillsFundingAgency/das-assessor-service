@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
-using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.AssessorService.Domain.DTOs;
 using SFA.DAS.AssessorService.EpaoImporter.Logger;
 
 namespace SFA.DAS.AssessorService.EpaoImporter.Data
@@ -44,12 +44,12 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Data
             return certificates;
         }
 
-        public async Task<EMailTemplate> GetEmailTemplate(string templateName)
+        public async Task<EmailTemplateSummary> GetEmailTemplate(string templateName)
         {           
             var response = await _httpClient.GetAsync(
                 $"/api/v1/emailTemplates/{templateName}");
 
-            var emailTemplate = await response.Content.ReadAsAsync<EMailTemplate>();
+            var emailTemplate = await response.Content.ReadAsAsync<EmailTemplateSummary>();
             if (response.IsSuccessStatusCode)
             {
                 _aggregateLogger.LogInfo($"Status code returned: {response.StatusCode}. Content: {response.Content.ReadAsStringAsync().Result}");

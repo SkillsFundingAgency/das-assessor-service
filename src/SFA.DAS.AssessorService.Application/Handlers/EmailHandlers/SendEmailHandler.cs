@@ -39,8 +39,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EmailHandlers
                 var personalisationTokens = GetPersonalisationTokens(message.Tokens);
                 await SendEmailViaNotificationsApi(message.Email, emailTemplate.TemplateId, emailTemplate.TemplateName, personalisationTokens);
 
-                if(emailTemplate.RecipientTemplate != null)
-                    await SendEmailToRecipients(emailTemplate.RecipientTemplate, personalisationTokens);
+                //if(emailTemplate.RecipientTemplate != null)
+                //    await SendEmailToRecipients(emailTemplate.RecipientTemplate, personalisationTokens);
 
             }
             else if (emailTemplate is null)
@@ -54,23 +54,23 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EmailHandlers
             return Unit.Value;
         }
 
-        private async Task SendEmailToRecipients(string templateName, dynamic tokens)
-        {
-            var emailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(templateName);
+        //private async Task SendEmailToRecipients(string templateName, dynamic tokens)
+        //{
+        //    var emailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(templateName);
 
-            if (emailTemplate != null && emailTemplate.Recipients != null)
-            {
-                var personalisationTokens = GetPersonalisationTokens(tokens);
+        //    if (emailTemplate != null && emailTemplate.Recipients != null)
+        //    {
+        //        var personalisationTokens = GetPersonalisationTokens(tokens);
 
-                var recipients = emailTemplate.Recipients.Split(';').Select(x => x.Trim());
-                foreach (var recipient in recipients)
-                {
-                    await SendEmailViaNotificationsApi(recipient, emailTemplate.TemplateId, emailTemplate.TemplateName, personalisationTokens);
-                }
+        //        var recipients = emailTemplate.Recipients.Split(';').Select(x => x.Trim());
+        //        foreach (var recipient in recipients)
+        //        {
+        //            await SendEmailViaNotificationsApi(recipient, emailTemplate.TemplateId, emailTemplate.TemplateName, personalisationTokens);
+        //        }
 
-                await SendEmailToRecipients(emailTemplate.RecipientTemplate, tokens);
-            }
-        }
+        //        await SendEmailToRecipients(emailTemplate.RecipientTemplate, tokens);
+        //    }
+        //}
 
 
         private Dictionary<string, string> GetPersonalisationTokens(dynamic tokens)
