@@ -11,6 +11,7 @@ using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
+using SFA.DAS.AssessorService.Domain.DTOs;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Exceptions;
 using SFA.DAS.AssessorService.Domain.JsonData;
@@ -216,6 +217,45 @@ namespace SFA.DAS.AssessorService.Data
             }
         }
 
+        public async Task<List<CertificateToBePrintedSummary>> GetCertificatesToBePrinted(List<string> statuses)
+        {
+            var certificatesToBePrinted = 
+                await(
+                    from certificate in _context.Certificates
+                    join organisation in _context.Organisations on certificate.OrganisationId equals organisation.Id
+                    where statuses.Contains(certificate.Status)
+                    let certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData)
+                    select new CertificateToBePrintedSummary
+                    {
+                        Uln = certificate.Uln,
+                        StandardCode = certificate.StandardCode,
+                        ProviderUkPrn = certificate.ProviderUkPrn,
+                        EndPointAssessorOrganisationId = organisation.EndPointAssessorOrganisationId,
+                        EndPointAssessorOrganisationName = organisation.EndPointAssessorName,
+                        CertificateReference = certificate.CertificateReference,
+                        BatchNumber = certificate.BatchNumber.GetValueOrDefault().ToString(),
+                        LearnerGivenNames = certificateData.LearnerGivenNames,
+                        LearnerFamilyName = certificateData.LearnerFamilyName,
+                        StandardName = certificateData.StandardName,
+                        StandardLevel = certificateData.StandardLevel,
+                        ContactName = certificateData.ContactName,
+                        ContactOrganisation = certificateData.ContactOrganisation,
+                        ContactAddLine1 = certificateData.ContactAddLine1,
+                        ContactAddLine2 = certificateData.ContactAddLine2,
+                        ContactAddLine3 = certificateData.ContactAddLine3,
+                        ContactAddLine4 = certificateData.ContactAddLine4,
+                        ContactPostCode = certificateData.ContactPostCode,
+                        AchievementDate = certificateData.AchievementDate,
+                        CourseOption = certificateData.CourseOption,
+                        OverallGrade = certificateData.OverallGrade,
+                        Department = certificateData.Department,
+                        FullName = certificateData.FullName,
+                        Status = certificate.Status
+                    }).ToListAsync();
+
+            return certificatesToBePrinted;
+        }
+
         public async Task<PaginatedList<Certificate>> GetCertificatesForApproval(int pageIndex, int pageSize,string status, string privatelyFundedStatus)
         {
             int count;
@@ -346,7 +386,6 @@ namespace SFA.DAS.AssessorService.Data
             certificateData.IncidentNumber = incidentNumber;
             cert.CertificateData = JsonConvert.SerializeObject(certificateData);
         }
-
         public async Task<Certificate> UpdateProviderName(Guid id, string providerName)
         {
             var certificate = await GetCertificate(id);
@@ -354,7 +393,7 @@ namespace SFA.DAS.AssessorService.Data
             var certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
             certificateData.ProviderName = providerName;
 
-            certificate.CertificateData = JsonConvert.SerializeObject(certificateData);           
+            certificate.CertificateData = JsonConvert.SerializeObject(certificateData);
             await _context.SaveChangesAsync();
 
             return certificate;

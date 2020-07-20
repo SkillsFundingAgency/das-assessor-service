@@ -95,11 +95,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         }
 
         [HttpGet("tobeprinted", Name = "GetCertificatesToBePrinted")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<CertificateResponse>))]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(CertificatesToBePrintedResponse))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> GetCertificatesToBePrinted()
         {
-            return Ok(await _mediator.Send(new GetToBePrintedCertificatesRequest()));
+            return Ok(await _mediator.Send(new GetCertificatesToBePrintedRequest()));
         }
     }
 }
