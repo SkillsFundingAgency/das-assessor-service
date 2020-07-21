@@ -57,34 +57,6 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.EmailHandler
             _notificationApiMock.Verify();
         }
 
-        [Test]
-        public void Then_RecipientTemplate_should_be_used_to_send_subsequent_emails()
-        {
-            var eMailTemplate1 = Builder<EmailTemplateSummary>.CreateNew().Build();
-            
-            //arrange
-            var request = Builder<SendEmailRequest>.CreateNew().WithConstructor(() =>
-                new SendEmailRequest("test@test.com", 
-                    eMailTemplate1,
-                    new { key = "value" })).Build();
-            
-            var secondEmailTemplate = Builder<EmailTemplateSummary>.CreateNew().Build();
-            secondEmailTemplate.TemplateId = "SecondTemplateId";
-            
-            
-            _emailTemplateQueryRepository.Setup(x => x.GetEmailTemplate("SecondTemplateId")).ReturnsAsync(secondEmailTemplate);
-            
-            var thirdEmailTemplate = Builder<EmailTemplateSummary>.CreateNew().Build();
-            thirdEmailTemplate.TemplateId = "ThirdTemplateId";            
-            
-            _emailTemplateQueryRepository.Setup(x => x.GetEmailTemplate("ThirdTemplateId")).ReturnsAsync(thirdEmailTemplate);
-            
-            _sendEmailHandler = new SendEmailHandler(_notificationApiMock.Object, _emailTemplateQueryRepository.Object,_loggerMock.Object);
-            
-            _sendEmailHandler.Handle(request, new CancellationToken()).Wait();
-            
-            _notificationApiMock.Verify(not => not.SendEmail(It.IsAny<Email>()), Times.Exactly(3));
-        }
 
         [Test]
         public void Then_Should_Have_Invoked_NotificationApi_Successfully_With_No_Personalisation_Tokens()
