@@ -17,7 +17,6 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<IEnumerable<Contact>> GetAllContactsIncludePrivileges(string endPointAssessorOrganisationId, bool? withUser = null);
 
         Task<Contact> GetBySignInId(Guid requestSignInId);
-        Task<IList<ContactRole>> GetRolesFor(Guid contactId);
         Task<IList<ContactsPrivilege>> GetPrivilegesFor(Guid contactId);
         Task<IEnumerable<Privilege>> GetAllPrivileges();
         Task<Contact> GetContactById(Guid id);

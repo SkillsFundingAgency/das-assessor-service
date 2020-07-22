@@ -9,7 +9,7 @@ using SFA.DAS.AssessorService.Application.Interfaces;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Standards
 {
-    public class GatherStandardsHandler : IRequestHandler<GatherStandardsRequest, string[]>
+    public class GatherStandardsHandler : IRequestHandler<GatherStandardsRequest>
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IStandardService _standardService;
@@ -24,7 +24,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Standards
             _logger = logger;
         }
 
-        public async Task<string[]> Handle(GatherStandardsRequest request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(GatherStandardsRequest request, CancellationToken cancellationToken)
         {
             var minimumHoursBetweenCollations = 23;
             var dateOfLastCollation = await _standardRepository.GetDateOfLastStandardCollation();
@@ -40,19 +40,17 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Standards
                     _logger.LogInformation("Gathering approved Standard details from all sources in the handler");
                     var approvedStandardDetails = await _standardService.GatherAllApprovedStandardDetails(approvedIfaStandards);
                     _logger.LogInformation("Upserting gathered approved Standards");
-                    var approvedResponse = await _standardRepository.UpsertApprovedStandards(approvedStandardDetails.ToList());
+                    _logger.LogInformation(await _standardRepository.UpsertApprovedStandards(approvedStandardDetails.ToList()));
                     _logger.LogInformation("Processing of approved Standards upsert complete");
 
                     var nonApprovedIfaStandards = ifaStandards.Where(p => p.LarsCode == 0).ToList();
                     _logger.LogInformation("Gathering non-approved Standard details from all sources in the handler");
                     var nonApprovedStandardDetails = _standardService.GatherAllNonApprovedStandardDetails(nonApprovedIfaStandards);
                     _logger.LogInformation("Upserting gathered non-approved Standards");
-                    var nonApprovedResponse = await _standardRepository.UpsertNonApprovedStandards(nonApprovedStandardDetails.ToList());
+                    _logger.LogInformation(await _standardRepository.UpsertNonApprovedStandards(nonApprovedStandardDetails.ToList()));
                     _logger.LogInformation("Processing of non-approved Standards upsert complete");
 
                     _unitOfWork.Commit();
-
-                    return new string[] { approvedResponse, nonApprovedResponse };
                 }
                 catch(Exception ex)
                 {
@@ -62,7 +60,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Standards
                 }
             }
 
-            return new string[] { $"Collation was last done on {dateOfLastCollation.Value}.  There is a minimum of {minimumHoursBetweenCollations} hours between collation runs" };
+            _logger.LogInformation($"Collation was last done on {dateOfLastCollation.Value}.  There is a minimum of {minimumHoursBetweenCollations} hours between collation runs");
+            return Unit.Value;
         }
     }
 }
