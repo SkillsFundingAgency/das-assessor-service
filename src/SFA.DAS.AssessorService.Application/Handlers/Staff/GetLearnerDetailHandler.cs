@@ -15,17 +15,17 @@ using SFA.DAS.AssessorService.Domain.JsonData;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Staff
 {
-    public class LearnerDetailHandler : IRequestHandler<LearnerDetailRequest, LearnerDetail>
+    public class GetLearnerDetailHandler : IRequestHandler<GetLearnerDetailRequest, LearnerDetailResult>
     {
         private readonly IIlrRepository _ilrRepository;
         private readonly ICertificateRepository _certificateRepository;
         private readonly IStaffCertificateRepository _staffCertificateRepository;
-        private readonly ILogger<LearnerDetailHandler> _logger;
+        private readonly ILogger<GetLearnerDetailHandler> _logger;
         private readonly IOrganisationQueryRepository _organisationRepository;
         private readonly IStandardRepository _standardRepository;
 
-        public LearnerDetailHandler(IIlrRepository ilrRepository, ICertificateRepository certificateRepository, 
-            IStaffCertificateRepository staffCertificateRepository, ILogger<LearnerDetailHandler> logger, IOrganisationQueryRepository organisationRepository, IStandardRepository standardRepository)
+        public GetLearnerDetailHandler(IIlrRepository ilrRepository, ICertificateRepository certificateRepository, 
+            IStaffCertificateRepository staffCertificateRepository, ILogger<GetLearnerDetailHandler> logger, IOrganisationQueryRepository organisationRepository, IStandardRepository standardRepository)
         {
             _ilrRepository = ilrRepository;
             _certificateRepository = certificateRepository;
@@ -34,7 +34,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
             _organisationRepository = organisationRepository;
             _standardRepository = standardRepository;
         }
-        public async Task<LearnerDetail> Handle(LearnerDetailRequest request, CancellationToken cancellationToken)
+        public async Task<LearnerDetailResult> Handle(GetLearnerDetailRequest request, CancellationToken cancellationToken)
         {
             var learner = await _ilrRepository.Get(request.Uln, request.StdCode);
             var standard = await _standardRepository.GetStandardCollationByStandardId(request.StdCode);
@@ -55,7 +55,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
                 epao = await _organisationRepository.Get(certificate.OrganisationId) ?? new Organisation();
             }
 
-            var learnerDetail = new LearnerDetail()
+            var learnerDetail = new LearnerDetailResult()
             {
                 Uln = request.Uln,
                 FamilyName = !string.IsNullOrEmpty(certificateData.LearnerFamilyName) ? certificateData.LearnerFamilyName : learner?.FamilyName,
