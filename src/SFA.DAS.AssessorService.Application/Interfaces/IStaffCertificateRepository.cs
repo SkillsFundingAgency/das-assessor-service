@@ -14,25 +14,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<List<CertificateLogSummary>> GetSummaryCertificateLogs(Guid certificateId);
         Task<CertificateLogSummary> GetLatestCertificateLog(Guid certificateId);
 
-        Task<StaffReposBatchSearchResult> GetCertificateLogsForBatch(int batchNumber, int page, int pageSize);
-        Task<StaffReposBatchLogResult> GetBatchLogs(int page, int pageSize);
-    }
-
-
-    public class StaffReposBatchSearchResult
-    {
-        public DateTime SentToPrinterAt { get; set; }
-        public DateTime? PrintedAt { get; set; }
-
-        public IEnumerable<CertificateBatchLogSummary> PageOfResults { get; set; }
-
-        public int TotalCount { get; set; }
-    }
-
-    public class StaffReposBatchLogResult
-    {
-        public IEnumerable<BatchLogSummary> PageOfResults { get; set; }
-
-        public int TotalCount { get; set; }
+        Task<GetCertificateLogsForBatchResult> GetCertificateLogsForBatch(int batchNumber, int page, int pageSize);
+        Task<GetBatchLogsResult> GetBatchLogs(int page, int pageSize);
     }
 }

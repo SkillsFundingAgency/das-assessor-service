@@ -135,9 +135,9 @@ namespace SFA.DAS.AssessorService.Data.Staff
             return result;
         }
 
-        public async Task<StaffReposBatchSearchResult> GetCertificateLogsForBatch(int batchNumber, int page, int pageSize)
+        public async Task<GetCertificateLogsForBatchResult> GetCertificateLogsForBatch(int batchNumber, int page, int pageSize)
         {
-            var results = new StaffReposBatchSearchResult();
+            var results = new GetCertificateLogsForBatchResult();
 
             var sql = @"
                 SELECT
@@ -196,9 +196,9 @@ namespace SFA.DAS.AssessorService.Data.Staff
             return results;
         }
 
-        public async Task<StaffReposBatchLogResult> GetBatchLogs(int page, int pageSize)
+        public async Task<GetBatchLogsResult> GetBatchLogs(int page, int pageSize)
         {
-            var result = new StaffReposBatchLogResult();
+            var result = new GetBatchLogsResult();
 
             var sql = @"
                 SELECT
