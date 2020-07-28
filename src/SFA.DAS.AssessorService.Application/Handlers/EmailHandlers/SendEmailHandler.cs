@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Domain.DTOs;
 using SFA.DAS.Notifications.Api.Client;
 using SFA.DAS.Notifications.Api.Types;
 
@@ -18,37 +19,39 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EmailHandlers
         private const string SystemId = "AssessorService";
         private const string ReplyToAddress = "digital.apprenticeship.service@notifications.service.gov.uk";
         private const string Subject = "EPAO user to approve";
-        private readonly INotificationsApi _notificationsApi;
-        private readonly IEMailTemplateQueryRepository _eMailTemplateQueryRepository;
+        private readonly INotificationsApi _notificationsApi;        
         private readonly ILogger<SendEmailHandler> _logger;
 
-        public SendEmailHandler(INotificationsApi notificationsApi, IEMailTemplateQueryRepository eMailTemplateQueryRepository, ILogger<SendEmailHandler> logger)
+        public SendEmailHandler(INotificationsApi notificationsApi, ILogger<SendEmailHandler> logger)
         {
-            _notificationsApi = notificationsApi;
-            _eMailTemplateQueryRepository = eMailTemplateQueryRepository;
+            _notificationsApi = notificationsApi;            
             _logger = logger;
         }
 
       
         public async Task<Unit> Handle(SendEmailRequest message, CancellationToken cancellationToken)
         {
-            var emailTemplate = message.EmailTemplateSummary;
+            var emailTemplateSummary = message.EmailTemplateSummary;            
+            var personalisationTokens = GetPersonalisationTokens(message.Tokens);
 
-            if (emailTemplate != null && !string.IsNullOrWhiteSpace(message.Email))
-            {
-                var personalisationTokens = GetPersonalisationTokens(message.Tokens);
-                await SendEmailViaNotificationsApi(message.Email, emailTemplate.TemplateId, emailTemplate.TemplateName, personalisationTokens);
+            if (emailTemplateSummary != null && !string.IsNullOrWhiteSpace(message.Email))
+            {                
+                await SendEmailViaNotificationsApi(message.Email, emailTemplateSummary.TemplateId, emailTemplateSummary.TemplateName, personalisationTokens);
             }
-            else if (emailTemplate is null)
+            else if (emailTemplateSummary != null && emailTemplateSummary.Recipients != string.Empty)
+            {
+                await SendEmail(emailTemplateSummary, personalisationTokens);
+            }
+            else if (emailTemplateSummary is null)
             {
                 _logger.LogError($"Cannot find email template ");
             }
             else
             {
-                _logger.LogError($"Cannot send email template {emailTemplate.TemplateName} to '{message.Email}'");
+                _logger.LogError($"Cannot send email template {emailTemplateSummary.TemplateName} to '{message.Email}'");
             };
             return Unit.Value;
-        }
+        }      
 
         private Dictionary<string, string> GetPersonalisationTokens(dynamic tokens)
         {
@@ -58,9 +61,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EmailHandlers
             {
                 try
                 {
-
-                    personalisationTokens =
-                        JsonConvert.DeserializeObject<Dictionary<string, string>>(JsonConvert.SerializeObject(tokens));
+                    personalisationTokens = JsonConvert.DeserializeObject<Dictionary<string, string>>(JsonConvert.SerializeObject(tokens));
                 }
                 catch (JsonException je)
                 {
@@ -69,6 +70,15 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EmailHandlers
             }
 
             return personalisationTokens;
+        }
+
+        private async Task SendEmail(EmailTemplateSummary emailTemplateSummary, dynamic personalisationTokens)
+        {
+            var recipients = emailTemplateSummary.Recipients.Split(';').Select(x => x.Trim());
+            foreach (var recipient in recipients)
+            {
+                await SendEmailViaNotificationsApi(recipient, emailTemplateSummary.TemplateId, emailTemplateSummary.TemplateName, personalisationTokens);
+            }
         }
 
         private async Task SendEmailViaNotificationsApi(string toAddress, string templateId, string templateName, Dictionary<string, string> personalisationTokens)
