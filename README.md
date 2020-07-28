@@ -146,3 +146,24 @@ Execute the analyse.ps1 PowerShell script
 ### Getting Started
 Please follow the [Walkthrough](https://skillsfundingagency.atlassian.net/wiki/spaces/NDL/pages/1533345867/EPAO+-+Walkthrough); which is a non-public Wiki.
 
+### Setup issues
+
+If you get issues with localhost certificate validation when accessing the local login service (e.g. "AuthenticationException: The remote certificate is invalid according to the validation procedure") then run the following command from the login service directory to install the local dev certificates
+
+```dotnet dev-certs https --trust``` 
+
+In the dialog that appears confirm the certificate install. 
+
+If you get issues with the target framework when building (e.g. it is targeting .net core 3 instead of 2.2.) then add a global.json file in each of the projects being run with the required target framework specified as follows
+
+``` 
+{
+  "sdk": {
+    "version": "2.2.207"
+  }
+}
+```
+
+to see the installed SDK versions run the following command
+
+```dotnet --info```
