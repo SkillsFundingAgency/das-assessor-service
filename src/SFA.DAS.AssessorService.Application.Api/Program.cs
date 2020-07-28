@@ -32,7 +32,7 @@ namespace SFA.DAS.AssessorService.Application.Api
             return WebHost.CreateDefaultBuilder(args)
                 .UseStartup<Startup>()
                 .UseApplicationInsights()
-                .UseKestrel()
+                .UseKestrel(options => options.AddServerHeader = false)
                 .UseNLog();
         }
     }
