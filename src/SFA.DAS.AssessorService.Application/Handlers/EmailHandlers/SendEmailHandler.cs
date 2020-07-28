@@ -40,7 +40,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EmailHandlers
             }
             else if (emailTemplateSummary != null && emailTemplateSummary.Recipients != string.Empty)
             {
-                await SendEmail(emailTemplateSummary, personalisationTokens);
+                await SendEmailToTemplateRecipients(emailTemplateSummary, personalisationTokens);
             }
             else if (emailTemplateSummary is null)
             {
@@ -72,7 +72,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EmailHandlers
             return personalisationTokens;
         }
 
-        private async Task SendEmail(EmailTemplateSummary emailTemplateSummary, dynamic personalisationTokens)
+        private async Task SendEmailToTemplateRecipients(EmailTemplateSummary emailTemplateSummary, dynamic personalisationTokens)
         {
             var recipients = emailTemplateSummary.Recipients.Split(';').Select(x => x.Trim());
             foreach (var recipient in recipients)

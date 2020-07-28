@@ -18,3 +18,7 @@ ADD CONSTRAINT [FK_EmailTemplates_EmailTemplatesRecipients]
 FOREIGN KEY([EmailTemplateId])
 REFERENCES [dbo].[EmailTemplates] ([Id]);
 GO
+
+ALTER TABLE [dbo].[EmailTemplatesRecipients]
+ADD CONSTRAINT [UK_EmailTemplateId] UNIQUE (EmailTemplateId)   
+GO  
