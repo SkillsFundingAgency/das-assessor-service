@@ -8,14 +8,15 @@ using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.BatchLogs
 {
-    public class GetBatchLogHandler : IRequestHandler<GetLastBatchLogRequest, BatchLogResponse>
+    public class GetLastBatchLogHandler : IRequestHandler<GetLastBatchLogRequest, BatchLogResponse>
     {
         private readonly IBatchLogQueryRepository _batchLogQueryRepository;
 
-        public GetBatchLogHandler(IBatchLogQueryRepository batchLogQueryRepository)
+        public GetLastBatchLogHandler(IBatchLogQueryRepository batchLogQueryRepository)
         {
             _batchLogQueryRepository = batchLogQueryRepository;
         }
+
         public async Task<BatchLogResponse> Handle(GetLastBatchLogRequest request, CancellationToken cancellationToken)
         {
             var batchLog = await _batchLogQueryRepository.GetLastBatchLog();

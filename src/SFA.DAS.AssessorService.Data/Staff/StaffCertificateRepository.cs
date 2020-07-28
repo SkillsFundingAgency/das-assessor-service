@@ -43,28 +43,19 @@ namespace SFA.DAS.AssessorService.Data.Staff
                 new {ulns})).ToList();
         }
 
-        public async Task<List<CertificateLogSummary>> GetCertificateLogsFor(Guid certificateId,
-            bool allRecords=false)
+        public async Task<List<CertificateLogSummary>> GetAllCertificateLogs(Guid certificateId)
         {
-            if (allRecords)
-            {
-                return (await _connection.QueryAsync<CertificateLogSummary>(
+            return (await _connection.QueryAsync<CertificateLogSummary>(
                     @"SELECT EventTime, Action, ISNULL(c.DisplayName, logs.Username) AS ActionBy, ISNULL(c.Email, '') AS ActionByEmail, logs.Status, logs.CertificateData, logs.BatchNumber, logs.ReasonForChange  
                     FROM CertificateLogs logs
                     LEFT OUTER JOIN Contacts c ON c.Username = logs.Username
                     WHERE CertificateId = @certificateId
-                    ORDER BY EventTime DESC", new {certificateId})).ToList();
-            }
-            else
-            {
-                var cert = await _connection.QueryFirstAsync<Certificate>("SELECT * FROM Certificates WHERE Id = @certificateId",
-                    new {certificateId});
+                    ORDER BY EventTime DESC", new { certificateId })).ToList();
+        }
 
-                if (cert.Status == CertificateStatus.Submitted 
-                    || cert.Status == CertificateStatus.Reprint 
-                    || cert.Status == CertificateStatus.Printed)
-                {
-                    return (await _connection.QueryAsync<CertificateLogSummary>(@"DECLARE @FirstSubmitTime datetime2
+        public async Task<List<CertificateLogSummary>> GetSummaryCertificateLogs(Guid certificateId)
+        {
+            return (await _connection.QueryAsync<CertificateLogSummary>(@"DECLARE @FirstSubmitTime datetime2
 
                                 SELECT @FirstSubmitTime = MIN(EventTime) FROM CertificateLogs WHERE CertificateId = @certificateId AND Action = 'Submit' 
 
@@ -74,31 +65,30 @@ namespace SFA.DAS.AssessorService.Data.Staff
                                 WHERE CertificateId = @certificateId 
                                 AND EventTime >= @FirstSubmitTime
                                 ORDER BY EventTime DESC
-                                ", new {certificateId})).ToList();
-                }
-                else
-                {
-                    return (await _connection.QueryAsync<CertificateLogSummary>(@"
+                                ", new { certificateId })).ToList();
+        }
+
+        public async Task<CertificateLogSummary> GetLatestCertificateLog(Guid certificateId)
+        {
+            return (await _connection.QueryFirstAsync<CertificateLogSummary>(@"
                         SELECT TOP(1) EventTime, Action, ISNULL(c.DisplayName, logs.Username) AS ActionBy, ISNULL(c.Email, '') AS ActionByEmail, logs.Status, logs.CertificateData, logs.BatchNumber, logs.ReasonForChange 
                         FROM CertificateLogs logs
                             LEFT OUTER JOIN Contacts c ON c.Username = logs.Username
                         WHERE CertificateId = @certificateId
-                        ORDER BY EventTime DESC", new {certificateId})).ToList();
-
-                }
-            }
+                        ORDER BY EventTime DESC", new { certificateId }));
         }
 
         public async Task<StaffReposBatchSearchResult> GetCertificateLogsForBatch(int batchNumber, int page, int pageSize)
-        {
-            var results = await _context.CertificateLogs.Where(cl => cl.BatchNumber == batchNumber && cl.Action == CertificateActions.Printed)
+        {            
+            var results = await _context.CertificateLogs.Where(cl => cl.BatchNumber == batchNumber && CertificateStatus.PrintNotificationStatus.Contains(cl.Status))
                 .Include(cl => cl.Certificate)
-                .OrderByDescending(cl => cl.EventTime)
+                .OrderBy(cl => cl.CertificateId)
+                .ThenByDescending(cl => cl.EventTime)
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)  
                 .ToListAsync();
 
-            var count = await _context.CertificateLogs.Where(cl => cl.BatchNumber == batchNumber && cl.Action == CertificateActions.Printed).CountAsync();
+            var count = await _context.CertificateLogs.Where(cl => cl.BatchNumber == batchNumber && CertificateStatus.PrintNotificationStatus.Contains(cl.Status)).CountAsync();
 
             return new StaffReposBatchSearchResult { PageOfResults = results, TotalCount = count };
         }

@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.DTOs.Staff;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Extensions;
@@ -45,7 +46,27 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
             var epao = new Organisation();
             if (certificate != null)
             {
-                logs = await _staffCertificateRepository.GetCertificateLogsFor(certificate.Id, request.AllRecords);
+                if (request.AllRecords)
+                {
+                    logs.AddRange(await _staffCertificateRepository.GetAllCertificateLogs(certificate.Id));
+                }
+                else
+                {
+                    var showSummaryStatus = new[] { CertificateStatus.Submitted }.Concat(CertificateStatus.PrintProcessStatus).ToList();
+                    if (showSummaryStatus.Contains(certificate.Status))
+                    {
+                        logs.AddRange(await _staffCertificateRepository.GetSummaryCertificateLogs(certificate.Id));
+                    }
+                    else
+                    {
+                        var latestCertificateLog = await _staffCertificateRepository.GetLatestCertificateLog(certificate.Id);
+                        if (latestCertificateLog != null)
+                        {
+                            logs.Add(latestCertificateLog);
+                        }
+                    }
+                }
+                
                 if (logs.Count() > 1)
                 {
                     CalculateDifferences(logs);

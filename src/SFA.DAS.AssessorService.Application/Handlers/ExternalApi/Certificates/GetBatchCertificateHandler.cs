@@ -44,7 +44,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
             _logger.LogInformation("GetCertificate Before Get Searching Organisation from db");
             var searchingOrganisation = await _organisationQueryRepository.GetByUkPrn(request.UkPrn);
 
-            var allowedCertificateStatus = new string[] { CertificateStatus.Draft, CertificateStatus.Submitted, CertificateStatus.Printed, CertificateStatus.Reprint };
+            var allowedCertificateStatus = new[] { CertificateStatus.Draft, CertificateStatus.Submitted }.Concat(CertificateStatus.PrintProcessStatus);
 
             if (certificate != null && searchingOrganisation != null && allowedCertificateStatus.Contains(certificate.Status))
             {

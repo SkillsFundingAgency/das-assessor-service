@@ -41,9 +41,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(BatchLogResponse))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> GetBatchLogForPeriodAndBatchNumber(string batchNumber)
+        public async Task<IActionResult> GetBatchLogForBatchNumber(int batchNumber)
         {
-            var batchLog = await _mediator.Send(new GetBatchFromBatchNumberRequest {BatchNumber = batchNumber});
+            var batchLog = await _mediator.Send(new GetForBatchNumberBatchLogRequest {BatchNumber = batchNumber});
             if (batchLog == null)
                 return NoContent();
             return Ok(batchLog);
