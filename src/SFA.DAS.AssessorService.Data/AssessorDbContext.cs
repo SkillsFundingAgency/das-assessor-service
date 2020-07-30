@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.AssessorService.Domain.JsonData.Printing;
 
 namespace SFA.DAS.AssessorService.Data
 {
@@ -22,8 +23,10 @@ namespace SFA.DAS.AssessorService.Data
 
         public virtual DbSet<Certificate> Certificates { get; set; }
         public virtual DbSet<CertificateLog> CertificateLogs { get; set; }
+        public virtual DbSet<CertificateBatchLog> CertificateBatchLogs { get; set; }
         public virtual DbSet<Contact> Contacts { get; set; }
         public virtual DbSet<Organisation> Organisations { get; set; }
+        public virtual DbSet<OrganisationStandard> OrganisationStandard { get; set; }
         public virtual DbSet<Ilr> Ilrs { get; set; }
         public virtual DbSet<EMailTemplate> EMailTemplates { get; set; }
         public virtual DbSet<BatchLog> BatchLogs { get; set; }
@@ -31,7 +34,6 @@ namespace SFA.DAS.AssessorService.Data
         public virtual DbSet<StaffReport> StaffReports { get; set; }
         public virtual DbSet<ContactsPrivilege> ContactsPrivileges { get; set; }
         public virtual DbSet<Privilege> Privileges { get; set; }
-        public virtual DbSet<ContactRole> ContactRoles { get; set; }
         public virtual DbSet<ContactInvitation> ContactInvitations { get; set; }
 
         public override int SaveChanges()
@@ -75,6 +77,31 @@ namespace SFA.DAS.AssessorService.Data
                 .WithMany(s => s.ContactsPrivileges)
                 .HasForeignKey(sc => sc.ContactId);
 
+            modelBuilder.Entity<OrganisationStandard>()
+                .ToTable("OrganisationStandard");
+            modelBuilder.Entity<OrganisationStandard>()
+                .HasOne(c => c.Organisation)
+                .WithMany(c => c.OrganisationStandards)
+                .HasPrincipalKey(c => c.EndPointAssessorOrganisationId)
+                .HasForeignKey(c => c.EndPointAssessorOrganisationId);
+
+            modelBuilder.Entity<OrganisationStandardDeliveryArea>()
+                .ToTable("OrganisationStandardDeliveryArea");
+            modelBuilder.Entity<OrganisationStandardDeliveryArea>()
+                .HasOne(c => c.OrganisationStandard)
+                .WithMany(c => c.OrganisationStandardDeliveryAreas)
+                .HasPrincipalKey(c => c.Id)
+                .HasForeignKey(c => c.OrganisationStandardId);
+            modelBuilder.Entity<OrganisationStandardDeliveryArea>()
+                .HasOne(c => c.DeliveryArea)
+                .WithOne(c => c.OrganisationStandardDeliveryArea)
+                .HasForeignKey<DeliveryArea>(c => c.Id)
+                .HasPrincipalKey<OrganisationStandardDeliveryArea>(c => c.DeliveryAreaId);
+
+            modelBuilder.Entity<DeliveryArea>()
+                .ToTable("DeliveryArea");
+
+            
             SetUpJsonToEntityTypeHandlers(modelBuilder);
         }
 
@@ -91,13 +118,18 @@ namespace SFA.DAS.AssessorService.Data
                 .HasConversion(
                     c => JsonConvert.SerializeObject(c),
                     c => JsonConvert.DeserializeObject<PrivilegeData>(string.IsNullOrWhiteSpace(c) ? "{}" : c));
+            
             modelBuilder.Entity<Organisation>()
                .Property(e => e.OrganisationData)
                .HasConversion(
                    c => JsonConvert.SerializeObject(c),
                    c => JsonConvert.DeserializeObject<OrganisationData>(string.IsNullOrWhiteSpace(c) ? "{}" : c));
 
-           
+            modelBuilder.Entity<BatchLog>()
+                 .Property(e => e.BatchData)
+                 .HasConversion(
+                     c => JsonConvert.SerializeObject(c),
+                     c => JsonConvert.DeserializeObject<BatchData>(string.IsNullOrWhiteSpace(c) ? "{}" : c));
         }
     }
 }

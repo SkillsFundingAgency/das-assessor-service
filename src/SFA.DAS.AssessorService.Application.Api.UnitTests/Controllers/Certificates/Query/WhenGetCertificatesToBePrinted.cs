@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using FizzWare.NBuilder;
@@ -10,6 +9,7 @@ using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Application.Api.Controllers;
+using SFA.DAS.AssessorService.Domain.DTOs;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Certificates.Query
 {
@@ -23,9 +23,12 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Certific
             var mediator = new Mock<IMediator>();
 
             MappingBootstrapper.Initialize();
-            var certificateResponses = Builder<CertificateResponse>.CreateListOfSize(10).Build().ToList();
+            var certificateResponses = new CertificatesToBePrintedResponse()
+            {
+                Certificates = Builder<CertificateToBePrintedSummary>.CreateListOfSize(10).Build().ToList()
+            };
 
-            mediator.Setup(q => q.Send(Moq.It.IsAny<GetToBePrintedCertificatesRequest>(), new CancellationToken()))
+            mediator.Setup(q => q.Send(Moq.It.IsAny<GetCertificatesToBePrintedRequest>(), new CancellationToken()))
                 .Returns(Task.FromResult((certificateResponses)));
 
             var certificateQueryControler = new CertificateQueryController(mediator.Object);

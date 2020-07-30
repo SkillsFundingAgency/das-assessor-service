@@ -6,11 +6,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
+using SFA.DAS.AssessorService.Domain.DTOs;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Exceptions;
 using SFA.DAS.AssessorService.Domain.JsonData;
@@ -54,8 +54,10 @@ namespace SFA.DAS.AssessorService.Data
                 }
                 throw;
             }
-                
-            await UpdateCertificateLog(certificate, CertificateActions.Start, certificate.CreatedBy);
+
+            await AddCertificateLog(certificate.Id, CertificateActions.Start, certificate.Status, DateTime.UtcNow, 
+                certificate.CertificateData, certificate.CreatedBy, certificate.BatchNumber);
+            
             await _context.SaveChangesAsync();
 
             return certificate;
@@ -94,7 +96,9 @@ namespace SFA.DAS.AssessorService.Data
                 throw;
             }
 
-            await UpdateCertificateLog(certificate, CertificateActions.Start, certificate.CreatedBy);
+            await AddCertificateLog(certificate.Id, CertificateActions.Start, certificate.Status, DateTime.UtcNow,
+                certificate.CertificateData, certificate.CreatedBy, certificate.BatchNumber);
+
             await _context.SaveChangesAsync();
 
             return certificate;
@@ -184,6 +188,14 @@ namespace SFA.DAS.AssessorService.Data
             return certificate;
         }
 
+        public async Task<Certificate> GetCertificate(string certificateReference)
+        {
+            var certificate = await
+               _context.Certificates
+                    .FirstOrDefaultAsync(q => q.CertificateReference == certificateReference);
+            return certificate;
+        }
+
         private bool CheckCertificateData(Certificate certificate, string lastName, DateTime? achievementDate)
         {
             var certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
@@ -192,7 +204,8 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<List<Certificate>> GetCompletedCertificatesFor(long uln)
         {
-            return await _context.Certificates.Where(c => c.Uln == uln && (c.Status == CertificateStatus.Reprint || c.Status == CertificateStatus.Printed || c.Status == CertificateStatus.Submitted || c.Status == CertificateStatus.ToBeApproved))
+            var statuses = new[] { CertificateStatus.Submitted, CertificateStatus.ToBeApproved }.Concat(CertificateStatus.PrintProcessStatus).ToList();
+            return await _context.Certificates.Where(c => c.Uln == uln && statuses.Contains(c.Status))
                 .ToListAsync();
         }
 
@@ -214,6 +227,45 @@ namespace SFA.DAS.AssessorService.Data
                     .Where(x => statuses.Contains(x.Status))
                     .ToListAsync();
             }
+        }
+
+        public async Task<List<CertificateToBePrintedSummary>> GetCertificatesToBePrinted(List<string> statuses)
+        {
+            var certificatesToBePrinted = 
+                await(
+                    from certificate in _context.Certificates
+                    join organisation in _context.Organisations on certificate.OrganisationId equals organisation.Id
+                    where statuses.Contains(certificate.Status)
+                    let certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData)
+                    select new CertificateToBePrintedSummary
+                    {
+                        Uln = certificate.Uln,
+                        StandardCode = certificate.StandardCode,
+                        ProviderUkPrn = certificate.ProviderUkPrn,
+                        EndPointAssessorOrganisationId = organisation.EndPointAssessorOrganisationId,
+                        EndPointAssessorOrganisationName = organisation.EndPointAssessorName,
+                        CertificateReference = certificate.CertificateReference,
+                        BatchNumber = certificate.BatchNumber.GetValueOrDefault().ToString(),
+                        LearnerGivenNames = certificateData.LearnerGivenNames,
+                        LearnerFamilyName = certificateData.LearnerFamilyName,
+                        StandardName = certificateData.StandardName,
+                        StandardLevel = certificateData.StandardLevel,
+                        ContactName = certificateData.ContactName,
+                        ContactOrganisation = certificateData.ContactOrganisation,
+                        ContactAddLine1 = certificateData.ContactAddLine1,
+                        ContactAddLine2 = certificateData.ContactAddLine2,
+                        ContactAddLine3 = certificateData.ContactAddLine3,
+                        ContactAddLine4 = certificateData.ContactAddLine4,
+                        ContactPostCode = certificateData.ContactPostCode,
+                        AchievementDate = certificateData.AchievementDate,
+                        CourseOption = certificateData.CourseOption,
+                        OverallGrade = certificateData.OverallGrade,
+                        Department = certificateData.Department,
+                        FullName = certificateData.FullName,
+                        Status = certificate.Status
+                    }).ToListAsync();
+
+            return certificatesToBePrinted;
         }
 
         public async Task<PaginatedList<Certificate>> GetCertificatesForApproval(int pageIndex, int pageSize,string status, string privatelyFundedStatus)
@@ -303,9 +355,12 @@ namespace SFA.DAS.AssessorService.Data
                 cert.DeletedAt = null;
             }
 
+            cert.BatchNumber = null;
+
             if (updateLog)
             {
-                await UpdateCertificateLog(cert, action, username, reasonForChange);
+                await AddCertificateLog(cert.Id, action, cert.Status, cert.UpdatedAt.Value,
+                    cert.CertificateData, cert.UpdatedBy, cert.BatchNumber, reasonForChange);
             }
             
             await _context.SaveChangesAsync();
@@ -313,28 +368,40 @@ namespace SFA.DAS.AssessorService.Data
             return cert;
         }
 
-        public async Task Delete(long uln, int standardCode, string username, string action, bool updateLog = true)
+        public async Task Delete(long uln, int standardCode, string username, string action, bool updateLog = true, string reasonForChange = null, string incidentNumber = null)
         {
-            var cert = await GetCertificate(uln, standardCode);
+            var certificate = await GetCertificate(uln, standardCode);
 
-            if (cert == null) throw new NotFound();
+            if (certificate == null) throw new NotFound();
 
             // If already deleted ignore
-            if (cert.Status == CertificateStatus.Deleted)
+            if (certificate.Status == CertificateStatus.Deleted)
                 return;
 
-            cert.Status = CertificateStatus.Deleted;
-            cert.DeletedBy = username;
-            cert.DeletedAt = DateTime.UtcNow;
+            certificate.Status = CertificateStatus.Deleted;
+            certificate.DeletedBy = username;
+            certificate.DeletedAt = DateTime.UtcNow;
+
+            if (incidentNumber != null)
+            {
+                UpdateIncidentNumber(incidentNumber, certificate);
+            }
 
             if (updateLog)
             {
-                await UpdateCertificateLog(cert, action, username);
+                await AddCertificateLog(certificate.Id, action, certificate.Status, certificate.DeletedAt.Value,
+                    certificate.CertificateData, certificate.DeletedBy, certificate.BatchNumber, reasonForChange);
             }
 
             await _context.SaveChangesAsync();
         }
 
+        private static void UpdateIncidentNumber(string incidentNumber, Certificate cert)
+        {
+            var certificateData = JsonConvert.DeserializeObject<CertificateData>(cert.CertificateData);
+            certificateData.IncidentNumber = incidentNumber;
+            cert.CertificateData = JsonConvert.SerializeObject(certificateData);
+        }
         public async Task<Certificate> UpdateProviderName(Guid id, string providerName)
         {
             var certificate = await GetCertificate(id);
@@ -342,26 +409,26 @@ namespace SFA.DAS.AssessorService.Data
             var certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
             certificateData.ProviderName = providerName;
 
-            certificate.CertificateData = JsonConvert.SerializeObject(certificateData);           
+            certificate.CertificateData = JsonConvert.SerializeObject(certificateData);
             await _context.SaveChangesAsync();
 
             return certificate;
         }
 
-        private async Task UpdateCertificateLog(Certificate cert, string action, string username, string reasonForChange = null)
+        private async Task AddCertificateLog(Guid certificateId, string action, string status, DateTime eventTime, string certificateData, string username, int? batchNumber, string reasonForChange = null)
         {
             if (action != null)
             {
                 var certLog = new CertificateLog
                 {
-                    Action = action,
-                    CertificateId = cert.Id,
-                    EventTime = DateTime.UtcNow,
-                    Status = cert.Status,
                     Id = Guid.NewGuid(),
-                    CertificateData = cert.CertificateData,
+                    CertificateId = certificateId,
+                    Action = action,
+                    Status = status,
+                    EventTime = eventTime,
+                    CertificateData = certificateData,
                     Username = username,
-                    BatchNumber = cert.BatchNumber,
+                    BatchNumber = batchNumber,
                     ReasonForChange = reasonForChange
                 };
 
@@ -369,24 +436,72 @@ namespace SFA.DAS.AssessorService.Data
             }
         }
 
-        public async Task UpdateStatuses(UpdateCertificatesBatchToIndicatePrintedRequest updateCertificatesBatchToIndicatePrintedRequest)
+        public async Task UpdatePrintStatus(Certificate certificate, int batchNumber, string printStatus, DateTime statusAt, bool changesCertificateStatus)
         {
-            var toBePrintedDate = DateTime.UtcNow;
+            var certificateBatchLog =
+                await _context.CertificateBatchLogs.FirstOrDefaultAsync(
+                    q => q.CertificateReference == certificate.CertificateReference && q.BatchNumber == batchNumber);
 
-            foreach (var certificateStatus in updateCertificatesBatchToIndicatePrintedRequest.CertificateStatuses)
+            if (certificateBatchLog != null)
             {
-                var certificate =
-                    await _context.Certificates.FirstAsync(q => q.CertificateReference == certificateStatus.CertificateReference);
+                if (changesCertificateStatus)
+                {
+                    certificate.BatchNumber = batchNumber;
+                    certificate.Status = printStatus;
+                    certificate.UpdatedBy = SystemUsers.PrintFunction;
+                }
 
-                certificate.BatchNumber = updateCertificatesBatchToIndicatePrintedRequest.BatchNumber;
-                certificate.Status = CertificateStatus.Printed;
-                certificate.ToBePrinted = toBePrintedDate;
-                certificate.UpdatedBy = UpdatedBy.PrintFunction;
+                if (statusAt >= certificateBatchLog.StatusAt)
+                {
+                    certificateBatchLog.Status = printStatus;
+                    certificateBatchLog.StatusAt = statusAt;
+                    certificateBatchLog.UpdatedBy = SystemUsers.PrintFunction;
+                }
 
-                await UpdateCertificateLog(certificate, CertificateActions.Printed, UpdatedBy.PrintFunction);
+                var action = (printStatus == CertificateStatus.Printed ? CertificateActions.Printed : CertificateActions.Status);
+                
+                await AddCertificateLog(certificate.Id, action, printStatus, statusAt,
+                    certificateBatchLog.CertificateData, SystemUsers.PrintFunction, certificateBatchLog.BatchNumber);
+                
+                await _context.SaveChangesAsync();
             }
+        }
 
-            await _context.SaveChangesAsync();
+        public async Task UpdateSentToPrinter(Certificate certificate, int batchNumber, DateTime sentToPrinterDate)
+        {
+            if (certificate != null)
+            {
+                await _context.CertificateBatchLogs.AddAsync(new CertificateBatchLog
+                {
+                    CertificateReference = certificate.CertificateReference,
+                    BatchNumber = batchNumber,
+                    CertificateData = certificate.CertificateData,
+                    Status = CertificateStatus.SentToPrinter,
+                    StatusAt = sentToPrinterDate,
+                    CreatedBy = SystemUsers.PrintFunction
+                });
+
+                certificate.BatchNumber = batchNumber;
+                certificate.Status = CertificateStatus.SentToPrinter;
+                certificate.ToBePrinted = sentToPrinterDate;
+                certificate.UpdatedBy = SystemUsers.PrintFunction;
+
+                await AddCertificateLog(certificate.Id, CertificateActions.Status, certificate.Status, certificate.ToBePrinted.Value,
+                        certificate.CertificateData, SystemUsers.PrintFunction, certificate.BatchNumber);
+                
+                await _context.SaveChangesAsync();
+            }            
+        }
+
+        public async Task<List<Certificate>> GetCertificatesForBatchLog(int batchNumber)
+        {
+            var certificaes = await (from certificateBatchLog in _context.CertificateBatchLogs
+                                     join certificate in _context.Certificates on
+                                          certificateBatchLog.CertificateReference equals certificate.CertificateReference
+                                     where certificateBatchLog.BatchNumber == batchNumber
+                                     select certificate).ToListAsync();
+
+            return certificaes;
         }
 
         public async Task<List<CertificateLog>> GetCertificateLogsFor(Guid[] certificateIds)
@@ -404,12 +519,7 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<CertificateAddress> GetContactPreviousAddress(string userName, bool isPrivatelyFunded)
         {
-            var statuses = new List<string>
-            {
-                CertificateStatus.Submitted,
-                CertificateStatus.Printed,
-                CertificateStatus.Reprint
-            };
+            var statuses = new[] { CertificateStatus.Submitted }.Concat(CertificateStatus.PrintProcessStatus).ToList();
 
             var certificateAddress = await (from certificateLog in _context.CertificateLogs
                 join certificate in _context.Certificates on certificateLog.CertificateId equals certificate.Id
@@ -459,7 +569,7 @@ namespace SFA.DAS.AssessorService.Data
             }
         }
 
-        public async Task ApproveCertificates(List<ApprovalResult> approvalResults, string userName)
+        public async Task ApproveCertificates(List<ApprovalResult> approvalResults, string username)
         {
             var certificateReferences =
                 approvalResults.Select(q => q.CertificateReference).ToList();
@@ -495,28 +605,12 @@ namespace SFA.DAS.AssessorService.Data
                     certificate.Status = approvalResult.IsApproved;
                     certificate.PrivatelyFundedStatus = approvalResult.PrivatelyFundedStatus;
 
-                    await UpdateCertificateLog(certificate, approvalResult.PrivatelyFundedStatus, userName,
-                        approvalResult.ReasonForChange);
-
+                    await AddCertificateLog(certificate.Id, certificate.PrivatelyFundedStatus, certificate.Status, DateTime.UtcNow,
+                        certificate.CertificateData, username, certificate.BatchNumber, approvalResult.ReasonForChange);
                 }
-
 
                 await _context.SaveChangesAsync();
             }
-        }
-
-        private bool CheckLastName(string data, string lastName)
-        {
-            var certificateData = JsonConvert.DeserializeObject<CertificateData>(data);
-            return certificateData.LearnerFamilyName == lastName;
-        }
-
-        private bool CheckLastNameExists(Certificate certificate, Certificate c)
-        {
-            var certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
-
-            var certificateDataCompare = JsonConvert.DeserializeObject<CertificateData>(c.CertificateData);
-            return certificateData.LearnerFamilyName == certificateDataCompare.LearnerFamilyName;
         }
     }
 }

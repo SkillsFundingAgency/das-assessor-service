@@ -116,13 +116,6 @@ namespace SFA.DAS.AssessorService.Data.TestData
 
                 context.Contacts.Add(thirdContact);
                 context.SaveChanges();
-
-                
-                context.ContactRoles.AddRange(
-                    new ContactRole(){ContactId = firstContact.Id, Id = Guid.NewGuid(), RoleName = "SuperUser"}, 
-                    new ContactRole(){ContactId = secondContact.Id, Id = Guid.NewGuid(), RoleName = "SuperUser"},  
-                    new ContactRole(){ContactId = thirdContact.Id, Id = Guid.NewGuid(), RoleName = "SuperUser"});
-                
                 
                 // create 30 certificates which will not have any duplicate standard codes
                 for (int i = 0; i <=30; i++)

@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using System.Threading;
 using System.Threading.Tasks;
@@ -21,11 +22,10 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
         {
             var certificate = await _certificateRepository.GetCertificate(request.Id);
 
-            if (certificate.Status == Domain.Consts.CertificateStatus.Printed)
+            if (CertificateStatus.CanRequestDuplicateCertificate(certificate.Status))
             {
-                certificate.Status = Domain.Consts.CertificateStatus.Reprint;
-                await _certificateRepository.Update(certificate, request.Username,
-                    action: Domain.Consts.CertificateActions.Reprint);
+                certificate.Status = CertificateStatus.Reprint;
+                await _certificateRepository.Update(certificate, request.Username, action: CertificateActions.Reprint);
             }
 
             return certificate;

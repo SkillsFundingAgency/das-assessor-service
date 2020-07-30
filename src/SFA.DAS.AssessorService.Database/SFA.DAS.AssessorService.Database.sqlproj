@@ -66,6 +66,7 @@
     <Folder Include="Functions" />
     <Folder Include="Functions\Scalar-valued Functions" />
     <Folder Include="Functions\Table-valued Functions" />
+    <Folder Include="PreDeploymentScripts" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Tables\CertificateLogs.sql" />
@@ -112,7 +113,6 @@
     <Build Include="StoredProcedures\EPAO_Registered_Standards.sql" />
     <Build Include="Tables\ContactsPrivileges.sql" />
     <Build Include="Tables\Privileges.sql" />
-    <Build Include="Tables\ContactRoles.sql" />
     <Build Include="StoredProcedures\GetEPAO_DashboardCounts.sql" />
     <Build Include="StoredProcedures\GetEPAO_Pipelines_Extract.sql" />
     <Build Include="StoredProcedures\StaffSearchCertificates_Count.sql" />
@@ -137,6 +137,10 @@
     <Build Include="StoredProcedures\Apply_Get_ReviewStatusCounts.sql" />
     <Build Include="StoredProcedures\Apply_List_Applications.sql" />
     <Build Include="Tables\Settings.sql" />
+    <Build Include="Tables\CertificateBatchLogs.sql" />
+    <None Include="PreDeploymentScripts\remove_certificatelogs_wasrejected.sql" />
+    <None Include="PostDeploymentScripts\con-1834-add_certificatebatchlogs_data.sql" />
+    <None Include="PostDeploymentScripts\qual-39-remove-contact-roles.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="SFA.DAS.AssessorService.Database.refactorlog" />
