@@ -4,8 +4,6 @@ namespace SFA.DAS.AssessorService.Settings
 {
     public class WebConfiguration : IWebConfiguration
     {
-        public AuthSettings Authentication { get; set; }
-
         [JsonRequired] public ApiAuthentication ApiAuthentication { get; set; }
 
         [JsonRequired] public AzureApiAuthentication AzureApiAuthentication { get; set; }
@@ -14,25 +12,19 @@ namespace SFA.DAS.AssessorService.Settings
 
         [JsonRequired] public NotificationsApiClientConfiguration NotificationsApiClientConfiguration { get; set; }
 
-        [JsonRequired] public CertificateDetails CertificateDetails { get; set; }
-
         [JsonRequired] public string AssessmentOrgsApiClientBaseUrl { get; set; }
 
         [JsonRequired] public string IfaApiClientBaseUrl { get; set; }
 
-        [JsonRequired] public string IFATemplateStorageConnectionString { get; set; }
+        [JsonRequired] public string IFATemplateStorageConnectionString { get; set; } 
 
         [JsonRequired] public string SqlConnectionString { get; set; }
 
-        public string SpecflowDBTestConnectionString { get; set; }
-
         [JsonRequired] public string SessionRedisConnectionString { get; set; }
-        [JsonRequired] public AuthSettings StaffAuthentication { get; set; }
+        
         [JsonRequired] public ClientApiAuthentication QnaApiAuthentication { get; set; }
         [JsonRequired] public string ServiceLink { get; set; }
         [JsonRequired] public DfeSignInConfig DfeSignIn { get; set; }
-
-        [JsonRequired] public string RoatpApiClientBaseUrl { get; set; }
 
         [JsonRequired] public ClientApiAuthentication RoatpApiAuthentication { get; set; }
         [JsonRequired] public string FeedbackUrl { get; set; }
