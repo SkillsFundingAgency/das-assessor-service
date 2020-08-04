@@ -8,7 +8,6 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Models.Request.Certif
         [SwaggerRequired]
         public string ContactName { get; set; }
         public string Department { get; set; }
-        [SwaggerRequired]
         public string Organisation { get; set; }
         [SwaggerRequired]
         public string AddressLine1 { get; set; }
