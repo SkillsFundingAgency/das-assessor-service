@@ -204,8 +204,8 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<List<Certificate>> GetCompletedCertificatesFor(long uln)
         {
-            var statuses = new[] { CertificateStatus.Submitted, CertificateStatus.ToBeApproved }.Concat(CertificateStatus.PrintProcessStatus).ToList();
-            return await _context.Certificates.Where(c => c.Uln == uln && statuses.Contains(c.Status))
+            var completedCertificateStatus = new[] { CertificateStatus.Submitted, CertificateStatus.ToBeApproved }.Concat(CertificateStatus.PrintProcessStatus).ToList();
+            return await _context.Certificates.Where(c => c.Uln == uln && completedCertificateStatus.Contains(c.Status))
                 .ToListAsync();
         }
 
