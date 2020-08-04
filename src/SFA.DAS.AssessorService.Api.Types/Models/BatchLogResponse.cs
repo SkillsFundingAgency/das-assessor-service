@@ -1,5 +1,5 @@
 ﻿using System;
-using SFA.DAS.AssessorService.Domain.JsonData.Printing;
+using Newtonsoft.Json;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models
 {
@@ -15,6 +15,23 @@ namespace SFA.DAS.AssessorService.Api.Types.Models
         public string CertificatesFileName { get; set; }
         public DateTime FileUploadStartTime { get; set; }
         public DateTime FileUploadEndTime { get; set; }
-        public BatchData BatchData { get; set; }
+        public BatchDataResponse BatchData { get; set; }
+    }
+
+    public class BatchDataResponse
+    {
+        public string BatchNumber { get; set; }
+        public DateTime BatchDate { get; set; }
+        public int PostalContactCount { get; set; }
+        public int TotalCertificateCount { get; set; }
+        
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public DateTime? PrintedDate { get; set; }
+        
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public DateTime? PostedDate { get; set; }
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public DateTime? DateOfResponse { get; set; }
     }
 }
