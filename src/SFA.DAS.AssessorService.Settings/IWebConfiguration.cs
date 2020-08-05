@@ -4,7 +4,7 @@
     {
         ApiAuthentication ApiAuthentication { get; set; }
         AzureApiAuthentication AzureApiAuthentication { get; set; }
-        ClientApiAuthentication ClientApiAuthentication { get; set; }
+        ClientApiAuthentication AssessorApiAuthentication { get; set; }
         NotificationsApiClientConfiguration NotificationsApiClientConfiguration { get; set; }
         string AssessmentOrgsApiClientBaseUrl { get; set; }
         string IfaApiClientBaseUrl { get; set; }
@@ -13,7 +13,7 @@
         string SessionRedisConnectionString { get; set; }
         ClientApiAuthentication QnaApiAuthentication { get; set; }
         string ServiceLink { get; set; }
-        DfeSignInConfig DfeSignIn { get; set; }
+        LoginServiceConfig LoginService { get; set; }
         
         ClientApiAuthentication RoatpApiAuthentication { get; set; }
 

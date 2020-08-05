@@ -34,11 +34,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
                     given_name = givenName,
                     family_name = familyName,
                     email,
-                    userRedirect = _config.DfeSignIn.RedirectUri,
-                    callback = _config.DfeSignIn.CallbackUri
+                    userRedirect = _config.LoginService.RedirectUri,
+                    callback = _config.LoginService.CallbackUri
                 });
 
-                var response = await httpClient.PostAsync(_config.DfeSignIn.ApiUri,
+                var response = await httpClient.PostAsync(_config.LoginService.ApiUri,
                     new StringContent(inviteJson, Encoding.UTF8, "application/json")
                 );
 
@@ -72,13 +72,13 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
                     given_name = givenName,
                     family_name = familyName,
                     email,
-                    userRedirect = _config.DfeSignIn.RedirectUri,
-                    callback = _config.DfeSignIn.CallbackUri, 
+                    userRedirect = _config.LoginService.RedirectUri,
+                    callback = _config.LoginService.CallbackUri, 
                     organisationName,
                     inviter
                 });
 
-                var inviteUrl = _config.DfeSignIn.ApiUri + "/inviteToOrganisation";
+                var inviteUrl = _config.LoginService.ApiUri + "/inviteToOrganisation";
                 
                 var response = await httpClient.PostAsync(inviteUrl,
                     new StringContent(inviteJson, Encoding.UTF8, "application/json")
@@ -104,7 +104,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
         private async Task<TokenResponse> GetAuthorizationToken()
         {
             var client = new HttpClient();
-            var disco = await client.GetDiscoveryDocumentAsync(_config.DfeSignIn.MetadataAddress);
+            var disco = await client.GetDiscoveryDocumentAsync(_config.LoginService.MetadataAddress);
             if (disco.IsError)
             {
                 _logger.LogError(disco.Error);
@@ -116,7 +116,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
                 Address = disco.TokenEndpoint,
 
                 ClientId = "client",
-                ClientSecret = _config.DfeSignIn.ApiClientSecret,
+                ClientSecret = _config.LoginService.ApiClientSecret,
                 Scope = "api1"
             }).Result;
 

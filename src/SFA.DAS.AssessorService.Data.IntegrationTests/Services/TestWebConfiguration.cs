@@ -8,7 +8,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Services
     {
         public ApiAuthentication ApiAuthentication { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public AzureApiAuthentication AzureApiAuthentication { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public ClientApiAuthentication ClientApiAuthentication { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public ClientApiAuthentication AssessorApiAuthentication { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public NotificationsApiClientConfiguration NotificationsApiClientConfiguration { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public string AssessmentOrgsApiClientBaseUrl { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public string IfaApiClientBaseUrl { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
@@ -18,7 +18,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Services
         public string SessionRedisConnectionString { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public ClientApiAuthentication QnaApiAuthentication { get; set; }
         public string ServiceLink { get; set; }
-        public DfeSignInConfig DfeSignIn { get; set; }
+        public LoginServiceConfig LoginService { get; set; }
         public ClientApiAuthentication RoatpApiAuthentication { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public ProviderRegisterApiAuthentication ProviderRegisterApiAuthentication { get; set; }
         public ReferenceDataApiAuthentication ReferenceDataApiAuthentication { get; set; }

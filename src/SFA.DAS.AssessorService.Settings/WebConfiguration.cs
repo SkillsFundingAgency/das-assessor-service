@@ -8,7 +8,7 @@ namespace SFA.DAS.AssessorService.Settings
 
         [JsonRequired] public AzureApiAuthentication AzureApiAuthentication { get; set; }
 
-        [JsonRequired] public ClientApiAuthentication ClientApiAuthentication { get; set; }
+        [JsonRequired] public ClientApiAuthentication AssessorApiAuthentication { get; set; }
 
         [JsonRequired] public NotificationsApiClientConfiguration NotificationsApiClientConfiguration { get; set; }
 
@@ -24,7 +24,7 @@ namespace SFA.DAS.AssessorService.Settings
         
         [JsonRequired] public ClientApiAuthentication QnaApiAuthentication { get; set; }
         [JsonRequired] public string ServiceLink { get; set; }
-        [JsonRequired] public DfeSignInConfig DfeSignIn { get; set; }
+        [JsonRequired] public LoginServiceConfig LoginService { get; set; }
 
         [JsonRequired] public ClientApiAuthentication RoatpApiAuthentication { get; set; }
         [JsonRequired] public string FeedbackUrl { get; set; }
