@@ -471,25 +471,32 @@ namespace SFA.DAS.AssessorService.Data
         {
             if (certificate != null)
             {
-                await _context.CertificateBatchLogs.AddAsync(new CertificateBatchLog
+                var certificateBatchLog =
+                    await _context.CertificateBatchLogs.FirstOrDefaultAsync(
+                        q => q.CertificateReference == certificate.CertificateReference && q.BatchNumber == batchNumber);
+
+                if (certificateBatchLog == null)
                 {
-                    CertificateReference = certificate.CertificateReference,
-                    BatchNumber = batchNumber,
-                    CertificateData = certificate.CertificateData,
-                    Status = CertificateStatus.SentToPrinter,
-                    StatusAt = sentToPrinterDate,
-                    CreatedBy = SystemUsers.PrintFunction
-                });
+                    await _context.CertificateBatchLogs.AddAsync(new CertificateBatchLog
+                    {
+                        CertificateReference = certificate.CertificateReference,
+                        BatchNumber = batchNumber,
+                        CertificateData = certificate.CertificateData,
+                        Status = CertificateStatus.SentToPrinter,
+                        StatusAt = sentToPrinterDate,
+                        CreatedBy = SystemUsers.PrintFunction
+                    });
 
-                certificate.BatchNumber = batchNumber;
-                certificate.Status = CertificateStatus.SentToPrinter;
-                certificate.ToBePrinted = sentToPrinterDate;
-                certificate.UpdatedBy = SystemUsers.PrintFunction;
+                    certificate.BatchNumber = batchNumber;
+                    certificate.Status = CertificateStatus.SentToPrinter;
+                    certificate.ToBePrinted = sentToPrinterDate;
+                    certificate.UpdatedBy = SystemUsers.PrintFunction;
 
-                await AddCertificateLog(certificate.Id, CertificateActions.Status, certificate.Status, certificate.ToBePrinted.Value,
-                        certificate.CertificateData, SystemUsers.PrintFunction, certificate.BatchNumber);
-                
-                await _context.SaveChangesAsync();
+                    await AddCertificateLog(certificate.Id, CertificateActions.Status, certificate.Status, certificate.ToBePrinted.Value,
+                            certificate.CertificateData, SystemUsers.PrintFunction, certificate.BatchNumber);
+
+                    await _context.SaveChangesAsync();
+                }
             }            
         }
 
