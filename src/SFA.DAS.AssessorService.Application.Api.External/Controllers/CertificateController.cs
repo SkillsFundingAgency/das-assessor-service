@@ -63,7 +63,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
                 {
                     response.Certificate.Status.CurrentStatus = CertificateStatus.Ready;
                 }
-                else if (response.Certificate.Status.CurrentStatus == CertificateStatus.Printed || response.Certificate.Status.CurrentStatus == CertificateStatus.Reprint)
+                else if (CertificateStatus.HasPrintProcessStatus(response.Certificate.Status.CurrentStatus))
                 {
                     response.Certificate.Status.CurrentStatus = CertificateStatus.Submitted;
                 }

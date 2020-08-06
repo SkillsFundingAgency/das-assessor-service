@@ -18,4 +18,7 @@
     <ProjectReference Include="..\SFA.DAS.AssessorService.Data\SFA.DAS.AssessorService.Data.csproj" />
     <ProjectReference Include="..\SFA.DAS.AssessorService.Domain\SFA.DAS.AssessorService.Domain.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Handlers\BatchLogs\CreateBatchLogHandlerTests\" />
+  </ItemGroup>
 </Project>
