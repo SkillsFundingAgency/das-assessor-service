@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Staff
 {
-    public class StaffCertificateBatchSearchHandler : IRequestHandler<StaffBatchSearchRequest, PaginatedList<StaffBatchSearchResult>>
+    public class StaffCertificateBatchSearchHandler : IRequestHandler<StaffBatchSearchRequest, StaffBatchSearchResponse>
     {
         private readonly IStaffCertificateRepository _staffCertificateRepository;
         private readonly ILogger<StaffCertificateBatchSearchHandler> _logger;
@@ -23,7 +23,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
             _logger = logger;
         }
 
-        public async Task<PaginatedList<StaffBatchSearchResult>> Handle(StaffBatchSearchRequest request, CancellationToken cancellationToken)
+        public async Task<StaffBatchSearchResponse> Handle(StaffBatchSearchRequest request, CancellationToken cancellationToken)
         {
             int pageSize = 10;
 
@@ -35,15 +35,20 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
                     new StaffBatchSearchResult
                     {
                         BatchNumber = sr.BatchNumber,
-                        BatchPrintDate = sr.EventTime,
+                        StatusAt = sr.StatusAt,
                         Status = sr.Status,
                         CertificateData = JsonConvert.DeserializeObject<CertificateData>(sr.CertificateData),
-                        CertificateReference = sr.Certificate?.CertificateReference,
-                        Uln = sr.Certificate?.Uln ?? 0,
-                        StandardCode = sr.Certificate?.StandardCode ?? 0
+                        CertificateReference = sr.CertificateReference,
+                        Uln = sr.Uln,
+                        StandardCode = sr.StandardCode
                     }).ToList();
 
-            return new PaginatedList<StaffBatchSearchResult>(searchResults, result.TotalCount, request.Page, pageSize);
+            return new StaffBatchSearchResponse
+            {
+                SentToPrinterDate = result.SentToPrinterAt,
+                PrintedDate = result.PrintedAt,
+                Results = new PaginatedList<StaffBatchSearchResult>(searchResults, result.TotalCount, request.Page, pageSize)
+            };
         }
     }
 }

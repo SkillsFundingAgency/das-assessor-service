@@ -45,8 +45,9 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.BatchLogs.Print
             }
         };
 
-        private ValidationResponse _updateCertificatesPrintStatusRequestResponse = new ValidationResponse();
+        
         private ValidationResponse _response;
+        private UpdateCertificatesPrintStatusRequest _request;
 
         [SetUp]
         public async Task Arrange()
@@ -60,7 +61,10 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.BatchLogs.Print
             _certificateRepository.Setup(r => r.GetCertificatesForBatchLog(It.IsAny<int>())).Returns(Task.FromResult(_certificates));
 
             _mediator = new Mock<IMediator>();
-            _mediator.Setup(r => r.Send(It.IsAny<UpdateCertificatesPrintStatusRequest>(), It.IsAny<CancellationToken>())).Returns(Task.FromResult(_updateCertificatesPrintStatusRequestResponse));
+            _mediator.Setup(r => r.Send(It.IsAny<UpdateCertificatesPrintStatusRequest>(), It.IsAny<CancellationToken>()))
+                .Returns(Task.FromResult(new ValidationResponse()))
+                .Callback((UpdateCertificatesPrintStatusRequest request, CancellationToken cancellationToken) => { _request = request; });
+
             _logger = new Mock<ILogger<PrintedBatchLogHandler>>();
 
             var sut = new PrintedBatchLogHandler(_batchLogQueryRepository.Object, _certificateRepository.Object, _mediator.Object, _logger.Object);
@@ -78,31 +82,25 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.BatchLogs.Print
         [Test]
         public void Then_certificate_update_print_status_message_is_sent()
         {
-            _mediator.Verify(r => r.Send(It.Is<UpdateCertificatesPrintStatusRequest>(t => t.CertificatePrintStatuses.Count == 2), It.IsAny<CancellationToken>()));
+            _mediator.Verify(r => r.Send(It.IsAny<UpdateCertificatesPrintStatusRequest>(), It.IsAny<CancellationToken>()), Times.Once);
             
-            _mediator.Verify(r => r.Send(It.Is<UpdateCertificatesPrintStatusRequest>(t => t.CertificatePrintStatuses.Exists(p => CompareCertificatePrintStatus(p, new CertificatePrintStatus
+            _request.CertificatePrintStatuses.Should().HaveCount(2);
+
+            _request.CertificatePrintStatuses.Should().ContainEquivalentOf(new CertificatePrintStatus
             {
                 CertificateReference = _certificateReference1,
                 BatchNumber = _batchNumber,
                 Status = CertificateStatus.Printed,
                 StatusChangedAt = _printedAt
-            }))), It.IsAny<CancellationToken>()));
-
-            _mediator.Verify(r => r.Send(It.Is<UpdateCertificatesPrintStatusRequest>(t => t.CertificatePrintStatuses.Exists(p => CompareCertificatePrintStatus(p, new CertificatePrintStatus
+            });
+            
+            _request.CertificatePrintStatuses.Should().ContainEquivalentOf(new CertificatePrintStatus
             {
                 CertificateReference = _certificateReference2,
                 BatchNumber = _batchNumber,
                 Status = CertificateStatus.Printed,
                 StatusChangedAt = _printedAt
-            }))), It.IsAny<CancellationToken>()));
-        }
-
-        private bool CompareCertificatePrintStatus(CertificatePrintStatus first, CertificatePrintStatus second)
-        {
-            return first.CertificateReference == second.CertificateReference &&
-                first.BatchNumber == second.BatchNumber &&
-                first.Status == second.Status &&
-                first.StatusChangedAt == second.StatusChangedAt;
+            });            
         }
     }
 }
