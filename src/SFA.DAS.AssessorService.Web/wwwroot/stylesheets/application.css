@@ -1911,3 +1911,8 @@ th[aria-sort="ascending"] a:after {
 .govuk-summary-list--top-border {
   border-top: 1px solid #bfc1c3;
 }
+
+/*** govuk confirmation panel ***/
+.govuk-panel--confirmation {
+    background: #00703c;
+}
