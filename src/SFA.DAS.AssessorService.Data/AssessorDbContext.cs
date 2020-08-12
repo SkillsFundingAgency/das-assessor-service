@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.AssessorService.Domain.JsonData.Printing;
 
 namespace SFA.DAS.AssessorService.Data
 {
@@ -22,6 +23,7 @@ namespace SFA.DAS.AssessorService.Data
 
         public virtual DbSet<Certificate> Certificates { get; set; }
         public virtual DbSet<CertificateLog> CertificateLogs { get; set; }
+        public virtual DbSet<CertificateBatchLog> CertificateBatchLogs { get; set; }
         public virtual DbSet<Contact> Contacts { get; set; }
         public virtual DbSet<Organisation> Organisations { get; set; }
         public virtual DbSet<OrganisationStandard> OrganisationStandard { get; set; }
@@ -116,13 +118,18 @@ namespace SFA.DAS.AssessorService.Data
                 .HasConversion(
                     c => JsonConvert.SerializeObject(c),
                     c => JsonConvert.DeserializeObject<PrivilegeData>(string.IsNullOrWhiteSpace(c) ? "{}" : c));
+            
             modelBuilder.Entity<Organisation>()
                .Property(e => e.OrganisationData)
                .HasConversion(
                    c => JsonConvert.SerializeObject(c),
                    c => JsonConvert.DeserializeObject<OrganisationData>(string.IsNullOrWhiteSpace(c) ? "{}" : c));
 
-           
+            modelBuilder.Entity<BatchLog>()
+                 .Property(e => e.BatchData)
+                 .HasConversion(
+                     c => JsonConvert.SerializeObject(c),
+                     c => JsonConvert.DeserializeObject<BatchData>(string.IsNullOrWhiteSpace(c) ? "{}" : c));
         }
     }
 }

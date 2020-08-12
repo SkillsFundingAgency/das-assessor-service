@@ -1,119 +1,239 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
-using Dapper;
-using Microsoft.EntityFrameworkCore;
+﻿using Dapper;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.DTOs.Staff;
-using SFA.DAS.AssessorService.Domain.Entities;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Data.Staff
 {
-    public class StaffCertificateRepository : IStaffCertificateRepository
+    public class StaffCertificateRepository : Repository, IStaffCertificateRepository
     {
-        private readonly AssessorDbContext _context;
-        private readonly IDbConnection _connection;
-
-        public StaffCertificateRepository(AssessorDbContext context, IDbConnection connection)
-        {
-            _context = context;
-            _connection = connection;
+        public StaffCertificateRepository(IUnitOfWork unitOfWork)
+            : base(unitOfWork)
+        { 
         }
 
         public async Task<List<CertificateForSearch>> GetCertificatesFor(long[] ulns)
         {
-            return (await _connection.QueryAsync<CertificateForSearch>(@"SELECT 
-                                                                            org.EndPointAssessorOrganisationId,
-                                                                            cert.StandardCode,
-                                                                            JSON_VALUE(CertificateData, '$.StandardName') AS StandardName, 
-                                                                            cert.Uln, 
-                                                                            cert.CertificateReference, 
-                                                                            JSON_VALUE(CertificateData, '$.LearnerGivenNames') AS GivenNames, 
-                                                                            JSON_VALUE(CertificateData, '$.LearnerFamilyName') AS FamilyName, 
-		                                                                    cert.Status,
-		                                                                    cert.UpdatedAt AS LastUpdatedAt
-                                                                            FROM Certificates cert
-																			INNER JOIN Organisations org
-																			ON cert.OrganisationId = org.Id                                                                            
-                                                                            WHERE Uln IN @ulns",
+            var sql = @"
+                SELECT 
+                    org.EndPointAssessorOrganisationId,
+                    cert.StandardCode,
+                    JSON_VALUE(CertificateData, '$.StandardName') AS StandardName, 
+                    cert.Uln, 
+                    cert.CertificateReference, 
+                    JSON_VALUE(CertificateData, '$.LearnerGivenNames') AS GivenNames, 
+                    JSON_VALUE(CertificateData, '$.LearnerFamilyName') AS FamilyName, 
+		            cert.Status,
+		            cert.UpdatedAt AS LastUpdatedAt
+                FROM 
+                    Certificates cert INNER JOIN Organisations org
+                    ON cert.OrganisationId = org.Id
+                WHERE Uln IN @ulns";
 
-                new {ulns})).ToList();
+            var results = await _unitOfWork.Connection.QueryAsync<CertificateForSearch>(
+                sql,
+                param: new { ulns },
+                transaction: _unitOfWork.Transaction);
+
+            return results.ToList();
         }
 
-        public async Task<List<CertificateLogSummary>> GetCertificateLogsFor(Guid certificateId,
-            bool allRecords=false)
+        public async Task<List<CertificateLogSummary>> GetAllCertificateLogs(Guid certificateId)
         {
-            if (allRecords)
-            {
-                return (await _connection.QueryAsync<CertificateLogSummary>(
-                    @"SELECT EventTime, Action, ISNULL(c.DisplayName, logs.Username) AS ActionBy, ISNULL(c.Email, '') AS ActionByEmail, logs.Status, logs.CertificateData, logs.BatchNumber, logs.ReasonForChange  
-                    FROM CertificateLogs logs
-                    LEFT OUTER JOIN Contacts c ON c.Username = logs.Username
-                    WHERE CertificateId = @certificateId
-                    ORDER BY EventTime DESC", new {certificateId})).ToList();
-            }
-            else
-            {
-                var cert = await _connection.QueryFirstAsync<Certificate>("SELECT * FROM Certificates WHERE Id = @certificateId",
-                    new {certificateId});
+            var sql = @"
+                SELECT 
+                    EventTime, 
+                    Action, 
+                    ISNULL(c.DisplayName, logs.Username) AS ActionBy, 
+                    ISNULL(c.Email, '') AS ActionByEmail, 
+                    logs.Status, 
+                    logs.CertificateData, 
+                    logs.BatchNumber, 
+                    logs.ReasonForChange  
+                FROM 
+                    CertificateLogs logs LEFT OUTER JOIN Contacts c 
+                    ON c.Username = logs.Username
+                WHERE 
+                    CertificateId = @certificateId
+                ORDER BY EventTime DESC";
 
-                if (cert.Status == CertificateStatus.Submitted 
-                    || cert.Status == CertificateStatus.Reprint 
-                    || cert.Status == CertificateStatus.Printed)
+            var results = await _unitOfWork.Connection.QueryAsync<CertificateLogSummary>(
+                    sql,
+                    param: new { certificateId },
+                    transaction: _unitOfWork.Transaction);
+
+            return results.ToList();
+        }
+
+        public async Task<List<CertificateLogSummary>> GetSummaryCertificateLogs(Guid certificateId)
+        {
+            var sql = @"
+                DECLARE @FirstSubmitTime datetime2
+
+                SELECT 
+                    @FirstSubmitTime = MIN(EventTime) 
+                FROM 
+                    CertificateLogs 
+                WHERE 
+                    CertificateId = @certificateId 
+                    AND Action = 'Submit' 
+
+                SELECT 
+                    EventTime, 
+                    Action, 
+                    ISNULL(c.DisplayName, logs.Username) AS ActionBy, 
+                    ISNULL(c.Email, '') AS ActionByEmail, 
+                    logs.Status, 
+                    logs.CertificateData, 
+                    logs.BatchNumber, 
+                    logs.ReasonForChange  
+                FROM 
+                    CertificateLogs logs LEFT OUTER JOIN Contacts c 
+                    ON c.Username = logs.Username
+                WHERE 
+                    CertificateId = @certificateId 
+                    AND EventTime >= @FirstSubmitTime
+                    ORDER BY EventTime DESC";
+
+            var results = await _unitOfWork.Connection.QueryAsync<CertificateLogSummary>(
+                    sql,
+                    param: new { certificateId },
+                    transaction: _unitOfWork.Transaction);
+
+            return results.ToList();
+        }
+
+        public async Task<CertificateLogSummary> GetLatestCertificateLog(Guid certificateId)
+        {
+            var sql = @"
+                SELECT TOP(1) 
+                    EventTime, 
+                    Action, 
+                    ISNULL(c.DisplayName, logs.Username) AS ActionBy, 
+                    ISNULL(c.Email, '') AS ActionByEmail, 
+                    logs.Status, 
+                    logs.CertificateData, 
+                    logs.BatchNumber, 
+                    logs.ReasonForChange 
+                FROM 
+                    CertificateLogs logs LEFT OUTER JOIN Contacts c 
+                    ON c.Username = logs.Username
+                WHERE 
+                    CertificateId = @certificateId
+                ORDER BY 
+                    EventTime DESC";
+
+            var result = await _unitOfWork.Connection.QueryFirstAsync<CertificateLogSummary>(
+                sql,
+                param: new { certificateId },
+                transaction: _unitOfWork.Transaction);
+
+            return result;
+        }
+
+        public async Task<GetCertificateLogsForBatchResult> GetCertificateLogsForBatch(int batchNumber, int page, int pageSize)
+        {
+            var results = new GetCertificateLogsForBatchResult();
+
+            var sql = @"
+                SELECT
+					b.FileUploadEndTime SentToPrinterAt,
+					CAST(JSON_VALUE(BatchData, '$.PrintedDate') AS DATETIME2) PrintedAt
+                FROM 
+                    [BatchLogs] b
+                WHERE
+                    b.BatchNumber = @batchNumber;
+
+                SELECT
+                    cbl.BatchNumber,
+                    cbl.StatusAt StatusAt,
+                    cbl.Status,
+                    cbl.CertificateData,
+                    cbl.CertificateReference,
+                    c.Uln,
+                    c.StandardCode
+                FROM 
+                    [CertificateBatchLogs] cbl INNER JOIN [Certificates] c
+                    ON cbl.CertificateReference = c.CertificateReference
+                WHERE
+                    cbl.BatchNumber = @batchNumber AND cbl.Status IN @printProcessStatus
+                ORDER BY
+                    c.CertificateReference
+                OFFSET @Offset ROWS
+                FETCH NEXT @PageSize ROWS ONLY;
+
+                SELECT
+                    COUNT(*)
+                FROM 
+                    [CertificateBatchLogs] cbl INNER JOIN [Certificates] c
+                    ON cbl.CertificateReference = c.CertificateReference
+                WHERE
+                    cbl.BatchNumber = @batchNumber AND cbl.Status IN @printProcessStatus;";
+
+            using (var multi = await _unitOfWork.Connection.QueryMultipleAsync(
+                sql,
+                param: new
                 {
-                    return (await _connection.QueryAsync<CertificateLogSummary>(@"DECLARE @FirstSubmitTime datetime2
+                    BatchNumber = batchNumber,
+                    CertificateStatus.PrintProcessStatus,
+                    OffSet = (page-1) * pageSize,
+                    PageSize = pageSize
+                },
+                transaction: _unitOfWork.Transaction))
+            {
+                var printResult = multi.ReadFirst();
+                results.SentToPrinterAt = printResult.SentToPrinterAt;
+                results.PrintedAt = printResult.PrintedAt;
 
-                                SELECT @FirstSubmitTime = MIN(EventTime) FROM CertificateLogs WHERE CertificateId = @certificateId AND Action = 'Submit' 
-
-                                SELECT EventTime, Action, ISNULL(c.DisplayName, logs.Username) AS ActionBy, ISNULL(c.Email, '') AS ActionByEmail, logs.Status, logs.CertificateData, logs.BatchNumber, logs.ReasonForChange  
-                                FROM CertificateLogs logs
-                                LEFT OUTER JOIN Contacts c ON c.Username = logs.Username
-                                WHERE CertificateId = @certificateId 
-                                AND EventTime >= @FirstSubmitTime
-                                ORDER BY EventTime DESC
-                                ", new {certificateId})).ToList();
-                }
-                else
-                {
-                    return (await _connection.QueryAsync<CertificateLogSummary>(@"
-                        SELECT TOP(1) EventTime, Action, ISNULL(c.DisplayName, logs.Username) AS ActionBy, ISNULL(c.Email, '') AS ActionByEmail, logs.Status, logs.CertificateData, logs.BatchNumber, logs.ReasonForChange 
-                        FROM CertificateLogs logs
-                            LEFT OUTER JOIN Contacts c ON c.Username = logs.Username
-                        WHERE CertificateId = @certificateId
-                        ORDER BY EventTime DESC", new {certificateId})).ToList();
-
-                }
+                results.PageOfResults = multi.Read<CertificateBatchLogSummary>().ToList();
+                results.TotalCount = multi.ReadFirst<int>(); 
             }
+
+            return results;
         }
 
-        public async Task<StaffReposBatchSearchResult> GetCertificateLogsForBatch(int batchNumber, int page, int pageSize)
+        public async Task<GetBatchLogsResult> GetBatchLogs(int page, int pageSize)
         {
-            var results = await _context.CertificateLogs.Where(cl => cl.BatchNumber == batchNumber && cl.Action == CertificateActions.Printed)
-                .Include(cl => cl.Certificate)
-                .OrderByDescending(cl => cl.EventTime)
-                .Skip((page - 1) * pageSize)
-                .Take(pageSize)  
-                .ToListAsync();
+            var result = new GetBatchLogsResult();
 
-            var count = await _context.CertificateLogs.Where(cl => cl.BatchNumber == batchNumber && cl.Action == CertificateActions.Printed).CountAsync();
+            var sql = @"
+                SELECT
+					BatchNumber,
+					ScheduledDate,
+					FileUploadEndTime SentToPrinterAt,
+					NumberOfCertificates NumberOfCertificatesSent,
+					CAST(JSON_VALUE(BatchData, '$.PrintedDate') AS DATETIME2) PrintedAt,
+					JSON_VALUE(BatchData, '$.TotalCertificateCount') NumberOfCertificatesPrinted
+				FROM 
+                    [BatchLogs]
+                ORDER BY
+                    FileUploadEndTime DESC
+                OFFSET @Offset ROWS
+                FETCH NEXT @PageSize ROWS ONLY;
 
-            return new StaffReposBatchSearchResult { PageOfResults = results, TotalCount = count };
-        }
+                SELECT
+                    COUNT(*)
+                FROM 
+                    [BatchLogs];";
 
-        public async Task<StaffReposBatchLogResult> GetBatchLogs(int page, int pageSize)
-        {
-            var results = await _context.BatchLogs
-                .OrderByDescending(q => q.BatchCreated)
-                .Skip((page - 1) * pageSize)
-                .Take(pageSize)
-                .ToListAsync();
+            using (var multi = await _unitOfWork.Connection.QueryMultipleAsync(
+                sql,
+                param: new
+                {
+                    OffSet = (page - 1) * pageSize,
+                    PageSize = pageSize
+                },
+                transaction: _unitOfWork.Transaction))
+            {
+                result.PageOfResults = multi.Read<BatchLogSummary>().ToList();
+                result.TotalCount = multi.ReadFirst<int>();
+            }
 
-            var count = await _context.BatchLogs.CountAsync();
-
-            return new StaffReposBatchLogResult { PageOfResults = results, TotalCount = count };
+            return result;
         }
     }
 }

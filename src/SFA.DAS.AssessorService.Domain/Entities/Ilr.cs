@@ -28,5 +28,11 @@ namespace SFA.DAS.AssessorService.Domain.Entities
         public int? CompletionStatus { get; set; }
         public long? EventId { get;set; }
         public DateTime? PlannedEndDate { get; set; }
+        public string DelLocPostCode { get; set; }
+        public DateTime? LearnActEndDate { get; set; }
+        public int? WithdrawReason { get; set; }
+        public int? Outcome { get; set; }
+        public DateTime? AchDate { get; set; }
+        public string OutGrade { get; set; }
     }
 }
