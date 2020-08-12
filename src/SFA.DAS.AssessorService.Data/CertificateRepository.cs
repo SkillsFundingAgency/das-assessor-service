@@ -442,7 +442,7 @@ namespace SFA.DAS.AssessorService.Data
                 await _context.CertificateBatchLogs.FirstOrDefaultAsync(
                     q => q.CertificateReference == certificate.CertificateReference && q.BatchNumber == batchNumber);
 
-            if (certificateBatchLog != null)
+            if (certificateBatchLog != null && certificateBatchLog.Status != printStatus)
             {
                 if (changesCertificateStatus)
                 {
