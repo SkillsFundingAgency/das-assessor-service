@@ -120,6 +120,7 @@ END
 :r .\Update-Staff-Reports-Config.sql
 
 /* START OF CON-2061-Extract [Recipients] column from [EmailTemplates]*/
-:r .\PostDeploymentScripts\con-2061-clear-entries-recipienttemplate.sql
-:r .\PostDeploymentScripts\con-2061-email-templates-recipients.sql
+:r .\PostDeploymentScripts\con-2061-transfer-recipient-template-to-recipients.sql
+:r .\PostDeploymentScripts\con-2061-create-email-template-recipients.sql
+:r .\PostDeploymentScripts\con-2061-clear-recipients-from-email-templates.sql
 /* END OF CON-2061-Extract [Recipients] column from [EmailTemplates] */
