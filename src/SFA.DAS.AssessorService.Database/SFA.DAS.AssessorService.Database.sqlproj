@@ -141,6 +141,7 @@
     <None Include="PreDeploymentScripts\remove_certificatelogs_wasrejected.sql" />
     <None Include="PostDeploymentScripts\con-1834-add_certificatebatchlogs_data.sql" />
     <None Include="PostDeploymentScripts\qual-39-remove-contact-roles.sql" />
+    <Build Include="Tables\EmailTemplatesRecipients.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="SFA.DAS.AssessorService.Database.refactorlog" />
