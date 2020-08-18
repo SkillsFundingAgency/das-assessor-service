@@ -11,6 +11,12 @@ namespace SFA.DAS.AssessorService.Application.Api.External.SwaggerHelpers.Exampl
     {
         public object GetExamples()
         {
+            var learningDetails = new LearningDetails { CourseOption = "French", OverallGrade = CertificateGrade.Pass, AchievementDate = DateTime.UtcNow, LearningStartDate = DateTime.UtcNow.AddYears(-1), ProviderUkPrn = 12345678, ProviderName = "Example Provider" };
+            var status = new Status { CurrentStatus = CertificateStatus.Submitted };
+            var created = new Created { CreatedAt = DateTime.UtcNow, CreatedBy = "Fred Bloggs" };
+            var submitted = new Submitted { SubmittedAt = DateTime.UtcNow, SubmittedBy = "Fred Bloggs" };
+
+
             return new List<SubmitCertificateResponse>
             {
                 new SubmitCertificateResponse
@@ -24,12 +30,12 @@ namespace SFA.DAS.AssessorService.Application.Api.External.SwaggerHelpers.Exampl
                             CertificateReference = "09876543",
                             Standard = new Standard { StandardCode = 1, StandardReference = "ST0001", Level = 1, StandardName = "Example Standard" },
                             Learner = new Learner { GivenNames = "John", FamilyName = "Smith", Uln = 1234567890 },
-                            LearningDetails = new LearningDetails { CourseOption = "French", OverallGrade = CertificateGrade.Pass, AchievementDate = DateTime.UtcNow, LearningStartDate = DateTime.UtcNow.AddYears(-1), ProviderUkPrn = 12345678, ProviderName = "Example Provider" },
+                            LearningDetails = learningDetails,
                             PostalContact = new PostalContact { ContactName = "Shreya Smith", Department = "Human Resources", Organisation = "Contoso Ltd", AddressLine1 = "123 Test Road", AddressLine2 = "Green Park", City = "Townsville", PostCode = "ZY9 9ZZ" }
                         },
-                        Status = new Status { CurrentStatus = CertificateStatus.Submitted },
-                        Created = new Created { CreatedAt = DateTime.UtcNow, CreatedBy = "Fred Bloggs" },
-                        Submitted = new Submitted { SubmittedAt = DateTime.UtcNow, SubmittedBy = "Fred Bloggs" }
+                        Status = status,
+                        Created = created,
+                        Submitted = submitted
                     }
                 },
                 new SubmitCertificateResponse
@@ -43,12 +49,12 @@ namespace SFA.DAS.AssessorService.Application.Api.External.SwaggerHelpers.Exampl
                             CertificateReference = "99999999",
                             Standard = new Standard { StandardCode = 99, StandardReference = "ST0099", Level = 1, StandardName = "Example Standard" },
                             Learner = new Learner { GivenNames = "James", FamilyName = "Hamilton", Uln = 9999999999 },
-                            LearningDetails = new LearningDetails { CourseOption = null, OverallGrade = CertificateGrade.Merit, AchievementDate = DateTime.UtcNow, LearningStartDate = DateTime.UtcNow.AddYears(-1), ProviderUkPrn = 12345678, ProviderName = "Example Provider" },
+                            LearningDetails = learningDetails,
                             PostalContact = new PostalContact { ContactName = "Ken Sanchez", Department = "Human Resources", Organisation = "AdventureWorks Cycles", AddressLine1 = "Silicon Business Park", City = "Bothell", PostCode = "ZY9 9ZZ" }
                         },
-                        Status = new Status { CurrentStatus = CertificateStatus.Submitted },
-                        Created = new Created { CreatedAt = DateTime.UtcNow, CreatedBy = "Fred Bloggs" },
-                        Submitted = new Submitted { SubmittedAt = DateTime.UtcNow, SubmittedBy = "Fred Bloggs" }
+                        Status = status,
+                        Created = created,
+                        Submitted = submitted
                     }
                 },
                 new SubmitCertificateResponse
@@ -62,12 +68,12 @@ namespace SFA.DAS.AssessorService.Application.Api.External.SwaggerHelpers.Exampl
                             CertificateReference = "333333333",
                             Standard = new Standard { StandardCode = 2, StandardReference = "ST0287", Level = 1, StandardName = "Other Example Standard" },
                             Learner = new Learner { FamilyName = "Jones", Uln = 6666666666 },
-                            LearningDetails = new LearningDetails { CourseOption = "Mechanics", OverallGrade = CertificateGrade.Pass, AchievementDate = DateTime.UtcNow, LearningStartDate = DateTime.UtcNow.AddYears(-1), ProviderUkPrn = 12345678, ProviderName = "Example Provider" },
+                            LearningDetails = learningDetails,
                             PostalContact = new PostalContact { ContactName = "Ken Sanchez", Department = null, Organisation = null, AddressLine1 = "88 Thinking Road", AddressLine2 = "Green Lane", City = "Brillville", PostCode = "BR9 8YE" }
                         },
-                        Status = new Status { CurrentStatus = CertificateStatus.Submitted },
-                        Created = new Created { CreatedAt = DateTime.UtcNow, CreatedBy = "Fred Bloggs" },
-                        Submitted = new Submitted { SubmittedAt = DateTime.UtcNow, SubmittedBy = "Fred Bloggs" }
+                         Status = status,
+                        Created = created,
+                        Submitted = submitted
                     }
                 },
                 new SubmitCertificateResponse
