@@ -8,18 +8,18 @@ using SFA.DAS.AssessorService.Application.Interfaces;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.BatchLogs
 {
-    public class UpdateBatchLogBatchDataHandler : IRequestHandler<UpdateBatchLogBatchDataRequest, ValidationResponse>
+    public class UpdateBatchDataBatchLogHandler : IRequestHandler<UpdateBatchDataBatchLogRequest, ValidationResponse>
     {
         private readonly IBatchLogRepository _batchLogRepository;
-        private readonly ILogger<UpdateBatchLogBatchDataHandler> _logger;
+        private readonly ILogger<UpdateBatchDataBatchLogHandler> _logger;
 
-        public UpdateBatchLogBatchDataHandler(IBatchLogRepository batchLogRepository, ILogger<UpdateBatchLogBatchDataHandler> logger)
+        public UpdateBatchDataBatchLogHandler(IBatchLogRepository batchLogRepository, ILogger<UpdateBatchDataBatchLogHandler> logger)
         {
             _batchLogRepository = batchLogRepository;
             _logger = logger;
         }
 
-        public async Task<ValidationResponse> Handle(UpdateBatchLogBatchDataRequest request, CancellationToken cancellationToken)
+        public async Task<ValidationResponse> Handle(UpdateBatchDataBatchLogRequest request, CancellationToken cancellationToken)
         {
             return await _batchLogRepository.UpdateBatchLogBatchWithDataRequest(request.Id, request.BatchData);
         }

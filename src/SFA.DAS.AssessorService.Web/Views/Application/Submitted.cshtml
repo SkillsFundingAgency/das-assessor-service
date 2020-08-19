@@ -7,7 +7,6 @@
 <main class="govuk-main-wrapper govuk-main-wrapper--l" id="main-content" role="main">
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-
             <div class="govuk-panel govuk-panel--confirmation">
                 <h1 class="govuk-panel__title">
                     @if (string.IsNullOrEmpty(Model.StandardName))
@@ -43,9 +42,9 @@
 
             <h3 class="govuk-heading-m">What happens next</h3>
 
-            <p class="govuk-body">We will email the outcome to you within 2 weeks.</p>
+            <p class="govuk-body">Once we've reviewed your application, we'll email the outcome to you. If any of your answers need clarification, we'll send you a notification by email.</p>
 
-            <p class="govuk-body"><a href="@Model.FeedbackUrl" target="_blank" class="govuk-link">What do you think of this service?</a> (takes 60 seconds)</p>
+            <p class="govuk-body"><a href="@Model.FeedbackUrl" target="_blank" class="govuk-link">What do you think of this service?</a> (Takes 60 seconds)</p>
             @* LINK BELOW REMOVED FOR PRIVATE BETA *@
             @*
             <p class="govuk-body">

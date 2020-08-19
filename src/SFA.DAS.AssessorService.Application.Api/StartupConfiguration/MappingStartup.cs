@@ -6,6 +6,7 @@ using SFA.DAS.AssessorService.Api.Types.Models.Register;
 using SFA.DAS.AssessorService.Application.Api.AutoMapperProfiles;
 using SFA.DAS.AssessorService.Application.Mapping.CustomResolvers;
 using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.AssessorService.Domain.JsonData.Printing;
 using Contact = SFA.DAS.AssessorService.Domain.Entities.Contact;
 
 namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
@@ -26,8 +27,11 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                 cfg.CreateMap<Ilr, SearchResult>();
                 cfg.CreateMap<Ilr, StaffSearchItems>()
                     .ForMember(q => q.StandardCode, opts => {opts.MapFrom(i => i.StdCode);});
+
                 cfg.CreateMap<CreateBatchLogRequest, BatchLog>();
-                cfg.CreateMap<BatchLog, BatchLogResponse>();               
+                cfg.CreateMap<BatchData, BatchDataResponse>();
+                cfg.CreateMap<BatchLog, BatchLogResponse>()
+                    .ForMember(q => q.BatchData, opts => { opts.MapFrom(q => q.BatchData); });
 
                 cfg.CreateMap<Certificate, CertificateResponse>()
                     .ForMember(q => q.EndPointAssessorOrganisationId,
