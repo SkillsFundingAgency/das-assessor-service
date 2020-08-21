@@ -21,7 +21,7 @@
                         <br /><strong>@Model.GivenNames @Model.FamilyName</strong>
                     </div>
                     <div>
-                         @if (Model.SelectedGrade == CertificateGrade.Fail)
+                        @if (Model.SelectedGrade == CertificateGrade.Fail)
                         {
                             @Localizer["ReferenceNumberIs"]
                         }
@@ -35,10 +35,16 @@
                 </div>
             </div>
 
+            <h2 class="govuk-heading-m">What happens next</h2>
+
+            <p class="govuk-body"> We'll send the apprentice's certificate to the address you entered. You can <a class="govuk-link" asp-controller="CertificateHistory" asp-action="Index">check the status of the certificate</a> in the 'Completed assessments' section of your account.</p>
+
             <h2 class="govuk-heading-m">@Localizer["DoNextHeader"]</h2>
             <ul class="govuk-list">
                 <li><a class="govuk-link" asp-controller="Search" asp-action="Index">@Localizer["DoNextSearch"]</a></li>
                 <li><a class="govuk-link" href="https://www.smartsurvey.co.uk/s/certification-transaction-complete/" target="_blank">@Localizer["DoNextFeedback"]</a></li>
+                <li>or</li>
+                <li><a class="govuk-link" asp-controller="Dashboard" asp-action="Index">Return to account home</a></li>
             </ul>
         </div>
     </div>
