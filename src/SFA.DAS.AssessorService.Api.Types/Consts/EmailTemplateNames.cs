@@ -6,6 +6,7 @@
         public const string EPAOOrganisationDetailsAmended = "EPAOOrganisationDetailsAmended";
         public const string ApplyEPAOInitialSubmission = "ApplyEPAOInitialSubmission";
         public const string ApplyEPAOStandardSubmission = "ApplyEPAOStandardSubmission";
+        public const string ApplyEPAOAlertSubmission = "ApplyEPAOAlertSubmission";
 
         /// <summary>
         /// Requires tokens: { contactname }
