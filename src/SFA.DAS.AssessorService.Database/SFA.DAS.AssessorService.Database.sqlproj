@@ -142,6 +142,9 @@
     <None Include="PostDeploymentScripts\con-1834-add_certificatebatchlogs_data.sql" />
     <None Include="PostDeploymentScripts\qual-39-remove-contact-roles.sql" />
     <Build Include="Tables\EmailTemplatesRecipients.sql" />
+    <None Include="PostDeploymentScripts\con-2061-clear-recipients-from-email-templates.sql" />
+    <None Include="PostDeploymentScripts\con-2061-create-email-template-recipients.sql" />
+    <None Include="PostDeploymentScripts\con-2061-transfer-recipient-template-to-recipients.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="SFA.DAS.AssessorService.Database.refactorlog" />
