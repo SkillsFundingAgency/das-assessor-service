@@ -17,9 +17,10 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Helpers
             {
                 return false;
             }
-            else if (certificate.CertificateData.PostalContact is null || string.IsNullOrEmpty(certificate.CertificateData.PostalContact.ContactName)
-                        || string.IsNullOrEmpty(certificate.CertificateData.PostalContact.Organisation) || string.IsNullOrEmpty(certificate.CertificateData.PostalContact.City)
-                        || string.IsNullOrEmpty(certificate.CertificateData.PostalContact.PostCode))
+            else if (certificate.CertificateData.PostalContact is null 
+                    || string.IsNullOrEmpty(certificate.CertificateData.PostalContact.ContactName)
+                    || string.IsNullOrEmpty(certificate.CertificateData.PostalContact.City) 
+                    || string.IsNullOrEmpty(certificate.CertificateData.PostalContact.PostCode))
             {
                 return false;
             }

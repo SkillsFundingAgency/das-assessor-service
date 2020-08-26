@@ -1,10 +1,10 @@
 ﻿using System.Threading.Tasks;
-using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.AssessorService.Domain.DTOs;
 
 namespace SFA.DAS.AssessorService.Application.Interfaces
 {
     public interface IEMailTemplateQueryRepository
     {
-        Task<EMailTemplate> GetEmailTemplate(string templateName);
+        Task<EmailTemplateSummary> GetEmailTemplate(string templateName);
     }
 }
