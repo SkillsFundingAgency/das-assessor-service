@@ -59,11 +59,11 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
         public void Then_repository_update_print_status_is_called()
         {
             _certificateRepository.Verify(r => r.UpdatePrintStatus(
-                It.Is<Certificate>(c => c.CertificateReference == _certificateReference1), _batchNumber, CertificateStatus.Printed, _statusChangedAt, true),
+                It.Is<Certificate>(c => c.CertificateReference == _certificateReference1), _batchNumber, CertificateStatus.Printed, _statusChangedAt, string.Empty, true),
                 Times.Once());
 
             _certificateRepository.Verify(r => r.UpdatePrintStatus(
-                It.Is<Certificate>(c => c.CertificateReference == _certificateReference2), _batchNumber, CertificateStatus.Delivered, _statusChangedAt, true),
+                It.Is<Certificate>(c => c.CertificateReference == _certificateReference2), _batchNumber, CertificateStatus.Delivered, _statusChangedAt, string.Empty, true),
                 Times.Once());
         }
     }

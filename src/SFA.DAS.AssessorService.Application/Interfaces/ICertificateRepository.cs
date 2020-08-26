@@ -30,7 +30,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<Certificate> UpdateProviderName(Guid id, string providerName);
 
         Task UpdateSentToPrinter(Certificate certificate, int batchNumber, DateTime sentToPrinterDate);
-        Task UpdatePrintStatus(Certificate certificate, int batchNumber, string status, DateTime statusAt, bool changesCertificateStatus);
+        Task UpdatePrintStatus(Certificate certificate, int batchNumber, string status, DateTime statusAt, string reasonForChange, bool changesCertificateStatus);
 
         Task UpdatePrivatelyFundedCertificatesToBeApproved();
         
