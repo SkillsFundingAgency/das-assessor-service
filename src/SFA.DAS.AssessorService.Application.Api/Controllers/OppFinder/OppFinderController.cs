@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data.SqlClient;
 using System.Net;
 using System.Threading.Tasks;
 using MediatR;
@@ -63,7 +64,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
                 _logger.LogInformation($"Received request to update standard summary");
                 await _mediator.Send(request);
             }
-            catch(Exception ex)
+            catch (SqlException sqlEx)
+            {
+                _logger.LogError($"Request to update standard summary failed : {sqlEx.Message}");
+            }
+            catch (Exception ex)
             {
                 _logger.LogError(ex, "Request to update standard summary failed");
             }

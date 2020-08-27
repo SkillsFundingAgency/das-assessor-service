@@ -146,11 +146,15 @@ BEGIN
 	AND ex1.StandardName IS NULL
 	GROUP BY StandardCode, Total.StandardReference, Total.StandardName, Sector, StandardLevel, Region,Ordering 
 	ORDER BY StandardCode, Ordering;
+
+	RAISERROR ('Error raised in store procedure OppFinder_Update_StandardSummary TRY block.', 15, 1);  
 	
 	END TRY
 	BEGIN CATCH;
 		-- Some basic error handling
 		SELECT @Error_Code = ERROR_NUMBER(), @Error_Message = ERROR_MESSAGE();
+		RAISERROR(@Error_Message, 15, 1) WITH NOWAIT;
+		SET @Error_Message = ERROR_NUMBER() + ERROR_LINE() + ERROR_MESSAGE()
 	END CATCH;
 	
 	IF @Error_Code <> 0 OR XACT_STATE() = -1 ROLLBACK TRANSACTION T1;
