@@ -11,9 +11,6 @@
         "apiAppServiceName": {
             "type": "string"
         },
-        "appServicePlanName": {
-            "type": "string"
-        },
         "externalApiAppServiceName": {
             "type": "string"
         },
@@ -54,9 +51,6 @@
             "defaultValue": [
             ]
         },
-        "functionAppNames": {
-            "type": "array"
-        },
         "storageAccountName": {
             "type": "string"
         },
@@ -86,18 +80,6 @@
         },
         "keyVaultName": {
             "type": "string"
-        },
-        "appServicePlanInstances": {
-            "type": "int",
-            "defaultValue": 1
-        },
-        "appServicePlanSize": {
-            "type": "string",
-            "defaultValue": "1"
-        },
-        "appServicePlanTier": {
-            "type": "string",
-            "defaultValue": "Basic"
         }
     },
     "variables": {
@@ -546,30 +528,6 @@
             }
         },
         {
-            "apiVersion": "2017-08-01",
-            "name": "[concat(parameters('functionAppNames')[copyIndex()], '-ai')]",
-            "type": "Microsoft.Resources/deployments",
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[concat(variables('deploymentUrlBase'), 'application-insights.json')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "appInsightsName": {
-                        "value": "[parameters('functionAppNames')[copyIndex()]]"
-                    },
-                    "attachedService": {
-                        "value": "[parameters('functionAppNames')[copyIndex()]]"
-                    }
-                }
-            },
-            "copy": {
-                "name": "AppInsightCopy",
-                "count": "[length(parameters('functionAppNames'))]"
-            }
-        },
-        {
             "name": "StorageAccount",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2017-05-10",
@@ -615,104 +573,6 @@
             },
             "dependsOn": [
                 "StorageAccount"
-            ]
-        },
-        {
-            "apiVersion": "2017-05-10",
-            "name": "function-app-service-plan",
-            "type": "Microsoft.Resources/deployments",
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[concat(variables('deploymentUrlBase'),'app-service-plan.json')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "appServicePlanName": {
-                        "value": "[parameters('appServicePlanName')]"
-                    },
-                    "aspSize": {
-                        "value": "[parameters('appServicePlanSize')]"
-                    },
-                    "aspInstances": {
-                        "value": "[parameters('appServicePlanInstances')]"
-                    },
-                    "nonASETier": {
-                        "value": "[parameters('appServicePlanTier')]"
-                    }
-                }
-            }
-        },
-        {
-            "name": "[concat('FunctionApp-', parameters('functionAppNames')[copyIndex()])]",
-            "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2017-05-10",
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[concat(variables('deploymentUrlBase'), 'function-app.json')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "functionAppName": {
-                        "value": "[parameters('functionAppNames')[copyIndex()]]"
-                    },
-                    "appServicePlanName": {
-                        "value": "[parameters('appServicePlanName')]"
-                    },
-                    "appServicePlanResourceGroup": {
-                        "value": "[resourceGroup().name]"
-                    },
-                    "functionAppAppSettings": {
-                        "value": [
-                            {
-                                "name": "AzureWebJobsStorage",
-                                "value": "[reference('StorageAccount').outputs.StorageConnectionString.value]"
-                            },
-                            {
-                                "name": "FUNCTIONS_EXTENSION_VERSION",
-                                "value": "~1"
-                            },
-                            {
-                                "name": "FUNCTIONS_WORKER_RUNTIME",
-                                "value": "dotnet"
-                            },
-                            {
-                                "name": "MSDEPLOY_RENAME_LOCKED_FILES",
-                                "value": "1"
-                            },
-                            {
-                                "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-                                "value": "[reference(concat(parameters('functionAppNames')[copyIndex()],'-ai')).outputs.InstrumentationKey.value]"
-                            },
-                            {
-                                "name": "ConfigurationStorageConnectionString",
-                                "value": "[parameters('configurationStorageConnectionString')]"
-                            },
-                            {
-                                "name": "EnvironmentName",
-                                "value": "[toUpper(parameters('environmentName'))]"
-                            }
-                        ]
-                    },
-                    "functionAppConnectionStrings": {
-                        "value": [
-                            {
-                                "name": "Redis",
-                                "connectionString": "[parameters('loggingRedisConnectionString')]",
-                                "type": "Custom"
-                            }
-                        ]
-                    }
-                }
-            },
-            "copy": {
-                "name": "FunctionAppCopy",
-                "count": "[length(parameters('functionAppNames'))]"
-            },
-            "dependsOn": [
-                "StorageAccount",
-                "function-app-service-plan"
             ]
         },
         {
