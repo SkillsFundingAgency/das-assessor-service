@@ -57,9 +57,6 @@
         "functionAppNames": {
             "type": "array"
         },
-        "dataSyncFunctionAppName": {
-            "type": "string"
-        },
         "storageAccountName": {
             "type": "string"
         },
@@ -712,74 +709,6 @@
             "copy": {
                 "name": "FunctionAppCopy",
                 "count": "[length(parameters('functionAppNames'))]"
-            },
-            "dependsOn": [
-                "StorageAccount",
-                "function-app-service-plan"
-            ]
-        },
-        {
-            "apiVersion": "2017-05-10",
-            "name": "DataSyncFunctionApp",
-            "type": "Microsoft.Resources/deployments",
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[concat(variables('deploymentUrlBase'), 'function-app.json')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "functionAppName": {
-                        "value": "[parameters('dataSyncFunctionAppName')]"
-                    },
-                    "appServicePlanName": {
-                        "value": "[parameters('appServicePlanName')]"
-                    },
-                    "appServicePlanResourceGroup": {
-                        "value": "[resourceGroup().name]"
-                    },
-                    "functionAppAppSettings": {
-                        "value": [
-                            {
-                                "name": "AzureWebJobsStorage",
-                                "value": "[reference('StorageAccount').outputs.StorageConnectionString.value]"
-                            },
-                            {
-                                "name": "AzureWebJobsDashboard",
-                                "value": "[reference('StorageAccount').outputs.StorageConnectionString.value]"
-                            },
-                            {
-                                "name": "FUNCTIONS_EXTENSION_VERSION",
-                                "value": "~1"
-                            },
-                            {
-                                "name": "FUNCTIONS_WORKER_RUNTIME",
-                                "value": "dotnet"
-                            },
-                            {
-                                "name": "MSDEPLOY_RENAME_LOCKED_FILES",
-                                "value": "1"
-                            },
-                            {
-                                "name": "ConfigurationStorageConnectionString",
-                                "value": "[parameters('configurationStorageConnectionString')]"
-                            },
-                            {
-                                "name": "EnvironmentName",
-                                "value": "[toUpper(parameters('environmentName'))]"
-                            }
-                        ]
-                    },
-                    "functionAppConnectionStrings": {
-                        "value": [
-                            {
-                                "name": "Redis",
-                                "connectionString": "[parameters('loggingRedisConnectionString')]",
-                                "type": "Custom"
-                            }
-                        ]
-                    }
-                }
             },
             "dependsOn": [
                 "StorageAccount",

@@ -3,11 +3,11 @@ using System.Threading.Tasks;
 using MediatR;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Interfaces;
-using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.AssessorService.Domain.DTOs;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.EmailTemplates
 {
-    public class GetEmailTemplateHandler : IRequestHandler<GetEmailTemplateRequest, EMailTemplate>
+    public class GetEmailTemplateHandler : IRequestHandler<GetEmailTemplateRequest, EmailTemplateSummary>
     {
         private readonly IEMailTemplateQueryRepository _emailTemplateQueryRepository;
 
@@ -16,7 +16,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EmailTemplates
             _emailTemplateQueryRepository = emailTemplateQueryRepository;
         }
 
-        public async Task<EMailTemplate> Handle(GetEmailTemplateRequest request,
+        public async Task<EmailTemplateSummary> Handle(GetEmailTemplateRequest request,
             CancellationToken cancellationToken)
         {
             var emailTemplate = await _emailTemplateQueryRepository.GetEmailTemplate(request.TemplateName);

@@ -27,11 +27,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             _mediator = mediator;
         }
 
-        [HttpPost(Name = "SendEmailToContact")]
+        [HttpPost(Name = "SendEmail")]
         [SwaggerResponse((int) HttpStatusCode.NoContent)]
         [SwaggerResponse((int) HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int) HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> SendEmailToContact(
+        public async Task<IActionResult> SendEmail(
             [FromBody] SendEmailRequest sendEmailRequest)
         {
             _logger.LogInformation("Received Request To Send Email");
