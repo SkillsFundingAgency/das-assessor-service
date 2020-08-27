@@ -135,6 +135,9 @@
   <data name="CertificateNumber" xml:space="preserve">
     <value>Certificate number</value>
   </data>
+  <data name="CertificateStatus" xml:space="preserve">
+    <value>Certificate status</value>
+  </data>
   <data name="ReferenceNumber" xml:space="preserve">
     <value>Reference number</value>
   </data>
@@ -156,8 +159,23 @@
   <data name="Option" xml:space="preserve">
     <value>Option</value>
   </data>
-  <data name="PostageDetails" xml:space="preserve">
-    <value>Postage details</value>
+  <data name="CertificateDetails" xml:space="preserve">
+    <value>Certificate details</value>
+  </data>
+  <data name="WaitingToBeDelivered" xml:space="preserve">
+    <value>Waiting to be delivered to:</value>
+  </data>
+  <data name="Delivered" xml:space="preserve">
+    <value>We delivered the certificate on {0} to:</value>
+  </data>
+  <data name="NotDelivered" xml:space="preserve">
+    <value>We attempted to deliver the certificate on {0} to:</value>
+  </data>
+  <data name="ReasonForNotDelivered" xml:space="preserve">
+    <value>Reason for no delivery: {0}</value>
+  </data>
+  <data name="NoReasonGiven" xml:space="preserve">
+    <value>no reason entered</value>
   </data>
   <data name="Previous" xml:space="preserve">
     <value>Previous</value>
