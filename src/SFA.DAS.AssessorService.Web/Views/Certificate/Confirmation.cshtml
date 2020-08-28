@@ -1,6 +1,4 @@
-﻿@using Microsoft.AspNetCore.Mvc.Localization
-@using SFA.DAS.AssessorService.Domain.Consts
-@inject IViewLocalizer Localizer
+﻿@using SFA.DAS.AssessorService.Domain.Consts
 @model SFA.DAS.AssessorService.Web.ViewModels.Certificate.CertificateConfirmationViewModel
 
 @{
@@ -13,7 +11,7 @@
         <div class="govuk-grid-column-two-thirds">
             <div class="govuk-panel govuk-panel--confirmation">
                 <h1 class="govuk-panel__title">
-                    @Localizer["Heading"]
+                    Assessment recorded
                 </h1>
                 <div class="govuk-panel__body">
                     <div class="govuk-!-margin-bottom-4">
@@ -23,13 +21,12 @@
                     <div>
                         @if (Model.SelectedGrade == CertificateGrade.Fail)
                         {
-                            @Localizer["ReferenceNumberIs"]
+                            <div>The reference number is</div>
                         }
                         else
                         {
-                            @Localizer["CertificateNumberIs"]
+                            <div>The certificate number is</div>
                         }
-                        <br />
                         <strong>@Model.Reference</strong>
                     </div>
                 </div>
@@ -42,10 +39,14 @@
                     We'll send the apprentice's certificate to the address you entered. You can <a class="govuk-link" asp-controller="CertificateHistory" asp-action="Index">check the status of the certificate</a> in the 'Completed assessments' section of your account.
                 </p>
             }
-            <h2 class="govuk-heading-m">@Localizer["DoNextHeader"]</h2>
+            <h2 class="govuk-heading-m">What do you want to do next?</h2>
             <ul class="govuk-list">
-                <li><a class="govuk-link" asp-controller="Search" asp-action="Index">@Localizer["DoNextSearch"]</a></li>
-                <li><a class="govuk-link" href="https://www.smartsurvey.co.uk/s/certification-transaction-complete/" target="_blank">@Localizer["DoNextFeedback"]</a></li>
+                <li><a class="govuk-link" asp-controller="Search" asp-action="Index">Record another grade</a></li>
+                <li>
+                    <a class="govuk-link" href="https://www.smartsurvey.co.uk/s/certification-transaction-complete/" target="_blank">
+                        Leave feedback
+                    </a>
+                </li>
                 @if (Model.SelectedGrade != CertificateGrade.Fail)
                 {
                     <li>or</li>
