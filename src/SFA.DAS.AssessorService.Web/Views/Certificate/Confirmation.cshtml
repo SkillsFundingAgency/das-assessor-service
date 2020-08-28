@@ -47,11 +47,8 @@
                         Leave feedback
                     </a>
                 </li>
-                @if (Model.SelectedGrade != CertificateGrade.Fail)
-                {
-                    <li>or</li>
-                    <li><a class="govuk-link" asp-controller="Dashboard" asp-action="Index">Return to account home</a></li>
-                }
+                <li>or</li>
+                <li><a class="govuk-link" asp-controller="Dashboard" asp-action="Index">Return to account home</a></li>
             </ul>
         </div>
     </div>
