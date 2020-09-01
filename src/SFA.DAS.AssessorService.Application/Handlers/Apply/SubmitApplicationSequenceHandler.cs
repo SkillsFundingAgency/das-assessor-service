@@ -206,6 +206,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
             {
                 var emailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.ApplyEPAOInitialSubmission);
                 await _mediator.Send(new SendEmailRequest(email, emailTemplate, new { contactname, reference }), cancellationToken);
+
+                var emailTemplateAlert = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.ApplyEPAOAlertSubmission);
+                await _mediator.Send(new SendEmailRequest(email, emailTemplateAlert, new { contactname, reference }), cancellationToken);
             }
             else if (sequenceNo == 2)
             {
