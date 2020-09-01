@@ -54,9 +54,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Infrastructure
                 {
                     isTrading = company.DissolvedOn == null && company.IsLiquidated != true;
                 }
-                else if("active".Equals(company.Status, StringComparison.InvariantCultureIgnoreCase))
+                else 
                 {
-                    isTrading = company.DissolvedOn == null && company.IsLiquidated != true;
+                    isTrading = "active".Equals(company.Status, StringComparison.InvariantCultureIgnoreCase);
                 } 
             }
 

@@ -1,0 +1,8 @@
+BEGIN TRANSACTION
+
+IF ((SELECT COUNT(*) FROM [dbo].[EMailTemplates]  WHERE Recipients IS NOT NULL) > 0)
+BEGIN
+  UPDATE [dbo].[EMailTemplates] SET Recipients = NULL WHERE Recipients IS NOT NULL
+END
+
+COMMIT TRANSACTION
