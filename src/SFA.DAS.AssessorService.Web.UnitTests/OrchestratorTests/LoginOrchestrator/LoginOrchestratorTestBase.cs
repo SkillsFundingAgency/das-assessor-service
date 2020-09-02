@@ -18,8 +18,6 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.OrchestratorTests.LoginOrchestra
         [SetUp]
         protected void Setup()
         {
-            var config = new WebConfiguration() { Authentication = new AuthSettings() { Role = "EPA" } };
-
             var contextAccessor = new Mock<IHttpContextAccessor>();
 
             contextAccessor.SetupGet(a => a.HttpContext.User.Claims).Returns(new List<Claim>
