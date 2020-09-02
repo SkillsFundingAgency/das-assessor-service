@@ -5,7 +5,6 @@ namespace SFA.DAS.AssessorService.Domain.Entities
     public class CertificateBatchLog : BaseEntity
     {
         public Guid Id { get; set; }
-
         public string CertificateReference { get; set; }
         public int BatchNumber { get; set; }
         public string CertificateData { get; set; }
@@ -15,7 +14,6 @@ namespace SFA.DAS.AssessorService.Domain.Entities
         public string CreatedBy { get; set; }
         public string UpdatedBy { get; set; }
         public string DeletedBy { get; set; }
-
         public Certificate Certificate { get; set; }
     }
 }
