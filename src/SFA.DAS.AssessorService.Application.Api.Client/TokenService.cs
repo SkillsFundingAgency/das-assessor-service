@@ -27,10 +27,10 @@ namespace SFA.DAS.AssessorService.Application.Api.Client
             }
             else
             {
-                var tenantId = _useSandbox ? _configuration.SandboxClientApiAuthentication.TenantId : _configuration.ClientApiAuthentication.TenantId;
-                var clientId = _useSandbox ? _configuration.SandboxClientApiAuthentication.ClientId : _configuration.ClientApiAuthentication.ClientId;
-                var appKey = _useSandbox ? _configuration.SandboxClientApiAuthentication.ClientSecret : _configuration.ClientApiAuthentication.ClientSecret;
-                var resourceId = _useSandbox ? _configuration.SandboxClientApiAuthentication.ResourceId : _configuration.ClientApiAuthentication.ResourceId;
+                var tenantId = _useSandbox ? _configuration.SandboxClientApiAuthentication.TenantId : _configuration.AssessorApiAuthentication.TenantId;
+                var clientId = _useSandbox ? _configuration.SandboxClientApiAuthentication.ClientId : _configuration.AssessorApiAuthentication.ClientId;
+                var appKey = _useSandbox ? _configuration.SandboxClientApiAuthentication.ClientSecret : _configuration.AssessorApiAuthentication.ClientSecret;
+                var resourceId = _useSandbox ? _configuration.SandboxClientApiAuthentication.ResourceId : _configuration.AssessorApiAuthentication.ResourceId;
 
                 var authority = $"https://login.microsoftonline.com/{tenantId}";
                 var clientCredential = new ClientCredential(clientId, appKey);

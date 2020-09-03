@@ -97,7 +97,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
                 CompletionStatus = learner?.CompletionStatus,
                 CompletionStatusDescription = FormatCompletionStatusDescription(learner?.CompletionStatus),
                 IsPrivatelyFunded = certificate?.IsPrivatelyFunded,
-                CertificateId = certificate?.Id
+                CertificateId = certificate?.Id,
+                PrintStatusAt = certificate?.CertificateBatchLog?.StatusAt,
+                ReasonForChange = certificate?.CertificateBatchLog?.ReasonForChange
             };
 
             return learnerDetail;

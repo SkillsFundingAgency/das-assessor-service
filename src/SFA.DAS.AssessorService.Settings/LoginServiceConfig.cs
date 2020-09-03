@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace SFA.DAS.AssessorService.Settings
+﻿namespace SFA.DAS.AssessorService.Settings
 {
-    public class DfeSignInConfig
+    public class LoginServiceConfig
     {
         public string MetadataAddress { get; set; }
         public string ClientId { get; set; }
