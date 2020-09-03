@@ -488,7 +488,7 @@ namespace SFA.DAS.AssessorService.Data
                         Status = CertificateStatus.SentToPrinter,
                         StatusAt = sentToPrinterDate,
                         CreatedBy = SystemUsers.PrintFunction
-                    }); ;
+                    });
 
                     certificate.BatchNumber = batchNumber;
                     certificate.Status = CertificateStatus.SentToPrinter;
