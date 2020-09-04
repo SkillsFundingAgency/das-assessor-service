@@ -102,7 +102,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         public void TearDownOrganisationTests()
         {
             OrganisationContactHandler.DeleteRecordByUserName(_username);
-            OrganisationHandler.DeleteRecordByOrganisationId(_organisationIdCreated);
+            OrganisationHandler.DeleteRecordByEndPointAssessorOrganisationId(_organisationIdCreated);
             OrganisationTypeHandler.DeleteRecord(_organisationTypeId);
         }
     }
