@@ -33,15 +33,18 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<Certificate> New(Certificate certificate)
         {
-            // Another check closer to INSERT that there isn't already a cert for this uln / std code
-            var existingCert = await _context.Certificates.FirstOrDefaultAsync(c =>
-                c.Uln == certificate.Uln && c.StandardCode == certificate.StandardCode && c.CreateDay == certificate.CreateDay);
+            // cannot create a New certificate for same uln / std code on the same day - return existing
+            var existingCert = await _context.Certificates
+                .FirstOrDefaultAsync(c =>
+                    c.Uln == certificate.Uln && 
+                    c.StandardCode == certificate.StandardCode && 
+                    c.CreateDay == certificate.CreateDay);
+            
             if (existingCert != null) return existingCert;
             
-            await _context.Certificates.AddAsync(certificate);
             try
             {
-                await _context.SaveChangesAsync();
+                return await CreateCertificate(certificate);
             }
             catch (Exception e)
             {
@@ -49,24 +52,21 @@ namespace SFA.DAS.AssessorService.Data
 
                 if (sqlException.Number == 2601 || sqlException.Number == 2627)
                 {
+                    // cannot create a New certificate for same uln / std code on the same day - return existing
                     return await _context.Certificates.FirstOrDefaultAsync(c =>
-                        c.Uln == certificate.Uln && c.StandardCode == certificate.StandardCode && c.CreateDay == certificate.CreateDay);
+                        c.Uln == certificate.Uln && 
+                        c.StandardCode == certificate.StandardCode && 
+                        c.CreateDay == certificate.CreateDay);
                 }
+
                 throw;
             }
-
-            await AddCertificateLog(certificate.Id, CertificateActions.Start, certificate.Status, DateTime.UtcNow, 
-                certificate.CertificateData, certificate.CreatedBy, certificate.BatchNumber);
-            
-            await _context.SaveChangesAsync();
-
-            return certificate;
         }
 
         public async Task<Certificate> NewPrivate(Certificate certificate,
             string endpointOrganisationId)
         {
-            // Another check closer to INSERT that there isn't already a cert for this uln / std code
+            // cannot create a New private certificate for same uln / organiation
             var existingCert = await _context.Certificates
                 .Include(q => q.Organisation)
                 .FirstOrDefaultAsync(c =>
@@ -77,10 +77,9 @@ namespace SFA.DAS.AssessorService.Data
             if (existingCert != null)
                 return existingCert;
 
-            await _context.Certificates.AddAsync(certificate);
             try
             {
-                await _context.SaveChangesAsync();
+                return await CreateCertificate(certificate);
             }
             catch (Exception e)
             {
@@ -88,18 +87,58 @@ namespace SFA.DAS.AssessorService.Data
 
                 if (sqlException.Number == 2601 || sqlException.Number == 2627)
                 {
-                    return await _context.Certificates.FirstOrDefaultAsync(c =>
-                        c.Uln == certificate.Uln && c.StandardCode == certificate.StandardCode &&
-                        c.CreateDay == certificate.CreateDay);
+                    // cannot create a New private certificate for same uln / organiation
+                    return await _context.Certificates
+                        .Include(q => q.Organisation)
+                        .FirstOrDefaultAsync(c =>
+                            c.Uln == certificate.Uln &&
+                            c.Organisation.EndPointAssessorOrganisationId == endpointOrganisationId &&
+                            c.IsPrivatelyFunded);
                 }
 
                 throw;
             }
+        }
 
-            await AddCertificateLog(certificate.Id, CertificateActions.Start, certificate.Status, DateTime.UtcNow,
-                certificate.CertificateData, certificate.CreatedBy, certificate.BatchNumber);
+        private async Task<Certificate> CreateCertificate(Certificate certificate)
+        {
+            var strategy = _context.Database.CreateExecutionStrategy();
 
-            await _context.SaveChangesAsync();
+            await strategy.ExecuteAsync(async () =>
+            {
+                using (var transaction = _context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        certificate.Id = Guid.NewGuid();
+                        await _context.Certificates.AddAsync(certificate);
+
+                        // generate the IDENTITY value from the CertificateReferenceId
+                        await _context.SaveChangesAsync();
+
+                        // format the IDENITY value into the CertificateReference - note that this is not using a sequence
+                        // or a computed column because doing so at this stage would require a large amount of rework in the
+                        // database schema
+                        certificate.CertificateReference = certificate.CertificateReferenceId.ToString().PadLeft(8, '0');
+
+                        // ensure the EpaDetails are kept in sychronization with the certificate reference
+                        var certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
+                        certificateData.EpaDetails.EpaReference = certificate.CertificateReference;
+                        certificate.CertificateData = JsonConvert.SerializeObject(certificateData);
+
+                        await AddCertificateLog(certificate.Id, CertificateActions.Start, certificate.Status, DateTime.UtcNow,
+                            certificate.CertificateData, certificate.CreatedBy, certificate.BatchNumber);
+
+                        await _context.SaveChangesAsync();
+                        transaction.Commit();
+                    }
+                    catch (Exception)
+                    {
+                        transaction.Rollback();
+                        throw;
+                    }
+                }
+            });
 
             return certificate;
         }
