@@ -1,18 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using MediatR;
+﻿using MediatR;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Api.Types.Models.Staff;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.DTOs.Staff;
 using SFA.DAS.AssessorService.Domain.Entities;
-using SFA.DAS.AssessorService.Domain.Extensions;
 using SFA.DAS.AssessorService.Domain.JsonData;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using Newtonsoft.Json;
+using SFA.DAS.AssessorService.Domain.Extensions;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Staff
 {
@@ -25,7 +25,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
         private readonly IOrganisationQueryRepository _organisationRepository;
         private readonly IStandardRepository _standardRepository;
 
-        public GetLearnerDetailHandler(IIlrRepository ilrRepository, ICertificateRepository certificateRepository, 
+        public GetLearnerDetailHandler(IIlrRepository ilrRepository, ICertificateRepository certificateRepository,
             IStaffCertificateRepository staffCertificateRepository, ILogger<GetLearnerDetailHandler> logger, IOrganisationQueryRepository organisationRepository, IStandardRepository standardRepository)
         {
             _ilrRepository = ilrRepository;
@@ -35,7 +35,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
             _organisationRepository = organisationRepository;
             _standardRepository = standardRepository;
         }
-        public async Task<LearnerDetailResult> Handle(GetLearnerDetailRequest request, CancellationToken cancellationToken)
+
+        public async Task<LearnerDetailResult> Handle(GetLearnerDetailRequest request,
+            CancellationToken cancellationToken)
         {
             var learner = await _ilrRepository.Get(request.Uln, request.StdCode);
             var standard = await _standardRepository.GetStandardCollationByStandardId(request.StdCode);
@@ -66,12 +68,12 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
                         }
                     }
                 }
-                
+
                 if (logs.Count() > 1)
                 {
                     CalculateDifferences(logs);
                 }
-                
+
                 certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData) ?? new CertificateData();
                 epao = await _organisationRepository.Get(certificate.OrganisationId) ?? new Organisation();
             }
@@ -99,7 +101,16 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
                 IsPrivatelyFunded = certificate?.IsPrivatelyFunded,
                 CertificateId = certificate?.Id,
                 PrintStatusAt = certificate?.CertificateBatchLog?.StatusAt,
-                ReasonForChange = certificate?.CertificateBatchLog?.ReasonForChange
+                ReasonForChange = certificate?.CertificateBatchLog?.ReasonForChange,
+                ContactName = certificateData.ContactName,
+                ContactOrganisation = certificateData.ContactOrganisation,
+                ContactAddLine1 = certificateData.ContactAddLine1,
+                ContactAddLine2 = certificateData.ContactAddLine2,
+                ContactAddLine3 = certificateData.ContactAddLine3,
+                ContactAddLine4 = certificateData.ContactAddLine4,
+                ContactPostCode = certificateData.ContactPostCode,
+                LastUpdatedAt = new[] { certificate?.ToBePrinted, certificate?.CreatedAt, certificate.LatestChange(), 
+                    certificate.DeletedAt, certificate?.UpdatedAt }.Max()
             };
 
             return learnerDetail;
@@ -107,7 +118,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
 
         private string FormatCompletionStatusDescription(int? completionStatus)
         {
-            switch(completionStatus)
+            switch (completionStatus)
             {
                 case 1:
                     return $"{completionStatus} - Continuing";
