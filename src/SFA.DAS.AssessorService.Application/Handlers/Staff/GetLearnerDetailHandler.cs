@@ -109,8 +109,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
                 ContactAddLine3 = certificateData.ContactAddLine3,
                 ContactAddLine4 = certificateData.ContactAddLine4,
                 ContactPostCode = certificateData.ContactPostCode,
-                LastUpdatedAt = new[] { certificate?.ToBePrinted, certificate?.CreatedAt, certificate.LatestChange(), 
-                    certificate.DeletedAt, certificate?.UpdatedAt }.Max()
+                LastUpdatedAt = certificate.LatestChange()
             };
 
             return learnerDetail;
