@@ -67,8 +67,8 @@ else
         <form asp-action="ShowProposedStandardsPerPage" asp-controller="OppFinder" method="get" asp-fragment="proposed">
             <div class="das-flex-space-around">
                 <div>
-                        <select class="proposed-per-page govuk-select" asp-for="ProposedStandardsPerPage" asp-items="Model.StandardsPerPage"></select>
-                        <label for="ProposedStandardsPerPage">Standards per page</label>
+                        <select class="proposed-per-page govuk-select govuk-!-margin-right-1" asp-for="ProposedStandardsPerPage" asp-items="Model.StandardsPerPage"></select>
+                        <label class="govuk-body" for="ProposedStandardsPerPage">Standards per page</label>
                 </div>
                 <div class="das-pagination-links">
                     @{await Html.RenderPartialAsync("_PaginationLinksPartial", new OppFinderPaginationViewModel
