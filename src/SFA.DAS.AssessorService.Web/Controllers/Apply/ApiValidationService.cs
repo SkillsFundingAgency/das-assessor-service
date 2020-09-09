@@ -34,7 +34,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 _logger.LogInformation("Page has question with api validation");
                 var validationResult = new ApiValidationResult();
                 
-                var apiBaseUri = new Uri(_config.ClientApiAuthentication.ApiBaseAddress, UriKind.Absolute);
+                var apiBaseUri = new Uri(_config.AssessorApiAuthentication.ApiBaseAddress, UriKind.Absolute);
                 using (var httpClient = new HttpClient())
                 {
                     httpClient.BaseAddress = apiBaseUri;
