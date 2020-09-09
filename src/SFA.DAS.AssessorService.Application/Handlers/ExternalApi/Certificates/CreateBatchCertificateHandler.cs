@@ -91,8 +91,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
             else
             {
                 _logger.LogInformation("CreateNewCertificate Before resurrecting deleted Certificate");
-                certificate.Status = CertificateStatus.Draft;
+                certData.EpaDetails.EpaReference = certificate.CertificateReference;
                 certificate.CertificateData = JsonConvert.SerializeObject(certData);
+                certificate.Status = CertificateStatus.Draft;
                 await _certificateRepository.Update(certificate, ExternalApiConstants.ApiUserName, CertificateActions.Start);
             }
             
