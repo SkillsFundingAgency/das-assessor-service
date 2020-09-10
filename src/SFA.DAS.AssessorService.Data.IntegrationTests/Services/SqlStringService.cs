@@ -19,6 +19,13 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Services
                 : $@"{intToProcess}";
         }
 
+        public static string ConvertGuidToSqlValueString(Guid? guidToProcess)
+        {
+            return guidToProcess == null
+                ? "null"
+                : $@"'{guidToProcess}'";
+        }
+
         public static string ConvertDateToSqlValueString(DateTime? dateToProcess)
         {
             return dateToProcess == null

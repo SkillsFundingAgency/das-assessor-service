@@ -72,19 +72,10 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Private
                         CreatedBy = request.Username,
                         CertificateData = JsonConvert.SerializeObject(certData),
                         Status = CertificateStatus.Draft,
-                        CertificateReference = "",
+                        CertificateReference = string.Empty,
                         CreateDay = DateTime.UtcNow.Date,
                         IsPrivatelyFunded = true
                     }, organisation.EndPointAssessorOrganisationId);
-
-                newCertificate.CertificateReference = newCertificate.CertificateReferenceId.ToString().PadLeft(8, '0');
-
-                // need to update EPA Reference too
-                certData.EpaDetails.EpaReference = newCertificate.CertificateReference;
-                newCertificate.CertificateData = JsonConvert.SerializeObject(certData);
-
-                _logger.LogInformation("CreateNewCertificate Before Update Cert in db");
-                await _certificateRepository.Update(newCertificate, request.Username, null);
 
                 _logger.LogInformation(LoggingConstants.CertificateStarted);
                 _logger.LogInformation($"Certificate with ID: {newCertificate.Id} Started with reference of {newCertificate.CertificateReference}");
