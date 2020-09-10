@@ -83,28 +83,20 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
                         CreatedBy = ExternalApiConstants.ApiUserName,
                         CertificateData = JsonConvert.SerializeObject(certData),
                         Status = CertificateStatus.Draft, // NOTE: Web & Staff always creates Draft first
-                        CertificateReference = "",
+                        CertificateReference = string.Empty,
                         LearnRefNumber = ilr.LearnRefNumber,
                         CreateDay = DateTime.UtcNow.Date
                     });
-
-                certificate.CertificateReference = certificate.CertificateReferenceId.ToString().PadLeft(8, '0');
             }
             else
             {
                 _logger.LogInformation("CreateNewCertificate Before resurrecting deleted Certificate");
-                certificate.Status = CertificateStatus.Draft;
+                certData.EpaDetails.EpaReference = certificate.CertificateReference;
                 certificate.CertificateData = JsonConvert.SerializeObject(certData);
+                certificate.Status = CertificateStatus.Draft;
                 await _certificateRepository.Update(certificate, ExternalApiConstants.ApiUserName, CertificateActions.Start);
             }
-
-            // need to update EPA Reference too
-            certData.EpaDetails.EpaReference = certificate.CertificateReference;
-            certificate.CertificateData = JsonConvert.SerializeObject(certData);
-
-            _logger.LogInformation("CreateNewCertificate Before Update Cert in db");
-            await _certificateRepository.Update(certificate, ExternalApiConstants.ApiUserName, null);
-
+            
             _logger.LogInformation(LoggingConstants.CertificateStarted);
             _logger.LogInformation($"Certificate with ID: {certificate.Id} Started with reference of {certificate.CertificateReference}");
 
