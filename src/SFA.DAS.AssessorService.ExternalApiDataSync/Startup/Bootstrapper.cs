@@ -1,4 +1,5 @@
-﻿using Microsoft.Azure.WebJobs;
+﻿using Microsoft.Azure.Services.AppAuthentication;
+using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.ExternalApiDataSync.Infrastructure;
 using SFA.DAS.AssessorService.ExternalApiDataSync.Logger;
@@ -29,9 +30,14 @@ namespace SFA.DAS.AssessorService.ExternalApiDataSync.Startup
                     x.WithDefaultConventions();
                 });
 
+                var connection = new SqlConnection(configuration.SqlConnectionString)
+                {
+                    AccessToken = (new AzureServiceTokenProvider()).GetAccessTokenAsync("https://database.windows.net/").Result
+                };
+
                 configure.For<IAggregateLogger>().Use(_logger).Singleton();
                 configure.For<IWebConfiguration>().Use(configuration).Singleton();
-                configure.For<IDbConnection>().Use(c => new SqlConnection(configuration.SqlConnectionString));
+                configure.For<IDbConnection>().Use(connection);
             });
 
             var language = "en-GB";

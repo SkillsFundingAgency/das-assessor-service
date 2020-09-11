@@ -1,14 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Microsoft.Azure.Services.AppAuthentication;
 using Newtonsoft.Json;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Handlers;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Models;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Services;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Data.IntegrationTests
 {
@@ -36,7 +37,10 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         [OneTimeSetUp]
         public void SetupStandardCollationTests()
         {
-            _databaseConnection = new SqlConnection(_databaseService.WebConfiguration.SqlConnectionString);
+            _databaseConnection = new SqlConnection(_databaseService.WebConfiguration.SqlConnectionString)
+            {
+                AccessToken = (new AzureServiceTokenProvider()).GetAccessTokenAsync("https://database.windows.net/").Result
+            };
             _unitOfWork = new UnitOfWork(_databaseConnection);            
             _repository = new StandardRepository(_unitOfWork);
            

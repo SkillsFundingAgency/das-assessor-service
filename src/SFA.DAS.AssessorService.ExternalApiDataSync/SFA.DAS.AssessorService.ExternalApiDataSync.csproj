@@ -5,6 +5,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Dapper" Version="1.60.6" />
+    <PackageReference Include="Microsoft.Azure.Services.AppAuthentication" Version="1.5.0" />
     <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="1.0.29" />
     <PackageReference Include="NewtonSoft.Json" Version="12.0.3" />
     <PackageReference Include="NLog.Extensions.Logging" Version="1.5.2" />

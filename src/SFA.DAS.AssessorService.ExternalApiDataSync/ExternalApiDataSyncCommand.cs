@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using Microsoft.Azure.Services.AppAuthentication;
 using SFA.DAS.AssessorService.ExternalApiDataSync.Infrastructure;
 using SFA.DAS.AssessorService.ExternalApiDataSync.Logger;
 using System;
@@ -47,6 +48,8 @@ namespace SFA.DAS.AssessorService.ExternalApiDataSync
 
                     using (var destinationSqlConnection = new SqlConnection(_destinationConnectionString))
                     {
+                        destinationSqlConnection.AccessToken = (new AzureServiceTokenProvider()).GetAccessTokenAsync("https://database.windows.net/").Result;
+
                         if (!destinationSqlConnection.State.HasFlag(ConnectionState.Open)) destinationSqlConnection.Open();
 
                         using (var transaction = destinationSqlConnection.BeginTransaction())
@@ -233,6 +236,8 @@ namespace SFA.DAS.AssessorService.ExternalApiDataSync
 
             using (var sourceSqlConnection = new SqlConnection(_sourceConnectionString))
             {
+                sourceSqlConnection.AccessToken = (new AzureServiceTokenProvider()).GetAccessTokenAsync("https://database.windows.net/").Result;
+
                 if (!sourceSqlConnection.State.HasFlag(ConnectionState.Open)) sourceSqlConnection.Open();
 
                 foreach (var table in tablesToCopy)

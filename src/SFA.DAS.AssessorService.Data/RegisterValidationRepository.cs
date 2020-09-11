@@ -1,10 +1,11 @@
+using Dapper;
+using Microsoft.Azure.Services.AppAuthentication;
+using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Settings;
 using System;
 using System.Data;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
-using Dapper;
-using SFA.DAS.AssessorService.Application.Interfaces;
-using SFA.DAS.AssessorService.Settings;
 
 namespace SFA.DAS.AssessorService.Data
 {
@@ -21,6 +22,8 @@ namespace SFA.DAS.AssessorService.Data
         {
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))
             {
+                connection.AccessToken = (new AzureServiceTokenProvider()).GetAccessTokenAsync("https://database.windows.net/").Result;
+
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
                 var sqlToCheckExists =
@@ -34,6 +37,8 @@ namespace SFA.DAS.AssessorService.Data
         {
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))
             {
+                connection.AccessToken = (new AzureServiceTokenProvider()).GetAccessTokenAsync("https://database.windows.net/").Result;
+
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
                 var sqlToCheckExists =
@@ -48,6 +53,8 @@ namespace SFA.DAS.AssessorService.Data
         {
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))
             {
+                connection.AccessToken = (new AzureServiceTokenProvider()).GetAccessTokenAsync("https://database.windows.net/").Result;
+
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
                 var sqlToCheckExists =
@@ -61,6 +68,8 @@ namespace SFA.DAS.AssessorService.Data
         {
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))
             {
+                connection.AccessToken = (new AzureServiceTokenProvider()).GetAccessTokenAsync("https://database.windows.net/").Result;
+
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
                 var sqlToCheckExists =
@@ -75,6 +84,8 @@ namespace SFA.DAS.AssessorService.Data
         {
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))
             {
+                connection.AccessToken = (new AzureServiceTokenProvider()).GetAccessTokenAsync("https://database.windows.net/").Result;
+
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
                 var sqlToCheckExists =
@@ -88,6 +99,8 @@ namespace SFA.DAS.AssessorService.Data
         {
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))
             {
+                connection.AccessToken = (new AzureServiceTokenProvider()).GetAccessTokenAsync("https://database.windows.net/").Result;
+
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
                 var sqlToCheckExists =
@@ -101,6 +114,8 @@ namespace SFA.DAS.AssessorService.Data
         {
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))
             {
+                connection.AccessToken = (new AzureServiceTokenProvider()).GetAccessTokenAsync("https://database.windows.net/").Result;
+
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
                 var sqlToCheckExists =
@@ -114,6 +129,8 @@ namespace SFA.DAS.AssessorService.Data
         {
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))
             {
+                connection.AccessToken = (new AzureServiceTokenProvider()).GetAccessTokenAsync("https://database.windows.net/").Result;
+
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
                 var sqlToCheckExists =
@@ -127,6 +144,8 @@ namespace SFA.DAS.AssessorService.Data
         {
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))
             {
+                connection.AccessToken = (new AzureServiceTokenProvider()).GetAccessTokenAsync("https://database.windows.net/").Result;
+
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
                 var sqlToCheckExists =
@@ -141,6 +160,8 @@ namespace SFA.DAS.AssessorService.Data
          
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))
             {
+                connection.AccessToken = (new AzureServiceTokenProvider()).GetAccessTokenAsync("https://database.windows.net/").Result;
+
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
                 
@@ -163,6 +184,8 @@ namespace SFA.DAS.AssessorService.Data
         {
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))
             {
+                connection.AccessToken = (new AzureServiceTokenProvider()).GetAccessTokenAsync("https://database.windows.net/").Result;
+
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
                 var sqlToCheckExists =
@@ -176,6 +199,8 @@ namespace SFA.DAS.AssessorService.Data
         {
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))
             {
+                connection.AccessToken = (new AzureServiceTokenProvider()).GetAccessTokenAsync("https://database.windows.net/").Result;
+
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
                 var sqlToCheckExists =
@@ -190,6 +215,8 @@ namespace SFA.DAS.AssessorService.Data
         {
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))
             {
+                connection.AccessToken = (new AzureServiceTokenProvider()).GetAccessTokenAsync("https://database.windows.net/").Result;
+
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
                 const string sqlToCheckExists =
@@ -203,6 +230,8 @@ namespace SFA.DAS.AssessorService.Data
         {
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))
             {
+                connection.AccessToken = (new AzureServiceTokenProvider()).GetAccessTokenAsync("https://database.windows.net/").Result;
+
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
                 const string sqlToCheckExists =
@@ -216,6 +245,8 @@ namespace SFA.DAS.AssessorService.Data
         {
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))
             {
+                connection.AccessToken = (new AzureServiceTokenProvider()).GetAccessTokenAsync("https://database.windows.net/").Result;
+
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
                 const string sqlToCheckExists =
@@ -229,6 +260,8 @@ namespace SFA.DAS.AssessorService.Data
         {
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))
             {
+                connection.AccessToken = (new AzureServiceTokenProvider()).GetAccessTokenAsync("https://database.windows.net/").Result;
+
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
                var sqlToCheckExists =
@@ -250,6 +283,8 @@ namespace SFA.DAS.AssessorService.Data
         {
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))
             {
+                connection.AccessToken = (new AzureServiceTokenProvider()).GetAccessTokenAsync("https://database.windows.net/").Result;
+
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
                 const string sqlToCheckExists =
