@@ -117,7 +117,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         [OneTimeTearDown]
         public void TearDownOrganisationTests()
         {
-            OrganisationHandler.DeleteRecordByOrganisationId(_organisationIdCreated);
+            OrganisationHandler.DeleteRecordByEndPointAssessorOrganisationId(_organisationIdCreated);
             OrganisationTypeHandler.DeleteRecord(_organisationTypeIdBefore);
             OrganisationTypeHandler.DeleteRecord(_organisationTypeIdAfter);
         }
