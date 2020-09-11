@@ -28,14 +28,31 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
 
         public async Task<ValidationResponse> Handle(UpdateCertificatesPrintStatusRequest request, CancellationToken cancellationToken)
         {
-            var validationResult = new ValidationResponse();
-
+            var validationResult = new ValidationResponse();            
+          
             var validatedCertificatePrintStatuses = await Validate(request.CertificatePrintStatuses, validationResult);
             foreach(var validatedCertificatePrintStatus in validatedCertificatePrintStatuses)
-            {
+            {                
+                var certificateBatchLog = await _certificateRepository.GetCertificateBatchLog(validatedCertificatePrintStatus.CertificateReference, validatedCertificatePrintStatus.BatchNumber);
+                if (certificateBatchLog == null)
+                {
+                    //Scenario 3:  Certificate not printed but included in delivery notification file
+                    validationResult.Errors.Add(
+                      new ValidationErrorDetail("CertificatePrintStatuses", $"Certificate {validatedCertificatePrintStatus.CertificateReference} not printed in batch {validatedCertificatePrintStatus.BatchNumber}  .", ValidationStatusCode.NotFound));                    
+                }
+                else
+                {
+                    //Scenario 5:  StatusChangedDateTime earlier than the latest date of the previous status for a certificate number in the given batch for eg delivery date earlier than the printed date
+                    if (validatedCertificatePrintStatus.StatusChangedAt < certificateBatchLog.LatestChange())
+                    {
+                        validationResult.Errors.Add(
+                                           new ValidationErrorDetail("StatusChangedDateTime", $"Certificate delivery(StatusChangedAt) datetime {validatedCertificatePrintStatus.StatusChangedAt} earlier than printed(latest date) datetime {certificateBatchLog.LatestChange()}.", ValidationStatusCode.BadRequest));
+                    }
+                }
+
                 var certificate = await _certificateRepository.GetCertificate(validatedCertificatePrintStatus.CertificateReference);
                 if (certificate == null)
-                {
+                {                   
                     validationResult.Errors.Add(
                         new ValidationErrorDetail("CertificatePrintStatuses", $"The certificate reference {validatedCertificatePrintStatus.CertificateReference} was not found.", ValidationStatusCode.NotFound));
                 }
@@ -70,6 +87,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
                     .Select(certificatePrintStatus => certificatePrintStatus.Key)
                     .ToList());
 
+            //Scenario 4:  Invalid status in delivery notification file
             invalidPrintStatuses.ForEach(invalidPrintStatus =>
             {
                 validationResult.Errors.Add(
@@ -80,7 +98,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
             {
                 validationResult.Errors.Add(
                     new ValidationErrorDetail("CertificatePrintStatuses", $"The batch number {invalidBatchNumber} was not found.", ValidationStatusCode.NotFound));
-            });
+            });            
 
             return certificatePrintStatuses
                 .Where(certificatePrintStatus => !invalidBatchNumbers.Contains(certificatePrintStatus.BatchNumber) && !invalidPrintStatuses.Contains(certificatePrintStatus.Status))

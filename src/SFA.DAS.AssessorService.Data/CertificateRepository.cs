@@ -196,6 +196,15 @@ namespace SFA.DAS.AssessorService.Data
             return certificate;
         }
 
+        public async Task<CertificateBatchLog> GetCertificateBatchLog(string certificateReference, int batchNumber)
+        {
+            var certificateBatchLog = await
+                _context.CertificateBatchLogs
+                .FirstOrDefaultAsync(q => q.CertificateReference == certificateReference && q.BatchNumber == batchNumber);
+
+            return certificateBatchLog;
+        }
+
         private bool CheckCertificateData(Certificate certificate, string lastName, DateTime? achievementDate)
         {
             var certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);

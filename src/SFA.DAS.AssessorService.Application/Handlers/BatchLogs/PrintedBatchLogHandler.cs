@@ -32,9 +32,20 @@ namespace SFA.DAS.AssessorService.Application.Handlers.BatchLogs
             var validationResult = new ValidationResponse();
             var sentToPrinterDate = DateTime.UtcNow;
 
-            if(await _batchLogQueryRepository.GetForBatchNumber(request.BatchNumber) == null)
+            var batchLog = await _batchLogQueryRepository.GetForBatchNumber(request.BatchNumber);
+
+            ////Scenario1 - Already done
+            if (batchLog == null)
             {
                 validationResult.Errors.Add(new ValidationErrorDetail(nameof(request.BatchNumber), $"The {nameof(request.BatchNumber)} {request.BatchNumber} was not found.", ValidationStatusCode.NotFound));
+            }
+            else
+            {
+                //Scenario 2 :AND the ProcessDate for the batch is earlier than the BatchDate
+                if (request.PrintedAt < batchLog.BatchCreated)
+                {
+                    validationResult.Errors.Add(new ValidationErrorDetail(nameof(request.PrintedAt), $"The ProcessedDate {request.PrintedAt} is not later than BatchDate {batchLog.BatchCreated}.", ValidationStatusCode.BadRequest));
+                }
             }
 
             if (validationResult.IsValid)

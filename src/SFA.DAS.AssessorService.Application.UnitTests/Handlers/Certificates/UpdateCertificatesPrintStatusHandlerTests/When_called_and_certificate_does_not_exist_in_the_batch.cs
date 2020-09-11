@@ -7,17 +7,15 @@ using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.UpdateCertificatesPrintStatusHandlerTests
 {
-    public class When_called_and_certificates_updated : UpdateCertificatesPrintStatusHandlerTestsBase
+    public class When_called_and_certificate_does_not_exist_in_the_batch : UpdateCertificatesPrintStatusHandlerTestsBase
     {
         private ValidationResponse _response;
         private static DateTime _statusChangedAt = DateTime.UtcNow;
-       
+
         [SetUp]
         public async Task Arrange()
         {
@@ -28,15 +26,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
                 new CertificatePrintStatus
                 {
                     BatchNumber = _batchNumber,
-                    CertificateReference = _certificateReferenceUpdateAfterPrinted,
-                    Status = CertificateStatus.Printed,
-                    StatusChangedAt = _statusChangedAt
-                },
-                new CertificatePrintStatus
-                {
-                    BatchNumber = _batchNumber,
-                    CertificateReference = _certificateReferenceDeletedAfterPrinted,
-                    Status = CertificateStatus.Delivered,
+                    CertificateReference = _certificateReference7,
+                    Status = CertificateStatus.NotDelivered,
                     StatusChangedAt = _statusChangedAt
                 }
             };
@@ -51,20 +42,15 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
         [Test]
         public void Then_validation_response_is_valid_false()
         {
-            _response.IsValid.Should().Be(false);
-            _response.Errors.Count.Should().Be(1);
+            _response.IsValid.Should().Be(false);            
         }
 
         [Test]
-        public void Then_repository_update_print_status_is_called()
+        public void Then_repository_update_print_status_is_not_called()
         {
             _certificateRepository.Verify(r => r.UpdatePrintStatus(
-                It.Is<Certificate>(c => c.CertificateReference == _certificateReferenceUpdateAfterPrinted), _batchNumber, CertificateStatus.Printed, _statusChangedAt, false),
-                Times.Once());
-
-            _certificateRepository.Verify(r => r.UpdatePrintStatus(
-                It.Is<Certificate>(c => c.CertificateReference == _certificateReferenceDeletedAfterPrinted), _batchNumber, CertificateStatus.Delivered, _statusChangedAt, false),
-                Times.Once());
+                It.Is<Certificate>(c => c.CertificateReference == _certificateReference7), _batchNumber, CertificateStatus.NotDelivered, _statusChangedAt, true),
+                Times.Never);
         }
     }
 }

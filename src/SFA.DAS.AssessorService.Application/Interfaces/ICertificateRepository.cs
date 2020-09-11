@@ -15,7 +15,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         
         Task<Certificate> GetCertificate(Guid id);
         Task<Certificate> GetCertificate(long uln, int standardCode);
-        Task<Certificate> GetCertificate(string certificateReference);
+        Task<Certificate> GetCertificate(string certificateReference);        
         Task<Certificate> GetPrivateCertificate(long uln, string endpointOrganisationId);
         Task<Certificate> GetCertificateByOrgIdLastname(long uln, string endpointOrganisationId, string lastName);
         Task<Certificate> GetCertificateByUlnLastname(long uln, string lastName);
@@ -43,5 +43,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<PaginatedList<Certificate>> GetCertificatesForApproval(int pageIndex, int pageSize,string status, string privatelyFundedStatus);
         Task<bool> CertifciateExistsForUln(long uln);
         Task<Certificate> GetCertificateDeletedByUln(long uln);
+        Task<CertificateBatchLog> GetCertificateBatchLog(string certificateReference, int batchNumber);
+
     }
 }
