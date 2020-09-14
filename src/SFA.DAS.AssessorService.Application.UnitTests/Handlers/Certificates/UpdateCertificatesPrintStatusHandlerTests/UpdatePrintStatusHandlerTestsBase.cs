@@ -121,8 +121,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
                   new CertificateBatchLog
                   {
                       Id = Guid.NewGuid(),
-                      CertificateReference = certificateReference,                      
-                      StatusAt = DateTime.UtcNow.AddDays(1)
+                      CertificateReference = certificateReference
                   }));
 
             _certificateRepository.Setup(r => r.GetCertificateBatchLog(It.IsIn(_certificateReferenceDeletedAfterPrinted), _batchNumber))
@@ -131,8 +130,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
                     {
                         Id = Guid.NewGuid(),
                         CertificateReference = certificateReference,
-                        Status = CertificateStatus.Delivered,                        
-                        StatusAt = DateTime.UtcNow.AddDays(-1)
+                        Status = CertificateStatus.Delivered
                     }));
 
             _certificateRepository.Setup(r => r.GetCertificateBatchLog(It.IsIn(_certificateReference6), _batchNumber))

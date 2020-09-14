@@ -28,7 +28,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
 
         public async Task<ValidationResponse> Handle(UpdateCertificatesPrintStatusRequest request, CancellationToken cancellationToken)
         {
-            var validationResult = new ValidationResponse();            
+            var validationResult = new ValidationResponse();
           
             var validatedCertificatePrintStatuses = await Validate(request.CertificatePrintStatuses, validationResult);
             foreach(var validatedCertificatePrintStatus in validatedCertificatePrintStatuses)

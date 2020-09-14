@@ -49,10 +49,10 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
         }
 
         [Test]
-        public void Then_validation_response_is_valid_false()
+        public void Then_validation_response_is_valid_true()
         {
-            _response.IsValid.Should().Be(false);
-            _response.Errors.Count.Should().Be(1);
+            _response.IsValid.Should().Be(true);
+            _response.Errors.Count.Should().Be(0);
         }
 
         [Test]
