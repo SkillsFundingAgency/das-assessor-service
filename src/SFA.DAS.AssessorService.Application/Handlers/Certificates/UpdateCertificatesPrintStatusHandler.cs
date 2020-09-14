@@ -35,18 +35,16 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
             {                
                 var certificateBatchLog = await _certificateRepository.GetCertificateBatchLog(validatedCertificatePrintStatus.CertificateReference, validatedCertificatePrintStatus.BatchNumber);
                 if (certificateBatchLog == null)
-                {
-                    //Scenario 3:  Certificate not printed but included in delivery notification file
+                {                    
                     validationResult.Errors.Add(
                       new ValidationErrorDetail("CertificatePrintStatuses", $"Certificate {validatedCertificatePrintStatus.CertificateReference} not printed in batch {validatedCertificatePrintStatus.BatchNumber}  .", ValidationStatusCode.NotFound));                    
                 }
                 else
-                {
-                    //Scenario 5:  StatusChangedDateTime earlier than the latest date of the previous status for a certificate number in the given batch for eg delivery date earlier than the printed date
-                    if (validatedCertificatePrintStatus.StatusChangedAt < certificateBatchLog.LatestChange())
+                {                    
+                    if (validatedCertificatePrintStatus.StatusChangedAt < certificateBatchLog.StatusAt)
                     {
                         validationResult.Errors.Add(
-                                           new ValidationErrorDetail("StatusChangedDateTime", $"Certificate delivery(StatusChangedAt) datetime {validatedCertificatePrintStatus.StatusChangedAt} earlier than printed(latest date) datetime {certificateBatchLog.LatestChange()}.", ValidationStatusCode.BadRequest));
+                           new ValidationErrorDetail("StatusChangedDateTime", $"Certificate delivery(StatusChangedAt) datetime {validatedCertificatePrintStatus.StatusChangedAt} earlier than printed(latest date) datetime {certificateBatchLog.LatestChange()}.", ValidationStatusCode.BadRequest));
                     }
                 }
 
@@ -87,7 +85,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
                     .Select(certificatePrintStatus => certificatePrintStatus.Key)
                     .ToList());
 
-            //Scenario 4:  Invalid status in delivery notification file
             invalidPrintStatuses.ForEach(invalidPrintStatus =>
             {
                 validationResult.Errors.Add(

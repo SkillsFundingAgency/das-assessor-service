@@ -89,7 +89,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
                   {
                       Id = Guid.NewGuid(),
                       CertificateReference = certificateReference,
-                      Status = CertificateStatus.Deleted,
+                      Status = CertificateStatus.Delivered,
                       UpdatedAt = DateTime.UtcNow.AddDays(1)
                   }));
 
@@ -121,8 +121,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
                   new CertificateBatchLog
                   {
                       Id = Guid.NewGuid(),
-                      CertificateReference = certificateReference,
-                      UpdatedAt = DateTime.UtcNow.AddDays(1)
+                      CertificateReference = certificateReference,                      
+                      StatusAt = DateTime.UtcNow.AddDays(1)
                   }));
 
             _certificateRepository.Setup(r => r.GetCertificateBatchLog(It.IsIn(_certificateReferenceDeletedAfterPrinted), _batchNumber))
@@ -131,8 +131,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
                     {
                         Id = Guid.NewGuid(),
                         CertificateReference = certificateReference,
-                        Status = CertificateStatus.Delivered,
-                        UpdatedAt = DateTime.UtcNow.AddDays(-1)
+                        Status = CertificateStatus.Delivered,                        
+                        StatusAt = DateTime.UtcNow.AddDays(-1)
                     }));
 
             _certificateRepository.Setup(r => r.GetCertificateBatchLog(It.IsIn(_certificateReference6), _batchNumber))
@@ -141,8 +141,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
                   {
                       Id = Guid.NewGuid(),
                       CertificateReference = certificateReference,
-                      Status = CertificateStatus.Deleted,
-                      UpdatedAt = DateTime.UtcNow.AddDays(1)
+                      Status = CertificateStatus.Delivered,                      
+                      StatusAt = DateTime.UtcNow.AddDays(1)
                   }));
 
             _certificateRepository.Setup(r => r.GetCertificate(It.IsIn(_certificateReference3)))
