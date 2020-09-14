@@ -43,7 +43,5 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<PaginatedList<Certificate>> GetCertificatesForApproval(int pageIndex, int pageSize,string status, string privatelyFundedStatus);
         Task<bool> CertifciateExistsForUln(long uln);
         Task<Certificate> GetCertificateDeletedByUln(long uln);
-        Task<CertificateBatchLog> GetCertificateBatchLog(string certificateReference, int batchNumber);
-
     }
 }

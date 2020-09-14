@@ -16,12 +16,16 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
     public class UpdateCertificatesPrintStatusHandler : IRequestHandler<UpdateCertificatesPrintStatusRequest, ValidationResponse>
     {
         private readonly ICertificateRepository _certificateRepository;
+        private readonly ICertificateBatchLogRepository _certificateBatchLogRepository;
         private readonly IMediator _mediator;
         private readonly ILogger<UpdateCertificatesPrintStatusHandler> _logger;
 
-        public UpdateCertificatesPrintStatusHandler(ICertificateRepository certificateRepository, IMediator mediator, ILogger<UpdateCertificatesPrintStatusHandler> logger)
+        public UpdateCertificatesPrintStatusHandler(ICertificateRepository certificateRepository, 
+            ICertificateBatchLogRepository certificateBatchLogRepository,
+            IMediator mediator, ILogger<UpdateCertificatesPrintStatusHandler> logger)
         {
             _certificateRepository = certificateRepository;
+            _certificateBatchLogRepository = certificateBatchLogRepository;
             _mediator = mediator;
             _logger = logger;
         }
@@ -33,7 +37,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
             var validatedCertificatePrintStatuses = await Validate(request.CertificatePrintStatuses, validationResult);
             foreach(var validatedCertificatePrintStatus in validatedCertificatePrintStatuses)
             {                
-                var certificateBatchLog = await _certificateRepository.GetCertificateBatchLog(validatedCertificatePrintStatus.CertificateReference, validatedCertificatePrintStatus.BatchNumber);
+                var certificateBatchLog = await _certificateBatchLogRepository.GetCertificateBatchLog(validatedCertificatePrintStatus.CertificateReference, validatedCertificatePrintStatus.BatchNumber);
                 if (certificateBatchLog == null)
                 {                    
                     validationResult.Errors.Add(
