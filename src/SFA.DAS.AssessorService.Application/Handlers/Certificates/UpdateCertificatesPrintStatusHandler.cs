@@ -33,18 +33,18 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
         public async Task<ValidationResponse> Handle(UpdateCertificatesPrintStatusRequest request, CancellationToken cancellationToken)
         {
             var validationResult = new ValidationResponse();
-          
+            
             var validatedCertificatePrintStatuses = await Validate(request.CertificatePrintStatuses, validationResult);
             foreach(var validatedCertificatePrintStatus in validatedCertificatePrintStatuses)
-            {                
+            {
                 var certificateBatchLog = await _certificateBatchLogRepository.GetCertificateBatchLog(validatedCertificatePrintStatus.CertificateReference, validatedCertificatePrintStatus.BatchNumber);
                 if (certificateBatchLog == null)
-                {                    
+                {
                     validationResult.Errors.Add(
                       new ValidationErrorDetail("CertificatePrintStatuses", $"Certificate {validatedCertificatePrintStatus.CertificateReference} not printed in batch {validatedCertificatePrintStatus.BatchNumber}  .", ValidationStatusCode.NotFound));                    
                 }
                 else
-                {                    
+                {
                     if (validatedCertificatePrintStatus.StatusChangedAt < certificateBatchLog.StatusAt)
                     {
                         validationResult.Errors.Add(
@@ -54,7 +54,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
 
                 var certificate = await _certificateRepository.GetCertificate(validatedCertificatePrintStatus.CertificateReference);
                 if (certificate == null)
-                {                   
+                {
                     validationResult.Errors.Add(
                         new ValidationErrorDetail("CertificatePrintStatuses", $"The certificate reference {validatedCertificatePrintStatus.CertificateReference} was not found.", ValidationStatusCode.NotFound));
                 }
@@ -99,7 +99,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
             {
                 validationResult.Errors.Add(
                     new ValidationErrorDetail("CertificatePrintStatuses", $"The batch number {invalidBatchNumber} was not found.", ValidationStatusCode.NotFound));
-            });            
+            });
 
             return certificatePrintStatuses
                 .Where(certificatePrintStatus => !invalidBatchNumbers.Contains(certificatePrintStatus.BatchNumber) && !invalidPrintStatuses.Contains(certificatePrintStatus.Status))

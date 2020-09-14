@@ -15,7 +15,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.BatchLogs.Print
 {
     public class When_called_and_processed_date_earlier_than_batch_date : PrintedBatchLogHandlerTestBase
     {
-        protected BatchLog _batchLog = new BatchLog { Id = Guid.NewGuid(), BatchNumber = _batchNumber, BatchCreated = DateTime.UtcNow.AddDays(1) };
+        protected new BatchLog _batchLog = new BatchLog { Id = Guid.NewGuid(), BatchNumber = _batchNumber, BatchCreated = DateTime.UtcNow.AddDays(1) };
         private ValidationResponse _response;
 
         [SetUp]

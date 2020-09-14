@@ -233,7 +233,7 @@ namespace SFA.DAS.AssessorService.Data
                _context.Certificates
                     .FirstOrDefaultAsync(q => q.CertificateReference == certificateReference);
             return certificate;
-        }        
+        }
 
         private bool CheckCertificateData(Certificate certificate, string lastName, DateTime? achievementDate)
         {

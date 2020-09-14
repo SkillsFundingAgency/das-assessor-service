@@ -5,10 +5,7 @@ using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.Application.Handlers.BatchLogs;
-using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
-using SFA.DAS.AssessorService.Domain.Entities;
-using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -16,7 +13,6 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.BatchLogs.Print
 {
     public class When_called_and_batch_does_exist : PrintedBatchLogHandlerTestBase
     {
-        protected BatchLog _batchLog = new BatchLog { Id = Guid.NewGuid(), BatchNumber = _batchNumber };
         private ValidationResponse _response;
 
         [SetUp]
@@ -24,9 +20,6 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.BatchLogs.Print
         {
             //Arrange
             base.BaseArrange();
-
-            _batchLogQueryRepository = new Mock<IBatchLogQueryRepository>();
-            _batchLogQueryRepository.Setup(r => r.GetForBatchNumber(It.IsAny<int>())).Returns(Task.FromResult(_batchLog));
 
             //Act
             var sut = new PrintedBatchLogHandler(_batchLogQueryRepository.Object, _certificateRepository.Object, _mediator.Object, _logger.Object);

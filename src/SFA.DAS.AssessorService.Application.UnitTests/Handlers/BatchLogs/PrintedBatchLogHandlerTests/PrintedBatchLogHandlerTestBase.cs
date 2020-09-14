@@ -18,7 +18,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.BatchLogs.Print
         protected Mock<IBatchLogQueryRepository> _batchLogQueryRepository;
         protected Mock<ICertificateRepository> _certificateRepository;
         protected Mock<IMediator> _mediator;
-        protected Mock<ILogger<PrintedBatchLogHandler>> _logger;
+        protected Mock<ILogger<PrintedBatchLogHandler>> _logger;        
 
         protected static int _batchNumber = 222;
         protected static DateTime _printedAt = DateTime.UtcNow;
@@ -41,6 +41,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.BatchLogs.Print
         };
 
         protected UpdateCertificatesPrintStatusRequest _request;
+        protected BatchLog _batchLog = new BatchLog { Id = Guid.NewGuid(), BatchNumber = _batchNumber };
 
         public void BaseArrange()
         {   
@@ -48,6 +49,10 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.BatchLogs.Print
             
             _certificateRepository = new Mock<ICertificateRepository>();
             _certificateRepository.Setup(r => r.GetCertificatesForBatchLog(It.IsAny<int>())).Returns(Task.FromResult(_certificates));
+
+            _batchLogQueryRepository = new Mock<IBatchLogQueryRepository>();
+            _batchLogQueryRepository.Setup(r => r.GetForBatchNumber(It.IsIn(_batchNumber))).Returns(Task.FromResult(_batchLog));
+            _batchLogQueryRepository.Setup(r => r.GetForBatchNumber(It.IsNotIn(_batchNumber))).Returns(Task.FromResult<BatchLog>(null));
 
             _mediator = new Mock<IMediator>();
             _mediator.Setup(r => r.Send(It.IsAny<UpdateCertificatesPrintStatusRequest>(), It.IsAny<CancellationToken>()))
