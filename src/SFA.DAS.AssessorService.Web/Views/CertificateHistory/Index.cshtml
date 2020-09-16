@@ -153,15 +153,16 @@
                                         }
                                         else
                                         {
-                                            var printStatusAtDateTime = item.PrintStatusAt.HasValue ? item.PrintStatusAt.Value.ToString("dd/MM/yyyy HH:mm:ss ") : string.Empty;
+                                            var printStatusAtDate = item.PrintStatusAt.HasValue ? item.PrintStatusAt.Value.ToString("dd/MM/yyyy") : string.Empty;
+                                            var printStatusAtTime = item.PrintStatusAt.HasValue ? item.PrintStatusAt.Value.ToString("HH:mm:ss") : string.Empty;
 
                                             if (Model.IsCertificateNotDelivered(item))
                                             {
-                                                <text>@string.Format(Localizer["NotDelivered"].Value, printStatusAtDateTime)</text>
+                                                <text>@string.Format(Localizer["NotDelivered"].Value, printStatusAtDate, printStatusAtTime)</text>
                                             }
                                             else if (Model.IsCertificateDelivered(item))
                                             {
-                                                <text>@string.Format(Localizer["Delivered"].Value, printStatusAtDateTime)</text>
+                                                <text>@string.Format(Localizer["Delivered"].Value, printStatusAtDate, printStatusAtTime)</text>
                                             }
                                     }
                                     </p>

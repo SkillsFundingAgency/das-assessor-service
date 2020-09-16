@@ -166,10 +166,10 @@
     <value>Waiting to be delivered to:</value>
   </data>
   <data name="Delivered" xml:space="preserve">
-    <value>We delivered the certificate on {0} to:</value>
+    <value>We delivered the certificate on {0} at {1} to:</value>
   </data>
   <data name="NotDelivered" xml:space="preserve">
-    <value>We attempted to deliver the certificate on {0} to:</value>
+    <value>We attempted to deliver the certificate on {0} at {1} to:</value>
   </data>
   <data name="ReasonForNotDelivered" xml:space="preserve">
     <value>Reason for no delivery: {0}</value>
