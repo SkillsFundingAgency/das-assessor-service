@@ -24,7 +24,7 @@ else
             <form class="apprentice-grade-form js-disable-on-submit" method="post" asp-controller="CertificateGrade">
                 @Html.HiddenFor(c => c.Id)
 
-                <div class="js-error-summary govuk-error-summary" role="alert" aria-labelledby="error-summary-title" tabindex="-1" data-module="error-summary">
+                <div class="js-error-summary govuk-error-summary" role="alert" aria-labelledby="error-summary-title" tabindex="-1" data-module="govuk-error-summary">
                     <h2 class="govuk-error-summary__title" id="error-summary-title">
                         There is a problem
                     </h2>
@@ -35,7 +35,7 @@ else
 
                 @if (!ViewData.ModelState.IsValid)
                 {
-                    <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
+                    <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
                         <h2 class="govuk-error-summary__title" id="error-summary-title">
                             There is a problem
                         </h2>
