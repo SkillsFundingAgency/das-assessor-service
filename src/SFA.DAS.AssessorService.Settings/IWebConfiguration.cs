@@ -30,6 +30,7 @@
         string SandboxSqlConnectionString { get; set; }
         ApiAuthentication SandboxApiAuthentication { get; set; }
         ClientApiAuthentication SandboxClientApiAuthentication { get; set; }
+        bool ExternalApiDataSyncEnabled { get; set; }
 
         #endregion
 

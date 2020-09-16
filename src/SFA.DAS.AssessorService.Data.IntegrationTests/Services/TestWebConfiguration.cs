@@ -30,6 +30,8 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Services
         public string SandboxSqlConnectionString { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public ApiAuthentication SandboxApiAuthentication { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public ClientApiAuthentication SandboxClientApiAuthentication { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public bool ExternalApiDataSyncEnabled { get; set; }
+
         #endregion
 
         public string ZenDeskSnippetKey { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
