@@ -1,7 +1,7 @@
 ﻿@using SFA.DAS.AssessorService.Domain.Consts
 @inject IViewLocalizer Localizer
 @using Microsoft.AspNetCore.Mvc.Localization
-@using SFA.DAS.AssessorService.Domain.Paging
+@using SFA.DAS.AssessorService.Domain.Extensions
 @model SFA.DAS.AssessorService.Web.ViewModels.Certificate.CertificateHistoryViewModel
 
 @{
@@ -153,8 +153,8 @@
                                         }
                                         else
                                         {
-                                            var printStatusAtDate = item.PrintStatusAt.HasValue ? item.PrintStatusAt.Value.ToString("dd/MM/yyyy") : string.Empty;
-                                            var printStatusAtTime = item.PrintStatusAt.HasValue ? item.PrintStatusAt.Value.ToString("HH:mm:ss") : string.Empty;
+                                            var printStatusAtDate = item.PrintStatusAt.HasValue ? item.PrintStatusAt.Value.UtcToTimeZoneTime().ToString("dd/MM/yyyy") : string.Empty;
+                                            var printStatusAtTime = item.PrintStatusAt.HasValue ? item.PrintStatusAt.Value.UtcToTimeZoneTime().ToString("HH:mm:ss") : string.Empty;
 
                                             if (Model.IsCertificateNotDelivered(item))
                                             {
