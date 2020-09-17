@@ -27,7 +27,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
                 new CertificatePrintStatus
                 {
                     BatchNumber = _batchNumber,
-                    CertificateReference = _certificateReference7,
+                    CertificateReference = _certificateReference6,
                     Status = CertificateStatus.NotDelivered,
                     StatusChangedAt = _statusChangedAt
                 }
@@ -53,7 +53,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
         {
             //Assert
             _certificateRepository.Verify(r => r.UpdatePrintStatus(
-                It.Is<Certificate>(c => c.CertificateReference == _certificateReference7), _batchNumber, CertificateStatus.NotDelivered, _statusChangedAt, true),
+                It.Is<Certificate>(c => c.CertificateReference == _certificateReference6), _batchNumber, CertificateStatus.NotDelivered, _statusChangedAt, true),
                 Times.Never);
         }
     }
