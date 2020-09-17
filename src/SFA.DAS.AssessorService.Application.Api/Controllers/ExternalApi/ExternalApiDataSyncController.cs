@@ -1,5 +1,4 @@
-﻿using System;
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
@@ -13,7 +12,7 @@ using SFA.DAS.AssessorService.Application.Handlers.ExternalApi.DataSync;
 namespace SFA.DAS.AssessorService.Application.Api.Controllers.ExternalApi
 {
     [Authorize(Roles = "AssessorServiceInternalAPI")]
-    [Route("api/v1/externalapidatasync")]
+    [Route("api/v1/rebuildapisandbox")]
     [ValidateBadRequest]
     public class RebuildExternalApiDataSyncController : Controller
     {
@@ -24,7 +23,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.ExternalApi
             _mediator = mediator;
         }
 
-        [HttpPost("rebuild-sandbox", Name = "RebuildExternalApiSandbox")]
+        [HttpPost(Name = "RebuildExternalApiSandbox")]
         [SwaggerResponse((int)HttpStatusCode.OK)]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
