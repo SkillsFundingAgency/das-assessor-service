@@ -66,6 +66,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             catch(Exception ex)
             {
                 _logger.LogError(ex, "Request to update standard summary failed");
+                throw new Exception("Something went wrong, Please contact support");
             }
         }
     }
