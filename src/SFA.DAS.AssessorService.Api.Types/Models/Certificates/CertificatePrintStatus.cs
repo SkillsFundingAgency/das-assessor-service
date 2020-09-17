@@ -8,5 +8,6 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Certificates
         public int BatchNumber { get; set; }
         public string Status { get; set; }
         public DateTime StatusChangedAt { get; set; }
+        public string ReasonForChange { get; set; }
     }
 }
