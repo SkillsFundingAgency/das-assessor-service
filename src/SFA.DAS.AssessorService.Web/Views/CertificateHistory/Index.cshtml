@@ -1,8 +1,8 @@
 ﻿@using SFA.DAS.AssessorService.Domain.Consts
 @inject IViewLocalizer Localizer
 @using Microsoft.AspNetCore.Mvc.Localization
-@using SFA.DAS.AssessorService.Domain.Paging
-@model SFA.DAS.AssessorService.Domain.Paging.PaginatedList<SFA.DAS.AssessorService.Api.Types.Models.Certificates.CertificateSummaryResponse>
+@using SFA.DAS.AssessorService.Domain.Extensions
+@model SFA.DAS.AssessorService.Web.ViewModels.Certificate.CertificateHistoryViewModel
 
 @{
     ViewBag.Title = "Completed assessments";
@@ -20,7 +20,7 @@
     
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
-        @if (Model.Items.Any())
+        @if (Model.Certificates.Items.Any())
         {
             <table class="govuk-table govuk-table--small responsive">
                 <thead class="govuk-table__head">
@@ -43,7 +43,7 @@
                     </tr>
                 </thead>
                 <tbody class="govuk-table__body">
-                @foreach (var item in Model.Items)
+                @foreach (var item in Model.Certificates.Items)
                 {
                     <tr>
                         <td data-label="@Localizer["Apprentice"]" class="govuk-table__cell das-no-wrap">
@@ -85,16 +85,16 @@
                                     </div>
                                     <div class="govuk-summary-list__row">
                                         <dt class="govuk-summary-list__key">@Localizer["Option"]</dt>
-                                            <dd class="govuk-summary-list__value">
-                                                @if (item.CourseOption != null)
-                                                {
-                                                    @Html.DisplayFor(modelItem => item.CourseOption)
-                                                }
-                                                else
-                                                {
-                                                    <text>None</text>
-                                                }
-                                            </dd>
+                                        <dd class="govuk-summary-list__value">
+                                            @if (item.CourseOption != null)
+                                            {
+                                                @Html.DisplayFor(modelItem => item.CourseOption)
+                                            }
+                                            else
+                                            {
+                                                <text>None</text>
+                                            }
+                                        </dd>
                                     </div>
                                     <div class="govuk-summary-list__row">
                                         <dt class="govuk-summary-list__key">@Localizer["AchievementStartDate"]</dt>
@@ -132,15 +132,41 @@
                                         </dt>
                                         <dd class="govuk-summary-list__value">@Html.DisplayFor(modelItem => item.CertificateReference)</dd>
                                     </div>
+                                    <div class="govuk-summary-list__row">
+                                        <dt class="govuk-summary-list__key">
+                                            @Localizer["CertificateStatus"]
+                                        </dt>
+                                        <dd class="govuk-summary-list__value">
+                                            <text>@CertificateStatus.GetDisplayName(item.Status)</text>
+                                        </dd>
+                                    </div>
                                 </dl>
 
-                                @if (item.OverallGrade != CertificateGrade.Fail)
+                                @if (Model.CanShowCertificateDetails(item))
                                 {
-                                    <h2 class="govuk-heading-m">@Localizer["PostageDetails"]</h2>
+                                    <h2 class="govuk-heading-m">@Localizer["CertificateDetails"]</h2>
 
                                     <p class="govuk-body">
-                                        The certificate was posted to this address.
+                                        @if (Model.IsCertificateWaitingToBeDelivered(item))
+                                        {
+                                            @Localizer["WaitingToBeDelivered"]
+                                        }
+                                        else
+                                        {
+                                            var printStatusAtDate = item.PrintStatusAt.HasValue ? item.PrintStatusAt.Value.UtcToTimeZoneTime().ToString("dd/MM/yyyy") : string.Empty;
+                                            var printStatusAtTime = item.PrintStatusAt.HasValue ? item.PrintStatusAt.Value.UtcToTimeZoneTime().ToString("HH:mm:ss") : string.Empty;
+
+                                            if (Model.IsCertificateNotDelivered(item))
+                                            {
+                                                <text>@string.Format(Localizer["NotDelivered"].Value, printStatusAtDate, printStatusAtTime)</text>
+                                            }
+                                            else if (Model.IsCertificateDelivered(item))
+                                            {
+                                                <text>@string.Format(Localizer["Delivered"].Value, printStatusAtDate, printStatusAtTime)</text>
+                                            }
+                                    }
                                     </p>
+
                                     <ul class="govuk-list">
                                         <li>
                                             @Html.DisplayFor(modelItem => item.ContactName)
@@ -164,6 +190,16 @@
                                             @Html.DisplayFor(modelItem => item.ContactPostCode)
                                         </li>
                                     </ul>
+                                    
+                                    @if (Model.IsCertificateNotDelivered(item))
+                                    {
+                                        <p class="govuk-body">
+                                        @{
+                                            var reason = !string.IsNullOrEmpty(item.ReasonForChange) ? item.ReasonForChange : Localizer["NoReasonGiven"].Value;
+                                            <text>@string.Format(Localizer["ReasonForNotDelivered"].Value, reason)</text>
+                                        }
+                                        </p>
+                                    }
                                 }
                             </div>
                         </td>
@@ -181,37 +217,37 @@
         </div>
     </div>
 
-    @if (Model.HasPreviousPage || Model.HasNextPage)
+    @if (Model.Certificates.HasPreviousPage || Model.Certificates.HasNextPage)
     {
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
             <div class="page-navigation">
 
-                @if (Model.HasPreviousPage)
+                @if (Model.Certificates.HasPreviousPage)
                 {
                     <a 
                         asp-action="Index"
                         asp-controller="CertificateHistory"
-                        asp-route-pageIndex="@(Model.PageIndex - 1)"
+                        asp-route-pageIndex="@(Model.Certificates.PageIndex - 1)"
                         class="govuk-link previous"
                     >
                         <i class="arrow-button icon-left-open">&#xe800;</i>
                         <span class="description">Previous <span class="hide-mob">page</span></span>
-                        <span class="counter">Page <span class="prevPage">@(Model.PageIndex - 1)</span> of <span class="totalPage">@(Model.TotalPages)</span></span>
+                        <span class="counter">Page <span class="prevPage">@(Model.Certificates.PageIndex - 1)</span> of <span class="totalPage">@(Model.Certificates.TotalPages)</span></span>
                     </a>
                 }
 
-                @if (Model.HasNextPage)
+                @if (Model.Certificates.HasNextPage)
                 {
                     <a 
                         asp-controller="CertificateHistory"
                         asp-action="Index"
-                        asp-route-pageIndex="@(Model.PageIndex + 1)"
+                        asp-route-pageIndex="@(Model.Certificates.PageIndex + 1)"
                         class="govuk-link next"
                     >
                         <i class="arrow-button icon-right-open">&#xe801;</i>
                         <span class="description">Next <span class="hide-mob">page</span></span>
-                        <span class="counter">Page <span class="nextPage">@(Model.PageIndex + 1)</span> of <span class="totalPage">@(Model.TotalPages)</span></span>
+                        <span class="counter">Page <span class="nextPage">@(Model.Certificates.PageIndex + 1)</span> of <span class="totalPage">@(Model.Certificates.TotalPages)</span></span>
                     </a>
                 }
 

@@ -73,7 +73,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
         public void Then_repository_update_print_status_is_not_called()
         {
             _certificateRepository.Verify(r => r.UpdatePrintStatus(
-                It.IsAny<Certificate>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<bool>()), 
+                It.IsAny<Certificate>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<string>(), It.IsAny<bool>()), 
                 Times.Never());
         }
     }
