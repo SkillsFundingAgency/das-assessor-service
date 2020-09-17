@@ -12,20 +12,20 @@ using SFA.DAS.AssessorService.Settings;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.DataSync
 {
-    public class ExternalApiDataSyncHandler : IRequestHandler<GetDataSyncRequest>
+    public class RebuildExternalApiSandboxHandler : IRequestHandler<RebuildExternalApiSandboxRequest>
     {
-        private readonly ILogger<ExternalApiDataSyncHandler> _logger;
+        private readonly ILogger<RebuildExternalApiSandboxHandler> _logger;
         private readonly SqlBulkCopyOptions _bulkCopyOptions;
         private readonly IWebConfiguration _config;
 
-        public ExternalApiDataSyncHandler(ILogger<ExternalApiDataSyncHandler> logger, IWebConfiguration configurationService)
+        public RebuildExternalApiSandboxHandler(ILogger<RebuildExternalApiSandboxHandler> logger, IWebConfiguration configurationService)
         {
             _logger = logger;
             _config = configurationService;
             _bulkCopyOptions = SqlBulkCopyOptions.KeepIdentity | SqlBulkCopyOptions.KeepNulls | SqlBulkCopyOptions.TableLock;
         }
 
-        public async Task<Unit> Handle(GetDataSyncRequest request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(RebuildExternalApiSandboxRequest request, CancellationToken cancellationToken)
         {
             await ExecuteDataSync();
             return Unit.Value;
@@ -249,10 +249,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.DataSync
                 }
             }
         }
-    }
-    
-    public class GetDataSyncRequest : IRequest
-    {
     }
 }
 

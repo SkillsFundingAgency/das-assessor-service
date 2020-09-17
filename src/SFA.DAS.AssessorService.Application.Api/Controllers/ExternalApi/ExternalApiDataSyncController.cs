@@ -15,21 +15,22 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.ExternalApi
     [Authorize(Roles = "AssessorServiceInternalAPI")]
     [Route("api/v1/externalapidatasync")]
     [ValidateBadRequest]
-    public class ExternalApiDataSyncController : Controller
+    public class RebuildExternalApiDataSyncController : Controller
     {
         private readonly IMediator _mediator;
 
-        public ExternalApiDataSyncController(IMediator mediator)
+        public RebuildExternalApiDataSyncController(IMediator mediator)
         {
             _mediator = mediator;
         }
 
+        [HttpPost("rebuild-sandbox", Name = "RebuildExternalApiSandbox")]
         [SwaggerResponse((int)HttpStatusCode.OK)]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> PerformDataSync()
+        public async Task<IActionResult> RebuildExternalApiSandbox()
         {
-            var request = new GetDataSyncRequest();
+            var request = new RebuildExternalApiSandboxRequest();
             await _mediator.Send(request);
             return Ok();
         }
