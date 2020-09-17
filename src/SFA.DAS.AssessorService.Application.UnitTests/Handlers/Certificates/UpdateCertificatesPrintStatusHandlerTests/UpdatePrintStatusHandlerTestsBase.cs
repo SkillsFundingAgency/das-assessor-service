@@ -7,6 +7,7 @@ using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -118,8 +119,18 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
                       UpdatedAt = DateTime.UtcNow.AddDays(-1),
                       BatchNumber = batchNumber,
                       Status = CertificateStatus.SentToPrinter
-                  }));
+                  }));          
 
+            _certificateBatchLogRepository.Setup(r => r.GetCertificateBatchLog(It.IsIn(_certificateReference3), _batchNumber))
+             .Returns((string certificateReference, int batchNumber) => Task.FromResult(
+                  new CertificateBatchLog
+                  {
+                      Id = Guid.NewGuid(),
+                      CertificateReference = certificateReference,
+                      UpdatedAt = DateTime.UtcNow.AddDays(-1),
+                      BatchNumber = batchNumber,
+                      Status = CertificateStatus.SentToPrinter
+                  }));
 
             _certificateBatchLogRepository.Setup(r => r.GetCertificateBatchLog(It.IsIn(_certificateReferenceUpdateAfterPrinted), _batchNumber))
               .Returns((string certificateReference, int batchNumber) => Task.FromResult(
@@ -149,7 +160,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
                   }));
 
             _certificateRepository.Setup(r => r.GetCertificate(It.IsIn(_certificateReference4)))
-                .Returns((string certificateReference) => Task.FromResult<Certificate>(null));
+                .Returns((string certificateReference) => Task.FromResult<Certificate>(null));           
 
             _certificateRepository.Setup(r => r.UpdateSentToPrinter(It.IsAny<Certificate>(), It.IsAny<int>(), It.IsAny<DateTime>()))
                 .Returns(Task.CompletedTask);

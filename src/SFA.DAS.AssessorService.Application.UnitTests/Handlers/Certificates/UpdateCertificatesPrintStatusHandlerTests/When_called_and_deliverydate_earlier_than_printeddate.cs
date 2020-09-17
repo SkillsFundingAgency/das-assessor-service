@@ -56,7 +56,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
         {          
             //Assert
             _certificateRepository.Verify(r => r.UpdatePrintStatus(
-                It.Is<Certificate>(c => c.CertificateReference == _certificateReference5), _batchNumber, CertificateStatus.Delivered, _statusChangedAt, false),
+                It.Is<Certificate>(c => c.CertificateReference == _certificateReference5), _batchNumber, CertificateStatus.Delivered, _statusChangedAt, null, false),
                 Times.Once);
         }
     }
