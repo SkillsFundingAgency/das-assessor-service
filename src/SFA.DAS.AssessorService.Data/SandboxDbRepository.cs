@@ -29,7 +29,7 @@ namespace SFA.DAS.AssessorService.Data
         {
             try
             {
-                _logger.LogInformation("Proceeding with External Api Data Sync...");
+                _logger.LogInformation("Proceeding with rebuilding of ExternalApiSandbox...");
 
                 using (var destinationSqlConnection = new SqlConnection(_config.SandboxSqlConnectionString))
                 {
@@ -49,19 +49,19 @@ namespace SFA.DAS.AssessorService.Data
                     }
                 }
 
-                _logger.LogInformation("External Api Data Sync completed");
+                _logger.LogInformation("Rebuilding of ExternalApiSandbox completed");
             }
             catch (TransactionAbortedException ex)
             {
-                _logger.LogError(ex, "Transaction was aborted during External Api Data Sync");
+                _logger.LogError(ex, "Transaction was aborted during Rebuilding of ExternalApiSandbox");
             }
             catch (SqlException ex)
             {
-                _logger.LogError(ex, "SqlException occurred during External Api Data Sync");
+                _logger.LogError(ex, "SqlException occurred during Rebuilding of ExternalApiSandbox");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Unknown Error occurred during External Api Data Sync");
+                _logger.LogError(ex, "Unknown Error occurred during Rebuilding of ExternalApiSandbox");
             }
             await Task.CompletedTask;
         }
