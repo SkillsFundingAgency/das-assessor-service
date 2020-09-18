@@ -1,9 +1,8 @@
-﻿using System;
+﻿using SFA.DAS.AssessorService.Domain.DTOs.Staff;
+using System;
 using System.Collections.Generic;
-using SFA.DAS.AssessorService.Domain.DTOs.Staff;
-using SFA.DAS.AssessorService.Domain.Entities;
 
-namespace SFA.DAS.AssessorService.Api.Types.Models
+namespace SFA.DAS.AssessorService.Api.Types.Models.Staff
 {
     public class LearnerDetailResult
     {
@@ -27,7 +26,15 @@ namespace SFA.DAS.AssessorService.Api.Types.Models
         public string OverallGrade { get; set; }
         public DateTime? AchievementDate { get; set; }
         public Guid? CertificateId { get; set; }
-
         public List<CertificateLogSummary> CertificateLogs { get; set; }
+        public string ReasonForChange { get; set; }
+        public DateTime? PrintStatusAt { get; set; }
+        public string ContactName { get; set; }
+        public string ContactOrganisation { get; set; }
+        public string ContactAddLine1 { get; set; }
+        public string ContactAddLine2 { get; set; }
+        public string ContactAddLine3 { get; set; }
+        public string ContactAddLine4 { get; set; }
+        public string ContactPostCode { get; set; }
     }
 }

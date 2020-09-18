@@ -37,5 +37,6 @@ namespace SFA.DAS.AssessorService.Domain.Entities
         public string PrivatelyFundedStatus { get; set; }
         public DateTime CreateDay { get; set; }
         public virtual ICollection<CertificateLog> CertificateLogs { get; set; } = new List<CertificateLog>();
+        public virtual CertificateBatchLog CertificateBatchLog { get; set; }
     }
 }
