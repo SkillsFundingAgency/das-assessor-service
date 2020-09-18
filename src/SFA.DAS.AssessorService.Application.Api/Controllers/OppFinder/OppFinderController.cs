@@ -58,8 +58,16 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task UpdateStandardSummary([FromBody] UpdateStandardSummaryRequest request)
         {
+            try
+            {
                 _logger.LogInformation($"Received request to update standard summary");
                 await _mediator.Send(request);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Request to update standard summary failed");
+                throw new Exception("Request to update standard summary failed");
+            }
         }
     }
 }
