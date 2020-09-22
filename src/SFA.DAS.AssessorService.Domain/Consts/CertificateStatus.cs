@@ -45,5 +45,29 @@ namespace SFA.DAS.AssessorService.Domain.Consts
             var allowed = new[] { Draft, Submitted };
             return allowed.Contains(status);
         }
+
+        public static string GetDisplayName(string status)
+        {
+            switch (status)
+            {
+                case ToBeApproved:
+                    return "To be approved";
+
+                case SentForApproval:
+                    return "Sent for approval";
+
+                case SentToPrinter:
+                    return "Sent to printer";
+
+                case NotDelivered:
+                    return "Not delivered";
+
+                case Reprint:
+                    return "Reprint requested";
+
+                default:
+                    return status;
+            }
+        }
     }
 }
