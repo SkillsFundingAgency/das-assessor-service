@@ -56,12 +56,12 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
 
         private async Task<PaginatedList<CertificateSummaryResponse>> MapCertificates(PaginatedList<Certificate> certificates)
         {
-            var trainingProviderName = string.Empty;
-            var recordedBy = string.Empty;
             var certificateResponses = certificates?.Items.Select(
                 certificate =>
                 {
                     var certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
+                    
+                    var recordedBy = string.Empty;
                     if (certificate.IsPrivatelyFunded)
                     {
                         recordedBy = certificate.CreatedBy;
@@ -74,6 +74,13 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
                                 certificateLog.Status == Domain.Consts.CertificateStatus.Submitted)?.Username;
                     }
 
+                    var printStatusAt =
+                        certificate.CertificateBatchLog?.StatusAt;
+
+                    var printReasonForChange =
+                        certificate.CertificateBatchLog?.ReasonForChange;
+
+                    var trainingProviderName = string.Empty;
                     try
                     {
                         if (certificateData.ProviderName == null)
@@ -104,6 +111,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
                         CreatedAt = certificate.CreatedAt,
                         CreatedDay = certificate.CreateDay,
                         UpdatedAt = certificate.UpdatedAt,
+                        PrintStatusAt = printStatusAt,
                         ContactOrganisation = certificateData.ContactOrganisation,
                         ContactName = certificateData.ContactName,
                         TrainingProvider = trainingProviderName,
@@ -120,7 +128,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
                         ContactAddLine2 = certificateData.ContactAddLine2,
                         ContactAddLine3 = certificateData.ContactAddLine3,
                         ContactAddLine4 = certificateData.ContactAddLine4,
-                        ContactPostCode = certificateData.ContactPostCode
+                        ContactPostCode = certificateData.ContactPostCode,
+                        Status = certificate.Status,
+                        ReasonForChange = printReasonForChange
                     };
                 });
 

@@ -7,6 +7,7 @@ using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -26,8 +27,11 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
         protected static string _certificateReference1 = "00000001";
         protected static string _certificateReference2 = "00000002";
         protected static string _certificateReference3 = "00000003";
-        protected static string _certificateReferenceUpdateAfterPrinted = "00000004";
-        protected static string _certificateReferenceDeletedAfterPrinted = "00000005";
+        protected static string _certificateReference4 = "00000004";
+        protected static string _certificateReferenceUpdateAfterPrinted = "00000005";
+        protected static string _certificateReferenceDeletedAfterPrinted = "00000006";
+
+        protected static string _certificateNotDeliveredReason1 = "The address given did not match the building street address";
 
         protected BatchLog _batchLog = new BatchLog { Id = Guid.NewGuid(), BatchNumber = _batchNumber };
         
@@ -48,7 +52,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
                         ToBePrinted = DateTime.UtcNow.AddDays(-1)
                     }));
 
-            _certificateRepository.Setup(r => r.GetCertificate(It.IsIn(_certificateReference2)))
+            _certificateRepository.Setup(r => r.GetCertificate(It.IsIn(_certificateReference2, _certificateReference3)))
                 .Returns((string certificateReference) => Task.FromResult(
                     new Certificate
                     {
@@ -81,7 +85,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
                         UpdatedAt = DateTime.UtcNow.AddDays(-1)
                     }));
 
-            _certificateRepository.Setup(r => r.GetCertificate(It.IsIn(_certificateReference3)))
+            _certificateRepository.Setup(r => r.GetCertificate(It.IsIn(_certificateReference4)))
                 .Returns((string certificateReference) => Task.FromResult<Certificate>(null));
 
             _certificateRepository.Setup(r => r.UpdateSentToPrinter(It.IsAny<Certificate>(), It.IsAny<int>(), It.IsAny<DateTime>()))
