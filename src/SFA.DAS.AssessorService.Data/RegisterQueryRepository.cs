@@ -1,9 +1,11 @@
 ﻿using Dapper;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Azure.Services.AppAuthentication;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Data.DapperTypeHandlers;
+using SFA.DAS.AssessorService.Data.Helpers;
 using SFA.DAS.AssessorService.Settings;
 using System;
 using System.Collections.Generic;
@@ -17,12 +19,24 @@ namespace SFA.DAS.AssessorService.Data
     public class RegisterQueryRepository : IRegisterQueryRepository
     {
         private readonly IWebConfiguration _configuration;
+        private readonly AzureServiceTokenProvider _azureServiceTokenProvider;
 
         public RegisterQueryRepository(IWebConfiguration configuration)
         {
             _configuration = configuration;
             SqlMapper.AddTypeHandler(typeof(OrganisationData), new OrganisationDataHandler());
             SqlMapper.AddTypeHandler(typeof(OrganisationStandardData), new OrganisationStandardDataHandler());
+        }
+
+        public RegisterQueryRepository(IWebConfiguration configuration, IHostingEnvironment hostingEnvironment)
+        {
+            _configuration = configuration;
+            SqlMapper.AddTypeHandler(typeof(OrganisationData), new OrganisationDataHandler());
+            SqlMapper.AddTypeHandler(typeof(OrganisationStandardData), new OrganisationStandardDataHandler());
+
+            if (!hostingEnvironment.IsDevelopment()) {
+                _azureServiceTokenProvider = new AzureServiceTokenProvider();
+            }
         }
 
         public async Task<IEnumerable<OrganisationType>> GetOrganisationTypes()
@@ -45,10 +59,8 @@ namespace SFA.DAS.AssessorService.Data
         {
             var connectionString = _configuration.SqlConnectionString;
 
-            using (var connection = new SqlConnection(connectionString))
+            using (var connection = ManagedIdentitySqlConnection.GetSqlConnection(_configuration.SqlConnectionString, _azureServiceTokenProvider))
             {
-                connection.AccessToken = (new AzureServiceTokenProvider()).GetAccessTokenAsync("https://database.windows.net/").Result;
-
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
 
