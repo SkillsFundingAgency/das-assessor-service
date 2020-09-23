@@ -18,6 +18,9 @@ namespace SFA.DAS.AssessorService.Data.Apply
         // NOTE: Should the Financial Section move; then these need to be updated
         private const int ORGANISATION_SEQUENCE_NO = 1;
         private const int STANDARD_SEQUENCE_NO = 2;
+        private const int ORGANISATION_WITHDRAWAL_SEQUENCE_NO = 3;
+        private const int STANDARD_WITHDRAWAL_SEQUENCE_NO = 4;
+
         private const int FINANCIAL_SEQUENCE_NO = 1;
         private const int FINANCIAL_SECTION_NO = 3;
 
@@ -31,25 +34,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
             SqlMapper.AddTypeHandler(typeof(ApplyData), new ApplyDataHandler());
             SqlMapper.AddTypeHandler(typeof(FinancialGrade), new FinancialGradeHandler());
             SqlMapper.AddTypeHandler(typeof(FinancialEvidence), new FinancialEvidenceHandler());
-        }
-
-        public async Task<List<Domain.Entities.Apply>> GetUserApplications(Guid userId)
-        {
-            return (await _unitOfWork.Connection.QueryAsync<Domain.Entities.Apply>(
-                @"SELECT a.* FROM Contacts c
-                  INNER JOIN Apply a ON a.OrganisationId = c.OrganisationId
-                  WHERE c.Id = @userId AND a.CreatedBy = @userId", new { userId })).ToList();
-
-        }
-
-        public async Task<List<Domain.Entities.Apply>> GetOrganisationApplications(Guid userId)
-        {
-            return (await _unitOfWork.Connection.QueryAsync<Domain.Entities.Apply>(
-                @"SELECT a.* FROM Contacts c
-                  INNER JOIN Apply a ON a.OrganisationId = c.OrganisationId
-                  WHERE c.Id = @userId", 
-                param: new { userId },
-                transaction: _unitOfWork.Transaction)).ToList();
+            SqlMapper.AddTypeHandler(typeof(GovernanceRecommendation), new GovernanceRecommendationHandler());
         }
 
         public async Task<Domain.Entities.Apply> GetApplication(Guid applicationId)
@@ -58,6 +43,45 @@ namespace SFA.DAS.AssessorService.Data.Apply
                 @"SELECT * FROM Apply WHERE Id = @applicationId", 
                 param: new { applicationId },
                 transaction: _unitOfWork.Transaction);
+        }
+
+        public async Task<List<Domain.Entities.Apply>> GetApplications(Guid userId, int[] sequenceNos)
+        {
+            string query = @"SELECT a.* FROM Contacts c
+                  INNER JOIN Apply a ON a.OrganisationId = c.OrganisationId
+                  CROSS APPLY OPENJSON(ApplyData,'$.Sequences') WITH (SequenceNo INT, NotRequired BIT) sequence
+                  WHERE c.Id = @userId
+                  AND sequence.SequenceNo in @sequenceNos AND sequence.NotRequired = 0";
+
+            return (await _unitOfWork.Connection.QueryAsync<Domain.Entities.Apply>(
+                sql: query,
+                param: new { userId, sequenceNos },
+                transaction: _unitOfWork.Transaction)).ToList();
+        }
+
+        public async Task<List<Domain.Entities.Apply>> GetCombindedApplications(Guid userId)
+        {
+            return await GetApplications(userId, new int[] { ORGANISATION_SEQUENCE_NO, STANDARD_SEQUENCE_NO });
+        }
+
+        public async Task<List<Domain.Entities.Apply>> GetOrganisationApplications(Guid userId)
+        {
+            return await GetApplications(userId, new int[] { ORGANISATION_SEQUENCE_NO });
+        }
+
+        public async Task<List<Domain.Entities.Apply>> GetStandardApplications(Guid userId)
+        {
+            return await GetApplications(userId, new int[] { STANDARD_SEQUENCE_NO });
+        }
+
+        public async Task<List<Domain.Entities.Apply>> GetOrganisationWithdrawalApplications(Guid userId)
+        {
+            return await GetApplications(userId, new int[] { ORGANISATION_WITHDRAWAL_SEQUENCE_NO });
+        }
+
+        public async Task<List<Domain.Entities.Apply>> GetStandardWithdrawalApplications(Guid userId)
+        {
+            return await GetApplications(userId, new int[] { STANDARD_WITHDRAWAL_SEQUENCE_NO });
         }
 
         public async Task<Guid> CreateApplication(Domain.Entities.Apply apply)
@@ -423,6 +447,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
 
             var organisationReviewStatusCounts = reviewStatusCountResults.Read<ReviewStatusCount>().ToList();
             var standardReviewStatusCounts = reviewStatusCountResults.Read<ReviewStatusCount>().ToList();
+            var organisationWithdrawalReviewStatusCounts = reviewStatusCountResults.Read<ReviewStatusCount>().ToList();
 
             var applicationReviewStatusCounts = new ApplicationReviewStatusCounts
             {
@@ -433,7 +458,11 @@ namespace SFA.DAS.AssessorService.Data.Apply
                 StandardApplicationsNew = standardReviewStatusCounts?.FirstOrDefault(p => p.ReviewStatus == ApplicationReviewStatus.New)?.Total ?? 0,
                 StandardApplicationsInProgress = standardReviewStatusCounts?.FirstOrDefault(p => p.ReviewStatus == ApplicationReviewStatus.InProgress)?.Total ?? 0,
                 StandardApplicationsHasFeedback = standardReviewStatusCounts?.FirstOrDefault(p => p.ReviewStatus == ApplicationReviewStatus.HasFeedback)?.Total ?? 0,
-                StandardApplicationsApproved = standardReviewStatusCounts?.FirstOrDefault(p => p.ReviewStatus == ApplicationReviewStatus.Approved)?.Total ?? 0
+                StandardApplicationsApproved = standardReviewStatusCounts?.FirstOrDefault(p => p.ReviewStatus == ApplicationReviewStatus.Approved)?.Total ?? 0,
+                OrganisationWithdrawalApplicationsNew = organisationWithdrawalReviewStatusCounts?.FirstOrDefault(p => p.ReviewStatus == ApplicationReviewStatus.New)?.Total ?? 0,
+                OrganisationWithdrawalApplicationsInProgress = organisationWithdrawalReviewStatusCounts?.FirstOrDefault(p => p.ReviewStatus == ApplicationReviewStatus.InProgress)?.Total ?? 0,
+                OrganisationWithdrawalApplicationsHasFeedback = organisationWithdrawalReviewStatusCounts?.FirstOrDefault(p => p.ReviewStatus == ApplicationReviewStatus.HasFeedback)?.Total ?? 0,
+                OrganisationWithdrawalApplicationsApproved = organisationWithdrawalReviewStatusCounts?.FirstOrDefault(p => p.ReviewStatus == ApplicationReviewStatus.Approved)?.Total ?? 0,
             };
 
             return applicationReviewStatusCounts;
@@ -442,6 +471,11 @@ namespace SFA.DAS.AssessorService.Data.Apply
         public async Task<OrganisationApplicationsResult> GetOrganisationApplications(string reviewStatus, string sortColumn, int sortAscending, int pageSize, int pageIndex)
         {
             return await GetApplications(ORGANISATION_SEQUENCE_NO, null, reviewStatus, sortColumn, sortAscending, pageSize, pageIndex);
+        }
+
+        public async Task<OrganisationApplicationsResult> GetOrganisationWithdrawalApplications(string reviewStatus, string sortColumn, int sortAscending, int pageSize, int pageIndex)
+        {
+            return await GetApplications(ORGANISATION_WITHDRAWAL_SEQUENCE_NO, null, reviewStatus, sortColumn, sortAscending, pageSize, pageIndex);
         }
 
         public async Task<OrganisationApplicationsResult> GetStandardApplications(string organisationId, string reviewStatus, string sortColumn, int sortAscending, int pageSize, int pageIndex)
@@ -494,6 +528,32 @@ namespace SFA.DAS.AssessorService.Data.Apply
             }
 
             return string.Empty;
+        }
+
+        public async Task UpdateGovernanceRecommendation(Guid id, GovernanceRecommendation governanceRecommendation)
+        {
+            if (governanceRecommendation != null)
+            {
+                var application = await GetApplication(id);
+                
+                if (application != null)
+                {
+                    application.GovernanceRecommendation = governanceRecommendation;
+                    application.UpdatedBy = governanceRecommendation.RecommendedBy;
+                    application.UpdatedAt = DateTime.UtcNow;
+
+                    await _unitOfWork.Connection.ExecuteAsync(
+                        @"UPDATE Apply
+                          SET  GovernanceRecommendation = @GovernanceRecommendation, UpdatedBy = @UpdatedBy, UpdatedAt = @UpdatedAt
+                          WHERE Apply.Id = @Id",
+                        param: new { application.Id, application.GovernanceRecommendation, application.UpdatedBy, application.UpdatedAt },
+                        transaction: _unitOfWork.Transaction);
+                }
+            }
+            else
+            {
+                _logger.LogError("GovernanceRecommendation is null therefore cannot update Apply table.");
+            }
         }
 
         public async Task<List<FinancialApplicationSummaryItem>> GetOpenFinancialApplications()

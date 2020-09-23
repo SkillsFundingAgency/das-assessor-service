@@ -3,6 +3,7 @@ using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Apply;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.ApplyTypes;
+using SFA.DAS.AssessorService.Domain.Consts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,6 +18,18 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
         private readonly IOrganisationQueryRepository _organisationQueryRepository;
         private readonly IRegisterQueryRepository _registerQueryRepository;
         private readonly IContactQueryRepository _contactQueryRepository;
+
+        private const int ORGANISATION_SEQUENCE = 1;
+        private const int STANDARD_SEQUENCE = 2;
+        private const int ORGANISATION_WITHDRAWAL_SEQUENCE = 3;
+        private const int STANDARD_WITHDRAWAL_SEQUENCE = 4;
+
+        private const int ORGANISATION_DETAILS_SECTION = 1;
+        private const int DECLARATIONS_SECTION = 2;
+        private const int FINANCE_DETAILS_SECTION = 3;
+        private const int STANDARD_DETAILS_SECTION = 4;
+        private const int ORGANISATION_WITHDRAWAL_DETAILS_SECTION = 5;
+        private const int STANDARD_WITHDRAWAL_DETAILS_SECTION = 6;
 
         public CreateApplicationHandler(IOrganisationQueryRepository organisationQueryRepository,
             IRegisterQueryRepository registerQueryRepository, IContactQueryRepository contactQueryRepository,
@@ -39,9 +52,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
                 var orgType = orgTypes.FirstOrDefault(x => x.Id == org.OrganisationTypeId);
 
                 var sequences = request.ApplySequences;
-                DisableSequencesAndSectionsAsAppropriate(sequences, org, orgType);
-                MakeLowerSequenceActive(sequences);
-
+                RemoveSequencesAndSections(sequences, org, orgType, request.ApplicationType);
+              
                 var applyData = new ApplyData
                 {
                     Sequences = sequences,
@@ -73,78 +85,55 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
             return Guid.Empty;
         }
 
-        private void DisableSequencesAndSectionsAsAppropriate(List<ApplySequence> sequences, Domain.Entities.Organisation org, OrganisationType orgType)
+        private void RemoveSequencesAndSections(List<ApplySequence> sequences, Domain.Entities.Organisation org, OrganisationType orgType, string applicationType)
         {
-            bool isEpao = IsOrganisationOnEPAORegister(org);
-            if (isEpao)
+            if (applicationType == ApplicationTypes.Combined)
             {
-                RemoveSectionsOneAndTwo(sequences.Single(x => x.SequenceNo == 1));
+                RemoveSections(sequences, ORGANISATION_WITHDRAWAL_SEQUENCE, ORGANISATION_WITHDRAWAL_DETAILS_SECTION);
+                RemoveSections(sequences, STANDARD_WITHDRAWAL_SEQUENCE, STANDARD_WITHDRAWAL_DETAILS_SECTION);
+                RemoveSequences(sequences, ORGANISATION_WITHDRAWAL_SEQUENCE, STANDARD_WITHDRAWAL_SEQUENCE);
+
+                bool isEpao = IsOrganisationOnEPAORegister(org);
+                if (isEpao)
+                {
+                    RemoveSections(sequences, ORGANISATION_SEQUENCE, ORGANISATION_DETAILS_SECTION, DECLARATIONS_SECTION);
+                }
+
+                bool isFinancialExempt = IsFinancialExempt(org.OrganisationData?.FHADetails, orgType);
+                if (isFinancialExempt)
+                {
+                    RemoveSections(sequences, ORGANISATION_SEQUENCE, FINANCE_DETAILS_SECTION);
+                }
+
+                if (isEpao && isFinancialExempt)
+                {
+                    RemoveSequences(sequences, ORGANISATION_SEQUENCE);
+                }
+            }
+            else if (applicationType == ApplicationTypes.OrganisationWithdrawal || applicationType == ApplicationTypes.StandardWithdrawal)
+            {
+                RemoveSections(sequences, ORGANISATION_SEQUENCE, ORGANISATION_DETAILS_SECTION, DECLARATIONS_SECTION, FINANCE_DETAILS_SECTION);
+                RemoveSections(sequences, STANDARD_SEQUENCE, STANDARD_DETAILS_SECTION);
+
+                if (applicationType == ApplicationTypes.OrganisationWithdrawal)
+                {
+                    RemoveSections(sequences, STANDARD_WITHDRAWAL_SEQUENCE, STANDARD_WITHDRAWAL_DETAILS_SECTION);
+                    RemoveSequences(sequences, ORGANISATION_SEQUENCE, STANDARD_SEQUENCE, STANDARD_WITHDRAWAL_SEQUENCE);
+                }
+                else if (applicationType == ApplicationTypes.StandardWithdrawal)
+                {
+                    RemoveSections(sequences, ORGANISATION_WITHDRAWAL_SEQUENCE, ORGANISATION_WITHDRAWAL_DETAILS_SECTION);
+                    RemoveSequences(sequences, ORGANISATION_SEQUENCE, STANDARD_SEQUENCE, ORGANISATION_WITHDRAWAL_SEQUENCE);
+                }
             }
 
-            bool isFinancialExempt = IsFinancialExempt(org.OrganisationData?.FHADetails, orgType);
-            if (isFinancialExempt)
-            {
-                RemoveSectionThree(sequences.Single(x => x.SequenceNo == 1));
-            }
-
-            if (isEpao && isFinancialExempt)
-            {
-                RemoveSequenceOne(sequences);
-            }
+            MakeLowestSequenceActive(sequences);
         }
 
         private static bool IsOrganisationOnEPAORegister(Domain.Entities.Organisation org)
         {
             if (org?.OrganisationData == null) return false;
-
             return org.OrganisationData.RoEPAOApproved || org.Status == "Live";
-        }
-
-        private void MakeLowerSequenceActive(List<ApplySequence> sequences)
-        {
-            int minsequence = sequences.Where(seq => seq.IsActive).Min(seq => seq.SequenceNo);
-
-            foreach (var sequence in sequences.Where(seq => seq.SequenceNo != minsequence))
-            {
-                sequence.IsActive = false;
-            }
-        }
-
-        private void RemoveSequenceOne(List<ApplySequence> sequences)
-        {
-            foreach (var sequence1 in sequences.Where(seq => seq.SequenceNo == 1))
-            {
-                sequence1.IsActive = false;
-                sequence1.NotRequired = true;
-                sequence1.Status = ApplicationSequenceStatus.Approved;
-            }
-
-            foreach (var sequence2 in sequences.Where(seq => seq.SequenceNo == 2))
-            {
-                if (!sequence2.NotRequired)
-                {
-                    sequence2.IsActive = true;
-                    sequence2.Status = ApplicationSequenceStatus.Draft;
-                }
-            }
-        }
-
-        private void RemoveSectionThree(ApplySequence sequence)
-        {
-            foreach (var section in sequence.Sections.Where(sec => sec.SectionNo == 3))
-            {
-                section.NotRequired = true;
-                section.Status = ApplicationSectionStatus.Evaluated;
-            }
-        }
-
-        private void RemoveSectionsOneAndTwo(ApplySequence sequence)
-        {
-            foreach (var section in sequence.Sections.Where(s => s.SectionNo == 1 || s.SectionNo == 2))
-            {
-                section.NotRequired = true;
-                section.Status = ApplicationSectionStatus.Evaluated;
-            }
         }
 
         private static bool IsFinancialExempt(ApplyTypes.FHADetails financials, OrganisationType orgType)
@@ -171,6 +160,47 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
             }
 
             return referenceNumber;
+        }
+
+        private void RemoveSequences(List<ApplySequence> sequences, params int[] sequenceNumbers)
+        {
+            foreach (var sequence in sequences.Where(s => sequenceNumbers.Contains(s.SequenceNo)))
+            {
+                sequence.IsActive = false;
+                sequence.NotRequired = true;
+                sequence.Status = ApplicationSequenceStatus.Approved;
+            }
+
+            // after deactivating all the not required sequences, the next sequence which is 
+            // required will be activated and started
+            var nextRequiredSequence = sequences.Where(s => !s.NotRequired).OrderBy(s => s.SequenceNo).FirstOrDefault();
+            if(nextRequiredSequence != null)
+            {
+                nextRequiredSequence.IsActive = true;
+                nextRequiredSequence.Status = ApplicationSequenceStatus.Draft;
+            }
+        }
+
+        private void MakeLowestSequenceActive(List<ApplySequence> sequences)
+        {
+            int lowestActiveSequenceNo = sequences.Where(seq => seq.IsActive).Min(seq => seq.SequenceNo);
+            foreach (var sequence in sequences.Where(seq => seq.SequenceNo != lowestActiveSequenceNo))
+            {
+                sequence.IsActive = false;
+            }
+        }
+
+        public void RemoveSections(List<ApplySequence> sequences, int sequenceNumber, params int[] sectionNumbers)
+        {
+            var sequence = sequences.Single(p => p.SequenceNo == sequenceNumber);
+            if (sequence != null)
+            {
+                foreach (var section in sequence.Sections.Where(s => sectionNumbers.Contains(s.SectionNo)))
+                {
+                    section.NotRequired = true;
+                    section.Status = ApplicationSectionStatus.Evaluated;
+                }
+            }
         }
     }
 }

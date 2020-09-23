@@ -8,8 +8,12 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
 {
     public interface IApplyRepository
     {
-        Task<List<Domain.Entities.Apply>> GetUserApplications(Guid userId);
+        Task<List<Domain.Entities.Apply>> GetCombindedApplications(Guid userId);
         Task<List<Domain.Entities.Apply>> GetOrganisationApplications(Guid userId);
+        Task<List<Domain.Entities.Apply>> GetStandardApplications(Guid userId);
+        Task<List<Domain.Entities.Apply>> GetOrganisationWithdrawalApplications(Guid userId);
+        Task<List<Domain.Entities.Apply>> GetStandardWithdrawalApplications(Guid userId);
+        
         Task<Domain.Entities.Apply> GetApplication(Guid applicationId);
         Task<Guid> CreateApplication(Domain.Entities.Apply apply);
         Task<bool> CanSubmitApplication(Guid applicationId);
@@ -17,8 +21,10 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<int> GetNextAppReferenceSequence();
         Task<ApplicationReviewStatusCounts> GetApplicationReviewStatusCounts();
         Task<OrganisationApplicationsResult> GetOrganisationApplications(string reviewStatus, string sortColumn, int sortAscending, int pageSize, int pageIndex);
+        Task<OrganisationApplicationsResult> GetOrganisationWithdrawalApplications(string reviewStatus, string sortColumn, int sortAscending, int pageSize, int pageIndex);
         Task<OrganisationApplicationsResult> GetStandardApplications(string organisationId, string reviewStatus, string sortColumn, int sortAscending, int pageSize, int pageIndex);
-        
+        Task UpdateGovernanceRecommendation(Guid id, GovernanceRecommendation governanceRecommendation);
+
         Task<List<FinancialApplicationSummaryItem>> GetOpenFinancialApplications();
         Task<List<FinancialApplicationSummaryItem>> GetFeedbackAddedFinancialApplications();
         Task<List<FinancialApplicationSummaryItem>> GetClosedFinancialApplications();

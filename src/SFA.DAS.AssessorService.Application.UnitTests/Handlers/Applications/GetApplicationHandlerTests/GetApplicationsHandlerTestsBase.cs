@@ -25,8 +25,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Applications.Ge
             });
 
             ApplyRepository = new Mock<IApplyRepository>();
-            ApplyRepository.Setup(r => r.GetUserApplications(It.IsAny<Guid>())).ReturnsAsync(new List<Domain.Entities.Apply>());
-            ApplyRepository.Setup(r => r.GetOrganisationApplications(It.IsAny<Guid>())).ReturnsAsync(new List<Domain.Entities.Apply>());
+            //ApplyRepository.Setup(r => r.GetUserApplications(It.IsAny<Guid>())).ReturnsAsync(new List<Domain.Entities.Apply>());
+            //ApplyRepository.Setup(r => r.GetOrganisationApplications(It.IsAny<Guid>())).ReturnsAsync(new List<Domain.Entities.Apply>());
             Handler = new GetApplicationsHandler(ApplyRepository.Object);
         }
     }

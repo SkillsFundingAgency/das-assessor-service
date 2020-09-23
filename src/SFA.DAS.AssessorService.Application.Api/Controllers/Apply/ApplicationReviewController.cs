@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models.Apply.Review;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
+using SFA.DAS.AssessorService.ApplyTypes;
 using Swashbuckle.AspNetCore.Annotations;
 using System;
 using System.Net;
@@ -39,6 +40,13 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.Apply
             return Ok(applications);
         }
 
+        [HttpPost("Review/OrganisationWithdrawalApplications")]
+        public async Task<ActionResult> OrganisationWithdrawalApplications([FromBody] OrganisationWithdrawalApplicationsRequest organisationApplicationsRequest)
+        {
+            var applications = await _mediator.Send(organisationApplicationsRequest);
+            return Ok(applications);
+        }
+
         [HttpPost("Review/StandardApplications")]
         public async Task<ActionResult> StandardApplications([FromBody] StandardApplicationsRequest standardApplicationsRequest)
         {
@@ -52,6 +60,15 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.Apply
         public async Task ReturnApplicationSequence(Guid Id, int sequenceId, [FromBody] ReturnApplicationSequenceRequest request)
         {
             await _mediator.Send(new AssessorService.Api.Types.Models.Apply.Review.ReturnApplicationSequenceRequest(Id, sequenceId, request.ReturnType, request.ReturnedBy));
+        }
+
+        [HttpPost("Review/Applications/{Id}/UpdateGovernanceRecommendation")]
+        [SwaggerResponse((int)HttpStatusCode.OK)]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<ActionResult> UpdateGovernanceRecommendation(Guid Id, [FromBody] GovernanceRecommendation recommendation)
+        {
+            await _mediator.Send(new UpdateGovernanceRecommendationRequest(Id, recommendation));
+            return Ok();
         }
 
         [HttpPost("Review/Applications/{Id}/Sequences/{sequenceNo}/Sections/{sectionNo}/StartReview")]

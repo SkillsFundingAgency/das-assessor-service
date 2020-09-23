@@ -18,6 +18,7 @@ using SFA.DAS.AssessorService.Application.Exceptions;
 using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.ApplyTypes.CharityCommission;
 using SFA.DAS.AssessorService.ApplyTypes.CompaniesHouse;
+using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.ViewModels.Apply;
@@ -38,6 +39,18 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         private readonly IWebConfiguration _config;
         private const string WorkflowType = "EPAO";
 
+        private const int ORGANISATION_SEQUENCE = 1;
+        private const int STANDARD_SEQUENCE = 2;
+        private const int ORGANISATION_WITHDRAWAL_SEQUENCE = 3;
+        private const int STANDARD_WITHDRAWAL_SEQUENCE = 4;
+
+        private const int ORGANISATION_DETAILS_SECTION = 1;
+        private const int DECLARATIONS_SECTION = 2;
+        private const int FINANCE_DETAILS_SECTION = 3;
+        private const int STANDARD_DETAILS_SECTION = 4;
+        private const int ORGANISATION_WITHDRAWAL_DETAILS_SECTION = 5;
+        private const int STANDARD_WITHDRAWAL_DETAILS_SECTION = 6;
+
         public ApplicationController(IOrganisationsApiClient orgApiClient, IQnaApiClient qnaApiClient, IWebConfiguration config,
             IContactsApiClient contactsApiClient, IApplicationApiClient applicationApiClient, ILogger<ApplicationController> logger, IApiValidationService apiValidationService)
         {
@@ -57,7 +70,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
             var userId = await GetUserId();
             var org = await _orgApiClient.GetOrganisationByUserId(userId);
-            var applications = await _applicationApiClient.GetApplications(userId, false);
+            //var applications = await _applicationApiClient.GetApplications(userId, false);
+            var applications = await _applicationApiClient.GetCombinedApplications(userId);
             applications = applications?.Where(app => app.ApplicationStatus != ApplicationStatus.Declined).ToList();
 
             if (applications is null || applications.Count == 0)
@@ -66,9 +80,12 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 //display empty list of application screen
                 if (org != null)
                 {
+                    // if the organisation exists but is not approved then start a standard application 
+                    // when that application is approved this will result in the organisation being approved 
                     return org.RoEPAOApproved ? View(applications) : View("~/Views/Application/Declaration.cshtml");
                 }
 
+                // force the intial journey
                 return RedirectToAction("Index", "OrganisationSearch");
             }
             else if (applications.Count == 1 && org?.RoEPAOApproved is true)
@@ -79,8 +96,12 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             }
             else if (applications.Count > 1)
             {
+                // presumbably if there is more than 1 then the organisation must have been approved
+                // so don't bother checking... ! really!...
                 return View(applications);
             }
+
+            // precisley one and the organisation is not approved
 
             //This always return one record otherwise the previous logic would have handled the response
             var application = applications.First();
@@ -96,6 +117,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 case ApplicationStatus.Resubmitted:
                     return RedirectToAction("Submitted", new { application.Id });
                 default:
+                    // why can't the sign post handle the above cases too?
                     return RedirectToAction("SequenceSignPost", new { application.Id });
             }
 
@@ -108,37 +130,52 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             var contact = await GetUserContact(signinId);
             var org = await _orgApiClient.GetOrganisationByUserId(contact.Id);
 
-            var existingApplications = (await _applicationApiClient.GetApplications(contact.Id, false))?.Where( x=> x.OrganisationId == org.Id && x.ApplicationStatus != ApplicationStatus.Declined);
-            if(existingApplications != null)
+            //var existingApplications = (await _applicationApiClient.GetApplications(contact.Id, false))?.Where( x=> x.OrganisationId == org.Id && x.ApplicationStatus != ApplicationStatus.Declined);
+
+            var existingApplications = (await _applicationApiClient.GetCombinedApplications(contact.Id))?
+                .Where(p => p.ApplicationStatus != ApplicationStatus.Declined);
+
+            if (existingApplications != null)
             {
                 var existingEmptyApplication = existingApplications.SingleOrDefault(x => x.StandardCode == null);
                 if(existingEmptyApplication != null)
                     return RedirectToAction("SequenceSignPost", new { existingEmptyApplication.Id });
             }
 
-            var applicationStartRequest = new StartApplicationRequest
-            {
-                UserReference = contact.Id.ToString(),
-                WorkflowType = WorkflowType,
-                ApplicationData = JsonConvert.SerializeObject(new ApplicationData
-                {
-                    UseTradingName = false,
-                    OrganisationName = org.EndPointAssessorName,
-                    OrganisationReferenceId = org.Id.ToString(),
-                    OrganisationType = org.OrganisationType,
-                    // NOTE: Surely it would be a good idea to include more info from the preamble search here?? Not been spec'ed at this point though :(
-                    CompanySummary = org.CompanySummary,
-                    CharitySummary = org.CharitySummary
-                })
-            };
-
-            var qnaResponse = await _qnaApiClient.StartApplications(applicationStartRequest);
-            var allApplicationSequences = await _qnaApiClient.GetAllApplicationSequences(qnaResponse.ApplicationId);
-            var sections = allApplicationSequences.Select(async sequence => await _qnaApiClient.GetSections(qnaResponse.ApplicationId, sequence.Id)).Select(t => t.Result).ToList();
-
-            var id = await _applicationApiClient.CreateApplication(BuildCreateApplicationRequest(qnaResponse.ApplicationId, contact, org, _config.ReferenceFormat, allApplicationSequences, sections));
-
+            var createApplicationRequest = await BuildCreateApplicationRequest(ApplicationTypes.Combined, contact, org, _config.ReferenceFormat);
+            
+            var id = await _applicationApiClient.CreateApplication(createApplicationRequest);
+            
             return RedirectToAction("SequenceSignPost", new { Id = id });
+        }
+
+        [HttpGet("/OrganisationWithdrawalApplication")]
+        public async Task<IActionResult> OrganisationWithdrawalApplications()
+        {
+            // push link on the dashboard to start withdrawing organisation
+            var userId = await GetUserId();
+            //var org = await _orgApiClient.GetOrganisationByUserId(userId);
+            //var applications = await _applicationApiClient.GetApplications(userId, false);
+            var applications = await _applicationApiClient.GetOrganisationWithdrawalApplications(userId);
+            
+            // should be show declined ones or not???
+            //applications = applications?.Where(app => app.ApplicationStatus != ApplicationStatus.Declined).ToList();
+
+            return View(applications);
+        }
+
+        [HttpPost("/OrganisationWithdrawalApplication")]
+        public async Task<IActionResult> StartOrganisationWithdrawalApplication()
+        {
+            var signinId = User.Claims.First(c => c.Type == "sub")?.Value;
+            var contact = await GetUserContact(signinId);
+            var org = await _orgApiClient.GetOrganisationByUserId(contact.Id);
+
+            var createApplicationRequest = await BuildCreateApplicationRequest(ApplicationTypes.OrganisationWithdrawal, contact, org, _config.ReferenceFormat);
+            var id = await _applicationApiClient.CreateApplication(createApplicationRequest);
+
+            return RedirectToAction("Sequence", new { Id = id, sequenceNo = ORGANISATION_WITHDRAWAL_SEQUENCE });
+            //return RedirectToAction("SequenceSignPost", new { Id = id });
         }
 
         [HttpGet("/Application/{Id}")]
@@ -177,23 +214,34 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 };
             }
 
-            if (IsSequenceActive(application,1))
+            if (IsSequenceActive(application, ORGANISATION_SEQUENCE))
             {
-                return RedirectToAction("Sequence", new { Id , sequenceNo = 1});
+                return RedirectToAction("Sequence", new { Id, sequenceNo = ORGANISATION_SEQUENCE });
             }
-            else if (!IsSequenceActive(application, 1) && string.IsNullOrWhiteSpace(applicationData?.StandardName))
+            else if(IsSequenceActive(application, STANDARD_SEQUENCE))
             {
-                var org = await _orgApiClient.GetOrganisationByUserId(userId);
-                if (org.RoEPAOApproved)
+                if (string.IsNullOrWhiteSpace(applicationData?.StandardName))
                 {
-                   return RedirectToAction("Index", "Standard", new { Id });
-                }
+                    var org = await _orgApiClient.GetOrganisationByUserId(userId);
+                    if (org.RoEPAOApproved)
+                    {
+                        return RedirectToAction("Index", "Standard", new { Id });
+                    }
 
-                return View("~/Views/Application/Stage2Intro.cshtml", application.Id);
+                    return View("~/Views/Application/Stage2Intro.cshtml", application.Id);
+                }
+                else if (!string.IsNullOrWhiteSpace(applicationData?.StandardName))
+                {
+                    return RedirectToAction("Sequence", new { Id, sequenceNo = STANDARD_SEQUENCE });
+                }
             }
-            else if (!IsSequenceActive(application, 1) && !string.IsNullOrWhiteSpace(applicationData?.StandardName))
+            else if(IsSequenceActive(application, ORGANISATION_WITHDRAWAL_SEQUENCE))
             {
-                return RedirectToAction("Sequence", new { Id, sequenceNo = 2 });
+                return RedirectToAction("Sequence", new { Id, sequenceNo = ORGANISATION_WITHDRAWAL_SEQUENCE });
+            }
+            else if(IsSequenceActive(application, STANDARD_WITHDRAWAL_SEQUENCE))
+            {
+                return RedirectToAction("Sequence", new { Id, sequenceNo = STANDARD_WITHDRAWAL_SEQUENCE });
             }
 
             throw new BadRequestException("Section does not have a valid DisplayType");
@@ -1046,13 +1094,31 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             };
         }
 
-        private static CreateApplicationRequest BuildCreateApplicationRequest(Guid qnaApplicationId, ContactResponse contact, OrganisationResponse org,
-           string referenceFormat, List<QnA.Api.Types.Sequence> sequences, List<List<Section>> sections)
+        private async Task<CreateApplicationRequest> BuildCreateApplicationRequest(string applicationType, ContactResponse contact, OrganisationResponse org, string referenceFormat)
         {
+            var startApplicationRequest = new StartApplicationRequest
+            {
+                UserReference = contact.Id.ToString(),
+                WorkflowType = WorkflowType,
+                ApplicationData = JsonConvert.SerializeObject(new ApplicationData
+                {
+                    UseTradingName = false,
+                    OrganisationName = org.EndPointAssessorName,
+                    OrganisationReferenceId = org.Id.ToString(),
+                    OrganisationType = org.OrganisationType,
+                    CompanySummary = org.CompanySummary,
+                    CharitySummary = org.CharitySummary
+                })
+            };
+
+            var qnaResponse = await _qnaApiClient.StartApplications(startApplicationRequest);
+            var sequences = await _qnaApiClient.GetAllApplicationSequences(qnaResponse.ApplicationId);
+            var sections = sequences.Select(async sequence => await _qnaApiClient.GetSections(qnaResponse.ApplicationId, sequence.Id)).Select(t => t.Result).ToList();
 
             return new CreateApplicationRequest
             {
-                QnaApplicationId = qnaApplicationId,
+                ApplicationType = applicationType,
+                QnaApplicationId = qnaResponse.ApplicationId,
                 OrganisationId = org.Id,
                 ApplicationReferenceFormat = referenceFormat,
                 CreatingContactId = contact.Id,

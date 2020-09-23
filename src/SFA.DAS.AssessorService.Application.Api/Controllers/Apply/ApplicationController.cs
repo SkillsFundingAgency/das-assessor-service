@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models.Apply;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
+using SFA.DAS.AssessorService.Domain.Consts;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers.Apply
@@ -27,22 +28,49 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.Apply
             _mediator = mediator;
         }
 
-        [HttpGet("{userId}/Organisation", Name = "GetOrganisationApplications")]
+        [HttpGet("{userId}/combined-applications", Name = "GetCombinedApplications")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<ApplicationResponse>))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<ActionResult<List<ApplicationResponse>>> GetCombinedApplications(string userId)
+        {
+            _logger.LogInformation($"Received request to retrieve combined applications for UserId {userId}");
+            return Ok(await _mediator.Send(new GetApplicationsRequest(Guid.Parse(userId), ApplicationTypes.Combined)));
+        }
+
+        [HttpGet("{userId}/organisation-applications", Name = "GetOrganisationApplications")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<ApplicationResponse>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<ActionResult<List<ApplicationResponse>>> GetOrganisationApplications(string userId)
         {
-            _logger.LogInformation($"Received request to retrieve application for organisation");
-            return Ok(await _mediator.Send(new GetApplicationsRequest(Guid.Parse(userId), false)));
+            _logger.LogInformation($"Received request to retrieve organisation applications for UserId {userId}");
+            return Ok(await _mediator.Send(new GetApplicationsRequest(Guid.Parse(userId), ApplicationTypes.Organisation)));
         }
 
-        [HttpGet("{userId}", Name = "GetApplications")]
+        [HttpGet("{userId}/standard-applications", Name = "GetStandardApplications")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<ApplicationResponse>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<ActionResult<List<ApplicationResponse>>> GetApplications(string userId)
+        public async Task<ActionResult<List<ApplicationResponse>>> GetStandardApplications(string userId)
         {
-            _logger.LogInformation($"Received request to retrieve application for user");
-            return Ok(await _mediator.Send(new GetApplicationsRequest(Guid.Parse(userId), true)));
+            _logger.LogInformation($"Received request to retrieve standard applications for UserId {userId}");
+            return Ok(await _mediator.Send(new GetApplicationsRequest(Guid.Parse(userId), ApplicationTypes.Standard)));
+        }
+
+        [HttpGet("{userId}/organisation-withdrawal-applications", Name = "GetOrganisationWithdrawalApplications")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<ApplicationResponse>))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<ActionResult<List<ApplicationResponse>>> GetOrganisationWithdrawalApplications(string userId)
+        {
+            _logger.LogInformation($"Received request to retrieve organisation withdrawal application for UserId {userId}");
+            return Ok(await _mediator.Send(new GetApplicationsRequest(Guid.Parse(userId), ApplicationTypes.OrganisationWithdrawal)));
+        }
+
+        [HttpGet("{userId}/standard-withdrawal-applications", Name = "GetStandardWithdrawalApplications")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<ApplicationResponse>))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<ActionResult<List<ApplicationResponse>>> GetStandardWithdrawalApplications(string userId)
+        {
+            _logger.LogInformation($"Received request to retrieve standard withdrawal applications for UserId {userId}");
+            return Ok(await _mediator.Send(new GetApplicationsRequest(Guid.Parse(userId), ApplicationTypes.StandardWithdrawal)));
         }
 
         [HttpGet("{Id}/application", Name = "GetApplication")]

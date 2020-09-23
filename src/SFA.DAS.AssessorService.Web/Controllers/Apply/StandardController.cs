@@ -132,10 +132,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             var standards = await _orgApiClient.GetOrganisationStandardsByOrganisation(org?.OrganisationId);
             var standard = standards?.SingleOrDefault(x => x.StandardCode == standardCode);
 
+            // does the org or the application not have the standard && 
             if(standard == null && application?.ApplyData != null)
             {
                 var userId = await GetUserId();
-                var applications = await _apiClient.GetApplications(userId, false);
+                var applications = await _apiClient.GetCombinedApplications(userId);
                 foreach( var app in applications)
                 {
                     if (app.OrganisationId == org?.Id && app.ApplyData.Apply.StandardCode == standardCode)
