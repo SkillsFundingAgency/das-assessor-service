@@ -19,12 +19,12 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
     public class CertificatePrivateTests : TestBase
     {
         private readonly DatabaseService _databaseService = new DatabaseService();
-
+        
         private AssessorDbContext _context;
         private SqlConnection _databaseConnection;
-
+        
         private CertificateRepository _repository;
-
+        
         private static int _organisationTypeId = 1;
         private static Guid _organisationId = Guid.NewGuid();
         private OrganisationModel _organisation;
@@ -35,19 +35,19 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         public async Task SetupCertificateTests()
         {
             var option = new DbContextOptionsBuilder<AssessorDbContext>();
-            option.UseSqlServer(_databaseService.WebConfiguration.SqlConnectionString, options => options.EnableRetryOnFailure(3));
-
+            option.UseSqlServer(_databaseService.WebConfiguration.SqlConnectionString, options => options.EnableRetryOnFailure(3));    
+            
             _context = new AssessorDbContext(option.Options);
             _databaseConnection = new SqlConnection(_databaseService.WebConfiguration.SqlConnectionString);
-
+            
             _repository = new CertificateRepository(_context, _databaseConnection);
 
             OrganisationTypeHandler.InsertRecord(
-                new OrganisationTypeModel
-                {
-                    Id = _organisationTypeId,
+                new OrganisationTypeModel 
+                { 
+                    Id = _organisationTypeId, 
                     Status = "Live",
-                    Type = "Organisation Type A"
+                    Type = "Organisation Type A" 
                 });
 
             _organisation = new OrganisationModel

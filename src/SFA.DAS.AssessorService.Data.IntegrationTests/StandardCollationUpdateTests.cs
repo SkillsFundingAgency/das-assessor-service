@@ -17,20 +17,20 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
     public class StandardCollationUpdateTests : TestBase
     {
         private readonly DatabaseService _databaseService = new DatabaseService();
-
+        
         private SqlConnection _databaseConnection;
         private UnitOfWork _unitOfWork;
         private StandardRepository _repository;
 
         private static List<StandardCollationModel> _existingStandardCollations = new List<StandardCollationModel>();
 
-
+        
         private const int _firstExistingStandardId = 1;
         private const string _firstExistingStandardReference = "ST0001";
         private const string _firstExistingStandardFirstOptionName = "Option 1.1";
         private const string _firstExistingStandardThirdOptionName = "Option 1.3";
         private const string _firstExistingStandardFourthNewOptionName = "Option 1.4";
-
+        
         private const int _secondExistingStandardId = 10;
         private const string _secondExistingStandardReference = "ST0010";
         private const string _secondExistingStandardFirstOptionName = "Option 2.1";
@@ -38,7 +38,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
 
         private const int _thirdExistingStandardId = 100;
         private const string _thirdExistingStandardReference = "ST0100";
-
+        
         private const int _fourthExistingStandardId = 200;
         private const string _fourthExistingStandardReference = "ST0200";
 
@@ -52,7 +52,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         public void SetupStandardCollationTests()
         {
             _databaseConnection = new SqlConnection(_databaseService.WebConfiguration.SqlConnectionString);
-            _unitOfWork = new UnitOfWork(_databaseConnection);
+            _unitOfWork = new UnitOfWork(_databaseConnection);            
             _repository = new StandardRepository(_unitOfWork);
 
             _existingStandardCollations = new List<StandardCollationModel> {
@@ -178,8 +178,8 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         {
             var existingStandard = _existingStandardCollations.Where(p => p.StandardId == standardId).Single();
             var _lastestStandardCollations = Clone(_existingStandardCollations);
-
-            _lastestStandardCollations.Where(p => p.StandardId == standardId).Single().Title = updatedTitle;
+           
+            _lastestStandardCollations.Where(p => p.StandardId == standardId).Single().Title = updatedTitle;            
 
             var beforeStandard = await _repository.GetStandardCollationByStandardId(standardId);
             var result = await _repository.UpsertApprovedStandards(_lastestStandardCollations);
@@ -190,7 +190,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
             {
                 Assert.AreEqual(beforeStandard.Title, existingStandard.Title);
             }
-
+            
             Assert.AreEqual(isLiveAfter, afterStandard != null);
             Assert.AreEqual(afterStandard.Title, updatedTitle);
         }
@@ -218,7 +218,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
 
             Assert.AreEqual(newStandard.StandardId, insertedStandard.StandardId);
         }
-
+        
         [TestCase(_firstExistingStandardId, _firstExistingStandardFirstOptionName, 2, 1)]
         [TestCase(_secondExistingStandardId, _secondExistingStandardFirstOptionName, 2, 1)]
         public async Task UpdateStandardCollationToRemoveOption(int standardId, string optionNameToRemove, int optionsBeforeUpdate, int optionsAfterUpdate)
@@ -281,7 +281,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         {
             StandardCollationHandler.DeleteAllRecords();
 
-            if (_databaseConnection != null)
+            if(_databaseConnection != null)
             {
                 _databaseConnection.Dispose();
             }
@@ -307,4 +307,5 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         }
     }
 }
+    
 

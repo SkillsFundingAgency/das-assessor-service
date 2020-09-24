@@ -12,10 +12,10 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Services
 {
     public class DatabaseService
     {
-
+     
         public DatabaseService()
         {
-
+           
             Configuration = new ConfigurationBuilder()
                 .AddJsonFile("connectionStrings.Local.json")
                 .Build();
@@ -80,10 +80,10 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Services
                 var result = connection.Query<T>(sql);
                 connection.Close();
                 return result.FirstOrDefault();
-            }
+            }    
         }
 
-
+        
         public object ExecuteScalar(string sql)
         {
             using (var connection = new SqlConnection(Configuration.GetConnectionString("SqlConnectionStringTest")))
