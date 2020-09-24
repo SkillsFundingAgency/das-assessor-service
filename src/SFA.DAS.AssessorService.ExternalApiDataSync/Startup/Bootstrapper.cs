@@ -30,10 +30,7 @@ namespace SFA.DAS.AssessorService.ExternalApiDataSync.Startup
                     x.WithDefaultConventions();
                 });
 
-                var connection = new SqlConnection(configuration.SqlConnectionString)
-                {
-                    AccessToken = (new AzureServiceTokenProvider()).GetAccessTokenAsync("https://database.windows.net/").Result
-                };
+                var connection = ManagedIdentitySqlConnection.GetSqlConnection(configuration.SqlConnectionString, _azureServiceTokenProvider);
 
                 configure.For<IAggregateLogger>().Use(_logger).Singleton();
                 configure.For<IWebConfiguration>().Use(configuration).Singleton();

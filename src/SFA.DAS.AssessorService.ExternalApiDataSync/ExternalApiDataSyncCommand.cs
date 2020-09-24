@@ -46,10 +46,8 @@ namespace SFA.DAS.AssessorService.ExternalApiDataSync
                 {
                     _aggregateLogger.LogInformation("Proceeding with External Api Data Sync...");
 
-                    using (var destinationSqlConnection = new SqlConnection(_destinationConnectionString))
+                    using (var destinationSqlConnection = ManagedIdentitySqlConnection.GetSqlConnection(_destinationConnectionString, _azureServiceTokenProvider))
                     {
-                        destinationSqlConnection.AccessToken = (new AzureServiceTokenProvider()).GetAccessTokenAsync("https://database.windows.net/").Result;
-
                         if (!destinationSqlConnection.State.HasFlag(ConnectionState.Open)) destinationSqlConnection.Open();
 
                         using (var transaction = destinationSqlConnection.BeginTransaction())
@@ -234,10 +232,8 @@ namespace SFA.DAS.AssessorService.ExternalApiDataSync
             if (transaction is null) throw new ArgumentNullException(nameof(transaction));
             if (tablesToCopy is null) throw new ArgumentNullException(nameof(tablesToCopy));
 
-            using (var sourceSqlConnection = new SqlConnection(_sourceConnectionString))
+            using (var sourceSqlConnection = ManagedIdentitySqlConnection.GetSqlConnection(_sourceConnectionString, _azureServiceTokenProvider))
             {
-                sourceSqlConnection.AccessToken = (new AzureServiceTokenProvider()).GetAccessTokenAsync("https://database.windows.net/").Result;
-
                 if (!sourceSqlConnection.State.HasFlag(ConnectionState.Open)) sourceSqlConnection.Open();
 
                 foreach (var table in tablesToCopy)

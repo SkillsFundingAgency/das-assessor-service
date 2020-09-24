@@ -1,18 +1,18 @@
-﻿using Dapper;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Azure.Services.AppAuthentication;
-using SFA.DAS.AssessorService.Api.Types.Models.AO;
-using SFA.DAS.AssessorService.Api.Types.Models.Standards;
-using SFA.DAS.AssessorService.Application.Interfaces;
-using SFA.DAS.AssessorService.Data.DapperTypeHandlers;
-using SFA.DAS.AssessorService.Data.Helpers;
-using SFA.DAS.AssessorService.Settings;
-using System;
+﻿using SFA.DAS.AssessorService.Application.Interfaces;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
+using Dapper;
+using SFA.DAS.AssessorService.Settings;
+using SFA.DAS.AssessorService.Api.Types.Models.AO;
+using SFA.DAS.AssessorService.Data.DapperTypeHandlers;
+using System;
+using SFA.DAS.AssessorService.Api.Types.Models.Standards;
+using Microsoft.Azure.Services.AppAuthentication;
+using Microsoft.AspNetCore.Hosting;
+using SFA.DAS.AssessorService.Data.Helpers;
 
 namespace SFA.DAS.AssessorService.Data
 {
@@ -21,32 +21,22 @@ namespace SFA.DAS.AssessorService.Data
         private readonly IWebConfiguration _configuration;
         private readonly AzureServiceTokenProvider _azureServiceTokenProvider;
 
-        public RegisterQueryRepository(IWebConfiguration configuration)
-        {
-            _configuration = configuration;
-            SqlMapper.AddTypeHandler(typeof(OrganisationData), new OrganisationDataHandler());
-            SqlMapper.AddTypeHandler(typeof(OrganisationStandardData), new OrganisationStandardDataHandler());
-        }
-
         public RegisterQueryRepository(IWebConfiguration configuration, IHostingEnvironment hostingEnvironment)
         {
             _configuration = configuration;
             SqlMapper.AddTypeHandler(typeof(OrganisationData), new OrganisationDataHandler());
             SqlMapper.AddTypeHandler(typeof(OrganisationStandardData), new OrganisationStandardDataHandler());
 
-            if (!hostingEnvironment.IsDevelopment()) {
+            if (!hostingEnvironment.IsDevelopment())
+            {
                 _azureServiceTokenProvider = new AzureServiceTokenProvider();
             }
         }
 
         public async Task<IEnumerable<OrganisationType>> GetOrganisationTypes()
         {
-            var connectionString = _configuration.SqlConnectionString;
-
-            using (var connection = new SqlConnection(connectionString))
+            using (var connection = ManagedIdentitySqlConnection.GetSqlConnection(_configuration.SqlConnectionString, _azureServiceTokenProvider))
             {
-                connection.AccessToken = (new AzureServiceTokenProvider()).GetAccessTokenAsync("https://database.windows.net/").Result;
-
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
 
@@ -57,8 +47,6 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<IEnumerable<DeliveryArea>> GetDeliveryAreas()
         {
-            var connectionString = _configuration.SqlConnectionString;
-
             using (var connection = ManagedIdentitySqlConnection.GetSqlConnection(_configuration.SqlConnectionString, _azureServiceTokenProvider))
             {
                 if (connection.State != ConnectionState.Open)
@@ -67,14 +55,12 @@ namespace SFA.DAS.AssessorService.Data
                 var deliveryAreas = await connection.QueryAsync<DeliveryArea>("select * from [DeliveryArea] order by ordering");
                 return deliveryAreas;
             }
-         }
+        }
 
         public async Task<EpaOrganisation> GetEpaOrganisationById(Guid id)
         {
-            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            using (var connection = ManagedIdentitySqlConnection.GetSqlConnection(_configuration.SqlConnectionString, _azureServiceTokenProvider))
             {
-                connection.AccessToken = (new AzureServiceTokenProvider()).GetAccessTokenAsync("https://database.windows.net/").Result;
-
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
                 var sqlForMainDetails =
@@ -83,7 +69,7 @@ namespace SFA.DAS.AssessorService.Data
                     " FROM [Organisations] O " +
                     "LEFT OUTER JOIN [Contacts] C ON C.Username = O.PrimaryContact AND C.EndPointAssessorOrganisationId = O.EndPointAssessorOrganisationId " +
                     "WHERE O.Id = @id";
-                var orgs = await connection.QueryAsync<EpaOrganisation>(sqlForMainDetails, new {id});
+                var orgs = await connection.QueryAsync<EpaOrganisation>(sqlForMainDetails, new { id });
                 var org = orgs.FirstOrDefault();
                 return org;
             }
@@ -91,10 +77,8 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<EpaOrganisation> GetEpaOrganisationByOrganisationId(string organisationId)
         {
-            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            using (var connection = ManagedIdentitySqlConnection.GetSqlConnection(_configuration.SqlConnectionString, _azureServiceTokenProvider))
             {
-                connection.AccessToken = (new AzureServiceTokenProvider()).GetAccessTokenAsync("https://database.windows.net/").Result;
-
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
                 var sqlForMainDetails =
@@ -103,19 +87,17 @@ namespace SFA.DAS.AssessorService.Data
                     " FROM [Organisations] O " +
                     "LEFT OUTER JOIN [Contacts] C ON C.Username = O.PrimaryContact AND C.EndPointAssessorOrganisationId = O.EndPointAssessorOrganisationId " +
                     "WHERE O.EndPointAssessorOrganisationId = @organisationId";
-                var orgs = await connection.QueryAsync<EpaOrganisation>(sqlForMainDetails, new {organisationId});
+                var orgs = await connection.QueryAsync<EpaOrganisation>(sqlForMainDetails, new { organisationId });
                 var org = orgs.FirstOrDefault();
                 return org;
             }
         }
 
-        
+
         public async Task<string> EpaOrganisationIdCurrentMaximum()
         {
-            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            using (var connection = ManagedIdentitySqlConnection.GetSqlConnection(_configuration.SqlConnectionString, _azureServiceTokenProvider))
             {
-                connection.AccessToken = (new AzureServiceTokenProvider()).GetAccessTokenAsync("https://database.windows.net/").Result;
-
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
                 const string sqlToGetHighestOrganisationId = @"select max(CAST( replace(EndPointAssessorOrganisationId,'EPA','') AS int)) OrgId from organisations where EndPointAssessorOrganisationId like 'EPA%' 
@@ -126,10 +108,8 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<int> EpaContactUsernameHighestCounter()
         {
-            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            using (var connection = ManagedIdentitySqlConnection.GetSqlConnection(_configuration.SqlConnectionString, _azureServiceTokenProvider))
             {
-                connection.AccessToken = (new AzureServiceTokenProvider()).GetAccessTokenAsync("https://database.windows.net/").Result;
-
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
 
@@ -144,10 +124,8 @@ namespace SFA.DAS.AssessorService.Data
         {
             var connectionString = _configuration.SqlConnectionString;
 
-            using (var connection = new SqlConnection(connectionString))
+            using (var connection = ManagedIdentitySqlConnection.GetSqlConnection(_configuration.SqlConnectionString, _azureServiceTokenProvider))
             {
-                connection.AccessToken = (new AzureServiceTokenProvider()).GetAccessTokenAsync("https://database.windows.net/").Result;
-
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
 
@@ -160,10 +138,8 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<IEnumerable<AssessmentOrganisationContact>> GetAssessmentOrganisationContacts(string organisationId)
         {
-            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            using (var connection = ManagedIdentitySqlConnection.GetSqlConnection(_configuration.SqlConnectionString, _azureServiceTokenProvider))
             {
-                connection.AccessToken = (new AzureServiceTokenProvider()).GetAccessTokenAsync("https://database.windows.net/").Result;
-
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
 
@@ -176,16 +152,14 @@ namespace SFA.DAS.AssessorService.Data
                     "where C.EndPointAssessorOrganisationId = @organisationId " +
                     "order by CASE WHEN PrimaryContact Is NULL THEN 0 ELSE 1 END DESC";
 
-                return await connection.QueryAsync<AssessmentOrganisationContact>(sql, new {organisationId});
+                return await connection.QueryAsync<AssessmentOrganisationContact>(sql, new { organisationId });
             }
         }
 
         public async Task<AssessmentOrganisationContact> GetAssessmentOrganisationContact(Guid contactId)
         {
-            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            using (var connection = ManagedIdentitySqlConnection.GetSqlConnection(_configuration.SqlConnectionString, _azureServiceTokenProvider))
             {
-                connection.AccessToken = (new AzureServiceTokenProvider()).GetAccessTokenAsync("https://database.windows.net/").Result;
-
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
 
@@ -197,17 +171,15 @@ namespace SFA.DAS.AssessorService.Data
                     "C.Username = O.PrimaryContact AND C.EndPointAssessorOrganisationId = O.EndPointAssessorOrganisationId " +
                     "where convert(varchar(50),C.Id) = @contactId ";
 
-                var contacts = await connection.QueryAsync<AssessmentOrganisationContact>(sql, new {contactId});
+                var contacts = await connection.QueryAsync<AssessmentOrganisationContact>(sql, new { contactId });
                 return contacts.FirstOrDefault();
             }
         }
 
         public async Task<AssessmentOrganisationContact> GetPrimaryOrFirstContact(string organisationId)
         {
-            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            using (var connection = ManagedIdentitySqlConnection.GetSqlConnection(_configuration.SqlConnectionString, _azureServiceTokenProvider))
             {
-                connection.AccessToken = (new AzureServiceTokenProvider()).GetAccessTokenAsync("https://database.windows.net/").Result;
-
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
 
@@ -220,18 +192,16 @@ namespace SFA.DAS.AssessorService.Data
                     "where C.EndPointAssessorOrganisationId = @organisationId " +
                     "order by CASE WHEN PrimaryContact Is NULL THEN 0 ELSE 1 END DESC";
 
-                var contact = await connection.QuerySingleAsync<AssessmentOrganisationContact>(sql, new {organisationId});
+                var contact = await connection.QuerySingleAsync<AssessmentOrganisationContact>(sql, new { organisationId });
 
                 return contact;
             }
         }
-        
+
         public async Task<IEnumerable<EpaOrganisation>> GetAssessmentOrganisationsByStandardId(int standardId)
         {
-            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            using (var connection = ManagedIdentitySqlConnection.GetSqlConnection(_configuration.SqlConnectionString, _azureServiceTokenProvider))
             {
-                connection.AccessToken = (new AzureServiceTokenProvider()).GetAccessTokenAsync("https://database.windows.net/").Result;
-
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
 
@@ -242,16 +212,14 @@ namespace SFA.DAS.AssessorService.Data
                     "JOIN OrganisationStandard  OS ON OS.EndPointAssessorOrganisationId = O.EndPointAssessorOrganisationId " +
                     "LEFT OUTER JOIN [Contacts] C ON C.Username = O.PrimaryContact AND C.EndPointAssessorOrganisationId = O.EndPointAssessorOrganisationId " +
                     "WHERE OS.StandardCode = @standardId";
-                return await connection.QueryAsync<EpaOrganisation>(sqlForOrganisationsByStandardId, new {standardId});
+                return await connection.QueryAsync<EpaOrganisation>(sqlForOrganisationsByStandardId, new { standardId });
             }
         }
 
         public async Task<IEnumerable<OrganisationStandardSummary>> GetOrganisationStandardByOrganisationId(string organisationId)
         {
-            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            using (var connection = ManagedIdentitySqlConnection.GetSqlConnection(_configuration.SqlConnectionString, _azureServiceTokenProvider))
             {
-                connection.AccessToken = (new AzureServiceTokenProvider()).GetAccessTokenAsync("https://database.windows.net/").Result;
-
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
 
@@ -260,7 +228,7 @@ namespace SFA.DAS.AssessorService.Data
                 FROM [OrganisationStandard] os
                     INNER JOIN StandardCollation sc ON sc.StandardId = os.StandardCode 
                 WHERE EndPointAssessorOrganisationId = @organisationId";
-                
+
                 var standard = await connection.QueryAsync<OrganisationStandardSummary, StandardCollation, OrganisationStandardSummary>(
                     sqlForStandardByOrganisationId, (summary, collation) =>
                     {
@@ -269,56 +237,49 @@ namespace SFA.DAS.AssessorService.Data
                             Title = collation.Title
                         };
                         return summary;
-                    }, new {organisationId});
-                
+                    }, new { organisationId });
+
                 return standard;
             }
         }
 
         public async Task<OrganisationStandard> GetOrganisationStandardFromOrganisationStandardId(int organisationStandardId)
         {
-            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            using (var connection = ManagedIdentitySqlConnection.GetSqlConnection(_configuration.SqlConnectionString, _azureServiceTokenProvider))
             {
-                connection.AccessToken = (new AzureServiceTokenProvider()).GetAccessTokenAsync("https://database.windows.net/").Result;
-
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
 
                 var sqlForStandardByOrganisationStandardId =
                     "SELECT Id, EndPointAssessorOrganisationId as OrganisationId, StandardCode as StandardId, EffectiveFrom, EffectiveTo, " +
-                    "DateStandardApprovedOnRegister, Comments, Status, ContactId, OrganisationStandardData "+
+                    "DateStandardApprovedOnRegister, Comments, Status, ContactId, OrganisationStandardData " +
                     "FROM [OrganisationStandard] WHERE Id = @organisationStandardId";
-                return await connection.QuerySingleAsync<OrganisationStandard>(sqlForStandardByOrganisationStandardId, new {organisationStandardId});
+                return await connection.QuerySingleAsync<OrganisationStandard>(sqlForStandardByOrganisationStandardId, new { organisationStandardId });
             }
         }
 
         public async Task<IEnumerable<OrganisationStandardPeriod>> GetOrganisationStandardPeriodsByOrganisationStandard(string organisationId, int standardId)
         {
-            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            using (var connection = ManagedIdentitySqlConnection.GetSqlConnection(_configuration.SqlConnectionString, _azureServiceTokenProvider))
             {
-                connection.AccessToken = (new AzureServiceTokenProvider()).GetAccessTokenAsync("https://database.windows.net/").Result;
-
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
 
                 var sql =
                     "SELECT EffectiveFrom, EffectiveTo " +
                     "FROM [OrganisationStandard] WHERE EndPointAssessorOrganisationId = @organisationId and StandardCode = @standardId";
-                return await connection.QueryAsync<OrganisationStandardPeriod>(sql, new {organisationId, standardId});
+                return await connection.QueryAsync<OrganisationStandardPeriod>(sql, new { organisationId, standardId });
             }
         }
 
         public async Task<IEnumerable<AssessmentOrganisationSummary>> GetAssessmentOrganisationsByUkprn(string ukprn)
         {
-            var connectionString = _configuration.SqlConnectionString;
-            if (!int.TryParse(ukprn.Replace(" ",""), out int ukprnNumeric))
+            if (!int.TryParse(ukprn.Replace(" ", ""), out int ukprnNumeric))
             {
                 return new List<AssessmentOrganisationSummary>();
             }
-            using (var connection = new SqlConnection(connectionString))
+            using (var connection = ManagedIdentitySqlConnection.GetSqlConnection(_configuration.SqlConnectionString, _azureServiceTokenProvider))
             {
-                connection.AccessToken = (new AzureServiceTokenProvider()).GetAccessTokenAsync("https://database.windows.net/").Result;
-
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
 
@@ -329,17 +290,14 @@ namespace SFA.DAS.AssessorService.Data
                     + "LEFT OUTER JOIN [Contacts] c ON c.Username = o.PrimaryContact AND c.EndPointAssessorOrganisationId = o.EndPointAssessorOrganisationId "
                     + "WHERE o.EndPointAssessorUkprn = @ukprnNumeric";
 
-                var assessmentOrganisationSummaries = await connection.QueryAsync<AssessmentOrganisationSummary>(sql, new {ukprnNumeric});
+                var assessmentOrganisationSummaries = await connection.QueryAsync<AssessmentOrganisationSummary>(sql, new { ukprnNumeric });
                 return assessmentOrganisationSummaries;
             }
         }
         public async Task<IEnumerable<AssessmentOrganisationSummary>> GetAssessmentOrganisationsByOrganisationId(string organisationId)
         {
-            var connectionString = _configuration.SqlConnectionString;
-            using (var connection = new SqlConnection(connectionString))
+            using (var connection = ManagedIdentitySqlConnection.GetSqlConnection(_configuration.SqlConnectionString, _azureServiceTokenProvider))
             {
-                connection.AccessToken = (new AzureServiceTokenProvider()).GetAccessTokenAsync("https://database.windows.net/").Result;
-
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
 
@@ -350,18 +308,15 @@ namespace SFA.DAS.AssessorService.Data
                     + "LEFT OUTER JOIN [Contacts] c ON c.Username = o.PrimaryContact AND c.EndPointAssessorOrganisationId = o.EndPointAssessorOrganisationId "
                     + "WHERE o.EndPointAssessorOrganisationId like @organisationId";
 
-                var assessmentOrganisationSummaries = await connection.QueryAsync<AssessmentOrganisationSummary>(sql, new {organisationId = $"{organisationId.Replace(" ","")}" });
+                var assessmentOrganisationSummaries = await connection.QueryAsync<AssessmentOrganisationSummary>(sql, new { organisationId = $"{organisationId.Replace(" ", "")}" });
                 return assessmentOrganisationSummaries;
             }
         }
 
         public async Task<AssessmentOrganisationSummary> GetAssessmentOrganisationByContactEmail(string email)
         {
-            var connectionString = _configuration.SqlConnectionString;
-            using (var connection = new SqlConnection(connectionString))
+            using (var connection = ManagedIdentitySqlConnection.GetSqlConnection(_configuration.SqlConnectionString, _azureServiceTokenProvider))
             {
-                connection.AccessToken = (new AzureServiceTokenProvider()).GetAccessTokenAsync("https://database.windows.net/").Result;
-
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
 
@@ -373,17 +328,14 @@ namespace SFA.DAS.AssessorService.Data
                     + "LEFT JOIN [Contacts] c ON c.EndPointAssessorOrganisationId = o.EndPointAssessorOrganisationId "
                     + "WHERE replace(c.Email, ' ','')  = replace(@email, ' ','')";
 
-                var organisation = await connection.QuerySingleOrDefaultAsync<AssessmentOrganisationSummary>(sql, new { email});
+                var organisation = await connection.QuerySingleOrDefaultAsync<AssessmentOrganisationSummary>(sql, new { email });
                 return organisation;
             }
         }
         public async Task<IEnumerable<AssessmentOrganisationSummary>> GetAssessmentOrganisationsByNameOrCharityNumberOrCompanyNumber(string searchString)
         {
-            var connectionString = _configuration.SqlConnectionString;
-            using (var connection = new SqlConnection(connectionString))
+            using (var connection = ManagedIdentitySqlConnection.GetSqlConnection(_configuration.SqlConnectionString, _azureServiceTokenProvider))
             {
-                connection.AccessToken = (new AzureServiceTokenProvider()).GetAccessTokenAsync("https://database.windows.net/").Result;
-
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
 
@@ -397,38 +349,30 @@ namespace SFA.DAS.AssessorService.Data
                     + "OR replace(JSON_VALUE(o.[OrganisationData], '$.LegalName'), ' ','') like @searchString "
                     + "OR replace(JSON_VALUE(o.[OrganisationData], '$.CompanyNumber'), ' ','') like @searchString "
                     + "OR replace(JSON_VALUE(o.[OrganisationData], '$.CharityNumber'), ' ','') like @searchString ";
-                var assessmentOrganisationSummaries = await connection.QueryAsync<AssessmentOrganisationSummary>(sql, new {searchString =$"%{searchString.Replace(" ","")}%" } );
+                var assessmentOrganisationSummaries = await connection.QueryAsync<AssessmentOrganisationSummary>(sql, new { searchString = $"%{searchString.Replace(" ", "")}%" });
                 return assessmentOrganisationSummaries;
             }
         }
 
         public async Task<IEnumerable<int>> GetDeliveryAreaIdsByOrganisationStandardId(int organisationStandardId)
         {
-            var connectionString = _configuration.SqlConnectionString;
-
-            using (var connection = new SqlConnection(connectionString))
+            using (var connection = ManagedIdentitySqlConnection.GetSqlConnection(_configuration.SqlConnectionString, _azureServiceTokenProvider))
             {
-                connection.AccessToken = (new AzureServiceTokenProvider()).GetAccessTokenAsync("https://database.windows.net/").Result;
-
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
 
                 var sql =
                     "select DeliveryAreaId from organisationStandardDeliveryArea" +
                     " where OrganisationStandardId = @organisationStandardId";
-                var deliveryAreas = await connection.QueryAsync<int>(sql, new {organisationStandardId});
+                var deliveryAreas = await connection.QueryAsync<int>(sql, new { organisationStandardId });
                 return deliveryAreas;
             }
         }
 
         public async Task<EpaContact> GetContactByContactId(Guid contactId)
         {
-            var connectionString = _configuration.SqlConnectionString;
-
-            using (var connection = new SqlConnection(connectionString))
+            using (var connection = ManagedIdentitySqlConnection.GetSqlConnection(_configuration.SqlConnectionString, _azureServiceTokenProvider))
             {
-                connection.AccessToken = (new AzureServiceTokenProvider()).GetAccessTokenAsync("https://database.windows.net/").Result;
-
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
 
@@ -442,12 +386,8 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<EpaContact> GetContactByEmail(string email)
         {
-            var connectionString = _configuration.SqlConnectionString;
-
-            using (var connection = new SqlConnection(connectionString))
+            using (var connection = ManagedIdentitySqlConnection.GetSqlConnection(_configuration.SqlConnectionString, _azureServiceTokenProvider))
             {
-                connection.AccessToken = (new AzureServiceTokenProvider()).GetAccessTokenAsync("https://database.windows.net/").Result;
-
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
 
@@ -461,12 +401,8 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<EpaContact> GetContactBySignInId(string signinId)
         {
-            var connectionString = _configuration.SqlConnectionString;
-
-            using (var connection = new SqlConnection(connectionString))
+            using (var connection = ManagedIdentitySqlConnection.GetSqlConnection(_configuration.SqlConnectionString, _azureServiceTokenProvider))
             {
-                connection.AccessToken = (new AzureServiceTokenProvider()).GetAccessTokenAsync("https://database.windows.net/").Result;
-
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
 
@@ -481,12 +417,8 @@ namespace SFA.DAS.AssessorService.Data
         public async Task<IEnumerable<OrganisationStandardDeliveryArea>> GetDeliveryAreasByOrganisationStandardId(
             int organisationStandardId)
         {
-            var connectionString = _configuration.SqlConnectionString;
-
-            using (var connection = new SqlConnection(connectionString))
+            using (var connection = ManagedIdentitySqlConnection.GetSqlConnection(_configuration.SqlConnectionString, _azureServiceTokenProvider))
             {
-                connection.AccessToken = (new AzureServiceTokenProvider()).GetAccessTokenAsync("https://database.windows.net/").Result;
-
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
 
@@ -494,7 +426,7 @@ namespace SFA.DAS.AssessorService.Data
                     "select *  from organisationStandardDeliveryArea" +
                     " where OrganisationStandardId = @organisationStandardId";
                 var deliveryAreas =
-                    await connection.QueryAsync<OrganisationStandardDeliveryArea>(sql, new {organisationStandardId});
+                    await connection.QueryAsync<OrganisationStandardDeliveryArea>(sql, new { organisationStandardId });
                 return deliveryAreas;
             }
         }
@@ -502,16 +434,14 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<string> GetEpaOrgIdByEndPointAssessmentName(string name)
         {
-            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            using (var connection = ManagedIdentitySqlConnection.GetSqlConnection(_configuration.SqlConnectionString, _azureServiceTokenProvider))
             {
-                connection.AccessToken = (new AzureServiceTokenProvider()).GetAccessTokenAsync("https://database.windows.net/").Result;
-
                 name = name.Replace(" ", "");
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
                 var sqlForMainDetails =
                     "SELECT  O.EndPointAssessorOrganisationId " +
-                    " FROM [Organisations] O " 
+                    " FROM [Organisations] O "
                     + "WHERE replace(o.EndPointAssessorName, ' ','') like @name "
                     + "OR replace(JSON_VALUE(o.[OrganisationData], '$.TradingName'), ' ','') like @name "
                     + "OR replace(JSON_VALUE(o.[OrganisationData], '$.LegalName'), ' ','') like @name ";

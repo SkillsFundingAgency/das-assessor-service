@@ -1,22 +1,21 @@
-﻿using Dapper;
-using Microsoft.Azure.Services.AppAuthentication;
+﻿using System.Data;
+using System.Data.SqlClient;
+using System.Linq;
+using Dapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Models;
 using SFA.DAS.AssessorService.Settings;
-using System.Data;
-using System.Data.SqlClient;
-using System.Linq;
 
 namespace SFA.DAS.AssessorService.Data.IntegrationTests.Services
 {
     public class DatabaseService
     {
-     
+
         public DatabaseService()
         {
-           
+
             Configuration = new ConfigurationBuilder()
                 .AddJsonFile("connectionStrings.Local.json")
                 .Build();
@@ -31,12 +30,8 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Services
             get
             {
                 var sqlConnectionStringTest = Configuration.GetConnectionString("SqlConnectionStringTest");
-                var sqlConnectionTest = new SqlConnection(sqlConnectionStringTest)
-                {
-                    AccessToken = (new AzureServiceTokenProvider()).GetAccessTokenAsync("https://database.windows.net/").Result
-                };
                 var option = new DbContextOptionsBuilder<AssessorDbContext>();
-                option.UseSqlServer(sqlConnectionTest, options => options.EnableRetryOnFailure(3));
+                option.UseSqlServer(sqlConnectionStringTest, options => options.EnableRetryOnFailure(3));
                 return new AssessorDbContext(option.Options);
             }
         }
@@ -51,8 +46,6 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Services
 
             using (var connection = new SqlConnection(Configuration.GetConnectionString("SqlConnectionString")))
             {
-                connection.AccessToken = (new AzureServiceTokenProvider()).GetAccessTokenAsync("https://database.windows.net/").Result;
-
                 if (connection.State != ConnectionState.Open)
                     connection.Open();
 
@@ -71,8 +64,6 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Services
         {
             using (var connection = new SqlConnection(Configuration.GetConnectionString("SqlConnectionStringTest")))
             {
-                connection.AccessToken = (new AzureServiceTokenProvider()).GetAccessTokenAsync("https://database.windows.net/").Result;
-
                 if (connection.State != ConnectionState.Open)
                     connection.Open();
                 connection.Execute(sql);
@@ -84,23 +75,19 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Services
         {
             using (var connection = new SqlConnection(Configuration.GetConnectionString("SqlConnectionStringTest")))
             {
-                connection.AccessToken = (new AzureServiceTokenProvider()).GetAccessTokenAsync("https://database.windows.net/").Result;
-
                 if (connection.State != ConnectionState.Open)
                     connection.Open();
                 var result = connection.Query<T>(sql);
                 connection.Close();
                 return result.FirstOrDefault();
-            }    
+            }
         }
 
-        
+
         public object ExecuteScalar(string sql)
         {
             using (var connection = new SqlConnection(Configuration.GetConnectionString("SqlConnectionStringTest")))
             {
-                connection.AccessToken = (new AzureServiceTokenProvider()).GetAccessTokenAsync("https://database.windows.net/").Result;
-
                 if (connection.State != ConnectionState.Open)
                     connection.Open();
                 var result = connection.ExecuteScalar(sql);
@@ -115,8 +102,6 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Services
         {
             using (var connection = new SqlConnection(Configuration.GetConnectionString("SqlConnectionStringTest")))
             {
-                connection.AccessToken = (new AzureServiceTokenProvider()).GetAccessTokenAsync("https://database.windows.net/").Result;
-
                 if (connection.State != ConnectionState.Open)
                     connection.Open();
                 connection.Execute(sql, model);
@@ -128,8 +113,6 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Services
         {
             using (var connection = new SqlConnection(Configuration.GetConnectionString("SqlConnectionString")))
             {
-                connection.AccessToken = (new AzureServiceTokenProvider()).GetAccessTokenAsync("https://database.windows.net/").Result;
-
                 if (connection.State != ConnectionState.Open)
                     connection.Open();
 

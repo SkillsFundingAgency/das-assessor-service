@@ -1,31 +1,30 @@
-﻿using FluentAssertions;
-using Microsoft.Azure.Services.AppAuthentication;
-using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
-using NUnit.Framework;
+﻿using NUnit.Framework;
+using System.Collections.Generic;
+using System.Linq;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Handlers;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Models;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Services;
+using Microsoft.EntityFrameworkCore;
+using System.Data.SqlClient;
+using System;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
-using SFA.DAS.AssessorService.Domain.JsonData;
-using System;
-using System.Collections.Generic;
-using System.Data.SqlClient;
-using System.Linq;
 using System.Threading.Tasks;
+using SFA.DAS.AssessorService.Domain.JsonData;
+using Newtonsoft.Json;
+using FluentAssertions;
 
 namespace SFA.DAS.AssessorService.Data.IntegrationTests
 {
     public class CertificatePrivateTests : TestBase
     {
         private readonly DatabaseService _databaseService = new DatabaseService();
-        
+
         private AssessorDbContext _context;
         private SqlConnection _databaseConnection;
-        
+
         private CertificateRepository _repository;
-        
+
         private static int _organisationTypeId = 1;
         private static Guid _organisationId = Guid.NewGuid();
         private OrganisationModel _organisation;
@@ -36,24 +35,19 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         public async Task SetupCertificateTests()
         {
             var option = new DbContextOptionsBuilder<AssessorDbContext>();
+            option.UseSqlServer(_databaseService.WebConfiguration.SqlConnectionString, options => options.EnableRetryOnFailure(3));
 
-            _databaseConnection = new SqlConnection(_databaseService.WebConfiguration.SqlConnectionString)
-            {
-                AccessToken = (new AzureServiceTokenProvider()).GetAccessTokenAsync("https://database.windows.net/").Result
-            };
-
-            option.UseSqlServer(_databaseConnection, options => options.EnableRetryOnFailure(3));    
-            
             _context = new AssessorDbContext(option.Options);
+            _databaseConnection = new SqlConnection(_databaseService.WebConfiguration.SqlConnectionString);
 
             _repository = new CertificateRepository(_context, _databaseConnection);
 
             OrganisationTypeHandler.InsertRecord(
-                new OrganisationTypeModel 
-                { 
-                    Id = _organisationTypeId, 
+                new OrganisationTypeModel
+                {
+                    Id = _organisationTypeId,
                     Status = "Live",
-                    Type = "Organisation Type A" 
+                    Type = "Organisation Type A"
                 });
 
             _organisation = new OrganisationModel

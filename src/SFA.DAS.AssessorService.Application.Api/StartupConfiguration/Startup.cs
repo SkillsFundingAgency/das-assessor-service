@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.Mvc.Razor;
+using Microsoft.Azure.Services.AppAuthentication;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -25,6 +26,7 @@ using SFA.DAS.AssessorService.Application.Api.Infrastructure;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Services;
 using SFA.DAS.AssessorService.Data;
+using SFA.DAS.AssessorService.Data.Helpers;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
 using SFA.DAS.AssessorService.ExternalApis.IFAStandards;
 using SFA.DAS.AssessorService.Settings;
@@ -43,6 +45,7 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
         private readonly IHostingEnvironment _env;
         private readonly ILogger<Startup> _logger;
         private readonly bool UseSandbox;
+        private readonly AzureServiceTokenProvider _azureServiceTokenProvider;
 
         public Startup(IHostingEnvironment env, IConfiguration config, ILogger<Startup> logger)
         {
@@ -55,6 +58,11 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
             if (!bool.TryParse(config["UseSandboxServices"], out UseSandbox))
             {
                 UseSandbox = "yes".Equals(config["UseSandboxServices"], StringComparison.InvariantCultureIgnoreCase);
+            }
+
+            if (!_env.IsDevelopment())
+            {
+                _azureServiceTokenProvider = new AzureServiceTokenProvider();
             }
 
             _logger.LogInformation($"UseSandbox is: {UseSandbox.ToString()}");
@@ -211,7 +219,7 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                 option.UseSqlServer(sqlConnectionString, options => options.EnableRetryOnFailure(3));
 
                 config.For<AssessorDbContext>().Use(c => new AssessorDbContext(option.Options));
-                config.For<IDbConnection>().Use(c => new SqlConnection(sqlConnectionString));
+                config.For<IDbConnection>().Use(c => ManagedIdentitySqlConnection.GetSqlConnection(sqlConnectionString, _azureServiceTokenProvider));
 
 
                 config.For<INotificationsApi>().Use<NotificationsApi>().Ctor<HttpClient>().Is(string.IsNullOrWhiteSpace(NotificationConfiguration().ClientId)

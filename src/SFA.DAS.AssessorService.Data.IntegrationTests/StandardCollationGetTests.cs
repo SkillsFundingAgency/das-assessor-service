@@ -1,15 +1,14 @@
-﻿using Microsoft.Azure.Services.AppAuthentication;
-using Newtonsoft.Json;
-using NUnit.Framework;
-using SFA.DAS.AssessorService.Data.IntegrationTests.Handlers;
-using SFA.DAS.AssessorService.Data.IntegrationTests.Models;
-using SFA.DAS.AssessorService.Data.IntegrationTests.Services;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
+using NUnit.Framework;
+using SFA.DAS.AssessorService.Data.IntegrationTests.Handlers;
+using SFA.DAS.AssessorService.Data.IntegrationTests.Models;
+using SFA.DAS.AssessorService.Data.IntegrationTests.Services;
 
 namespace SFA.DAS.AssessorService.Data.IntegrationTests
 {
@@ -17,7 +16,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
     public class StandardCollationGetTests : TestBase
     {
         private readonly DatabaseService _databaseService = new DatabaseService();
-        
+
         private SqlConnection _databaseConnection;
         private UnitOfWork _unitOfWork;
         private StandardRepository _repository;
@@ -37,13 +36,10 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         [OneTimeSetUp]
         public void SetupStandardCollationTests()
         {
-            _databaseConnection = new SqlConnection(_databaseService.WebConfiguration.SqlConnectionString)
-            {
-                AccessToken = (new AzureServiceTokenProvider()).GetAccessTokenAsync("https://database.windows.net/").Result
-            };
-            _unitOfWork = new UnitOfWork(_databaseConnection);            
+            _databaseConnection = new SqlConnection(_databaseService.WebConfiguration.SqlConnectionString);
+            _unitOfWork = new UnitOfWork(_databaseConnection);
             _repository = new StandardRepository(_unitOfWork);
-           
+
             _standardCollations.Add(new StandardCollationModel
             {
                 StandardId = _firstStandardId,
@@ -151,8 +147,8 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
 
             var liveStandardCollationsCount = _standardCollations.Where(p => p.IsLive == 1).Count();
             Assert.AreEqual(liveStandardCollationsCount, standardsReturned.Count, $"Expected {liveStandardCollationsCount} standards back but got {standardsReturned.Count}");
-            
-            foreach(var standardModel in _standardCollations.Where(p => p.IsLive == 1))
+
+            foreach (var standardModel in _standardCollations.Where(p => p.IsLive == 1))
             {
                 Assert.AreEqual(1, standardsReturned.Count(x => x.StandardId == standardModel.StandardId), $"Standard Id: {standardModel.StandardId} - was not found");
             }
@@ -165,11 +161,11 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         {
             var standardExpected = _standardCollations.Single(p => p.StandardId == standardId);
             var standardReturned = (await _repository.GetStandardCollationByStandardId(standardId));
-            
+
             Assert.AreEqual(standardExpected.StandardId, standardReturned.StandardId);
             Assert.AreEqual(standardExpected.Title, standardReturned.Title);
             Assert.AreEqual(standardExpected.ReferenceNumber, standardReturned.ReferenceNumber);
-            
+
             if (standardExpected.StandardData != null)
             {
                 Assert.AreEqual(JsonConvert.DeserializeObject<StandardDataModel>(standardExpected.StandardData).Level, standardReturned.StandardData.Level);
@@ -180,7 +176,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
             }
         }
 
-        [TestCase(_firstStandardId,true)]
+        [TestCase(_firstStandardId, true)]
         [TestCase(_secondStandardId, true)]
         [TestCase(_thirdStandardId, true)]
         [TestCase(_fourthStandardId, false)] // the standard exists but is not live
@@ -188,7 +184,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         public async Task GetStandardByIdAndCheckTheStandardCollationIsFoundIfExpected(int standardId, bool found)
         {
             var standardReturned = await _repository.GetStandardCollationByStandardId(standardId);
-            Assert.AreEqual(found, standardReturned != null, $"The result for StandardId: [{standardId}] is not as expected");          
+            Assert.AreEqual(found, standardReturned != null, $"The result for StandardId: [{standardId}] is not as expected");
         }
 
 
@@ -226,12 +222,11 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         {
             StandardCollationHandler.DeleteAllRecords();
 
-            if(_databaseConnection != null)
+            if (_databaseConnection != null)
             {
                 _databaseConnection.Dispose();
             }
         }
     }
 }
-    
 
