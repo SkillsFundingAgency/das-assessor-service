@@ -7,6 +7,7 @@ CREATE TABLE [Apply](
 	[ApplyData] [nvarchar](max) NULL,
 	[FinancialReviewStatus] [nvarchar](20) NOT NULL DEFAULT 'Required',
 	[FinancialGrade] [nvarchar](max) NULL,
+	[GovernanceRecommendation] [nvarchar] (max) NULL,
 	[StandardCode] int NULL,
 	[CreatedAt] [datetime2](7) NOT NULL,
 	[CreatedBy] [nvarchar](256) NOT NULL,

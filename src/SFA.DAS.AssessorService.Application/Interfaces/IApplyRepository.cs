@@ -23,6 +23,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<OrganisationApplicationsResult> GetOrganisationApplications(string reviewStatus, string sortColumn, int sortAscending, int pageSize, int pageIndex);
         Task<OrganisationApplicationsResult> GetOrganisationWithdrawalApplications(string reviewStatus, string sortColumn, int sortAscending, int pageSize, int pageIndex);
         Task<OrganisationApplicationsResult> GetStandardApplications(string organisationId, string reviewStatus, string sortColumn, int sortAscending, int pageSize, int pageIndex);
+        Task<OrganisationApplicationsResult> GetStandardWithdrawalApplications(string organisationId, string reviewStatus, string sortColumn, int sortAscending, int pageSize, int pageIndex);
         Task UpdateGovernanceRecommendation(Guid id, GovernanceRecommendation governanceRecommendation);
 
         Task<List<FinancialApplicationSummaryItem>> GetOpenFinancialApplications();

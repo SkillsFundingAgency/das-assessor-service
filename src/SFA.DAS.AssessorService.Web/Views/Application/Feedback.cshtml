@@ -1,5 +1,6 @@
-@using SFA.DAS.AssessorService.ApplyTypes
-@model SFA.DAS.AssessorService.Web.ViewModels.Apply.SequenceViewModel
+@using SFA.DAS.AssessorService.ApplyTypes;
+@using SFA.DAS.AssessorService.Domain.Consts;
+@model SFA.DAS.AssessorService.Web.ViewModels.Apply.SequenceViewModel;
 
 @{
     ViewBag.Title = "Feedback";
@@ -37,13 +38,21 @@
                 </div>
             }
 
-            @if (Model.SequenceNo == 1)
+            @if (Model.SequenceNo == ApplyConst.ORGANISATION_SEQUENCE_NO)
             {
                 <p class="govuk-body">The first part of your application to join the Register of end-point assessment organisations has been rejected</p>
             }
-            else if (Model.SequenceNo == 2)
+            else if (Model.SequenceNo == ApplyConst.STANDARD_SEQUENCE_NO)
             {
                 <p class="govuk-body">The second part of your application to join the Register of end-point assessment organisations has been rejected</p>
+            }
+            else if (Model.SequenceNo == ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO)
+            {
+                <p class="govuk-body">Your application to withdraw from the Register of end-point assessment organisations has been rejected</p>
+            }
+            else if (Model.SequenceNo == ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO)
+            {
+                <p class="govuk-body">Your application to withdraw from assessing a standard has been rejected</p>
             }
 
             <p class="govuk-body">Go into each question to view comments, where you will have an opportunity to give more information.</p>

@@ -100,8 +100,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
         private  bool CanUpdateApplicationAsync(ApplicationResponse application)
         {
-            const int STANDARD_SEQUENCE_NO = 2;
-
             bool canUpdate = false;
 
             var validApplicationStatuses = new string[] { ApplicationStatus.InProgress };
@@ -109,7 +107,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
             if (application?.ApplyData != null && validApplicationStatuses.Contains(application.ApplicationStatus))
             {
-                var sequence = application.ApplyData.Sequences?.FirstOrDefault(seq => seq.IsActive && seq.SequenceNo == STANDARD_SEQUENCE_NO);
+                var sequence = application.ApplyData.Sequences?.FirstOrDefault(seq => seq.IsActive && seq.SequenceNo == ApplyConst.STANDARD_SEQUENCE_NO);
 
                 if (sequence != null && validApplicationSequenceStatuses.Contains(sequence.Status))
                 {
@@ -122,8 +120,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
         private async Task<string> ApplicationStandardStatus(ApplicationResponse application, int standardCode)
         {
-            const int STANDARD_SEQUENCE_NO = 2;
-
             var validApplicationStatuses = new string[] { ApplicationStatus.InProgress };
             var validApplicationSequenceStatuses = new string[] { ApplicationSequenceStatus.Draft };
 
@@ -143,7 +139,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                     {
                         if (validApplicationStatuses.Contains(application.ApplicationStatus))
                         {
-                            var sequence = application.ApplyData.Sequences?.FirstOrDefault(seq => seq.IsActive && seq.SequenceNo == STANDARD_SEQUENCE_NO);
+                            var sequence = application.ApplyData.Sequences?.FirstOrDefault(seq => seq.IsActive && seq.SequenceNo == ApplyConst.STANDARD_SEQUENCE_NO);
 
                             if (sequence != null && validApplicationSequenceStatuses.Contains(sequence.Status))
                             {

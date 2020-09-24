@@ -15,35 +15,44 @@ RETURN
         ap1.Id AS ApplicationId,
         seq.SequenceNo AS SequenceNo,
         org.EndPointAssessorName AS OrganisationName,
-        CASE WHEN seq.SequenceNo = 1 THEN NULL
-		        ELSE JSON_VALUE(ap1.ApplyData, '$.Apply.StandardName')
+        CASE WHEN seq.SequenceNo = [dbo].[ApplyConst_STANDARD_SEQUENCE_NO]() THEN JSON_VALUE(ap1.ApplyData, '$.Apply.StandardName')
+		     ELSE NULL
         END As StandardName,
-        CASE WHEN seq.SequenceNo = 1 THEN NULL
-		        ELSE JSON_VALUE(ap1.ApplyData, '$.Apply.StandardCode')
+        CASE WHEN seq.SequenceNo = [dbo].[ApplyConst_STANDARD_SEQUENCE_NO]() THEN JSON_VALUE(ap1.ApplyData, '$.Apply.StandardCode')
+		     ELSE NULL
         END As StandardCode,
-		CASE WHEN seq.SequenceNo = 1 THEN NULL
-		        ELSE JSON_VALUE(ap1.ApplyData, '$.Apply.StandardReference')
+		CASE WHEN seq.SequenceNo = [dbo].[ApplyConst_STANDARD_SEQUENCE_NO]() THEN JSON_VALUE(ap1.ApplyData, '$.Apply.StandardReference')
+		     ELSE NULL
         END As StandardReference,
-		CASE WHEN seq.SequenceNo = 1 THEN JSON_VALUE(ap1.ApplyData, '$.Apply.LatestInitSubmissionDate')
-		        WHEN seq.SequenceNo = 2 THEN JSON_VALUE(ap1.ApplyData, '$.Apply.LatestStandardSubmissionDate')
-		        ELSE NULL
+		CASE WHEN seq.SequenceNo = [dbo].[ApplyConst_ORGANISATION_SEQUENCE_NO]() THEN JSON_VALUE(ap1.ApplyData, '$.Apply.LatestInitSubmissionDate')
+		     WHEN seq.SequenceNo = [dbo].[ApplyConst_STANDARD_SEQUENCE_NO]() THEN JSON_VALUE(ap1.ApplyData, '$.Apply.LatestStandardSubmissionDate')
+			 WHEN seq.SequenceNo = [dbo].[ApplyConst_ORGANISATION_WITHDRAWAL_SEQUENCE_NO]() THEN JSON_VALUE(ap1.ApplyData, '$.Apply.LatestOrganiationWithdrawalSubmissionDate')
+		     WHEN seq.SequenceNo = [dbo].[ApplyConst_STANDARD_WITHDRAWAL_SEQUENCE_NO]() THEN JSON_VALUE(ap1.ApplyData, '$.Apply.LatestStandardWithdrawalSubmissionDate')
+		     ELSE NULL
 		END As SubmittedDate,
-        CASE WHEN seq.SequenceNo = 1 THEN JSON_VALUE(ap1.ApplyData, '$.Apply.InitSubmissionFeedbackAddedDate')
-		        WHEN seq.SequenceNo = 2 THEN JSON_VALUE(ap1.ApplyData, '$.Apply.StandardSubmissionFeedbackAddedDate')
-		        ELSE NULL
+        CASE WHEN seq.SequenceNo = [dbo].[ApplyConst_ORGANISATION_SEQUENCE_NO]() THEN JSON_VALUE(ap1.ApplyData, '$.Apply.InitSubmissionFeedbackAddedDate')
+		     WHEN seq.SequenceNo = [dbo].[ApplyConst_STANDARD_SEQUENCE_NO]() THEN JSON_VALUE(ap1.ApplyData, '$.Apply.StandardSubmissionFeedbackAddedDate')
+			 WHEN seq.SequenceNo = [dbo].[ApplyConst_ORGANISATION_WITHDRAWAL_SEQUENCE_NO]() THEN JSON_VALUE(ap1.ApplyData, '$.Apply.OrganisationWithdrawalSubmissionFeedbackAddedDate')
+		     WHEN seq.SequenceNo = [dbo].[ApplyConst_STANDARD_WITHDRAWAL_SEQUENCE_NO]() THEN JSON_VALUE(ap1.ApplyData, '$.Apply.StandardWithdrawalSubmissionFeedbackAddedDate')
+		     ELSE NULL
 		END As FeedbackAddedDate,
-		CASE WHEN seq.SequenceNo = 1 THEN JSON_VALUE(ap1.ApplyData, '$.Apply.InitSubmissionClosedDate')
-		        WHEN seq.SequenceNo = 2 THEN JSON_VALUE(ap1.ApplyData, '$.Apply.StandardSubmissionClosedDate')
-		        ELSE NULL
+		CASE WHEN seq.SequenceNo = [dbo].[ApplyConst_ORGANISATION_SEQUENCE_NO]() THEN JSON_VALUE(ap1.ApplyData, '$.Apply.InitSubmissionClosedDate')
+		     WHEN seq.SequenceNo = [dbo].[ApplyConst_STANDARD_SEQUENCE_NO]() THEN JSON_VALUE(ap1.ApplyData, '$.Apply.StandardSubmissionClosedDate')
+			 WHEN seq.SequenceNo = [dbo].[ApplyConst_ORGANISATION_WITHDRAWAL_SEQUENCE_NO]() THEN JSON_VALUE(ap1.ApplyData, '$.Apply.OrganisationWithdrawalSubmissionClosedDate')
+		     WHEN seq.SequenceNo = [dbo].[ApplyConst_STANDARD_WITHDRAWAL_SEQUENCE_NO]() THEN JSON_VALUE(ap1.ApplyData, '$.Apply.StandardWithdrawalSubmissionClosedDate')
+		     ELSE NULL
 	    END As ClosedDate,
-        CASE WHEN seq.SequenceNo = 1 THEN JSON_VALUE(ap1.ApplyData, '$.Apply.InitSubmissionCount')
-		        WHEN seq.SequenceNo = 2 THEN JSON_VALUE(ap1.ApplyData, '$.Apply.StandardSubmissionsCount')
-		        ELSE 0
+        CASE WHEN seq.SequenceNo = [dbo].[ApplyConst_ORGANISATION_SEQUENCE_NO]() THEN JSON_VALUE(ap1.ApplyData, '$.Apply.InitSubmissionsCount')
+		     WHEN seq.SequenceNo = [dbo].[ApplyConst_STANDARD_SEQUENCE_NO]() THEN JSON_VALUE(ap1.ApplyData, '$.Apply.StandardSubmissionsCount')
+			 WHEN seq.SequenceNo = [dbo].[ApplyConst_ORGANISATION_WITHDRAWAL_SEQUENCE_NO]() THEN JSON_VALUE(ap1.ApplyData, '$.Apply.OrganisationWithdrawalSubmissionsCount')
+		     WHEN seq.SequenceNo = [dbo].[ApplyConst_STANDARD_WITHDRAWAL_SEQUENCE_NO]() THEN JSON_VALUE(ap1.ApplyData, '$.Apply.StandardWithdrawalSubmissionsCount')
+		     ELSE 0
 		END As SubmissionCount,
         ap1.ApplicationStatus As ApplicationStatus,
         ap1.ReviewStatus As ReviewStatus,
         ap1.FinancialReviewStatus As FinancialStatus,
         JSON_VALUE(ap1.FinancialGrade,'$.SelectedGrade') AS FinancialGrade,
+		JSON_VALUE(ap1.GovernanceRecommendation,'$.SelectedRecomendation') AS GovernanceRecommendation,
         seq.Status As SequenceStatus,
 		TotalCount = COUNT(1) OVER()
 	FROM 

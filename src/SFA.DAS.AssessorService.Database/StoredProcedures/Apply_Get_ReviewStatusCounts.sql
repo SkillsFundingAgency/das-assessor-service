@@ -14,25 +14,49 @@ BEGIN
 	SELECT ReviewStatus, Total
 	FROM
 	(
-		SELECT @includedNewReviewStatus ReviewStatus, COUNT(ReviewStatus) Total FROM [dbo].[Apply_Func_Get_Applications] (1, null, @includedNewApplicationSequenceStatus, @excludedApplicationStatus, @excludedReviewStatus, @includedNewReviewStatus)
+		SELECT @includedNewReviewStatus ReviewStatus, COUNT(ReviewStatus) Total FROM [dbo].[Apply_Func_Get_Applications] (dbo.[ApplyConst_ORGANISATION_SEQUENCE_NO](), null, @includedNewApplicationSequenceStatus, @excludedApplicationStatus, @excludedReviewStatus, @includedNewReviewStatus)
 		UNION ALL
-		SELECT @includedInProgressReviewStatus ReviewStatus, COUNT(ReviewStatus) Total FROM [dbo].[Apply_Func_Get_Applications] (1, null, @includedInProgressApplicationSequenceStatus, @excludedApplicationStatus, @excludedReviewStatus, @includedInProgressReviewStatus)
+		SELECT @includedInProgressReviewStatus ReviewStatus, COUNT(ReviewStatus) Total FROM [dbo].[Apply_Func_Get_Applications] (dbo.[ApplyConst_ORGANISATION_SEQUENCE_NO](), null, @includedInProgressApplicationSequenceStatus, @excludedApplicationStatus, @excludedReviewStatus, @includedInProgressReviewStatus)
 		UNION ALL
-		SELECT @includedHasFeedbackReviewStatus ReviewStatus, COUNT(ReviewStatus) Total FROM [dbo].[Apply_Func_Get_Applications] (1, null, @includedHasFeedbackApplicationSequenceStatus, @excludedApplicationStatus, @excludedReviewStatus, @includedHasFeedbackReviewStatus)
+		SELECT @includedHasFeedbackReviewStatus ReviewStatus, COUNT(ReviewStatus) Total FROM [dbo].[Apply_Func_Get_Applications] (dbo.[ApplyConst_ORGANISATION_SEQUENCE_NO](), null, @includedHasFeedbackApplicationSequenceStatus, @excludedApplicationStatus, @excludedReviewStatus, @includedHasFeedbackReviewStatus)
 		UNION ALL
-		SELECT @includedApprovedReviewStatus ReviewStatus, COUNT(ReviewStatus) Total FROM [dbo].[Apply_Func_Get_Applications] (1, null, @includedApprovedApplicationSequenceStatus, @excludedApplicationStatus, @excludedReviewStatus, @includedApprovedReviewStatus)
+		SELECT @includedApprovedReviewStatus ReviewStatus, COUNT(ReviewStatus) Total FROM [dbo].[Apply_Func_Get_Applications] (dbo.[ApplyConst_ORGANISATION_SEQUENCE_NO](), null, @includedApprovedApplicationSequenceStatus, @excludedApplicationStatus, @excludedReviewStatus, @includedApprovedReviewStatus)
 	) [OrganisationApplications]
 	
 	SELECT ReviewStatus, Total
 	FROM
 	(
-		SELECT @includedNewReviewStatus ReviewStatus, COUNT(ReviewStatus) Total FROM [dbo].[Apply_Func_Get_Applications] (2, null, @includedNewApplicationSequenceStatus, @excludedApplicationStatus, @excludedReviewStatus, @includedNewReviewStatus)
+		SELECT @includedNewReviewStatus ReviewStatus, COUNT(ReviewStatus) Total FROM [dbo].[Apply_Func_Get_Applications] (dbo.[ApplyConst_STANDARD_SEQUENCE_NO](), null, @includedNewApplicationSequenceStatus, @excludedApplicationStatus, @excludedReviewStatus, @includedNewReviewStatus)
 		UNION ALL
-		SELECT @includedInProgressReviewStatus ReviewStatus, COUNT(ReviewStatus) Total FROM [dbo].[Apply_Func_Get_Applications] (2, null, @includedInProgressApplicationSequenceStatus, @excludedApplicationStatus, @excludedReviewStatus, @includedInProgressReviewStatus)
+		SELECT @includedInProgressReviewStatus ReviewStatus, COUNT(ReviewStatus) Total FROM [dbo].[Apply_Func_Get_Applications] (dbo.[ApplyConst_STANDARD_SEQUENCE_NO](), null, @includedInProgressApplicationSequenceStatus, @excludedApplicationStatus, @excludedReviewStatus, @includedInProgressReviewStatus)
 		UNION ALL
-		SELECT @includedHasFeedbackReviewStatus ReviewStatus, COUNT(ReviewStatus) Total FROM [dbo].[Apply_Func_Get_Applications] (2, null, @includedHasFeedbackApplicationSequenceStatus, @excludedApplicationStatus, @excludedReviewStatus, @includedHasFeedbackReviewStatus)
+		SELECT @includedHasFeedbackReviewStatus ReviewStatus, COUNT(ReviewStatus) Total FROM [dbo].[Apply_Func_Get_Applications] (dbo.[ApplyConst_STANDARD_SEQUENCE_NO](), null, @includedHasFeedbackApplicationSequenceStatus, @excludedApplicationStatus, @excludedReviewStatus, @includedHasFeedbackReviewStatus)
 		UNION ALL
-		SELECT @includedApprovedReviewStatus ReviewStatus, COUNT(ReviewStatus) Total FROM [dbo].[Apply_Func_Get_Applications] (2, null, @includedApprovedApplicationSequenceStatus, @excludedApplicationStatus, @excludedReviewStatus, @includedApprovedReviewStatus)
+		SELECT @includedApprovedReviewStatus ReviewStatus, COUNT(ReviewStatus) Total FROM [dbo].[Apply_Func_Get_Applications] (dbo.[ApplyConst_STANDARD_SEQUENCE_NO](), null, @includedApprovedApplicationSequenceStatus, @excludedApplicationStatus, @excludedReviewStatus, @includedApprovedReviewStatus)
 	) [StandardApplications]
+
+	SELECT ReviewStatus, Total
+	FROM
+	(
+		SELECT @includedNewReviewStatus ReviewStatus, COUNT(ReviewStatus) Total FROM [dbo].[Apply_Func_Get_Applications] (dbo.[ApplyConst_ORGANISATION_WITHDRAWAL_SEQUENCE_NO](), null, @includedNewApplicationSequenceStatus, @excludedApplicationStatus, @excludedReviewStatus, @includedNewReviewStatus)
+		UNION ALL
+		SELECT @includedInProgressReviewStatus ReviewStatus, COUNT(ReviewStatus) Total FROM [dbo].[Apply_Func_Get_Applications] (dbo.[ApplyConst_ORGANISATION_WITHDRAWAL_SEQUENCE_NO](), null, @includedInProgressApplicationSequenceStatus, @excludedApplicationStatus, @excludedReviewStatus, @includedInProgressReviewStatus)
+		UNION ALL
+		SELECT @includedHasFeedbackReviewStatus ReviewStatus, COUNT(ReviewStatus) Total FROM [dbo].[Apply_Func_Get_Applications] (dbo.[ApplyConst_ORGANISATION_WITHDRAWAL_SEQUENCE_NO](), null, @includedHasFeedbackApplicationSequenceStatus, @excludedApplicationStatus, @excludedReviewStatus, @includedHasFeedbackReviewStatus)
+		UNION ALL
+		SELECT @includedApprovedReviewStatus ReviewStatus, COUNT(ReviewStatus) Total FROM [dbo].[Apply_Func_Get_Applications] (dbo.[ApplyConst_ORGANISATION_WITHDRAWAL_SEQUENCE_NO](), null, @includedApprovedApplicationSequenceStatus, @excludedApplicationStatus, @excludedReviewStatus, @includedApprovedReviewStatus)
+	) [OrganisationWithdrawalApplications]
+
+	SELECT ReviewStatus, Total
+	FROM
+	(
+		SELECT @includedNewReviewStatus ReviewStatus, COUNT(ReviewStatus) Total FROM [dbo].[Apply_Func_Get_Applications] (dbo.[ApplyConst_STANDARD_WITHDRAWAL_SEQUENCE_NO](), null, @includedNewApplicationSequenceStatus, @excludedApplicationStatus, @excludedReviewStatus, @includedNewReviewStatus)
+		UNION ALL
+		SELECT @includedInProgressReviewStatus ReviewStatus, COUNT(ReviewStatus) Total FROM [dbo].[Apply_Func_Get_Applications] (dbo.[ApplyConst_STANDARD_WITHDRAWAL_SEQUENCE_NO](), null, @includedInProgressApplicationSequenceStatus, @excludedApplicationStatus, @excludedReviewStatus, @includedInProgressReviewStatus)
+		UNION ALL
+		SELECT @includedHasFeedbackReviewStatus ReviewStatus, COUNT(ReviewStatus) Total FROM [dbo].[Apply_Func_Get_Applications] (dbo.[ApplyConst_STANDARD_WITHDRAWAL_SEQUENCE_NO](), null, @includedHasFeedbackApplicationSequenceStatus, @excludedApplicationStatus, @excludedReviewStatus, @includedHasFeedbackReviewStatus)
+		UNION ALL
+		SELECT @includedApprovedReviewStatus ReviewStatus, COUNT(ReviewStatus) Total FROM [dbo].[Apply_Func_Get_Applications] (dbo.[ApplyConst_STANDARD_WITHDRAWAL_SEQUENCE_NO](), null, @includedApprovedApplicationSequenceStatus, @excludedApplicationStatus, @excludedReviewStatus, @includedApprovedReviewStatus)
+	) [StandardWithdrawalApplications]
 
 END

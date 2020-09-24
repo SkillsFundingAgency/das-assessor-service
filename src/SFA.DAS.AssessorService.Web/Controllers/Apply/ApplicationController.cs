@@ -39,18 +39,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         private readonly IWebConfiguration _config;
         private const string WorkflowType = "EPAO";
 
-        private const int ORGANISATION_SEQUENCE = 1;
-        private const int STANDARD_SEQUENCE = 2;
-        private const int ORGANISATION_WITHDRAWAL_SEQUENCE = 3;
-        private const int STANDARD_WITHDRAWAL_SEQUENCE = 4;
-
-        private const int ORGANISATION_DETAILS_SECTION = 1;
-        private const int DECLARATIONS_SECTION = 2;
-        private const int FINANCE_DETAILS_SECTION = 3;
-        private const int STANDARD_DETAILS_SECTION = 4;
-        private const int ORGANISATION_WITHDRAWAL_DETAILS_SECTION = 5;
-        private const int STANDARD_WITHDRAWAL_DETAILS_SECTION = 6;
-
         public ApplicationController(IOrganisationsApiClient orgApiClient, IQnaApiClient qnaApiClient, IWebConfiguration config,
             IContactsApiClient contactsApiClient, IApplicationApiClient applicationApiClient, ILogger<ApplicationController> logger, IApiValidationService apiValidationService)
         {
@@ -174,8 +162,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             var createApplicationRequest = await BuildCreateApplicationRequest(ApplicationTypes.OrganisationWithdrawal, contact, org, _config.ReferenceFormat);
             var id = await _applicationApiClient.CreateApplication(createApplicationRequest);
 
-            return RedirectToAction("Sequence", new { Id = id, sequenceNo = ORGANISATION_WITHDRAWAL_SEQUENCE });
-            //return RedirectToAction("SequenceSignPost", new { Id = id });
+            return RedirectToAction("Sequence", new { Id = id, sequenceNo = ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO });
         }
 
         [HttpGet("/Application/{Id}")]
@@ -214,11 +201,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 };
             }
 
-            if (IsSequenceActive(application, ORGANISATION_SEQUENCE))
+            if (IsSequenceActive(application, ApplyConst.ORGANISATION_SEQUENCE_NO))
             {
-                return RedirectToAction("Sequence", new { Id, sequenceNo = ORGANISATION_SEQUENCE });
+                return RedirectToAction("Sequence", new { Id, sequenceNo = ApplyConst.ORGANISATION_SEQUENCE_NO });
             }
-            else if(IsSequenceActive(application, STANDARD_SEQUENCE))
+            else if(IsSequenceActive(application, ApplyConst.STANDARD_SEQUENCE_NO))
             {
                 if (string.IsNullOrWhiteSpace(applicationData?.StandardName))
                 {
@@ -232,16 +219,16 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 }
                 else if (!string.IsNullOrWhiteSpace(applicationData?.StandardName))
                 {
-                    return RedirectToAction("Sequence", new { Id, sequenceNo = STANDARD_SEQUENCE });
+                    return RedirectToAction("Sequence", new { Id, sequenceNo = ApplyConst.STANDARD_SEQUENCE_NO });
                 }
             }
-            else if(IsSequenceActive(application, ORGANISATION_WITHDRAWAL_SEQUENCE))
+            else if(IsSequenceActive(application, ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO))
             {
-                return RedirectToAction("Sequence", new { Id, sequenceNo = ORGANISATION_WITHDRAWAL_SEQUENCE });
+                return RedirectToAction("Sequence", new { Id, sequenceNo = ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO });
             }
-            else if(IsSequenceActive(application, STANDARD_WITHDRAWAL_SEQUENCE))
+            else if(IsSequenceActive(application, ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO))
             {
-                return RedirectToAction("Sequence", new { Id, sequenceNo = STANDARD_WITHDRAWAL_SEQUENCE });
+                return RedirectToAction("Sequence", new { Id, sequenceNo = ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO });
             }
 
             throw new BadRequestException("Section does not have a valid DisplayType");
@@ -872,7 +859,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         private static string BuildPageContext(ApplicationResponse application, QnA.Api.Types.Sequence sequence)
         {
             string pageContext = string.Empty;
-            if (sequence.SequenceNo == 2)
+            if (sequence.SequenceNo == ApplyConst.STANDARD_SEQUENCE_NO)
             {
                 pageContext = $"{application?.ApplyData?.Apply?.StandardReference } {application?.ApplyData?.Apply?.StandardName}";
             }
@@ -1139,8 +1126,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 }).ToList()
             };
         }
-
-
 
         private static List<ValidationErrorDetail> ValidateSubmit(List<Section> qnaSections, List<ApplySection> applySections)
         {

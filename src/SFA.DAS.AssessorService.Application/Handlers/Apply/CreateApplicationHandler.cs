@@ -19,18 +19,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
         private readonly IRegisterQueryRepository _registerQueryRepository;
         private readonly IContactQueryRepository _contactQueryRepository;
 
-        private const int ORGANISATION_SEQUENCE = 1;
-        private const int STANDARD_SEQUENCE = 2;
-        private const int ORGANISATION_WITHDRAWAL_SEQUENCE = 3;
-        private const int STANDARD_WITHDRAWAL_SEQUENCE = 4;
-
-        private const int ORGANISATION_DETAILS_SECTION = 1;
-        private const int DECLARATIONS_SECTION = 2;
-        private const int FINANCE_DETAILS_SECTION = 3;
-        private const int STANDARD_DETAILS_SECTION = 4;
-        private const int ORGANISATION_WITHDRAWAL_DETAILS_SECTION = 5;
-        private const int STANDARD_WITHDRAWAL_DETAILS_SECTION = 6;
-
         public CreateApplicationHandler(IOrganisationQueryRepository organisationQueryRepository,
             IRegisterQueryRepository registerQueryRepository, IContactQueryRepository contactQueryRepository,
             IApplyRepository applyRepository)
@@ -59,11 +47,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
                     Sequences = sequences,
                     Apply = new ApplyTypes.Apply
                     {
-                        ReferenceNumber = await CreateReferenceNumber(request.ApplicationReferenceFormat),
-                        InitSubmissions = new List<Submission>(),
-                        InitSubmissionsCount = 0,
-                        StandardSubmissions = new List<Submission>(),
-                        StandardSubmissionsCount = 0
+                        ReferenceNumber = await CreateReferenceNumber(request.ApplicationReferenceFormat)
                     }
                 };
 
@@ -89,41 +73,41 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
         {
             if (applicationType == ApplicationTypes.Combined)
             {
-                RemoveSections(sequences, ORGANISATION_WITHDRAWAL_SEQUENCE, ORGANISATION_WITHDRAWAL_DETAILS_SECTION);
-                RemoveSections(sequences, STANDARD_WITHDRAWAL_SEQUENCE, STANDARD_WITHDRAWAL_DETAILS_SECTION);
-                RemoveSequences(sequences, ORGANISATION_WITHDRAWAL_SEQUENCE, STANDARD_WITHDRAWAL_SEQUENCE);
+                RemoveSections(sequences, ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO, ApplyConst.ORGANISATION_WITHDRAWAL_DETAILS_SECTION_NO);
+                RemoveSections(sequences, ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO, ApplyConst.STANDARD_WITHDRAWAL_DETAILS_SECTION_NO);
+                RemoveSequences(sequences, ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO, ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO);
 
                 bool isEpao = IsOrganisationOnEPAORegister(org);
                 if (isEpao)
                 {
-                    RemoveSections(sequences, ORGANISATION_SEQUENCE, ORGANISATION_DETAILS_SECTION, DECLARATIONS_SECTION);
+                    RemoveSections(sequences, ApplyConst.ORGANISATION_SEQUENCE_NO, ApplyConst.ORGANISATION_DETAILS_SECTION_NO, ApplyConst.DECLARATIONS_SECTION_NO);
                 }
 
                 bool isFinancialExempt = IsFinancialExempt(org.OrganisationData?.FHADetails, orgType);
                 if (isFinancialExempt)
                 {
-                    RemoveSections(sequences, ORGANISATION_SEQUENCE, FINANCE_DETAILS_SECTION);
+                    RemoveSections(sequences, ApplyConst.ORGANISATION_SEQUENCE_NO, ApplyConst.FINANCIAL_DETAILS_SECTION_NO);
                 }
 
                 if (isEpao && isFinancialExempt)
                 {
-                    RemoveSequences(sequences, ORGANISATION_SEQUENCE);
+                    RemoveSequences(sequences, ApplyConst.ORGANISATION_SEQUENCE_NO);
                 }
             }
             else if (applicationType == ApplicationTypes.OrganisationWithdrawal || applicationType == ApplicationTypes.StandardWithdrawal)
             {
-                RemoveSections(sequences, ORGANISATION_SEQUENCE, ORGANISATION_DETAILS_SECTION, DECLARATIONS_SECTION, FINANCE_DETAILS_SECTION);
-                RemoveSections(sequences, STANDARD_SEQUENCE, STANDARD_DETAILS_SECTION);
+                RemoveSections(sequences, ApplyConst.ORGANISATION_SEQUENCE_NO, ApplyConst.ORGANISATION_DETAILS_SECTION_NO, ApplyConst.DECLARATIONS_SECTION_NO, ApplyConst.FINANCIAL_DETAILS_SECTION_NO);
+                RemoveSections(sequences, ApplyConst.STANDARD_SEQUENCE_NO, ApplyConst.STANDARD_DETAILS_SECTION_NO);
 
                 if (applicationType == ApplicationTypes.OrganisationWithdrawal)
                 {
-                    RemoveSections(sequences, STANDARD_WITHDRAWAL_SEQUENCE, STANDARD_WITHDRAWAL_DETAILS_SECTION);
-                    RemoveSequences(sequences, ORGANISATION_SEQUENCE, STANDARD_SEQUENCE, STANDARD_WITHDRAWAL_SEQUENCE);
+                    RemoveSections(sequences, ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO, ApplyConst.STANDARD_WITHDRAWAL_DETAILS_SECTION_NO);
+                    RemoveSequences(sequences, ApplyConst.ORGANISATION_SEQUENCE_NO, ApplyConst.STANDARD_SEQUENCE_NO, ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO);
                 }
                 else if (applicationType == ApplicationTypes.StandardWithdrawal)
                 {
-                    RemoveSections(sequences, ORGANISATION_WITHDRAWAL_SEQUENCE, ORGANISATION_WITHDRAWAL_DETAILS_SECTION);
-                    RemoveSequences(sequences, ORGANISATION_SEQUENCE, STANDARD_SEQUENCE, ORGANISATION_WITHDRAWAL_SEQUENCE);
+                    RemoveSections(sequences, ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO, ApplyConst.ORGANISATION_WITHDRAWAL_DETAILS_SECTION_NO);
+                    RemoveSequences(sequences, ApplyConst.ORGANISATION_SEQUENCE_NO, ApplyConst.STANDARD_SEQUENCE_NO, ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO);
                 }
             }
 

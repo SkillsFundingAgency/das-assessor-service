@@ -1,7 +1,9 @@
+using Newtonsoft.Json;
 using SFA.DAS.AssessorService.ApplyTypes.CharityCommission;
 using SFA.DAS.AssessorService.ApplyTypes.CompaniesHouse;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace SFA.DAS.AssessorService.ApplyTypes
 {
@@ -77,16 +79,46 @@ namespace SFA.DAS.AssessorService.ApplyTypes
         public int? StandardCode { get; set; }
         public string StandardReference { get; set; }
         public string StandardName { get; set; }
-        public List<Submission> InitSubmissions { get; set; }
-        public int InitSubmissionsCount { get; set; }
-        public DateTime? LatestInitSubmissionDate { get; set; }
+
+        public List<Submission> InitSubmissions { get; set; } = new List<Submission>();
+
+        [JsonIgnore]
+        public Submission LatestInitSubmission => InitSubmissions?.OrderByDescending(o => o.SubmittedAt).FirstOrDefault();
+
+        public int InitSubmissionsCount => InitSubmissions?.Count ?? 0;
+        public DateTime? LatestInitSubmissionDate => LatestInitSubmission?.SubmittedAt;
         public DateTime? InitSubmissionFeedbackAddedDate { get; set; }
         public DateTime? InitSubmissionClosedDate { get; set; }
-        public List<Submission> StandardSubmissions { get; set; }
-        public int StandardSubmissionsCount { get; set; }
-        public DateTime? LatestStandardSubmissionDate { get; set; }
+
+        public List<Submission> StandardSubmissions { get; set; } = new List<Submission>();
+
+        [JsonIgnore]
+        public Submission LatestStandardSubmission => StandardSubmissions?.OrderByDescending(o => o.SubmittedAt).FirstOrDefault();
+
+        public int StandardSubmissionsCount => StandardSubmissions?.Count ?? 0;
+        public DateTime? LatestStandardSubmissionDate => LatestStandardSubmission?.SubmittedAt;
         public DateTime? StandardSubmissionFeedbackAddedDate { get; set; }
         public DateTime? StandardSubmissionClosedDate { get; set; }
+
+        public List<Submission> OrganisationWithdrawalSubmissions { get; set; } = new List<Submission>();
+        
+        [JsonIgnore]
+        public Submission LatestOrganisationWithdrawalSubmission => OrganisationWithdrawalSubmissions?.OrderByDescending(o => o.SubmittedAt).FirstOrDefault();
+
+        public int OrganisationWithdrawalSubmissionsCount => OrganisationWithdrawalSubmissions?.Count ?? 0;
+        public DateTime? LatestOrganisationWithdrawalSubmissionDate => LatestOrganisationWithdrawalSubmission?.SubmittedAt;
+        public DateTime? OrganisationWithdrawalSubmissionFeedbackAddedDate { get; set; }
+        public DateTime? OrganisationWithdrawalSubmissionClosedDate { get; set; }
+
+        public List<Submission> StandardWithdrawalSubmissions { get; set; } = new List<Submission>();
+        
+        [JsonIgnore]
+        public Submission LatestStandardWithdrawalSubmission => StandardWithdrawalSubmissions?.OrderByDescending(o => o.SubmittedAt).FirstOrDefault();
+
+        public int StandardWithdrawalSubmissionsCount => StandardWithdrawalSubmissions?.Count ?? 0;
+        public DateTime? LatestStandardWithdrawalSubmissionDate => LatestStandardWithdrawalSubmission?.SubmittedAt;
+        public DateTime? StandardWithdrawalSubmissionFeedbackAddedDate { get; set; }
+        public DateTime? StandardWithdrawalSubmissionClosedDate { get; set; }
     }
 
     public class Submission
