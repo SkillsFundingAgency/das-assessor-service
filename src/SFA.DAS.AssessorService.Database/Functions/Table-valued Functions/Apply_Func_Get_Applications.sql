@@ -26,7 +26,7 @@ RETURN
         END As StandardReference,
 		CASE WHEN seq.SequenceNo = [dbo].[ApplyConst_ORGANISATION_SEQUENCE_NO]() THEN JSON_VALUE(ap1.ApplyData, '$.Apply.LatestInitSubmissionDate')
 		     WHEN seq.SequenceNo = [dbo].[ApplyConst_STANDARD_SEQUENCE_NO]() THEN JSON_VALUE(ap1.ApplyData, '$.Apply.LatestStandardSubmissionDate')
-			 WHEN seq.SequenceNo = [dbo].[ApplyConst_ORGANISATION_WITHDRAWAL_SEQUENCE_NO]() THEN JSON_VALUE(ap1.ApplyData, '$.Apply.LatestOrganiationWithdrawalSubmissionDate')
+			 WHEN seq.SequenceNo = [dbo].[ApplyConst_ORGANISATION_WITHDRAWAL_SEQUENCE_NO]() THEN JSON_VALUE(ap1.ApplyData, '$.Apply.LatestOrganisationWithdrawalSubmissionDate')
 		     WHEN seq.SequenceNo = [dbo].[ApplyConst_STANDARD_WITHDRAWAL_SEQUENCE_NO]() THEN JSON_VALUE(ap1.ApplyData, '$.Apply.LatestStandardWithdrawalSubmissionDate')
 		     ELSE NULL
 		END As SubmittedDate,
@@ -52,7 +52,7 @@ RETURN
         ap1.ReviewStatus As ReviewStatus,
         ap1.FinancialReviewStatus As FinancialStatus,
         JSON_VALUE(ap1.FinancialGrade,'$.SelectedGrade') AS FinancialGrade,
-		JSON_VALUE(ap1.GovernanceRecommendation,'$.SelectedRecomendation') AS GovernanceRecommendation,
+		JSON_VALUE(ap1.GovernanceRecommendation,'$.SelectedRecommendation') AS GovernanceRecommendation,
         seq.Status As SequenceStatus,
 		TotalCount = COUNT(1) OVER()
 	FROM 

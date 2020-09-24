@@ -29,6 +29,7 @@ BEGIN
 		ReviewStatus,
 		FinancialStatus,
 		FinancialGrade,
+		GovernanceRecommendation,
 		SequenceStatus,
 		TotalCount
 	INTO 
@@ -54,6 +55,7 @@ BEGIN
 		ReviewStatus,
 		FinancialStatus,
 		FinancialGrade,
+		GovernanceRecommendation,
 		SequenceStatus
 	FROM
 		#Results
@@ -65,6 +67,7 @@ BEGIN
 				WHEN @sortColumn = 'StandardReference' THEN StandardReference
 				WHEN @sortColumn = 'StandardName' THEN StandardName
 				WHEN @sortColumn = 'FinancialStatus' THEN FinancialStatus
+				WHEN @sortColumn = 'GovernanceRecommendation' THEN GovernanceRecommendation
 				WHEN @sortColumn = 'Status' THEN ApplicationStatus
 				-- all dynamic order by columns must be the same type and using right aligned zero padded strings to sort as natural numbers
 				WHEN @sortColumn = 'SubmittedDate' THEN RIGHT(REPLICATE('0', 20) + LTRIM(RTRIM(CAST([dbo].[ToTicks](CONVERT(DATETIME2, SubmittedDate, 127)) AS VARCHAR(20)))), 20)
@@ -80,6 +83,7 @@ BEGIN
 				WHEN @sortColumn = 'StandardReference' THEN StandardReference
 				WHEN @sortColumn = 'StandardName' THEN StandardName
 				WHEN @sortColumn = 'FinancialStatus' THEN FinancialStatus
+				WHEN @sortColumn = 'GovernanceRecommendation' THEN GovernanceRecommendation
 				WHEN @sortColumn = 'Status' THEN ApplicationStatus
 				-- all dynamic order by columns must be the same type and using right aligned zero padded strings to sort as natural numbers
 				WHEN @sortColumn = 'SubmittedDate' THEN RIGHT(REPLICATE('0', 20) + LTRIM(RTRIM(CAST([dbo].[ToTicks](CONVERT(DATETIME2, SubmittedDate, 127)) AS VARCHAR(20)))), 20)
