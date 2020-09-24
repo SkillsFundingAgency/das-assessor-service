@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using Microsoft.Azure.Services.AppAuthentication;
+using SFA.DAS.AssessorService.ExternalApiDataSync.Helpers;
 using SFA.DAS.AssessorService.ExternalApiDataSync.Infrastructure;
 using SFA.DAS.AssessorService.ExternalApiDataSync.Logger;
 using System;
@@ -22,6 +23,8 @@ namespace SFA.DAS.AssessorService.ExternalApiDataSync
         private readonly bool _allowDataSync;
         private readonly string _sourceConnectionString;
         private readonly string _destinationConnectionString;
+        private readonly string _currentEnvironment;
+        private readonly AzureServiceTokenProvider _azureServiceTokenProvider;
 
         private readonly SqlBulkCopyOptions _bulkCopyOptions;     
 
@@ -33,6 +36,13 @@ namespace SFA.DAS.AssessorService.ExternalApiDataSync
             _sourceConnectionString = config.SqlConnectionString;
             _destinationConnectionString = config.SandboxSqlConnectionString;
             _bulkCopyOptions = SqlBulkCopyOptions.KeepIdentity | SqlBulkCopyOptions.KeepNulls | SqlBulkCopyOptions.TableLock;
+
+            _currentEnvironment = Environment.GetEnvironmentVariable("EnvironmentName");
+
+            if (!_currentEnvironment.Contains("DEV", StringComparison.CurrentCultureIgnoreCase) || !_currentEnvironment.Contains("LOCAL", StringComparison.CurrentCultureIgnoreCase))
+            {
+                _azureServiceTokenProvider = new AzureServiceTokenProvider();
+            }
         }
 
         public async Task Execute()
