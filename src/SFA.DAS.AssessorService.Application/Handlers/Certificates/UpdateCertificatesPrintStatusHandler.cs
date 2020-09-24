@@ -41,7 +41,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
                 if (certificateBatchLog == null)
                 {
                     validationResult.Errors.Add(
-                      new ValidationErrorDetail("CertificatePrintStatuses", $"Certificate {validatedCertificatePrintStatus.CertificateReference} not printed in batch {validatedCertificatePrintStatus.BatchNumber}  .", ValidationStatusCode.NotFound));                    
+                      new ValidationErrorDetail("CertificatePrintStatuses", $"Certificate {validatedCertificatePrintStatus.CertificateReference} not printed in batch {validatedCertificatePrintStatus.BatchNumber}.", ValidationStatusCode.NotFound));                    
                 }
                 else
                 {
