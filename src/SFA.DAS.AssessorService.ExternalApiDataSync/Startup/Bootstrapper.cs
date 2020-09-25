@@ -28,7 +28,7 @@ namespace SFA.DAS.AssessorService.ExternalApiDataSync.Startup
 
             var currentEnvironment = Environment.GetEnvironmentVariable("EnvironmentName");
 
-            if (!currentEnvironment.Contains("DEV", StringComparison.CurrentCultureIgnoreCase) || !currentEnvironment.Contains("LOCAL", StringComparison.CurrentCultureIgnoreCase))
+            if (!currentEnvironment.Equals("DEV", StringComparison.CurrentCultureIgnoreCase) && !currentEnvironment.Equals("LOCAL", StringComparison.CurrentCultureIgnoreCase))
             {
                 _azureServiceTokenProvider = new AzureServiceTokenProvider();
             }
