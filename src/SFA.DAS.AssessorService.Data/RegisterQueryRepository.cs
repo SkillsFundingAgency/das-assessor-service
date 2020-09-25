@@ -21,6 +21,13 @@ namespace SFA.DAS.AssessorService.Data
         private readonly IWebConfiguration _configuration;
         private readonly AzureServiceTokenProvider _azureServiceTokenProvider;
 
+        public RegisterQueryRepository(IWebConfiguration configuration)
+        {
+            _configuration = configuration;
+            SqlMapper.AddTypeHandler(typeof(OrganisationData), new OrganisationDataHandler());
+            SqlMapper.AddTypeHandler(typeof(OrganisationStandardData), new OrganisationStandardDataHandler());
+        }
+
         public RegisterQueryRepository(IWebConfiguration configuration, IHostingEnvironment hostingEnvironment)
         {
             _configuration = configuration;

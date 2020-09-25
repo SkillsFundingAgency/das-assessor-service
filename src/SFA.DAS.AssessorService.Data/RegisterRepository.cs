@@ -24,6 +24,14 @@ namespace SFA.DAS.AssessorService.Data
         private readonly ILogger<RegisterRepository> _logger;
         private readonly AzureServiceTokenProvider _azureServiceTokenProvider;
 
+        public RegisterRepository(IWebConfiguration configuration, ILogger<RegisterRepository> logger)
+        {
+            _configuration = configuration;
+            _logger = logger;
+            SqlMapper.AddTypeHandler(typeof(Api.Types.Models.AO.OrganisationData), new OrganisationDataHandler());
+            SqlMapper.AddTypeHandler(typeof(OrganisationStandardData), new OrganisationStandardDataHandler());
+        }
+
         public RegisterRepository(IWebConfiguration configuration, ILogger<RegisterRepository> logger, IHostingEnvironment hostingEnvironment)
         {
             _configuration = configuration;

@@ -16,6 +16,11 @@ namespace SFA.DAS.AssessorService.Data
         private readonly IWebConfiguration _configuration;
         private readonly AzureServiceTokenProvider _azureServiceTokenProvider;
 
+        public RegisterValidationRepository(IWebConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
+
         public RegisterValidationRepository(IWebConfiguration configuration, IHostingEnvironment hostingEnvironment)
         {
             _configuration = configuration;
