@@ -33,7 +33,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
             // CanSubmitApplication was migrated over from Apply Service. If this causes issues then remove it
             if (await _applyRepository.CanSubmitApplication(request.ApplicationId))
             {
-                var application = await _applyRepository.GetApplication(request.ApplicationId);
+                var application = await _applyRepository.GetApply(request.ApplicationId);
                 var submittingContact = await _contactQueryRepository.GetContactById(request.SubmittingContactId);
 
                 if (application?.ApplyData != null && submittingContact != null)

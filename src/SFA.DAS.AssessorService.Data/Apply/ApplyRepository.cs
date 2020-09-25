@@ -1,10 +1,10 @@
 ﻿using Dapper;
 using Microsoft.Extensions.Logging;
-using SFA.DAS.AssessorService.Api.Types.Models.Apply.Review;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.Data.DapperTypeHandlers;
 using SFA.DAS.AssessorService.Domain.Consts;
+using SFA.DAS.AssessorService.Domain.DTOs;
 using SFA.DAS.AssessorService.Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -29,7 +29,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
             SqlMapper.AddTypeHandler(typeof(GovernanceRecommendation), new GovernanceRecommendationHandler());
         }
 
-        public async Task<Domain.Entities.Apply> GetApplication(Guid applicationId)
+        public async Task<Domain.Entities.Apply> GetApply(Guid applicationId)
         {
             return await _unitOfWork.Connection.QuerySingleOrDefaultAsync<Domain.Entities.Apply>(
                 @"SELECT * FROM Apply WHERE Id = @applicationId", 
@@ -37,41 +37,57 @@ namespace SFA.DAS.AssessorService.Data.Apply
                 transaction: _unitOfWork.Transaction);
         }
 
-        public async Task<List<Domain.Entities.Apply>> GetApplications(Guid userId, int[] sequenceNos)
+        public async Task<ApplySummary> GetApplication(Guid applicationId)
         {
-            string query = @"SELECT a.* FROM Contacts c
+            return await _unitOfWork.Connection.QuerySingleOrDefaultAsync<ApplySummary>(
+                @"SELECT a.*, o.EndPointAssessorName FROM Apply a
+                  LEFT JOIN Organisations o ON a.OrganisationId = o.Id
+                  WHERE a.Id = @applicationId",
+                param: new { applicationId },
+                transaction: _unitOfWork.Transaction);
+        }
+
+        public async Task<List<ApplySummary>> GetApplications(Guid userId, int[] sequenceNos)
+        {
+            string query = @"SELECT a.*, o.EndPointAssessorName FROM Contacts c
                   INNER JOIN Apply a ON a.OrganisationId = c.OrganisationId
+                  LEFT JOIN Organisations o ON a.OrganisationId = o.Id
                   CROSS APPLY OPENJSON(ApplyData,'$.Sequences') WITH (SequenceNo INT, NotRequired BIT) sequence
                   WHERE c.Id = @userId
                   AND sequence.SequenceNo in @sequenceNos AND sequence.NotRequired = 0";
 
-            return (await _unitOfWork.Connection.QueryAsync<Domain.Entities.Apply>(
+            return (await _unitOfWork.Connection.QueryAsync<ApplySummary>(
                 sql: query,
                 param: new { userId, sequenceNos },
                 transaction: _unitOfWork.Transaction)).ToList();
         }
 
-        public async Task<List<Domain.Entities.Apply>> GetCombindedApplications(Guid userId)
+        public async Task<List<ApplySummary>> GetCombindedApplications(Guid userId)
         {
             return await GetApplications(userId, new int[] { ApplyConst.ORGANISATION_SEQUENCE_NO, ApplyConst.STANDARD_SEQUENCE_NO });
         }
 
-        public async Task<List<Domain.Entities.Apply>> GetOrganisationApplications(Guid userId)
+        public async Task<List<ApplySummary>> GetOrganisationApplications(Guid userId)
         {
             return await GetApplications(userId, new int[] { ApplyConst.ORGANISATION_SEQUENCE_NO });
         }
 
-        public async Task<List<Domain.Entities.Apply>> GetStandardApplications(Guid userId)
+        public async Task<List<ApplySummary>> GetStandardApplications(Guid userId)
         {
             return await GetApplications(userId, new int[] { ApplyConst.STANDARD_SEQUENCE_NO });
         }
 
-        public async Task<List<Domain.Entities.Apply>> GetOrganisationWithdrawalApplications(Guid userId)
+        public async Task<List<ApplySummary>> GetWithdrawalApplications(Guid userId)
+        {
+            return await GetApplications(userId, new int[] { ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO, ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO });
+        }
+
+        public async Task<List<ApplySummary>> GetOrganisationWithdrawalApplications(Guid userId)
         {
             return await GetApplications(userId, new int[] { ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO });
         }
 
-        public async Task<List<Domain.Entities.Apply>> GetStandardWithdrawalApplications(Guid userId)
+        public async Task<List<ApplySummary>> GetStandardWithdrawalApplications(Guid userId)
         {
             return await GetApplications(userId, new int[] { ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO });
         }
@@ -125,7 +141,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
 
         public async Task<bool> UpdateStandardData(Guid id, int standardCode, string referenceNumber, string standardName)
         {
-            var application = await GetApplication(id);
+            var application = await GetApply(id);
             var applyData = application?.ApplyData;
 
             if(application != null && applyData != null)
@@ -156,7 +172,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
 
         public async Task StartFinancialReview(Guid id, string reviewer)
         {
-            var application = await GetApplication(id);
+            var application = await GetApply(id);
             var applyData = application?.ApplyData;
             var sequence = applyData?.Sequences.SingleOrDefault(seq => seq.SequenceNo == ApplyConst.FINANCIAL_SEQUENCE_NO);
             var section = sequence?.Sections.SingleOrDefault(sec => sec.SectionNo == ApplyConst.FINANCIAL_DETAILS_SECTION_NO);
@@ -184,7 +200,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
         {
             if (financialGrade != null)
             {
-                var application = await GetApplication(id);
+                var application = await GetApply(id);
                 var applyData = application?.ApplyData;
                 var sequence = applyData?.Sequences.SingleOrDefault(seq => seq.SequenceNo == ApplyConst.FINANCIAL_SEQUENCE_NO);
                 var section = sequence?.Sections.SingleOrDefault(sec => sec.SectionNo == ApplyConst.FINANCIAL_DETAILS_SECTION_NO);
@@ -218,7 +234,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
 
         public async Task StartApplicationSectionReview(Guid id, int sequenceNo, int sectionNo, string reviewer)
         {
-            var application = await GetApplication(id);
+            var application = await GetApply(id);
             var applyData = application?.ApplyData;
             var sequence = applyData?.Sequences.SingleOrDefault(seq => seq.SequenceNo == sequenceNo);
             var section = sequence?.Sections.SingleOrDefault(sec => sec.SectionNo == sectionNo);
@@ -243,7 +259,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
 
         public async Task EvaluateApplicationSection(Guid id, int sequenceNo, int sectionNo, bool isSectionComplete, string evaluatedBy)
         {
-            var application = await GetApplication(id);
+            var application = await GetApply(id);
             var applyData = application?.ApplyData;
             var sequence = applyData?.Sequences.SingleOrDefault(seq => seq.SequenceNo == sequenceNo);
             var section = sequence?.Sections.SingleOrDefault(sec => sec.SectionNo == sectionNo);
@@ -296,7 +312,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
 
         public async Task ReturnApplicationSequence(Guid id, int sequenceNo, string sequenceStatus, string returnedBy)
         {
-            var application = await GetApplication(id);
+            var application = await GetApply(id);
             var applyData = application?.ApplyData;
             var sequence = applyData?.Sequences.SingleOrDefault(seq => seq.SequenceNo == sequenceNo);
             var nextSequence = applyData?.Sequences.Where(seq => seq.SequenceNo > sequenceNo && !seq.NotRequired).OrderBy(seq => seq.SequenceNo).FirstOrDefault();
@@ -555,7 +571,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
         {
             if (governanceRecommendation != null)
             {
-                var application = await GetApplication(id);
+                var application = await GetApply(id);
                 
                 if (application != null)
                 {

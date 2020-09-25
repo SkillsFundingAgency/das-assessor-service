@@ -1,0 +1,40 @@
+﻿@{
+    ViewData["Title"] = "Apply for organisation withdrawal";
+    Layout = "_DashboardLayout";
+}
+<a asp-action="Index" asp-controller="Dashboard" class="govuk-back-link">Back</a>
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <form asp-action="TypeOfWithdrawal" asp-controller="ApplyForWithdrawal" method="post">
+                <div class="govuk-form-group">
+                    <fieldset class="govuk-fieldset">
+                        <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
+                            <h1 class="govuk-fieldset__heading">
+                                What are you withdrawing from?
+                            </h1>
+                        </legend>
+                        <div class="govuk-radios">
+                            <div class="govuk-radios__item">
+                                <input class="govuk-radios__input" id="withdrawal-type" name="TypeOfWithdrawal" type="radio" value="Standard">
+                                <label class="govuk-label govuk-radios__label" for="withdrawal-type">
+                                    Assessing a specific standard
+                                </label>
+                            </div>
+                            <div class="govuk-radios__item">
+                                <input class="govuk-radios__input" id="withdrawal-type-2" name="TypeOfWithdrawal" type="radio" value="Organsiation">
+                                <label class="govuk-label govuk-radios__label" for="withdrawal-type-2">
+                                    The register of end-point assessment organisations
+                                </label>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+                <button class="govuk-button govuk-!-margin-top-4" data-module="govuk-button">
+                    Continue
+                </button>
+            </form>
+        </div>
+    </div>
+</main>

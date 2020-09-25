@@ -35,6 +35,9 @@ namespace SFA.DAS.AssessorService.ApplyTypes
     {
         public List<ApplySequence> Sequences { get; set; }
         public Apply Apply { get; set; }
+
+        [JsonIgnore]
+        public int[] RequiredSequences => Sequences.Where(seq => !seq.NotRequired).Select(seq => seq.SequenceNo).ToArray();
     }
 
 

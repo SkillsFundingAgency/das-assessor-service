@@ -48,16 +48,16 @@
 
             @if (Model)
             {
-                <form asp-action="StartOrganisationWithdrawalApplication" asp-controller="Application" method="post">
-                    <button class="govuk-button" type="submit">Continue</button>
-                </form>
-            }
-            else
-            {
-                <a asp-action="OrganisationWithdrawalApplications" asp-controller="Application" class="govuk-button">
+                <a asp-action="TypeOfWithdrawal" asp-controller="ApplyForWithdrawal" class="govuk-button">
                     Continue
                 </a>
             }
+            else
+            {
+                <a asp-action="WithdrawalApplications" asp-controller = "ApplyForWithdrawal" class="govuk-button">
+                    Continue
+                </a>
+    }
         </div>
     </div>
 </main>

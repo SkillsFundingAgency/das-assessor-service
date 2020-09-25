@@ -15,6 +15,8 @@
 
         public const string Standard = "Standard";
 
+        public const string Withdrawal = "Withdrawl";
+
         public const string OrganisationWithdrawal = "OrganisationWithdrawal";
 
         public const string StandardWithdrawal = "StandardWithdrawal";

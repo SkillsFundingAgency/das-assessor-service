@@ -28,27 +28,25 @@ using SFA.DAS.QnA.Api.Types.Page;
 namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 {
     [Authorize]
-    public class ApplicationController : Controller
+    public class ApplicationController : AssessorController
     {
-        private readonly ILogger<ApplicationController> _logger;
         private readonly IApiValidationService _apiValidationService;
+        private readonly IApplicationService _applicationService;
         private readonly IOrganisationsApiClient _orgApiClient;
-        private readonly IContactsApiClient _contactsApiClient;
-        private readonly IApplicationApiClient _applicationApiClient;
         private readonly IQnaApiClient _qnaApiClient;
         private readonly IWebConfiguration _config;
-        private const string WorkflowType = "EPAO";
+        private readonly ILogger<ApplicationController> _logger;
 
-        public ApplicationController(IOrganisationsApiClient orgApiClient, IQnaApiClient qnaApiClient, IWebConfiguration config,
-            IContactsApiClient contactsApiClient, IApplicationApiClient applicationApiClient, ILogger<ApplicationController> logger, IApiValidationService apiValidationService)
+        public ApplicationController(IApiValidationService apiValidationService, IApplicationService applicationService, IOrganisationsApiClient orgApiClient, IQnaApiClient qnaApiClient, IWebConfiguration config,
+            IApplicationApiClient applicationApiClient, IContactsApiClient contactsApiClient, ILogger<ApplicationController> logger)
+            : base (applicationApiClient, contactsApiClient)
         {
-            _logger = logger;
             _apiValidationService = apiValidationService;
+            _applicationService = applicationService;
             _orgApiClient = orgApiClient;
-            _contactsApiClient = contactsApiClient;
-            _applicationApiClient = applicationApiClient;
             _qnaApiClient = qnaApiClient;
             _config = config;
+            _logger = logger;
         }
 
         [HttpGet("/Application")]
@@ -114,11 +112,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         [HttpPost("/Application")]
         public async Task<IActionResult> StartApplication()
         {
-            var signinId = User.Claims.First(c => c.Type == "sub")?.Value;
-            var contact = await GetUserContact(signinId);
+            var contact = await GetUserContact();
             var org = await _orgApiClient.GetOrganisationByUserId(contact.Id);
-
-            //var existingApplications = (await _applicationApiClient.GetApplications(contact.Id, false))?.Where( x=> x.OrganisationId == org.Id && x.ApplicationStatus != ApplicationStatus.Declined);
 
             var existingApplications = (await _applicationApiClient.GetCombinedApplications(contact.Id))?
                 .Where(p => p.ApplicationStatus != ApplicationStatus.Declined);
@@ -130,39 +125,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                     return RedirectToAction("SequenceSignPost", new { existingEmptyApplication.Id });
             }
 
-            var createApplicationRequest = await BuildCreateApplicationRequest(ApplicationTypes.Combined, contact, org, _config.ReferenceFormat);
+            var createApplicationRequest = await _applicationService.BuildCreateApplicationRequest(ApplicationTypes.Combined, contact, org, _config.ReferenceFormat);
             
             var id = await _applicationApiClient.CreateApplication(createApplicationRequest);
             
             return RedirectToAction("SequenceSignPost", new { Id = id });
-        }
-
-        [HttpGet("/OrganisationWithdrawalApplication")]
-        public async Task<IActionResult> OrganisationWithdrawalApplications()
-        {
-            // push link on the dashboard to start withdrawing organisation
-            var userId = await GetUserId();
-            //var org = await _orgApiClient.GetOrganisationByUserId(userId);
-            //var applications = await _applicationApiClient.GetApplications(userId, false);
-            var applications = await _applicationApiClient.GetOrganisationWithdrawalApplications(userId);
-            
-            // should be show declined ones or not???
-            //applications = applications?.Where(app => app.ApplicationStatus != ApplicationStatus.Declined).ToList();
-
-            return View(applications);
-        }
-
-        [HttpPost("/OrganisationWithdrawalApplication")]
-        public async Task<IActionResult> StartOrganisationWithdrawalApplication()
-        {
-            var signinId = User.Claims.First(c => c.Type == "sub")?.Value;
-            var contact = await GetUserContact(signinId);
-            var org = await _orgApiClient.GetOrganisationByUserId(contact.Id);
-
-            var createApplicationRequest = await BuildCreateApplicationRequest(ApplicationTypes.OrganisationWithdrawal, contact, org, _config.ReferenceFormat);
-            var id = await _applicationApiClient.CreateApplication(createApplicationRequest);
-
-            return RedirectToAction("Sequence", new { Id = id, sequenceNo = ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO });
         }
 
         [HttpGet("/Application/{Id}")]
@@ -700,8 +667,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             var dictRequestedFeedbackAnswered = sections.Select(t => new { t.SectionNo, t.QnAData.RequestedFeedbackAnswered })
                .ToDictionary(t => t.SectionNo, t => t.RequestedFeedbackAnswered);
 
-            var signinId = User.Claims.First(c => c.Type == "sub")?.Value;
-            var contact = await GetUserContact(signinId);
+            var contact = await GetUserContact();
             var submitRequest = BuildSubmitApplicationSequenceRequest(application.Id, dictRequestedFeedbackAnswered,_config.ReferenceFormat, sequence.SequenceNo, contact.Id);
 
             if (await _applicationApiClient.SubmitApplicationSequence(submitRequest))
@@ -859,7 +825,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         private static string BuildPageContext(ApplicationResponse application, QnA.Api.Types.Sequence sequence)
         {
             string pageContext = string.Empty;
-            if (sequence.SequenceNo == ApplyConst.STANDARD_SEQUENCE_NO)
+            if (sequence.SequenceNo == ApplyConst.STANDARD_SEQUENCE_NO || sequence.SequenceNo == ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO)
             {
                 pageContext = $"{application?.ApplyData?.Apply?.StandardReference } {application?.ApplyData?.Apply?.StandardName}";
             }
@@ -1081,51 +1047,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             };
         }
 
-        private async Task<CreateApplicationRequest> BuildCreateApplicationRequest(string applicationType, ContactResponse contact, OrganisationResponse org, string referenceFormat)
-        {
-            var startApplicationRequest = new StartApplicationRequest
-            {
-                UserReference = contact.Id.ToString(),
-                WorkflowType = WorkflowType,
-                ApplicationData = JsonConvert.SerializeObject(new ApplicationData
-                {
-                    UseTradingName = false,
-                    OrganisationName = org.EndPointAssessorName,
-                    OrganisationReferenceId = org.Id.ToString(),
-                    OrganisationType = org.OrganisationType,
-                    CompanySummary = org.CompanySummary,
-                    CharitySummary = org.CharitySummary
-                })
-            };
-
-            var qnaResponse = await _qnaApiClient.StartApplications(startApplicationRequest);
-            var sequences = await _qnaApiClient.GetAllApplicationSequences(qnaResponse.ApplicationId);
-            var sections = sequences.Select(async sequence => await _qnaApiClient.GetSections(qnaResponse.ApplicationId, sequence.Id)).Select(t => t.Result).ToList();
-
-            return new CreateApplicationRequest
-            {
-                ApplicationType = applicationType,
-                QnaApplicationId = qnaResponse.ApplicationId,
-                OrganisationId = org.Id,
-                ApplicationReferenceFormat = referenceFormat,
-                CreatingContactId = contact.Id,
-                ApplySequences = sequences.Select(sequence => new ApplySequence
-                {
-                    SequenceId = sequence.Id,
-                    Sections = sections.SelectMany(y => y.Where(x => x.SequenceNo == sequence.SequenceNo).Select(x => new ApplySection
-                    {
-                        SectionId = x.Id,
-                        SectionNo = x.SectionNo,
-                        Status = ApplicationSectionStatus.Draft,
-                        RequestedFeedbackAnswered = x.QnAData.RequestedFeedbackAnswered
-                    })).ToList(),
-                    Status = ApplicationSequenceStatus.Draft,
-                    IsActive = sequence.IsActive,
-                    SequenceNo = sequence.SequenceNo,
-                    NotRequired = sequence.NotRequired
-                }).ToList()
-            };
-        }
+        
 
         private static List<ValidationErrorDetail> ValidateSubmit(List<Section> qnaSections, List<ApplySection> applySections)
         {
@@ -1156,19 +1078,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             }
 
             return validationErrors;
-        }
-
-        private async Task<Guid> GetUserId()
-        {
-            var signinId = User.Claims.First(c => c.Type == "sub")?.Value;
-            var contact = await GetUserContact(signinId);
-
-            return contact?.Id ?? Guid.Empty;
-        }
-
-        private async Task<ContactResponse> GetUserContact(string signinId)
-        {
-            return await _contactsApiClient.GetContactBySignInId(signinId);
         }
 
         private static bool CanUpdateApplication(ApplicationResponse application, int sequenceNo, int? sectionNo = null)

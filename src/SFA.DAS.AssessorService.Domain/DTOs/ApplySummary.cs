@@ -1,22 +1,23 @@
 ﻿using SFA.DAS.AssessorService.ApplyTypes;
 using System;
-using System.Linq;
 
-namespace SFA.DAS.AssessorService.Api.Types.Models.Apply
+namespace SFA.DAS.AssessorService.Domain.DTOs
 {
-    public class ApplicationResponse 
+    public class ApplySummary
     {
         public Guid Id { get; set; }
         public Guid ApplicationId { get; set; }
         public Guid OrganisationId { get; set; }
         public string EndPointAssessorName { get; set; }
-        public GovernanceRecommendation GovernanceRecommendation { get; set; }
-        public FinancialGrade financialGrade { get; set; }
         public string ApplicationStatus { get; set; }
-        public string ReviewStatus { get; set; }
         public string FinancialReviewStatus { get; set; }
-        public ApplyData ApplyData { get; set; }
+        public string ReviewStatus { get; set; }
+        public FinancialGrade FinancialGrade { get; set; }
+        public GovernanceRecommendation GovernanceRecommendation { get; set; }
         public int? StandardCode { get; set; }
+        public ApplyData ApplyData { get; set; }
         public string CreatedBy { get; set; }
+        public string UpdatedBy { get; set; }
+        public string DeletedBy { get; set; }
     }
 }

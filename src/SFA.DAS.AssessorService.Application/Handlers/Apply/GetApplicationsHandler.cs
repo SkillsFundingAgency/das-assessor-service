@@ -3,6 +3,7 @@ using MediatR;
 using SFA.DAS.AssessorService.Api.Types.Models.Apply;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
+using SFA.DAS.AssessorService.Domain.DTOs;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -20,7 +21,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
 
         public async Task<List<ApplicationResponse>> Handle(GetApplicationsRequest request, CancellationToken cancellationToken)
         {
-            List<Domain.Entities.Apply> result = null;
+            List<ApplySummary> result = null;
 
             switch(request.ApplicationType)
             {
@@ -33,6 +34,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
                 case ApplicationTypes.Standard:
                     result = await _applyRepository.GetStandardApplications(request.UserId);
                     break;
+                case ApplicationTypes.Withdrawal:
+                    result = await _applyRepository.GetWithdrawalApplications(request.UserId);
+                    break;
                 case ApplicationTypes.OrganisationWithdrawal:
                     result = await _applyRepository.GetOrganisationWithdrawalApplications(request.UserId);
                     break;
@@ -42,7 +46,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
             }
 
             return result != null
-                ? Mapper.Map<List<Domain.Entities.Apply>, List<ApplicationResponse>>(result)
+                ? Mapper.Map<List<ApplySummary>, List<ApplicationResponse>>(result)
                 : null;
         }
     }

@@ -1,5 +1,6 @@
 ﻿using SFA.DAS.AssessorService.Api.Types.Models.Apply.Review;
 using SFA.DAS.AssessorService.ApplyTypes;
+using SFA.DAS.AssessorService.Domain.DTOs;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -8,13 +9,15 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
 {
     public interface IApplyRepository
     {
-        Task<List<Domain.Entities.Apply>> GetCombindedApplications(Guid userId);
-        Task<List<Domain.Entities.Apply>> GetOrganisationApplications(Guid userId);
-        Task<List<Domain.Entities.Apply>> GetStandardApplications(Guid userId);
-        Task<List<Domain.Entities.Apply>> GetOrganisationWithdrawalApplications(Guid userId);
-        Task<List<Domain.Entities.Apply>> GetStandardWithdrawalApplications(Guid userId);
+        Task<Domain.Entities.Apply> GetApply(Guid applicationId);
+        Task<ApplySummary> GetApplication(Guid applicationId);
+        Task<List<ApplySummary>> GetCombindedApplications(Guid userId);
+        Task<List<ApplySummary>> GetOrganisationApplications(Guid userId);
+        Task<List<ApplySummary>> GetStandardApplications(Guid userId);
+        Task<List<ApplySummary>> GetWithdrawalApplications(Guid userId);
+        Task<List<ApplySummary>> GetOrganisationWithdrawalApplications(Guid userId);
+        Task<List<ApplySummary>> GetStandardWithdrawalApplications(Guid userId);
         
-        Task<Domain.Entities.Apply> GetApplication(Guid applicationId);
         Task<Guid> CreateApplication(Domain.Entities.Apply apply);
         Task<bool> CanSubmitApplication(Guid applicationId);
         Task SubmitApplicationSequence(Domain.Entities.Apply apply);
