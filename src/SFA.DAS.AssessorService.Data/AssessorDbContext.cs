@@ -70,7 +70,21 @@ namespace SFA.DAS.AssessorService.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<ContactsPrivilege>().HasKey(sc => new { sc.ContactId, sc.PrivilegeId });
+            modelBuilder.Entity<Certificate>()
+                .HasOne(c => c.CertificateBatchLog)
+                .WithOne(s => s.Certificate)
+                .HasForeignKey<CertificateBatchLog>(sc => new { sc.CertificateReference, sc.BatchNumber });
+                
+            modelBuilder.Entity<CertificateBatchLog>()
+                .HasKey(c => new { c.CertificateReference, c.BatchNumber });
+
+            modelBuilder.Entity<CertificateBatchLog>()
+                .HasOne(c => c.Certificate)
+                .WithOne(c => c.CertificateBatchLog)
+                .HasForeignKey<Certificate>(c => new { c.CertificateReference, c.BatchNumber });
+            
+            modelBuilder.Entity<ContactsPrivilege>()
+                .HasKey(sc => new { sc.ContactId, sc.PrivilegeId });
 
             modelBuilder.Entity<ContactsPrivilege>()
                 .HasOne<Contact>(sc => sc.Contact)
@@ -79,6 +93,7 @@ namespace SFA.DAS.AssessorService.Data
 
             modelBuilder.Entity<OrganisationStandard>()
                 .ToTable("OrganisationStandard");
+            
             modelBuilder.Entity<OrganisationStandard>()
                 .HasOne(c => c.Organisation)
                 .WithMany(c => c.OrganisationStandards)
@@ -87,11 +102,13 @@ namespace SFA.DAS.AssessorService.Data
 
             modelBuilder.Entity<OrganisationStandardDeliveryArea>()
                 .ToTable("OrganisationStandardDeliveryArea");
+            
             modelBuilder.Entity<OrganisationStandardDeliveryArea>()
                 .HasOne(c => c.OrganisationStandard)
                 .WithMany(c => c.OrganisationStandardDeliveryAreas)
                 .HasPrincipalKey(c => c.Id)
                 .HasForeignKey(c => c.OrganisationStandardId);
+            
             modelBuilder.Entity<OrganisationStandardDeliveryArea>()
                 .HasOne(c => c.DeliveryArea)
                 .WithOne(c => c.OrganisationStandardDeliveryArea)
