@@ -10,22 +10,22 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Apply.Review
 {
-    public class OrganisationWithdrawalApplicationsHandler : IRequestHandler<OrganisationWithdrawalApplicationsRequest, PaginatedList<ApplicationSummaryItem>>
+    public class WithdrawalApplicationsHandler : IRequestHandler<WithdrawalApplicationsRequest, PaginatedList<ApplicationSummaryItem>>
     {
         private readonly IApplyRepository _repository;
-        private readonly ILogger<OrganisationWithdrawalApplicationsHandler> _logger;
+        private readonly ILogger<WithdrawalApplicationsHandler> _logger;
 
-        public OrganisationWithdrawalApplicationsHandler(IApplyRepository repository, ILogger<OrganisationWithdrawalApplicationsHandler> logger)
+        public WithdrawalApplicationsHandler(IApplyRepository repository, ILogger<WithdrawalApplicationsHandler> logger)
         {
             _repository = repository;
             _logger = logger;
         }
 
-        public async Task<PaginatedList<ApplicationSummaryItem>> Handle(OrganisationWithdrawalApplicationsRequest request, CancellationToken cancellationToken)
+        public async Task<PaginatedList<ApplicationSummaryItem>> Handle(WithdrawalApplicationsRequest request, CancellationToken cancellationToken)
         {
-            _logger.LogInformation("Retrieving organisation withdrawal applications");
+            _logger.LogInformation("Retrieving withdrawal applications");
 
-            var organisationApplicationsResult = await _repository.GetOrganisationWithdrawalApplications(request.ReviewStatus, request.SortColumn, request.SortAscending,
+            var organisationApplicationsResult = await _repository.GetWithdrawalApplications(request.OrganisationId, request.ReviewStatus, request.SortColumn, request.SortAscending,
                 request.PageSize, request.PageIndex);
 
             return new PaginatedList<ApplicationSummaryItem>(organisationApplicationsResult.PageOfResults.ToList(),

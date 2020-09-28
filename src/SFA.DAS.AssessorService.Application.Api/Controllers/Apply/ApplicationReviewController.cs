@@ -40,10 +40,10 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.Apply
             return Ok(applications);
         }
 
-        [HttpPost("Review/OrganisationWithdrawalApplications")]
-        public async Task<ActionResult> OrganisationWithdrawalApplications([FromBody] OrganisationWithdrawalApplicationsRequest organisationApplicationsRequest)
+        [HttpPost("Review/WithdrawalApplications")]
+        public async Task<ActionResult> WithdrawalApplications([FromBody] WithdrawalApplicationsRequest withdrawalApplicationsRequest)
         {
-            var applications = await _mediator.Send(organisationApplicationsRequest);
+            var applications = await _mediator.Send(withdrawalApplicationsRequest);
             return Ok(applications);
         }
 

@@ -23,10 +23,9 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task SubmitApplicationSequence(Domain.Entities.Apply apply);
         Task<int> GetNextAppReferenceSequence();
         Task<ApplicationReviewStatusCounts> GetApplicationReviewStatusCounts();
-        Task<OrganisationApplicationsResult> GetOrganisationApplications(string reviewStatus, string sortColumn, int sortAscending, int pageSize, int pageIndex);
-        Task<OrganisationApplicationsResult> GetOrganisationWithdrawalApplications(string reviewStatus, string sortColumn, int sortAscending, int pageSize, int pageIndex);
-        Task<OrganisationApplicationsResult> GetStandardApplications(string organisationId, string reviewStatus, string sortColumn, int sortAscending, int pageSize, int pageIndex);
-        Task<OrganisationApplicationsResult> GetStandardWithdrawalApplications(string organisationId, string reviewStatus, string sortColumn, int sortAscending, int pageSize, int pageIndex);
+        Task<ApplicationsResult> GetOrganisationApplications(string reviewStatus, string sortColumn, int sortAscending, int pageSize, int pageIndex);
+        Task<ApplicationsResult> GetStandardApplications(string organisationId, string reviewStatus, string sortColumn, int sortAscending, int pageSize, int pageIndex);
+        Task<ApplicationsResult> GetWithdrawalApplications(string organisationId, string reviewStatus, string sortColumn, int sortAscending, int pageSize, int pageIndex);
         Task UpdateGovernanceRecommendation(Guid id, GovernanceRecommendation governanceRecommendation);
 
         Task<List<FinancialApplicationSummaryItem>> GetOpenFinancialApplications();
@@ -40,7 +39,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<bool> UpdateStandardData(Guid id, int standardCode, string referenceNumber, string standardName);
     }
 
-    public class OrganisationApplicationsResult
+    public class ApplicationsResult
     {
         public IEnumerable<ApplicationSummaryItem> PageOfResults { get; set; }
         public int TotalCount { get; set; }

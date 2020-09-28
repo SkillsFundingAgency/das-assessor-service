@@ -1,6 +1,6 @@
 ﻿CREATE FUNCTION [dbo].[Apply_Func_Get_Applications]
 (	
-	@sequenceNo INT,
+	@sequenceNos AS NVARCHAR(MAX),
 	@organisationId AS NVARCHAR(12),
 	@includedApplicationSequenceStatus AS NVARCHAR(MAX),
 	@excludedApplicationStatus AS NVARCHAR(MAX),
@@ -16,12 +16,15 @@ RETURN
         seq.SequenceNo AS SequenceNo,
         org.EndPointAssessorName AS OrganisationName,
         CASE WHEN seq.SequenceNo = [dbo].[ApplyConst_STANDARD_SEQUENCE_NO]() THEN JSON_VALUE(ap1.ApplyData, '$.Apply.StandardName')
+			 WHEN seq.SequenceNo = [dbo].[ApplyConst_STANDARD_WITHDRAWAL_SEQUENCE_NO]() THEN JSON_VALUE(ap1.ApplyData, '$.Apply.StandardName')
 		     ELSE NULL
         END As StandardName,
         CASE WHEN seq.SequenceNo = [dbo].[ApplyConst_STANDARD_SEQUENCE_NO]() THEN JSON_VALUE(ap1.ApplyData, '$.Apply.StandardCode')
+			 WHEN seq.SequenceNo = [dbo].[ApplyConst_STANDARD_WITHDRAWAL_SEQUENCE_NO]() THEN JSON_VALUE(ap1.ApplyData, '$.Apply.StandardCode')
 		     ELSE NULL
         END As StandardCode,
 		CASE WHEN seq.SequenceNo = [dbo].[ApplyConst_STANDARD_SEQUENCE_NO]() THEN JSON_VALUE(ap1.ApplyData, '$.Apply.StandardReference')
+			 WHEN seq.SequenceNo = [dbo].[ApplyConst_STANDARD_WITHDRAWAL_SEQUENCE_NO]() THEN JSON_VALUE(ap1.ApplyData, '$.Apply.StandardReference')
 		     ELSE NULL
         END As StandardReference,
 		CASE WHEN seq.SequenceNo = [dbo].[ApplyConst_ORGANISATION_SEQUENCE_NO]() THEN JSON_VALUE(ap1.ApplyData, '$.Apply.LatestInitSubmissionDate')
@@ -58,9 +61,10 @@ RETURN
 	FROM 
 		Apply ap1
 		INNER JOIN Organisations org ON ap1.OrganisationId = org.Id
-        CROSS APPLY OPENJSON(ApplyData,'$.Sequences') WITH (SequenceNo INT, Status VARCHAR(20), NotRequired BIT) seq
+		CROSS APPLY OPENJSON(ApplyData,'$.Sequences') WITH (SequenceNo INT, Status VARCHAR(20), NotRequired BIT) seq
 	WHERE 
-		seq.SequenceNo = @sequenceNo AND seq.NotRequired = 0
+		seq.SequenceNo IN (SELECT LTRIM(RTRIM(value)) FROM STRING_SPLIT ( @sequenceNos, '|' ))
+		AND seq.NotRequired = 0
 		AND (org.EndPointAssessorOrganisationId = @organisationId OR @organisationId IS NULL)
 		AND seq.Status IN (SELECT LTRIM(RTRIM(value)) FROM STRING_SPLIT ( @includedApplicationSequenceStatus, '|' )) 
         AND ap1.DeletedAt IS NULL

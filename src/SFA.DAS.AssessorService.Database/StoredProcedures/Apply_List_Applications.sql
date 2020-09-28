@@ -1,5 +1,5 @@
 ﻿CREATE PROCEDURE [dbo].[Apply_List_Applications]
-	@sequenceNo INT,
+	@sequenceNos VARCHAR(MAX),
 	@organisationId AS NVARCHAR(12),
 	@includedApplicationSequenceStatus AS NVARCHAR(MAX),
 	@excludedApplicationStatus AS NVARCHAR(MAX),
@@ -35,7 +35,7 @@ BEGIN
 	INTO 
 		#Results
 	FROM
-		[dbo].[Apply_Func_Get_Applications] (@sequenceNo, @organisationId, @includedApplicationSequenceStatus, @excludedApplicationStatus, @excludedReviewStatus, @includedReviewStatus)
+		[dbo].[Apply_Func_Get_Applications] (@sequenceNos, @organisationId, @includedApplicationSequenceStatus, @excludedApplicationStatus, @excludedReviewStatus, @includedReviewStatus)
 	
 	-- the total number of results is returned as an out parameter
 	SELECT @totalCount = (SELECT MAX(TotalCount) FROM #Results)

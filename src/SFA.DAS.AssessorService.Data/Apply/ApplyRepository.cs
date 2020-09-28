@@ -479,7 +479,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
 
             var organisationReviewStatusCounts = reviewStatusCountResults.Read<ReviewStatusCount>().ToList();
             var standardReviewStatusCounts = reviewStatusCountResults.Read<ReviewStatusCount>().ToList();
-            var organisationWithdrawalReviewStatusCounts = reviewStatusCountResults.Read<ReviewStatusCount>().ToList();
+            var withdrawalReviewStatusCounts = reviewStatusCountResults.Read<ReviewStatusCount>().ToList();
 
             var applicationReviewStatusCounts = new ApplicationReviewStatusCounts
             {
@@ -491,39 +491,34 @@ namespace SFA.DAS.AssessorService.Data.Apply
                 StandardApplicationsInProgress = standardReviewStatusCounts?.FirstOrDefault(p => p.ReviewStatus == ApplicationReviewStatus.InProgress)?.Total ?? 0,
                 StandardApplicationsHasFeedback = standardReviewStatusCounts?.FirstOrDefault(p => p.ReviewStatus == ApplicationReviewStatus.HasFeedback)?.Total ?? 0,
                 StandardApplicationsApproved = standardReviewStatusCounts?.FirstOrDefault(p => p.ReviewStatus == ApplicationReviewStatus.Approved)?.Total ?? 0,
-                OrganisationWithdrawalApplicationsNew = organisationWithdrawalReviewStatusCounts?.FirstOrDefault(p => p.ReviewStatus == ApplicationReviewStatus.New)?.Total ?? 0,
-                OrganisationWithdrawalApplicationsInProgress = organisationWithdrawalReviewStatusCounts?.FirstOrDefault(p => p.ReviewStatus == ApplicationReviewStatus.InProgress)?.Total ?? 0,
-                OrganisationWithdrawalApplicationsHasFeedback = organisationWithdrawalReviewStatusCounts?.FirstOrDefault(p => p.ReviewStatus == ApplicationReviewStatus.HasFeedback)?.Total ?? 0,
-                OrganisationWithdrawalApplicationsApproved = organisationWithdrawalReviewStatusCounts?.FirstOrDefault(p => p.ReviewStatus == ApplicationReviewStatus.Approved)?.Total ?? 0,
+                WithdrawalApplicationsNew = withdrawalReviewStatusCounts?.FirstOrDefault(p => p.ReviewStatus == ApplicationReviewStatus.New)?.Total ?? 0,
+                WithdrawalApplicationsInProgress = withdrawalReviewStatusCounts?.FirstOrDefault(p => p.ReviewStatus == ApplicationReviewStatus.InProgress)?.Total ?? 0,
+                WithdrawalApplicationsHasFeedback = withdrawalReviewStatusCounts?.FirstOrDefault(p => p.ReviewStatus == ApplicationReviewStatus.HasFeedback)?.Total ?? 0,
+                WithdrawalApplicationsApproved = withdrawalReviewStatusCounts?.FirstOrDefault(p => p.ReviewStatus == ApplicationReviewStatus.Approved)?.Total ?? 0,
             };
 
             return applicationReviewStatusCounts;
         }
 
-        public async Task<OrganisationApplicationsResult> GetOrganisationApplications(string reviewStatus, string sortColumn, int sortAscending, int pageSize, int pageIndex)
+        public async Task<ApplicationsResult> GetOrganisationApplications(string reviewStatus, string sortColumn, int sortAscending, int pageSize, int pageIndex)
         {
-            return await GetApplications(ApplyConst.ORGANISATION_SEQUENCE_NO, null, reviewStatus, sortColumn, sortAscending, pageSize, pageIndex);
+            return await GetApplications(new[] { ApplyConst.ORGANISATION_SEQUENCE_NO }, null, reviewStatus, sortColumn, sortAscending, pageSize, pageIndex);
         }
 
-        public async Task<OrganisationApplicationsResult> GetOrganisationWithdrawalApplications(string reviewStatus, string sortColumn, int sortAscending, int pageSize, int pageIndex)
+        public async Task<ApplicationsResult> GetStandardApplications(string organisationId, string reviewStatus, string sortColumn, int sortAscending, int pageSize, int pageIndex)
         {
-            return await GetApplications(ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO, null, reviewStatus, sortColumn, sortAscending, pageSize, pageIndex);
+            return await GetApplications(new[] { ApplyConst.STANDARD_SEQUENCE_NO }, organisationId, reviewStatus, sortColumn, sortAscending, pageSize, pageIndex);
         }
 
-        public async Task<OrganisationApplicationsResult> GetStandardApplications(string organisationId, string reviewStatus, string sortColumn, int sortAscending, int pageSize, int pageIndex)
+        public async Task<ApplicationsResult> GetWithdrawalApplications(string organisationId, string reviewStatus, string sortColumn, int sortAscending, int pageSize, int pageIndex)
         {
-            return await GetApplications(ApplyConst.STANDARD_SEQUENCE_NO, organisationId, reviewStatus, sortColumn, sortAscending, pageSize, pageIndex);
+            return await GetApplications(new[] { ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO, ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO }, organisationId, reviewStatus, sortColumn, sortAscending, pageSize, pageIndex);
         }
 
-        public async Task<OrganisationApplicationsResult> GetStandardWithdrawalApplications(string organisationId, string reviewStatus, string sortColumn, int sortAscending, int pageSize, int pageIndex)
-        {
-            return await GetApplications(ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO, organisationId, reviewStatus, sortColumn, sortAscending, pageSize, pageIndex);
-        }
-
-        private async Task<OrganisationApplicationsResult> GetApplications(int sequenceNo, string organisationId, string reviewStatus, string sortColumn, int sortAscending, int pageSize, int pageIndex)
+        private async Task<ApplicationsResult> GetApplications(int[] sequenceNos, string organisationId, string reviewStatus, string sortColumn, int sortAscending, int pageSize, int pageIndex)
         {
             var @params = new DynamicParameters();
-            @params.Add("sequenceNo", sequenceNo);
+            @params.Add("sequenceNos", string.Join("|", sequenceNos));
             @params.Add("organisationId", organisationId);
             @params.Add("includedApplicationSequenceStatus", GetApplicationSequenceStatus(reviewStatus));
             @params.Add("excludedApplicationStatus", string.Join("|", new List<string> { ApplicationStatus.Declined }));
@@ -541,7 +536,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
                 transaction: _unitOfWork.Transaction,
                 commandType: CommandType.StoredProcedure);
 
-            var result = new OrganisationApplicationsResult
+            var result = new ApplicationsResult
             {
                 PageOfResults = results?.ToList() ?? new List<ApplicationSummaryItem>(),
                 TotalCount = @params.Get<int?>("totalCount") ?? 0
