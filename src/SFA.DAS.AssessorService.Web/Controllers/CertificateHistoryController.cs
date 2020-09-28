@@ -8,6 +8,7 @@ using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Web.Constants;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.StartupConfiguration;
+using SFA.DAS.AssessorService.Web.ViewModels.Certificate;
 
 namespace SFA.DAS.AssessorService.Web.Controllers
 {
@@ -40,8 +41,12 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         {
             var endPointAssessorOrganisationId = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/epaoid")?.Value;
 
-            var certificateHistory = await _certificateApiClient.GetCertificateHistory(pageIndex ?? 1, endPointAssessorOrganisationId);            
-            return View("Index", certificateHistory);
+            var model = new CertificateHistoryViewModel
+            { 
+                Certificates = await _certificateApiClient.GetCertificateHistory(pageIndex ?? 1, endPointAssessorOrganisationId)
+            };
+
+            return View("Index", model);
         }
     }
 }

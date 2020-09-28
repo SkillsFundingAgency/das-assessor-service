@@ -37,6 +37,15 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
                     BatchNumber = _batchNumber,
                     CertificateReference = _certificateReference2,
                     Status = CertificateStatus.Delivered,
+                    ReasonForChange = string.Empty,
+                    StatusChangedAt = _statusChangedAt
+                },
+                new CertificatePrintStatus
+                {
+                    BatchNumber = _batchNumber,
+                    CertificateReference = _certificateReference3,
+                    Status = CertificateStatus.NotDelivered,
+                    ReasonForChange = _certificateNotDeliveredReason1,
                     StatusChangedAt = _statusChangedAt
                 }
             };
@@ -59,11 +68,15 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
         public void Then_repository_update_print_status_is_called()
         {
             _certificateRepository.Verify(r => r.UpdatePrintStatus(
-                It.Is<Certificate>(c => c.CertificateReference == _certificateReference1), _batchNumber, CertificateStatus.Printed, _statusChangedAt, true),
+                It.Is<Certificate>(c => c.CertificateReference == _certificateReference1), _batchNumber, CertificateStatus.Printed, _statusChangedAt, null, true),
                 Times.Once());
 
             _certificateRepository.Verify(r => r.UpdatePrintStatus(
-                It.Is<Certificate>(c => c.CertificateReference == _certificateReference2), _batchNumber, CertificateStatus.Delivered, _statusChangedAt, true),
+                It.Is<Certificate>(c => c.CertificateReference == _certificateReference2), _batchNumber, CertificateStatus.Delivered, _statusChangedAt, string.Empty, true),
+                Times.Once());
+
+            _certificateRepository.Verify(r => r.UpdatePrintStatus(
+                It.Is<Certificate>(c => c.CertificateReference == _certificateReference3), _batchNumber, CertificateStatus.NotDelivered, _statusChangedAt, _certificateNotDeliveredReason1, true),
                 Times.Once());
         }
     }

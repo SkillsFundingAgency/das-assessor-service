@@ -47,8 +47,13 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
                         validatedCertificatePrintStatus.StatusChangedAt > certificate.LatestChange().Value &&
                         certificate.Status != CertificateStatus.Deleted;
 
-                    await _certificateRepository.UpdatePrintStatus(certificate,
-                            validatedCertificatePrintStatus.BatchNumber, validatedCertificatePrintStatus.Status, validatedCertificatePrintStatus.StatusChangedAt, changesCertificateStatus);
+                    await _certificateRepository.UpdatePrintStatus(
+                        certificate,
+                        validatedCertificatePrintStatus.BatchNumber, 
+                        validatedCertificatePrintStatus.Status, 
+                        validatedCertificatePrintStatus.StatusChangedAt,
+                        validatedCertificatePrintStatus.ReasonForChange,
+                        changesCertificateStatus);
 
                     _logger.LogInformation($"Certificate reference {validatedCertificatePrintStatus.CertificateReference} set as {validatedCertificatePrintStatus.Status} in batch {validatedCertificatePrintStatus.BatchNumber}");
                 }

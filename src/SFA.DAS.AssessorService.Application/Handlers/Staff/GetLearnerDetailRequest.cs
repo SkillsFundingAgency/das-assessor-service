@@ -1,5 +1,5 @@
 ﻿using MediatR;
-using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Api.Types.Models.Staff;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Staff
 {
