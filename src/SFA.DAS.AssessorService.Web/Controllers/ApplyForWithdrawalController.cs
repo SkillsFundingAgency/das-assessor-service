@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Settings;
@@ -14,7 +15,7 @@ using System.Threading.Tasks;
 namespace SFA.DAS.AssessorService.Web.Controllers
 {
     [PrivilegeAuthorize(Privileges.ChangeOrganisationDetails)]
-    [CheckSession]
+    [Authorize]
     public class ApplyForWithdrawalController : AssessorController
     {
         private readonly IApplicationService _applicationService;

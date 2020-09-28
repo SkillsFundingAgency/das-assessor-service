@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 
 namespace SFA.DAS.AssessorService.Web.Controllers
 {
+    [Authorize]
     public class AssessorController : Controller
     {
         protected readonly IApplicationApiClient _applicationApiClient;
