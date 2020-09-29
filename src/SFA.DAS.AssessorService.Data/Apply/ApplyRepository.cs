@@ -54,7 +54,12 @@ namespace SFA.DAS.AssessorService.Data.Apply
                   LEFT JOIN Organisations o ON a.OrganisationId = o.Id
                   CROSS APPLY OPENJSON(ApplyData,'$.Sequences') WITH (SequenceNo INT, NotRequired BIT) sequence
                   WHERE c.Id = @userId
-                  AND sequence.SequenceNo in @sequenceNos AND sequence.NotRequired = 0";
+                  AND sequence.SequenceNo IN @sequenceNos AND sequence.NotRequired = 0
+                  GROUP BY 
+                    a.Id, a.ApplicationId, a.OrganisationId, a.ApplicationStatus, a.ReviewStatus, 
+                    a.ApplyData, a.FinancialReviewStatus, a.FinancialGrade, a.GovernanceRecommendation, 
+                    a.StandardCode, a.CreatedAt, a.CreatedBy, a.UpdatedAt, a.UpdatedBy, a.DeletedAt, a.DeletedBy, 
+                    o.EndPointAssessorName";
 
             return (await _unitOfWork.Connection.QueryAsync<ApplySummary>(
                 sql: query,
