@@ -63,9 +63,10 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
                 _logger.LogInformation($"Received request to update standard summary");
                 await _mediator.Send(request);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError(ex, "Request to update standard summary failed");
+                throw new Exception("Request to update standard summary failed");
             }
         }
     }
