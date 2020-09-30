@@ -54,14 +54,22 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Certifi
                         }
                     }
 
-                    if (learnerDetails.CompletionStatus == (int)CompletionStatus.Withdrawn)
+                    if (learnerDetails != null)
                     {
-                        context.AddFailure(new ValidationFailure("CompletionStatus", "Completion status must not be withdrawn"));
+                        if (learnerDetails.CompletionStatus == (int)CompletionStatus.Withdrawn)
+                        {
+                            context.AddFailure(new ValidationFailure("CompletionStatus", "Completion status must not be withdrawn"));
+                        }
+                        else if (learnerDetails.CompletionStatus == (int)CompletionStatus.TemporarilyWithdrawn)
+                        {
+                            context.AddFailure(new ValidationFailure("CompletionStatus", "Completion status must not be temporarily withdrawn"));
+                        }
                     }
-                    else if (learnerDetails.CompletionStatus == (int)CompletionStatus.TemporarilyWithdrawn)
+                    else
                     {
-                        context.AddFailure(new ValidationFailure("CompletionStatus", "Completion status must not be temporarily withdrawn"));
+                        context.AddFailure(new ValidationFailure("LearnerDetails", $"Learner details for ULN: {m.Uln} not found"));
                     }
+                    
                 });
             });
         }
