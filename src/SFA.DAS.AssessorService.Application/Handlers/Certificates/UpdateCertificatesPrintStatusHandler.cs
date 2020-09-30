@@ -16,12 +16,16 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
     public class UpdateCertificatesPrintStatusHandler : IRequestHandler<UpdateCertificatesPrintStatusRequest, ValidationResponse>
     {
         private readonly ICertificateRepository _certificateRepository;
+        private readonly ICertificateBatchLogRepository _certificateBatchLogRepository;
         private readonly IMediator _mediator;
         private readonly ILogger<UpdateCertificatesPrintStatusHandler> _logger;
 
-        public UpdateCertificatesPrintStatusHandler(ICertificateRepository certificateRepository, IMediator mediator, ILogger<UpdateCertificatesPrintStatusHandler> logger)
+        public UpdateCertificatesPrintStatusHandler(ICertificateRepository certificateRepository, 
+            ICertificateBatchLogRepository certificateBatchLogRepository,
+            IMediator mediator, ILogger<UpdateCertificatesPrintStatusHandler> logger)
         {
             _certificateRepository = certificateRepository;
+            _certificateBatchLogRepository = certificateBatchLogRepository;
             _mediator = mediator;
             _logger = logger;
         }
@@ -29,10 +33,25 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
         public async Task<ValidationResponse> Handle(UpdateCertificatesPrintStatusRequest request, CancellationToken cancellationToken)
         {
             var validationResult = new ValidationResponse();
-
+            
             var validatedCertificatePrintStatuses = await Validate(request.CertificatePrintStatuses, validationResult);
             foreach(var validatedCertificatePrintStatus in validatedCertificatePrintStatuses)
             {
+                var certificateBatchLog = await _certificateBatchLogRepository.GetCertificateBatchLog(validatedCertificatePrintStatus.CertificateReference, validatedCertificatePrintStatus.BatchNumber);
+                if (certificateBatchLog == null)
+                {
+                    validationResult.Errors.Add(
+                      new ValidationErrorDetail("CertificatePrintStatuses", $"Certificate {validatedCertificatePrintStatus.CertificateReference} not printed in batch {validatedCertificatePrintStatus.BatchNumber}.", ValidationStatusCode.NotFound));                    
+                }
+                else
+                {
+                    if (validatedCertificatePrintStatus.StatusChangedAt < certificateBatchLog.StatusAt)
+                    {
+                        validationResult.Errors.Add(
+                           new ValidationErrorDetail("StatusChangedDateTime", $"Certificate delivery(StatusChangedAt) datetime {validatedCertificatePrintStatus.StatusChangedAt} earlier than printed(latest date) datetime {certificateBatchLog.LatestChange()}.", ValidationStatusCode.BadRequest));
+                    }
+                }
+
                 var certificate = await _certificateRepository.GetCertificate(validatedCertificatePrintStatus.CertificateReference);
                 if (certificate == null)
                 {
