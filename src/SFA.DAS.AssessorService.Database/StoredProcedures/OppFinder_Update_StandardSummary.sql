@@ -13,6 +13,7 @@ SET NOCOUNT ON;
 
 DECLARE @Error_Code INT = 0
 		,@Error_Message VARCHAR(MAX)
+		,@Error_Severity INT = 0
 
 BEGIN
 	BEGIN TRANSACTION T1;
@@ -61,7 +62,7 @@ BEGIN
 				AND il1.CompletionStatus = 1
 				AND (CASE WHEN il1.PlannedEndDate > GETDATE() THEN EOMONTH(il1.PlannedEndDate) ELSE EOMONTH(DATEADD(month, st1.Duration, il1.LearnStartDate)) END) >= DATEADD(month,-3,GETDATE())
 			) il2
-			LEFT JOIN PostCodeRegion pc1 on pc1.PostCodePrefix = LEFT(DelLocPostCode,(PATINDEX('%[0-9]%',ISNULL(DelLocPostCode,'ZZ'))-1))
+			LEFT JOIN PostCodeRegion pc1 on pc1.PostCodePrefix = dbo.OppFinder_GetPostCodePrefix(DelLocPostCode)
 			GROUP BY StdCode, ISNULL(pc1.DeliveryAreaId ,0) 
 		) ab1
 		LEFT JOIN DeliveryArea de1 on de1.Id = ab1.DeliveryAreaId
@@ -126,7 +127,7 @@ BEGIN
 			AND IsPrivatelyFunded = 0
 			AND ce1.[Status] NOT IN ('Deleted','Draft')
 		) od1
-		LEFT JOIN PostCodeRegion pc1 on pc1.PostCodePrefix = LEFT(od1.DelLocPostCode,(PATINDEX('%[0-9]%',ISNULL(od1.DelLocPostCode,'ZZ'))-1))
+		LEFT JOIN PostCodeRegion pc1 on pc1.PostCodePrefix = dbo.OppFinder_GetPostCodePrefix(od1.DelLocPostCode)
 		LEFT JOIN DeliveryArea de1 on de1.Id = pc1.DeliveryAreaId
 		JOIN StandardCollation sc1 On sc1.StandardId = od1.StandardCode
 		WHERE 1=1
@@ -150,9 +151,10 @@ BEGIN
 	END TRY
 	BEGIN CATCH;
 		-- Some basic error handling
-		SELECT @Error_Code = ERROR_NUMBER(), @Error_Message = ERROR_MESSAGE();
+		ROLLBACK TRANSACTION T1;
+		SELECT @Error_Code = ERROR_NUMBER(), @Error_Message = ERROR_MESSAGE(), @Error_Severity = ERROR_SEVERITY();
+		raiserror (@Error_Message, @Error_Severity,@Error_Code);
 	END CATCH;
-	
-	IF @Error_Code <> 0 OR XACT_STATE() = -1 ROLLBACK TRANSACTION T1;
-	ELSE IF @Error_Code = 0 AND XACT_STATE() = 1 COMMIT TRANSACTION T1;
+
+	 IF @Error_Code = 0 AND XACT_STATE() = 1 COMMIT TRANSACTION T1;
 END
