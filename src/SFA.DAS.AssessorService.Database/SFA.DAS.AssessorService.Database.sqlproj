@@ -129,7 +129,6 @@
     <Build Include="Functions\Scalar-valued Functions\OppFinder_Is_Proposed_StandardStatus.sql" />
     <Build Include="StoredProcedures\OppFinder_List_NonApproved_Standards.sql" />
     <Build Include="Tables\Audits.sql" />
-    <None Include="PostDeploymentScripts\on-2210-dashboard_api_subscriptions.sql" />
     <Build Include="StoredProcedures\OppFinder_Filter_Standards.sql" />
     <Build Include="StoredProcedures\OppFinder_Get_Approved_Standard_Details.sql" />
     <Build Include="Tables\ExpressionsOfInterest.sql" />
@@ -140,8 +139,6 @@
     <Build Include="Tables\Settings.sql" />
     <Build Include="Tables\CertificateBatchLogs.sql" />
     <None Include="PreDeploymentScripts\remove_certificatelogs_wasrejected.sql" />
-    <None Include="PostDeploymentScripts\con-1834-add_certificatebatchlogs_data.sql" />
-    <None Include="PostDeploymentScripts\qual-39-remove-contact-roles.sql" />
     <Build Include="Tables\EmailTemplatesRecipients.sql" />
     <None Include="PostDeploymentScripts\con-2061-clear-recipients-from-email-templates.sql" />
     <None Include="PostDeploymentScripts\con-2061-create-email-template-recipients.sql" />
@@ -150,8 +147,9 @@
     <None Include="PostDeploymentScripts\LookupData\PrivilegesInsertOrUpdate.sql" />
     <None Include="PostDeploymentScripts\LookupData\DeliveryAreaInsertOrUpdate.sql" />
     <None Include="PostDeploymentScripts\LookupData\DeliveryAreaDelete.sql" />
-    <None Include="PostDeploymentScripts\on-2197-insert_postcode_to_regions.sql" />
-    <None Include="PostDeploymentScripts\on-2242_update_staff_reports_config.sql" />
+    <None Include="PreDeploymentScripts\con-1561_update_staff_reports_id.sql" />
+    <None Include="PostDeploymentScripts\LookupData\EmailTemplatesDelete.sql" />
+    <None Include="PostDeploymentScripts\LookupData\EmailTemplatessInsertOrUpdate.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="SFA.DAS.AssessorService.Database.refactorlog" />
@@ -164,8 +162,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="DataToImport\assessmentorgs.xlsx" />
-    <None Include="PostDeploymentScripts\on-2033-anytime_updates.sql" />
-    <None Include="PostDeploymentScripts\on-2295-expression-of-interest.sql" />
     <Build Include="Functions\Table-valued Functions\Apply_Func_Get_Applications.sql" />
     <Build Include="Functions\Scalar-valued Functions\ToTicks.sql" />
     <None Include="PreDeploymentScripts\con-1561_update_privilege_id.sql" />
@@ -177,7 +173,6 @@
     <None Include="PostDeploymentScripts\LookupData\PostCodeRegionDelete.sql" />
     <None Include="PostDeploymentScripts\LookupData\StaffReportsInsertOrUpdate.sql" />
     <None Include="PostDeploymentScripts\LookupData\StaffReportsDelete.sql" />
-    <None Include="PostDeploymentScripts\on-1952_update_organisation_financial_exempt.sql" />
   </ItemGroup>
   <ItemGroup>
     <ArtifactReference Include="$(DacPacRootPath)\Extensions\Microsoft\SQLDB\Extensions\SqlServer\AzureV12\SqlSchemas\master.dacpac">

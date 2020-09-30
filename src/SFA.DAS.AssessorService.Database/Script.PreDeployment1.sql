@@ -23,6 +23,8 @@ Pre-Deployment Script Template
 */
 
 :r .\PreDeploymentScripts\con-1561_update_privilege_id.sql
+:r .\PreDeploymentScripts\con-1561_update_staff_reports_id.sql
+
 
 
 
