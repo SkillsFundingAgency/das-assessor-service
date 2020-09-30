@@ -85,7 +85,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Certifi
             RuleFor(m => m.CertificateData).NotEmpty().WithMessage("Provide Certificate Data").DependentRules(() =>
             {
                 RuleFor(m => m.CertificateData.ContactName).NotEmpty().WithMessage("Provide a contact name");
-                RuleFor(m => m.CertificateData.ContactOrganisation).NotEmpty().WithMessage("Provide an organisation");
                 RuleFor(m => m.CertificateData.ContactAddLine1).NotEmpty().WithMessage("Provide an address");
                 RuleFor(m => m.CertificateData.ContactAddLine4).NotEmpty().WithMessage("Provide a city or town");
                 RuleFor(m => m.CertificateData.ContactPostCode).NotEmpty().WithMessage("Provide a postcode").DependentRules(() =>

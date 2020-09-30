@@ -8,7 +8,6 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Models.Response.Certi
         [Required]
         public string ContactName { get; set; }
         public string Department { get; set; }
-        [Required]
         public string Organisation { get; set; }
         [Required]
         public string AddressLine1 { get; set; }

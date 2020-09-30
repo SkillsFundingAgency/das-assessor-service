@@ -115,7 +115,6 @@ namespace SFA.DAS.AssessorService.ExternalApiDataSync
             transaction.Connection.Execute(
                 @"  DELETE FROM ContactLogs;
                             DELETE FROM ContactsPrivileges;
-                            DELETE FROM ContactRoles;
                             DELETE FROM Contacts;", transaction: transaction);
 
             // repopulated in Step 1

@@ -1,7 +1,7 @@
 /* Cookie banner */
 
 .das-cookie-banner {
-  font-family: "nta", Arial, sans-serif;
+  font-family: "GDS Transport", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-size: 14px;
@@ -115,7 +115,7 @@
 }
 
 .das-cookie-banner__hide-button {
-  font-family: "nta", Arial, sans-serif;
+  font-family: "GDS Transport", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-size: 16px;
@@ -208,7 +208,7 @@
 }
 
 .das-notice__title {
-  font-family: "nta", Arial, sans-serif;
+  font-family: "GDS Transport", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-weight: 700;
@@ -249,7 +249,7 @@
 }
 
 .das-notice__description {
-  font-family: "nta", Arial, sans-serif;
+  font-family: "GDS Transport", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-weight: 400;
@@ -293,7 +293,7 @@
 }
 
 .cookie-settings__confirmation {
-  font-family: "nta", Arial, sans-serif;
+  font-family: "GDS Transport", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-weight: 400;
@@ -432,7 +432,7 @@
 }
 
 .app-check-your-answers {
-  font-family: "nta", Arial, sans-serif;
+  font-family: "GDS Transport", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-weight: 400;
@@ -573,7 +573,7 @@
 
 .app-task-list__section {
   display: table;
-  font-family: "nta", Arial, sans-serif;
+  font-family: "GDS Transport", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-weight: 700;
@@ -615,7 +615,7 @@
 }
 
 .app-task-list__items {
-  font-family: "nta", Arial, sans-serif;
+  font-family: "GDS Transport", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-weight: 400;
@@ -665,7 +665,7 @@
 }
 
 .app-task-list__item {
-  border-bottom: 1px solid #bfc1c3;
+  border-bottom: 1px solid #b1b4b6;
   margin-bottom: 0 !important;
   padding-top: 10px;
   padding-bottom: 10px;
@@ -677,6 +677,10 @@
   clear: both;
 }
 
+.app-task-list__item:first-child {
+  border-top: 1px solid #b1b4b6;
+}
+
 .app-task-list__task-name {
   display: block;
 }
@@ -684,7 +688,6 @@
 @media (min-width: 28.125em) {
   .app-task-list__task-name {
     float: left;
-    width: 75%;
   }
 }
 
@@ -855,7 +858,7 @@
 
 .app-navigation {
   background-color: #f8f8f8;
-  font-family: "nta", Arial, sans-serif;
+  font-family: "GDS Transport", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-weight: 700;
@@ -1491,7 +1494,7 @@ TODO: change to 'das-page-navigation' and BEM
 
 .ui-autocomplete .ui-menu-item {
   cursor: pointer;
-  font-family: "nta", Arial, sans-serif;
+  font-family: "GDS Transport", Arial, sans-serif;
   font-size: 16px;
   line-height: 1.25;
   font-weight: 300;
@@ -1677,6 +1680,16 @@ th[aria-sort="ascending"] a:after {
   line-height: 40px;
 }
 
+.das-pagination-links > a,
+.das-pagination-links span {
+  margin-left: 15px;
+}
+
+.das-pagination-links > a:first-child,
+.das-pagination-links > span:first-child {
+  margin-left: 0;
+}
+
 .sorted-ascending::after {
   content: "";
   margin-left: 3px;
@@ -1713,7 +1726,7 @@ th[aria-sort="ascending"] a:after {
 }
 
 .das-icon-search__input[type="search"] {
-  font-family: "nta", Arial, sans-serif;
+  font-family: "GDS Transport", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-weight: 400;
@@ -1910,4 +1923,9 @@ th[aria-sort="ascending"] a:after {
 
 .govuk-summary-list--top-border {
   border-top: 1px solid #bfc1c3;
+}
+
+/*** govuk confirmation panel ***/
+.govuk-panel--confirmation {
+    background: #00703c;
 }

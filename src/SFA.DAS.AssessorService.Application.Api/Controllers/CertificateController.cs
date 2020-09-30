@@ -5,6 +5,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
+using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
 using SFA.DAS.AssessorService.Application.Exceptions;
@@ -53,14 +54,13 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             return Ok(await _mediator.Send(certificate));
         }
 
-        [HttpPut("{batchNumber}", Name = "UpdateCertificatesBatchToIndicatePrinted")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(Certificate))]
+        [HttpPost("update-print-status", Name = "UpdatePrintStatus")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(ValidationResponse))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> UpdateCertificatesBatchToIndicatePrinted(int batchNumber, [FromBody] UpdateCertificatesBatchToIndicatePrintedRequest updateCertificatesBatchToIndicatePrintedRequest)
+        public async Task<IActionResult> UpdatePrintStatus([FromBody] UpdateCertificatesPrintStatusRequest request)
         {
-            await _mediator.Send(updateCertificatesBatchToIndicatePrintedRequest);
-            return Ok();
+            return Ok(await _mediator.Send(request));
         }
 
         [HttpPost("requestreprint", Name = "RequestReprint")]

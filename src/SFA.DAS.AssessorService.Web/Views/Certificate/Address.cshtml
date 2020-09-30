@@ -21,11 +21,11 @@ else
         <div class="govuk-grid-column-two-thirds">
 
             <form class="apprentice-address-form js-disable-on-submit" method="post" asp-controller="CertificateAddress"
-                    asp-action="Address">
+                  asp-action="Address">
                 @Html.HiddenFor(c => c.Id)
-                @Html.HiddenFor( c=> c.IsPrivatelyFunded)
+                @Html.HiddenFor(c => c.IsPrivatelyFunded)
 
-                <div class="js-error-summary govuk-error-summary" role="alert" aria-labelledby="error-summary-title" tabindex="-1" data-module="error-summary">
+                <div class="js-error-summary govuk-error-summary" role="alert" aria-labelledby="error-summary-title" tabindex="-1" data-module="govuk-error-summary">
                     <h2 class="govuk-error-summary__title" id="error-summary-title">
                         There is a problem
                     </h2>
@@ -36,13 +36,12 @@ else
 
                 @if (!ViewData.ModelState.IsValid)
                 {
-                    <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
+                    <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
                         <h2 class="govuk-error-summary__title" id="error-summary-title">
                             There is a problem
                         </h2>
                         <div class="govuk-error-summary__body">
-                            <ul class="govuk-list govuk-error-summary__list">
-                                <li><a sfa-validation-for="Employer"></a></li>
+                            <ul class="govuk-list govuk-error-summary__list">                                
                                 <li><a sfa-validation-for="AddressLine1"></a></li>
                                 <li><a sfa-validation-for="City"></a></li>
                                 <li><a sfa-validation-for="Postcode"></a></li>
@@ -65,16 +64,16 @@ else
                         <span class="js-manual-address-heading hidden">@(Localizer["ManualHeading"])</span>
                         <span class="js-hidden">@(Localizer["NoJsHeading"])</span>
                     </h1>
-                    <p class="govuk-body">@Localizer["Lead"]</p>
                 }
 
+                <p class="govuk-body">@Localizer["Lead"]</p>
 
                 @if (!Model.EditForm)
                 {
                     <div id="address-lookup" class="hide-nojs form-group disabled">
                         <div class="govuk-form-group" id="addressInputWrapper">
                             <label for="postcode-search" class="govuk-label govuk-label--m">@Localizer["PostcodeLookup"]</label>
-                            <input id="postcode-search" name="postcodeSearch" type="text" class="govuk-input" spellcheck="false" autocomplete="off" autocorrect="off" disabled="disabled"/>
+                            <input id="postcode-search" name="postcodeSearch" type="text" class="govuk-input" spellcheck="false" autocomplete="off" autocorrect="off" disabled="disabled" />
                             <span class="govuk-visually-hidden" id="ariaAddressEntered" aria-live="polite"></span>
                         </div>
                         <div class="govuk-form-group" id="address-manual">
@@ -95,7 +94,7 @@ else
                             <p class="govuk-body govuk-!-margin-bottom-2">@Localizer["UseLastAddress"]</p>
                             <div class="govuk-checkboxes">
                                 <div class="govuk-checkboxes__item">
-                                    <input class="govuk-checkboxes__input" name="SelectPreviousAddress" asp-for="SelectPreviousAddress" type="checkbox"/>
+                                    <input class="govuk-checkboxes__input" name="SelectPreviousAddress" asp-for="SelectPreviousAddress" type="checkbox" />
                                     <label class="govuk-label govuk-checkboxes__label" for="SelectPreviousAddress">
                                         @Model.PreviousAddress.StringifiedAddress
                                     </label>
@@ -112,7 +111,7 @@ else
                                 @Localizer["Employer"]
                             </label>
                             <span class="govuk-error-message" asp-validation-for="Employer"></span>
-                            <input class="govuk-input govuk-!-width-two-thirds" name="Employer" sfa-validation-for="Employer" sfa-validationerror-class="govuk-input--error" asp-for="Employer" type="text" />
+                            <input class="govuk-input govuk-!-width-two-thirds" name="Employer" sfa-validation-for="Employer" sfa-validationerror-class="govuk-input--error" asp-for="Employer" type="text" />                            
                         </div>
 
                         <div class="govuk-form-group address-item" sfa-validation-for="AddressLine1" sfa-validationerror-class="govuk-form-group--error">

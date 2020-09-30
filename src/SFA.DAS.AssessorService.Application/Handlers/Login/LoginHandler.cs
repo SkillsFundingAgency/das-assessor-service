@@ -17,19 +17,17 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Login
     public class LoginHandler : IRequestHandler<LoginRequest, LoginResponse>
     {
         private readonly ILogger<LoginHandler> _logger;
-        private readonly IWebConfiguration _config;
         private readonly IOrganisationQueryRepository _organisationQueryRepository;
         private readonly IContactQueryRepository _contactQueryRepository;
         private readonly IRegisterRepository _registerRepository;
         private readonly IContactRepository _contactRepository;
 
-        public LoginHandler(ILogger<LoginHandler> logger, IWebConfiguration config, 
+        public LoginHandler(ILogger<LoginHandler> logger,  
             IOrganisationQueryRepository organisationQueryRepository, 
             IContactQueryRepository contactQueryRepository, IContactRepository contactRepository,
             IRegisterRepository registerRepository)
         {
             _logger = logger;
-            _config = config;
             _organisationQueryRepository = organisationQueryRepository;
             _contactQueryRepository = contactQueryRepository;
             _contactRepository = contactRepository;

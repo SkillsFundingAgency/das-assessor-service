@@ -36,6 +36,14 @@ namespace SFA.DAS.AssessorService.Application.Api.External.SwaggerHelpers.Exampl
                     Learner = new Learner { FamilyName = "Unknown", Uln = 5555555555 },
                     LearningDetails = new LearningDetails { CourseOption = null, OverallGrade = CertificateGrade.Credit, AchievementDate = DateTime.UtcNow },
                     PostalContact = new PostalContact { ContactName = "Alan Brewer", Department = "Human Resources", Organisation = "Fabrikam Inc", AddressLine1 = "Outlook Place", City = "Lorem Ipsum", PostCode = "ZY9 9ZZ" }
+                },
+                new CreateCertificateRequest
+                {
+                    RequestId = "4",
+                    Standard = new Standard { StandardReference = "ST0287" },
+                    Learner = new Learner { FamilyName = "Jones", Uln = 6666666666 },
+                    LearningDetails = new LearningDetails { CourseOption = "Mechanics", OverallGrade = CertificateGrade.Pass, AchievementDate = DateTime.UtcNow },
+                    PostalContact = new PostalContact { ContactName = "Shreya Smith", Department = null, Organisation = null, AddressLine1 = "88 Thinking Road", AddressLine2 = "Green Lane", City = "Brillville", PostCode = "BR9 8YE" }
                 }
             };
         }

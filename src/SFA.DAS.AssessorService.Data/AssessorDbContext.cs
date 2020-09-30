@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.AssessorService.Domain.JsonData.Printing;
 
 namespace SFA.DAS.AssessorService.Data
 {
@@ -22,6 +23,7 @@ namespace SFA.DAS.AssessorService.Data
 
         public virtual DbSet<Certificate> Certificates { get; set; }
         public virtual DbSet<CertificateLog> CertificateLogs { get; set; }
+        public virtual DbSet<CertificateBatchLog> CertificateBatchLogs { get; set; }
         public virtual DbSet<Contact> Contacts { get; set; }
         public virtual DbSet<Organisation> Organisations { get; set; }
         public virtual DbSet<OrganisationStandard> OrganisationStandard { get; set; }
@@ -32,7 +34,6 @@ namespace SFA.DAS.AssessorService.Data
         public virtual DbSet<StaffReport> StaffReports { get; set; }
         public virtual DbSet<ContactsPrivilege> ContactsPrivileges { get; set; }
         public virtual DbSet<Privilege> Privileges { get; set; }
-        public virtual DbSet<ContactRole> ContactRoles { get; set; }
         public virtual DbSet<ContactInvitation> ContactInvitations { get; set; }
 
         public override int SaveChanges()
@@ -69,7 +70,21 @@ namespace SFA.DAS.AssessorService.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<ContactsPrivilege>().HasKey(sc => new { sc.ContactId, sc.PrivilegeId });
+            modelBuilder.Entity<Certificate>()
+                .HasOne(c => c.CertificateBatchLog)
+                .WithOne(s => s.Certificate)
+                .HasForeignKey<CertificateBatchLog>(sc => new { sc.CertificateReference, sc.BatchNumber });
+                
+            modelBuilder.Entity<CertificateBatchLog>()
+                .HasKey(c => new { c.CertificateReference, c.BatchNumber });
+
+            modelBuilder.Entity<CertificateBatchLog>()
+                .HasOne(c => c.Certificate)
+                .WithOne(c => c.CertificateBatchLog)
+                .HasForeignKey<Certificate>(c => new { c.CertificateReference, c.BatchNumber });
+            
+            modelBuilder.Entity<ContactsPrivilege>()
+                .HasKey(sc => new { sc.ContactId, sc.PrivilegeId });
 
             modelBuilder.Entity<ContactsPrivilege>()
                 .HasOne<Contact>(sc => sc.Contact)
@@ -78,6 +93,7 @@ namespace SFA.DAS.AssessorService.Data
 
             modelBuilder.Entity<OrganisationStandard>()
                 .ToTable("OrganisationStandard");
+            
             modelBuilder.Entity<OrganisationStandard>()
                 .HasOne(c => c.Organisation)
                 .WithMany(c => c.OrganisationStandards)
@@ -86,11 +102,13 @@ namespace SFA.DAS.AssessorService.Data
 
             modelBuilder.Entity<OrganisationStandardDeliveryArea>()
                 .ToTable("OrganisationStandardDeliveryArea");
+            
             modelBuilder.Entity<OrganisationStandardDeliveryArea>()
                 .HasOne(c => c.OrganisationStandard)
                 .WithMany(c => c.OrganisationStandardDeliveryAreas)
                 .HasPrincipalKey(c => c.Id)
                 .HasForeignKey(c => c.OrganisationStandardId);
+            
             modelBuilder.Entity<OrganisationStandardDeliveryArea>()
                 .HasOne(c => c.DeliveryArea)
                 .WithOne(c => c.OrganisationStandardDeliveryArea)
@@ -117,13 +135,18 @@ namespace SFA.DAS.AssessorService.Data
                 .HasConversion(
                     c => JsonConvert.SerializeObject(c),
                     c => JsonConvert.DeserializeObject<PrivilegeData>(string.IsNullOrWhiteSpace(c) ? "{}" : c));
+            
             modelBuilder.Entity<Organisation>()
                .Property(e => e.OrganisationData)
                .HasConversion(
                    c => JsonConvert.SerializeObject(c),
                    c => JsonConvert.DeserializeObject<OrganisationData>(string.IsNullOrWhiteSpace(c) ? "{}" : c));
 
-           
+            modelBuilder.Entity<BatchLog>()
+                 .Property(e => e.BatchData)
+                 .HasConversion(
+                     c => JsonConvert.SerializeObject(c),
+                     c => JsonConvert.DeserializeObject<BatchData>(string.IsNullOrWhiteSpace(c) ? "{}" : c));
         }
     }
 }

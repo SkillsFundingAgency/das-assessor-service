@@ -91,3 +91,30 @@ END
 
 -- ON-2222 - remove duplicated certs
 --:r .\Delete-Duplicated-Certs.sql
+
+/* START OF ON-2033 */
+:r .\PostDeploymentScripts\on-2033-anytime_updates.sql
+/* END OF ON-2033 */
+
+/* START OF ON-2210 */
+:r .\PostDeploymentScripts\on-2210-dashboard_api_subscriptions.sql
+/* END OF ON-2210 */
+
+
+/* START OF ON-2295 */
+:r .\PostDeploymentScripts\on-2295-expression-of-interest.sql
+/* END OF ON-2295 */
+
+/* START OF QUAL-39 */
+/* REMOVE CONTACTROLES TABLE */
+:r .\PostDeploymentScripts\qual-39-remove-contact-roles.sql
+/* END OF QUAL-39 */
+
+/* UPDATE THE STAFF REPORT CONFIGURATION FOR EXISTING REPORTS */
+:r .\Update-Staff-Reports-Config.sql
+
+/* START OF CON-2061-Extract [Recipients] column from [EmailTemplates]*/
+:r .\PostDeploymentScripts\con-2061-transfer-recipient-template-to-recipients.sql
+:r .\PostDeploymentScripts\con-2061-create-email-template-recipients.sql
+:r .\PostDeploymentScripts\con-2061-clear-recipients-from-email-templates.sql
+/* END OF CON-2061-Extract [Recipients] column from [EmailTemplates] */

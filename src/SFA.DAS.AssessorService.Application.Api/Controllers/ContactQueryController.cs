@@ -211,7 +211,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [HttpPost("MigrateUsers", Name= "MigrateUsers")]
         public async Task<ActionResult> MigrateUsers()
         {
-            var endpoint = new Uri(new Uri(_config.DfeSignIn.MetadataAddress), "/Migrate"); 
+            var endpoint = new Uri(new Uri(_config.LoginService.MetadataAddress), "/Migrate"); 
             using (var httpClient = new HttpClient())
             {
                 var usersToMigrate = await _contactQueryRepository.GetUsersToMigrate();
@@ -219,7 +219,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
                 {
                     var result = await httpClient.PostAsJsonAsync(endpoint, new
                     {
-                        ClientId = _config.DfeSignIn.ClientId, 
+                        ClientId = _config.LoginService.ClientId, 
                         GivenName = user.GivenNames, 
                         FamilyName = user.FamilyName, 
                         Email = user.Email

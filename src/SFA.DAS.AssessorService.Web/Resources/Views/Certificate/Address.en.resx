@@ -139,22 +139,22 @@
     <value>For example, human resources</value>
   </data>
   <data name="Employer" xml:space="preserve">
-    <value>Company name</value>
+    <value>Organisation name (optional)</value>
   </data>
   <data name="SearchHeading" xml:space="preserve">
-    <value>Search for the employer's address</value>
+    <value>Search for the address that you’d like us to send the certificate to</value>
   </data>
   <data name="EditHeading" xml:space="preserve">
-    <value>Edit the employer's address</value>
+    <value>Edit the address that you’d like us to send the certificate to</value>
   </data>
   <data name="NoJsHeading" xml:space="preserve">
     <value>Where will the certificate be sent?</value>
   </data>
   <data name="ManualHeading" xml:space="preserve">
-    <value>Add the employer's address</value>
+    <value>Add the address that you’d like us to send the certificate to</value>
   </data>
   <data name="Lead" xml:space="preserve">
-    <value>This is the address where the certificate will be sent.</value>
+    <value>Some employers are not open due to the coronavirus (COVID-19) outbreak. You can temporarily choose to send certificates to the apprentice, employer or training provider.</value>
   </data>
   <data name="LoadingAddress" xml:space="preserve">
     <value>Loading address...</value>

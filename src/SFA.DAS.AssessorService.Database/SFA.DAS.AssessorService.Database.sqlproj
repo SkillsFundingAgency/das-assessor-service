@@ -114,7 +114,6 @@
     <Build Include="StoredProcedures\EPAO_Registered_Standards.sql" />
     <Build Include="Tables\ContactsPrivileges.sql" />
     <Build Include="Tables\Privileges.sql" />
-    <Build Include="Tables\ContactRoles.sql" />
     <Build Include="StoredProcedures\GetEPAO_DashboardCounts.sql" />
     <Build Include="StoredProcedures\GetEPAO_Pipelines_Extract.sql" />
     <Build Include="StoredProcedures\StaffSearchCertificates_Count.sql" />
@@ -142,6 +141,12 @@
     <Build Include="Tables\CertificateBatchLogs.sql" />
     <None Include="PreDeploymentScripts\remove_certificatelogs_wasrejected.sql" />
     <None Include="PostDeploymentScripts\con-1834-add_certificatebatchlogs_data.sql" />
+    <None Include="PostDeploymentScripts\qual-39-remove-contact-roles.sql" />
+    <Build Include="Tables\EmailTemplatesRecipients.sql" />
+    <None Include="PostDeploymentScripts\con-2061-clear-recipients-from-email-templates.sql" />
+    <None Include="PostDeploymentScripts\con-2061-create-email-template-recipients.sql" />
+    <None Include="PostDeploymentScripts\con-2061-transfer-recipient-template-to-recipients.sql" />
+    <Build Include="Functions\Scalar-valued Functions\OppFinder_GetPostCodePrefix.sql" />
     <None Include="PostDeploymentScripts\LookupData\PrivilegesInsertOrUpdate.sql" />
     <None Include="PostDeploymentScripts\LookupData\DeliveryAreaInsertOrUpdate.sql" />
     <None Include="PostDeploymentScripts\LookupData\DeliveryAreaDelete.sql" />

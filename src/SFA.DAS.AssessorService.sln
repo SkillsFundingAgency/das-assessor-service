@@ -52,15 +52,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.Api
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.Data.UnitTests", "SFA.DAS.AssessorService.Data.UnitTests\SFA.DAS.AssessorService.Data.UnitTests.csproj", "{C6966220-9CF5-41CA-92CD-DF428AD66AB5}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.EpaoImporter", "SFA.DAS.AssessorService.EpaoImporter\SFA.DAS.AssessorService.EpaoImporter.csproj", "{6901B04C-FEA8-4BAB-87CF-1FF871B7C497}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.NLog.Targets.Redis", "SFA.DAS.AssessorService.NLog.Targets.Redis\SFA.DAS.AssessorService.NLog.Targets.Redis.csproj", "{93FFBB83-E16E-4F7E-93F8-446175CCF965}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.Data.IntegrationTests", "SFA.DAS.AssessorService.Data.IntegrationTests\SFA.DAS.AssessorService.Data.IntegrationTests.csproj", "{69B3D223-F8CA-4AF9-A258-F5DF1AE24F27}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.Application.Api.External", "SFA.DAS.AssessorService.Application.Api.External\SFA.DAS.AssessorService.Application.Api.External.csproj", "{EFEC1E75-6DD4-41A2-B1CB-106BAC3E3EBD}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.EpaoDataSync", "SFA.DAS.AssessorService.EpaoDataSync\SFA.DAS.AssessorService.EpaoDataSync.csproj", "{2CD0ED7B-43B3-4736-8A59-086AD47C41EF}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.ApplyTypes", "SFA.DAS.AssessorService.ApplyTypes\SFA.DAS.AssessorService.ApplyTypes.csproj", "{7F682D43-DA65-439A-B4AC-27503270FA73}"
 EndProject
@@ -132,10 +128,6 @@ Global
 		{C6966220-9CF5-41CA-92CD-DF428AD66AB5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C6966220-9CF5-41CA-92CD-DF428AD66AB5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C6966220-9CF5-41CA-92CD-DF428AD66AB5}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6901B04C-FEA8-4BAB-87CF-1FF871B7C497}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6901B04C-FEA8-4BAB-87CF-1FF871B7C497}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6901B04C-FEA8-4BAB-87CF-1FF871B7C497}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6901B04C-FEA8-4BAB-87CF-1FF871B7C497}.Release|Any CPU.Build.0 = Release|Any CPU
 		{93FFBB83-E16E-4F7E-93F8-446175CCF965}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{93FFBB83-E16E-4F7E-93F8-446175CCF965}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{93FFBB83-E16E-4F7E-93F8-446175CCF965}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -148,10 +140,6 @@ Global
 		{EFEC1E75-6DD4-41A2-B1CB-106BAC3E3EBD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EFEC1E75-6DD4-41A2-B1CB-106BAC3E3EBD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EFEC1E75-6DD4-41A2-B1CB-106BAC3E3EBD}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2CD0ED7B-43B3-4736-8A59-086AD47C41EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2CD0ED7B-43B3-4736-8A59-086AD47C41EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2CD0ED7B-43B3-4736-8A59-086AD47C41EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2CD0ED7B-43B3-4736-8A59-086AD47C41EF}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7F682D43-DA65-439A-B4AC-27503270FA73}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7F682D43-DA65-439A-B4AC-27503270FA73}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7F682D43-DA65-439A-B4AC-27503270FA73}.Release|Any CPU.ActiveCfg = Release|Any CPU

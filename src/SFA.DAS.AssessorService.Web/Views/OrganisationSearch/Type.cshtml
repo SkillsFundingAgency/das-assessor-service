@@ -18,7 +18,7 @@
                 <input asp-for="Postcode" type="hidden" />
                 <input asp-for="PageIndex" value="@Model.PageIndex" type="hidden" />
 
-                <div class="js-error-summary govuk-error-summary" role="alert" aria-labelledby="error-summary-title" tabindex="-1" data-module="error-summary">
+                <div class="js-error-summary govuk-error-summary" role="alert" aria-labelledby="error-summary-title" tabindex="-1" data-module="govuk-error-summary">
                     <h2 class="govuk-error-summary__title" id="error-summary-title">
                         There is a problem
                     </h2>
@@ -30,7 +30,7 @@
                 @if (!ViewData.ModelState.IsValid || showErrors)
                 {
                     var firstOrgType = "#" + Model.OrganisationTypes.First().Type.Replace(" ", "_");
-                    <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
+                    <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
                         <h2 class="govuk-error-summary__title" id="error-summary-title">
                             There is a problem
                         </h2>

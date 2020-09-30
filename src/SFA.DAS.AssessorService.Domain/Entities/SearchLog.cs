@@ -1,6 +1,4 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System;
 
 namespace SFA.DAS.AssessorService.Domain.Entities
 {
@@ -11,8 +9,6 @@ namespace SFA.DAS.AssessorService.Domain.Entities
         public long Uln { get; set; }
         public DateTime SearchTime { get; set; }
         public SearchData SearchData { get; set; }
-        [NotMapped]
-        public string SearchDataJsonString { get => JsonConvert.SerializeObject(SearchData); }
         public int NumberOfResults { get; set; }
         public string Username { get; set; }
     }
