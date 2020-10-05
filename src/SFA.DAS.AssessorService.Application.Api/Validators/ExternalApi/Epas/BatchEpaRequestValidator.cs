@@ -50,11 +50,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Epas
                         }
                         else if (requestedIlr.CompletionStatus == (int)CompletionStatus.Withdrawn)
                         {
-                            context.AddFailure(new ValidationFailure("CompletionStatus", "Completion Status must not be withdrawn"));
+                            context.AddFailure(new ValidationFailure("LearnerDetails", "Cannot find the apprentice details"));
                         }
                         else if (requestedIlr.CompletionStatus == (int)CompletionStatus.TemporarilyWithdrawn)
                         {
-                            context.AddFailure(new ValidationFailure("CompletionStatus", "Completion Status must not be temporarily withdrawn"));
+                            context.AddFailure(new ValidationFailure("LearnerDetails", "Cannot find the apprentice details"));
                         }
                         else
                         {
