@@ -123,7 +123,8 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
             ilrRepositoryMock.Setup(q => q.Get(5555555555, 1)).ReturnsAsync(GenerateIlr(5555555555, 1, "Test", "12345678", CompletionStatus.Complete));
 
             ilrRepositoryMock.Setup(q => q.Get(1234567891, 1)).ReturnsAsync(GenerateIlr(1234567891, 1, "Test", "12345678", CompletionStatus.Withdrawn));
-            
+            ilrRepositoryMock.Setup(q => q.Get(1234567892, 1)).ReturnsAsync(GenerateIlr(1234567892, 1, "Test", "12345678", CompletionStatus.TemporarilyWithdrawn));
+
             return ilrRepositoryMock;
         }
 
