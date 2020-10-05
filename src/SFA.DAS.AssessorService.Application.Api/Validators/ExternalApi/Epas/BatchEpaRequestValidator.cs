@@ -83,8 +83,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Epas
                                .Must(epa => outcomes.Contains(epa.EpaOutcome, StringComparer.InvariantCultureIgnoreCase)).WithMessage($"Invalid outcome: must be Pass, Fail or Withdrawn");
                     });
             });
-
-            //RuleFor(m => m.)
         }
     }
 }
