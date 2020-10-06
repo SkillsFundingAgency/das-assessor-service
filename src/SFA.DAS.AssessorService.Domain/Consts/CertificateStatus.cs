@@ -51,7 +51,7 @@ namespace SFA.DAS.AssessorService.Domain.Consts
             switch (status)
             {
                 case ToBeApproved:
-                    return "To be approved";
+                    return "Submitted";
 
                 case SentForApproval:
                     return "Sent for approval";
