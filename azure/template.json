@@ -78,7 +78,7 @@
         "sharedManagementResourceGroup": {
             "type": "string"
         },
-        "keyVaultName": {
+        "sharedKeyVaultName": {
             "type": "string"
         },
         "sharedEnvResourceGroup": {
@@ -132,7 +132,7 @@
                         "value": "[parameters('uiKeyvaultCertificateName')]"
                     },
                     "keyVaultName": {
-                        "value": "[parameters('keyVaultName')]"
+                        "value": "[parameters('sharedKeyVaultName')]"
                     },
                     "keyVaultResourceGroup": {
                         "value": "[parameters('sharedManagementResourceGroup')]"
@@ -217,7 +217,7 @@
                         "value": "[parameters('apiKeyvaultCertificateName')]"
                     },
                     "keyVaultName": {
-                        "value": "[parameters('keyVaultName')]"
+                        "value": "[parameters('sharedKeyVaultName')]"
                     },
                     "keyVaultResourceGroup": {
                         "value": "[parameters('sharedManagementResourceGroup')]"
@@ -310,7 +310,7 @@
                         "value": "[parameters('externalAPiKeyvaultCertificateName')]"
                     },
                     "keyVaultName": {
-                        "value": "[parameters('keyVaultName')]"
+                        "value": "[parameters('sharedKeyVaultName')]"
                     },
                     "keyVaultResourceGroup": {
                         "value": "[parameters('sharedManagementResourceGroup')]"
@@ -399,7 +399,7 @@
                         "value": "[parameters('externalAPiSandboxKeyvaultCertificateName')]"
                     },
                     "keyVaultName": {
-                        "value": "[parameters('keyVaultName')]"
+                        "value": "[parameters('sharedKeyVaultName')]"
                     },
                     "keyVaultResourceGroup": {
                         "value": "[parameters('sharedManagementResourceGroup')]"
