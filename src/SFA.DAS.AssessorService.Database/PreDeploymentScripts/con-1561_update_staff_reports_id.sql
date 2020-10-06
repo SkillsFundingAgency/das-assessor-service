@@ -36,19 +36,19 @@ IF((SELECT COUNT(*) FROM [StaffReports] WHERE Id NOT IN
 BEGIN
 	BEGIN TRANSACTION
 
-	DECLARE @CurrentMonthlySummary UNIQUEIDENTIFIER = (SELECT Id FROM [StaffReports] WHERE [Name] = 'Monthly summary')
-	DECLARE @CurrentWeeklySummary UNIQUEIDENTIFIER = (SELECT Id FROM [StaffReports] WHERE [Name] = 'Weekly summary')
-	DECLARE @CurrentBatch UNIQUEIDENTIFIER = (SELECT Id FROM [StaffReports] WHERE [Name] = 'Batch')
-	DECLARE @CurrentEPAO UNIQUEIDENTIFIER = (SELECT Id FROM [StaffReports] WHERE [Name] = 'EPAO')
-	DECLARE @CurrentEPAOStandardAndGrade UNIQUEIDENTIFIER = (SELECT Id FROM [StaffReports] WHERE [Name] = 'EPAO, standard and grade')
-	DECLARE @CurrentProvider UNIQUEIDENTIFIER = (SELECT Id FROM [StaffReports] WHERE [Name] = 'Provider')
-	DECLARE @CurrentProviderAndGrade UNIQUEIDENTIFIER = (SELECT Id FROM [StaffReports] WHERE [Name] = 'Provider and grade')
-	DECLARE @CurrentStandard UNIQUEIDENTIFIER = (SELECT Id FROM [StaffReports] WHERE [Name] = 'Standard')
-	DECLARE @CurrentExpressionOfInterestEntries UNIQUEIDENTIFIER = (SELECT Id FROM [StaffReports] WHERE [Name] = 'Expression of interest entries')
-	DECLARE @CurrentMonthlyDetailedExtract UNIQUEIDENTIFIER = (SELECT Id FROM [StaffReports] WHERE [Name] = 'Monthly detailed extract')
-	DECLARE @CurrentEPAORegister UNIQUEIDENTIFIER = (SELECT Id FROM [StaffReports] WHERE [Name] = 'EPAO Register')
-	DECLARE @CurrentRegisterListOfOrganisations UNIQUEIDENTIFIER = (SELECT Id FROM [StaffReports] WHERE [Name] = 'Register List of Organisations')
-	DECLARE @CurrentRegisterListOfStandards UNIQUEIDENTIFIER = (SELECT Id FROM [StaffReports] WHERE [Name] = 'Register List of Standards')
+	DECLARE @CurrentMonthlySummary UNIQUEIDENTIFIER = (SELECT Id FROM [StaffReports] WHERE [ReportName] = 'Monthly summary')
+	DECLARE @CurrentWeeklySummary UNIQUEIDENTIFIER = (SELECT Id FROM [StaffReports] WHERE [ReportName] = 'Weekly summary')
+	DECLARE @CurrentBatch UNIQUEIDENTIFIER = (SELECT Id FROM [StaffReports] WHERE [ReportName] = 'Batch')
+	DECLARE @CurrentEPAO UNIQUEIDENTIFIER = (SELECT Id FROM [StaffReports] WHERE [ReportName] = 'EPAO')
+	DECLARE @CurrentEPAOStandardAndGrade UNIQUEIDENTIFIER = (SELECT Id FROM [StaffReports] WHERE [ReportName] = 'EPAO, standard and grade')
+	DECLARE @CurrentProvider UNIQUEIDENTIFIER = (SELECT Id FROM [StaffReports] WHERE [ReportName] = 'Provider')
+	DECLARE @CurrentProviderAndGrade UNIQUEIDENTIFIER = (SELECT Id FROM [StaffReports] WHERE [ReportName] = 'Provider and grade')
+	DECLARE @CurrentStandard UNIQUEIDENTIFIER = (SELECT Id FROM [StaffReports] WHERE [ReportName] = 'Standard')
+	DECLARE @CurrentExpressionOfInterestEntries UNIQUEIDENTIFIER = (SELECT Id FROM [StaffReports] WHERE [ReportName] = 'Expression of interest entries')
+	DECLARE @CurrentMonthlyDetailedExtract UNIQUEIDENTIFIER = (SELECT Id FROM [StaffReports] WHERE [ReportName] = 'Monthly detailed extract')
+	DECLARE @CurrentEPAORegister UNIQUEIDENTIFIER = (SELECT Id FROM [StaffReports] WHERE [ReportName] = 'EPAO Register')
+	DECLARE @CurrentRegisterListOfOrganisations UNIQUEIDENTIFIER = (SELECT Id FROM [StaffReports] WHERE [ReportName] = 'Register List of Organisations')
+	DECLARE @CurrentRegisterListOfStandards UNIQUEIDENTIFIER = (SELECT Id FROM [StaffReports] WHERE [ReportName] = 'Register List of Standards')
 
 	-- update each of the [StaffReports] to match the known [StaffReports] in the default lookup data
 	UPDATE [StaffReports] SET Id = @DefaultMonthlySummary WHERE Id = @CurrentMonthlySummary

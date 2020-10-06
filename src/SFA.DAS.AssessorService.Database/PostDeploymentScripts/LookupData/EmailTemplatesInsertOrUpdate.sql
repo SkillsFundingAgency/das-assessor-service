@@ -42,7 +42,7 @@ WHEN MATCHED
     THEN UPDATE SET 
         [Target].[TemplateName] = [Source].[TemplateName],
         [Target].[TemplateId] = [Source].[TemplateId],
-        [Target].[Recipients] = [Sourcfe].[Recipients], -- TODO: this column is redundant
+        [Target].[Recipients] = [Source].[Recipients], -- TODO: this column is redundant
         [Target].[CreatedAt] = [Source].[CreatedAt], -- TODO: the columns CreatedAt, DeletedAt and UpdatedAt should not be present for lookup data
         [Target].[DeletedAt] = [Source].[DeletedAt],
         [Target].[UpdatedAt] = [Source].[UpdatedAt],
@@ -50,7 +50,7 @@ WHEN MATCHED
 
 WHEN NOT MATCHED BY TARGET 
     THEN INSERT ([Id], [TemplateName], [TemplateId], [Recipients], [CreatedAt], [DeletedAt], [UpdatedAt], [RecipientTemplate])
-         VALUES ([Source].[Id], [Source].[TemplateName], [Source].[TemplateId], [Source].[CreatedAt], [Source].[DeletedAt], [Source].[UpdatedAt], [Source].[RecipientTemplate]);
+         VALUES ([Source].[Id], [Source].[TemplateName], [Source].[TemplateId], [Source].[Recipients], [Source].[CreatedAt], [Source].[DeletedAt], [Source].[UpdatedAt], [Source].[RecipientTemplate]);
 
 COMMIT TRANSACTION
 
