@@ -19,9 +19,13 @@
     under the PostDeploymentScripts folder for future reference.
 */
 
-/*	KEEP SECTION FIRST - START DATABASE LOOKUP */
+/* SPECIAL CASE OF DROPPING COLUMNS FROM LOOKUP TABLES */
+:r .\PostDeploymentScripts\con-1561_remove_email_templates_columns.sql
+/* SPECIAL CASE OF DROPPING COLUMNS FROM LOOKUP TABLES */
+
+/*	NORMALLY KEEP SECTION FIRST - START DATABASE LOOKUP */
 :r .\PostDeploymentScripts\LookupData\SynchronizeLookupData.sql
-/* 	KEEP SECTION FIRST - END DATABASE LOOKUP */
+/* 	NORMALLY KEEP SECTION FIRST - END DATABASE LOOKUP */
 
 -- ON-613 Patch Certificates with STxxxx StandardReference, where it is not yet included. 
 -- AB 11/03/19 Keep this active for new deployments, for now

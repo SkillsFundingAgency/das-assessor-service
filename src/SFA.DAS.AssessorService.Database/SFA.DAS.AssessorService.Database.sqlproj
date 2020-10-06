@@ -148,6 +148,8 @@
     <None Include="PostDeploymentScripts\LookupData\EmailTemplatesDelete.sql" />
     <None Include="PostDeploymentScripts\LookupData\EmailTemplatesInsertOrUpdate.sql" />
     <None Include="PreDeploymentScripts\con-1561_update_email_templates_id.sql" />
+    <None Include="PreDeploymentScripts\con-1561_remove_email_templates_columns.sql" />
+    <None Include="PostDeploymentScripts\con-1561_remove_email_templates_columns.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="SFA.DAS.AssessorService.Database.refactorlog" />
