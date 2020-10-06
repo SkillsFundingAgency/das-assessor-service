@@ -31,3 +31,6 @@
 
 :r .\StaffReportsDelete.sql
 :r .\StaffReportsInsertOrUpdate.sql
+
+:r .\EmailTemplatesDelete.sql
+:r .\EmailTemplatesInsertOrUpdate.sql
