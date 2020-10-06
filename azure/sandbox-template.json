@@ -46,30 +46,6 @@
         "sandboxFunctionAppNames": {
             "type": "array"
         },
-        "sharedSqlResourceGroup": {
-            "type": "string"
-        },
-        "secondaryDatabaseName": {
-            "type": "string"
-        },
-        "sharedSqlServerName": {
-            "type": "string"
-        },
-        "databaseSkuName": {
-            "type": "string"
-        },
-        "databaseTier": {
-            "type": "string"
-        },
-        "logAnalyticsSubscriptionId": {
-            "type": "string"
-        },
-        "logAnalyticsResourceGroup": {
-            "type": "string"
-        },
-        "logAnalyticsWorkspaceName": {
-            "type": "string"
-        },
         "externalActiveApiSandboxCustomHostname": {
             "type": "string"
         },
@@ -88,6 +64,34 @@
         "functionsExtensionVersion": {
             "type": "string",
             "defaultValue": "~2.0"
+        },
+        "sharedEnvResourceGroup": {
+            "type": "string"
+        },
+        "sharedSQLServerName": {
+            "type": "string"
+        },
+        "sandboxDatabaseName": {
+            "type": "string"
+        },
+        "elasticPoolName": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "databaseSkuName": {
+            "type": "string",
+            "defaultValue": "S0"
+        },
+        "databaseTier": {
+            "type": "string",
+            "defaultValue": "Standard"
+        },
+        "logAnalyticsSubscriptionId": {
+            "type": "string",
+            "defaultValue": "[subscription().subscriptionId]"
+        },
+        "logAnalyticsWorkspaceName": {
+            "type": "string"
         }
     },
     "variables": {
@@ -485,21 +489,24 @@
         },
         {
             "apiVersion": "2017-05-10",
-            "name": "secondary-sql-database",
+            "name": "sql-database",
             "type": "Microsoft.Resources/deployments",
-            "resourceGroup": "[parameters('sharedSqlResourceGroup')]",
+            "resourceGroup": "[parameters('sharedEnvResourceGroup')]",
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(variables('deploymentUrlBase'), 'sql-database.json')]",
+                    "uri": "[concat(variables('deploymentUrlBase'),'sql-database.json')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
                     "databaseName": {
-                        "value": "[parameters('secondaryDatabaseName')]"
+                        "value": "[parameters('sandboxDatabaseName')]"
                     },
                     "sqlServerName": {
-                        "value": "[parameters('sharedSqlServerName')]"
+                        "value": "[parameters('sharedSQLServerName')]"
+                    },
+                    "elasticPoolName": {
+                        "value": "[parameters('elasticPoolName')]"
                     },
                     "databaseSkuName": {
                         "value": "[parameters('databaseSkuName')]"
@@ -511,7 +518,7 @@
                         "value": "[parameters('logAnalyticsSubscriptionId')]"
                     },
                     "logAnalyticsResourceGroup": {
-                        "value": "[parameters('logAnalyticsResourceGroup')]"
+                        "value": "[parameters('sharedManagementResourceGroup')]"
                     },
                     "logAnalyticsWorkspaceName": {
                         "value": "[parameters('logAnalyticsWorkspaceName')]"
