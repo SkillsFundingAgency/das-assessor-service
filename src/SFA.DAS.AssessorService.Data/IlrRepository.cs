@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Data.DapperTypeHandlers;
+using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -20,10 +21,13 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<IEnumerable<Ilr>> SearchForLearnerByUln(long uln)
         {
+            var continuing = (int)CompletionStatus.Continuing;
+            var complete = (int)CompletionStatus.Complete;
+
             return (await _unitOfWork.Connection.QueryAsync<Ilr>(
-                @"SELECT * FROM Ilrs WHERE [Uln] = @uln AND [CompletionStatus] IN (1, 2)",
-                  param: new { uln },
-                  transaction: _unitOfWork.Transaction)).ToList();
+               $@"SELECT * FROM Ilrs WHERE [Uln] = @uln AND [CompletionStatus] IN (@continuing, @complete)",
+                 param: new { uln, continuing, complete },
+                 transaction: _unitOfWork.Transaction)).ToList();
         }
 
         public async Task<Ilr> Get(long uln, int stdCode)
