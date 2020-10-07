@@ -7,7 +7,7 @@
     [UkPrn] INT NULL, 
     [StdCode] INT NULL, 
     [LearnStartDate] DATETIME2 NULL, 
-    [EpaOrgId] NVARCHAR(50) NULL,     
+    [EpaOrgId] NVARCHAR(50) NULL,
     [FundingModel] INT NULL,
     [ApprenticeshipId] BIGINT NULL,
     [EmployerAccountId] BIGINT NULL,
