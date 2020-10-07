@@ -35,8 +35,9 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
             certificateRepositoryMock.Setup(q => q.GetCertificate(1234567890, 1)).ReturnsAsync(GenerateCertificate(1234567890, 1, "test", CertificateStatus.Draft, new Guid("12345678123456781234567812345678")));
             certificateRepositoryMock.Setup(q => q.GetCertificate(1234567890, 98)).ReturnsAsync(GenerateCertificate(1234567890, 98, "test", CertificateStatus.Deleted, new Guid("12345678123456781234567812345678")));
             certificateRepositoryMock.Setup(q => q.GetCertificate(9999999999, 1)).ReturnsAsync(GenerateCertificate(9999999999, 1, "test", CertificateStatus.Printed, new Guid("99999999999999999999999999999999")));
-
-            // This is simulating a Certificate that started it's life on the Web App, but was never submitted
+            certificateRepositoryMock.Setup(q => q.GetCertificate(1234567890, 99)).ReturnsAsync(GenerateCertificate(1234567890, 99, "Test", CertificateStatus.Draft, new Guid("12345678123456781234567812345678")));
+          
+                // This is simulating a Certificate that started it's life on the Web App, but was never submitted
             certificateRepositoryMock.Setup(q => q.GetCertificate(1234567890, 99)).ReturnsAsync(GeneratePartialCertificate(1234567890, 99, "test", new Guid("12345678123456781234567812345678"), null));
             certificateRepositoryMock.Setup(q => q.GetCertificate(9999999999, 99)).ReturnsAsync(GeneratePartialCertificate(9999999999, 99, "test", new Guid("99999999999999999999999999999999"), CertificateGrade.Fail));
 
@@ -110,16 +111,19 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
         {
             var ilrRepositoryMock = new Mock<IIlrRepository>();
 
-            ilrRepositoryMock.Setup(q => q.Get(1234567890, 1)).ReturnsAsync(GenerateIlr(1234567890, 1, "Test", "12345678"));
-            ilrRepositoryMock.Setup(q => q.Get(1234567890, 98)).ReturnsAsync(GenerateIlr(1234567890, 98, "Test", "12345678"));
-            ilrRepositoryMock.Setup(q => q.Get(1234567890, 99)).ReturnsAsync(GenerateIlr(1234567890, 99, "Test", "12345678"));
-            ilrRepositoryMock.Setup(q => q.Get(1234567890, 101)).ReturnsAsync(GenerateIlr(1234567890, 101, "Test", "12345678"));
-            ilrRepositoryMock.Setup(q => q.Get(9999999999, 1)).ReturnsAsync(GenerateIlr(9999999999, 1, "Test", "99999999"));
-            ilrRepositoryMock.Setup(q => q.Get(9999999999, 99)).ReturnsAsync(GenerateIlr(9999999999, 99, "Test", "99999999"));
-            ilrRepositoryMock.Setup(q => q.Get(9999999999, 101)).ReturnsAsync(GenerateIlr(9999999999, 101, "Test", "99999999"));
+            ilrRepositoryMock.Setup(q => q.Get(1234567890, 1)).ReturnsAsync(GenerateIlr(1234567890, 1, "Test", "12345678", CompletionStatus.Complete));
+            ilrRepositoryMock.Setup(q => q.Get(1234567890, 98)).ReturnsAsync(GenerateIlr(1234567890, 98, "Test", "12345678", CompletionStatus.Complete));
+            ilrRepositoryMock.Setup(q => q.Get(1234567890, 99)).ReturnsAsync(GenerateIlr(1234567890, 99, "Test", "12345678", CompletionStatus.Complete));
+            ilrRepositoryMock.Setup(q => q.Get(1234567890, 101)).ReturnsAsync(GenerateIlr(1234567890, 101, "Test", "12345678", CompletionStatus.Complete));
+            ilrRepositoryMock.Setup(q => q.Get(9999999999, 1)).ReturnsAsync(GenerateIlr(9999999999, 1, "Test", "99999999", CompletionStatus.Complete));
+            ilrRepositoryMock.Setup(q => q.Get(9999999999, 99)).ReturnsAsync(GenerateIlr(9999999999, 99, "Test", "99999999", CompletionStatus.Complete));
+            ilrRepositoryMock.Setup(q => q.Get(9999999999, 101)).ReturnsAsync(GenerateIlr(9999999999, 101, "Test", "99999999", CompletionStatus.Complete));
 
             // Leave this ILR without a EPA or a Certificate!
-            ilrRepositoryMock.Setup(q => q.Get(5555555555, 1)).ReturnsAsync(GenerateIlr(5555555555, 1, "Test", "12345678"));
+            ilrRepositoryMock.Setup(q => q.Get(5555555555, 1)).ReturnsAsync(GenerateIlr(5555555555, 1, "Test", "12345678", CompletionStatus.Complete));
+
+            ilrRepositoryMock.Setup(q => q.Get(1234567891, 1)).ReturnsAsync(GenerateIlr(1234567891, 1, "Test", "12345678", CompletionStatus.Withdrawn));
+            ilrRepositoryMock.Setup(q => q.Get(1234567892, 1)).ReturnsAsync(GenerateIlr(1234567892, 1, "Test", "12345678", CompletionStatus.TemporarilyWithdrawn));
 
             return ilrRepositoryMock;
         }
@@ -270,13 +274,14 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
                 .Build();
         }
 
-        private static Ilr GenerateIlr(long uln, int standardCode, string familyName, string epaOrgId)
+        private static Ilr GenerateIlr(long uln, int standardCode, string familyName, string epaOrgId, CompletionStatus completionStatus)
         {
             return Builder<Ilr>.CreateNew()
                 .With(i => i.Uln = uln)
                 .With(i => i.StdCode = standardCode)
                 .With(i => i.FamilyName = familyName)
                 .With(i => i.EpaOrgId = epaOrgId)
+                .With(i => i.CompletionStatus = (int)completionStatus)
                 .Build();
         }
 

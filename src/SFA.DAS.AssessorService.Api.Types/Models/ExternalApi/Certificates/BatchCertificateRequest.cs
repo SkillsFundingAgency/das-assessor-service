@@ -12,7 +12,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.ExternalApi.Certificates
 
         public int StandardCode { get; set; }
         public string StandardReference { get; set; }
-
+        public int? StandardId { get; set; }
         public int UkPrn { get; set; }
 
         public string CertificateReference { get; set; }
