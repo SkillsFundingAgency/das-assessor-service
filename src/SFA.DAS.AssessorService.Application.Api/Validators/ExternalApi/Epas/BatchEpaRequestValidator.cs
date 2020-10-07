@@ -39,7 +39,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Epas
                     {
                         var requestedIlr = await ilrRepository.Get(m.Uln, m.StandardCode);
                         var sumbittingEpao = await organisationQueryRepository.GetByUkPrn(m.UkPrn);
-
+                        
                         if (requestedIlr is null || !string.Equals(requestedIlr.FamilyName, m.FamilyName, StringComparison.InvariantCultureIgnoreCase))
                         {
                             context.AddFailure(new ValidationFailure("Uln", "ULN, FamilyName and Standard not found."));
@@ -47,6 +47,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Epas
                         else if (sumbittingEpao is null)
                         {
                             context.AddFailure(new ValidationFailure("UkPrn", "Specified UKPRN not found"));
+                        }
+                        else if (requestedIlr.CompletionStatus == (int)CompletionStatus.Withdrawn)
+                        {
+                            context.AddFailure(new ValidationFailure("LearnerDetails", "Cannot find the apprentice details"));
+                        }
+                        else if (requestedIlr.CompletionStatus == (int)CompletionStatus.TemporarilyWithdrawn)
+                        {
+                            context.AddFailure(new ValidationFailure("LearnerDetails", "Cannot find the apprentice details"));
                         }
                         else
                         {
