@@ -87,6 +87,8 @@ namespace SFA.DAS.AssessorService.Application.Api.AutoMapperProfiles
                 .ForMember(dest => dest.EndPointAssessorOrganisationId, opt => opt.MapFrom(source => source.EndPointAssessorOrganisationId))
                 .ForMember(dest => dest.EndPointAssessorUkprn, opt => opt.MapFrom(source => source.EndPointAssessorUkprn))
                 .ForMember(dest => dest.OrganisationType, opt => opt.ResolveUsing(source => source.OrganisationType?.Type))
+                .ForMember(dest => dest.City, opt => opt.ResolveUsing(source => source.OrganisationData?.Address4))
+                .ForMember(dest => dest.Postcode, opt => opt.ResolveUsing(source => source.OrganisationData?.Postcode))
                 .ForMember(dest => dest.DeliveryAreasDetails,
                     opt => opt.MapFrom(src => src.OrganisationStandards.FirstOrDefault().OrganisationStandardDeliveryAreas
                         .Select(Mapper.Map<Domain.Entities.OrganisationStandardDeliveryArea, OrganisationStandardDeliveryArea>).ToList()))
