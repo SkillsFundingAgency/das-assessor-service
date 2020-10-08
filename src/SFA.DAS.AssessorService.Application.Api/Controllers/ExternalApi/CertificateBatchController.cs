@@ -11,6 +11,7 @@ using Swashbuckle.AspNetCore.Annotations;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Threading;
 using System.Threading.Tasks;
 using NotFound = SFA.DAS.AssessorService.Domain.Exceptions.NotFound;
 
@@ -90,9 +91,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.ExternalApi
             foreach (var request in batchRequest)
             {
                 var collatedStandard = request.StandardCode > 0 ? await GetCollatedStandard(request.StandardCode) : await GetCollatedStandard(request.StandardReference);
-
+                
                 if (collatedStandard != null)
                 {
+                    request.StandardId = collatedStandard.StandardId;
+
                     // Only fill in the missing bits...
                     if (request.StandardCode < 1)
                     {
@@ -120,7 +123,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.ExternalApi
 
                 if (!validationErrors.Any() && isRequestValid)
                 {
-                    certResponse.Certificate = await _mediator.Send(request);
+                    certResponse.Certificate = await _mediator.Send(request, new CancellationToken());
                 }
 
                 bag.Add(certResponse);
@@ -154,7 +157,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.ExternalApi
                     }
                 }
 
-                var validationResult = await _updateValidator.ValidateAsync(request);
+                var validationResult = await _updateValidator.ValidateAsync(request, new CancellationToken());
                 var isRequestValid = validationResult.IsValid;
                 var validationErrors = validationResult.Errors.Select(error => error.ErrorMessage).ToList();
 
