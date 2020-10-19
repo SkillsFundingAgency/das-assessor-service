@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;
 using Dapper;
+using SFA.DAS.AssessorService.Api.Types.Models.ScheduleRun;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
+using ScheduleRunStatus = SFA.DAS.AssessorService.Domain.Entities.ScheduleRunStatus;
 
 namespace SFA.DAS.AssessorService.Data
 {
@@ -38,7 +40,8 @@ namespace SFA.DAS.AssessorService.Data
                                     WHERE ScheduleType = @scheduleType 
                                     AND IsComplete = 0 
                                     AND RunTime <= GetUtcDate()
-                                    ORDER BY RunTime", new {scheduleType});
+                                    AND (Status <> @scheduleRunStatus or Status is null)
+                                    ORDER BY RunTime", new {scheduleType, scheduleRunStatus = ScheduleRunStatus.Failed});
         }
 
         public async Task<ScheduleRun> GetNextScheduledRun(int scheduleType)
@@ -55,7 +58,8 @@ namespace SFA.DAS.AssessorService.Data
             var schedule = await _connection.QuerySingleAsync<ScheduleRun>("SELECT * FROM ScheduleRuns WHERE Id = @scheduleRunId", new {scheduleRunId});
             if (!schedule.IsComplete)
             {
-                await _connection.ExecuteAsync("UPDATE ScheduleRuns SET IsComplete = 1 WHERE Id = @scheduleRunId", new {scheduleRunId});
+                await _connection.ExecuteAsync("UPDATE ScheduleRuns SET IsComplete = 1, status=@scheduleRunStatus WHERE Id = @scheduleRunId", 
+                    new {scheduleRunId, scheduleRunStatus = ScheduleRunStatus.Complete });
                 if (schedule.IsRecurring)
                 {
                     var newScheduleTime = schedule.RunTime.AddMinutes((int)schedule.Interval);
@@ -64,6 +68,12 @@ namespace SFA.DAS.AssessorService.Data
                         new {runTime = newScheduleTime, schedule.Interval, IsRecurring = true, schedule.ScheduleType});
                 }   
             }
+        }
+
+        public async Task UpdateStatus(SendScheduleRunStatusRequest request)
+        {
+            await _connection.ExecuteAsync("UPDATE ScheduleRuns SET Status=@scheduleRunStatus WHERE Id = @scheduleRunId",
+                new { scheduleRunId = request.ScheduleRunId, scheduleRunStatus = request.ScheduleRunStatus });
         }
 
         public async Task QueueImmediateRun(int scheduleType) 

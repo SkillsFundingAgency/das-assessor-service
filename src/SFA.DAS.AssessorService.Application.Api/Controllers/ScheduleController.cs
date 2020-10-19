@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SFA.DAS.AssessorService.Api.Types.Models.ScheduleRun;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
 
@@ -70,6 +71,13 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         public async Task<IActionResult> DeleteScheduleRun(Guid scheduleRunId)
         {
             await _scheduleRepository.DeleteScheduleRun(scheduleRunId);
+            return Ok();
+        }
+
+        [HttpPost("api/v1/schedule/updatestatus", Name = "UpdateStatus")]
+        public async Task<IActionResult> UpdateStatus([FromBody] SendScheduleRunStatusRequest request)
+        {
+            await _scheduleRepository.UpdateStatus(request);
             return Ok();
         }
     }

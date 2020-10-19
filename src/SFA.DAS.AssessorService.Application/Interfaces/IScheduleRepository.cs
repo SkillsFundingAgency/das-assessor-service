@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using SFA.DAS.AssessorService.Api.Types.Models.ScheduleRun;
 using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Application.Interfaces
@@ -15,5 +16,6 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task QueueImmediateRun(int scheduleType);
         Task CreateScheduleRun(ScheduleRun scheduleRun);
         Task DeleteScheduleRun(Guid scheduleRunId);
+        Task UpdateStatus(SendScheduleRunStatusRequest request);
     }
 }
