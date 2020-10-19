@@ -75,7 +75,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         }
 
         [HttpPost("api/v1/schedule/updatestatus", Name = "UpdateStatus")]
-        public async Task<IActionResult> UpdateStatus([FromBody] SendScheduleRunStatusRequest request)
+        public async Task<IActionResult> UpdateStatus([FromBody] UpdateScheduleRunStatusRequest request)
         {
             await _scheduleRepository.UpdateStatus(request);
             return Ok();

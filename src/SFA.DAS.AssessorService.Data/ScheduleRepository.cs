@@ -70,7 +70,7 @@ namespace SFA.DAS.AssessorService.Data
             }
         }
 
-        public async Task UpdateStatus(SendScheduleRunStatusRequest request)
+        public async Task UpdateStatus(UpdateScheduleRunStatusRequest request)
         {
             await _connection.ExecuteAsync("UPDATE ScheduleRuns SET Status=@scheduleRunStatus WHERE Id = @scheduleRunId",
                 new { scheduleRunId = request.ScheduleRunId, scheduleRunStatus = request.ScheduleRunStatus });
