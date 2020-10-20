@@ -6,5 +6,5 @@
     [Interval] BIGINT NULL, 
     [IsRecurring] BIT NOT NULL DEFAULT 0, 
     [ScheduleType] INT NOT NULL, 
-    [Status] INT NULL
+    [LastRunStatus] INT NULL
 )

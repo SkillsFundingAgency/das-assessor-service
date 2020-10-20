@@ -74,10 +74,10 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             return Ok();
         }
 
-        [HttpPost("api/v1/schedule/updatestatus", Name = "UpdateStatus")]
-        public async Task<IActionResult> UpdateStatus([FromBody] UpdateScheduleRunStatusRequest request)
+        [HttpPost("api/v1/schedule/updatelaststatus", Name = "UpdateLastRunStatus")]
+        public async Task<IActionResult> UpdateLastRunStatus([FromBody] UpdateLastRunStatusRequest request)
         {
-            await _scheduleRepository.UpdateStatus(request);
+            await _scheduleRepository.UpdateLastRunStatus(request);
             return Ok();
         }
     }

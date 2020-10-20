@@ -6,7 +6,7 @@ using Dapper;
 using SFA.DAS.AssessorService.Api.Types.Models.ScheduleRun;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
-using ScheduleRunStatus = SFA.DAS.AssessorService.Domain.Entities.ScheduleRunStatus;
+using LastRunStatus = SFA.DAS.AssessorService.Domain.Entities.LastRunStatus;
 
 namespace SFA.DAS.AssessorService.Data
 {
@@ -41,7 +41,7 @@ namespace SFA.DAS.AssessorService.Data
                                     AND IsComplete = 0 
                                     AND RunTime <= GetUtcDate()
                                     AND (Status <> @scheduleRunStatus or Status is null)
-                                    ORDER BY RunTime", new {scheduleType, scheduleRunStatus = ScheduleRunStatus.Failed});
+                                    ORDER BY RunTime", new {scheduleType, scheduleRunStatus = LastRunStatus.Failed});
         }
 
         public async Task<ScheduleRun> GetNextScheduledRun(int scheduleType)
@@ -58,22 +58,22 @@ namespace SFA.DAS.AssessorService.Data
             var schedule = await _connection.QuerySingleAsync<ScheduleRun>("SELECT * FROM ScheduleRuns WHERE Id = @scheduleRunId", new {scheduleRunId});
             if (!schedule.IsComplete)
             {
-                await _connection.ExecuteAsync("UPDATE ScheduleRuns SET IsComplete = 1, status=@scheduleRunStatus WHERE Id = @scheduleRunId", 
-                    new {scheduleRunId, scheduleRunStatus = ScheduleRunStatus.Complete });
+                await _connection.ExecuteAsync("UPDATE ScheduleRuns SET IsComplete = 1 WHERE Id = @scheduleRunId", 
+                    new {scheduleRunId });
                 if (schedule.IsRecurring)
                 {
                     var newScheduleTime = schedule.RunTime.AddMinutes((int)schedule.Interval);
                     await _connection.ExecuteAsync(
-                        "INSERT ScheduleRuns (RunTime, Interval, IsRecurring, ScheduleType) VALUES (@runTime, @interval, @isRecurring, @scheduleType)",
-                        new {runTime = newScheduleTime, schedule.Interval, IsRecurring = true, schedule.ScheduleType});
+                        "INSERT ScheduleRuns (RunTime, Interval, IsRecurring, ScheduleType, LastRunStatus) VALUES (@runTime, @interval, @isRecurring, @scheduleType, @lastRunStatus)",
+                        new {runTime = newScheduleTime, schedule.Interval, IsRecurring = true, schedule.ScheduleType, lastRunStatus = LastRunStatus.Completed});
                 }   
             }
         }
 
-        public async Task UpdateStatus(UpdateScheduleRunStatusRequest request)
+        public async Task UpdateLastRunStatus(UpdateLastRunStatusRequest request)
         {
-            await _connection.ExecuteAsync("UPDATE ScheduleRuns SET Status=@scheduleRunStatus WHERE Id = @scheduleRunId",
-                new { scheduleRunId = request.ScheduleRunId, scheduleRunStatus = request.ScheduleRunStatus });
+            await _connection.ExecuteAsync("UPDATE ScheduleRuns SET LastRunStatus=@scheduleRunStatus WHERE Id = @scheduleRunId",
+                new { scheduleRunId = request.ScheduleRunId, scheduleRunStatus = request.LastRunStatus });
         }
 
         public async Task QueueImmediateRun(int scheduleType) 

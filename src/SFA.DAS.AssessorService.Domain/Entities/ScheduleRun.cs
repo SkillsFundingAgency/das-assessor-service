@@ -10,7 +10,7 @@ namespace SFA.DAS.AssessorService.Domain.Entities
         public long? Interval { get; set; }
         public bool IsRecurring { get; set; }
         public ScheduleType ScheduleType { get; set; }
-        public ScheduleRunStatus Status { get; set; }
+        public LastRunStatus? LastRunStatus { get; set; }
     }
 
     public enum ScheduleType
@@ -18,11 +18,11 @@ namespace SFA.DAS.AssessorService.Domain.Entities
         PrintRun = 1
     }
 
-    public enum ScheduleRunStatus
+    public enum LastRunStatus
     {
-        WaitingToStart = 0,
+        Restarted = 0,
         Started = 1,
-        Complete = 2,
-        Failed = 3
+        Completed = 2,
+        Failed = 3,
     }
 }
