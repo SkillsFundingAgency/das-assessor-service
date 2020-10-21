@@ -145,6 +145,8 @@
     <None Include="PostDeploymentScripts\con-2061-clear-recipients-from-email-templates.sql" />
     <None Include="PostDeploymentScripts\con-2061-create-email-template-recipients.sql" />
     <None Include="PostDeploymentScripts\con-2061-transfer-recipient-template-to-recipients.sql" />
+    <Build Include="Functions\Scalar-valued Functions\OppFinder_GetPostCodePrefix.sql" />
+    <Build Include="Tables\IlrsImport.sql" />
     <Build Include="Functions\Scalar-valued Functions\ApplyConst.sql" />
   </ItemGroup>
   <ItemGroup>
