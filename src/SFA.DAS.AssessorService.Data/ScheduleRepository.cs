@@ -40,7 +40,7 @@ namespace SFA.DAS.AssessorService.Data
                                     WHERE ScheduleType = @scheduleType 
                                     AND IsComplete = 0 
                                     AND RunTime <= GetUtcDate()
-                                    AND (Status <> @scheduleRunStatus or Status is null)
+                                    AND (LastRunStatus <> @scheduleRunStatus or LastRunStatus is null)
                                     ORDER BY RunTime", new {scheduleType, scheduleRunStatus = LastRunStatus.Failed});
         }
 
@@ -50,7 +50,8 @@ namespace SFA.DAS.AssessorService.Data
                                     FROM ScheduleRuns 
                                     WHERE ScheduleType = @scheduleType 
                                     AND IsComplete = 0 
-                                    ORDER BY RunTime", new {scheduleType});
+                                    AND (LastRunStatus <> @scheduleRunStatus or LastRunStatus is null)
+                                    ORDER BY RunTime", new {scheduleType, scheduleRunStatus = LastRunStatus.Failed });
         }
 
         public async Task CompleteScheduleRun(Guid scheduleRunId)
