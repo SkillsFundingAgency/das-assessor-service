@@ -28,9 +28,9 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Schedule
         {
             var request = new UpdateLastRunStatusRequest { LastRunStatus = LastRunStatus.Completed, ScheduleRunId = Guid.NewGuid() };
 
-            await _sut.UpdateLastRunStatus(request);
+            _result = await _sut.UpdateLastRunStatus(request);
 
-            var result = _result as OkObjectResult;
+            var result = _result as OkResult;
             result.Should().NotBeNull();
         }
 
