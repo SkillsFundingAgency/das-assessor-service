@@ -4,10 +4,12 @@
 	 @Take int
 AS
 BEGIN
-select 
+SELECT 
 	os.StandardCode as StandardCode,
 	sc.Title as 'StandardName',
-	JSON_VALUE(sc.StandardData, '$.Level') as [Level] FROM OrganisationStandard os 
+	JSON_VALUE(sc.StandardData, '$.Level') as [Level],
+	sc.ReferenceNumber as ReferenceNumber
+FROM OrganisationStandard os 
 	INNER join Organisations o on os.EndPointAssessorOrganisationId = o.EndPointAssessorOrganisationId and o.EndPointAssessorOrganisationId = @EPAOID
 	LEFT outer join StandardCollation sc on os.StandardCode = sc.StandardId
 	LEFT outer join Contacts c on os.ContactId = c.Id

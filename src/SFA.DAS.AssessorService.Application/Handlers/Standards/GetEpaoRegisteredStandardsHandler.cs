@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
@@ -32,7 +29,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Standards
                 {
                     Level = o.Level,
                     StandardCode = o.StandardCode,
-                    StandardName = o.StandardName
+                    StandardName = o.StandardName,
+                    ReferenceNumber = o.ReferenceNumber
                 }).ToList();
 
            return new PaginatedList<GetEpaoRegisteredStandardsResponse>(epaoRegisteredStandardsResult, result.TotalCount, request.PageIndex, request.PageSize);
