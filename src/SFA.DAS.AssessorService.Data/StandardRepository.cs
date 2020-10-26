@@ -249,7 +249,7 @@ namespace SFA.DAS.AssessorService.Data
         }
 
         public async Task<EpoRegisteredStandardsResult> GetEpaoRegisteredStandards(
-            string endPointAssessorOrganisationId, int? pageSize, int? pageIndex)
+            string endPointAssessorOrganisationId, int pageSize, int pageIndex)
         {
             var epoRegisteredStandardsResult = new EpoRegisteredStandardsResult
             {
@@ -257,7 +257,7 @@ namespace SFA.DAS.AssessorService.Data
                 TotalCount = 0
             };
             var total = await GetEpaoStandardsCount(endPointAssessorOrganisationId);
-            var skip = ((pageIndex ?? 1) - 1) * (pageSize ?? 10);
+            var skip = (pageIndex - 1) * pageSize;
             var result = await _unitOfWork.Connection.QueryAsync<EPORegisteredStandards>(
                 "EPAO_Registered_Standards", 
                 param: new

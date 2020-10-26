@@ -62,7 +62,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
 
                     if (certificate.OrganisationId != searchingOrganisation.Id)
                     {
-                        var providedStandards = await _standardRepository.GetEpaoRegisteredStandards(searchingOrganisation.EndPointAssessorOrganisationId, short.MaxValue, null);
+                        var providedStandards = await _standardRepository.GetEpaoRegisteredStandards(searchingOrganisation.EndPointAssessorOrganisationId, int.MaxValue, 1);
 
                         if (providedStandards.PageOfResults.Any(s => s.StandardCode == certificate.StandardCode))
                         {

@@ -9,7 +9,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
     {
         Task<PaginatedList<GetEpaoRegisteredStandardsResponse>> GetEpaoRegisteredStandards(string epaoId, int? pageIndex, int? pageSize);
 
-        Task<PaginatedList<EpaoPipelineStandardsResponse>> GetEpaoPipelineStandards(string epaoId, string orderBy, string orderDirection, int pageSize, int? pageIndex = null);
+        Task<PaginatedList<EpaoPipelineStandardsResponse>> GetEpaoPipelineStandards(string epaoId, string orderBy, string orderDirection, int pageSize, int? pageIndex);
 
         Task<List<EpaoPipelineStandardsExtractResponse>> GetEpaoPipelineStandardsExtract(string epaoId);
     }
