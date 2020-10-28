@@ -1,7 +1,7 @@
 ﻿CREATE TABLE [dbo].[CertificateBatchLogs]
 (
 	[Id] [uniqueidentifier] NOT NULL DEFAULT NEWID(),
-	[CertificateReference] VARCHAR(50) NOT NULL,
+	[CertificateReference] NVARCHAR(50) NOT NULL,
 	[BatchNumber] [int] NOT NULL,
 	[CertificateData] [nvarchar](max) NOT NULL,
 	[Status] [nvarchar](20) NOT NULL,
