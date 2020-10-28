@@ -10,11 +10,14 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<IEnumerable<Ilr>> SearchForLearnerByUln(long uln);
         
         Task<Ilr> Get(long uln, int standardCode);
-        
+        Task<Ilr> GetImport(long uln, int standardCode);
+
         Task StoreSearchLog(SearchLog log);
         
         Task Create(Ilr ilr);
+        Task CreateImport(Ilr ilr);
 
         Task Update(Ilr ilr);
+        Task UpdateImport(Ilr ilr);
     }
 }
