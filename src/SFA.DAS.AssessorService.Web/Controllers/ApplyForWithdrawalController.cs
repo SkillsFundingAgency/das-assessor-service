@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Web.Controllers
 {
-    [PrivilegeAuthorize(Privileges.ChangeOrganisationDetails)]
+    [PrivilegeAuthorize(Privileges.ApplyForStandard)]
     [Authorize]
     public class ApplyForWithdrawalController : AssessorController
     {
