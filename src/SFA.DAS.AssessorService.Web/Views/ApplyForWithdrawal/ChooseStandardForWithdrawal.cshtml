@@ -1,9 +1,10 @@
-﻿@model SFA.DAS.AssessorService.Web.ViewModels.ApplyForWithdrawal.ChooseStandardForWithdrawalViewModel;
+@model SFA.DAS.AssessorService.Web.ViewModels.ApplyForWithdrawal.ChooseStandardForWithdrawalViewModel;
 @{
-    ViewData["Title"] = "Apply for organisation withdrawal";
+    ViewData["Title"] = "Which standard do you want to withdraw from assessing?";
     Layout = "_DashboardLayout";
 }
-<a asp-action="Index" asp-controller="Dashboard" class="govuk-back-link">Back</a>
+
+<a asp-action="TypeOfWithdrawal" asp-controller="ApplyForWithdrawal" class="govuk-back-link">Back</a>
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
     @if (!ViewData.ModelState.IsValid)
@@ -21,14 +22,14 @@
     }
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <h1 class="govuk-heading-xl">Choose a standard for withdrawal</h1>
-        </div>
-    </div>
+            <h1 class="govuk-heading-xl">Which standard do you want to withdraw from assessing? </h1>
 
-    @if (Model.Standards.Items.Any())
-    {
-        <div class="govuk-grid-row">
-            <div class="govuk-grid-column-two-thirds">
+            <p class="govuk-inset-text">
+                You can only withdraw from one standard at a time.
+            </p>
+            
+            @if (Model.Standards.Items.Any())
+            {
                 <form asp-action="ChooseStandardForWithdrawal" asp-controller="ApplyForWithdrawal" method="post">
                     <div class="govuk-form-group" sfa-validation-for="SelectedStandardForWithdrawal" sfa-validationerror-class="govuk-form-group--error">
                         <fieldset class="govuk-fieldset">
@@ -42,16 +43,19 @@
                                 @foreach (var item in Model.Standards.Items)
                                 {
                                     <div class="govuk-radios__item">
-                                        <input class="govuk-radios__input" id="withdrawal-standard" 
-                                                name="SelectedStandardForWithdrawal"
-                                                sfa-validation-for="SelectedStandardForWithdrawal"
-                                                sfa-validationerror-class="govuk-input--error"
-                                                asp-for="SelectedStandardForWithdrawal"
-                                                type="radio" 
-                                                value="@item.StandardCode">
+                                        <input class="govuk-radios__input" id="withdrawal-standard"
+                                               name="SelectedStandardForWithdrawal"
+                                               sfa-validation-for="SelectedStandardForWithdrawal"
+                                               sfa-validationerror-class="govuk-input--error"
+                                               asp-for="SelectedStandardForWithdrawal"
+                                               type="radio"
+                                               value="@item.StandardCode">
                                         <label class="govuk-label govuk-radios__label" asp-for="SelectedStandardForWithdrawal">
-                                            @item.StandardName
+                                            @item.StandardName (Level @item.Level)
                                         </label>
+                                        <span class="govuk-hint govuk-radios__hint">
+                                            @item.ReferenceNumber
+                                        </span>
                                     </div>
                                 }
                             </div>
@@ -61,51 +65,13 @@
                         Continue
                     </button>
                 </form>
-            </div>
-        </div>
-    }
-    else
-    {
-        <div class="govuk-grid-row">
-            <div class="govuk-grid-column-two-thirds">
+            }
+            else
+            {
                 <div class="info-summary">
                     <h2 class="govuk-heading-m">You are not yet approved to assess any standards.</h2>
                 </div>
-            </div>
+            }
         </div>
-    }
-
-    @if (Model.Standards.HasPreviousPage || Model.Standards.HasNextPage)
-    {
-        <div class="govuk-grid-row">
-            <div class="govuk-grid-column-full">
-                <div class="page-navigation">
-
-                    @if (Model.Standards.HasPreviousPage)
-                    {
-                        <a asp-action="Index"
-                           asp-controller="OrganisationStandards"
-                           asp-route-pageIndex="@(Model.Standards.PageIndex - 1)"
-                           class="govuk-link previous">
-                            <i class="arrow-button icon-left-open">&#xe800;</i>
-                            <span class="description">Previous <span class="hide-mob">page</span></span>
-                            <span class="counter">Page <span class="prevPage">@(Model.Standards.PageIndex - 1)</span> of <span class="totalPage">@(Model.Standards.TotalPages)</span></span>
-                        </a>
-                    }
-
-                    @if (Model.Standards.HasNextPage)
-                    {
-                        <a asp-controller="ApplyForWithdrawal"
-                           asp-action="ChooseStandardForWithdrawal"
-                           asp-route-pageIndex="@(Model.Standards.PageIndex + 1)"
-                           class="govuk-link next">
-                            <i class="arrow-button icon-right-open">&#xe801;</i>
-                            <span class="description">Next <span class="hide-mob">page</span></span>
-                            <span class="counter">Page <span class="nextPage">@(Model.Standards.PageIndex + 1)</span> of <span class="totalPage">@(Model.Standards.TotalPages)</span></span>
-                        </a>
-                    }
-                </div>
-            </div>
-        </div>
-    }
+    </div>
 </main>

@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Domain.Consts;
@@ -97,7 +97,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [HttpGet]
         [ModelStatePersist(ModelStatePersist.RestoreEntry)]
         [TypeFilter(typeof(MenuFilter), Arguments = new object[] { Pages.Dashboard })]
-        public async Task<IActionResult> ChooseStandardForWithdrawal(int? pageIndex)
+        public async Task<IActionResult> ChooseStandardForWithdrawal()
         {
             var contact = await GetUserContact();
             var org = await _orgApiClient.GetEpaOrganisationById(contact.OrganisationId?.ToString());
@@ -112,7 +112,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             var viewModel = new ChooseStandardForWithdrawalViewModel()
             {
                 SelectedStandardForWithdrawal = ModelState.IsValid ? null : modelStateSelectedStandardForWithdrawal,
-                Standards = await _standardsApiClient.GetEpaoRegisteredStandards(org.OrganisationId, pageIndex ?? 1)
+                Standards = await _standardsApiClient.GetEpaoRegisteredStandards(org.OrganisationId, 1, int.MaxValue)
             };
 
             return View(viewModel);
@@ -125,7 +125,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         {
             if (!viewModel.SelectedStandardForWithdrawal.HasValue)
             {
-                ModelState.AddModelError(nameof(viewModel.SelectedStandardForWithdrawal), "Please select a standard for withdrawl");
+                ModelState.AddModelError(nameof(viewModel.SelectedStandardForWithdrawal), "Select the standard you want to withdraw from assessing");
             }
 
             if (ModelState.IsValid)

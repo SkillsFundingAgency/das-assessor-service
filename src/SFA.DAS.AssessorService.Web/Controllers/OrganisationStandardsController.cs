@@ -57,7 +57,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 if (organisation != null)
                     epaoRegisteredStandardsResponse =
                         await _standardsApiClient.GetEpaoRegisteredStandards(
-                            organisation.OrganisationId, pageIndex ?? 1);
+                            organisation.OrganisationId, pageIndex ?? 1, 10);
             }
             catch (EntityNotFoundException)
             {
