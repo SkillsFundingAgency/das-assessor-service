@@ -67,7 +67,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         {
             if(string.IsNullOrEmpty(viewModel.TypeOfWithdrawal))
             {
-                ModelState.AddModelError(nameof(viewModel.TypeOfWithdrawal), "Please select a type of withdrawl");
+                ModelState.AddModelError(nameof(viewModel.TypeOfWithdrawal), "Select if you’re withdrawing from a standard or the register");
             }
             
             if (ModelState.IsValid)
