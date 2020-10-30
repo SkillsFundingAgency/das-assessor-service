@@ -1,6 +1,6 @@
 @model SFA.DAS.AssessorService.Web.ViewModels.ApplyForWithdrawal.TypeOfWithdrawalViewModel;
 @{
-    ViewData["Title"] = "Apply for organisation withdrawal";
+    ViewData["Title"] = "Withdrawing from a standard or the register?";
     Layout = "_DashboardLayout";
 }
 
@@ -34,7 +34,7 @@
                         <div class="govuk-radios">
                             <div class="govuk-radios__item">
                                 <input class="govuk-radios__input"
-                                       id="withdrawal-type-standard"
+                                       id="TypeOfWithdrawal"
                                        name="TypeOfWithdrawal"
                                        type="radio"
                                        value="Standard"
@@ -47,7 +47,7 @@
                             </div>
                             <div class="govuk-radios__item">
                                 <input class="govuk-radios__input"
-                                       id="withdrawal-type-organisation"
+                                       id="TypeOfWithdrawal-2"
                                        name="TypeOfWithdrawal"
                                        type="radio"
                                        value="Organisation"
@@ -62,7 +62,7 @@
                     </fieldset>
                 </div>
                 <button class="govuk-button govuk-!-margin-top-4" data-module="govuk-button">
-                    Continue
+                    Save and continue
                 </button>
             </form>
         </div>
