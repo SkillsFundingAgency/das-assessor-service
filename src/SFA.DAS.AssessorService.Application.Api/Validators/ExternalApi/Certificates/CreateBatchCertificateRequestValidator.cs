@@ -27,6 +27,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Certifi
                 {
                     var existingCertificate = await certificateRepository.GetCertificate(m.Uln, m.StandardCode);
                     var sumbittingEpao = await organisationQueryRepository.GetByUkPrn(m.UkPrn);
+                    var learnerDetails = await ilrRepository.Get(m.Uln, m.StandardId.GetValueOrDefault());
 
                     if (existingCertificate != null && existingCertificate.Status != CertificateStatus.Deleted)
                     {
@@ -52,6 +53,23 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Certifi
                             context.AddFailure(new ValidationFailure("CertificateData", $"Certificate already exists: {existingCertificate.CertificateReference}"));
                         }
                     }
+
+                    if (learnerDetails != null)
+                    {
+                        if (learnerDetails.CompletionStatus == (int)CompletionStatus.Withdrawn)
+                        {
+                            context.AddFailure(new ValidationFailure("LearnerDetails", "Cannot find the apprentice details"));
+                        }
+                        else if (learnerDetails.CompletionStatus == (int)CompletionStatus.TemporarilyWithdrawn)
+                        {
+                            context.AddFailure(new ValidationFailure("LearnerDetails", "Cannot find the apprentice details"));
+                        }
+                    }
+                    else
+                    {
+                        context.AddFailure(new ValidationFailure("LearnerDetails", $"Learner details for ULN: {m.Uln} not found"));
+                    }
+                    
                 });
             });
         }

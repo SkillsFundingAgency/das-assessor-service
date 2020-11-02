@@ -241,13 +241,13 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
         protected void BaseArrange()
         {
             IlrRepository = new Mock<IIlrRepository>();
-            IlrRepository.Setup(r => r.Get(LearnerOne.Uln, LearnerOne.StdCode)).ReturnsAsync(LearnerOne);
-            IlrRepository.Setup(r => r.Get(LearnerTwo.Uln, LearnerTwo.StdCode)).ReturnsAsync(LearnerTwo);
-            IlrRepository.Setup(r => r.Get(LearnerThree.Uln, LearnerThree.StdCode)).ReturnsAsync(LearnerThree);
-            IlrRepository.Setup(r => r.Get(LearnerFive.Uln, LearnerFive.StdCode)).ReturnsAsync(LearnerFive);
+            IlrRepository.Setup(r => r.GetImport(LearnerOne.Uln, LearnerOne.StdCode)).ReturnsAsync(LearnerOne);
+            IlrRepository.Setup(r => r.GetImport(LearnerTwo.Uln, LearnerTwo.StdCode)).ReturnsAsync(LearnerTwo);
+            IlrRepository.Setup(r => r.GetImport(LearnerThree.Uln, LearnerThree.StdCode)).ReturnsAsync(LearnerThree);
+            IlrRepository.Setup(r => r.GetImport(LearnerFive.Uln, LearnerFive.StdCode)).ReturnsAsync(LearnerFive);
 
             IlrRepository
-                .Setup(c => c.Update(It.IsAny<Ilr>()))
+                .Setup(c => c.UpdateImport(It.IsAny<Ilr>()))
                 .Returns(Task.CompletedTask) // Handle null returning async for Moq callback
                 .Callback<Ilr>((ilr) => ModifiedIlr = ilr);
 
@@ -266,7 +266,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
             int? completionStatus, string learnRefNumber, string delLocPostCode, DateTime? learnActEndDate, int? withdrawReason,
             int? outcome, DateTime? achDate, string outGrade, Func<Times> times)
         {
-            IlrRepository.Verify(r => r.Update(It.IsAny<Ilr>()), times);
+            IlrRepository.Verify(r => r.UpdateImport(It.IsAny<Ilr>()), times);
 
             ModifiedIlr.Source.Should().Be(source);
             ModifiedIlr.UkPrn.Should().Be(ukprn.Value);
@@ -290,7 +290,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
 
         protected void VerifyIlrReplaced(ImportLearnerDetail importLearnerDetail, Func<Times> times)
         {
-            IlrRepository.Verify(r => r.Update(It.IsAny<Ilr>()), times);
+            IlrRepository.Verify(r => r.UpdateImport(It.IsAny<Ilr>()), times);
 
             ModifiedIlr.Source.Should().Be(importLearnerDetail.Source);
             ModifiedIlr.UkPrn.Should().Be(importLearnerDetail.Ukprn.Value);

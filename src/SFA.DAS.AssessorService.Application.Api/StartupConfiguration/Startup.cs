@@ -82,15 +82,24 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                     })
                     .AddJwtBearer(o =>
                     {
+                        var validAudiences = new List<string>();
+
+                        if (UseSandbox)
+                        {
+                            validAudiences.Add(Configuration.SandboxApiAuthentication.Audience);
+                            validAudiences.Add(Configuration.SandboxApiAuthentication.ClientId);
+                        }
+                        else
+                        {
+                            validAudiences.AddRange(Configuration.ApiAuthentication.Audience.Split(","));
+                            validAudiences.Add(Configuration.ApiAuthentication.ClientId);
+                        }
+                        
                         o.Authority = $"https://login.microsoftonline.com/{Configuration.ApiAuthentication.TenantId}"; 
                         o.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
                         {
                             RoleClaimType = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role",
-                            ValidAudiences = new List<string>
-                            {
-                                UseSandbox ? Configuration.SandboxApiAuthentication.Audience : Configuration.ApiAuthentication.Audience,
-                                UseSandbox ? Configuration.SandboxApiAuthentication.ClientId : Configuration.ApiAuthentication.ClientId
-                            }
+                            ValidAudiences = validAudiences
                         };
                         o.Events = new JwtBearerEvents()
                         {

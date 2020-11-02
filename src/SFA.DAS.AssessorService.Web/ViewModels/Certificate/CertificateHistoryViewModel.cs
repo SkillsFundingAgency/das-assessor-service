@@ -15,7 +15,8 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
             { 
                 CertificateStatus.Submitted, CertificateStatus.SentToPrinter, 
                 CertificateStatus.Printed, CertificateStatus.Reprint, 
-                CertificateStatus.Delivered, CertificateStatus.NotDelivered  
+                CertificateStatus.Delivered, CertificateStatus.NotDelivered,
+                CertificateStatus.ToBeApproved
             };
             
             return 
