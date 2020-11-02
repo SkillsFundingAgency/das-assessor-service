@@ -829,6 +829,10 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             {
                 pageContext = $"{application?.ApplyData?.Apply?.StandardReference } {application?.ApplyData?.Apply?.StandardName}";
             }
+            else if (sequence.SequenceNo == ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO)
+            {
+                pageContext = "Withdrawing from register";
+            }
             return pageContext;
         }
 
