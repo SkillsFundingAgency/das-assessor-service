@@ -4,7 +4,7 @@
 */
 IF EXISTS(SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'EmailTemplates' AND COLUMN_NAME IN ('Recipients', 'CreatedAt', 'DeletedAt', 'UpdatedAt', 'RecipientTemplate'))
 BEGIN
-	IF EXISTS(SELECT * FROM INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS WHERE CONSTRAINT_NAME ='FK_ChannelPlayerSkins_Channels')
+	IF EXISTS(SELECT * FROM INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS WHERE CONSTRAINT_NAME ='FK_EmailTemplates_EmailTemplatesRecipients')
 	BEGIN
 		ALTER TABLE [dbo].[EmailTemplatesRecipients] DROP CONSTRAINT [FK_EmailTemplates_EmailTemplatesRecipients]
 	END
