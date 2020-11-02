@@ -97,6 +97,12 @@ BEGIN
 	UPDATE [EmailTemplates] SET Id = @DefaultPrintAssessorCoverLetters WHERE Id = @CurrentPrintAssessorCoverLetters AND Id <> @DefaultPrintAssessorCoverLetters
 	UPDATE [EmailTemplates] SET Id = @DefaultEPAOUserApproveConfirm WHERE Id = @CurrentEPAOUserApproveConfirm AND Id <> @DefaultEPAOUserApproveConfirm
 
+	PRINT 'REMOVING INVALID [EmailTemplatesRecipients]'
+	DELETE FROM 
+		[EmailTemplatesRecipients] 
+	WHERE 
+		EmailTemplateId NOT IN (SELECT Id FROM [EMailTemplates])
+
 	PRINT 'RECREATE FOREIGN KEY CONSTRAINT'
 	ALTER TABLE [dbo].[EmailTemplatesRecipients]  WITH CHECK ADD  CONSTRAINT [FK_EmailTemplates_EmailTemplatesRecipients] FOREIGN KEY([EmailTemplateId])
 	REFERENCES [dbo].[EMailTemplates] ([Id])

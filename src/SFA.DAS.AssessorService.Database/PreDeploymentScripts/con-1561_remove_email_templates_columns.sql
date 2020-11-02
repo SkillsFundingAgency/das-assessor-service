@@ -4,7 +4,15 @@
 */
 IF EXISTS(SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'EmailTemplates' AND COLUMN_NAME IN ('Recipients', 'CreatedAt', 'DeletedAt', 'UpdatedAt', 'RecipientTemplate'))
 BEGIN
-	ALTER TABLE [dbo].[EmailTemplatesRecipients] DROP CONSTRAINT [FK_EmailTemplates_EmailTemplatesRecipients]
+	IF EXISTS(SELECT * FROM INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS WHERE CONSTRAINT_NAME ='FK_ChannelPlayerSkins_Channels')
+	BEGIN
+		ALTER TABLE [dbo].[EmailTemplatesRecipients] DROP CONSTRAINT [FK_EmailTemplates_EmailTemplatesRecipients]
+	END
+
+	IF EXISTS(SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'EmailTemplates_1561_Deployment')
+	BEGIN
+		DROP TABLE [EmailTemplates_1561_Deployment]
+	END
 	
 	-- Removing all the data from [EmailTemplate] during deployment so that columns can be dropped by DAC deploy
 	SELECT Id, TemplateName, TemplateId INTO EmailTemplates_1561_Deployment	FROM EMailTemplates
