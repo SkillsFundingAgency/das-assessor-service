@@ -33,17 +33,13 @@
                 <form asp-action="ChooseStandardForWithdrawal" asp-controller="ApplyForWithdrawal" method="post">
                     <div class="govuk-form-group" sfa-validation-for="SelectedStandardForWithdrawal" sfa-validationerror-class="govuk-form-group--error">
                         <fieldset class="govuk-fieldset">
-                            <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
-                                <h1 class="govuk-fieldset__heading">
-                                    Choose
-                                </h1>
-                            </legend>
                             <sfa-validationerror-detail sfa-validation-for="SelectedStandardForWithdrawal" sfa-validationerror-class="govuk-error-message"></sfa-validationerror-detail>
                             <div class="govuk-radios">
                                 @foreach (var item in Model.Standards.Items)
                                 {
                                     <div class="govuk-radios__item">
-                                        <input class="govuk-radios__input" id="withdrawal-standard"
+                                        <input class="govuk-radios__input" 
+                                               id="SelectedStandardForWithdrawal"
                                                name="SelectedStandardForWithdrawal"
                                                sfa-validation-for="SelectedStandardForWithdrawal"
                                                sfa-validationerror-class="govuk-input--error"
@@ -62,7 +58,7 @@
                         </fieldset>
                     </div>
                     <button class="govuk-button govuk-!-margin-top-4" data-module="govuk-button">
-                        Continue
+                        Save and continue
                     </button>
                 </form>
             }
