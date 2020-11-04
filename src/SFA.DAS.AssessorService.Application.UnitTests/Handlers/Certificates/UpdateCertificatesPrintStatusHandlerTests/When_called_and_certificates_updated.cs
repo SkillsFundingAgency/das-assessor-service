@@ -15,7 +15,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
 {
     public class When_called_and_certificates_updated : UpdateCertificatesPrintStatusHandlerTestsBase
     {
-        private ValidationResponse _response;
+        /*private ValidationResponse _response;
         private static DateTime _statusChangedAt = DateTime.UtcNow;
        
         [SetUp]
@@ -66,6 +66,6 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
             _certificateRepository.Verify(r => r.UpdatePrintStatus(
                 It.Is<Certificate>(c => c.CertificateReference == _certificateReferenceDeletedAfterPrinted), _batchNumber, CertificateStatus.Delivered, _statusChangedAt, string.Empty, false),
                 Times.Once());
-        }
+        }*/
     }
 }

@@ -13,7 +13,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
 {
     public class When_called_and_certificate_does_not_exist_in_the_batch : UpdateCertificatesPrintStatusHandlerTestsBase
     {
-        private ValidationResponse _response;
+        /*private ValidationResponse _response;
         private static DateTime _statusChangedAt = DateTime.UtcNow;
 
         [SetUp]
@@ -55,6 +55,6 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
             _certificateRepository.Verify(r => r.UpdatePrintStatus(
                 It.Is<Certificate>(c => c.CertificateReference == _certificateReference6), _batchNumber, CertificateStatus.NotDelivered, _statusChangedAt, null, true),
                 Times.Never);
-        }
+        }*/
     }
 }

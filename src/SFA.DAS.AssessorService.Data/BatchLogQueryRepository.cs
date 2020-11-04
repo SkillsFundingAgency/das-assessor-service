@@ -19,7 +19,7 @@ namespace SFA.DAS.AssessorService.Data
             SqlMapper.AddTypeHandler(typeof(BatchData), new BatchDataHandler());
         }
 
-        public async Task<BatchLog> GetForBatchNumber(int batchNumber)
+        public async Task<BatchLog> Get(int batchNumber)
         {
             var batchLog = await _unitOfWork.Connection.QueryAsync<BatchLog>(
                 "SELECT TOP 1 " +
@@ -70,6 +70,22 @@ namespace SFA.DAS.AssessorService.Data
             }
 
             return batchLog;
+        }
+
+        public async Task<int?> GetBatchNumberReadyToPrint()
+        {
+            var batchNumber = await _unitOfWork.Connection.QueryFirstOrDefaultAsync<int?>(
+                "SELECT TOP 1 " +
+                    "[BatchNumber] " +
+                "FROM " +
+                "   BatchLogs " +
+                "WHERE " +
+                "   BatchData IS NULL " +
+                "ORDER BY " +
+                "   BatchNumber",
+                transaction: _unitOfWork.Transaction);
+
+            return batchNumber;
         }
     }
 }

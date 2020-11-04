@@ -3,8 +3,8 @@ using System.Collections.Generic;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models.Certificates
 {
-    public class CertificatesToBePrintedResponse
+    public class CertificatesForBatchNumberResponse
     {
-        public List<CertificateToBePrintedSummary> Certificates { get; set; }
+        public List<CertificatePrintSummary> Certificates { get; set; }
     }
 }

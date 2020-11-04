@@ -15,7 +15,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
 {
     public class When_called_and_status_not_print_status : UpdateCertificatesPrintStatusHandlerTestsBase
     {
-        private ValidationResponse _response;
+        /*private ValidationResponse _response;
         private static List<string> _invalidPrintStatuses = new List<string>
         {
             CertificateStatus.Approved,
@@ -75,6 +75,6 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
             _certificateRepository.Verify(r => r.UpdatePrintStatus(
                 It.IsAny<Certificate>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<string>(), It.IsAny<bool>()), 
                 Times.Never());
-        }
+        }*/
     }
 }

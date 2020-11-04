@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -9,20 +10,21 @@ using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
+using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Extensions;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
 {
-    public class UpdateCertificatesPrintStatusHandler : IRequestHandler<UpdateCertificatesPrintStatusRequest, ValidationResponse>
+    public class CertificatesPrintStatusUpdateHandler : IRequestHandler<CertificatesPrintStatusUpdateRequest, ValidationResponse>
     {
         private readonly ICertificateRepository _certificateRepository;
         private readonly ICertificateBatchLogRepository _certificateBatchLogRepository;
         private readonly IMediator _mediator;
-        private readonly ILogger<UpdateCertificatesPrintStatusHandler> _logger;
+        private readonly ILogger<CertificatesPrintStatusUpdateHandler> _logger;
 
-        public UpdateCertificatesPrintStatusHandler(ICertificateRepository certificateRepository, 
+        public CertificatesPrintStatusUpdateHandler(ICertificateRepository certificateRepository, 
             ICertificateBatchLogRepository certificateBatchLogRepository,
-            IMediator mediator, ILogger<UpdateCertificatesPrintStatusHandler> logger)
+            IMediator mediator, ILogger<CertificatesPrintStatusUpdateHandler> logger)
         {
             _certificateRepository = certificateRepository;
             _certificateBatchLogRepository = certificateBatchLogRepository;
@@ -30,11 +32,11 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
             _logger = logger;
         }
 
-        public async Task<ValidationResponse> Handle(UpdateCertificatesPrintStatusRequest request, CancellationToken cancellationToken)
+        public async Task<ValidationResponse> Handle(CertificatesPrintStatusUpdateRequest request, CancellationToken cancellationToken)
         {
             var validationResult = new ValidationResponse();
             
-            var validatedCertificatePrintStatuses = await Validate(request.CertificatePrintStatuses, validationResult);
+            var validatedCertificatePrintStatuses = await Validate(request.CertificatePrintStatusUpdates, validationResult);
             foreach(var validatedCertificatePrintStatus in validatedCertificatePrintStatuses)
             {
                 var certificateBatchLog = await _certificateBatchLogRepository.GetCertificateBatchLog(validatedCertificatePrintStatus.CertificateReference, validatedCertificatePrintStatus.BatchNumber);
@@ -45,10 +47,10 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
                 }
                 else
                 {
-                    if (validatedCertificatePrintStatus.StatusChangedAt < certificateBatchLog.StatusAt)
+                    if (validatedCertificatePrintStatus.StatusAt < certificateBatchLog.StatusAt)
                     {
                         validationResult.Errors.Add(
-                           new ValidationErrorDetail("StatusChangedDateTime", $"Certificate delivery(StatusChangedAt) datetime {validatedCertificatePrintStatus.StatusChangedAt} earlier than printed(latest date) datetime {certificateBatchLog.LatestChange()}.", ValidationStatusCode.BadRequest));
+                           new ValidationErrorDetail("StatusChangedDateTime", $"Certificate delivery(StatusChangedAt) datetime {validatedCertificatePrintStatus.StatusAt} earlier than printed(latest date) datetime {certificateBatchLog.LatestChange()}.", ValidationStatusCode.BadRequest));
                     }
                 }
 
@@ -62,17 +64,17 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
                 {
                     // when the certificate batch number is not set then a reprint has been requested but not sent to printer
                     // any print status update would be for a prior batch number and would not update the certificate status
-                    var changesCertificateStatus = validatedCertificatePrintStatus.BatchNumber >= (certificate.BatchNumber ?? int.MaxValue) &&
-                        validatedCertificatePrintStatus.StatusChangedAt > certificate.LatestChange().Value &&
+                    var isLatestChange = validatedCertificatePrintStatus.BatchNumber >= (certificate.BatchNumber ?? int.MaxValue) &&
+                        validatedCertificatePrintStatus.StatusAt > certificate.LatestChange().Value &&
                         certificate.Status != CertificateStatus.Deleted;
 
                     await _certificateRepository.UpdatePrintStatus(
                         certificate,
                         validatedCertificatePrintStatus.BatchNumber, 
                         validatedCertificatePrintStatus.Status, 
-                        validatedCertificatePrintStatus.StatusChangedAt,
+                        validatedCertificatePrintStatus.StatusAt,
                         validatedCertificatePrintStatus.ReasonForChange,
-                        changesCertificateStatus);
+                        isLatestChange);
 
                     _logger.LogInformation($"Certificate reference {validatedCertificatePrintStatus.CertificateReference} set as {validatedCertificatePrintStatus.Status} in batch {validatedCertificatePrintStatus.BatchNumber}");
                 }
@@ -81,7 +83,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
             return validationResult;
         }
 
-        private async Task<List<CertificatePrintStatus>> Validate(List<CertificatePrintStatus> certificatePrintStatuses, ValidationResponse validationResult)
+        private async Task<List<CertificatePrintStatusUpdate>> Validate(List<CertificatePrintStatusUpdate> certificatePrintStatuses, ValidationResponse validationResult)
         {
             var invalidPrintStatuses = certificatePrintStatuses
                     .GroupBy(certificatePrintStatus => certificatePrintStatus.Status)
@@ -117,7 +119,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
 
             foreach (var batchNumber in batchNumbers)
             {
-                if (await _mediator.Send(new GetForBatchNumberBatchLogRequest { BatchNumber = batchNumber }) == null)
+                if (await _mediator.Send(new GetBatchLogRequest { BatchNumber = batchNumber }) == null)
                 {
                     invalidBatchNumbers.Add(batchNumber);
                 }

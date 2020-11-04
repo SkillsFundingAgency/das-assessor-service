@@ -2,7 +2,7 @@
 
 namespace SFA.DAS.AssessorService.Domain.DTOs
 {
-    public class CertificateToBePrintedSummary
+    public class CertificatePrintSummary
     {
         public long Uln { get; set; }
         public int StandardCode { get; set; }

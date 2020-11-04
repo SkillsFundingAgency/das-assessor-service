@@ -28,7 +28,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Certific
                 Certificates = Builder<CertificateToBePrintedSummary>.CreateListOfSize(10).Build().ToList()
             };
 
-            mediator.Setup(q => q.Send(Moq.It.IsAny<GetCertificatesToBePrintedRequest>(), new CancellationToken()))
+            mediator.Setup(q => q.Send(Moq.It.IsAny<GetBatchCertificatesReadyToPrintRequest>(), new CancellationToken()))
                 .Returns(Task.FromResult((certificateResponses)));
 
             var certificateQueryControler = new CertificateQueryController(mediator.Object);

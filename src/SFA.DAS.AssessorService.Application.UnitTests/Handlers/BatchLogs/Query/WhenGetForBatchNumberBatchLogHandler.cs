@@ -25,11 +25,11 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.BatchLogs.Query
             MappingBootstrapper.Initialize();
 
             _batchLogQueryRepository = new Mock<IBatchLogQueryRepository>();
-            _batchLogQueryRepository.Setup(r => r.GetForBatchNumber(It.IsAny<int>())).Returns(Task.FromResult(_batchLog));
+            _batchLogQueryRepository.Setup(r => r.Get(It.IsAny<int>())).Returns(Task.FromResult(_batchLog));
 
-            var sut = new GetForBatchNumberBatchLogHandler(_batchLogQueryRepository.Object);
+            var sut = new GetBatchLogHandler(_batchLogQueryRepository.Object);
 
-            _response = await sut.Handle(new GetForBatchNumberBatchLogRequest { BatchNumber = _batchNumber }, new CancellationToken());
+            _response = await sut.Handle(new GetBatchLogRequest { BatchNumber = _batchNumber }, new CancellationToken());
         }
 
         [Test]

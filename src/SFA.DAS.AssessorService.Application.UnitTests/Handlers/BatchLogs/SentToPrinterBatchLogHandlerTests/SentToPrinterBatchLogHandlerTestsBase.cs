@@ -16,7 +16,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.BatchLogs.SentT
 {
     public class SentToPrinterBatchLogHandlerTestsBase
     {
-        protected SentToPrinterBatchLogHandler _sut;
+        /*protected SentToPrinterBatchLogHandler _sut;
 
         protected Mock<ICertificateRepository> _certificateRepository;
         protected Mock<IBatchLogQueryRepository> _batchLogQueryRepository;
@@ -61,6 +61,6 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.BatchLogs.SentT
             _logger = new Mock<ILogger<SentToPrinterBatchLogHandler>>();
 
             _sut = new SentToPrinterBatchLogHandler(_certificateRepository.Object, _batchLogQueryRepository.Object, _logger.Object);
-        }
+        }*/
     }
 }

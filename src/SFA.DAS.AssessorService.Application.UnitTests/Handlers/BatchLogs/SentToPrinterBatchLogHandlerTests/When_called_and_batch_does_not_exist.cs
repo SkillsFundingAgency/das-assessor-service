@@ -17,7 +17,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.BatchLogs.SentT
 {
     public class When_called_and_batch_does_not_exist
     {
-        private Mock<ICertificateRepository> _certificateRepository;
+        /*private Mock<ICertificateRepository> _certificateRepository;
         private Mock<IBatchLogQueryRepository> _batchLogQueryRepository;
         private Mock<ILogger<SentToPrinterBatchLogHandler>> _logger;
 
@@ -49,6 +49,6 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.BatchLogs.SentT
             _response.IsValid.Should().Be(false);
             _response.Errors.Count.Should().Be(1);
             _response.Errors[0].Field.Should().Be("BatchNumber");
-        }
+        }*/
     }
 }

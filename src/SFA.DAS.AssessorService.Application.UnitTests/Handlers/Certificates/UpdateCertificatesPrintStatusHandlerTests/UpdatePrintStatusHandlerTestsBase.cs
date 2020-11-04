@@ -15,7 +15,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
 {
     public class UpdateCertificatesPrintStatusHandlerTestsBase
     {
-        protected UpdateCertificatesPrintStatusHandler _sut;
+        /*protected UpdateCertificatesPrintStatusHandler _sut;
 
         protected Mock<ICertificateRepository> _certificateRepository;
         protected Mock<ICertificateBatchLogRepository> _certificateBatchLogRepository;
@@ -174,6 +174,6 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
             _logger = new Mock<ILogger<UpdateCertificatesPrintStatusHandler>>();
 
             _sut = new UpdateCertificatesPrintStatusHandler(_certificateRepository.Object, _certificateBatchLogRepository.Object, _mediator.Object, _logger.Object);
-        }
+        }*/
     }
 }

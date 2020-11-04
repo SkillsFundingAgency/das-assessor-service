@@ -12,7 +12,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.BatchLogs.SentT
 {
     public class When_called_and_certificate_does_not_exist : SentToPrinterBatchLogHandlerTestsBase
     {
-        private static List<string> _certificateReferences = new List<string>
+        /*private static List<string> _certificateReferences = new List<string>
         {
             _certificateReference1,
             _certificateReference2,
@@ -47,6 +47,6 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.BatchLogs.SentT
             _certificateRepository.Verify(r => r.UpdateSentToPrinter(
                 It.Is<Certificate>(c => c.CertificateReference == _certificateReference2),
                 It.IsAny<int>(), It.IsAny<DateTime>()));
-        }
+        }*/
     }
 }
