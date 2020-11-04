@@ -7,7 +7,6 @@ using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -15,7 +14,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
 {
     public class When_called_and_status_not_print_status : UpdateCertificatesPrintStatusHandlerTestsBase
     {
-        /*private ValidationResponse _response;
+        private ValidationResponse _response;
         private static List<string> _invalidPrintStatuses = new List<string>
         {
             CertificateStatus.Approved,
@@ -26,7 +25,6 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
             CertificateStatus.Rejected,
             CertificateStatus.Reprint,
             CertificateStatus.SentForApproval,
-            CertificateStatus.SentToPrinter,
             CertificateStatus.ToBeApproved
         };
 
@@ -35,24 +33,24 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
         {
             base.BaseArrange();
 
-            var certificatePrintStatuses = new List<CertificatePrintStatus>();
+            var certificatePrintStatusUpdates = new List<CertificatePrintStatusUpdate>();
             _invalidPrintStatuses.ForEach(r =>
             {
-                certificatePrintStatuses.Add(
-                    new CertificatePrintStatus
+                certificatePrintStatusUpdates.Add(
+                    new CertificatePrintStatusUpdate
                     {
                         BatchNumber = _batchNumber,
                         CertificateReference = _certificateReference1,
                         Status = r,
-                        StatusChangedAt = DateTime.UtcNow
+                        StatusAt = DateTime.UtcNow
                     }
                 );
             });
 
             _response = await _sut.Handle(
-                new UpdateCertificatesPrintStatusRequest
+                new CertificatesPrintStatusUpdateRequest
                 {
-                    CertificatePrintStatuses = certificatePrintStatuses
+                    CertificatePrintStatusUpdates = certificatePrintStatusUpdates
                 }, new CancellationToken());
         }
 
@@ -75,6 +73,6 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
             _certificateRepository.Verify(r => r.UpdatePrintStatus(
                 It.IsAny<Certificate>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<string>(), It.IsAny<bool>()), 
                 Times.Never());
-        }*/
+        }
     }
 }

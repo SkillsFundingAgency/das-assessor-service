@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Api.Types.Models.BatchLogs;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.Application.Api.Controllers;
@@ -16,40 +17,40 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Certificates
 {
-    public class WhenUpdatePrintStatus
+    public class When_UpdatePrintStatus_Called
     {
         private CertificateController _sut;
         private Mock<IMediator> _mediator;
         private IActionResult _result;
 
-        private List<CertificatePrintStatus> _certificatePrintStatuses = new List<CertificatePrintStatus>
+        private List<CertificatePrintStatusUpdate> _certificatePrintStatusUpdates = new List<CertificatePrintStatusUpdate>
         {
-            new CertificatePrintStatus
+            new CertificatePrintStatusUpdate
             {
                 BatchNumber = 1,
                 CertificateReference = "00000001",
                 Status = CertificateStatus.Delivered,
-                StatusChangedAt = DateTime.UtcNow
+                StatusAt = DateTime.UtcNow
             },
-            new CertificatePrintStatus
+            new CertificatePrintStatusUpdate
             {
                 BatchNumber = 1,
                 CertificateReference = "00000002",
                 Status = CertificateStatus.NotDelivered,
-                StatusChangedAt = DateTime.UtcNow
+                StatusAt = DateTime.UtcNow
             }
         };
         
         [SetUp]
         public async Task Arrange()
         {
-            _mediator = new Mock<IMediator>();            
+            _mediator = new Mock<IMediator>();
             
-            _mediator.Setup(q => q.Send(It.IsAny<SentToPrinterBatchLogRequest>(), new CancellationToken()))
+            _mediator.Setup(q => q.Send(It.IsAny<CertificatesPrintStatusUpdateRequest>(), new CancellationToken()))
                 .Returns(Task.FromResult(new ValidationResponse()));
             
             _sut = new CertificateController(_mediator.Object);
-            _result = await _sut.UpdatePrintStatus(new UpdateCertificatesPrintStatusRequest { CertificatePrintStatuses = _certificatePrintStatuses });
+            _result = await _sut.UpdatePrintStatus(new CertificatesPrintStatusUpdateRequest { CertificatePrintStatusUpdates = _certificatePrintStatusUpdates });
         }
 
         [Test]
@@ -63,7 +64,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Certific
         public void ThenShouldCallUpdateCertificatesPrintStatusRequest()
         {
             _mediator.Verify(x => x.Send(
-                It.Is<UpdateCertificatesPrintStatusRequest>(s => s.CertificatePrintStatuses.SequenceEqual(_certificatePrintStatuses)), 
+                It.Is<CertificatesPrintStatusUpdateRequest>(s => s.CertificatePrintStatusUpdates.SequenceEqual(_certificatePrintStatusUpdates)), 
                 It.IsAny<CancellationToken>()), 
                 Times.Once());
         }

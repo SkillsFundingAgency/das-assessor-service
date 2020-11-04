@@ -14,31 +14,31 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
 {
     public class When_called_and_deliverydate_earlier_than_printeddate : UpdateCertificatesPrintStatusHandlerTestsBase
     {
-        /*private ValidationResponse _response;
+        private ValidationResponse _response;
         private static DateTime _statusChangedAt = DateTime.UtcNow;
 
         [SetUp]
         public async Task Arrange()
         {
-            //Arrange
+            // Arrange
             base.BaseArrange();
 
-            var certificatePrintStatuses = new List<CertificatePrintStatus>
+            var certificatePrintStatusUpdates = new List<CertificatePrintStatusUpdate>
             {                
-                new CertificatePrintStatus
+                new CertificatePrintStatusUpdate
                 {
                     BatchNumber = _batchNumber,
                     CertificateReference = _certificateReference5,
                     Status = CertificateStatus.Delivered,
-                    StatusChangedAt = _statusChangedAt
+                    StatusAt = _statusChangedAt
                 }
             };
 
-            //Act
+            // Act
             _response = await _sut.Handle(
-                new UpdateCertificatesPrintStatusRequest
+                new CertificatesPrintStatusUpdateRequest
                 {
-                    CertificatePrintStatuses = certificatePrintStatuses
+                    CertificatePrintStatusUpdates = certificatePrintStatusUpdates
                 }, new CancellationToken());
         }
 
@@ -46,7 +46,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
         [Test]
         public void Then_validation_response_is_valid_false()
         {
-            //Assert
+            // Assert
             _response.IsValid.Should().Be(false);
             _response.Errors.Count.Should().Be(1);
         }
@@ -54,10 +54,10 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
         [Test]
         public void Then_repository_update_print_status_is_called()
         {          
-            //Assert
+            // Assert
             _certificateRepository.Verify(r => r.UpdatePrintStatus(
                 It.Is<Certificate>(c => c.CertificateReference == _certificateReference5), _batchNumber, CertificateStatus.Delivered, _statusChangedAt, null, false),
                 Times.Once);
-        }*/
+        }
     }
 }

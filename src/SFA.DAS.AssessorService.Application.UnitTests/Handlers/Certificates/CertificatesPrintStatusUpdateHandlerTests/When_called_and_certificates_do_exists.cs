@@ -7,7 +7,6 @@ using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -15,7 +14,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
 {
     public class When_called_and_certificates_do_exists : UpdateCertificatesPrintStatusHandlerTestsBase
     {
-        /*private ValidationResponse _response;
+        private ValidationResponse _response;
         private static DateTime _statusChangedAt = DateTime.UtcNow;
        
         [SetUp]
@@ -23,37 +22,37 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
         {
             base.BaseArrange();
 
-            var certificatePrintStatuses = new List<CertificatePrintStatus>
+            var certificatePrintStatusUpdates = new List<CertificatePrintStatusUpdate>
             {
-                new CertificatePrintStatus
+                new CertificatePrintStatusUpdate
                 {
                     BatchNumber = _batchNumber,
                     CertificateReference = _certificateReference1,
                     Status = CertificateStatus.Printed,
-                    StatusChangedAt = _statusChangedAt
+                    StatusAt = _statusChangedAt
                 },
-                new CertificatePrintStatus
+                new CertificatePrintStatusUpdate
                 {
                     BatchNumber = _batchNumber,
                     CertificateReference = _certificateReference2,
                     Status = CertificateStatus.Delivered,
                     ReasonForChange = string.Empty,
-                    StatusChangedAt = _statusChangedAt
+                    StatusAt = _statusChangedAt
                 },
-                new CertificatePrintStatus
+                new CertificatePrintStatusUpdate
                 {
                     BatchNumber = _batchNumber,
                     CertificateReference = _certificateReference3,
                     Status = CertificateStatus.NotDelivered,
                     ReasonForChange = _certificateNotDeliveredReason1,
-                    StatusChangedAt = _statusChangedAt
+                    StatusAt = _statusChangedAt
                 }
             };
 
             _response = await _sut.Handle(
-                new UpdateCertificatesPrintStatusRequest
+                new CertificatesPrintStatusUpdateRequest
                 {
-                    CertificatePrintStatuses = certificatePrintStatuses
+                    CertificatePrintStatusUpdates = certificatePrintStatusUpdates
                 }, new CancellationToken());
         }
 
@@ -78,6 +77,6 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
             _certificateRepository.Verify(r => r.UpdatePrintStatus(
                 It.Is<Certificate>(c => c.CertificateReference == _certificateReference3), _batchNumber, CertificateStatus.NotDelivered, _statusChangedAt, _certificateNotDeliveredReason1, true),
                 Times.Once());
-        }*/
+        }
     }
 }

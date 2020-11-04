@@ -13,9 +13,10 @@ using SFA.DAS.AssessorService.Domain.DTOs;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Certificates.Query
 {
-    public class WhenGetCertificatesToBePrinted
+    public class When_GetCertificatesForBatchNumber_Called
     {
         private IActionResult _result;
+        private int _batchNumber = 222;
 
         [SetUp]
         public void Arrange()
@@ -23,17 +24,17 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Certific
             var mediator = new Mock<IMediator>();
 
             MappingBootstrapper.Initialize();
-            var certificateResponses = new CertificatesToBePrintedResponse()
+            var certificateResponses = new CertificatesForBatchNumberResponse()
             {
-                Certificates = Builder<CertificateToBePrintedSummary>.CreateListOfSize(10).Build().ToList()
+                Certificates = Builder<CertificatePrintSummary>.CreateListOfSize(10).Build().ToList()
             };
 
-            mediator.Setup(q => q.Send(Moq.It.IsAny<GetBatchCertificatesReadyToPrintRequest>(), new CancellationToken()))
+            mediator.Setup(q => q.Send(Moq.It.IsAny<GetCertificatesForBatchNumberRequest>(), new CancellationToken()))
                 .Returns(Task.FromResult((certificateResponses)));
 
             var certificateQueryControler = new CertificateQueryController(mediator.Object);
 
-            _result = certificateQueryControler.GetCertificatesToBePrinted().Result;
+            _result = certificateQueryControler.GetCertificatesForBatchNumber(_batchNumber).Result;
         }
 
         [Test]

@@ -7,7 +7,6 @@ using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using System;
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -15,12 +14,12 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
 {
     public class UpdateCertificatesPrintStatusHandlerTestsBase
     {
-        /*protected UpdateCertificatesPrintStatusHandler _sut;
+        protected CertificatesPrintStatusUpdateHandler _sut;
 
         protected Mock<ICertificateRepository> _certificateRepository;
         protected Mock<ICertificateBatchLogRepository> _certificateBatchLogRepository;
         protected Mock<IMediator> _mediator;
-        protected Mock<ILogger<UpdateCertificatesPrintStatusHandler>> _logger;
+        protected Mock<ILogger<CertificatesPrintStatusUpdateHandler>> _logger;
 
         protected static int _batchNumber = 222;
         protected static DateTime _printedAt = DateTime.UtcNow;
@@ -155,25 +154,25 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
                   {
                       Id = Guid.NewGuid(),
                       CertificateReference = certificateReference,
-                      Status = CertificateStatus.Delivered,                      
+                      Status = CertificateStatus.Delivered,
                       StatusAt = DateTime.UtcNow.AddDays(1)
                   }));
 
             _certificateRepository.Setup(r => r.GetCertificate(It.IsIn(_certificateReference4)))
                 .Returns((string certificateReference) => Task.FromResult<Certificate>(null));           
 
-            _certificateRepository.Setup(r => r.UpdateSentToPrinter(It.IsAny<Certificate>(), It.IsAny<int>(), It.IsAny<DateTime>()))
+            _certificateRepository.Setup(r => r.UpdatePrintStatus(It.IsAny<Certificate>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<string>(), It.IsAny<bool>()))
                 .Returns(Task.CompletedTask);
 
-            _mediator.Setup(r => r.Send(It.Is<GetForBatchNumberBatchLogRequest>(p => p.BatchNumber == _batchNumber), It.IsAny<CancellationToken>()))
-                .Returns((GetForBatchNumberBatchLogRequest request, CancellationToken token) => Task.FromResult(new BatchLogResponse { BatchNumber = request.BatchNumber }));
+            _mediator.Setup(r => r.Send(It.Is<GetBatchLogRequest>(p => p.BatchNumber == _batchNumber), It.IsAny<CancellationToken>()))
+                .Returns((GetBatchLogRequest request, CancellationToken token) => Task.FromResult(new BatchLogResponse { BatchNumber = request.BatchNumber }));
 
-            _mediator.Setup(r => r.Send(It.Is<GetForBatchNumberBatchLogRequest>(p => p.BatchNumber != _batchNumber), It.IsAny<CancellationToken>()))
-                .Returns((GetForBatchNumberBatchLogRequest request, CancellationToken token) => Task.FromResult<BatchLogResponse>(null));
+            _mediator.Setup(r => r.Send(It.Is<GetBatchLogRequest>(p => p.BatchNumber != _batchNumber), It.IsAny<CancellationToken>()))
+                .Returns((GetBatchLogRequest request, CancellationToken token) => Task.FromResult<BatchLogResponse>(null));
 
-            _logger = new Mock<ILogger<UpdateCertificatesPrintStatusHandler>>();
+            _logger = new Mock<ILogger<CertificatesPrintStatusUpdateHandler>>();
 
-            _sut = new UpdateCertificatesPrintStatusHandler(_certificateRepository.Object, _certificateBatchLogRepository.Object, _mediator.Object, _logger.Object);
-        }*/
+            _sut = new CertificatesPrintStatusUpdateHandler(_certificateRepository.Object, _certificateBatchLogRepository.Object, _mediator.Object, _logger.Object);
+        }
     }
 }

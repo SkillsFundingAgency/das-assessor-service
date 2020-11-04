@@ -13,23 +13,23 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
 {
     public class When_called_and_batch_does_not_exist : UpdateCertificatesPrintStatusHandlerTestsBase
     {
-        /*private ValidationResponse _response;
+        private ValidationResponse _response;
 
         [SetUp]
         public async Task Arrange()
         {
             base.BaseArrange();
             
-            _response = await _sut.Handle(new UpdateCertificatesPrintStatusRequest
+            _response = await _sut.Handle(new CertificatesPrintStatusUpdateRequest
             {
-                CertificatePrintStatuses = new List<CertificatePrintStatus>
+                CertificatePrintStatusUpdates = new List<CertificatePrintStatusUpdate>
                 {
-                    new CertificatePrintStatus
+                    new CertificatePrintStatusUpdate
                     {
                         BatchNumber = _batchNumber + 999,
                         CertificateReference = _certificateReference1,
                         Status = CertificateStatus.Delivered,
-                        StatusChangedAt = DateTime.UtcNow
+                        StatusAt = DateTime.UtcNow
                     }
                 }
             }, new CancellationToken());
@@ -42,6 +42,6 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
             _response.Errors.Count.Should().Be(1);
             _response.Errors[0].Field.Should().Be("CertificatePrintStatuses");
             _response.Errors[0].ErrorMessage.Contains("BatchNumber");
-        }*/
+        }
     }
 }

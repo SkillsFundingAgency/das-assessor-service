@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.BatchLogs.Query
 {
-    public class WhenGetForBatchNumberBatchLogHandler
+    public class WhenGetBatchLogHandler
     {
         private Mock<IBatchLogQueryRepository> _batchLogQueryRepository;
 

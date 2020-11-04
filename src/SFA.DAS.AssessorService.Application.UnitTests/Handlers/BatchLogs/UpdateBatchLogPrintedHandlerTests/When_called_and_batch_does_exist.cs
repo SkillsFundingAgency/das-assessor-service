@@ -48,9 +48,9 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.BatchLogs.Updat
         {
             // Assert
             _batchLogRepository.Verify(r => r.UpdateBatchLogPrinted(
-                _invalidBatchNumber,
+                _validBatchNumber,
                 It.Is<BatchData>(p =>
-                    p.BatchNumber == _invalidBatchNumber &&
+                    p.BatchNumber == _validBatchNumber &&
                     p.BatchDate == _utcNow &&
                     p.TotalCertificateCount == 1 &&
                     p.PostalContactCount == 1 &&
