@@ -39,7 +39,7 @@ namespace SFA.DAS.AssessorService.Data
                     "StatusAt, " +
                     "CreatedAt, " +
                     "CreatedBy" +
-                ")" +
+                ") " +
                 "SELECT " +
                     "c.CertificateReference, " +
                     "@batchNumber, " +
@@ -51,7 +51,7 @@ namespace SFA.DAS.AssessorService.Data
                 "FROM " +
                     "[Certificates] c " +
                 "WHERE " +
-                    "c.Id IN (@certificateIds)",
+                    "c.Id IN @certificateIds",
                 param: new { certificateIds, batchNumber, createdBy = SystemUsers.PrintFunction },
                 transaction: _unitOfWork.Transaction);
         }

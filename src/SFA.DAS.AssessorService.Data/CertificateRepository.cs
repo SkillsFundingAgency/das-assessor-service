@@ -277,7 +277,7 @@ namespace SFA.DAS.AssessorService.Data
                     "[Certificates] c " +
                 "WHERE " +
                     "JSON_VALUE(c.CertificateData, '$.OverallGrade') <> 'Fail' " +
-                    "AND c.Status in ('Submitted', 'Reprint') " +
+                    "AND c.Status IN ('Submitted', 'Reprint') " +
                     "AND c.BatchNumber IS NULL";
 
             var count = await _unitOfWork.Connection.QueryFirstAsync<int>(
@@ -296,7 +296,7 @@ namespace SFA.DAS.AssessorService.Data
                     "[Certificates] c " + 
                 "WHERE " +
                     "JSON_VALUE(CertificateData, '$.OverallGrade') <> 'Fail' " +
-                    "AND c.Status in ('Submitted', 'Reprint') " +
+                    "AND c.Status IN ('Submitted', 'Reprint') " +
                     "AND BatchNumber IS NULL",
                 param: new { numberOfCertifictes },
                 transaction: _unitOfWork.Transaction);
@@ -312,7 +312,7 @@ namespace SFA.DAS.AssessorService.Data
                     "UpdatedBy = @updatedBy, " +
                     "BatchNumber = @batchNumber " +
                 "WHERE " +
-                    "Id IN (@certificateIds)",
+                    "Id IN @certificateIds",
                 param: new { certificateIds, batchNumber, updatedBy = SystemUsers.PrintFunction },
                 transaction: _unitOfWork.Transaction);
 
@@ -723,7 +723,7 @@ namespace SFA.DAS.AssessorService.Data
                    "FROM " +
                        "[Certificates] c " +
                    "WHERE " +
-                       "c.Id IN (@certificateIds)",
+                       "c.Id IN @certificateIds",
                    param: new { certificateIds, action, status, eventTime, certificateData, username, batchNumber, reasonForChange },
                    transaction: _unitOfWork.Transaction);
         }
