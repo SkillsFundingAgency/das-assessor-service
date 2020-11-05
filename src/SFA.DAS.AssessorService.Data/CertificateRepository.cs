@@ -536,6 +536,11 @@ namespace SFA.DAS.AssessorService.Data
                     certificate.BatchNumber = batchNumber;
                     certificate.Status = printStatus;
                     certificate.UpdatedBy = SystemUsers.PrintFunction;
+
+                    if(printStatus == CertificateStatus.SentToPrinter)
+                    {
+                        certificate.ToBePrinted = statusAt;
+                    }
                 }
 
                 if (statusAt >= certificateBatchLog.StatusAt)
