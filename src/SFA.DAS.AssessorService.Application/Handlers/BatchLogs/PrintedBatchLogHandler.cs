@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
@@ -32,9 +31,18 @@ namespace SFA.DAS.AssessorService.Application.Handlers.BatchLogs
             var validationResult = new ValidationResponse();
             var sentToPrinterDate = DateTime.UtcNow;
 
-            if(await _batchLogQueryRepository.GetForBatchNumber(request.BatchNumber) == null)
+            var batchLog = await _batchLogQueryRepository.GetForBatchNumber(request.BatchNumber);
+            
+            if (batchLog == null)
             {
                 validationResult.Errors.Add(new ValidationErrorDetail(nameof(request.BatchNumber), $"The {nameof(request.BatchNumber)} {request.BatchNumber} was not found.", ValidationStatusCode.NotFound));
+            }
+            else
+            {                
+                if (request.PrintedAt < batchLog.BatchCreated)
+                {
+                    validationResult.Errors.Add(new ValidationErrorDetail(nameof(request.PrintedAt), $"The ProcessedDate {request.PrintedAt} is not later than BatchDate {batchLog.BatchCreated}.", ValidationStatusCode.BadRequest));
+                }
             }
 
             if (validationResult.IsValid)

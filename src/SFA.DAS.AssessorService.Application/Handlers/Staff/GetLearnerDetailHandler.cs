@@ -109,7 +109,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
                 ContactAddLine3 = certificateData.ContactAddLine3,
                 ContactAddLine4 = certificateData.ContactAddLine4,
                 ContactPostCode = certificateData.ContactPostCode,
-                LastUpdatedAt = certificate.LatestChange()
+                LastUpdatedAt = certificate?.LatestChange()
             };
 
             return learnerDetail;
@@ -119,16 +119,16 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
         {
             switch (completionStatus)
             {
-                case 1:
+                case (int)CompletionStatus.Continuing:
                     return $"{completionStatus} - Continuing";
 
-                case 2:
+                case (int)CompletionStatus.Complete:
                     return $"{completionStatus} - Completed";
 
-                case 3:
+                case (int)CompletionStatus.Withdrawn:
                     return $"{completionStatus} - Withdrawn";
 
-                case 6:
+                case (int)CompletionStatus.TemporarilyWithdrawn:
                     return $"{completionStatus} - Temporarily withdrawn";
 
                 default:
