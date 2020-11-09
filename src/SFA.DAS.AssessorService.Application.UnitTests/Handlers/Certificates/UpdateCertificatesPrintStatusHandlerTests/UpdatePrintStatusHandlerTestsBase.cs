@@ -22,22 +22,33 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
         protected Mock<IMediator> _mediator;
         protected Mock<ILogger<UpdateCertificatesPrintStatusHandler>> _logger;
 
-        protected static int _batchNumber = 222;
-        protected static DateTime _printedAt = DateTime.UtcNow;
+        protected static int _batch111 = 111;
+        protected static int _batch222 = 222;
+
+        protected static DateTime _batch111SentToPrinterAt = DateTime.UtcNow.AddDays(-3);
+
+        protected static DateTime _batch222SentToPrinterAt = DateTime.UtcNow.AddDays(-3);
+        protected static DateTime _batch222PrintedAt = DateTime.UtcNow.AddDays(-2);
+        protected static DateTime _batch222PrintNotifiedAt = DateTime.UtcNow.AddDays(-2).AddHours(12);
+
+        protected static DateTime _deliveredAt = DateTime.UtcNow.AddDays(-2).AddHours(3); // delivered after printing but before print notified
+        protected static DateTime _notDeliveredAt = DateTime.UtcNow.AddDays(-2).AddHours(9); // not delivered after printing after print notified
+        protected static DateTime _deliveryNotifiedAt = DateTime.UtcNow.AddDays(-1).AddHours(12);
 
         protected static string _certificateReference1 = "00000001";
         protected static string _certificateReference2 = "00000002";
         protected static string _certificateReference3 = "00000003";
         protected static string _certificateReference4 = "00000004";
         protected static string _certificateReference5 = "00000005";
-        protected static string _certificateReference6 = "00000006";
-        protected static string _certificateReferenceUpdateAfterPrinted = "00000007";
-        protected static string _certificateReferenceDeletedAfterPrinted = "00000008";        
+        
+        protected static string _certificateReferenceReprintedAfterPrinted = "00000006";
+        protected static string _certificateReferenceDeletedAfterPrinted = "00000007";
 
         protected static string _certificateNotDeliveredReason1 = "The address given did not match the building street address";
 
-        protected BatchLog _batchLog = new BatchLog { Id = Guid.NewGuid(), BatchNumber = _batchNumber };
-        
+        protected BatchLog _sentToPrinterBatchLog = new BatchLog { Id = Guid.NewGuid(), BatchNumber = _batch111 };
+        protected BatchLog _printedBatchLog = new BatchLog { Id = Guid.NewGuid(), BatchNumber = _batch222 };
+
         public void BaseArrange()
         {
             _certificateRepository = new Mock<ICertificateRepository>();
@@ -50,10 +61,22 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
                     {
                         Id = Guid.NewGuid(),
                         CertificateReference = certificateReference,
-                        UpdatedAt = DateTime.UtcNow.AddDays(-1),
-                        BatchNumber = _batchNumber,
+                        UpdatedAt = _batch111SentToPrinterAt,
+                        BatchNumber = _batch111,
                         Status = CertificateStatus.SentToPrinter,
-                        ToBePrinted = DateTime.UtcNow.AddDays(-1)
+                        ToBePrinted = _batch111SentToPrinterAt
+                    }));
+
+            _certificateBatchLogRepository.Setup(r => r.GetCertificateBatchLog(It.IsIn(_certificateReference1), _batch111))
+               .Returns((string certificateReference, int batchNumber) => Task.FromResult(
+                    new CertificateBatchLog
+                    {
+                        Id = Guid.NewGuid(),
+                        CertificateReference = certificateReference,
+                        UpdatedAt = _batch111SentToPrinterAt,
+                        BatchNumber = batchNumber,
+                        Status = CertificateStatus.SentToPrinter,
+                        StatusAt = _batch111SentToPrinterAt
                     }));
 
             _certificateRepository.Setup(r => r.GetCertificate(It.IsIn(_certificateReference2, _certificateReference3)))
@@ -62,32 +85,26 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
                     {
                         Id = Guid.NewGuid(),
                         CertificateReference = certificateReference,
-                        UpdatedAt = DateTime.UtcNow.AddDays(-1),
-                        BatchNumber = _batchNumber,
+                        UpdatedAt = _batch222PrintNotifiedAt,
+                        BatchNumber = _batch222,
                         Status = CertificateStatus.Printed,
-                        ToBePrinted = DateTime.UtcNow.AddDays(-1)
+                        ToBePrinted = _batch222SentToPrinterAt
                     }));
 
-            _certificateRepository.Setup(r => r.GetCertificate(It.IsIn(_certificateReferenceUpdateAfterPrinted)))
-                .Returns((string certificateReference) => Task.FromResult(
-                    new Certificate
-                    {
-                        Id = Guid.NewGuid(),
-                        CertificateReference = certificateReference,
-                        UpdatedAt = DateTime.UtcNow.AddDays(1),
-                        BatchNumber = null,
-                        Status = CertificateStatus.Reprint,
-                    }));
+            _certificateBatchLogRepository.Setup(r => r.GetCertificateBatchLog(It.IsIn(_certificateReference2, _certificateReference3), _batch222))
+             .Returns((string certificateReference, int batchNumber) => Task.FromResult(
+                  new CertificateBatchLog
+                  {
+                      Id = Guid.NewGuid(),
+                      CertificateReference = certificateReference,
+                      UpdatedAt = _batch222PrintNotifiedAt,
+                      BatchNumber = batchNumber,
+                      Status = CertificateStatus.Printed,
+                      StatusAt = _batch222PrintedAt
+                  }));
 
-            _certificateRepository.Setup(r => r.GetCertificate(It.IsIn(_certificateReferenceDeletedAfterPrinted)))
-                .Returns((string certificateReference) => Task.FromResult(
-                    new Certificate
-                    {
-                        Id = Guid.NewGuid(),
-                        CertificateReference = certificateReference,
-                        Status = CertificateStatus.Deleted,
-                        UpdatedAt = DateTime.UtcNow.AddDays(-1)
-                    }));
+            _certificateRepository.Setup(r => r.GetCertificate(It.IsIn(_certificateReference4)))
+                .Returns((string certificateReference) => Task.FromResult<Certificate>(null));
 
             _certificateRepository.Setup(r => r.GetCertificate(It.IsIn(_certificateReference5)))
               .Returns((string certificateReference) => Task.FromResult(
@@ -95,80 +112,77 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
                   {
                       Id = Guid.NewGuid(),
                       CertificateReference = certificateReference,
-                      Status = CertificateStatus.Delivered,
-                      UpdatedAt = DateTime.UtcNow.AddDays(1)
+                      UpdatedAt = DateTime.UtcNow.AddDays(1),
+                      BatchNumber = _batch222,
+                      Status = CertificateStatus.Delivered
                   }));
 
-            _certificateBatchLogRepository.Setup(r => r.GetCertificateBatchLog(It.IsIn(_certificateReference1), _batchNumber))
-               .Returns((string certificateReference, int batchNumber) => Task.FromResult(
-                    new CertificateBatchLog
-                    {
-                        Id = Guid.NewGuid(),
-                        CertificateReference = certificateReference,
-                        UpdatedAt = DateTime.UtcNow.AddDays(-1),
-                        BatchNumber = batchNumber,
-                        Status = CertificateStatus.SentToPrinter
-                    }));
-
-            _certificateBatchLogRepository.Setup(r => r.GetCertificateBatchLog(It.IsIn(_certificateReference2), _batchNumber))
-             .Returns((string certificateReference, int batchNumber) => Task.FromResult(
-                  new CertificateBatchLog
-                  {
-                      Id = Guid.NewGuid(),
-                      CertificateReference = certificateReference,
-                      UpdatedAt = DateTime.UtcNow.AddDays(-1),
-                      BatchNumber = batchNumber,
-                      Status = CertificateStatus.SentToPrinter
-                  }));          
-
-            _certificateBatchLogRepository.Setup(r => r.GetCertificateBatchLog(It.IsIn(_certificateReference3), _batchNumber))
-             .Returns((string certificateReference, int batchNumber) => Task.FromResult(
-                  new CertificateBatchLog
-                  {
-                      Id = Guid.NewGuid(),
-                      CertificateReference = certificateReference,
-                      UpdatedAt = DateTime.UtcNow.AddDays(-1),
-                      BatchNumber = batchNumber,
-                      Status = CertificateStatus.SentToPrinter
-                  }));
-
-            _certificateBatchLogRepository.Setup(r => r.GetCertificateBatchLog(It.IsIn(_certificateReferenceUpdateAfterPrinted), _batchNumber))
+            _certificateBatchLogRepository.Setup(r => r.GetCertificateBatchLog(It.IsIn(_certificateReference5), _batch222))
               .Returns((string certificateReference, int batchNumber) => Task.FromResult(
                   new CertificateBatchLog
                   {
                       Id = Guid.NewGuid(),
-                      CertificateReference = certificateReference
+                      CertificateReference = certificateReference,
+                      UpdatedAt = _deliveryNotifiedAt,
+                      BatchNumber = batchNumber,
+                      Status = CertificateStatus.Delivered,
+                      StatusAt = _deliveredAt
                   }));
 
-            _certificateBatchLogRepository.Setup(r => r.GetCertificateBatchLog(It.IsIn(_certificateReferenceDeletedAfterPrinted), _batchNumber))
+
+            _certificateRepository.Setup(r => r.GetCertificate(It.IsIn(_certificateReferenceReprintedAfterPrinted)))
+                .Returns((string certificateReference) => Task.FromResult(
+                    new Certificate
+                    {
+                        Id = Guid.NewGuid(),
+                        CertificateReference = certificateReference,
+                        UpdatedAt = DateTime.UtcNow,
+                        BatchNumber = null,
+                        Status = CertificateStatus.Reprint,
+                    }));
+
+            _certificateBatchLogRepository.Setup(r => r.GetCertificateBatchLog(It.IsIn(_certificateReferenceReprintedAfterPrinted), _batch222))
+              .Returns((string certificateReference, int batchNumber) => Task.FromResult(
+                  new CertificateBatchLog
+                  {
+                      Id = Guid.NewGuid(),
+                      CertificateReference = certificateReference,
+                      UpdatedAt = _batch222PrintNotifiedAt,
+                      BatchNumber = batchNumber,
+                      Status = CertificateStatus.Printed,
+                      StatusAt = _batch222PrintedAt
+                  }));
+
+            _certificateRepository.Setup(r => r.GetCertificate(It.IsIn(_certificateReferenceDeletedAfterPrinted)))
+                .Returns((string certificateReference) => Task.FromResult(
+                    new Certificate
+                    {
+                        Id = Guid.NewGuid(),
+                        CertificateReference = certificateReference,
+                        UpdatedAt = DateTime.UtcNow,
+                        BatchNumber = _batch222,
+                        Status = CertificateStatus.Deleted
+                    }));
+
+            _certificateBatchLogRepository.Setup(r => r.GetCertificateBatchLog(It.IsIn(_certificateReferenceDeletedAfterPrinted), _batch222))
                 .Returns((string certificateReference, int batchNumber) => Task.FromResult(
                     new CertificateBatchLog
                     {
                         Id = Guid.NewGuid(),
                         CertificateReference = certificateReference,
-                        Status = CertificateStatus.Delivered
+                        UpdatedAt = _batch222PrintNotifiedAt,
+                        BatchNumber = batchNumber,
+                        Status = CertificateStatus.Printed,
+                        StatusAt = _batch222PrintedAt
                     }));
-
-            _certificateBatchLogRepository.Setup(r => r.GetCertificateBatchLog(It.IsIn(_certificateReference5), _batchNumber))
-              .Returns((string certificateReference, int batchNumber) => Task.FromResult(
-                  new CertificateBatchLog
-                  {
-                      Id = Guid.NewGuid(),
-                      CertificateReference = certificateReference,
-                      Status = CertificateStatus.Delivered,                      
-                      StatusAt = DateTime.UtcNow.AddDays(1)
-                  }));
-
-            _certificateRepository.Setup(r => r.GetCertificate(It.IsIn(_certificateReference4)))
-                .Returns((string certificateReference) => Task.FromResult<Certificate>(null));           
 
             _certificateRepository.Setup(r => r.UpdateSentToPrinter(It.IsAny<Certificate>(), It.IsAny<int>(), It.IsAny<DateTime>()))
                 .Returns(Task.CompletedTask);
 
-            _mediator.Setup(r => r.Send(It.Is<GetForBatchNumberBatchLogRequest>(p => p.BatchNumber == _batchNumber), It.IsAny<CancellationToken>()))
+            _mediator.Setup(r => r.Send(It.Is<GetForBatchNumberBatchLogRequest>(p => p.BatchNumber == _batch111 || p.BatchNumber == _batch222), It.IsAny<CancellationToken>()))
                 .Returns((GetForBatchNumberBatchLogRequest request, CancellationToken token) => Task.FromResult(new BatchLogResponse { BatchNumber = request.BatchNumber }));
 
-            _mediator.Setup(r => r.Send(It.Is<GetForBatchNumberBatchLogRequest>(p => p.BatchNumber != _batchNumber), It.IsAny<CancellationToken>()))
+            _mediator.Setup(r => r.Send(It.Is<GetForBatchNumberBatchLogRequest>(p => p.BatchNumber != _batch111 && p.BatchNumber != _batch222), It.IsAny<CancellationToken>()))
                 .Returns((GetForBatchNumberBatchLogRequest request, CancellationToken token) => Task.FromResult<BatchLogResponse>(null));
 
             _logger = new Mock<ILogger<UpdateCertificatesPrintStatusHandler>>();

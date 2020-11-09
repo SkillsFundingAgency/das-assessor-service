@@ -48,7 +48,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
                     if (validatedCertificatePrintStatus.StatusChangedAt < certificateBatchLog.StatusAt)
                     {
                         validationResult.Errors.Add(
-                           new ValidationErrorDetail("StatusChangedDateTime", $"Certificate delivery(StatusChangedAt) datetime {validatedCertificatePrintStatus.StatusChangedAt} earlier than printed(latest date) datetime {certificateBatchLog.LatestChange()}.", ValidationStatusCode.BadRequest));
+                           new ValidationErrorDetail("StatusChangedDateTime", $"Certificate {validatedCertificatePrintStatus.CertificateReference} new status {validatedCertificatePrintStatus.Status}({validatedCertificatePrintStatus.StatusChangedAt}) should not be earlier than current status {certificateBatchLog.Status}({certificateBatchLog.StatusAt}).", ValidationStatusCode.BadRequest));
                     }
                 }
 
@@ -60,10 +60,15 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
                 }
                 else
                 {
-                    // when the certificate batch number is not set then a reprint has been requested but not sent to printer
-                    // any print status update would be for a prior batch number and would not update the certificate status
-                    var changesCertificateStatus = validatedCertificatePrintStatus.BatchNumber >= (certificate.BatchNumber ?? int.MaxValue) &&
-                        validatedCertificatePrintStatus.StatusChangedAt > certificate.LatestChange().Value &&
+                    // use the actual print notification datetime for certificates which currently have a print notification status
+                    var certificatePrintStatusAt = CertificateStatus.HasPrintNotificateStatus(certificate.Status)
+                        ? certificateBatchLog?.StatusAt
+                        : null;
+
+                    // the certificate status should not be overwritten when it has been sent to printer or reprinted, has a more recent 
+                    // changed datetime than the actual print notification datetime or when it has been deleted
+                    var changesCertificateStatus = validatedCertificatePrintStatus.BatchNumber == certificate.BatchNumber &&
+                        validatedCertificatePrintStatus.StatusChangedAt > (certificatePrintStatusAt ?? certificate.LatestChange().Value) &&
                         certificate.Status != CertificateStatus.Deleted;
 
                     await _certificateRepository.UpdatePrintStatus(
