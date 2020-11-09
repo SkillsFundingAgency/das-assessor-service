@@ -1,12 +1,12 @@
 ﻿using Dapper;
-using Microsoft.Azure.Services.AppAuthentication;
-using SFA.DAS.AssessorService.ExternalApiDataSync.Helpers;
+using SFA.DAS.AssessorService.ExternalApiDataSync.Data.Entities;
 using SFA.DAS.AssessorService.ExternalApiDataSync.Infrastructure;
 using SFA.DAS.AssessorService.ExternalApiDataSync.Logger;
+using SqlBulkTools;
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Data.SqlClient;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Transactions;
 
@@ -23,26 +23,27 @@ namespace SFA.DAS.AssessorService.ExternalApiDataSync
         private readonly bool _allowDataSync;
         private readonly string _sourceConnectionString;
         private readonly string _destinationConnectionString;
-        private readonly string _currentEnvironment;
-        private readonly AzureServiceTokenProvider _azureServiceTokenProvider;
 
-        private readonly SqlBulkCopyOptions _bulkCopyOptions;     
+        private readonly BulkCopySettings _bulkCopySettings;
 
         public ExternalApiDataSyncCommand(IWebConfiguration config, IAggregateLogger aggregateLogger)
         {
+            // TODO: ON-2005 When we're allowed to do changes that affect Staff UI...
+            // ..  1. Re-apply fixes to Domain Entities
+            // ..  2. Remove local copies of Entities
+            // ..  3. Migrate back over to Domain Entities
+            // ..  4. Re-enable Type Handlers below
             _aggregateLogger = aggregateLogger;
 
             _allowDataSync = config.ExternalApiDataSync.IsEnabled;
             _sourceConnectionString = config.SqlConnectionString;
             _destinationConnectionString = config.SandboxSqlConnectionString;
-            _bulkCopyOptions = SqlBulkCopyOptions.KeepIdentity | SqlBulkCopyOptions.KeepNulls | SqlBulkCopyOptions.TableLock;
 
-            _currentEnvironment = Environment.GetEnvironmentVariable("EnvironmentName");
+            _bulkCopySettings = new BulkCopySettings { SqlBulkCopyOptions = SqlBulkCopyOptions.KeepIdentity | SqlBulkCopyOptions.KeepNulls | SqlBulkCopyOptions.TableLock };
 
-            if (!_currentEnvironment.Contains("DEV", StringComparison.CurrentCultureIgnoreCase) || !_currentEnvironment.Contains("LOCAL", StringComparison.CurrentCultureIgnoreCase))
-            {
-                _azureServiceTokenProvider = new AzureServiceTokenProvider();
-            }
+            //SqlMapper.AddTypeHandler(typeof(Domain.Entities.OrganisationData), new OrganisationDataHandler());
+            //SqlMapper.AddTypeHandler(typeof(StandardData), new StandardDataHandler());
+            //SqlMapper.AddTypeHandler(typeof(OrganisationStandardData), new OrganisationStandardDataHandler());
         }
 
         public async Task Execute()
@@ -55,30 +56,16 @@ namespace SFA.DAS.AssessorService.ExternalApiDataSync
                 try
                 {
                     _aggregateLogger.LogInformation("Proceeding with External Api Data Sync...");
-
-                    using (var destinationSqlConnection = ManagedIdentitySqlConnection.GetSqlConnection(_destinationConnectionString, _azureServiceTokenProvider))
-                    {
-                        if (!destinationSqlConnection.State.HasFlag(ConnectionState.Open)) destinationSqlConnection.Open();
-
-                        using (var transaction = destinationSqlConnection.BeginTransaction())
-                        {
-                            Step0_TearDown_Database(transaction);
-                            Step1_Organisation_Data(transaction);
-                            Step2_Contacts_Data(transaction);
-                            Step3_Standard_Data(transaction);
-                            Step4_OrganisationStandard_Data(transaction);
-                            Step5_Obfuscate_Personal_Data(transaction);
-                            Step6_Generate_Test_Data(transaction);
-
-                            transaction.Commit();
-                        }
-                    }
-
+                    await Step1_Organisation_Data();
+                    await Step2_Contacts_Data();
+                    await Step3_Standard_Data();
+                    await Step4_OrganisationStandard_Data();
+                    Step5_Generate_Test_Data();
                     _aggregateLogger.LogInformation("External Api Data Sync completed");
                 }
                 catch (TransactionAbortedException ex)
                 {
-                    _aggregateLogger.LogError(ex, "Transaction was aborted during External Api Data Sync");
+                    _aggregateLogger.LogError(ex, "Transaction was aborted occurred during External Api Data Sync");
                 }
                 catch (SqlException ex)
                 {
@@ -93,105 +80,248 @@ namespace SFA.DAS.AssessorService.ExternalApiDataSync
             {
                 _aggregateLogger.LogInformation("External Api Data Sync is disabled at this time");
             }
-
-            await Task.CompletedTask;
         }
 
-        private void Step0_TearDown_Database(SqlTransaction transaction)
-        {
-            _aggregateLogger.LogInformation("Step 0: Tear Down Database");
 
-            // repopulated in Step 6
-            transaction.Connection.Execute(
-                @"  DELETE FROM CertificateLogs;
-                            DELETE FROM Certificates;
-                            DELETE FROM Ilrs;
-                            DBCC CHECKIDENT('Certificates', RESEED, 10001);", transaction: transaction);
-
-            // repopulated in Step 4
-            transaction.Connection.Execute(
-                @"  DELETE FROM OrganisationStandardDeliveryArea;
-                            DELETE FROM OrganisationStandard;
-                            DELETE FROM DeliveryArea;
-                            DBCC CHECKIDENT('OrganisationStandardDeliveryArea', RESEED, 1);
-                            DBCC CHECKIDENT('OrganisationStandard', RESEED, 1);
-                            DBCC CHECKIDENT('DeliveryArea', RESEED, 1);", transaction: transaction);
-
-            // repopulated in Step 3
-            transaction.Connection.Execute(
-                @"  DELETE FROM Options;
-                            DELETE FROM StandardCollation;", transaction: transaction);
-
-            // repopulated in Step 2
-            transaction.Connection.Execute(
-                @"  DELETE FROM ContactLogs;
-                            DELETE FROM ContactsPrivileges;
-                            DELETE FROM Contacts;", transaction: transaction);
-
-            // repopulated in Step 1
-            transaction.Connection.Execute(
-                @"  DELETE FROM Organisations;
-                            DELETE FROM OrganisationType;
-                            DBCC CHECKIDENT('OrganisationType', RESEED, 1);", transaction: transaction);
-
-            _aggregateLogger.LogInformation("Step 0: Tear Down Completed");
-        }
-
-        private void Step1_Organisation_Data(SqlTransaction transaction)
+        private async Task Step1_Organisation_Data()
         {
             _aggregateLogger.LogInformation("Step 1: Syncing Organisation Data");
-            BulkCopyData(transaction, new List<string> { "OrganisationType", "Organisations" });
+
+            List<OrganisationType> orgTypes;
+            List<Organisation> orgs;
+
+            using (var sourceConnection = new SqlConnection(_sourceConnectionString))
+            {
+                orgTypes = (await sourceConnection.QueryAsync<OrganisationType>("SELECT * FROM OrganisationType ORDER BY [Id]")).ToList();
+                orgs = (await sourceConnection.QueryAsync<Organisation>("SELECT * FROM Organisations ORDER BY [Id]")).ToList();
+            }
+
+            _aggregateLogger.LogInformation("Step 1: Organisation Data received, now syncing...");
+
+            var bulk = new BulkOperations();
+            using (var trans = new TransactionScope())
+            {
+                using (SqlConnection conn = new SqlConnection(_destinationConnectionString))
+                {
+                    conn.Open();
+
+                    bulk.Setup<OrganisationType>()
+                        .ForCollection(orgTypes)
+                        .WithTable("OrganisationType")
+                        .WithBulkCopySettings(_bulkCopySettings)
+                        .AddAllColumns()
+                        .BulkInsertOrUpdate()
+                        .SetIdentityColumn(x => x.Id)
+                        .MatchTargetOn(x => x.Id)
+                        .DeleteWhenNotMatched(true)
+                        .Commit(conn);
+
+                    bulk.Setup<Organisation>()
+                        .ForCollection(orgs)
+                        .WithTable("Organisations")
+                        .WithBulkCopySettings(_bulkCopySettings)
+                        .AddAllColumns()
+                        .BulkInsertOrUpdate()
+                        .MatchTargetOn(x => x.Id)
+                        .Commit(conn);
+                }
+
+                trans.Complete();
+            }
+
             _aggregateLogger.LogInformation("Step 1: Completed");
         }
 
-        private void Step2_Contacts_Data(SqlTransaction transaction)
+        private async Task Step2_Contacts_Data()
         {
             _aggregateLogger.LogInformation("Step 2: Syncing Contacts");
-            BulkCopyData(transaction, new List<string> { "Contacts" });
-            _aggregateLogger.LogInformation("Step 2: Completed");
-        }
 
-        private void Step3_Standard_Data(SqlTransaction transaction)
-        {
-            _aggregateLogger.LogInformation("Step 3: Syncing Standard Data");
-            BulkCopyData(transaction, new List<string> { "StandardCollation", "Options" });
-            _aggregateLogger.LogInformation("Step 3: Completed");
-        }
+            List<Contact> contacts;
 
-        private void Step4_OrganisationStandard_Data(SqlTransaction transaction)
-        {
-            _aggregateLogger.LogInformation("Step 4: Syncing Organisation Standard Data");
-            BulkCopyData(transaction, new List<string> { "DeliveryArea", "OrganisationStandard", "OrganisationStandardDeliveryArea" });
-            _aggregateLogger.LogInformation("Step 4: Completed");
-        }
+            using (var sourceConnection = new SqlConnection(_sourceConnectionString))
+            {
+                contacts = (await sourceConnection.QueryAsync<Contact>("SELECT * FROM Contacts ORDER BY [Id]")).ToList();
+            }
 
-        private void Step5_Obfuscate_Personal_Data(SqlTransaction transaction)
-        {
-            _aggregateLogger.LogInformation("Step 5: Obfuscate Personal Data");
+            _aggregateLogger.LogInformation("Step 2: Contacts received, now syncing...");
 
-            transaction.Connection.Execute(@" UPDATE Contacts
+            var bulk = new BulkOperations();
+            using (var trans = new TransactionScope())
+            {
+                using (SqlConnection conn = new SqlConnection(_destinationConnectionString))
+                {
+                    bulk.Setup<Contact>()
+                        .ForCollection(contacts)
+                        .WithTable("Contacts")
+                        .WithBulkCopySettings(_bulkCopySettings)
+                        .AddAllColumns()
+                        .BulkInsertOrUpdate()
+                        .MatchTargetOn(x => x.Id)
+                        .Commit(conn);
+
+                    // Obfuscate_Personal_Data
+                    conn.Execute(@" UPDATE Contacts
                                     SET GivenNames = ISNULL(EndPointAssessorOrganisationId, 'UNKNOWN')
                                         , FamilyName = 'TEST'
                                         , DisplayName = ISNULL(EndPointAssessorOrganisationId, 'UNKNOWN') + ' TEST'
                                         , Title = ''
-                                        , Email = CONVERT(VARCHAR(36), Id) + '@TEST.TEST'
-                                        , Username = CONVERT(VARCHAR(36), Id) + '@TEST.TEST'
+                                        , Email = ISNULL(EndPointAssessorOrganisationId, 'UNKNOWN') + '@TEST.TEST'
                                         , PhoneNumber = NULL
-                                        , SignInId = NULL;", transaction: transaction);
+                                        , SignInId = NULL;");
+                }
 
-            transaction.Connection.Execute(@" UPDATE Organisations
-                                    SET PrimaryContact = NULL
-                                        , ApiUser = NULL;", transaction: transaction);
+                trans.Complete();
+            }
 
-            _aggregateLogger.LogInformation("Step 5: Completed");
+            _aggregateLogger.LogInformation("Step 2: Completed");
         }
 
-        private void Step6_Generate_Test_Data(SqlTransaction transaction)
+        private async Task Step3_Standard_Data()
         {
-            _aggregateLogger.LogInformation("Step 6: Generating Test Data");
+            _aggregateLogger.LogInformation("Step 3: Syncing Standard Data");
 
-            transaction.Connection.Execute(
-                @"WITH CTE AS (
+            List<StandardCollation> standards;
+            List<Option> options;
+
+            using (var sourceConnection = new SqlConnection(_sourceConnectionString))
+            {
+                standards = (await sourceConnection.QueryAsync<StandardCollation>("SELECT * FROM StandardCollation ORDER BY [Id]")).ToList();
+                options = (await sourceConnection.QueryAsync<Option>("SELECT * FROM Options ORDER BY [Id]")).ToList();
+            }
+
+            _aggregateLogger.LogInformation("Step 3: Standard Data received, now syncing...");
+
+            var bulk = new BulkOperations();
+            using (var trans = new TransactionScope())
+            {
+                using (SqlConnection conn = new SqlConnection(_destinationConnectionString))
+                {
+                    bulk.Setup<StandardCollation>()
+                        .ForCollection(standards)
+                        .WithTable("StandardCollation")
+                        .WithBulkCopySettings(_bulkCopySettings)
+                        .AddAllColumns()
+                        .BulkInsertOrUpdate()
+                        .SetIdentityColumn(x => x.Id)
+                        .MatchTargetOn(x => x.Id)
+                        .DeleteWhenNotMatched(true)
+                        .Commit(conn);
+
+                    bulk.Setup<Option>()
+                        .ForCollection(options)
+                        .WithTable("Options")
+                        .WithBulkCopySettings(_bulkCopySettings)
+                        .AddAllColumns()
+                        .BulkInsertOrUpdate()
+                        .MatchTargetOn(x => x.Id)
+                        .DeleteWhenNotMatched(true)
+                        .Commit(conn);
+                }
+
+                trans.Complete();
+            }
+
+            _aggregateLogger.LogInformation("Step 3: Completed");
+        }
+
+        private async Task Step4_OrganisationStandard_Data()
+        {
+            _aggregateLogger.LogInformation("Step 4: Syncing Organisation Standard Data");
+
+            List<DeliveryArea> deliveryArea;
+            List<OrganisationStandard> orgStandard;
+            List<OrganisationStandardDeliveryArea> orgStandardDeliveryArea;
+
+            using (var sourceConnection = new SqlConnection(_sourceConnectionString))
+            {
+                deliveryArea = (await sourceConnection.QueryAsync<DeliveryArea>("SELECT * FROM DeliveryArea ORDER BY [Id]")).ToList();
+                orgStandard = (await sourceConnection.QueryAsync<OrganisationStandard>("SELECT * FROM OrganisationStandard ORDER BY [Id]")).ToList();
+                orgStandardDeliveryArea = (await sourceConnection.QueryAsync<OrganisationStandardDeliveryArea>("SELECT * FROM OrganisationStandardDeliveryArea ORDER BY [Id]")).ToList();
+            }
+
+            _aggregateLogger.LogInformation("Step 4: Organisation Standard Data received, now syncing...");
+
+            var bulk = new BulkOperations();
+            using (var trans = new TransactionScope())
+            {
+                using (SqlConnection conn = new SqlConnection(_destinationConnectionString))
+                {
+                    bulk.Setup<DeliveryArea>()
+                        .ForCollection(deliveryArea)
+                        .WithTable("DeliveryArea")
+                        .WithBulkCopySettings(_bulkCopySettings)
+                        .AddAllColumns()
+                        .BulkInsertOrUpdate()
+                        .SetIdentityColumn(x => x.Id)
+                        .MatchTargetOn(x => x.Id)
+                        .DeleteWhenNotMatched(true)
+                        .Commit(conn);
+
+                    // NOTE: Have to delete these as IDENTITY insert isn't working correctly (maybe because the Id's don't start at 1 due to spreadsheet import)
+                    conn.Execute("DELETE FROM OrganisationStandardDeliveryArea;");
+
+                    bulk.Setup<OrganisationStandard>()
+                        .ForCollection(orgStandard)
+                        .WithTable("OrganisationStandard")
+                        .WithBulkCopySettings(_bulkCopySettings)
+                        .AddAllColumns()
+                        .BulkInsertOrUpdate()
+                        .SetIdentityColumn(x => x.Id)
+                        .MatchTargetOn(x => x.Id)
+                        .DeleteWhenNotMatched(true)
+                        .Commit(conn);
+
+                    // NOTE: As the Id's won't match, we cannot do this...
+                    //    bulk.Setup<OrganisationStandardDeliveryArea>()
+                    //        .ForCollection(orgStandardDeliveryArea)
+                    //        .WithTable("OrganisationStandardDeliveryArea")
+                    //        .WithBulkCopySettings(_bulkCopySettings)
+                    //        .AddAllColumns()
+                    //        .BulkInsertOrUpdate()
+                    //        .SetIdentityColumn(x => x.Id)
+                    //        .MatchTargetOn(x => x.Id)
+                    //        .DeleteWhenNotMatched(true)
+                    //        .Commit(conn);
+                    // ... so we have to generate fake data instead
+                    conn.Execute(@" INSERT INTO OrganisationStandardDeliveryArea
+                                           (OrganisationStandardId, DeliveryAreaId, Comments, Status)
+	                                SELECT os.Id, da.Id AS DeliveryAreaId, NULL AS Comments, os.Status
+	                                FROM OrganisationStandard os, DeliveryArea da
+	                                WHERE os.Status = 'Live' AND da.Status = 'Live';");
+                }
+
+                trans.Complete();
+            }
+
+            _aggregateLogger.LogInformation("Step 4: Completed");
+        }
+
+        private void Step5_Generate_Test_Data()
+        {
+            _aggregateLogger.LogInformation("Step 5: Generating Test Data");
+
+            using (var trans = new TransactionScope())
+            {
+                using (SqlConnection conn = new SqlConnection(_destinationConnectionString))
+                {
+                    conn.Open();
+
+                    conn.Execute(@"DELETE FROM Ilrs
+                                    WHERE GivenNames = 'Test' AND FamilyName LIKE '1%';");
+
+                    conn.Execute(@"DELETE FROM CertificateLogs
+                                    WHERE CertificateId IN (
+                                        SELECT Id FROM[Certificates]
+                                            WHERE JSON_VALUE(CertificateData, '$.LearnerFamilyName') LIKE '1%' AND
+                                                  JSON_VALUE(CertificateData, '$.LearnerGivenNames') = 'Test'
+                                        );");
+
+                    conn.Execute(@"DELETE FROM Certificates
+                                    WHERE JSON_VALUE(CertificateData, '$.LearnerFamilyName') LIKE '1%' AND
+                                          JSON_VALUE(CertificateData, '$.LearnerGivenNames') = 'Test';");
+
+                    conn.Execute(
+                        @"WITH CTE AS (
                           SELECT 0 as Number
                           UNION ALL
                           SELECT Number+1
@@ -231,38 +361,13 @@ namespace SFA.DAS.AssessorService.ExternalApiDataSync
                           JOIN StandardCollation sc1 ON ogs.StandardCode = sc1.StandardId
                         WHERE  ogs.Status NOT IN ( 'Deleted','New') AND (ogs.EffectiveTo IS NULL OR ogs.EffectiveTo > GETDATE()) AND og1.EndPointAssessorUkprn IS NOT NULL
                         ) ab1
-                        ORDER BY Uln, EndPointAssessorOrganisationId, StandardCode, Number", transaction: transaction);
-
-            _aggregateLogger.LogInformation("Step 6: Completed");
-        }
-
-        private void BulkCopyData(SqlTransaction transaction, List<string> tablesToCopy)
-        {
-            // https://docs.microsoft.com/en-us/dotnet/api/system.data.sqlclient.sqlbulkcopy
-            if (transaction is null) throw new ArgumentNullException(nameof(transaction));
-            if (tablesToCopy is null) throw new ArgumentNullException(nameof(tablesToCopy));
-
-            using (var sourceSqlConnection = ManagedIdentitySqlConnection.GetSqlConnection(_sourceConnectionString, _azureServiceTokenProvider))
-            {
-                if (!sourceSqlConnection.State.HasFlag(ConnectionState.Open)) sourceSqlConnection.Open();
-
-                foreach (var table in tablesToCopy)
-                {
-                    _aggregateLogger.LogDebug($"\tSyncing table: {table}");
-                    using (var commandSourceData = new SqlCommand($"SELECT * FROM {table} ORDER BY [Id]", sourceSqlConnection))
-                    {
-                        using (var reader = commandSourceData.ExecuteReader())
-                        {
-                            using (var bulkCopy = new SqlBulkCopy(transaction.Connection, _bulkCopyOptions, transaction))
-                            {
-                                bulkCopy.DestinationTableName = table;
-                                bulkCopy.WriteToServer(reader);
-                            }
-                        }
-                    }
+                        ORDER BY Uln, EndPointAssessorOrganisationId, StandardCode, Number");
                 }
+
+                trans.Complete();
             }
+
+            _aggregateLogger.LogInformation("Step 5: Completed");
         }
     }
 }
-
