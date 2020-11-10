@@ -26,7 +26,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
                 {
                     new CertificatePrintStatusUpdate
                     {
-                        BatchNumber = _batchNumber + 999,
+                        BatchNumber = _batch111 + 999,
                         CertificateReference = _certificateReference1,
                         Status = CertificateStatus.Delivered,
                         StatusAt = DateTime.UtcNow

@@ -62,10 +62,15 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
                 }
                 else
                 {
-                    // when the certificate batch number is not set then a reprint has been requested but not sent to printer
-                    // any print status update would be for a prior batch number and would not update the certificate status
-                    var isLatestChange = validatedCertificatePrintStatus.BatchNumber >= (certificate.BatchNumber ?? int.MaxValue) &&
-                        validatedCertificatePrintStatus.StatusAt > certificate.LatestChange().Value &&
+                    // use the actual print notification datetime for certificates which currently have a print notification status
+                    var certificatePrintStatusAt = CertificateStatus.HasPrintNotificateStatus(certificate.Status)
+                        ? certificateBatchLog?.StatusAt
+                        : null;
+
+                    // the certificate status should not be overwritten when it has been sent to printer or reprinted, has a more recent 
+                    // changed datetime than the actual print notification datetime or when it has been deleted
+                    var isLatestChange = validatedCertificatePrintStatus.BatchNumber == certificate.BatchNumber &&
+                        validatedCertificatePrintStatus.StatusAt > (certificatePrintStatusAt ?? certificate.LatestChange().Value) &&
                         certificate.Status != CertificateStatus.Deleted;
 
                     await _certificateRepository.UpdatePrintStatus(

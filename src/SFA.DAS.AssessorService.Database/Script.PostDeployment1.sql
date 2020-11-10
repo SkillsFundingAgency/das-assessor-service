@@ -95,9 +95,6 @@ END
 -- ON-2197 - PostCode to Region Mapping 
 :r .\Insert-Postcode-to-Regions.sql
 
--- ON-2222 - remove duplicated certs
---:r .\Delete-Duplicated-Certs.sql
-
 /* START OF ON-2033 */
 :r .\PostDeploymentScripts\on-2033-anytime_updates.sql
 /* END OF ON-2033 */
@@ -115,6 +112,11 @@ END
 /* REMOVE CONTACTROLES TABLE */
 :r .\PostDeploymentScripts\qual-39-remove-contact-roles.sql
 /* END OF QUAL-39 */
+
+/* START OF CON-1888 */
+/* REMOVE CERTIFICATESDELETED AND CERTIFICATELOGSDELETED TABLES */
+:r .\PostDeploymentScripts\con-1888-remove-certificatesdeleted.sql
+/* END OF CON-1888 */
 
 /* UPDATE THE STAFF REPORT CONFIGURATION FOR EXISTING REPORTS */
 :r .\Update-Staff-Reports-Config.sql

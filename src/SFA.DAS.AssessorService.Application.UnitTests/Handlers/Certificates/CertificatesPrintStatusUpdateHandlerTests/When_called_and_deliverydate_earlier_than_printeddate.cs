@@ -15,7 +15,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
     public class When_called_and_deliverydate_earlier_than_printeddate : UpdateCertificatesPrintStatusHandlerTestsBase
     {
         private ValidationResponse _response;
-        private static DateTime _statusChangedAt = DateTime.UtcNow;
+        private static DateTime _deliveredAtEarlierThanPrintedAt = _batch222PrintedAt.AddHours(-6);
 
         [SetUp]
         public async Task Arrange()
@@ -27,10 +27,10 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
             {                
                 new CertificatePrintStatusUpdate
                 {
-                    BatchNumber = _batchNumber,
-                    CertificateReference = _certificateReference5,
+                    BatchNumber = _batch222,
+                    CertificateReference = _certificateReference3,
                     Status = CertificateStatus.Delivered,
-                    StatusAt = _statusChangedAt
+                    StatusAt = _deliveredAtEarlierThanPrintedAt
                 }
             };
 
@@ -56,7 +56,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
         {          
             // Assert
             _certificateRepository.Verify(r => r.UpdatePrintStatus(
-                It.Is<Certificate>(c => c.CertificateReference == _certificateReference5), _batchNumber, CertificateStatus.Delivered, _statusChangedAt, null, false),
+                It.Is<Certificate>(c => c.CertificateReference == _certificateReference3), _batch222, CertificateStatus.Delivered, _deliveredAtEarlierThanPrintedAt, null, false),
                 Times.Once);
         }
     }
