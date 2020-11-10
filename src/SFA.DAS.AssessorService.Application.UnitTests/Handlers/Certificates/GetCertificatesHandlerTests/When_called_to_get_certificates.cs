@@ -13,9 +13,9 @@ using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
 
-namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Query
+namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.GetCertificatesHandlerTests
 {
-    public class WhenGetCertificates
+    public class When_called_to_get_certificates
     {
         private Mock<ICertificateRepository> _certificateRepository;
         private List<CertificateResponse> _result;
@@ -40,7 +40,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Qu
         }
 
         [Test]
-        public void then_certificates_are_returned()
+        public void Then_certificates_are_returned()
         {
             _result.Count().Should().BeGreaterOrEqualTo(10);
         }

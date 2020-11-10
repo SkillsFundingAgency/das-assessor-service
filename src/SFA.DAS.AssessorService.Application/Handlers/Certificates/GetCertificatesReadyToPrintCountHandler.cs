@@ -21,7 +21,10 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
 
         public async Task<int> Handle(GetCertificatesReadyToPrintCountRequest request, CancellationToken cancellationToken)
         {
-            return await _certificateRepository.GetCertificatesReadyToPrintCount();
+            var excludedOverallGrades = new[] { "Fail" };
+            var includedStatus = new[] { "Submitted", "Reprint" };
+
+            return await _certificateRepository.GetCertificatesReadyToPrintCount(excludedOverallGrades, includedStatus);
         }
     }
 }

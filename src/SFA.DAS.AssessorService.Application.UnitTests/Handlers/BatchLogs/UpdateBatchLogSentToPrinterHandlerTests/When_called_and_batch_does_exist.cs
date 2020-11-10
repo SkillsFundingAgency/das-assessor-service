@@ -52,8 +52,15 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.BatchLogs.Updat
         {
             // Assert
             _batchLogRepository.Verify(r => r.UpdateBatchLogSentToPrinter(
-                _validBatchNumber, _utcNow, 1, 1, "TestFileName", _utcNow, _utcNow, 
-                It.Is<BatchData>(p => p.BatchNumber == _validBatchNumber)), Times.Once);
+                It.Is<BatchLog>(b => 
+                    b.BatchNumber == _validBatchNumber &&
+                    b.BatchCreated == _utcNow &&
+                    b.NumberOfCertificates == 1 &&
+                    b.NumberOfCoverLetters == 1 &&
+                    b.CertificatesFileName == "TestFileName" &&
+                    b.FileUploadStartTime == _utcNow &&
+                    b.FileUploadEndTime == _utcNow &&
+                    b.BatchData.BatchNumber == _validBatchNumber)), Times.Once);
         }
     }
 }

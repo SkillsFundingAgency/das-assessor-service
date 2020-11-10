@@ -4,6 +4,7 @@ using MediatR;
 using SFA.DAS.AssessorService.Api.Types.Models.BatchLogs;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData.Printing;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.BatchLogs
@@ -19,18 +20,22 @@ namespace SFA.DAS.AssessorService.Application.Handlers.BatchLogs
 
         public async Task<ValidationResponse> Handle(UpdateBatchLogSentToPrinterRequest request, CancellationToken cancellationToken)
         {
-            return await _batchLogRepository.UpdateBatchLogSentToPrinter(
-                request.BatchNumber, 
-                request.BatchCreated, 
-                request.NumberOfCertificates, 
-                request.NumberOfCoverLetters,
-                request.CertificatesFileName,
-                request.FileUploadStartTime, 
-                request.FileUploadEndTime,
-                new BatchData()
+            var updatedBatchLog = new BatchLog()
+            {
+                BatchNumber = request.BatchNumber,
+                BatchCreated = request.BatchCreated,
+                NumberOfCertificates = request.NumberOfCertificates,
+                NumberOfCoverLetters = request.NumberOfCoverLetters,
+                CertificatesFileName = request.CertificatesFileName,
+                FileUploadStartTime = request.FileUploadStartTime,
+                FileUploadEndTime = request.FileUploadEndTime,
+                BatchData = new BatchData()
                 {
                     BatchNumber = request.BatchNumber
-                });
+                }
+            };
+
+            return await _batchLogRepository.UpdateBatchLogSentToPrinter(updatedBatchLog);
         }
     }
 }

@@ -20,26 +20,14 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.BatchLogs.Updat
         public void BaseArrange()
         {
             _batchLogRepository = new Mock<IBatchLogRepository>();
-            
-            _batchLogRepository.Setup(p => p.UpdateBatchLogSentToPrinter(_validBatchNumber,
-                It.IsAny<DateTime>(),
-                It.IsAny<int>(),
-                It.IsAny<int>(),
-                It.IsAny<string>(),
-                It.IsAny<DateTime>(),
-                It.IsAny<DateTime>(),
-                It.IsAny<BatchData>()
-                )).ReturnsAsync(new ValidationResponse());
 
-            _batchLogRepository.Setup(p => p.UpdateBatchLogSentToPrinter(_invalidBatchNumber,
-                It.IsAny<DateTime>(),
-                It.IsAny<int>(),
-                It.IsAny<int>(),
-                It.IsAny<string>(),
-                It.IsAny<DateTime>(),
-                It.IsAny<DateTime>(),
-                It.IsAny<BatchData>()
-                )).ReturnsAsync(new ValidationResponse() { Errors = new List<ValidationErrorDetail>() { new ValidationErrorDetail() } });
+            _batchLogRepository.Setup(p => p.UpdateBatchLogSentToPrinter(
+                It.Is<BatchLog>(b => b.BatchNumber == _validBatchNumber)))
+                .ReturnsAsync(new ValidationResponse());
+
+            _batchLogRepository.Setup(p => p.UpdateBatchLogSentToPrinter(
+                It.Is<BatchLog>(b => b.BatchNumber == _invalidBatchNumber)))
+                .ReturnsAsync(new ValidationResponse() { Errors = new List<ValidationErrorDetail>() { new ValidationErrorDetail() } });
         }
     }
 }

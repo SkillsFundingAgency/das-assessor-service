@@ -4,6 +4,7 @@ using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models.BatchLogs;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.Application.Handlers.BatchLogs;
+using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData.Printing;
 using System;
 using System.Threading;
@@ -48,14 +49,14 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.BatchLogs.Updat
         {
             // Assert
             _batchLogRepository.Verify(r => r.UpdateBatchLogPrinted(
-                _validBatchNumber,
-                It.Is<BatchData>(p =>
-                    p.BatchNumber == _validBatchNumber &&
-                    p.BatchDate == _utcNow &&
-                    p.TotalCertificateCount == 1 &&
-                    p.PostalContactCount == 1 &&
-                    p.PrintedDate == _utcNow &&
-                    p.DateOfResponse == _utcNow)), Times.Once());
+                It.Is<BatchLog>(b => 
+                    b.BatchNumber == _validBatchNumber &&
+                    b.BatchData.BatchNumber == _validBatchNumber &&
+                    b.BatchData.BatchDate == _utcNow &&
+                    b.BatchData.TotalCertificateCount == 1 &&
+                    b.BatchData.PostalContactCount == 1 &&
+                    b.BatchData.PrintedDate == _utcNow &&
+                    b.BatchData.DateOfResponse == _utcNow)), Times.Once());
         }
     }
 }

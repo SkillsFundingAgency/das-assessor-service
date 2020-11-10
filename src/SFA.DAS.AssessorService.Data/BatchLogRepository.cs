@@ -35,8 +35,7 @@ namespace SFA.DAS.AssessorService.Data
 
             return batchLog;
         }
-        public async Task<ValidationResponse> UpdateBatchLogSentToPrinter(int batchNumber, DateTime batchCreated, int numberOfCertificates,
-            int numberOfCoverLetters, string certificatesFileName, DateTime fileUploadStartTime, DateTime fileUploadEndTime, BatchData batchData)
+        public async Task<ValidationResponse> UpdateBatchLogSentToPrinter(BatchLog updatedBatchLog)
         {
             var rowsAffected = await _unitOfWork.Connection.ExecuteAsync(
                 "UPDATE [BatchLogs] SET " +
@@ -51,27 +50,27 @@ namespace SFA.DAS.AssessorService.Data
                 "   [BatchNumber] = @batchNumber",
                 param: new
                 {
-                    batchNumber,
-                    batchCreated,
-                    numberOfCertificates,
-                    numberOfCoverLetters,
-                    certificatesFileName,
-                    fileUploadStartTime,
-                    fileUploadEndTime,
-                    batchData
+                    updatedBatchLog.BatchNumber,
+                    updatedBatchLog.BatchCreated,
+                    updatedBatchLog.NumberOfCertificates,
+                    updatedBatchLog.NumberOfCoverLetters,
+                    updatedBatchLog.CertificatesFileName,
+                    updatedBatchLog.FileUploadStartTime,
+                    updatedBatchLog.FileUploadEndTime,
+                    updatedBatchLog.BatchData
                 },
                 transaction: _unitOfWork.Transaction);
 
             var response = new ValidationResponse();
             if(rowsAffected == 0)
             {
-                response.Errors.Add(new ValidationErrorDetail("BatchNumber", $"Error the batch log {batchNumber} does not exist."));
+                response.Errors.Add(new ValidationErrorDetail("BatchNumber", $"Error the batch log {updatedBatchLog.BatchNumber} does not exist."));
             }
             
             return response;
         }
 
-        public async Task<ValidationResponse> UpdateBatchLogPrinted(int batchNumber, BatchData batchData)
+        public async Task<ValidationResponse> UpdateBatchLogPrinted(BatchLog updatedBatchLog)
         {
             var rowsAffected = await _unitOfWork.Connection.ExecuteAsync(
                 "UPDATE [BatchLogs] SET " +
@@ -80,15 +79,15 @@ namespace SFA.DAS.AssessorService.Data
                 "   [BatchNumber] = @batchNumber",
                 param: new
                 {
-                    batchNumber,
-                    batchData
+                    updatedBatchLog.BatchNumber,
+                    updatedBatchLog.BatchData
                 },
                 transaction: _unitOfWork.Transaction);
 
             var response = new ValidationResponse();
             if (rowsAffected == 0)
             {
-                response.Errors.Add(new ValidationErrorDetail("BatchNumber", $"Error the batch log {batchNumber} does not exist."));
+                response.Errors.Add(new ValidationErrorDetail("BatchNumber", $"Error the batch log {updatedBatchLog.BatchNumber} does not exist."));
             }
 
             return response;

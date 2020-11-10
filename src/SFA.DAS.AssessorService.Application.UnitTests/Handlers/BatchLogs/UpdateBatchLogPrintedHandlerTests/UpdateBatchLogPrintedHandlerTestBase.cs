@@ -22,8 +22,17 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.BatchLogs.Updat
         public void BaseArrange()
         {   
             _batchLogRepository = new Mock<IBatchLogRepository>();
-            _batchLogRepository.Setup(p => p.UpdateBatchLogPrinted(_validBatchNumber, It.IsAny<BatchData>())).ReturnsAsync(new ValidationResponse());
-            _batchLogRepository.Setup(p => p.UpdateBatchLogPrinted(_invalidBatchNumber, It.IsAny<BatchData>())).ReturnsAsync(new ValidationResponse() { Errors = new List<ValidationErrorDetail>() { new ValidationErrorDetail() } });
+            _batchLogRepository.Setup(p => p.UpdateBatchLogPrinted(
+                It.Is<BatchLog>(b => 
+                    b.BatchNumber == _validBatchNumber &&
+                    b.BatchData.BatchNumber == _validBatchNumber)))
+                .ReturnsAsync(new ValidationResponse());
+
+            _batchLogRepository.Setup(p => p.UpdateBatchLogPrinted(
+                It.Is<BatchLog>(b =>
+                    b.BatchNumber == _invalidBatchNumber &&
+                    b.BatchData.BatchNumber == _invalidBatchNumber)))
+                .ReturnsAsync(new ValidationResponse() { Errors = new List<ValidationErrorDetail>() { new ValidationErrorDetail() } });
         }
     }
 }

@@ -10,8 +10,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
     public interface IBatchLogRepository
     {
         Task<BatchLog> Create(BatchLog batchLog);
-        Task<ValidationResponse> UpdateBatchLogSentToPrinter(int batchNumber, DateTime batchCreated, int numberOfCertificates, 
-            int numberOfCoverLetters, string certificatesFileName, DateTime fileUploadStartTime, DateTime fileUploadEndTime, BatchData batchData);
-        Task<ValidationResponse> UpdateBatchLogPrinted(int batchNumber, BatchData batchData);
+        Task<ValidationResponse> UpdateBatchLogSentToPrinter(BatchLog updatedBatchLog);
+        Task<ValidationResponse> UpdateBatchLogPrinted(BatchLog updatedBatchLog);
     }
 }

@@ -270,24 +270,25 @@ namespace SFA.DAS.AssessorService.Data
             }
         }
 
-        public async Task<int> GetCertificatesReadyToPrintCount()
+        public async Task<int> GetCertificatesReadyToPrintCount(string[] excludedOverallGrades, string[] includedStatus)
         {
             var sql = "SELECT COUNT(1)" +
                 "FROM" +
                     "[Certificates] c " +
                 "WHERE " +
-                    "JSON_VALUE(c.CertificateData, '$.OverallGrade') <> 'Fail' " +
-                    "AND c.Status IN ('Submitted', 'Reprint') " +
+                    "JSON_VALUE(CertificateData, '$.OverallGrade') NOT IN @excludedOverallGrades " +
+                    "AND c.Status IN @includedStatus " +
                     "AND c.BatchNumber IS NULL";
 
             var count = await _unitOfWork.Connection.QueryFirstAsync<int>(
                 sql,
+                param: new { excludedOverallGrades, includedStatus },
                 transaction: _unitOfWork.Transaction);
 
             return count;
         }
 
-        public async Task<Guid[]> GetCertificatesReadyToPrint(int numberOfCertifictes)
+        public async Task<Guid[]> GetCertificatesReadyToPrint(int numberOfCertifictes, string[] excludedOverallGrades, string[] includedStatus )
         {
             var certificateIds = await _unitOfWork.Connection.QueryAsync<Guid>(
                 "SELECT TOP(@numberOfCertifictes)" +
@@ -295,10 +296,10 @@ namespace SFA.DAS.AssessorService.Data
                 "FROM" + 
                     "[Certificates] c " + 
                 "WHERE " +
-                    "JSON_VALUE(CertificateData, '$.OverallGrade') <> 'Fail' " +
-                    "AND c.Status IN ('Submitted', 'Reprint') " +
+                    "JSON_VALUE(CertificateData, '$.OverallGrade') NOT IN @excludedOverallGrades " +
+                    "AND c.Status IN @includedStatus " +
                     "AND BatchNumber IS NULL",
-                param: new { numberOfCertifictes },
+                param: new { numberOfCertifictes, excludedOverallGrades, includedStatus },
                 transaction: _unitOfWork.Transaction);
 
             return certificateIds.ToArray();

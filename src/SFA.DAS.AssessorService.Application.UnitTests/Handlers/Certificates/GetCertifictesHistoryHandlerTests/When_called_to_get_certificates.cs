@@ -20,8 +20,8 @@ using Organisation = SFA.DAS.AssessorService.Domain.Entities.Organisation;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Query
 {
-    public class WhenGetCertificateHistoryHandler
-    {                     
+    public class When_called_to_get_certificates
+    {
         private Mock<ICertificateRepository> _certificateRepositoryMock;
         private Mock<IAssessmentOrgsApiClient> _assessmentOrgsApiClientMock;
         private Mock<IContactQueryRepository> _contactQueryRepositoryMock;
@@ -77,7 +77,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Qu
         }
 
         [Test]
-        public void then_certificates_are_returned()
+        public void Then_certificates_are_returned()
         {
             _result.Items.Count().Should().BeGreaterOrEqualTo(10);
         }

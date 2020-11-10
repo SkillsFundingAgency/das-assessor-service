@@ -11,19 +11,17 @@ namespace SFA.DAS.AssessorService.Application.Handlers.BatchLogs
 {
     public class UpdateBatchLogReadyToPrintAddCertificatesHandler : IRequestHandler<UpdateBatchLogReadyToPrintAddCertificatesRequest, int>
     {
-        private readonly IBatchLogRepository _batchLogRepository;
         private readonly ICertificateBatchLogRepository _certificateBatchLogRepository;
         private readonly ICertificateRepository _certificateRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger<UpdateBatchLogReadyToPrintAddCertificatesHandler> _logger;
 
-        public UpdateBatchLogReadyToPrintAddCertificatesHandler(IBatchLogRepository batchLogRepository, 
+        public UpdateBatchLogReadyToPrintAddCertificatesHandler(
             ICertificateBatchLogRepository certificateBatchLogRepository,
             ICertificateRepository certificateRepository,
             IUnitOfWork unitOfWork,
             ILogger<UpdateBatchLogReadyToPrintAddCertificatesHandler> logger)
         {
-            _batchLogRepository = batchLogRepository;
             _certificateBatchLogRepository = certificateBatchLogRepository;
             _certificateRepository = certificateRepository;
             _unitOfWork = unitOfWork;
@@ -36,11 +34,25 @@ namespace SFA.DAS.AssessorService.Application.Handlers.BatchLogs
             {
                 _unitOfWork.Begin();
 
-                var certificateIds = await _certificateRepository.GetCertificatesReadyToPrint(request.MaxCertificatesToBeAdded);
+                var excludedOverallGrades = new[] { "Fail" };
+                var includedStatus = new[] { "Submitted", "Reprint" };
 
-                await _certificateBatchLogRepository.UpdateCertificatesReadyToPrintInBatch(certificateIds, request.BatchNumber);
-                await _certificateRepository.UpdateCertificatesReadyToPrintInBatch(certificateIds, request.BatchNumber);
-                
+                var certificateIds = await _certificateRepository.GetCertificatesReadyToPrint(
+                    request.MaxCertificatesToBeAdded, 
+                    excludedOverallGrades, 
+                    includedStatus);
+
+                if (certificateIds.Length > 0)
+                {
+                    var updateCertificateBatchLogTask =
+                        _certificateBatchLogRepository.UpdateCertificatesReadyToPrintInBatch(certificateIds, request.BatchNumber);
+
+                    var updateCertificateTask =
+                        _certificateRepository.UpdateCertificatesReadyToPrintInBatch(certificateIds, request.BatchNumber);
+
+                    await Task.WhenAll(updateCertificateBatchLogTask, updateCertificateTask);
+                }
+
                 _unitOfWork.Commit();
 
                 return certificateIds.Length;
