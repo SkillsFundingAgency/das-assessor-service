@@ -53,8 +53,8 @@ namespace SFA.DAS.AssessorService.Data
 
         protected override void OnConfiguring(DbContextOptionsBuilder dbContextOptionsBuilder)
         {
-                var connection = ManagedIdentitySqlConnection.GetSqlConnection(_sqlConnectionString, _azureServiceTokenProvider);
-                dbContextOptionsBuilder.UseSqlServer(connection, options => options.EnableRetryOnFailure(3));
+            var connection = ManagedIdentitySqlConnection.GetSqlConnection(_sqlConnectionString, _azureServiceTokenProvider);
+            dbContextOptionsBuilder.UseSqlServer(connection, options => options.EnableRetryOnFailure(3));
         }
 
         public override int SaveChanges()
