@@ -1,10 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Azure.Services.AppAuthentication;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using SFA.DAS.AssessorService.Data.Helpers;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData.Printing;
 
@@ -12,6 +17,9 @@ namespace SFA.DAS.AssessorService.Data
 {
     public class AssessorDbContext : DbContext
     {
+        private readonly AzureServiceTokenProvider _azureServiceTokenProvider;
+        private readonly string _sqlConnectionString;
+
         public AssessorDbContext()
         {
         }
@@ -19,6 +27,13 @@ namespace SFA.DAS.AssessorService.Data
         public AssessorDbContext(DbContextOptions<AssessorDbContext> options)
             : base(options)
         {
+        }
+
+        public AssessorDbContext(DbContextOptions<AssessorDbContext> options, string connectionString, AzureServiceTokenProvider azureServiceTokenProvider)
+            : base(options)
+        {
+            _azureServiceTokenProvider = azureServiceTokenProvider;
+            _sqlConnectionString = connectionString;
         }
 
         public virtual DbSet<Certificate> Certificates { get; set; }
@@ -35,6 +50,12 @@ namespace SFA.DAS.AssessorService.Data
         public virtual DbSet<ContactsPrivilege> ContactsPrivileges { get; set; }
         public virtual DbSet<Privilege> Privileges { get; set; }
         public virtual DbSet<ContactInvitation> ContactInvitations { get; set; }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder dbContextOptionsBuilder)
+        {
+                var connection = ManagedIdentitySqlConnection.GetSqlConnection(_sqlConnectionString, _azureServiceTokenProvider);
+                dbContextOptionsBuilder.UseSqlServer(connection, options => options.EnableRetryOnFailure(3));
+        }
 
         public override int SaveChanges()
         {

@@ -15,7 +15,7 @@ namespace SFA.DAS.AssessorService.Data.Helpers
             SqlConnection sqlConnection = new SqlConnection(sqlConnectionString);
             if (azureServiceTokenProvider != null)
             {
-                sqlConnection.AccessToken = azureServiceTokenProvider.GetAccessTokenAsync("https://database.windows.net/").Result;
+                sqlConnection.AccessToken = azureServiceTokenProvider.GetAccessTokenAsync("https://database.windows.net/").GetAwaiter().GetResult();
             }
             return sqlConnection;
         }

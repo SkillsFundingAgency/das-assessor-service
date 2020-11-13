@@ -225,9 +225,8 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
               
                 var sqlConnectionString = UseSandbox ? Configuration.SandboxSqlConnectionString : Configuration.SqlConnectionString;
                 var option = new DbContextOptionsBuilder<AssessorDbContext>();
-                option.UseSqlServer(sqlConnectionString, options => options.EnableRetryOnFailure(3));
 
-                config.For<AssessorDbContext>().Use(c => new AssessorDbContext(option.Options));
+                config.For<AssessorDbContext>().Use(c => new AssessorDbContext(option.Options, sqlConnectionString, _azureServiceTokenProvider));
                 config.For<IDbConnection>().Use(c => ManagedIdentitySqlConnection.GetSqlConnection(sqlConnectionString, _azureServiceTokenProvider));
 
 
