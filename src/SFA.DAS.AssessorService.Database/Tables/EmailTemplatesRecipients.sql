@@ -16,7 +16,7 @@ GO
 ALTER TABLE [dbo].[EmailTemplatesRecipients] 
 ADD CONSTRAINT [FK_EmailTemplates_EmailTemplatesRecipients] 
 FOREIGN KEY([EmailTemplateId])
-REFERENCES [dbo].[EmailTemplates] ([Id]);
+REFERENCES [dbo].[EMailTemplates] ([Id]);
 GO
 
 ALTER TABLE [dbo].[EmailTemplatesRecipients]

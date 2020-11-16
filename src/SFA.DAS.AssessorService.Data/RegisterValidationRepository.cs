@@ -3,7 +3,10 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
 using Dapper;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Azure.Services.AppAuthentication;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Data.Helpers;
 using SFA.DAS.AssessorService.Settings;
 
 namespace SFA.DAS.AssessorService.Data
@@ -11,15 +14,26 @@ namespace SFA.DAS.AssessorService.Data
     public class RegisterValidationRepository: IRegisterValidationRepository
     {
         private readonly IWebConfiguration _configuration;
+        private readonly AzureServiceTokenProvider _azureServiceTokenProvider;
 
         public RegisterValidationRepository(IWebConfiguration configuration)
         {
             _configuration = configuration;
         }
 
+        public RegisterValidationRepository(IWebConfiguration configuration, IHostingEnvironment hostingEnvironment)
+        {
+            _configuration = configuration;
+
+            if (!hostingEnvironment.IsDevelopment())
+            {
+                _azureServiceTokenProvider = new AzureServiceTokenProvider();
+            }
+        }
+
         public async Task<bool> EpaOrganisationExistsWithOrganisationId(string organisationId)
         {
-            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            using (var connection = ManagedIdentitySqlConnection.GetSqlConnection(_configuration.SqlConnectionString, _azureServiceTokenProvider))
             {
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
@@ -32,7 +46,7 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<bool> EpaOrganisationExistsWithCompanyNumber(string organisationIdToExclude, string companyNumber)
         {
-            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            using (var connection = ManagedIdentitySqlConnection.GetSqlConnection(_configuration.SqlConnectionString, _azureServiceTokenProvider))
             {
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
@@ -46,7 +60,7 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<bool> EpaOrganisationExistsWithCompanyNumber(string companyNumber)
         {
-            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            using (var connection = ManagedIdentitySqlConnection.GetSqlConnection(_configuration.SqlConnectionString, _azureServiceTokenProvider))
             {
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
@@ -59,7 +73,7 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<bool> EpaOrganisationExistsWithCharityNumber(string organisationIdToExclude, string charityNumber)
         {
-            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            using (var connection = ManagedIdentitySqlConnection.GetSqlConnection(_configuration.SqlConnectionString, _azureServiceTokenProvider))
             {
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
@@ -73,7 +87,7 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<bool> EpaOrganisationExistsWithCharityNumber(string charityNumber)
         {
-            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            using (var connection = ManagedIdentitySqlConnection.GetSqlConnection(_configuration.SqlConnectionString, _azureServiceTokenProvider))
             {
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
@@ -86,7 +100,7 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<bool> EpaOrganisationExistsWithUkprn(long ukprn)
         {
-            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            using (var connection = ManagedIdentitySqlConnection.GetSqlConnection(_configuration.SqlConnectionString, _azureServiceTokenProvider))
             {
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
@@ -99,7 +113,7 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<bool> OrganisationTypeExists(int organisationTypeId)
         {
-            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            using (var connection = ManagedIdentitySqlConnection.GetSqlConnection(_configuration.SqlConnectionString, _azureServiceTokenProvider))
             {
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
@@ -112,7 +126,7 @@ namespace SFA.DAS.AssessorService.Data
         
         public async Task<bool> EpaOrganisationAlreadyUsingUkprn(long ukprn, string organisationIdToExclude)
         {
-            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            using (var connection = ManagedIdentitySqlConnection.GetSqlConnection(_configuration.SqlConnectionString, _azureServiceTokenProvider))
             {
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
@@ -125,7 +139,7 @@ namespace SFA.DAS.AssessorService.Data
               
         public async Task<bool> EpaOrganisationStandardExists(string organisationId, int standardCode)
         {
-            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            using (var connection = ManagedIdentitySqlConnection.GetSqlConnection(_configuration.SqlConnectionString, _azureServiceTokenProvider))
             {
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
@@ -139,7 +153,7 @@ namespace SFA.DAS.AssessorService.Data
         public async Task<bool> EpaOrganisationAlreadyUsingName(string organisationName, string organisationIdToExclude)
         {
          
-            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            using (var connection = ManagedIdentitySqlConnection.GetSqlConnection(_configuration.SqlConnectionString, _azureServiceTokenProvider))
             {
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
@@ -161,7 +175,7 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<bool> ContactIdIsValid(Guid contactId)
         {
-            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            using (var connection = ManagedIdentitySqlConnection.GetSqlConnection(_configuration.SqlConnectionString, _azureServiceTokenProvider))
             {
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
@@ -174,7 +188,7 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<bool> ContactIdIsValidForOrganisationId(Guid contactId, string organisationId)
         {
-            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            using (var connection = ManagedIdentitySqlConnection.GetSqlConnection(_configuration.SqlConnectionString, _azureServiceTokenProvider))
             {
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
@@ -188,7 +202,7 @@ namespace SFA.DAS.AssessorService.Data
         
         public async Task<bool> EmailAlreadyPresentInAnotherOrganisation(string email, string organisationId)
         {
-            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            using (var connection = ManagedIdentitySqlConnection.GetSqlConnection(_configuration.SqlConnectionString, _azureServiceTokenProvider))
             {
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
@@ -201,7 +215,7 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<bool> EmailAlreadyPresentInAnOrganisationNotAssociatedWithContact(string email, Guid contactId)
         {
-            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            using (var connection = ManagedIdentitySqlConnection.GetSqlConnection(_configuration.SqlConnectionString, _azureServiceTokenProvider))
             {
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
@@ -214,7 +228,7 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<bool> ContactExists(Guid contactId)
         {
-            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            using (var connection = ManagedIdentitySqlConnection.GetSqlConnection(_configuration.SqlConnectionString, _azureServiceTokenProvider))
             {
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
@@ -227,7 +241,7 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<bool> ContactDetailsAlreadyExist(string firstName, string lastName, string email, string phone, Guid? contactId)
         {
-            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            using (var connection = ManagedIdentitySqlConnection.GetSqlConnection(_configuration.SqlConnectionString, _azureServiceTokenProvider))
             {
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
@@ -248,7 +262,7 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<bool> EmailAlreadyPresent(string email)
         {
-            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            using (var connection = ManagedIdentitySqlConnection.GetSqlConnection(_configuration.SqlConnectionString, _azureServiceTokenProvider))
             {
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
@@ -258,6 +272,5 @@ namespace SFA.DAS.AssessorService.Data
                 return await connection.ExecuteScalarAsync<bool>(sqlToCheckExists, new { email });
             }
         }
-        
     }
 }

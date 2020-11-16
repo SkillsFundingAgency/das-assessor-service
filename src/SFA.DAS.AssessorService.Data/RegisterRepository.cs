@@ -11,6 +11,9 @@ using Newtonsoft.Json;
 using System.Linq;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Data.DapperTypeHandlers;
+using Microsoft.Azure.Services.AppAuthentication;
+using Microsoft.AspNetCore.Hosting;
+using SFA.DAS.AssessorService.Data.Helpers;
 
 namespace SFA.DAS.AssessorService.Data
 {
@@ -19,6 +22,7 @@ namespace SFA.DAS.AssessorService.Data
 
         private readonly IWebConfiguration _configuration;
         private readonly ILogger<RegisterRepository> _logger;
+        private readonly AzureServiceTokenProvider _azureServiceTokenProvider;
 
         public RegisterRepository(IWebConfiguration configuration, ILogger<RegisterRepository> logger)
         {
@@ -28,9 +32,22 @@ namespace SFA.DAS.AssessorService.Data
             SqlMapper.AddTypeHandler(typeof(OrganisationStandardData), new OrganisationStandardDataHandler());
         }
 
+        public RegisterRepository(IWebConfiguration configuration, ILogger<RegisterRepository> logger, IHostingEnvironment hostingEnvironment)
+        {
+            _configuration = configuration;
+            _logger = logger;
+            SqlMapper.AddTypeHandler(typeof(Api.Types.Models.AO.OrganisationData), new OrganisationDataHandler());
+            SqlMapper.AddTypeHandler(typeof(OrganisationStandardData), new OrganisationStandardDataHandler());
+
+            if (!hostingEnvironment.IsDevelopment())
+            {
+                _azureServiceTokenProvider = new AzureServiceTokenProvider();
+            }
+        }
+
         public async Task<string> CreateEpaOrganisation(EpaOrganisation org)
         {
-            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            using (var connection = ManagedIdentitySqlConnection.GetSqlConnection(_configuration.SqlConnectionString, _azureServiceTokenProvider))
             {
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
@@ -50,7 +67,7 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<string> UpdateEpaOrganisation(EpaOrganisation org)
         {
-            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            using (var connection = ManagedIdentitySqlConnection.GetSqlConnection(_configuration.SqlConnectionString, _azureServiceTokenProvider))
             {
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
@@ -72,7 +89,7 @@ namespace SFA.DAS.AssessorService.Data
         public async Task<string>CreateEpaOrganisationStandard(EpaOrganisationStandard organisationStandard, List<int> deliveryAreas)
         {
            
-            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            using (var connection = ManagedIdentitySqlConnection.GetSqlConnection(_configuration.SqlConnectionString, _azureServiceTokenProvider))
             {
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
@@ -106,7 +123,7 @@ namespace SFA.DAS.AssessorService.Data
             List<int> deliveryAreas)
         {
 
-            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            using (var connection = ManagedIdentitySqlConnection.GetSqlConnection(_configuration.SqlConnectionString, _azureServiceTokenProvider))
             {
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
@@ -151,7 +168,7 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<string> CreateEpaOrganisationContact(EpaContact contact)
         {
-            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            using (var connection = ManagedIdentitySqlConnection.GetSqlConnection(_configuration.SqlConnectionString, _azureServiceTokenProvider))
             {
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
@@ -187,7 +204,7 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<string> AssociateAllPrivilegesWithContact(EpaContact contact)
         {
-            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            using (var connection = ManagedIdentitySqlConnection.GetSqlConnection(_configuration.SqlConnectionString, _azureServiceTokenProvider))
             {
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
@@ -210,7 +227,7 @@ namespace SFA.DAS.AssessorService.Data
         //Fix for ON-2047
         public async Task<string> AssociateDefaultPrivilegesWithContact(EpaContact contact)
         {
-            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            using (var connection = ManagedIdentitySqlConnection.GetSqlConnection(_configuration.SqlConnectionString, _azureServiceTokenProvider))
             {
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
@@ -233,7 +250,7 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<string> UpdateEpaOrganisationContact(EpaContact contact, string actionChoice)
         {
-            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            using (var connection = ManagedIdentitySqlConnection.GetSqlConnection(_configuration.SqlConnectionString, _azureServiceTokenProvider))
             {
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
@@ -259,7 +276,7 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<string> AssociateOrganisationWithContact(Guid contactId, EpaOrganisation org, string status, string actionChoice)
         {
-            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            using (var connection = ManagedIdentitySqlConnection.GetSqlConnection(_configuration.SqlConnectionString, _azureServiceTokenProvider))
             {
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
@@ -283,7 +300,7 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task UpdateEpaOrganisationPrimaryContact(Guid contactId, string contactUsername)
         {
-            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            using (var connection = ManagedIdentitySqlConnection.GetSqlConnection(_configuration.SqlConnectionString, _azureServiceTokenProvider))
             {
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
