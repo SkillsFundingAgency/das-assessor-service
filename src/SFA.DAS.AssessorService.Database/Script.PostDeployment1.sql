@@ -126,3 +126,8 @@ END
 :r .\PostDeploymentScripts\con-2061-create-email-template-recipients.sql
 :r .\PostDeploymentScripts\con-2061-clear-recipients-from-email-templates.sql
 /* END OF CON-2061-Extract [Recipients] column from [EmailTemplates] */
+
+/* START OF CON-2699 */
+/* ADDING EMAIL TEMPLATE LOOKUP */
+:r .\PostDeploymentScripts\con-2699-add_email_template.sql
+/* END OF CON-2699 */
