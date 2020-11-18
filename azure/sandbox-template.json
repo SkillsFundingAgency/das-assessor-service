@@ -188,7 +188,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(variables('deploymentUrlBase'), 'app-service.json')]",
+                    "uri": "[concat(variables('deploymentUrlBase'), 'app-service-v2.json')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -202,37 +202,41 @@
                         "value": "[resourceGroup().name]"
                     },
                     "appServiceAppSettings": {
-                        "value": [
-                            {
-                                "name": "ApplicationInsights:InstrumentationKey",
-                                "value": "[reference(concat(parameters('externalApiActiveSandboxAppServiceName'),'-ai')).outputs.InstrumentationKey.value]"
-                            },
-                            {
-                                "name": "EnvironmentName",
-                                "value": "[parameters('environmentName')]"
-                            },
-                            {
-                                "name": "ConfigurationStorageConnectionString",
-                                "value": "[parameters('configurationStorageConnectionString')]"
-                            },
-                            {
-                                "name": "InstanceName",
-                                "value": "[concat(variables('instanceName'),' (ActiveSandbox)')]"
-                            },
-                            {
-                                "name": "UseSandboxServices",
-                                "value": "yes"
-                            }
-                        ]
+                        "value": {
+                            "array": [
+                                {
+                                    "name": "ApplicationInsights:InstrumentationKey",
+                                    "value": "[reference(concat(parameters('externalApiActiveSandboxAppServiceName'),'-ai')).outputs.InstrumentationKey.value]"
+                                },
+                                {
+                                    "name": "EnvironmentName",
+                                    "value": "[parameters('environmentName')]"
+                                },
+                                {
+                                    "name": "ConfigurationStorageConnectionString",
+                                    "value": "[parameters('configurationStorageConnectionString')]"
+                                },
+                                {
+                                    "name": "InstanceName",
+                                    "value": "[concat(variables('instanceName'),' (ActiveSandbox)')]"
+                                },
+                                {
+                                    "name": "UseSandboxServices",
+                                    "value": "yes"
+                                }
+                            ]
+                        }
                     },
                     "appServiceConnectionStrings": {
-                        "value": [
-                            {
-                                "name": "Redis",
-                                "connectionString": "[parameters('loggingRedisConnectionString')]",
-                                "type": "Custom"
-                            }
-                        ]
+                        "value": {
+                            "array": [
+                                {
+                                    "name": "Redis",
+                                    "connectionString": "[parameters('loggingRedisConnectionString')]",
+                                    "type": "Custom"
+                                }
+                            ]
+                        }
                     },
                     "customHostName": {
                         "value": "[parameters('externalActiveApiSandboxCustomHostname')]"
@@ -257,7 +261,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(variables('deploymentUrlBase'), 'app-service.json')]",
+                    "uri": "[concat(variables('deploymentUrlBase'), 'app-service-v2.json')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -271,46 +275,50 @@
                         "value": "[resourceGroup().name]"
                     },
                     "appServiceAppSettings": {
-                        "value": [
-                            {
-                                "name": "ApplicationInsights:InstrumentationKey",
-                                "value": "[reference(concat(parameters('internalApiSandboxAppServiceName'),'-ai')).outputs.InstrumentationKey.value]"
-                            },
-                            {
-                                "name": "ConfigurationStorageConnectionString",
-                                "value": "[parameters('configurationStorageConnectionString')]"
-                            },
-                            {
-                                "name": "EnvironmentName",
-                                "value": "[toUpper(parameters('environmentName'))]"
-                            },
-                            {
-                                "name": "UseSandboxServices",
-                                "value": "yes"
-                            },
-                            {
-                                "name": "WEBSITE_SWAP_WARMUP_PING_PATH",
-                                "value": "/health"
-                            },
-                            {
-                                "name": "WEBSITE_SWAP_WARMUP_PING_STATUSES",
-                                "value": "200"
-                            }
-                        ]
+                        "value": {
+                            "array": [
+                                {
+                                    "name": "ApplicationInsights:InstrumentationKey",
+                                    "value": "[reference(concat(parameters('internalApiSandboxAppServiceName'),'-ai')).outputs.InstrumentationKey.value]"
+                                },
+                                {
+                                    "name": "ConfigurationStorageConnectionString",
+                                    "value": "[parameters('configurationStorageConnectionString')]"
+                                },
+                                {
+                                    "name": "EnvironmentName",
+                                    "value": "[toUpper(parameters('environmentName'))]"
+                                },
+                                {
+                                    "name": "UseSandboxServices",
+                                    "value": "yes"
+                                },
+                                {
+                                    "name": "WEBSITE_SWAP_WARMUP_PING_PATH",
+                                    "value": "/health"
+                                },
+                                {
+                                    "name": "WEBSITE_SWAP_WARMUP_PING_STATUSES",
+                                    "value": "200"
+                                }
+                            ]
+                        }
                     },
                     "appServiceConnectionStrings": {
-                        "value": [
-                            {
-                                "name": "Redis",
-                                "connectionString": "[parameters('loggingRedisConnectionString')]",
-                                "type": "Custom"
-                            },
-                            {
-                                "name": "SandboxSqlDbConnectionString",
-                                "connectionString": "[parameters('sandboxSqlDbConnectionString')]",
-                                "type": "Custom"
-                            }
-                        ]
+                        "value": {
+                            "array": [
+                                {
+                                    "name": "Redis",
+                                    "connectionString": "[parameters('loggingRedisConnectionString')]",
+                                    "type": "Custom"
+                                },
+                                {
+                                    "name": "SandboxSqlDbConnectionString",
+                                    "connectionString": "[parameters('sandboxSqlDbConnectionString')]",
+                                    "type": "Custom"
+                                }
+                            ]
+                        }
                     },
                     "customHostName": {
                         "value": "[parameters('internalApiSandboxCustomHostName')]"
@@ -353,7 +361,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(variables('deploymentUrlBase'), 'function-app.json')]",
+                    "uri": "[concat(variables('deploymentUrlBase'), 'function-app-v2.json')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -367,45 +375,49 @@
                         "value": "[resourceGroup().name]"
                     },
                     "functionAppAppSettings": {
-                        "value": [
-                            {
-                                "name": "AzureWebJobsStorage",
-                                "value": "[reference('sandbox-storage-account').outputs.StorageConnectionString.value]"
-                            },
-                            {
-                                "name": "FUNCTIONS_EXTENSION_VERSION",
-                                "value": "[parameters('functionsExtensionVersion')]"
-                            },
-                            {
-                                "name": "MSDEPLOY_RENAME_LOCKED_FILES",
-                                "value": "1"
-                            },
-                            {
-                                "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-                                "value": "[reference(concat(parameters('sandBoxFunctionAppNames')[copyIndex()],'-ai')).outputs.InstrumentationKey.value]"
-                            },
-                            {
-                                "name": "ConfigurationStorageConnectionString",
-                                "value": "[parameters('configurationStorageConnectionString')]"
-                            },
-                            {
-                                "name": "EnvironmentName",
-                                "value": "[toUpper(parameters('environmentName'))]"
-                            },
-                            {
-                                "name": "FUNCTIONS_WORKER_RUNTIME",
-                                "value": "dotnet"
-                            }
-                        ]
+                        "value": {
+                            "array": [
+                                {
+                                    "name": "AzureWebJobsStorage",
+                                    "value": "[reference('sandbox-storage-account').outputs.StorageConnectionString.value]"
+                                },
+                                {
+                                    "name": "FUNCTIONS_EXTENSION_VERSION",
+                                    "value": "[parameters('functionsExtensionVersion')]"
+                                },
+                                {
+                                    "name": "MSDEPLOY_RENAME_LOCKED_FILES",
+                                    "value": "1"
+                                },
+                                {
+                                    "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
+                                    "value": "[reference(concat(parameters('sandBoxFunctionAppNames')[copyIndex()],'-ai')).outputs.InstrumentationKey.value]"
+                                },
+                                {
+                                    "name": "ConfigurationStorageConnectionString",
+                                    "value": "[parameters('configurationStorageConnectionString')]"
+                                },
+                                {
+                                    "name": "EnvironmentName",
+                                    "value": "[toUpper(parameters('environmentName'))]"
+                                },
+                                {
+                                    "name": "FUNCTIONS_WORKER_RUNTIME",
+                                    "value": "dotnet"
+                                }
+                            ]
+                        }
                     },
                     "functionAppConnectionStrings": {
-                        "value": [
-                            {
-                                "name": "Redis",
-                                "connectionString": "[parameters('loggingRedisConnectionString')]",
-                                "type": "Custom"
-                            }
-                        ]
+                        "value": {
+                            "array": [
+                                {
+                                    "name": "Redis",
+                                    "connectionString": "[parameters('loggingRedisConnectionString')]",
+                                    "type": "Custom"
+                                }
+                            ]
+                        }
                     }
                 }
             },
