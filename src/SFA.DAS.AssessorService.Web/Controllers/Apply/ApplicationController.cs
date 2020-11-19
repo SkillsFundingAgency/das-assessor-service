@@ -18,8 +18,10 @@ using SFA.DAS.AssessorService.Application.Exceptions;
 using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.ApplyTypes.CharityCommission;
 using SFA.DAS.AssessorService.ApplyTypes.CompaniesHouse;
+using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Web.Infrastructure;
+using SFA.DAS.AssessorService.Web.StartupConfiguration;
 using SFA.DAS.AssessorService.Web.ViewModels.Apply;
 using SFA.DAS.QnA.Api.Types;
 using SFA.DAS.QnA.Api.Types.Page;
@@ -62,27 +64,32 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
             if (applications is null || applications.Count == 0)
             {
-                //ON-2068 Registered org  with no application created via digital service then
-                //display empty list of application screen
                 if (org != null)
-                {
-                    return org.RoEPAOApproved ? View(applications) : View("~/Views/Application/Declaration.cshtml");
+                {   
+                    if(org.RoEPAOApproved)
+                    {
+                        // an organistion maybe registered with no applications, as it has been migrated in 
+                        // the approved state from the pre-digital service, display an empty list
+                        return RedirectToAction(nameof(StandardApplications));
+                    }
+
+                    return View("~/Views/Application/Declaration.cshtml");
                 }
 
                 return RedirectToAction("Index", "OrganisationSearch");
             }
             else if (applications.Count == 1 && org?.RoEPAOApproved is true)
             {
-                //ON-2068 If there is an existing application for an org that is registered then display it
-                //in a list of application screen
-                return View(applications);
+                // when there is an existing application for an organisation that is registered 
+                // then display the single application
+                return RedirectToAction(nameof(StandardApplications));
             }
             else if (applications.Count > 1)
             {
-                return View(applications);
+                return RedirectToAction(nameof(StandardApplications));
             }
 
-            //This always return one record otherwise the previous logic would have handled the response
+            // otherwise there must be a single application for an organisation which is not registered
             var application = applications.First();
 
             switch (application.ApplicationStatus)
@@ -98,7 +105,17 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 default:
                     return RedirectToAction("SequenceSignPost", new { application.Id });
             }
+        }
 
+        [PrivilegeAuthorize(Privileges.ApplyForStandard)]
+        [HttpGet("/Application/StandardApplications")]
+        public async Task<IActionResult> StandardApplications()
+        {
+            var userId = await GetUserId();
+            var applications = await _applicationApiClient.GetApplications(userId, false);
+            applications = applications?.Where(app => app.ApplicationStatus != ApplicationStatus.Declined).ToList();
+
+            return View(applications);
         }
 
         [HttpPost("/Application")]
