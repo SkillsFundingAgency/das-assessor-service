@@ -31,13 +31,6 @@ BEGIN
 	DECLARE @CurrentManageUsersId UNIQUEIDENTIFIER = (SELECT Id FROM [Privileges] WHERE [Key] = 'ManageUsers')
 	DECLARE @CurrentViewPipelineId UNIQUEIDENTIFIER = (SELECT Id FROM [Privileges] WHERE [Key] = 'ViewPipeline')
 	
-	-- remove rows from [ContactPrivileges] which are not actually for a known [Privileges] row, created whilst FK did not exist
-	DELETE FROM [ContactsPrivileges] WHERE PrivilegeId IN
-	(
-		SELECT DISTINCT cp.PrivilegeId from [ContactsPrivileges] cp left join [Privileges] p on cp.PrivilegeId = p.Id
-		WHERE p.Id IS NULL
-	)
-
 	PRINT 'UPDATING CONTACTS PRIVILEGES'
 
 	-- update each of the [ContactsPrivileges] to match the known [Privileges] in the default lookup data
@@ -60,3 +53,10 @@ BEGIN
 
 	COMMIT TRANSACTION
 END
+
+-- remove rows from [ContactPrivileges] which are not actually for a known [Privileges] row, created whilst FK did not exist
+DELETE FROM [ContactsPrivileges] WHERE PrivilegeId IN
+(
+	SELECT DISTINCT cp.PrivilegeId from [ContactsPrivileges] cp left join [Privileges] p on cp.PrivilegeId = p.Id
+	WHERE p.Id IS NULL
+)
