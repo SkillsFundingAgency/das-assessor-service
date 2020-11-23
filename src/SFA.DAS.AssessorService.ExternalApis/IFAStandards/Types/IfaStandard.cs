@@ -7,6 +7,7 @@ namespace SFA.DAS.AssessorService.ExternalApis.IFAStandards.Types
     {
         public int LarsCode { get; set; }
         public string ReferenceNumber { get; set; }
+        public double? Version { get; set; }
         public string Title { get; set; }
         public string Status { get; set; }
         public string Url { get; set; }
