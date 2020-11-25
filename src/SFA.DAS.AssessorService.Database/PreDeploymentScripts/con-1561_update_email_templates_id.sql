@@ -20,8 +20,9 @@ DECLARE @DefaultEPAOPermissionsRequested UNIQUEIDENTIFIER = 'DA7603D3-87B1-4040-
 DECLARE @DefaultPrintAssessorCoverLetters UNIQUEIDENTIFIER = 'CA7C8BE2-A6F1-479B-A77D-F0614F7E8924'
 DECLARE @DefaultEPAOUserApproveConfirm UNIQUEIDENTIFIER = 'F5A787F4-0276-4C23-A125-F6D4C1AE0650'
 
-
-IF((SELECT COUNT(*) FROM [EMailTemplates] WHERE Id NOT IN
+IF(EXISTS(SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'EMailTemplates'))
+BEGIN
+	IF((SELECT COUNT(*) FROM [EMailTemplates] WHERE Id NOT IN
 	(
 		@DefaultEPAOPermissionsAmended,
 		@DefaultApplyEPAOResponse,
@@ -38,76 +39,77 @@ IF((SELECT COUNT(*) FROM [EMailTemplates] WHERE Id NOT IN
 		@DefaultPrintAssessorCoverLetters,
 		@DefaultEPAOUserApproveConfirm
 	)) > 0)
-BEGIN
-	BEGIN TRANSACTION
+	BEGIN
+		BEGIN TRANSACTION
 
-	DECLARE @CurrentEPAOPermissionsAmended UNIQUEIDENTIFIER = (SELECT Id FROM [EMailTemplates] WHERE [TemplateName] = 'EPAOPermissionsAmended')
-	DECLARE @CurrentApplyEPAOResponse UNIQUEIDENTIFIER = (SELECT Id FROM [EMailTemplates] WHERE [TemplateName] = 'ApplyEPAOResponse')
-	DECLARE @CurrentApplyEPAOUpdate UNIQUEIDENTIFIER = (SELECT Id FROM [EMailTemplates] WHERE [TemplateName] = 'ApplyEPAOUpdate')
-	DECLARE @CurrentApplyEPAOInitialSubmission UNIQUEIDENTIFIER = (SELECT Id FROM [EMailTemplates] WHERE [TemplateName] = 'ApplyEPAOInitialSubmission')
-	DECLARE @CurrentEPAOUserApproveReject UNIQUEIDENTIFIER = (SELECT Id FROM [EMailTemplates] WHERE [TemplateName] = 'EPAOUserApproveReject')
-	DECLARE @CurrentEPAOPrimaryContactAmended UNIQUEIDENTIFIER = (SELECT Id FROM [EMailTemplates] WHERE [TemplateName] = 'EPAOPrimaryContactAmended')
-	DECLARE @CurrentEPAOLoginAccountCreated UNIQUEIDENTIFIER = (SELECT Id FROM [EMailTemplates] WHERE [TemplateName] = 'EPAOLoginAccountCreated')
-	DECLARE @CurrentEPAOUserApproveRequest UNIQUEIDENTIFIER = (SELECT Id FROM [EMailTemplates] WHERE [TemplateName] = 'EPAOUserApproveRequest')
-	DECLARE @CurrentApplyEPAOStandardSubmission UNIQUEIDENTIFIER = (SELECT Id FROM [EMailTemplates] WHERE [TemplateName] = 'ApplyEPAOStandardSubmission')
-	DECLARE @CurrentApplyEPAOAlertSubmission UNIQUEIDENTIFIER = (SELECT Id FROM [EMailTemplates] WHERE [TemplateName] = 'ApplyEPAOAlertSubmission')
-	DECLARE @CurrentEPAOOrganisationDetailsAmended UNIQUEIDENTIFIER = (SELECT Id FROM [EMailTemplates] WHERE [TemplateName] = 'EPAOOrganisationDetailsAmended')
-	DECLARE @CurrentEPAOPermissionsRequested UNIQUEIDENTIFIER = (SELECT Id FROM [EMailTemplates] WHERE [TemplateName] = 'EPAOPermissionsRequested')
-	DECLARE @CurrentPrintAssessorCoverLetters UNIQUEIDENTIFIER = (SELECT Id FROM [EMailTemplates] WHERE [TemplateName] = 'PrintAssessorCoverLetters')
-	DECLARE @CurrentEPAOUserApproveConfirm UNIQUEIDENTIFIER = (SELECT Id FROM [EMailTemplates] WHERE [TemplateName] = 'EPAOUserApproveConfirm')
+		DECLARE @CurrentEPAOPermissionsAmended UNIQUEIDENTIFIER = (SELECT Id FROM [EMailTemplates] WHERE [TemplateName] = 'EPAOPermissionsAmended')
+		DECLARE @CurrentApplyEPAOResponse UNIQUEIDENTIFIER = (SELECT Id FROM [EMailTemplates] WHERE [TemplateName] = 'ApplyEPAOResponse')
+		DECLARE @CurrentApplyEPAOUpdate UNIQUEIDENTIFIER = (SELECT Id FROM [EMailTemplates] WHERE [TemplateName] = 'ApplyEPAOUpdate')
+		DECLARE @CurrentApplyEPAOInitialSubmission UNIQUEIDENTIFIER = (SELECT Id FROM [EMailTemplates] WHERE [TemplateName] = 'ApplyEPAOInitialSubmission')
+		DECLARE @CurrentEPAOUserApproveReject UNIQUEIDENTIFIER = (SELECT Id FROM [EMailTemplates] WHERE [TemplateName] = 'EPAOUserApproveReject')
+		DECLARE @CurrentEPAOPrimaryContactAmended UNIQUEIDENTIFIER = (SELECT Id FROM [EMailTemplates] WHERE [TemplateName] = 'EPAOPrimaryContactAmended')
+		DECLARE @CurrentEPAOLoginAccountCreated UNIQUEIDENTIFIER = (SELECT Id FROM [EMailTemplates] WHERE [TemplateName] = 'EPAOLoginAccountCreated')
+		DECLARE @CurrentEPAOUserApproveRequest UNIQUEIDENTIFIER = (SELECT Id FROM [EMailTemplates] WHERE [TemplateName] = 'EPAOUserApproveRequest')
+		DECLARE @CurrentApplyEPAOStandardSubmission UNIQUEIDENTIFIER = (SELECT Id FROM [EMailTemplates] WHERE [TemplateName] = 'ApplyEPAOStandardSubmission')
+		DECLARE @CurrentApplyEPAOAlertSubmission UNIQUEIDENTIFIER = (SELECT Id FROM [EMailTemplates] WHERE [TemplateName] = 'ApplyEPAOAlertSubmission')
+		DECLARE @CurrentEPAOOrganisationDetailsAmended UNIQUEIDENTIFIER = (SELECT Id FROM [EMailTemplates] WHERE [TemplateName] = 'EPAOOrganisationDetailsAmended')
+		DECLARE @CurrentEPAOPermissionsRequested UNIQUEIDENTIFIER = (SELECT Id FROM [EMailTemplates] WHERE [TemplateName] = 'EPAOPermissionsRequested')
+		DECLARE @CurrentPrintAssessorCoverLetters UNIQUEIDENTIFIER = (SELECT Id FROM [EMailTemplates] WHERE [TemplateName] = 'PrintAssessorCoverLetters')
+		DECLARE @CurrentEPAOUserApproveConfirm UNIQUEIDENTIFIER = (SELECT Id FROM [EMailTemplates] WHERE [TemplateName] = 'EPAOUserApproveConfirm')
 
-	PRINT 'DISABLE FOREIGN KEY CONSTRAINT'
-	ALTER TABLE [dbo].[EmailTemplatesRecipients] DROP CONSTRAINT [FK_EmailTemplates_EmailTemplatesRecipients]
+		PRINT 'DISABLE FOREIGN KEY CONSTRAINT'
+		ALTER TABLE [dbo].[EmailTemplatesRecipients] DROP CONSTRAINT [FK_EmailTemplates_EmailTemplatesRecipients]
 	
-	PRINT 'UPDATING EMAIL TEMPLATE RECIPIENTS'
+		PRINT 'UPDATING EMAIL TEMPLATE RECIPIENTS'
 
-	-- update each of the [EmailTemaplateRecipients] to match the known [EmailTemplate] in the default lookup data
-	UPDATE [EmailTemplatesRecipients] SET EmailTemplateId = @DefaultApplyEPAOAlertSubmission WHERE EmailTemplateId = @CurrentApplyEPAOAlertSubmission AND EmailTemplateId <> @DefaultApplyEPAOAlertSubmission
-	UPDATE [EmailTemplatesRecipients] SET EmailTemplateId = @DefaultEPAOPermissionsAmended WHERE EmailTemplateId = @CurrentEPAOPermissionsAmended AND EmailTemplateId <> @DefaultEPAOPermissionsAmended
-	UPDATE [EmailTemplatesRecipients] SET EmailTemplateId = @DefaultApplyEPAOResponse WHERE EmailTemplateId = @CurrentApplyEPAOResponse AND EmailTemplateId <> @DefaultApplyEPAOResponse
-	UPDATE [EmailTemplatesRecipients] SET EmailTemplateId = @DefaultApplyEPAOUpdate WHERE EmailTemplateId = @CurrentApplyEPAOUpdate AND EmailTemplateId <> @DefaultApplyEPAOUpdate
-	UPDATE [EmailTemplatesRecipients] SET EmailTemplateId = @DefaultApplyEPAOInitialSubmission WHERE EmailTemplateId = @CurrentApplyEPAOInitialSubmission AND EmailTemplateId <> @DefaultApplyEPAOInitialSubmission
-	UPDATE [EmailTemplatesRecipients] SET EmailTemplateId = @DefaultEPAOUserApproveReject WHERE EmailTemplateId = @CurrentEPAOUserApproveReject AND EmailTemplateId <> @DefaultEPAOUserApproveReject
-	UPDATE [EmailTemplatesRecipients] SET EmailTemplateId = @DefaultEPAOPrimaryContactAmended WHERE EmailTemplateId = @CurrentEPAOPrimaryContactAmended AND EmailTemplateId <> @DefaultEPAOPrimaryContactAmended
-	UPDATE [EmailTemplatesRecipients] SET EmailTemplateId = @DefaultEPAOLoginAccountCreated WHERE EmailTemplateId = @CurrentEPAOLoginAccountCreated AND EmailTemplateId <> @DefaultEPAOLoginAccountCreated
-	UPDATE [EmailTemplatesRecipients] SET EmailTemplateId = @DefaultEPAOUserApproveRequest WHERE EmailTemplateId = @CurrentEPAOUserApproveRequest AND EmailTemplateId <> @DefaultEPAOUserApproveRequest
-	UPDATE [EmailTemplatesRecipients] SET EmailTemplateId = @DefaultApplyEPAOStandardSubmission WHERE EmailTemplateId = @CurrentApplyEPAOStandardSubmission AND EmailTemplateId <> @DefaultApplyEPAOStandardSubmission
-	UPDATE [EmailTemplatesRecipients] SET EmailTemplateId = @DefaultApplyEPAOAlertSubmission WHERE EmailTemplateId = @CurrentApplyEPAOAlertSubmission AND EmailTemplateId <> @DefaultApplyEPAOAlertSubmission
-	UPDATE [EmailTemplatesRecipients] SET EmailTemplateId = @DefaultEPAOOrganisationDetailsAmended WHERE EmailTemplateId = @CurrentEPAOOrganisationDetailsAmended AND EmailTemplateId <> @DefaultEPAOOrganisationDetailsAmended
-	UPDATE [EmailTemplatesRecipients] SET EmailTemplateId = @DefaultEPAOPermissionsRequested WHERE EmailTemplateId = @CurrentEPAOPermissionsRequested AND EmailTemplateId <> @DefaultEPAOPermissionsRequested
-	UPDATE [EmailTemplatesRecipients] SET EmailTemplateId = @DefaultPrintAssessorCoverLetters WHERE EmailTemplateId = @CurrentPrintAssessorCoverLetters AND EmailTemplateId <> @DefaultPrintAssessorCoverLetters
-	UPDATE [EmailTemplatesRecipients] SET EmailTemplateId = @DefaultEPAOUserApproveConfirm WHERE EmailTemplateId = @CurrentEPAOUserApproveConfirm AND EmailTemplateId <> @DefaultEPAOUserApproveConfirm
+		-- update each of the [EmailTemaplateRecipients] to match the known [EmailTemplate] in the default lookup data
+		UPDATE [EmailTemplatesRecipients] SET EmailTemplateId = @DefaultApplyEPAOAlertSubmission WHERE EmailTemplateId = @CurrentApplyEPAOAlertSubmission AND EmailTemplateId <> @DefaultApplyEPAOAlertSubmission
+		UPDATE [EmailTemplatesRecipients] SET EmailTemplateId = @DefaultEPAOPermissionsAmended WHERE EmailTemplateId = @CurrentEPAOPermissionsAmended AND EmailTemplateId <> @DefaultEPAOPermissionsAmended
+		UPDATE [EmailTemplatesRecipients] SET EmailTemplateId = @DefaultApplyEPAOResponse WHERE EmailTemplateId = @CurrentApplyEPAOResponse AND EmailTemplateId <> @DefaultApplyEPAOResponse
+		UPDATE [EmailTemplatesRecipients] SET EmailTemplateId = @DefaultApplyEPAOUpdate WHERE EmailTemplateId = @CurrentApplyEPAOUpdate AND EmailTemplateId <> @DefaultApplyEPAOUpdate
+		UPDATE [EmailTemplatesRecipients] SET EmailTemplateId = @DefaultApplyEPAOInitialSubmission WHERE EmailTemplateId = @CurrentApplyEPAOInitialSubmission AND EmailTemplateId <> @DefaultApplyEPAOInitialSubmission
+		UPDATE [EmailTemplatesRecipients] SET EmailTemplateId = @DefaultEPAOUserApproveReject WHERE EmailTemplateId = @CurrentEPAOUserApproveReject AND EmailTemplateId <> @DefaultEPAOUserApproveReject
+		UPDATE [EmailTemplatesRecipients] SET EmailTemplateId = @DefaultEPAOPrimaryContactAmended WHERE EmailTemplateId = @CurrentEPAOPrimaryContactAmended AND EmailTemplateId <> @DefaultEPAOPrimaryContactAmended
+		UPDATE [EmailTemplatesRecipients] SET EmailTemplateId = @DefaultEPAOLoginAccountCreated WHERE EmailTemplateId = @CurrentEPAOLoginAccountCreated AND EmailTemplateId <> @DefaultEPAOLoginAccountCreated
+		UPDATE [EmailTemplatesRecipients] SET EmailTemplateId = @DefaultEPAOUserApproveRequest WHERE EmailTemplateId = @CurrentEPAOUserApproveRequest AND EmailTemplateId <> @DefaultEPAOUserApproveRequest
+		UPDATE [EmailTemplatesRecipients] SET EmailTemplateId = @DefaultApplyEPAOStandardSubmission WHERE EmailTemplateId = @CurrentApplyEPAOStandardSubmission AND EmailTemplateId <> @DefaultApplyEPAOStandardSubmission
+		UPDATE [EmailTemplatesRecipients] SET EmailTemplateId = @DefaultApplyEPAOAlertSubmission WHERE EmailTemplateId = @CurrentApplyEPAOAlertSubmission AND EmailTemplateId <> @DefaultApplyEPAOAlertSubmission
+		UPDATE [EmailTemplatesRecipients] SET EmailTemplateId = @DefaultEPAOOrganisationDetailsAmended WHERE EmailTemplateId = @CurrentEPAOOrganisationDetailsAmended AND EmailTemplateId <> @DefaultEPAOOrganisationDetailsAmended
+		UPDATE [EmailTemplatesRecipients] SET EmailTemplateId = @DefaultEPAOPermissionsRequested WHERE EmailTemplateId = @CurrentEPAOPermissionsRequested AND EmailTemplateId <> @DefaultEPAOPermissionsRequested
+		UPDATE [EmailTemplatesRecipients] SET EmailTemplateId = @DefaultPrintAssessorCoverLetters WHERE EmailTemplateId = @CurrentPrintAssessorCoverLetters AND EmailTemplateId <> @DefaultPrintAssessorCoverLetters
+		UPDATE [EmailTemplatesRecipients] SET EmailTemplateId = @DefaultEPAOUserApproveConfirm WHERE EmailTemplateId = @CurrentEPAOUserApproveConfirm AND EmailTemplateId <> @DefaultEPAOUserApproveConfirm
 	
-	PRINT 'UPDATING EMAIL TEMPLATE'
+		PRINT 'UPDATING EMAIL TEMPLATE'
 
-	-- update each of the [EmailTemplates] to match the known [EmailTemplate] in the default lookup data
-	UPDATE [EmailTemplates] SET Id = @DefaultApplyEPAOAlertSubmission WHERE Id = @CurrentApplyEPAOAlertSubmission AND Id <> @DefaultApplyEPAOAlertSubmission
-	UPDATE [EmailTemplates] SET Id = @DefaultEPAOPermissionsAmended WHERE Id = @CurrentEPAOPermissionsAmended AND Id <> @DefaultEPAOPermissionsAmended
-	UPDATE [EmailTemplates] SET Id = @DefaultApplyEPAOResponse WHERE Id = @CurrentApplyEPAOResponse AND Id <> @DefaultApplyEPAOResponse
-	UPDATE [EmailTemplates] SET Id = @DefaultApplyEPAOUpdate WHERE Id = @CurrentApplyEPAOUpdate AND Id <> @DefaultApplyEPAOUpdate
-	UPDATE [EmailTemplates] SET Id = @DefaultApplyEPAOInitialSubmission WHERE Id = @CurrentApplyEPAOInitialSubmission AND Id <> @DefaultApplyEPAOInitialSubmission
-	UPDATE [EmailTemplates] SET Id = @DefaultEPAOUserApproveReject WHERE Id = @CurrentEPAOUserApproveReject AND Id <> @DefaultEPAOUserApproveReject
-	UPDATE [EmailTemplates] SET Id = @DefaultEPAOPrimaryContactAmended WHERE Id = @CurrentEPAOPrimaryContactAmended AND Id <> @DefaultEPAOPrimaryContactAmended
-	UPDATE [EmailTemplates] SET Id = @DefaultEPAOLoginAccountCreated WHERE Id = @CurrentEPAOLoginAccountCreated AND Id <> @DefaultEPAOLoginAccountCreated
-	UPDATE [EmailTemplates] SET Id = @DefaultEPAOUserApproveRequest WHERE Id = @CurrentEPAOUserApproveRequest AND Id <> @DefaultEPAOUserApproveRequest
-	UPDATE [EmailTemplates] SET Id = @DefaultApplyEPAOStandardSubmission WHERE Id = @CurrentApplyEPAOStandardSubmission AND Id <> @DefaultApplyEPAOStandardSubmission
-	UPDATE [EmailTemplates] SET Id = @DefaultApplyEPAOAlertSubmission WHERE Id = @CurrentApplyEPAOAlertSubmission AND Id <> @DefaultApplyEPAOAlertSubmission
-	UPDATE [EmailTemplates] SET Id = @DefaultEPAOOrganisationDetailsAmended WHERE Id = @CurrentEPAOOrganisationDetailsAmended AND Id <> @DefaultEPAOOrganisationDetailsAmended
-	UPDATE [EmailTemplates] SET Id = @DefaultEPAOPermissionsRequested WHERE Id = @CurrentEPAOPermissionsRequested AND Id <> @DefaultEPAOPermissionsRequested
-	UPDATE [EmailTemplates] SET Id = @DefaultPrintAssessorCoverLetters WHERE Id = @CurrentPrintAssessorCoverLetters AND Id <> @DefaultPrintAssessorCoverLetters
-	UPDATE [EmailTemplates] SET Id = @DefaultEPAOUserApproveConfirm WHERE Id = @CurrentEPAOUserApproveConfirm AND Id <> @DefaultEPAOUserApproveConfirm
+		-- update each of the [EmailTemplates] to match the known [EmailTemplate] in the default lookup data
+		UPDATE [EmailTemplates] SET Id = @DefaultApplyEPAOAlertSubmission WHERE Id = @CurrentApplyEPAOAlertSubmission AND Id <> @DefaultApplyEPAOAlertSubmission
+		UPDATE [EmailTemplates] SET Id = @DefaultEPAOPermissionsAmended WHERE Id = @CurrentEPAOPermissionsAmended AND Id <> @DefaultEPAOPermissionsAmended
+		UPDATE [EmailTemplates] SET Id = @DefaultApplyEPAOResponse WHERE Id = @CurrentApplyEPAOResponse AND Id <> @DefaultApplyEPAOResponse
+		UPDATE [EmailTemplates] SET Id = @DefaultApplyEPAOUpdate WHERE Id = @CurrentApplyEPAOUpdate AND Id <> @DefaultApplyEPAOUpdate
+		UPDATE [EmailTemplates] SET Id = @DefaultApplyEPAOInitialSubmission WHERE Id = @CurrentApplyEPAOInitialSubmission AND Id <> @DefaultApplyEPAOInitialSubmission
+		UPDATE [EmailTemplates] SET Id = @DefaultEPAOUserApproveReject WHERE Id = @CurrentEPAOUserApproveReject AND Id <> @DefaultEPAOUserApproveReject
+		UPDATE [EmailTemplates] SET Id = @DefaultEPAOPrimaryContactAmended WHERE Id = @CurrentEPAOPrimaryContactAmended AND Id <> @DefaultEPAOPrimaryContactAmended
+		UPDATE [EmailTemplates] SET Id = @DefaultEPAOLoginAccountCreated WHERE Id = @CurrentEPAOLoginAccountCreated AND Id <> @DefaultEPAOLoginAccountCreated
+		UPDATE [EmailTemplates] SET Id = @DefaultEPAOUserApproveRequest WHERE Id = @CurrentEPAOUserApproveRequest AND Id <> @DefaultEPAOUserApproveRequest
+		UPDATE [EmailTemplates] SET Id = @DefaultApplyEPAOStandardSubmission WHERE Id = @CurrentApplyEPAOStandardSubmission AND Id <> @DefaultApplyEPAOStandardSubmission
+		UPDATE [EmailTemplates] SET Id = @DefaultApplyEPAOAlertSubmission WHERE Id = @CurrentApplyEPAOAlertSubmission AND Id <> @DefaultApplyEPAOAlertSubmission
+		UPDATE [EmailTemplates] SET Id = @DefaultEPAOOrganisationDetailsAmended WHERE Id = @CurrentEPAOOrganisationDetailsAmended AND Id <> @DefaultEPAOOrganisationDetailsAmended
+		UPDATE [EmailTemplates] SET Id = @DefaultEPAOPermissionsRequested WHERE Id = @CurrentEPAOPermissionsRequested AND Id <> @DefaultEPAOPermissionsRequested
+		UPDATE [EmailTemplates] SET Id = @DefaultPrintAssessorCoverLetters WHERE Id = @CurrentPrintAssessorCoverLetters AND Id <> @DefaultPrintAssessorCoverLetters
+		UPDATE [EmailTemplates] SET Id = @DefaultEPAOUserApproveConfirm WHERE Id = @CurrentEPAOUserApproveConfirm AND Id <> @DefaultEPAOUserApproveConfirm
 
-	PRINT 'REMOVING INVALID [EmailTemplatesRecipients]'
-	DELETE FROM 
-		[EmailTemplatesRecipients] 
-	WHERE 
-		EmailTemplateId NOT IN (SELECT Id FROM [EMailTemplates])
+		PRINT 'REMOVING INVALID [EmailTemplatesRecipients]'
+		DELETE FROM 
+			[EmailTemplatesRecipients] 
+		WHERE 
+			EmailTemplateId NOT IN (SELECT Id FROM [EMailTemplates])
 
-	PRINT 'RECREATE FOREIGN KEY CONSTRAINT'
-	ALTER TABLE [dbo].[EmailTemplatesRecipients]  WITH CHECK ADD  CONSTRAINT [FK_EmailTemplates_EmailTemplatesRecipients] FOREIGN KEY([EmailTemplateId])
-	REFERENCES [dbo].[EMailTemplates] ([Id])
+		PRINT 'RECREATE FOREIGN KEY CONSTRAINT'
+		ALTER TABLE [dbo].[EmailTemplatesRecipients]  WITH CHECK ADD  CONSTRAINT [FK_EmailTemplates_EmailTemplatesRecipients] FOREIGN KEY([EmailTemplateId])
+		REFERENCES [dbo].[EMailTemplates] ([Id])
 	
-	ALTER TABLE [dbo].[EmailTemplatesRecipients] CHECK CONSTRAINT [FK_EmailTemplates_EmailTemplatesRecipients]
+		ALTER TABLE [dbo].[EmailTemplatesRecipients] CHECK CONSTRAINT [FK_EmailTemplates_EmailTemplatesRecipients]
 	
-	COMMIT TRANSACTION
+		COMMIT TRANSACTION
+	END
 END
