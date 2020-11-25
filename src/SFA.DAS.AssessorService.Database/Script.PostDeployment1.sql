@@ -40,6 +40,3 @@ SELECT ce1.[Id],JSON_MODIFY([CertificateData],'$.StandardReference',st1.Referenc
   AND JSON_VALUE([CertificateData],'$.StandardReference') IS NULL) up1
 ON (ma1.id = up1.id)
 WHEN MATCHED THEN UPDATE SET ma1.[CertificateData] = up1.[newData];
-
--- ON-2222 - remove duplicated certs
---:r .\Delete-Duplicated-Certs.sql

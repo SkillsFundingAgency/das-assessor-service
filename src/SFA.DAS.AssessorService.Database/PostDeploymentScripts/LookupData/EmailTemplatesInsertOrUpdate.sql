@@ -30,6 +30,7 @@ INSERT INTO #EmailTemplates VALUES('F072BF45-8F43-44C7-9117-E8116A5EF388', 'EPAO
 INSERT INTO #EmailTemplates VALUES('DA7603D3-87B1-4040-B272-EDE806538BE8', 'EPAOPermissionsRequested', 'addf58d9-9e20-46fe-b952-7fc62a47b7f7')
 INSERT INTO #EmailTemplates VALUES('CA7C8BE2-A6F1-479B-A77D-F0614F7E8924', 'PrintAssessorCoverLetters', '5b171b91-d406-402a-a651-081cce820acb')
 INSERT INTO #EmailTemplates VALUES('F5A787F4-0276-4C23-A125-F6D4C1AE0650', 'EPAOUserApproveConfirm', '68506adb-7e17-45c9-ad54-45ef9a2cad15')
+INSERT INTO #EmailTemplates VALUES('76DE4F5E-0B82-4729-AD80-DE0C0F54FEEF', 'PrintSasToken', '83b79354-4d2b-476d-b02d-cdb9c016911e')
 
 MERGE [EmailTemplates] [Target] USING #EmailTemplates [Source]
 ON ([Source].[Id] = [Target].[Id])
