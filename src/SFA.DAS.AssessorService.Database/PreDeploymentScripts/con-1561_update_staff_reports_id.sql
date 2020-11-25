@@ -17,7 +17,9 @@ DECLARE @DefaultEPAORegister UNIQUEIDENTIFIER = '4D07FE96-AE3E-4476-9A53-673E193
 DECLARE @DefaultRegisterListOfOrganisations UNIQUEIDENTIFIER = '3E230675-D61D-4EF0-A678-A254F77C58B7'
 DECLARE @DefaultRegisterListOfStandards UNIQUEIDENTIFIER = '37770D79-1733-43F9-90D5-88F0609DD7E2'
 
-IF((SELECT COUNT(*) FROM [StaffReports] WHERE Id NOT IN
+IF(EXISTS(SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'EMailTemplates'))
+BEGIN
+	IF((SELECT COUNT(*) FROM [StaffReports] WHERE Id NOT IN
 	(
 		@DefaultMonthlySummary,
 		@DefaultWeeklySummary,
@@ -33,38 +35,38 @@ IF((SELECT COUNT(*) FROM [StaffReports] WHERE Id NOT IN
 		@DefaultRegisterListOfOrganisations,
 		@DefaultRegisterListOfStandards
 	)) > 0)
-BEGIN
-	BEGIN TRANSACTION
+	BEGIN
+		BEGIN TRANSACTION
 
-	DECLARE @CurrentMonthlySummary UNIQUEIDENTIFIER = (SELECT Id FROM [StaffReports] WHERE [ReportName] = 'Monthly summary')
-	DECLARE @CurrentWeeklySummary UNIQUEIDENTIFIER = (SELECT Id FROM [StaffReports] WHERE [ReportName] = 'Weekly summary')
-	DECLARE @CurrentBatch UNIQUEIDENTIFIER = (SELECT Id FROM [StaffReports] WHERE [ReportName] = 'Batch')
-	DECLARE @CurrentEPAO UNIQUEIDENTIFIER = (SELECT Id FROM [StaffReports] WHERE [ReportName] = 'EPAO')
-	DECLARE @CurrentEPAOStandardAndGrade UNIQUEIDENTIFIER = (SELECT Id FROM [StaffReports] WHERE [ReportName] = 'EPAO, standard and grade')
-	DECLARE @CurrentProvider UNIQUEIDENTIFIER = (SELECT Id FROM [StaffReports] WHERE [ReportName] = 'Provider')
-	DECLARE @CurrentProviderAndGrade UNIQUEIDENTIFIER = (SELECT Id FROM [StaffReports] WHERE [ReportName] = 'Provider and grade')
-	DECLARE @CurrentStandard UNIQUEIDENTIFIER = (SELECT Id FROM [StaffReports] WHERE [ReportName] = 'Standard')
-	DECLARE @CurrentExpressionOfInterestEntries UNIQUEIDENTIFIER = (SELECT Id FROM [StaffReports] WHERE [ReportName] = 'Expression of interest entries')
-	DECLARE @CurrentMonthlyDetailedExtract UNIQUEIDENTIFIER = (SELECT Id FROM [StaffReports] WHERE [ReportName] = 'Monthly detailed extract')
-	DECLARE @CurrentEPAORegister UNIQUEIDENTIFIER = (SELECT Id FROM [StaffReports] WHERE [ReportName] = 'EPAO Register')
-	DECLARE @CurrentRegisterListOfOrganisations UNIQUEIDENTIFIER = (SELECT Id FROM [StaffReports] WHERE [ReportName] = 'Register List of Organisations')
-	DECLARE @CurrentRegisterListOfStandards UNIQUEIDENTIFIER = (SELECT Id FROM [StaffReports] WHERE [ReportName] = 'Register List of Standards')
+		DECLARE @CurrentMonthlySummary UNIQUEIDENTIFIER = (SELECT Id FROM [StaffReports] WHERE [ReportName] = 'Monthly summary')
+		DECLARE @CurrentWeeklySummary UNIQUEIDENTIFIER = (SELECT Id FROM [StaffReports] WHERE [ReportName] = 'Weekly summary')
+		DECLARE @CurrentBatch UNIQUEIDENTIFIER = (SELECT Id FROM [StaffReports] WHERE [ReportName] = 'Batch')
+		DECLARE @CurrentEPAO UNIQUEIDENTIFIER = (SELECT Id FROM [StaffReports] WHERE [ReportName] = 'EPAO')
+		DECLARE @CurrentEPAOStandardAndGrade UNIQUEIDENTIFIER = (SELECT Id FROM [StaffReports] WHERE [ReportName] = 'EPAO, standard and grade')
+		DECLARE @CurrentProvider UNIQUEIDENTIFIER = (SELECT Id FROM [StaffReports] WHERE [ReportName] = 'Provider')
+		DECLARE @CurrentProviderAndGrade UNIQUEIDENTIFIER = (SELECT Id FROM [StaffReports] WHERE [ReportName] = 'Provider and grade')
+		DECLARE @CurrentStandard UNIQUEIDENTIFIER = (SELECT Id FROM [StaffReports] WHERE [ReportName] = 'Standard')
+		DECLARE @CurrentExpressionOfInterestEntries UNIQUEIDENTIFIER = (SELECT Id FROM [StaffReports] WHERE [ReportName] = 'Expression of interest entries')
+		DECLARE @CurrentMonthlyDetailedExtract UNIQUEIDENTIFIER = (SELECT Id FROM [StaffReports] WHERE [ReportName] = 'Monthly detailed extract')
+		DECLARE @CurrentEPAORegister UNIQUEIDENTIFIER = (SELECT Id FROM [StaffReports] WHERE [ReportName] = 'EPAO Register')
+		DECLARE @CurrentRegisterListOfOrganisations UNIQUEIDENTIFIER = (SELECT Id FROM [StaffReports] WHERE [ReportName] = 'Register List of Organisations')
+		DECLARE @CurrentRegisterListOfStandards UNIQUEIDENTIFIER = (SELECT Id FROM [StaffReports] WHERE [ReportName] = 'Register List of Standards')
 
-	-- update each of the [StaffReports] to match the known [StaffReports] in the default lookup data
-	UPDATE [StaffReports] SET Id = @DefaultMonthlySummary WHERE Id = @CurrentMonthlySummary
-	UPDATE [StaffReports] SET Id = @DefaultWeeklySummary WHERE Id = @CurrentWeeklySummary
-	UPDATE [StaffReports] SET Id = @DefaultBatch WHERE Id = @CurrentBatch
-	UPDATE [StaffReports] SET Id = @DefaultEPAO WHERE Id = @CurrentEPAO
-	UPDATE [StaffReports] SET Id = @DefaultEPAOStandardAndGrade WHERE Id = @CurrentEPAOStandardAndGrade
-	UPDATE [StaffReports] SET Id = @DefaultProvider WHERE Id = @CurrentProvider
-	UPDATE [StaffReports] SET Id = @DefaultProviderAndGrade WHERE Id = @CurrentProviderAndGrade
-	UPDATE [StaffReports] SET Id = @DefaultStandard WHERE Id = @CurrentStandard
-	UPDATE [StaffReports] SET Id = @DefaultExpressionOfInterestEntries WHERE Id = @CurrentExpressionOfInterestEntries
-	UPDATE [StaffReports] SET Id = @DefaultMonthlyDetailedExtract WHERE Id = @CurrentMonthlyDetailedExtract
-	UPDATE [StaffReports] SET Id = @DefaultEPAORegister WHERE Id = @CurrentEPAORegister
-	UPDATE [StaffReports] SET Id = @DefaultRegisterListOfOrganisations WHERE Id = @CurrentRegisterListOfOrganisations
-	UPDATE [StaffReports] SET Id = @DefaultRegisterListOfStandards WHERE Id = @CurrentRegisterListOfStandards
+		-- update each of the [StaffReports] to match the known [StaffReports] in the default lookup data
+		UPDATE [StaffReports] SET Id = @DefaultMonthlySummary WHERE Id = @CurrentMonthlySummary
+		UPDATE [StaffReports] SET Id = @DefaultWeeklySummary WHERE Id = @CurrentWeeklySummary
+		UPDATE [StaffReports] SET Id = @DefaultBatch WHERE Id = @CurrentBatch
+		UPDATE [StaffReports] SET Id = @DefaultEPAO WHERE Id = @CurrentEPAO
+		UPDATE [StaffReports] SET Id = @DefaultEPAOStandardAndGrade WHERE Id = @CurrentEPAOStandardAndGrade
+		UPDATE [StaffReports] SET Id = @DefaultProvider WHERE Id = @CurrentProvider
+		UPDATE [StaffReports] SET Id = @DefaultProviderAndGrade WHERE Id = @CurrentProviderAndGrade
+		UPDATE [StaffReports] SET Id = @DefaultStandard WHERE Id = @CurrentStandard
+		UPDATE [StaffReports] SET Id = @DefaultExpressionOfInterestEntries WHERE Id = @CurrentExpressionOfInterestEntries
+		UPDATE [StaffReports] SET Id = @DefaultMonthlyDetailedExtract WHERE Id = @CurrentMonthlyDetailedExtract
+		UPDATE [StaffReports] SET Id = @DefaultEPAORegister WHERE Id = @CurrentEPAORegister
+		UPDATE [StaffReports] SET Id = @DefaultRegisterListOfOrganisations WHERE Id = @CurrentRegisterListOfOrganisations
+		UPDATE [StaffReports] SET Id = @DefaultRegisterListOfStandards WHERE Id = @CurrentRegisterListOfStandards
 
-	COMMIT TRANSACTION
+		COMMIT TRANSACTION
+	END
 END
-
