@@ -12,51 +12,57 @@ DECLARE @DefaultViewCompletedAssessmentsId UNIQUEIDENTIFIER = '2213af32-7e36-41e
 DECLARE @DefaultManageUsersId UNIQUEIDENTIFIER = '55df950b-4b2f-485f-9106-e67d5cce5afd'
 DECLARE @DefaultViewPipelineId UNIQUEIDENTIFIER = 'eb2b783d-4509-4c84-bd35-f056b3b9cad9'
 
-IF((SELECT COUNT(*) FROM [Privileges] WHERE Id NOT IN
-	(
-		@DefaultApplyForStandardId,
-		@DefaultChangeOrganisationDetailsId,
-		@DefaultRecordGradesId,
-		@DefaultViewCompletedAssessmentsId,
-		@DefaultManageUsersId,
-		@DefaultViewPipelineId
-	)) > 0)
+IF(EXISTS(SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'Privileges'))
 BEGIN
-	BEGIN TRANSACTION
+	IF((SELECT COUNT(*) FROM [Privileges] WHERE Id NOT IN
+		(
+			@DefaultApplyForStandardId,
+			@DefaultChangeOrganisationDetailsId,
+			@DefaultRecordGradesId,
+			@DefaultViewCompletedAssessmentsId,
+			@DefaultManageUsersId,
+			@DefaultViewPipelineId
+		)) > 0)
+	BEGIN
+		BEGIN TRANSACTION
 
-	DECLARE @CurrentApplyForStandardId UNIQUEIDENTIFIER = (SELECT Id FROM [Privileges] WHERE [Key] = 'ApplyForStandard')
-	DECLARE @CurrentChangeOrganisationDetailsId UNIQUEIDENTIFIER = (SELECT Id FROM [Privileges] WHERE [Key] = 'ChangeOrganisationDetails')
-	DECLARE @CurrentRecordGradesId UNIQUEIDENTIFIER = (SELECT Id FROM [Privileges] WHERE [Key] = 'RecordGrades')
-	DECLARE @CurrentViewCompletedAssessmentsId UNIQUEIDENTIFIER = (SELECT Id FROM [Privileges] WHERE [Key] = 'ViewCompletedAssessments')
-	DECLARE @CurrentManageUsersId UNIQUEIDENTIFIER = (SELECT Id FROM [Privileges] WHERE [Key] = 'ManageUsers')
-	DECLARE @CurrentViewPipelineId UNIQUEIDENTIFIER = (SELECT Id FROM [Privileges] WHERE [Key] = 'ViewPipeline')
+		DECLARE @CurrentApplyForStandardId UNIQUEIDENTIFIER = (SELECT Id FROM [Privileges] WHERE [Key] = 'ApplyForStandard')
+		DECLARE @CurrentChangeOrganisationDetailsId UNIQUEIDENTIFIER = (SELECT Id FROM [Privileges] WHERE [Key] = 'ChangeOrganisationDetails')
+		DECLARE @CurrentRecordGradesId UNIQUEIDENTIFIER = (SELECT Id FROM [Privileges] WHERE [Key] = 'RecordGrades')
+		DECLARE @CurrentViewCompletedAssessmentsId UNIQUEIDENTIFIER = (SELECT Id FROM [Privileges] WHERE [Key] = 'ViewCompletedAssessments')
+		DECLARE @CurrentManageUsersId UNIQUEIDENTIFIER = (SELECT Id FROM [Privileges] WHERE [Key] = 'ManageUsers')
+		DECLARE @CurrentViewPipelineId UNIQUEIDENTIFIER = (SELECT Id FROM [Privileges] WHERE [Key] = 'ViewPipeline')
 	
-	PRINT 'UPDATING CONTACTS PRIVILEGES'
+		PRINT 'UPDATING CONTACTS PRIVILEGES'
 
-	-- update each of the [ContactsPrivileges] to match the known [Privileges] in the default lookup data
-	UPDATE [ContactsPrivileges] SET PrivilegeId = @DefaultApplyForStandardId WHERE PrivilegeId = @CurrentApplyForStandardId
-	UPDATE [ContactsPrivileges] SET PrivilegeId = @DefaultChangeOrganisationDetailsId WHERE PrivilegeId = @CurrentChangeOrganisationDetailsId
-	UPDATE [ContactsPrivileges] SET PrivilegeId = @DefaultRecordGradesId WHERE PrivilegeId = @CurrentRecordGradesId
-	UPDATE [ContactsPrivileges] SET PrivilegeId = @DefaultViewCompletedAssessmentsId WHERE PrivilegeId = @CurrentViewCompletedAssessmentsId
-	UPDATE [ContactsPrivileges] SET PrivilegeId = @DefaultManageUsersId WHERE PrivilegeId = @CurrentManageUsersId
-	UPDATE [ContactsPrivileges] SET PrivilegeId = @DefaultViewPipelineId WHERE PrivilegeId = @CurrentViewPipelineId
+		-- update each of the [ContactsPrivileges] to match the known [Privileges] in the default lookup data
+		UPDATE [ContactsPrivileges] SET PrivilegeId = @DefaultApplyForStandardId WHERE PrivilegeId = @CurrentApplyForStandardId
+		UPDATE [ContactsPrivileges] SET PrivilegeId = @DefaultChangeOrganisationDetailsId WHERE PrivilegeId = @CurrentChangeOrganisationDetailsId
+		UPDATE [ContactsPrivileges] SET PrivilegeId = @DefaultRecordGradesId WHERE PrivilegeId = @CurrentRecordGradesId
+		UPDATE [ContactsPrivileges] SET PrivilegeId = @DefaultViewCompletedAssessmentsId WHERE PrivilegeId = @CurrentViewCompletedAssessmentsId
+		UPDATE [ContactsPrivileges] SET PrivilegeId = @DefaultManageUsersId WHERE PrivilegeId = @CurrentManageUsersId
+		UPDATE [ContactsPrivileges] SET PrivilegeId = @DefaultViewPipelineId WHERE PrivilegeId = @CurrentViewPipelineId
 
-	PRINT 'UPDATING PRIVILEGES'
+		PRINT 'UPDATING PRIVILEGES'
 
-	-- update each of the [Privileges] to match the known [Privileges] in the default lookup data
-	UPDATE [Privileges] SET Id = @DefaultApplyForStandardId WHERE Id = @CurrentApplyForStandardId
-	UPDATE [Privileges] SET Id = @DefaultChangeOrganisationDetailsId WHERE Id = @CurrentChangeOrganisationDetailsId
-	UPDATE [Privileges] SET Id = @DefaultRecordGradesId WHERE Id = @CurrentRecordGradesId
-	UPDATE [Privileges] SET Id = @DefaultViewCompletedAssessmentsId WHERE Id = @CurrentViewCompletedAssessmentsId
-	UPDATE [Privileges] SET Id = @DefaultManageUsersId WHERE Id = @CurrentManageUsersId
-	UPDATE [Privileges] SET Id = @DefaultViewPipelineId WHERE Id = @CurrentViewPipelineId
+		-- update each of the [Privileges] to match the known [Privileges] in the default lookup data
+		UPDATE [Privileges] SET Id = @DefaultApplyForStandardId WHERE Id = @CurrentApplyForStandardId
+		UPDATE [Privileges] SET Id = @DefaultChangeOrganisationDetailsId WHERE Id = @CurrentChangeOrganisationDetailsId
+		UPDATE [Privileges] SET Id = @DefaultRecordGradesId WHERE Id = @CurrentRecordGradesId
+		UPDATE [Privileges] SET Id = @DefaultViewCompletedAssessmentsId WHERE Id = @CurrentViewCompletedAssessmentsId
+		UPDATE [Privileges] SET Id = @DefaultManageUsersId WHERE Id = @CurrentManageUsersId
+		UPDATE [Privileges] SET Id = @DefaultViewPipelineId WHERE Id = @CurrentViewPipelineId
 
-	COMMIT TRANSACTION
+		COMMIT TRANSACTION
+	END
 END
 
--- remove rows from [ContactPrivileges] which are not actually for a known [Privileges] row, created whilst FK did not exist
-DELETE FROM [ContactsPrivileges] WHERE PrivilegeId IN
-(
-	SELECT DISTINCT cp.PrivilegeId from [ContactsPrivileges] cp left join [Privileges] p on cp.PrivilegeId = p.Id
-	WHERE p.Id IS NULL
-)
+IF(EXISTS(SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'ContactsPrivileges'))
+BEGIN
+	-- remove rows from [ContactPrivileges] which are not actually for a known [Privileges] row, created whilst FK did not exist
+	DELETE FROM [ContactsPrivileges] WHERE PrivilegeId IN
+	(
+		SELECT DISTINCT cp.PrivilegeId from [ContactsPrivileges] cp left join [Privileges] p on cp.PrivilegeId = p.Id
+		WHERE p.Id IS NULL
+	)
+END
