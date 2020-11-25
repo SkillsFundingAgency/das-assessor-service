@@ -34,7 +34,6 @@ namespace SFA.DAS.AssessorService.Settings
         [JsonRequired] public string SandboxSqlConnectionString { get; set; }
         [JsonRequired] public ApiAuthentication SandboxApiAuthentication { get; set; }
         [JsonRequired] public ClientApiAuthentication SandboxClientApiAuthentication { get; set; }
-        [JsonRequired] public bool ExternalApiDataSyncEnabled { get; set; }
         #endregion
 
         [JsonRequired] public ProviderRegisterApiAuthentication ProviderRegisterApiAuthentication { get; set; }
