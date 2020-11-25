@@ -40,8 +40,3 @@ SELECT ce1.[Id],JSON_MODIFY([CertificateData],'$.StandardReference',st1.Referenc
   AND JSON_VALUE([CertificateData],'$.StandardReference') IS NULL) up1
 ON (ma1.id = up1.id)
 WHEN MATCHED THEN UPDATE SET ma1.[CertificateData] = up1.[newData];
-
-/* START OF CON-2699 */
-/* ADDING EMAIL TEMPLATE LOOKUP */
-:r .\PostDeploymentScripts\con-2699-add_email_template.sql
-/* END OF CON-2699 */
