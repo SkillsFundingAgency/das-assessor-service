@@ -27,18 +27,18 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
             {
                 new CertificatePrintStatus
                 {
-                    BatchNumber = _batchNumber,
-                    CertificateReference = _certificateReferenceUpdateAfterPrinted,
-                    Status = CertificateStatus.Printed,
-                    StatusChangedAt = _statusChangedAt
+                    BatchNumber = _batch222,
+                    CertificateReference = _certificateReferenceReprintedAfterPrinted,
+                    Status = CertificateStatus.Delivered,
+                    StatusChangedAt = _deliveredAt
                 },
                 new CertificatePrintStatus
                 {
-                    BatchNumber = _batchNumber,
+                    BatchNumber = _batch222,
                     CertificateReference = _certificateReferenceDeletedAfterPrinted,
-                    Status = CertificateStatus.Delivered,
+                    Status = CertificateStatus.NotDelivered,
                     ReasonForChange = string.Empty,
-                    StatusChangedAt = _statusChangedAt
+                    StatusChangedAt = _notDeliveredAt
                 }
             };
 
@@ -60,11 +60,11 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
         public void Then_repository_update_print_status_is_called()
         {
             _certificateRepository.Verify(r => r.UpdatePrintStatus(
-                It.Is<Certificate>(c => c.CertificateReference == _certificateReferenceUpdateAfterPrinted), _batchNumber, CertificateStatus.Printed, _statusChangedAt, null, false),
+                It.Is<Certificate>(c => c.CertificateReference == _certificateReferenceReprintedAfterPrinted), _batch222, CertificateStatus.Delivered, _deliveredAt, null, false),
                 Times.Once());
 
             _certificateRepository.Verify(r => r.UpdatePrintStatus(
-                It.Is<Certificate>(c => c.CertificateReference == _certificateReferenceDeletedAfterPrinted), _batchNumber, CertificateStatus.Delivered, _statusChangedAt, string.Empty, false),
+                It.Is<Certificate>(c => c.CertificateReference == _certificateReferenceDeletedAfterPrinted), _batch222, CertificateStatus.NotDelivered, _notDeliveredAt, string.Empty, false),
                 Times.Once());
         }
     }

@@ -52,7 +52,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Learner
                 return "IgnoreUlnDummyValue";
             }
 
-            var learner = await _ilrRepository.Get(importLearnerDetail.Uln.Value, importLearnerDetail.StdCode.Value);
+            var learner = await _ilrRepository.GetImport(importLearnerDetail.Uln.Value, importLearnerDetail.StdCode.Value);
             if (learner != null)
             {
                 return await HandleExistingLearnerRequest(learner, importLearnerDetail, cancellationToken);
@@ -119,7 +119,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Learner
         {
             _logger.LogDebug("Handling Import Learner Detail Request - Create Ilr");
 
-            await _ilrRepository.Create(new Ilr
+            await _ilrRepository.CreateImport(new Ilr
             {
                 Source = importLearnerDetail.Source,
                 UkPrn = importLearnerDetail.Ukprn.Value,
@@ -150,7 +150,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Learner
 
             // for an update to certain fields if the request is null then the currrent value will be
             // retained, otherwise the request value will be used
-            await _ilrRepository.Update(new Ilr
+            await _ilrRepository.UpdateImport(new Ilr
             {
                 Source = importLearnerDetail.Source,
                 UkPrn = importLearnerDetail.Ukprn.Value,

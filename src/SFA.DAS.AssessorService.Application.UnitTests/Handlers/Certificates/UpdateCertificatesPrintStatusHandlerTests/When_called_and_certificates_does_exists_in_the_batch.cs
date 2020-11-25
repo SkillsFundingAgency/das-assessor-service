@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.UpdateCertificatesPrintStatusHandlerTests
 {
-    public class When_called_and_certificates_do_exists : UpdateCertificatesPrintStatusHandlerTestsBase
+    public class When_called_and_certificates_does_exists_in_the_batch : UpdateCertificatesPrintStatusHandlerTestsBase
     {
         private ValidationResponse _response;
         private static DateTime _statusChangedAt = DateTime.UtcNow;
@@ -27,26 +27,19 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
             {
                 new CertificatePrintStatus
                 {
-                    BatchNumber = _batchNumber,
-                    CertificateReference = _certificateReference1,
-                    Status = CertificateStatus.Printed,
-                    StatusChangedAt = _statusChangedAt
-                },
-                new CertificatePrintStatus
-                {
-                    BatchNumber = _batchNumber,
+                    BatchNumber = _batch222,
                     CertificateReference = _certificateReference2,
                     Status = CertificateStatus.Delivered,
                     ReasonForChange = string.Empty,
-                    StatusChangedAt = _statusChangedAt
+                    StatusChangedAt = _deliveredAt
                 },
                 new CertificatePrintStatus
                 {
-                    BatchNumber = _batchNumber,
+                    BatchNumber = _batch222,
                     CertificateReference = _certificateReference3,
                     Status = CertificateStatus.NotDelivered,
                     ReasonForChange = _certificateNotDeliveredReason1,
-                    StatusChangedAt = _statusChangedAt
+                    StatusChangedAt = _notDeliveredAt
                 }
             };
 
@@ -68,15 +61,11 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
         public void Then_repository_update_print_status_is_called()
         {
             _certificateRepository.Verify(r => r.UpdatePrintStatus(
-                It.Is<Certificate>(c => c.CertificateReference == _certificateReference1), _batchNumber, CertificateStatus.Printed, _statusChangedAt, null, true),
+                It.Is<Certificate>(c => c.CertificateReference == _certificateReference2), _batch222, CertificateStatus.Delivered, _deliveredAt, string.Empty, true),
                 Times.Once());
 
             _certificateRepository.Verify(r => r.UpdatePrintStatus(
-                It.Is<Certificate>(c => c.CertificateReference == _certificateReference2), _batchNumber, CertificateStatus.Delivered, _statusChangedAt, string.Empty, true),
-                Times.Once());
-
-            _certificateRepository.Verify(r => r.UpdatePrintStatus(
-                It.Is<Certificate>(c => c.CertificateReference == _certificateReference3), _batchNumber, CertificateStatus.NotDelivered, _statusChangedAt, _certificateNotDeliveredReason1, true),
+                It.Is<Certificate>(c => c.CertificateReference == _certificateReference3), _batch222, CertificateStatus.NotDelivered, _notDeliveredAt, _certificateNotDeliveredReason1, true),
                 Times.Once());
         }
     }

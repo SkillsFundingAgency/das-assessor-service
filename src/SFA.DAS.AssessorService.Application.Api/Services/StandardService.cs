@@ -145,8 +145,13 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
             var collation = new List<StandardCollation>();
             foreach (var winStandard in winResults)
             {
-                if (!int.TryParse(winStandard.Id, out int standardId)) continue;
-                var ifaStandardToMatch = ifaResults?.FirstOrDefault(x => x.LarsCode.ToString() == winStandard.Id);
+                if (!int.TryParse(winStandard.Id, out var standardId)) continue;
+
+                var ifaStandardToMatch = ifaResults?
+                    .Where(x => x.LarsCode.ToString() == winStandard.Id)
+                    .OrderByDescending(x => x.Version ?? 1)
+                    .FirstOrDefault();
+
                 var standard = MapDataToStandardCollation(standardId, ifaStandardToMatch, winStandard);
                 collation.Add(standard);
             }
