@@ -70,4 +70,18 @@
     <Property Name="ParentElementType" Value="SqlSchema" />
     <Property Name="NewName" Value="[OppFinder_Update_StandardSummary]" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="0f4d2b75-05d9-4038-b282-69103f910768" ChangeDateTime="10/20/2020 08:25:34">
+    <Property Name="ElementName" Value="[dbo].[ScheduleRuns].[Status]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[ScheduleRuns]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="LastStatus" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="180e792c-0b40-4496-aa19-c8deb6d10c76" ChangeDateTime="10/20/2020 08:26:33">
+    <Property Name="ElementName" Value="[dbo].[ScheduleRuns].[LastStatus]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[ScheduleRuns]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="LastRunStatus" />
+  </Operation>
 </Operations>
