@@ -20,18 +20,12 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
         {
             base.BaseArrange();
             
-            _response = await _sut.Handle(new CertificatesPrintStatusUpdateRequest
+            _response = await _sut.Handle(new CertificatePrintStatusUpdateRequest
             {
-                CertificatePrintStatusUpdates = new List<CertificatePrintStatusUpdate>
-                {
-                    new CertificatePrintStatusUpdate
-                    {
-                        BatchNumber = _batch111 + 999,
-                        CertificateReference = _certificateReference1,
-                        Status = CertificateStatus.Delivered,
-                        StatusAt = DateTime.UtcNow
-                    }
-                }
+                BatchNumber = _batch111 + 999,
+                CertificateReference = _certificateReference1,
+                Status = CertificateStatus.Delivered,
+                StatusAt = DateTime.UtcNow
             }, new CancellationToken());
         }
 

@@ -15,12 +15,12 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
 {
     public class UpdateCertificatesPrintStatusHandlerTestsBase
     {
-        protected CertificatesPrintStatusUpdateHandler _sut;
+        protected CertificatePrintStatusUpdateHandler _sut;
 
         protected Mock<ICertificateRepository> _certificateRepository;
         protected Mock<ICertificateBatchLogRepository> _certificateBatchLogRepository;
         protected Mock<IMediator> _mediator;
-        protected Mock<ILogger<CertificatesPrintStatusUpdateHandler>> _logger;
+        protected Mock<ILogger<CertificatePrintStatusUpdateHandler>> _logger;
 
         protected static int _batch111 = 111;
         protected static int _batch222 = 222;
@@ -214,9 +214,9 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
             _mediator.Setup(r => r.Send(It.Is<GetBatchLogRequest>(p => !(new[] { _batch111, _batch222 }.Contains(p.BatchNumber))), It.IsAny<CancellationToken>()))
                 .Returns((GetBatchLogRequest request, CancellationToken token) => Task.FromResult<BatchLogResponse>(null));
 
-            _logger = new Mock<ILogger<CertificatesPrintStatusUpdateHandler>>();
+            _logger = new Mock<ILogger<CertificatePrintStatusUpdateHandler>>();
 
-            _sut = new CertificatesPrintStatusUpdateHandler(_certificateRepository.Object, _certificateBatchLogRepository.Object, _mediator.Object, _logger.Object);
+            _sut = new CertificatePrintStatusUpdateHandler(_certificateRepository.Object, _certificateBatchLogRepository.Object, _mediator.Object, _logger.Object);
         }
     }
 }

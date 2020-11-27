@@ -2,6 +2,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
+using Newtonsoft.Json;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.BatchLogs;
@@ -23,49 +24,105 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Certific
         private Mock<IMediator> _mediator;
         private IActionResult _result;
 
-        private List<CertificatePrintStatusUpdate> _certificatePrintStatusUpdates = new List<CertificatePrintStatusUpdate>
+        private CertificatePrintStatusUpdate _certificatePrintStatusUpdateDelivered = new CertificatePrintStatusUpdate
         {
-            new CertificatePrintStatusUpdate
-            {
-                BatchNumber = 1,
-                CertificateReference = "00000001",
-                Status = CertificateStatus.Delivered,
-                StatusAt = DateTime.UtcNow
-            },
-            new CertificatePrintStatusUpdate
-            {
-                BatchNumber = 1,
-                CertificateReference = "00000002",
-                Status = CertificateStatus.NotDelivered,
-                StatusAt = DateTime.UtcNow
-            }
+            BatchNumber = 1,
+            CertificateReference = "00000001",
+            Status = CertificateStatus.Delivered,
+            StatusAt = DateTime.UtcNow
+        };
+
+        private CertificatePrintStatusUpdate _certificatePrintStatusUpdateNotDelivered = new CertificatePrintStatusUpdate
+        {
+            BatchNumber = 1,
+            CertificateReference = "00000002",
+            ReasonForChange = "Unable to deliver to door",
+            Status = CertificateStatus.NotDelivered,
+            StatusAt = DateTime.UtcNow
         };
         
         [SetUp]
-        public async Task Arrange()
+        public void Arrange()
         {
             _mediator = new Mock<IMediator>();
             
-            _mediator.Setup(q => q.Send(It.IsAny<CertificatesPrintStatusUpdateRequest>(), new CancellationToken()))
+            _mediator.Setup(q => q.Send(It.IsAny<CertificatePrintStatusUpdateRequest>(), new CancellationToken()))
                 .Returns(Task.FromResult(new ValidationResponse()));
             
             _sut = new CertificateController(_mediator.Object);
-            _result = await _sut.UpdatePrintStatus(new CertificatesPrintStatusUpdateRequest { CertificatePrintStatusUpdates = _certificatePrintStatusUpdates });
         }
 
         [Test]
-        public void ThenShouldReturnOk()
+        public async Task ThenShouldReturnOk_ForDelivered()
         {
+            // Act
+            _result = await _sut.UpdatePrintStatus(new CertificatePrintStatusUpdateRequest
+            {
+                BatchNumber = _certificatePrintStatusUpdateDelivered.BatchNumber,
+                CertificateReference = _certificatePrintStatusUpdateDelivered.CertificateReference,
+                Status = _certificatePrintStatusUpdateDelivered.Status,
+                StatusAt = _certificatePrintStatusUpdateDelivered.StatusAt
+            });
+
+            // Assert
             var result = _result as OkObjectResult;
             result.Should().NotBeNull();
         }
 
         [Test]
-        public void ThenShouldCallUpdateCertificatesPrintStatusRequest()
+        public async Task ThenShouldCallUpdateCertificatesPrintStatusRequest_ForDelivered()
         {
+            // Act
+            _result = await _sut.UpdatePrintStatus(new CertificatePrintStatusUpdateRequest
+            {
+                BatchNumber = _certificatePrintStatusUpdateDelivered.BatchNumber,
+                CertificateReference = _certificatePrintStatusUpdateDelivered.CertificateReference,
+                Status = _certificatePrintStatusUpdateDelivered.Status,
+                StatusAt = _certificatePrintStatusUpdateDelivered.StatusAt
+            });
+
+            // Assert
             _mediator.Verify(x => x.Send(
-                It.Is<CertificatesPrintStatusUpdateRequest>(s => s.CertificatePrintStatusUpdates.SequenceEqual(_certificatePrintStatusUpdates)), 
+                It.Is<CertificatePrintStatusUpdateRequest>(s => JsonConvert.SerializeObject(s).Equals(JsonConvert.SerializeObject(_certificatePrintStatusUpdateDelivered))), 
                 It.IsAny<CancellationToken>()), 
+                Times.Once());
+        }
+
+        [Test]
+        public async Task ThenShouldReturnOk_ForNotDelivered()
+        {
+            // Act
+            _result = await _sut.UpdatePrintStatus(new CertificatePrintStatusUpdateRequest
+            {
+                BatchNumber = _certificatePrintStatusUpdateNotDelivered.BatchNumber,
+                CertificateReference = _certificatePrintStatusUpdateNotDelivered.CertificateReference,
+                ReasonForChange = _certificatePrintStatusUpdateNotDelivered.ReasonForChange,
+                Status = _certificatePrintStatusUpdateNotDelivered.Status,
+                StatusAt = _certificatePrintStatusUpdateNotDelivered.StatusAt
+            });
+
+            // Assert
+            var result = _result as OkObjectResult;
+            result.Should().NotBeNull();
+        }
+
+        [Test]
+        public async Task ThenShouldCallUpdateCertificatesPrintStatusRequest_ForNotDelivered()
+        {
+            // Act
+            _result = await _sut.UpdatePrintStatus(new CertificatePrintStatusUpdateRequest
+            {
+                BatchNumber = _certificatePrintStatusUpdateNotDelivered.BatchNumber,
+                CertificateReference = _certificatePrintStatusUpdateNotDelivered.CertificateReference,
+                ReasonForChange = _certificatePrintStatusUpdateNotDelivered.ReasonForChange,
+                Status = _certificatePrintStatusUpdateNotDelivered.Status,
+                StatusAt = _certificatePrintStatusUpdateNotDelivered.StatusAt
+            });
+
+            // Assert
+            _mediator.Verify(x => x.Send(
+                It.Is<CertificatePrintStatusUpdateRequest>(s => JsonConvert.SerializeObject(s).Equals(JsonConvert.SerializeObject(_certificatePrintStatusUpdateNotDelivered))),
+                It.IsAny<CancellationToken>()),
                 Times.Once());
         }
     }

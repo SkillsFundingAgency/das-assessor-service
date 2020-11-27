@@ -80,7 +80,7 @@ namespace SFA.DAS.AssessorService.Data
                 "FROM " +
                 "   BatchLogs " +
                 "WHERE " +
-                "   BatchData IS NULL " +
+                "   FileUploadEndTime IS NULL " +
                 "ORDER BY " +
                 "   BatchNumber",
                 transaction: _unitOfWork.Transaction);
