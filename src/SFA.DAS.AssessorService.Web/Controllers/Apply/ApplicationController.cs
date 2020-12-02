@@ -112,10 +112,12 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         public async Task<IActionResult> StandardApplications()
         {
             var userId = await GetUserId();
-            var applications = await _applicationApiClient.GetApplications(userId, false);
-            applications = applications?.Where(app => app.ApplicationStatus != ApplicationStatus.Declined).ToList();
 
-            return View(applications);
+            var existingApplications = (await _applicationApiClient.GetCombinedApplications(userId))?
+                .Where(p => p.ApplicationStatus != ApplicationStatus.Declined)
+                .ToList();
+
+            return View(existingApplications);
         }
 
         [HttpPost("/Application")]
