@@ -135,7 +135,7 @@ namespace SFA.DAS.AssessorService.Data
                         "o.Status, " +
                         "JSON_VALUE(OrganisationData,'$.Email') as Email " +
                         "from [Organisations] o " +
-                        "join OrganisationType ot " +
+                        "left join OrganisationType ot " +
                         "on ot.id = o.OrganisationTypeId " +
                         "and ot.Status = 'Live'");
                 return assessmentOrganisationSummaries;
