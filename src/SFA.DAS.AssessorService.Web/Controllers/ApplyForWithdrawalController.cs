@@ -75,9 +75,13 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 if (viewModel.TypeOfWithdrawal == "Organisation")
                 {
                     var contact = await GetUserContact();
-                    var org = await _orgApiClient.GetOrganisationByUserId(contact.Id);
+                    var organisation = await _orgApiClient.GetOrganisationByUserId(contact.Id);
 
-                    var createApplicationRequest = await _applicationService.BuildCreateApplicationRequest(ApplicationTypes.OrganisationWithdrawal, contact, org, _config.ReferenceFormat);
+                    var createApplicationRequest = await _applicationService.BuildOrganisationWithdrawalCreateApplicationRequest(
+                        contact, 
+                        organisation, 
+                        _config.ReferenceFormat);
+
                     var id = await _applicationApiClient.CreateApplication(createApplicationRequest);
 
                     return RedirectToAction(
@@ -131,9 +135,14 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             if (ModelState.IsValid)
             {
                 var contact = await GetUserContact();
-                var org = await _orgApiClient.GetOrganisationByUserId(contact.Id);
+                var organisation = await _orgApiClient.GetOrganisationByUserId(contact.Id);
 
-                var createApplicationRequest = await _applicationService.BuildCreateApplicationRequest(ApplicationTypes.StandardWithdrawal, contact, org, _config.ReferenceFormat);
+                var createApplicationRequest = await _applicationService.BuildStandardWithdrawalCreateApplicationRequest(
+                    contact, 
+                    organisation, 
+                    viewModel.SelectedStandardForWithdrawal.Value, 
+                    _config.ReferenceFormat);
+                
                 var id = await _applicationApiClient.CreateApplication(createApplicationRequest);
 
                 var standards = await _applicationApiClient.GetStandards();

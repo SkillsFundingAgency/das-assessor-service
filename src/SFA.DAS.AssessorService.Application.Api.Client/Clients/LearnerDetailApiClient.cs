@@ -38,5 +38,23 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                     importLearnerDetailRequest);
             }
         }
+
+        public async Task<int> GetPipelinesCount(string epaOrgId, int? stdCode)
+        {
+            if(stdCode.HasValue)
+            {
+                using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/learnerdetails/pipelines-count/{epaOrgId}/{stdCode}"))
+                {
+                    return await RequestAndDeserialiseAsync<int>(request);
+                }
+            }
+            else
+            {
+                using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/learnerdetails/pipelines-count/{epaOrgId}"))
+                {
+                    return await RequestAndDeserialiseAsync<int>(request);
+                }
+            }
+        }
     }
 }

@@ -292,7 +292,7 @@ namespace SFA.DAS.AssessorService.Data
                 "GetEPAO_Pipelines", 
                 param: new
                 {
-                    EPAOId = endPointAssessorOrganisationId
+                    epaOrgId = endPointAssessorOrganisationId
                 },
                 transaction: _unitOfWork.Transaction,
                 commandType: CommandType.StoredProcedure);
@@ -330,7 +330,7 @@ namespace SFA.DAS.AssessorService.Data
                 "GetEPAO_Pipelines_Extract", 
                 param: new
                 {
-                    EPAOId = endPointAssessorOrganisationId
+                    epaOrgId = endPointAssessorOrganisationId
                 },
                 transaction: _unitOfWork.Transaction,
                 commandType: CommandType.StoredProcedure);
