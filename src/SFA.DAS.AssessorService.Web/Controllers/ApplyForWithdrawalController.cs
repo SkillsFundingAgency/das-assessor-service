@@ -44,7 +44,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             return View(applications?.Count() == 0);
         }
 
-        [HttpGet()]
+        [HttpGet("/your-withdrawal-notifications")]
         public async Task<IActionResult> WithdrawalApplications()
         {
             var userId = await GetUserId();
