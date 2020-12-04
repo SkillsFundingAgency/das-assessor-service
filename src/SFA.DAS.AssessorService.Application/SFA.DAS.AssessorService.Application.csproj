@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Dapper" Version="2.0.4" />
     <PackageReference Include="FluentValidation.AspNetCore" Version="8.4.0" />
     <PackageReference Include="EPPlus" Version="4.5.2.1" />
     <PackageReference Include="AutoMapper" Version="7.0.1" />
@@ -12,6 +13,7 @@
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="2.2.0" />
     <PackageReference Include="SFA.DAS.Notifications.Api.Client" Version="2.2.210" />
     <PackageReference Include="SFA.DAS.QnA.Api.Types" Version="0.2.218" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.3.0" />
   </ItemGroup>
 
   <ItemGroup>
