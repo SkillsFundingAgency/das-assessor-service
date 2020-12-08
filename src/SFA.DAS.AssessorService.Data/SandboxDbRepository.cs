@@ -1,94 +1,74 @@
-﻿using Dapper;
-using SFA.DAS.AssessorService.ExternalApiDataSync.Infrastructure;
-using SFA.DAS.AssessorService.ExternalApiDataSync.Logger;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
 using System.Transactions;
+using Dapper;
+using Microsoft.Extensions.Logging;
+using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Settings;
 
-namespace SFA.DAS.AssessorService.ExternalApiDataSync
+namespace SFA.DAS.AssessorService.Data
 {
-    public interface ICommand
+    public class SandboxDbRepository : ISandboxDbRepository
     {
-        Task Execute();
-    }
+        private readonly SqlBulkCopyOptions _bulkCopyOptions;
+        private readonly IWebConfiguration _config;
+        private readonly ILogger<SandboxDbRepository> _logger;
 
-    public class ExternalApiDataSyncCommand : ICommand
-    {
-        private readonly IAggregateLogger _aggregateLogger;
-        private readonly bool _allowDataSync;
-        private readonly string _sourceConnectionString;
-        private readonly string _destinationConnectionString;
-
-        private readonly SqlBulkCopyOptions _bulkCopyOptions;     
-
-        public ExternalApiDataSyncCommand(IWebConfiguration config, IAggregateLogger aggregateLogger)
+        public SandboxDbRepository(IWebConfiguration config, ILogger<SandboxDbRepository> logger)
         {
-            _aggregateLogger = aggregateLogger;
-
-            _allowDataSync = config.ExternalApiDataSync.IsEnabled;
-            _sourceConnectionString = config.SqlConnectionString;
-            _destinationConnectionString = config.SandboxSqlConnectionString;
-            _bulkCopyOptions = SqlBulkCopyOptions.KeepIdentity | SqlBulkCopyOptions.KeepNulls | SqlBulkCopyOptions.TableLock;
+            _config = config;
+            _logger = logger;
+            _bulkCopyOptions = SqlBulkCopyOptions.KeepIdentity | SqlBulkCopyOptions.KeepNulls |
+                               SqlBulkCopyOptions.TableLock;
         }
 
-        public async Task Execute()
+        public async Task RebuildExternalApiSandbox()
         {
-            _aggregateLogger.LogInformation("External Api Data Sync Function Started");
-            _aggregateLogger.LogInformation($"Process Environment = {EnvironmentVariableTarget.Process}");
-
-            if (_allowDataSync)
+            try
             {
-                try
-                {
-                    _aggregateLogger.LogInformation("Proceeding with External Api Data Sync...");
+                _logger.LogInformation("Proceeding with rebuilding of ExternalApiSandbox...");
 
-                    using (var destinationSqlConnection = new SqlConnection(_destinationConnectionString))
+                using (var destinationSqlConnection = new SqlConnection(_config.SandboxSqlConnectionString))
+                {
+                    if (!destinationSqlConnection.State.HasFlag(ConnectionState.Open)) destinationSqlConnection.Open();
+
+                    using (var transaction = destinationSqlConnection.BeginTransaction())
                     {
-                        if (!destinationSqlConnection.State.HasFlag(ConnectionState.Open)) destinationSqlConnection.Open();
+                        Step0_TearDown_Database(transaction);
+                        Step1_Organisation_Data(transaction);
+                        Step2_Contacts_Data(transaction);
+                        Step3_Standard_Data(transaction);
+                        Step4_OrganisationStandard_Data(transaction);
+                        Step5_Obfuscate_Personal_Data(transaction);
+                        Step6_Generate_Test_Data(transaction);
 
-                        using (var transaction = destinationSqlConnection.BeginTransaction())
-                        {
-                            Step0_TearDown_Database(transaction);
-                            Step1_Organisation_Data(transaction);
-                            Step2_Contacts_Data(transaction);
-                            Step3_Standard_Data(transaction);
-                            Step4_OrganisationStandard_Data(transaction);
-                            Step5_Obfuscate_Personal_Data(transaction);
-                            Step6_Generate_Test_Data(transaction);
-
-                            transaction.Commit();
-                        }
+                        transaction.Commit();
                     }
+                }
 
-                    _aggregateLogger.LogInformation("External Api Data Sync completed");
-                }
-                catch (TransactionAbortedException ex)
-                {
-                    _aggregateLogger.LogError(ex, "Transaction was aborted during External Api Data Sync");
-                }
-                catch (SqlException ex)
-                {
-                    _aggregateLogger.LogError(ex, "SqlException occurred during External Api Data Sync");
-                }
-                catch (Exception ex)
-                {
-                    _aggregateLogger.LogError(ex, "Unknown Error occurred during External Api Data Sync");
-                }
+                _logger.LogInformation("Rebuilding of ExternalApiSandbox completed");
             }
-            else
+            catch (TransactionAbortedException ex)
             {
-                _aggregateLogger.LogInformation("External Api Data Sync is disabled at this time");
+                _logger.LogError(ex, "Transaction was aborted during Rebuilding of ExternalApiSandbox");
             }
-
+            catch (SqlException ex)
+            {
+                _logger.LogError(ex, "SqlException occurred during Rebuilding of ExternalApiSandbox");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unknown Error occurred during Rebuilding of ExternalApiSandbox");
+            }
             await Task.CompletedTask;
         }
 
         private void Step0_TearDown_Database(SqlTransaction transaction)
         {
-            _aggregateLogger.LogInformation("Step 0: Tear Down Database");
+            _logger.LogInformation("Step 0: Tear Down Database");
 
             // repopulated in Step 6
             transaction.Connection.Execute(
@@ -123,40 +103,40 @@ namespace SFA.DAS.AssessorService.ExternalApiDataSync
                             DELETE FROM OrganisationType;
                             DBCC CHECKIDENT('OrganisationType', RESEED, 1);", transaction: transaction);
 
-            _aggregateLogger.LogInformation("Step 0: Tear Down Completed");
+            _logger.LogInformation("Step 0: Tear Down Completed");
         }
 
         private void Step1_Organisation_Data(SqlTransaction transaction)
         {
-            _aggregateLogger.LogInformation("Step 1: Syncing Organisation Data");
+            _logger.LogInformation("Step 1: Syncing Organisation Data");
             BulkCopyData(transaction, new List<string> { "OrganisationType", "Organisations" });
-            _aggregateLogger.LogInformation("Step 1: Completed");
+            _logger.LogInformation("Step 1: Completed");
         }
 
         private void Step2_Contacts_Data(SqlTransaction transaction)
         {
-            _aggregateLogger.LogInformation("Step 2: Syncing Contacts");
+            _logger.LogInformation("Step 2: Syncing Contacts");
             BulkCopyData(transaction, new List<string> { "Contacts" });
-            _aggregateLogger.LogInformation("Step 2: Completed");
+            _logger.LogInformation("Step 2: Completed");
         }
 
         private void Step3_Standard_Data(SqlTransaction transaction)
         {
-            _aggregateLogger.LogInformation("Step 3: Syncing Standard Data");
+            _logger.LogInformation("Step 3: Syncing Standard Data");
             BulkCopyData(transaction, new List<string> { "StandardCollation", "Options" });
-            _aggregateLogger.LogInformation("Step 3: Completed");
+            _logger.LogInformation("Step 3: Completed");
         }
 
         private void Step4_OrganisationStandard_Data(SqlTransaction transaction)
         {
-            _aggregateLogger.LogInformation("Step 4: Syncing Organisation Standard Data");
+            _logger.LogInformation("Step 4: Syncing Organisation Standard Data");
             BulkCopyData(transaction, new List<string> { "DeliveryArea", "OrganisationStandard", "OrganisationStandardDeliveryArea" });
-            _aggregateLogger.LogInformation("Step 4: Completed");
+            _logger.LogInformation("Step 4: Completed");
         }
 
         private void Step5_Obfuscate_Personal_Data(SqlTransaction transaction)
         {
-            _aggregateLogger.LogInformation("Step 5: Obfuscate Personal Data");
+            _logger.LogInformation("Step 5: Obfuscate Personal Data");
 
             transaction.Connection.Execute(@" UPDATE Contacts
                                     SET GivenNames = ISNULL(EndPointAssessorOrganisationId, 'UNKNOWN')
@@ -172,12 +152,12 @@ namespace SFA.DAS.AssessorService.ExternalApiDataSync
                                     SET PrimaryContact = NULL
                                         , ApiUser = NULL;", transaction: transaction);
 
-            _aggregateLogger.LogInformation("Step 5: Completed");
+            _logger.LogInformation("Step 5: Completed");
         }
 
         private void Step6_Generate_Test_Data(SqlTransaction transaction)
         {
-            _aggregateLogger.LogInformation("Step 6: Generating Test Data");
+            _logger.LogInformation("Step 6: Generating Test Data");
 
             transaction.Connection.Execute(
                 @"WITH CTE AS (
@@ -222,7 +202,7 @@ namespace SFA.DAS.AssessorService.ExternalApiDataSync
                         ) ab1
                         ORDER BY Uln, EndPointAssessorOrganisationId, StandardCode, Number", transaction: transaction);
 
-            _aggregateLogger.LogInformation("Step 6: Completed");
+            _logger.LogInformation("Step 6: Completed");
         }
 
         private void BulkCopyData(SqlTransaction transaction, List<string> tablesToCopy)
@@ -231,13 +211,13 @@ namespace SFA.DAS.AssessorService.ExternalApiDataSync
             if (transaction is null) throw new ArgumentNullException(nameof(transaction));
             if (tablesToCopy is null) throw new ArgumentNullException(nameof(tablesToCopy));
 
-            using (var sourceSqlConnection = new SqlConnection(_sourceConnectionString))
+            using (var sourceSqlConnection = new SqlConnection(_config.SqlConnectionString))
             {
                 if (!sourceSqlConnection.State.HasFlag(ConnectionState.Open)) sourceSqlConnection.Open();
 
                 foreach (var table in tablesToCopy)
                 {
-                    _aggregateLogger.LogDebug($"\tSyncing table: {table}");
+                    _logger.LogDebug($"\tSyncing table: {table}");
                     using (var commandSourceData = new SqlCommand($"SELECT * FROM {table} ORDER BY [Id]", sourceSqlConnection))
                     {
                         using (var reader = commandSourceData.ExecuteReader())
