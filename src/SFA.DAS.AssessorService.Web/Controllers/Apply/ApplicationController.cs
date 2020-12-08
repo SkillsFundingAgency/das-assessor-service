@@ -25,6 +25,7 @@ using SFA.DAS.AssessorService.Web.StartupConfiguration;
 using SFA.DAS.AssessorService.Web.ViewModels.Apply;
 using SFA.DAS.QnA.Api.Types;
 using SFA.DAS.QnA.Api.Types.Page;
+using AssessorServiceApplyType = SFA.DAS.AssessorService.ApplyTypes;
 
 namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 {
@@ -698,7 +699,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             {
                 ReferenceNumber = application?.ApplyData?.Apply?.ReferenceNumber,
                 FeedbackUrl = _config.FeedbackUrl,
-                StandardName = application?.ApplyData?.Apply?.StandardName
+                StandardName = application?.ApplyData?.Apply?.StandardName,
+                SubmissionType = GetSubmissionType(application?.ApplyData?.Apply)
             });
         }
 
@@ -1154,5 +1156,30 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             }
 
         }
+
+        private SubmissionType GetSubmissionType(AssessorServiceApplyType.Apply apply)
+        {
+            if(apply == null)
+                return SubmissionType.General;
+
+            if (apply.LatestOrganisationWithdrawalSubmissionDate.GetValueOrDefault() >
+                apply.LatestStandardWithdrawalSubmissionDate.GetValueOrDefault()
+                &&
+                apply.LatestOrganisationWithdrawalSubmissionDate.GetValueOrDefault() >
+                apply.LatestStandardSubmissionDate.GetValueOrDefault())
+                return SubmissionType.WithdrawalFromRegister;
+
+
+            if (apply.LatestStandardWithdrawalSubmissionDate.GetValueOrDefault() >
+                apply.LatestOrganisationWithdrawalSubmissionDate.GetValueOrDefault()
+                &&
+                apply.LatestStandardWithdrawalSubmissionDate.GetValueOrDefault() >
+                apply.LatestStandardSubmissionDate.GetValueOrDefault())
+                return SubmissionType.WithdrawalFromStandard;
+            
+
+            return SubmissionType.General;
+        }
+
     }
 }
