@@ -26,6 +26,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Services
         public CharityCommissionApiAuthentication CharityCommissionApiAuthentication { get; set; }
         public string ReferenceFormat { get; set; }
         public string FeedbackUrl { get; set; }
+        
         #region For External API Sandbox
         public string SandboxSqlConnectionString { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public ApiAuthentication SandboxApiAuthentication { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
