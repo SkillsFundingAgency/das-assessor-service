@@ -37,7 +37,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                     UseTradingName = false,
                     OrganisationName = organisation.EndPointAssessorName,
                     OrganisationReferenceId = organisation.Id.ToString(),
-                    PipelinesCount = pipelinesCount
+                    PipelinesCount = pipelinesCount,
+                    EarliestDateOfWithdrawal = DateTime.Now.AddMonths(6)
                 })
             };
 
@@ -57,7 +58,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                     UseTradingName = false,
                     OrganisationName = organisation.EndPointAssessorName,
                     OrganisationReferenceId = organisation.Id.ToString(),
-                    PipelinesCount = pipelinesCount
+                    PipelinesCount = pipelinesCount,
+                    EarliestDateOfWithdrawal = DateTime.Now.AddMonths(6)
                 })
             };
 
