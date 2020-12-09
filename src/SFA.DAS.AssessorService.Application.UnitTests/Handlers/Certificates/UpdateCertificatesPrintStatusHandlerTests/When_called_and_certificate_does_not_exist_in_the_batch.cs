@@ -14,7 +14,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
     public class When_called_and_certificate_does_not_exist_in_the_batch : UpdateCertificatesPrintStatusHandlerTestsBase
     {
         private ValidationResponse _response;
-        private static DateTime _statusChangedAt = DateTime.UtcNow;
+        private static DateTime _statusChangedAt = _deliveredAt;
 
         [SetUp]
         public async Task Arrange()
@@ -26,8 +26,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
             {
                 new CertificatePrintStatus
                 {
-                    BatchNumber = _batchNumber,
-                    CertificateReference = _certificateReference6,
+                    BatchNumber = _batch222,
+                    CertificateReference = _certificateReference4,
                     Status = CertificateStatus.NotDelivered,
                     StatusChangedAt = _statusChangedAt
                 }
@@ -45,7 +45,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
         public void Then_validation_response_is_valid_false()
         {
             //Assert
-            _response.IsValid.Should().Be(false);            
+            _response.IsValid.Should().Be(false);
         }
 
         [Test]
@@ -53,8 +53,9 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
         {
             //Assert
             _certificateRepository.Verify(r => r.UpdatePrintStatus(
-                It.Is<Certificate>(c => c.CertificateReference == _certificateReference6), _batchNumber, CertificateStatus.NotDelivered, _statusChangedAt, null, true),
-                Times.Never);
+                It.IsAny<Certificate>(), It.IsAny<int>(), 
+                It.IsAny<string>(), It.IsAny<DateTime>(), 
+                It.IsAny<string>(), It.IsAny<bool>()), Times.Never);
         }
     }
 }

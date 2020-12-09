@@ -1,11 +1,11 @@
 ﻿CREATE TABLE [dbo].[Privileges](
     [Id] [uniqueidentifier] NOT NULL,
-    [UserPrivilege] [nvarchar](120) NOT NULL DEFAULT '',
-    [MustBeAtLeastOneUserAssigned] [bit] NOT NULL DEFAULT(0),
-    [Description] [nvarchar](MAX) NOT NULL DEFAULT '',
-    [PrivilegeData] [nvarchar](MAX) NOT NULL DEFAULT '',
-    [Key] [nvarchar](125) NOT NULL DEFAULT '',
-    [Enabled] bit NOT NULL DEFAULT 1
+    [UserPrivilege] [nvarchar](120) NOT NULL,
+    [MustBeAtLeastOneUserAssigned] [bit] NOT NULL,
+    [Description] [nvarchar](MAX) NOT NULL,
+    [PrivilegeData] [nvarchar](MAX) NOT NULL,
+    [Key] [nvarchar](125) NOT NULL,
+    [Enabled] bit NOT NULL
  CONSTRAINT [PK_Privileges] PRIMARY KEY CLUSTERED 
 (
     [Id] ASC
@@ -15,6 +15,6 @@ GO
 
 CREATE UNIQUE NONCLUSTERED INDEX [IX_Key] ON [dbo].[Privileges]
 (
-	[Id] ASC
+	[Key] ASC
 )WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF) ON [PRIMARY]
 GO

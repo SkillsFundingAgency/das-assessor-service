@@ -41,8 +41,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
             Response = await Sut.Handle(request, new CancellationToken());
 
             // Assert
-            IlrRepository.Verify(r => r.CreateImport(It.Is<Ilr>(p => p.Uln == ImportLearnerDetail.Uln.Value && p.StdCode == ImportLearnerDetail.StdCode.Value)), Times.Once);
-            IlrRepository.Verify(r => r.CreateImport(It.Is<Ilr>(p => p.Uln == _secondImportLearnerDetail.Uln.Value && p.StdCode == _secondImportLearnerDetail.StdCode.Value)), Times.Once);
+            IlrRepository.Verify(r => r.Create(It.Is<Ilr>(p => p.Uln == ImportLearnerDetail.Uln.Value && p.StdCode == ImportLearnerDetail.StdCode.Value)), Times.Once);
+            IlrRepository.Verify(r => r.Create(It.Is<Ilr>(p => p.Uln == _secondImportLearnerDetail.Uln.Value && p.StdCode == _secondImportLearnerDetail.StdCode.Value)), Times.Once);
         }
 
         [Test]
