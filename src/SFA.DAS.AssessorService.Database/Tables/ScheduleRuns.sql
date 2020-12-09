@@ -5,5 +5,6 @@
     [IsComplete] BIT NOT NULL DEFAULT 0, 
     [Interval] BIGINT NULL, 
     [IsRecurring] BIT NOT NULL DEFAULT 0, 
-    [ScheduleType] INT NOT NULL
+    [ScheduleType] INT NOT NULL, 
+    [LastRunStatus] INT NULL
 )
