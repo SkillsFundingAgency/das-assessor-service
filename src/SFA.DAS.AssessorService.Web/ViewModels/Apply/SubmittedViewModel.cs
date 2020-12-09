@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using SFA.DAS.AssessorService.ApplyTypes;
 
 namespace SFA.DAS.AssessorService.Web.ViewModels.Apply
 {
@@ -10,10 +11,10 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Apply
         public string ReferenceNumber { get; set; }
         public string FeedbackUrl { get; set; }
         public string StandardName { get; set; }
-        public SubmissionType SubmissionType { get; set; } = SubmissionType.General;
+        public ApplicationSubmissionType ApplicationSubmissionType { get; set; } = ApplicationSubmissionType.General;
     }
 
-    public enum SubmissionType
+    public enum ApplicationSubmissionType
     {
         General,
         WithdrawalFromStandard,
