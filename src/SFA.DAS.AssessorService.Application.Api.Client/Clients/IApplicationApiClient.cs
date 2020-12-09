@@ -15,6 +15,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         Task<List<ApplicationResponse>> GetWithdrawalApplications(Guid userId);
         Task<List<ApplicationResponse>> GetOrganisationWithdrawalApplications(Guid userId);
         Task<List<ApplicationResponse>> GetStandardWithdrawalApplications(Guid userId);
+        Task<List<ApplicationResponse>> GetApplications(Guid userId, bool createdBy);
         Task<ApplicationResponse> GetApplication(Guid id);
 
         Task<Guid> CreateApplication(CreateApplicationRequest createApplicationRequest);
