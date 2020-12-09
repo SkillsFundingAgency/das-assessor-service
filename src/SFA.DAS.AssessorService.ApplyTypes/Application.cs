@@ -27,13 +27,13 @@ namespace SFA.DAS.AssessorService.ApplyTypes
         public string ContactGivenName { get; set; }
         
         public int? PipelinesCount { get; set; }
-
+        
         public CompaniesHouseSummary CompanySummary { get; set; }
         public CharityCommissionSummary CharitySummary { get; set; }
 
-        public T GetPropertyValue<T>(string propertyName) where T : struct
+        public object GetPropertyValue(string propertyName)
         {
-            return (T)(GetType().GetProperty(propertyName)?.GetValue(this, null) ?? default(T));
+            return GetType().GetProperty(propertyName)?.GetValue(this, null);
         }
     }
 

@@ -342,13 +342,13 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                         return RedirectToAction("Applications");
                     throw ex;
                 }
-
-                var applicationData = await _qnaApiClient.GetApplicationData(application.ApplicationId);
-                ReplaceApplicationDataPropertyPlaceholdersInQuestions(viewModel.Questions, applicationData);
-
-                // the standard name preamble answer is currently stored in the application, instead of the application data
-                ProcessPageVmQuestionsForStandardName(viewModel.Questions, application);
             }
+
+            var applicationData = await _qnaApiClient.GetApplicationData(application.ApplicationId);
+            ReplaceApplicationDataPropertyPlaceholdersInQuestions(viewModel.Questions, applicationData);
+
+            // the standard name preamble answer is currently stored in the application, instead of the application data
+            ProcessPageVmQuestionsForStandardName(viewModel.Questions, application);
 
             if (viewModel.AllowMultipleAnswers)
             {
@@ -1065,15 +1065,18 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             
             Func<Match, string> evaluator = (match) =>
             {
-                var propertyName = match.Value.Trim(new char[] { '{', '}' });
-                return $"{applicationData.GetPropertyValue<int>(propertyName)}";
+                var propertyName = match.Groups[2].Value;
+                var alignment = match.Groups[3].Value;
+                var formatString = match.Groups[4].Value;
+
+                return string.Format("{0" + alignment + formatString + "}", applicationData.GetPropertyValue(propertyName));
             };
 
             try
             {
                 formattedText = Regex.Replace(
                     formattedText,
-                    "{{\\w+}}",
+                    "{{((\\w+)(,[0-9]*)?)(:[\\w\\s.:/]*)?}}",
                     new MatchEvaluator(evaluator),
                     RegexOptions.IgnorePatternWhitespace,
                     TimeSpan.FromSeconds(.25));
