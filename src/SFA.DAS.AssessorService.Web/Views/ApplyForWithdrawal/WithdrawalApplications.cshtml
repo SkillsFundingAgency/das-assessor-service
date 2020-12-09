@@ -3,7 +3,7 @@
 @model List<SFA.DAS.AssessorService.Api.Types.Models.Apply.ApplicationResponse>;
 
 @{
-    ViewBag.Title = "Applications";
+    ViewBag.Title = "Your withdrawal notifications";
 }
 
 <a asp-action="Index" asp-controller="ApplyForWithdrawal" class="govuk-back-link">Back</a>
@@ -48,7 +48,7 @@
                                     @application.ApplyData?.Apply?.StandardName
                                 }
                             </td>
-                            <td class="govuk-table__cell govuk-table__cell--numeric">@application.ApplicationStatus.CapitaliseFirstLetterOnly()</td>
+                            <td class="govuk-table__cell govuk-table__cell--numeric">@application.ApplicationStatus.FormatStatus()</td>
                             <td class="govuk-table__cell govuk-table__cell--numeric">
                                 <a class="govuk-link" href="@Url.Action("SequenceSignPost", "Application", new { Id = application.Id })">View</a>
                             </td>

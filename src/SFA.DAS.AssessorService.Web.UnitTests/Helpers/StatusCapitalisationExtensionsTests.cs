@@ -7,14 +7,15 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.Helpers
     public class StatusCapitalisationExtensionsTests
     {
         [TestCase("In Progress", "In progress")]
-        [TestCase("FeEdbAcK Added", "Feedback added")]
         [TestCase("feedback Added", "Feedback added")]
-        [TestCase(" "," ")]
-        [TestCase("","")]
-        [TestCase(null,null)]
-        public void When_CapitaliseFirstLetterOnly_Then_FirstLetterWillBeUpperCaseAndTheRemainingLettersWillBeLowerCase(string status, string expected)
+        [TestCase("InProgress", "In progress")]
+        [TestCase("feedbackAdded", "Feedback added")]
+        [TestCase(" ", " ")]
+        [TestCase("", "")]
+        [TestCase(null, null)]
+        public void When_FormatStatus_Then_CorrectStatusIsReturned(string status, string expected)
         {
-            var result = status.CapitaliseFirstLetterOnly();
+            var result = status.FormatStatus();
 
             Assert.AreEqual(expected, result);
         }
