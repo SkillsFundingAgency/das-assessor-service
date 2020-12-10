@@ -6,8 +6,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 {
     public interface IApplicationService
     {
-        Task<CreateApplicationRequest> BuildStandardWithdrawalCreateApplicationRequest(ContactResponse contact, OrganisationResponse organisation, int standardCode, string referenceFormat);
-        Task<CreateApplicationRequest> BuildOrganisationWithdrawalCreateApplicationRequest(ContactResponse contact, OrganisationResponse organisation, string referenceFormat);
-        Task<CreateApplicationRequest> BuildCombinedCreateApplicationRequest(ContactResponse contact, OrganisationResponse org, string referenceFormat);
+        Task<CreateApplicationRequest> BuildStandardWithdrawalRequest(ContactResponse contact, OrganisationResponse organisation, int standardCode, string referenceFormat);
+        Task<CreateApplicationRequest> BuildOrganisationWithdrawalRequest(ContactResponse contact, OrganisationResponse organisation, string referenceFormat);
+        Task<CreateApplicationRequest> BuildCombinedRequest(ContactResponse contact, OrganisationResponse org, string referenceFormat);
     }
 }

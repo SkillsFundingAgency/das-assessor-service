@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -39,8 +40,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         private readonly ILogger<ApplicationController> _logger;
 
         public ApplicationController(IApiValidationService apiValidationService, IApplicationService applicationService, IOrganisationsApiClient orgApiClient, IQnaApiClient qnaApiClient, IWebConfiguration config,
-            IApplicationApiClient applicationApiClient, IContactsApiClient contactsApiClient, ILogger<ApplicationController> logger)
-            : base (applicationApiClient, contactsApiClient)
+            IApplicationApiClient applicationApiClient, IContactsApiClient contactsApiClient, IHttpContextAccessor httpContextAccessor, ILogger<ApplicationController> logger)
+            : base (applicationApiClient, contactsApiClient, httpContextAccessor)
         {
             _apiValidationService = apiValidationService;
             _applicationService = applicationService;
@@ -136,7 +137,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                     return RedirectToAction("SequenceSignPost", new { existingEmptyApplication.Id });
             }
 
-            var createApplicationRequest = await _applicationService.BuildCombinedCreateApplicationRequest(contact, org, _config.ReferenceFormat);
+            var createApplicationRequest = await _applicationService.BuildCombinedRequest(contact, org, _config.ReferenceFormat);
             
             var id = await _applicationApiClient.CreateApplication(createApplicationRequest);
             

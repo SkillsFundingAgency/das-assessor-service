@@ -24,7 +24,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             _learnerDetailsApiClient = learnerDetailsApiClient;
         }
 
-        public async Task<CreateApplicationRequest> BuildStandardWithdrawalCreateApplicationRequest(ContactResponse contact, OrganisationResponse organisation, int standardCode, string referenceFormat)
+        public async Task<CreateApplicationRequest> BuildStandardWithdrawalRequest(ContactResponse contact, OrganisationResponse organisation, int standardCode, string referenceFormat)
         {
             var pipelinesCount = await _learnerDetailsApiClient.GetPipelinesCount(organisation.EndPointAssessorOrganisationId, standardCode);
             
@@ -41,10 +41,10 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 })
             };
 
-            return await BuildCreateApplicationRequest(startApplicationRequest, ApplicationTypes.StandardWithdrawal, contact.Id, organisation.Id, referenceFormat);
+            return await BuildRequest(startApplicationRequest, ApplicationTypes.StandardWithdrawal, contact.Id, organisation.Id, referenceFormat);
         }
 
-        public async Task<CreateApplicationRequest> BuildOrganisationWithdrawalCreateApplicationRequest(ContactResponse contact, OrganisationResponse organisation, string referenceFormat)
+        public async Task<CreateApplicationRequest> BuildOrganisationWithdrawalRequest(ContactResponse contact, OrganisationResponse organisation, string referenceFormat)
         {
             var pipelinesCount = await _learnerDetailsApiClient.GetPipelinesCount(organisation.EndPointAssessorOrganisationId, null);
 
@@ -61,10 +61,10 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 })
             };
 
-            return await BuildCreateApplicationRequest(startApplicationRequest, ApplicationTypes.OrganisationWithdrawal, contact.Id, organisation.Id, referenceFormat);
+            return await BuildRequest(startApplicationRequest, ApplicationTypes.OrganisationWithdrawal, contact.Id, organisation.Id, referenceFormat);
         }
 
-        public async Task<CreateApplicationRequest> BuildCombinedCreateApplicationRequest(ContactResponse contact, OrganisationResponse organisation, string referenceFormat)
+        public async Task<CreateApplicationRequest> BuildCombinedRequest(ContactResponse contact, OrganisationResponse organisation, string referenceFormat)
         {
             var startApplicationRequest = new StartApplicationRequest
             {
@@ -81,10 +81,10 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 })
             };
 
-            return await BuildCreateApplicationRequest(startApplicationRequest, ApplicationTypes.Combined, contact.Id, organisation.Id, referenceFormat);
+            return await BuildRequest(startApplicationRequest, ApplicationTypes.Combined, contact.Id, organisation.Id, referenceFormat);
         }
 
-        private async Task<CreateApplicationRequest> BuildCreateApplicationRequest(StartApplicationRequest startApplicationRequest, string applicationType, Guid contactId, Guid organisationId, string referenceFormat)
+        private async Task<CreateApplicationRequest> BuildRequest(StartApplicationRequest startApplicationRequest, string applicationType, Guid contactId, Guid organisationId, string referenceFormat)
         {
             var qnaResponse = await _qnaApiClient.StartApplications(startApplicationRequest);
             var sequences = await _qnaApiClient.GetAllApplicationSequences(qnaResponse.ApplicationId);

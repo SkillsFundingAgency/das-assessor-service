@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
@@ -13,11 +14,13 @@ namespace SFA.DAS.AssessorService.Web.Controllers
     {
         protected readonly IApplicationApiClient _applicationApiClient;
         protected readonly IContactsApiClient _contactsApiClient;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public AssessorController(IApplicationApiClient applicationApiClient, IContactsApiClient contactsApiClient)
+        public AssessorController(IApplicationApiClient applicationApiClient, IContactsApiClient contactsApiClient, IHttpContextAccessor httpContextAccessor)
         {
             _applicationApiClient = applicationApiClient;
             _contactsApiClient = contactsApiClient;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         protected async Task<Guid> GetUserId()
@@ -28,7 +31,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
         protected async Task<ContactResponse> GetUserContact()
         {
-            var signinId = User.Claims.First(c => c.Type == "sub")?.Value;
+            var signinId = _httpContextAccessor.HttpContext.User.Claims.First(c => c.Type == "sub")?.Value;
             return await GetUserContact(signinId);
         }
 

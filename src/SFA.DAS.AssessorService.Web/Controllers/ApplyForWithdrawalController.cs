@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Domain.Consts;
@@ -24,9 +25,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         private readonly IWebConfiguration _config;
 
         public ApplyForWithdrawalController(IApplicationService applicationService, IOrganisationsApiClient orgApiClient, 
-            IApplicationApiClient applicationApiClient, IContactsApiClient contactsApiClient, IStandardsApiClient standardsApiClient,
-            IWebConfiguration config)
-            : base (applicationApiClient, contactsApiClient)
+            IApplicationApiClient applicationApiClient, IContactsApiClient contactsApiClient, IHttpContextAccessor httpContextAccessor, 
+            IStandardsApiClient standardsApiClient, IWebConfiguration config)
+            : base (applicationApiClient, contactsApiClient, httpContextAccessor)
         {
             _applicationService = applicationService;
             _orgApiClient = orgApiClient;
@@ -72,12 +73,12 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             
             if (ModelState.IsValid)
             {
-                if (viewModel.TypeOfWithdrawal == "Organisation")
+                if (viewModel.TypeOfWithdrawal == ApplicationTypes.OrganisationWithdrawal)
                 {
                     var contact = await GetUserContact();
                     var organisation = await _orgApiClient.GetOrganisationByUserId(contact.Id);
 
-                    var createApplicationRequest = await _applicationService.BuildOrganisationWithdrawalCreateApplicationRequest(
+                    var createApplicationRequest = await _applicationService.BuildOrganisationWithdrawalRequest(
                         contact, 
                         organisation, 
                         _config.ReferenceFormat);
@@ -89,7 +90,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                         nameof(ApplicationController).RemoveController(), 
                         new { Id = id, sequenceNo = ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO });
                 }
-                else if (viewModel.TypeOfWithdrawal == "Standard")
+                else if (viewModel.TypeOfWithdrawal == ApplicationTypes.StandardWithdrawal)
                 {
                     return RedirectToAction(nameof(ChooseStandardForWithdrawal), nameof(ApplyForWithdrawalController).RemoveController());
                 }
@@ -137,7 +138,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 var contact = await GetUserContact();
                 var organisation = await _orgApiClient.GetOrganisationByUserId(contact.Id);
 
-                var createApplicationRequest = await _applicationService.BuildStandardWithdrawalCreateApplicationRequest(
+                var createApplicationRequest = await _applicationService.BuildStandardWithdrawalRequest(
                     contact, 
                     organisation, 
                     viewModel.SelectedStandardForWithdrawal.Value, 
