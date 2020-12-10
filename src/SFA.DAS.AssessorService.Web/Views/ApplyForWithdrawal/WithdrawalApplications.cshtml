@@ -1,15 +1,18 @@
 @using SFA.DAS.AssessorService.Domain.Consts;
+@using SFA.DAS.AssessorService.Web.Extensions;
 @model List<SFA.DAS.AssessorService.Api.Types.Models.Apply.ApplicationResponse>;
 
 @{
-    ViewBag.Title = "Applications";
+    ViewBag.Title = "Your withdrawal notifications";
 }
+
+<a asp-action="Index" asp-controller="ApplyForWithdrawal" class="govuk-back-link">Back</a>
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
             <h1 class="govuk-heading-xl">
-                Select withdrawal application
+                Your withdrawal notifications
             </h1>
             <table class="govuk-table">
                 <thead class="govuk-table__head">
@@ -27,7 +30,8 @@
                         <tr>
                             <td class="govuk-table__cell">
                                 @if (application.ApplyData.RequiredSequences.Contains(ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO))
-                                    {<text> Organisation</text>
+                                {
+                                    <text>Register</text>
                                 }
                                 else if (application.ApplyData.RequiredSequences.Contains(ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO))
                                 {
@@ -37,14 +41,14 @@
                             <td class="govuk-table__cell">
                                 @if (application.ApplyData.RequiredSequences.Contains(ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO))
                                 {
-                                    @application.EndPointAssessorName
+                                    <text>Not applicable</text>
                                 }
                                 else if (application.ApplyData.RequiredSequences.Contains(ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO))
                                 {
                                     @application.ApplyData?.Apply?.StandardName
                                 }
                             </td>
-                            <td class="govuk-table__cell govuk-table__cell--numeric">@application.ApplicationStatus</td>
+                            <td class="govuk-table__cell govuk-table__cell--numeric">@application.ApplicationStatus.FormatStatus()</td>
                             <td class="govuk-table__cell govuk-table__cell--numeric">
                                 <a class="govuk-link" href="@Url.Action("SequenceSignPost", "Application", new { Id = application.Id })">View</a>
                             </td>
@@ -55,6 +59,6 @@
         </div>
     </div>
     <a asp-action="TypeOfWithdrawal" asp-controller="ApplyForWithdrawal" class="govuk-button">
-        Start
+        Create a new withdrawal notification
     </a>
 </main>
