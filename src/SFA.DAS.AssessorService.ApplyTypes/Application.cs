@@ -130,5 +130,4 @@ namespace SFA.DAS.AssessorService.ApplyTypes
         public Guid SubmittedBy { get; set; }
         public string SubmittedByEmail { get; set; }
     }
-
 }

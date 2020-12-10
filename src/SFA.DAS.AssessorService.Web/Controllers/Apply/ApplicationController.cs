@@ -10,7 +10,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Apply;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
@@ -25,7 +24,6 @@ using SFA.DAS.AssessorService.Web.StartupConfiguration;
 using SFA.DAS.AssessorService.Web.ViewModels.Apply;
 using SFA.DAS.QnA.Api.Types;
 using SFA.DAS.QnA.Api.Types.Page;
-using AssessorServiceApplyType = SFA.DAS.AssessorService.ApplyTypes;
 
 namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 {
@@ -212,7 +210,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
             throw new BadRequestException("Section does not have a valid DisplayType");
         }
-
 
         private static bool IsSequenceActive(ApplicationResponse applicationResponse, int sequenceNo)
         {
@@ -574,8 +571,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 throw ex;
             }
         }
-
-
+        
         [HttpPost("/Application/{Id}/RefreshApplicationData")]
         public async Task<IActionResult> RefreshApplicationData(Guid Id)
         {
@@ -703,7 +699,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 ReferenceNumber = application?.ApplyData?.Apply?.ReferenceNumber,
                 FeedbackUrl = _config.FeedbackUrl,
                 StandardName = application?.ApplyData?.Apply?.StandardName,
-                ApplicationSubmissionType =  GetApplicationSubmissionTypeAsync(application, sequence)
+                SequenceNo = sequence.SequenceNo
             });
         }
 
@@ -737,21 +733,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             var sequenceVm = new SequenceViewModel(sequence, application.Id, BuildPageContext(application, sequence), sections, applyData.Sections, null);
 
             return View("~/Views/Application/Feedback.cshtml", sequenceVm);
-        }
-
-        private ApplicationSubmissionType GetApplicationSubmissionTypeAsync(ApplicationResponse application, Sequence sequence)
-        {
-            if (sequence.SequenceNo == ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO)
-            {
-                return ApplicationSubmissionType.WithdrawalFromStandard;
-            }
-
-            if (sequence.SequenceNo == ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO)
-            {
-                return ApplicationSubmissionType.WithdrawalFromRegister;
-            }
-
-            return ApplicationSubmissionType.General;
         }
         
         private async Task<Page> GetDataFedOptions(Page page)
@@ -880,7 +861,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
             return page;
         }
-
 
         private RedirectToActionResult RedirectToNextAction(Guid Id, int sequenceNo, int sectionNo, string nextAction, string nextActionId, string __redirectAction, string __summaryLink = "Show")
         {

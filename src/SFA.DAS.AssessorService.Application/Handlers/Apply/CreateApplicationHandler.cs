@@ -68,7 +68,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
 
             return Guid.Empty;
         }
-         
         private void RemoveSequencesAndSections(List<ApplySequence> sequences, Domain.Entities.Organisation org, OrganisationType orgType, string applicationType)
         {
             if (applicationType == ApplicationTypes.Combined)

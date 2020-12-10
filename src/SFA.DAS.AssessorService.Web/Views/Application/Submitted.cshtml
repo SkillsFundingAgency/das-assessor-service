@@ -1,6 +1,4 @@
-@using System.Diagnostics
-@using SFA.DAS.AssessorService.ApplyTypes
-@using SFA.DAS.AssessorService.Web.ViewModels.Apply
+@using SFA.DAS.AssessorService.Domain.Consts
 @model SFA.DAS.AssessorService.Web.ViewModels.Apply.SubmittedViewModel
 @{
     ViewBag.Title = "Application submitted";
@@ -8,13 +6,11 @@
 }
 
 <main class="govuk-main-wrapper govuk-main-wrapper--l" id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
 
-    @if (Model.ApplicationSubmissionType == ApplicationSubmissionType.WithdrawalFromRegister ||
-         Model.ApplicationSubmissionType == ApplicationSubmissionType.WithdrawalFromStandard)
-      {
-
-        <div class="govuk-grid-row">
-            <div class="govuk-grid-column-two-thirds">
+            @if (Model.SequenceNo == ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO || Model.SequenceNo == ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO)
+            {
                 <form method="post">
 
                     <div class="govuk-panel govuk-panel--confirmation">
@@ -36,7 +32,7 @@
                     </h2>
 
 
-                    @if (Model.ApplicationSubmissionType == ApplicationSubmissionType.WithdrawalFromRegister)
+                    @if (Model.SequenceNo == ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO)
                     {
                         <p class="govuk-body">
                             We'll review your withdrawal notification within 4 weeks, then email the outcome to you. If any of your answers need clarification, we'll send you a notification by email.
@@ -52,7 +48,7 @@
                     }
 
 
-                    @if (Model.ApplicationSubmissionType == ApplicationSubmissionType.WithdrawalFromStandard)
+                    @if (Model.SequenceNo == ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO)
                     {
                         <p class="govuk-body">
                             We'll review your withdrawal notification within 4 weeks, then email the outcome to you. If any of your answers need clarification, we'll send you a notification by email.
@@ -74,16 +70,9 @@
                         <a href="@Model.FeedbackUrl" target="_blank" class="govuk-link">What do you think of this service?</a> (Takes 60 seconds)
                     </p>
                 </form>
-            </div>
-        </div>
-
-    }
-    else
-    {
-
-
-        <div class="govuk-grid-row">
-            <div class="govuk-grid-column-two-thirds">
+            }
+            else
+            {
                 <div class="govuk-panel govuk-panel--confirmation">
                     <h1 class="govuk-panel__title">
                         @if (string.IsNullOrEmpty(Model.StandardName))
@@ -122,18 +111,8 @@
                 <p class="govuk-body">Once we've reviewed your application, we'll email the outcome to you. If any of your answers need clarification, we'll send you a notification by email.</p>
 
                 <p class="govuk-body"><a href="@Model.FeedbackUrl" target="_blank" class="govuk-link">What do you think of this service?</a> (Takes 60 seconds)</p>
-                @* LINK BELOW REMOVED FOR PRIVATE BETA *@
-                @*
-                    <p class="govuk-body">
-                        <a asp-action="Applications" asp-controller="Application" class="govuk-link">Return to application overview</a>
-                    </p>
-                *@
-            </div>
+            }
 
         </div>
-
-
-    }
-
-
+    </div>
 </main>
