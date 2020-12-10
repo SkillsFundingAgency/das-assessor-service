@@ -4,6 +4,7 @@ using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Domain.Consts;
+using SFA.DAS.AssessorService.Domain.Helpers;
 using SFA.DAS.AssessorService.Web.Controllers.Apply;
 using SFA.DAS.QnA.Api.Types;
 using System;
@@ -18,12 +19,14 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ApplyControllerTests.ApplyForWit
         private ApplicationService _sut;
         private Mock<IQnaApiClient> _mockQnaApiClient;
         private Mock<ILearnerDetailsApiClient> _mockLearnerDetailsApiClient;
+        private Mock<IDateTimeHelper> _mockDateTimeHelper;
 
         [SetUp]
         public void Arrange()
         {
             _mockQnaApiClient = new Mock<IQnaApiClient>();
             _mockLearnerDetailsApiClient = new Mock<ILearnerDetailsApiClient>();
+            _mockDateTimeHelper = new Mock<IDateTimeHelper>();
 
             _mockQnaApiClient
                 .Setup(r => r.StartApplications(It.IsAny<StartApplicationRequest>()))
@@ -37,7 +40,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ApplyControllerTests.ApplyForWit
                 .Setup(r => r.GetPipelinesCount(It.IsAny<string>(), It.IsAny<int?>()))
                 .ReturnsAsync(10);
 
-            _sut = new ApplicationService(_mockQnaApiClient.Object, _mockLearnerDetailsApiClient.Object);
+            _sut = new ApplicationService(_mockQnaApiClient.Object, _mockLearnerDetailsApiClient.Object, _mockDateTimeHelper.Object);
         }
         
         [Test]

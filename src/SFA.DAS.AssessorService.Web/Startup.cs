@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
-using FluentValidation.AspNetCore;
+﻿using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.DataProtection;
@@ -15,6 +11,7 @@ using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Application.Api.Client.Azure;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
+using SFA.DAS.AssessorService.Domain.Helpers;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
 using SFA.DAS.AssessorService.ExternalApis.IFAStandards;
 using SFA.DAS.AssessorService.Settings;
@@ -22,8 +19,12 @@ using SFA.DAS.AssessorService.Web.Controllers.Apply;
 using SFA.DAS.AssessorService.Web.Extensions;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.StartupConfiguration;
-using StructureMap;
 using StackExchange.Redis;
+using StructureMap;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
 
 namespace SFA.DAS.AssessorService.Web
 {
@@ -134,11 +135,17 @@ namespace SFA.DAS.AssessorService.Web
                 config.For<ITokenService>().Use<TokenService>();
                 config.For<ITokenService>().Add<QnaTokenService>().Named("qnaTokenService");
                 config.For<ITokenService>().Use<TokenService>().Ctor<bool>("useSandbox").Is(false); // Always false unless we want to start integrating with the sandbox environment;
-                config.For<IWebConfiguration>().Use(Configuration);
-                config.For<IQnaApiClient>().Use<QnaApiClient>()
-                  .Ctor<ITokenService>("qnaTokenService").Is(c => c.GetInstance<ITokenService>("qnaTokenService")).Ctor<string>().Is(Configuration.QnaApiAuthentication.ApiBaseAddress);
+                config.For<IAzureTokenService>().Use<AzureTokenService>();
+
                 config.For<ISessionService>().Use<SessionService>().Ctor<string>().Is(_env.EnvironmentName);
                 config.For<IOppFinderSession>().Use<OppFinderSession>();
+
+                config.For<IWebConfiguration>().Use(Configuration);
+                
+                config.For<IQnaApiClient>().Use<QnaApiClient>()
+                  .Ctor<ITokenService>("qnaTokenService").Is(c => c.GetInstance<ITokenService>("qnaTokenService"))
+                  .Ctor<string>().Is(Configuration.QnaApiAuthentication.ApiBaseAddress);
+                
                 config.For<IOrganisationsApiClient>().Use<OrganisationsApiClient>().Ctor<string>().Is(Configuration.AssessorApiAuthentication.ApiBaseAddress);
                 config.For<IStandardsApiClient>().Use<StandardsApiClient>().Ctor<string>().Is(Configuration.AssessorApiAuthentication.ApiBaseAddress);
                 config.For<IOppFinderApiClient>().Use<OppFinderApiClient>().Ctor<string>().Is(Configuration.AssessorApiAuthentication.ApiBaseAddress);
@@ -153,13 +160,13 @@ namespace SFA.DAS.AssessorService.Web
                 config.For<ILoginApiClient>().Use<LoginApiClient>().Ctor<string>().Is(Configuration.AssessorApiAuthentication.ApiBaseAddress);
                 config.For<IApplicationApiClient>().Use<ApplicationApiClient>().Ctor<string>().Is(Configuration.AssessorApiAuthentication.ApiBaseAddress);
                 config.For<ILearnerDetailsApiClient>().Use<LearnerDetailApiClient>().Ctor<string>().Is(Configuration.AssessorApiAuthentication.ApiBaseAddress);
-
-                config.For<IAzureTokenService>().Use<AzureTokenService>();
                 config.For<IAzureApiClient>().Use<AzureApiClient>().Ctor<string>().Is(Configuration.AzureApiAuthentication.ApiBaseAddress);
 
                 config.For<IStandardServiceClient>().Use<StandardServiceClient>().Ctor<string>().Is(Configuration.AssessorApiAuthentication.ApiBaseAddress);
 
                 config.For<IApiValidationService>().Use<ApiValidationService>();
+
+                config.For<IDateTimeHelper>().Use<DateTimeHelper>();
                 
                 config.Populate(services);
             });
@@ -172,7 +179,7 @@ namespace SFA.DAS.AssessorService.Web
             MappingStartup.AddMappings();
             if (env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();                
+                app.UseDeveloperExceptionPage();
             }
             else
             {
