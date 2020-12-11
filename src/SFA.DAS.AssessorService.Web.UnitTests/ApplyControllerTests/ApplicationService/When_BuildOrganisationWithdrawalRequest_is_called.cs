@@ -6,7 +6,6 @@ using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.Domain.Consts;
-using SFA.DAS.AssessorService.Domain.Helpers;
 using SFA.DAS.AssessorService.Web.Controllers.Apply;
 using SFA.DAS.QnA.Api.Types;
 using System;
@@ -21,14 +20,17 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ApplyControllerTests.ApplyForWit
         private ApplicationService _sut;
         private Mock<IQnaApiClient> _mockQnaApiClient;
         private Mock<ILearnerDetailsApiClient> _mockLearnerDetailsApiClient;
-        private Mock<IDateTimeHelper> _mockDateTimeHelper;
+        private Mock<IOrganisationsApiClient> _mockOrganisationsApiClient;
+
+        private DateTime _earliestWithdrawalDate = DateTime.Now.AddMonths(6);
+        private int _pipelinesCount = 33;
 
         [SetUp]
         public void Arrange()
         {
             _mockQnaApiClient = new Mock<IQnaApiClient>();
             _mockLearnerDetailsApiClient = new Mock<ILearnerDetailsApiClient>();
-            _mockDateTimeHelper = new Mock<IDateTimeHelper>();
+            _mockOrganisationsApiClient = new Mock<IOrganisationsApiClient>();
 
             _mockQnaApiClient
                 .Setup(r => r.StartApplications(It.IsAny<StartApplicationRequest>()))
@@ -40,9 +42,13 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ApplyControllerTests.ApplyForWit
 
             _mockLearnerDetailsApiClient
                 .Setup(r => r.GetPipelinesCount(It.IsAny<string>(), It.IsAny<int?>()))
-                .ReturnsAsync(33);
+                .ReturnsAsync(_pipelinesCount);
 
-            _sut = new ApplicationService(_mockQnaApiClient.Object, _mockLearnerDetailsApiClient.Object, _mockDateTimeHelper.Object);
+            _mockOrganisationsApiClient
+                .Setup(r => r.GetEarliestWithdrawalDate(It.IsAny<Guid>(), It.IsAny<int?>()))
+                .ReturnsAsync(_earliestWithdrawalDate);
+
+            _sut = new ApplicationService(_mockQnaApiClient.Object, _mockLearnerDetailsApiClient.Object, _mockOrganisationsApiClient.Object);
         }
         
         [Test]
@@ -85,7 +91,53 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ApplyControllerTests.ApplyForWit
 
             // Assert
             _mockQnaApiClient
-                .Verify(r => r.StartApplications(It.Is<StartApplicationRequest>(p => JsonConvert.DeserializeObject<ApplicationData>(p.ApplicationData).PipelinesCount == 33)));
+                .Verify(r => r.StartApplications(It.Is<StartApplicationRequest>(p => 
+                JsonConvert.DeserializeObject<ApplicationData>(p.ApplicationData).PipelinesCount == _pipelinesCount)));
+        }
+
+        [Test]
+        public async Task Then_GetEarliestWithdrawalDate_is_called()
+        {
+            // Arrange
+            Guid organisationId = Guid.NewGuid();
+            string endPointAssessorOrganisationId = "EPA0200";
+
+            // Act
+            await _sut.BuildOrganisationWithdrawalRequest(
+                new ContactResponse { Id = Guid.NewGuid() },
+                new OrganisationResponse
+                {
+                    Id = organisationId,
+                    EndPointAssessorOrganisationId = endPointAssessorOrganisationId,
+                    EndPointAssessorName = "Organisation Limited"
+                }, string.Empty);
+
+            // Assert
+            _mockOrganisationsApiClient
+                .Verify(r => r.GetEarliestWithdrawalDate(organisationId, null), Times.Once);
+        }
+
+        [Test]
+        public async Task Then_ApplicationData_contains_EarliestWithdrawalDate()
+        {
+            // Arrange
+            Guid organisationId = Guid.NewGuid();
+            string endPointAssessorOrganisationId = "EPA0200";
+
+            // Act
+            var result = await _sut.BuildOrganisationWithdrawalRequest(
+                new ContactResponse { Id = Guid.NewGuid() },
+                new OrganisationResponse
+                {
+                    Id = organisationId,
+                    EndPointAssessorOrganisationId = endPointAssessorOrganisationId,
+                    EndPointAssessorName = "Organisation Limited"
+                }, string.Empty);
+
+            // Assert
+            _mockQnaApiClient
+                .Verify(r => r.StartApplications(It.Is<StartApplicationRequest>(p =>
+                JsonConvert.DeserializeObject<ApplicationData>(p.ApplicationData).EarliestDateOfWithdrawal == _earliestWithdrawalDate)));
         }
 
 

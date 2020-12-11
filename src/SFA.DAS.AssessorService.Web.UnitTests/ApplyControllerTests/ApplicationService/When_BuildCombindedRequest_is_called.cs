@@ -19,14 +19,14 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ApplyControllerTests.ApplyForWit
         private ApplicationService _sut;
         private Mock<IQnaApiClient> _mockQnaApiClient;
         private Mock<ILearnerDetailsApiClient> _mockLearnerDetailsApiClient;
-        private Mock<IDateTimeHelper> _mockDateTimeHelper;
+        private Mock<IOrganisationsApiClient> _mockOrganisationsApiClient;
 
         [SetUp]
         public void Arrange()
         {
             _mockQnaApiClient = new Mock<IQnaApiClient>();
             _mockLearnerDetailsApiClient = new Mock<ILearnerDetailsApiClient>();
-            _mockDateTimeHelper = new Mock<IDateTimeHelper>();
+            _mockOrganisationsApiClient = new Mock<IOrganisationsApiClient>();
 
             _mockQnaApiClient
                 .Setup(r => r.StartApplications(It.IsAny<StartApplicationRequest>()))
@@ -40,7 +40,11 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ApplyControllerTests.ApplyForWit
                 .Setup(r => r.GetPipelinesCount(It.IsAny<string>(), It.IsAny<int?>()))
                 .ReturnsAsync(10);
 
-            _sut = new ApplicationService(_mockQnaApiClient.Object, _mockLearnerDetailsApiClient.Object, _mockDateTimeHelper.Object);
+            _mockOrganisationsApiClient
+                .Setup(r => r.GetEarliestWithdrawalDate(It.IsAny<Guid>(), It.IsAny<int?>()))
+                .ReturnsAsync(DateTime.Now.AddMonths(6));
+
+            _sut = new ApplicationService(_mockQnaApiClient.Object, _mockLearnerDetailsApiClient.Object, _mockOrganisationsApiClient.Object);
         }
         
         [Test]
