@@ -691,13 +691,13 @@
   }
 }
 
-.app-task-list__task-completed {
+.app-task-list__task-custom-tag {
   margin-top: 10px;
   margin-bottom: 5px;
 }
 
 @media (min-width: 28.125em) {
-  .app-task-list__task-completed {
+  .app-task-list__task-custom-tag {
     float: right;
     margin-top: 0;
     margin-bottom: 0;
