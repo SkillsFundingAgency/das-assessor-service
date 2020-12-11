@@ -126,7 +126,18 @@ namespace SFA.DAS.AssessorService.Data
 
                 var assessmentOrganisationSummaries =
                     await connection.QueryAsync<AssessmentOrganisationSummary>(
-                        "select EndPointAssessorOrganisationId as Id, EndPointAssessorName as Name, EndPointAssessorUkprn as ukprn, OrganisationData from [Organisations]");
+                        "select EndPointAssessorOrganisationId as Id, " +
+                        "EndPointAssessorName as Name, " +
+                        "EndPointAssessorUkprn as ukprn, " +
+                        "OrganisationData, " +
+                        "OrganisationTypeId, " +
+                        "ot.Type as OrganisationType, " +
+                        "o.Status, " +
+                        "JSON_VALUE(OrganisationData,'$.Email') as Email " +
+                        "from [Organisations] o " +
+                        "left join OrganisationType ot " +
+                        "on ot.id = o.OrganisationTypeId " +
+                        "and ot.Status = 'Live'");
                 return assessmentOrganisationSummaries;
             }
         }
