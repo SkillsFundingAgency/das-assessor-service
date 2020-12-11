@@ -94,7 +94,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             switch (application.ApplicationStatus)
             {
                 case ApplicationStatus.FeedbackAdded:
-                    return View("~/Views/Application/FeedbackIntro.cshtml", application.Id);
+                    return View("~/Views/Application/FeedbackIntro.cshtml", new FeedbackIntroViewModel(application));
                 case ApplicationStatus.Declined:
                 case ApplicationStatus.Approved:
                     return View(applications);
@@ -161,7 +161,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 case ApplicationStatus.Declined:
                     return View("~/Views/Application/Rejected.cshtml", application);
                 case ApplicationStatus.FeedbackAdded:
-                    return View("~/Views/Application/FeedbackIntro.cshtml", application.Id);
+                    return View("~/Views/Application/FeedbackIntro.cshtml", new FeedbackIntroViewModel(application));
                 case ApplicationStatus.Submitted:
                 case ApplicationStatus.Resubmitted:
                     return RedirectToAction("Submitted", new { application.Id });
@@ -179,11 +179,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 };
             }
 
-            if (IsSequenceActive(application, ApplyConst.ORGANISATION_SEQUENCE_NO))
+            if (application.IsSequenceActive(ApplyConst.ORGANISATION_SEQUENCE_NO))
             {
                 return RedirectToAction("Sequence", new { Id, sequenceNo = ApplyConst.ORGANISATION_SEQUENCE_NO });
             }
-            else if(IsSequenceActive(application, ApplyConst.STANDARD_SEQUENCE_NO))
+            else if(application.IsSequenceActive(ApplyConst.STANDARD_SEQUENCE_NO))
             {
                 if (string.IsNullOrWhiteSpace(applicationData?.StandardName))
                 {
@@ -200,23 +200,16 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                     return RedirectToAction("Sequence", new { Id, sequenceNo = ApplyConst.STANDARD_SEQUENCE_NO });
                 }
             }
-            else if(IsSequenceActive(application, ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO))
+            else if(application.IsSequenceActive(ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO))
             {
                 return RedirectToAction("Sequence", new { Id, sequenceNo = ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO });
             }
-            else if(IsSequenceActive(application, ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO))
+            else if(application.IsSequenceActive(ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO))
             {
                 return RedirectToAction("Sequence", new { Id, sequenceNo = ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO });
             }
 
             throw new BadRequestException("Section does not have a valid DisplayType");
-        }
-
-
-        private static bool IsSequenceActive(ApplicationResponse applicationResponse, int sequenceNo)
-        {
-            //A sequence can be considered active even if it does not exist in the ApplyData, since it has not yet been submitted and is in progress.
-            return applicationResponse.ApplyData?.Sequences?.Any(x => x.SequenceNo == sequenceNo && x.IsActive) ?? true;
         }
 
         [HttpGet("/Application/{Id}/Sequence/{sequenceNo}")]
