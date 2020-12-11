@@ -317,7 +317,7 @@ namespace SFA.DAS.AssessorService.Data
                 param: new { certificateIds, batchNumber, updatedBy = SystemUsers.PrintFunction },
                 transaction: _unitOfWork.Transaction);
 
-            await AddMultipleCertificateLogs(certificateIds, CertificateActions.ReadyToPrint, null, null, null, SystemUsers.PrintFunction, batchNumber, null);
+            await AddMultipleCertificateLogs(certificateIds, CertificateActions.Status, null, null, null, SystemUsers.PrintFunction, batchNumber, null);
         }        
 
         public async Task<List<CertificatePrintSummary>> GetCertificatesForBatch(int batchNumber)
