@@ -10,6 +10,4 @@ namespace SFA.DAS.AssessorService.ApplyTypes
         public bool RoEPAOApproved { get; set; }
         public bool RoATPApproved { get; set; }
     }
-
-   
 }

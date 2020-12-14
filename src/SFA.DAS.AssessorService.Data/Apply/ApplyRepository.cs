@@ -26,7 +26,6 @@ namespace SFA.DAS.AssessorService.Data.Apply
             SqlMapper.AddTypeHandler(typeof(ApplyData), new ApplyDataHandler());
             SqlMapper.AddTypeHandler(typeof(FinancialGrade), new FinancialGradeHandler());
             SqlMapper.AddTypeHandler(typeof(FinancialEvidence), new FinancialEvidenceHandler());
-            SqlMapper.AddTypeHandler(typeof(GovernanceRecommendation), new GovernanceRecommendationHandler());
         }
 
         public async Task<Domain.Entities.Apply> GetApply(Guid applicationId)
@@ -57,7 +56,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
                   AND sequence.SequenceNo IN @sequenceNos AND sequence.NotRequired = 0
                   GROUP BY 
                     a.Id, a.ApplicationId, a.OrganisationId, a.ApplicationStatus, a.ReviewStatus, 
-                    a.ApplyData, a.FinancialReviewStatus, a.FinancialGrade, a.GovernanceRecommendation, 
+                    a.ApplyData, a.FinancialReviewStatus, a.FinancialGrade, 
                     a.StandardCode, a.CreatedAt, a.CreatedBy, a.UpdatedAt, a.UpdatedBy, a.DeletedAt, a.DeletedBy, 
                     o.EndPointAssessorName";
 
@@ -565,32 +564,6 @@ namespace SFA.DAS.AssessorService.Data.Apply
             }
 
             return string.Empty;
-        }
-
-        public async Task UpdateGovernanceRecommendation(Guid id, GovernanceRecommendation governanceRecommendation)
-        {
-            if (governanceRecommendation != null)
-            {
-                var application = await GetApply(id);
-                
-                if (application != null)
-                {
-                    application.GovernanceRecommendation = governanceRecommendation;
-                    application.UpdatedBy = governanceRecommendation.RecommendedBy;
-                    application.UpdatedAt = DateTime.UtcNow;
-
-                    await _unitOfWork.Connection.ExecuteAsync(
-                        @"UPDATE Apply
-                          SET  GovernanceRecommendation = @GovernanceRecommendation, UpdatedBy = @UpdatedBy, UpdatedAt = @UpdatedAt
-                          WHERE Apply.Id = @Id",
-                        param: new { application.Id, application.GovernanceRecommendation, application.UpdatedBy, application.UpdatedAt },
-                        transaction: _unitOfWork.Transaction);
-                }
-            }
-            else
-            {
-                _logger.LogError("GovernanceRecommendation is null therefore cannot update Apply table.");
-            }
         }
 
         public async Task<List<FinancialApplicationSummaryItem>> GetOpenFinancialApplications()
