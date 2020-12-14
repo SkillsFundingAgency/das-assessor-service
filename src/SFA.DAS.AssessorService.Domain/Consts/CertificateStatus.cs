@@ -22,7 +22,7 @@ namespace SFA.DAS.AssessorService.Domain.Consts
         public const string Error = "Error";
 
         public static string[] PrintProcessStatus = new[] { SentToPrinter, Printed, Reprint, Delivered, NotDelivered };
-        public static string[] PrintNotificationStatus = new[] { Printed, Delivered, NotDelivered };
+        public static string[] PrintNotificationStatus = new[] { SentToPrinter, Printed, Delivered, NotDelivered };
 
         public static bool HasPrintProcessStatus(string status)
         {

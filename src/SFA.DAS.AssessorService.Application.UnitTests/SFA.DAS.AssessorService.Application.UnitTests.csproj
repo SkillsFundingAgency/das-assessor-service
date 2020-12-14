@@ -3,6 +3,11 @@
     <TargetFramework>netcoreapp2.2</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="Handlers\BatchLogs\CreateBatchLogHandlerTests\**" />
+    <EmbeddedResource Remove="Handlers\BatchLogs\CreateBatchLogHandlerTests\**" />
+    <None Remove="Handlers\BatchLogs\CreateBatchLogHandlerTests\**" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="FluentAssertions" Version="5.10.3" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="2.2.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.7.0" />
@@ -17,8 +22,5 @@
     <ProjectReference Include="..\SFA.DAS.AssessorService.Application\SFA.DAS.AssessorService.Application.csproj" />
     <ProjectReference Include="..\SFA.DAS.AssessorService.Data\SFA.DAS.AssessorService.Data.csproj" />
     <ProjectReference Include="..\SFA.DAS.AssessorService.Domain\SFA.DAS.AssessorService.Domain.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Handlers\BatchLogs\CreateBatchLogHandlerTests\" />
   </ItemGroup>
 </Project>
