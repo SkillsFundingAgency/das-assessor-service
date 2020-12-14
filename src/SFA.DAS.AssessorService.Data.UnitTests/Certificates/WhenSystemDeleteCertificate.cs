@@ -14,6 +14,7 @@ using SFA.DAS.AssessorService.Domain.JsonData;
 using Newtonsoft.Json;
 using System.Threading;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using SFA.DAS.AssessorService.Application.Interfaces;
 
 namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
 {
@@ -21,7 +22,7 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
     {
         private CertificateRepository _certificateRepository;        
         private Mock<AssessorDbContext> _mockDbContext;
-        private Mock<IDbConnection> _mockDbConnection;
+        private Mock<IUnitOfWork> _mockUnitOfWork;
         private Exception _exception;        
         private Guid _certificateId;
         private string _incidentNumber;
@@ -38,10 +39,9 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
             var mockCertificateLog = MockDbSetCreateCertificateLog();
             
             _mockDbContext = CreateMockDbContext(mockCertificate, mockCertificateLog);
-
-            _mockDbConnection = new Mock<IDbConnection>();
-
-            _certificateRepository = new CertificateRepository(_mockDbContext.Object,  _mockDbConnection.Object);
+            _mockUnitOfWork = new Mock<IUnitOfWork>();
+            
+            _certificateRepository = new CertificateRepository(_mockUnitOfWork.Object, _mockDbContext.Object);
         }
 
 
