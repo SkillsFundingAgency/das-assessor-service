@@ -218,14 +218,12 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
                 var emailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.ApplyEPAOStandardSubmission);
                 await _mediator.Send(new SendEmailRequest(email, emailTemplate, new { contactname, reference, standard }), cancellationToken);
             }
-            else if (sequenceNo == ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO)
+            else if (sequenceNo == ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO || sequenceNo == ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO)
             {
-                // TO DO: Send email to notify that the application has been smbmitted
+                var emailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.WithdrawalEPAOSubmission);
+                await _mediator.Send(new SendEmailRequest(email, emailTemplate, new { contactname, reference, standard }), cancellationToken);
             }
-            else if (sequenceNo == ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO)
-            {
-                // TO DO: Send email to notify that the application has been submitted
-            }
+
         }
     }
 }
