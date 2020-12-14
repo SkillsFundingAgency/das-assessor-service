@@ -5,8 +5,10 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
 {
     public interface IBatchLogQueryRepository
     {
-        Task<BatchLog> GetForBatchNumber(int batchNumber);
+        Task<BatchLog> Get(int batchNumber);
 
         Task<BatchLog> GetLastBatchLog();
+
+        Task<int?> GetBatchNumberReadyToPrint();
     }
 }
