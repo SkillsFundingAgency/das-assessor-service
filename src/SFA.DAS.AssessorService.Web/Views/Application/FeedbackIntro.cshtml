@@ -1,22 +1,57 @@
-@model Guid
+@using SFA.DAS.AssessorService.Web.ViewModels.Apply; 
+@model FeedbackIntroViewModel
 
 @{
-    ViewBag.Title = "Application feedback";
+    if (Model.IsWithdrawalApplication)
+    {
+        ViewBag.Title = "Feedback on your withdrawal notification";
+    }
+    else
+    {
+        ViewBag.Title = "Application feedback";
+    }
+
     Layout = "_Layout";
 }
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             <h1 class="govuk-heading-l">
-                Application feedback
+                @ViewBag.Title
             </h1>
 
-            <p class="govuk-body">After reviewing your application to join the register of end-point assessment organisations, we need more information.</p>
+            @if (Model.IsOrganisationWithdrawalApplication)
+            {
+                <p class="govuk-body">We've reviewed your withdrawal notification for withdrawing from the register of end-point assessment organisations and need more information.</p>
 
-            <p class="govuk-body">Read the comments on the answers that need more information.</p>
+                <p class="govuk-body">We've provided feedback on the answers we need more information about.</p>
 
-            <a href="@Url.Action("Feedback", "Application", new {id = Model})" class="govuk-button">
-                Go to feedback
+                <p class="govuk-body">Use the feedback to change your answers.</p>
+            }
+            else if (Model.IsStandardWithdrawalApplication)
+            {
+                <p class="govuk-body">We've reviewed your withdrawal notification for withdrawing from @Model.StandardName and need more information.</p>
+
+                <p class="govuk-body">We've provided feedback on the answers we need more information about.</p>
+
+                <p class="govuk-body">Use the feedback to change your answers.</p>
+            }
+            else
+            {
+                <p class="govuk-body">After reviewing your application to join the register of end-point assessment organisations, we need more information.</p>
+
+                <p class="govuk-body">Read the comments on the answers that need more information.</p>
+            }
+
+            <a href="@Url.Action("Feedback", "Application", new {id = Model.ApplicationId})" class="govuk-button">
+                @if (Model.IsWithdrawalApplication)
+                {
+                    <text>Continue</text>
+                }
+                else
+                {
+                    <text>Go to feedback</text>
+                }
             </a>
         </div>
     </div>

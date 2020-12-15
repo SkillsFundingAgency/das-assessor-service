@@ -7,7 +7,8 @@
         public const string ApplyEPAOInitialSubmission = "ApplyEPAOInitialSubmission";
         public const string ApplyEPAOStandardSubmission = "ApplyEPAOStandardSubmission";
         public const string ApplyEPAOAlertSubmission = "ApplyEPAOAlertSubmission";
-
+        public const string WithdrawalEPAOSubmission = "WithdrawalEPAOSubmission";
+        
         /// <summary>
         /// Requires tokens: { contactname }
         /// </summary>
