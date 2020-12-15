@@ -40,8 +40,9 @@ namespace SFA.DAS.AssessorService.Data.Apply
         public async Task<ApplySummary> GetApplication(Guid applicationId)
         {
             return await _unitOfWork.Connection.QuerySingleOrDefaultAsync<ApplySummary>(
-                @"SELECT a.*, o.EndPointAssessorName FROM Apply a
+                @"SELECT a.*, o.EndPointAssessorName, c.DisplayName [ContactName] , c.Email [ContactEmail] FROM Apply a
                   LEFT JOIN Organisations o ON a.OrganisationId = o.Id
+                  LEFT JOIN Contacts c ON c.Id = a.CreatedBy
                   WHERE a.Id = @applicationId",
                 param: new { applicationId },
                 transaction: _unitOfWork.Transaction);
