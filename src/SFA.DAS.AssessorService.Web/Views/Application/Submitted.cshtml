@@ -1,7 +1,16 @@
 @using SFA.DAS.AssessorService.Domain.Consts
 @model SFA.DAS.AssessorService.Web.ViewModels.Apply.SubmittedViewModel
 @{
-    ViewBag.Title = "Application submitted";
+
+    if (Model.SequenceNo == ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO || Model.SequenceNo == ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO)
+    {
+        ViewBag.Title = " Withdrawal notification submitted";
+    }
+    else
+    {
+        ViewBag.Title = "Application submitted";
+    }
+
     Layout = "_Layout";
 }
 
@@ -26,6 +35,9 @@
 
                     </div>
 
+                    <p class="govuk-body">
+                        We have sent you a confirmation email.
+                    </p>
 
                     <h2 class="govuk-heading-m govuk-!-margin-top-6">
                         What happens next
