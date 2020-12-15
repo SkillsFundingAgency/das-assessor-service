@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using MediatR;
@@ -11,19 +12,27 @@ namespace SFA.DAS.AssessorService.Application.Handlers.BatchLogs
     public class CreateBatchLogHandler : IRequestHandler<CreateBatchLogRequest, BatchLogResponse>
     {
         private readonly IBatchLogRepository _batchLogRepository;
+        private readonly IBatchLogQueryRepository _batchLogQueryRepository;
 
-        public CreateBatchLogHandler(IBatchLogRepository batchLogRepository)
+        public CreateBatchLogHandler(IBatchLogRepository batchLogRepository, IBatchLogQueryRepository batchLogQueryRepository)
         {
             _batchLogRepository = batchLogRepository;
+            _batchLogQueryRepository = batchLogQueryRepository;
         }
 
         public async Task<BatchLogResponse> Handle(CreateBatchLogRequest request, CancellationToken cancellationToken)
         {
-            var batchLogEntity = Mapper.Map<BatchLog>(request);
-            var updatedBatchLogEntity = await _batchLogRepository.Create(batchLogEntity);
-            var batchLogResponse = Mapper.Map<BatchLogResponse>(updatedBatchLogEntity);
+            var lastBatchLog = await _batchLogQueryRepository.GetLastBatchLog();
+            
+            var batchLog = new BatchLog()
+            {
+                Period = DateTime.UtcNow.ToString("MMyy"),
+                ScheduledDate = request.ScheduledDate,
+                BatchNumber = lastBatchLog.BatchNumber + 1
+            };
 
-            return batchLogResponse;
+            batchLog = await _batchLogRepository.Create(batchLog);
+            return Mapper.Map<BatchLogResponse>(batchLog);
         }
     }
 }
