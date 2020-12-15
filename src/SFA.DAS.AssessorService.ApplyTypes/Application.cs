@@ -27,24 +27,10 @@ namespace SFA.DAS.AssessorService.ApplyTypes
         public string ContactGivenName { get; set; }
         
         public int? PipelinesCount { get; set; }
-        
-        [JsonIgnore]
         public DateTime EarliestDateOfWithdrawal { get; set; }
-
-        [JsonProperty("EarliestDateOfWithdrawal")]
-        public string EarliestDateOfWithdrawalJson
-        {
-            get { return EarliestDateOfWithdrawal.ToString("O"); }
-            set { EarliestDateOfWithdrawal = DateTime.ParseExact(value, "O", null); }
-        }
 
         public CompaniesHouseSummary CompanySummary { get; set; }
         public CharityCommissionSummary CharitySummary { get; set; }
-
-        public object GetPropertyValue(string propertyName)
-        {
-            return GetType().GetProperty(propertyName)?.GetValue(this, null);
-        }
     }
 
     public class ApplyData
