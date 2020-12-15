@@ -17,7 +17,7 @@
                 </span>
             }
 
-            <h1 class="govuk-heading-xl">Application feedback</h1>
+            <h1 class="govuk-heading-xl">Application overview</h1>
 
             @if (!ViewData.ModelState.IsValid || Model.ErrorMessages?.Any() is true)
             {
@@ -40,23 +40,33 @@
 
             @if (Model.SequenceNo == ApplyConst.ORGANISATION_SEQUENCE_NO)
             {
-                <p class="govuk-body">The first part of your application to join the Register of end-point assessment organisations has been rejected</p>
+                <p class="govuk-body">
+                    The first part of your application to join the Register of end-point assessment organisations has been rejected
+                </p>
+
+                <p class="govuk-body">
+                    Go into each question to view comments, where you will have an opportunity to give more information.
+                </p>
             }
             else if (Model.SequenceNo == ApplyConst.STANDARD_SEQUENCE_NO)
             {
                 <p class="govuk-body">The second part of your application to join the Register of end-point assessment organisations has been rejected</p>
             }
-            else if (Model.SequenceNo == ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO)
+            else if (Model.SequenceNo == ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO || Model.SequenceNo == ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO)
             {
-                <p class="govuk-body">Your application to withdraw from the Register of end-point assessment organisations has been rejected</p>
-            }
-            else if (Model.SequenceNo == ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO)
-            {
-                <p class="govuk-body">Your application to withdraw from assessing a standard has been rejected</p>
-            }
+                <p class="govuk-body">
+                    We've provided feedback on the answers we need more information about.  You'll need to open each question to view the feedback.
+                </p>
 
-            <p class="govuk-body">Go into each question to view comments, where you will have an opportunity to give more information.</p>
+                <p class="govuk-body">
+                    Use the feedback to change your answers, then resubmit your application.
+                </p>
 
+                <p class="govuk-body">
+                    By submitting your answers, you confirm that you have the authority to act on behalf of the organisation.
+                </p>
+            }
+           
             <ol class="app-task-list">
                 @foreach (var applicationSection in Model.Sections.OrderBy(s => s.SectionNo))
                 {
@@ -78,7 +88,11 @@
                                             </span>
                                             @if (pg.AllFeedbackIsCompleted)
                                             {
-                                                <strong class="govuk-tag app-task-list__task-completed" id="feedback-completed">Completed</strong>
+                                                <strong class="govuk-tag app-task-list__task-custom-tag" id="feedback-completed">Completed</strong>
+                                            }
+                                            else
+                                            {
+                                                <strong class="govuk-tag app-task-list__task-custom-tag" id="feedback-feedbackTag">Feedback Added</strong>
                                             }
                                         </li>
                                     }
@@ -99,7 +113,7 @@
                     <form asp-action="Submit" asp-controller="Application" asp-route-Id="@Model.Id" asp-route-sequenceNo="@Model.SequenceNo">
                         <div class="govuk-form-group">
                             <button type="submit" class="govuk-button">
-                                Submit application
+                                Submit your answers
                             </button>
                         </div>
                     </form>
