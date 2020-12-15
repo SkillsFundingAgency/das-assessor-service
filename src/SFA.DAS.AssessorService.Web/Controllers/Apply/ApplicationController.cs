@@ -41,7 +41,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
         public ApplicationController(IApiValidationService apiValidationService, IApplicationService applicationService, IOrganisationsApiClient orgApiClient, IQnaApiClient qnaApiClient, IWebConfiguration config,
             IApplicationApiClient applicationApiClient, IContactsApiClient contactsApiClient, IHttpContextAccessor httpContextAccessor, ILogger<ApplicationController> logger)
-            : base (applicationApiClient, contactsApiClient, httpContextAccessor)
+            : base(applicationApiClient, contactsApiClient, httpContextAccessor)
         {
             _apiValidationService = apiValidationService;
             _applicationService = applicationService;
@@ -64,8 +64,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             if (applications is null || applications.Count == 0)
             {
                 if (org != null)
-                {   
-                    if(org.RoEPAOApproved)
+                {
+                    if (org.RoEPAOApproved)
                     {
                         // an organistion maybe registered with no applications, as it has been migrated in 
                         // the approved state from the pre-digital service, display an empty list
@@ -132,14 +132,14 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             if (existingApplications != null)
             {
                 var existingEmptyApplication = existingApplications.SingleOrDefault(x => x.StandardCode == null);
-                if(existingEmptyApplication != null)
+                if (existingEmptyApplication != null)
                     return RedirectToAction("SequenceSignPost", new { existingEmptyApplication.Id });
             }
 
             var createApplicationRequest = await _applicationService.BuildCombinedRequest(contact, org, _config.ReferenceFormat);
-            
+
             var id = await _applicationApiClient.CreateApplication(createApplicationRequest);
-            
+
             return RedirectToAction("SequenceSignPost", new { Id = id });
         }
 
@@ -154,7 +154,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 return RedirectToAction("Applications");
             }
 
-            switch(application.ApplicationStatus)
+            switch (application.ApplicationStatus)
             {
                 case ApplicationStatus.Approved:
                     return View("~/Views/Application/Approved.cshtml", application);
@@ -175,7 +175,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             {
                 return RedirectToAction("Sequence", new { Id, sequenceNo = ApplyConst.ORGANISATION_SEQUENCE_NO });
             }
-            else if(application.IsSequenceActive(ApplyConst.STANDARD_SEQUENCE_NO))
+            else if (application.IsSequenceActive(ApplyConst.STANDARD_SEQUENCE_NO))
             {
                 if (string.IsNullOrWhiteSpace(standardName))
                 {
@@ -192,11 +192,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                     return RedirectToAction("Sequence", new { Id, sequenceNo = ApplyConst.STANDARD_SEQUENCE_NO });
                 }
             }
-            else if(application.IsSequenceActive(ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO))
+            else if (application.IsSequenceActive(ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO))
             {
                 return RedirectToAction("Sequence", new { Id, sequenceNo = ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO });
             }
-            else if(application.IsSequenceActive(ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO))
+            else if (application.IsSequenceActive(ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO))
             {
                 return RedirectToAction("Sequence", new { Id, sequenceNo = ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO });
             }
@@ -210,17 +210,22 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             var application = await _applicationApiClient.GetApplication(Id);
             if (!CanUpdateApplication(application, sequenceNo))
             {
+                if (application.IsWithdrawalApplication)
+                {
+                    return RedirectToAction("WithdrawalApplications", "ApplyForWithdrawal");
+                }
+
                 return RedirectToAction("Applications");
             }
 
             var sequence = await _qnaApiClient.GetSequenceBySequenceNo(application.ApplicationId, sequenceNo);
             var sections = await _qnaApiClient.GetSections(application.ApplicationId, sequence.Id);
             var applyData = application.ApplyData.Sequences.Single(x => x.SequenceNo == sequenceNo);
-            
+
             var sequenceVm = new SequenceViewModel(sequence, application.Id, BuildPageContext(application, sequence), sections, applyData.Sections, null);
-            if(application.ApplyData != null && application.ApplyData.Sequences != null)
+            if (application.ApplyData != null && application.ApplyData.Sequences != null)
             {
-                var seq= application.ApplyData.Sequences.SingleOrDefault(x => x.SequenceId == sequence.Id && x.SequenceNo == sequence.SequenceNo);
+                var seq = application.ApplyData.Sequences.SingleOrDefault(x => x.SequenceId == sequence.Id && x.SequenceNo == sequence.SequenceNo);
                 if (seq != null && seq.Status == ApplicationSequenceStatus.Submitted)
                     sequenceVm.Status = seq.Status;
             }
@@ -324,14 +329,14 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                     {
                         page.Title = section.Title;
                     }
-                    
+
                     viewModel = new PageViewModel(Id, sequenceNo, sectionNo, page.PageId, page, pageContext, __redirectAction,
                         returnUrl, null, __summaryLink);
 
                 }
                 catch (Exception ex)
                 {
-                    if(ex.Message.Equals("Could not find the page", StringComparison.OrdinalIgnoreCase))
+                    if (ex.Message.Equals("Could not find the page", StringComparison.OrdinalIgnoreCase))
                         return RedirectToAction("Applications");
                     throw ex;
                 }
@@ -437,7 +442,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 {
                     return BadRequest("Page is not of a type of Multiple Answers");
                 }
-                
+
                 return RedirectToAction("Page", new { Id, sequenceNo, sectionNo, pageId, __redirectAction, __summaryLink });
             }
             catch (Exception ex)
@@ -450,7 +455,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
         [HttpPost("/Application/{Id}/Sequences/{sequenceNo}/Sections/{sectionNo}/Pages/{pageId}"), ModelStatePersist(ModelStatePersist.Store)]
         public async Task<IActionResult> SaveAnswers(Guid Id, int sequenceNo, int sectionNo, string pageId, string __redirectAction, string __summaryLink)
-        { 
+        {
             var application = await _applicationApiClient.GetApplication(Id);
 
             if (!CanUpdateApplication(application, sequenceNo, sectionNo))
@@ -504,7 +509,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                     {
                         if (FileValidator.FileValidationPassed(answers, page, errorMessages, ModelState, HttpContext.Request.Form.Files))
                             updatePageResult = await UploadFilesToStorage(application.ApplicationId, page.SectionId.Value, page.PageId, page);
-                    }                  
+                    }
                 }
 
                 var apiValidationResult = await _apiValidationService.CallApiValidation(page, answers);
@@ -526,8 +531,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                     // applySection.RequestedFeedbackAnswered = qnaSection.QnAData.RequestedFeedbackAnswered
 
                     if (__redirectAction == "Feedback")
-                    { 
-                        foreach( var answer in answers)
+                    {
+                        foreach (var answer in answers)
                         {
                             if (page.Next.Exists(y => y.Conditions.Exists(x => x.QuestionId == answer.QuestionId || x.QuestionTag == answer.QuestionId)))
                             {
@@ -553,7 +558,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 return RedirectToAction("Page", new { Id, sequenceNo, sectionNo, pageId, __redirectAction, __summaryLink });
             }
             catch (Exception ex)
-            {  
+            {
                 if (ex.Message.Equals("Could not find the page", StringComparison.OrdinalIgnoreCase))
                     return RedirectToAction("Applications");
 
@@ -570,7 +575,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             var application = await _applicationApiClient.GetApplication(Id);
             var applicationData = await _qnaApiClient.GetApplicationData(application.ApplicationId);
 
-            if(applicationData != null)
+            if (applicationData != null)
             {
                 var companyDetails = !string.IsNullOrWhiteSpace(applicationData.CompanySummary?.CompanyNumber) ? await _orgApiClient.GetCompanyDetails(applicationData.CompanySummary.CompanyNumber) : null;
                 var charityDetails = int.TryParse(applicationData.CharitySummary?.CharityNumber, out var charityNumber) ? await _orgApiClient.GetCharityDetails(charityNumber) : null;
@@ -598,7 +603,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             {
                 await _qnaApiClient.RemovePageAnswer(application.ApplicationId, page.SectionId.Value, page.PageId, answerId);
             }
-            catch (HttpRequestException ex) {
+            catch (HttpRequestException ex)
+            {
                 _logger.LogError($"Page answer removal errored : {ex} ");
             }
 
@@ -648,11 +654,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             var applySequence = application.ApplyData.Sequences.Single(x => x.SequenceNo == sequence.SequenceNo);
             var applySections = applySequence.Sections;
 
-            var errors =  ValidateSubmit(sections, applySections);
+            var errors = ValidateSubmit(sections, applySections);
             if (errors.Any())
             {
                 var applyData = application.ApplyData.Sequences.Single(x => x.SequenceNo == sequenceNo);
-                var sequenceVm = new SequenceViewModel(sequence, Id, BuildPageContext(application,sequence),sections,applyData.Sections, errors);
+                var sequenceVm = new SequenceViewModel(sequence, Id, BuildPageContext(application, sequence), sections, applyData.Sections, errors);
 
                 if (applyData.Status == ApplicationSequenceStatus.FeedbackAdded)
                 {
@@ -663,12 +669,12 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                     return View("~/Views/Application/Sequence.cshtml", sequenceVm);
                 }
             }
-      
+
             var dictRequestedFeedbackAnswered = sections.Select(t => new { t.SectionNo, t.QnAData.RequestedFeedbackAnswered })
                .ToDictionary(t => t.SectionNo, t => t.RequestedFeedbackAnswered);
 
             var contact = await GetUserContact();
-            var submitRequest = BuildSubmitApplicationSequenceRequest(application.Id, dictRequestedFeedbackAnswered,_config.ReferenceFormat, sequence.SequenceNo, contact.Id);
+            var submitRequest = BuildSubmitApplicationSequenceRequest(application.Id, dictRequestedFeedbackAnswered, _config.ReferenceFormat, sequence.SequenceNo, contact.Id);
 
             if (await _applicationApiClient.SubmitApplicationSequence(submitRequest))
             {
@@ -710,7 +716,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             var allApplicationSequences = await _qnaApiClient.GetAllApplicationSequences(application.ApplicationId);
             var sequenceNo = application.ApplyData.Sequences.SingleOrDefault(x => x.IsActive && x.Status == ApplicationSequenceStatus.FeedbackAdded)?.SequenceNo;
 
-            if(sequenceNo == null )
+            if (sequenceNo == null)
                 return RedirectToAction("Applications");
 
             var sequence = allApplicationSequences.Single(x => x.SequenceNo == sequenceNo);
@@ -760,20 +766,20 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             SetResponseValidationErrors(updatePageResult?.ValidationErrors, page);
         }
 
-        private bool HasAtLeastOneAnswerChanged(Page page,List<Answer> answers)
+        private bool HasAtLeastOneAnswerChanged(Page page, List<Answer> answers)
         {
-            _logger.LogInformation($"HasAtLeastOneAnswerChanged -> Is page null? {(page == null ? "Yes": "No")}");
-            _logger.LogInformation($"HasAtLeastOneAnswerChanged -> page.Questions null? {(page.Questions == null ? "Yes": "No")}");
+            _logger.LogInformation($"HasAtLeastOneAnswerChanged -> Is page null? {(page == null ? "Yes" : "No")}");
+            _logger.LogInformation($"HasAtLeastOneAnswerChanged -> page.Questions null? {(page.Questions == null ? "Yes" : "No")}");
 
             foreach (var pageQuestion in page.Questions)
             {
-                _logger.LogInformation($"HasAtLeastOneAnswerChanged -> page.Question.Id {pageQuestion.QuestionId} Input null? {(pageQuestion.Input == null ? "Yes": "No")}");
-                _logger.LogInformation($"HasAtLeastOneAnswerChanged -> page.Question.Id {pageQuestion.QuestionId} Input.Type null? {(pageQuestion.Input.Type == null ? "Yes": "No")}");
+                _logger.LogInformation($"HasAtLeastOneAnswerChanged -> page.Question.Id {pageQuestion.QuestionId} Input null? {(pageQuestion.Input == null ? "Yes" : "No")}");
+                _logger.LogInformation($"HasAtLeastOneAnswerChanged -> page.Question.Id {pageQuestion.QuestionId} Input.Type null? {(pageQuestion.Input.Type == null ? "Yes" : "No")}");
             }
-            
+
             _logger.LogInformation($"HasAtLeastOneAnswerChanged -> Checks ok.  Page JSON: {JsonConvert.SerializeObject(page)}");
-            
-            var atLeastOneAnswerChanged = page.Questions.Any(q => q.Input.Type == "FileUpload" );
+
+            var atLeastOneAnswerChanged = page.Questions.Any(q => q.Input.Type == "FileUpload");
 
             foreach (var question in page.Questions)
             {
@@ -909,7 +915,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             // Check if any Page Question is missing and add the default answer
             foreach (var questionId in page.Questions.Select(q => q.QuestionId))
             {
-                if(!answers.Any(a => a.QuestionId == questionId))
+                if (!answers.Any(a => a.QuestionId == questionId))
                 {
                     // Add default answer if it's missing
                     answers.Add(new Answer { QuestionId = questionId, Value = string.Empty });
@@ -1055,7 +1061,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         private string ReplaceApplicationDataPropertyPlaceholders(string input, ApplicationData applicationData)
         {
             string formattedText = input;
-            
+
             Func<Match, string> evaluator = (match) =>
             {
                 var propertyName = match.Groups[2].Value;
@@ -1079,8 +1085,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             return formattedText;
         }
 
-        private static SubmitApplicationSequenceRequest BuildSubmitApplicationSequenceRequest(Guid applicationId, Dictionary<int,bool?> dictRequestedFeedbackAnswered, string referenceFormat, int sequenceNo, Guid userId)
-        {  
+        private static SubmitApplicationSequenceRequest BuildSubmitApplicationSequenceRequest(Guid applicationId, Dictionary<int, bool?> dictRequestedFeedbackAnswered, string referenceFormat, int sequenceNo, Guid userId)
+        {
             return new SubmitApplicationSequenceRequest
             {
                 ApplicationId = applicationId,
@@ -1095,9 +1101,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         {
             var validationErrors = new List<ValidationErrorDetail>();
 
-            var sections = qnaSections?.Where(x => !applySections?.Any(p => p.SectionNo == x.SectionNo && p.NotRequired)??false).ToList();
+            var sections = qnaSections?.Where(x => !applySections?.Any(p => p.SectionNo == x.SectionNo && p.NotRequired) ?? false).ToList();
 
-            if (sections is null )
+            if (sections is null)
             {
                 var validationError = new ValidationErrorDetail(string.Empty, $"Cannot submit empty sequence");
                 validationErrors.Add(validationError);
