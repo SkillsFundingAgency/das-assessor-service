@@ -1,11 +1,11 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Microsoft.EntityFrameworkCore.Internal;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.QnA.Api.Types.Page;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace SFA.DAS.AssessorService.Web.ViewModels.Apply
 {
@@ -159,7 +159,6 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Apply
 
             return null;
         }
-
 
         private dynamic GetJsonValue(List<Answer> answers, Question question)
         {

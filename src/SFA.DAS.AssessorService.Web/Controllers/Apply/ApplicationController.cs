@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -39,8 +40,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         private readonly ILogger<ApplicationController> _logger;
 
         public ApplicationController(IApiValidationService apiValidationService, IApplicationService applicationService, IOrganisationsApiClient orgApiClient, IQnaApiClient qnaApiClient, IWebConfiguration config,
-            IApplicationApiClient applicationApiClient, IContactsApiClient contactsApiClient, ILogger<ApplicationController> logger)
-            : base (applicationApiClient, contactsApiClient)
+            IApplicationApiClient applicationApiClient, IContactsApiClient contactsApiClient, IHttpContextAccessor httpContextAccessor, ILogger<ApplicationController> logger)
+            : base (applicationApiClient, contactsApiClient, httpContextAccessor)
         {
             _apiValidationService = apiValidationService;
             _applicationService = applicationService;
@@ -57,7 +58,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
             var userId = await GetUserId();
             var org = await _orgApiClient.GetOrganisationByUserId(userId);
-            //var applications = await _applicationApiClient.GetApplications(userId, false);
             var applications = await _applicationApiClient.GetCombinedApplications(userId);
             applications = applications?.Where(app => app.ApplicationStatus != ApplicationStatus.Declined).ToList();
 
@@ -136,7 +136,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                     return RedirectToAction("SequenceSignPost", new { existingEmptyApplication.Id });
             }
 
-            var createApplicationRequest = await _applicationService.BuildCreateApplicationRequest(ApplicationTypes.Combined, contact, org, _config.ReferenceFormat);
+            var createApplicationRequest = await _applicationService.BuildCombinedRequest(contact, org, _config.ReferenceFormat);
             
             var id = await _applicationApiClient.CreateApplication(createApplicationRequest);
             
@@ -169,15 +169,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                     break;
             }
 
-            StandardApplicationData applicationData = null;
-
-            if (application.ApplyData != null)
-            {
-                applicationData = new StandardApplicationData
-                {
-                    StandardName = application.ApplyData?.Apply?.StandardName
-                };
-            }
+            var standardName = application.ApplyData?.Apply?.StandardName;
 
             if (application.IsSequenceActive(ApplyConst.ORGANISATION_SEQUENCE_NO))
             {
@@ -185,7 +177,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             }
             else if(application.IsSequenceActive(ApplyConst.STANDARD_SEQUENCE_NO))
             {
-                if (string.IsNullOrWhiteSpace(applicationData?.StandardName))
+                if (string.IsNullOrWhiteSpace(standardName))
                 {
                     var org = await _orgApiClient.GetOrganisationByUserId(userId);
                     if (org.RoEPAOApproved)
@@ -195,7 +187,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
                     return View("~/Views/Application/Stage2Intro.cshtml", application.Id);
                 }
-                else if (!string.IsNullOrWhiteSpace(applicationData?.StandardName))
+                else if (!string.IsNullOrWhiteSpace(standardName))
                 {
                     return RedirectToAction("Sequence", new { Id, sequenceNo = ApplyConst.STANDARD_SEQUENCE_NO });
                 }
@@ -279,9 +271,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             PageViewModel viewModel = null;
             var returnUrl = Request.Headers["Referer"].ToString();
             var pageContext = BuildPageContext(application, sequence);
+
             if (!ModelState.IsValid)
             {
-
                 // when the model state has errors the page will be displayed with the values which failed validation
                 var page = JsonConvert.DeserializeObject<Page>((string)TempData["InvalidPage"]);
                 page = await GetDataFedOptions(page);
@@ -343,9 +335,13 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                         return RedirectToAction("Applications");
                     throw ex;
                 }
-
-                ProcessPageVmQuestionsForStandardName(viewModel.Questions, application);
             }
+
+            var applicationData = await _qnaApiClient.GetApplicationData(application.ApplicationId);
+            ReplaceApplicationDataPropertyPlaceholdersInQuestions(viewModel.Questions, applicationData);
+
+            // the standard name preamble answer is currently stored in the application, instead of the application data
+            ProcessPageVmQuestionsForStandardName(viewModel.Questions, application);
 
             if (viewModel.AllowMultipleAnswers)
             {
@@ -1043,6 +1039,46 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             }
         }
 
+        private void ReplaceApplicationDataPropertyPlaceholdersInQuestions(List<QuestionViewModel> questions, ApplicationData applicationData)
+        {
+            if (questions == null) return;
+
+            foreach (var question in questions)
+            {
+                question.Label = ReplaceApplicationDataPropertyPlaceholders(question.Label, applicationData);
+                question.Hint = ReplaceApplicationDataPropertyPlaceholders(question.Hint, applicationData);
+                question.QuestionBodyText = ReplaceApplicationDataPropertyPlaceholders(question.QuestionBodyText, applicationData);
+                question.ShortLabel = ReplaceApplicationDataPropertyPlaceholders(question.ShortLabel, applicationData);
+            }
+        }
+
+        private string ReplaceApplicationDataPropertyPlaceholders(string input, ApplicationData applicationData)
+        {
+            string formattedText = input;
+            
+            Func<Match, string> evaluator = (match) =>
+            {
+                var propertyName = match.Groups[2].Value;
+                var alignment = match.Groups[3].Value;
+                var formatString = match.Groups[4].Value;
+
+                return string.Format("{0" + alignment + formatString + "}", applicationData.GetPropertyValue(propertyName));
+            };
+
+            try
+            {
+                formattedText = Regex.Replace(
+                    formattedText,
+                    "{{((\\w+)(,[0-9]*)?)(:[\\w\\s.:/]*)?}}",
+                    new MatchEvaluator(evaluator),
+                    RegexOptions.IgnorePatternWhitespace,
+                    TimeSpan.FromSeconds(.25));
+            }
+            catch (RegexMatchTimeoutException) { }
+
+            return formattedText;
+        }
+
         private static SubmitApplicationSequenceRequest BuildSubmitApplicationSequenceRequest(Guid applicationId, Dictionary<int,bool?> dictRequestedFeedbackAnswered, string referenceFormat, int sequenceNo, Guid userId)
         {  
             return new SubmitApplicationSequenceRequest
@@ -1054,8 +1090,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 RequestedFeedbackAnswered = dictRequestedFeedbackAnswered
             };
         }
-
-        
 
         private static List<ValidationErrorDetail> ValidateSubmit(List<Section> qnaSections, List<ApplySection> applySections)
         {

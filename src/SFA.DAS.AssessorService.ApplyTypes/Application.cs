@@ -9,27 +9,43 @@ namespace SFA.DAS.AssessorService.ApplyTypes
 {
     public class ApplicationData
     {
+        public string ReferenceNumber { get; set; }
+
+        // These are preamble answers
         public string OrganisationReferenceId { get; set; }
         public string OrganisationName { get; set; }
-        public string ReferenceNumber { get; set; }
-        public string StandardName { get; set; }
         public string OrganisationType { get; set; }
+        
+        
+        // These are preamble answers, but are currently unused and stored instead in ApplyData.Apply
         public int? StandardCode { get; set; }
+        public string StandardReference { get; set; }
+        public string StandardName { get; set; }
+        
         public string TradingName { get; set; }
         public bool UseTradingName { get; set; }
         public string ContactGivenName { get; set; }
+        
+        public int? PipelinesCount { get; set; }
+        
+        [JsonIgnore]
+        public DateTime EarliestDateOfWithdrawal { get; set; }
+
+        [JsonProperty("EarliestDateOfWithdrawal")]
+        public string EarliestDateOfWithdrawalJson
+        {
+            get { return EarliestDateOfWithdrawal.ToString("O"); }
+            set { EarliestDateOfWithdrawal = DateTime.ParseExact(value, "O", null); }
+        }
 
         public CompaniesHouseSummary CompanySummary { get; set; }
         public CharityCommissionSummary CharitySummary { get; set; }
-    }
 
-    public class StandardApplicationData
-    {
-        public string StandardName { get; set; }
-        public int StandardCode { get; set; }
-        public Guid UserId { get; set; }
-        public string UserEmail { get; set; }
-    }   
+        public object GetPropertyValue(string propertyName)
+        {
+            return GetType().GetProperty(propertyName)?.GetValue(this, null);
+        }
+    }
 
     public class ApplyData
     {
@@ -67,18 +83,12 @@ namespace SFA.DAS.AssessorService.ApplyTypes
         public bool? RequestedFeedbackAnswered { get; set; }
     }
 
-    public class Feedback
-    {
-        public DateTime? Feedbackdate { get; set; }
-        public string FeedbackBy { get; set; }
-        public bool FeedbackAnswered { get; set; }
-        public DateTime? FeedbackAnsweredDate { get; set; }
-        public string FeedbackAnsweredBy { get; set; }
-    }
 
     public class Apply
     {
         public string ReferenceNumber { get; set; }
+        
+        // These are preamble answers, they should be stored in the application data 
         public int? StandardCode { get; set; }
         public string StandardReference { get; set; }
         public string StandardName { get; set; }

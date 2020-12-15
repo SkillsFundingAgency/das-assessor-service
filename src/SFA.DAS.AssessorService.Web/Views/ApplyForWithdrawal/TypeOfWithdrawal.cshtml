@@ -1,3 +1,4 @@
+@using SFA.DAS.AssessorService.Domain.Consts;
 @model SFA.DAS.AssessorService.Web.ViewModels.ApplyForWithdrawal.TypeOfWithdrawalViewModel;
 @{
     ViewData["Title"] = "What are you withdrawing from?";
@@ -37,7 +38,7 @@
                                        id="TypeOfWithdrawal"
                                        name="TypeOfWithdrawal"
                                        type="radio"
-                                       value="Standard"
+                                       value="@ApplicationTypes.StandardWithdrawal"
                                        asp-for="TypeOfWithdrawal"
                                        sfa-validation-for="TypeOfWithdrawal"
                                        sfa-validationerror-class="govuk-input--error">
@@ -50,7 +51,7 @@
                                        id="TypeOfWithdrawal-2"
                                        name="TypeOfWithdrawal"
                                        type="radio"
-                                       value="Organisation"
+                                       value="@ApplicationTypes.OrganisationWithdrawal"
                                        asp-for="TypeOfWithdrawal"
                                        sfa-validation-for="TypeOfWithdrawal"
                                        sfa-validationerror-class="govuk-input--error">
