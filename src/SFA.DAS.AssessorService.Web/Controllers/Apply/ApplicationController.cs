@@ -683,7 +683,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         public async Task<IActionResult> Submitted(Guid Id)
         {
             var application = await _applicationApiClient.GetApplication(Id);
-            return View("~/Views/Application/Submitted.cshtml", new SubmittedViewModel
+            return View("~/Views/Application/Submitted.cshtml", new SubmittedViewModel(application)
             {
                 ReferenceNumber = application?.ApplyData?.Apply?.ReferenceNumber,
                 FeedbackUrl = _config.FeedbackUrl,
@@ -695,7 +695,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         public async Task<IActionResult> NotSubmitted(Guid Id)
         {
             var application = await _applicationApiClient.GetApplication(Id);
-            return View("~/Views/Application/NotSubmitted.cshtml", new SubmittedViewModel
+            return View("~/Views/Application/NotSubmitted.cshtml", new SubmittedViewModel(application)
             {
                 ReferenceNumber = application?.ApplyData?.Apply?.ReferenceNumber,
                 FeedbackUrl = _config.FeedbackUrl,
