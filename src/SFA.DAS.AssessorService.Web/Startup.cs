@@ -152,6 +152,7 @@ namespace SFA.DAS.AssessorService.Web
                 config.For<IIfaStandardsApiClient>().Use(() => new IfaStandardsApiClient(Configuration.IfaApiClientBaseUrl));
                 config.For<ILoginApiClient>().Use<LoginApiClient>().Ctor<string>().Is(Configuration.AssessorApiAuthentication.ApiBaseAddress);
                 config.For<IApplicationApiClient>().Use<ApplicationApiClient>().Ctor<string>().Is(Configuration.AssessorApiAuthentication.ApiBaseAddress);
+                config.For<ILearnerDetailsApiClient>().Use<LearnerDetailApiClient>().Ctor<string>().Is(Configuration.AssessorApiAuthentication.ApiBaseAddress);
 
                 config.For<IAzureTokenService>().Use<AzureTokenService>();
                 config.For<IAzureApiClient>().Use<AzureApiClient>().Ctor<string>().Is(Configuration.AzureApiAuthentication.ApiBaseAddress);
