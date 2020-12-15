@@ -58,7 +58,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
             var userId = await GetUserId();
             var org = await _orgApiClient.GetOrganisationByUserId(userId);
-            //var applications = await _applicationApiClient.GetApplications(userId, false);
             var applications = await _applicationApiClient.GetCombinedApplications(userId);
             applications = applications?.Where(app => app.ApplicationStatus != ApplicationStatus.Declined).ToList();
 

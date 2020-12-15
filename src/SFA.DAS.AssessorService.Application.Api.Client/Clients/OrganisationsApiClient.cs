@@ -71,7 +71,25 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                 return await RequestAndDeserialiseAsync<Organisation>(request,$"Could not find the organisation {organisationId}");
             }
         }
-        
+
+        public async Task<DateTime> GetEarliestWithdrawalDate(Guid organisationId, int? standardCode)
+        {
+            if (standardCode.HasValue)
+            {
+                using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/organisations/organisation/earliest-withdrawal/{organisationId}/{standardCode}"))
+                {
+                    return await RequestAndDeserialiseAsync<DateTime>(request, $"Could not get the earliest withdrawal for the standard {standardCode} of the organisation {organisationId}");
+                }
+            }
+            else
+            {
+                using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/organisations/organisation/earliest-withdrawal/{organisationId}"))
+                {
+                    return await RequestAndDeserialiseAsync<DateTime>(request, $"Could not get the earliest withdrawal for the organisation {organisationId}");
+                }
+            }
+        }
+
         public async Task<OrganisationResponse> Create(CreateOrganisationRequest createOrganisationRequest)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/v1/organisations/"))
@@ -251,13 +269,13 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task<ValidationResponse> ValidateCreateOrganisationStandard(string organisationId, int standardId, DateTime? effectiveFrom,
+        public async Task<ValidationResponse> ValidateCreateOrganisationStandard(string organisationId, int standardCode, DateTime? effectiveFrom,
             DateTime? effectiveTo, Guid? contactId, List<int> deliveryAreas)
         {
             var validationRequest = new CreateEpaOrganisationStandardValidationRequest
             {
                 OrganisationId = organisationId,
-                StandardCode = standardId,
+                StandardCode = standardCode,
                 EffectiveFrom = effectiveFrom?.Date,
                 EffectiveTo = effectiveTo?.Date,
                 ContactId = contactId.HasValue ? contactId.Value.ToString() : string.Empty,
@@ -271,13 +289,13 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task<ValidationResponse> ValidateUpdateOrganisationStandard(string organisationId, int standardId, DateTime? effectiveFrom,
+        public async Task<ValidationResponse> ValidateUpdateOrganisationStandard(string organisationId, int standardCode, DateTime? effectiveFrom,
             DateTime? effectiveTo, Guid? contactId, List<int> deliveryAreas, string actionChoice, string organisationStandardStatus, string organisationStatus)
         {
             var validationRequest = new UpdateEpaOrganisationStandardValidationRequest
             {
                 OrganisationId = organisationId,
-                StandardCode = standardId,
+                StandardCode = standardCode,
                 EffectiveFrom = effectiveFrom?.Date,
                 EffectiveTo = effectiveTo?.Date,
                 ContactId = contactId.HasValue ? contactId.Value.ToString() : string.Empty,
