@@ -54,8 +54,7 @@ RETURN
         ap1.ApplicationStatus As ApplicationStatus,
         ap1.ReviewStatus As ReviewStatus,
         ap1.FinancialReviewStatus As FinancialStatus,
-        JSON_VALUE(ap1.FinancialGrade,'$.SelectedGrade') AS FinancialGrade,
-		JSON_VALUE(ap1.GovernanceRecommendation,'$.SelectedRecommendation') AS GovernanceRecommendation,
+        JSON_VALUE(ap1.FinancialGrade,'$.SelectedGrade') AS FinancialGrade,		
         seq.Status As SequenceStatus,
 		TotalCount = COUNT(1) OVER()
 	FROM 

@@ -21,6 +21,7 @@ using SFA.DAS.AssessorService.ApplyTypes.CharityCommission;
 using SFA.DAS.AssessorService.ApplyTypes.CompaniesHouse;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Settings;
+using SFA.DAS.AssessorService.Web.Helpers;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.StartupConfiguration;
 using SFA.DAS.AssessorService.Web.ViewModels.Apply;
@@ -342,7 +343,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 }
             }
 
-            var applicationData = await _qnaApiClient.GetApplicationData(application.ApplicationId);
+            var applicationData = await _qnaApiClient.GetApplicationDataDictionary(application.ApplicationId);
             ReplaceApplicationDataPropertyPlaceholdersInQuestions(viewModel.Questions, applicationData);
 
             // the standard name preamble answer is currently stored in the application, instead of the application data
@@ -1045,44 +1046,17 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             }
         }
 
-        private void ReplaceApplicationDataPropertyPlaceholdersInQuestions(List<QuestionViewModel> questions, ApplicationData applicationData)
+        private void ReplaceApplicationDataPropertyPlaceholdersInQuestions(List<QuestionViewModel> questions, Dictionary<string, object> applicationData)
         {
             if (questions == null) return;
 
             foreach (var question in questions)
             {
-                question.Label = ReplaceApplicationDataPropertyPlaceholders(question.Label, applicationData);
-                question.Hint = ReplaceApplicationDataPropertyPlaceholders(question.Hint, applicationData);
-                question.QuestionBodyText = ReplaceApplicationDataPropertyPlaceholders(question.QuestionBodyText, applicationData);
-                question.ShortLabel = ReplaceApplicationDataPropertyPlaceholders(question.ShortLabel, applicationData);
+                question.Label = ApplicationDataFormatHelper.FormatApplicationDataPropertyPlaceholders(question.Label, applicationData);
+                question.Hint = ApplicationDataFormatHelper.FormatApplicationDataPropertyPlaceholders(question.Hint, applicationData);
+                question.QuestionBodyText = ApplicationDataFormatHelper.FormatApplicationDataPropertyPlaceholders(question.QuestionBodyText, applicationData);
+                question.ShortLabel = ApplicationDataFormatHelper.FormatApplicationDataPropertyPlaceholders(question.ShortLabel, applicationData);
             }
-        }
-
-        private string ReplaceApplicationDataPropertyPlaceholders(string input, ApplicationData applicationData)
-        {
-            string formattedText = input;
-
-            Func<Match, string> evaluator = (match) =>
-            {
-                var propertyName = match.Groups[2].Value;
-                var alignment = match.Groups[3].Value;
-                var formatString = match.Groups[4].Value;
-
-                return string.Format("{0" + alignment + formatString + "}", applicationData.GetPropertyValue(propertyName));
-            };
-
-            try
-            {
-                formattedText = Regex.Replace(
-                    formattedText,
-                    "{{((\\w+)(,[0-9]*)?)(:[\\w\\s.:/]*)?}}",
-                    new MatchEvaluator(evaluator),
-                    RegexOptions.IgnorePatternWhitespace,
-                    TimeSpan.FromSeconds(.25));
-            }
-            catch (RegexMatchTimeoutException) { }
-
-            return formattedText;
         }
 
         private static SubmitApplicationSequenceRequest BuildSubmitApplicationSequenceRequest(Guid applicationId, Dictionary<int, bool?> dictRequestedFeedbackAnswered, string referenceFormat, int sequenceNo, Guid userId)

@@ -62,15 +62,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.Apply
             await _mediator.Send(new AssessorService.Api.Types.Models.Apply.Review.ReturnApplicationSequenceRequest(Id, sequenceId, request.ReturnType, request.ReturnedBy));
         }
 
-        [HttpPost("Review/Applications/{Id}/UpdateGovernanceRecommendation")]
-        [SwaggerResponse((int)HttpStatusCode.OK)]
-        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<ActionResult> UpdateGovernanceRecommendation(Guid Id, [FromBody] GovernanceRecommendation recommendation)
-        {
-            await _mediator.Send(new UpdateGovernanceRecommendationRequest(Id, recommendation));
-            return Ok();
-        }
-
         [HttpPost("Review/Applications/{Id}/Sequences/{sequenceNo}/Sections/{sectionNo}/StartReview")]
         public async Task StartSectionReview(Guid Id, int sequenceNo, int sectionNo, [FromBody] StartApplicationSectionReviewRequest request)
         {
