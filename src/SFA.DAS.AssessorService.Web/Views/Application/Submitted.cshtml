@@ -1,56 +1,130 @@
+@using SFA.DAS.AssessorService.Domain.Consts
 @model SFA.DAS.AssessorService.Web.ViewModels.Apply.SubmittedViewModel
 @{
-    ViewBag.Title = "Application submitted";
+
+    if (Model.IsWithdrawalApplication)
+    {
+        ViewBag.Title = " Withdrawal notification submitted";
+    }
+    else
+    {
+        ViewBag.Title = "Application submitted";
+    }
+
     Layout = "_Layout";
 }
 
 <main class="govuk-main-wrapper govuk-main-wrapper--l" id="main-content" role="main">
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <div class="govuk-panel govuk-panel--confirmation">
-                <h1 class="govuk-panel__title">
-                    @if (string.IsNullOrEmpty(Model.StandardName))
-                    {
-                        <text>Stage 1 of your application has been submitted</text>
-                    }
-                    else
-                    {
-                        <text>Stage 2 of your application has been submitted</text>
-                    }
-                </h1>
-                <div class="govuk-panel__body">
-                    @if (!string.IsNullOrEmpty(Model.StandardName))
-                    {
-                        <div class="govuk-!-margin-bottom-4">
-                            <span class="govuk-!-font-size-24">Standard applied for</span>
-                            <br />
-                            <strong>@Model.StandardName</strong>
-                        </div>
-                    }
-                    @if (!string.IsNullOrEmpty(Model.ReferenceNumber))
-                    {
-                        <div>
-                            <span class="govuk-!-font-size-24">Your reference number</span>
-                            <br />
+
+            @if (Model.IsWithdrawalApplication)
+            {
+                <form method="post">
+
+                    <div class="govuk-panel govuk-panel--confirmation">
+                        <h1 class="govuk-panel__title">
+                            Withdrawal notification submitted
+                        </h1>
+
+                        <div class="govuk-panel__body">
+                            Your reference number
+                            <br>
                             <strong>@Model.ReferenceNumber</strong>
                         </div>
+
+                    </div>
+
+                    <p class="govuk-body">
+                        We have sent you a confirmation email.
+                    </p>
+
+                    <h2 class="govuk-heading-m govuk-!-margin-top-6">
+                        What happens next
+                    </h2>
+
+
+                    @if (Model.IsOrganisationWithdrawalApplication)
+                    {
+                        <p class="govuk-body">
+                            We'll review your withdrawal notification within 4 weeks, then email the outcome to you. If any of your answers need clarification, we'll send you a notification by email.
+                        </p>
+
+                        <p class="govuk-body">
+                            You must not agree to assess any new learners while we review your withdrawal.
+                        </p>
+
+                        <p class="govuk-body">
+                            Once you withdraw, your organisation cannot reapply to join the register for at least 12 months.
+                        </p>
                     }
+
+
+                    @if (Model.IsStandardWithdrawalApplication)
+                    {
+                        <p class="govuk-body">
+                            We'll review your withdrawal notification within 4 weeks, then email the outcome to you. If any of your answers need clarification, we'll send you a notification by email.
+                        </p>
+
+                        <p class="govuk-body">
+                            You must not agree to assess any new learners for this standard while we review your withdrawal.
+                        </p>
+
+                        <p class="govuk-body">
+                            Once you withdraw, your organisation cannot reapply to assess this standard for at least 12 months.
+                        </p>
+                    }
+
+                    <p>
+                        <a href="@Url.Action("Index", "Dashboard")" class="govuk-link govuk-link--no-visited-state">Return to account home</a>
+                    </p>
+                    <p class="govuk-body">
+                        <a href="@Model.FeedbackUrl" target="_blank" class="govuk-link">What do you think of this service?</a> (Takes 60 seconds)
+                    </p>
+                </form>
+            }
+            else
+            {
+                <div class="govuk-panel govuk-panel--confirmation">
+                    <h1 class="govuk-panel__title">
+                        @if (string.IsNullOrEmpty(Model.StandardName))
+                        {
+                            <text>Stage 1 of your application has been submitted</text>
+                        }
+                        else
+                        {
+                            <text>Stage 2 of your application has been submitted</text>
+                        }
+                    </h1>
+                    <div class="govuk-panel__body">
+                        @if (!string.IsNullOrEmpty(Model.StandardName))
+                        {
+                            <div class="govuk-!-margin-bottom-4">
+                                <span class="govuk-!-font-size-24">Standard applied for</span>
+                                <br />
+                                <strong>@Model.StandardName</strong>
+                            </div>
+                        }
+                        @if (!string.IsNullOrEmpty(Model.ReferenceNumber))
+                        {
+                            <div>
+                                <span class="govuk-!-font-size-24">Your reference number</span>
+                                <br />
+                                <strong>@Model.ReferenceNumber</strong>
+                            </div>
+                        }
+                    </div>
                 </div>
-            </div>
-            
-            <p class="govuk-body">We have sent you a confirmation email.</p>
 
-            <h3 class="govuk-heading-m">What happens next</h3>
+                <p class="govuk-body">We have sent you a confirmation email.</p>
 
-            <p class="govuk-body">Once we've reviewed your application, we'll email the outcome to you. If any of your answers need clarification, we'll send you a notification by email.</p>
+                <h3 class="govuk-heading-m">What happens next</h3>
 
-            <p class="govuk-body"><a href="@Model.FeedbackUrl" target="_blank" class="govuk-link">What do you think of this service?</a> (Takes 60 seconds)</p>
-            @* LINK BELOW REMOVED FOR PRIVATE BETA *@
-            @*
-            <p class="govuk-body">
-                <a asp-action="Applications" asp-controller="Application" class="govuk-link">Return to application overview</a>
-            </p>
-            *@
+                <p class="govuk-body">Once we've reviewed your application, we'll email the outcome to you. If any of your answers need clarification, we'll send you a notification by email.</p>
+
+                <p class="govuk-body"><a href="@Model.FeedbackUrl" target="_blank" class="govuk-link">What do you think of this service?</a> (Takes 60 seconds)</p>
+            }
+
         </div>
     </div>
 </main>

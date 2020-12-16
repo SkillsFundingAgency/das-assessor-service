@@ -54,5 +54,11 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Apply
             // a sequence can be considered active even if it does not exist in the ApplyData, since it has not yet been submitted and is in progress.
             return ApplyData?.Sequences?.Any(x => x.SequenceNo == sequenceNo && x.IsActive) ?? true;
         }
+
+        public bool IsWithdrawalApplication => IsStandardWithdrawalApplication || IsOrganisationWithdrawalApplication;
+
+        public bool IsStandardWithdrawalApplication => GetApplicationType() == ApplicationTypes.StandardWithdrawal;
+
+        public bool IsOrganisationWithdrawalApplication => GetApplicationType() == ApplicationTypes.OrganisationWithdrawal;
     }
 }

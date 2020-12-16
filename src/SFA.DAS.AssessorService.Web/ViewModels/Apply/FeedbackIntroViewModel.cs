@@ -13,11 +13,11 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Apply
             _applicationResponse = applicationResponse;
         }
 
-        public bool IsWithdrawalApplication => IsStandardWithdrawalApplication || IsOrganisationWithdrawalApplication;
-        
-        public bool IsStandardWithdrawalApplication => _applicationResponse.GetApplicationType() == ApplicationTypes.StandardWithdrawal;
-        
-        public bool IsOrganisationWithdrawalApplication => _applicationResponse.GetApplicationType() == ApplicationTypes.OrganisationWithdrawal;
+        public bool IsWithdrawalApplication => _applicationResponse.IsWithdrawalApplication;
+
+        public bool IsStandardWithdrawalApplication => _applicationResponse.IsStandardWithdrawalApplication;
+
+        public bool IsOrganisationWithdrawalApplication => _applicationResponse.IsOrganisationWithdrawalApplication;
 
         public string StandardName => $"{_applicationResponse.ApplyData.Apply.StandardName} ({_applicationResponse.ApplyData.Apply.StandardReference})";
 
