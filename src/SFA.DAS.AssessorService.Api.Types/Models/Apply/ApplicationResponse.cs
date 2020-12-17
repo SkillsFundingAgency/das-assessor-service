@@ -1,4 +1,5 @@
 ﻿using SFA.DAS.AssessorService.ApplyTypes;
+using SFA.DAS.AssessorService.Domain.Consts;
 using System;
 using System.Linq;
 
@@ -20,5 +21,11 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Apply
         public string CreatedBy { get; set; }
         public string ContactName { get; set; }
         public string ContactEmail { get; set; }
+
+        public bool IsWithdrawalApplication => IsStandardWithdrawalApplication || IsOrganisationWithdrawalApplication;
+
+        public bool IsStandardWithdrawalApplication => ApplicationType == ApplicationTypes.StandardWithdrawal;
+
+        public bool IsOrganisationWithdrawalApplication => ApplicationType == ApplicationTypes.OrganisationWithdrawal;
     }
 }

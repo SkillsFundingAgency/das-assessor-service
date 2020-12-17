@@ -119,7 +119,7 @@ namespace SFA.DAS.AssessorService.ApplyTypes
         public DateTime? StandardWithdrawalSubmissionClosedDate { get; set; }
 
         [JsonIgnore]
-        public string StandardDescription => $"{StandardName} ({StandardReference})";
+        public string StandardWithReference => $"{StandardName} ({StandardReference})";
     }
 
     public class Submission
