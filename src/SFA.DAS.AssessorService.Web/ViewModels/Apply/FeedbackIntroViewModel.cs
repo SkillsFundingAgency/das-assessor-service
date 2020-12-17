@@ -1,5 +1,4 @@
 ﻿using SFA.DAS.AssessorService.Api.Types.Models.Apply;
-using SFA.DAS.AssessorService.Domain.Consts;
 using System;
 
 namespace SFA.DAS.AssessorService.Web.ViewModels.Apply
@@ -19,7 +18,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Apply
 
         public bool IsOrganisationWithdrawalApplication => _applicationResponse.IsOrganisationWithdrawalApplication;
 
-        public string StandardName => $"{_applicationResponse.ApplyData.Apply.StandardName} ({_applicationResponse.ApplyData.Apply.StandardReference})";
+        public string StandardDescription => _applicationResponse.ApplyData.Apply.StandardWithReference;
 
         public Guid ApplicationId => _applicationResponse.Id;
         

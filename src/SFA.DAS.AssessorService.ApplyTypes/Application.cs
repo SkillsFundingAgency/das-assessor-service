@@ -74,7 +74,6 @@ namespace SFA.DAS.AssessorService.ApplyTypes
     {
         public string ReferenceNumber { get; set; }
         
-        // These are preamble answers, they should be stored in the application data 
         public int? StandardCode { get; set; }
         public string StandardReference { get; set; }
         public string StandardName { get; set; }
@@ -118,6 +117,9 @@ namespace SFA.DAS.AssessorService.ApplyTypes
         public DateTime? LatestStandardWithdrawalSubmissionDate => LatestStandardWithdrawalSubmission?.SubmittedAt;
         public DateTime? StandardWithdrawalSubmissionFeedbackAddedDate { get; set; }
         public DateTime? StandardWithdrawalSubmissionClosedDate { get; set; }
+
+        [JsonIgnore]
+        public string StandardWithReference => $"{StandardName} ({StandardReference})";
     }
 
     public class Submission

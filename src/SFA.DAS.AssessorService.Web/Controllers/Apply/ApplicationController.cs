@@ -172,11 +172,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
             var standardName = application.ApplyData?.Apply?.StandardName;
 
-            if (application.IsSequenceActive(ApplyConst.ORGANISATION_SEQUENCE_NO))
+            if (IsSequenceActive(application.ApplyData, ApplyConst.ORGANISATION_SEQUENCE_NO))
             {
                 return RedirectToAction("Sequence", new { Id, sequenceNo = ApplyConst.ORGANISATION_SEQUENCE_NO });
             }
-            else if (application.IsSequenceActive(ApplyConst.STANDARD_SEQUENCE_NO))
+            else if(IsSequenceActive(application.ApplyData, ApplyConst.STANDARD_SEQUENCE_NO))
             {
                 if (string.IsNullOrWhiteSpace(standardName))
                 {
@@ -193,11 +193,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                     return RedirectToAction("Sequence", new { Id, sequenceNo = ApplyConst.STANDARD_SEQUENCE_NO });
                 }
             }
-            else if (application.IsSequenceActive(ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO))
+            else if(IsSequenceActive(application.ApplyData, ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO))
             {
                 return RedirectToAction("Sequence", new { Id, sequenceNo = ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO });
             }
-            else if (application.IsSequenceActive(ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO))
+            else if(IsSequenceActive(application.ApplyData, ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO))
             {
                 return RedirectToAction("Sequence", new { Id, sequenceNo = ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO });
             }
@@ -1014,7 +1014,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             return answers;
         }
 
-
         private static void ProcessPageVmQuestionsForStandardName(List<QuestionViewModel> pageVmQuestions, ApplicationResponse application)
         {
             if (pageVmQuestions == null) return;
@@ -1133,6 +1132,12 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             }
 
             return canUpdate;
+        }
+
+        public bool IsSequenceActive(ApplyData applyData, int sequenceNo)
+        {
+            // a sequence can be considered active even if it does not exist in the ApplyData, since it has not yet been submitted and is in progress.
+            return applyData?.Sequences?.Any(x => x.SequenceNo == sequenceNo && x.IsActive) ?? true;
         }
 
         //Todo: Remove this function if and when the _Address.cshtml is refactored or the qna modelstate 
