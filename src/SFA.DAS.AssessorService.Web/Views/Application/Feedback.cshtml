@@ -3,7 +3,7 @@
 @model SFA.DAS.AssessorService.Web.ViewModels.Apply.SequenceViewModel;
 
 @{
-    ViewBag.Title = "Feedback";
+    ViewBag.Title = "Application overview";
     Layout = "_Layout";
 }
 
@@ -66,7 +66,7 @@
                     By submitting your answers, you confirm that you have the authority to act on behalf of the organisation.
                 </p>
             }
-           
+
             <ol class="app-task-list">
                 @foreach (var applicationSection in Model.Sections.OrderBy(s => s.SectionNo))
                 {
