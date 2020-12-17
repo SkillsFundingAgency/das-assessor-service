@@ -15,9 +15,9 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Apply
 
         public bool IsWithdrawalApplication => IsStandardWithdrawalApplication || IsOrganisationWithdrawalApplication;
         
-        public bool IsStandardWithdrawalApplication => _applicationResponse.GetApplicationType() == ApplicationTypes.StandardWithdrawal;
+        public bool IsStandardWithdrawalApplication => _applicationResponse.ApplicationType == ApplicationTypes.StandardWithdrawal;
         
-        public bool IsOrganisationWithdrawalApplication => _applicationResponse.GetApplicationType() == ApplicationTypes.OrganisationWithdrawal;
+        public bool IsOrganisationWithdrawalApplication => _applicationResponse.ApplicationType == ApplicationTypes.OrganisationWithdrawal;
 
         public string StandardName => $"{_applicationResponse.ApplyData.Apply.StandardName} ({_applicationResponse.ApplyData.Apply.StandardReference})";
 
