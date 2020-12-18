@@ -138,18 +138,13 @@
     <Build Include="StoredProcedures\Apply_List_Applications.sql" />
     <Build Include="Tables\Settings.sql" />
     <Build Include="Tables\CertificateBatchLogs.sql" />
-    <None Include="PreDeploymentScripts\remove_certificatelogs_wasrejected.sql" />
     <Build Include="Tables\EmailTemplatesRecipients.sql" />
     <Build Include="Functions\Scalar-valued Functions\OppFinder_GetPostCodePrefix.sql" />
     <None Include="PostDeploymentScripts\LookupData\PrivilegesInsertOrUpdate.sql" />
     <None Include="PostDeploymentScripts\LookupData\DeliveryAreaInsertOrUpdate.sql" />
     <None Include="PostDeploymentScripts\LookupData\DeliveryAreaDelete.sql" />
-    <None Include="PreDeploymentScripts\con-1561_update_staff_reports_id.sql" />
     <None Include="PostDeploymentScripts\LookupData\EmailTemplatesDelete.sql" />
     <None Include="PostDeploymentScripts\LookupData\EmailTemplatesInsertOrUpdate.sql" />
-    <None Include="PreDeploymentScripts\con-1561_update_email_templates_id.sql" />
-    <None Include="PreDeploymentScripts\con-1561_remove_email_templates_columns.sql" />
-    <None Include="PostDeploymentScripts\con-1561_remove_email_templates_columns.sql" />
     <Build Include="Tables\IlrsImport.sql" />
   </ItemGroup>
   <ItemGroup>
@@ -165,7 +160,6 @@
     <None Include="DataToImport\assessmentorgs.xlsx" />
     <Build Include="Functions\Table-valued Functions\Apply_Func_Get_Applications.sql" />
     <Build Include="Functions\Scalar-valued Functions\ToTicks.sql" />
-    <None Include="PreDeploymentScripts\con-1561_update_privileges_id.sql" />
     <None Include="PostDeploymentScripts\LookupData\PrivilegesDelete.sql" />
     <None Include="PostDeploymentScripts\LookupData\SynchronizeLookupData.sql" />
     <None Include="PostDeploymentScripts\LookupData\OrganisationTypeInsertOrUpdate.sql" />
