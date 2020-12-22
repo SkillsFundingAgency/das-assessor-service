@@ -19,10 +19,6 @@
     under the PostDeploymentScripts folder for future reference.
 */
 
-/* SPECIAL CASE OF DROPPING COLUMNS FROM LOOKUP TABLES */
-:r .\PostDeploymentScripts\con-1561_remove_email_templates_columns.sql
-/* SPECIAL CASE OF DROPPING COLUMNS FROM LOOKUP TABLES */
-
 /*	NORMALLY KEEP SECTION FIRST - START DATABASE LOOKUP */
 :r .\PostDeploymentScripts\LookupData\SynchronizeLookupData.sql
 /* 	NORMALLY KEEP SECTION FIRST - END DATABASE LOOKUP */
