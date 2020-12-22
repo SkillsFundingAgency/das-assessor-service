@@ -19,8 +19,3 @@
     When a script has been deployed to PROD it can be disabled by removing the reference below and optionally retained
     under the PreDeploymentScripts folder for future reference.
 */
-
-:r .\PreDeploymentScripts\con-1561_update_privileges_id.sql
-:r .\PreDeploymentScripts\con-1561_update_staff_reports_id.sql
-:r .\PreDeploymentScripts\con-1561_update_email_templates_id.sql
-:r .\PreDeploymentScripts\con-1561_remove_email_templates_columns.sql
