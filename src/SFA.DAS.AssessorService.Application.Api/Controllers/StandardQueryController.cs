@@ -61,7 +61,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         }
 
         [HttpGet("{standardCode}/organisations")]
-        [ProducesResponseType(typeof(List<EpaOrganisation>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(List<OrganisationStandardResponse>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async  Task<IActionResult> GetEpaosByStandard(int standardCode)
