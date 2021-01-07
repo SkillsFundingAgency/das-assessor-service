@@ -7,7 +7,6 @@ using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Settings;
 using System;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
