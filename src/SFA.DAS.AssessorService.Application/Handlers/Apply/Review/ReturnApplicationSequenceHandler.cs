@@ -70,7 +70,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply.Review
 
         private async Task NotifyContact(Guid applicationId, int sequenceNo, CancellationToken cancellationToken)
         {
-            var application = await _applyRepository.GetApplication(applicationId);
+            var application = await _applyRepository.GetApply(applicationId);
 
             if (application != null)
             {

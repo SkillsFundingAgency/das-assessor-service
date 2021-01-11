@@ -94,5 +94,17 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.Apply
 
             return Ok(await _mediator.Send(updateStandardDataRequest));
         }
+
+        [HttpPost("resetApplicationToStage1", Name = "ResetApplicationToStage1")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(bool))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<ActionResult> ResetApplicationToStage1(
+            [FromBody] ResetApplicationToStage1Request resetApplicationToStage1Request)
+        {
+            _logger.LogInformation("Received Reset Application To Stage 1 Request");
+
+            return Ok(await _mediator.Send(resetApplicationToStage1Request));
+        }
     }
 }

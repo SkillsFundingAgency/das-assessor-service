@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 {
-    public class QnaApiClient : ApiClientBase,IQnaApiClient
+    public class QnaApiClient : ApiClientBase, IQnaApiClient
     {
         private readonly ILogger<QnaApiClient> _logger;
 
@@ -146,6 +146,16 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                 JsonSerializerSettings settings = new JsonSerializerSettings();
                 settings.Converters.Add(new SetResultConverter());
                 return await PostPutRequestWithResponse<List<Answer>, SetPageAnswersResponse>(request, answer,settings);
+            }
+        }
+
+        public async Task<ResetPageAnswersResponse> ResetSectionAnswers(Guid applicationId, int sequenceId, int sectionId)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Post, $"/applications/{applicationId}/sequences/{sequenceId}/sections/{sectionId}/reset"))
+            {
+                JsonSerializerSettings settings = new JsonSerializerSettings();
+                settings.Converters.Add(new SetResultConverter());
+                return await PostPutRequestWithResponse<ResetPageAnswersResponse>(request, settings);
             }
         }
 

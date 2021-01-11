@@ -33,6 +33,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
     {
         private readonly ILogger<ApplicationController> _logger;
         private readonly IApiValidationService _apiValidationService;
+        private readonly IApplicationService _applicationService;
         private readonly IOrganisationsApiClient _orgApiClient;
         private readonly IContactsApiClient _contactsApiClient;
         private readonly IApplicationApiClient _applicationApiClient;
@@ -40,11 +41,12 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         private readonly IWebConfiguration _config;
         private const string WorkflowType = "EPAO";
 
-        public ApplicationController(IOrganisationsApiClient orgApiClient, IQnaApiClient qnaApiClient, IWebConfiguration config,
+        public ApplicationController(IApplicationService applicationService, IOrganisationsApiClient orgApiClient, IQnaApiClient qnaApiClient, IWebConfiguration config,
             IContactsApiClient contactsApiClient, IApplicationApiClient applicationApiClient, ILogger<ApplicationController> logger, IApiValidationService apiValidationService)
         {
             _logger = logger;
             _apiValidationService = apiValidationService;
+            _applicationService = applicationService;
             _orgApiClient = orgApiClient;
             _contactsApiClient = contactsApiClient;
             _applicationApiClient = applicationApiClient;
@@ -273,6 +275,14 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 default:
                     throw new BadRequestException("Section does not have a valid DisplayType");
             }
+        }
+
+        [HttpGet("/Application/{id}/Cancel")]
+        public async Task<IActionResult> ResetApplicatonToStage1(Guid id)
+        {
+            var userId = await GetUserId();
+            await _applicationService.ResetApplicationToStage1(id, userId);
+            return RedirectToAction(nameof(SequenceSignPost), new { id });
         }
 
         [HttpGet("/Application/{Id}/Sequences/{sequenceNo}/Sections/{sectionNo}/Pages/{pageId}"), ModelStatePersist(ModelStatePersist.RestoreEntry)]

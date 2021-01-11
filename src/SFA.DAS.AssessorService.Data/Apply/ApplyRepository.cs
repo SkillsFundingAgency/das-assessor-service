@@ -4,6 +4,7 @@ using SFA.DAS.AssessorService.Api.Types.Models.Apply.Review;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.Data.DapperTypeHandlers;
+using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -33,6 +34,14 @@ namespace SFA.DAS.AssessorService.Data.Apply
             SqlMapper.AddTypeHandler(typeof(FinancialEvidence), new FinancialEvidenceHandler());
         }
 
+        public async Task<Domain.Entities.Apply> GetApply(Guid applicationId)
+        {
+            return await _unitOfWork.Connection.QuerySingleOrDefaultAsync<Domain.Entities.Apply>(
+                @"SELECT * FROM Apply WHERE Id = @applicationId",
+                param: new { applicationId },
+                transaction: _unitOfWork.Transaction);
+        }
+
         public async Task<List<Domain.Entities.Apply>> GetUserApplications(Guid userId)
         {
             return (await _unitOfWork.Connection.QueryAsync<Domain.Entities.Apply>(
@@ -50,14 +59,6 @@ namespace SFA.DAS.AssessorService.Data.Apply
                   WHERE c.Id = @userId", 
                 param: new { userId },
                 transaction: _unitOfWork.Transaction)).ToList();
-        }
-
-        public async Task<Domain.Entities.Apply> GetApplication(Guid applicationId)
-        {
-            return await _unitOfWork.Connection.QuerySingleOrDefaultAsync<Domain.Entities.Apply>(
-                @"SELECT * FROM Apply WHERE Id = @applicationId", 
-                param: new { applicationId },
-                transaction: _unitOfWork.Transaction);
         }
 
         public async Task<Guid> CreateApplication(Domain.Entities.Apply apply)
@@ -109,7 +110,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
 
         public async Task<bool> UpdateStandardData(Guid id, int standardCode, string referenceNumber, string standardName)
         {
-            var application = await GetApplication(id);
+            var application = await GetApply(id);
             var applyData = application?.ApplyData;
 
             if(application != null && applyData != null)
@@ -138,9 +139,74 @@ namespace SFA.DAS.AssessorService.Data.Apply
             return false;
         }
 
+        public async Task<bool> ResetApplicatonToStage1(Guid id, Guid userId)
+        {
+            var application = await GetApply(id);
+            var applyData = application?.ApplyData;
+            var sequence = applyData?.Sequences.SingleOrDefault(seq => seq.SequenceNo == ApplyConst.STANDARD_SEQUENCE_NO);
+            var section = sequence?.Sections.SingleOrDefault(sec => sec.SectionNo == ApplyConst.STANDARD_DETAILS_SECTION_NO);
+
+            if (application != null && sequence != null && section != null)
+            {
+                application.ApplicationStatus = ApplicationStatus.InProgress;
+                application.ReviewStatus = ApplicationReviewStatus.Approved;
+                application.StandardCode = null;
+                application.UpdatedAt = DateTime.UtcNow;
+                application.UpdatedBy = userId.ToString();
+
+                section.Status = ApplicationSectionStatus.Draft;
+                section.ReviewStartDate = null;
+                section.ReviewedBy = null;
+                section.EvaluatedDate = null;
+                section.EvaluatedBy = null;
+
+                sequence.Status = ApplicationSequenceStatus.Draft;
+                sequence.ApprovedDate = null;
+                sequence.ApprovedBy = null;
+
+                if (applyData.Apply == null)
+                {
+                    applyData.Apply = new ApplyTypes.Apply();
+                }
+
+                applyData.Apply.StandardCode = null;
+                applyData.Apply.StandardReference = null;
+                applyData.Apply.StandardName = null;
+
+                applyData.Apply.StandardSubmissions = new List<Submission>();
+
+                await _unitOfWork.Connection.ExecuteAsync(
+                    "UPDATE " +
+                    "   Apply " + 
+                    "SET " +
+                    "   ApplyData = @ApplyData, " + 
+                    "   ApplicationStatus = @ApplicationStatus, " +
+                    "   ReviewStatus = @ReviewStatus, " +
+                    "   StandardCode = @StandardCode, " +
+                    "   UpdatedAt = @UpdatedAt, " + 
+                    "   UpdatedBy = @UpdatedBy " +
+                    "WHERE " +
+                    "   Id = @Id",
+                    param: new { 
+                        application.Id, 
+                        application.ApplyData, 
+                        application.ApplicationStatus, 
+                        application.ReviewStatus, 
+                        application.StandardCode, 
+                        application.UpdatedAt, 
+                        application.UpdatedBy 
+                    },
+                    transaction: _unitOfWork.Transaction);
+
+                return true;
+            }
+
+            return false;
+        }
+
         public async Task StartFinancialReview(Guid id, string reviewer)
         {
-            var application = await GetApplication(id);
+            var application = await GetApply(id);
             var applyData = application?.ApplyData;
             var sequence = applyData?.Sequences.SingleOrDefault(seq => seq.SequenceNo == FINANCIAL_SEQUENCE_NO);
             var section = sequence?.Sections.SingleOrDefault(sec => sec.SectionNo == FINANCIAL_SECTION_NO);
@@ -168,7 +234,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
         {
             if (financialGrade != null)
             {
-                var application = await GetApplication(id);
+                var application = await GetApply(id);
                 var applyData = application?.ApplyData;
                 var sequence = applyData?.Sequences.SingleOrDefault(seq => seq.SequenceNo == FINANCIAL_SEQUENCE_NO);
                 var section = sequence?.Sections.SingleOrDefault(sec => sec.SectionNo == FINANCIAL_SECTION_NO);
@@ -202,7 +268,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
 
         public async Task StartApplicationSectionReview(Guid id, int sequenceNo, int sectionNo, string reviewer)
         {
-            var application = await GetApplication(id);
+            var application = await GetApply(id);
             var applyData = application?.ApplyData;
             var sequence = applyData?.Sequences.SingleOrDefault(seq => seq.SequenceNo == sequenceNo);
             var section = sequence?.Sections.SingleOrDefault(sec => sec.SectionNo == sectionNo);
@@ -227,7 +293,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
 
         public async Task EvaluateApplicationSection(Guid id, int sequenceNo, int sectionNo, bool isSectionComplete, string evaluatedBy)
         {
-            var application = await GetApplication(id);
+            var application = await GetApply(id);
             var applyData = application?.ApplyData;
             var sequence = applyData?.Sequences.SingleOrDefault(seq => seq.SequenceNo == sequenceNo);
             var section = sequence?.Sections.SingleOrDefault(sec => sec.SectionNo == sectionNo);
@@ -280,7 +346,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
 
         public async Task ReturnApplicationSequence(Guid id, int sequenceNo, string sequenceStatus, string returnedBy)
         {
-            var application = await GetApplication(id);
+            var application = await GetApply(id);
             var applyData = application?.ApplyData;
             var sequence = applyData?.Sequences.SingleOrDefault(seq => seq.SequenceNo == sequenceNo);
             var nextSequence = applyData?.Sequences.Where(seq => seq.SequenceNo > sequenceNo && !seq.NotRequired).OrderBy(seq => seq.SequenceNo).FirstOrDefault();

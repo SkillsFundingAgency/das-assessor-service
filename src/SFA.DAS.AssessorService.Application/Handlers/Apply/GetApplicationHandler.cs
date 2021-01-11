@@ -18,7 +18,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
 
         public async Task<ApplicationResponse> Handle(GetApplicationRequest request, CancellationToken cancellationToken)
         {
-            var result =  await _applyRepository.GetApplication(request.ApplicationId);
+            var result =  await _applyRepository.GetApply(request.ApplicationId);
 
             return Mapper.Map<Domain.Entities.Apply, ApplicationResponse>(result);
         }

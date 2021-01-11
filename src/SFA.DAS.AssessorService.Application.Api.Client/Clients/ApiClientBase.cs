@@ -259,6 +259,31 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             return result;
         }
 
+        protected async Task<U> PostPutRequestWithResponse<U>(HttpRequestMessage requestMessage, JsonSerializerSettings setting)
+        {
+            HttpRequestMessage clonedRequest = null;
+            var response = await _retryPolicy.ExecuteAsync(async () =>
+            {
+                clonedRequest = new HttpRequestMessage(requestMessage.Method, requestMessage.RequestUri);
+                clonedRequest.Headers.Add("Accept", "application/json");
+                clonedRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", TokenService.GetToken());
+
+                return await HttpClient.SendAsync(clonedRequest);
+            });
+
+            var json = await response.Content.ReadAsStringAsync();
+            if (response.StatusCode == HttpStatusCode.OK
+                || response.StatusCode == HttpStatusCode.Created
+                || response.StatusCode == HttpStatusCode.NoContent)
+            {
+                return await Task.Factory.StartNew<U>(() => JsonConvert.DeserializeObject<U>(json, setting));
+            }
+            else
+            {
+                _logger.LogInformation($"HttpRequestException: Status Code: {response.StatusCode} Body: {json}");
+                throw new HttpRequestException(json);
+            }
+        }
 
         protected async Task PostPutRequest<T>(HttpRequestMessage requestMessage, T model)
         {
