@@ -24,7 +24,6 @@
 
                     @foreach (var application in Model)
                     {
-                        // this is just AWFUL this view should have only been passsed Standard applications
                         if (!string.IsNullOrEmpty(application.ApplyData?.Apply?.StandardName))
                         {
                         <tr>
