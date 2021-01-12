@@ -32,7 +32,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             var pipelinesCount = _learnerDetailsApiClient.GetPipelinesCount(organisation.EndPointAssessorOrganisationId, standardCode);
             var earliestWithdrawalDate = _organisationsApiClient.GetEarliestWithdrawalDate(organisation.Id, standardCode);
 
-            Task.WaitAll(pipelinesCount, earliestWithdrawalDate);
+            await Task.WhenAll(pipelinesCount, earliestWithdrawalDate);
 
             var startApplicationRequest = new StartApplicationRequest
             {
@@ -43,8 +43,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                     UseTradingName = false,
                     OrganisationName = organisation.EndPointAssessorName,
                     OrganisationReferenceId = organisation.Id.ToString(),
-                    PipelinesCount = await pipelinesCount,
-                    EarliestDateOfWithdrawal = await earliestWithdrawalDate
+                    PipelinesCount = pipelinesCount.Result,
+                    EarliestDateOfWithdrawal = earliestWithdrawalDate.Result
                 })
             };
 
@@ -56,7 +56,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             var pipelinesCount = _learnerDetailsApiClient.GetPipelinesCount(organisation.EndPointAssessorOrganisationId, null);
             var earliestWithdrawalDate = _organisationsApiClient.GetEarliestWithdrawalDate(organisation.Id, null);
 
-            Task.WaitAll(pipelinesCount, earliestWithdrawalDate);
+            await Task.WhenAll(pipelinesCount, earliestWithdrawalDate);
 
             var startApplicationRequest = new StartApplicationRequest
             {
@@ -67,8 +67,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                     UseTradingName = false,
                     OrganisationName = organisation.EndPointAssessorName,
                     OrganisationReferenceId = organisation.Id.ToString(),
-                    PipelinesCount = await pipelinesCount,
-                    EarliestDateOfWithdrawal = await earliestWithdrawalDate
+                    PipelinesCount = pipelinesCount.Result,
+                    EarliestDateOfWithdrawal = earliestWithdrawalDate.Result
                 })
             };
 
