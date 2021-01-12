@@ -64,7 +64,7 @@
                         <h2 class="govuk-heading-l">Feedback</h2>
                         @foreach (var fb in Model.Feedback)
                         {
-                            <p class="govuk-body">@Html.Raw(fb.Message)</p>
+                            <p class="govuk-body">@fb.Message</p>
                         }
                     </div>
                 }
