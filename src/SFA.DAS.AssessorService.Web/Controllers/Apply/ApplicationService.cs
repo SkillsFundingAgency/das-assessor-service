@@ -29,9 +29,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
         public async Task<CreateApplicationRequest> BuildStandardWithdrawalRequest(ContactResponse contact, OrganisationResponse organisation, int standardCode, string referenceFormat)
         {
-            var pipelinesCount = await _learnerDetailsApiClient.GetPipelinesCount(organisation.EndPointAssessorOrganisationId, standardCode);
-            var earliestWithdrawalDate = await _organisationsApiClient.GetEarliestWithdrawalDate(organisation.Id, standardCode);
-            
+            var pipelinesCount = _learnerDetailsApiClient.GetPipelinesCount(organisation.EndPointAssessorOrganisationId, standardCode);
+            var earliestWithdrawalDate = _organisationsApiClient.GetEarliestWithdrawalDate(organisation.Id, standardCode);
+
+            Task.WaitAll(pipelinesCount, earliestWithdrawalDate);
+
             var startApplicationRequest = new StartApplicationRequest
             {
                 UserReference = contact.Id.ToString(),
@@ -41,8 +43,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                     UseTradingName = false,
                     OrganisationName = organisation.EndPointAssessorName,
                     OrganisationReferenceId = organisation.Id.ToString(),
-                    PipelinesCount = pipelinesCount,
-                    EarliestDateOfWithdrawal = earliestWithdrawalDate
+                    PipelinesCount = await pipelinesCount,
+                    EarliestDateOfWithdrawal = await earliestWithdrawalDate
                 })
             };
 
@@ -51,8 +53,10 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
         public async Task<CreateApplicationRequest> BuildOrganisationWithdrawalRequest(ContactResponse contact, OrganisationResponse organisation, string referenceFormat)
         {
-            var pipelinesCount = await _learnerDetailsApiClient.GetPipelinesCount(organisation.EndPointAssessorOrganisationId, null);
-            var earliestWithdrawalDate = await _organisationsApiClient.GetEarliestWithdrawalDate(organisation.Id, null);
+            var pipelinesCount = _learnerDetailsApiClient.GetPipelinesCount(organisation.EndPointAssessorOrganisationId, null);
+            var earliestWithdrawalDate = _organisationsApiClient.GetEarliestWithdrawalDate(organisation.Id, null);
+
+            Task.WaitAll(pipelinesCount, earliestWithdrawalDate);
 
             var startApplicationRequest = new StartApplicationRequest
             {
@@ -63,8 +67,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                     UseTradingName = false,
                     OrganisationName = organisation.EndPointAssessorName,
                     OrganisationReferenceId = organisation.Id.ToString(),
-                    PipelinesCount = pipelinesCount,
-                    EarliestDateOfWithdrawal = earliestWithdrawalDate
+                    PipelinesCount = await pipelinesCount,
+                    EarliestDateOfWithdrawal = await earliestWithdrawalDate
                 })
             };
 
