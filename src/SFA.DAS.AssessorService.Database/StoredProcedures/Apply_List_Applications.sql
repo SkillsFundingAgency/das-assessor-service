@@ -1,5 +1,5 @@
 ﻿CREATE PROCEDURE [dbo].[Apply_List_Applications]
-	@sequenceNo INT,
+	@sequenceNos VARCHAR(MAX),
 	@organisationId AS NVARCHAR(12),
 	@includedApplicationSequenceStatus AS NVARCHAR(MAX),
 	@excludedApplicationStatus AS NVARCHAR(MAX),
@@ -34,7 +34,7 @@ BEGIN
 	INTO 
 		#Results
 	FROM
-		[dbo].[Apply_Func_Get_Applications] (@sequenceNo, @organisationId, @includedApplicationSequenceStatus, @excludedApplicationStatus, @excludedReviewStatus, @includedReviewStatus)
+		[dbo].[Apply_Func_Get_Applications] (@sequenceNos, @organisationId, @includedApplicationSequenceStatus, @excludedApplicationStatus, @excludedReviewStatus, @includedReviewStatus)
 	
 	-- the total number of results is returned as an out parameter
 	SELECT @totalCount = (SELECT MAX(TotalCount) FROM #Results)
@@ -53,7 +53,7 @@ BEGIN
 		ApplicationStatus,
 		ReviewStatus,
 		FinancialStatus,
-		FinancialGrade,
+		FinancialGrade,		
 		SequenceStatus
 	FROM
 		#Results
@@ -64,7 +64,7 @@ BEGIN
 				WHEN @sortColumn = 'OrganisationName' THEN OrganisationName
 				WHEN @sortColumn = 'StandardReference' THEN StandardReference
 				WHEN @sortColumn = 'StandardName' THEN StandardName
-				WHEN @sortColumn = 'FinancialStatus' THEN FinancialStatus
+				WHEN @sortColumn = 'FinancialStatus' THEN FinancialStatus				
 				WHEN @sortColumn = 'Status' THEN ApplicationStatus
 				-- all dynamic order by columns must be the same type and using right aligned zero padded strings to sort as natural numbers
 				WHEN @sortColumn = 'SubmittedDate' THEN RIGHT(REPLICATE('0', 20) + LTRIM(RTRIM(CAST([dbo].[ToTicks](CONVERT(DATETIME2, SubmittedDate, 127)) AS VARCHAR(20)))), 20)
@@ -79,7 +79,7 @@ BEGIN
 				WHEN @sortColumn = 'OrganisationName' THEN OrganisationName
 				WHEN @sortColumn = 'StandardReference' THEN StandardReference
 				WHEN @sortColumn = 'StandardName' THEN StandardName
-				WHEN @sortColumn = 'FinancialStatus' THEN FinancialStatus
+				WHEN @sortColumn = 'FinancialStatus' THEN FinancialStatus				
 				WHEN @sortColumn = 'Status' THEN ApplicationStatus
 				-- all dynamic order by columns must be the same type and using right aligned zero padded strings to sort as natural numbers
 				WHEN @sortColumn = 'SubmittedDate' THEN RIGHT(REPLICATE('0', 20) + LTRIM(RTRIM(CAST([dbo].[ToTicks](CONVERT(DATETIME2, SubmittedDate, 127)) AS VARCHAR(20)))), 20)

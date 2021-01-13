@@ -1,0 +1,63 @@
+﻿@model bool
+@{
+    ViewData["Title"] = "Withdraw from a standard or the register";
+    Layout = "_DashboardLayout";
+}
+<a asp-action="Index" asp-controller="Dashboard" class="govuk-back-link">Back</a>
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <h1 class="govuk-heading-xl">
+                Withdraw from a standard or the register
+            </h1>
+
+            <p class="govuk-body">
+                End-point assessment organisations (EPAOs) must withdraw if they no longer want to assess a specific standard or be on the register of EPAOs.
+            </p>
+
+            <p class="govuk-body">
+                We need you to provide some information before you withdraw, so that we can work with you to support any learners.
+            </p>
+
+            <p class="govuk-body">
+                All withdrawals notifications must comply with the <a href="https://www.gov.uk/guidance/conditions-for-being-on-the-register-of-end-point-assessment-organisations#orderly-withdrawal-from-the-register-of-end-point-assessment-organisations" target="_blank">conditions of acceptance (opens in a new tab or window)</a>.
+            </p>
+
+            <p class="govuk-inset-text">
+                Once you withdraw, your organisation cannot reapply to join the register or assess that standard for at least 12 months.
+            </p>
+
+            <h2 class="govuk-heading-m">
+                What you'll need
+            </h2>
+            <p class="govuk-body">
+                You’ll need to tell us:
+            </p>
+
+            <ul class="govuk-list govuk-list--bullet">
+                <li>why you want to withdraw</li>
+                <li>whether you’ll complete your registered learners’ assessments</li>
+                <li>how you’ll communicate your market exit to customers</li>
+                <li>the date that you want to withdraw</li>
+            </ul>
+
+            <p class="govuk-body">
+                You must tell ESFA that you want to withdraw before you tell your customers.
+            </p>
+
+            @if (Model)
+            {
+                <a asp-action="TypeOfWithdrawal" asp-controller="ApplyForWithdrawal" class="govuk-button">
+                    Continue
+                </a>
+            }
+            else
+            {
+                <a asp-action="WithdrawalApplications" asp-controller="ApplyForWithdrawal" class="govuk-button">
+                    Continue
+                </a>
+    }
+        </div>
+    </div>
+</main>

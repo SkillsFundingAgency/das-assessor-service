@@ -18,18 +18,51 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             _logger = logger;
         }
 
-        public async Task<List<ApplicationResponse>> GetApplications(Guid userId, bool createdBy)
+        public async Task<List<ApplicationResponse>> GetCombinedApplications(Guid userId)
         {
-            if (!createdBy)
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/applications/{userId}/combined-applications"))
             {
-                using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/applications/{userId}/Organisation"))
-                {
-                    return await RequestAndDeserialiseAsync <List<ApplicationResponse>>(request, $"Could not retrieve applications");
-                }
+                return await RequestAndDeserialiseAsync<List<ApplicationResponse>>(request, $"Could not retrieve combined applications");
             }
-            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/Applications/{userId}"))
+        }
+
+        public async Task<List<ApplicationResponse>> GetOrganisationApplications(Guid userId)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/applications/{userId}/organisation-applications"))
             {
-                return await RequestAndDeserialiseAsync<List<ApplicationResponse>>(request, $"Could not retrieve applications");
+                return await RequestAndDeserialiseAsync<List<ApplicationResponse>>(request, $"Could not retrieve organsisation applications");
+            }
+        }
+
+        public async Task<List<ApplicationResponse>> GetStandardApplications(Guid userId)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/applications/{userId}/standard-applications"))
+            {
+                return await RequestAndDeserialiseAsync<List<ApplicationResponse>>(request, $"Could not retrieve standard applications");
+            }
+        }
+
+        public async Task<List<ApplicationResponse>> GetWithdrawalApplications(Guid userId)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/applications/{userId}/withdrawal-applications"))
+            {
+                return await RequestAndDeserialiseAsync<List<ApplicationResponse>>(request, $"Could not retrieve withdrawal applications");
+            }
+        }
+
+        public async Task<List<ApplicationResponse>> GetOrganisationWithdrawalApplications(Guid userId)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/applications/{userId}/organisation-withdrawal-applications"))
+            {
+                return await RequestAndDeserialiseAsync<List<ApplicationResponse>>(request, $"Could not retrieve organisation withdrawal applications");
+            }
+        }
+
+        public async Task<List<ApplicationResponse>> GetStandardWithdrawalApplications(Guid userId)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/applications/{userId}/standard-withdrawal-applications"))
+            {
+                return await RequestAndDeserialiseAsync<List<ApplicationResponse>>(request, $"Could not retrieve standard withdrawal applications");
             }
         }
 

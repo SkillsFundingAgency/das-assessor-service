@@ -6,6 +6,7 @@ using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -36,6 +37,21 @@ namespace SFA.DAS.AssessorService.Data
                 @"SELECT * FROM [Ilrs] WHERE [Uln] = @uln AND [StdCode] = @stdCode",
                   param: new { uln, stdCode },
                   transaction: _unitOfWork.Transaction);
+        }
+
+        public async Task<int> GetEpaoPipelinesCount(string epaOrgId, int? stdCode = null)
+        {
+            var result = await _unitOfWork.Connection.QueryAsync<int>(
+                "GetEPAO_Pipelines_Count",
+                param: new
+                {
+                    epaOrgId,
+                    stdCode
+                },
+                transaction: _unitOfWork.Transaction,
+                commandType: CommandType.StoredProcedure);
+
+            return result.First();
         }
 
         public async Task<Ilr> GetImport(long uln, int stdCode)

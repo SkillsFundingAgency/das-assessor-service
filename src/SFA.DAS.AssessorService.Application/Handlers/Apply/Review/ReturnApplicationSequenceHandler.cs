@@ -4,9 +4,9 @@ using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Apply.Review;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.ApplyTypes;
+using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Settings;
 using System;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -48,7 +48,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply.Review
                     break;
             }
 
-            await NotifyContact(request.ApplicationId, request.SequenceId, cancellationToken);
+            await NotifyContact(request.ApplicationId, request.SequenceId, request.ReturnType, cancellationToken);
 
             return Unit.Value;
         }
@@ -68,7 +68,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply.Review
             await _applyRepository.ReturnApplicationSequence(request.ApplicationId, request.SequenceId, ApplicationSequenceStatus.Declined, request.ReturnedBy);
         }
 
-        private async Task NotifyContact(Guid applicationId, int sequenceNo, CancellationToken cancellationToken)
+        private async Task NotifyContact(Guid applicationId, int sequenceNo, string returnType, CancellationToken cancellationToken)
         {
             var application = await _applyRepository.GetApply(applicationId);
 
@@ -76,31 +76,52 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply.Review
             {
                 var loginLink = $"{_config.ServiceLink}/Account/SignIn";
 
-                if (sequenceNo == 1)
+                if (sequenceNo == ApplyConst.ORGANISATION_SEQUENCE_NO)
                 {
-                    var lastInitSubmission = application.ApplyData?.Apply.InitSubmissions.OrderByDescending(sub => sub.SubmittedAt).FirstOrDefault();
-
-                    if (lastInitSubmission != null)
+                    var lastSubmission = application.ApplyData?.Apply.LatestInitSubmission;
+                    if (lastSubmission != null)
                     {
-                        var contactToNotify = await _contactQueryRepository.GetContactById(lastInitSubmission.SubmittedBy);
+                        var contactToNotify = await _contactQueryRepository.GetContactById(lastSubmission.SubmittedBy);
 
                         var emailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.APPLY_EPAO_UPDATE);
                         await _mediator.Send(new SendEmailRequest(contactToNotify.Email, emailTemplate,
                             new { ServiceName = SERVICE_NAME, ServiceTeam = SERVICE_TEAM, Contact = contactToNotify.DisplayName, LoginLink = loginLink }), cancellationToken);
                     }
                 }
-                else if (sequenceNo == 2)
+                else if (sequenceNo == ApplyConst.STANDARD_SEQUENCE_NO)
                 {
-                    var standardName = application.ApplyData?.Apply.StandardName ?? string.Empty;
-                    var lastStandardSubmission = application.ApplyData?.Apply.StandardSubmissions.OrderByDescending(sub => sub.SubmittedAt).FirstOrDefault();
-
-                    if (lastStandardSubmission != null)
+                    var lastSubmission = application.ApplyData?.Apply.LatestStandardSubmission;
+                    if (lastSubmission != null)
                     {
-                        var contactToNotify = await _contactQueryRepository.GetContactById(lastStandardSubmission.SubmittedBy);
+                        var standardName = application.ApplyData?.Apply.StandardName ?? string.Empty;
+                        var contactToNotify = await _contactQueryRepository.GetContactById(lastSubmission.SubmittedBy);
 
                         var emailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.APPLY_EPAO_RESPONSE);
                         await _mediator.Send(new SendEmailRequest(contactToNotify.Email, emailTemplate,
                             new { ServiceName = SERVICE_NAME, ServiceTeam = SERVICE_TEAM, Contact = contactToNotify.DisplayName, standard = standardName, LoginLink = loginLink }), cancellationToken);
+                    }
+                }
+                else if(returnType == "ReturnWithFeedback" && 
+                        (sequenceNo == ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO || 
+                         sequenceNo == ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO))
+                {
+                    var lastSubmission = sequenceNo == ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO
+                        ? application.ApplyData?.Apply.LatestOrganisationWithdrawalSubmission
+                        : application.ApplyData?.Apply.LatestStandardWithdrawalSubmission;
+
+                    if (lastSubmission != null)
+                    {
+                        var contactToNotify = await _contactQueryRepository.GetContactById(lastSubmission.SubmittedBy);
+                        var emailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.EPAOWithdrawalFeedbackNotification);
+
+                        await _mediator.Send(new SendEmailRequest(contactToNotify.Email, emailTemplate,
+                            new
+                            {
+                                ServiceName = SERVICE_NAME, 
+                                ServiceTeam = SERVICE_TEAM,
+                                Contact = contactToNotify.DisplayName, 
+                                LoginLink = loginLink
+                            }), cancellationToken);
                     }
                 }
             }

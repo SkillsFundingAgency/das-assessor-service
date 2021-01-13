@@ -121,7 +121,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
 
         public async Task<IEnumerable<EPORegisteredStandards>> GetEpaoRegisteredStandards(string endPointAssessorOrganisationId)
         {
-            var results = await _standardRepository.GetEpaoRegisteredStandards(endPointAssessorOrganisationId, short.MaxValue, null);
+            var results = await _standardRepository.GetEpaoRegisteredStandards(endPointAssessorOrganisationId, int.MaxValue, 1);
             return results.PageOfResults;
         }
 

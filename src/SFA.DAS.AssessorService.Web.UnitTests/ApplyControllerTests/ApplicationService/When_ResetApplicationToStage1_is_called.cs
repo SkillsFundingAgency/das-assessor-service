@@ -15,14 +15,19 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ApplyControllerTests.ApplyForWit
         private ApplicationService _sut;
         private Mock<IQnaApiClient> _mockQnaApiClient;
         private Mock<IApplicationApiClient> _mockApplicationApiClient;
+        private Mock<ILearnerDetailsApiClient> _mockLearnerDetailsApiClient;
+        private Mock<IOrganisationsApiClient> _mockOrganisationsApiClient;
 
         [SetUp]
         public void Arrange()
         {
             _mockQnaApiClient = new Mock<IQnaApiClient>();
             _mockApplicationApiClient = new Mock<IApplicationApiClient>();
+            _mockLearnerDetailsApiClient = new Mock<ILearnerDetailsApiClient>();
+            _mockOrganisationsApiClient = new Mock<IOrganisationsApiClient>();
 
-            _sut = new ApplicationService(_mockQnaApiClient.Object, _mockApplicationApiClient.Object);
+            _sut = new ApplicationService(_mockQnaApiClient.Object, _mockApplicationApiClient.Object,
+                _mockLearnerDetailsApiClient.Object, _mockOrganisationsApiClient.Object);
         }
         
         [Test]
