@@ -96,6 +96,15 @@
                     </form>
                 </div>
             }
+
+            @if (Model.AllowCancel)
+            {
+                <p class="govuk-body">
+                    <a class="govuk-link" href="@Url.Action("ResetApplicatonToStage1", "Application", new { @Model.Id })">
+                        Cancel your application for this standard
+                    </a>
+                </p>
+            }
         </div>
     </div>
 
