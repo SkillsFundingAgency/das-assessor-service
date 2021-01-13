@@ -1,0 +1,73 @@
+@model SFA.DAS.AssessorService.Web.ViewModels.ApplyForWithdrawal.ChooseStandardForWithdrawalViewModel;
+@{
+    ViewData["Title"] = "Which standard do you want to withdraw from assessing?";
+    Layout = "_DashboardLayout";
+}
+
+<a asp-action="TypeOfWithdrawal" asp-controller="ApplyForWithdrawal" class="govuk-back-link">Back</a>
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
+            <h2 class="govuk-error-summary__title" id="error-summary-title">
+                There is a problem
+            </h2>
+            <div class="govuk-error-summary__body">
+                <ul class="govuk-list govuk-error-summary__list">
+                    <li><a sfa-validation-for="SelectedStandardForWithdrawal"></a></li>
+                </ul>
+            </div>
+        </div>
+    }
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <h1 class="govuk-heading-xl">Which standard do you want to withdraw from assessing? </h1>
+
+            <p class="govuk-inset-text">
+                You can only withdraw from one standard at a time.
+            </p>
+            
+            @if (Model.Standards.Items.Any())
+            {
+                <form asp-action="ChooseStandardForWithdrawal" asp-controller="ApplyForWithdrawal" method="post">
+                    <div class="govuk-form-group" sfa-validation-for="SelectedStandardForWithdrawal" sfa-validationerror-class="govuk-form-group--error">
+                        <fieldset class="govuk-fieldset">
+                            <sfa-validationerror-detail sfa-validation-for="SelectedStandardForWithdrawal" sfa-validationerror-class="govuk-error-message"></sfa-validationerror-detail>
+                            <div class="govuk-radios">
+                                @foreach (var item in Model.Standards.Items)
+                                {
+                                    <div class="govuk-radios__item">
+                                        <input class="govuk-radios__input" 
+                                               id="SelectedStandardForWithdrawal"
+                                               name="SelectedStandardForWithdrawal"
+                                               sfa-validation-for="SelectedStandardForWithdrawal"
+                                               sfa-validationerror-class="govuk-input--error"
+                                               asp-for="SelectedStandardForWithdrawal"
+                                               type="radio"
+                                               value="@item.StandardCode">
+                                        <label class="govuk-label govuk-radios__label" asp-for="SelectedStandardForWithdrawal">
+                                            @item.StandardName (Level @item.Level)
+                                        </label>
+                                        <span class="govuk-hint govuk-radios__hint">
+                                            @item.ReferenceNumber
+                                        </span>
+                                    </div>
+                                }
+                            </div>
+                        </fieldset>
+                    </div>
+                    <button class="govuk-button govuk-!-margin-top-4" data-module="govuk-button">
+                        Save and continue
+                    </button>
+                </form>
+            }
+            else
+            {
+                <div class="info-summary">
+                    <h2 class="govuk-heading-m">You are not yet approved to assess any standards.</h2>
+                </div>
+            }
+        </div>
+    </div>
+</main>

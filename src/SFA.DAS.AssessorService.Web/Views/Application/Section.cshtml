@@ -1,5 +1,7 @@
-@model SFA.DAS.AssessorService.ApplyTypes.ApplicationSection
-@inject Microsoft.Extensions.Configuration.IConfiguration configuration
+@model SFA.DAS.AssessorService.ApplyTypes.ApplicationSection;
+@using SFA.DAS.AssessorService.Domain.Consts;
+@inject Microsoft.Extensions.Configuration.IConfiguration configuration;
+
 @{
     ViewBag.Title = @Model?.Section.Title ?? "Section not active";
     Layout = "_Layout";
@@ -34,7 +36,7 @@ else
                 // This is Developer WIP until we get the appropraite UX/UI designs
                 @if (!configuration["EnvironmentName"].EndsWith("PROD", StringComparison.InvariantCultureIgnoreCase))
                 {
-                    if (Model.SequenceNo == 1 && Model.Section.SectionNo == 1)
+                    if (Model.SequenceNo == ApplyConst.ORGANISATION_SEQUENCE_NO && Model.Section.SectionNo == ApplyConst.ORGANISATION_DETAILS_SECTION_NO)
                     {
                         <form asp-action="RefreshApplicationData" asp-controller="Application">
                             <input type="hidden" id="Id" name="Id" value="@Model.Id" />
@@ -60,7 +62,7 @@ else
                                     </span>
                                     @if (pg.Complete)
                                     {
-                                        <strong class="govuk-tag app-task-list__task-completed" id="completed">Completed</strong>
+                                        <strong class="govuk-tag app-task-list__task-custom-tag" id="completed">Completed</strong>
                                     }
                                 </li>
                             }

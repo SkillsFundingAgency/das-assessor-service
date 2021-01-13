@@ -8,9 +8,10 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
     public interface IIlrRepository
     {
         Task<IEnumerable<Ilr>> SearchForLearnerByUln(long uln);
-        
-        Task<Ilr> Get(long uln, int standardCode);
-        Task<Ilr> GetImport(long uln, int standardCode);
+        Task<int> GetEpaoPipelinesCount(string epaOrgId, int? stdCode = null);
+
+        Task<Ilr> Get(long uln, int stdCode);
+        Task<Ilr> GetImport(long uln, int stdCode);
 
         Task StoreSearchLog(SearchLog log);
         
