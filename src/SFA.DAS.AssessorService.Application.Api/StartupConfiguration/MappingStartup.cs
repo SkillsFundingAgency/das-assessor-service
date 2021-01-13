@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
-using SFA.DAS.AssessorService.Api.Types.AutoMapperProfiles;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
 using SFA.DAS.AssessorService.Application.Api.AutoMapperProfiles;
+using SFA.DAS.AssessorService.Application.Mapping.AutoMapperProfiles;
 using SFA.DAS.AssessorService.Application.Mapping.CustomResolvers;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData.Printing;
@@ -86,6 +86,8 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                 cfg.AddProfile<OrganisationWithStandardResponseMapper>();
                 cfg.AddProfile<OrganisationStandardDeliveryAreaMapper>();
                 cfg.AddProfile<OrganisationStandardMapper>();
+
+                cfg.AddProfile<ApplicationResponseProfile>();
             });
         }
     }

@@ -248,7 +248,8 @@ namespace SFA.DAS.AssessorService.Data
             return @params.Get<int>("Count");
         }
 
-        public async Task<EpoRegisteredStandardsResult> GetEpaoRegisteredStandards(string endPointAssessorOrganisationId, int pageSize, int? pageIndex)
+        public async Task<EpoRegisteredStandardsResult> GetEpaoRegisteredStandards(
+            string endPointAssessorOrganisationId, int pageSize, int pageIndex)
         {
             var epoRegisteredStandardsResult = new EpoRegisteredStandardsResult
             {
@@ -256,7 +257,7 @@ namespace SFA.DAS.AssessorService.Data
                 TotalCount = 0
             };
             var total = await GetEpaoStandardsCount(endPointAssessorOrganisationId);
-            var skip = ((pageIndex ?? 1) - 1) * pageSize;
+            var skip = (pageIndex - 1) * pageSize;
             var result = await _unitOfWork.Connection.QueryAsync<EPORegisteredStandards>(
                 "EPAO_Registered_Standards", 
                 param: new
@@ -291,7 +292,7 @@ namespace SFA.DAS.AssessorService.Data
                 "GetEPAO_Pipelines", 
                 param: new
                 {
-                    EPAOId = endPointAssessorOrganisationId
+                    epaOrgId = endPointAssessorOrganisationId
                 },
                 transaction: _unitOfWork.Transaction,
                 commandType: CommandType.StoredProcedure);
@@ -329,7 +330,7 @@ namespace SFA.DAS.AssessorService.Data
                 "GetEPAO_Pipelines_Extract", 
                 param: new
                 {
-                    EPAOId = endPointAssessorOrganisationId
+                    epaOrgId = endPointAssessorOrganisationId
                 },
                 transaction: _unitOfWork.Transaction,
                 commandType: CommandType.StoredProcedure);

@@ -34,11 +34,10 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [HttpGet("{epaoId}", Name = "GetEpaoRegisteredStandards")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(int))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> GetEpaoRegisteredStandards(string epaoId, int? pageIndex = null)
+        public async Task<IActionResult> GetEpaoRegisteredStandards(string epaoId, int? pageIndex = 1, int? pageSize = 10)
         {
-            var normalisedPageIndex = (pageIndex == null || pageIndex == 0) ? 1 : pageIndex;
             _logger.LogInformation($"Received request to retrieve Standards for Organisation {epaoId}");
-            return Ok(await _mediator.Send(new GetEpaoRegisteredStandardsRequest(epaoId, normalisedPageIndex)));
+            return Ok(await _mediator.Send(new GetEpaoRegisteredStandardsRequest(epaoId, pageIndex.Value, pageSize.Value)));
         }
 
         [HttpGet("pipelines/{epaoId}", Name = "GetEpaoPipelineStandards")]

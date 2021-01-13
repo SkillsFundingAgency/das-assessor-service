@@ -33,7 +33,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply.Financial.Review
 
         private async Task UpdateOrganisationWithUpdatedGrade(Guid applicationId, FinancialGrade grade)
         {
-            var application = await _applyRepository.GetApplication(applicationId);
+            var application = await _applyRepository.GetApply(applicationId);
             var org = await _organisationQueryRepository.Get(application.OrganisationId);
 
             if (org != null)
