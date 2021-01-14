@@ -4,6 +4,7 @@ using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Apply;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.ApplyTypes;
+using SFA.DAS.AssessorService.Domain.Consts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,7 +33,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
             // CanSubmitApplication was migrated over from Apply Service. If this causes issues then remove it
             if (await _applyRepository.CanSubmitApplication(request.ApplicationId))
             {
-                var application = await _applyRepository.GetApplication(request.ApplicationId);
+                var application = await _applyRepository.GetApply(request.ApplicationId);
                 var submittingContact = await _contactQueryRepository.GetContactById(request.SubmittingContactId);
 
                 if (application?.ApplyData != null && submittingContact != null)
@@ -105,27 +106,21 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
                 SubmittedByEmail = submittingContact.Email
             };
 
-            if (sequenceNo == 1)
+            if (sequenceNo == ApplyConst.ORGANISATION_SEQUENCE_NO)
             {
-                if (applyData.Apply.InitSubmissions == null)
-                {
-                    applyData.Apply.InitSubmissions = new List<Submission>();
-                }
-
                 applyData.Apply.InitSubmissions.Add(submission);
-                applyData.Apply.InitSubmissionsCount = applyData.Apply.InitSubmissions.Count;
-                applyData.Apply.LatestInitSubmissionDate = submission.SubmittedAt;
             }
-            else if (sequenceNo == 2)
+            else if (sequenceNo == ApplyConst.STANDARD_SEQUENCE_NO)
             {
-                if (applyData.Apply.StandardSubmissions == null)
-                {
-                    applyData.Apply.StandardSubmissions = new List<Submission>();
-                }
-
                 applyData.Apply.StandardSubmissions.Add(submission);
-                applyData.Apply.StandardSubmissionsCount = applyData.Apply.StandardSubmissions.Count;
-                applyData.Apply.LatestStandardSubmissionDate = submission.SubmittedAt;
+            }
+            else if (sequenceNo == ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO)
+            {
+                applyData.Apply.OrganisationWithdrawalSubmissions.Add(submission);
+            }
+            else if (sequenceNo == ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO)
+            {
+                applyData.Apply.StandardWithdrawalSubmissions.Add(submission);
             }
         }
 
@@ -133,12 +128,12 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
         {
             if (applyData.Sequences != null)
             {
-                foreach (var sequence in applyData.Sequences.Where(seq => seq.SequenceNo == 1 && !seq.NotRequired))
+                foreach (var sequence in applyData.Sequences.Where(seq => seq.SequenceNo == ApplyConst.ORGANISATION_SEQUENCE_NO && !seq.NotRequired))
                 {
                     // NOTE: Get Status for a required Section 3 - Financial
                     if (sequence.Sections != null)
                     {
-                        foreach (var section in sequence.Sections.Where(sec => sec.SectionNo == 3 && !sec.NotRequired))
+                        foreach (var section in sequence.Sections.Where(sec => sec.SectionNo == ApplyConst.FINANCIAL_DETAILS_SECTION_NO && !sec.NotRequired))
                         {
                             return section.Status;
                         }
@@ -157,7 +152,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
 
             var applyData = application.ApplyData;
 
-            if (sequenceNo == 1)
+            if (sequenceNo == ApplyConst.ORGANISATION_SEQUENCE_NO)
             {
                 application.ApplicationStatus = (applyData.Apply.InitSubmissions.Count == 1) ? ApplicationStatus.Submitted : ApplicationStatus.Resubmitted;
 
@@ -171,9 +166,17 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
                     }
                 }
             }
-            else if (sequenceNo == 2)
+            else if (sequenceNo == ApplyConst.STANDARD_SEQUENCE_NO)
             {
                 application.ApplicationStatus = (applyData.Apply.StandardSubmissions.Count == 1) ? ApplicationStatus.Submitted : ApplicationStatus.Resubmitted;
+            }
+            else if (sequenceNo == ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO)
+            {
+                application.ApplicationStatus = (applyData.Apply.OrganisationWithdrawalSubmissions.Count == 1) ? ApplicationStatus.Submitted : ApplicationStatus.Resubmitted;
+            }
+            else if (sequenceNo == ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO)
+            {
+                application.ApplicationStatus = (applyData.Apply.StandardWithdrawalSubmissions.Count == 1) ? ApplicationStatus.Submitted : ApplicationStatus.Resubmitted;
             }
             else
             {
@@ -202,7 +205,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
             var reference = applyData.Apply.ReferenceNumber;
             var standard = applyData.Apply.StandardName;
 
-            if (sequenceNo == 1)
+            if (sequenceNo == ApplyConst.ORGANISATION_SEQUENCE_NO)
             {
                 var emailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.ApplyEPAOInitialSubmission);
                 await _mediator.Send(new SendEmailRequest(email, emailTemplate, new { contactname, reference }), cancellationToken);
@@ -210,12 +213,17 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
                 var emailTemplateAlert = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.ApplyEPAOAlertSubmission);               
                 await _mediator.Send(new SendEmailRequest(string.Empty, emailTemplateAlert, new { contactname, reference }), cancellationToken);
             }
-            else if (sequenceNo == 2)
+            else if (sequenceNo == ApplyConst.STANDARD_SEQUENCE_NO)
             {
                 var emailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.ApplyEPAOStandardSubmission);
                 await _mediator.Send(new SendEmailRequest(email, emailTemplate, new { contactname, reference, standard }), cancellationToken);
             }
-        }
+            else if (sequenceNo == ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO || sequenceNo == ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO)
+            {
+                var emailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.WithdrawalEPAOSubmission);
+                await _mediator.Send(new SendEmailRequest(email, emailTemplate, new { contactname, reference }), cancellationToken);
+            }
 
+        }
     }
 }

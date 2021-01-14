@@ -2,7 +2,7 @@
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
 
-namespace SFA.DAS.AssessorService.Api.Types.AutoMapperProfiles
+namespace SFA.DAS.AssessorService.Application.Mapping.AutoMapperProfiles
 {
     public class EpaOrganisationProfile : Profile
     {
