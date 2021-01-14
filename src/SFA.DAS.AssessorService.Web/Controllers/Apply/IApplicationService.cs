@@ -10,6 +10,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         Task<CreateApplicationRequest> BuildStandardWithdrawalRequest(ContactResponse contact, OrganisationResponse organisation, int standardCode, string referenceFormat);
         Task<CreateApplicationRequest> BuildOrganisationWithdrawalRequest(ContactResponse contact, OrganisationResponse organisation, string referenceFormat);
         Task<CreateApplicationRequest> BuildCombinedRequest(ContactResponse contact, OrganisationResponse org, string referenceFormat);
-        Task<bool> ResetApplicationToStage1(Guid id, Guid userId);
+        Task<bool> ResetApplicationToStage1(Guid id);
     }
 }

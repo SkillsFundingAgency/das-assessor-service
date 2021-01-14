@@ -128,9 +128,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             };
         }
 
-        public async Task<bool> ResetApplicationToStage1(Guid id, Guid userId)
+        public async Task<bool> ResetApplicationToStage1(Guid id)
         {
-            if (await _applicationApiClient.ResetApplicationToStage1(id, userId))
+            if (await _applicationApiClient.ResetApplicationToStage1(id))
             {
                 var application = await _applicationApiClient.GetApplication(id);
                 await _qnaApiClient.ResetSectionAnswers(application.ApplicationId, ApplyConst.STANDARD_SEQUENCE_NO, ApplyConst.STANDARD_DETAILS_SECTION_NO);

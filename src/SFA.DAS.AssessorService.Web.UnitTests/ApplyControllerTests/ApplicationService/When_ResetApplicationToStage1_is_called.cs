@@ -39,7 +39,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ApplyControllerTests.ApplyForWit
                 .ReturnsAsync(new ApplicationResponse { Id = Guid.NewGuid(), ApplicationId = Guid.NewGuid() });
 
             _mockApplicationApiClient
-                .Setup(r => r.ResetApplicationToStage1(It.IsAny<Guid>(), It.IsAny<Guid>()))
+                .Setup(r => r.ResetApplicationToStage1(It.IsAny<Guid>()))
                 .ReturnsAsync(true);
 
             _mockQnaApiClient
@@ -48,11 +48,10 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ApplyControllerTests.ApplyForWit
 
             // Act
             var result = await _sut.ResetApplicationToStage1(
-                Guid.NewGuid(),
                 Guid.NewGuid());
 
             // Assert
-            _mockApplicationApiClient.Verify(p => p.ResetApplicationToStage1(It.IsAny<Guid>(), It.IsAny<Guid>()), Times.Once);
+            _mockApplicationApiClient.Verify(p => p.ResetApplicationToStage1(It.IsAny<Guid>()), Times.Once);
         }
 
         [Test]
@@ -64,7 +63,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ApplyControllerTests.ApplyForWit
                 .ReturnsAsync(new ApplicationResponse { Id = Guid.NewGuid(), ApplicationId = Guid.NewGuid() });
 
             _mockApplicationApiClient
-                .Setup(r => r.ResetApplicationToStage1(It.IsAny<Guid>(), It.IsAny<Guid>()))
+                .Setup(r => r.ResetApplicationToStage1(It.IsAny<Guid>()))
                 .ReturnsAsync(true);
 
             _mockQnaApiClient
@@ -73,7 +72,6 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ApplyControllerTests.ApplyForWit
 
             // Act
             var result = await _sut.ResetApplicationToStage1(
-                Guid.NewGuid(),
                 Guid.NewGuid());
 
             // Assert
@@ -85,12 +83,11 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ApplyControllerTests.ApplyForWit
         {
             // Arrange
             _mockApplicationApiClient
-                .Setup(r => r.ResetApplicationToStage1(It.IsAny<Guid>(), It.IsAny<Guid>()))
+                .Setup(r => r.ResetApplicationToStage1(It.IsAny<Guid>()))
                 .ReturnsAsync(false);
 
             // Act
             var result = await _sut.ResetApplicationToStage1(
-                Guid.NewGuid(),
                 Guid.NewGuid());
 
             // Assert

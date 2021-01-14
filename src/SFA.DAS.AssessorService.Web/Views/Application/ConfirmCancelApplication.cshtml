@@ -1,0 +1,82 @@
+@using SFA.DAS.AssessorService.Domain.Consts;
+@model SFA.DAS.AssessorService.Web.ViewModels.Apply.ConfirmCancelApplicationViewModel;
+@{
+    ViewData["Title"] = "Are you sure you want to cancel your application to assess this standard?";
+    Layout = "_DashboardLayout";
+}
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
+            <h2 class="govuk-error-summary__title" id="error-summary-title">
+                There is a problem
+            </h2>
+            <div class="govuk-error-summary__body">
+                <ul class="govuk-list govuk-error-summary__list">
+                    <li><a sfa-validation-for="AreYouSure"></a></li>
+                </ul>
+            </div>
+        </div>
+    }
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <form asp-action="ConfirmCancelApplication" asp-controller="Application" method="post">
+                <div class="govuk-form-group" sfa-validation-for="AreYouSure" sfa-validationerror-class="govuk-form-group--error">
+                    <fieldset class="govuk-fieldset">
+                        <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
+                            <h1 class="govuk-fieldset__heading">
+                                Are you sure you want to cancel your application to assess this standard?
+                            </h1>
+                            <p>
+                                <div class="govuk-warning-text">
+                                    <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                                    <strong class="govuk-warning-text__text">
+                                        <span class="govuk-warning-text__assistive">Warning</span>
+                                        If you select yes, we will not take into account any answers you entered as part of your application to assess @Model.StandardWithReference.
+                                    </strong>
+                                </div>
+                            </p>
+                            <p class="govuk-body">
+                                If you've recently made an application, your application for stage 1 will still be valid.
+                            </p>
+                        </legend>
+                        <sfa-validationerror-detail sfa-validation-for="AreYouSure" sfa-validationerror-class="govuk-error-message"></sfa-validationerror-detail>
+                        <div class="govuk-radios">
+                            <div class="govuk-radios__item">
+                                <input class="govuk-radios__input"
+                                       id="AreYouSure"
+                                       name="AreYouSure"
+                                       type="radio"
+                                       value="Yes"
+                                       asp-for="AreYouSure"
+                                       sfa-validation-for="AreYouSure"
+                                       sfa-validationerror-class="govuk-input--error">
+                                <label class="govuk-label govuk-radios__label" for="withdrawal-type">
+                                    Yes
+                                </label>
+                            </div>
+                            <div class="govuk-radios__item">
+                                <input class="govuk-radios__input"
+                                       id="AreYouSure-2"
+                                       name="AreYouSure"
+                                       type="radio"
+                                       value="No"
+                                       asp-for="AreYouSure"
+                                       sfa-validation-for="AreYouSure"
+                                       sfa-validationerror-class="govuk-input--error">
+                                <label class="govuk-label govuk-radios__label" for="withdrawal-type-2">
+                                    No
+                                </label>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+                @Html.HiddenFor(m => m.Id)
+                <button class="govuk-button govuk-!-margin-top-4" data-module="govuk-button">
+                    Save and continue
+                </button>
+            </form>
+        </div>
+    </div>
+</main>
