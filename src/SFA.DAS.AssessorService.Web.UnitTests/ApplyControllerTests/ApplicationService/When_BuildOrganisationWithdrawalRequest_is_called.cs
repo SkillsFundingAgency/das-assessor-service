@@ -12,7 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace SFA.DAS.AssessorService.Web.UnitTests.ApplyControllerTests.ApplyForWithdrawal
+namespace SFA.DAS.AssessorService.Web.UnitTests.ApplicationServiceTests
 {
     [TestFixture]
     public class When_BuildOrganisationWithdrawalRequest_is_called

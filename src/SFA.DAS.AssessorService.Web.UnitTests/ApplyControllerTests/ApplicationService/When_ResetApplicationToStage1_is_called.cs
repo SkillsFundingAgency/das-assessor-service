@@ -7,7 +7,7 @@ using SFA.DAS.QnA.Api.Types;
 using System;
 using System.Threading.Tasks;
 
-namespace SFA.DAS.AssessorService.Web.UnitTests.ApplyControllerTests.ApplyForWithdrawal
+namespace SFA.DAS.AssessorService.Web.UnitTests.ApplicationServiceTests
 {
     [TestFixture]
     public class When_ResetApplicationToStage1_is_called
