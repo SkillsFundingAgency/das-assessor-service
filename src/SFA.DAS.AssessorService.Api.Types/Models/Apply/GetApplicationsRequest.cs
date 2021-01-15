@@ -9,12 +9,12 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Apply
     {
         public Guid UserId { get; }
 
-        public bool CreatedBy { get; }
+        public string ApplicationType { get; }
 
-        public GetApplicationsRequest(Guid userId, bool createdBy)
+        public GetApplicationsRequest(Guid userId, string applicationType)
         {
             UserId = userId;
-            CreatedBy = createdBy;
+            ApplicationType = applicationType;
         }
     }
 }

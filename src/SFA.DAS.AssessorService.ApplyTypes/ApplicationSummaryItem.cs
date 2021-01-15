@@ -19,7 +19,6 @@ namespace SFA.DAS.AssessorService.ApplyTypes
         public string ReviewStatus { get; set; }
         public string FinancialStatus { get; set; }
         public string FinancialGrade { get; set; }
-
         public string SequenceStatus { get; set; } // NOTE: Only used for Closed Applications
     }
 }

@@ -94,12 +94,32 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             return Ok(await _mediator.Send(new GetToBeApprovedCertificatesRequest { PageSize = pageSize, PageIndex = pageIndex , Status = status, PrivatelyFundedStatus = privatelyFundedStatus }));
         }
 
-        [HttpGet("tobeprinted", Name = "GetCertificatesToBePrinted")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(CertificatesToBePrintedResponse))]
+        [HttpGet("ready-to-print/count", Name = "GetCertificatesReadyToPrintCount")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(CertificatesForBatchNumberResponse))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> GetCertificatesToBePrinted()
+        public async Task<IActionResult> GetCertificatesReadyToPrintCount()
         {
-            return Ok(await _mediator.Send(new GetCertificatesToBePrintedRequest()));
+            return Ok(await _mediator.Send(new GetCertificatesReadyToPrintCountRequest()));
+        }
+
+        [HttpGet("batch/{batchNumber}", Name = "GetCertificatesForBatchNumber")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(CertificatesForBatchNumberResponse))]
+        [SwaggerResponse((int)HttpStatusCode.NoContent)]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> GetCertificatesForBatchNumber(int batchNumber)
+        {
+            var request = new GetCertificatesForBatchNumberRequest()
+            {
+                BatchNumber = batchNumber
+            };
+
+            var response = await _mediator.Send(request);
+            if (response.Certificates.Count == 0)
+            {
+                return NoContent();
+            }
+
+            return Ok(response);
         }
     }
 }

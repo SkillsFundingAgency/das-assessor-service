@@ -11,5 +11,10 @@ namespace SFA.DAS.AssessorService.ApplyTypes
         public int StandardApplicationsInProgress { get; set; }
         public int StandardApplicationsHasFeedback { get; set; }
         public int StandardApplicationsApproved { get; set; }
+
+        public int WithdrawalApplicationsNew { get; set; }
+        public int WithdrawalApplicationsInProgress { get; set; }
+        public int WithdrawalApplicationsHasFeedback { get; set; }
+        public int WithdrawalApplicationsApproved { get; set; }
     }
 }

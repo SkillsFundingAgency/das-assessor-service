@@ -1,10 +1,12 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Api.Types.Models.BatchLogs;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
@@ -33,32 +35,34 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             return Ok(await _mediator.Send(request));
         }
 
-        [HttpPut("sent-to-printer", Name = "SentToPrinter")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(ValidationResponse))]
+        [HttpPut("{batchNumber}/update-ready-to-print-add-certificates", Name = "UpdateBatchLogReadyToPrintAddCertificates")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(int))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(ApiResponse))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> SentToPrinter([FromBody] SentToPrinterBatchLogRequest request)
+        public async Task<IActionResult> UpdateBatchLogReadyToPrintAddCertificates(int batchNumber, [FromBody] UpdateBatchLogReadyToPrintAddCertificatesRequest request)
         {
+            request.BatchNumber = batchNumber;
             return Ok(await _mediator.Send(request));
         }
 
-        [HttpPut("printed", Name = "Printed")]
+        [HttpPut("{batchNumber}/update-sent-to-printer", Name = "UpdateBatchLogSentToPrinter")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(ValidationResponse))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(ApiResponse))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> Printed([FromBody] PrintedBatchLogRequest request)
+        public async Task<IActionResult> UpdateBatchLogSentToPrinter(int batchNumber, [FromBody] UpdateBatchLogSentToPrinterRequest request)
         {
+            request.BatchNumber = batchNumber;
             return Ok(await _mediator.Send(request));
         }
 
-        [HttpPut("update-batch-data",Name= "UpdateBatchData")]
+        [HttpPut("{batchNumber}/update-printed", Name = "UpdateBatchPrinted")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(ValidationResponse))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(ApiResponse))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> UpdateBatchData([FromBody] UpdateBatchDataBatchLogRequest request)
+        public async Task<IActionResult> UpdateBatchLogPrinted(int batchNumber, [FromBody] UpdateBatchLogPrintedRequest request)
         {
+            request.BatchNumber = batchNumber;
             return Ok(await _mediator.Send(request));
         }
-
     }
 } 

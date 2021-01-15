@@ -22,7 +22,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         private readonly DatabaseService _databaseService = new DatabaseService();
         
         private AssessorDbContext _context;
-        private SqlConnection _databaseConnection;
+        private UnitOfWork _unitOfWork;
         
         private CertificateRepository _repository;
         
@@ -39,9 +39,9 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
             option.UseSqlServer(_databaseService.WebConfiguration.SqlConnectionString, options => options.EnableRetryOnFailure(3));    
             
             _context = new AssessorDbContext(option.Options);
-            _databaseConnection = new SqlConnection(_databaseService.WebConfiguration.SqlConnectionString);
+            _unitOfWork = new UnitOfWork(new SqlConnection(_databaseService.WebConfiguration.SqlConnectionString));
             
-            _repository = new CertificateRepository(_context, _databaseConnection);
+            _repository = new CertificateRepository(_unitOfWork, _context);
 
             OrganisationTypeHandler.InsertRecord(
                 new OrganisationTypeModel 
