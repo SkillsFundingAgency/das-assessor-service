@@ -181,7 +181,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                 }
                 JsonSerializerSettings settings = new JsonSerializerSettings();
                 settings.Converters.Add(new SetResultConverter());
-                return await PostRequestWithFileAndResponse<SetPageAnswersResponse>(request, formDataContent, settings);
+                return await PostPutRequestWithResponse<SetPageAnswersResponse>(request, formDataContent, settings);
             }
         }
 
