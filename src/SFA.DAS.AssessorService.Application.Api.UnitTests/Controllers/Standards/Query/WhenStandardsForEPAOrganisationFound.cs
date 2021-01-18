@@ -34,7 +34,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Standard
             var epoRegisteredStandardsResult = Builder<EpoRegisteredStandardsResult>.CreateNew().Build();
             var standardRepositoryMock = new Mock<IStandardRepository>();
             standardRepositoryMock.Setup(x =>
-                    x.GetEpaoRegisteredStandards(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int?>()))
+                    x.GetEpaoRegisteredStandards(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>()))
                 .Returns(Task.FromResult(epoRegisteredStandardsResult));
 
             var controllerLoggerMock = new Mock<ILogger<StandardQueryController>>();

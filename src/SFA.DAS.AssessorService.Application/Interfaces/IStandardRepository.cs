@@ -23,7 +23,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<DateTime?> GetDateOfLastStandardCollation();
         Task<int> GetEpaoStandardsCount(string endPointAssessorOrganisationId);
         Task<EpoRegisteredStandardsResult> GetEpaoRegisteredStandards(string endPointAssessorOrganisationId,
-        int pageSize, int? pageIndex);
+        int pageSize, int pageIndex);
         Task<EpaoPipelineStandardsResult> GetEpaoPipelineStandards(string endPointAssessorOrganisationId,
         string orderBy, string orderDirection, int pageSize, int? pageIndex);
         Task<List<EpaoPipelineStandardExtract>> GetEpaoPipelineStandardsExtract(string endPointAssessorOrganisationId);        

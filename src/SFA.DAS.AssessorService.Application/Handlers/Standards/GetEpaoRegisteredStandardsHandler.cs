@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
@@ -24,18 +21,19 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Standards
 
         public async Task<PaginatedList<GetEpaoRegisteredStandardsResponse>> Handle(GetEpaoRegisteredStandardsRequest request, CancellationToken cancellationToken)
         {
-            const int pageSize = 10;
             _logger.LogInformation("Retreiving Epao registered standards");
-            var result =  await _standardRepository.GetEpaoRegisteredStandards(request.EpaoId, pageSize, request.PageIndex ?? 1);
+            var result =  await _standardRepository.GetEpaoRegisteredStandards(request.EpaoId, request.PageSize, request.PageIndex);
 
             var epaoRegisteredStandardsResult = result.PageOfResults.Select(o =>
                 new GetEpaoRegisteredStandardsResponse
                 {
                     Level = o.Level,
                     StandardCode = o.StandardCode,
-                    StandardName = o.StandardName
+                    StandardName = o.StandardName,
+                    ReferenceNumber = o.ReferenceNumber
                 }).ToList();
-           return new PaginatedList<GetEpaoRegisteredStandardsResponse>(epaoRegisteredStandardsResult, result.TotalCount, request.PageIndex ?? 1, pageSize);
+
+           return new PaginatedList<GetEpaoRegisteredStandardsResponse>(epaoRegisteredStandardsResult, result.TotalCount, request.PageIndex, request.PageSize);
         }
     }
 }
