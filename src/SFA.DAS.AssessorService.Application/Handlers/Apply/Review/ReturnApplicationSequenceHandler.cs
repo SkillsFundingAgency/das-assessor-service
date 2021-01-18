@@ -141,11 +141,13 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply.Review
                     var lastSubmission = application.ApplyData?.Apply.LatestStandardWithdrawalSubmission;
                     if (lastSubmission != null)
                     {
+                        var standardName = application.ApplyData?.Apply.StandardName ?? string.Empty;
+                        var standardReferance = application.ApplyData?.Apply.StandardReference ?? string.Empty;
                         var contactToNotify = await _contactQueryRepository.GetContactById(lastSubmission.SubmittedBy);
 
                         var emailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.EPAOStandardWithdrawalApproval);
                         await _mediator.Send(new SendEmailRequest(contactToNotify.Email, emailTemplate,
-                            new { ServiceName = SERVICE_NAME, ServiceTeam = SERVICE_TEAM, Contact = contactToNotify.DisplayName, LoginLink = loginLink }), cancellationToken);
+                            new { ServiceName = SERVICE_NAME, ServiceTeam = SERVICE_TEAM, Contact = contactToNotify.DisplayName, StandardName = standardName, StandardReference = standardReferance,  LoginLink = loginLink }), cancellationToken);
                     }
                 }
             }
