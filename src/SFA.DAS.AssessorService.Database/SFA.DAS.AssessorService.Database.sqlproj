@@ -149,6 +149,7 @@
     <Build Include="Functions\Scalar-valued Functions\ApplyConst.sql" />
     <Build Include="Functions\Table-valued Functions\EPAO_Func_Get_PipelineInfo.sql" />
     <Build Include="StoredProcedures\GetEPAO_Pipelines_Count.sql" />
+    <Build Include="StoredProcedures\DatabaseMaintenance.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="SFA.DAS.AssessorService.Database.refactorlog" />
