@@ -73,6 +73,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Standard
             {
                 cfg.AddProfile<OrganisationWithStandardResponseMapper>();
                 cfg.AddProfile<OrganisationStandardDeliveryAreaMapper>();
+                cfg.AddProfile<OrganisationStandardMapper>();
             });
             mediator
                 .Setup(x => x.Send(
