@@ -124,7 +124,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply.Review
                             }), cancellationToken);
                     }
                 }
-                else if (sequenceNo == ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO && application.ApplicationStatus == ApplicationStatus.Approved)
+                else if (sequenceNo == ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO && returnType == "Approve")
                 {
                     var lastSubmission = application.ApplyData?.Apply.LatestOrganisationWithdrawalSubmission;
                     if (lastSubmission != null)
@@ -136,7 +136,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply.Review
                             new { ServiceName = SERVICE_NAME, ServiceTeam = SERVICE_TEAM, Contact = contactToNotify.DisplayName,  LoginLink = loginLink }), cancellationToken);
                     }
                 }
-                else if (sequenceNo == ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO && application.ApplicationStatus == ApplicationStatus.Approved)
+                else if (sequenceNo == ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO && returnType == "Approve")
                 {
                     var lastSubmission = application.ApplyData?.Apply.LatestStandardWithdrawalSubmission;
                     if (lastSubmission != null)
