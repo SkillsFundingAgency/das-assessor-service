@@ -68,6 +68,9 @@
     <Folder Include="Functions\Table-valued Functions" />
     <Folder Include="PreDeploymentScripts" />
     <Folder Include="PostDeploymentScripts\LookupData" />
+    <Folder Include="Security" />
+    <Folder Include="Security\Roles" />
+    <Folder Include="Security\Roles\DatabaseRoles" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Tables\CertificateLogs.sql" />
@@ -150,6 +153,8 @@
     <Build Include="Functions\Table-valued Functions\EPAO_Func_Get_PipelineInfo.sql" />
     <Build Include="StoredProcedures\GetEPAO_Pipelines_Count.sql" />
     <Build Include="StoredProcedures\DatabaseMaintenance.sql" />
+    <Build Include="Security\Roles\DatabaseRoles\DatabaseMaintenance.sql" />
+    <None Include="PostDeploymentScripts\GrantOrDenyPermissions.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="SFA.DAS.AssessorService.Database.refactorlog" />
