@@ -68,8 +68,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 {
                     if (org.RoEPAOApproved)
                     {
-                        // an organistion maybe registered with no applications, as it has been migrated in 
-                        // the approved state from the pre-digital service, display an empty list
+                        // an organistion maybe registered without any applications because it has been 
+                        // migrated in the approved state from the pre-digital service
                         return RedirectToAction(nameof(StandardApplications));
                     }
 
@@ -80,8 +80,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             }
             else if (applications.Count == 1 && org?.RoEPAOApproved is true)
             {
-                // when there is an existing application for an organisation that is registered 
-                // then display the single application
                 return RedirectToAction(nameof(StandardApplications));
             }
             else if (applications.Count > 1)
@@ -89,7 +87,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 return RedirectToAction(nameof(StandardApplications));
             }
 
-            // otherwise there must be a single application for an organisation which is not registered
+            // otherwise there must be a single application for an organisation which is not approved
             var application = applications.First();
 
             switch (application.ApplicationStatus)
@@ -98,12 +96,12 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                     return View("~/Views/Application/FeedbackIntro.cshtml", new FeedbackIntroViewModel(application));
                 case ApplicationStatus.Declined:
                 case ApplicationStatus.Approved:
-                    return View(applications);
+                    return RedirectToAction(nameof(StandardApplications));
                 case ApplicationStatus.Submitted:
                 case ApplicationStatus.Resubmitted:
                     return RedirectToAction("Submitted", new { application.Id });
                 default:
-                    // why can't the sign post handle the above cases too?
+                    // when the application is in progress, display the application overview
                     return RedirectToAction("SequenceSignPost", new { application.Id });
             }
         }
@@ -156,7 +154,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             }
 
             switch (application.ApplicationStatus)
-            {
+            { 
                 case ApplicationStatus.Approved:
                     return View("~/Views/Application/Approved.cshtml", application);
                 case ApplicationStatus.Declined:
