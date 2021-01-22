@@ -15,7 +15,7 @@ namespace SFA.DAS.AssessorService.Data
         public async Task<EmailTemplateSummary> GetEmailTemplate(string templateName)
         {
             var sql = @"SELECT ET.Id, ET.TemplateName, ET.TemplateId, ETR.Recipients
-                    FROM [dbo].[EMailTemplates] ET inner join [dbo].[EmailTemplatesRecipients] ETR
+                    FROM [dbo].[EMailTemplates] ET left join [dbo].[EmailTemplatesRecipients] ETR
                     ON ET.Id = ETR.EmailTemplateId
                     WHERE ET.TemplateName = @templateName";
 

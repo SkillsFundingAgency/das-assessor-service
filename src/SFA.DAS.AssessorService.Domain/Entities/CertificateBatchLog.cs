@@ -1,4 +1,5 @@
 ﻿using System;
+using Newtonsoft.Json;
 
 namespace SFA.DAS.AssessorService.Domain.Entities
 {
@@ -14,6 +15,7 @@ namespace SFA.DAS.AssessorService.Domain.Entities
         public string CreatedBy { get; set; }
         public string UpdatedBy { get; set; }
         public string DeletedBy { get; set; }
+        [JsonIgnore]
         public Certificate Certificate { get; set; }
     }
 }

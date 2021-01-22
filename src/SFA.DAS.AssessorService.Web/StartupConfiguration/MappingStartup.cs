@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using SFA.DAS.AssessorService.Api.Types.AutoMapperProfiles;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Web.AutoMapperProfiles;
 using SFA.DAS.AssessorService.Web.Controllers.ManageUsers.ViewModels;
@@ -24,8 +23,6 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
                 .ForMember(dest => dest.OrganisationIsLive, x => x.Ignore())
                 .ForMember(dest => dest.RoEPAOApproved, x => x.Ignore());
                 cfg.CreateMap<ContactResponse, UserViewModel>();
-
-                cfg.AddProfile<EpaOrganisationProfile>();
 
                 cfg.AddProfile<CompaniesHouseSummaryProfile>();
                 cfg.AddProfile<DirectorInformationProfile>();
