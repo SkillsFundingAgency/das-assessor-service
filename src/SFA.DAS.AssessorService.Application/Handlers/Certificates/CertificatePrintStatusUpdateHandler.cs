@@ -87,7 +87,14 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
                     validatedCertificatePrintStatus.ReasonForChange,
                     isLatestChange);
 
-                _logger.LogInformation($"Certificate {validatedCertificatePrintStatus.CertificateReference} {validatedCertificatePrintStatus.Status} in batch {validatedCertificatePrintStatus.BatchNumber}");
+                if(isLatestChange)
+                {
+                    _logger.LogInformation($"Certificate {validatedCertificatePrintStatus.CertificateReference} updated to status {validatedCertificatePrintStatus.Status} in batch {validatedCertificatePrintStatus.BatchNumber}");
+                }
+                else
+                {
+                    _logger.LogInformation($"Certificate {validatedCertificatePrintStatus.CertificateReference} not updated to status {validatedCertificatePrintStatus.Status} in batch {validatedCertificatePrintStatus.BatchNumber} because it was not the latest change");
+                }
             }
 
             return validationResult;
