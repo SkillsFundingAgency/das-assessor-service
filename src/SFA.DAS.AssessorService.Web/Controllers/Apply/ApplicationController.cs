@@ -154,7 +154,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             }
 
             switch (application.ApplicationStatus)
-            { 
+            {
                 case ApplicationStatus.Approved:
                     return View("~/Views/Application/Approved.cshtml", application);
                 case ApplicationStatus.Declined:
