@@ -124,6 +124,32 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply.Review
                             }), cancellationToken);
                     }
                 }
+                else if (sequenceNo == ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO && returnType == "Approve")
+                {
+                    var lastSubmission = application.ApplyData?.Apply.LatestOrganisationWithdrawalSubmission;
+                    if (lastSubmission != null)
+                    {                        
+                        var contactToNotify = await _contactQueryRepository.GetContactById(lastSubmission.SubmittedBy);
+
+                        var emailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.EPAORegisterWithdrawalApproval);
+                        await _mediator.Send(new SendEmailRequest(contactToNotify.Email, emailTemplate,
+                            new { ServiceName = SERVICE_NAME, ServiceTeam = SERVICE_TEAM, Contact = contactToNotify.DisplayName,  LoginLink = loginLink }), cancellationToken);
+                    }
+                }
+                else if (sequenceNo == ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO && returnType == "Approve")
+                {
+                    var lastSubmission = application.ApplyData?.Apply.LatestStandardWithdrawalSubmission;
+                    if (lastSubmission != null)
+                    {
+                        var standardName = application.ApplyData?.Apply.StandardName ?? string.Empty;
+                        var standardReferance = application.ApplyData?.Apply.StandardReference ?? string.Empty;
+                        var contactToNotify = await _contactQueryRepository.GetContactById(lastSubmission.SubmittedBy);
+
+                        var emailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.EPAOStandardWithdrawalApproval);
+                        await _mediator.Send(new SendEmailRequest(contactToNotify.Email, emailTemplate,
+                            new { ServiceName = SERVICE_NAME, ServiceTeam = SERVICE_TEAM, Contact = contactToNotify.DisplayName, StandardName = standardName, StandardReference = standardReferance,  LoginLink = loginLink }), cancellationToken);
+                    }
+                }
             }
         }
     }
