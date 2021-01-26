@@ -10,6 +10,8 @@
         public const string WithdrawalEPAOSubmission = "WithdrawalEPAOSubmission";
         public const string EPAOWithdrawalFeedbackNotification = "EPAOWithdrawalFeedbackNotification";
         public const string EPAOCancelApplication = "EPAOCancelApplication";
+        public const string EPAOStandardWithdrawalApproval = "EPAOStandardWithdrawalApproval";
+        public const string EPAORegisterWithdrawalApproval = "EPAORegisterWithdrawalApproval";
 
         /// <summary>
         /// Requires tokens: { contactname }
