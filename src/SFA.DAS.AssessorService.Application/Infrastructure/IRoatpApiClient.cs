@@ -1,8 +1,6 @@
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using SFA.DAS.AssessorService.Api.Types.Models;
 
-namespace SFA.DAS.AssessorService.Application.Api.Infrastructure
+namespace SFA.DAS.AssessorService.Application.Infrastructure
 {
     public interface IRoatpApiClient
     {

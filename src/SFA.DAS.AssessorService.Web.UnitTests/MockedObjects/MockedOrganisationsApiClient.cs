@@ -5,12 +5,9 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using Newtonsoft.Json;
 using RichardSzalay.MockHttp;
-using SFA.DAS.Apprenticeships.Api.Types;
-using SFA.DAS.Apprenticeships.Api.Types.AssessmentOrgs;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
-using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
 using SFA.DAS.AssessorService.Settings;
 
 namespace SFA.DAS.AssessorService.Web.UnitTests.MockedObjects
@@ -64,7 +61,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.MockedObjects
             var mockHttp = new MockHttpMessageHandler();
 
             var clientlocal = mockHttp.ToHttpClient();
-            clientlocal.BaseAddress = new Uri("https://findapprenticeshiptraining-api.sfa.bis.gov.uk/");
+            clientlocal.BaseAddress = new Uri("https://test.local/");
 
             mockHttp.When($"/api/ao/assessment-organisations/EPA00001/standards")
                 .Respond("application/json", JsonConvert.SerializeObject(standardOrganisartionSummaries));
