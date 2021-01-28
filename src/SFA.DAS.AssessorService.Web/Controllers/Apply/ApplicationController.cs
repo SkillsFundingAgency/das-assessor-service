@@ -221,7 +221,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             var sections = await _qnaApiClient.GetSections(application.ApplicationId, sequence.Id);
             var applyData = application.ApplyData.Sequences.Single(x => x.SequenceNo == sequenceNo);
 
-            var allowCancel = await GetAllowCancelApplication(application.OrganisationId);
+            var allowCancel = GetAllowCancelApplication(application);
             var sequenceVm = new SequenceViewModel(sequence, application.Id, BuildPageContext(application, sequence), allowCancel, sections, applyData.Sections, null);
 
             if (application.ApplyData != null && application.ApplyData.Sequences != null)
@@ -281,7 +281,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             var application = await _applicationApiClient.GetApplication(id);
             if (application != null)
             {
-                if (await GetAllowCancelApplication(application.OrganisationId))
+                if (GetAllowCancelApplication(application))
                 {
                     return View(new ConfirmCancelApplicationViewModel { Id = application.Id, StandardWithReference = application.ApplyData.Apply.StandardWithReference });
                 }
@@ -306,13 +306,13 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 {
                     if (viewModel.AreYouSure == "Yes")
                     {
-                        if (await GetAllowCancelApplication(application.OrganisationId))
+                        if (GetAllowCancelApplication(application))
                         {
-                            await _applicationService.ResetApplicationToStage1(application.Id);
-
-                            TempData["StandardWithReference"] = application.ApplyData.Apply.StandardWithReference;
-                            
-                            return RedirectToAction(nameof(ApplicationCancelled), new { viewModel.Id });
+                            if (await _applicationService.ResetApplicationToStage1(application.Id))
+                            {
+                                TempData["StandardWithReference"] = application.ApplyData.Apply.StandardWithReference;
+                                return RedirectToAction(nameof(ApplicationCancelled), new { viewModel.Id });
+                            }
                         }
                     }
                     else if (viewModel.AreYouSure == "No")
@@ -732,7 +732,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             if (errors.Any())
             {
                 var applyData = application.ApplyData.Sequences.Single(x => x.SequenceNo == sequenceNo);
-                var allowCancel = await GetAllowCancelApplication(application.OrganisationId);
+                var allowCancel = GetAllowCancelApplication(application);
                 var sequenceVm = new SequenceViewModel(sequence, Id, BuildPageContext(application, sequence), allowCancel, sections, applyData.Sections, errors);
 
                 if (applyData.Status == ApplicationSequenceStatus.FeedbackAdded)
@@ -799,7 +799,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             var sections = await _qnaApiClient.GetSections(application.ApplicationId, sequence.Id);
             var applyData = application.ApplyData.Sequences.Single(x => x.SequenceNo == sequence.SequenceNo);
 
-            var allowCancel = await GetAllowCancelApplication(application.OrganisationId);
+            var allowCancel = GetAllowCancelApplication(application);
             var sequenceVm = new SequenceViewModel(sequence, application.Id, BuildPageContext(application, sequence), allowCancel, sections, applyData.Sections, null);
 
             return View("~/Views/Application/Feedback.cshtml", sequenceVm);
@@ -918,15 +918,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             return pageContext;
         }
 
-        private async Task<bool> GetAllowCancelApplication(Guid organisationId)
+        private bool GetAllowCancelApplication(ApplicationResponse application)
         {
-            var organisation = await _orgApiClient.Get(organisationId);
-            if (organisation != null)
-            {
-                return !organisation.OrganisationData.RoEPAOApproved;
-            }
-
-            return false;
+            return application.IsCombindedApplication && IsSequenceActive(application.ApplyData, ApplyConst.STANDARD_SEQUENCE_NO);
         }
 
         private static Page StoreEnteredAnswers(List<Answer> answers, Page page)
