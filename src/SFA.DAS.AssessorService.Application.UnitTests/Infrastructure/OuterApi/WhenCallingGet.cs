@@ -35,7 +35,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Infrastructure.OuterApi
             };
             var httpMessageHandler = MessageHandler.SetupMessageHandlerMock(response, config.BaseUrl + getTestRequest.GetUrl, config.Key);
             var client = new HttpClient(httpMessageHandler.Object);
-            var apiClient = new ApiClient(client, configMock.Object);
+            var apiClient = new OuterApiClient(client, configMock.Object);
 
             //Act
             var actual = await apiClient.Get<List<string>>(getTestRequest);
@@ -61,7 +61,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Infrastructure.OuterApi
             
             var httpMessageHandler = MessageHandler.SetupMessageHandlerMock(response, config.BaseUrl + getTestRequest.GetUrl, config.Key);
             var client = new HttpClient(httpMessageHandler.Object);
-            var apiClient = new ApiClient(client, configMock.Object);
+            var apiClient = new OuterApiClient(client, configMock.Object);
             
             //Act Assert
             Assert.ThrowsAsync<HttpRequestException>(() => apiClient.Get<List<string>>(getTestRequest));
@@ -85,7 +85,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Infrastructure.OuterApi
             
             var httpMessageHandler = MessageHandler.SetupMessageHandlerMock(response, config.BaseUrl + getTestRequest.GetUrl, config.Key);
             var client = new HttpClient(httpMessageHandler.Object);
-            var apiClient = new ApiClient(client, configMock.Object);
+            var apiClient = new OuterApiClient(client, configMock.Object);
             
             //Act Assert
             var actual = await apiClient.Get<List<string>>(getTestRequest);

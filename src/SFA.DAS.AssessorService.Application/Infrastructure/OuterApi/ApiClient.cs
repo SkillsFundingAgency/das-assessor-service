@@ -7,12 +7,12 @@ using SFA.DAS.AssessorService.Settings;
 
 namespace SFA.DAS.AssessorService.Application.Infrastructure.OuterApi
 {
-    public class ApiClient : IApiClient
+    public class OuterApiClient : IOuterApiClient
     {
         private readonly HttpClient _httpClient;
         private readonly OuterApiConfiguration _config;
 
-        public ApiClient (HttpClient httpClient, IWebConfiguration config)
+        public OuterApiClient (HttpClient httpClient, IWebConfiguration config)
         {
             _httpClient = httpClient;
             _config = config.OuterApi;
@@ -49,8 +49,8 @@ namespace SFA.DAS.AssessorService.Application.Infrastructure.OuterApi
         }
     }
 
-    public interface IApiClient
+    public interface IOuterApiClient
     {
-        Task<TResponse> Get<TResponse>(IGetApiRequest getStandardsRequest);
+        Task<TResponse> Get<TResponse>(IGetApiRequest request);
     }
 }

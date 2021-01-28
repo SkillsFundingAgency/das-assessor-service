@@ -171,7 +171,7 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                     .SetHandlerLifetime(TimeSpan.FromMinutes(5));
 
                 
-                services.AddHttpClient<ApiClient>().SetHandlerLifetime(TimeSpan.FromMinutes(5));
+                services.AddHttpClient<OuterApiClient>().SetHandlerLifetime(TimeSpan.FromMinutes(5));
                 
                 services.AddHealthChecks();
 

@@ -16,15 +16,15 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
     public class StandardService : IStandardService
     {
         private readonly CacheService _cacheService;
-        private readonly IApiClient _apiClient;
+        private readonly IOuterApiClient _outerApiClient;
         private readonly IIfaStandardsApiClient _ifaStandardsApiClient;
         private readonly ILogger<StandardService> _logger;
         private readonly IStandardRepository _standardRepository;
 
-        public StandardService(CacheService cacheService, IApiClient apiClient, IIfaStandardsApiClient ifaStandardsApiClient, ILogger<StandardService> logger, IStandardRepository standardRepository)
+        public StandardService(CacheService cacheService, IOuterApiClient outerApiClient, IIfaStandardsApiClient ifaStandardsApiClient, ILogger<StandardService> logger, IStandardRepository standardRepository)
         {
             _cacheService = cacheService;
-            _apiClient = apiClient;
+            _outerApiClient = outerApiClient;
             _ifaStandardsApiClient = ifaStandardsApiClient;
             _logger = logger;
             _standardRepository = standardRepository;
@@ -94,7 +94,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
         {
             _logger.LogInformation("STANDARD COLLATION: Starting gathering of all Standard details");
             
-            var standards = await _apiClient.Get<GetStandardsListResponse>(new GetStandardsRequest());
+            var standards = await _outerApiClient.Get<GetStandardsListResponse>(new GetStandardsRequest());
 
             _logger.LogInformation("STANDARD COLLATION: Start collating approved IFA and standards");
             var collation = CollateWinAndIfaStandardDetails(standards.Standards.ToList(), approvedIfaStandards);
