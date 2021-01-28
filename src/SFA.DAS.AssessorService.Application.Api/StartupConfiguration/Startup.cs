@@ -24,8 +24,9 @@ using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Infrastructure;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Services;
+using SFA.DAS.AssessorService.Application.Infrastructure;
+using SFA.DAS.AssessorService.Application.Infrastructure.OuterApi;
 using SFA.DAS.AssessorService.Data;
-using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
 using SFA.DAS.AssessorService.ExternalApis.IFAStandards;
 using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.Http;
@@ -148,13 +149,6 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                         }
                     });
  
-                services.AddHttpClient<ProviderRegisterApiClient>("ProviderRegisterApiClient", config =>
-                    {
-                        config.BaseAddress = new Uri(Configuration.ProviderRegisterApiAuthentication.ApiBaseAddress); //  "https://findapprenticeshiptraining-api.sfa.bis.gov.uk"
-                        config.DefaultRequestHeaders.Add("Accept", "Application/json");
-                    })
-                    .SetHandlerLifetime(TimeSpan.FromMinutes(5));
-
                 services.AddHttpClient<ReferenceDataApiClient>("ReferenceDataApiClient", config =>
                     {
                         config.BaseAddress = new Uri(Configuration.ReferenceDataApiAuthentication.ApiBaseAddress); //  "https://at-refdata.apprenticeships.sfa.bis.gov.uk/api"
@@ -176,6 +170,9 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                     })
                     .SetHandlerLifetime(TimeSpan.FromMinutes(5));
 
+                
+                services.AddHttpClient<ApiClient>().SetHandlerLifetime(TimeSpan.FromMinutes(5));
+                
                 services.AddHealthChecks();
 
                 serviceProvider = ConfigureIOC(services);
@@ -209,7 +206,6 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                 config.For<IWebConfiguration>().Use(Configuration);
                 config.For<ServiceFactory>().Use<ServiceFactory>(ctx => t => ctx.GetInstance(t));
                 config.For<IMediator>().Use<Mediator>();
-                config.For<IAssessmentOrgsApiClient>().Use(() => new AssessmentOrgsApiClient(Configuration.AssessmentOrgsApiClientBaseUrl));  
                 config.For<IIfaStandardsApiClient>().Use(() => new IfaStandardsApiClient(Configuration.IfaApiClientBaseUrl));
           
                 config.For<IDateTimeProvider>().Use<UtcDateTimeProvider>();
