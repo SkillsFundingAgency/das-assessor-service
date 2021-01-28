@@ -12,14 +12,20 @@ namespace SFA.DAS.AssessorService.Application.Infrastructure.OuterApi
     {
         public int Id { get ; set ; }
         public string Title { get ; set ; }
-        public DateTime? EffectiveFrom { get ; set ; }
-        public DateTime? EffectiveTo { get ; set ; }
-        public DateTime? LastDateForNewStarts { get ; set ; }
+        public StandardDates StandardDates { get ; set ; }
         public int Level { get ; set ; }
         public int Duration { get ; set ; }
-        public int CurrentFundingCap { get ; set ; }
-        public bool IsPublished { get ; set ; }
+        public int MaxFunding { get ; set ; }
         public bool IsActiveStandard { get ; set ; }
-        public string Uri { get ; set ; }
+        
+    }
+
+    public class StandardDates
+    {
+        public DateTime? LastDateStarts { get; set; }
+
+        public DateTime? EffectiveTo { get; set; }
+
+        public DateTime EffectiveFrom { get; set; }
     }
 }
