@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models.Apply.Review;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
+using SFA.DAS.AssessorService.ApplyTypes;
 using Swashbuckle.AspNetCore.Annotations;
 using System;
 using System.Net;
@@ -36,6 +37,13 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.Apply
         public async Task<ActionResult> OrganisationApplications([FromBody] OrganisationApplicationsRequest organisationApplicationsRequest)
         {
             var applications = await _mediator.Send(organisationApplicationsRequest);
+            return Ok(applications);
+        }
+
+        [HttpPost("Review/WithdrawalApplications")]
+        public async Task<ActionResult> WithdrawalApplications([FromBody] WithdrawalApplicationsRequest withdrawalApplicationsRequest)
+        {
+            var applications = await _mediator.Send(withdrawalApplicationsRequest);
             return Ok(applications);
         }
 

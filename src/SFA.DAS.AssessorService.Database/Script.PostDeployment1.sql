@@ -8,20 +8,22 @@
     Example:      :setvar TableName MyTable                            
                 SELECT * FROM [$(TableName)]                    
     --------------------------------------------------------------------------------------
-
-    This is typically used to manipulate the data after running the DAC PAC scripts, where this
-    is required to allow constraints.
-
-    Each script should be stored under the PostDeploymentScripts folder and will be run on each deployment,
-    so all scripts should be written as IDEMPOTENT.
-  
-    When a script has been deployed to PROD it can be disabled by removing the reference below and optionally retained
-    under the PostDeploymentScripts folder for future reference.
 */
 
-/*	NORMALLY KEEP SECTION FIRST - START DATABASE LOOKUP */
+/* START OF PERMANENT SCRIPT SECTION */ 
 :r .\PostDeploymentScripts\LookupData\SynchronizeLookupData.sql
-/* 	NORMALLY KEEP SECTION FIRST - END DATABASE LOOKUP */
+
+:r .\PostDeploymentScripts\GrantOrDenyPermissions.sql
+/* END OF PERMANENT SCRIPT SECTION */ 
+
+/*  START OF TEMPORARY SCRIPT SECTION
+
+    Each temporary script should be stored under the 'PostDeploymentScripts' folder prefixed with the Jira ticket number
+    for which it has been created and will be run on each deployment, so all scripts should be written as IDEMPOTENT.
+  
+    When a script has been deployed to ALL environments it can be disabled by removing the reference below and optionally retained
+    under the PostDeploymentScripts folder for future reference.
+*/
 
 -- ON-613 Patch Certificates with STxxxx StandardReference, where it is not yet included. 
 -- AB 11/03/19 Keep this active for new deployments, for now
