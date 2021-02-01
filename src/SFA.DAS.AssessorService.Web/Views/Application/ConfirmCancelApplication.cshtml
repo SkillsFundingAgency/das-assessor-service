@@ -2,9 +2,10 @@
 @model SFA.DAS.AssessorService.Web.ViewModels.Apply.ConfirmCancelApplicationViewModel;
 @{
     ViewData["Title"] = "Are you sure you want to cancel your application to assess this standard?";
-    Layout = "_DashboardLayout";
+    Layout = "_Layout";
 }
 
+<a asp-action="SequenceSignPost" asp-controller="Application" asp-route-id="@Model.Id" class="govuk-back-link">Back</a>
 <main class="govuk-main-wrapper " id="main-content" role="main">
     @if (!ViewData.ModelState.IsValid)
     {

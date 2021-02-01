@@ -283,7 +283,12 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             {
                 if (GetAllowCancelApplication(application))
                 {
-                    return View(new ConfirmCancelApplicationViewModel { Id = application.Id, StandardWithReference = application.ApplyData.Apply.StandardWithReference });
+                    return View(new ConfirmCancelApplicationViewModel 
+                    { 
+                        Id = application.Id, 
+                        StandardWithReference =
+                        application.ApplyData.Apply.StandardWithReference
+                    });
                 }
             }
 

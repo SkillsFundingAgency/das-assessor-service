@@ -23,8 +23,8 @@
                 </h2>
 
                 <p class="govuk-body">
-                    Your application for stage 1 is still valid, so you can start again and 
-                    <a href="@Url.Action("SequenceSignPost", "Application", new { @Model.Id })" class="govuk-link govuk-link--no-visited-state">apply for a standard</a>.
+                    Your application for stage 1 is still valid, so you can start again and
+                    <a asp-action="SequenceSignPost" asp-controller="Application" asp-route-id="@Model.Id" class="govuk-link govuk-link--no-visited-state">apply for a standard</a>
                 </p>
             </form>
         </div>
