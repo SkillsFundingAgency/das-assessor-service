@@ -108,6 +108,12 @@
         },
         "logAnalyticsWorkspaceName": {
             "type": "string"
+        },
+        "sharedApimName": {
+            "type": "string"
+        },
+        "sharedApimResourceGroup": {
+            "type": "string"
         }
     },
     "variables": {
@@ -115,6 +121,30 @@
         "InstanceName": "[if(equals(toUpper(parameters('environmentName')),'PROD'),'',parameters('environmentName'))]"
     },
     "resources": [
+        {
+            "apiVersion": "2020-06-01",
+            "name": "apim-subscription",
+            "resourceGroup": "[parameters('sharedApimResourceGroup')]",
+            "type": "Microsoft.Resources/deployments",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('deploymentUrlBase'),'apim/apim-subscription.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "apimName": {
+                        "value": "[parameters('sharedApimName')]"
+                    },
+                    "subscriptionName": {
+                        "value": "[parameters('uiAppServiceName')]"
+                    },
+                    "subscriptionScope": {
+                        "value": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('sharedApimResourceGroup'), '/providers/Microsoft.ApiManagement/service/', parameters('sharedApimName'), '/products/AssessorsOuterApi')]"
+                    }
+                }
+            }
+        },
         {
             "condition": "[greater(length(parameters('uiCustomHostname')), 0)]",
             "apiVersion": "2017-05-10",
