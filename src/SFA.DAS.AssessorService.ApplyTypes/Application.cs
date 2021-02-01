@@ -82,7 +82,10 @@ namespace SFA.DAS.AssessorService.ApplyTypes
 
         public void AddInitSubmission(Submission submission)
         {
-            (InitSubmissions ?? new List<Submission>()).Add(submission);
+            if(InitSubmissions == null)
+                InitSubmissions = new List<Submission>();
+
+            InitSubmissions.Add(submission);
         }
 
         [JsonIgnore]
@@ -97,7 +100,10 @@ namespace SFA.DAS.AssessorService.ApplyTypes
 
         public void AddStandardSubmission(Submission submission)
         {
-            (StandardSubmissions ?? new List<Submission>()).Add(submission);
+            if (StandardSubmissions == null)
+                StandardSubmissions = new List<Submission>();
+
+            StandardSubmissions.Add(submission);
         }
 
         [JsonIgnore]
@@ -112,7 +118,10 @@ namespace SFA.DAS.AssessorService.ApplyTypes
 
         public void AddOrganisationWithdrawalSubmission(Submission submission)
         {
-            (OrganisationWithdrawalSubmissions ?? new List<Submission>()).Add(submission);
+            if (OrganisationWithdrawalSubmissions == null)
+                OrganisationWithdrawalSubmissions = new List<Submission>();
+
+            OrganisationWithdrawalSubmissions.Add(submission);
         }
 
         [JsonIgnore]
@@ -127,7 +136,10 @@ namespace SFA.DAS.AssessorService.ApplyTypes
 
         public void AddStandardWithdrawalSubmission(Submission submission)
         {
-            (StandardWithdrawalSubmissions ?? new List<Submission>()).Add(submission);
+            if (StandardWithdrawalSubmissions == null)
+                StandardWithdrawalSubmissions = new List<Submission>();
+
+            StandardWithdrawalSubmissions.Add(submission);
         }
 
         [JsonIgnore]
