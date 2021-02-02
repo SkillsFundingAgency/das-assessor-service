@@ -287,7 +287,10 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                     { 
                         Id = application.Id, 
                         StandardWithReference =
-                        application.ApplyData.Apply.StandardWithReference
+                        application.ApplyData.Apply.StandardWithReference,
+                        BackAction = application.ApplicationStatus == ApplicationStatus.FeedbackAdded
+                         ? nameof(Feedback)
+                         : nameof(SequenceSignPost)
                     });
                 }
             }
@@ -328,8 +331,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                                 return RedirectToAction(nameof(Feedback), 
                                     new { viewModel.Id });
                             default:
-                                return RedirectToAction(nameof(Sequence),
-                                    new { viewModel.Id, sequenceNo = ApplyConst.STANDARD_SEQUENCE_NO });
+                                return RedirectToAction(nameof(SequenceSignPost), 
+                                    new { viewModel.Id });
                         }
                     }
                 }

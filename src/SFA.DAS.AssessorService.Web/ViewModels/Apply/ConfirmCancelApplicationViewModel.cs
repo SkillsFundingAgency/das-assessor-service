@@ -7,5 +7,6 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Apply
         public Guid Id { get; set; }
         public string AreYouSure { get; set; }
         public string StandardWithReference { get; set; }
+        public string BackAction { get; set; }
     }
 }

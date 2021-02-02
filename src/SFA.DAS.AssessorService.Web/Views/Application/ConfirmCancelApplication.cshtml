@@ -5,7 +5,7 @@
     Layout = "_Layout";
 }
 
-<a asp-action="SequenceSignPost" asp-controller="Application" asp-route-id="@Model.Id" class="govuk-back-link">Back</a>
+<a asp-action="@Model.BackAction" asp-controller="Application" asp-route-id="@Model.Id" class="govuk-back-link">Back</a>
 <main class="govuk-main-wrapper " id="main-content" role="main">
     @if (!ViewData.ModelState.IsValid)
     {
