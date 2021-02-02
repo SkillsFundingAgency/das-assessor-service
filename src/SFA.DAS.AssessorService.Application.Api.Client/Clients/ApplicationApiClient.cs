@@ -105,6 +105,17 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
+        public async Task<bool> ResetApplicationToStage1(Guid id)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Post, $"api/v1/applications/resetApplicationToStage1"))
+            {
+                return await PostPutRequestWithResponse<ResetApplicationToStage1Request, bool>(request, new ResetApplicationToStage1Request
+                {
+                    Id = id
+                });
+            }
+        }
+
         public async Task<List<StandardCollation>> GetStandards()
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/ao/assessment-organisations/collated-standards"))

@@ -15,14 +15,16 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
     public class ApplicationService : IApplicationService
     {
         private readonly IQnaApiClient _qnaApiClient;
+        private readonly IApplicationApiClient _applicationApiClient;
         private readonly ILearnerDetailsApiClient _learnerDetailsApiClient;
         private readonly IOrganisationsApiClient _organisationsApiClient;
 
         private const string WorkflowType = "EPAO";
 
-        public ApplicationService(IQnaApiClient qnApiClient, ILearnerDetailsApiClient learnerDetailsApiClient, IOrganisationsApiClient organisationsApiClient)
+        public ApplicationService(IQnaApiClient qnApiClient, IApplicationApiClient applicationApiClient, ILearnerDetailsApiClient learnerDetailsApiClient, IOrganisationsApiClient organisationsApiClient)
         {
             _qnaApiClient = qnApiClient;
+            _applicationApiClient = applicationApiClient;
             _learnerDetailsApiClient = learnerDetailsApiClient;
             _organisationsApiClient = organisationsApiClient;
         }
@@ -124,6 +126,18 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                     NotRequired = sequence.NotRequired
                 }).ToList()
             };
+        }
+
+        public async Task<bool> ResetApplicationToStage1(Guid id)
+        {
+            if (await _applicationApiClient.ResetApplicationToStage1(id))
+            {
+                var application = await _applicationApiClient.GetApplication(id);
+                await _qnaApiClient.ResetSectionAnswers(application.ApplicationId, ApplyConst.STANDARD_SEQUENCE_NO, ApplyConst.STANDARD_DETAILS_SECTION_NO);
+                return true;
+            }
+
+            return false;
         }
     }
 }
