@@ -22,10 +22,14 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Apply
         public string ContactName { get; set; }
         public string ContactEmail { get; set; }
 
-        public bool IsWithdrawalApplication => IsStandardWithdrawalApplication || IsOrganisationWithdrawalApplication;
+        public bool IsCombindedApplication => ApplicationType == ApplicationTypes.Combined;
+
+        public bool IsStandardApplication => ApplicationType == ApplicationTypes.Standard;
 
         public bool IsStandardWithdrawalApplication => ApplicationType == ApplicationTypes.StandardWithdrawal;
 
         public bool IsOrganisationWithdrawalApplication => ApplicationType == ApplicationTypes.OrganisationWithdrawal;
+        
+        public bool IsWithdrawalApplication => IsStandardWithdrawalApplication || IsOrganisationWithdrawalApplication;
     }
 }

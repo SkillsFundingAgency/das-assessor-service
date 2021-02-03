@@ -35,6 +35,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task EvaluateApplicationSection(Guid id, int sequenceNo, int sectionNo, bool isSectionComplete, string evaluatedBy);
         Task ReturnApplicationSequence(Guid id, int sequenceNo, string sequenceStatus, string returnedBy);
         Task<bool> UpdateStandardData(Guid id, int standardCode, string referenceNumber, string standardName);
+        Task<bool> ResetApplicatonToStage1(Guid id, Guid userId);
     }
 
     public class ApplicationsResult
