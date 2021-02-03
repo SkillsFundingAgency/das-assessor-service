@@ -175,6 +175,71 @@ namespace SFA.DAS.AssessorService.Data.Apply
             return false;
         }
 
+        public async Task<bool> ResetApplicatonToStage1(Guid id, Guid userId)
+        {
+            var application = await GetApply(id);
+            var applyData = application?.ApplyData;
+            var sequence = applyData?.Sequences.SingleOrDefault(seq => seq.SequenceNo == ApplyConst.STANDARD_SEQUENCE_NO);
+            var section = sequence?.Sections.SingleOrDefault(sec => sec.SectionNo == ApplyConst.STANDARD_DETAILS_SECTION_NO);
+
+            if (application != null && sequence != null && section != null)
+            {
+                application.ApplicationStatus = ApplicationStatus.InProgress;
+                application.ReviewStatus = ApplicationReviewStatus.Approved;
+                application.StandardCode = null;
+                application.UpdatedAt = DateTime.UtcNow;
+                application.UpdatedBy = userId.ToString();
+
+                section.Status = ApplicationSectionStatus.Draft;
+                section.ReviewStartDate = null;
+                section.ReviewedBy = null;
+                section.EvaluatedDate = null;
+                section.EvaluatedBy = null;
+
+                sequence.Status = ApplicationSequenceStatus.Draft;
+                sequence.ApprovedDate = null;
+                sequence.ApprovedBy = null;
+
+                if (applyData.Apply == null)
+                {
+                    applyData.Apply = new ApplyTypes.Apply();
+                }
+
+                applyData.Apply.StandardCode = null;
+                applyData.Apply.StandardReference = null;
+                applyData.Apply.StandardName = null;
+
+                applyData.Apply.StandardSubmissions = new List<Submission>();
+
+                await _unitOfWork.Connection.ExecuteAsync(
+                    "UPDATE " +
+                    "   Apply " + 
+                    "SET " +
+                    "   ApplyData = @ApplyData, " + 
+                    "   ApplicationStatus = @ApplicationStatus, " +
+                    "   ReviewStatus = @ReviewStatus, " +
+                    "   StandardCode = @StandardCode, " +
+                    "   UpdatedAt = @UpdatedAt, " + 
+                    "   UpdatedBy = @UpdatedBy " +
+                    "WHERE " +
+                    "   Id = @Id",
+                    param: new { 
+                        application.Id, 
+                        application.ApplyData, 
+                        application.ApplicationStatus, 
+                        application.ReviewStatus, 
+                        application.StandardCode, 
+                        application.UpdatedAt, 
+                        application.UpdatedBy 
+                    },
+                    transaction: _unitOfWork.Transaction);
+
+                return true;
+            }
+
+            return false;
+        }
+
         public async Task StartFinancialReview(Guid id, string reviewer)
         {
             var application = await GetApply(id);
