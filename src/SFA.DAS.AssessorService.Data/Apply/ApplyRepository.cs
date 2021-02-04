@@ -209,7 +209,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
                 applyData.Apply.StandardReference = null;
                 applyData.Apply.StandardName = null;
 
-                applyData.Apply.StandardSubmissions = new List<Submission>();
+                applyData.Apply.ResetStandardSubmissions();
 
                 await _unitOfWork.Connection.ExecuteAsync(
                     "UPDATE " +

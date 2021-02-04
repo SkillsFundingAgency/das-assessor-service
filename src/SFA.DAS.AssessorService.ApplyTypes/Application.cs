@@ -82,10 +82,15 @@ namespace SFA.DAS.AssessorService.ApplyTypes
 
         public void AddInitSubmission(Submission submission)
         {
-            if(InitSubmissions == null)
-                InitSubmissions = new List<Submission>();
+            if (InitSubmissions == null)
+                ResetInitSubmissions();
 
             InitSubmissions.Add(submission);
+        }
+
+        public void ResetInitSubmissions()
+        {
+            InitSubmissions = new List<Submission>();
         }
 
         [JsonIgnore]
@@ -101,9 +106,14 @@ namespace SFA.DAS.AssessorService.ApplyTypes
         public void AddStandardSubmission(Submission submission)
         {
             if (StandardSubmissions == null)
-                StandardSubmissions = new List<Submission>();
+                ResetStandardSubmissions();
 
             StandardSubmissions.Add(submission);
+        }
+
+        public void ResetStandardSubmissions()
+        {
+            StandardSubmissions = new List<Submission>();
         }
 
         [JsonIgnore]
@@ -119,9 +129,14 @@ namespace SFA.DAS.AssessorService.ApplyTypes
         public void AddOrganisationWithdrawalSubmission(Submission submission)
         {
             if (OrganisationWithdrawalSubmissions == null)
-                OrganisationWithdrawalSubmissions = new List<Submission>();
+                ResetOrganisationWithdrawalSubmissions();
 
             OrganisationWithdrawalSubmissions.Add(submission);
+        }
+
+        public void ResetOrganisationWithdrawalSubmissions()
+        {
+            OrganisationWithdrawalSubmissions = new List<Submission>();
         }
 
         [JsonIgnore]
@@ -137,9 +152,14 @@ namespace SFA.DAS.AssessorService.ApplyTypes
         public void AddStandardWithdrawalSubmission(Submission submission)
         {
             if (StandardWithdrawalSubmissions == null)
-                StandardWithdrawalSubmissions = new List<Submission>();
+                ResetStandardWithdrawalSubmissions();
 
             StandardWithdrawalSubmissions.Add(submission);
+        }
+
+        public void ResetStandardWithdrawalSubmissions()
+        {
+            StandardWithdrawalSubmissions = new List<Submission>();
         }
 
         [JsonIgnore]
