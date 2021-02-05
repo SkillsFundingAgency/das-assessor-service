@@ -13,13 +13,14 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace SFA.DAS.AssessorService.Web.UnitTests.ApplyControllerTests.ApplyForWithdrawal
+namespace SFA.DAS.AssessorService.Web.UnitTests.ApplicationServiceTests
 {
     [TestFixture]
     public class When_BuildStandardWithdrawalRequest_is_called
     {
         private ApplicationService _sut;
         private Mock<IQnaApiClient> _mockQnaApiClient;
+        private Mock<IApplicationApiClient> _mockApplicatonApiClient;
         private Mock<ILearnerDetailsApiClient> _mockLearnerDetailsApiClient;
         private Mock<IOrganisationsApiClient> _mockOrganisationsApiClient;
 
@@ -30,6 +31,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ApplyControllerTests.ApplyForWit
         public void Arrange()
         {
             _mockQnaApiClient = new Mock<IQnaApiClient>();
+            _mockApplicatonApiClient = new Mock<IApplicationApiClient>();
             _mockLearnerDetailsApiClient = new Mock<ILearnerDetailsApiClient>();
             _mockOrganisationsApiClient = new Mock<IOrganisationsApiClient>();
 
@@ -49,7 +51,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ApplyControllerTests.ApplyForWit
                 .Setup(r => r.GetEarliestWithdrawalDate(It.IsAny<Guid>(), It.IsAny<int?>()))
                 .ReturnsAsync(_earliestWithdrawalDate);
 
-            _sut = new ApplicationService(_mockQnaApiClient.Object, _mockLearnerDetailsApiClient.Object, _mockOrganisationsApiClient.Object);
+            _sut = new ApplicationService(_mockQnaApiClient.Object, _mockApplicatonApiClient.Object, _mockLearnerDetailsApiClient.Object, _mockOrganisationsApiClient.Object);
         }
         
         [Test]

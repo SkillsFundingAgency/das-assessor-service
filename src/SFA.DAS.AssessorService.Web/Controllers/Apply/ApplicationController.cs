@@ -1,9 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -11,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Apply;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
@@ -21,12 +14,19 @@ using SFA.DAS.AssessorService.ApplyTypes.CharityCommission;
 using SFA.DAS.AssessorService.ApplyTypes.CompaniesHouse;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Settings;
+using SFA.DAS.AssessorService.Web.Extensions;
 using SFA.DAS.AssessorService.Web.Helpers;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.StartupConfiguration;
 using SFA.DAS.AssessorService.Web.ViewModels.Apply;
 using SFA.DAS.QnA.Api.Types;
 using SFA.DAS.QnA.Api.Types.Page;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net.Http;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 {
@@ -221,7 +221,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             var sections = await _qnaApiClient.GetSections(application.ApplicationId, sequence.Id);
             var applyData = application.ApplyData.Sequences.Single(x => x.SequenceNo == sequenceNo);
 
-            var sequenceVm = new SequenceViewModel(sequence, application.Id, BuildPageContext(application, sequence), sections, applyData.Sections, null);
+            var allowCancel = GetAllowCancelApplication(application);
+            var sequenceVm = new SequenceViewModel(sequence, application.Id, BuildPageContext(application, sequence), allowCancel, sections, applyData.Sections, null);
+
             if (application.ApplyData != null && application.ApplyData.Sequences != null)
             {
                 var seq = application.ApplyData.Sequences.SingleOrDefault(x => x.SequenceId == sequence.Id && x.SequenceNo == sequence.SequenceNo);
@@ -258,6 +260,87 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 default:
                     throw new BadRequestException("Section does not have a valid DisplayType");
             }
+        }
+
+        [HttpGet("/Application/{id}/Cancelled")]
+        public IActionResult ApplicationCancelled(Guid id)
+        {
+            var standardWithReference = TempData["StandardWithReference"]?.ToString();
+            if (!string.IsNullOrEmpty(standardWithReference))
+            {
+                return View(new ApplicationCancelledViewModel { Id = id, StandardWithReference = standardWithReference });
+            }
+            
+            return RedirectToAction(nameof(SequenceSignPost), new { Id = id });
+        }
+
+        [HttpGet("/Application/{id}/ConfirmCancel")]
+        [ModelStatePersist(ModelStatePersist.RestoreEntry)]
+        public async Task<IActionResult> ConfirmCancelApplication(Guid id)
+        {
+            var application = await _applicationApiClient.GetApplication(id);
+            if (application != null)
+            {
+                if (GetAllowCancelApplication(application))
+                {
+                    return View(new ConfirmCancelApplicationViewModel 
+                    { 
+                        Id = application.Id, 
+                        StandardWithReference =
+                        application.ApplyData.Apply.StandardWithReference,
+                        BackAction = application.ApplicationStatus == ApplicationStatus.FeedbackAdded
+                         ? nameof(Feedback)
+                         : nameof(SequenceSignPost)
+                    });
+                }
+            }
+
+            return RedirectToAction(nameof(SequenceSignPost), new { Id = id });
+        }
+
+        [HttpPost("/Application/{id}/ConfirmCancel")]
+        [ModelStatePersist(ModelStatePersist.Store)]
+        public async Task<IActionResult> ConfirmCancelApplication(ConfirmCancelApplicationViewModel viewModel)
+        {
+            if (string.IsNullOrEmpty(viewModel.AreYouSure))
+            {
+                ModelState.AddModelError(nameof(viewModel.AreYouSure), "Select if you want to cancel your application to assess this standard");
+            }
+
+            if (ModelState.IsValid)
+            {
+                var application = await _applicationApiClient.GetApplication(viewModel.Id);
+                if (application != null)
+                {
+                    if (viewModel.AreYouSure == "Yes")
+                    {
+                        if (GetAllowCancelApplication(application))
+                        {
+                            if (await _applicationService.ResetApplicationToStage1(application.Id))
+                            {
+                                TempData["StandardWithReference"] = application.ApplyData.Apply.StandardWithReference;
+                                return RedirectToAction(nameof(ApplicationCancelled), new { viewModel.Id });
+                            }
+                        }
+                    }
+                    else if (viewModel.AreYouSure == "No")
+                    {
+                        switch(application.ApplicationStatus)
+                        {
+                            case ApplicationStatus.FeedbackAdded:
+                                return RedirectToAction(nameof(Feedback), 
+                                    new { viewModel.Id });
+                            default:
+                                return RedirectToAction(nameof(SequenceSignPost), 
+                                    new { viewModel.Id });
+                        }
+                    }
+                }
+
+                return RedirectToAction(nameof(SequenceSignPost), new { viewModel.Id });
+            }
+
+            return RedirectToAction(nameof(ConfirmCancelApplication));
         }
 
         [HttpGet("/Application/{Id}/Sequences/{sequenceNo}/Sections/{sectionNo}/Pages/{pageId}"), ModelStatePersist(ModelStatePersist.RestoreEntry)]
@@ -657,7 +740,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             if (errors.Any())
             {
                 var applyData = application.ApplyData.Sequences.Single(x => x.SequenceNo == sequenceNo);
-                var sequenceVm = new SequenceViewModel(sequence, Id, BuildPageContext(application, sequence), sections, applyData.Sections, errors);
+                var allowCancel = GetAllowCancelApplication(application);
+                var sequenceVm = new SequenceViewModel(sequence, Id, BuildPageContext(application, sequence), allowCancel, sections, applyData.Sections, errors);
 
                 if (applyData.Status == ApplicationSequenceStatus.FeedbackAdded)
                 {
@@ -723,7 +807,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             var sections = await _qnaApiClient.GetSections(application.ApplicationId, sequence.Id);
             var applyData = application.ApplyData.Sequences.Single(x => x.SequenceNo == sequence.SequenceNo);
 
-            var sequenceVm = new SequenceViewModel(sequence, application.Id, BuildPageContext(application, sequence), sections, applyData.Sections, null);
+            var allowCancel = GetAllowCancelApplication(application);
+            var sequenceVm = new SequenceViewModel(sequence, application.Id, BuildPageContext(application, sequence), allowCancel, sections, applyData.Sections, null);
 
             return View("~/Views/Application/Feedback.cshtml", sequenceVm);
         }
@@ -839,6 +924,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 pageContext = "Withdrawing from register";
             }
             return pageContext;
+        }
+
+        private bool GetAllowCancelApplication(ApplicationResponse application)
+        {
+            return application.IsCombindedApplication && IsSequenceActive(application.ApplyData, ApplyConst.STANDARD_SEQUENCE_NO);
         }
 
         private static Page StoreEnteredAnswers(List<Answer> answers, Page page)
