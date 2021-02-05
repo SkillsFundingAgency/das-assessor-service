@@ -24,6 +24,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using SFA.DAS.AssessorService.Application.Infrastructure;
 
 namespace SFA.DAS.AssessorService.Web
 {
@@ -113,6 +114,13 @@ namespace SFA.DAS.AssessorService.Web
                     HttpOnly = true
                 };
             });
+            
+            services.AddHttpClient<IRoatpApiClient, RoatpApiClient>("RoatpApiClient", cfg =>
+                {
+                    cfg.BaseAddress = new Uri(Configuration.RoatpApiAuthentication.ApiBaseAddress); //  "https://at-providers-api.apprenticeships.education.gov.uk"
+                    cfg.DefaultRequestHeaders.Add("Accept", "Application/json");
+                })
+                .SetHandlerLifetime(TimeSpan.FromMinutes(5));
 
             services.AddHealthChecks();
             
@@ -165,6 +173,8 @@ namespace SFA.DAS.AssessorService.Web
                 config.For<IApiValidationService>().Use<ApiValidationService>();
 
                 config.For<IDateTimeHelper>().Use<DateTimeHelper>();
+                
+               
                 
                 config.Populate(services);
             });
