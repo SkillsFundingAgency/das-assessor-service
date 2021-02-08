@@ -35,49 +35,65 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
             var validatedCertificatePrintStatus = await Validate(request, validationResult);
             if (validatedCertificatePrintStatus != null)
             {
-                var certificateBatchLog = await _certificateBatchLogRepository.GetCertificateBatchLog(validatedCertificatePrintStatus.CertificateReference, validatedCertificatePrintStatus.BatchNumber);
-                if (certificateBatchLog == null)
-                {
-                    validationResult.Errors.Add(
-                      new ValidationErrorDetail("CertificatePrintStatuses", $"Certificate {validatedCertificatePrintStatus.CertificateReference} not printed in batch {validatedCertificatePrintStatus.BatchNumber}.", ValidationStatusCode.NotFound));
-                }
-                else
-                {
-                    if (validatedCertificatePrintStatus.StatusAt < certificateBatchLog.StatusAt)
-                    {
-                        validationResult.Errors.Add(
-                           new ValidationErrorDetail("StatusChangedDateTime", $"Certificate delivery(StatusChangedAt) datetime {validatedCertificatePrintStatus.StatusAt} earlier than printed(latest date) datetime {certificateBatchLog.LatestChange()}.", ValidationStatusCode.BadRequest));
-                    }
-                }
-
                 var certificate = await _certificateRepository.GetCertificate(validatedCertificatePrintStatus.CertificateReference);
                 if (certificate == null)
                 {
                     validationResult.Errors.Add(
-                        new ValidationErrorDetail("CertificatePrintStatuses", $"The certificate reference {validatedCertificatePrintStatus.CertificateReference} was not found.", ValidationStatusCode.NotFound));
+                        new ValidationErrorDetail(
+                            "CertificatePrintStatuses",
+                            $"The certificate reference {validatedCertificatePrintStatus.CertificateReference} was not found.",
+                            ValidationStatusCode.NotFound));
+
+                    return validationResult;
+                }
+
+                var certificateBatchLog = await _certificateBatchLogRepository.GetCertificateBatchLog(validatedCertificatePrintStatus.CertificateReference, validatedCertificatePrintStatus.BatchNumber);
+                if (certificateBatchLog == null)
+                {
+                    validationResult.Errors.Add(
+                        new ValidationErrorDetail(
+                            "CertificatePrintStatuses",
+                            $"Certificate {validatedCertificatePrintStatus.CertificateReference} not printed in batch {validatedCertificatePrintStatus.BatchNumber}.",
+                            ValidationStatusCode.NotFound));
+
+                    return validationResult;
+                }
+
+                if (validatedCertificatePrintStatus.StatusAt < certificateBatchLog.StatusAt)
+                {
+                    validationResult.Errors.Add(
+                        new ValidationErrorDetail(
+                            "StatusChangedDateTime", 
+                            $"Certificate {validatedCertificatePrintStatus.CertificateReference} {validatedCertificatePrintStatus.Status} at {validatedCertificatePrintStatus.StatusAt} is earlier than {certificateBatchLog.Status} at {certificateBatchLog.StatusAt}.", 
+                            ValidationStatusCode.Warning));
+                }
+
+                // use the actual print notification datetime for certificates which currently have a print notification status
+                var certificatePrintStatusAt = CertificateStatus.HasPrintNotificateStatus(certificate.Status)
+                    ? certificateBatchLog?.StatusAt
+                    : null;
+
+                // the certificate status should not be overwritten when it has been sent to printer or reprinted, has a more recent 
+                // changed datetime than the actual print notification datetime or when it has been deleted
+                var isLatestChange = validatedCertificatePrintStatus.BatchNumber == certificate.BatchNumber &&
+                    validatedCertificatePrintStatus.StatusAt > (certificatePrintStatusAt ?? certificate.LatestChange().Value) &&
+                    certificate.Status != CertificateStatus.Deleted;
+
+                await _certificateRepository.UpdatePrintStatus(
+                    certificate,
+                    validatedCertificatePrintStatus.BatchNumber,
+                    validatedCertificatePrintStatus.Status,
+                    validatedCertificatePrintStatus.StatusAt,
+                    validatedCertificatePrintStatus.ReasonForChange,
+                    isLatestChange);
+
+                if(isLatestChange)
+                {
+                    _logger.LogInformation($"Certificate {validatedCertificatePrintStatus.CertificateReference} updated to status {validatedCertificatePrintStatus.Status} in batch {validatedCertificatePrintStatus.BatchNumber}");
                 }
                 else
                 {
-                    // use the actual print notification datetime for certificates which currently have a print notification status
-                    var certificatePrintStatusAt = CertificateStatus.HasPrintNotificateStatus(certificate.Status)
-                        ? certificateBatchLog?.StatusAt
-                        : null;
-
-                    // the certificate status should not be overwritten when it has been sent to printer or reprinted, has a more recent 
-                    // changed datetime than the actual print notification datetime or when it has been deleted
-                    var isLatestChange = validatedCertificatePrintStatus.BatchNumber == certificate.BatchNumber &&
-                        validatedCertificatePrintStatus.StatusAt > (certificatePrintStatusAt ?? certificate.LatestChange().Value) &&
-                        certificate.Status != CertificateStatus.Deleted;
-
-                    await _certificateRepository.UpdatePrintStatus(
-                        certificate,
-                        validatedCertificatePrintStatus.BatchNumber,
-                        validatedCertificatePrintStatus.Status,
-                        validatedCertificatePrintStatus.StatusAt,
-                        validatedCertificatePrintStatus.ReasonForChange,
-                        isLatestChange);
-
-                    _logger.LogInformation($"Certificate reference {validatedCertificatePrintStatus.CertificateReference} set as {validatedCertificatePrintStatus.Status} in batch {validatedCertificatePrintStatus.BatchNumber}");
+                    _logger.LogInformation($"Certificate {validatedCertificatePrintStatus.CertificateReference} not updated to status {validatedCertificatePrintStatus.Status} in batch {validatedCertificatePrintStatus.BatchNumber} because it was not the latest change");
                 }
             }
 

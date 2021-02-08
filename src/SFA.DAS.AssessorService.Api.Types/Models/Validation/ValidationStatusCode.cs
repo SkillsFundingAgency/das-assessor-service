@@ -9,6 +9,8 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Validation
         [EnumMember(Value = "AlreadyExists")]
         AlreadyExists,
         [EnumMember(Value="NotFound")]
-        NotFound
+        NotFound,
+        [EnumMember(Value = "Warning")]
+        Warning
     }
 }
