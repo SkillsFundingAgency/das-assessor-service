@@ -1,21 +1,15 @@
 ﻿using System;
 using System.Threading;
-using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
-using Newtonsoft.Json;
 using NUnit.Framework;
-using SFA.DAS.Apprenticeships.Api.Types;
-using SFA.DAS.Apprenticeships.Api.Types.Providers;
+using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
-using SFA.DAS.AssessorService.Application.Handlers.Certificates;
 using SFA.DAS.AssessorService.Application.Handlers.Staff;
+using SFA.DAS.AssessorService.Application.Infrastructure;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
-using SFA.DAS.AssessorService.Domain.JsonData;
-using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
-using SFA.DAS.AssessorService.ExternalApis.Services;
 using Organisation = SFA.DAS.AssessorService.Domain.Entities.Organisation;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.StartCertificateHandlerTests
@@ -53,7 +47,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
 
             organisationQueryRepository.Setup(r => r.GetByUkPrn(88888888)).ReturnsAsync(new Organisation() { Id = _organisationId});
 
-            var assessmentOrgsApiClient = new Mock<IAssessmentOrgsApiClient>();
+            var roatpApiClientMock = new Mock<IRoatpApiClient>();
             var standardService = new Mock<IStandardService>();
 
             standardService.Setup(c => c.GetStandard(30))
@@ -65,11 +59,11 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
                         EffectiveFrom = new DateTime(2016,09,01)
                     }
                 });
-            assessmentOrgsApiClient.Setup(c => c.GetProvider(It.IsAny<long>()))
-                .ReturnsAsync(new Provider {ProviderName = "A Provider"});
+            roatpApiClientMock.Setup(c => c.GetOrganisationByUkprn(It.IsAny<long>()))
+                .ReturnsAsync(new OrganisationSearchResult {ProviderName = "A Provider"});
 
             _startCertificateHandler = new StartCertificateHandler(_certificateRepository.Object,
-                ilrRepository.Object, assessmentOrgsApiClient.Object,
+                ilrRepository.Object, roatpApiClientMock.Object,
                 organisationQueryRepository.Object, new Mock<ILogger<StartCertificateHandler>>().Object, standardService.Object);
 
             _returnedCertificate = _startCertificateHandler

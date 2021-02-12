@@ -1,17 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using SFA.DAS.Apprenticeships.Api.Types.Providers;
+using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
+using SFA.DAS.AssessorService.Api.Types.Models.ProviderRegister;
+using SFA.DAS.AssessorService.Application.Infrastructure;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Application.Logging;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
-using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
 using CertificateStatus = SFA.DAS.AssessorService.Domain.Consts.CertificateStatus;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Staff
@@ -20,17 +22,17 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
     {
         private readonly ICertificateRepository _certificateRepository;
         private readonly IIlrRepository _ilrRepository;
-        private readonly IAssessmentOrgsApiClient _assessmentOrgsApiClient;
+        private readonly IRoatpApiClient _roatpApiClient;
         private readonly IOrganisationQueryRepository _organisationQueryRepository;
         private readonly ILogger<StartCertificateHandler> _logger;
         private readonly IStandardService _standardService;
 
-        public StartCertificateHandler(ICertificateRepository certificateRepository, IIlrRepository ilrRepository, IAssessmentOrgsApiClient assessmentOrgsApiClient, 
+        public StartCertificateHandler(ICertificateRepository certificateRepository, IIlrRepository ilrRepository, IRoatpApiClient roatpApiClient, 
             IOrganisationQueryRepository organisationQueryRepository, ILogger<StartCertificateHandler> logger, IStandardService standardService)
         {
             _certificateRepository = certificateRepository;
             _ilrRepository = ilrRepository;
-            _assessmentOrgsApiClient = assessmentOrgsApiClient;
+            _roatpApiClient = roatpApiClient;
             _organisationQueryRepository = organisationQueryRepository;
             _logger = logger;
             _standardService = standardService;
@@ -109,17 +111,18 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
 
         private async Task<Provider> GetProviderFromUkprn(int ukprn)
         {
-            Provider provider = null;
+            Provider provider;
+            OrganisationSearchResult searchResult = null;
             try
             {
-                provider = await _assessmentOrgsApiClient.GetProvider(ukprn);
+                searchResult = await _roatpApiClient.GetOrganisationByUkprn(ukprn);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"Unable to get Provider from AssessmentOrgsApi. Ukprn: {ukprn}");
             }
 
-            if (provider is null)
+            if (searchResult is null)
             {
                 // see if we can get it from Organisation Table
                 var org = await _organisationQueryRepository.GetByUkPrn(ukprn);
@@ -135,19 +138,13 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
                     provider = new Provider { ProviderName = previousProviderName ?? "Unknown", Ukprn = ukprn };
                 }
             }
+            else
+            {
+                provider = new Provider{ProviderName = searchResult.ProviderName, Ukprn =  ukprn};
+            }
 
             return provider;
         }
     }
 
-    public interface ICommitmentsApi
-    {
-        CommitmentEmployerDetails GetCommitmentEmployerDetails(long providerId, long commitmentId);
-    }
-
-    public class CommitmentEmployerDetails
-    {
-        public string LegalEntityName { get; set; }
-        public string LegalEntityAddress { get; set; }
-    }
 }

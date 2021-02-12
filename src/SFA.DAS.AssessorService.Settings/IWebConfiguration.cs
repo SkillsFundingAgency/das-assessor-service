@@ -17,7 +17,6 @@
         
         ClientApiAuthentication RoatpApiAuthentication { get; set; }
 
-        ProviderRegisterApiAuthentication ProviderRegisterApiAuthentication { get; set; }
         ReferenceDataApiAuthentication ReferenceDataApiAuthentication { get; set; }
 
         CompaniesHouseApiAuthentication CompaniesHouseApiAuthentication { get; set; }
@@ -35,5 +34,7 @@
         string ZenDeskSnippetKey { get; set; }
         string ZenDeskSectionId { get; set; }
         string ZenDeskCobrowsingSnippetKey { get; set; }
+        
+        OuterApiConfiguration OuterApi { get; set; }
     }
 }

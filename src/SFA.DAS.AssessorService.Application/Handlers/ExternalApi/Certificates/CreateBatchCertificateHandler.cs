@@ -1,7 +1,6 @@
 ﻿using MediatR;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using SFA.DAS.Apprenticeships.Api.Types.Providers;
 using SFA.DAS.AssessorService.Api.Types.Models.ExternalApi.Certificates;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Handlers.ExternalApi._HelperClasses;
@@ -10,12 +9,14 @@ using SFA.DAS.AssessorService.Application.Logging;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
-using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Api.Types.Models.ProviderRegister;
+using SFA.DAS.AssessorService.Application.Infrastructure;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
 {
@@ -23,22 +24,22 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
     {
         private readonly ICertificateRepository _certificateRepository;
         private readonly IIlrRepository _ilrRepository;
-        private readonly IAssessmentOrgsApiClient _assessmentOrgsApiClient;
         private readonly IOrganisationQueryRepository _organisationQueryRepository;
         private readonly IContactQueryRepository _contactQueryRepository;
         private readonly ILogger<CreateBatchCertificateHandler> _logger;
         private readonly IStandardService _standardService;
+        private readonly IRoatpApiClient _roatpApiClient;
 
-        public CreateBatchCertificateHandler(ICertificateRepository certificateRepository, IIlrRepository ilrRepository, IAssessmentOrgsApiClient assessmentOrgsApiClient,
-            IOrganisationQueryRepository organisationQueryRepository, IContactQueryRepository contactQueryRepository, ILogger<CreateBatchCertificateHandler> logger, IStandardService standardService)
+        public CreateBatchCertificateHandler(ICertificateRepository certificateRepository, IIlrRepository ilrRepository, 
+            IOrganisationQueryRepository organisationQueryRepository, IContactQueryRepository contactQueryRepository, ILogger<CreateBatchCertificateHandler> logger, IStandardService standardService, IRoatpApiClient roatpApiClient)
         {
             _certificateRepository = certificateRepository;
             _ilrRepository = ilrRepository;
-            _assessmentOrgsApiClient = assessmentOrgsApiClient;
             _organisationQueryRepository = organisationQueryRepository;
             _contactQueryRepository = contactQueryRepository;
             _logger = logger;
             _standardService = standardService;
+            _roatpApiClient = roatpApiClient;
         }
 
         public async Task<Certificate> Handle(CreateBatchCertificateRequest request, CancellationToken cancellationToken)
@@ -105,17 +106,18 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
 
         private async Task<Provider> GetProviderFromUkprn(int ukprn)
         {
-            Provider provider = null;
+            Provider provider;
+            OrganisationSearchResult searchResult = null;
             try
             {
-                provider = await _assessmentOrgsApiClient.GetProvider(ukprn);
+                searchResult = await _roatpApiClient.GetOrganisationByUkprn(ukprn);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"Unable to get Provider from AssessmentOrgsApi. Ukprn: {ukprn}");
             }
 
-            if (provider is null)
+            if (searchResult is null)
             {
                 // see if we can get it from Organisation Table
                 var org = await _organisationQueryRepository.GetByUkPrn(ukprn);
@@ -130,6 +132,10 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
                     var previousProviderName = await _certificateRepository.GetPreviousProviderName(ukprn);
                     provider = new Provider { ProviderName = previousProviderName ?? "Unknown", Ukprn = ukprn };
                 }
+            }
+            else
+            {
+                provider = new Provider{ProviderName = searchResult.ProviderName, Ukprn =  ukprn};
             }
 
             return provider;

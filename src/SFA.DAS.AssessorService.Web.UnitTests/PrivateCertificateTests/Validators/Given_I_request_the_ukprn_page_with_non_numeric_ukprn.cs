@@ -5,7 +5,7 @@ using FluentValidation.Results;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Application.Api.Consts;
-using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
+using SFA.DAS.AssessorService.Application.Infrastructure;
 using SFA.DAS.AssessorService.Web.Controllers.Private;
 using SFA.DAS.AssessorService.Web.UnitTests.Helpers;
 using SFA.DAS.AssessorService.Web.Validators;
@@ -27,7 +27,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.PrivateCertificateTests.Validato
                     MockSession.Object
                     );
 
-            var assessmentOrgsApiClientMock = new Mock<IAssessmentOrgsApiClient>();
+            var roatpApiClient = new Mock<IRoatpApiClient>();
 
             SetupSession();
 
@@ -40,7 +40,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.PrivateCertificateTests.Validato
 
             var certificateUkprnViewModelValidator
                 = new CertificateUkprnViewModelValidator(localiser.Object,
-                    assessmentOrgsApiClientMock.Object);
+                    roatpApiClient.Object);
 
             var vm = new CertificateUkprnViewModel
             {

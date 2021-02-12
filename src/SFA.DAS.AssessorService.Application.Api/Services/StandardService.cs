@@ -1,9 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
-using SFA.DAS.Apprenticeships.Api.Types;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
-using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
 using SFA.DAS.AssessorService.ExternalApis.IFAStandards;
 using SFA.DAS.AssessorService.ExternalApis.IFAStandards.Types;
 using SFA.DAS.AssessorService.ExternalApis.Services;
@@ -11,21 +9,22 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using SFA.DAS.AssessorService.Application.Infrastructure.OuterApi;
 
 namespace SFA.DAS.AssessorService.Application.Api.Services
 {
     public class StandardService : IStandardService
     {
         private readonly CacheService _cacheService;
-        private readonly IAssessmentOrgsApiClient _assessmentOrgsApiClient;
+        private readonly IOuterApiClient _outerApiClient;
         private readonly IIfaStandardsApiClient _ifaStandardsApiClient;
         private readonly ILogger<StandardService> _logger;
         private readonly IStandardRepository _standardRepository;
 
-        public StandardService(CacheService cacheService, IAssessmentOrgsApiClient assessmentOrgsApiClient, IIfaStandardsApiClient ifaStandardsApiClient, ILogger<StandardService> logger, IStandardRepository standardRepository)
+        public StandardService(CacheService cacheService, IOuterApiClient outerApiClient, IIfaStandardsApiClient ifaStandardsApiClient, ILogger<StandardService> logger, IStandardRepository standardRepository)
         {
             _cacheService = cacheService;
-            _assessmentOrgsApiClient = assessmentOrgsApiClient;
+            _outerApiClient = outerApiClient;
             _ifaStandardsApiClient = ifaStandardsApiClient;
             _logger = logger;
             _standardRepository = standardRepository;
@@ -93,13 +92,12 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
 
         public async Task<IEnumerable<StandardCollation>> GatherAllApprovedStandardDetails(List<IfaStandard> approvedIfaStandards)
         {
-            _logger.LogInformation("STANDARD COLLATION: Starting gathering of all WIN Standard details");
+            _logger.LogInformation("STANDARD COLLATION: Starting gathering of all Standard details");
             
-            // get all the standards from the apprenticeship programs api - formally known as WIN aka provider api 
-            var winResults = await _assessmentOrgsApiClient.GetAllStandardsV2();
+            var standards = await _outerApiClient.Get<GetStandardsListResponse>(new GetStandardsRequest());
 
-            _logger.LogInformation("STANDARD COLLATION: Start collating approved IFA and WIN standards");
-            var collation = CollateWinAndIfaStandardDetails(winResults, approvedIfaStandards);
+            _logger.LogInformation("STANDARD COLLATION: Start collating approved IFA and standards");
+            var collation = CollateWinAndIfaStandardDetails(standards.Standards.ToList(), approvedIfaStandards);
 
             _logger.LogInformation($"STANDARD COLLATION: Add unmatched approved IFA Standards to collation");
             AddIfaOnlyStandardsToCollatedStandards(approvedIfaStandards, collation);
@@ -111,7 +109,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
 
         public IEnumerable<StandardNonApprovedCollation> GatherAllNonApprovedStandardDetails(List<IfaStandard> nonApprovedIfaStandards)
         {
-            _logger.LogInformation("STANDARD COLLATION: Start collating non-approved IFA and WIN standards");
+            _logger.LogInformation("STANDARD COLLATION: Start collating non-approved IFA and standards");
             var collation = CollateNonApprovedIfaStandardDetails(nonApprovedIfaStandards);
 
             _logger.LogInformation($"STANDARD COLLATION: Non-Approved collation finished");
@@ -140,19 +138,17 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
             }
         }
 
-        private List<StandardCollation> CollateWinAndIfaStandardDetails(List<StandardSummary> winResults, List<IfaStandard> ifaResults)
+        private List<StandardCollation> CollateWinAndIfaStandardDetails(List<GetStandardsListItem> standards, List<IfaStandard> ifaResults)
         {
             var collation = new List<StandardCollation>();
-            foreach (var winStandard in winResults)
+            foreach (var standardsListItem in standards)
             {
-                if (!int.TryParse(winStandard.Id, out var standardId)) continue;
-
                 var ifaStandardToMatch = ifaResults?
-                    .Where(x => x.LarsCode.ToString() == winStandard.Id)
+                    .Where(x => x.LarsCode == standardsListItem.Id)
                     .OrderByDescending(x => x.Version ?? 1)
                     .FirstOrDefault();
 
-                var standard = MapDataToStandardCollation(standardId, ifaStandardToMatch, winStandard);
+                var standard = MapDataToStandardCollation(standardsListItem.Id, ifaStandardToMatch, standardsListItem);
                 collation.Add(standard);
             }
 
@@ -171,13 +167,13 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
             return collation;
         }
 
-        private StandardCollation MapDataToStandardCollation(int standardId, IfaStandard ifaStandard, StandardSummary winStandard)
+        private StandardCollation MapDataToStandardCollation(int standardId, IfaStandard ifaStandard, GetStandardsListItem standard)
         {
             return new StandardCollation
             {
                 StandardId = standardId,
                 ReferenceNumber = ifaStandard?.ReferenceNumber,
-                Title = ifaStandard?.Title ?? winStandard?.Title,
+                Title = ifaStandard?.Title ?? standard?.Title,
                 Options = ifaStandard?.GetOptionTitles() ?? new List<string>(),
                 StandardData = new StandardData
                 {
@@ -189,21 +185,21 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
                     EqaProviderContactEmail = ifaStandard?.EqaProvider?.ContactEmail,
                     EqaProviderWebLink = ifaStandard?.EqaProvider?.WebLink,
                     IntegratedDegree = ifaStandard?.IntegratedDegree,
-                    EffectiveFrom = winStandard?.EffectiveFrom,
-                    EffectiveTo = winStandard?.EffectiveTo,
-                    Level = winStandard?.Level ?? ifaStandard?.Level,
-                    LastDateForNewStarts = winStandard?.LastDateForNewStarts,
-                    IfaOnly = winStandard == null,
-                    Duration = winStandard?.Duration ?? ifaStandard?.TypicalDuration,
-                    MaxFunding = winStandard?.CurrentFundingCap ?? ifaStandard?.MaxFunding,
+                    EffectiveFrom = standard?.StandardDates.EffectiveFrom,
+                    EffectiveTo = standard?.StandardDates.EffectiveTo,
+                    Level = standard?.Level ?? ifaStandard?.Level,
+                    LastDateForNewStarts = standard?.StandardDates.LastDateStarts,
+                    IfaOnly = standard == null,
+                    Duration = standard?.Duration ?? ifaStandard?.TypicalDuration,
+                    MaxFunding = standard?.MaxFunding ?? ifaStandard?.MaxFunding,
                     Trailblazer = ifaStandard?.TbMainContact,
                     PublishedDate = ifaStandard?.ApprovedForDelivery,
-                    IsPublished = winStandard?.IsPublished ?? ifaStandard?.IsPublished,
+                    IsPublished = standard!=null ? true : ifaStandard?.IsPublished,
                     Ssa1 = ifaStandard?.Ssa1,
                     Ssa2 = ifaStandard?.Ssa2,
                     OverviewOfRole = ifaStandard?.OverviewOfRole,
-                    IsActiveStandardInWin = winStandard?.IsActiveStandard,
-                    FatUri = winStandard?.Uri,
+                    IsActiveStandardInWin = standard?.IsActiveStandard,
+                    FatUri = "",
                     IfaUri = ifaStandard?.Url,
                     AssessmentPlanUrl = ifaStandard?.AssessmentPlanUrl,
                     StandardPageUrl = ifaStandard?.StandardPageUrl
