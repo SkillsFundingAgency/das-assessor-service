@@ -18,14 +18,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             _logger = logger;
         }
 
-        public async Task<List<ApplicationResponse>> GetCombinedApplications(Guid userId)
-        {
-            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/applications/{userId}/combined-applications"))
-            {
-                return await RequestAndDeserialiseAsync<List<ApplicationResponse>>(request, $"Could not retrieve combined applications");
-            }
-        }
-
         public async Task<List<ApplicationResponse>> GetOrganisationApplications(Guid userId)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/applications/{userId}/organisation-applications"))

@@ -71,7 +71,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
 
         private void RemoveSequencesAndSections(List<ApplySequence> sequences, Domain.Entities.Organisation org, OrganisationType orgType, string applicationType)
         {
-            if (applicationType == ApplicationTypes.Combined)
+            if (applicationType == ApplicationTypes.Initial)
             {
                 RemoveSections(sequences, ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO, ApplyConst.ORGANISATION_WITHDRAWAL_DETAILS_SECTION_NO);
                 RemoveSections(sequences, ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO, ApplyConst.STANDARD_WITHDRAWAL_DETAILS_SECTION_NO);
