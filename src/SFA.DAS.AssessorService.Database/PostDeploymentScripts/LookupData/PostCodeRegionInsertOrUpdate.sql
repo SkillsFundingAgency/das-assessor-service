@@ -141,7 +141,7 @@ INSERT #PostCodeRegion VALUES (N'ZE', N'Scotland', 0)
 INSERT #PostCodeRegion VALUES (N'ZZ', N'distance or e-learning', 0)
 
 MERGE [PostCodeRegion] [Target] USING #PostCodeRegion [Source]
-ON ([Source].[PostCodePrefix] = [Target].[PostCodePrefix])
+ON ([Source].[PostCodePrefix] = [Target].[PostCodePrefix] COLLATE SQL_Latin1_General_CP1_CI_AS)
 WHEN MATCHED
     THEN UPDATE SET 
         [Target].[Region] = [Source].[Region],
