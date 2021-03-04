@@ -3,152 +3,148 @@
 
 	NOTES:
 
-	1) This script uses a temporary table, insert or update the values in the temporary table to apply changes; removed values will
-	not take affect (by design); values which are removed should also be written into the PostCodeRegionDelete.sql script to remove
+	1), This script uses a temporary table, insert or update the values in the temporary table to apply changes; removed values will
+	not take affect (by design),; values which are removed should also be written into the PostCodeRegionDelete.sql script to remove
 	manually any dependencies, but they must also be removed from the temporary table.
 */
 BEGIN TRANSACTION
 
-CREATE TABLE #PostCodeRegion(
-	[PostCodePrefix] [nvarchar](2) NOT NULL,
-	[Region] [nvarchar](50) NOT NULL,
-	[DeliveryAreaId] [int] NULL
+MERGE [PostCodeRegion] AS [Target] 
+USING (VALUES
+	(N'AB', N'Scotland111', 0),
+	(N'AL', N'East of England', 2),
+	(N'B', N'West Midlands', 8),
+	(N'BA', N'South West England', 7),
+	(N'BB', N'North West England', 5),
+	(N'BD', N'Yorkshire and the Humber', 9),
+	(N'BH', N'South West England', 7),
+	(N'BL', N'North West England', 5),
+	(N'BN', N'South East England', 6),
+	(N'BR', N'London', 3),
+	(N'BS', N'South West England', 7),
+	(N'BT', N'Northern Ireland', 0),
+	(N'CA', N'North West England', 5),
+	(N'CB', N'East of England', 2),
+	(N'CF', N'Wales', 0),
+	(N'CH', N'North West England', 5),
+	(N'CM', N'East of England', 2),
+	(N'CO', N'East of England', 2),
+	(N'CR', N'London', 3),
+	(N'CT', N'South East England', 6),
+	(N'CV', N'West Midlands', 8),
+	(N'CW', N'North West England', 5),
+	(N'DA', N'South East England', 6),
+	(N'DD', N'Scotland', 0),
+	(N'DE', N'East Midlands', 1),
+	(N'DG', N'Scotland', 0),
+	(N'DH', N'North East England', 4),
+	(N'DL', N'North East England', 4),
+	(N'DN', N'Yorkshire and the Humber', 9),
+	(N'DT', N'South West England', 7),
+	(N'DY', N'West Midlands', 8),
+	(N'E', N'London', 3),
+	(N'EC', N'London', 3),
+	(N'EH', N'Scotland', 0),
+	(N'EN', N'London', 3),
+	(N'EX', N'South West England', 7),
+	(N'FK', N'Scotland', 0),
+	(N'FY', N'North West England', 5),
+	(N'G', N'Scotland', 0),
+	(N'GL', N'South West England', 7),
+	(N'GU', N'South East England', 6),
+	(N'GY', N'Channel Islands', 0),
+	(N'HA', N'London', 3),
+	(N'HD', N'Yorkshire and the Humber', 9),
+	(N'HG', N'Yorkshire and the Humber', 9),
+	(N'HP', N'South East England', 6),
+	(N'HR', N'West Midlands', 8),
+	(N'HS', N'Scotland', 0),
+	(N'HU', N'Yorkshire and the Humber', 9),
+	(N'HX', N'Yorkshire and the Humber', 9),
+	(N'IG', N'London', 3),
+	(N'IP', N'East of England', 2),
+	(N'IV', N'Scotland', 0),
+	(N'JE', N'Channel Islands', 0),
+	(N'KA', N'Scotland', 0),
+	(N'KT', N'South East England', 6),
+	(N'KW', N'Scotland', 0),
+	(N'KY', N'Scotland', 0),
+	(N'L', N'North West England', 5),
+	(N'LA', N'North West England', 5),
+	(N'LD', N'Wales', 0),
+	(N'LE', N'East Midlands', 1),
+	(N'LL', N'Wales', 0),
+	(N'LN', N'East Midlands', 1),
+	(N'LS', N'Yorkshire and the Humber', 9),
+	(N'LU', N'East of England', 2),
+	(N'M', N'North West England', 5),
+	(N'ME', N'South East England', 6),
+	(N'MK', N'South East England', 6),
+	(N'ML', N'Scotland', 0),
+	(N'N', N'London', 3),
+	(N'NE', N'North East England', 4),
+	(N'NG', N'East Midlands', 1),
+	(N'NN', N'East Midlands', 1),
+	(N'NP', N'Wales', 0),
+	(N'NR', N'East of England', 2),
+	(N'NW', N'London', 3),
+	(N'OL', N'North West England', 5),
+	(N'OX', N'South East England', 6),
+	(N'PA', N'Scotland', 0),
+	(N'PE', N'East of England', 2),
+	(N'PH', N'Scotland', 0),
+	(N'PL', N'South West England', 7),
+	(N'PO', N'South East England', 6),
+	(N'PR', N'North West England', 5),
+	(N'RG', N'South East England', 6),
+	(N'RH', N'South East England', 6),
+	(N'RM', N'London', 3),
+	(N'S', N'Yorkshire and the Humber', 9),
+	(N'SA', N'Wales', 0),
+	(N'SE', N'London', 3),
+	(N'SG', N'East of England', 2),
+	(N'SK', N'North West England', 5),
+	(N'SL', N'South East England', 6),
+	(N'SM', N'London', 3),
+	(N'SN', N'South West England', 7),
+	(N'SO', N'South East England', 6),
+	(N'SP', N'South West England', 7),
+	(N'SR', N'North East England', 4),
+	(N'SS', N'East of England', 2),
+	(N'ST', N'West Midlands', 8),
+	(N'SW', N'London', 3),
+	(N'SY', N'West Midlands', 8),
+	(N'TA', N'South West England', 7),
+	(N'TD', N'Scotland', 0),
+	(N'TF', N'West Midlands', 8),
+	(N'TN', N'South East England', 6),
+	(N'TQ', N'South West England', 7),
+	(N'TR', N'South West England', 7),
+	(N'TS', N'North East England', 4),
+	(N'TW', N'London', 3),
+	(N'UB', N'London', 3),
+	(N'W', N'London', 3),
+	(N'WA', N'North West England', 5),
+	(N'WC', N'London', 3),
+	(N'WD', N'East of England', 2),
+	(N'WF', N'Yorkshire and the Humber', 9),
+	(N'WN', N'North West England', 5),
+	(N'WR', N'West Midlands', 8),
+	(N'WS', N'West Midlands', 8),
+	(N'WV', N'West Midlands', 8),
+	(N'YO', N'Yorkshire and the Humber', 9),
+	(N'ZE', N'Scotland', 0),
+	(N'ZZ', N'distance or e-learning', 0)
 ) 
-
-INSERT #PostCodeRegion VALUES (N'AB', N'Scotland', 0)
-INSERT #PostCodeRegion VALUES (N'AL', N'East of England', 2)
-INSERT #PostCodeRegion VALUES (N'B', N'West Midlands', 8)
-INSERT #PostCodeRegion VALUES (N'BA', N'South West England', 7)
-INSERT #PostCodeRegion VALUES (N'BB', N'North West England', 5)
-INSERT #PostCodeRegion VALUES (N'BD', N'Yorkshire and the Humber', 9)
-INSERT #PostCodeRegion VALUES (N'BH', N'South West England', 7)
-INSERT #PostCodeRegion VALUES (N'BL', N'North West England', 5)
-INSERT #PostCodeRegion VALUES (N'BN', N'South East England', 6)
-INSERT #PostCodeRegion VALUES (N'BR', N'London', 3)
-INSERT #PostCodeRegion VALUES (N'BS', N'South West England', 7)
-INSERT #PostCodeRegion VALUES (N'BT', N'Northern Ireland', 0)
-INSERT #PostCodeRegion VALUES (N'CA', N'North West England', 5)
-INSERT #PostCodeRegion VALUES (N'CB', N'East of England', 2)
-INSERT #PostCodeRegion VALUES (N'CF', N'Wales', 0)
-INSERT #PostCodeRegion VALUES (N'CH', N'North West England', 5)
-INSERT #PostCodeRegion VALUES (N'CM', N'East of England', 2)
-INSERT #PostCodeRegion VALUES (N'CO', N'East of England', 2)
-INSERT #PostCodeRegion VALUES (N'CR', N'London', 3)
-INSERT #PostCodeRegion VALUES (N'CT', N'South East England', 6)
-INSERT #PostCodeRegion VALUES (N'CV', N'West Midlands', 8)
-INSERT #PostCodeRegion VALUES (N'CW', N'North West England', 5)
-INSERT #PostCodeRegion VALUES (N'DA', N'South East England', 6)
-INSERT #PostCodeRegion VALUES (N'DD', N'Scotland', 0)
-INSERT #PostCodeRegion VALUES (N'DE', N'East Midlands', 1)
-INSERT #PostCodeRegion VALUES (N'DG', N'Scotland', 0)
-INSERT #PostCodeRegion VALUES (N'DH', N'North East England', 4)
-INSERT #PostCodeRegion VALUES (N'DL', N'North East England', 4)
-INSERT #PostCodeRegion VALUES (N'DN', N'Yorkshire and the Humber', 9)
-INSERT #PostCodeRegion VALUES (N'DT', N'South West England', 7)
-INSERT #PostCodeRegion VALUES (N'DY', N'West Midlands', 8)
-INSERT #PostCodeRegion VALUES (N'E', N'London', 3)
-INSERT #PostCodeRegion VALUES (N'EC', N'London', 3)
-INSERT #PostCodeRegion VALUES (N'EH', N'Scotland', 0)
-INSERT #PostCodeRegion VALUES (N'EN', N'London', 3)
-INSERT #PostCodeRegion VALUES (N'EX', N'South West England', 7)
-INSERT #PostCodeRegion VALUES (N'FK', N'Scotland', 0)
-INSERT #PostCodeRegion VALUES (N'FY', N'North West England', 5)
-INSERT #PostCodeRegion VALUES (N'G', N'Scotland', 0)
-INSERT #PostCodeRegion VALUES (N'GL', N'South West England', 7)
-INSERT #PostCodeRegion VALUES (N'GU', N'South East England', 6)
-INSERT #PostCodeRegion VALUES (N'GY', N'Channel Islands', 0)
-INSERT #PostCodeRegion VALUES (N'HA', N'London', 3)
-INSERT #PostCodeRegion VALUES (N'HD', N'Yorkshire and the Humber', 9)
-INSERT #PostCodeRegion VALUES (N'HG', N'Yorkshire and the Humber', 9)
-INSERT #PostCodeRegion VALUES (N'HP', N'South East England', 6)
-INSERT #PostCodeRegion VALUES (N'HR', N'West Midlands', 8)
-INSERT #PostCodeRegion VALUES (N'HS', N'Scotland', 0)
-INSERT #PostCodeRegion VALUES (N'HU', N'Yorkshire and the Humber', 9)
-INSERT #PostCodeRegion VALUES (N'HX', N'Yorkshire and the Humber', 9)
-INSERT #PostCodeRegion VALUES (N'IG', N'London', 3)
-INSERT #PostCodeRegion VALUES (N'IP', N'East of England', 2)
-INSERT #PostCodeRegion VALUES (N'IV', N'Scotland', 0)
-INSERT #PostCodeRegion VALUES (N'JE', N'Channel Islands', 0)
-INSERT #PostCodeRegion VALUES (N'KA', N'Scotland', 0)
-INSERT #PostCodeRegion VALUES (N'KT', N'South East England', 6)
-INSERT #PostCodeRegion VALUES (N'KW', N'Scotland', 0)
-INSERT #PostCodeRegion VALUES (N'KY', N'Scotland', 0)
-INSERT #PostCodeRegion VALUES (N'L', N'North West England', 5)
-INSERT #PostCodeRegion VALUES (N'LA', N'North West England', 5)
-INSERT #PostCodeRegion VALUES (N'LD', N'Wales', 0)
-INSERT #PostCodeRegion VALUES (N'LE', N'East Midlands', 1)
-INSERT #PostCodeRegion VALUES (N'LL', N'Wales', 0)
-INSERT #PostCodeRegion VALUES (N'LN', N'East Midlands', 1)
-INSERT #PostCodeRegion VALUES (N'LS', N'Yorkshire and the Humber', 9)
-INSERT #PostCodeRegion VALUES (N'LU', N'East of England', 2)
-INSERT #PostCodeRegion VALUES (N'M', N'North West England', 5)
-INSERT #PostCodeRegion VALUES (N'ME', N'South East England', 6)
-INSERT #PostCodeRegion VALUES (N'MK', N'South East England', 6)
-INSERT #PostCodeRegion VALUES (N'ML', N'Scotland', 0)
-INSERT #PostCodeRegion VALUES (N'N', N'London', 3)
-INSERT #PostCodeRegion VALUES (N'NE', N'North East England', 4)
-INSERT #PostCodeRegion VALUES (N'NG', N'East Midlands', 1)
-INSERT #PostCodeRegion VALUES (N'NN', N'East Midlands', 1)
-INSERT #PostCodeRegion VALUES (N'NP', N'Wales', 0)
-INSERT #PostCodeRegion VALUES (N'NR', N'East of England', 2)
-INSERT #PostCodeRegion VALUES (N'NW', N'London', 3)
-INSERT #PostCodeRegion VALUES (N'OL', N'North West England', 5)
-INSERT #PostCodeRegion VALUES (N'OX', N'South East England', 6)
-INSERT #PostCodeRegion VALUES (N'PA', N'Scotland', 0)
-INSERT #PostCodeRegion VALUES (N'PE', N'East of England', 2)
-INSERT #PostCodeRegion VALUES (N'PH', N'Scotland', 0)
-INSERT #PostCodeRegion VALUES (N'PL', N'South West England', 7)
-INSERT #PostCodeRegion VALUES (N'PO', N'South East England', 6)
-INSERT #PostCodeRegion VALUES (N'PR', N'North West England', 5)
-INSERT #PostCodeRegion VALUES (N'RG', N'South East England', 6)
-INSERT #PostCodeRegion VALUES (N'RH', N'South East England', 6)
-INSERT #PostCodeRegion VALUES (N'RM', N'London', 3)
-INSERT #PostCodeRegion VALUES (N'S', N'Yorkshire and the Humber', 9)
-INSERT #PostCodeRegion VALUES (N'SA', N'Wales', 0)
-INSERT #PostCodeRegion VALUES (N'SE', N'London', 3)
-INSERT #PostCodeRegion VALUES (N'SG', N'East of England', 2)
-INSERT #PostCodeRegion VALUES (N'SK', N'North West England', 5)
-INSERT #PostCodeRegion VALUES (N'SL', N'South East England', 6)
-INSERT #PostCodeRegion VALUES (N'SM', N'London', 3)
-INSERT #PostCodeRegion VALUES (N'SN', N'South West England', 7)
-INSERT #PostCodeRegion VALUES (N'SO', N'South East England', 6)
-INSERT #PostCodeRegion VALUES (N'SP', N'South West England', 7)
-INSERT #PostCodeRegion VALUES (N'SR', N'North East England', 4)
-INSERT #PostCodeRegion VALUES (N'SS', N'East of England', 2)
-INSERT #PostCodeRegion VALUES (N'ST', N'West Midlands', 8)
-INSERT #PostCodeRegion VALUES (N'SW', N'London', 3)
-INSERT #PostCodeRegion VALUES (N'SY', N'West Midlands', 8)
-INSERT #PostCodeRegion VALUES (N'TA', N'South West England', 7)
-INSERT #PostCodeRegion VALUES (N'TD', N'Scotland', 0)
-INSERT #PostCodeRegion VALUES (N'TF', N'West Midlands', 8)
-INSERT #PostCodeRegion VALUES (N'TN', N'South East England', 6)
-INSERT #PostCodeRegion VALUES (N'TQ', N'South West England', 7)
-INSERT #PostCodeRegion VALUES (N'TR', N'South West England', 7)
-INSERT #PostCodeRegion VALUES (N'TS', N'North East England', 4)
-INSERT #PostCodeRegion VALUES (N'TW', N'London', 3)
-INSERT #PostCodeRegion VALUES (N'UB', N'London', 3)
-INSERT #PostCodeRegion VALUES (N'W', N'London', 3)
-INSERT #PostCodeRegion VALUES (N'WA', N'North West England', 5)
-INSERT #PostCodeRegion VALUES (N'WC', N'London', 3)
-INSERT #PostCodeRegion VALUES (N'WD', N'East of England', 2)
-INSERT #PostCodeRegion VALUES (N'WF', N'Yorkshire and the Humber', 9)
-INSERT #PostCodeRegion VALUES (N'WN', N'North West England', 5)
-INSERT #PostCodeRegion VALUES (N'WR', N'West Midlands', 8)
-INSERT #PostCodeRegion VALUES (N'WS', N'West Midlands', 8)
-INSERT #PostCodeRegion VALUES (N'WV', N'West Midlands', 8)
-INSERT #PostCodeRegion VALUES (N'YO', N'Yorkshire and the Humber', 9)
-INSERT #PostCodeRegion VALUES (N'ZE', N'Scotland', 0)
-INSERT #PostCodeRegion VALUES (N'ZZ', N'distance or e-learning', 0)
-
-MERGE [PostCodeRegion] [Target] USING #PostCodeRegion [Source]
-ON ([Source].[PostCodePrefix] = [Target].[PostCodePrefix])
+AS [Source] ([PostCodePrefix], [Region], [DeliveryAreaId])
+ON ([Source].[PostCodePrefix] = [Target].[PostCodePrefix] )
 WHEN MATCHED
-    THEN UPDATE SET 
-        [Target].[Region] = [Source].[Region],
-        [Target].[DeliveryAreaId] = [Source].[DeliveryAreaId]
+	THEN UPDATE SET 
+		[Target].[Region] = [Source].[Region],
+		[Target].[DeliveryAreaId] = [Source].[DeliveryAreaId]
 
 WHEN NOT MATCHED BY TARGET 
-    THEN INSERT ([PostCodePrefix], [Region], [DeliveryAreaId] )
-         VALUES ([Source].[PostCodePrefix], [Source].[Region], [Source].[DeliveryAreaId]);
+	THEN INSERT ([PostCodePrefix], [Region], [DeliveryAreaId] )
+		VALUES ([Source].[PostCodePrefix], [Source].[Region], [Source].[DeliveryAreaId]);
 
 COMMIT TRANSACTION
