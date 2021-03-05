@@ -1,4 +1,5 @@
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
+using SFA.DAS.AssessorService.Application.Infrastructure.OuterApi;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.ExternalApis.IFAStandards.Types;
 using System.Collections.Generic;
@@ -18,5 +19,6 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         IEnumerable<StandardNonApprovedCollation> GatherAllNonApprovedStandardDetails(List<IfaStandard> nonApprovedIfaStandards);
 
         Task<IEnumerable<EPORegisteredStandards>> GetEpaoRegisteredStandards(string endPointAssessorOrganisationId);
+        Task UpsertStandards(IEnumerable<GetStandardsListItem> standards);
     }
 }

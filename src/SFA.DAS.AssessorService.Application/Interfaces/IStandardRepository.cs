@@ -26,7 +26,10 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         int pageSize, int pageIndex);
         Task<EpaoPipelineStandardsResult> GetEpaoPipelineStandards(string endPointAssessorOrganisationId,
         string orderBy, string orderDirection, int pageSize, int? pageIndex);
-        Task<List<EpaoPipelineStandardExtract>> GetEpaoPipelineStandardsExtract(string endPointAssessorOrganisationId);        
+        Task<List<EpaoPipelineStandardExtract>> GetEpaoPipelineStandardsExtract(string endPointAssessorOrganisationId);
+        Task Insert(Standard standard);
+        Task Update(Standard standard);
+        Task DeleteAll();
     }
 
     public class EpoRegisteredStandardsResult

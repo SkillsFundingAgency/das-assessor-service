@@ -30,6 +30,32 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
             _standardRepository = standardRepository;
         }
 
+        public async Task UpsertStandards(IEnumerable<GetStandardsListItem> standards)
+        {
+            Func<GetStandardsListItem, Standard> MapGetStandardsListItemToStandard = source => new Standard 
+            {
+                StandardUId = source.StandardUId,
+                IfateReferenceNumber = source.IfateReferenceNumber,
+                LarsCode = source.LarsCode,
+                Title = source.Title,
+                Version = source.Version,
+                Level = source.Level,
+                Status = source.Status,
+                TypicalDuration = source.TypicalDuration,
+                MaxFunding = source.MaxFunding,
+                IsActive = source.IsActive,
+                LastDateStarts = source.StandardDates?.LastDateStarts,
+                EffectiveFrom = source.StandardDates?.EffectiveFrom,
+                EffectiveTo = source.StandardDates?.EffectiveTo
+            };
+
+            await _standardRepository.DeleteAll();
+
+            var tasks = standards.Select(MapGetStandardsListItemToStandard).Select(_standardRepository.Insert);
+
+            await Task.WhenAll(tasks);
+        }
+
         public async Task<IEnumerable<StandardCollation>> GetAllStandards()
         {
             var results = await _cacheService.RetrieveFromCache<IEnumerable<StandardCollation>>("StandardCollations");

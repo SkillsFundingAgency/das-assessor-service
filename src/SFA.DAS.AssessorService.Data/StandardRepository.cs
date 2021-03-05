@@ -1,6 +1,5 @@
 ﻿using Dapper;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Data.DapperTypeHandlers;
@@ -16,11 +15,45 @@ namespace SFA.DAS.AssessorService.Data
 {
     public class StandardRepository : Repository, IStandardRepository
     {
-        public StandardRepository(IUnitOfWork unitOfWork)
-            : base(unitOfWork)
+        public StandardRepository(IUnitOfWork unitOfWork) : base(unitOfWork)
         {
             SqlMapper.AddTypeHandler(typeof(StandardData), new StandardDataHandler());
             SqlMapper.AddTypeHandler(typeof(StandardNonApprovedData), new StandardNonApprovedDataHandler());
+        }
+
+        public async Task Insert(Standard standard)
+        {
+            await _unitOfWork.Connection.ExecuteAsync(
+                "INSERT INTO [Standards] ([StandardUId], [IfateReferenceNumber], [LarsCode], [Title], [Version], [Level], [Status], [TypicalDuration], [MaxFunding], [IsActive], [LastDateStarts], [EffectiveFrom], [EffectiveTo]) " +
+                "VALUES (@standardUId, @ifateReferenceNumber, @larsCode, @title, @version, @level, @status, @typicalDuration, @maxFunding, @isActive, @lastDateStarts, @effectiveFrom, @effectiveTo)",
+                param: new { standard.StandardUId, standard.IfateReferenceNumber, standard.LarsCode, standard.Title, standard.Version, standard.Level, standard.Status, standard.TypicalDuration, standard.MaxFunding, standard.IsActive, standard.LastDateStarts, standard.EffectiveFrom, standard.EffectiveTo },
+                transaction: _unitOfWork.Transaction);
+        }
+
+        public async Task DeleteAll()
+        {
+            await _unitOfWork.Connection.ExecuteAsync("DELETE FROM Standards", transaction: _unitOfWork.Transaction);
+        }
+
+        public async Task Update(Standard standard)
+        {
+            await _unitOfWork.Connection.ExecuteAsync(
+                "UPDATE [Standards] SET " +
+                    "IfateReferenceNumber = @ifateReferenceNumber, " +
+                    "LarsCode = @larsCode, " +
+                    "Title = @title, " +
+                    "Version = @version, " +
+                    "Level = @level, " +
+                    "Status = @status, " +
+                    "TypicalDuration = @typicalDuration, " +
+                    "MaxFunding = @maxFunding, " +
+                    "IsActive = @isActive, " +
+                    "LastDateStarts = @lastDateStarts, " +
+                    "EffectiveFrom = @effectiveFrom, " +
+                    "EffectiveTo = @effectiveTo, " +
+                "WHERE StandardUId = @standardUId",
+                param: new { standard.StandardUId, standard.IfateReferenceNumber, standard.LarsCode, standard.Title, standard.Version, standard.Level, standard.Status, standard.TypicalDuration, standard.MaxFunding, standard.IsActive, standard.LastDateStarts, standard.EffectiveFrom, standard.EffectiveTo },
+                transaction: _unitOfWork.Transaction);
         }
 
         public async Task<List<StandardCollation>> GetStandardCollations()
@@ -154,7 +187,7 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<DateTime?> GetDateOfLastStandardCollation()
         {
-            const string sql = "SELECT TOP 1 COALESCE(MAX(DateUpdated), MAX(DateAdded)) MaxDate FROM [StandardCollation]";
+            const string sql = "SELECT TOP 1 COALESCE(MAX(DateUpdated), MAX(DateAdded)) MaxDate FROM [Standard]";
             var dateOfLastCollation = await _unitOfWork.Connection.QuerySingleAsync<DateTime?>(
                 sql, 
                 param: null, 
