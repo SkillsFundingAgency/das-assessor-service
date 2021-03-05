@@ -6,29 +6,29 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
+using SFA.DAS.AssessorService.Application.Infrastructure;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using SFA.DAS.AssessorService.Domain.Paging;
 using SFA.DAS.AssessorService.ExternalApis;
-using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
 {
     public class GetCertificatesHistoryHandler : IRequestHandler<GetCertificateHistoryRequest, PaginatedList<CertificateSummaryResponse>>
     {
         private readonly ICertificateRepository _certificateRepository;
-        private readonly IAssessmentOrgsApiClient _assessmentOrgsApiClient;
+        private readonly IRoatpApiClient _roatpApiClient;
         private readonly IContactQueryRepository _contactQueryRepository;
         private readonly ILogger<GetCertificatesHistoryHandler> _logger;
 
         public GetCertificatesHistoryHandler(ICertificateRepository certificateRepository,
-            IAssessmentOrgsApiClient assessmentOrgsApiClient,
+            IRoatpApiClient roatpApiClient,
             IContactQueryRepository contactQueryRepository,
             ILogger<GetCertificatesHistoryHandler> logger)
         {
             _certificateRepository = certificateRepository;
-            _assessmentOrgsApiClient = assessmentOrgsApiClient;
+            _roatpApiClient = roatpApiClient;
             _contactQueryRepository = contactQueryRepository;
             _logger = logger;
         }
@@ -85,8 +85,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
                     {
                         if (certificateData.ProviderName == null)
                         {
-                            var provider = _assessmentOrgsApiClient
-                                .GetProvider(certificate.ProviderUkPrn).GetAwaiter()
+                            var provider = _roatpApiClient
+                                .GetOrganisationByUkprn(certificate.ProviderUkPrn).GetAwaiter()
                                 .GetResult();
 
                             trainingProviderName = provider.ProviderName;

@@ -8,7 +8,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Apply
 {
     public class SequenceViewModel
     {
-        public SequenceViewModel(Sequence sequence, Guid Id, string pageContext, List<Section> sections,
+        public SequenceViewModel(Sequence sequence, Guid Id, string pageContext, bool allowCancel, List<Section> sections,
             List<ApplySection> applySection, List<ValidationErrorDetail> errorMessages)
         {
             this.Id = Id;
@@ -17,6 +17,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Apply
             SequenceNo = sequence.SequenceNo;
             Status = sequence.Status;
             PageContext = pageContext;
+            AllowCancel = allowCancel;
             ErrorMessages = errorMessages;
         }
 
@@ -27,5 +28,6 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Apply
         public Guid Id { get; }
         public int SequenceNo { get; }
         public List<ValidationErrorDetail> ErrorMessages { get; }
+        public bool AllowCancel { get; }
     }
 }

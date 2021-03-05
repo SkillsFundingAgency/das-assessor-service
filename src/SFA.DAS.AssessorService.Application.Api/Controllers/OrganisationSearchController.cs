@@ -14,6 +14,7 @@ using SFA.DAS.AssessorService.Application.Api.Infrastructure;
 using SFA.DAS.AssessorService.Domain.Paging;
 using SFA.DAS.AssessorService.Api.Types.CharityCommission;
 using SFA.DAS.AssessorService.Api.Types.CompaniesHouse;
+using SFA.DAS.AssessorService.Application.Infrastructure;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers
 {
@@ -23,17 +24,15 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
     {
         private readonly ILogger<OrganisationSearchController> _logger;
         private readonly RoatpApiClient _roatpApiClient;
-        private readonly ProviderRegisterApiClient _providerRegisterApiClient;
         private readonly ReferenceDataApiClient _referenceDataApiClient;
         private readonly CompaniesHouseApiClient _companiesHouseApiClient;
         private readonly CharityCommissionApiClient _charityCommissionApiClient;
         private readonly IMediator _mediator;
 
-        public OrganisationSearchController(ILogger<OrganisationSearchController> logger, IMediator mediator, RoatpApiClient roatpApiClient, ProviderRegisterApiClient providerRegisterApiClient, ReferenceDataApiClient referenceDataApiClient, CompaniesHouseApiClient companiesHouseApiClient, CharityCommissionApiClient charityCommissionApiClient)
+        public OrganisationSearchController(ILogger<OrganisationSearchController> logger, IMediator mediator, RoatpApiClient roatpApiClient, ReferenceDataApiClient referenceDataApiClient, CompaniesHouseApiClient companiesHouseApiClient, CharityCommissionApiClient charityCommissionApiClient)
         {
             _logger = logger;
             _roatpApiClient = roatpApiClient;
-            _providerRegisterApiClient = providerRegisterApiClient;
             _referenceDataApiClient = referenceDataApiClient;
             _companiesHouseApiClient = companiesHouseApiClient;
             _charityCommissionApiClient = charityCommissionApiClient;
@@ -292,7 +291,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             {
                 try
                 {
-                    var ukprnResponse = await _providerRegisterApiClient.SearchOrgansiationByUkprn(ukprn.Value);
+                    var ukprnResponse = await _roatpApiClient.GetOrganisationByUkprn(ukprn.Value);
                     if (ukprnResponse != null) results.Add(ukprnResponse);
                 }
                 catch (Exception ex)
@@ -305,7 +304,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             {
                 try
                 {
-                    var response = await _providerRegisterApiClient.SearchOrgansiationByName(name, false);
+                    var response = await _roatpApiClient.SearchOrganisationByName(name, false);
                     if (response != null) results.AddRange(response);
                 }
                 catch (Exception ex)
@@ -320,7 +319,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
                 {
                     try
                     {
-                        var response = await _providerRegisterApiClient.SearchOrgansiationByName(exactName, true);
+                        var response = await _roatpApiClient.SearchOrganisationByName(exactName, true);
                         if (response != null) results.AddRange(response);
                     }
                     catch (Exception ex)

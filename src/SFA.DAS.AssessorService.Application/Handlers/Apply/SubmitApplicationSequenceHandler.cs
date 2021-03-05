@@ -108,19 +108,19 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
 
             if (sequenceNo == ApplyConst.ORGANISATION_SEQUENCE_NO)
             {
-                applyData.Apply.InitSubmissions.Add(submission);
+                applyData.Apply.AddInitSubmission(submission);
             }
             else if (sequenceNo == ApplyConst.STANDARD_SEQUENCE_NO)
             {
-                applyData.Apply.StandardSubmissions.Add(submission);
+                applyData.Apply.AddStandardSubmission(submission);
             }
             else if (sequenceNo == ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO)
             {
-                applyData.Apply.OrganisationWithdrawalSubmissions.Add(submission);
+                applyData.Apply.AddOrganisationWithdrawalSubmission(submission);
             }
             else if (sequenceNo == ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO)
             {
-                applyData.Apply.StandardWithdrawalSubmissions.Add(submission);
+                applyData.Apply.AddStandardWithdrawalSubmission(submission);
             }
         }
 
@@ -154,7 +154,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
 
             if (sequenceNo == ApplyConst.ORGANISATION_SEQUENCE_NO)
             {
-                application.ApplicationStatus = (applyData.Apply.InitSubmissions.Count == 1) ? ApplicationStatus.Submitted : ApplicationStatus.Resubmitted;
+                application.ApplicationStatus = (applyData.Apply.InitSubmissionsCount == 1) ? ApplicationStatus.Submitted : ApplicationStatus.Resubmitted;
 
                 var closedFinanicalStatuses = new List<string> { FinancialReviewStatus.Approved, FinancialReviewStatus.Exempt };
 
@@ -168,15 +168,15 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
             }
             else if (sequenceNo == ApplyConst.STANDARD_SEQUENCE_NO)
             {
-                application.ApplicationStatus = (applyData.Apply.StandardSubmissions.Count == 1) ? ApplicationStatus.Submitted : ApplicationStatus.Resubmitted;
+                application.ApplicationStatus = (applyData.Apply.StandardSubmissionsCount == 1) ? ApplicationStatus.Submitted : ApplicationStatus.Resubmitted;
             }
             else if (sequenceNo == ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO)
             {
-                application.ApplicationStatus = (applyData.Apply.OrganisationWithdrawalSubmissions.Count == 1) ? ApplicationStatus.Submitted : ApplicationStatus.Resubmitted;
+                application.ApplicationStatus = (applyData.Apply.OrganisationWithdrawalSubmissionsCount == 1) ? ApplicationStatus.Submitted : ApplicationStatus.Resubmitted;
             }
             else if (sequenceNo == ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO)
             {
-                application.ApplicationStatus = (applyData.Apply.StandardWithdrawalSubmissions.Count == 1) ? ApplicationStatus.Submitted : ApplicationStatus.Resubmitted;
+                application.ApplicationStatus = (applyData.Apply.StandardWithdrawalSubmissionsCount == 1) ? ApplicationStatus.Submitted : ApplicationStatus.Resubmitted;
             }
             else
             {

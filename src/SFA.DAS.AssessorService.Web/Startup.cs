@@ -12,7 +12,6 @@ using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Application.Api.Client.Azure;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Domain.Helpers;
-using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
 using SFA.DAS.AssessorService.ExternalApis.IFAStandards;
 using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Web.Controllers.Apply;
@@ -25,6 +24,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using SFA.DAS.AssessorService.Application.Infrastructure;
 
 namespace SFA.DAS.AssessorService.Web
 {
@@ -114,6 +114,13 @@ namespace SFA.DAS.AssessorService.Web
                     HttpOnly = true
                 };
             });
+            
+            services.AddHttpClient<IRoatpApiClient, RoatpApiClient>("RoatpApiClient", cfg =>
+                {
+                    cfg.BaseAddress = new Uri(Configuration.RoatpApiAuthentication.ApiBaseAddress); //  "https://at-providers-api.apprenticeships.education.gov.uk"
+                    cfg.DefaultRequestHeaders.Add("Accept", "Application/json");
+                })
+                .SetHandlerLifetime(TimeSpan.FromMinutes(5));
 
             services.AddHealthChecks();
             
@@ -155,7 +162,6 @@ namespace SFA.DAS.AssessorService.Web
                 config.For<IEmailApiClient>().Use<EmailApiClient>().Ctor<string>().Is(Configuration.AssessorApiAuthentication.ApiBaseAddress);
                 config.For<IValidationApiClient>().Use<ValidationApiClient>().Ctor<string>().Is(Configuration.AssessorApiAuthentication.ApiBaseAddress);
                 config.For<ICertificateApiClient>().Use<CertificateApiClient>().Ctor<string>().Is(Configuration.AssessorApiAuthentication.ApiBaseAddress);
-                config.For<IAssessmentOrgsApiClient>().Use(() => new AssessmentOrgsApiClient(Configuration.AssessmentOrgsApiClientBaseUrl));
                 config.For<IIfaStandardsApiClient>().Use(() => new IfaStandardsApiClient(Configuration.IfaApiClientBaseUrl));
                 config.For<ILoginApiClient>().Use<LoginApiClient>().Ctor<string>().Is(Configuration.AssessorApiAuthentication.ApiBaseAddress);
                 config.For<IApplicationApiClient>().Use<ApplicationApiClient>().Ctor<string>().Is(Configuration.AssessorApiAuthentication.ApiBaseAddress);
@@ -167,6 +173,8 @@ namespace SFA.DAS.AssessorService.Web
                 config.For<IApiValidationService>().Use<ApiValidationService>();
 
                 config.For<IDateTimeHelper>().Use<DateTimeHelper>();
+                
+               
                 
                 config.Populate(services);
             });

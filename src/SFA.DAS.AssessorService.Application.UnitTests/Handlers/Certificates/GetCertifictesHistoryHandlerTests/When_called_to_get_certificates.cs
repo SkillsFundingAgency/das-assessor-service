@@ -2,20 +2,19 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 using FizzWare.NBuilder;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using NUnit.Framework;
-using SFA.DAS.Apprenticeships.Api.Types.Providers;
+using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Application.Handlers.Certificates;
+using SFA.DAS.AssessorService.Application.Infrastructure;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using SFA.DAS.AssessorService.Domain.Paging;
-using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
 using Organisation = SFA.DAS.AssessorService.Domain.Entities.Organisation;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Query
@@ -23,7 +22,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Qu
     public class When_called_to_get_certificates
     {
         private Mock<ICertificateRepository> _certificateRepositoryMock;
-        private Mock<IAssessmentOrgsApiClient> _assessmentOrgsApiClientMock;
+        private Mock<IRoatpApiClient> _roatpApiClientMock;
         private Mock<IContactQueryRepository> _contactQueryRepositoryMock;
         private Mock<ILogger<GetCertificatesHistoryHandler>> _loggermock;
 
@@ -53,9 +52,9 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Qu
                 DisplayName = "Test Name"
             });
 
-            _assessmentOrgsApiClientMock = new Mock<IAssessmentOrgsApiClient>();
-            _assessmentOrgsApiClientMock.Setup(r => r.GetProvider(It.IsAny<long>()))
-                .ReturnsAsync( new Provider
+            _roatpApiClientMock = new Mock<IRoatpApiClient>();
+            _roatpApiClientMock.Setup(r => r.GetOrganisationByUkprn(It.IsAny<long>()))
+                .ReturnsAsync( new OrganisationSearchResult
                 {
                     ProviderName = "TestProvider",
                     Ukprn = 123456789
@@ -65,7 +64,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Qu
 
             var getCertificatesHistoryHandler =
                 new GetCertificatesHistoryHandler(_certificateRepositoryMock.Object,
-                    _assessmentOrgsApiClientMock.Object, _contactQueryRepositoryMock.Object,
+                    _roatpApiClientMock.Object, _contactQueryRepositoryMock.Object,
                     _loggermock.Object);
 
             _result = getCertificatesHistoryHandler.Handle(new GetCertificateHistoryRequest

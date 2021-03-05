@@ -17,9 +17,9 @@ namespace SFA.DAS.AssessorService.ExternalApis
             NullValueHandling = NullValueHandling.Ignore
         };
 
-        protected ApiClientBase(string baseUri = null)
+        protected ApiClientBase(string baseUri)
         {
-            _httpClient = new HttpClient { BaseAddress = new Uri(baseUri ?? "http://das-prd-apprenticeshipinfoservice.cloudapp.net") };
+            _httpClient = new HttpClient { BaseAddress = new Uri(baseUri) };
         }
 
         protected ApiClientBase(HttpClient httpClient)
@@ -80,68 +80,6 @@ namespace SFA.DAS.AssessorService.ExternalApis
             return null;
         }
 
-        protected bool Exists(HttpRequestMessage request)
-        {
-            using (var response = _httpClient.SendAsync(request))
-            {
-                var result = response.Result;
-                if (result.StatusCode == HttpStatusCode.NoContent)
-                {
-                    return true;
-                }
-                if (result.StatusCode == HttpStatusCode.NotFound)
-                {
-                    return false;
-                }
-
-                RaiseResponseError(request, result);
-            }
-
-            return false;
-        }
-
-        protected async Task<bool> ExistsAsync(HttpRequestMessage request)
-        {
-            using (var response = _httpClient.SendAsync(request))
-            {
-                var result = await response;
-                if (result.StatusCode == HttpStatusCode.NoContent)
-                {
-                    return true;
-                }
-                if (result.StatusCode == HttpStatusCode.NotFound)
-                {
-                    return false;
-                }
-
-                RaiseResponseError(request, result);
-            }
-
-            return false;
-        }
-
-        internal T RequestAndDeserialise<T>(HttpRequestMessage request, string missing = null) where T : class
-
-        {
-            request.Headers.Add("Accept", "application/json");
-
-            using (var response = _httpClient.SendAsync(request))
-            {
-                var result = response.Result;
-                if (result.StatusCode == HttpStatusCode.OK)
-                {
-                    return JsonConvert.DeserializeObject<T>(result.Content.ReadAsStringAsync().Result, _jsonSettings);
-                }
-                if (result.StatusCode == HttpStatusCode.NotFound)
-                {
-                    RaiseResponseError(missing, request, result);
-                }
-
-                RaiseResponseError(request, result);
-            }
-
-            return null;
-        }
 
         public void Dispose()
         {

@@ -1,7 +1,7 @@
 ﻿using System;
 using FluentValidation;
 using Microsoft.Extensions.Localization;
-using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
+using SFA.DAS.AssessorService.Application.Infrastructure;
 using SFA.DAS.AssessorService.Web.ViewModels.Certificate.Private;
 using SFA.DAS.AssessorService.ExternalApis;
 
@@ -9,10 +9,10 @@ namespace SFA.DAS.AssessorService.Web.Validators
 {
     public class CertificateUkprnViewModelValidator : AbstractValidator<CertificateUkprnViewModel>
     {
-        private readonly IAssessmentOrgsApiClient _apiClient;
+        private readonly IRoatpApiClient _apiClient;
 
         public CertificateUkprnViewModelValidator(IStringLocalizer<CertificateUkprnViewModelValidator> localizer,
-            IAssessmentOrgsApiClient apiClient)
+            IRoatpApiClient apiClient)
         {
             _apiClient = apiClient;
             RuleFor(vm => vm.Ukprn).NotEmpty()
@@ -38,7 +38,7 @@ namespace SFA.DAS.AssessorService.Web.Validators
             try
             {
                 var providerUkprn = Convert.ToInt32(ukprn);
-               _apiClient.GetProvider(providerUkprn).GetAwaiter().GetResult();
+               _apiClient.GetOrganisationByUkprn(providerUkprn).GetAwaiter().GetResult();
             }
             catch (EntityNotFoundException)
             {

@@ -1,16 +1,16 @@
-﻿using Microsoft.Extensions.Logging;
-using Microsoft.IdentityModel.Clients.ActiveDirectory;
-using SFA.DAS.AssessorService.Api.Types.Models;
-using SFA.DAS.AssessorService.Settings;
-using System;
-using System.Linq;
+﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Clients.ActiveDirectory;
+using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Settings;
 
-namespace SFA.DAS.AssessorService.Application.Api.Infrastructure
+namespace SFA.DAS.AssessorService.Application.Infrastructure
 {
     public class RoatpApiClient : IRoatpApiClient
     {
@@ -38,6 +38,12 @@ namespace SFA.DAS.AssessorService.Application.Api.Infrastructure
             return Mapper.Map<IEnumerable<SFA.DAS.AssessorService.Api.Types.Models.Roatp.Organisation>, IEnumerable<OrganisationSearchResult>>(apiResponse?.SearchResults);
         }
 
+        public async Task<OrganisationSearchResult> GetOrganisationByUkprn(long ukprn)
+        {
+            var organisationSearchResults = await GetOrganisationSearchResultsFromRoatp(Convert.ToInt32(ukprn));
+            return organisationSearchResults.FirstOrDefault();
+        }
+
         public async Task<IEnumerable<OrganisationSearchResult>> SearchOrganisationByUkprn(int ukprn)
         {
             // Search directly in UKRLP first as there will be more information about the Organisation if it is there.
@@ -49,16 +55,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Infrastructure
             }
             else
             {
-                // If we get a result here then it means the Organisation is in the process of On-Boarding
-                _logger.LogInformation($"Searching RoATP. UKPRN: {ukprn}");
-                var apiResponse = await Get<AssessorService.Api.Types.Models.Roatp.OrganisationSearchResults>($"/api/v1/search?searchTerm={ukprn}");
-
-                if (apiResponse?.SearchResults != null)
-                {
-                    apiResponse.SearchResults = apiResponse.SearchResults.Where(r => r.UKPRN.Equals(ukprn.ToString(), StringComparison.InvariantCultureIgnoreCase)).ToList();
-                }
-
-                return Mapper.Map<IEnumerable<SFA.DAS.AssessorService.Api.Types.Models.Roatp.Organisation>, IEnumerable<OrganisationSearchResult>>(apiResponse?.SearchResults);
+                return await GetOrganisationSearchResultsFromRoatp(ukprn);
             }
         }
 
@@ -98,6 +95,26 @@ namespace SFA.DAS.AssessorService.Application.Api.Infrastructure
             var result = context.AcquireTokenAsync(resourceId, clientCredential).Result;
 
             return result.AccessToken;
+        }
+
+        private async Task<IEnumerable<OrganisationSearchResult>> GetOrganisationSearchResultsFromRoatp(int ukprn)
+        {
+            _logger.LogInformation($"Searching RoATP. UKPRN: {ukprn}");
+            var apiResponse =
+                await Get<AssessorService.Api.Types.Models.Roatp.OrganisationSearchResults>(
+                    $"/api/v1/search?searchTerm={ukprn}");
+
+            if (apiResponse?.SearchResults != null)
+            {
+                apiResponse.SearchResults = apiResponse.SearchResults
+                    .Where(r => r.UKPRN.Equals(ukprn.ToString(), StringComparison.InvariantCultureIgnoreCase)).ToList();
+            }
+
+            var organisationSearchResults =
+                Mapper
+                    .Map<IEnumerable<SFA.DAS.AssessorService.Api.Types.Models.Roatp.Organisation>,
+                        IEnumerable<OrganisationSearchResult>>(apiResponse?.SearchResults);
+            return organisationSearchResults;
         }
     }
 }

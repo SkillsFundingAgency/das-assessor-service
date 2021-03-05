@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Logging;
-using SFA.DAS.Apprenticeships.Api.Types;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;

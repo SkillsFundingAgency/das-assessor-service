@@ -20,7 +20,6 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Services
         public string ServiceLink { get; set; }
         public LoginServiceConfig LoginService { get; set; }
         public ClientApiAuthentication RoatpApiAuthentication { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public ProviderRegisterApiAuthentication ProviderRegisterApiAuthentication { get; set; }
         public ReferenceDataApiAuthentication ReferenceDataApiAuthentication { get; set; }
         public CompaniesHouseApiAuthentication CompaniesHouseApiAuthentication { get; set; }
         public CharityCommissionApiAuthentication CharityCommissionApiAuthentication { get; set; }
@@ -36,5 +35,6 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Services
         public string ZenDeskSnippetKey { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public string ZenDeskSectionId { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public string ZenDeskCobrowsingSnippetKey { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public OuterApiConfiguration OuterApi { get; set; }
     }
 }

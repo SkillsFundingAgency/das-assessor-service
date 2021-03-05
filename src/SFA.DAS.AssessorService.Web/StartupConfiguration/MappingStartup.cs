@@ -29,6 +29,7 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
                 cfg.AddProfile<PersonSignificantControlInformationProfile>();
                 cfg.AddProfile<CharityCommissionSummaryProfile>();
                 cfg.AddProfile<CharityTrusteeProfile>();
+                cfg.AddProfile<RoatpOrganisationProfile>();
             });
         }
     }
