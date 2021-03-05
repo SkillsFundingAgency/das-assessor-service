@@ -212,12 +212,11 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
             return apiResponse;
         }
 
-
-        public virtual async Task<IEnumerable<StandardOptions>> GetStandards()
+        public virtual async Task<IEnumerable<StandardOptions>> GetStandardOptionsList()
         {
-            var apiResponse = await Get<IEnumerable<AssessorService.Api.Types.Models.Standards.StandardCollation>>($"/api/ao/assessment-organisations/collated-standards");
+            var response = await Get<IEnumerable<StandardOptions>>("api/v1/standard-service/standard-options");
 
-            return Mapper.Map<IEnumerable<AssessorService.Api.Types.Models.Standards.StandardCollation>, IEnumerable<StandardOptions>>(apiResponse);
+            return response;
         }
 
         public virtual async Task<StandardOptions> GetStandard(string standard)

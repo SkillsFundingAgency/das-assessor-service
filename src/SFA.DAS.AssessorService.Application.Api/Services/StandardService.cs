@@ -90,6 +90,28 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
             return null;
         }
 
+
+        public async Task<IEnumerable<StandardOptions>> GetStandardOptions()
+        {
+            try
+            {
+                var standardOptionsResponse = await _outerApiClient.Get<GetStandardOptionsListResponse>(new GetStandardOptionsRequest());
+
+                return standardOptionsResponse.StandardOptions.Select(standard => new StandardOptions { 
+                    StandardUId = standard.StandardUId,
+                    StandardCode = standard.LarsCode,
+                    StandardReference = standard.IfateReferenceNumber,
+                    CourseOption = standard.Options
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "STANDARD OPTIONS: Failed to get standard options");
+            }
+
+            return null;
+        }
+
         public async Task<IEnumerable<StandardCollation>> GatherAllApprovedStandardDetails(List<IfaStandard> approvedIfaStandards)
         {
             _logger.LogInformation("STANDARD COLLATION: Starting gathering of all Standard details");

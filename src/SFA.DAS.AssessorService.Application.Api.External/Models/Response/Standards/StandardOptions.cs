@@ -6,6 +6,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Models.Response.Stand
 {
     public sealed class StandardOptions : IEquatable<StandardOptions>
     {
+        public string StandardUId { get; set; }
         public int? StandardCode { get; set; }
         public string StandardReference { get; set; }
         public IEnumerable<string> CourseOption { get; set; }
