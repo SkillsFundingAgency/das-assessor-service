@@ -35,7 +35,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
         [SwaggerOperation("Get Options", "Gets the latest list of course options by Standard.", Produces = new string[] { "application/json" })]
         public async Task<IActionResult> GetOptionsForAllStandards()
         {
-            var standards = await _apiClient.GetStandards();
+            var standards = await _apiClient.GetStandardOptionsList();
 
             if(standards is null)
             {
