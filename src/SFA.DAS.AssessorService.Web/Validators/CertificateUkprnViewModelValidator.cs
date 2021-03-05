@@ -3,7 +3,7 @@ using FluentValidation;
 using Microsoft.Extensions.Localization;
 using SFA.DAS.AssessorService.Application.Infrastructure;
 using SFA.DAS.AssessorService.Web.ViewModels.Certificate.Private;
-using SFA.DAS.AssessorService.ExternalApis;
+using SFA.DAS.AssessorService.Domain.Exceptions;
 
 namespace SFA.DAS.AssessorService.Web.Validators
 {

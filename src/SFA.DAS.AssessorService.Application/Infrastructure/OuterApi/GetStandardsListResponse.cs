@@ -34,8 +34,6 @@ namespace SFA.DAS.AssessorService.Application.Infrastructure.OuterApi
         public int MaxFunding { get ; set ; }
         [JsonProperty("isActive")]
         public bool IsActive { get ; set ; }
-        [JsonIgnore]
-        public int Id { get; set; } //TODO remove
     }
 
     public class StandardDates

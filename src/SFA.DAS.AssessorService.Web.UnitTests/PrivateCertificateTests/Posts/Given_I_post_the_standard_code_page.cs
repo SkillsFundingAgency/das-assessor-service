@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Distributed;
 using Moq;
 using NUnit.Framework;
-using SFA.DAS.AssessorService.ExternalApis.Services;
 using SFA.DAS.AssessorService.Web.Controllers.Private;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.ViewModels.Certificate.Private;
