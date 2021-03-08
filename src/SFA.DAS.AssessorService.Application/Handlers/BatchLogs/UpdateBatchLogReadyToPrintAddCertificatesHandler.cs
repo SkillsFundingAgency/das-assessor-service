@@ -44,13 +44,11 @@ namespace SFA.DAS.AssessorService.Application.Handlers.BatchLogs
 
                 if (certificateIds.Length > 0)
                 {
-                    var updateCertificateBatchLogTask =
-                        _certificateBatchLogRepository.UpdateCertificatesReadyToPrintInBatch(certificateIds, request.BatchNumber);
+                    await _certificateBatchLogRepository
+                        .UpsertCertificatesReadyToPrintInBatch(certificateIds, request.BatchNumber);
 
-                    var updateCertificateTask =
-                        _certificateRepository.UpdateCertificatesReadyToPrintInBatch(certificateIds, request.BatchNumber);
-
-                    await Task.WhenAll(updateCertificateBatchLogTask, updateCertificateTask);
+                    await _certificateRepository.
+                        UpdateCertificatesReadyToPrintInBatch(certificateIds, request.BatchNumber);
                 }
 
                 _unitOfWork.Commit();

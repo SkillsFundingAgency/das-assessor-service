@@ -463,12 +463,8 @@ namespace SFA.DAS.AssessorService.Data
                 cert.DeletedAt = null;
             }
 
-            // when the certificate has been sent to the printer the update will be sent in a new batch
-            if (cert.ToBePrinted != null)
-            {
-                cert.ToBePrinted = null;
-                cert.BatchNumber = null;
-            }
+            cert.ToBePrinted = null;
+            cert.BatchNumber = null;
 
             if (updateLog)
             {
