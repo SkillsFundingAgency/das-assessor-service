@@ -17,6 +17,8 @@ namespace SFA.DAS.AssessorService.Application.Infrastructure.OuterApi
         public int LarsCode { get; set; }
         [JsonProperty("ifateReferenceNumber")]
         public string IfateReferenceNumber { get; set; }
+        [JsonProperty("version")]
+        public decimal Version { get; set; }
         [JsonProperty("options")]
         public List<string> Options { get; set; }
 

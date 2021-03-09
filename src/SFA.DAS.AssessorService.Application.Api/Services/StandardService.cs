@@ -101,6 +101,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
                     StandardUId = standard.StandardUId,
                     StandardCode = standard.LarsCode,
                     StandardReference = standard.IfateReferenceNumber,
+                    Version = standard.Version,
                     CourseOption = standard.Options
                 });
             }
