@@ -7,6 +7,7 @@ using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Api.Controllers;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.Testing.AutoFixture;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -30,6 +31,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Standard
 
         [Test, MoqAutoData]
         public async Task WhenRequestingGetStandardOptions_ThenListOfStandardsWithTheirOptionsIsReturned(IEnumerable<StandardOptions> standardOptions)
+
         {
             _mockStandardService.Setup(service => service.GetStandardOptions())
                 .ReturnsAsync(standardOptions);
