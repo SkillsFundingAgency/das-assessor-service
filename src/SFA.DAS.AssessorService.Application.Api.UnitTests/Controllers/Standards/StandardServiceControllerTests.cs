@@ -30,7 +30,8 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Standard
         }
 
         [Test, MoqAutoData]
-        public async Task test(IEnumerable<StandardOptions> standardOptions)
+        public async Task WhenRequestingGetStandardOptions_ThenListOfStandardsWithTheirOptionsIsReturned(IEnumerable<StandardOptions> standardOptions)
+
         {
             _mockStandardService.Setup(service => service.GetStandardOptions())
                 .ReturnsAsync(standardOptions);
@@ -46,6 +47,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Standard
                 StandardUId = s.StandardUId,
                 StandardCode = s.StandardCode,
                 StandardReference = s.StandardReference,
+                Version = s.Version,
                 CourseOption = s.CourseOption
             });
 

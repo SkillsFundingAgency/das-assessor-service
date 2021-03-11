@@ -7,6 +7,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Standards
         public string StandardUId { get; set; }
         public int StandardCode { get; set; }
         public string StandardReference { get; set; }
+        public decimal Version { get; set; }
         public IEnumerable<string> CourseOption { get; set; }
     }
 }
