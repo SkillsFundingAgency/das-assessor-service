@@ -59,7 +59,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
             var userId = await GetUserId();
             var org = await _orgApiClient.GetOrganisationByUserId(userId);
-            var applications = await _applicationApiClient.GetCombinedApplications(userId);
+            var applications = await _applicationApiClient.GetStandardApplications(userId);
             applications = applications?.Where(app => app.ApplicationStatus != ApplicationStatus.Declined).ToList();
 
             if (applications is null || applications.Count == 0)
@@ -112,7 +112,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         {
             var userId = await GetUserId();
 
-            var existingApplications = (await _applicationApiClient.GetCombinedApplications(userId))?
+            var existingApplications = (await _applicationApiClient.GetStandardApplications(userId))?
                 .Where(p => p.ApplicationStatus != ApplicationStatus.Declined)
                 .ToList();
 
@@ -125,7 +125,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             var contact = await GetUserContact();
             var org = await _orgApiClient.GetOrganisationByUserId(contact.Id);
 
-            var existingApplications = (await _applicationApiClient.GetCombinedApplications(contact.Id))?
+            var existingApplications = (await _applicationApiClient.GetStandardApplications(contact.Id))?
                 .Where(p => p.ApplicationStatus != ApplicationStatus.Declined);
 
             if (existingApplications != null)
@@ -135,7 +135,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                     return RedirectToAction("SequenceSignPost", new { existingEmptyApplication.Id });
             }
 
-            var createApplicationRequest = await _applicationService.BuildCombinedRequest(contact, org, _config.ReferenceFormat);
+            var createApplicationRequest = await _applicationService.BuildInitialRequest(contact, org, _config.ReferenceFormat);
 
             var id = await _applicationApiClient.CreateApplication(createApplicationRequest);
 
@@ -928,7 +928,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
         private bool GetAllowCancelApplication(ApplicationResponse application)
         {
-            return application.IsCombindedApplication && IsSequenceActive(application.ApplyData, ApplyConst.STANDARD_SEQUENCE_NO);
+            return application.IsInitialApplication && IsSequenceActive(application.ApplyData, ApplyConst.STANDARD_SEQUENCE_NO);
         }
 
         private static Page StoreEnteredAnswers(List<Answer> answers, Page page)

@@ -28,15 +28,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.Apply
             _mediator = mediator;
         }
 
-        [HttpGet("{userId}/combined-applications", Name = "GetCombinedApplications")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<ApplicationResponse>))]
-        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<ActionResult<List<ApplicationResponse>>> GetCombinedApplications(string userId)
-        {
-            _logger.LogInformation($"Received request to retrieve combined applications for UserId {userId}");
-            return Ok(await _mediator.Send(new GetApplicationsRequest(Guid.Parse(userId), ApplicationTypes.Combined)));
-        }
-
         [HttpGet("{userId}/organisation-applications", Name = "GetOrganisationApplications")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<ApplicationResponse>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
