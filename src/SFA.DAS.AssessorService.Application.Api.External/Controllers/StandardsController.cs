@@ -53,7 +53,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
         [SwaggerOperation("Get Options for Standard", "Gets the latest list of course options for the specified Standard.", Produces = new string[] { "application/json" })]
         public async Task<IActionResult> GetOptionsForStandard([SwaggerParameter("Standard Code or Standard Reference Number")] string standard)
         {
-            var requestedStandard = await _apiClient.GetStandard(standard);
+            var requestedStandard = await _apiClient.GetStandardOptionsByStandard(standard);
 
             if (requestedStandard is null)
             {

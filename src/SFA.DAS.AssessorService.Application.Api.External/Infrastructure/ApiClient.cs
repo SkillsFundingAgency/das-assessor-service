@@ -219,6 +219,14 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
             return response;
         }
 
+        public virtual async Task<StandardOptions> GetStandardOptionsByStandard(string standard)
+        {
+            var response = await Get<StandardOptions>($"/api/v1/standard-service/standard-options/{standard}");
+
+            return response;
+        }
+
+
         public virtual async Task<StandardOptions> GetStandard(string standard)
         {
             AssessorService.Api.Types.Models.Standards.StandardCollation apiResponse = null;

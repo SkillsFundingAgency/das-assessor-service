@@ -21,6 +21,6 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
         Task<ApiResponse> DeleteCertificate(DeleteBatchCertificateRequest request);
 
         Task<IEnumerable<StandardOptions>> GetStandardOptionsList();
-        Task<StandardOptions> GetStandard(string standard);
+        Task<StandardOptions> GetStandardOptionsByStandard(string standard);
     }
 }
