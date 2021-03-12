@@ -77,7 +77,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             return await BuildRequest(startApplicationRequest, ApplicationTypes.OrganisationWithdrawal, contact.Id, organisation.Id, referenceFormat);
         }
 
-        public async Task<CreateApplicationRequest> BuildCombinedRequest(ContactResponse contact, OrganisationResponse organisation, string referenceFormat)
+        public async Task<CreateApplicationRequest> BuildInitialRequest(ContactResponse contact, OrganisationResponse organisation, string referenceFormat)
         {
             var startApplicationRequest = new StartApplicationRequest
             {
@@ -94,7 +94,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 })
             };
 
-            return await BuildRequest(startApplicationRequest, ApplicationTypes.Combined, contact.Id, organisation.Id, referenceFormat);
+            return await BuildRequest(startApplicationRequest, ApplicationTypes.Initial, contact.Id, organisation.Id, referenceFormat);
         }
 
         private async Task<CreateApplicationRequest> BuildRequest(StartApplicationRequest startApplicationRequest, string applicationType, Guid contactId, Guid organisationId, string referenceFormat)

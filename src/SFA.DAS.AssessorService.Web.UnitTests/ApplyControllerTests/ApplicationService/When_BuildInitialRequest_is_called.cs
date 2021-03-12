@@ -4,7 +4,6 @@ using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Domain.Consts;
-using SFA.DAS.AssessorService.Domain.Helpers;
 using SFA.DAS.AssessorService.Web.Controllers.Apply;
 using SFA.DAS.QnA.Api.Types;
 using System;
@@ -14,7 +13,7 @@ using System.Threading.Tasks;
 namespace SFA.DAS.AssessorService.Web.UnitTests.ApplicationServiceTests
 {
     [TestFixture]
-    public class When_BuildCombindedRequest_is_called
+    public class When_BuildInitialRequest_is_called
     {
         private ApplicationService _sut;
         private Mock<IQnaApiClient> _mockQnaApiClient;
@@ -51,13 +50,13 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ApplicationServiceTests
         }
         
         [Test]
-        public async Task Then_CreateApplication_returns_Combinded()
+        public async Task Then_CreateApplication_returns_Initial()
         {
             // Arrange
             string endPointAssessorOrganisationId = "EPA0200";
 
             // Act
-            var result = await _sut.BuildCombinedRequest(
+            var result = await _sut.BuildInitialRequest(
                 new ContactResponse { Id = Guid.NewGuid() },
                 new OrganisationResponse
                 {
@@ -67,7 +66,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ApplicationServiceTests
                 }, string.Empty);
 
             // Assert
-            result.ApplicationType.Should().Be(ApplicationTypes.Combined);
+            result.ApplicationType.Should().Be(ApplicationTypes.Initial);
         }
     }
 }
