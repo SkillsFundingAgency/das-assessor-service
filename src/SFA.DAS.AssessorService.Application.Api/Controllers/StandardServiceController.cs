@@ -58,5 +58,16 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             var standardOptions = await _standardService.GetStandardOptions();
             return Ok(standardOptions);
         }
+
+        [HttpGet("standard-options/{id}", Name = "GetStandardOptionsByStandardId")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(StandardOptions))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> GetStandardOptionsForStandard(string id)
+        {
+            _logger.LogInformation($"Get standard options from Standard Service for standard with id {id}");
+            var standardOptions = await _standardService.GetStandardOptionsByStandardId(id);
+            return Ok(standardOptions);
+        }
     }
 }
