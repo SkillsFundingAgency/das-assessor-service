@@ -74,10 +74,14 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
             var result = await _standardService.GetStandardOptionsByStandardId(id);
 
             Assert.IsInstanceOf<StandardOptions>(result);
-            Assert.AreEqual(result, response);
+            Assert.AreEqual(result.CourseOption, response.Options);
+            Assert.AreEqual(result.StandardUId, response.StandardUId);
+            Assert.AreEqual(result.StandardCode, response.LarsCode);
+            Assert.AreEqual(result.StandardReference, response.IfateReferenceNumber);
+            Assert.AreEqual(result.Version, response.Version);
         }
 
-        [Test]
+        [Test, AutoData]
         public async Task When_GettingStandardOptionsByStandardId_And_OuterApiDoesNotReturnResponse_Then_LogError_And_ReturnNull(string id)
         {
             _mockOuterApiClient.Setup(client => client.Get<GetStandardByIdResponse>(It.Is<GetStandardByIdRequest>(x => x.Id == id)))
