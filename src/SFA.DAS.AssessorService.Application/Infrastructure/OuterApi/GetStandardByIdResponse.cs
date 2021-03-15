@@ -42,18 +42,6 @@ namespace SFA.DAS.AssessorService.Application.Infrastructure.OuterApi
         [JsonProperty("trailBlazerContact")]
         public string TrailBlazerContact { get; set; }
 
-        [JsonProperty("typicalJobTitles")]
-        public string TypicalJobTitles { get; set; }
-
-        [JsonProperty("skills")]
-        public List<string> Skills { get; set; }
-
-        [JsonProperty("knowledge")]
-        public List<string> Knowledge { get; set; }
-
-        [JsonProperty("behaviours")]
-        public List<string> Behaviours { get; set; }
-
         [JsonProperty("standardPageUrl")]
         public string StandardPageUrl { get; set; }
 
@@ -66,9 +54,6 @@ namespace SFA.DAS.AssessorService.Application.Infrastructure.OuterApi
         [JsonProperty("sectorSubjectAreaTier2Description")]
         public string SectorSubjectAreaTier2Description { get; set; }
 
-        [JsonProperty("apprenticeshipFunding")]
-        public List<ApprenticeshipFunding> ApprenticeshipFunding { get; set; }
-
         [JsonProperty("standardDates")]
         public StandardDates StandardDates { get; set; }
 
@@ -77,24 +62,6 @@ namespace SFA.DAS.AssessorService.Application.Infrastructure.OuterApi
 
         [JsonProperty("eqaProvider")]
         public EqaProvider EqaProvider { get; set; }
-
-        [JsonProperty("otherBodyApprovalRequired")]
-        public bool OtherBodyApprovalRequired { get; set; }
-
-        [JsonProperty("approvalBody")]
-        public string ApprovalBody { get; set; }
-
-        [JsonProperty("duties")]
-        public List<string> Duties { get; set; }
-
-        [JsonProperty("coreAndOptions")]
-        public bool CoreAndOptions { get; set; }
-
-        [JsonProperty("coreDuties")]
-        public string CoreDuties { get; set; }
-
-        [JsonProperty("integratedAprenticeship")]
-        public bool IntegratedApprenticeship { get; set; }
 
         [JsonProperty("options")]
         public List<string> Options { get; set; }
@@ -113,21 +80,6 @@ namespace SFA.DAS.AssessorService.Application.Infrastructure.OuterApi
 
         [JsonProperty("effectiveFrom")]
         public DateTime EffectiveFrom { get; set; }
-    }
-
-    public class ApprenticeshipFunding
-    {
-        [JsonProperty("maxEmployerLevyCap")]
-        public int MaxEmployerLevyCap { get; set; }
-
-        [JsonProperty("effectiveTo")]
-        public DateTime? EffectiveTo { get; set; }
-
-        [JsonProperty("effectiveFrom")]
-        public DateTime EffectiveFrom { get; set; }
-
-        [JsonProperty("duration")]
-        public int Duration { get; set; }
     }
 
     public class EqaProvider
