@@ -6,7 +6,7 @@ namespace SFA.DAS.AssessorService.Application.Infrastructure.OuterApi
         /// <summary>
         /// Id can be Lars Code, Ifate Standard Reference, or StandardUId
         /// </summary>
-        private string Id { get; }
+        public string Id { get; }
         public GetStandardByIdRequest(string id)
         {
             Id = id;

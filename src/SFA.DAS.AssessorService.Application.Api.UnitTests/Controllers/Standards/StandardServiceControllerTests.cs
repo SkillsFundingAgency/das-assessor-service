@@ -53,5 +53,21 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Standard
 
             model.Should().BeEquivalentTo(expectedResponse);
         }
+
+        [Test, MoqAutoData]
+        public async Task WhenRequestingGetStandardOptionByStandardId_ThenListOfOptionsForThatStandardIsReturned(StandardOptions options, string standard)
+
+        {
+            _mockStandardService.Setup(service => service.GetStandardOptionsByStandardId(standard))
+                .ReturnsAsync(options);
+
+            var controllerResult = await _standardServiceController.GetStandardOptionsForStandard(standard) as ObjectResult;
+
+            controllerResult.StatusCode.Should().Be((int)HttpStatusCode.OK);
+
+            var model = controllerResult.Value as StandardOptions;
+
+            model.Should().BeEquivalentTo(options);
+        }
     }
 }
