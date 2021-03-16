@@ -13,12 +13,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
     public class StandardService : IStandardService
     {
         private readonly CacheService _cacheService;
+        private readonly IOuterApiClient _outerApiClient;
         private readonly ILogger<StandardService> _logger;
         private readonly IStandardRepository _standardRepository;
 
-        public StandardService(CacheService cacheService, ILogger<StandardService> logger, IStandardRepository standardRepository)
+        public StandardService(CacheService cacheService, IOuterApiClient outerApiClient, ILogger<StandardService> logger, IStandardRepository standardRepository)
         {
             _cacheService = cacheService;
+            _outerApiClient = outerApiClient;
             _logger = logger;
             _standardRepository = standardRepository;
         }
@@ -92,6 +94,53 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
             }
 
             return standardCollation;
+        }
+
+
+        public async Task<IEnumerable<StandardOptions>> GetStandardOptions()
+        {
+            try
+            {
+                var standardOptionsResponse = await _outerApiClient.Get<GetStandardOptionsListResponse>(new GetStandardOptionsRequest());
+
+                return standardOptionsResponse.StandardOptions.Select(standard => new StandardOptions
+                {
+                    StandardUId = standard.StandardUId,
+                    StandardCode = standard.LarsCode,
+                    StandardReference = standard.IfateReferenceNumber,
+                    Version = standard.Version,
+                    CourseOption = standard.Options
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "STANDARD OPTIONS: Failed to get standard options");
+            }
+
+            return null;
+        }
+
+        public async Task<StandardOptions> GetStandardOptionsByStandardId(string id)
+        {
+            try
+            {
+                var standard = await _outerApiClient.Get<GetStandardByIdResponse>(new GetStandardByIdRequest(id));
+
+                return new StandardOptions
+                {
+                    StandardUId = standard.StandardUId,
+                    StandardCode = standard.LarsCode,
+                    StandardReference = standard.IfateReferenceNumber,
+                    Version = standard.Version,
+                    CourseOption = standard.Options
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"STANDARD OPTIONS: Failed to get standard options for id {id}");
+            }
+
+            return null;
         }
 
         public async Task<IEnumerable<EPORegisteredStandards>> GetEpaoRegisteredStandards(string endPointAssessorOrganisationId)

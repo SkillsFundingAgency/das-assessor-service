@@ -35,16 +35,4 @@ namespace SFA.DAS.AssessorService.Application.Infrastructure.OuterApi
         [JsonProperty("isActive")]
         public bool IsActive { get ; set ; }
     }
-
-    public class StandardDates
-    {
-        [JsonProperty("lastDateStarts")]
-        public DateTime? LastDateStarts { get; set; }
-
-        [JsonProperty("effectiveTo")]
-        public DateTime? EffectiveTo { get; set; }
-
-        [JsonProperty("effectiveFrom")]
-        public DateTime EffectiveFrom { get; set; }
-    }
 }

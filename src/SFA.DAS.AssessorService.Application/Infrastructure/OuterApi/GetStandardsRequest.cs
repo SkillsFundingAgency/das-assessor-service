@@ -4,9 +4,4 @@ namespace SFA.DAS.AssessorService.Application.Infrastructure.OuterApi
     {
         public string GetUrl => "trainingcourses";
     }
-
-    public interface IGetApiRequest
-    {
-        string GetUrl { get; }
-    }
 }
