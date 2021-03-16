@@ -8,6 +8,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Models.Response.Stand
     {
         public int? StandardCode { get; set; }
         public string StandardReference { get; set; }
+        public decimal Version { get; set; }
         public IEnumerable<string> CourseOption { get; set; }
 
         #region GetHashCode, Equals and IEquatable

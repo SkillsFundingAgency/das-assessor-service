@@ -15,5 +15,8 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
 
         Task<IEnumerable<EPORegisteredStandards>> GetEpaoRegisteredStandards(string endPointAssessorOrganisationId);
         Task UpsertStandards(IEnumerable<GetStandardsListItem> standards);
+        Task<IEnumerable<StandardOptions>> GetStandardOptions();
+        Task<StandardOptions> GetStandardOptionsByStandardId(string id);
+
     }
 }
