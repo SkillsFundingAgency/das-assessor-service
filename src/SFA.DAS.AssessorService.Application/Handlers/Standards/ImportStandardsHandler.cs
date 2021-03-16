@@ -29,14 +29,15 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Standards
             try
             {
                 var standards = await outerApiService.GetAllStandards();
-                if (standards.Any() == false)
+                var standardDetails = await outerApiService.GetAllStandardDetails(standards.Select(s => s.StandardUId));
+                if (standardDetails.Any() == false)
                 {
                     logger.LogWarning("Outer API did not return any standards");
                     return Unit.Value;
                 }
                 unitOfWork.Begin();
 
-                await standardService.UpsertStandards(standards);
+                await standardService.UpsertStandards(standardDetails);
 
                 unitOfWork.Commit();
             }

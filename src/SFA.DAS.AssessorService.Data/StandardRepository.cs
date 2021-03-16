@@ -24,9 +24,9 @@ namespace SFA.DAS.AssessorService.Data
         public async Task Insert(Standard standard)
         {
             await _unitOfWork.Connection.ExecuteAsync(
-                "INSERT INTO [Standards] ([StandardUId], [IfateReferenceNumber], [LarsCode], [Title], [Version], [Level], [Status], [TypicalDuration], [MaxFunding], [IsActive], [LastDateStarts], [EffectiveFrom], [EffectiveTo]) " +
-                "VALUES (@standardUId, @ifateReferenceNumber, @larsCode, @title, @version, @level, @status, @typicalDuration, @maxFunding, @isActive, @lastDateStarts, @effectiveFrom, @effectiveTo)",
-                param: new { standard.StandardUId, standard.IfateReferenceNumber, standard.LarsCode, standard.Title, standard.Version, standard.Level, standard.Status, standard.TypicalDuration, standard.MaxFunding, standard.IsActive, standard.LastDateStarts, standard.EffectiveFrom, standard.EffectiveTo },
+                "INSERT INTO [Standards] ([StandardUId], [IfateReferenceNumber], [LarsCode], [Title], [Version], [Level], [Status], [TypicalDuration], [MaxFunding], [IsActive], [LastDateStarts], [EffectiveFrom], [EffectiveTo], [VersionEarliestStartDate], [VersionLatestStartDate], [VersionLatestEndDate], [VersionApprovedForDelivery], [ProposedTypicalDuration], [ProposedMaxFunding]) " +
+                "VALUES (@standardUId, @ifateReferenceNumber, @larsCode, @title, @version, @level, @status, @typicalDuration, @maxFunding, @isActive, @lastDateStarts, @effectiveFrom, @effectiveTo, @versionEarliestStartDate, @versionLatestStartDate, @versionLatestEndDate, @versionApprovedForDelivery, @proposedTypicalDuration, @proposedMaxFunding)",
+                param: new { standard.StandardUId, standard.IfateReferenceNumber, standard.LarsCode, standard.Title, standard.Version, standard.Level, standard.Status, standard.TypicalDuration, standard.MaxFunding, standard.IsActive, standard.LastDateStarts, standard.EffectiveFrom, standard.EffectiveTo, standard.VersionEarliestStartDate, standard.VersionLatestStartDate, standard.VersionLatestEndDate, standard.VersionApprovedForDelivery, standard.ProposedTypicalDuration, standard.ProposedMaxFunding },
                 transaction: _unitOfWork.Transaction);
         }
 

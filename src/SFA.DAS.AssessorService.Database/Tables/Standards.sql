@@ -17,6 +17,6 @@
     [VersionLatestStartDate] DATETIME NULL, 
     [VersionLatestEndDate] DATETIME NULL, 
     [VersionApprovedForDelivery] DATETIME NULL, 
-    [ProposedTypicalDuration] INT NULL, 
-    [ProposedMaxFunding] INT NULL
+    [ProposedTypicalDuration] INT NOT NULL, 
+    [ProposedMaxFunding] INT NOT NULL
 )
