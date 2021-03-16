@@ -12,5 +12,11 @@
 	[IsActive] BIT NOT NULL,
 	[LastDateStarts] DATETIME NULL,
 	[EffectiveFrom] DATETIME NULL,
-	[EffectiveTo] DATETIME NULL
+	[EffectiveTo] DATETIME NULL, 
+    [VersionEarliestStartDate] DATETIME NULL, 
+    [VersionLatestStartDate] DATETIME NULL, 
+    [VersionLatestEndDate] DATETIME NULL, 
+    [VersionApprovedForDelivery] DATETIME NULL, 
+    [ProposedTypicalDuration] INT NULL, 
+    [ProposedMaxFunding] INT NULL
 )
