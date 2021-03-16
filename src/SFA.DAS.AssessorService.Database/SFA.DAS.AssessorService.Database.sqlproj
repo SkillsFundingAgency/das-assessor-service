@@ -87,6 +87,8 @@
     <Build Include="Tables\ScheduleRuns.sql" />
     <Build Include="Tables\DeliveryArea.sql" />
     <Build Include="Tables\OrganisationStandard.sql" />
+    <Build Include="Tables\Standards.sql" />
+    <Build Include="Tables\OrganisationStandardVersion.sql" />
     <Build Include="Tables\OrganisationStandardDeliveryArea.sql" />
     <Build Include="Tables\OrganisationType.sql" />
     <Build Include="StoredProcedures\StaffSearchCertificates.sql" />
