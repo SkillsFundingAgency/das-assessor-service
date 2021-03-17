@@ -57,6 +57,50 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
             await Task.WhenAll(tasks);
         }
 
+        public async Task UpsertStandardCollations(IEnumerable<GetStandardByIdResponse> standards)
+        {
+            Func<GetStandardByIdResponse, StandardCollation> MapGetStandardsListItemToStandard = source => new StandardCollation
+            {
+                StandardId = source.LarsCode,
+                ReferenceNumber = source.IfateReferenceNumber,
+                Title = source.Title,
+                Options = source.Options,
+                StandardData = new StandardData 
+                {
+                    Category = source.Route,
+                    IfaStatus = source.Status,
+                    //EqaProviderName = source.EqaProvider?.ProviderName,
+                    EqaProviderContactName = source.EqaProvider?.ContactName,
+                    //EqaProviderContactAddress = source.EqaProvider?.ContactAddress,
+                    EqaProviderContactEmail = source.EqaProvider?.ContactEmail,
+                    EqaProviderWebLink = source.EqaProvider?.WebLink,
+                    IntegratedDegree = source.IntegratedDegree,
+                    EffectiveFrom = source.StandardDates.EffectiveFrom,
+                    EffectiveTo = source.StandardDates.EffectiveTo,
+                    Level = source.Level,
+                    LastDateForNewStarts = source.StandardDates.LastDateStarts,
+                    IfaOnly = source.LarsCode == 0,
+                    Duration = source.TypicalDuration,
+                    MaxFunding = source.MaxFunding,
+                    Trailblazer = source.TrailBlazerContact,
+                    PublishedDate = source.VersionDetail.ApprovedForDelivery,
+                    IsPublished = source.LarsCode > 0,
+                    //Ssa1 = source.ssa1,
+                    Ssa2 = source.SectorSubjectAreaTier2Description,
+                    OverviewOfRole = source.OverviewOfRole,
+                    IsActiveStandardInWin = source.IsActive,
+                    FatUri = "",
+                    //IfaUri = source.Url,
+                    AssessmentPlanUrl = source.AssessmentPlanUrl,
+                    StandardPageUrl = source.StandardPageUrl
+                }
+            };
+
+            var standardCollations = standards.Select(MapGetStandardsListItemToStandard).ToList();
+
+            await _standardRepository.UpsertApprovedStandards(standardCollations);
+        }
+
         public async Task<IEnumerable<StandardCollation>> GetAllStandards()
         {
             var results = await _cacheService.RetrieveFromCache<IEnumerable<StandardCollation>>("StandardCollations");

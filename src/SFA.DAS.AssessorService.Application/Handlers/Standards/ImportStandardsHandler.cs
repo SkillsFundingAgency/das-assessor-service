@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -26,18 +27,30 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Standards
 
         public async Task<Unit> Handle(ImportStandardsRequest request, CancellationToken cancellationToken)
         {
+            var getAllStandardsTask = outerApiService.GetAllStandards();
+            var getActiveStandardsTask = outerApiService.GetActiveStandards();
+            await Task.WhenAll(getAllStandardsTask, getActiveStandardsTask);
+
+            var allStandards = getAllStandardsTask.Result;
+            var activeStandardUIds = getActiveStandardsTask.Result.Select(s => s.StandardUId);
+
+            if (allStandards.Any() == false)
+            {
+                logger.LogWarning("Outer API did not return any standards");
+                return Unit.Value;
+            }
+
+            var allStandardDetails = await outerApiService.GetAllStandardDetails(allStandards.Select(s => s.StandardUId));
+
+            var activeStandardDetails = allStandardDetails.Where(s => activeStandardUIds.Contains(s.StandardUId)).ToList();
+
             try
             {
-                var standards = await outerApiService.GetAllStandards();
-                var standardDetails = await outerApiService.GetAllStandardDetails(standards.Select(s => s.StandardUId));
-                if (standardDetails.Any() == false)
-                {
-                    logger.LogWarning("Outer API did not return any standards");
-                    return Unit.Value;
-                }
                 unitOfWork.Begin();
 
-                await standardService.UpsertStandards(standardDetails);
+                await standardService.LoadStandards(allStandardDetails);
+
+                await standardService.UpsertStandardCollations(activeStandardDetails);
 
                 unitOfWork.Commit();
             }
