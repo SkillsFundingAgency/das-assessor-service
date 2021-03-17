@@ -11,13 +11,26 @@ namespace SFA.DAS.AssessorService.Application.Mapping.CustomResolvers
     {
         public string Resolve(ApplySummary source, ApplicationResponse destination, string destMember, ResolutionContext context)
         {
-            if (IsSequenceRequired(source.ApplyData, ApplyConst.ORGANISATION_SEQUENCE_NO) && IsSequenceRequired(source.ApplyData, ApplyConst.STANDARD_SEQUENCE_NO))
+            bool OrganisationSectionRequired(int sectionNo) => 
+                IsSectionRequired(source.ApplyData, ApplyConst.ORGANISATION_SEQUENCE_NO, sectionNo);
+
+            if (IsSequenceRequired(source.ApplyData, ApplyConst.ORGANISATION_SEQUENCE_NO) && 
+                OrganisationSectionRequired(ApplyConst.ORGANISATION_DETAILS_SECTION_NO) &&
+                OrganisationSectionRequired(ApplyConst.DECLARATIONS_SECTION_NO))
             {
-                return ApplicationTypes.Combined;
+                if (OrganisationSectionRequired(ApplyConst.FINANCIAL_DETAILS_SECTION_NO))
+                {
+                    return ApplicationTypes.InitialWithFinancialHealthChecks;
+                }
+                else return ApplicationTypes.InitialWithoutFinancialHealthChecks;
             }
-            else if (IsSequenceRequired(source.ApplyData, ApplyConst.STANDARD_SEQUENCE_NO))
+            else if(IsSequenceRequired(source.ApplyData, ApplyConst.STANDARD_SEQUENCE_NO))
             {
-                return ApplicationTypes.Standard;
+                if (OrganisationSectionRequired(ApplyConst.FINANCIAL_DETAILS_SECTION_NO))
+                {
+                    return ApplicationTypes.AdditionalStandardWithFinancialHealthChecks;
+                }
+                else return ApplicationTypes.AdditionalStandardWithoutFinancialHealthChecks;
             }
             else if (IsSequenceRequired(source.ApplyData, ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO))
             {
@@ -34,7 +47,19 @@ namespace SFA.DAS.AssessorService.Application.Mapping.CustomResolvers
         private bool IsSequenceRequired(ApplyData applyData, int sequenceNo)
         {
             // a sequence cannot be considered required if it does not exist in the ApplyData
-            return applyData?.Sequences?.Any(x => x.SequenceNo == sequenceNo && !x.NotRequired) ?? false;
+            return applyData
+                ?.Sequences
+                ?.Any(x => x.SequenceNo == sequenceNo && !x.NotRequired) ?? false;
+        }
+
+        private bool IsSectionRequired(ApplyData applyData, int sequenceNo, int sectionNo)
+        {
+            // a sequence section cannot be considered required if the sequence or sequence section does not exist in the ApplyData
+            return applyData
+                ?.Sequences
+                ?.Where(sequence => sequence.SequenceNo == sequenceNo && !sequence.NotRequired)
+                ?.SelectMany(sequence => sequence.Sections.Where(section => section.SectionNo == sectionNo && !section.NotRequired))
+                ?.Any() ?? false;
         }
     }
 }

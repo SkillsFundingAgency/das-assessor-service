@@ -9,7 +9,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 {
     public interface IApplicationApiClient
     {
-        Task<List<ApplicationResponse>> GetCombinedApplications(Guid userId);
         Task<List<ApplicationResponse>> GetOrganisationApplications(Guid userId);
         Task<List<ApplicationResponse>> GetStandardApplications(Guid userId);
         Task<List<ApplicationResponse>> GetWithdrawalApplications(Guid userId);

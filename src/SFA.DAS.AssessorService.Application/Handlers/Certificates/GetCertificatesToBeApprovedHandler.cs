@@ -67,6 +67,10 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
                     if (certificateData.ProviderName == null)
                     {
                         var provider = (await _roatpApiClient.SearchOrganisationByUkprn(certificate.ProviderUkPrn)).FirstOrDefault();
+                        if (provider == null)
+                        {
+                            throw new EntityNotFoundException($"Training provider {certificate.ProviderUkPrn} not found", null);
+                        }
                             
                         trainingProviderName = provider?.ProviderName;
                         await _certificateRepository.UpdateProviderName(certificate.Id, trainingProviderName);

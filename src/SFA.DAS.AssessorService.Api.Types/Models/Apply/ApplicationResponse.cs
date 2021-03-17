@@ -22,9 +22,21 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Apply
         public string ContactName { get; set; }
         public string ContactEmail { get; set; }
 
-        public bool IsCombindedApplication => ApplicationType == ApplicationTypes.Combined;
+        public bool IsInitialWithFinancialHealthChecks => ApplicationType == ApplicationTypes.InitialWithFinancialHealthChecks;
 
-        public bool IsStandardApplication => ApplicationType == ApplicationTypes.Standard;
+        public bool IsInitialWithoutFinancialHealthChecks => ApplicationType == ApplicationTypes.InitialWithoutFinancialHealthChecks;
+
+        public bool IsInitialApplication => IsInitialWithFinancialHealthChecks || IsInitialWithoutFinancialHealthChecks;
+
+        public bool IsAdditionalStandardWithFinancialHealthChecks => ApplicationType == ApplicationTypes.AdditionalStandardWithFinancialHealthChecks;
+
+        public bool IsAdditionalStandardWithoutFinancialHealthChecks => ApplicationType == ApplicationTypes.AdditionalStandardWithoutFinancialHealthChecks;
+
+        public bool IsAdditionalStandardApplication => IsAdditionalStandardWithFinancialHealthChecks || IsAdditionalStandardWithoutFinancialHealthChecks;
+
+        public bool IsOrganisationApplication => IsInitialApplication || IsAdditionalStandardWithFinancialHealthChecks;
+
+        public bool ISStandardApplication => IsInitialApplication || IsAdditionalStandardApplication;
 
         public bool IsStandardWithdrawalApplication => ApplicationType == ApplicationTypes.StandardWithdrawal;
 

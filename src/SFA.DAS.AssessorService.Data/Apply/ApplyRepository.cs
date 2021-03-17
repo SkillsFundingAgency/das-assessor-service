@@ -67,11 +67,6 @@ namespace SFA.DAS.AssessorService.Data.Apply
                 transaction: _unitOfWork.Transaction)).ToList();
         }
 
-        public async Task<List<ApplySummary>> GetCombindedApplications(Guid userId)
-        {
-            return await GetApplications(userId, new int[] { ApplyConst.ORGANISATION_SEQUENCE_NO, ApplyConst.STANDARD_SEQUENCE_NO });
-        }
-
         public async Task<List<ApplySummary>> GetOrganisationApplications(Guid userId)
         {
             return await GetApplications(userId, new int[] { ApplyConst.ORGANISATION_SEQUENCE_NO });

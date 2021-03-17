@@ -463,6 +463,7 @@ namespace SFA.DAS.AssessorService.Data
                 cert.DeletedAt = null;
             }
 
+            cert.ToBePrinted = null;
             cert.BatchNumber = null;
 
             if (updateLog)
