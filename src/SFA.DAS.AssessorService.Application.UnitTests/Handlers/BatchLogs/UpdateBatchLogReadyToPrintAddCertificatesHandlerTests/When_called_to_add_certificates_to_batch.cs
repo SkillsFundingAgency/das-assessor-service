@@ -99,7 +99,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.De
             await _sut.Handle(new UpdateBatchLogReadyToPrintAddCertificatesRequest { BatchNumber = _batchNumber, MaxCertificatesToBeAdded = 1 }, new CancellationToken());
 
             // Assert
-            _mockCertificateBatchLogRepository.Verify(v => v.UpdateCertificatesReadyToPrintInBatch(_certificateIds, _batchNumber));
+            _mockCertificateBatchLogRepository.Verify(v => v.UpsertCertificatesReadyToPrintInBatch(_certificateIds, _batchNumber));
         }
 
         [Test]
