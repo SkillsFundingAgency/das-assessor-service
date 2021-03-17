@@ -25,9 +25,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
 
             switch(request.ApplicationType)
             {
-                case ApplicationTypes.Combined:
-                    result = await _applyRepository.GetCombindedApplications(request.UserId);
-                    break;
                 case ApplicationTypes.Organisation:
                     result = await _applyRepository.GetOrganisationApplications(request.UserId);
                     break;
