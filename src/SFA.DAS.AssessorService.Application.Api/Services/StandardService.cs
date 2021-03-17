@@ -25,7 +25,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
             _standardRepository = standardRepository;
         }
 
-        public async Task UpsertStandards(IEnumerable<GetStandardByIdResponse> standards)
+        public async Task LoadStandards(IEnumerable<GetStandardByIdResponse> standards)
         {
             Func<GetStandardByIdResponse, Standard> MapGetStandardsListItemToStandard = source => new Standard 
             {
