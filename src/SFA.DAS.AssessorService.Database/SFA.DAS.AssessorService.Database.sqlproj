@@ -157,6 +157,9 @@
     <Build Include="StoredProcedures\DatabaseMaintenance.sql" />
     <Build Include="Security\Roles\DatabaseRoles\DatabaseMaintenance.sql" />
     <None Include="PostDeploymentScripts\GrantOrDenyPermissions.sql" />
+    <None Include="PostDeploymentScripts\EPAO_Migration_Part1_Certificates.sql" />
+    <None Include="PostDeploymentScripts\EPAO_Migration_Part2_OrganisationStandard.sql" />
+    <None Include="PostDeploymentScripts\EPAO_Migration_Part3_OrganisationStandardVersion.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="SFA.DAS.AssessorService.Database.refactorlog" />
