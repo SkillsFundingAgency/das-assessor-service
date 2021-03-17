@@ -19,6 +19,12 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
             this.logger = logger;
         }
 
+        public async Task<IEnumerable<GetStandardsListItem>> GetActiveStandards()
+        {
+            var response = await outerApiClient.Get<GetStandardsListResponse>(new GetActiveStandardsRequest());
+            return response.Standards;
+        }
+
         public async Task<IEnumerable<GetStandardByIdResponse>> GetAllStandardDetails(IEnumerable<string> standardUIds)
         {
             try
