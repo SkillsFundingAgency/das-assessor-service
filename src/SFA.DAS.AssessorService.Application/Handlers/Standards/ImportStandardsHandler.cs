@@ -14,10 +14,10 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Standards
     {
         private readonly IUnitOfWork unitOfWork;
         private readonly IOuterApiService outerApiService;
-        private readonly IStandardService standardService;
+        private readonly IStandardImportService standardService;
         private readonly ILogger<ImportStandardsHandler> logger;
 
-        public ImportStandardsHandler(IUnitOfWork unitOfWork, IOuterApiService outerApiService, IStandardService standardService, ILogger<ImportStandardsHandler> logger)
+        public ImportStandardsHandler(IUnitOfWork unitOfWork, IOuterApiService outerApiService, IStandardImportService standardService, ILogger<ImportStandardsHandler> logger)
         {
             this.unitOfWork = unitOfWork;
             this.outerApiService = outerApiService;

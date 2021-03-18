@@ -1,5 +1,4 @@
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
-using SFA.DAS.AssessorService.Application.Infrastructure.OuterApi;
 using SFA.DAS.AssessorService.Domain.Entities;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -14,10 +13,8 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<StandardCollation> GetStandard(string referenceNumber);
 
         Task<IEnumerable<EPORegisteredStandards>> GetEpaoRegisteredStandards(string endPointAssessorOrganisationId);
-        Task LoadStandards(IEnumerable<GetStandardByIdResponse> standards);
+        
         Task<IEnumerable<StandardOptions>> GetStandardOptions();
         Task<StandardOptions> GetStandardOptionsByStandardId(string id);
-
-        Task UpsertStandardCollations(IEnumerable<GetStandardByIdResponse> standards);
     }
 }
