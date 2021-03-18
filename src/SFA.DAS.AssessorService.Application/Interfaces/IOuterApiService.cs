@@ -9,5 +9,6 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<IEnumerable<GetStandardsListItem>> GetAllStandards();
         Task<IEnumerable<GetStandardByIdResponse>> GetAllStandardDetails(IEnumerable<string> standardUIds);
         Task<IEnumerable<GetStandardsListItem>> GetActiveStandards();
+        Task<IEnumerable<GetStandardsListItem>> GetDraftStandards();
     }
 }

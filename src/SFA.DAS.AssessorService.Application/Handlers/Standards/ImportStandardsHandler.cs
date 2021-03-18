@@ -29,10 +29,12 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Standards
         {
             var getAllStandardsTask = outerApiService.GetAllStandards();
             var getActiveStandardsTask = outerApiService.GetActiveStandards();
-            await Task.WhenAll(getAllStandardsTask, getActiveStandardsTask);
+            var getDraftStandardsTask = outerApiService.GetDraftStandards();
+            await Task.WhenAll(getAllStandardsTask, getActiveStandardsTask, getDraftStandardsTask);
 
             var allStandards = getAllStandardsTask.Result;
             var activeStandardUIds = getActiveStandardsTask.Result.Select(s => s.StandardUId);
+            var draftStandardUIds = getDraftStandardsTask.Result.Select(s => s.StandardUId);
 
             if (allStandards.Any() == false)
             {
@@ -42,7 +44,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Standards
 
             var allStandardDetails = await outerApiService.GetAllStandardDetails(allStandards.Select(s => s.StandardUId));
 
-            var activeStandardDetails = allStandardDetails.Where(s => activeStandardUIds.Contains(s.StandardUId)).ToList();
+            var activeStandardDetails = allStandardDetails.Where(s => activeStandardUIds.Contains(s.StandardUId));
+
+            var draftStandardDetails = allStandardDetails.Where(s => draftStandardUIds.Contains(s.StandardUId));
 
             try
             {
@@ -51,6 +55,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Standards
                 await standardService.LoadStandards(allStandardDetails);
 
                 await standardService.UpsertStandardCollations(activeStandardDetails);
+
+                await standardService.UpsertStandardNonApprovedCollations(draftStandardDetails);
 
                 unitOfWork.Commit();
             }

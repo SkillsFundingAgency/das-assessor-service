@@ -51,7 +51,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
 
         public async Task UpsertStandardCollations(IEnumerable<GetStandardByIdResponse> standards)
         {
-            Func<GetStandardByIdResponse, StandardCollation> MapGetStandardsListItemToStandard = source => new StandardCollation
+            Func<GetStandardByIdResponse, StandardCollation> MapGetStandardsListItemToStandardCollation = source => new StandardCollation
             {
                 StandardId = source.LarsCode,
                 ReferenceNumber = source.IfateReferenceNumber,
@@ -88,9 +88,34 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
                 }
             };
 
-            var standardCollations = standards.Select(MapGetStandardsListItemToStandard).ToList();
+            var standardCollations = standards.Select(MapGetStandardsListItemToStandardCollation).ToList();
 
             await standardRepository.UpsertApprovedStandards(standardCollations);
+        }
+
+        public async Task UpsertStandardNonApprovedCollations(IEnumerable<GetStandardByIdResponse> standards)
+        {
+            Func<GetStandardByIdResponse, StandardNonApprovedCollation> MapGetStandardsListItemToStandardNonApprovedCollation = source => new StandardNonApprovedCollation
+            {
+                ReferenceNumber = source.IfateReferenceNumber,
+                Title = source.Title,
+                StandardData = new StandardNonApprovedData
+                {
+                    Level = source.Level,
+                    Category = source.Route,
+                    IfaStatus = source.Status,
+                    IntegratedDegree = source.IntegratedDegree,
+                    Duration = source.TypicalDuration,
+                    MaxFunding = source.MaxFunding,
+                    Trailblazer = source.TrailBlazerContact,
+                    OverviewOfRole = source.OverviewOfRole,
+                    StandardPageUrl = source.StandardPageUrl
+                }
+            };
+
+            var standardNonApprovedCollations = standards.Select(MapGetStandardsListItemToStandardNonApprovedCollation).ToList();
+
+            await standardRepository.UpsertNonApprovedStandards(standardNonApprovedCollations);
         }
     }
 }

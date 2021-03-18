@@ -46,5 +46,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
             var response = await outerApiClient.Get<GetStandardsListResponse>(new GetStandardsRequest());
             return response.Standards;
         }
+
+        public async Task<IEnumerable<GetStandardsListItem>> GetDraftStandards()
+        {
+            var response = await outerApiClient.Get<GetStandardsListResponse>(new GetDraftStandardsRequest());
+            return response.Standards;
+        }
     }
 }

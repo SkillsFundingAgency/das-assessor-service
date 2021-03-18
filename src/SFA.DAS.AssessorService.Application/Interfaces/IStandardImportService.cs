@@ -8,5 +8,6 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
     {
         Task LoadStandards(IEnumerable<GetStandardByIdResponse> standards);
         Task UpsertStandardCollations(IEnumerable<GetStandardByIdResponse> standards);
+        Task UpsertStandardNonApprovedCollations(IEnumerable<GetStandardByIdResponse> standards);
     }
 }
