@@ -18,5 +18,8 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         IEnumerable<StandardNonApprovedCollation> GatherAllNonApprovedStandardDetails(List<IfaStandard> nonApprovedIfaStandards);
 
         Task<IEnumerable<EPORegisteredStandards>> GetEpaoRegisteredStandards(string endPointAssessorOrganisationId);
+        Task<IEnumerable<StandardOptions>> GetStandardOptions();
+        Task<StandardOptions> GetStandardOptionsByStandardId(string id);
+
     }
 }

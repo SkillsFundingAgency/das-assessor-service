@@ -90,10 +90,57 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
             return null;
         }
 
+
+        public async Task<IEnumerable<StandardOptions>> GetStandardOptions()
+        {
+            try
+            {
+                var standardOptionsResponse = await _outerApiClient.Get<GetStandardOptionsListResponse>(new GetStandardOptionsRequest());
+
+                return standardOptionsResponse.StandardOptions.Select(standard => new StandardOptions
+                {
+                    StandardUId = standard.StandardUId,
+                    StandardCode = standard.LarsCode,
+                    StandardReference = standard.IfateReferenceNumber,
+                    Version = standard.Version,
+                    CourseOption = standard.Options
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "STANDARD OPTIONS: Failed to get standard options");
+            }
+
+            return null;
+        }
+
+        public async Task<StandardOptions> GetStandardOptionsByStandardId(string id)
+        {
+            try
+            {
+                var standard = await _outerApiClient.Get<GetStandardByIdResponse>(new GetStandardByIdRequest(id));
+
+                return new StandardOptions
+                {
+                    StandardUId = standard.StandardUId,
+                    StandardCode = standard.LarsCode,
+                    StandardReference = standard.IfateReferenceNumber,
+                    Version = standard.Version,
+                    CourseOption = standard.Options
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"STANDARD OPTIONS: Failed to get standard options for id {id}");
+            }
+
+            return null;
+        }
+
         public async Task<IEnumerable<StandardCollation>> GatherAllApprovedStandardDetails(List<IfaStandard> approvedIfaStandards)
         {
             _logger.LogInformation("STANDARD COLLATION: Starting gathering of all Standard details");
-            
+
             var standards = await _outerApiClient.Get<GetStandardsListResponse>(new GetStandardsRequest());
 
             _logger.LogInformation("STANDARD COLLATION: Start collating approved IFA and standards");
@@ -194,7 +241,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
                     MaxFunding = standard?.MaxFunding ?? ifaStandard?.MaxFunding,
                     Trailblazer = ifaStandard?.TbMainContact,
                     PublishedDate = ifaStandard?.ApprovedForDelivery,
-                    IsPublished = standard!=null ? true : ifaStandard?.IsPublished,
+                    IsPublished = standard != null ? true : ifaStandard?.IsPublished,
                     Ssa1 = ifaStandard?.Ssa1,
                     Ssa2 = ifaStandard?.Ssa2,
                     OverviewOfRole = ifaStandard?.OverviewOfRole,
