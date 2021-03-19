@@ -29,7 +29,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
         {
             try
             {
-                var tasks = standardUIds.Select(id => outerApiClient.Get<GetStandardByIdResponse>(new GetStandardByIdRequest(id)));
+                var tasks = standardUIds.Select(id => outerApiClient.Get<GetStandardByIdResponse>(new GetStandardByIdRequest(id))).ToList();
                 await Task.WhenAll(tasks);
                 var data = tasks.Select(t => t.Result).ToList();
                 return data;
