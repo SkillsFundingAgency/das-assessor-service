@@ -14,14 +14,14 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Standards
     {
         private readonly IUnitOfWork unitOfWork;
         private readonly IOuterApiService outerApiService;
-        private readonly IStandardImportService standardService;
+        private readonly IStandardImportService standardImportService;
         private readonly ILogger<ImportStandardsHandler> logger;
 
-        public ImportStandardsHandler(IUnitOfWork unitOfWork, IOuterApiService outerApiService, IStandardImportService standardService, ILogger<ImportStandardsHandler> logger)
+        public ImportStandardsHandler(IUnitOfWork unitOfWork, IOuterApiService outerApiService, IStandardImportService standardImportService, ILogger<ImportStandardsHandler> logger)
         {
             this.unitOfWork = unitOfWork;
             this.outerApiService = outerApiService;
-            this.standardService = standardService;
+            this.standardImportService = standardImportService;
             this.logger = logger;
         }
 
@@ -52,11 +52,11 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Standards
             {
                 unitOfWork.Begin();
 
-                await standardService.LoadStandards(allStandardDetails);
+                await standardImportService.LoadStandards(allStandardDetails);
 
-                await standardService.UpsertStandardCollations(activeStandardDetails);
+                await standardImportService.UpsertStandardCollations(activeStandardDetails);
 
-                await standardService.UpsertStandardNonApprovedCollations(draftStandardDetails);
+                await standardImportService.UpsertStandardNonApprovedCollations(draftStandardDetails);
 
                 unitOfWork.Commit();
             }
