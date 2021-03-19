@@ -28,6 +28,7 @@
 :r .\PostDeploymentScripts\EPAO_Migration_Part1_Certificates.sql
 :r .\PostDeploymentScripts\EPAO_Migration_Part2_OrganisationStandard.sql
 :r .\PostDeploymentScripts\EPAO_Migration_Part3_OrganisationStandardVersion.sql
+:r .\PostDeploymentScripts\EPAO_Migration_Part4_Apply.sql
 
 -- ON-613 Patch Certificates with STxxxx StandardReference, where it is not yet included. 
 -- AB 11/03/19 Keep this active for new deployments, for now
