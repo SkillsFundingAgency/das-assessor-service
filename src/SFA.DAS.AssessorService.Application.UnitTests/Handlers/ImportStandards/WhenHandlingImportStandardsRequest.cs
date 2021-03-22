@@ -1,6 +1,4 @@
 ﻿using AutoFixture;
-using AutoFixture.NUnit3;
-using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
@@ -16,8 +14,9 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ImportStandards
 {
-    public class WhenHanldingImportStandardsRequest
+    public class WhenHandlingImportStandardsRequest
     {
+        Fixture fixture = new Fixture();
         const string ActiveStatus = "approved for delivery";
         const string DraftStatus = "in development";
         Mock<IUnitOfWork> _unitOfWorkMock = new Mock<IUnitOfWork>();
@@ -28,16 +27,12 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ImportStandards
         List<GetStandardByIdResponse> _allStandardDetails;
         ImportStandardsHandler _sut;
 
-        [SetUp, AutoData]
+        [SetUp]
         public async Task Initialize()
         {
-            var fixture = new Fixture();
-            var activeStandards = fixture.Create<List<GetStandardsListItem>>();
-            var draftStandards = fixture.Create<List<GetStandardsListItem>>();
-            var otherStandards = fixture.Create<List<GetStandardsListItem>>();
-
-            activeStandards.ForEach(s => s.Status = ActiveStatus);
-            draftStandards.ForEach(s => s.Status = DraftStatus);
+            var activeStandards = fixture.Build<GetStandardsListItem>().With(t => t.Status, ActiveStatus).CreateMany();
+            var draftStandards = fixture.Build<GetStandardsListItem>().With(t => t.Status, DraftStatus).CreateMany();
+            var otherStandards = fixture.CreateMany<GetStandardsListItem>();
 
             _allStandards.AddRange(activeStandards);
             _allStandards.AddRange(draftStandards);
@@ -55,6 +50,13 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ImportStandards
             await _sut.Handle(new ImportStandardsRequest(), new CancellationToken() );
         }
 
+        [TearDown]
+        public void ClearAll()
+        {
+            _allStandards.Clear();
+            _allStandardDetails.Clear();
+        }
+
         [Test]
         public void Then_Gets_All_Standards_From_Outer_Api()
         {
@@ -70,7 +72,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ImportStandards
         [Test]
         public void Then_Gets_Draft_Standards_From_Outer_Api()
         {
-            _outerApiServiceMock.Verify(o => o.GetActiveStandards());
+            _outerApiServiceMock.Verify(o => o.GetDraftStandards());
         }
 
         [Test]
