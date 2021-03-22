@@ -78,7 +78,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
             Assert.AreEqual(result.StandardUId, response.StandardUId);
             Assert.AreEqual(result.StandardCode, response.LarsCode);
             Assert.AreEqual(result.StandardReference, response.IfateReferenceNumber);
-            Assert.AreEqual(result.Version, response.Version);
+            Assert.AreEqual(result.Version, response.Version.ToString("#.0"));
         }
 
         [Test, AutoData]

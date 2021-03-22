@@ -102,7 +102,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
                     StandardUId = standard.StandardUId,
                     StandardCode = standard.LarsCode,
                     StandardReference = standard.IfateReferenceNumber,
-                    Version = standard.Version,
+                    Version = standard.Version.ToString("#.0"),
                     CourseOption = standard.Options
                 });
             }
@@ -125,7 +125,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
                     StandardUId = standard.StandardUId,
                     StandardCode = standard.LarsCode,
                     StandardReference = standard.IfateReferenceNumber,
-                    Version = standard.Version,
+                    Version = standard.Version.ToString("#.0"),
                     CourseOption = standard.Options
                 };
             }
