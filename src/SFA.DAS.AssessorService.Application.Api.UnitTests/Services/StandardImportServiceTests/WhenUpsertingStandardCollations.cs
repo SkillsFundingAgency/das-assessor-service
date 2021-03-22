@@ -28,7 +28,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services.StandardImp
         }
 
         [Test]
-        public void Then_Inserts_Data_Into_Standards_Table()
+        public void Then_Inserts_Data_Into_StandardCollation_Table()
         {
             standardRepositoryMock.Verify(r => r.UpsertApprovedStandards(It.IsAny<List<StandardCollation>>()));
         }

@@ -24,13 +24,13 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services.StandardImp
 
             var sut = new StandardImportService(standardRepositoryMock.Object);
 
-            await sut.UpsertStandardCollations(standards);
+            await sut.UpsertStandardNonApprovedCollations(standards);
         }
 
         [Test]
-        public void Then_Inserts_Data_Into_Standards_Table()
+        public void Then_Inserts_Data_Into_StandardNonApprovedCollation_Table()
         {
-            standardRepositoryMock.Verify(r => r.UpsertNonApprovedStandards(It.IsAny<List<StandardCollation>>()));
+            standardRepositoryMock.Verify(r => r.UpsertNonApprovedStandards(It.IsAny<List<StandardNonApprovedCollation>>()));
         }
     }
 }
