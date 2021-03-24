@@ -1,8 +1,7 @@
 ﻿using MediatR;
+using System;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models
 {
-    public class GatherStandardsRequest : IRequest
-    {
-    }
+    public class ImportStandardsRequest : IRequest {}
 }

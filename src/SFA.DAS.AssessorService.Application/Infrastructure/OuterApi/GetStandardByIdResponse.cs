@@ -66,6 +66,12 @@ namespace SFA.DAS.AssessorService.Application.Infrastructure.OuterApi
         [JsonProperty("options")]
         public List<string> Options { get; set; }
 
+        [JsonProperty("typicalDuration")]
+        public int TypicalDuration { get; set; }
+
+        [JsonProperty("maxFunding")]
+        public int MaxFunding { get; set; }
+
         [JsonProperty("isActive")]
         public bool IsActive { get; set; }
     }
