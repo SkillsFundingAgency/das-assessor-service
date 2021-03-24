@@ -185,17 +185,6 @@ namespace SFA.DAS.AssessorService.Data
             return results.ToList();
         }
 
-        public async Task<DateTime?> GetDateOfLastStandardCollation()
-        {
-            const string sql = "SELECT TOP 1 COALESCE(MAX(DateUpdated), MAX(DateAdded)) MaxDate FROM [Standard]";
-            var dateOfLastCollation = await _unitOfWork.Connection.QuerySingleAsync<DateTime?>(
-                sql, 
-                param: null, 
-                transaction: _unitOfWork.Transaction);
-
-            return dateOfLastCollation;
-        }
-
         public async Task<string> UpsertApprovedStandards(List<StandardCollation> latestStandards)
         {
             // retrieving both live and non-live, so that an existing non-live approved standard can be re-activated

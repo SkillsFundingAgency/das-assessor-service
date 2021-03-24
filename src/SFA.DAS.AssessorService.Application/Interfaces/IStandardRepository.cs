@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Domain.Entities;
@@ -19,8 +18,6 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<StandardNonApprovedCollation> GetStandardNonApprovedCollationByReferenceNumber(string referenceNumber);
 
         Task<List<Option>> GetOptions(int stdCode);
-
-        Task<DateTime?> GetDateOfLastStandardCollation();
         Task<int> GetEpaoStandardsCount(string endPointAssessorOrganisationId);
         Task<EpoRegisteredStandardsResult> GetEpaoRegisteredStandards(string endPointAssessorOrganisationId,
         int pageSize, int pageIndex);
