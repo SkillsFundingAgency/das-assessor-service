@@ -49,7 +49,10 @@ namespace SFA.DAS.AssessorService.Data.Apply
 
         public async Task<List<ApplySummary>> GetApplications(Guid userId, int[] sequenceNos)
         {
-            string query = @"SELECT a.*, o.EndPointAssessorName FROM Contacts c
+            string query = @"SELECT a.Id, a.ApplicationId, a.OrganisationId, a.ApplicationStatus, a.ReviewStatus, 
+                    a.ApplyData, a.FinancialReviewStatus, a.FinancialGrade, 
+                    a.StandardCode, a.CreatedAt, a.CreatedBy, a.UpdatedAt, a.UpdatedBy, a.DeletedAt, a.DeletedBy, o.EndPointAssessorName 
+                  FROM Contacts c
                   INNER JOIN Apply a ON a.OrganisationId = c.OrganisationId
                   LEFT JOIN Organisations o ON a.OrganisationId = o.Id
                   CROSS APPLY OPENJSON(ApplyData,'$.Sequences') WITH (SequenceNo INT, NotRequired BIT) sequence
