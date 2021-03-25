@@ -81,7 +81,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
             {
                 return NotFound();
             }
-            else if (standardVersion.CourseOption is null)
+            else if (standardVersion.CourseOption is null || standardVersion.CourseOption.Any() == false)
             {
                 return NoContent();
             }
