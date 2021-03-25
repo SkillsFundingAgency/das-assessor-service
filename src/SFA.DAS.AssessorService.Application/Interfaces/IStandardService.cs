@@ -16,5 +16,6 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         
         Task<IEnumerable<StandardOptions>> GetStandardOptions();
         Task<StandardOptions> GetStandardOptionsByStandardId(string id);
+        Task<StandardOptions> GetStandardOptionsByStandardReferenceAndVersion(string standardReference, decimal version);
     }
 }
