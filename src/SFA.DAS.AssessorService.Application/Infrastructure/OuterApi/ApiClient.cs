@@ -11,6 +11,8 @@ namespace SFA.DAS.AssessorService.Application.Infrastructure.OuterApi
     {
         private readonly HttpClient _httpClient;
         private readonly OuterApiConfiguration _config;
+        const string SubscriptionKeyRequestHeaderKey = "Ocp-Apim-Subscription-Key";
+        const string VersionRequestHeaderKey = "X-Version";
 
         public OuterApiClient (HttpClient httpClient, IWebConfiguration config)
         {
@@ -21,7 +23,6 @@ namespace SFA.DAS.AssessorService.Application.Infrastructure.OuterApi
         
         public async Task<TResponse> Get<TResponse>(IGetApiRequest request) 
         {
-            
             AddHeaders();
 
             var response = await _httpClient.GetAsync(request.GetUrl).ConfigureAwait(false);
@@ -34,18 +35,21 @@ namespace SFA.DAS.AssessorService.Application.Infrastructure.OuterApi
             if (response.IsSuccessStatusCode)
             {
                 var json = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                return JsonConvert.DeserializeObject<TResponse>(json);    
+                return JsonConvert.DeserializeObject<TResponse>(json);
             }
-            
+
             response.EnsureSuccessStatusCode();
-            
             return default;
         }
 
         private void AddHeaders()
         {
-            _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _config.Key);
-            _httpClient.DefaultRequestHeaders.Add("X-Version", "1");
+            //The http handler life time is set to 5 minutes
+            //hence once the headers are added they don't need added again
+            if (_httpClient.DefaultRequestHeaders.Contains(SubscriptionKeyRequestHeaderKey)) return;
+
+            _httpClient.DefaultRequestHeaders.Add(SubscriptionKeyRequestHeaderKey, _config.Key);
+            _httpClient.DefaultRequestHeaders.Add(VersionRequestHeaderKey, "1");
         }
     }
 

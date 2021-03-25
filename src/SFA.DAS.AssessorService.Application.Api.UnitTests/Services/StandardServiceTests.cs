@@ -8,8 +8,6 @@ using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Api.Services;
 using SFA.DAS.AssessorService.Application.Infrastructure.OuterApi;
 using SFA.DAS.AssessorService.Application.Interfaces;
-using SFA.DAS.AssessorService.ExternalApis.IFAStandards;
-using SFA.DAS.AssessorService.ExternalApis.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,7 +29,6 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
 
             _standardService = new StandardService(new CacheService(Mock.Of<IDistributedCache>()),
                 _mockOuterApiClient.Object,
-                Mock.Of<IIfaStandardsApiClient>(),
                 _mockLogger.Object,
                 Mock.Of<IStandardRepository>());
         }
