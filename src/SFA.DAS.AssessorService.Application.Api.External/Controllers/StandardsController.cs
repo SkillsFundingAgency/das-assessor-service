@@ -42,7 +42,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
                 return StatusCode((int)HttpStatusCode.ServiceUnavailable);
             }
 
-            return Ok(standards.Where(s => s.CourseOption != null).OrderBy(s => s.StandardCode));
+            return Ok(standards.Where(s => s.CourseOption != null && s.CourseOption.Any()).OrderBy(s => s.StandardCode));
         }
 
         [HttpGet("options/{*standard}")]
@@ -59,7 +59,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
             {
                 return NotFound();
             }
-            else if (requestedStandard.CourseOption is null)
+            else if (requestedStandard.CourseOption is null || requestedStandard.CourseOption.Any() == false)
             {
                 return NoContent();
             }
