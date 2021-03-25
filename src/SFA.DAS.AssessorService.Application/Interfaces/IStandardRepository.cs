@@ -14,6 +14,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<List<StandardCollation>> GetStandardCollations();
         Task<StandardCollation> GetStandardCollationByStandardId(int standardId);
         Task<StandardCollation> GetStandardCollationByReferenceNumber(string referenceNumber);
+        Task<Standard> GetStandardByStandardReferenceAndVersion(string standardReference, decimal version);
 
         Task<List<StandardNonApprovedCollation>> GetStandardNonApprovedCollations();
         Task<StandardNonApprovedCollation> GetStandardNonApprovedCollationByReferenceNumber(string referenceNumber);

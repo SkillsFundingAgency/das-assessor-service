@@ -117,6 +117,24 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
             return null;
         }
 
+        public async Task<StandardOptions> GetStandardOptionsByStandardReferenceAndVersion(string standardReference, decimal version)
+        {
+            Standard standard;
+
+            try
+            {
+                standard = await _standardRepository.GetStandardByStandardReferenceAndVersion(standardReference, version);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Could not find standard with StandardReference: {standardReference} and Version: {version}");
+
+                return null;
+            }
+
+            return await GetStandardOptionsByStandardId(standard.StandardUId);
+        }
+
         public async Task<IEnumerable<EPORegisteredStandards>> GetEpaoRegisteredStandards(string endPointAssessorOrganisationId)
         {
             var results = await _standardRepository.GetEpaoRegisteredStandards(endPointAssessorOrganisationId, int.MaxValue, 1);
