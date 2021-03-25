@@ -2,4 +2,4 @@
 
 UPDATE Apply
 SET StandardReference = JSON_VALUE(ApplyData,'$.Apply.StandardReference') 
-WHERE StandardReference IS NULL AND StandardCode IS NULL
+WHERE StandardReference IS NULL AND StandardCode IS NOT NULL
