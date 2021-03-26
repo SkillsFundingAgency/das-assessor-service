@@ -117,7 +117,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
             return null;
         }
 
-        public async Task<StandardOptions> GetStandardOptionsByStandardReferenceAndVersion(string standardReference, decimal version)
+        public async Task<StandardOptions> GetStandardOptionsByStandardReferenceAndVersion(string standardReference, string version)
         {
             Standard standard;
 

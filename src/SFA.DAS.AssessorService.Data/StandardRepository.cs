@@ -84,23 +84,21 @@ namespace SFA.DAS.AssessorService.Data
             return standards.FirstOrDefault();
         }
 
-        public async Task<Standard> GetStandardByStandardReferenceAndVersion(string standardReference, decimal version)
+        public async Task<Standard> GetStandardByStandardReferenceAndVersion(string standardReference, string version)
         {
-            var standards = await GetStandardsByStandardReferenceInternal(standardReference);
-
-            return standards.Single(standard => standard.Version == version);
+            return await GetStandardsByStandardReferenceAndVersionInternal(standardReference, version);
         }
 
-        private async Task<List<Standard>> GetStandardsByStandardReferenceInternal(string standardReference)
+        private async Task<Standard> GetStandardsByStandardReferenceAndVersionInternal(string standardReference, string version)
         {
-            var sql = "SELECT * FROM [Standards] WHERE IFateReferenceNumber = @standardReference";
+            var sql = "SELECT * FROM [Standards] WHERE IFateReferenceNumber = @standardReference AND Version = @version";
 
             var results = await _unitOfWork.Connection.QueryAsync<Standard>(
                 sql,
-                param: new { standardReference},
+                param: new { standardReference, version},
                 transaction: _unitOfWork.Transaction);
 
-            return results.ToList();
+            return results.FirstOrDefault();
         }
 
         public async Task<List<Option>> GetOptions(int stdCode)

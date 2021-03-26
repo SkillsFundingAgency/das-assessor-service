@@ -226,7 +226,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
             return response;
         }
 
-        public virtual async Task<StandardOptions> GetStandardOptionsByStandardReferenceAndVersion(string standardReference, decimal version)
+        public virtual async Task<StandardOptions> GetStandardOptionsByStandardReferenceAndVersion(string standardReference, string version)
         {
             var response = await Get<StandardOptions>($"/api/v1/standard-service/standard-options/{standardReference}/{version}");
 

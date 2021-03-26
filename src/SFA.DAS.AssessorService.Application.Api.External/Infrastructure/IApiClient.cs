@@ -22,6 +22,6 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
 
         Task<IEnumerable<StandardOptions>> GetStandardOptionsList();
         Task<StandardOptions> GetStandardOptionsByStandard(string standard);
-        Task<StandardOptions> GetStandardOptionsByStandardReferenceAndVersion(string standardReference, decimal version);
+        Task<StandardOptions> GetStandardOptionsByStandardReferenceAndVersion(string standardReference, string version);
     }
 }

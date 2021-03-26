@@ -99,7 +99,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
         }
 
         [Test, AutoData]
-        public async Task When_GettingStandardOptionsByStandardReferenceAndVersion_Then_StandardIsRetrievedFromAssessorStandardsTable(string standardReference, decimal version, Standard getStandardResponse)
+        public async Task When_GettingStandardOptionsByStandardReferenceAndVersion_Then_StandardIsRetrievedFromAssessorStandardsTable(string standardReference, string version, Standard getStandardResponse)
         {
             _mockStandardRepository.Setup(repository => repository.GetStandardByStandardReferenceAndVersion(standardReference, version))
                 .ReturnsAsync(getStandardResponse);
@@ -110,9 +110,9 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
         }
 
         [Test, AutoData]
-        public async Task When_GettingStandardOptionsByStandardReferenceAndVersion_And_StandardWithReferenceAndVersionIsNotFound_Then_LogError_And_ReturnNull(string standardReference, decimal version)
+        public async Task When_GettingStandardOptionsByStandardReferenceAndVersion_And_StandardWithReferenceAndVersionIsNotFound_Then_LogError_And_ReturnNull(string standardReference, string version)
         {
-            _mockStandardRepository.Setup(repository => repository.GetStandardByStandardReferenceAndVersion(It.IsAny<string>(), It.IsAny<decimal>()))
+            _mockStandardRepository.Setup(repository => repository.GetStandardByStandardReferenceAndVersion(It.IsAny<string>(), It.IsAny<string>()))
                 .Throws(new Exception());
 
             var result = await _standardService.GetStandardOptionsByStandardReferenceAndVersion(standardReference, version);
@@ -127,7 +127,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
         }
 
         [Test, AutoData]
-        public async Task When_GettingStandardOptionsByStandardReferenceAndVersion_Then_UseStandardUIdToCallOuterApi(string standardReference, decimal version, Standard getStandardResponse, GetStandardByIdResponse getStandardByIdResponse)
+        public async Task When_GettingStandardOptionsByStandardReferenceAndVersion_Then_UseStandardUIdToCallOuterApi(string standardReference, string version, Standard getStandardResponse, GetStandardByIdResponse getStandardByIdResponse)
         {
             _mockStandardRepository.Setup(repository => repository.GetStandardByStandardReferenceAndVersion(standardReference, version))
                 .ReturnsAsync(getStandardResponse);

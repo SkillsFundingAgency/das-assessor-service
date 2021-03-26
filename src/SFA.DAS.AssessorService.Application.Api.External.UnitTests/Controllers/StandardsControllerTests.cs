@@ -36,7 +36,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.UnitTests.Controllers
         }
 
         [Test, MoqAutoData]
-        public async Task WhenRequestingStandardVersionOptions_And_StandardVersionWithOptionsIsFound_Then_ReturnStandard(string standardReference, decimal version, StandardOptions standardOptionsResponse)
+        public async Task WhenRequestingStandardVersionOptions_And_StandardVersionWithOptionsIsFound_Then_ReturnStandard(string standardReference, string version, StandardOptions standardOptionsResponse)
         {
             _mockApiClient.Setup(client => client.GetStandardOptionsByStandardReferenceAndVersion(standardReference, version))
                 .ReturnsAsync(standardOptionsResponse);
@@ -51,7 +51,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.UnitTests.Controllers
         }
 
         [Test, MoqAutoData]
-        public async Task WhenRequestingStandardVersionOptions_And_StandardVersionWithNoOptionsIsFound_Then_ReturnNoContent(string standardReference, decimal version)
+        public async Task WhenRequestingStandardVersionOptions_And_StandardVersionWithNoOptionsIsFound_Then_ReturnNoContent(string standardReference, string version)
         {
             var standardOptionsResponse = _fixture.Build<StandardOptions>()
                 .With(s => s.CourseOption, new List<string>())
@@ -66,7 +66,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.UnitTests.Controllers
         }
 
         [Test, MoqAutoData]
-        public async Task WhenRequestingStandardVersionOptions_And_StandardVersionIsNotFound_Then_ReturnNotFound(string standardReference, decimal version)
+        public async Task WhenRequestingStandardVersionOptions_And_StandardVersionIsNotFound_Then_ReturnNotFound(string standardReference, string version)
         {
             _mockApiClient.Setup(client => client.GetStandardOptionsByStandardReferenceAndVersion(standardReference, version))
                 .ReturnsAsync((StandardOptions)null);
