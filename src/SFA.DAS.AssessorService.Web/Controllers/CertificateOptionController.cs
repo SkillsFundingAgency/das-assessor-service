@@ -66,8 +66,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             {
                 if (ContextAccessor.HttpContext.Request.Query.ContainsKey("fromback"))
                 {
-                    if (certificate.IsPrivatelyFunded)
-                        return RedirectToAction("StandardCode", "CertificatePrivateStandardCode");
                     return RedirectToAction("Declare", "CertificateDeclaration");
                 }
 

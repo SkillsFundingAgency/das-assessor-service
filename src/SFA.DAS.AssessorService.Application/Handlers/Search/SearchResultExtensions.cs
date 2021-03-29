@@ -60,14 +60,14 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
                 logger.LogInformation("MatchUpExistingCompletedStandards After GetCertificateLogsFor");
                 var submittedLogEntry = certificateLogs.FirstOrDefault(l => l.Status == CertificateStatus.Submitted);
                 var createdLogEntry = certificateLogs.FirstOrDefault(l => l.Status == CertificateStatus.Draft);
-                if (request.IsPrivatelyFunded)
+                var toBeApprovedLogEntry = certificateLogs.FirstOrDefault(l => l.Status == CertificateStatus.ToBeApproved);
+
+                if(toBeApprovedLogEntry != null)
                 {
-                    var toBeApprovedLogEntry = certificateLogs.FirstOrDefault(l => l.Status == CertificateStatus.ToBeApproved);
-                    if (toBeApprovedLogEntry == null)
-                        continue;
+                    // Hangover from Privately funded, To Be Approved only exists for old private funded certificates
                     submittedLogEntry = toBeApprovedLogEntry;
                 }
-
+                
                 if (submittedLogEntry == null) continue;
 
                 var submittingContact = contactRepository.GetContact(submittedLogEntry.Username).Result ?? contactRepository.GetContact(certificate.UpdatedBy).Result;

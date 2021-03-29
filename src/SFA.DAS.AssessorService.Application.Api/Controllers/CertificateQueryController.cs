@@ -58,8 +58,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [HttpGet("contact/previousaddress", Name = "GetContactPreviousAddress")]
         [SwaggerResponse((int) HttpStatusCode.OK, Type = typeof(CertificateAddress))]
         [SwaggerResponse((int) HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> GetContactPreviousAddress([FromQuery] string username,
-            bool isPrivatelyFunded)
+        public async Task<IActionResult> GetContactPreviousAddress([FromQuery] string username,bool isPrivatelyFunded)
         {
             var address = await _mediator.Send(new GetContactPreviousAddressesRequest
                 {Username = username, IsPrivatelyFunded = isPrivatelyFunded});

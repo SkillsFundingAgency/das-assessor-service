@@ -61,14 +61,8 @@ else
                     <p class="govuk-body">@Localizer["InfoLine1"]</p>
                 }
 
-                @if (Model.IsPrivatelyFunded)
-                {
-                    <p class="govuk-body">If the name, standard or level is incorrect, you need to agree on the correct details along with the training provider and the employer.</p>
-                }
-                else
-                {
-                    <p class="govuk-body">If the name, standard or level is incorrect, you need to agree on the correct details along with the training provider and the employer. The training provider needs to then update the Individualised Learner Record (<abbr title="Individualised Learner Record">ILR</abbr>).</p>
-                }
+                <p class="govuk-body">If the name, standard or level is incorrect, you need to agree on the correct details along with the training provider and the employer. The training provider needs to then update the Individualised Learner Record (<abbr title="Individualised Learner Record">ILR</abbr>).</p>
+
             </div>
 
             <h2 class="govuk-heading-m">
@@ -83,14 +77,6 @@ else
                     <dd class="govuk-summary-list__value">
                         @Model.GivenNames
                     </dd>
-                    <dd class="govuk-summary-list__actions">
-                        @if (Model.IsPrivatelyFunded)
-                        {
-                            <a class="govuk-link" asp-controller="CertificatePrivateFirstName" asp-action="FirstName" asp-route-redirecttocheck="true">
-                                Change<span class="govuk-visually-hidden"> given name</span>
-                            </a>
-                        }
-                    </dd>
                 </div>
 
                 <div class="govuk-summary-list__row">
@@ -100,14 +86,6 @@ else
                     <dd class="govuk-summary-list__value">
                         @Model.FamilyName
                     </dd>
-                    <dd class="govuk-summary-list__actions">
-                        @if (Model.IsPrivatelyFunded)
-                        {
-                            <a class="govuk-link" asp-controller="CertificatePrivateLastName" asp-action="LastName" asp-route-redirecttocheck="true">
-                                Change<span class="govuk-visually-hidden"> family name</span>
-                            </a>
-                        }
-                    </dd>
                 </div>
 
                 <div class="govuk-summary-list__row">
@@ -116,14 +94,6 @@ else
                     </dt>
                     <dd class="govuk-summary-list__value">
                         @Model.Uln
-                    </dd>
-                    <dd class="govuk-summary-list__actions">
-                        @if (Model.IsPrivatelyFunded)
-                        {
-                            <a class="govuk-link" asp-controller="CertificatePrivateUln" asp-action="Uln" asp-route-redirecttocheck="true">
-                                Change<span class="govuk-visually-hidden"> ULN</span>
-                            </a>
-                        }
                     </dd>
                 </div>
             </dl>
@@ -139,14 +109,6 @@ else
                     </dt>
                     <dd class="govuk-summary-list__value">
                         @Model.Standard (@Model.SelectedStandard)
-                    </dd>
-                    <dd class="govuk-summary-list__actions">
-                        @if (Model.IsPrivatelyFunded)
-                        {
-                            <a class="govuk-link" asp-controller="CertificatePrivateStandardCode" asp-action="StandardCode" asp-route-redirecttocheck="true">
-                                Change<span class="govuk-visually-hidden"> standard</span>
-                            </a>
-                        }
                     </dd>
                 </div>
                 <div class="govuk-summary-list__row">
@@ -189,23 +151,6 @@ else
                     </div>
                 }
 
-                @if (Model.IsPrivatelyFunded)
-                {
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">
-                            Apprenticeship start date
-                        </dt>
-                        <dd class="govuk-summary-list__value">
-                            @Model.LearnerStartDate?.ToSfaShortDateString()
-                        </dd>
-                        <dd class="govuk-summary-list__actions">
-                            <a class="govuk-link" asp-controller="CertificatePrivateLearnerStartDate" asp-action="LearnerStartDate" asp-route-redirecttocheck="true">
-                                Change<span class="govuk-visually-hidden"> apprenticeship start date</span>
-                            </a>
-                        </dd>
-                    </div>
-                }
-
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">
                         @if (Model.SelectedGrade == CertificateGrade.Fail)
@@ -226,23 +171,6 @@ else
                         </a>
                     </dd>
                 </div>
-
-                @if (Model.IsPrivatelyFunded)
-                {
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">
-                            UKPRN
-                        </dt>
-                        <dd class="govuk-summary-list__value">
-                            @Model.SelectedUkPrn
-                        </dd>
-                        <dd class="govuk-summary-list__actions">
-                            <a class="govuk-link" asp-controller="CertificatePrivateProviderUkprn" asp-action="Ukprn" asp-route-redirecttocheck="true">
-                                Change<span class="govuk-visually-hidden"> UKPRN</span>
-                            </a>
-                        </dd>
-                    </div>
-                }
             </dl>
 
 
@@ -357,15 +285,15 @@ else
                 </dl>
             }
 
-                <form class="js-disable-on-submit" method="post" asp-controller="CertificateCheck">
-                    @Html.HiddenFor(c => c.Id)
-                    @Html.HiddenFor(c => c.SelectedGrade)
-                    @Html.HiddenFor(c => c.Name)
-                    @Html.HiddenFor(c => c.AddressLine1)
-                    @Html.HiddenFor(c => c.City)
-                    @Html.HiddenFor(c => c.Postcode)
-                    <button type="submit" class="govuk-button">@Localizer["ContinueButton"]</button>
-                </form>
+            <form class="js-disable-on-submit" method="post" asp-controller="CertificateCheck">
+                @Html.HiddenFor(c => c.Id)
+                @Html.HiddenFor(c => c.SelectedGrade)
+                @Html.HiddenFor(c => c.Name)
+                @Html.HiddenFor(c => c.AddressLine1)
+                @Html.HiddenFor(c => c.City)
+                @Html.HiddenFor(c => c.Postcode)
+                <button type="submit" class="govuk-button">@Localizer["ContinueButton"]</button>
+            </form>
         </div>
     </div>
 </main>

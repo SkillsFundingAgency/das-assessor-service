@@ -8,7 +8,6 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Search
     {
         public string Uln { get; set; }
         public string Surname { get; set; }
-        public bool IsPrivatelyFunded { get; set; }
         public IEnumerable<ResultViewModel> SearchResults { get; set; }
     }
 

@@ -13,7 +13,7 @@ using SFA.DAS.AssessorService.Domain.JsonData;
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
 {
     [TestFixture]
-    public class When_search_completed_for_non_private_fundeded : SearchHandlerTestBase
+    public class When_search_completed : SearchHandlerTestBase
     {
         [SetUp]
         public void Arrange()
@@ -22,6 +22,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
 
             var certificateId = Guid.NewGuid();
             var searchingEpaoOrgId = Guid.NewGuid();
+            var privateCertificateId = Guid.NewGuid();
+            var privateSearchingEpaoOrgId = Guid.NewGuid();
 
             CertificateRepository.Setup(r => r.GetCompletedCertificatesFor(1111111111))
                 .ReturnsAsync(new List<Certificate>
@@ -39,6 +41,21 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
                                 AchievementDate = new DateTime(2018, 06, 01)
                             }),
                         IsPrivatelyFunded = false,
+                        CreatedBy = "username"
+                    },
+                    new Certificate
+                    {
+                        Id = privateCertificateId,
+                        CertificateReference = "00010001",
+                        StandardCode = 12,
+                        CertificateData =
+                            JsonConvert.SerializeObject(new CertificateData
+                            {
+                                OverallGrade = CertificateGrade.Distinction,
+                                LearningStartDate = new DateTime(2015, 06, 01),
+                                AchievementDate = new DateTime(2018, 06, 01)
+                            }),
+                        IsPrivatelyFunded = true,
                         CreatedBy = "username"
                     }
                 });
@@ -58,35 +75,36 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
         {
             var result =
                 SearchHandler.Handle(
-                    new SearchQuery() {Surname = "Lamora", EpaOrgId= "12345", Uln = 1111111111, Username = "username", IsPrivatelyFunded = false},
+                    new SearchQuery() {Surname = "Lamora", EpaOrgId= "12345", Uln = 1111111111, Username = "username"},
                     new CancellationToken()).Result;
 
             result[0].LearnStartDate.Should().Be(new DateTime(2015, 06, 01));
         }
 
-        public void Then_a_response_is_returned_including_IsPrivatelyFunded()
+        [Test]
+        public void Then_a_response_is_returned_where_a_certificate_is_privately_funded()
         {
             var result =
                 SearchHandler.Handle(
-                    new SearchQuery() { Surname = "Lamora", EpaOrgId = "12345", Uln = 1111111111, Username = "username", IsPrivatelyFunded = false },
+                    new SearchQuery() { Surname = "Lamora", EpaOrgId = "12345", Uln = 1111111111, Username = "username" },
                     new CancellationToken()).Result;
 
-            result[0].IsPrivatelyFunded.Should().Be(false);
+            result[0].LearnStartDate.Should().Be(new DateTime(2015, 06, 01));
+            result[0].IsPrivatelyFunded.Should().BeTrue();
         }
 
         [Test]
         public void Then_a_Search_Log_entry_is_created()
         {
             SearchHandler.Handle(
-                    new SearchQuery() {Surname = "Lamora", EpaOrgId= "12345", Uln = 1111111111, Username = "username", IsPrivatelyFunded = false},
+                    new SearchQuery() {Surname = "Lamora", EpaOrgId= "12345", Uln = 1111111111, Username = "username"},
                     new CancellationToken()).Wait();
 
             IlrRepository.Verify(r => r.StoreSearchLog(It.Is<SearchLog>(l =>
                 l.Username == "username" && 
                 l.NumberOfResults == 1 && 
                 l.Surname == "Lamora" && 
-                l.Uln == 1111111111 &&
-                l.SearchData.IsPrivatelyFunded == false)));
+                l.Uln == 1111111111)));
         }
     }
 }
