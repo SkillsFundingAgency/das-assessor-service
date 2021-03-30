@@ -35,8 +35,7 @@ namespace SFA.DAS.AssessorService.Web.Orchestrators.Search
                 Surname = vm.Surname,
                 Uln = long.Parse(vm.Uln),
                 EpaOrgId = epaOrgId,
-                Username = username,
-                IsPrivatelyFunded = vm.IsPrivatelyFunded
+                Username = username
             });
 
             var viewModelSearchResults = new List<ResultViewModel>();
@@ -58,7 +57,6 @@ namespace SFA.DAS.AssessorService.Web.Orchestrators.Search
                     LearnStartDate = result.LearnStartDate,
                     ShowExtraInfo = result.ShowExtraInfo,
                     UlnAlreadyExists = result.UlnAlreadyExits,
-                    IsPrivatelyFunded = result.IsPrivatelyFunded,
                     IsNoMatchingFamilyName = result.IsNoMatchingFamilyName
                 });
             }

@@ -63,43 +63,6 @@ namespace SFA.DAS.AssessorService.Data
             }
         }
 
-        public async Task<Certificate> NewPrivate(Certificate certificate,
-            string endpointOrganisationId)
-        {
-            // cannot create a New private certificate for same uln / organiation
-            var existingCert = await _context.Certificates
-                .Include(q => q.Organisation)
-                .FirstOrDefaultAsync(c =>
-                    c.Uln == certificate.Uln &&
-                    c.Organisation.EndPointAssessorOrganisationId == endpointOrganisationId &&
-                    c.IsPrivatelyFunded);
-
-            if (existingCert != null)
-                return existingCert;
-
-            try
-            {
-                return await CreateCertificate(certificate);
-            }
-            catch (Exception e)
-            {
-                if (!(e.InnerException is SqlException sqlException)) throw;
-
-                if (sqlException.Number == 2601 || sqlException.Number == 2627)
-                {
-                    // cannot create a New private certificate for same uln / organiation
-                    return await _context.Certificates
-                        .Include(q => q.Organisation)
-                        .FirstOrDefaultAsync(c =>
-                            c.Uln == certificate.Uln &&
-                            c.Organisation.EndPointAssessorOrganisationId == endpointOrganisationId &&
-                            c.IsPrivatelyFunded);
-                }
-
-                throw;
-            }
-        }
-
         private async Task<Certificate> CreateCertificate(Certificate certificate)
         {
             var strategy = _context.Database.CreateExecutionStrategy();
@@ -154,17 +117,6 @@ namespace SFA.DAS.AssessorService.Data
                 .Include(q => q.CertificateBatchLog)
                 .SingleOrDefaultAsync(c =>
                 c.Uln == uln && c.StandardCode == standardCode);
-        }
-
-        public async Task<Certificate> GetPrivateCertificate(long uln,
-            string endpointOrganisationId)
-        {
-            var existingCert = await _context.Certificates
-                .Include(q => q.Organisation)
-                .FirstOrDefaultAsync(c =>
-                    c.Uln == uln &&
-                    c.Organisation.EndPointAssessorOrganisationId == endpointOrganisationId);
-            return existingCert;
         }
 
         public async Task<Certificate> GetCertificateByOrgIdLastname(long uln,
@@ -570,14 +522,13 @@ namespace SFA.DAS.AssessorService.Data
                 .ToListAsync();
         }
         
-        public async Task<CertificateAddress> GetContactPreviousAddress(string userName, bool isPrivatelyFunded)
+        public async Task<CertificateAddress> GetContactPreviousAddress(string userName)
         {
             var statuses = new[] { CertificateStatus.Submitted }.Concat(CertificateStatus.PrintProcessStatus).ToList();
 
             var certificateAddress = await (from certificateLog in _context.CertificateLogs
                 join certificate in _context.Certificates on certificateLog.CertificateId equals certificate.Id
                 where statuses.Contains(certificate.Status) && certificateLog.Username == userName
-                                                            && certificate.IsPrivatelyFunded == isPrivatelyFunded
                 let certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData)
                 orderby certificate.UpdatedAt descending 
                 select new CertificateAddress

@@ -10,13 +10,10 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
 {
     public interface ICertificateRepository
     {
-        Task<Certificate> New(Certificate certificate);
-        Task<Certificate> NewPrivate(Certificate certificate, string endpointOrganisationId);
-        
+        Task<Certificate> New(Certificate certificate);        
         Task<Certificate> GetCertificate(Guid id);
         Task<Certificate> GetCertificate(long uln, int standardCode);
         Task<Certificate> GetCertificate(string certificateReference);
-        Task<Certificate> GetPrivateCertificate(long uln, string endpointOrganisationId);
         Task<Certificate> GetCertificateByOrgIdLastname(long uln, string endpointOrganisationId, string lastName);
         Task<Certificate> GetCertificateByUlnLastname(long uln, string lastName);
         Task<Certificate> GetCertificate(string certificateReference, string lastName, DateTime? achievementDate);
@@ -40,7 +37,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<List<CertificateLog>> GetCertificateLogsFor(Guid certificateId);
         Task<PaginatedList<Certificate>> GetCertificateHistory(string endPointAssessorOrganisationId, int pageIndex, int pageSize, List<string> statuses);
         Task<string> GetPreviousProviderName(int providerUkPrn);
-        Task<CertificateAddress> GetContactPreviousAddress(string username, bool requestIsPrivatelyFunded);
+        Task<CertificateAddress> GetContactPreviousAddress(string username);
         Task ApproveCertificates(List<ApprovalResult> approvalResults, string username);
         Task<PaginatedList<Certificate>> GetCertificatesForApproval(int pageIndex, int pageSize,string status, string privatelyFundedStatus);
         Task<bool> CertifciateExistsForUln(long uln);

@@ -51,37 +51,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
             var result = await _searchOrchestrator.Search(vm);
 
-            if (result.IsPrivatelyFunded)
-            {
-                //When there is no certficate found
-                if (!result.SearchResults.Any())
-                {
-                    return RedirectToAction("Index", "CertificatePrivateDeclaration", vm);
-                }
-                //When certificate found but ULN already being used and a different familyname used
-                if (result.SearchResults.Any(x => x.UlnAlreadyExists && x.IsPrivatelyFunded))
-                {
-                    GetSelectedStandardViewModel(result);
-                    return RedirectToAction("Result");
-                }
-                //Certificate found but was for a uln assocaited with a user in another org
-                if (result.SearchResults.Any(x => x.Uln == "0" && x.GivenNames == null && x.IsPrivatelyFunded))
-                {
-                    vm.SearchResults = new List<ResultViewModel>();
-                    return View("Index", vm);
-                }
-                //Certifcate found but no standard set or a certificate reference not set, this could be a draft certificate
-                if (result.SearchResults.Any(x => x.Standard == null || x.CertificateReference == null))
-                {
-                    return RedirectToAction("Index", "CertificatePrivateDeclaration", vm);
-                }
-                
-            }
-
             if (!result.SearchResults.Any())
                 return View("Index", vm);
 
-          
             _sessionService.Set("SearchResults", result);
             
             if (result.SearchResults.Count() > 1)

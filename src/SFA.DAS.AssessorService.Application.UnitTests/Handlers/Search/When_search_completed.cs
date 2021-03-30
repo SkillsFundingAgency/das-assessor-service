@@ -13,7 +13,7 @@ using SFA.DAS.AssessorService.Domain.JsonData;
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
 {
     [TestFixture]
-    public class When_search_completed_for_non_private_fundeded : SearchHandlerTestBase
+    public class When_search_completed : SearchHandlerTestBase
     {
         [SetUp]
         public void Arrange()
@@ -58,35 +58,24 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
         {
             var result =
                 SearchHandler.Handle(
-                    new SearchQuery() {Surname = "Lamora", EpaOrgId= "12345", Uln = 1111111111, Username = "username", IsPrivatelyFunded = false},
+                    new SearchQuery() {Surname = "Lamora", EpaOrgId= "12345", Uln = 1111111111, Username = "username"},
                     new CancellationToken()).Result;
 
             result[0].LearnStartDate.Should().Be(new DateTime(2015, 06, 01));
-        }
-
-        public void Then_a_response_is_returned_including_IsPrivatelyFunded()
-        {
-            var result =
-                SearchHandler.Handle(
-                    new SearchQuery() { Surname = "Lamora", EpaOrgId = "12345", Uln = 1111111111, Username = "username", IsPrivatelyFunded = false },
-                    new CancellationToken()).Result;
-
-            result[0].IsPrivatelyFunded.Should().Be(false);
         }
 
         [Test]
         public void Then_a_Search_Log_entry_is_created()
         {
             SearchHandler.Handle(
-                    new SearchQuery() {Surname = "Lamora", EpaOrgId= "12345", Uln = 1111111111, Username = "username", IsPrivatelyFunded = false},
+                    new SearchQuery() {Surname = "Lamora", EpaOrgId= "12345", Uln = 1111111111, Username = "username"},
                     new CancellationToken()).Wait();
 
             IlrRepository.Verify(r => r.StoreSearchLog(It.Is<SearchLog>(l =>
                 l.Username == "username" && 
                 l.NumberOfResults == 1 && 
                 l.Surname == "Lamora" && 
-                l.Uln == 1111111111 &&
-                l.SearchData.IsPrivatelyFunded == false)));
+                l.Uln == 1111111111)));
         }
     }
 }

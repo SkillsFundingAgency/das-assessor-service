@@ -58,15 +58,10 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
 
                 var certificateLogs = certificateRepository.GetCertificateLogsFor(certificate.Id).Result;
                 logger.LogInformation("MatchUpExistingCompletedStandards After GetCertificateLogsFor");
-                var submittedLogEntry = certificateLogs.FirstOrDefault(l => l.Status == CertificateStatus.Submitted);
                 var createdLogEntry = certificateLogs.FirstOrDefault(l => l.Status == CertificateStatus.Draft);
-                if (request.IsPrivatelyFunded)
-                {
-                    var toBeApprovedLogEntry = certificateLogs.FirstOrDefault(l => l.Status == CertificateStatus.ToBeApproved);
-                    if (toBeApprovedLogEntry == null)
-                        continue;
-                    submittedLogEntry = toBeApprovedLogEntry;
-                }
+                                
+                var submittedLogStatus = certificate.IsPrivatelyFunded ? CertificateStatus.ToBeApproved : CertificateStatus.Submitted;
+                var submittedLogEntry = certificateLogs.FirstOrDefault(l => l.Status == submittedLogStatus);
 
                 if (submittedLogEntry == null) continue;
 
