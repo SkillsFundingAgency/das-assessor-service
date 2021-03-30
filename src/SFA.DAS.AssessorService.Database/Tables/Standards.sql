@@ -4,7 +4,7 @@
 	[IFateReferenceNumber] VARCHAR(10) NOT NULL,
 	[LarsCode] INT NULL,
 	[Title] VARCHAR(1000) NOT NULL,
-	[Version] DECIMAL(18,1) NULL,
+	[Version] VARCHAR(10) NULL,
 	[Level] INT NOT NULL,
 	[Status] VARCHAR(100) NOT NULL,
 	[TypicalDuration] INT NOT NULL,
