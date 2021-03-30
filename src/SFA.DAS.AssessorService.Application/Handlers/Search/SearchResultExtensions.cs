@@ -64,7 +64,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
 
                 if(toBeApprovedLogEntry != null)
                 {
-                    // Hangover from Privately funded, To Be Approved only exists for old private funded certificates
+                    // To Be Approved only exists for private funded certificates
                     submittedLogEntry = toBeApprovedLogEntry;
                 }
                 
