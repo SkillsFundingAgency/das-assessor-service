@@ -56,7 +56,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
             if (vm.SelectPreviousAddress)
             {
-                var certificatePreviousAddress = await _certificateApiClient.GetContactPreviousAddress(username, vm.IsPrivatelyFunded);
+                var certificatePreviousAddress = await _certificateApiClient.GetContactPreviousAddress(username);
                 vm = vm.CopyFromCertificateAddress(certificatePreviousAddress);             
             }
 
@@ -122,8 +122,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         {
             try
             {
-                var certificatePreviousAddress = await _certificateApiClient.GetContactPreviousAddress(username,
-                    certificateAddress.IsPrivatelyFunded);
+                var certificatePreviousAddress = await _certificateApiClient.GetContactPreviousAddress(username);
 
                 certificateAddress.PreviousAddress =
                     new CertificatePreviousAddressViewModel(certificatePreviousAddress);

@@ -522,14 +522,13 @@ namespace SFA.DAS.AssessorService.Data
                 .ToListAsync();
         }
         
-        public async Task<CertificateAddress> GetContactPreviousAddress(string userName, bool isPrivatelyFunded)
+        public async Task<CertificateAddress> GetContactPreviousAddress(string userName)
         {
             var statuses = new[] { CertificateStatus.Submitted }.Concat(CertificateStatus.PrintProcessStatus).ToList();
 
             var certificateAddress = await (from certificateLog in _context.CertificateLogs
                 join certificate in _context.Certificates on certificateLog.CertificateId equals certificate.Id
                 where statuses.Contains(certificate.Status) && certificateLog.Username == userName
-                                                            && certificate.IsPrivatelyFunded == isPrivatelyFunded
                 let certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData)
                 orderby certificate.UpdatedAt descending 
                 select new CertificateAddress

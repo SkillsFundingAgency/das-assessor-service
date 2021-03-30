@@ -55,9 +55,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
                     certData.LearningStartDate = ilr.LearnStartDate;
                     certData.FullName = $"{ilr.GivenNames} {ilr.FamilyName}";
                     certificate.CertificateData = JsonConvert.SerializeObject(certData);
-                    
-                    // To be updated based on ILR Funding Model
-                    certificate.IsPrivatelyFunded = false;
+                                        
+                    certificate.IsPrivatelyFunded = ilr?.FundingModel == 99;
                     await _certificateRepository.Update(certificate, request.Username, null);
                 }
             }
