@@ -2,8 +2,11 @@
 using Microsoft.EntityFrameworkCore;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
+using SFA.DAS.AssessorService.Domain.DTOs;
 using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.AssessorService.Domain.JsonData;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -26,6 +29,65 @@ namespace SFA.DAS.AssessorService.Data
                 .FirstOrDefaultAsync(q => q.CertificateReference == certificateReference && q.BatchNumber == batchNumber);
 
             return certificateBatchLog;
+        }
+
+        public async Task<List<CertificatePrintSummary>> GetCertificatesForBatch(int batchNumber)
+        {
+            var sql =
+               @"SELECT 
+                    c.[Uln], 
+                    c.[StandardCode], 
+                    c.[ProviderUkPrn], 
+                    c.[CertificateReference], 
+                    c.[BatchNumber], 
+                    c.[Status], 
+                    o.[EndPointAssessorOrganisationId], 
+                    o.[EndPointAssessorName], 
+                    c.[CertificateData] 
+                FROM 
+                    [CertificateBatchLogs] cbl INNER JOIN [Certificates] c 
+                       ON cbl.CertificateReference = c.CertificateReference INNER JOIN [Organisations] o 
+                       ON c.OrganisationId = o.Id 
+                WHERE 
+                    cbl.BatchNumber = @batchNumber";
+
+            var certificates = await _unitOfWork.Connection.QueryAsync<Certificate, Organisation, CertificateData, CertificatePrintSummary>(
+                sql, (certificate, organisation, certificateData) =>
+                {
+                    var certificatePrintSummary = new CertificatePrintSummary()
+                    {
+                        Uln = certificate.Uln,
+                        StandardCode = certificate.StandardCode,
+                        ProviderUkPrn = certificate.ProviderUkPrn,
+                        EndPointAssessorOrganisationId = organisation.EndPointAssessorOrganisationId,
+                        EndPointAssessorOrganisationName = organisation.EndPointAssessorName,
+                        CertificateReference = certificate.CertificateReference,
+                        BatchNumber = certificate.BatchNumber.GetValueOrDefault().ToString(),
+                        LearnerGivenNames = certificateData.LearnerGivenNames,
+                        LearnerFamilyName = certificateData.LearnerFamilyName,
+                        StandardName = certificateData.StandardName,
+                        StandardLevel = certificateData.StandardLevel,
+                        ContactName = certificateData.ContactName,
+                        ContactOrganisation = certificateData.ContactOrganisation,
+                        ContactAddLine1 = certificateData.ContactAddLine1,
+                        ContactAddLine2 = certificateData.ContactAddLine2,
+                        ContactAddLine3 = certificateData.ContactAddLine3,
+                        ContactAddLine4 = certificateData.ContactAddLine4,
+                        ContactPostCode = certificateData.ContactPostCode,
+                        AchievementDate = certificateData.AchievementDate,
+                        CourseOption = certificateData.CourseOption,
+                        OverallGrade = certificateData.OverallGrade,
+                        Department = certificateData.Department,
+                        FullName = certificateData.FullName,
+                        Status = certificate.Status
+                    };
+                    return certificatePrintSummary;
+                },
+                splitOn: "Uln, EndPointAssessorOrganisationId, CertificateData",
+                param: new { batchNumber },
+                transaction: _unitOfWork.Transaction);
+
+            return certificates.ToList();
         }
 
         public async Task UpsertCertificatesReadyToPrintInBatch(Guid[] certificateIds, int batchNumber)
