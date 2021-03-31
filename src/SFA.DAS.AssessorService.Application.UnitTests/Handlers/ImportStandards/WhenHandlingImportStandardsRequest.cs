@@ -23,8 +23,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ImportStandards
         Mock<IOuterApiService> _outerApiServiceMock = new Mock<IOuterApiService>();
         Mock<IStandardImportService> _standardServiceMock = new Mock<IStandardImportService>();
         Mock<ILogger<ImportStandardsHandler>> _loggerMock = new Mock<ILogger<ImportStandardsHandler>>();
-        List<GetStandardsListItem> _allStandards = new List<GetStandardsListItem>();
-        List<GetStandardByIdResponse> _allStandardDetails;
+        List<GetStandardsListItem> _allStandards;
+        List<StandardDetailResponse> _allStandardDetails;
         ImportStandardsHandler _sut;
 
         [SetUp]
@@ -34,16 +34,15 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ImportStandards
             var draftStandards = fixture.Build<GetStandardsListItem>().With(t => t.Status, DraftStatus).CreateMany();
             var otherStandards = fixture.CreateMany<GetStandardsListItem>();
 
+            _allStandards = new List<GetStandardsListItem>();
             _allStandards.AddRange(activeStandards);
             _allStandards.AddRange(draftStandards);
             _allStandards.AddRange(otherStandards);
+            _allStandardDetails = _allStandards.Select(ConvertToStandardDetailResponse).ToList();
 
-            _allStandardDetails = _allStandards.Select(ConvertToGetStandardByIdResponse).ToList();
-
-            _outerApiServiceMock.Setup(o => o.GetAllStandards()).ReturnsAsync(_allStandards);
+            _outerApiServiceMock.Setup(o => o.GetAllStandards()).ReturnsAsync(_allStandardDetails);
             _outerApiServiceMock.Setup(o => o.GetActiveStandards()).ReturnsAsync(activeStandards);
             _outerApiServiceMock.Setup(o => o.GetDraftStandards()).ReturnsAsync(draftStandards);
-            _outerApiServiceMock.Setup(o => o.GetAllStandardDetails(It.IsAny<IEnumerable<string>>())).ReturnsAsync(_allStandardDetails);
 
             _sut = new ImportStandardsHandler(_unitOfWorkMock.Object, _outerApiServiceMock.Object, _standardServiceMock.Object, _loggerMock.Object);
 
@@ -53,7 +52,6 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ImportStandards
         [TearDown]
         public void ClearAll()
         {
-            _allStandards.Clear();
             _allStandardDetails.Clear();
         }
 
@@ -76,30 +74,24 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ImportStandards
         }
 
         [Test]
-        public void Then_Gets_Details_For_All_Standards_From_Outer_Api()
-        {
-            _outerApiServiceMock.Verify(o => o.GetAllStandardDetails(It.Is<IEnumerable<string>>(list => list.SequenceEqual(_allStandards.Select(s => s.StandardUId)) )));
-        }
-
-        [Test]
         public void Then_Load_Standards()
         {
-            _standardServiceMock.Verify(s => s.LoadStandards(It.Is<IEnumerable<GetStandardByIdResponse>>(list => list.SequenceEqual(_allStandardDetails))));
+            _standardServiceMock.Verify(s => s.LoadStandards(It.Is<IEnumerable<StandardDetailResponse>>(list => list.SequenceEqual(_allStandardDetails))));
         }
 
         [Test]
         public void Then_Upserts_StandardCollations()
         {
-            _standardServiceMock.Verify(s => s.UpsertStandardCollations(It.Is<IEnumerable<GetStandardByIdResponse>>(list => list.SequenceEqual(_allStandardDetails.Where(d => d.Status == ActiveStatus)))));
+            _standardServiceMock.Verify(s => s.UpsertStandardCollations(It.Is<IEnumerable<StandardDetailResponse>>(list => list.SequenceEqual(_allStandardDetails.Where(d => d.Status == ActiveStatus)))));
         }
 
         [Test]
         public void Then_Upserts_StandardNonApprovedCollations()
         {
-            _standardServiceMock.Verify(s => s.UpsertStandardNonApprovedCollations(It.Is<IEnumerable<GetStandardByIdResponse>>(list => list.SequenceEqual(_allStandardDetails.Where(d => d.Status == DraftStatus)))));
+            _standardServiceMock.Verify(s => s.UpsertStandardNonApprovedCollations(It.Is<IEnumerable<StandardDetailResponse>>(list => list.SequenceEqual(_allStandardDetails.Where(d => d.Status == DraftStatus)))));
         }
 
-        private GetStandardByIdResponse ConvertToGetStandardByIdResponse(GetStandardsListItem source) => new GetStandardByIdResponse
+        private StandardDetailResponse ConvertToStandardDetailResponse(GetStandardsListItem source) => new StandardDetailResponse
         {
             StandardUId = source.StandardUId,
             Status = source.Status

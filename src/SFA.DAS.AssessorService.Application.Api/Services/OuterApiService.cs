@@ -23,27 +23,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
         {
             var response = await outerApiClient.Get<GetStandardsListResponse>(new GetActiveStandardsRequest());
             return response.Standards;
-        }
+        }       
 
-        public async Task<IEnumerable<GetStandardByIdResponse>> GetAllStandardDetails(IEnumerable<string> standardUIds)
+        public async Task<IEnumerable<StandardDetailResponse>> GetAllStandards()
         {
-            try
-            {
-                var tasks = standardUIds.Select(id => outerApiClient.Get<GetStandardByIdResponse>(new GetStandardByIdRequest(id))).ToList();
-                await Task.WhenAll(tasks);
-                var data = tasks.Select(t => t.Result).ToList();
-                return data;
-            }
-            catch (Exception ex)
-            {
-                logger.LogError(ex, "Error while fetching details for all the standards");
-                throw;
-            }
-        }
-
-        public async Task<IEnumerable<GetStandardsListItem>> GetAllStandards()
-        {
-            var response = await outerApiClient.Get<GetStandardsListResponse>(new GetStandardsRequest());
+            var response = await outerApiClient.Get<GetStandardsExportListResponse>(new GetStandardsRequest());
             return response.Standards;
         }
 

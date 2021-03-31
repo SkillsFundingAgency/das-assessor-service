@@ -41,17 +41,14 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Standards
                 return Unit.Value;
             }
 
-            var allStandardDetails = await outerApiService.GetAllStandardDetails(allStandards.Select(s => s.StandardUId));
-
-            var activeStandardDetails = allStandardDetails.Where(s => activeStandardUIds.Contains(s.StandardUId));
-
-            var draftStandardDetails = allStandardDetails.Where(s => draftStandardUIds.Contains(s.StandardUId));
+            var activeStandardDetails = allStandards.Where(s => activeStandardUIds.Contains(s.StandardUId));
+            var draftStandardDetails = allStandards.Where(s => draftStandardUIds.Contains(s.StandardUId));
 
             try
             {
                 unitOfWork.Begin();
 
-                await standardImportService.LoadStandards(allStandardDetails);
+                await standardImportService.LoadStandards(allStandards);
 
                 await standardImportService.UpsertStandardCollations(activeStandardDetails);
 
