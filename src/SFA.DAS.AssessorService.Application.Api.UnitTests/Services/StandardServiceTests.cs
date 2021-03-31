@@ -67,9 +67,9 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
         }
 
         [Test, AutoData]
-        public async Task When_GettingStandardOptionsByStandardId_And_OuterApiReturnsStandardDetailResponse_Then_ReturnsStandardOptions(GetStandardByIdResponse response, string id)
+        public async Task When_GettingStandardOptionsByStandardId_And_OuterApiReturnsStandardDetailResponse_Then_ReturnsStandardOptions(StandardDetailResponse response, string id)
         {
-            _mockOuterApiClient.Setup(client => client.Get<GetStandardByIdResponse>(It.Is<GetStandardByIdRequest>(x => x.Id == id)))
+            _mockOuterApiClient.Setup(client => client.Get<StandardDetailResponse>(It.Is<GetStandardByIdRequest>(x => x.Id == id)))
                 .ReturnsAsync(response);
 
             var result = await _standardService.GetStandardOptionsByStandardId(id);
@@ -85,8 +85,8 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
         [Test, AutoData]
         public async Task When_GettingStandardOptionsByStandardId_And_OuterApiDoesNotReturnResponse_Then_LogError_And_ReturnNull(string id)
         {
-            _mockOuterApiClient.Setup(client => client.Get<GetStandardByIdResponse>(It.Is<GetStandardByIdRequest>(x => x.Id == id)))
-                .ReturnsAsync((GetStandardByIdResponse)null);
+            _mockOuterApiClient.Setup(client => client.Get<StandardDetailResponse>(It.Is<GetStandardByIdRequest>(x => x.Id == id)))
+                .ReturnsAsync((StandardDetailResponse)null);
 
             var result = await _standardService.GetStandardOptionsByStandardId(id);
             Assert.IsNull(result);
@@ -127,18 +127,18 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
         }
 
         [Test, AutoData]
-        public async Task When_GettingStandardOptionsByStandardReferenceAndVersion_Then_UseStandardUIdToCallOuterApi(string standardReference, string version, Standard getStandardResponse, GetStandardByIdResponse getStandardByIdResponse)
+        public async Task When_GettingStandardOptionsByStandardReferenceAndVersion_Then_UseStandardUIdToCallOuterApi(string standardReference, string version, Standard getStandardResponse, StandardDetailResponse StandardDetailResponse)
         {
             _mockStandardRepository.Setup(repository => repository.GetStandardByStandardReferenceAndVersion(standardReference, version))
                 .ReturnsAsync(getStandardResponse);
 
-            _mockOuterApiClient.Setup(client => client.Get<GetStandardByIdResponse>(It.Is<GetStandardByIdRequest>(x => x.Id == getStandardResponse.StandardUId)))
-                .ReturnsAsync(getStandardByIdResponse);
+            _mockOuterApiClient.Setup(client => client.Get<StandardDetailResponse>(It.Is<GetStandardByIdRequest>(x => x.Id == getStandardResponse.StandardUId)))
+                .ReturnsAsync(StandardDetailResponse);
 
             var result = await _standardService.GetStandardOptionsByStandardReferenceAndVersion(standardReference, version);
 
             Assert.IsInstanceOf<StandardOptions>(result);
-            _mockOuterApiClient.Verify(client => client.Get<GetStandardByIdResponse>(It.Is<GetStandardByIdRequest>(x => x.Id == getStandardResponse.StandardUId)), Times.Once);
+            _mockOuterApiClient.Verify(client => client.Get<StandardDetailResponse>(It.Is<GetStandardByIdRequest>(x => x.Id == getStandardResponse.StandardUId)), Times.Once);
         }
     }
 }

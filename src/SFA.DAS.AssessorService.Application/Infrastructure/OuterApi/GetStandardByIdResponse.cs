@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 
 namespace SFA.DAS.AssessorService.Application.Infrastructure.OuterApi
 {
-    public class GetStandardByIdResponse
+    public class StandardDetailResponse
     {
         [JsonProperty("standardUId")]
         public string StandardUId { get; set; }

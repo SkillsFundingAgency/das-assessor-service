@@ -98,7 +98,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
         {
             try
             {
-                var standard = await _outerApiClient.Get<GetStandardByIdResponse>(new GetStandardByIdRequest(id));
+                var standard = await _outerApiClient.Get<StandardDetailResponse>(new GetStandardByIdRequest(id));
 
                 return new StandardOptions
                 {

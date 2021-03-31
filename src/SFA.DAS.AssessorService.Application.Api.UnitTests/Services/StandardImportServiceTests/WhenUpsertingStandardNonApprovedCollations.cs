@@ -13,13 +13,13 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services.StandardImp
     public class WhenUpsertingStandardNonApprovedCollations
     {
         Mock<IStandardRepository> standardRepositoryMock;
-        IEnumerable<GetStandardByIdResponse> standards;
+        IEnumerable<StandardDetailResponse> standards;
 
         [SetUp]
         public async Task Initialize()
         {
             var fixture = new Fixture();
-            standards = fixture.Build<GetStandardByIdResponse>().CreateMany();
+            standards = fixture.Build<StandardDetailResponse>().CreateMany();
             standardRepositoryMock = new Mock<IStandardRepository>();
 
             var sut = new StandardImportService(standardRepositoryMock.Object);

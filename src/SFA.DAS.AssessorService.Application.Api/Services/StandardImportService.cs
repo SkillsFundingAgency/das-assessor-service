@@ -17,9 +17,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
         {
             this.standardRepository = standardRepository;
         }
-        public async Task LoadStandards(IEnumerable<GetStandardByIdResponse> standards)
+        public async Task LoadStandards(IEnumerable<StandardDetailResponse> standards)
         {
-            Func<GetStandardByIdResponse, Standard> MapGetStandardsListItemToStandard = source => new Standard
+            Func<StandardDetailResponse, Standard> MapGetStandardsListItemToStandard = source => new Standard
             {
                 StandardUId = source.StandardUId,
                 IfateReferenceNumber = source.IfateReferenceNumber,
@@ -49,9 +49,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
             await Task.WhenAll(tasks);
         }
 
-        public async Task UpsertStandardCollations(IEnumerable<GetStandardByIdResponse> standards)
+        public async Task UpsertStandardCollations(IEnumerable<StandardDetailResponse> standards)
         {
-            Func<GetStandardByIdResponse, StandardCollation> MapGetStandardsListItemToStandardCollation = source => new StandardCollation
+            Func<StandardDetailResponse, StandardCollation> MapGetStandardsListItemToStandardCollation = source => new StandardCollation
             {
                 StandardId = source.LarsCode,
                 ReferenceNumber = source.IfateReferenceNumber,
@@ -89,9 +89,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
             await standardRepository.UpsertApprovedStandards(standardCollations);
         }
 
-        public async Task UpsertStandardNonApprovedCollations(IEnumerable<GetStandardByIdResponse> standards)
+        public async Task UpsertStandardNonApprovedCollations(IEnumerable<StandardDetailResponse> standards)
         {
-            Func<GetStandardByIdResponse, StandardNonApprovedCollation> MapGetStandardsListItemToStandardNonApprovedCollation = source => new StandardNonApprovedCollation
+            Func<StandardDetailResponse, StandardNonApprovedCollation> MapGetStandardsListItemToStandardNonApprovedCollation = source => new StandardNonApprovedCollation
             {
                 ReferenceNumber = source.IfateReferenceNumber,
                 Title = source.Title,
