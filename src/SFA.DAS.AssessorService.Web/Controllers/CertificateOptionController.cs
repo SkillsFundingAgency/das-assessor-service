@@ -66,10 +66,10 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             {
                 if (ContextAccessor.HttpContext.Request.Query.ContainsKey("fromback"))
                 {
-                    return RedirectToAction("Declare", "CertificateDeclaration");
+                    return RedirectToAction("Result", "Search");
                 }
 
-                return RedirectToAction("Grade", "CertificateGrade");
+                return RedirectToAction("Declare", "CertificateDeclaration");
             }
 
             Logger.LogInformation($"Got Certificate for CertificateOptionViewModel requested by {username} with Id {certificate.Id}");
@@ -87,7 +87,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
          
             return await SaveViewModel(vm,
                 returnToIfModelNotValid: "~/Views/Certificate/Option.cshtml",
-                nextAction: RedirectToAction("Grade", "CertificateGrade"), action: CertificateActions.Option);
+                nextAction: RedirectToAction("Declare", "CertificateDeclaration"), action: CertificateActions.Option);
         }
 
          private async Task<IActionResult> SaveViewModel(CertificateOptionViewModel vm, string returnToIfModelNotValid, RedirectToActionResult nextAction, string action)
