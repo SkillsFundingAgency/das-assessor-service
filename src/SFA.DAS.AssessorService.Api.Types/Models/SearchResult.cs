@@ -1,4 +1,6 @@
-﻿using System;
+﻿using SFA.DAS.AssessorService.Api.Types.Models.Standards;
+using System;
+using System.Collections.Generic;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models
 {
@@ -9,6 +11,8 @@ namespace SFA.DAS.AssessorService.Api.Types.Models
         public string FamilyName { get; set; }
         public DateTime DateOfBirth { get; set; }
         public int StdCode { get; set; }
+        public string StandardReferenceNumber { get; set; }
+        public List<StandardVersion> Versions { get; set; }
         public string Standard { get; set; }
         public int Level { get; set; }
         public int? FundingModel { get; set; }

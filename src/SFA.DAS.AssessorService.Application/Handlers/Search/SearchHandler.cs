@@ -8,6 +8,7 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Application.Logging;
 using SFA.DAS.AssessorService.Domain.Consts;
@@ -101,7 +102,22 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
 
             _logger.LogInformation((ilrResults != null && ilrResults.Any())? LoggingConstants.SearchSuccess : LoggingConstants.SearchFailure);
 
-            var searchResults = Mapper.Map<List<SearchResult>>(ilrResults)
+            var searchResults = Mapper.Map<List<SearchResult>>(ilrResults);
+
+            var standards = await _standardService.GetAllStandardVersions();
+
+            foreach(var result in searchResults)
+            {
+                var standardVersions = standards.Where(s => s.LarsCode == result.StdCode);
+                result.Versions = standardVersions.Select(s => new StandardVersion
+                {
+                    StandardUId = s.StandardUId,
+                    Title = s.Title,
+                    Version = s.Version.ToString()
+                }).ToList();
+            }
+
+            searchResults
                 .MatchUpExistingCompletedStandards(request, _certificateRepository, _contactRepository, _organisationRepository, _logger)
                 .PopulateStandards(_standardService, _logger);
 

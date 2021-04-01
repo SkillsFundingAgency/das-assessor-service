@@ -89,6 +89,17 @@ namespace SFA.DAS.AssessorService.Data
             return await GetStandardsByStandardReferenceAndVersionInternal(standardReference, version);
         }
 
+        public async Task<IEnumerable<Standard>> GetAllStandards()
+        {
+            var sql = "SELECT * FROM [Standards]";
+
+            var results = await _unitOfWork.Connection.QueryAsync<Standard>(
+                sql,
+                transaction: _unitOfWork.Transaction);
+
+            return results;
+        }
+
         private async Task<Standard> GetStandardsByStandardReferenceAndVersionInternal(string standardReference, string version)
         {
             var sql = @"SELECT StandardUId, IfateReferenceNumber, LarsCode, Title, Version, Level, Status, TypicalDuration, 
