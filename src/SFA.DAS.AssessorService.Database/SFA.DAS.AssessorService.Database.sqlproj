@@ -155,6 +155,7 @@
     <Build Include="StoredProcedures\DatabaseMaintenance.sql" />
     <Build Include="Security\Roles\DatabaseRoles\DatabaseMaintenance.sql" />
     <None Include="PostDeploymentScripts\GrantOrDenyPermissions.sql" />
+    <Build Include="StoredProcedures\StaffReports_MissingCertificateData.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="SFA.DAS.AssessorService.Database.refactorlog" />
