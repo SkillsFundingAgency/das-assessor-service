@@ -24,7 +24,6 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateOptionsTests
     {
         private Certificate _certificate;
 
-        private Mock<IHttpContextAccessor> _mockHttpContextAccessor;
         private Mock<ISessionService> _mockSessionService;
 
         private CertificateOptionController _controller;
@@ -35,10 +34,9 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateOptionsTests
             _certificate = SetupCertificate();
 
             _mockSessionService = new Mock<ISessionService>();
-              _mockHttpContextAccessor = SetupHttpContextAssessor();
 
             _controller = new CertificateOptionController(Mock.Of<ILogger<CertificateController>>(),
-                _mockHttpContextAccessor.Object,
+                SetupHttpContextAssessor(),
                 SetUpCertificateApiClient(),
                 _mockSessionService.Object);
         }
@@ -64,9 +62,9 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateOptionsTests
             result.ActionName.Should().Be("Declare");
         }
 
-        private Mock<IHttpContextAccessor> SetupHttpContextAssessor()
+        private IHttpContextAccessor SetupHttpContextAssessor()
         {
-            return MockedHttpContextAccessor.Setup();
+            return MockedHttpContextAccessor.Setup().Object;
         }
         private ICertificateApiClient SetUpCertificateApiClient()
         {
