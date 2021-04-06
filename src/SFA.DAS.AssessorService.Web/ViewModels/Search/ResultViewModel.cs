@@ -12,7 +12,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Search
         public string Standard { get; set; }
         public string StdCode { get; set; }
         public string StandardReferenceNumber { get; set; }
-        public List<StandardVersion> Versions { get; set; }
+        public List<StandardVersion> Versions { get; set; } = new List<StandardVersion>();
         public string OverallGrade { get; set; }
         public string CertificateReference { get; set; }
         public string Level { get; set; }

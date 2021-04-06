@@ -140,5 +140,16 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
             Assert.IsInstanceOf<StandardOptions>(result);
             _mockOuterApiClient.Verify(client => client.Get<StandardDetailResponse>(It.Is<GetStandardByIdRequest>(x => x.Id == getStandardResponse.StandardUId)), Times.Once);
         }
+
+        [Test, AutoData]
+        public async Task When_GettingAllStandardVersions_Then_ReturnsListOfStandards(IEnumerable<Standard> standards)
+        {
+            _mockStandardRepository.Setup(s => s.GetAllStandards()).ReturnsAsync(standards);
+
+            var result = await _standardService.GetAllStandardVersions();
+
+            Assert.IsInstanceOf<IEnumerable<Standard>>(result);
+            Assert.AreEqual(result.Count(), standards.Count());
+        }
     }
 }

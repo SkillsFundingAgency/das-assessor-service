@@ -38,7 +38,18 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
                 FamilyName = "Smith",
                 StdCode = 30,
                 LearnStartDate = new DateTime(2016, 01, 09),
-                UkPrn = 12345678
+                UkPrn = 12345678,
+                FundingModel = 81,
+            });
+
+            ilrRepository.Setup(r => r.Get(222222222, 30)).ReturnsAsync(new Ilr()
+            {
+                GivenNames = "Dave",
+                FamilyName = "Smith",
+                StdCode = 30,
+                LearnStartDate = new DateTime(2016, 01, 09),
+                UkPrn = 12345678,
+                FundingModel = 99,
             });
 
             var organisationQueryRepository = new Mock<IOrganisationQueryRepository>();
@@ -66,13 +77,23 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
                 ilrRepository.Object, roatpApiClientMock.Object,
                 organisationQueryRepository.Object, new Mock<ILogger<StartCertificateHandler>>().Object, standardService.Object);
 
-            _returnedCertificate = _startCertificateHandler
+            _startCertificateHandler
                 .Handle(
                     new StartCertificateRequest()
                     {
                         StandardCode = 30,
                         UkPrn = 88888888,
                         Uln = 1111111111,
+                        Username = "user"
+                    }, new CancellationToken()).Wait();
+
+            _returnedCertificate = _startCertificateHandler
+                .Handle(
+                    new StartCertificateRequest()
+                    {
+                        StandardCode = 30,
+                        UkPrn = 88888888,
+                        Uln = 222222222,
                         Username = "user"
                     }, new CancellationToken()).Result;
         }
@@ -87,7 +108,22 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
                 c.OrganisationId == _organisationId && 
                 c.CreatedBy == "user" && 
                 c.Status == Domain.Consts.CertificateStatus.Draft &&
-                c.CertificateReference == "")));
+                c.CertificateReference == "" &&
+                c.IsPrivatelyFunded == false)));
+        }
+
+        [Test]
+        public void Then_a_new_privately_funded_certificate_is_created()
+        {
+            _certificateRepository.Verify(r => r.New(It.Is<Certificate>(c =>
+                c.Uln == 222222222 &&
+                c.StandardCode == 30 &&
+                c.ProviderUkPrn == 12345678 &&
+                c.OrganisationId == _organisationId &&
+                c.CreatedBy == "user" &&
+                c.Status == Domain.Consts.CertificateStatus.Draft &&
+                c.CertificateReference == "" &&
+                c.IsPrivatelyFunded == true)));
         }
     }
 }
