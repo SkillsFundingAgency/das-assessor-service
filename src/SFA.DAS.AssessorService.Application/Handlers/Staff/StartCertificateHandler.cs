@@ -101,8 +101,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
                     Status = CertificateStatus.Draft,
                     CertificateReference = string.Empty,
                     LearnRefNumber = ilr.LearnRefNumber,
-                    CreateDay = DateTime.UtcNow.Date
-                });
+                    CreateDay = DateTime.UtcNow.Date,
+                    IsPrivatelyFunded = ilr?.FundingModel == 99
+        });
 
             _logger.LogInformation(LoggingConstants.CertificateStarted);
             _logger.LogInformation($"Certificate with ID: {newCertificate.Id} Started with reference of {newCertificate.CertificateReference}");

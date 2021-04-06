@@ -104,19 +104,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
 
             var searchResults = Mapper.Map<List<SearchResult>>(ilrResults);
 
-            var standards = await _standardService.GetAllStandardVersions();
-
-            foreach(var result in searchResults)
-            {
-                var standardVersions = standards.Where(s => s.LarsCode == result.StdCode);
-                result.Versions = standardVersions.Select(s => new StandardVersion
-                {
-                    StandardUId = s.StandardUId,
-                    Title = s.Title,
-                    Version = s.Version.ToString()
-                }).ToList();
-            }
-
             searchResults
                 .MatchUpExistingCompletedStandards(request, _certificateRepository, _contactRepository, _organisationRepository, _logger)
                 .PopulateStandards(_standardService, _logger);

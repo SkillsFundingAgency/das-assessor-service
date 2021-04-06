@@ -91,7 +91,10 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<IEnumerable<Standard>> GetAllStandards()
         {
-            var sql = "SELECT * FROM [Standards]";
+            var sql = @"SELECT [StandardUId],[IFateReferenceNumber],[LarsCode],[Title],[Version],
+[Level],[Status],[TypicalDuration],[MaxFunding],[IsActive],[LastDateStarts],
+[EffectiveFrom],[EffectiveTo],[VersionEarliestStartDate],[VersionLatestStartDate],[VersionLatestEndDate],
+[VersionApprovedForDelivery],[ProposedTypicalDuration],[ProposedMaxFunding] FROM [Standards]";
 
             var results = await _unitOfWork.Connection.QueryAsync<Standard>(
                 sql,
