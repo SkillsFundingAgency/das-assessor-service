@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Application.Infrastructure;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Exceptions;
 using SFA.DAS.AssessorService.Domain.JsonData;
@@ -61,19 +62,11 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
                 {
                     var certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
                     
-                    var recordedBy = string.Empty;
-                    if (certificate.IsPrivatelyFunded)
-                    {
-                        recordedBy = certificate.CreatedBy;
-                    }
-                    else
-                    {
-                        recordedBy = certificate.CertificateLogs
+                    var recordedBy = certificate.CertificateLogs
                             .OrderByDescending(q => q.EventTime)
                             .FirstOrDefault(certificateLog =>
-                                certificateLog.Status == Domain.Consts.CertificateStatus.Submitted)?.Username;
-                    }
-
+                                certificateLog.Action == CertificateActions.Submit)?.Username;
+                    
                     var printStatusAt =
                         certificate.CertificateBatchLog?.StatusAt;
 
