@@ -74,6 +74,12 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ImportStandards
         }
 
         [Test]
+        public void Then_Deletes_Existing_Standards()
+        {
+            _standardServiceMock.Verify(s => s.DeleteAllStandards(), Times.Once);
+        }
+
+        [Test]
         public void Then_Load_Standards()
         {
             _standardServiceMock.Verify(s => s.LoadStandards(It.Is<IEnumerable<StandardDetailResponse>>(list => list.SequenceEqual(_allStandardDetails))));

@@ -17,6 +17,12 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
         {
             this.standardRepository = standardRepository;
         }
+
+        public async Task DeleteAllStandards()
+        {
+            await standardRepository.DeleteAll();
+        }
+
         public async Task LoadStandards(IEnumerable<StandardDetailResponse> standards)
         {
             Func<StandardDetailResponse, Standard> MapGetStandardsListItemToStandard = source => new Standard
@@ -41,8 +47,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
                 ProposedMaxFunding = source.VersionDetail.ProposedMaxFunding,
                 ProposedTypicalDuration = source.VersionDetail.ProposedTypicalDuration
             };
-
-            await standardRepository.DeleteAll();
 
             var tasks = standards.Select(MapGetStandardsListItemToStandard).Select(standardRepository.Insert);
 

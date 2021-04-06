@@ -48,6 +48,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Standards
             {
                 unitOfWork.Begin();
 
+                await standardImportService.DeleteAllStandards();
+
                 await standardImportService.LoadStandards(allStandards);
 
                 await standardImportService.UpsertStandardCollations(activeStandardDetails);
