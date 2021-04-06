@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Distributed;
 using Newtonsoft.Json;
 
-namespace SFA.DAS.AssessorService.ExternalApis.Services
+namespace SFA.DAS.AssessorService.Application.Api.Services
 {
     public class CacheService
     {
@@ -24,7 +24,7 @@ namespace SFA.DAS.AssessorService.ExternalApis.Services
         public async Task<T> RetrieveFromCache<T>(string key)
         {
             var json = await _distributedCache.GetStringAsync(key);
-            return json == null ? default(T) : JsonConvert.DeserializeObject<T>(json);
+            return json == null ? default : JsonConvert.DeserializeObject<T>(json);
         }
     }
 }
