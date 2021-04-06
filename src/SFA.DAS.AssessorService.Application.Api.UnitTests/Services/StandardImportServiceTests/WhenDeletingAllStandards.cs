@@ -21,7 +21,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services.StandardImp
         }
 
         [Test]
-        public void Then_Inserts_Data_Into_Standards_Table()
+        public void Then_Deletes_Data_From_Standards_Table()
         {
             standardRepositoryMock.Verify(r => r.DeleteAll(), Times.Once);
         }
