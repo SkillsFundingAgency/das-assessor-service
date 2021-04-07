@@ -22,7 +22,6 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
         private Mock<IOuterApiClient> _mockOuterApiClient;
         private Mock<ILogger<StandardService>> _mockLogger;
         private Mock<IStandardRepository> _mockStandardRepository;
-        private Mock<IDistributedCache> _mockCache;
 
         private StandardService _standardService;
 
@@ -32,9 +31,8 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
             _mockOuterApiClient = new Mock<IOuterApiClient>();
             _mockLogger = new Mock<ILogger<StandardService>>();
             _mockStandardRepository = new Mock<IStandardRepository>();
-            _mockCache = new Mock<IDistributedCache>();
 
-            _standardService = new StandardService(new CacheService(_mockCache.Object),
+            _standardService = new StandardService(new CacheService(Mock.Of<IDistributedCache>()),
                 _mockOuterApiClient.Object,
                 _mockLogger.Object,
                 _mockStandardRepository.Object);
@@ -156,7 +154,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
         }
 
         [Test, AutoData]
-        public async Task When_GettingAllStandardVersions_Then_ReturnsListOfStandards(int standardId, IEnumerable<Standard> standards)
+        public async Task When_GettingAllStandardVersions_OfAGivenStandardId_Then_ReturnsAListOfThatStandardsVersions(int standardId, IEnumerable<Standard> standards)
         {
             _mockStandardRepository.Setup(s => s.GetStandardVersions(standardId)).ReturnsAsync(standards);
 
