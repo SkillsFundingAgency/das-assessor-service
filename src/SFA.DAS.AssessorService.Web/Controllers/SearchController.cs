@@ -11,6 +11,7 @@ using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.Orchestrators.Search;
 using SFA.DAS.AssessorService.Web.StartupConfiguration;
 using SFA.DAS.AssessorService.Web.ViewModels.Search;
+using static SFA.DAS.AssessorService.Web.ViewModels.Search.SelectedStandardViewModel;
 
 namespace SFA.DAS.AssessorService.Web.Controllers
 {
@@ -59,6 +60,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             if (result.SearchResults.Count() > 1)
             {
                 GetChooseStandardViewModel(vm);
+                // SV-587 - Choose Standard Journey
                 return RedirectToAction("ChooseStandard");
             }
             
@@ -95,8 +97,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 AchievementDate = resultViewModel.AchDate.GetValueOrDefault().ToString("d MMMM yyyy"),
                 ShowExtraInfo = resultViewModel.ShowExtraInfo,
                 UlnAlreadyExists = resultViewModel.UlnAlreadyExists,
-                IsNoMatchingFamilyName = resultViewModel.IsNoMatchingFamilyName
-
+                IsNoMatchingFamilyName = resultViewModel.IsNoMatchingFamilyName,
+                Versions = resultViewModel?.Versions.Select(v => (StandardVersion)v)
             };
 
             _sessionService.Set("SelectedStandard", selectedStandardViewModel);

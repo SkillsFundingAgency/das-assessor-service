@@ -12,6 +12,7 @@ using SFA.DAS.AssessorService.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
@@ -139,6 +140,28 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
 
             Assert.IsInstanceOf<StandardOptions>(result);
             _mockOuterApiClient.Verify(client => client.Get<StandardDetailResponse>(It.Is<GetStandardByIdRequest>(x => x.Id == getStandardResponse.StandardUId)), Times.Once);
+        }
+
+        [Test, AutoData]
+        public async Task When_GettingAllStandardVersions_Then_ReturnsListOfStandards(IEnumerable<Standard> standards)
+        {
+            _mockStandardRepository.Setup(s => s.GetAllStandards()).ReturnsAsync(standards);
+
+            var result = await _standardService.GetAllStandardVersions();
+
+            Assert.IsInstanceOf<IEnumerable<Standard>>(result);
+            Assert.AreEqual(result.Count(), standards.Count());
+        }
+
+        [Test, AutoData]
+        public async Task When_GettingAllStandardVersions_OfAGivenStandardId_Then_ReturnsAListOfThatStandardsVersions(int standardId, IEnumerable<Standard> standards)
+        {
+            _mockStandardRepository.Setup(s => s.GetStandardVersions(standardId)).ReturnsAsync(standards);
+
+            var result = await _standardService.GetStandardVersions(standardId);
+
+            Assert.IsInstanceOf<IEnumerable<Standard>>(result);
+            Assert.AreEqual(result.Count(), standards.Count());
         }
     }
 }

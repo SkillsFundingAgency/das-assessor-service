@@ -36,13 +36,20 @@
                                 <dt class="govuk-summary-list__key">Level:</dt>
                                 <dd class="govuk-summary-list__value">@Model.Level</dd>
                             </div>
+                            @if (Model.Versions.Count() == 1)
+                            {
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">Version:</dt>
+                                    <dd class="govuk-summary-list__value">@Model.Versions.First().Version</dd>
+                                </div>
+                            }
                             <div class="govuk-summary-list__row">
                                 <dt class="govuk-summary-list__key">Learner start date:</dt>
                                 <dd class="govuk-summary-list__value">@Model.LearnerStartDate</dd>
                             </div>
                         </dl>
-                        <p class="govuk-body">If the name, standard or level is incorrect, you need to agree on the correct details along with the training provider and the employer. The training provider needs to then update the Individualised Learner Record (<abbr title="Individualised Learner Record">ILR</abbr>).</p>
-                    </div>
+                            <p class="govuk-body">If the name, standard or level is incorrect, you need to agree on the correct details along with the training provider and the employer. The training provider needs to then update the Individualised Learner Record (<abbr title="Individualised Learner Record">ILR</abbr>).</p>
+                        </div>
 
                     @Html.HiddenFor(m => m.Uln)
                     @Html.HiddenFor(m => m.StdCode)
@@ -74,6 +81,13 @@
                                 <dt class="govuk-summary-list__key">Level:</dt>
                                 <dd class="govuk-summary-list__value">@Model.Level</dd>
                             </div>
+                            @if (Model.Versions.Count() == 1)
+                            {
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">Version:</dt>
+                                    <dd class="govuk-summary-list__value">@Model.Versions.First().Version</dd>
+                                </div>
+                            }
                             @if (Model.ShowExtraInfo)
                             {
                                 <div class="govuk-summary-list__row">
@@ -127,6 +141,7 @@
             }
             else
             {
+                /* SV-588 */
                 <h1 class="govuk-heading-xl">An assessment has already been recorded against this apprentice</h1>
                 <dl class="govuk-summary-list">
                     <div class="govuk-summary-list__row">

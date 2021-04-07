@@ -13,8 +13,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<List<StandardCollation>> GetStandardCollations();
         Task<StandardCollation> GetStandardCollationByStandardId(int standardId);
         Task<StandardCollation> GetStandardCollationByReferenceNumber(string referenceNumber);
-        Task<Standard> GetStandardByStandardReferenceAndVersion(string standardReference, string version);
-
+        
         Task<List<StandardNonApprovedCollation>> GetStandardNonApprovedCollations();
         Task<StandardNonApprovedCollation> GetStandardNonApprovedCollationByReferenceNumber(string referenceNumber);
 
@@ -25,9 +24,15 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<EpaoPipelineStandardsResult> GetEpaoPipelineStandards(string endPointAssessorOrganisationId,
         string orderBy, string orderDirection, int pageSize, int? pageIndex);
         Task<List<EpaoPipelineStandardExtract>> GetEpaoPipelineStandardsExtract(string endPointAssessorOrganisationId);
+
+        // New Standard Methods
+        Task<IEnumerable<Standard>> GetAllStandards();
+        Task<IEnumerable<Standard>> GetStandardVersions(int standardId);
+        Task<Standard> GetStandardByStandardReferenceAndVersion(string standardReference, string version);
         Task Insert(Standard standard);
         Task Update(Standard standard);
         Task DeleteAll();
+        
     }
 
     public class EpoRegisteredStandardsResult

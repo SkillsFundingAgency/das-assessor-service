@@ -49,13 +49,15 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
                     {
                         Status = CertificateStatus.Submitted,
                         EventTime = new DateTime(2018, 2, 3, 13, 23, 33),
-                        Username = "username"
+                        Username = "username",
+                        Action = CertificateActions.Submit,
                     },
                     new CertificateLog()
                     {
                         Status = CertificateStatus.Draft,
                         EventTime = new DateTime(2018, 2, 3, 13, 23, 32),
-                        Username = "username"
+                        Username = "username",
+                        Action = CertificateActions.Start
                     }
                 });
 
