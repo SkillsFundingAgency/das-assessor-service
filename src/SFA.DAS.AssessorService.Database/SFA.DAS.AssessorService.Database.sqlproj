@@ -87,6 +87,8 @@
     <Build Include="Tables\ScheduleRuns.sql" />
     <Build Include="Tables\DeliveryArea.sql" />
     <Build Include="Tables\OrganisationStandard.sql" />
+    <Build Include="Tables\Standards.sql" />
+    <Build Include="Tables\OrganisationStandardVersion.sql" />
     <Build Include="Tables\OrganisationStandardDeliveryArea.sql" />
     <Build Include="Tables\OrganisationType.sql" />
     <Build Include="StoredProcedures\StaffSearchCertificates.sql" />
@@ -156,6 +158,10 @@
     <Build Include="Security\Roles\DatabaseRoles\DatabaseMaintenance.sql" />
     <None Include="PostDeploymentScripts\GrantOrDenyPermissions.sql" />
     <Build Include="StoredProcedures\StaffReports_MissingCertificateData.sql" />
+    <None Include="PostDeploymentScripts\EPAO_Migration_Part1_Certificates.sql" />
+    <None Include="PostDeploymentScripts\EPAO_Migration_Part2_OrganisationStandard.sql" />
+    <None Include="PostDeploymentScripts\EPAO_Migration_Part3_OrganisationStandardVersion.sql" />
+    <None Include="PostDeploymentScripts\EPAO_Migration_Part4_Apply.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="SFA.DAS.AssessorService.Database.refactorlog" />

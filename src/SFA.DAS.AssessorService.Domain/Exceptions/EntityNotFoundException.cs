@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SFA.DAS.AssessorService.ExternalApis
+namespace SFA.DAS.AssessorService.Domain.Exceptions
 {
     public class EntityNotFoundException : ApplicationException
     {

@@ -24,11 +24,17 @@
     When a script has been deployed to ALL environments it can be disabled by removing the reference below and optionally retained
     under the PostDeploymentScripts folder for future reference.
 */
+-- SV-542
+:r .\PostDeploymentScripts\EPAO_Migration_Part1_Certificates.sql
+:r .\PostDeploymentScripts\EPAO_Migration_Part2_OrganisationStandard.sql
+:r .\PostDeploymentScripts\EPAO_Migration_Part3_OrganisationStandardVersion.sql
+:r .\PostDeploymentScripts\EPAO_Migration_Part4_Apply.sql
 
 -- ON-613 Patch Certificates with STxxxx StandardReference, where it is not yet included. 
 -- AB 11/03/19 Keep this active for new deployments, for now
 -- AB 31/07/19 Still seeing existance of certs without Standard reference (need to understand why)
 -- ****************************************************************************
+/* AB 17/03/21 - time to retire this "fix"
 MERGE INTO certificates ma1
 USING (
 SELECT ce1.[Id],JSON_MODIFY([CertificateData],'$.StandardReference',st1.ReferenceNumber) newData
@@ -38,3 +44,4 @@ SELECT ce1.[Id],JSON_MODIFY([CertificateData],'$.StandardReference',st1.Referenc
   AND JSON_VALUE([CertificateData],'$.StandardReference') IS NULL) up1
 ON (ma1.id = up1.id)
 WHEN MATCHED THEN UPDATE SET ma1.[CertificateData] = up1.[newData];
+*/
