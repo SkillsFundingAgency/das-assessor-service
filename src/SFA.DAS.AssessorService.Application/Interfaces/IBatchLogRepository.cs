@@ -12,5 +12,6 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<BatchLog> Create(BatchLog batchLog);
         Task<ValidationResponse> UpdateBatchLogSentToPrinter(BatchLog updatedBatchLog);
         Task<ValidationResponse> UpdateBatchLogPrinted(BatchLog updatedBatchLog);
+        Task UpsertCertificatesReadyToPrintInBatch(int batchNumber, Guid[] certificateIds);
     }
 }
