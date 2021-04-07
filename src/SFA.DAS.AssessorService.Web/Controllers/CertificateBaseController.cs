@@ -22,13 +22,15 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         protected readonly ILogger<CertificateController> Logger;
         protected readonly IHttpContextAccessor ContextAccessor;
         protected readonly ICertificateApiClient CertificateApiClient;
+        protected readonly IStandardServiceClient StandardServiceClient;
         protected readonly ISessionService SessionService;
 
-        public CertificateBaseController(ILogger<CertificateController> logger, IHttpContextAccessor contextAccessor, ICertificateApiClient certificateApiClient, ISessionService sessionService)
+        public CertificateBaseController(ILogger<CertificateController> logger, IHttpContextAccessor contextAccessor, ICertificateApiClient certificateApiClient, IStandardServiceClient standardServiceClient, ISessionService sessionService)
         {
             Logger = logger;
             ContextAccessor = contextAccessor;
             CertificateApiClient = certificateApiClient;
+            StandardServiceClient = standardServiceClient;
             SessionService = sessionService;
         }
         protected async Task<IActionResult> LoadViewModel<T>(string view) where T : ICertificateViewModel, new()

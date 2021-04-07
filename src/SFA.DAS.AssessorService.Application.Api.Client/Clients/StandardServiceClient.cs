@@ -32,11 +32,20 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                 return await RequestAndDeserialiseAsync<StandardCollation>(request, $"Could not find the standard {standardCode}");
             }
         }
+
+        public async Task<StandardOptions> GetStandardOptions(string standardId)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/standard-service/standard-options/{standardId}"))
+            {
+                return await RequestAndDeserialiseAsync<StandardOptions>(request, $"Could not find the standard {standardId}");
+            }
+        }
     }
 
     public interface IStandardServiceClient
     {
         Task<IEnumerable<StandardCollation>> GetAllStandards();
         Task<StandardCollation> GetStandard(int standardCode);
+        Task<StandardOptions> GetStandardOptions(string standardId);
     }
 }

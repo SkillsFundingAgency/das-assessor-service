@@ -18,8 +18,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers
     [Route("certificate/option")]
     public class CertificateOptionController : CertificateBaseController
     {
-        public CertificateOptionController(ILogger<CertificateController> logger, IHttpContextAccessor contextAccessor, ICertificateApiClient certificateApiClient, ISessionService sessionService)
-            :base(logger, contextAccessor, certificateApiClient, sessionService)
+        public CertificateOptionController(ILogger<CertificateController> logger, IHttpContextAccessor contextAccessor, ICertificateApiClient certificateApiClient, IStandardServiceClient standardServiceClient, ISessionService sessionService)
+            :base(logger, contextAccessor, certificateApiClient, standardServiceClient, sessionService)
         {}
 
         [HttpGet]
@@ -69,7 +69,13 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                     return RedirectToAction("Result", "Search");
                 }
 
-                return RedirectToAction("Declare", "CertificateDeclaration");
+                var standardOptions = await StandardServiceClient.GetStandardOptions(certSession.StandardUId);
+
+                if (standardOptions.CourseOption == null)
+                    return RedirectToAction("Declare", "CertificateDeclaration");
+
+                certSession.Options = standardOptions.CourseOption.ToList();
+                SessionService.Set("CertificateSession", certSession);
             }
 
             Logger.LogInformation($"Got Certificate for CertificateOptionViewModel requested by {username} with Id {certificate.Id}");

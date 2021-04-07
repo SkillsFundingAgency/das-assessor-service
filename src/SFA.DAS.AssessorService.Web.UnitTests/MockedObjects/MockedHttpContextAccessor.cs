@@ -16,7 +16,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.MockedObjects
             }));
 
             var mockHttpContextAccessor = new Mock<IHttpContextAccessor>();
-            var context = new DefaultHttpContext { User = user };
+            var context = new DefaultHttpContext { User = user};
 
             mockHttpContextAccessor.Setup(_ => _.HttpContext).Returns(context);
             return mockHttpContextAccessor;

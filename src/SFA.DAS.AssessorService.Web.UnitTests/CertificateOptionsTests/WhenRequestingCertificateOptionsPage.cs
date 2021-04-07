@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using Newtonsoft.Json;
 using NUnit.Framework;
+using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
@@ -23,8 +24,10 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateOptionsTests
     public class WhenRequestingCertificateOptionsPage
     {
         private Certificate _certificate;
+        private CertificateSession _certificateSession;
 
         private Mock<ISessionService> _mockSessionService;
+        private Mock<IStandardServiceClient> _mockStandardServiceClient;
 
         private CertificateOptionController _controller;
 
@@ -34,17 +37,19 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateOptionsTests
             _certificate = SetupCertificate();
 
             _mockSessionService = new Mock<ISessionService>();
+            _mockStandardServiceClient = new Mock<IStandardServiceClient>();
 
             _controller = new CertificateOptionController(Mock.Of<ILogger<CertificateController>>(),
                 SetupHttpContextAssessor(),
                 SetUpCertificateApiClient(),
+                _mockStandardServiceClient.Object,
                 _mockSessionService.Object);
         }
 
-        [Test]
+       [Test]
         public async Task And_StandardHasMultipleOptions_Then_ReturnOptionsView()
         {
-            SetupSessionOptions(new List<string> { "Option1", "Option2", "Option3" });
+            SetupSessionOptions(withOptions: true);
 
             var result = await _controller.Option() as ViewResult;
 
@@ -54,12 +59,35 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateOptionsTests
         [Test]
         public async Task And_StandardHasNoOptions_Then_RedirectToCertificateDeclaration()
         {
-            SetupSessionOptions(new List<string>());
+            SetupSessionOptions();
+            SetupStandardServiceOptions();
 
             var result = await _controller.Option() as RedirectToActionResult;
 
             result.ControllerName.Should().Be("CertificateDeclaration");
             result.ActionName.Should().Be("Declare");
+        }
+
+        [Test]
+        public async Task And_CertificateSessionContainsNoOptions_Then_GetStandardOptionsFromApi()
+        {
+            SetupSessionOptions();
+            SetupStandardServiceOptions(withOptions: true);
+
+            await _controller.Option();
+
+            _mockStandardServiceClient.Verify(client => client.GetStandardOptions(It.IsAny<string>()), Times.Once);
+        }
+
+        [Test]
+        public async Task And_StandardVersionHasOptions_Then_UpdateCertificateSession()
+        {
+            SetupSessionOptions();
+            SetupStandardServiceOptions(withOptions: true);
+
+            await _controller.Option();
+
+            _mockSessionService.Verify(session => session.Set("CertificateSession", It.IsAny<CertificateSession>()), Times.Once);
         }
 
         private IHttpContextAccessor SetupHttpContextAssessor()
@@ -71,17 +99,32 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateOptionsTests
             return MockedCertificateApiClient.Setup(_certificate, new Mock<ILogger<CertificateApiClient>>());
         }
 
-        private void SetupSessionOptions(List<string> options)
+        private void SetupSessionOptions(bool withOptions = false)
         {
-            var certificateSession = new Builder().CreateNew<CertificateSession>()
+            _certificateSession = new Builder().CreateNew<CertificateSession>()
                 .With(x => x.CertificateId = _certificate.Id)
-                .With(x => x.Options = options)
+                .With(x => x.Options = new List<string>())
                 .Build();
 
-            var certificateSessionString = JsonConvert.SerializeObject(certificateSession);
+            if (withOptions)
+                _certificateSession.Options = new List<string> { "Option1", "Option2", "Option3" };
+
+            var certificateSessionString = JsonConvert.SerializeObject(_certificateSession);
 
             _mockSessionService.Setup(session => session.Get("CertificateSession"))
                 .Returns(certificateSessionString);
+        }
+
+        private void SetupStandardServiceOptions(bool withOptions = false)
+        {
+            var standardOptions = new Builder().CreateNew<StandardOptions>()
+                .Build();
+
+            if (withOptions)
+                standardOptions.CourseOption = new List<string> { "Option1", "Option2", "Option3" };
+
+            _mockStandardServiceClient.Setup(client => client.GetStandardOptions(_certificateSession.StandardUId))
+                .ReturnsAsync(standardOptions);
         }
 
         private Certificate SetupCertificate()

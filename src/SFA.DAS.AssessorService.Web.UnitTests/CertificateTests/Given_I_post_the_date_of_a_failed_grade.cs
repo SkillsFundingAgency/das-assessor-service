@@ -38,6 +38,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
                     SetupHttpContextAssessor(),
                     SetUpCertificateApiClient(),
                     SetupValidator(),
+                    Mock.Of<IStandardServiceClient>(),
                     SetupSessionService()
                     );
 
