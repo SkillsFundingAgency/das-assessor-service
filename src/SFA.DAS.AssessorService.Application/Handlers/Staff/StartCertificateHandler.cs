@@ -102,15 +102,17 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
 
             if (standardVersions.Count() == 1)
             {
-                // If one versions, populate data, otherwise await for version update.
+                // If one version, populate data, otherwise await for version update later in journey.
                 var standard = standardVersions.First();
-
+                
                 certData.StandardReference = standard.IfateReferenceNumber;
                 certData.StandardName = standard.Title;
                 certData.StandardLevel = standard.Level;
                 certData.StandardPublicationDate = standard.EffectiveFrom;
+                certData.Version = standard.Version.ToString();
 
                 certificate.StandardUId = standard.StandardUId;
+                certificate.CertificateData = JsonConvert.SerializeObject(certData);
             }
 
 

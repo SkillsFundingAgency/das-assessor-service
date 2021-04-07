@@ -12,6 +12,7 @@ using SFA.DAS.AssessorService.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
@@ -21,6 +22,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
         private Mock<IOuterApiClient> _mockOuterApiClient;
         private Mock<ILogger<StandardService>> _mockLogger;
         private Mock<IStandardRepository> _mockStandardRepository;
+        private Mock<IDistributedCache> _mockCache;
 
         private StandardService _standardService;
 
@@ -30,8 +32,9 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
             _mockOuterApiClient = new Mock<IOuterApiClient>();
             _mockLogger = new Mock<ILogger<StandardService>>();
             _mockStandardRepository = new Mock<IStandardRepository>();
+            _mockCache = new Mock<IDistributedCache>();
 
-            _standardService = new StandardService(new CacheService(Mock.Of<IDistributedCache>()),
+            _standardService = new StandardService(new CacheService(_mockCache.Object),
                 _mockOuterApiClient.Object,
                 _mockLogger.Object,
                 _mockStandardRepository.Object);
@@ -147,6 +150,17 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
             _mockStandardRepository.Setup(s => s.GetAllStandards()).ReturnsAsync(standards);
 
             var result = await _standardService.GetAllStandardVersions();
+
+            Assert.IsInstanceOf<IEnumerable<Standard>>(result);
+            Assert.AreEqual(result.Count(), standards.Count());
+        }
+
+        [Test, AutoData]
+        public async Task When_GettingAllStandardVersions_Then_ReturnsListOfStandards(int standardId, IEnumerable<Standard> standards)
+        {
+            _mockStandardRepository.Setup(s => s.GetStandardVersions(standardId)).ReturnsAsync(standards);
+
+            var result = await _standardService.GetStandardVersions(standardId);
 
             Assert.IsInstanceOf<IEnumerable<Standard>>(result);
             Assert.AreEqual(result.Count(), standards.Count());
