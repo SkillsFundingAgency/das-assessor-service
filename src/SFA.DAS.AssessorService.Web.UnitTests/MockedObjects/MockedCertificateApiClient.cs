@@ -39,8 +39,14 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.MockedObjects
                 .Respond("application/json", JsonConvert.SerializeObject(certificate));
 
             mockHttp.When($"http://localhost:59022/api/v1/certificates/options/?stdCode={93}")
-                .Respond("application/json", JsonConvert.SerializeObject(options));            
-            
+                .Respond("application/json", JsonConvert.SerializeObject(options));
+
+            mockHttp.When($"http://localhost:59022/api/v1/certificates/options/?stdCode={1}")
+                .Respond("application/json", JsonConvert.SerializeObject(options));
+
+            mockHttp.When($"http://localhost:59022/api/v1/certificates/start")
+                .Respond("application/json", JsonConvert.SerializeObject(certificate));
+           
             mockHttp
                 .When(System.Net.Http.HttpMethod.Put, "http://localhost:59022/api/v1/certificates/update")
                 .Respond(System.Net.HttpStatusCode.OK, "application/json", "{'status' : 'OK'}");
