@@ -291,10 +291,10 @@ namespace SFA.DAS.AssessorService.Data
             return count;
         }
 
-        public async Task<Guid[]> GetCertificatesReadyToPrint(int numberOfCertifictes, string[] excludedOverallGrades, string[] includedStatus )
+        public async Task<Guid[]> GetCertificatesReadyToPrint(int numberOfCertificates, string[] excludedOverallGrades, string[] includedStatus )
         {
             var certificateIds = await _unitOfWork.Connection.QueryAsync<Guid>(
-              @"SELECT TOP(@numberOfCertifictes) 
+              @"SELECT TOP(@numberOfCertificates) 
                     c.[Id] 
                 FROM 
                     [Certificates] c 
@@ -304,7 +304,7 @@ namespace SFA.DAS.AssessorService.Data
                     AND JSON_VALUE(CertificateData, '$.OverallGrade') NOT IN @excludedOverallGrades 
                     AND c.Status IN @includedStatus 
                     AND BatchNumber IS NULL",
-                param: new { numberOfCertifictes, excludedOverallGrades, includedStatus },
+                param: new { numberOfCertificates, excludedOverallGrades, includedStatus },
                 transaction: _unitOfWork.Transaction);
 
             return certificateIds.ToArray();
