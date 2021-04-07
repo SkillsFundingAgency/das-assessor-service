@@ -1,4 +1,7 @@
-﻿namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
+﻿using System.Collections;
+using System.Collections.Generic;
+
+namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
 {
     public class CertificateStartViewModel
     {

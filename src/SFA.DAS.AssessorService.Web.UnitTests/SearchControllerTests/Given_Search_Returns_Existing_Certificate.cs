@@ -7,7 +7,7 @@ using SFA.DAS.AssessorService.Web.ViewModels.Search;
 namespace SFA.DAS.AssessorService.Web.UnitTests.SearchControllerTests
 {
     [TestFixture]
-    public class Given_Search_Returns_Existing_Certificate :SearchControllerTestBase
+    public class Given_Search_Returns_Existing_Certificate : SearchControllerTestBase
     {
         [Test]
         public void And_submitted_at_is_null_Then_ViewModel_Submitted_At_Is_Empty()
@@ -17,10 +17,10 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.SearchControllerTests
                 .ReturnsAsync(new SearchRequestViewModel()
                 {
                     SearchResults =
-                        new List<ResultViewModel>() {new ResultViewModel() {FamilyName = "Lamora", Uln = "1234567890", SubmittedAt = null}}
+                        new List<ResultViewModel>() { new ResultViewModel() { FamilyName = "Lamora", Uln = "1234567890", SubmittedAt = null } }
                 });
 
-            SearchController.Index(new SearchRequestViewModel() {Surname = "Lamora", Uln = "1234567890"})
+            SearchController.Index(new SearchRequestViewModel() { Surname = "Lamora", Uln = "1234567890" })
                 .Wait();
 
             SessionService.Verify(ss => ss.Set("SelectedStandard", It.Is<SelectedStandardViewModel>(vm => vm.SubmittedAt == "")));
@@ -34,7 +34,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.SearchControllerTests
                 .ReturnsAsync(new SearchRequestViewModel()
                 {
                     SearchResults =
-                        new List<ResultViewModel>() { new ResultViewModel() { FamilyName = "Lamora", Uln = "1234567890", SubmittedAt = new DateTime(2018, 2, 3, 12,34,22) } }
+                        new List<ResultViewModel>() { new ResultViewModel() { FamilyName = "Lamora", Uln = "1234567890", SubmittedAt = new DateTime(2018, 2, 3, 12, 34, 22) } }
                 });
 
             SearchController.Index(new SearchRequestViewModel() { Surname = "Lamora", Uln = "1234567890" })

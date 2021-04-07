@@ -13,7 +13,10 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<StandardCollation> GetStandard(string referenceNumber);
 
         Task<IEnumerable<EPORegisteredStandards>> GetEpaoRegisteredStandards(string endPointAssessorOrganisationId);
-        
+
+        // New Standard Versioning Methods
+        Task<IEnumerable<Standard>> GetAllStandardVersions();
+        Task<IEnumerable<Standard>> GetStandardVersions(int standardId);
         Task<IEnumerable<StandardOptions>> GetStandardOptions();
         Task<StandardOptions> GetStandardOptionsByStandardId(string id);
         Task<StandardOptions> GetStandardOptionsByStandardReferenceAndVersion(string standardReference, string version);

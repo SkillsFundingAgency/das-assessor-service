@@ -89,6 +89,35 @@ namespace SFA.DAS.AssessorService.Data
             return await GetStandardsByStandardReferenceAndVersionInternal(standardReference, version);
         }
 
+        public async Task<IEnumerable<Standard>> GetAllStandards()
+        {
+            var sql = @"SELECT [StandardUId],[IFateReferenceNumber],[LarsCode],[Title],[Version],
+[Level],[Status],[TypicalDuration],[MaxFunding],[IsActive],[LastDateStarts],
+[EffectiveFrom],[EffectiveTo],[VersionEarliestStartDate],[VersionLatestStartDate],[VersionLatestEndDate],
+[VersionApprovedForDelivery],[ProposedTypicalDuration],[ProposedMaxFunding] FROM [Standards]";
+
+            var results = await _unitOfWork.Connection.QueryAsync<Standard>(
+                sql,
+                transaction: _unitOfWork.Transaction);
+
+            return results;
+        }
+
+        public async Task<IEnumerable<Standard>> GetStandardVersions(int standardId)
+        {
+            var sql = @"SELECT [StandardUId],[IFateReferenceNumber],[LarsCode],[Title],[Version],
+[Level],[Status],[TypicalDuration],[MaxFunding],[IsActive],[LastDateStarts],
+[EffectiveFrom],[EffectiveTo],[VersionEarliestStartDate],[VersionLatestStartDate],[VersionLatestEndDate],
+[VersionApprovedForDelivery],[ProposedTypicalDuration],[ProposedMaxFunding] FROM [Standards] Where [LarsCode] = @standardId";
+
+            var results = await _unitOfWork.Connection.QueryAsync<Standard>(
+                sql,
+                param: new { standardId },
+                transaction: _unitOfWork.Transaction);
+
+            return results;
+        }
+
         private async Task<Standard> GetStandardsByStandardReferenceAndVersionInternal(string standardReference, string version)
         {
             var sql = @"SELECT StandardUId, IfateReferenceNumber, LarsCode, Title, Version, Level, Status, TypicalDuration, 
@@ -98,7 +127,7 @@ namespace SFA.DAS.AssessorService.Data
 
             var results = await _unitOfWork.Connection.QueryAsync<Standard>(
                 sql,
-                param: new { standardReference, version},
+                param: new { standardReference, version },
                 transaction: _unitOfWork.Transaction);
 
             return results.FirstOrDefault();
@@ -117,7 +146,7 @@ namespace SFA.DAS.AssessorService.Data
         private async Task<List<Option>> GetOptionsInternal(List<int> stdCodes, bool? isLive = null)
         {
             var sql = "SELECT * FROM [Options] WHERE StdCode IN @stdCodes";
-            if(isLive.HasValue)
+            if (isLive.HasValue)
             {
                 sql += " AND IsLive = @isLive";
             }
@@ -135,7 +164,7 @@ namespace SFA.DAS.AssessorService.Data
             var standardsDictionary = new Dictionary<string, StandardCollation>();
 
             var sql = new SqlQuery($"SELECT * FROM [StandardCollation] {SqlQuery.PredicatePlaceholder}");
-            
+
             if (standardIdFilter.HasValue)
             {
                 sql.Predicates.Add("StandardId = @standardIdFilter");
@@ -145,14 +174,14 @@ namespace SFA.DAS.AssessorService.Data
                 sql.Predicates.Add("ReferenceNumber = @referenceNumberFilter");
             }
 
-            if(isLive.HasValue)
+            if (isLive.HasValue)
             {
                 sql.Predicates.Add("IsLive = @isLive");
             }
 
             var standards = await _unitOfWork.Connection.QueryAsync<StandardCollation>(
-                sql.SqlWithOptionalPredicates(), 
-                param: new { standardIdFilter, referenceNumberFilter, isLive = (isLive ?? true) ? 1 : 0 }, 
+                sql.SqlWithOptionalPredicates(),
+                param: new { standardIdFilter, referenceNumberFilter, isLive = (isLive ?? true) ? 1 : 0 },
                 transaction: _unitOfWork.Transaction);
 
             foreach (var standard in standards)
@@ -192,14 +221,14 @@ namespace SFA.DAS.AssessorService.Data
                 sql.Predicates.Add("ReferenceNumber = @referenceNumberFilter");
             }
 
-            if(isLive.HasValue)
+            if (isLive.HasValue)
             {
                 sql.Predicates.Add("IsLive = @isLive");
             }
 
             var results = await _unitOfWork.Connection.QueryAsync<StandardNonApprovedCollation>(
                 sql.SqlWithOptionalPredicates(),
-                param: new { referenceNumberFilter, isLive = (isLive ?? true) ? 1 : 0 }, 
+                param: new { referenceNumberFilter, isLive = (isLive ?? true) ? 1 : 0 },
                 transaction: _unitOfWork.Transaction);
 
             return results.ToList();
@@ -223,7 +252,7 @@ namespace SFA.DAS.AssessorService.Data
                 .Where(latestStandard => existingStandards.Any(existingStandard => existingStandard.StandardId.Equals(latestStandard.StandardId)))
                 .ToList();
 
-            foreach(var standard in standardsToBeUpdated)
+            foreach (var standard in standardsToBeUpdated)
             {
                 await UpdateExistingStandard(standard);
             }
@@ -301,7 +330,7 @@ namespace SFA.DAS.AssessorService.Data
             var total = await GetEpaoStandardsCount(endPointAssessorOrganisationId);
             var skip = (pageIndex - 1) * pageSize;
             var result = await _unitOfWork.Connection.QueryAsync<EPORegisteredStandards>(
-                "EPAO_Registered_Standards", 
+                "EPAO_Registered_Standards",
                 param: new
                 {
                     EPAOId = endPointAssessorOrganisationId,
@@ -331,7 +360,7 @@ namespace SFA.DAS.AssessorService.Data
 
             var skip = ((pageIndex ?? 1) - 1) * pageSize;
             var result = await _unitOfWork.Connection.QueryAsync<EpaoPipelineStandard>(
-                "GetEPAO_Pipelines", 
+                "GetEPAO_Pipelines",
                 param: new
                 {
                     epaOrgId = endPointAssessorOrganisationId
@@ -369,7 +398,7 @@ namespace SFA.DAS.AssessorService.Data
         public async Task<List<EpaoPipelineStandardExtract>> GetEpaoPipelineStandardsExtract(string endPointAssessorOrganisationId)
         {
             var result = await _unitOfWork.Connection.QueryAsync<EpaoPipelineStandardExtract>(
-                "GetEPAO_Pipelines_Extract", 
+                "GetEPAO_Pipelines_Extract",
                 param: new
                 {
                     epaOrgId = endPointAssessorOrganisationId
@@ -385,11 +414,11 @@ namespace SFA.DAS.AssessorService.Data
             await _unitOfWork.Connection.ExecuteAsync(
                 "UPDATE [StandardCollation] SET " +
                     // when new ReferenceNumber is null (IFA has not supplied one) retain the current ReferenceNumber    
-                    "ReferenceNumber = CASE WHEN @referenceNumber IS NOT NULL THEN @referenceNumber ELSE ReferenceNumber END, " + 
-                    "Title = @title, " + 
-                    "StandardData = @StandardData, " + 
-                    "DateUpdated = GETUTCDATE(), " + 
-                    "DateRemoved = NULL, " + 
+                    "ReferenceNumber = CASE WHEN @referenceNumber IS NOT NULL THEN @referenceNumber ELSE ReferenceNumber END, " +
+                    "Title = @title, " +
+                    "StandardData = @StandardData, " +
+                    "DateUpdated = GETUTCDATE(), " +
+                    "DateRemoved = NULL, " +
                     "IsLive = 1 " +
                 "WHERE StandardId = @standardId",
                 param: new { standard.StandardId, standard.ReferenceNumber, standard.Title, standard.StandardData },
@@ -402,12 +431,12 @@ namespace SFA.DAS.AssessorService.Data
         private async Task UpdateExistingStandard(StandardNonApprovedCollation standard)
         {
             await _unitOfWork.Connection.ExecuteAsync(
-                "UPDATE [StandardNonApprovedCollation] SET " + 
-                    "ReferenceNumber = @referenceNumber, " + 
-                    "Title = @title, " + 
-                    "StandardData = @standardData, " + 
-                    "DateUpdated = GETUTCDATE(), " + 
-                    "DateRemoved = NULL, " + 
+                "UPDATE [StandardNonApprovedCollation] SET " +
+                    "ReferenceNumber = @referenceNumber, " +
+                    "Title = @title, " +
+                    "StandardData = @standardData, " +
+                    "DateUpdated = GETUTCDATE(), " +
+                    "DateRemoved = NULL, " +
                     "IsLive = 1 " +
                 "WHERE ReferenceNumber = @referenceNumber",
                 param: new { standard.ReferenceNumber, standard.Title, standard.StandardData },
@@ -440,8 +469,8 @@ namespace SFA.DAS.AssessorService.Data
         private async Task UpdateExistingStandardToRemoved(StandardCollation standard)
         {
             await _unitOfWork.Connection.ExecuteAsync(
-                "UPDATE [StandardCollation] SET " + 
-                    "IsLive = 0, " + 
+                "UPDATE [StandardCollation] SET " +
+                    "IsLive = 0, " +
                     "DateRemoved = GETUTCDATE() " +
                 "WHERE StandardId = @standardId",
                 param: new { standard.StandardId },
@@ -454,8 +483,8 @@ namespace SFA.DAS.AssessorService.Data
         private async Task UpdateExistingStandardToRemoved(StandardNonApprovedCollation standard)
         {
             await _unitOfWork.Connection.ExecuteAsync(
-                    "UPDATE [StandardNonApprovedCollation] SET " + 
-                        "IsLive = 0, " + 
+                    "UPDATE [StandardNonApprovedCollation] SET " +
+                        "IsLive = 0, " +
                         "DateRemoved = GETUTCDATE() " +
                     "WHERE ReferenceNumber = @referenceNumber",
                     param: new { standard.ReferenceNumber },
@@ -467,8 +496,8 @@ namespace SFA.DAS.AssessorService.Data
         {
             // retrieving both live and non-live, so that an existing non-live option can be re-activated
             var existingOptions = await GetOptionsInternal(new List<int> { standard.StandardId.Value }, isLive: null);
-                
-            var optionsToBeRemoved = removingStandard 
+
+            var optionsToBeRemoved = removingStandard
                 ? existingOptions
                 : existingOptions
                     .Where(existingOptionName => !standard.Options.Any(optionName => optionName.Equals(existingOptionName.OptionName, StringComparison.InvariantCulture)));
@@ -490,7 +519,7 @@ namespace SFA.DAS.AssessorService.Data
 
             var optionsToBeInserted = standard.Options
                 .Where(latestOptionName => !existingOptions.Any(existingOptionName => existingOptionName.OptionName.Equals(latestOptionName, StringComparison.InvariantCulture)));
-                
+
             foreach (var optionName in optionsToBeInserted)
             {
                 await InsertNewOption(standard, optionName);

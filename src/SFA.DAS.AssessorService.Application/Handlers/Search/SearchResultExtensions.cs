@@ -4,6 +4,7 @@ using System.Linq;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Extensions;
@@ -15,24 +16,27 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
     {
         public static List<SearchResult> PopulateStandards(this List<SearchResult> searchResults, IStandardService standardService, ILogger<SearchHandler> logger)
         {
-            var allStandards = standardService.GetAllStandards().Result;
+            var allStandards = standardService.GetAllStandardVersions().Result;
 
             foreach (var searchResult in searchResults)
             {
-                var standard = allStandards.SingleOrDefault(s => s.StandardId == searchResult.StdCode);
-                if (standard == null)
+                var standards = allStandards.Where(s => s.LarsCode == searchResult.StdCode)
+                    .OrderByDescending(o => o.Version);
+
+                if(!standards.Any())
                 {
-                    try
-                    {
-                        standard = standardService.GetStandard(searchResult.StdCode)?.Result;
-                    }
-                    catch (Exception e)
-                    {
-                        logger.LogInformation($"Failed to get standard for {searchResult.StdCode}, error message: {e.Message}");
-                    }
+                    logger.LogInformation($"Failed to get standard for {searchResult.StdCode}");
+                    continue;
                 }
-                searchResult.Standard = standard?.Title;
-                searchResult.Level = standard?.StandardData.Level.GetValueOrDefault()??0;
+
+                searchResult.Standard = standards.First().Title;
+                searchResult.Level = standards.First().Level;
+                searchResult.Versions = standards.Select(s => new StandardVersion
+                {
+                    Title = s.Title,
+                    StandardUId = s.StandardUId,
+                    Version = s.Version.ToString()
+                }).ToList();
             }
 
             return searchResults;
@@ -60,8 +64,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
                 logger.LogInformation("MatchUpExistingCompletedStandards After GetCertificateLogsFor");
                 var createdLogEntry = certificateLogs.FirstOrDefault(l => l.Status == CertificateStatus.Draft);
                                 
-                var submittedLogStatus = certificate.IsPrivatelyFunded ? CertificateStatus.ToBeApproved : CertificateStatus.Submitted;
-                var submittedLogEntry = certificateLogs.FirstOrDefault(l => l.Status == submittedLogStatus);
+                var submittedLogEntry = certificateLogs.FirstOrDefault(l => l.Action == CertificateActions.Submit);
 
                 if (submittedLogEntry == null) continue;
 
