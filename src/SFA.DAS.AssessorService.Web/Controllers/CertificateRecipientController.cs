@@ -15,7 +15,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
     public class CertificateRecipientController : CertificateBaseController
     {
         public CertificateRecipientController(ILogger<CertificateController> logger, IHttpContextAccessor contextAccessor,
-            ICertificateApiClient certificateApiClient, IStandardServiceClient standardServiceClient, ISessionService sessionService) : base(logger, contextAccessor, certificateApiClient, standardServiceClient, sessionService)
+            ICertificateApiClient certificateApiClient, IStandardServiceClient standardServiceClient, ISessionService sessionService) : base(logger, contextAccessor, certificateApiClient, sessionService)
         {}
 
         [HttpGet]

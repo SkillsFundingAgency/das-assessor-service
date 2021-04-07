@@ -16,7 +16,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         private readonly ISessionService _sessionService;
 
         public CertificateConfirmationController(ILogger<CertificateController> logger, IHttpContextAccessor contextAccessor,
-            ICertificateApiClient certificateApiClient, IStandardServiceClient standardServiceClient, ISessionService sessionService) : base(logger, contextAccessor, certificateApiClient, standardServiceClient, sessionService)
+            ICertificateApiClient certificateApiClient, IStandardServiceClient standardServiceClient, ISessionService sessionService) : base(logger, contextAccessor, certificateApiClient, sessionService)
         {
             _sessionService = sessionService;
         }

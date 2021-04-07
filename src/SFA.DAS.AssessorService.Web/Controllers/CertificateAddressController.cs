@@ -20,7 +20,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         private readonly ICertificateApiClient _certificateApiClient;
 
         public CertificateAddressController(ILogger<CertificateController> logger, IHttpContextAccessor contextAccessor,
-            ICertificateApiClient certificateApiClient, IStandardServiceClient standardServiceClient, ISessionService sessionService) : base(logger, contextAccessor, certificateApiClient, standardServiceClient, sessionService)
+            ICertificateApiClient certificateApiClient, IStandardServiceClient standardServiceClient, ISessionService sessionService) : base(logger, contextAccessor, certificateApiClient, sessionService)
         {
             _contextAccessor = contextAccessor;
             _certificateApiClient = certificateApiClient;

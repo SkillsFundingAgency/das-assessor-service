@@ -18,9 +18,12 @@ namespace SFA.DAS.AssessorService.Web.Controllers
     [Route("certificate/option")]
     public class CertificateOptionController : CertificateBaseController
     {
+        private readonly IStandardServiceClient _standardServiceClient;
         public CertificateOptionController(ILogger<CertificateController> logger, IHttpContextAccessor contextAccessor, ICertificateApiClient certificateApiClient, IStandardServiceClient standardServiceClient, ISessionService sessionService)
-            :base(logger, contextAccessor, certificateApiClient, standardServiceClient, sessionService)
-        {}
+            :base(logger, contextAccessor, certificateApiClient, sessionService)
+        {
+            _standardServiceClient = standardServiceClient;
+        }
 
         [HttpGet]
         public async Task<IActionResult> Option(bool? redirectToCheck = false, bool? isFromStandard = false)
@@ -69,7 +72,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                     return RedirectToAction("Result", "Search");
                 }
 
-                var standardOptions = await StandardServiceClient.GetStandardOptions(certSession.StandardUId);
+                var standardOptions = await _standardServiceClient.GetStandardOptions(certSession.StandardUId);
 
                 if (standardOptions.CourseOption == null)
                     return RedirectToAction("Declare", "CertificateDeclaration");

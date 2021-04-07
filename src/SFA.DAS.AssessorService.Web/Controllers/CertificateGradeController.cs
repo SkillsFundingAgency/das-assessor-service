@@ -14,8 +14,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers
     [Route("certificate/grade")]
     public class CertificateGradeController : CertificateBaseController
     {
-        public CertificateGradeController(ILogger<CertificateController> logger, IHttpContextAccessor contextAccessor, ICertificateApiClient certificateApiClient, IStandardServiceClient standardServiceClient, ISessionService sessionService)
-            : base(logger, contextAccessor, certificateApiClient, standardServiceClient, sessionService)
+        public CertificateGradeController(ILogger<CertificateController> logger, IHttpContextAccessor contextAccessor, ICertificateApiClient certificateApiClient, ISessionService sessionService)
+            : base(logger, contextAccessor, certificateApiClient, sessionService)
         {}
 
         [HttpGet]
