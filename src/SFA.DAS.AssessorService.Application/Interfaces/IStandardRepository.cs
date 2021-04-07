@@ -27,6 +27,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
 
         // New Standard Methods
         Task<IEnumerable<Standard>> GetAllStandards();
+        Task<IEnumerable<Standard>> GetStandardVersions(int standardId);
         Task<Standard> GetStandardByStandardReferenceAndVersion(string standardReference, string version);
         Task Insert(Standard standard);
         Task Update(Standard standard);

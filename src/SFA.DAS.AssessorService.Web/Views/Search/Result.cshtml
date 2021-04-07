@@ -17,7 +17,7 @@
             @if (Model.CertificateReference == null && !Model.UlnAlreadyExists )
             {
                 <h1 class="govuk-heading-xl">Confirm this is the correct apprentice</h1>
-                <form class="apprentice-search-result-form js-disable-on-submit" asp-controller="Search" asp-action="SelectStandardVersion" method="post">
+                <form class="apprentice-search-result-form js-disable-on-submit" asp-controller="Certificate" asp-action="Start" method="post">
                     <div class="govuk-form-group">
                         <dl class="govuk-summary-list">
                             <div class="govuk-summary-list__row">
@@ -48,26 +48,7 @@
                                 <dd class="govuk-summary-list__value">@Model.LearnerStartDate</dd>
                             </div>
                         </dl>
-                        <p class="govuk-body">If the name, standard or level is incorrect, you need to agree on the correct details along with the training provider and the employer. The training provider needs to then update the Individualised Learner Record (<abbr title="Individualised Learner Record">ILR</abbr>).</p>
-                        @if (Model.Versions.Count() > 1)
-                        {
-                            <div class="govuk-form-group">
-                                <fieldset class="govuk-fieldset">
-                                    <legend></legend>
-                                    <div class="govuk-radios">
-                                        @foreach (var result in Model.Versions)
-                                        {
-                                            <div class="govuk-radios__item">
-                                                <input class="govuk-radios__input" id=@("standard_" + result.StandardUId) type="radio" name="StandardUId" value="@result.StandardUId">
-                                                <label class="govuk-label govuk-radios__label govuk-!-padding-bottom-0" for=@("standard_" + result.StandardUId)>
-                                                    Version @result.Version
-                                                </label>
-                                            </div>
-                                        }
-                                    </div>
-                                </fieldset>
-                            </div>
-                        }
+                            <p class="govuk-body">If the name, standard or level is incorrect, you need to agree on the correct details along with the training provider and the employer. The training provider needs to then update the Individualised Learner Record (<abbr title="Individualised Learner Record">ILR</abbr>).</p>
                         </div>
 
                     @Html.HiddenFor(m => m.Uln)
@@ -81,7 +62,7 @@
             else if (Model.OverallGrade == CertificateGrade.Fail)
             {
                 <h1 class="govuk-heading-xl">Confirm this is the correct apprentice</h1>
-                <form class="apprentice-search-result-form js-disable-on-submit" asp-controller="Search" asp-action="SelectStandardVersion" method="post">
+                <form class="apprentice-search-result-form js-disable-on-submit" asp-controller="Certificate" asp-action="Start" method="post">
                     <div class="govuk-form-group">
                         <dl class="govuk-summary-list">
                             <div class="govuk-summary-list__row">
@@ -132,25 +113,6 @@
                             }
                         </dl>
                         <p class="govuk-body">If the name, standard or level is incorrect, you need to agree on the correct details along with the training provider and the employer. The training provider needs to then update the Individualised Learner Record (<abbr title="Individualised Learner Record">ILR</abbr>).</p>
-                        @if (Model.Versions.Count() > 1)
-                        {
-                            <div class="govuk-form-group">
-                                <fieldset class="govuk-fieldset">
-                                    <legend></legend>
-                                    <div class="govuk-radios">
-                                        @foreach (var result in Model.Versions)
-                                        {
-                                            <div class="govuk-radios__item">
-                                                <input class="govuk-radios__input" id=@("standard_" + result.StandardUId) type="radio" name="StandardUId" value="@result.StandardUId">
-                                                <label class="govuk-label govuk-radios__label govuk-!-padding-bottom-0" for=@("standard_" + result.StandardUId)>
-                                                    Version @result.Version
-                                                </label>
-                                            </div>
-                                        }
-                                    </div>
-                                </fieldset>
-                            </div>
-                        }
                     </div>
 
                     @Html.HiddenFor(m => m.Uln)

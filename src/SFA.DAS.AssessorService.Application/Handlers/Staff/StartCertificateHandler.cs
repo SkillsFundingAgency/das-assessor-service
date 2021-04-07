@@ -26,6 +26,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
         private readonly IOrganisationQueryRepository _organisationQueryRepository;
         private readonly ILogger<StartCertificateHandler> _logger;
         private readonly IStandardService _standardService;
+        private readonly int PrivateFundingModelNumber = 99;
 
         public StartCertificateHandler(ICertificateRepository certificateRepository, IIlrRepository ilrRepository, IRoatpApiClient roatpApiClient, 
             IOrganisationQueryRepository organisationQueryRepository, ILogger<StartCertificateHandler> logger, IStandardService standardService)
@@ -56,7 +57,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
                     certData.FullName = $"{ilr.GivenNames} {ilr.FamilyName}";
                     certificate.CertificateData = JsonConvert.SerializeObject(certData);
                                         
-                    certificate.IsPrivatelyFunded = ilr?.FundingModel == 99;
+                    certificate.IsPrivatelyFunded = ilr?.FundingModel == PrivateFundingModelNumber;
                     await _certificateRepository.Update(certificate, request.Username, null);
                 }
             }
@@ -69,41 +70,52 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
             var ilr = await _ilrRepository.Get(request.Uln, request.StandardCode);
             _logger.LogInformation("CreateNewCertificate Before Get Organisation from db");
             var organisation = await _organisationQueryRepository.GetByUkPrn(request.UkPrn);
-            _logger.LogInformation("CreateNewCertificate Before Get Standard from API");
-            var standard = await _standardService.GetStandard(ilr.StdCode);
+            _logger.LogInformation("CreateNewCertificate Before Get StandardVersions from API");
+            var standardVersions = await _standardService.GetStandardVersions(ilr.StdCode);
             _logger.LogInformation("CreateNewCertificate Before Get Provider from API");
             var provider = await GetProviderFromUkprn(ilr.UkPrn);
-
+                        
             var certData = new CertificateData()
             {
                 LearnerGivenNames = ilr.GivenNames,
                 LearnerFamilyName = ilr.FamilyName,
                 LearningStartDate = ilr.LearnStartDate,
-                StandardReference = standard.ReferenceNumber,
-                StandardName = standard.Title,
-                StandardLevel = standard.StandardData.Level.GetValueOrDefault(),
-                StandardPublicationDate = standard.StandardData.EffectiveFrom.GetValueOrDefault(),
                 FullName = $"{ilr.GivenNames} {ilr.FamilyName}",
                 ProviderName = provider.ProviderName,
                 EpaDetails = new EpaDetails { Epas = new List<EpaRecord>() }
             };
 
+            var certificate = new Certificate()
+            {
+                Uln = request.Uln,
+                StandardCode = request.StandardCode,
+                ProviderUkPrn = ilr.UkPrn,
+                OrganisationId = organisation.Id,
+                CreatedBy = request.Username,
+                CertificateData = JsonConvert.SerializeObject(certData),
+                Status = CertificateStatus.Draft,
+                CertificateReference = string.Empty,
+                LearnRefNumber = ilr.LearnRefNumber,
+                CreateDay = DateTime.UtcNow.Date,
+                IsPrivatelyFunded = ilr?.FundingModel == PrivateFundingModelNumber
+            };
+
+            if (standardVersions.Count() == 1)
+            {
+                // If one versions, populate data, otherwise await for version update.
+                var standard = standardVersions.First();
+
+                certData.StandardReference = standard.IfateReferenceNumber;
+                certData.StandardName = standard.Title;
+                certData.StandardLevel = standard.Level;
+                certData.StandardPublicationDate = standard.EffectiveFrom;
+
+                certificate.StandardUId = standard.StandardUId;
+            }
+
+
             _logger.LogInformation("CreateNewCertificate Before create new Certificate");
-            var newCertificate = await _certificateRepository.New(
-                new Certificate()
-                {
-                    Uln = request.Uln,
-                    StandardCode = request.StandardCode,
-                    ProviderUkPrn = ilr.UkPrn,
-                    OrganisationId = organisation.Id,
-                    CreatedBy = request.Username,
-                    CertificateData = JsonConvert.SerializeObject(certData),
-                    Status = CertificateStatus.Draft,
-                    CertificateReference = string.Empty,
-                    LearnRefNumber = ilr.LearnRefNumber,
-                    CreateDay = DateTime.UtcNow.Date,
-                    IsPrivatelyFunded = ilr?.FundingModel == 99
-        });
+            var newCertificate = await _certificateRepository.New(certificate);
 
             _logger.LogInformation(LoggingConstants.CertificateStarted);
             _logger.LogInformation($"Certificate with ID: {newCertificate.Id} Started with reference of {newCertificate.CertificateReference}");

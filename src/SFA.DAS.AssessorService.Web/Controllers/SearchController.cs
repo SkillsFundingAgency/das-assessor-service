@@ -68,34 +68,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             return RedirectToAction("Result");
         }
 
-        [HttpPost]
-        [Route("/[controller]/SelectStandardVersion")]
-        public async Task<IActionResult> SelectStandardVersion([FromForm] SelectedStandardViewModel vm)
-        {
-            if (!ModelState.IsValid)
-            {
-                return View(vm);
-            }
-
-            var standardUId = vm.StandardUId;
-            // SV-584
-            // Need to check if the EPAO is allowed to assess this standard version
-            // Otherwise return an error with return mechanism
-
-            // SV-585
-            // Need to query if the standard selected has options
-            // If so navigate to options page.
-
-            // SV-586
-            // if no options, redirect to Certificate / Start with model.
-            // Need to modify Certificate Controller as it expects to be posted to
-            // Via a model.
-
-            //_sessionService.Set("SelectedStandard", vm);
-            //return RedirectToAction("start", "certificate");
-            return View(vm);
-        }
-
         private void GetChooseStandardViewModel(SearchRequestViewModel vm)
         {
             var chooseStandardViewModel = new ChooseStandardViewModel

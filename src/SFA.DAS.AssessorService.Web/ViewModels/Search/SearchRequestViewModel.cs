@@ -35,7 +35,6 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Search
         public bool UlnAlreadyExists { get; set; }
         public bool ShowExtraInfo { get; set; }
         public bool IsNoMatchingFamilyName { get; set; }
-        public string StandardUId { get; set; }
         public IEnumerable<StandardVersion> Versions { get; set; }
 
         public class StandardVersion

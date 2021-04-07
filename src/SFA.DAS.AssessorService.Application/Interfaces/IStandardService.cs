@@ -16,6 +16,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
 
         // New Standard Versioning Methods
         Task<IEnumerable<Standard>> GetAllStandardVersions();
+        Task<IEnumerable<Standard>> GetStandardVersions(int standardId);
         Task<IEnumerable<StandardOptions>> GetStandardOptions();
         Task<StandardOptions> GetStandardOptionsByStandardId(string id);
         Task<StandardOptions> GetStandardOptionsByStandardReferenceAndVersion(string standardReference, string version);
