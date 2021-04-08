@@ -26,7 +26,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         
         public async Task<IEnumerable<StandardVersion>> GetStandardVersionsByLarsCode(int larsCode)
         {
-            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/standard-version/standards/{larsCode}"))
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/standard-version/standards/versions/{larsCode}"))
             {
                 return await RequestAndDeserialiseAsync<IEnumerable<StandardVersion>>(request, $"Could not find the standard {larsCode}");
             }

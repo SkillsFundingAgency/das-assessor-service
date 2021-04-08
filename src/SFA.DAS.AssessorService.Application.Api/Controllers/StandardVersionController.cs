@@ -39,11 +39,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             return Ok(standards.Select(s => (StandardVersion)s));
         }
 
-        [HttpGet("standards/{standardId}", Name = "GetStandardVersions")]
+        [HttpGet("standards/versions/{larsCode}", Name = "GetStandardVersionsByLarsCode")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(IEnumerable<StandardVersion>))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> GetStandardVersions(int larsCode)
+        public async Task<IActionResult> GetStandardVersionsByLarsCode(int larsCode)
         {
             _logger.LogInformation($@"Get Standard Versions for LarsCode {larsCode} from Standard Service");
             var standards = await _standardService.GetStandardVersionsByLarsCode(larsCode);
