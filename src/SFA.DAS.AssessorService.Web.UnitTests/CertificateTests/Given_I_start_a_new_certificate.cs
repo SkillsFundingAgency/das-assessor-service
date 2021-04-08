@@ -33,7 +33,9 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
                 Mock.Of<ILogger<CertificateController>>(),
                 SetupHttpContextAssessor(),
                 SetUpCertificateApiClient(),
-                Mock.Of<IOrganisationsApiClient>(),
+                // TO be replaced with setup and unit tests
+                Mock.Of<IStandardVersionClient>(),
+                Mock.Of<IStandardServiceClient>(),
                 Mock.Of<ISessionService>());
         }
 

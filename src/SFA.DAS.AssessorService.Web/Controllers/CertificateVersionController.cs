@@ -11,6 +11,7 @@ using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.ViewModels.Certificate;
+using static SFA.DAS.AssessorService.Web.ViewModels.Certificate.CertificateVersionViewModel;
 
 namespace SFA.DAS.AssessorService.Web.Controllers
 {
@@ -18,11 +19,13 @@ namespace SFA.DAS.AssessorService.Web.Controllers
     [Route("certificate/version")]
     public class CertificateVersionController : CertificateBaseController
     {
+        private readonly IStandardVersionClient _standardVersionClient;
         private readonly IStandardServiceClient _standardServiceClient;
-        public CertificateVersionController(IStandardServiceClient standardServiceClient, ILogger<CertificateController> logger, IHttpContextAccessor contextAccessor, 
+        public CertificateVersionController(IStandardVersionClient standardVersionClient, IStandardServiceClient standardServiceClient, ILogger<CertificateController> logger, IHttpContextAccessor contextAccessor,
             ICertificateApiClient certificateApiClient, ISessionService sessionService)
-            :base(logger, contextAccessor, certificateApiClient, sessionService)
+            : base(logger, contextAccessor, certificateApiClient, sessionService)
         {
+            _standardVersionClient = standardVersionClient;
             _standardServiceClient = standardServiceClient;
         }
 
@@ -34,7 +37,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             {
                 return RedirectToAction("Index", "Search");
             }
-            
+
             return await LoadViewModel("~/Views/Certificate/Version.cshtml");
         }
 
@@ -57,7 +60,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             {
                 SessionService.Remove("redirecttocheck");
             }
-                
+
             var sessionString = SessionService.Get("CertificateSession");
             if (sessionString == null)
             {
@@ -68,22 +71,26 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             var certSession = JsonConvert.DeserializeObject<CertificateSession>(sessionString);
             var certificate = await CertificateApiClient.GetCertificate(certSession.CertificateId);
 
-            // get versions of a standard by standard code.
-            // Preselect one if standard uid in session is set
+            var versions = await _standardVersionClient.GetStandardVersions(certSession.StandardCode);
 
-            //if (!certSession.Options.Any())
-            //{
-            //    if (ContextAccessor.HttpContext.Request.Query.ContainsKey("fromback"))
-            //    {
-            //        return RedirectToAction("Result", "Search");
-            //    }
+            if (versions.Count() == 1)
+            {
+                // Only 1 version no need for a selection
+                var singularStandard = versions.First();
+                var options = await _standardServiceClient.GetStandardOptions(singularStandard.StandardUId);
+                if (options != null & options.CourseOption.Any())
+                {
+                    certSession.StandardUId = singularStandard.StandardUId;
+                    SessionService.Set("CertificateSession", certSession);
+                    return RedirectToAction("Option", "CertificateOption");
+                }
 
-            //    return RedirectToAction("Declare", "CertificateDeclaration");
-            //}
+                return RedirectToAction("Declare", "CertificateDeclaration");
+            }
 
             Logger.LogInformation($"Got Certificate for CertificateVersionViewModel requested by {username} with Id {certificate.Id}");
 
-            viewModel.FromCertificate(certificate);
+            viewModel.FromCertificate(certificate, versions.Select(v => (StandardVersion)v));
 
             Logger.LogInformation($"Got View Model of type CertificateVersionViewModel requested by {username}");
 
@@ -98,10 +105,10 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 nextAction: RedirectToAction("Declare", "CertificateDeclaration"), action: CertificateActions.Option);
         }
 
-         private async Task<IActionResult> SaveViewModel(CertificateVersionViewModel vm, string returnToIfModelNotValid, RedirectToActionResult nextAction, string action)
+        private async Task<IActionResult> SaveViewModel(CertificateVersionViewModel vm, string returnToIfModelNotValid, RedirectToActionResult nextAction, string action)
         {
             var username = ContextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
-            
+
             Logger.LogInformation($"Save View Model for CertificateVersionViewModel for {username} with values: {GetModelValues(vm)}");
 
             var certificate = await CertificateApiClient.GetCertificate(vm.Id);
@@ -123,17 +130,29 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
             var updatedCertificate = vm.GetCertificateFromViewModel(certificate, certData);
 
-            await CertificateApiClient.UpdateCertificate(new UpdateCertificateRequest(updatedCertificate) { Username = username, Action = action});
+            await CertificateApiClient.UpdateCertificate(new UpdateCertificateRequest(updatedCertificate) { Username = username, Action = action });
 
             Logger.LogInformation($"Certificate for CertificateVersionViewModel requested by {username} with Id {certificate.Id} updated.");
 
-            // version changed?
+            // If it's being set for the first time, or it's been changed.
             if (vm.StandardUId != certificate.StandardUId)
             {
-                // Wipe Options from session
-                // If options exist for new version
-                // redirect to options page
-                // If redirect to check, go to options page or not dependent on above.
+                certSession.Options = null;
+                certSession.StandardUId = vm.StandardUId;
+                SessionService.Set("CertificateSession", certSession);
+
+                var options = await _standardServiceClient.GetStandardOptions(vm.StandardUId);
+
+                if (options != null && options.CourseOption.Any())
+                {
+                    object routeValues = null;
+                    if (SessionService.Exists("redirecttocheck") && bool.Parse(SessionService.Get("redirecttocheck")))
+                    {
+                        routeValues = new { redirecttocheck = true };
+                    }
+
+                    return new RedirectToActionResult("Option", "CertificateOption", routeValues);
+                }
             }
 
             if (SessionService.Exists("redirecttocheck") && bool.Parse(SessionService.Get("redirecttocheck")))
