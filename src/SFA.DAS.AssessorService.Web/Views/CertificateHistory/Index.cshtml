@@ -76,6 +76,19 @@
                                         <dd class="govuk-summary-list__value">@Html.DisplayFor(modelItem => item.StandardName)</dd>
                                     </div>
                                     <div class="govuk-summary-list__row">
+                                        <dt class="govuk-summary-list__key">@Localizer["Version"]</dt>
+                                        <dd class="govuk-summary-list__value">
+                                            @if (!string.IsNullOrEmpty(item.Version))
+                                            {
+                                                @Html.DisplayFor(modelItem => item.Version)
+                                            }
+                                            else
+                                            { 
+                                                <text>Unavailable</text>
+                                            }
+                                        </dd>
+                                    </div>
+                                    <div class="govuk-summary-list__row">
                                         <dt class="govuk-summary-list__key">@Localizer["Level"]</dt>
                                         <dd class="govuk-summary-list__value">@Html.DisplayFor(modelItem => item.Level)</dd>
                                     </div>
