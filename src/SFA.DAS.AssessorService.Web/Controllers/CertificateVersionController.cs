@@ -145,6 +145,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
                 if (options != null && options.CourseOption.Any())
                 {
+                    certSession.Options = options.CourseOption.ToList();
+                    SessionService.Set("CertificateSession", certSession);
                     object routeValues = null;
                     if (SessionService.Exists("redirecttocheck") && bool.Parse(SessionService.Get("redirecttocheck")))
                     {

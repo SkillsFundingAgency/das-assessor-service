@@ -1,0 +1,92 @@
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+@model SFA.DAS.AssessorService.Web.ViewModels.Certificate.CertificateVersionViewModel
+
+@{
+    ViewBag.Title = (!ViewData.ModelState.IsValid ? "Error: " : "") + "Learning version";
+    Layout = "_DashboardLayout";
+}
+
+@if (Model.BackToCheckPage)
+{
+    <a class="govuk-back-link" asp-controller="CertificateCheck" asp-action="Check">Back</a>
+}
+else
+{
+    <a class="govuk-back-link" asp-controller="Search" asp-action="Result">Back</a>
+}
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+        
+            <form class="apprentice-version-form js-disable-on-submit" method="post" asp-controller="Certificate" asp-method="Version">
+                @Html.HiddenFor(c => c.Id)
+
+                <div class="js-error-summary govuk-error-summary" role="alert" aria-labelledby="error-summary-title" tabindex="-1" data-module="govuk-error-summary">
+                    <h2 class="govuk-error-summary__title" id="error-summary-title">
+                        There is a problem
+                    </h2>
+                    <div class="govuk-error-summary__body">
+                        <ul class="js-error-summary-list govuk-list govuk-error-summary__list"></ul>
+                    </div>
+                </div>
+
+                @if (!ViewData.ModelState.IsValid)
+                {
+                    <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
+                        <h2 class="govuk-error-summary__title" id="error-summary-title">
+                            There is a problem
+                        </h2>
+                        <div class="govuk-error-summary__body">
+                            <ul class="govuk-list govuk-error-summary__list">
+                                <li><a sfa-validation-for="Versions"></a></li>
+                            </ul>
+                        </div>
+                    </div>
+                }
+
+                <h1 class="govuk-heading-xl">
+                    @Localizer["Heading"]
+                </h1>
+                <p class="govuk-body">You may know options as 'occupational options', 'pathways', 'specialisms' or 'specialist functions'.</p>
+                <p class="govuk-body">The option will appear on the certificate.</p>
+
+                <div class="govuk-form-group" sfa-anyvalidationerror-class="govuk-form-group--error">
+                    <span class="govuk-error-message" asp-validation-for="Versions"></span>
+
+                    <div class="govuk-radios">
+                        @foreach (var version in Model.Versions)
+                        {
+                            <div class="govuk-radios__item" data-target="show-version-input">
+                                <input class="govuk-radios__input" asp-for="Versions" id="versions_@version.StandardUId" type="radio" value="@version.StandardUId" />
+                                <label class="govuk-label govuk-radios__label" for="versions_@version.StandardUId">
+                                    @version.Version
+                                </label>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <button type="submit" class="govuk-button">@Localizer["ContinueButton"]</button>
+
+                <details class="govuk-details">
+                    <summary class="govuk-details__summary">
+                        <span class="govuk-details__summary-text">
+                            @Localizer["InfoHeader"]
+                        </span>
+                    </summary>
+                    <div class="govuk-details__text" id="what-is-a-learning-option">
+                        @Localizer["InfoBody"]
+                    </div>
+                </details>
+
+            </form>
+        </div>
+    </div>
+</main>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+    @{await Html.RenderPartialAsync("~/Views/Certificate/_VersionScriptsPartial.cshtml"); }
+}

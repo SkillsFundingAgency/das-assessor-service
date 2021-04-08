@@ -80,6 +80,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 if(options != null && options.CourseOption.Any())
                 {
                     certificateSession.StandardUId = singularVersion.StandardUId;
+                    certificateSession.Options = options.CourseOption.ToList();
                     _sessionService.Set("CertificateSession", certificateSession);
 
                     return RedirectToAction("Option", "CertificateOption");
