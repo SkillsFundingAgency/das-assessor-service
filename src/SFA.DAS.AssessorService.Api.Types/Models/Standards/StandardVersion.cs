@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models.Standards
 {
@@ -8,7 +6,16 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Standards
     {
         public string StandardUId { get; set; }
         public string Title { get; set; }
-        public List<string> Options { get; set; }
         public string Version { get; set; }
+
+        public static implicit operator StandardVersion(Standard standard)
+        {
+            return new StandardVersion
+            {
+                StandardUId = standard.StandardUId,
+                Title = standard.Title,
+                Version = standard.Version?.ToString() ?? string.Empty
+            };
+        }
     }
 }

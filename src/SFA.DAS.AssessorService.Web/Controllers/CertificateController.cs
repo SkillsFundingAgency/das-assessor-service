@@ -19,18 +19,21 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         private readonly ILogger<CertificateController> _logger;
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly ICertificateApiClient _certificateApiClient;
-        private readonly IOrganisationsApiClient _organisationsApiClient;
+        private readonly IStandardVersionClient _standardVersionClient;
+        private readonly IStandardServiceClient _standardServiceClient;
         private readonly ISessionService _sessionService;
 
         public CertificateController(ILogger<CertificateController> logger, IHttpContextAccessor contextAccessor,
             ICertificateApiClient certificateApiClient, 
-            IOrganisationsApiClient organisationsApiClient,
+            IStandardVersionClient standardVersionClient,
+            IStandardServiceClient standardServiceClient,
             ISessionService sessionService)
         {
             _logger = logger;
             _contextAccessor = contextAccessor;
             _certificateApiClient = certificateApiClient;
-            _organisationsApiClient = organisationsApiClient;
+            _standardVersionClient = standardVersionClient;
+            _standardServiceClient = standardServiceClient;
             _sessionService = sessionService;
         }
 
@@ -53,25 +56,37 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 Username = username
             });
 
-            var organisation = await _organisationsApiClient.Get(ukprn);
-
-            _sessionService.Set("CertificateSession", new CertificateSession()
+            var certificateSession =  new CertificateSession()
             {
                 CertificateId = cert.Id,
                 Uln = vm.Uln,
-                StandardCode = vm.StdCode
-            });
+                StandardCode = vm.StdCode,
+            };
 
-            _logger.LogInformation(
-                $"New Certificate received for ULN {vm.Uln} and Standard Code: {vm.StdCode} with ID {cert.Id}");
+            _sessionService.Set("CertificateSession", certificateSession);
 
-            // If > 1 version -> Version page
+            _logger.LogInformation($"New Certificate received for ULN {vm.Uln} and Standard Code: {vm.StdCode} with ID {cert.Id}");
 
-            // If > 1 option -> Options Page
+            var versions = await _standardVersionClient.GetStandardVersions(vm.StdCode);
 
-            // If 1 version, 1 option -> Declaration
+            if(versions.Count() > 1)
+            {
+                return RedirectToAction("Version", "CertificateVersion");
+            } 
+            else if(versions.Count() == 1)
+            {
+                var singularVersion = versions.First();
+                var options = await _standardServiceClient.GetStandardOptions(singularVersion.StandardUId);
+                if(options != null && options.CourseOption.Any())
+                {
+                    certificateSession.StandardUId = singularVersion.StandardUId;
+                    _sessionService.Set("CertificateSession", certificateSession);
 
-            return RedirectToAction("Option", "CertificateOption");
+                    return RedirectToAction("Option", "CertificateOption");
+                } 
+            }
+
+            return RedirectToAction("Declare", "CertificateDeclaration");
         }
     }
 }

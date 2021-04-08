@@ -167,6 +167,7 @@ namespace SFA.DAS.AssessorService.Web
                 config.For<IAzureApiClient>().Use<AzureApiClient>().Ctor<string>().Is(Configuration.AzureApiAuthentication.ApiBaseAddress);
 
                 config.For<IStandardServiceClient>().Use<StandardServiceClient>().Ctor<string>().Is(Configuration.AssessorApiAuthentication.ApiBaseAddress);
+                config.For<IStandardVersionClient>().Use<StandardVersionClient>().Ctor<string>().Is(Configuration.AssessorApiAuthentication.ApiBaseAddress);
 
                 config.For<IApiValidationService>().Use<ApiValidationService>();
 
