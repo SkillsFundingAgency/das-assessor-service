@@ -129,7 +129,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
             // collected here as it's needed later and GetCertificateFromViewModel Updates Cert with View Model
             var standardVersionChanged = vm.StandardUId != certificate.StandardUId;
-
             var standardVersion = await _standardVersionClient.GetStandardVersionByStandardUId(vm.StandardUId);
 
             var updatedCertificate = vm.GetCertificateFromViewModel(certificate, standardVersionChanged, standardVersion);

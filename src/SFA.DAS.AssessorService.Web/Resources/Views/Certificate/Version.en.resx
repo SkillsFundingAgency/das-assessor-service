@@ -118,15 +118,9 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ContinueButton" xml:space="preserve">
-    <value>Continue</value>
+    <value>Confirm and continue</value>
   </data>
   <data name="Heading" xml:space="preserve">
-    <value>Which learning version did the apprentice take?</value>
-  </data>
-  <data name="InfoBody" xml:space="preserve">
-    <value>For some standards, an apprentice can take different learning versions. For example, the assessment plan may have been updated since the apprentice started.</value>
-  </data>
-  <data name="InfoHeader" xml:space="preserve">
-    <value>What is a learning version?</value>
+    <value>Which version of the {0} standard did you assess?</value>
   </data>
 </root>

@@ -47,10 +47,8 @@ else
                 }
 
                 <h1 class="govuk-heading-xl">
-                    @Localizer["Heading"]
+                     @Localizer["Heading", Model.Standard]
                 </h1>
-                <p class="govuk-body">You may know options as 'occupational options', 'pathways', 'specialisms' or 'specialist functions'.</p>
-                <p class="govuk-body">The option will appear on the certificate.</p>
 
                 <div class="govuk-form-group" sfa-anyvalidationerror-class="govuk-form-group--error">
                     <span class="govuk-error-message" asp-validation-for="Versions"></span>
@@ -61,7 +59,7 @@ else
                             <div class="govuk-radios__item" data-target="show-version-input">
                                 <input class="govuk-radios__input" asp-for="Versions" id="versions_@version.StandardUId" type="radio" value="@version.StandardUId" name="StandardUId" />
                                 <label class="govuk-label govuk-radios__label" for="versions_@version.StandardUId">
-                                    @version.Version
+                                    Version @version.Version
                                 </label>
                             </div>
                         }
@@ -69,18 +67,6 @@ else
                 </div>
 
                 <button type="submit" class="govuk-button">@Localizer["ContinueButton"]</button>
-
-                <details class="govuk-details">
-                    <summary class="govuk-details__summary">
-                        <span class="govuk-details__summary-text">
-                            @Localizer["InfoHeader"]
-                        </span>
-                    </summary>
-                    <div class="govuk-details__text" id="what-is-a-learning-option">
-                        @Localizer["InfoBody"]
-                    </div>
-                </details>
-
             </form>
         </div>
     </div>

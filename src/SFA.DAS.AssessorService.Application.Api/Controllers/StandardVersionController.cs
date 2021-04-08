@@ -52,7 +52,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
         [HttpGet("standards/{standardUId}", Name = "GetStandardVersionByStandardUId")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(StandardVersion))]
-        [SwaggerResponse((int)HttpStatusCode.NotFound]
+        [SwaggerResponse((int)HttpStatusCode.NotFound)]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> GetStandardVersionByStandardUId(string standardUId)
