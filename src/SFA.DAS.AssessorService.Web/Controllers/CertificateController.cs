@@ -55,14 +55,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
             var organisation = await _organisationsApiClient.Get(ukprn);
 
-            var options = (await _certificateApiClient.GetOptions(cert.StandardCode)).Select(o => o.OptionName).ToList();
-
             _sessionService.Set("CertificateSession", new CertificateSession()
             {
                 CertificateId = cert.Id,
                 Uln = vm.Uln,
-                StandardCode = vm.StdCode,
-                Options = options
+                StandardCode = vm.StdCode
             });
 
             _logger.LogInformation(
