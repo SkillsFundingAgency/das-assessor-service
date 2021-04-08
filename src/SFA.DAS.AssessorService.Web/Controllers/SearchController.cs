@@ -104,6 +104,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             _sessionService.Set("SelectedStandard", selectedStandardViewModel);
         }
 
+
+
         private string GetSubmittedAtString(DateTime? submittedAt)
         {
             return !submittedAt.HasValue ? "" : submittedAt.Value.ToString("d MMMM yyyy");

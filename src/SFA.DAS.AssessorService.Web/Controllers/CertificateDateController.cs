@@ -20,7 +20,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         private readonly CertificateDateViewModelValidator _validator;
 
         public CertificateDateController(ILogger<CertificateController> logger, IHttpContextAccessor contextAccessor,
-            ICertificateApiClient certificateApiClient, CertificateDateViewModelValidator validator, IStandardServiceClient standardServiceClient, ISessionService sessionService) : base(logger, contextAccessor, certificateApiClient, sessionService)
+            ICertificateApiClient certificateApiClient, CertificateDateViewModelValidator validator, ISessionService sessionService) : base(logger, contextAccessor, certificateApiClient, sessionService)
         {
             _validator = validator;
         }
