@@ -40,14 +40,31 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         }
 
         [HttpGet("standards/{standardId}", Name = "GetStandardVersions")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(StandardVersion))]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(IEnumerable<StandardVersion>))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> GetStandardVersions(int standardId)
+        public async Task<IActionResult> GetStandardVersions(int larsCode)
         {
-            _logger.LogInformation($@"Get Standard Versions for LarsCode {standardId} from Standard Service");
-            var standards = await _standardService.GetStandardVersions(standardId);
+            _logger.LogInformation($@"Get Standard Versions for LarsCode {larsCode} from Standard Service");
+            var standards = await _standardService.GetStandardVersionsByLarsCode(larsCode);
             return Ok(standards.Select(s => (StandardVersion)s));
+        }
+
+        [HttpGet("standards/{standardUId}", Name = "GetStandardVersionByStandardUId")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(StandardVersion))]
+        [SwaggerResponse((int)HttpStatusCode.NotFound]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> GetStandardVersionByStandardUId(string standardUId)
+        {
+            _logger.LogInformation($@"Get Standard Version for StandardUId {standardUId} from Standard Service");
+            var standard = await _standardService.GetStandardVersionByStandardUId(standardUId);
+            if(standard == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(standard);
         }
 
     }

@@ -156,9 +156,9 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
         [Test, AutoData]
         public async Task When_GettingAllStandardVersions_OfAGivenStandardId_Then_ReturnsAListOfThatStandardsVersions(int standardId, IEnumerable<Standard> standards)
         {
-            _mockStandardRepository.Setup(s => s.GetStandardVersions(standardId)).ReturnsAsync(standards);
+            _mockStandardRepository.Setup(s => s.GetStandardVersionsByLarsCode(standardId)).ReturnsAsync(standards);
 
-            var result = await _standardService.GetStandardVersions(standardId);
+            var result = await _standardService.GetStandardVersionsByLarsCode(standardId);
 
             Assert.IsInstanceOf<IEnumerable<Standard>>(result);
             Assert.AreEqual(result.Count(), standards.Count());

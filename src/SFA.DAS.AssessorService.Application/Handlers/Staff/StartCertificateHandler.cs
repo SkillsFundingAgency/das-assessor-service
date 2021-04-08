@@ -71,7 +71,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
             _logger.LogInformation("CreateNewCertificate Before Get Organisation from db");
             var organisation = await _organisationQueryRepository.GetByUkPrn(request.UkPrn);
             _logger.LogInformation("CreateNewCertificate Before Get StandardVersions from API");
-            var standardVersions = await _standardService.GetStandardVersions(ilr.StdCode);
+            var standardVersions = await _standardService.GetStandardVersionsByLarsCode(ilr.StdCode);
             _logger.LogInformation("CreateNewCertificate Before Get Provider from API");
             var provider = await GetProviderFromUkprn(ilr.UkPrn);
                         

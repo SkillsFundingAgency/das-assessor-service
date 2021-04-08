@@ -62,7 +62,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
             var roatpApiClientMock = new Mock<IRoatpApiClient>();
             var standardService = new Mock<IStandardService>();
 
-            standardService.Setup(c => c.GetStandardVersions(30))
+            standardService.Setup(c => c.GetStandardVersionsByLarsCode(30))
                 .ReturnsAsync(new List<Standard> { new Standard()
                 {
                     Title = "Standard Name",

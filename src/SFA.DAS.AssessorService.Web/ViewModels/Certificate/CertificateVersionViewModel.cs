@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
 {
     public class CertificateVersionViewModel : CertificateBaseViewModel
-    {        
+    {
         public IEnumerable<StandardVersion> Versions { get; set; }
 
         public class StandardVersion
@@ -31,16 +31,26 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
             Versions = versions;
         }
 
-        public Domain.Entities.Certificate GetCertificateFromViewModel(Domain.Entities.Certificate certificate, CertificateData data)
+        public Domain.Entities.Certificate GetCertificateFromViewModel(Domain.Entities.Certificate certificate, bool standardVersionChanged, Api.Types.Models.Standards.StandardVersion standardVersion)
         {
-            if(certificate.StandardUId != StandardUId)
+
+            var certData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
+            certData.StandardReference = standardVersion.IFateReferenceNumber;
+            certData.StandardName = standardVersion.Title;
+            certData.StandardLevel = standardVersion.Level;
+            certData.StandardPublicationDate = standardVersion.EffectiveFrom;
+            certData.Version = standardVersion.Version.ToString();
+
+            if (standardVersionChanged)
             {
-                var certData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
+                // If changed, wipe the option in case different versions have different options
                 certData.CourseOption = null;
-                certificate.CertificateData = JsonConvert.SerializeObject(certData);
             }
 
-            certificate.StandardUId = StandardUId;           
+            certificate.CertificateData = JsonConvert.SerializeObject(certData);
+
+
+            certificate.StandardUId = StandardUId;
             return certificate;
         }
     }

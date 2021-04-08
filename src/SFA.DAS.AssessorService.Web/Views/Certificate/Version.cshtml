@@ -59,7 +59,7 @@ else
                         @foreach (var version in Model.Versions)
                         {
                             <div class="govuk-radios__item" data-target="show-version-input">
-                                <input class="govuk-radios__input" asp-for="Versions" id="versions_@version.StandardUId" type="radio" value="@version.StandardUId" />
+                                <input class="govuk-radios__input" asp-for="Versions" id="versions_@version.StandardUId" type="radio" value="@version.StandardUId" name="StandardUId" />
                                 <label class="govuk-label govuk-radios__label" for="versions_@version.StandardUId">
                                     @version.Version
                                 </label>

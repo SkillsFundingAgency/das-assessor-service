@@ -71,7 +71,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             var certSession = JsonConvert.DeserializeObject<CertificateSession>(sessionString);
             var certificate = await CertificateApiClient.GetCertificate(certSession.CertificateId);
 
-            var versions = await _standardVersionClient.GetStandardVersions(certSession.StandardCode);
+            var versions = await _standardVersionClient.GetStandardVersionsByLarsCode(certSession.StandardCode);
 
             if (versions.Count() == 1)
             {
@@ -112,7 +112,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             Logger.LogInformation($"Save View Model for CertificateVersionViewModel for {username} with values: {GetModelValues(vm)}");
 
             var certificate = await CertificateApiClient.GetCertificate(vm.Id);
-            var certData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
 
             var sessionString = SessionService.Get("CertificateSession");
             if (sessionString == null)
@@ -128,14 +127,18 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 return View(returnToIfModelNotValid, vm);
             }
 
-            var updatedCertificate = vm.GetCertificateFromViewModel(certificate, certData);
+            // collected here as it's needed later and GetCertificateFromViewModel Updates Cert with View Model
+            var standardVersionChanged = vm.StandardUId != certificate.StandardUId;
 
+            var standardVersion = await _standardVersionClient.GetStandardVersionByStandardUId(vm.StandardUId);
+
+            var updatedCertificate = vm.GetCertificateFromViewModel(certificate, standardVersionChanged, standardVersion);
+ 
             await CertificateApiClient.UpdateCertificate(new UpdateCertificateRequest(updatedCertificate) { Username = username, Action = action });
 
             Logger.LogInformation($"Certificate for CertificateVersionViewModel requested by {username} with Id {certificate.Id} updated.");
 
-            // If it's being set for the first time, or it's been changed.
-            if (vm.StandardUId != certificate.StandardUId)
+            if (standardVersionChanged)
             {
                 certSession.Options = null;
                 certSession.StandardUId = vm.StandardUId;
