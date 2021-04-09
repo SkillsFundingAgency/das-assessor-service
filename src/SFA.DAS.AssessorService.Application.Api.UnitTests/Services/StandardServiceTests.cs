@@ -1,4 +1,5 @@
 ﻿using AutoFixture.NUnit3;
+using FluentAssertions;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Internal;
@@ -156,12 +157,22 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
         [Test, AutoData]
         public async Task When_GettingAllStandardVersions_OfAGivenStandardId_Then_ReturnsAListOfThatStandardsVersions(int standardId, IEnumerable<Standard> standards)
         {
-            _mockStandardRepository.Setup(s => s.GetStandardVersions(standardId)).ReturnsAsync(standards);
+            _mockStandardRepository.Setup(s => s.GetStandardVersionsByLarsCode(standardId)).ReturnsAsync(standards);
 
-            var result = await _standardService.GetStandardVersions(standardId);
+            var result = await _standardService.GetStandardVersionsByLarsCode(standardId);
 
             Assert.IsInstanceOf<IEnumerable<Standard>>(result);
             Assert.AreEqual(result.Count(), standards.Count());
+        }
+
+        [Test, AutoData]
+        public async Task When_GettingAStandardVersion_ByStandardUId(string standardUId, Standard standard)
+        {
+            _mockStandardRepository.Setup(s => s.GetStandardVersionByStandardUId(standardUId)).ReturnsAsync(standard);
+
+            var result = await _standardService.GetStandardVersionByStandardUId(standardUId);
+
+            result.Should().BeEquivalentTo(standard);
         }
     }
 }

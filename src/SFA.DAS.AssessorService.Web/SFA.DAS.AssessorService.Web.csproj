@@ -184,6 +184,9 @@
     <EmbeddedResource Update="Resources\Views\Certificate\AddressSummary.en.resx">
       <Generator>ResXFileCodeGenerator</Generator>
     </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Views\Certificate\Version.en.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
     <EmbeddedResource Update="Resources\Views\Certificate\Uln.en.resx">
       <Generator>ResXFileCodeGenerator</Generator>
     </EmbeddedResource>

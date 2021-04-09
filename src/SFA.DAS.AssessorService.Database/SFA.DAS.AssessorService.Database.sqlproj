@@ -161,6 +161,7 @@
     <None Include="PostDeploymentScripts\EPAO_Migration_Part2_OrganisationStandard.sql" />
     <None Include="PostDeploymentScripts\EPAO_Migration_Part3_OrganisationStandardVersion.sql" />
     <None Include="PostDeploymentScripts\EPAO_Migration_Part4_Apply.sql" />
+    <Build Include="Tables\StandardOptions.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="SFA.DAS.AssessorService.Database.refactorlog" />

@@ -27,8 +27,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateOptionsTests
         private CertificateSession _certificateSession;
 
         private Mock<ISessionService> _mockSessionService;
-        private Mock<IStandardServiceClient> _mockStandardServiceClient;
-
+        
         private CertificateOptionController _controller;
 
         [SetUp]
@@ -37,12 +36,10 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateOptionsTests
             _certificate = SetupCertificate();
 
             _mockSessionService = new Mock<ISessionService>();
-            _mockStandardServiceClient = new Mock<IStandardServiceClient>();
-
+            
             _controller = new CertificateOptionController(Mock.Of<ILogger<CertificateController>>(),
                 SetupHttpContextAssessor(),
                 SetUpCertificateApiClient(),
-                _mockStandardServiceClient.Object,
                 _mockSessionService.Object);
         }
 
@@ -57,37 +54,14 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateOptionsTests
         }
 
         [Test]
-        public async Task And_StandardHasNoOptions_Then_RedirectToCertificateDeclaration()
+        public async Task And_StandardHasNoOptions_Then_RedirectToSearchIndex()
         {
             SetupSessionOptions();
-            SetupStandardServiceOptions();
-
+            
             var result = await _controller.Option() as RedirectToActionResult;
 
-            result.ControllerName.Should().Be("CertificateDeclaration");
-            result.ActionName.Should().Be("Declare");
-        }
-
-        [Test]
-        public async Task And_CertificateSessionContainsNoOptions_Then_GetStandardOptionsFromApi()
-        {
-            SetupSessionOptions();
-            SetupStandardServiceOptions(withOptions: true);
-
-            await _controller.Option();
-
-            _mockStandardServiceClient.Verify(client => client.GetStandardOptions(It.IsAny<string>()), Times.Once);
-        }
-
-        [Test]
-        public async Task And_StandardVersionHasOptions_Then_UpdateCertificateSession()
-        {
-            SetupSessionOptions();
-            SetupStandardServiceOptions(withOptions: true);
-
-            await _controller.Option();
-
-            _mockSessionService.Verify(session => session.Set("CertificateSession", It.IsAny<CertificateSession>()), Times.Once);
+            result.ControllerName.Should().Be("Search");
+            result.ActionName.Should().Be("Index");
         }
 
         private IHttpContextAccessor SetupHttpContextAssessor()
@@ -113,18 +87,6 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateOptionsTests
 
             _mockSessionService.Setup(session => session.Get("CertificateSession"))
                 .Returns(certificateSessionString);
-        }
-
-        private void SetupStandardServiceOptions(bool withOptions = false)
-        {
-            var standardOptions = new Builder().CreateNew<StandardOptions>()
-                .Build();
-
-            if (withOptions)
-                standardOptions.CourseOption = new List<string> { "Option1", "Option2", "Option3" };
-
-            _mockStandardServiceClient.Setup(client => client.GetStandardOptions(_certificateSession.StandardUId))
-                .ReturnsAsync(standardOptions);
         }
 
         private Certificate SetupCertificate()

@@ -67,20 +67,37 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
             return standardCollation;
         }
 
-        public async Task<IEnumerable<Standard>> GetStandardVersions(int standardId)
+        public async Task<IEnumerable<Standard>> GetStandardVersionsByLarsCode(int larsCode)
         {
             IEnumerable<Standard> standards = null;
 
             try
             {
-                standards = await _standardRepository.GetStandardVersions(standardId);
+                standards = await _standardRepository.GetStandardVersionsByLarsCode(larsCode);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"STANDARD: Failed to get for standard id: {standardId}");
+                _logger.LogError(ex, $"STANDARD: Failed to get for standard id: {larsCode}");
             }
 
             return standards;
+        }
+
+
+        public async Task<Standard> GetStandardVersionByStandardUId(string standardUId)
+        {
+            Standard standard = null;
+
+            try
+            {
+                standard = await _standardRepository.GetStandardVersionByStandardUId(standardUId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"STANDARD: Failed to get for standard id: {standardUId}");
+            }
+
+            return standard;
         }
 
         public async Task<StandardCollation> GetStandard(string referenceNumber)

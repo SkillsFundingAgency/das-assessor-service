@@ -71,7 +71,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
             _logger.LogInformation("CreateNewCertificate Before Get Organisation from db");
             var organisation = await _organisationQueryRepository.GetByUkPrn(request.UkPrn);
             _logger.LogInformation("CreateNewCertificate Before Get StandardVersions from API");
-            var standardVersions = await _standardService.GetStandardVersions(ilr.StdCode);
+            var standardVersions = await _standardService.GetStandardVersionsByLarsCode(ilr.StdCode);
             _logger.LogInformation("CreateNewCertificate Before Get Provider from API");
             var provider = await GetProviderFromUkprn(ilr.UkPrn);
                         
@@ -82,7 +82,10 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
                 LearningStartDate = ilr.LearnStartDate,
                 FullName = $"{ilr.GivenNames} {ilr.FamilyName}",
                 ProviderName = provider.ProviderName,
-                EpaDetails = new EpaDetails { Epas = new List<EpaRecord>() }
+                EpaDetails = new EpaDetails { Epas = new List<EpaRecord>() },
+                // Pre-fil latest version title for use in pages, to be updated later by a specific version
+                // when it's known
+                StandardName = standardVersions.OrderByDescending(s => s.Version).First().Title                
             };
 
             var certificate = new Certificate()

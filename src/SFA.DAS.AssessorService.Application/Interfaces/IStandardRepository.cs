@@ -25,9 +25,10 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         string orderBy, string orderDirection, int pageSize, int? pageIndex);
         Task<List<EpaoPipelineStandardExtract>> GetEpaoPipelineStandardsExtract(string endPointAssessorOrganisationId);
 
-        // New Standard Methods
+        // New Standard Version Methods
         Task<IEnumerable<Standard>> GetAllStandards();
-        Task<IEnumerable<Standard>> GetStandardVersions(int standardId);
+        Task<IEnumerable<Standard>> GetStandardVersionsByLarsCode(int larsCode);
+        Task<Standard> GetStandardVersionByStandardUId(string standardUId);
         Task<Standard> GetStandardByStandardReferenceAndVersion(string standardReference, string version);
         Task Insert(Standard standard);
         Task Update(Standard standard);

@@ -34,7 +34,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 return RedirectToAction("Index", "Search");
             }
             var certSession = JsonConvert.DeserializeObject<CertificateSession>(sessionString);
-            TempData["HideOption"] = !certSession.Options.Any();
+            TempData["HideOption"] = certSession.Options == null || !certSession.Options.Any();
 
             return await LoadViewModel<CertificateCheckViewModel>("~/Views/Certificate/Check.cshtml");
         }

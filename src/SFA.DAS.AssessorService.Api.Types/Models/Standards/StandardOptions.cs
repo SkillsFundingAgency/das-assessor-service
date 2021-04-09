@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models.Standards
 {
@@ -9,5 +10,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Standards
         public string StandardReference { get; set; }
         public string Version { get; set; }
         public IEnumerable<string> CourseOption { get; set; }
+
+        public bool HasOptions() => CourseOption != null && CourseOption.Any();
     }
 }

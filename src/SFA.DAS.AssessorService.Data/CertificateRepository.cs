@@ -397,6 +397,7 @@ namespace SFA.DAS.AssessorService.Data
             var cert = await GetCertificate(certificate.Id);
 
             cert.Uln = certificate.Uln;
+            cert.StandardUId = certificate.StandardUId;
             cert.CertificateData = certificate.CertificateData;
             cert.Status = certificate.Status;
             cert.ProviderUkPrn = certificate.ProviderUkPrn;
