@@ -118,6 +118,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
                         OverallGrade = certificateData.OverallGrade,
                         StandardReference = certificateData.StandardReference,
                         StandardName = certificateData.StandardName,
+                        Version = certificateData.Version,
                         Level = certificateData.StandardLevel,
                         AchievementDate = certificateData.AchievementDate,
                         LearningStartDate = certificateData.LearningStartDate,
