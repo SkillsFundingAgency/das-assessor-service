@@ -1,15 +1,15 @@
 <script>
-var epaoVersionFormElement = $('.apprentice-version-form');
-var epaoVersionValidationRulesObject = {
-  rules: {
-    Version: {
-      required: true
-    }
-  },
-  messages: {
-    Version  : 'Select an version'
-  }
-};
+    var epaoVersionFormElement = $('.apprentice-version-form');
+    var epaoVersionValidationRulesObject = {
+        rules: {
+            StandardUId: {
+                required: true
+            }
+        },
+        messages: {
+            StandardUId: 'Select a version'
+        }
+    };
 
     GOVUK.epaoValidate(epaoVersionFormElement, epaoVersionValidationRulesObject);
 </script>
