@@ -9,6 +9,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Standards
         public string Title { get; set; }
         public string Version { get; set; }
         public string IFateReferenceNumber { get; set; }
+        public int LarsCode { get; set; }
         public int Level { get; set; }
         public DateTime EffectiveFrom { get; set; }
 
@@ -20,6 +21,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Standards
                 Title = standard.Title,
                 Version = standard.Version?.ToString() ?? string.Empty,
                 IFateReferenceNumber = standard.IfateReferenceNumber,
+                LarsCode = standard.LarsCode,
                 Level = standard.Level,
                 EffectiveFrom = standard.EffectiveFrom.GetValueOrDefault()
             };

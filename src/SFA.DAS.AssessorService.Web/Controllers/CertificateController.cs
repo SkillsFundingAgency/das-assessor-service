@@ -77,7 +77,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             {
                 var singularVersion = versions.First();
                 var options = await _standardServiceClient.GetStandardOptions(singularVersion.StandardUId);
-                if(options != null && options.CourseOption.Any())
+                if(options != null && options.HasOptions())
                 {
                     certificateSession.StandardUId = singularVersion.StandardUId;
                     certificateSession.Options = options.CourseOption.ToList();

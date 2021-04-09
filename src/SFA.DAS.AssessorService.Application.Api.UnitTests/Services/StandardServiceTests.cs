@@ -1,4 +1,5 @@
 ﻿using AutoFixture.NUnit3;
+using FluentAssertions;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Internal;
@@ -162,6 +163,16 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
 
             Assert.IsInstanceOf<IEnumerable<Standard>>(result);
             Assert.AreEqual(result.Count(), standards.Count());
+        }
+
+        [Test, AutoData]
+        public async Task When_GettingAStandardVersion_ByStandardUId(string standardUId, Standard standard)
+        {
+            _mockStandardRepository.Setup(s => s.GetStandardVersionByStandardUId(standardUId)).ReturnsAsync(standard);
+
+            var result = await _standardService.GetStandardVersionByStandardUId(standardUId);
+
+            result.Should().BeEquivalentTo(standard);
         }
     }
 }

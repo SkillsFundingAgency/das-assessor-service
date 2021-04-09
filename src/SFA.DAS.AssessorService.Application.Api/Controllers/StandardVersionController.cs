@@ -64,7 +64,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
                 return NotFound();
             }
 
-            return Ok(standard);
+            return Ok((StandardVersion)standard);
         }
 
     }

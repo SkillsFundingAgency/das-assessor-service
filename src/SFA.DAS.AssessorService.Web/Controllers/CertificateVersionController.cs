@@ -21,8 +21,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers
     {
         private readonly IStandardVersionClient _standardVersionClient;
         private readonly IStandardServiceClient _standardServiceClient;
-        public CertificateVersionController(IStandardVersionClient standardVersionClient, IStandardServiceClient standardServiceClient, ILogger<CertificateController> logger, IHttpContextAccessor contextAccessor,
-            ICertificateApiClient certificateApiClient, ISessionService sessionService)
+        public CertificateVersionController(ILogger<CertificateController> logger, IHttpContextAccessor contextAccessor,
+            ICertificateApiClient certificateApiClient, IStandardVersionClient standardVersionClient, IStandardServiceClient standardServiceClient, ISessionService sessionService)
             : base(logger, contextAccessor, certificateApiClient, sessionService)
         {
             _standardVersionClient = standardVersionClient;
@@ -78,9 +78,10 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 // Only 1 version no need for a selection
                 var singularStandard = versions.First();
                 var options = await _standardServiceClient.GetStandardOptions(singularStandard.StandardUId);
-                if (options != null & options.CourseOption.Any())
+                if (options != null & options.HasOptions())
                 {
                     certSession.StandardUId = singularStandard.StandardUId;
+                    certSession.Options = options.CourseOption.ToList();
                     SessionService.Set("CertificateSession", certSession);
                     return RedirectToAction("Option", "CertificateOption");
                 }
@@ -145,7 +146,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
                 var options = await _standardServiceClient.GetStandardOptions(vm.StandardUId);
 
-                if (options != null && options.CourseOption.Any())
+                if (options != null && options.HasOptions())
                 {
                     certSession.Options = options.CourseOption.ToList();
                     SessionService.Set("CertificateSession", certSession);
