@@ -118,15 +118,6 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ContinueButton" xml:space="preserve">
-    <value>Continue</value>
-  </data>
-  <data name="Heading" xml:space="preserve">
-    <value>Which learning option did the apprentice take?</value>
-  </data>
-  <data name="InfoBody" xml:space="preserve">
-    <value>For some standards, an apprentice can take different learning options. For example, the standard for professional accounting taxation technician has a tax option.</value>
-  </data>
-  <data name="InfoHeader" xml:space="preserve">
-    <value>What is a learning option?</value>
+    <value>Confirm and continue</value>
   </data>
 </root>
