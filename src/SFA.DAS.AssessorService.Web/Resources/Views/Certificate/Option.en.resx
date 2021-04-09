@@ -120,4 +120,7 @@
   <data name="ContinueButton" xml:space="preserve">
     <value>Confirm and continue</value>
   </data>
+  <data name="Heading" xml:space="preserve">
+    <value>Choose the option for {0}</value>
+  </data>
 </root>
