@@ -192,4 +192,7 @@
   <data name="ULN" xml:space="preserve">
     <value>ULN</value>
   </data>
+  <data name="Version" xml:space="preserve">
+    <value>Version</value>
+  </data>
 </root>

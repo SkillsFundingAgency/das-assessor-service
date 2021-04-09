@@ -17,6 +17,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Certificates
         public DateTime? PrintStatusAt { get; set; }
         public string StandardReference { get; set; }
         public string StandardName { get; set; }
+        public string Version { get; set; }
         public int Level { get; set; }
         public string OverallGrade { get; set; }
         public string CourseOption { get; set; }
