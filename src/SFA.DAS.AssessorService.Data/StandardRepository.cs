@@ -34,41 +34,6 @@ namespace SFA.DAS.AssessorService.Data
             }
         }
 
-        private DataTable ConstructStandardsDataTable(IEnumerable<Standard> standards)
-        {
-            var dataTable = new DataTable();
-            
-            dataTable.Columns.Add("StandardUId");
-            dataTable.Columns.Add("IfateReferenceNumber");
-            dataTable.Columns.Add("LarsCode");
-            dataTable.Columns.Add("Title");
-            dataTable.Columns.Add("Version");
-            dataTable.Columns.Add("Level");
-            dataTable.Columns.Add("Status");
-            dataTable.Columns.Add("TypicalDuration");
-            dataTable.Columns.Add("MaxFunding");
-            dataTable.Columns.Add("IsActive");
-            dataTable.Columns.Add("LastDateStarts");
-            dataTable.Columns.Add("EffectiveFrom");
-            dataTable.Columns.Add("EffectiveTo");
-            dataTable.Columns.Add("VersionEarliestStartDate");
-            dataTable.Columns.Add("VersionLatestStartDate");
-            dataTable.Columns.Add("VersionLatestEndDate");
-            dataTable.Columns.Add("VersionApprovedForDelivery");
-            dataTable.Columns.Add("ProposedTypicalDuration");
-            dataTable.Columns.Add("ProposedMaxFunding");
-
-            foreach(var standard in standards)
-            {
-                dataTable.Rows.Add(standard.StandardUId, standard.IfateReferenceNumber, standard.LarsCode, standard.Title, standard.Version, standard.Level,
-                    standard.Status, standard.TypicalDuration, standard.MaxFunding, standard.IsActive, standard.LastDateStarts, standard.EffectiveFrom, standard.EffectiveTo,
-                    standard.VersionEarliestStartDate, standard.VersionLatestStartDate, standard.VersionLatestEndDate, standard.VersionApprovedForDelivery,
-                    standard.ProposedTypicalDuration, standard.ProposedMaxFunding);
-            }
-
-            return dataTable;
-        }
-
         public async Task DeleteAll()
         {
             await _unitOfWork.Connection.ExecuteAsync("DELETE FROM Standards", transaction: _unitOfWork.Transaction);
@@ -570,6 +535,41 @@ namespace SFA.DAS.AssessorService.Data
                 param: new { StdCode = standard.StandardId, optionName },
                 transaction: _unitOfWork.Transaction
             );
+        }
+
+        private DataTable ConstructStandardsDataTable(IEnumerable<Standard> standards)
+        {
+            var dataTable = new DataTable();
+
+            dataTable.Columns.Add("StandardUId");
+            dataTable.Columns.Add("IfateReferenceNumber");
+            dataTable.Columns.Add("LarsCode");
+            dataTable.Columns.Add("Title");
+            dataTable.Columns.Add("Version");
+            dataTable.Columns.Add("Level");
+            dataTable.Columns.Add("Status");
+            dataTable.Columns.Add("TypicalDuration");
+            dataTable.Columns.Add("MaxFunding");
+            dataTable.Columns.Add("IsActive");
+            dataTable.Columns.Add("LastDateStarts");
+            dataTable.Columns.Add("EffectiveFrom");
+            dataTable.Columns.Add("EffectiveTo");
+            dataTable.Columns.Add("VersionEarliestStartDate");
+            dataTable.Columns.Add("VersionLatestStartDate");
+            dataTable.Columns.Add("VersionLatestEndDate");
+            dataTable.Columns.Add("VersionApprovedForDelivery");
+            dataTable.Columns.Add("ProposedTypicalDuration");
+            dataTable.Columns.Add("ProposedMaxFunding");
+
+            foreach (var standard in standards)
+            {
+                dataTable.Rows.Add(standard.StandardUId, standard.IfateReferenceNumber, standard.LarsCode, standard.Title, standard.Version, standard.Level,
+                    standard.Status, standard.TypicalDuration, standard.MaxFunding, standard.IsActive, standard.LastDateStarts, standard.EffectiveFrom, standard.EffectiveTo,
+                    standard.VersionEarliestStartDate, standard.VersionLatestStartDate, standard.VersionLatestEndDate, standard.VersionApprovedForDelivery,
+                    standard.ProposedTypicalDuration, standard.ProposedMaxFunding);
+            }
+
+            return dataTable;
         }
     }
 }
