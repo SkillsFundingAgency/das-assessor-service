@@ -48,9 +48,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
                 ProposedTypicalDuration = source.VersionDetail.ProposedTypicalDuration
             };
 
-            var standardsToInsert = standards.Select(MapGetStandardsListItemToStandard).ToList();
-
-            await standardRepository.Insert(standardsToInsert);
+            await standardRepository.Insert(standards.Select(MapGetStandardsListItemToStandard));
         }
 
         public async Task UpsertStandardCollations(IEnumerable<StandardDetailResponse> standards)
