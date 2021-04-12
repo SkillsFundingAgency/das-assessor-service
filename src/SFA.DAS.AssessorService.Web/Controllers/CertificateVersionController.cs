@@ -138,7 +138,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             if (!approvedStandardVersions.Any(v => v.StandardUId == vm.StandardUId))
             {
                 // Epao not approved for this version
-                ModelState.AddModelError("StandardUId", $"You are not approved for version {standardVersion.Version} of {standardVersion.Title}");
+                ModelState.AddModelError("StandardUId", $"Your organisation is not approved to assess version {standardVersion.Version} of {standardVersion.Title}");
                 var versions = await _standardVersionClient.GetStandardVersionsByLarsCode(certSession.StandardCode);
                 vm.Versions = versions.Select(v => (StandardVersion)v);
                 return View(returnToIfModelNotValid, vm);
