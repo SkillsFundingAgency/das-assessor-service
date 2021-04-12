@@ -30,10 +30,9 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<IEnumerable<Standard>> GetStandardVersionsByLarsCode(int larsCode);
         Task<Standard> GetStandardVersionByStandardUId(string standardUId);
         Task<Standard> GetStandardByStandardReferenceAndVersion(string standardReference, string version);
-        Task Insert(Standard standard);
+        Task Insert(IEnumerable<Standard> standard);
         Task Update(Standard standard);
         Task DeleteAll();
-        
     }
 
     public class EpoRegisteredStandardsResult
