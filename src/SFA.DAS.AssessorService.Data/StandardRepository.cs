@@ -7,6 +7,7 @@ using SFA.DAS.AssessorService.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Linq.Dynamic.Core;
 using System.Threading.Tasks;
@@ -21,13 +22,51 @@ namespace SFA.DAS.AssessorService.Data
             SqlMapper.AddTypeHandler(typeof(StandardNonApprovedData), new StandardNonApprovedDataHandler());
         }
 
-        public async Task Insert(Standard standard)
+        public async Task Insert(IEnumerable<Standard> standardsToInsert)
         {
-            await _unitOfWork.Connection.ExecuteAsync(
-                "INSERT INTO [Standards] ([StandardUId], [IfateReferenceNumber], [LarsCode], [Title], [Version], [Level], [Status], [TypicalDuration], [MaxFunding], [IsActive], [LastDateStarts], [EffectiveFrom], [EffectiveTo], [VersionEarliestStartDate], [VersionLatestStartDate], [VersionLatestEndDate], [VersionApprovedForDelivery], [ProposedTypicalDuration], [ProposedMaxFunding]) " +
-                "VALUES (@standardUId, @ifateReferenceNumber, @larsCode, @title, @version, @level, @status, @typicalDuration, @maxFunding, @isActive, @lastDateStarts, @effectiveFrom, @effectiveTo, @versionEarliestStartDate, @versionLatestStartDate, @versionLatestEndDate, @versionApprovedForDelivery, @proposedTypicalDuration, @proposedMaxFunding)",
-                param: new { standard.StandardUId, standard.IfateReferenceNumber, standard.LarsCode, standard.Title, standard.Version, standard.Level, standard.Status, standard.TypicalDuration, standard.MaxFunding, standard.IsActive, standard.LastDateStarts, standard.EffectiveFrom, standard.EffectiveTo, standard.VersionEarliestStartDate, standard.VersionLatestStartDate, standard.VersionLatestEndDate, standard.VersionApprovedForDelivery, standard.ProposedTypicalDuration, standard.ProposedMaxFunding },
-                transaction: _unitOfWork.Transaction);
+            var bulkCopyOptions = SqlBulkCopyOptions.TableLock;
+            var dataTable = ConstructStandardsDataTable(standardsToInsert);
+
+            using (var bulkCopy = new SqlBulkCopy(_unitOfWork.Connection as SqlConnection, bulkCopyOptions, _unitOfWork.Transaction as SqlTransaction))
+            {                
+                bulkCopy.DestinationTableName = "Standards";
+                await bulkCopy.WriteToServerAsync(dataTable);
+            }
+        }
+
+        private DataTable ConstructStandardsDataTable(IEnumerable<Standard> standards)
+        {
+            var dataTable = new DataTable();
+            
+            dataTable.Columns.Add("StandardUId");
+            dataTable.Columns.Add("IfateReferenceNumber");
+            dataTable.Columns.Add("LarsCode");
+            dataTable.Columns.Add("Title");
+            dataTable.Columns.Add("Version");
+            dataTable.Columns.Add("Level");
+            dataTable.Columns.Add("Status");
+            dataTable.Columns.Add("TypicalDuration");
+            dataTable.Columns.Add("MaxFunding");
+            dataTable.Columns.Add("IsActive");
+            dataTable.Columns.Add("LastDateStarts");
+            dataTable.Columns.Add("EffectiveFrom");
+            dataTable.Columns.Add("EffectiveTo");
+            dataTable.Columns.Add("VersionEarliestStartDate");
+            dataTable.Columns.Add("VersionLatestStartDate");
+            dataTable.Columns.Add("VersionLatestEndDate");
+            dataTable.Columns.Add("VersionApprovedForDelivery");
+            dataTable.Columns.Add("ProposedTypicalDuration");
+            dataTable.Columns.Add("ProposedMaxFunding");
+
+            foreach(var standard in standards)
+            {
+                dataTable.Rows.Add(standard.StandardUId, standard.IfateReferenceNumber, standard.LarsCode, standard.Title, standard.Version, standard.Level,
+                    standard.Status, standard.TypicalDuration, standard.MaxFunding, standard.IsActive, standard.LastDateStarts, standard.EffectiveFrom, standard.EffectiveTo,
+                    standard.VersionEarliestStartDate, standard.VersionLatestStartDate, standard.VersionLatestEndDate, standard.VersionApprovedForDelivery,
+                    standard.ProposedTypicalDuration, standard.ProposedMaxFunding);
+            }
+
+            return dataTable;
         }
 
         public async Task DeleteAll()
