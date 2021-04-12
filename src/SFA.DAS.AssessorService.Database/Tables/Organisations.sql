@@ -29,3 +29,6 @@ REFERENCES [dbo].[OrganisationType] ([Id]);
 GO
  ALTER TABLE [dbo].[Organisations] CHECK CONSTRAINT [FK_OrganisationType_Organisations];
 GO
+
+CREATE INDEX [IX_Organisations_EndPointAssessorUkprn] ON [Organisations] ([EndPointAssessorUkprn])
+GO

@@ -150,7 +150,6 @@
     <None Include="PostDeploymentScripts\LookupData\DeliveryAreaDelete.sql" />
     <None Include="PostDeploymentScripts\LookupData\EmailTemplatesDelete.sql" />
     <None Include="PostDeploymentScripts\LookupData\EmailTemplatesInsertOrUpdate.sql" />
-    <Build Include="Tables\IlrsImport.sql" />
     <Build Include="Functions\Scalar-valued Functions\ApplyConst.sql" />
     <Build Include="Functions\Table-valued Functions\EPAO_Func_Get_PipelineInfo.sql" />
     <Build Include="StoredProcedures\GetEPAO_Pipelines_Count.sql" />
@@ -161,6 +160,7 @@
     <None Include="PostDeploymentScripts\EPAO_Migration_Part2_OrganisationStandard.sql" />
     <None Include="PostDeploymentScripts\EPAO_Migration_Part3_OrganisationStandardVersion.sql" />
     <None Include="PostDeploymentScripts\EPAO_Migration_Part4_Apply.sql" />
+    <None Include="PostDeploymentScripts\CON-3359_Remove_IlrsImport.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="SFA.DAS.AssessorService.Database.refactorlog" />
