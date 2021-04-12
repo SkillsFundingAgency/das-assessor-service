@@ -109,6 +109,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         private async Task<IActionResult> SaveViewModel(CertificateVersionViewModel vm, string returnToIfModelNotValid, RedirectToActionResult nextAction, string action)
         {
             var username = ContextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
+            var epaoid = ContextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/epaoid")?.Value;
 
             Logger.LogInformation($"Save View Model for CertificateVersionViewModel for {username} with values: {GetModelValues(vm)}");
 
@@ -132,8 +133,19 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             var standardVersionChanged = vm.StandardUId != certificate.StandardUId;
             var standardVersion = await _standardVersionClient.GetStandardVersionByStandardUId(vm.StandardUId);
 
+            // Retrieve what versions the EPAO is able to assess
+            var approvedStandardVersions = await _standardVersionClient.GetEpaoRegisteredStandardVersions(epaoid);
+            if (!approvedStandardVersions.Any(v => v.StandardUId == vm.StandardUId))
+            {
+                // Epao not approved for this version
+                ModelState.AddModelError("StandardUId", $"You are not approved for version {standardVersion.Version} of {standardVersion.Title}");
+                var versions = await _standardVersionClient.GetStandardVersionsByLarsCode(certSession.StandardCode);
+                vm.Versions = versions.Select(v => (StandardVersion)v);
+                return View(returnToIfModelNotValid, vm);
+            }
+
             var updatedCertificate = vm.GetCertificateFromViewModel(certificate, standardVersionChanged, standardVersion);
- 
+
             await CertificateApiClient.UpdateCertificate(new UpdateCertificateRequest(updatedCertificate) { Username = username, Action = action });
 
             Logger.LogInformation($"Certificate for CertificateVersionViewModel requested by {username} with Id {certificate.Id} updated.");
