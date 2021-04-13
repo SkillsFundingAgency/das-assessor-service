@@ -39,6 +39,23 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                 return await RequestAndDeserialiseAsync<StandardVersion>(request, $"Could not find the standard {standardUId}");
             }
         }
+
+        public async Task<IEnumerable<StandardVersion>> GetEpaoRegisteredStandardVersions(string epaOrgId)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/standard-version/standards/epao/{epaOrgId}"))
+            {
+                return await RequestAndDeserialiseAsync<IEnumerable<StandardVersion>>(request, $"Could not find the registered standards versions for EPAO {epaOrgId}");
+            }
+        }
+
+        public async Task<IEnumerable<StandardVersion>> GetEpaoRegisteredStandardVersions(string epaOrgId, int larsCode)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/standard-version/standards/epao/{epaOrgId}/{larsCode}"))
+            {
+                return await RequestAndDeserialiseAsync<IEnumerable<StandardVersion>>(request, $"Could not find the registered standards versions for EPAO {epaOrgId} and larsCode {larsCode}");
+            }
+        }
+
     }
 
     public interface IStandardVersionClient
@@ -46,5 +63,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         Task<IEnumerable<StandardVersion>> GetAllStandardVersions();
         Task<IEnumerable<StandardVersion>> GetStandardVersionsByLarsCode(int standardId);
         Task<StandardVersion> GetStandardVersionByStandardUId(string standardUId);
+        Task<IEnumerable<StandardVersion>> GetEpaoRegisteredStandardVersions(string epaOrgId);
+        Task<IEnumerable<StandardVersion>> GetEpaoRegisteredStandardVersions(string epaOrgId, int larsCode);
     }
 }

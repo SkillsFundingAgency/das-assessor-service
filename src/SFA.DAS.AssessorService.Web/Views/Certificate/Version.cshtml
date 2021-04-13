@@ -51,12 +51,11 @@ else
                 </h1>
 
                 <div class="govuk-form-group" sfa-anyvalidationerror-class="govuk-form-group--error">
-                    <span class="govuk-error-message" asp-validation-for="StandardUId"></span>
-
+                    <a href="#StandardUId" />
                     <div class="govuk-radios">
                         @foreach (var version in Model.Versions)
                         {
-                            <div class="govuk-radios__item" data-target="show-version-input">
+                            <div class="govuk-radios__item" data-target="show-version-input" id="StandardUId">
                                 <input class="govuk-radios__input" asp-for="StandardUId" id="versions_@version.StandardUId" type="radio" value="@version.StandardUId" name="StandardUId" />
                                 <label class="govuk-label govuk-radios__label" for="versions_@version.StandardUId">
                                     Version @version.Version

@@ -19,8 +19,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
 
         Task<List<Option>> GetOptions(int stdCode);
         Task<int> GetEpaoStandardsCount(string endPointAssessorOrganisationId);
-        Task<EpoRegisteredStandardsResult> GetEpaoRegisteredStandards(string endPointAssessorOrganisationId,
-        int pageSize, int pageIndex);
+        Task<EpoRegisteredStandardsResult> GetEpaoRegisteredStandards(string endPointAssessorOrganisationId,int pageSize, int pageIndex);
         Task<EpaoPipelineStandardsResult> GetEpaoPipelineStandards(string endPointAssessorOrganisationId,
         string orderBy, string orderDirection, int pageSize, int? pageIndex);
         Task<List<EpaoPipelineStandardExtract>> GetEpaoPipelineStandardsExtract(string endPointAssessorOrganisationId);
@@ -33,6 +32,8 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task Insert(IEnumerable<Standard> standard);
         Task Update(Standard standard);
         Task DeleteAll();
+        Task<IEnumerable<StandardVersion>> GetEpaoRegisteredStandardVersions(string endPointAssessorOrganisationId);
+        Task<IEnumerable<StandardVersion>> GetEpaoRegisteredStandardVersions(string endPointAssessorOrganisationId, int larsCode);
     }
 
     public class EpoRegisteredStandardsResult
