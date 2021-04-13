@@ -32,6 +32,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
 
             Level = CertificateData.StandardLevel;
             Option = CertificateData.CourseOption;
+            Version = CertificateData.Version;
             SelectedGrade = CertificateData.OverallGrade;
             SelectedStandard = cert.StandardCode.ToString();
             SelectedUkPrn = cert.ProviderUkPrn.ToString();

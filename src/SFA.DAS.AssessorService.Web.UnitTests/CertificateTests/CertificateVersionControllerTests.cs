@@ -5,13 +5,11 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using Newtonsoft.Json;
 using NUnit.Framework;
-using StandardApiTypes = SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using SFA.DAS.AssessorService.Web.Controllers;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.ViewModels.Certificate;
-using SFA.DAS.AssessorService.Web.ViewModels.Shared;
 using SFA.DAS.Testing.AutoFixture;
 using System;
 using System.Collections.Generic;
@@ -19,6 +17,8 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
+using SFA.DAS.AssessorService.Api.Types.Models.Standards;
+using SharedModelTypes = SFA.DAS.AssessorService.Web.ViewModels.Shared;
 
 namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
 {
@@ -94,14 +94,14 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
         }
 
         [Test, MoqAutoData]
-        public async Task WhenSelectingAVersion_WhenLoadingModel_WithOneVersion_RedirectsToDeclaration(CertificateSession session, StandardVersion standardVersion)
+        public async Task WhenSelectingAVersion_WhenLoadingModel_WithOneVersion_RedirectsToDeclaration(CertificateSession session, SharedModelTypes.StandardVersion standardVersion)
         {
             standardVersion.StandardUId = session.StandardUId;
-            session.Versions = new List<StandardVersion> { standardVersion };
+            session.Versions = new List<SharedModelTypes.StandardVersion> { standardVersion };
             var sessionString = JsonConvert.SerializeObject(session);
             _mockSessionService.Setup(s => s.Get("CertificateSession")).Returns(sessionString);
 
-            _mockStandardServiceClient.Setup(s => s.GetStandardOptions(session.StandardUId)).ReturnsAsync(new StandardApiTypes.StandardOptions());
+            _mockStandardServiceClient.Setup(s => s.GetStandardOptions(session.StandardUId)).ReturnsAsync(new StandardOptions());
 
             var result = await _certificateVersionController.Version(false) as RedirectToActionResult;
 
@@ -110,10 +110,10 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
         }
 
         [Test, MoqAutoData]
-        public async Task WhenSelectingAVersion_WhenLoadingModel_WithOneVersion_RedirectsToOptionPage(CertificateSession session, StandardVersion standardVersion, StandardApiTypes.StandardOptions options)
+        public async Task WhenSelectingAVersion_WhenLoadingModel_WithOneVersion_RedirectsToOptionPage(CertificateSession session, SharedModelTypes.StandardVersion standardVersion, StandardOptions options)
         {
             standardVersion.StandardUId = session.StandardUId;
-            session.Versions = new List<StandardVersion> { standardVersion };
+            session.Versions = new List<SharedModelTypes.StandardVersion> { standardVersion };
             var sessionString = JsonConvert.SerializeObject(session);
             _mockSessionService.Setup(s => s.Get("CertificateSession")).Returns(sessionString);
 
@@ -128,15 +128,15 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
         }
 
         [Test, MoqAutoData]
-        public async Task WhenPostingToSelectAVersion_WhenSavingModel_AndEpaoIsNotApprovedToRecordAGrade_ErrorsAndReturnsToSelectVersions(CertificateVersionViewModel vm, StandardApiTypes.StandardVersion standardVersion, CertificateSession session)
+        public async Task WhenPostingToSelectAVersion_WhenSavingModel_AndEpaoIsNotApprovedToRecordAGrade_ErrorsAndReturnsToSelectVersions(CertificateVersionViewModel vm, StandardVersion standardVersion, CertificateSession session)
         {
             var sessionString = JsonConvert.SerializeObject(session);
             _mockSessionService.Setup(s => s.Get("CertificateSession")).Returns(sessionString);
-            var approvedVersions = new List<StandardApiTypes.StandardVersion>();
+            var approvedVersions = new List<StandardVersion>();
 
             _mockStandardVersionClient.Setup(s => s.GetStandardVersionByStandardUId(vm.StandardUId)).ReturnsAsync(standardVersion);
             _mockStandardVersionClient.Setup(s => s.GetEpaoRegisteredStandardVersions(EpaoId, session.StandardCode)).ReturnsAsync(approvedVersions);
-            _mockStandardServiceClient.Setup(s => s.GetStandardOptions(vm.StandardUId)).ReturnsAsync(new StandardApiTypes.StandardOptions());
+            _mockStandardServiceClient.Setup(s => s.GetStandardOptions(vm.StandardUId)).ReturnsAsync(new StandardOptions());
 
             var result = await _certificateVersionController.Version(vm) as ViewResult;
             result.ViewName.Should().Be("~/Views/Certificate/Version.cshtml");
@@ -149,7 +149,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
         }
 
         [Test, MoqAutoData]
-        public async Task WhenPostingToSelectAVersion_WhenSavingModel_UpdatesCertificateWithStandardUId(CertificateVersionViewModel vm, StandardApiTypes.StandardVersion standardVersion, CertificateSession session, List<StandardApiTypes.StandardVersion> approvedVersions)
+        public async Task WhenPostingToSelectAVersion_WhenSavingModel_UpdatesCertificateWithStandardUId(CertificateVersionViewModel vm, StandardVersion standardVersion, CertificateSession session, List<StandardVersion> approvedVersions)
         {
             var sessionString = JsonConvert.SerializeObject(session);
             _mockSessionService.Setup(s => s.Get("CertificateSession")).Returns(sessionString);
@@ -157,7 +157,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
             approvedVersions.Add(standardVersion);
             _mockStandardVersionClient.Setup(s => s.GetStandardVersionByStandardUId(vm.StandardUId)).ReturnsAsync(standardVersion);
             _mockStandardVersionClient.Setup(s => s.GetEpaoRegisteredStandardVersions(EpaoId, session.StandardCode)).ReturnsAsync(approvedVersions);
-            _mockStandardServiceClient.Setup(s => s.GetStandardOptions(vm.StandardUId)).ReturnsAsync(new StandardApiTypes.StandardOptions());
+            _mockStandardServiceClient.Setup(s => s.GetStandardOptions(vm.StandardUId)).ReturnsAsync(new StandardOptions());
 
             var result = await _certificateVersionController.Version(vm) as RedirectToActionResult;
 
@@ -169,7 +169,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
         }
 
         [Test, MoqAutoData]
-        public async Task WhenPostingToSelectAVersion_WhenSavingModel_IfVersionHasOptions_RedirectToOptionsPage(CertificateVersionViewModel vm, StandardApiTypes.StandardVersion standardVersion, StandardApiTypes.StandardOptions options, CertificateSession session, List<StandardApiTypes.StandardVersion> approvedVersions)
+        public async Task WhenPostingToSelectAVersion_WhenSavingModel_IfVersionHasOptions_RedirectToOptionsPage(CertificateVersionViewModel vm, StandardVersion standardVersion, StandardOptions options, CertificateSession session, List<StandardVersion> approvedVersions)
         {
             var sessionString = JsonConvert.SerializeObject(session);
             _mockSessionService.Setup(s => s.Get("CertificateSession")).Returns(sessionString);
@@ -188,7 +188,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
         }
 
         [Test, MoqAutoData]
-        public async Task WhenPostingToSelectAVersion_WhenSavingModel_IfVersionHasOptions_RedirectToOptionsPageWithRedirectToCheck(CertificateVersionViewModel vm, StandardApiTypes.StandardVersion standardVersion, StandardApiTypes.StandardOptions options, CertificateSession session, List<StandardApiTypes.StandardVersion> approvedVersions)
+        public async Task WhenPostingToSelectAVersion_WhenSavingModel_IfVersionHasOptions_RedirectToOptionsPageWithRedirectToCheck(CertificateVersionViewModel vm, StandardVersion standardVersion, StandardOptions options, CertificateSession session, List<StandardVersion> approvedVersions)
         {
             var sessionString = JsonConvert.SerializeObject(session);
             _mockSessionService.Setup(s => s.Get("CertificateSession")).Returns(sessionString);
@@ -210,13 +210,13 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
         }
 
         [Test, MoqAutoData]
-        public async Task WhenPostingToSelectAVersion_WhenSavingModel_IfVersionHasChanged_ClearOptionSessionCache(CertificateVersionViewModel vm, StandardApiTypes.StandardVersion standardVersion, CertificateSession session, List<StandardApiTypes.StandardVersion> approvedVersions)
+        public async Task WhenPostingToSelectAVersion_WhenSavingModel_IfVersionHasChanged_ClearOptionSessionCache(CertificateVersionViewModel vm, StandardVersion standardVersion, CertificateSession session, List<StandardVersion> approvedVersions)
         {
             standardVersion.StandardUId = vm.StandardUId;
             approvedVersions.Add(standardVersion);
             _mockStandardVersionClient.Setup(s => s.GetStandardVersionByStandardUId(vm.StandardUId)).ReturnsAsync(standardVersion);
             _mockStandardVersionClient.Setup(s => s.GetEpaoRegisteredStandardVersions(EpaoId, session.StandardCode)).ReturnsAsync(approvedVersions);
-            _mockStandardServiceClient.Setup(s => s.GetStandardOptions(vm.StandardUId)).ReturnsAsync(new StandardApiTypes.StandardOptions());
+            _mockStandardServiceClient.Setup(s => s.GetStandardOptions(vm.StandardUId)).ReturnsAsync(new StandardOptions());
             
 
             var sessionString = JsonConvert.SerializeObject(session);
