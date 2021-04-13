@@ -11,6 +11,7 @@ using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.ViewModels.Certificate;
+using SFA.DAS.AssessorService.Web.ViewModels.Shared;
 using static SFA.DAS.AssessorService.Web.ViewModels.Certificate.CertificateVersionViewModel;
 
 namespace SFA.DAS.AssessorService.Web.Controllers

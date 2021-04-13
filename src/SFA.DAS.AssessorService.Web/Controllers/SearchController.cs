@@ -11,6 +11,7 @@ using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.Orchestrators.Search;
 using SFA.DAS.AssessorService.Web.StartupConfiguration;
 using SFA.DAS.AssessorService.Web.ViewModels.Search;
+using SFA.DAS.AssessorService.Web.ViewModels.Shared;
 using static SFA.DAS.AssessorService.Web.ViewModels.Search.SelectedStandardViewModel;
 
 namespace SFA.DAS.AssessorService.Web.Controllers
@@ -98,7 +99,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 ShowExtraInfo = resultViewModel.ShowExtraInfo,
                 UlnAlreadyExists = resultViewModel.UlnAlreadyExists,
                 IsNoMatchingFamilyName = resultViewModel.IsNoMatchingFamilyName,
-                Versions = resultViewModel?.Versions.Select(v => (StandardVersion)v)
+                Versions = resultViewModel?.Versions
             };
 
             _sessionService.Set("SelectedStandard", selectedStandardViewModel);

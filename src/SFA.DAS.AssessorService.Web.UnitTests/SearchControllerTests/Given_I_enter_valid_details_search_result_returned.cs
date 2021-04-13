@@ -4,6 +4,7 @@ using System.Linq;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Web.ViewModels.Search;
+using SFA.DAS.AssessorService.Web.ViewModels.Shared;
 
 namespace SFA.DAS.AssessorService.Web.UnitTests.SearchControllerTests
 {
@@ -21,9 +22,9 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.SearchControllerTests
                         new List<ResultViewModel>() 
                         { 
                             new ResultViewModel() { FamilyName = "Lamora", Uln = "1234567890", 
-                                Versions = new List<ResultViewModel.StandardVersion> {
-                                    new ResultViewModel.StandardVersion { StandardUId="StandardUId1",Version="1.0" },
-                                    new ResultViewModel.StandardVersion { StandardUId="StandardUId2",Version="1.1" } } } 
+                                Versions = new List<StandardVersion> {
+                                    new StandardVersion { StandardUId="StandardUId1",Version="1.0" },
+                                    new StandardVersion { StandardUId="StandardUId2",Version="1.1" } } } 
                         }
                 });
 

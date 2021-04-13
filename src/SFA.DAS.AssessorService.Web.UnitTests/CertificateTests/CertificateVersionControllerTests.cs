@@ -8,7 +8,6 @@ using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
-using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using SFA.DAS.AssessorService.Web.Controllers;
 using SFA.DAS.AssessorService.Web.Infrastructure;
@@ -92,7 +91,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
 
             versionModel.Should().NotBeNull();
             versionModel.Id.Should().Be(CertificateId);
-            versionModel.Versions.Should().BeEquivalentTo(standardVersions.Select(s => new CertificateVersionViewModel.StandardVersion
+            versionModel.Versions.Should().BeEquivalentTo(standardVersions.Select(s => new StandardVersion
             {
                 StandardUId = s.StandardUId,
                 Title = s.Title,
