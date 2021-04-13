@@ -174,5 +174,25 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
 
             result.Should().BeEquivalentTo(standard);
         }
+
+        [Test, AutoData]
+        public async Task When_GettingEpaoRegisteredStandardVersionsByEpaoId_ReturnsApprovedStandardVersions(string epaoId, IEnumerable<StandardVersion> standards)
+        {
+            _mockStandardRepository.Setup(s => s.GetEpaoRegisteredStandardVersions(epaoId)).ReturnsAsync(standards);
+
+            var result = await _standardService.GetEPAORegisteredStandardVersions(epaoId, null);
+
+            result.Should().BeEquivalentTo(standards);
+        }
+
+        [Test, AutoData]
+        public async Task When_GettingEpaoRegisteredStandardVersionsByEpaoIdAndLarsCode_ReturnsApprovedStandardVersionsForThatStandard(string epaoId, int larsCode, IEnumerable<StandardVersion> standards)
+        {
+            _mockStandardRepository.Setup(s => s.GetEpaoRegisteredStandardVersions(epaoId, larsCode)).ReturnsAsync(standards);
+
+            var result = await _standardService.GetEPAORegisteredStandardVersions(epaoId, larsCode);
+
+            result.Should().BeEquivalentTo(standards);
+        }
     }
 }
