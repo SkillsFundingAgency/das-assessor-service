@@ -40,19 +40,19 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task<IEnumerable<StandardVersion>> GetEpaoRegisteredStandardVersions(string epaoOrgId)
+        public async Task<IEnumerable<StandardVersion>> GetEpaoRegisteredStandardVersions(string epaOrgId)
         {
-            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/standard-version/standards/epao/{epaoOrgId}"))
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/standard-version/standards/epao/{epaOrgId}"))
             {
-                return await RequestAndDeserialiseAsync<IEnumerable<StandardVersion>>(request, $"Could not find the registered standards versions for EPAO {epaoOrgId}");
+                return await RequestAndDeserialiseAsync<IEnumerable<StandardVersion>>(request, $"Could not find the registered standards versions for EPAO {epaOrgId}");
             }
         }
 
-        public async Task<IEnumerable<StandardVersion>> GetEpaoRegisteredStandardVersions(string epaoOrgId, int larsCode)
+        public async Task<IEnumerable<StandardVersion>> GetEpaoRegisteredStandardVersions(string epaOrgId, int larsCode)
         {
-            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/standard-version/standards/epao/{epaoOrgId}/{larsCode}"))
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/standard-version/standards/epao/{epaOrgId}/{larsCode}"))
             {
-                return await RequestAndDeserialiseAsync<IEnumerable<StandardVersion>>(request, $"Could not find the registered standards versions for EPAO {epaoOrgId} and larsCode {larsCode}");
+                return await RequestAndDeserialiseAsync<IEnumerable<StandardVersion>>(request, $"Could not find the registered standards versions for EPAO {epaOrgId} and larsCode {larsCode}");
             }
         }
 
@@ -63,7 +63,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         Task<IEnumerable<StandardVersion>> GetAllStandardVersions();
         Task<IEnumerable<StandardVersion>> GetStandardVersionsByLarsCode(int standardId);
         Task<StandardVersion> GetStandardVersionByStandardUId(string standardUId);
-        Task<IEnumerable<StandardVersion>> GetEpaoRegisteredStandardVersions(string epaoOrgId);
-        Task<IEnumerable<StandardVersion>> GetEpaoRegisteredStandardVersions(string epaoOrgId, int larsCode);
+        Task<IEnumerable<StandardVersion>> GetEpaoRegisteredStandardVersions(string epaOrgId);
+        Task<IEnumerable<StandardVersion>> GetEpaoRegisteredStandardVersions(string epaOrgId, int larsCode);
     }
 }

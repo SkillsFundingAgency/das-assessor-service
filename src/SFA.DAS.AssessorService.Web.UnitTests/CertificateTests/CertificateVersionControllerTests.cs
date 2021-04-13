@@ -34,7 +34,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
         private const int Ukprn = 123456;
         private const string Username = "TestProviderUsername";
         private Guid CertificateId = Guid.NewGuid();
-        private const string EpaoId = "EpaoId1234";
+        private const string EpaoId = "EPAO123";
 
         [SetUp]
         public void SetUp()
