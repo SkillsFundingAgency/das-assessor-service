@@ -15,9 +15,8 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
             Versions = versions;
         }
 
-        public Domain.Entities.Certificate GetCertificateFromViewModel(Domain.Entities.Certificate certificate, bool standardVersionChanged, Api.Types.Models.Standards.StandardVersion standardVersion)
+        public Domain.Entities.Certificate GetCertificateFromViewModel(Domain.Entities.Certificate certificate, Api.Types.Models.Standards.StandardVersion standardVersion)
         {
-
             var certData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
             certData.StandardReference = standardVersion.IFateReferenceNumber;
             certData.StandardName = standardVersion.Title;
@@ -25,7 +24,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
             certData.StandardPublicationDate = standardVersion.EffectiveFrom;
             certData.Version = standardVersion.Version.ToString();
 
-            if (standardVersionChanged)
+            if (certificate.StandardUId != StandardUId)
             {
                 // If changed, wipe the option in case different versions have different options
                 certData.CourseOption = null;

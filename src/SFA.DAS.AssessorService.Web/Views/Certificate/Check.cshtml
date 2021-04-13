@@ -123,17 +123,21 @@ else
                 </div>
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">
-                        Grade
+                        Version
                     </dt>
                     <dd class="govuk-summary-list__value">
-                        @Model.SelectedGrade
+                        @Model.Version
                     </dd>
-                    <dd class="govuk-summary-list__actions">
-                        <a class="govuk-link" asp-controller="CertificateGrade" asp-action="Grade" asp-route-redirecttocheck="true">
-                            Change<span class="govuk-visually-hidden"> grade</span>
-                        </a>
-                    </dd>
+                    @if ((bool)TempData["HideChangeVersion"] == false)
+                    { 
+                        <dd class="govuk-summary-list__actions">
+                            <a class="govuk-link" asp-controller="CertificateVersion" asp-action="Version" asp-route-redirecttocheck="true">
+                                Change<span class="govuk-visually-hidden"> version</span>
+                            </a>
+                        </dd>
+                    }
                 </div>
+                
                 @if ((bool)TempData["HideOption"] == false)
                 {
                     <div class="govuk-summary-list__row">
@@ -150,6 +154,20 @@ else
                         </dd>
                     </div>
                 }
+
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Grade
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Model.SelectedGrade
+                    </dd>
+                    <dd class="govuk-summary-list__actions">
+                        <a class="govuk-link" asp-controller="CertificateGrade" asp-action="Grade" asp-route-redirecttocheck="true">
+                            Change<span class="govuk-visually-hidden"> grade</span>
+                        </a>
+                    </dd>
+                </div>
 
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">

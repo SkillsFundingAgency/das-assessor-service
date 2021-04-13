@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SFA.DAS.AssessorService.Web.ViewModels.Shared;
+using System;
 using System.Collections.Generic;
 
 namespace SFA.DAS.AssessorService.Web.Controllers
@@ -11,5 +12,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         public string EPAOName { get; set; }
         public string StandardUId { get; set; }
         public List<string> Options { get; set; }
+        public IEnumerable<StandardVersion> Versions { get; set; }
     }
 }
