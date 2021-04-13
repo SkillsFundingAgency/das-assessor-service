@@ -134,7 +134,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             var standardVersion = await _standardVersionClient.GetStandardVersionByStandardUId(vm.StandardUId);
 
             // Retrieve what versions the EPAO is able to assess
-            var approvedStandardVersions = await _standardVersionClient.GetEpaoRegisteredStandardVersions(epaoid);
+            var approvedStandardVersions = await _standardVersionClient.GetEpaoRegisteredStandardVersions(epaoid, certSession.StandardCode);
             if (!approvedStandardVersions.Any(v => v.StandardUId == vm.StandardUId))
             {
                 // Epao not approved for this version

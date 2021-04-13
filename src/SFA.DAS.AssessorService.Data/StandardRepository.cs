@@ -376,13 +376,33 @@ namespace SFA.DAS.AssessorService.Data
                         INNER JOIN [dbo].[OrganisationStandard] os on osv.OrganisationStandardId = os.Id
                         INNER JOIN [dbo].[Organisations] o on os.EndPointAssessorOrganisationId = o.EndPointAssessorOrganisationId AND o.EndPointAssessorOrganisationId = @endPointAssessorOrganisationId
                         INNER JOIN [dbo].[Standards] s on osv.StandardUId = s.StandardUId
-                        WHERE osv.Status = 'Live'
+                        WHERE osv.Status = 'Live' AND os.status = 'Live'
                         AND (os.EffectiveTo IS NULL OR os.EffectiveTo > GETDATE())
                         AND (osv.EffectiveTo IS NULL OR osv.EffectiveTo > GETDATE())";
 
             var results = await _unitOfWork.Connection.QueryAsync<StandardVersion>(
                 sql,
                 param: new { endPointAssessorOrganisationId },
+                transaction: _unitOfWork.Transaction);
+
+            return results;
+        }
+
+        public async Task<IEnumerable<StandardVersion>> GetEpaoRegisteredStandardVersions(string endPointAssessorOrganisationId, int larsCode)
+        {
+
+            var sql = @"SELECT osv.StandardUId, os.StandardCode as LarsCode, s.Title, s.Level, s.IFateReferenceNumber, s.Version
+                        FROM [dbo].[OrganisationStandardVersion] osv
+                        INNER JOIN [dbo].[OrganisationStandard] os on osv.OrganisationStandardId = os.Id
+                        INNER JOIN [dbo].[Organisations] o on os.EndPointAssessorOrganisationId = o.EndPointAssessorOrganisationId AND o.EndPointAssessorOrganisationId = @endPointAssessorOrganisationId
+                        INNER JOIN [dbo].[Standards] s on osv.StandardUId = s.StandardUId
+                        WHERE osv.Status = 'Live' AND os.status = 'Live' AND os.StandardCode = @larsCode
+                        AND (os.EffectiveTo IS NULL OR os.EffectiveTo > GETDATE())
+                        AND (osv.EffectiveTo IS NULL OR osv.EffectiveTo > GETDATE())";
+
+            var results = await _unitOfWork.Connection.QueryAsync<StandardVersion>(
+                sql,
+                param: new { endPointAssessorOrganisationId, larsCode },
                 transaction: _unitOfWork.Transaction);
 
             return results;

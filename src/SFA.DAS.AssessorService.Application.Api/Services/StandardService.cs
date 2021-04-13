@@ -187,10 +187,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
             return results.PageOfResults;
         }
 
-        public async Task<IEnumerable<StandardVersion>> GetEPAORegisteredStandardVersions(string endPointAssessorOrganisationId)
+        public async Task<IEnumerable<StandardVersion>> GetEPAORegisteredStandardVersions(string endPointAssessorOrganisationId, int? larsCode)
         {
-            var results = await _standardRepository.GetEpaoRegisteredStandardVersions(endPointAssessorOrganisationId);
-            return results;
+            if (larsCode.HasValue && larsCode.Value > 0)
+            {
+                return await _standardRepository.GetEpaoRegisteredStandardVersions(endPointAssessorOrganisationId, larsCode.Value);
+            }
+
+            return await _standardRepository.GetEpaoRegisteredStandardVersions(endPointAssessorOrganisationId);
         }
     }
 }
