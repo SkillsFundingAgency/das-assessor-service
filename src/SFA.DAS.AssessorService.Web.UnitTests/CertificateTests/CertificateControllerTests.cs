@@ -82,8 +82,10 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
                 m => m.StandardCode == model.StdCode && m.Uln == model.Uln
                 && m.Username == Username && m.UkPrn == Ukprn)));
 
-            _mockSessionService.Verify(c => c.Set("CertificateSession", It.Is<CertificateSession>(
-                s => s.CertificateId == CertificateId && s.Uln == model.Uln && s.StandardCode == model.StdCode)));
+            setSession.CertificateId.Should().Be(CertificateId);
+            setSession.Uln.Should().Be(model.Uln);
+            setSession.StandardCode.Should().Be(model.StdCode);
+            setSession.Options.Should().BeNull();
             setSession.Versions.Should().BeEquivalentTo(new List<ViewModels.Shared.StandardVersion> { standard });
 
             result.ControllerName.Should().Be("CertificateDeclaration");
@@ -108,12 +110,15 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
             _mockCertificateApiClient.Verify(s => s.Start(It.Is<StartCertificateRequest>(
                 m => m.StandardCode == model.StdCode && m.Uln == model.Uln
                 && m.Username == Username && m.UkPrn == Ukprn)));
-
-            _mockSessionService.Verify(c => c.Set("CertificateSession", It.Is<CertificateSession>(s => s.CertificateId == CertificateId && s.Uln == model.Uln && s.StandardCode == model.StdCode)));
-            setSession.Versions.Should().BeEquivalentTo(standards.Select(a => (ViewModels.Shared.StandardVersion)a));
-
+                        
             result.ControllerName.Should().Be("CertificateVersion");
             result.ActionName.Should().Be("Version");
+
+            setSession.CertificateId.Should().Be(CertificateId);
+            setSession.Uln.Should().Be(model.Uln);
+            setSession.StandardCode.Should().Be(model.StdCode);
+            setSession.Options.Should().BeNull();
+            setSession.Versions.Should().BeEquivalentTo(standards.Select(a => (ViewModels.Shared.StandardVersion)a));
         }
 
         [Test, MoqAutoData]
@@ -135,21 +140,15 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
             _mockCertificateApiClient.Verify(s => s.Start(It.Is<StartCertificateRequest>(
                 m => m.StandardCode == model.StdCode && m.Uln == model.Uln
                 && m.Username == Username && m.UkPrn == Ukprn)));
-
-            _mockSessionService.Verify(c => c.Set("CertificateSession", It.Is<CertificateSession>(
-                s => s.CertificateId == CertificateId && s.Uln == model.Uln && s.StandardCode == model.StdCode)));
+                                    
+            setSession.CertificateId.Should().Be(CertificateId);
+            setSession.Uln.Should().Be(model.Uln);
+            setSession.StandardCode.Should().Be(model.StdCode);
+            setSession.Options.Should().BeEquivalentTo(options.CourseOption.ToList());
+            setSession.Versions.Should().BeEquivalentTo(new List<ViewModels.Shared.StandardVersion> { standard });
 
             result.ControllerName.Should().Be("CertificateOption");
             result.ActionName.Should().Be(CertificateActions.Option);
-
-            setSession.Versions.Should().BeEquivalentTo(new List<ViewModels.Shared.StandardVersion> { standard });
-            _mockSessionService.Verify(s => s.Set("CertificateSession", It.Is<CertificateSession>(c =>
-                    c.CertificateId == CertificateId &&
-                    c.Uln == model.Uln &&
-                    c.StandardCode == model.StdCode &&
-                    c.Options.SequenceEqual(options.CourseOption.ToList())
-                    )));
-
         }
     }
 }
