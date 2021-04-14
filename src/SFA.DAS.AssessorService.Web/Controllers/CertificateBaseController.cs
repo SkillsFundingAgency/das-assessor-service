@@ -85,15 +85,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 return View(returnToIfModelNotValid, vm);
             }
 
-            if (nextAction.ActionName == "Option")
-            {
-                var sessionString = RetrieveSessionString(username);
-                if (sessionString == null)
-                    return RedirectToAction("Index", "Search");
-                if (!IsOptionSet(sessionString))
-                    certData.CourseOption = null;
-            }
-
             var updatedCertificate = vm.GetCertificateFromViewModel(certificate, certData);
             if (updatedCertificate.Status == Domain.Consts.CertificateStatus.Deleted)
             {
@@ -108,15 +99,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
             if (SessionService.Exists("redirecttocheck") && bool.Parse(SessionService.Get("redirecttocheck")))
             {
-                if (nextAction.ActionName == "Option")
-                {
-                    var sessionString = RetrieveSessionString(username);
-                    if (sessionString == null)
-                        return RedirectToAction("Index", "Search");
-                    if (IsOptionSet(sessionString))
-                        return new RedirectToActionResult("Option", "CertificateOption", new { redirecttocheck = "true", isFromStandard = true });
-                }
-
                 if(nextAction.ActionName == "AddressSummary")
                 {
                     var certAddress = vm as CertificateAddressViewModel;
@@ -140,26 +122,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             var properties = typeof(T).GetProperties().ToList();
 
             return properties.Aggregate("", (current, prop) => current + $"{prop.Name}: {prop.GetValue(viewModel)}, ");
-        }
-
-        private string RetrieveSessionString(string username)
-        {
-            var sessionString = SessionService.Get("CertificateSession");
-            if (sessionString == null)
-            {
-                Logger.LogInformation(
-                    $"Session for CertificateOptionViewModel requested by {username} has been lost. Redirecting to Search Index");
-            }
-            return sessionString;
-        }
-
-        private bool IsOptionSet(string sessionString)
-        {
-            var certSession = JsonConvert.DeserializeObject<CertificateSession>(sessionString);
-            if (certSession.Options == null || !certSession.Options.Any())
-                return false;
-            return true;
-        }
-        
+        }      
     }
 }

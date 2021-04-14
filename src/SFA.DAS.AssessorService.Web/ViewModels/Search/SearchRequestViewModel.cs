@@ -1,7 +1,5 @@
-﻿using System;
+﻿using SFA.DAS.AssessorService.Web.ViewModels.Shared;
 using System.Collections.Generic;
-using System.Linq;
-using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 
 namespace SFA.DAS.AssessorService.Web.ViewModels.Search
 {
@@ -36,22 +34,5 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Search
         public bool ShowExtraInfo { get; set; }
         public bool IsNoMatchingFamilyName { get; set; }
         public IEnumerable<StandardVersion> Versions { get; set; }
-
-        public class StandardVersion
-        {
-            public string StandardUId { get; set; }
-            public string Title { get; set; }
-            public string Version { get; set; }
-
-            public static implicit operator StandardVersion(ResultViewModel.StandardVersion modelVersion)
-            {
-                return new StandardVersion
-                {
-                    StandardUId = modelVersion.StandardUId,
-                    Title = modelVersion.Title,
-                    Version = modelVersion.Version
-                };
-            }
-        }
     }
 }

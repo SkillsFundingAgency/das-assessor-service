@@ -11,6 +11,7 @@ using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.ViewModels.Certificate;
+using SFA.DAS.AssessorService.Web.ViewModels.Shared;
 using static SFA.DAS.AssessorService.Web.ViewModels.Certificate.CertificateVersionViewModel;
 
 namespace SFA.DAS.AssessorService.Web.Controllers
@@ -71,12 +72,15 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             var certSession = JsonConvert.DeserializeObject<CertificateSession>(sessionString);
             var certificate = await CertificateApiClient.GetCertificate(certSession.CertificateId);
 
-            var versions = await _standardVersionClient.GetStandardVersionsByLarsCode(certSession.StandardCode);
+            if (certSession.Versions == null || certSession.Versions.Count() == 0)
+            {
+                return RedirectToAction("Index", "Search");
+            }
 
-            if (versions.Count() == 1)
+            if (certSession.Versions.Count() == 1)
             {
                 // Only 1 version no need for a selection
-                var singularStandard = versions.First();
+                var singularStandard = certSession.Versions.First();
                 var options = await _standardServiceClient.GetStandardOptions(singularStandard.StandardUId);
                 if (options != null & options.HasOptions())
                 {
@@ -91,7 +95,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
             Logger.LogInformation($"Got Certificate for CertificateVersionViewModel requested by {username} with Id {certificate.Id}");
 
-            viewModel.FromCertificate(certificate, versions.Select(v => (StandardVersion)v));
+            viewModel.FromCertificate(certificate, certSession.Versions);
 
             Logger.LogInformation($"Got View Model of type CertificateVersionViewModel requested by {username}");
 
@@ -128,48 +132,40 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 Logger.LogInformation($"Model State not valid for CertificateVersionViewModel requested by {username} with Id {certificate.Id}. Errors: {ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage)}");
                 return View(returnToIfModelNotValid, vm);
             }
-
-            // collected here as it's needed later and GetCertificateFromViewModel Updates Cert with View Model
-            var standardVersionChanged = vm.StandardUId != certificate.StandardUId;
+                                    
             var standardVersion = await _standardVersionClient.GetStandardVersionByStandardUId(vm.StandardUId);
-
-            // Retrieve what versions the EPAO is able to assess
             var approvedStandardVersions = await _standardVersionClient.GetEpaoRegisteredStandardVersions(epaoid, certSession.StandardCode);
+            
             if (!approvedStandardVersions.Any(v => v.StandardUId == vm.StandardUId))
             {
                 // Epao not approved for this version
                 ModelState.AddModelError("StandardUId", $"Your organisation is not approved to assess version {standardVersion.Version} of {standardVersion.Title}");
-                var versions = await _standardVersionClient.GetStandardVersionsByLarsCode(certSession.StandardCode);
-                vm.Versions = versions.Select(v => (StandardVersion)v);
+                vm.Versions = certSession.Versions;
                 return View(returnToIfModelNotValid, vm);
             }
 
-            var updatedCertificate = vm.GetCertificateFromViewModel(certificate, standardVersionChanged, standardVersion);
-
+            var updatedCertificate = vm.GetCertificateFromViewModel(certificate, standardVersion);
             await CertificateApiClient.UpdateCertificate(new UpdateCertificateRequest(updatedCertificate) { Username = username, Action = action });
-
             Logger.LogInformation($"Certificate for CertificateVersionViewModel requested by {username} with Id {certificate.Id} updated.");
 
-            if (standardVersionChanged)
+            // Reset options to null as they will be need to be re-queried 
+            // if the version has changed, or if it hasn't and we are returning via the check page.
+            certSession.StandardUId = vm.StandardUId;
+            certSession.Options = null;
+            SessionService.Set("CertificateSession", certSession);
+
+            var options = await _standardServiceClient.GetStandardOptions(vm.StandardUId);
+            if (options != null && options.HasOptions())
             {
-                certSession.Options = null;
-                certSession.StandardUId = vm.StandardUId;
+                certSession.Options = options.CourseOption.ToList();
                 SessionService.Set("CertificateSession", certSession);
-
-                var options = await _standardServiceClient.GetStandardOptions(vm.StandardUId);
-
-                if (options != null && options.HasOptions())
+                object routeValues = null;
+                if (SessionService.Exists("redirecttocheck") && bool.Parse(SessionService.Get("redirecttocheck")))
                 {
-                    certSession.Options = options.CourseOption.ToList();
-                    SessionService.Set("CertificateSession", certSession);
-                    object routeValues = null;
-                    if (SessionService.Exists("redirecttocheck") && bool.Parse(SessionService.Get("redirecttocheck")))
-                    {
-                        routeValues = new { redirecttocheck = true };
-                    }
-
-                    return new RedirectToActionResult("Option", "CertificateOption", routeValues);
+                    routeValues = new { redirecttocheck = true };
                 }
+
+                return new RedirectToActionResult("Option", "CertificateOption", routeValues);
             }
 
             if (SessionService.Exists("redirecttocheck") && bool.Parse(SessionService.Get("redirecttocheck")))

@@ -9,6 +9,7 @@ using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Web.Controllers;
 using SFA.DAS.AssessorService.Web.ViewModels.Search;
+using SFA.DAS.AssessorService.Web.ViewModels.Shared;
 using static SFA.DAS.AssessorService.Web.ViewModels.Search.ResultViewModel;
 
 namespace SFA.DAS.AssessorService.Web.Orchestrators.Search
@@ -50,7 +51,7 @@ namespace SFA.DAS.AssessorService.Web.Orchestrators.Search
                     Uln = Convert.ToString(result.Uln),
                     Standard = result.Standard,
                     StdCode = Convert.ToString(result.StdCode),
-                    Versions = result.Versions.Select(s => new StandardVersion { StandardUId = s.StandardUId, Title = s.Title, Version = s.Version }).ToList(),
+                    Versions = result.Versions.Select(s => (StandardVersion)s),
                     OverallGrade = result.OverallGrade,
                     CertificateReference = result.CertificateReference,
                     Level = Convert.ToString(result.Level),

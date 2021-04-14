@@ -1,6 +1,6 @@
-﻿using System;
+﻿using SFA.DAS.AssessorService.Web.ViewModels.Shared;
+using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SFA.DAS.AssessorService.Web.ViewModels.Search
 {
@@ -12,7 +12,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Search
         public string Standard { get; set; }
         public string StdCode { get; set; }
         public string StandardReferenceNumber { get; set; }
-        public List<StandardVersion> Versions { get; set; } = new List<StandardVersion>();
+        public IEnumerable<StandardVersion> Versions { get; set; } = new List<StandardVersion>();
         public string OverallGrade { get; set; }
         public string CertificateReference { get; set; }
         public string Level { get; set; }
@@ -23,12 +23,5 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Search
         public bool ShowExtraInfo { get; set; }
         public bool UlnAlreadyExists { get; set; }
         public bool IsNoMatchingFamilyName { get; set; }
-
-        public class StandardVersion
-        {
-            public string StandardUId { get; set; }
-            public string Title { get; set; }
-            public string Version { get; set; }
-        }
     }
 }

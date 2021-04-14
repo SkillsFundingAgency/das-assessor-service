@@ -35,7 +35,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             }
             var certSession = JsonConvert.DeserializeObject<CertificateSession>(sessionString);
             TempData["HideOption"] = certSession.Options == null || !certSession.Options.Any();
-
+            TempData["HideChangeVersion"] = certSession.Versions == null || certSession.Versions.Count() <= 1;
+            
             return await LoadViewModel<CertificateCheckViewModel>("~/Views/Certificate/Check.cshtml");
         }
         

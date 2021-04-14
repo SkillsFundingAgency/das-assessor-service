@@ -64,8 +64,17 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
         [Test, MoqAutoData]
         public async Task WhenStartingANewCertificate_WithSingleVersionNoOptions_GoesToDeclaration(CertificateStartViewModel model, StandardVersion standard)
         {
+            CertificateSession setSession = new CertificateSession();
             _mockStandardVersionClient.Setup(s => s.GetStandardVersionsByLarsCode(model.StdCode)).ReturnsAsync(new List<StandardVersion> { standard });
             _mockStandardServiceClient.Setup(s => s.GetStandardOptions(standard.StandardUId)).ReturnsAsync(new StandardOptions());
+            _mockSessionService.Setup(c => c.Set("CertificateSession", It.IsAny<object>()))
+                .Callback<string, object>((key, session) =>
+                {
+                    if (key == "CertificateSession" && session is CertificateSession)
+                    {
+                        setSession = (CertificateSession)session;
+                    }
+                });
 
             var result = await _certificateController.Start(model) as RedirectToActionResult;
 
@@ -73,8 +82,11 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
                 m => m.StandardCode == model.StdCode && m.Uln == model.Uln
                 && m.Username == Username && m.UkPrn == Ukprn)));
 
-            _mockSessionService.Verify(c => c.Set("CertificateSession", It.Is<CertificateSession>(
-                s => s.CertificateId == CertificateId && s.Uln == model.Uln && s.StandardCode == model.StdCode)));
+            setSession.CertificateId.Should().Be(CertificateId);
+            setSession.Uln.Should().Be(model.Uln);
+            setSession.StandardCode.Should().Be(model.StdCode);
+            setSession.Options.Should().BeNull();
+            setSession.Versions.Should().BeEquivalentTo(new List<ViewModels.Shared.StandardVersion> { standard });
 
             result.ControllerName.Should().Be("CertificateDeclaration");
             result.ActionName.Should().Be("Declare");
@@ -83,45 +95,60 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
         [Test, MoqAutoData]
         public async Task WhenStartingANewCertificate_WithMultipleVersions_GoesToVersionPage(CertificateStartViewModel model, IEnumerable<StandardVersion> standards)
         {
+            CertificateSession setSession = new CertificateSession();
             _mockStandardVersionClient.Setup(s => s.GetStandardVersionsByLarsCode(model.StdCode)).ReturnsAsync(standards);
-
+            _mockSessionService.Setup(c => c.Set("CertificateSession", It.IsAny<object>()))
+                .Callback<string, object>((key, session) =>
+                 {
+                     if (key == "CertificateSession" && session is CertificateSession)
+                     {
+                         setSession = (CertificateSession)session;
+                     }
+                 });
             var result = await _certificateController.Start(model) as RedirectToActionResult;
 
             _mockCertificateApiClient.Verify(s => s.Start(It.Is<StartCertificateRequest>(
                 m => m.StandardCode == model.StdCode && m.Uln == model.Uln
                 && m.Username == Username && m.UkPrn == Ukprn)));
-
-            _mockSessionService.Verify(c => c.Set("CertificateSession", It.Is<CertificateSession>(
-                s => s.CertificateId == CertificateId && s.Uln == model.Uln && s.StandardCode == model.StdCode)));
-
+                        
             result.ControllerName.Should().Be("CertificateVersion");
             result.ActionName.Should().Be("Version");
+
+            setSession.CertificateId.Should().Be(CertificateId);
+            setSession.Uln.Should().Be(model.Uln);
+            setSession.StandardCode.Should().Be(model.StdCode);
+            setSession.Options.Should().BeNull();
+            setSession.Versions.Should().BeEquivalentTo(standards.Select(a => (ViewModels.Shared.StandardVersion)a));
         }
 
         [Test, MoqAutoData]
         public async Task WhenStartingANewCertificate_WithOneVersion_GoesToOptionPage(CertificateStartViewModel model, StandardVersion standard, StandardOptions options)
         {
+            CertificateSession setSession = new CertificateSession();
             _mockStandardVersionClient.Setup(s => s.GetStandardVersionsByLarsCode(model.StdCode)).ReturnsAsync(new List<StandardVersion> { standard });
             _mockStandardServiceClient.Setup(s => s.GetStandardOptions(standard.StandardUId)).ReturnsAsync(options);
-
+            _mockSessionService.Setup(c => c.Set("CertificateSession", It.IsAny<object>()))
+                .Callback<string, object>((key, session) =>
+                {
+                    if (key == "CertificateSession" && session is CertificateSession)
+                    {
+                        setSession = (CertificateSession)session;
+                    }
+                });
             var result = await _certificateController.Start(model) as RedirectToActionResult;
 
             _mockCertificateApiClient.Verify(s => s.Start(It.Is<StartCertificateRequest>(
                 m => m.StandardCode == model.StdCode && m.Uln == model.Uln
                 && m.Username == Username && m.UkPrn == Ukprn)));
-
-            _mockSessionService.Verify(c => c.Set("CertificateSession", It.Is<CertificateSession>(
-                s => s.CertificateId == CertificateId && s.Uln == model.Uln && s.StandardCode == model.StdCode)));
+                                    
+            setSession.CertificateId.Should().Be(CertificateId);
+            setSession.Uln.Should().Be(model.Uln);
+            setSession.StandardCode.Should().Be(model.StdCode);
+            setSession.Options.Should().BeEquivalentTo(options.CourseOption.ToList());
+            setSession.Versions.Should().BeEquivalentTo(new List<ViewModels.Shared.StandardVersion> { standard });
 
             result.ControllerName.Should().Be("CertificateOption");
             result.ActionName.Should().Be(CertificateActions.Option);
-
-            _mockSessionService.Verify(s => s.Set("CertificateSession", It.Is<CertificateSession>(c => 
-                    c.CertificateId == CertificateId && 
-                    c.Uln == model.Uln && 
-                    c.StandardCode == model.StdCode &&
-                    c.Options.SequenceEqual(options.CourseOption.ToList())
-                    )));
         }
     }
 }

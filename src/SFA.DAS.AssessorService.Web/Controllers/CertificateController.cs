@@ -8,6 +8,8 @@ using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.ViewModels.Certificate;
+using SFA.DAS.AssessorService.Web.ViewModels.Shared;
+using static SFA.DAS.AssessorService.Web.ViewModels.Certificate.CertificateVersionViewModel;
 
 namespace SFA.DAS.AssessorService.Web.Controllers
 {
@@ -56,26 +58,26 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 Username = username
             });
 
-            var certificateSession =  new CertificateSession()
+            var versions = await _standardVersionClient.GetStandardVersionsByLarsCode(vm.StdCode);
+
+            var certificateSession = new CertificateSession()
             {
                 CertificateId = cert.Id,
                 Uln = vm.Uln,
                 StandardCode = vm.StdCode,
+                Versions = versions.Select(s => (StandardVersion)s)
             };
 
             _sessionService.Set("CertificateSession", certificateSession);
-
             _logger.LogInformation($"New Certificate received for ULN {vm.Uln} and Standard Code: {vm.StdCode} with ID {cert.Id}");
-
-            var versions = await _standardVersionClient.GetStandardVersionsByLarsCode(vm.StdCode);
-
-            if(versions.Count() > 1)
-            {
+            
+            if (versions.Count() > 1)
+            {   
                 return RedirectToAction("Version", "CertificateVersion");
             } 
             else if(versions.Count() == 1)
             {
-                var singularVersion = versions.First();
+                var singularVersion = versions.Single();
                 var options = await _standardServiceClient.GetStandardOptions(singularVersion.StandardUId);
                 if(options != null && options.HasOptions())
                 {
