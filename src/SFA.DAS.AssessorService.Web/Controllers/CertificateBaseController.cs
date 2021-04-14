@@ -122,17 +122,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             var properties = typeof(T).GetProperties().ToList();
 
             return properties.Aggregate("", (current, prop) => current + $"{prop.Name}: {prop.GetValue(viewModel)}, ");
-        }
-
-        private string RetrieveSessionString(string username)
-        {
-            var sessionString = SessionService.Get("CertificateSession");
-            if (sessionString == null)
-            {
-                Logger.LogInformation(
-                    $"Session for CertificateOptionViewModel requested by {username} has been lost. Redirecting to Search Index");
-            }
-            return sessionString;
-        }        
+        }      
     }
 }
