@@ -132,10 +132,10 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 Logger.LogInformation($"Model State not valid for CertificateVersionViewModel requested by {username} with Id {certificate.Id}. Errors: {ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage)}");
                 return View(returnToIfModelNotValid, vm);
             }
-                                    
+
             var standardVersion = await _standardVersionClient.GetStandardVersionByStandardUId(vm.StandardUId);
             var approvedStandardVersions = await _standardVersionClient.GetEpaoRegisteredStandardVersions(epaoid, certSession.StandardCode);
-            
+
             if (!approvedStandardVersions.Any(v => v.StandardUId == vm.StandardUId))
             {
                 // Epao not approved for this version
@@ -144,9 +144,18 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 return View(returnToIfModelNotValid, vm);
             }
 
+            var redirectToCheck = SessionService.Exists("redirecttocheck") && bool.Parse(SessionService.Get("redirecttocheck"));
+            var versionChanged = certificate.StandardUId != vm.StandardUId;
             var updatedCertificate = vm.GetCertificateFromViewModel(certificate, standardVersion);
             await CertificateApiClient.UpdateCertificate(new UpdateCertificateRequest(updatedCertificate) { Username = username, Action = action });
+            
             Logger.LogInformation($"Certificate for CertificateVersionViewModel requested by {username} with Id {certificate.Id} updated.");
+            
+            if (!versionChanged && redirectToCheck)
+            {
+                // if version hasn't changed, don't need to update options.
+                return new RedirectToActionResult("Check", "CertificateCheck", null);
+            }
 
             // Reset options to null as they will be need to be re-queried 
             // if the version has changed, or if it hasn't and we are returning via the check page.
@@ -160,15 +169,15 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 certSession.Options = options.CourseOption.ToList();
                 SessionService.Set("CertificateSession", certSession);
                 object routeValues = null;
-                if (SessionService.Exists("redirecttocheck") && bool.Parse(SessionService.Get("redirecttocheck")))
+                if (redirectToCheck)
                 {
                     routeValues = new { redirecttocheck = true };
                 }
-
+                SessionService.Set("redirectedfromversion", true);
                 return new RedirectToActionResult("Option", "CertificateOption", routeValues);
             }
 
-            if (SessionService.Exists("redirecttocheck") && bool.Parse(SessionService.Get("redirecttocheck")))
+            if (redirectToCheck)
             {
                 Logger.LogInformation($"Certificate for CertificateVersionViewModel requested by {username} with Id {certificate.Id} redirecting back to Certificate Check.");
                 return new RedirectToActionResult("Check", "CertificateCheck", null);
