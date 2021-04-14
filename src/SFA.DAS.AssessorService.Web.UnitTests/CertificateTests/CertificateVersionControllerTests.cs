@@ -120,7 +120,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
         }
 
         [Test, MoqAutoData]
-        public async Task WhenSelectingAVersion_WhenLoadingModel_WithOneVersion_RedirectsToDeclaration(CertificateSession session, SharedModelTypes.StandardVersion standardVersion)
+        public async Task WhenSelectingAVersion_WhenLoadingModel_WithOneVersion_WithNoOptions_RedirectsToDeclaration(CertificateSession session, SharedModelTypes.StandardVersion standardVersion)
         {
             standardVersion.StandardUId = session.StandardUId;
             session.Versions = new List<SharedModelTypes.StandardVersion> { standardVersion };
@@ -136,7 +136,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
         }
 
         [Test, MoqAutoData]
-        public async Task WhenSelectingAVersion_WhenLoadingModel_WithOneVersion_RedirectsToOptionPage(CertificateSession session, SharedModelTypes.StandardVersion standardVersion, StandardOptions options)
+        public async Task WhenSelectingAVersion_WhenLoadingModel_WithOneVersion_WithOptions_RedirectsToOptionPage(CertificateSession session, SharedModelTypes.StandardVersion standardVersion, StandardOptions options)
         {
             standardVersion.StandardUId = session.StandardUId;
             session.Versions = new List<SharedModelTypes.StandardVersion> { standardVersion };
