@@ -2,20 +2,21 @@ using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using System.Collections.Generic;
 using SFA.DAS.AssessorService.Web.ViewModels.Shared;
+using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 
 namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
 {
     public class CertificateVersionViewModel : CertificateBaseViewModel
     {
-        public IEnumerable<StandardVersion> Versions { get; set; }
+        public IEnumerable<StandardVersionViewModel> Versions { get; set; }
 
-        public void FromCertificate(Domain.Entities.Certificate cert, IEnumerable<StandardVersion> versions)
+        public void FromCertificate(Domain.Entities.Certificate cert, IEnumerable<StandardVersionViewModel> versions)
         {
             base.FromCertificate(cert);
             Versions = versions;
         }
 
-        public Domain.Entities.Certificate GetCertificateFromViewModel(Domain.Entities.Certificate certificate, Api.Types.Models.Standards.StandardVersion standardVersion)
+        public Domain.Entities.Certificate GetCertificateFromViewModel(Domain.Entities.Certificate certificate, StandardVersion standardVersion)
         {
             var certData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
             certData.StandardReference = standardVersion.IFateReferenceNumber;

@@ -18,7 +18,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
-using SharedModelTypes = SFA.DAS.AssessorService.Web.ViewModels.Shared;
+using SFA.DAS.AssessorService.Web.ViewModels.Shared;
 
 namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
 {
@@ -96,7 +96,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
         [Test, MoqAutoData]
         public async Task WhenSelectingAVersion_WhenSessionVersionValueIsEmpty_RedirectsBackToSearch(CertificateSession session)
         {
-            session.Versions = new List<SharedModelTypes.StandardVersion>();
+            session.Versions = new List<StandardVersionViewModel>();
             var sessionString = JsonConvert.SerializeObject(session);
             _mockSessionService.Setup(s => s.Get(nameof(CertificateSession))).Returns(sessionString);
 
@@ -122,10 +122,10 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
         }
 
         [Test, MoqAutoData]
-        public async Task WhenSelectingAVersion_WhenLoadingModel_WithOneVersion_WithNoOptions_RedirectsToDeclaration(CertificateSession session, SharedModelTypes.StandardVersion standardVersion)
+        public async Task WhenSelectingAVersion_WhenLoadingModel_WithOneVersion_WithNoOptions_RedirectsToDeclaration(CertificateSession session, StandardVersionViewModel standardVersion)
         {
             standardVersion.StandardUId = session.StandardUId;
-            session.Versions = new List<SharedModelTypes.StandardVersion> { standardVersion };
+            session.Versions = new List<StandardVersionViewModel> { standardVersion };
             var sessionString = JsonConvert.SerializeObject(session);
             _mockSessionService.Setup(s => s.Get(nameof(CertificateSession))).Returns(sessionString);
 
@@ -138,10 +138,10 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
         }
 
         [Test, MoqAutoData]
-        public async Task WhenSelectingAVersion_WhenLoadingModel_WithOneVersion_WithOptions_RedirectsToOptionPage(CertificateSession session, SharedModelTypes.StandardVersion standardVersion, StandardOptions options)
+        public async Task WhenSelectingAVersion_WhenLoadingModel_WithOneVersion_WithOptions_RedirectsToOptionPage(CertificateSession session, StandardVersionViewModel standardVersion, StandardOptions options)
         {
             standardVersion.StandardUId = session.StandardUId;
-            session.Versions = new List<SharedModelTypes.StandardVersion> { standardVersion };
+            session.Versions = new List<StandardVersionViewModel> { standardVersion };
             var sessionString = JsonConvert.SerializeObject(session);
             _mockSessionService.Setup(s => s.Get(nameof(CertificateSession))).Returns(sessionString);
 

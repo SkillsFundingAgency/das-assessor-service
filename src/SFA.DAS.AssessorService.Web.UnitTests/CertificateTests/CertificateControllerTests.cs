@@ -11,6 +11,7 @@ using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Web.Controllers;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.ViewModels.Certificate;
+using SFA.DAS.AssessorService.Web.ViewModels.Shared;
 using SFA.DAS.Testing.AutoFixture;
 using System;
 using System.Collections.Generic;
@@ -86,7 +87,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
             setSession.Uln.Should().Be(model.Uln);
             setSession.StandardCode.Should().Be(model.StdCode);
             setSession.Options.Should().BeNull();
-            setSession.Versions.Should().BeEquivalentTo(new List<ViewModels.Shared.StandardVersion> { standard });
+            setSession.Versions.Should().BeEquivalentTo(new List<StandardVersionViewModel> { standard });
 
             result.ControllerName.Should().Be("CertificateDeclaration");
             result.ActionName.Should().Be("Declare");
@@ -118,7 +119,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
             setSession.Uln.Should().Be(model.Uln);
             setSession.StandardCode.Should().Be(model.StdCode);
             setSession.Options.Should().BeNull();
-            setSession.Versions.Should().BeEquivalentTo(standards.Select(a => (ViewModels.Shared.StandardVersion)a));
+            setSession.Versions.Should().BeEquivalentTo(standards.Select(a => (StandardVersionViewModel)a));
         }
 
         [Test, MoqAutoData]
@@ -145,7 +146,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
             setSession.Uln.Should().Be(model.Uln);
             setSession.StandardCode.Should().Be(model.StdCode);
             setSession.Options.Should().BeEquivalentTo(options.CourseOption.ToList());
-            setSession.Versions.Should().BeEquivalentTo(new List<ViewModels.Shared.StandardVersion> { standard });
+            setSession.Versions.Should().BeEquivalentTo(new List<StandardVersionViewModel> { standard });
 
             result.ControllerName.Should().Be("CertificateOption");
             result.ActionName.Should().Be(CertificateActions.Option);

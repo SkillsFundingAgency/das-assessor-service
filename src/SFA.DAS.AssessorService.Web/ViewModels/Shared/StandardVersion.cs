@@ -1,14 +1,16 @@
-﻿namespace SFA.DAS.AssessorService.Web.ViewModels.Shared
+﻿using SFA.DAS.AssessorService.Api.Types.Models.Standards;
+
+namespace SFA.DAS.AssessorService.Web.ViewModels.Shared
 {
-    public class StandardVersion
+    public class StandardVersionViewModel
     {
         public string Title { get; set; }
         public string StandardUId { get; set; }
         public string Version { get; set; }
 
-        public static implicit operator StandardVersion(Api.Types.Models.Standards.StandardVersion version)
+        public static implicit operator StandardVersionViewModel(StandardVersion version)
         {
-            return new StandardVersion
+            return new StandardVersionViewModel
             {
                 StandardUId = version.StandardUId,
                 Title = version.Title,

@@ -65,7 +65,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 CertificateId = cert.Id,
                 Uln = vm.Uln,
                 StandardCode = vm.StdCode,
-                Versions = versions.Select(s => (StandardVersion)s).ToList()
+                Versions = versions.Select(s => (StandardVersionViewModel)s).ToList()
             };
 
             _sessionService.Set(nameof(CertificateSession), certificateSession);

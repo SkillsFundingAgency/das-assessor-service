@@ -11,6 +11,7 @@ using SFA.DAS.AssessorService.Domain.JsonData;
 using SFA.DAS.AssessorService.Web.Controllers;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.ViewModels.Certificate;
+using SFA.DAS.AssessorService.Web.ViewModels.Shared;
 using SFA.DAS.Testing.AutoFixture;
 using System;
 using System.Collections.Generic;
@@ -117,10 +118,10 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateOptionsTests
         }
 
         [Test, MoqAutoData]
-        public void AndClickingBack_RedirectsToSearchResult_IfNoOptionsWith1Version(CertificateSession session, ViewModels.Shared.StandardVersion standardVersion)
+        public void AndClickingBack_RedirectsToSearchResult_IfNoOptionsWith1Version(CertificateSession session, StandardVersionViewModel standardVersion)
         {
             session.Options = null;
-            session.Versions = new List<ViewModels.Shared.StandardVersion> { standardVersion };
+            session.Versions = new List<StandardVersionViewModel> { standardVersion };
             var sessionString = JsonConvert.SerializeObject(session);
             _mockSessionService.Setup(s => s.Get(nameof(CertificateSession))).Returns(sessionString);
 
@@ -131,7 +132,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateOptionsTests
         }
 
         [Test, MoqAutoData]
-        public void AndClickingBack_RedirectsToVersionSelectPage_IfNoOptionsWithManyVersions(CertificateSession session, List<ViewModels.Shared.StandardVersion> standardVersions)
+        public void AndClickingBack_RedirectsToVersionSelectPage_IfNoOptionsWithManyVersions(CertificateSession session, List<StandardVersionViewModel> standardVersions)
         {
             session.Options = null;
             session.Versions = standardVersions;
