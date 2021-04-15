@@ -227,8 +227,8 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
             _mockStandardVersionClient.Setup(s => s.GetStandardVersionByStandardUId(vm.StandardUId)).ReturnsAsync(standardVersion);
             _mockStandardVersionClient.Setup(s => s.GetEpaoRegisteredStandardVersions(EpaoId, session.StandardCode)).ReturnsAsync(approvedVersions);
             _mockStandardServiceClient.Setup(s => s.GetStandardOptions(vm.StandardUId)).ReturnsAsync(options);
-            _mockSessionService.Setup(s => s.Exists("redirecttocheck")).Returns(true);
-            _mockSessionService.Setup(s => s.Get("redirecttocheck")).Returns("true");
+            var expectedValue = true;
+            _mockSessionService.Setup(s => s.TryGet<bool>("redirecttocheck", out expectedValue));
 
             var result = await _certificateVersionController.Version(vm) as RedirectToActionResult;
 
@@ -249,9 +249,10 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
             _mockStandardVersionClient.Setup(s => s.GetStandardVersionByStandardUId(vm.StandardUId)).ReturnsAsync(standardVersion);
             _mockStandardVersionClient.Setup(s => s.GetEpaoRegisteredStandardVersions(EpaoId, session.StandardCode)).ReturnsAsync(approvedVersions);
             _mockStandardServiceClient.Setup(s => s.GetStandardOptions(vm.StandardUId)).ReturnsAsync(options);
-            _mockSessionService.Setup(s => s.Exists("redirecttocheck")).Returns(true);
-            _mockSessionService.Setup(s => s.Get("redirecttocheck")).Returns("true");
-
+            
+            var expectedValue = true;
+            _mockSessionService.Setup(s => s.TryGet<bool>("redirecttocheck", out expectedValue));
+            
             var result = await _certificateVersionController.Version(vm) as RedirectToActionResult;
 
             result.ControllerName.Should().Be("CertificateOption");

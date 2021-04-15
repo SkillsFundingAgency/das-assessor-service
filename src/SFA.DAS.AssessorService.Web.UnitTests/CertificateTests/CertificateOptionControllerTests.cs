@@ -134,10 +134,10 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateOptionsTests
             session.Versions = standardVersions;
             var sessionString = JsonConvert.SerializeObject(session);
             _mockSessionService.Setup(s => s.Get(nameof(CertificateSession))).Returns(sessionString);
-            _mockSessionService.Setup(s => s.Exists("redirectedfromversion")).Returns(true);
-            _mockSessionService.Setup(s => s.Get("redirectedfromversion")).Returns("true");
-            _mockSessionService.Setup(s => s.Exists("redirecttocheck")).Returns(true);
-            _mockSessionService.Setup(s => s.Get("redirecttocheck")).Returns("true");
+
+            var expectedValue = true;
+            _mockSessionService.Setup(s => s.TryGet<bool>("redirecttocheck", out expectedValue));
+            _mockSessionService.Setup(s => s.TryGet<bool>("redirectedfromversion", out expectedValue));
 
             var result = _certificateOptionController.Back() as RedirectToActionResult;
 
@@ -152,8 +152,8 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateOptionsTests
             session.Versions = standardVersions;
             var sessionString = JsonConvert.SerializeObject(session);
             _mockSessionService.Setup(s => s.Get(nameof(CertificateSession))).Returns(sessionString);
-            _mockSessionService.Setup(s => s.Exists("redirecttocheck")).Returns(true);
-            _mockSessionService.Setup(s => s.Get("redirecttocheck")).Returns("true");
+            var expectedValue = true;
+            _mockSessionService.Setup(s => s.TryGet<bool>("redirecttocheck", out expectedValue));
 
             var result = _certificateOptionController.Back() as RedirectToActionResult;
 

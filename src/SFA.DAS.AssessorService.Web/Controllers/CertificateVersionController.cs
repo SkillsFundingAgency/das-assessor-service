@@ -144,7 +144,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 return View(returnToIfModelNotValid, vm);
             }
 
-            var redirectToCheck = SessionService.Exists("redirecttocheck") && bool.Parse(SessionService.Get("redirecttocheck"));
+            SessionService.TryGet<bool>("redirecttocheck", out var redirectToCheck);
             var versionChanged = certificate.StandardUId != vm.StandardUId;
             var updatedCertificate = vm.GetCertificateFromViewModel(certificate, standardVersion);
             await CertificateApiClient.UpdateCertificate(new UpdateCertificateRequest(updatedCertificate) { Username = username, Action = action });

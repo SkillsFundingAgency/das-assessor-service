@@ -118,7 +118,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
             Logger.LogInformation($"Certificate for CertificateOptionViewModel requested by {username} with Id {certificate.Id} updated.");
 
-            if (SessionService.Exists("redirecttocheck") && bool.Parse(SessionService.Get("redirecttocheck")))
+            if (SessionService.TryGet<bool>("redirecttocheck", out var redirectToCheck) && redirectToCheck)
             {
                 Logger.LogInformation($"Certificate for CertificateOptionViewModel requested by {username} with Id {certificate.Id} redirecting back to Certificate Check.");
                 return new RedirectToActionResult("Check", "CertificateCheck", null);
@@ -161,8 +161,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 //redirectfromversion is always set when coming from version page to allow for this
                 //however it's removed beyond that page, therefore if coming back from declaration
                 //the final version count check allows that fallback.
-                var redirectToCheck = SessionService.Exists("redirecttocheck") && bool.Parse(SessionService.Get("redirecttocheck"));
-                var redirectedFromVersion = SessionService.Exists("redirectedfromversion") && bool.Parse(SessionService.Get("redirectedfromversion"));
+                SessionService.TryGet<bool>("redirecttocheck", out var redirectToCheck);
+                SessionService.TryGet<bool>("redirectedfromversion", out var redirectedFromVersion);
+                
                 SessionService.Remove("redirectedfromversion");
                 object routeValues = null;
                 if (redirectToCheck)

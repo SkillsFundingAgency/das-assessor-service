@@ -97,7 +97,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
             Logger.LogInformation($"Certificate for {typeof(T).Name} requested by {username} with Id {certificate.Id} updated.");
 
-            if (SessionService.Exists("redirecttocheck") && bool.Parse(SessionService.Get("redirecttocheck")))
+            if (SessionService.TryGet<bool>("redirecttocheck",out var redirectToCheck) && redirectToCheck)
             {
                 if(nextAction.ActionName == "AddressSummary")
                 {
