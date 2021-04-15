@@ -42,7 +42,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Start(CertificateStartViewModel vm)
         {
-            _sessionService.Remove("CertificateSession");
+            _sessionService.Remove(nameof(CertificateSession));
             var ukprn = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/ukprn")?.Value;
             var username = _contextAccessor.HttpContext.User
                 .FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
@@ -68,7 +68,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 Versions = versions.Select(s => (StandardVersion)s).ToList()
             };
 
-            _sessionService.Set("CertificateSession", certificateSession);
+            _sessionService.Set(nameof(CertificateSession), certificateSession);
             _logger.LogInformation($"New Certificate received for ULN {vm.Uln} and Standard Code: {vm.StdCode} with ID {cert.Id}");
             
             if (versions.Count() > 1)
@@ -83,7 +83,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 {
                     certificateSession.StandardUId = singularVersion.StandardUId;
                     certificateSession.Options = options.CourseOption.ToList();
-                    _sessionService.Set("CertificateSession", certificateSession);
+                    _sessionService.Set(nameof(CertificateSession), certificateSession);
 
                     return RedirectToAction("Option", "CertificateOption");
                 } 

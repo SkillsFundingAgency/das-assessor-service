@@ -33,7 +33,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Version(bool? redirectToCheck = false)
         {
-            var sessionString = SessionService.Get("CertificateSession");
+            var sessionString = SessionService.Get(nameof(CertificateSession));
             if (sessionString == null)
             {
                 return RedirectToAction("Index", "Search");
@@ -62,7 +62,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 SessionService.Remove("redirecttocheck");
             }
 
-            var sessionString = SessionService.Get("CertificateSession");
+            var sessionString = SessionService.Get(nameof(CertificateSession));
             if (sessionString == null)
             {
                 Logger.LogInformation($"Session for CertificateVersionViewModel requested by {username} has been lost. Redirecting to Search Index");
@@ -86,7 +86,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 {
                     certSession.StandardUId = singularStandard.StandardUId;
                     certSession.Options = options.CourseOption.ToList();
-                    SessionService.Set("CertificateSession", certSession);
+                    SessionService.Set(nameof(CertificateSession), certSession);
                     return RedirectToAction("Option", "CertificateOption");
                 }
 
@@ -119,7 +119,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
             var certificate = await CertificateApiClient.GetCertificate(vm.Id);
 
-            var sessionString = SessionService.Get("CertificateSession");
+            var sessionString = SessionService.Get(nameof(CertificateSession));
             if (sessionString == null)
             {
                 Logger.LogInformation($"Session for CertificateVersionViewModel requested by {username} has been lost. Redirecting to Search Index");
@@ -161,13 +161,13 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             // if the version has changed, or if it hasn't and we are returning via the check page.
             certSession.StandardUId = vm.StandardUId;
             certSession.Options = null;
-            SessionService.Set("CertificateSession", certSession);
+            SessionService.Set(nameof(CertificateSession), certSession);
 
             var options = await _standardServiceClient.GetStandardOptions(vm.StandardUId);
             if (options != null && options.HasOptions())
             {
                 certSession.Options = options.CourseOption.ToList();
-                SessionService.Set("CertificateSession", certSession);
+                SessionService.Set(nameof(CertificateSession), certSession);
                 object routeValues = null;
                 if (redirectToCheck)
                 {

@@ -49,7 +49,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             else
                 SessionService.Remove("redirecttocheck");
                 
-            var sessionString = SessionService.Get("CertificateSession");
+            var sessionString = SessionService.Get(nameof(CertificateSession));
             if (sessionString == null)
             {
                 Logger.LogInformation($"Session for {typeof(T).Name} requested by {username} has been lost. Redirecting to Search Index");

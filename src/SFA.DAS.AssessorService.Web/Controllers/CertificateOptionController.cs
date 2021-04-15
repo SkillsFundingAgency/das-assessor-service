@@ -27,7 +27,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Option(bool? redirectToCheck = false)
         {
-            var sessionString = SessionService.Get("CertificateSession");
+            var sessionString = SessionService.Get(nameof(CertificateSession));
             if (sessionString == null)
             {
                 return RedirectToAction("Index", "Search");
@@ -54,7 +54,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             else
                 SessionService.Remove("redirecttocheck");
                 
-            var sessionString = SessionService.Get("CertificateSession");
+            var sessionString = SessionService.Get(nameof(CertificateSession));
             if (sessionString == null)
             {
                 Logger.LogInformation($"Session for CertificateOptionViewModel requested by {username} has been lost. Redirecting to Search Index");
@@ -97,7 +97,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             var certData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
             SessionService.Remove("redirectedfromversion");
 
-            var sessionString = SessionService.Get("CertificateSession");
+            var sessionString = SessionService.Get(nameof(CertificateSession));
             if (sessionString == null)
             {
                 Logger.LogInformation($"Session for CertificateOptionViewModel requested by {username} has been lost. Redirecting to Search Index");
@@ -139,7 +139,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         public IActionResult Back()
         {
             var username = ContextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
-            var sessionString = SessionService.Get("CertificateSession");
+            var sessionString = SessionService.Get(nameof(CertificateSession));
             if (sessionString == null)
             {
                 Logger.LogInformation($"Session for CertificateOptionViewModel requested by {username} has been lost. Redirecting to Search Index");

@@ -38,7 +38,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         public IActionResult Back()
         {
             var username = ContextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
-            var sessionString = SessionService.Get("CertificateSession");
+            var sessionString = SessionService.Get(nameof(CertificateSession));
             if (sessionString == null)
             {
                 Logger.LogInformation($"Session for CertificateDeclarationViewModel requested by {username} has been lost. Redirecting to Search Index");

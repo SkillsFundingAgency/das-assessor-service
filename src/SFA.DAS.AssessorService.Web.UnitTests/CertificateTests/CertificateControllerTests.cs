@@ -67,10 +67,10 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
             CertificateSession setSession = new CertificateSession();
             _mockStandardVersionClient.Setup(s => s.GetStandardVersionsByLarsCode(model.StdCode)).ReturnsAsync(new List<StandardVersion> { standard });
             _mockStandardServiceClient.Setup(s => s.GetStandardOptions(standard.StandardUId)).ReturnsAsync(new StandardOptions());
-            _mockSessionService.Setup(c => c.Set("CertificateSession", It.IsAny<object>()))
+            _mockSessionService.Setup(c => c.Set(nameof(CertificateSession), It.IsAny<object>()))
                 .Callback<string, object>((key, session) =>
                 {
-                    if (key == "CertificateSession" && session is CertificateSession)
+                    if (key == nameof(CertificateSession) && session is CertificateSession)
                     {
                         setSession = (CertificateSession)session;
                     }
@@ -97,10 +97,10 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
         {
             CertificateSession setSession = new CertificateSession();
             _mockStandardVersionClient.Setup(s => s.GetStandardVersionsByLarsCode(model.StdCode)).ReturnsAsync(standards);
-            _mockSessionService.Setup(c => c.Set("CertificateSession", It.IsAny<object>()))
+            _mockSessionService.Setup(c => c.Set(nameof(CertificateSession), It.IsAny<object>()))
                 .Callback<string, object>((key, session) =>
                  {
-                     if (key == "CertificateSession" && session is CertificateSession)
+                     if (key == nameof(CertificateSession) && session is CertificateSession)
                      {
                          setSession = (CertificateSession)session;
                      }
@@ -127,10 +127,10 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
             CertificateSession setSession = new CertificateSession();
             _mockStandardVersionClient.Setup(s => s.GetStandardVersionsByLarsCode(model.StdCode)).ReturnsAsync(new List<StandardVersion> { standard });
             _mockStandardServiceClient.Setup(s => s.GetStandardOptions(standard.StandardUId)).ReturnsAsync(options);
-            _mockSessionService.Setup(c => c.Set("CertificateSession", It.IsAny<object>()))
+            _mockSessionService.Setup(c => c.Set(nameof(CertificateSession), It.IsAny<object>()))
                 .Callback<string, object>((key, session) =>
                 {
-                    if (key == "CertificateSession" && session is CertificateSession)
+                    if (key == nameof(CertificateSession) && session is CertificateSession)
                     {
                         setSession = (CertificateSession)session;
                     }

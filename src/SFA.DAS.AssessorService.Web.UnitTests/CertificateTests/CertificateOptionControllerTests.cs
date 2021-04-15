@@ -72,7 +72,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateOptionsTests
         {
             session.Options = options;
             var sessionString = JsonConvert.SerializeObject(session);
-            _mockSessionService.Setup(s => s.Get("CertificateSession")).Returns(sessionString);
+            _mockSessionService.Setup(s => s.Get(nameof(CertificateSession))).Returns(sessionString);
 
             var result = await _certificateOptionController.Option() as ViewResult;
 
@@ -85,7 +85,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateOptionsTests
         {
             session.Options = null;
             var sessionString = JsonConvert.SerializeObject(session);
-            _mockSessionService.Setup(s => s.Get("CertificateSession")).Returns(sessionString);
+            _mockSessionService.Setup(s => s.Get(nameof(CertificateSession))).Returns(sessionString);
 
             var result = await _certificateOptionController.Option() as RedirectToActionResult;
 
@@ -98,7 +98,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateOptionsTests
         {
             session.Options = null;
             var sessionString = JsonConvert.SerializeObject(session);
-            _mockSessionService.Setup(s => s.Get("CertificateSession")).Returns(sessionString);
+            _mockSessionService.Setup(s => s.Get(nameof(CertificateSession))).Returns(sessionString);
 
             var result = await _certificateOptionController.Option(model) as RedirectToActionResult;
 
@@ -120,7 +120,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateOptionsTests
         {
             session.Versions = null;
             var sessionString = JsonConvert.SerializeObject(session);
-            _mockSessionService.Setup(s => s.Get("CertificateSession")).Returns(sessionString);
+            _mockSessionService.Setup(s => s.Get(nameof(CertificateSession))).Returns(sessionString);
             var result = _certificateOptionController.Back() as RedirectToActionResult;
 
             result.ControllerName.Should().Be("Search");
@@ -132,7 +132,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateOptionsTests
         {
             session.Versions = standardVersions;
             var sessionString = JsonConvert.SerializeObject(session);
-            _mockSessionService.Setup(s => s.Get("CertificateSession")).Returns(sessionString);
+            _mockSessionService.Setup(s => s.Get(nameof(CertificateSession))).Returns(sessionString);
             _mockSessionService.Setup(s => s.Exists("redirectedfromversion")).Returns(true);
             _mockSessionService.Setup(s => s.Get("redirectedfromversion")).Returns("true");
             _mockSessionService.Setup(s => s.Exists("redirecttocheck")).Returns(true);
@@ -150,7 +150,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateOptionsTests
         {
             session.Versions = standardVersions;
             var sessionString = JsonConvert.SerializeObject(session);
-            _mockSessionService.Setup(s => s.Get("CertificateSession")).Returns(sessionString);
+            _mockSessionService.Setup(s => s.Get(nameof(CertificateSession))).Returns(sessionString);
             _mockSessionService.Setup(s => s.Exists("redirecttocheck")).Returns(true);
             _mockSessionService.Setup(s => s.Get("redirecttocheck")).Returns("true");
 
@@ -165,7 +165,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateOptionsTests
         {
             session.Versions = new List<ViewModels.Shared.StandardVersion> { standardVersion };
             var sessionString = JsonConvert.SerializeObject(session);
-            _mockSessionService.Setup(s => s.Get("CertificateSession")).Returns(sessionString);
+            _mockSessionService.Setup(s => s.Get(nameof(CertificateSession))).Returns(sessionString);
             
             var result = _certificateOptionController.Back() as RedirectToActionResult;
 
@@ -178,7 +178,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateOptionsTests
         {
             session.Versions = standardVersions;
             var sessionString = JsonConvert.SerializeObject(session);
-            _mockSessionService.Setup(s => s.Get("CertificateSession")).Returns(sessionString);
+            _mockSessionService.Setup(s => s.Get(nameof(CertificateSession))).Returns(sessionString);
 
             var result = _certificateOptionController.Back() as RedirectToActionResult;
 
