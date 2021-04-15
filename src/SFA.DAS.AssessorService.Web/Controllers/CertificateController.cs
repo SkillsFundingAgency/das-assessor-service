@@ -1,5 +1,7 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -65,7 +67,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 CertificateId = cert.Id,
                 Uln = vm.Uln,
                 StandardCode = vm.StdCode,
-                Versions = versions.Select(s => (StandardVersionViewModel)s).ToList()
+                Versions = Mapper.Map<List<StandardVersionViewModel>>(versions)
             };
 
             _sessionService.Set(nameof(CertificateSession), certificateSession);

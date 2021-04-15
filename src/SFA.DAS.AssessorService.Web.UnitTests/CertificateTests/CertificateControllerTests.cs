@@ -1,4 +1,5 @@
-﻿using FluentAssertions;
+﻿using AutoMapper;
+using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -37,6 +38,12 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
         [SetUp]
         public void SetUp()
         {
+            Mapper.Reset();
+            Mapper.Initialize(cfg =>
+            {
+                cfg.CreateMap<StandardVersionViewModel, StandardVersion>();
+            });
+
             _mockStandardServiceClient = new Mock<IStandardServiceClient>();
             _mockStandardVersionClient = new Mock<IStandardVersionClient>();
             _mockCertificateApiClient = new Mock<ICertificateApiClient>();
@@ -87,7 +94,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
             setSession.Uln.Should().Be(model.Uln);
             setSession.StandardCode.Should().Be(model.StdCode);
             setSession.Options.Should().BeNull();
-            setSession.Versions.Should().BeEquivalentTo(new List<StandardVersionViewModel> { standard });
+            setSession.Versions.Should().BeEquivalentTo(new List<StandardVersionViewModel> { Mapper.Map<StandardVersionViewModel>(standard) });
 
             result.ControllerName.Should().Be("CertificateDeclaration");
             result.ActionName.Should().Be("Declare");
@@ -119,7 +126,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
             setSession.Uln.Should().Be(model.Uln);
             setSession.StandardCode.Should().Be(model.StdCode);
             setSession.Options.Should().BeNull();
-            setSession.Versions.Should().BeEquivalentTo(standards.Select(a => (StandardVersionViewModel)a));
+            setSession.Versions.Should().BeEquivalentTo(Mapper.Map<List<StandardVersionViewModel>>(standards));
         }
 
         [Test, MoqAutoData]
@@ -146,7 +153,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
             setSession.Uln.Should().Be(model.Uln);
             setSession.StandardCode.Should().Be(model.StdCode);
             setSession.Options.Should().BeEquivalentTo(options.CourseOption.ToList());
-            setSession.Versions.Should().BeEquivalentTo(new List<StandardVersionViewModel> { standard });
+            setSession.Versions.Should().BeEquivalentTo(new List<StandardVersionViewModel> { Mapper.Map<StandardVersionViewModel>(standard) });
 
             result.ControllerName.Should().Be("CertificateOption");
             result.ActionName.Should().Be(CertificateActions.Option);
