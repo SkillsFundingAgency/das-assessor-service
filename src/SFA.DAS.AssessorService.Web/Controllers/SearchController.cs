@@ -99,7 +99,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 ShowExtraInfo = resultViewModel.ShowExtraInfo,
                 UlnAlreadyExists = resultViewModel.UlnAlreadyExists,
                 IsNoMatchingFamilyName = resultViewModel.IsNoMatchingFamilyName,
-                Versions = resultViewModel?.Versions
+                Versions = resultViewModel.Versions
             };
 
             _sessionService.Set("SelectedStandard", selectedStandardViewModel);

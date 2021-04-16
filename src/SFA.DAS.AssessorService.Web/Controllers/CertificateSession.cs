@@ -12,6 +12,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         public string EPAOName { get; set; }
         public string StandardUId { get; set; }
         public List<string> Options { get; set; }
-        public IEnumerable<StandardVersion> Versions { get; set; }
+        public List<StandardVersionViewModel> Versions { get; set; }
     }
 }

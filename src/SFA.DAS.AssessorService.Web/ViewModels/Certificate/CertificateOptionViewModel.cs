@@ -10,8 +10,6 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
         
         public string Option { get; set; }
         public List<string> Options { get; set; }
-        public bool IsFromStandard { get; set; }
-
         public void FromCertificate(Domain.Entities.Certificate cert, List<string> options)
         {
             base.FromCertificate(cert);

@@ -1,5 +1,7 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -42,7 +44,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Start(CertificateStartViewModel vm)
         {
-            _sessionService.Remove("CertificateSession");
+            _sessionService.Remove(nameof(CertificateSession));
             var ukprn = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/ukprn")?.Value;
             var username = _contextAccessor.HttpContext.User
                 .FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
@@ -65,10 +67,10 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 CertificateId = cert.Id,
                 Uln = vm.Uln,
                 StandardCode = vm.StdCode,
-                Versions = versions.Select(s => (StandardVersion)s)
+                Versions = Mapper.Map<List<StandardVersionViewModel>>(versions)
             };
 
-            _sessionService.Set("CertificateSession", certificateSession);
+            _sessionService.Set(nameof(CertificateSession), certificateSession);
             _logger.LogInformation($"New Certificate received for ULN {vm.Uln} and Standard Code: {vm.StdCode} with ID {cert.Id}");
             
             if (versions.Count() > 1)
@@ -83,7 +85,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 {
                     certificateSession.StandardUId = singularVersion.StandardUId;
                     certificateSession.Options = options.CourseOption.ToList();
-                    _sessionService.Set("CertificateSession", certificateSession);
+                    _sessionService.Set(nameof(CertificateSession), certificateSession);
 
                     return RedirectToAction("Option", "CertificateOption");
                 } 

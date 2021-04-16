@@ -25,6 +25,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
 
                 if(!standards.Any())
                 {
+                    searchResult.Versions = new List<StandardVersion>();
                     logger.LogInformation($"Failed to get standard for {searchResult.StdCode}");
                     continue;
                 }

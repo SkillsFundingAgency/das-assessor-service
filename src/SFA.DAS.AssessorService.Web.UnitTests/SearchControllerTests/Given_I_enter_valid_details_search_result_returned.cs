@@ -22,9 +22,9 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.SearchControllerTests
                         new List<ResultViewModel>() 
                         { 
                             new ResultViewModel() { FamilyName = "Lamora", Uln = "1234567890", 
-                                Versions = new List<StandardVersion> {
-                                    new StandardVersion { StandardUId="StandardUId1",Version="1.0" },
-                                    new StandardVersion { StandardUId="StandardUId2",Version="1.1" } } } 
+                                Versions = new List<StandardVersionViewModel> {
+                                    new StandardVersionViewModel { StandardUId="StandardUId1",Version="1.0" },
+                                    new StandardVersionViewModel { StandardUId="StandardUId2",Version="1.1" } } } 
                         }
                 });
 
