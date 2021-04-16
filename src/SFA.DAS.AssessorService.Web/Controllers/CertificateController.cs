@@ -11,7 +11,6 @@ using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.ViewModels.Certificate;
 using SFA.DAS.AssessorService.Web.ViewModels.Shared;
-using static SFA.DAS.AssessorService.Web.ViewModels.Certificate.CertificateVersionViewModel;
 
 namespace SFA.DAS.AssessorService.Web.Controllers
 {
@@ -80,12 +79,18 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             else if(versions.Count() == 1)
             {
                 var singularVersion = versions.Single();
+                certificateSession.StandardUId = singularVersion.StandardUId;
                 var options = await _standardServiceClient.GetStandardOptions(singularVersion.StandardUId);
+
                 if(options != null && options.HasOptions())
                 {
-                    certificateSession.StandardUId = singularVersion.StandardUId;
                     certificateSession.Options = options.CourseOption.ToList();
                     _sessionService.Set(nameof(CertificateSession), certificateSession);
+
+                    if(options.OnlyOneOption())
+                    {
+                        return RedirectToAction("Declare", "CertificateDeclaration");
+                    }
 
                     return RedirectToAction("Option", "CertificateOption");
                 } 

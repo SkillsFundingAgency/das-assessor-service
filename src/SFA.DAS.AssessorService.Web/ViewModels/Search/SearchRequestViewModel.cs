@@ -1,5 +1,6 @@
 ﻿using SFA.DAS.AssessorService.Web.ViewModels.Shared;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace SFA.DAS.AssessorService.Web.ViewModels.Search
 {
@@ -34,5 +35,8 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Search
         public bool ShowExtraInfo { get; set; }
         public bool IsNoMatchingFamilyName { get; set; }
         public IEnumerable<StandardVersionViewModel> Versions { get; set; }
+
+        public bool OnlySingleVersion => Versions != null && Versions.Count() == 1;
+        public bool OnlySingleOption => OnlySingleVersion && Versions.Single().Options != null && Versions.Single().Options.Count() == 1;
     }
 }

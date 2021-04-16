@@ -3,6 +3,7 @@ using SFA.DAS.AssessorService.Domain.JsonData;
 using System.Collections.Generic;
 using SFA.DAS.AssessorService.Web.ViewModels.Shared;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
+using System.Linq;
 
 namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
 {
@@ -16,7 +17,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
             Versions = versions;
         }
 
-        public Domain.Entities.Certificate GetCertificateFromViewModel(Domain.Entities.Certificate certificate, StandardVersion standardVersion)
+        public Domain.Entities.Certificate GetCertificateFromViewModel(Domain.Entities.Certificate certificate, StandardVersion standardVersion, StandardOptions options)
         {
             var certData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
             certData.StandardReference = standardVersion.IFateReferenceNumber;
@@ -25,15 +26,18 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
             certData.StandardPublicationDate = standardVersion.EffectiveFrom;
             certData.Version = standardVersion.Version.ToString();
 
-            if (certificate.StandardUId != StandardUId)
+            if (options != null && options.OnlyOneOption())
+            {
+                // If only one option set on the certificate
+                certData.CourseOption = options.CourseOption.Single();
+            }
+            else if(certificate.StandardUId != StandardUId)
             {
                 // If changed, wipe the option in case different versions have different options
                 certData.CourseOption = null;
             }
 
             certificate.CertificateData = JsonConvert.SerializeObject(certData);
-
-
             certificate.StandardUId = StandardUId;
             return certificate;
         }

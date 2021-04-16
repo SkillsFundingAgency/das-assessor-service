@@ -130,10 +130,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
             SessionService.TryGet<bool>("redirecttocheck", out var redirectToCheck);
             var versionChanged = certificate.StandardUId != vm.StandardUId;
-            var updatedCertificate = vm.GetCertificateFromViewModel(certificate, standardVersion);
-            await CertificateApiClient.UpdateCertificate(new UpdateCertificateRequest(updatedCertificate) { Username = username, Action = action });
-
-            Logger.LogInformation($"Certificate for CertificateVersionViewModel requested by {username} with Id {certificate.Id} updated.");
 
             if (!versionChanged && redirectToCheck)
             {
@@ -141,24 +137,41 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 return new RedirectToActionResult("Check", "CertificateCheck", null);
             }
 
-            // Reset options to null as they will be need to be re-queried 
-            // if the version has changed, or if it hasn't and we are returning via the check page.
             certSession.StandardUId = vm.StandardUId;
-            certSession.Options = null;
-            SessionService.Set(nameof(CertificateSession), certSession);
-
             var options = await _standardServiceClient.GetStandardOptions(vm.StandardUId);
+            var updatedCertificate = vm.GetCertificateFromViewModel(certificate, standardVersion, options);
+            await CertificateApiClient.UpdateCertificate(new UpdateCertificateRequest(updatedCertificate) { Username = username, Action = action });
+            
+            Logger.LogInformation($"Certificate for CertificateVersionViewModel requested by {username} with Id {certificate.Id} updated.");
+
             if (options != null && options.HasOptions())
             {
                 certSession.Options = options.CourseOption.ToList();
                 SessionService.Set(nameof(CertificateSession), certSession);
+
+                if (options.OnlyOneOption())
+                {
+                    if (redirectToCheck)
+                    {
+                        return new RedirectToActionResult("Check", "CertificateCheck", null);
+                    }
+
+                    return new RedirectToActionResult("Declare", "CertificateDeclaration", null);
+                }
+
                 object routeValues = null;
                 if (redirectToCheck)
                 {
                     routeValues = new { redirecttocheck = true };
                 }
+
                 SessionService.Set("redirectedfromversion", true);
                 return new RedirectToActionResult("Option", "CertificateOption", routeValues);
+            }
+            else
+            {
+                certSession.Options = null;
+                SessionService.Set(nameof(CertificateSession), certSession);
             }
 
             if (redirectToCheck)

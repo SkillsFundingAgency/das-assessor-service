@@ -90,10 +90,10 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateOptionsTests
         }
 
         [Test, MoqAutoData]
-        public void AndClickingBack_RedirectsToSearchResult_IfHasOnlyOneOption(CertificateSession session)
+        public void AndClickingBack_RedirectsToSearchResult_IfHasOnlyOneOption(CertificateSession session, StandardVersionViewModel version)
         {
             session.Options = new List<string> { "1 Option" };
-            session.Versions = null;
+            session.Versions = new List<StandardVersionViewModel> { version };
             var sessionString = JsonConvert.SerializeObject(session);
             _mockSessionService.Setup(s => s.Get(nameof(CertificateSession))).Returns(sessionString);
 
@@ -118,10 +118,24 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateOptionsTests
         }
 
         [Test, MoqAutoData]
-        public void AndClickingBack_RedirectsToSearchResult_IfNoOptionsWith1Version(CertificateSession session, StandardVersionViewModel standardVersion)
+        public void AndClickingBack_RedirectsToSearchResult_IfNoOptionsWithOneVersion(CertificateSession session, StandardVersionViewModel standardVersion)
         {
             session.Options = null;
             session.Versions = new List<StandardVersionViewModel> { standardVersion };
+            var sessionString = JsonConvert.SerializeObject(session);
+            _mockSessionService.Setup(s => s.Get(nameof(CertificateSession))).Returns(sessionString);
+
+            var result = _certificateDeclarationController.Back() as RedirectToActionResult;
+
+            result.ControllerName.Should().Be("Search");
+            result.ActionName.Should().Be("Result");
+        }
+
+        [Test, MoqAutoData]
+        public void AndClickingBack_RedirectsToSearchResult_IfOnlyOneOption(CertificateSession session, string option)
+        {
+            session.Options = new List<string> { option };
+            session.Versions = null;
             var sessionString = JsonConvert.SerializeObject(session);
             _mockSessionService.Setup(s => s.Get(nameof(CertificateSession))).Returns(sessionString);
 

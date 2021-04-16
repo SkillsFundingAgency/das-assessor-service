@@ -1,5 +1,6 @@
 ﻿using SFA.DAS.AssessorService.Domain.Entities;
 using System;
+using System.Collections.Generic;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models.Standards
 {
@@ -12,6 +13,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Standards
         public int LarsCode { get; set; }
         public int Level { get; set; }
         public DateTime EffectiveFrom { get; set; }
+        public IEnumerable<string> Options { get; set; }
 
         public static implicit operator StandardVersion(Standard standard)
         {

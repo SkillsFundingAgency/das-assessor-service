@@ -42,28 +42,26 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             {
                 return RedirectToAction("Index", "Search");
             }
-            
-            var hasOptions = certSession.Options != null && certSession.Options.Any();
-            var hasVersions = certSession.Versions != null && certSession.Versions.Any();
 
-            if (hasOptions)
+            var hasMultipleOptions = certSession.Options != null && certSession.Options.Count > 1;
+            var hasMultipleVersions = certSession.Versions != null && certSession.Versions.Count > 1;
+
+            var hasSingleOption = certSession.Options != null && certSession.Options.Count == 1;
+            var hasSingleVersion = certSession.Versions != null && certSession.Versions.Count == 1;
+
+            if (hasMultipleOptions)
             {
-                if (certSession.Options.Count == 1)
-                {
-                    return RedirectToAction("Result", "Search");
-                }
-
                 return RedirectToAction("Option", "CertificateOption");
             }
 
-            if (hasVersions)
+            if (hasMultipleVersions)
             {
-                if (certSession.Versions.Count == 1)
-                {
-                    return RedirectToAction("Result", "Search");
-                }
-
                 return RedirectToAction("Version", "CertificateVersion");
+            }
+
+            if (hasSingleOption || hasSingleVersion)
+            {
+                return RedirectToAction("Result", "Search");
             }
 
             // No Options and No Version, return to search.

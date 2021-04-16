@@ -107,12 +107,19 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
             {
                 // If one version, populate data, otherwise await for version update later in journey.
                 var standard = standardVersions.First();
-                
+
+                // If only one option, also set on cert data
+                var options = await _standardService.GetStandardOptionsByStandardId(standard.StandardUId);
+                if(options.CourseOption != null && options.CourseOption.Count() == 1)
+                {
+                    certData.CourseOption = options.CourseOption.Single();
+                }
+
                 certData.StandardReference = standard.IfateReferenceNumber;
                 certData.StandardName = standard.Title;
                 certData.StandardLevel = standard.Level;
                 certData.StandardPublicationDate = standard.EffectiveFrom;
-                certData.Version = standard.Version.ToString();
+                certData.Version = standard.Version.ToString();               
 
                 certificate.StandardUId = standard.StandardUId;
                 certificate.CertificateData = JsonConvert.SerializeObject(certData);

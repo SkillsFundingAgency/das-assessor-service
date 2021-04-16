@@ -130,7 +130,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
         }
 
         [Test, MoqAutoData]
-        public async Task WhenStartingANewCertificate_WithOneVersion_GoesToOptionPage(CertificateStartViewModel model, StandardVersion standard, StandardOptions options)
+        public async Task WhenStartingANewCertificate_WithOneVersion_WithOptions_GoesToOptionPage(CertificateStartViewModel model, StandardVersion standard, StandardOptions options)
         {
             CertificateSession setSession = new CertificateSession();
             _mockStandardVersionClient.Setup(s => s.GetStandardVersionsByLarsCode(model.StdCode)).ReturnsAsync(new List<StandardVersion> { standard });
@@ -157,6 +157,37 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
 
             result.ControllerName.Should().Be("CertificateOption");
             result.ActionName.Should().Be(CertificateActions.Option);
+        }
+
+        [Test, MoqAutoData]
+        public async Task WhenStartingANewCertificate_WithOneVersion_WithOneOption_GoesToDeclarationPage(CertificateStartViewModel model, StandardVersion standard, StandardOptions options, string option)
+        {
+            CertificateSession setSession = new CertificateSession();
+            options.CourseOption = new List<string> { option };
+            _mockStandardVersionClient.Setup(s => s.GetStandardVersionsByLarsCode(model.StdCode)).ReturnsAsync(new List<StandardVersion> { standard });
+            _mockStandardServiceClient.Setup(s => s.GetStandardOptions(standard.StandardUId)).ReturnsAsync(options);
+            _mockSessionService.Setup(c => c.Set(nameof(CertificateSession), It.IsAny<object>()))
+                .Callback<string, object>((key, session) =>
+                {
+                    if (key == nameof(CertificateSession) && session is CertificateSession)
+                    {
+                        setSession = (CertificateSession)session;
+                    }
+                });
+            var result = await _certificateController.Start(model) as RedirectToActionResult;
+
+            _mockCertificateApiClient.Verify(s => s.Start(It.Is<StartCertificateRequest>(
+                m => m.StandardCode == model.StdCode && m.Uln == model.Uln
+                && m.Username == Username && m.UkPrn == Ukprn)));
+
+            setSession.CertificateId.Should().Be(CertificateId);
+            setSession.Uln.Should().Be(model.Uln);
+            setSession.StandardCode.Should().Be(model.StdCode);
+            setSession.Options.Should().BeEquivalentTo(options.CourseOption.ToList());
+            setSession.Versions.Should().BeEquivalentTo(new List<StandardVersionViewModel> { Mapper.Map<StandardVersionViewModel>(standard) });
+
+            result.ControllerName.Should().Be("CertificateDeclaration");
+            result.ActionName.Should().Be("Declare");
         }
     }
 }
