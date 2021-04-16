@@ -17,7 +17,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
         public void FromCertificate(Domain.Entities.Certificate cert, IEnumerable<StandardVersionViewModel> versions)
         {
             base.FromCertificate(cert);
-            Versions = versions;
+            Versions = versions.OrderBy(v => v.Version);
         }
 
         public override Domain.Entities.Certificate GetCertificateFromViewModel(Domain.Entities.Certificate certificate, CertificateData certData)
