@@ -12,5 +12,6 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Standards
         public IEnumerable<string> CourseOption { get; set; }
 
         public bool HasOptions() => CourseOption != null && CourseOption.Any();
+        public bool OnlyOneOption() => HasOptions() && CourseOption.Count() == 1;
     }
 }

@@ -69,6 +69,19 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateOptionsTests
         }
 
         [Test, MoqAutoData]
+        public async Task WhenOneOptionInSession_RedirectsToDeclaration(CertificateSession session, string option)
+        {
+            session.Options = new List<string> { option };
+            var sessionString = JsonConvert.SerializeObject(session);
+            _mockSessionService.Setup(s => s.Get(nameof(CertificateSession))).Returns(sessionString);
+
+            var result = await _certificateOptionController.Option() as RedirectToActionResult;
+
+            result.ControllerName.Should().Be("CertificateDeclaration");
+            result.ActionName.Should().Be("Declare");
+        }
+
+        [Test, MoqAutoData]
         public async Task WhenOptionsInSession_LoadsOptionView(CertificateSession session, List<string> options)
         {
             session.Options = options;

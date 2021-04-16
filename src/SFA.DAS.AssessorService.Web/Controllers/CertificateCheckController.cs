@@ -34,12 +34,12 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 return RedirectToAction("Index", "Search");
             }
             var certSession = JsonConvert.DeserializeObject<CertificateSession>(sessionString);
-            TempData["HideOption"] = certSession.Options == null || !certSession.Options.Any();
-            TempData["HideChangeVersion"] = certSession.Versions == null || certSession.Versions.Count() <= 1;
-            
+            TempData["HideOption"] = certSession.Options == null || certSession.Options.Count <= 1;
+            TempData["HideChangeVersion"] = certSession.Versions == null || certSession.Versions.Count <= 1;
+
             return await LoadViewModel<CertificateCheckViewModel>("~/Views/Certificate/Check.cshtml");
         }
-        
+
         [HttpPost(Name = "Check")]
         public async Task<IActionResult> Check(CertificateCheckViewModel vm)
         {
@@ -54,7 +54,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 return await Check();
             }
 
-            return await SaveViewModel(vm, 
+            return await SaveViewModel(vm,
                 returnToIfModelNotValid: "~/Views/Certificate/Check.cshtml",
                 nextAction: RedirectToAction("Confirm", "CertificateConfirmation"), action: CertificateActions.Submit);
         }

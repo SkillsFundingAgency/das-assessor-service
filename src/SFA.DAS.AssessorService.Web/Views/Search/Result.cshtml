@@ -36,11 +36,18 @@
                                 <dt class="govuk-summary-list__key">Level:</dt>
                                 <dd class="govuk-summary-list__value">@Model.Level</dd>
                             </div>
-                            @if (Model.Versions.Count() == 1)
+                            @if (Model.OnlySingleVersion)
                             {
                                 <div class="govuk-summary-list__row">
                                     <dt class="govuk-summary-list__key">Version:</dt>
                                     <dd class="govuk-summary-list__value">@Model.Versions.First().Version</dd>
+                                </div>
+                            }
+                            @if (Model.OnlySingleOption)
+                            {
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">Option:</dt>
+                                    <dd class="govuk-summary-list__value">@Model.Versions.First().Options.First()</dd>
                                 </div>
                             }
                             <div class="govuk-summary-list__row">
@@ -81,11 +88,18 @@
                                 <dt class="govuk-summary-list__key">Level:</dt>
                                 <dd class="govuk-summary-list__value">@Model.Level</dd>
                             </div>
-                            @if (Model.Versions.Count() == 1)
+                            @if (Model.OnlySingleVersion)
                             {
                                 <div class="govuk-summary-list__row">
                                     <dt class="govuk-summary-list__key">Version:</dt>
                                     <dd class="govuk-summary-list__value">@Model.Versions.First().Version</dd>
+                                </div>
+                            }
+                            @if (Model.OnlySingleOption)
+                            {
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">Option:</dt>
+                                    <dd class="govuk-summary-list__value">@Model.Versions.First().Options.First()</dd>
                                 </div>
                             }
                             @if (Model.ShowExtraInfo)
@@ -141,7 +155,6 @@
             }
             else
             {
-                /* SV-588 */
                 <h1 class="govuk-heading-xl">An assessment has already been recorded against this apprentice</h1>
                 <dl class="govuk-summary-list">
                     <div class="govuk-summary-list__row">

@@ -5,7 +5,7 @@ using SFA.DAS.AssessorService.Domain.JsonData;
 
 namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
 {
-    public class CertificateDateViewModel : CertificateBaseViewModel, ICertificateViewModel
+    public class CertificateDateViewModel : CertificateBaseViewModel
     {
         public string SelectedGrade { get; set; }
         public DateTime Date { get; set; }
@@ -30,7 +30,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
             WarningShown = "false";
         }
 
-        public Domain.Entities.Certificate GetCertificateFromViewModel(Domain.Entities.Certificate certificate, CertificateData data)
+        public override Domain.Entities.Certificate GetCertificateFromViewModel(Domain.Entities.Certificate certificate, CertificateData data)
         {
             data.AchievementDate = new DateTime(int.Parse(Year), int.Parse(Month), int.Parse(Day));
 

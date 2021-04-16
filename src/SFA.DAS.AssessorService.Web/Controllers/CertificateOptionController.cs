@@ -58,6 +58,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 return RedirectToAction("Index", "Search");
             }
 
+            if(certSession.Options.Count == 1)
+            {
+                return RedirectToAction("Declare", "CertificateDeclaration");
+            }
+
             Logger.LogInformation($"Got Certificate for CertificateOptionViewModel requested by {username} with Id {certificate.Id}");
 
             viewModel.FromCertificate(certificate, certSession.Options);

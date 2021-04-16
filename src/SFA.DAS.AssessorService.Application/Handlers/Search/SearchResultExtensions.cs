@@ -17,6 +17,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
         public static List<SearchResult> PopulateStandards(this List<SearchResult> searchResults, IStandardService standardService, ILogger<SearchHandler> logger)
         {
             var allStandards = standardService.GetAllStandardVersions().Result;
+            var allOptions = standardService.GetStandardOptions().Result;
 
             foreach (var searchResult in searchResults)
             {
@@ -25,18 +26,19 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
 
                 if(!standards.Any())
                 {
-                    searchResult.Versions = new List<StandardVersion>();
                     logger.LogInformation($"Failed to get standard for {searchResult.StdCode}");
                     continue;
                 }
-
-                searchResult.Standard = standards.First().Title;
-                searchResult.Level = standards.First().Level;
+                                
+                var firstStandard = standards.First();
+                searchResult.Standard = firstStandard.Title;
+                searchResult.Level = firstStandard.Level;
                 searchResult.Versions = standards.Select(s => new StandardVersion
                 {
                     Title = s.Title,
                     StandardUId = s.StandardUId,
-                    Version = s.Version.ToString()
+                    Version = s.Version.ToString(),
+                    Options = allOptions.Where(o => o.StandardUId == s.StandardUId).SingleOrDefault()?.CourseOption
                 }).ToList();
             }
 

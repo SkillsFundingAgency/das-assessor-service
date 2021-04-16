@@ -6,7 +6,7 @@ using SFA.DAS.AssessorService.Domain.JsonData;
 
 namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
 {
-    public class CertificateGradeViewModel : CertificateBaseViewModel, ICertificateViewModel
+    public class CertificateGradeViewModel : CertificateBaseViewModel
     {
         public string SelectedGrade { get; set; }       
 
@@ -34,7 +34,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
             }
         }
 
-        public Domain.Entities.Certificate GetCertificateFromViewModel(Domain.Entities.Certificate certificate, CertificateData data)
+        public override Domain.Entities.Certificate GetCertificateFromViewModel(Domain.Entities.Certificate certificate, CertificateData data)
         {
             data.OverallGrade = SelectedGrade;
             certificate.CertificateData = JsonConvert.SerializeObject(data);
