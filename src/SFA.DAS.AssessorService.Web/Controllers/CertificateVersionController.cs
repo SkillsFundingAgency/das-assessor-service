@@ -50,26 +50,13 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
             var viewModel = new CertificateVersionViewModel();
 
-            var query = ContextAccessor.HttpContext.Request.Query;
-            if (query.ContainsKey("redirecttocheck") && bool.Parse(query["redirecttocheck"]))
-            {
-                Logger.LogInformation($"RedirectToCheck for CertificateVersionViewModel is true");
-                SessionService.Set("redirecttocheck", "true");
-                viewModel.BackToCheckPage = true;
-            }
-            else
-            {
-                SessionService.Remove("redirecttocheck");
-            }
+            CheckAndSetRedirectToCheck(viewModel);
 
-            var sessionString = SessionService.Get(nameof(CertificateSession));
-            if (sessionString == null)
+            if (!TryGetCertificateSession("CertificateVersionViewModel", username, out CertificateSession certSession))
             {
-                Logger.LogInformation($"Session for CertificateVersionViewModel requested by {username} has been lost. Redirecting to Search Index");
                 return RedirectToAction("Index", "Search");
             }
 
-            var certSession = JsonConvert.DeserializeObject<CertificateSession>(sessionString);
             var certificate = await CertificateApiClient.GetCertificate(certSession.CertificateId);
 
             if (certSession.Versions == null || certSession.Versions.Count() == 0)
@@ -119,13 +106,10 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
             var certificate = await CertificateApiClient.GetCertificate(vm.Id);
 
-            var sessionString = SessionService.Get(nameof(CertificateSession));
-            if (sessionString == null)
+            if (!TryGetCertificateSession("CertificateVersionViewModel", username, out var certSession))
             {
-                Logger.LogInformation($"Session for CertificateVersionViewModel requested by {username} has been lost. Redirecting to Search Index");
                 return RedirectToAction("Index", "Search");
             }
-            var certSession = JsonConvert.DeserializeObject<CertificateSession>(sessionString);
 
             if (!ModelState.IsValid)
             {
@@ -148,9 +132,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             var versionChanged = certificate.StandardUId != vm.StandardUId;
             var updatedCertificate = vm.GetCertificateFromViewModel(certificate, standardVersion);
             await CertificateApiClient.UpdateCertificate(new UpdateCertificateRequest(updatedCertificate) { Username = username, Action = action });
-            
+
             Logger.LogInformation($"Certificate for CertificateVersionViewModel requested by {username} with Id {certificate.Id} updated.");
-            
+
             if (!versionChanged && redirectToCheck)
             {
                 // if version hasn't changed, don't need to update options.

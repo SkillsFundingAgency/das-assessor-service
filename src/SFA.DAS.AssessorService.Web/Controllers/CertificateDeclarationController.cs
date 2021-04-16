@@ -38,14 +38,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         public IActionResult Back()
         {
             var username = GetUsernameFromClaim();
-            var sessionString = SessionService.Get(nameof(CertificateSession));
-            if (sessionString == null)
+            if (!TryGetCertificateSession("CertificateDeclarationViewModel", username, out CertificateSession certSession))
             {
-                Logger.LogInformation($"Session for CertificateDeclarationViewModel requested by {username} has been lost. Redirecting to Search Index");
                 return RedirectToAction("Index", "Search");
             }
-            var certSession = JsonConvert.DeserializeObject<CertificateSession>(sessionString);
-
+            
             var hasOptions = certSession.Options != null && certSession.Options.Any();
             var hasVersions = certSession.Versions != null && certSession.Versions.Any();
 
