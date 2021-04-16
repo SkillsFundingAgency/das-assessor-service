@@ -105,6 +105,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             Logger.LogInformation($"Save View Model for CertificateVersionViewModel for {username} with values: {GetModelValues(vm)}");
 
             var certificate = await CertificateApiClient.GetCertificate(vm.Id);
+            var certData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
 
             if (!TryGetCertificateSession("CertificateVersionViewModel", username, out var certSession))
             {
@@ -139,7 +140,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
             certSession.StandardUId = vm.StandardUId;
             var options = await _standardServiceClient.GetStandardOptions(vm.StandardUId);
-            var updatedCertificate = vm.GetCertificateFromViewModel(certificate, standardVersion, options);
+            
+            // To pass in to inherited method.
+            vm.SelectedStandardVersion = standardVersion;
+            vm.SelectedStandardOptions = options;
+            var updatedCertificate = vm.GetCertificateFromViewModel(certificate, certData);
             await CertificateApiClient.UpdateCertificate(new UpdateCertificateRequest(updatedCertificate) { Username = username, Action = action });
             
             Logger.LogInformation($"Certificate for CertificateVersionViewModel requested by {username} with Id {certificate.Id} updated.");

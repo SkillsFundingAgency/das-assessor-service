@@ -31,7 +31,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             CertificateApiClient = certificateApiClient;
             SessionService = sessionService;
         }
-        protected async Task<IActionResult> LoadViewModel<T>(string view) where T : ICertificateViewModel, new()
+        protected async Task<IActionResult> LoadViewModel<T>(string view) where T : CertificateBaseViewModel, new()
         {
             var username = GetUsernameFromClaim();
 
@@ -39,7 +39,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
             var viewModel = new T();
 
-            CheckAndSetRedirectToCheckBase(viewModel);
+            CheckAndSetRedirectToCheck(viewModel);
 
             if (!TryGetCertificateSession(typeof(T).Name, username, out var certSession))
             {
@@ -57,7 +57,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             return View(view, viewModel);
         }
 
-        protected async Task<IActionResult> SaveViewModel<T>(T vm, string returnToIfModelNotValid, RedirectToActionResult nextAction, string action) where T : ICertificateViewModel
+        protected async Task<IActionResult> SaveViewModel<T>(T vm, string returnToIfModelNotValid, RedirectToActionResult nextAction, string action) where T : CertificateBaseViewModel
         {
             var username = GetUsernameFromClaim();
 
@@ -121,19 +121,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         }
 
         protected void CheckAndSetRedirectToCheck<T>(T viewModel) where T : CertificateBaseViewModel
-        {
-            var query = ContextAccessor.HttpContext.Request.Query;
-            if (query.ContainsKey("redirecttocheck") && bool.Parse(query["redirecttocheck"]))
-            {
-                Logger.LogInformation($"RedirectToCheck for {typeof(T).Name} is true");
-                SessionService.Set("redirecttocheck", "true");
-                viewModel.BackToCheckPage = true;
-            }
-            else
-                SessionService.Remove("redirecttocheck");
-        }
-
-        private void CheckAndSetRedirectToCheckBase<T>(T viewModel) where T : ICertificateViewModel
         {
             var query = ContextAccessor.HttpContext.Request.Query;
             if (query.ContainsKey("redirecttocheck") && bool.Parse(query["redirecttocheck"]))

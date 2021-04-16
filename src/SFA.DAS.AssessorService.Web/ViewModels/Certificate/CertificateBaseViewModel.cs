@@ -8,6 +8,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
     {
         protected CertificateData CertificateData;
 
+        public abstract Domain.Entities.Certificate GetCertificateFromViewModel(Domain.Entities.Certificate certificate, CertificateData certData);
         public virtual void FromCertificate(Domain.Entities.Certificate cert)
         {
             CertificateData = JsonConvert.DeserializeObject<CertificateData>(cert.CertificateData);
@@ -21,7 +22,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
             Uln = cert.Uln.ToString();
             StandardUId = cert.StandardUId;            
         }
-
+                
         public Guid Id { get; set; }
         public string FamilyName { get; set; }
         public string GivenNames { get; set; }

@@ -11,25 +11,27 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
     {
         public IEnumerable<StandardVersionViewModel> Versions { get; set; }
 
+        public StandardVersion SelectedStandardVersion { get; set; }
+        public StandardOptions SelectedStandardOptions { get; set; }
+
         public void FromCertificate(Domain.Entities.Certificate cert, IEnumerable<StandardVersionViewModel> versions)
         {
             base.FromCertificate(cert);
             Versions = versions;
         }
 
-        public Domain.Entities.Certificate GetCertificateFromViewModel(Domain.Entities.Certificate certificate, StandardVersion standardVersion, StandardOptions options)
+        public override Domain.Entities.Certificate GetCertificateFromViewModel(Domain.Entities.Certificate certificate, CertificateData certData)
         {
-            var certData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
-            certData.StandardReference = standardVersion.IFateReferenceNumber;
-            certData.StandardName = standardVersion.Title;
-            certData.StandardLevel = standardVersion.Level;
-            certData.StandardPublicationDate = standardVersion.EffectiveFrom;
-            certData.Version = standardVersion.Version.ToString();
+            certData.StandardReference = SelectedStandardVersion.IFateReferenceNumber;
+            certData.StandardName = SelectedStandardVersion.Title;
+            certData.StandardLevel = SelectedStandardVersion.Level;
+            certData.StandardPublicationDate = SelectedStandardVersion.EffectiveFrom;
+            certData.Version = SelectedStandardVersion.Version.ToString();
 
-            if (options != null && options.OnlyOneOption())
+            if (SelectedStandardOptions != null && SelectedStandardOptions.OnlyOneOption())
             {
                 // If only one option set on the certificate
-                certData.CourseOption = options.CourseOption.Single();
+                certData.CourseOption = SelectedStandardOptions.CourseOption.Single();
             }
             else if(certificate.StandardUId != StandardUId)
             {
