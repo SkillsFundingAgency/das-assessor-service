@@ -44,7 +44,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
         private async Task<IActionResult> LoadViewModel(string view)
         {
-            var username = ContextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
+            var username = GetUsernameFromClaim();
 
             Logger.LogInformation($"Load View Model for CertificateVersionViewModel for {username}");
 
@@ -112,8 +112,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
         private async Task<IActionResult> SaveViewModel(CertificateVersionViewModel vm, string returnToIfModelNotValid, RedirectToActionResult nextAction, string action)
         {
-            var username = ContextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
-            var epaoid = ContextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/epaoid")?.Value;
+            var username = GetUsernameFromClaim();
+            var epaoid = GetEpaOrgIdFromClaim();
 
             Logger.LogInformation($"Save View Model for CertificateVersionViewModel for {username} with values: {GetModelValues(vm)}");
 

@@ -37,7 +37,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [HttpGet("back", Name = "Back")]
         public IActionResult Back()
         {
-            var username = ContextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
+            var username = GetUsernameFromClaim();
             var sessionString = SessionService.Get(nameof(CertificateSession));
             if (sessionString == null)
             {

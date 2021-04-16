@@ -33,7 +33,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         }
         protected async Task<IActionResult> LoadViewModel<T>(string view) where T : ICertificateViewModel, new()
         {
-            var username = ContextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
+            var username = GetUsernameFromClaim();
 
             Logger.LogInformation($"Load View Model for {typeof(T).Name} for {username}");
             
@@ -70,7 +70,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
         protected async Task<IActionResult> SaveViewModel<T>(T vm, string returnToIfModelNotValid, RedirectToActionResult nextAction, string action) where T : ICertificateViewModel
         {
-            var username = ContextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
+            var username = GetUsernameFromClaim();
             
             Logger.LogInformation($"Save View Model for {typeof(T).Name} for {username} with values: {GetModelValues(vm)}");
 
@@ -123,5 +123,20 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
             return properties.Aggregate("", (current, prop) => current + $"{prop.Name}: {prop.GetValue(viewModel)}, ");
         }      
+
+        protected string GetUsernameFromClaim()
+        {
+            return GetClaimValue("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn");
+        }
+
+        protected string GetEpaOrgIdFromClaim()
+        {
+            return GetClaimValue("http://schemas.portal.com/epaoid");
+        }
+
+        private string GetClaimValue(string key)
+        {
+            return ContextAccessor.HttpContext.User.FindFirst(key)?.Value;
+        }
     }
 }

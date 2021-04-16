@@ -32,7 +32,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             bool? reset,
             bool? redirectToCheck = false)
         {
-            var username = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
+            var username = GetUsernameFromClaim();
 
             var certificateAddressViewModel = await LoadViewModel<CertificateAddressViewModel>("~/Views/Certificate/Address.cshtml");            
 
@@ -51,8 +51,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [HttpPost(Name = "Address")]
         public async Task<IActionResult> Address(CertificateAddressViewModel vm)
         {
-            var username = _contextAccessor.HttpContext.User
-                .FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
+            var username = GetUsernameFromClaim();
 
             if (vm.SelectPreviousAddress)
             {
@@ -84,7 +83,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [HttpGet("resetaddress", Name = "ResetAddress")]
         public async Task<IActionResult> ResetAddress(bool? redirectToCheck = false)
         {
-            var username = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
+            var username = GetUsernameFromClaim();
 
             var viewModel = await LoadViewModel<CertificateAddressViewModel>("~/Views/Certificate/Address.cshtml");
             var viewResult = viewModel as ViewResult;
