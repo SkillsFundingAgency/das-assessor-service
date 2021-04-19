@@ -156,10 +156,12 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
         }
 
         [Test, MoqAutoData]
-        public async Task WhenPostingToSelectAVersion_WhenSavingModel_AndEpaoIsNotApprovedToRecordAGrade_ErrorsAndReturnsToSelectVersions(CertificateVersionViewModel vm, StandardVersion standardVersion, CertificateSession session)
+        public async Task WhenPostingToSelectAVersion_WhenSavingModel_AndEpaoIsNotApprovedToRecordAGrade_ErrorsAndReturnsToSelectVersionsAndPersistsRedirectToCheckIfSet(CertificateVersionViewModel vm, StandardVersion standardVersion, CertificateSession session)
         {
             var sessionString = JsonConvert.SerializeObject(session);
             _mockSessionService.Setup(s => s.Get(nameof(CertificateSession))).Returns(sessionString);
+            var redirect = true;
+            _mockSessionService.Setup(s => s.TryGet("redirecttocheck", out redirect));
             var approvedVersions = new List<StandardVersion>();
 
             _mockStandardVersionClient.Setup(s => s.GetStandardVersionByStandardUId(vm.StandardUId)).ReturnsAsync(standardVersion);
@@ -171,6 +173,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
 
             var model = result.Model as CertificateVersionViewModel;
             model.StandardUId.Should().Be(vm.StandardUId);
+            model.BackToCheckPage.Should().Be(true);
 
             _certificateVersionController.ModelState.ErrorCount.Should().Be(1);
             _certificateVersionController.ModelState.IsValid.Should().Be(false);
