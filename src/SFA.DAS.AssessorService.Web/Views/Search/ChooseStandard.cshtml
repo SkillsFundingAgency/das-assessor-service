@@ -43,18 +43,24 @@
 
                 <h1 class="govuk-heading-xl">@Localizer["PageHeading"]</h1>
 
-                <dl class="govuk-summary-list govuk-summary-list--no-border">
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">Name</dt>
-                        <dd class="govuk-summary-list__value">@Model.SearchResults.First().GivenNames @Model.SearchResults.First().FamilyName</dd>
-                    </div>
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key"><abbr title="Unique learner number">ULN</abbr></dt>
-                        <dd class="govuk-summary-list__value">@Model.SearchResults.First().Uln</dd>
-                    </div>
-                </dl>
 
-                <p class="govuk-body govuk-!-margin-bottom-5">If the name, standard or level is incorrect, you need to agree on the correct details along with the training provider and the employer. The training provider needs to then update the Individualised Learner Record (<abbr title="Individualised Learner Record">ILR</abbr>).</p>
+                <table class="govuk-table">
+                    <tbody class="govuk-table__body">
+                        <tr class="govuk-table__row">
+                            <th scope="row" class="govuk-table__header">Name</th>
+                            <td class="govuk-table__cell">@Model.SearchResults.First().GivenNames @Model.SearchResults.First().FamilyName</td>
+                        </tr>
+                        <tr class="govuk-table__row">
+                            <th scope="row" class="govuk-table__header"><abbr title="Unique learner number">ULN</abbr></th>
+                            <td class="govuk-table__cell">@Model.SearchResults.First().Uln</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p class="govuk-body">
+                    If the name is incorrect, you need to agree the correct details with the training provider and employer.
+                    Once the training provider updates the Individual Learner Record (<abbr title="Individualised Learner Record">ILR</abbr>), return here and continue.
+                </p>
 
                 @if (Model.SearchResults.Any(sr => sr.CertificateReference != null && sr.OverallGrade != CertificateGrade.Fail))
                 {
@@ -68,7 +74,7 @@
                             <h2 class="govuk-heading-m">@Localizer["CompletedStandardsHeading"]</h2>
                             @foreach (var result in Model.SearchResults.Where(sr => sr.CertificateReference != null && sr.OverallGrade != CertificateGrade.Fail))
                             {
-                                <dl class="govuk-summary-list govuk-!-margin-bottom-6">
+                                <dl class="govuk-summary-list">
                                     <div class="govuk-summary-list__row">
                                         <dt class="govuk-summary-list__key">Standard name</dt>
                                         <dd class="govuk-summary-list__value">@result.Standard</dd>
@@ -97,21 +103,18 @@
                     @if (Model.SearchResults.Any(sr => sr.CertificateReference == null || sr.OverallGrade == CertificateGrade.Fail))
                     {
                         <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
-                            <h2 class="govuk-fieldset__heading">
+                            <h1 class="govuk-fieldset__heading">
                                 @Localizer["SelectStandardHeading"]
-                            </h2>
+                            </h1>
                         </legend>
-                        <div class="govuk-radios govuk-!-margin-bottom-6">
+                        <div class="govuk-radios">
                             @foreach (var result in Model.SearchResults.Where(sr => sr.CertificateReference == null))
                             {
                                 <div class="govuk-radios__item">
                                     <input class="govuk-radios__input" id=@("standard_" + result.StdCode) type="radio" name="StdCode" value="@result.StdCode">
                                     <label class="govuk-label govuk-radios__label govuk-!-padding-bottom-0" for=@("standard_" + result.StdCode)>
                                         @result.Standard
-                                    </label> 
-                                    <span class="govuk-hint govuk-radios__hint">
-                                        Level @result.Level
-                                    </span>
+                                    </label>
                                 </div>
                             }
                             @foreach (var result in Model.SearchResults.Where(sr => sr.OverallGrade == CertificateGrade.Fail))
@@ -122,7 +125,6 @@
                                         @result.Standard
                                     </label>
                                     <span class="govuk-hint govuk-radios__hint">
-                                        Level @result.Level<br />
                                         Failed on @result.AchDate.ToSfaShortDateString()
                                     </span>
                                 </div>
