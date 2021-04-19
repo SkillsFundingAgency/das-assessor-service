@@ -101,6 +101,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         {
             var username = GetUsernameFromClaim();
             var epaoid = GetEpaOrgIdFromClaim();
+            SessionService.TryGet<bool>("redirecttocheck", out var redirectToCheck);
 
             Logger.LogInformation($"Save View Model for CertificateVersionViewModel for {username} with values: {GetModelValues(vm)}");
 
@@ -126,10 +127,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 // Epao not approved for this version
                 ModelState.AddModelError("StandardUId", $"Your organisation is not approved to assess version {standardVersion.Version} of {standardVersion.Title}");
                 vm.Versions = certSession.Versions;
+                vm.BackToCheckPage = redirectToCheck;
                 return View(returnToIfModelNotValid, vm);
             }
 
-            SessionService.TryGet<bool>("redirecttocheck", out var redirectToCheck);
+            
             var versionChanged = certificate.StandardUId != vm.StandardUId;
 
             if (!versionChanged && redirectToCheck)
