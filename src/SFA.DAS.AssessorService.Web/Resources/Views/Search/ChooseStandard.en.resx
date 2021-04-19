@@ -130,7 +130,7 @@
     <value>Previously recorded assessment|Previously recorded assessments</value>
   </data>
   <data name="SelectStandardButton" xml:space="preserve">
-    <value>Continue</value>
+    <value>Confirm and continue</value>
   </data>
   <data name="CompletedStandardsHeading" xml:space="preserve">
     <value>Completed standards</value>

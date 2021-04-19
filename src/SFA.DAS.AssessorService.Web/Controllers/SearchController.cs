@@ -61,7 +61,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             if (result.SearchResults.Count() > 1)
             {
                 GetChooseStandardViewModel(vm);
-                // SV-587 - Choose Standard Journey
                 return RedirectToAction("ChooseStandard");
             }
             
@@ -73,7 +72,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         {
             var chooseStandardViewModel = new ChooseStandardViewModel
             {
-                SearchResults = vm.SearchResults
+                SearchResults = vm.SearchResults.OrderByDescending(s => s.StandardReferenceNumber)
             };
 
             _sessionService.Set("SearchResultsChooseStandard", chooseStandardViewModel);
@@ -141,46 +140,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             }
 
             return View("ChooseStandard", vm);
-        }
-
-        [HttpPost(Name = "choose")]
-        public IActionResult ChooseStandard(ChooseStandardViewModel chooseStandardViewModel)
-        {
-            if (!ModelState.IsValid)
-            {
-                var viewModel = _sessionService.Get<ChooseStandardViewModel>("SearchResultsChooseStandard");
-                return View("ChooseStandard", viewModel);
-            }
-
-            var vm = _sessionService.Get<SearchRequestViewModel>("SearchResults");
-            if (vm == null)
-            {
-                return RedirectToAction("Index");
-            }
-
-            var selected = vm.SearchResults
-                .Single(sr => sr.StdCode == chooseStandardViewModel.StdCode);
-
-            var selectedStandardViewModel = new SelectedStandardViewModel()
-            {
-                Standard = selected.Standard,
-                StdCode = selected.StdCode,
-                Uln = selected.Uln,
-                GivenNames = selected.GivenNames,
-                FamilyName = selected.FamilyName,
-                CertificateReference = selected.CertificateReference,
-                OverallGrade = selected.OverallGrade,
-                Level = selected.Level,
-                SubmittedAt = GetSubmittedAtString(selected.SubmittedAt),
-                SubmittedBy = selected.SubmittedBy,
-                LearnerStartDate = selected.LearnStartDate.GetValueOrDefault().ToString("d MMMM yyyy"),
-                AchievementDate = selected.AchDate.GetValueOrDefault().ToString("d MMMM yyyy"),
-                ShowExtraInfo = selected.ShowExtraInfo
-            };
-
-            _sessionService.Set("SelectedStandard", selectedStandardViewModel);
-            
-            return RedirectToAction("Result");
         }
     }
 }
