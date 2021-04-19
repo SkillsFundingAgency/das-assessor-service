@@ -110,6 +110,7 @@ else
                     <dd class="govuk-summary-list__value">
                         @Model.Standard (@Model.SelectedStandard)
                     </dd>
+                    <dd class="govuk-summary-list__actions"></dd>
                 </div>
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">
@@ -128,14 +129,14 @@ else
                     <dd class="govuk-summary-list__value">
                         @Model.Version
                     </dd>
-                    @if ((bool)TempData["HideChangeVersion"] == false)
-                    { 
-                        <dd class="govuk-summary-list__actions">
+                    <dd class="govuk-summary-list__actions">
+                        @if ((bool)TempData["HideChangeVersion"] == false)
+                        {
                             <a class="govuk-link" asp-controller="CertificateVersion" asp-action="Version" asp-route-redirecttocheck="true">
                                 Change<span class="govuk-visually-hidden"> version</span>
                             </a>
-                        </dd>
-                    }
+                        }
+                    </dd>
                 </div>
                 
                 @if ((bool)TempData["HideOption"] == false)
