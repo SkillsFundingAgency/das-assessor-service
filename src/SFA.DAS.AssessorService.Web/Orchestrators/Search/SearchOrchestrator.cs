@@ -51,6 +51,7 @@ namespace SFA.DAS.AssessorService.Web.Orchestrators.Search
                     Uln = Convert.ToString(result.Uln),
                     Standard = result.Standard,
                     StdCode = Convert.ToString(result.StdCode),
+                    Version = result.Version,
                     Versions = Mapper.Map<List<StandardVersionViewModel>>(result.Versions),
                     OverallGrade = result.OverallGrade,
                     CertificateReference = result.CertificateReference,
