@@ -16,3 +16,26 @@
     <dt class="govuk-summary-list__key">Level</dt>
     <dd class="govuk-summary-list__value">@Model.Level</dd>
 </div>
+
+@if (!string.IsNullOrEmpty(Model.Version))
+{
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Version</dt>
+        <dd class="govuk-summary-list__value">@Model.Version</dd>
+    </div>
+}
+else if (Model.OnlySingleVersion)
+{
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Version</dt>
+        <dd class="govuk-summary-list__value">@Model.Versions.First().Version</dd>
+    </div>
+}
+
+@if (Model.OnlySingleOption)
+{
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Option</dt>
+        <dd class="govuk-summary-list__value">@Model.Versions.First().Options.First()</dd>
+    </div>
+}

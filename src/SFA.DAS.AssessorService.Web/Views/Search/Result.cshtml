@@ -23,26 +23,12 @@
 
                             @(await Html.PartialAsync($"./_ApprenticeshipBasicInfoListRows.cshtml", Model))
 
-                            @if (Model.OnlySingleVersion)
-                            {
-                                <div class="govuk-summary-list__row">
-                                    <dt class="govuk-summary-list__key">Version</dt>
-                                    <dd class="govuk-summary-list__value">@Model.Versions.First().Version</dd>
-                                </div>
-                            }
-                            @if (Model.OnlySingleOption)
-                            {
-                                <div class="govuk-summary-list__row">
-                                    <dt class="govuk-summary-list__key">Option</dt>
-                                    <dd class="govuk-summary-list__value">@Model.Versions.First().Options.First()</dd>
-                                </div>
-                            }
                             <div class="govuk-summary-list__row">
                                 <dt class="govuk-summary-list__key">Learner start date</dt>
                                 <dd class="govuk-summary-list__value">@Model.LearnerStartDate</dd>
                             </div>
                         </dl>
-                            <p class="govuk-body">If the name, standard or level is incorrect, you need to agree on the correct details along with the training provider and the employer. The training provider needs to then update the Individualised Learner Record (<abbr title="Individualised Learner Record">ILR</abbr>).</p>
+                        <p class="govuk-body">If the name, standard or level is incorrect, you need to agree on the correct details along with the training provider and the employer. The training provider needs to then update the Individualised Learner Record (<abbr title="Individualised Learner Record">ILR</abbr>).</p>
                     </div>
 
                     @Html.HiddenFor(m => m.Uln)
@@ -62,20 +48,6 @@
 
                             @(await Html.PartialAsync($"./_ApprenticeshipBasicInfoListRows.cshtml", Model))
 
-                            @if (Model.OnlySingleVersion)
-                            {
-                                <div class="govuk-summary-list__row">
-                                    <dt class="govuk-summary-list__key">Version</dt>
-                                    <dd class="govuk-summary-list__value">@Model.Versions.First().Version</dd>
-                                </div>
-                            }
-                            @if (Model.OnlySingleOption)
-                            {
-                                <div class="govuk-summary-list__row">
-                                    <dt class="govuk-summary-list__key">Option</dt>
-                                    <dd class="govuk-summary-list__value">@Model.Versions.First().Options.First()</dd>
-                                </div>
-                            }
                             @if (Model.ShowExtraInfo)
                             {
                                 @(await Html.PartialAsync($"./_ApprenticeshipExtraInfoListRows.cshtml", Model))
@@ -114,14 +86,6 @@
                 <dl class="govuk-summary-list">
 
                     @(await Html.PartialAsync($"./_ApprenticeshipBasicInfoListRows.cshtml", Model))
-
-                    @if (!string.IsNullOrEmpty(Model.Version))
-                    {
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">Version</dt>
-                            <dd class="govuk-summary-list__value">@Model.Version</dd>
-                        </div>
-                    }
 
                     @if (Model.ShowExtraInfo)
                     {
