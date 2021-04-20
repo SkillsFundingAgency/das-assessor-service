@@ -20,22 +20,9 @@
                 <form class="apprentice-search-result-form js-disable-on-submit" asp-controller="Certificate" asp-action="Start" method="post">
                     <div class="govuk-form-group">
                         <dl class="govuk-summary-list">
-                            <div class="govuk-summary-list__row">
-                                <dt class="govuk-summary-list__key">Name</dt>
-                                <dd class="govuk-summary-list__value">@Model.GivenNames @Model.FamilyName</dd>
-                            </div>
-                            <div class="govuk-summary-list__row">
-                                <dt class="govuk-summary-list__key"><abbr title="Unique learner number">ULN</abbr></dt>
-                                <dd class="govuk-summary-list__value">@Model.Uln</dd>
-                            </div>
-                            <div class="govuk-summary-list__row">
-                                <dt class="govuk-summary-list__key">Standard</dt>
-                                <dd class="govuk-summary-list__value">@Model.Standard</dd>
-                            </div>
-                            <div class="govuk-summary-list__row">
-                                <dt class="govuk-summary-list__key">Level</dt>
-                                <dd class="govuk-summary-list__value">@Model.Level</dd>
-                            </div>
+
+                            @(await Html.PartialAsync($"./_ApprenticeBasicInformation.cshtml", Model))
+
                             @if (Model.OnlySingleVersion)
                             {
                                 <div class="govuk-summary-list__row">
@@ -72,22 +59,9 @@
                 <form class="apprentice-search-result-form js-disable-on-submit" asp-controller="Certificate" asp-action="Start" method="post">
                     <div class="govuk-form-group">
                         <dl class="govuk-summary-list">
-                            <div class="govuk-summary-list__row">
-                                <dt class="govuk-summary-list__key">Name</dt>
-                                <dd class="govuk-summary-list__value">@Model.GivenNames @Model.FamilyName</dd>
-                            </div>
-                            <div class="govuk-summary-list__row">
-                                <dt class="govuk-summary-list__key"><abbr title="Unique learner number">ULN</abbr></dt>
-                                <dd class="govuk-summary-list__value">@Model.Uln</dd>
-                            </div>
-                            <div class="govuk-summary-list__row">
-                                <dt class="govuk-summary-list__key">Standard</dt>
-                                <dd class="govuk-summary-list__value">@Model.Standard</dd>
-                            </div>
-                            <div class="govuk-summary-list__row">
-                                <dt class="govuk-summary-list__key">Level</dt>
-                                <dd class="govuk-summary-list__value">@Model.Level</dd>
-                            </div>
+
+                            @(await Html.PartialAsync($"./_ApprenticeBasicInformation.cshtml", Model))
+
                             @if (Model.OnlySingleVersion)
                             {
                                 <div class="govuk-summary-list__row">
@@ -157,22 +131,9 @@
             {
                 <h1 class="govuk-heading-xl">An assessment has already been recorded against this apprentice</h1>
                 <dl class="govuk-summary-list">
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">Name</dt>
-                        <dd class="govuk-summary-list__value">@Model.GivenNames @Model.FamilyName</dd>
-                    </div>
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key"><abbr title="Unique learner number">ULN</abbr></dt>
-                        <dd class="govuk-summary-list__value">@Model.Uln</dd>
-                    </div>
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">Standard</dt>
-                        <dd class="govuk-summary-list__value">@Model.Standard</dd>
-                    </div>
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">Level</dt>
-                        <dd class="govuk-summary-list__value">@Model.Level</dd>
-                    </div>
+
+                    @(await Html.PartialAsync($"./_ApprenticeBasicInformation.cshtml", Model))
+
                     @if (!string.IsNullOrEmpty(Model.Version))
                     {
                         <div class="govuk-summary-list__row">
