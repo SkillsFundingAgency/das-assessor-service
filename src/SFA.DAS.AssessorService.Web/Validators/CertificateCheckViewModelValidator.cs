@@ -20,6 +20,12 @@ namespace SFA.DAS.AssessorService.Web.Validators
                 RuleFor(vm => vm.Name).NotEmpty()
                 .WithMessage(localizer["NameCannotBeEmpty"]);
             });
+
+            When(vm => vm.StandardHasOptions, () =>
+            {
+                RuleFor(vm => vm.Option).NotNull()
+                    .WithMessage(localizer["SelectAnOption"]);
+            });
         }
     }
 }

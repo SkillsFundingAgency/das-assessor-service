@@ -11,8 +11,6 @@ using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.ViewModels.Certificate;
-using SFA.DAS.AssessorService.Web.ViewModels.Shared;
-using static SFA.DAS.AssessorService.Web.ViewModels.Certificate.CertificateVersionViewModel;
 
 namespace SFA.DAS.AssessorService.Web.Controllers
 {
@@ -131,7 +129,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 vm.BackToCheckPage = redirectToCheck;
                 return View(returnToIfModelNotValid, vm);
             }
-                        
+
             var versionChanged = certificate.StandardUId != vm.StandardUId;
             // Edge case to cater to back buttons where user can change version without setting an option
             var optionNotSet = string.IsNullOrEmpty(certData.CourseOption) && options != null && options.HasOptions();

@@ -14,6 +14,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
         public string SelectedStandard { get; set; }
         public DateTime? AchievementDate { get; set; }
         public DateTime? LearnerStartDate { get; set; }
+        public bool StandardHasOptions { get; set; }
 
         public string Name { get; set; }
         public string Dept { get; set; }

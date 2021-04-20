@@ -16,7 +16,7 @@ using Organisation = SFA.DAS.AssessorService.Domain.Entities.Organisation;
 
 namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
 {
-    public class Given_I_submit_passed_certificate_with_no_receipient : CertificateCheckControllerTestBase
+    public class When_submitting_passed_certificate_with_no_option_selected : CertificateCheckControllerTestBase
     {
         private ViewResult _result;
 
@@ -43,12 +43,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
                     .CreateNew<CertificateData>()
                     .With(x => x.OverallGrade = CertificateGrade.Pass)
                     .With(x => x.AchievementDate = DateTime.Now)
-                    .With(x => x.ContactName = null)
-                    .With(x => x.ContactAddLine1 = null)
-                    .With(x => x.ContactAddLine2 = null)
-                    .With(x => x.ContactAddLine3 = null)
-                    .With(x => x.ContactAddLine4 = null)
-                    .With(x => x.ContactPostCode = null)
+                    .With(x => x.CourseOption = null)
                     .Build()))
                 .Build();
 
@@ -65,6 +60,9 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
         [Test]
         public void ThenShouldNotProgressToConfirmationPage()
         {
+            _viewModel.Option = null;
+            _viewModel.StandardHasOptions = true;
+
             _result = _certificateCheckController.Check(_viewModel).GetAwaiter().GetResult() as ViewResult;
 
             _result.ViewName.Should().Be("~/Views/Certificate/Check.cshtml");

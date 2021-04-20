@@ -96,5 +96,14 @@ namespace SFA.DAS.AssessorService.Web.Resources.Validators {
                 return ResourceManager.GetString("PostcodeCannotBeEmpty", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select an option.
+        /// </summary>
+        internal static string SelectAnOption {
+            get {
+                return ResourceManager.GetString("SelectAnOption", resourceCulture);
+            }
+        }
     }
 }
