@@ -19,12 +19,10 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
         {
             base.FromCertificate(cert);
 
-            if (CertificateData.OverallGrade != CertificateGrade.Fail)
-            {
-                Day = CertificateData.AchievementDate?.Day.ToString();
-                Month = CertificateData.AchievementDate?.Month.ToString();
-                Year = CertificateData.AchievementDate?.Year.ToString();
-            }
+            Day = CertificateData.AchievementDate?.Day.ToString();
+            Month = CertificateData.AchievementDate?.Month.ToString();
+            Year = CertificateData.AchievementDate?.Year.ToString();
+            
             StartDate = CertificateData.LearningStartDate;
             SelectedGrade = CertificateData.OverallGrade;
             WarningShown = "false";
