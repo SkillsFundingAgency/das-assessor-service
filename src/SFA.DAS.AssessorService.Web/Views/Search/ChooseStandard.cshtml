@@ -83,6 +83,13 @@
                                         <dt class="govuk-summary-list__key">Standard level</dt>
                                         <dd class="govuk-summary-list__value">Level @result.Level</dd>
                                     </div>
+                                    @if (!string.IsNullOrEmpty(result.Version))
+                                    {
+                                        <div class="govuk-summary-list__row">
+                                            <dt class="govuk-summary-list__key">Version </dt>
+                                            <dd class="govuk-summary-list__value">@result.Version</dd>
+                                        </div>
+                                    }
                                     <div class="govuk-summary-list__row">
                                         <dt class="govuk-summary-list__key">Grade</dt>
                                         <dd class="govuk-summary-list__value">@result.OverallGrade</dd>

@@ -61,8 +61,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
                 searchResult.CertificateId = certificate.Id;
                 searchResult.CertificateStatus = certificate.Status;
                 searchResult.LearnStartDate = certificateData.LearningStartDate;
+                searchResult.Version = certificateData.Version;
                 searchResult.Option = certificateData.CourseOption;
-
+                
                 var certificateLogs = certificateRepository.GetCertificateLogsFor(certificate.Id).Result;
                 logger.LogInformation("MatchUpExistingCompletedStandards After GetCertificateLogsFor");
                 var createdLogEntry = certificateLogs.FirstOrDefault(l => l.Status == CertificateStatus.Draft);
