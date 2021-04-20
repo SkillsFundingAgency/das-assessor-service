@@ -121,6 +121,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
             var standardVersion = await _standardVersionClient.GetStandardVersionByStandardUId(vm.StandardUId);
             var approvedStandardVersions = await _standardVersionClient.GetEpaoRegisteredStandardVersions(epaoid, certSession.StandardCode);
+            var options = await _standardServiceClient.GetStandardOptions(vm.StandardUId);
 
             if (!approvedStandardVersions.Any(v => v.StandardUId == vm.StandardUId))
             {
@@ -130,19 +131,19 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 vm.BackToCheckPage = redirectToCheck;
                 return View(returnToIfModelNotValid, vm);
             }
-
-            
+                        
             var versionChanged = certificate.StandardUId != vm.StandardUId;
+            // Edge case to cater to back buttons where user can change version without setting an option
+            var optionNotSet = string.IsNullOrEmpty(certData.CourseOption) && options != null && options.HasOptions();
 
-            if (!versionChanged && redirectToCheck)
+            if (!versionChanged && !optionNotSet && redirectToCheck)
             {
-                // if version hasn't changed, don't need to update options.
+                // if version hasn't changed, and option set if required, don't need to update options.
                 return new RedirectToActionResult("Check", "CertificateCheck", null);
             }
 
             certSession.StandardUId = vm.StandardUId;
-            var options = await _standardServiceClient.GetStandardOptions(vm.StandardUId);
-            
+                        
             // To pass in to inherited method.
             vm.SelectedStandardVersion = standardVersion;
             vm.SelectedStandardOptions = options;

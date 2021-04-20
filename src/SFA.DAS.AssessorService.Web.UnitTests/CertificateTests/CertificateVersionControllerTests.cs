@@ -286,6 +286,31 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
         }
 
         [Test, MoqAutoData]
+        public async Task WhenPostingToSelectAVersion_WhenSavingModel_IfVersionNotChanged_AndRedirectToCheckSet_AndVersionHasOptions_ButOptionsNotSet_RedirectToOptionsPageWithRedirectToCheck(CertificateVersionViewModel vm, StandardVersion standardVersion, StandardOptions options, CertificateSession session, List<StandardVersion> approvedVersions)
+        {
+            var sessionString = JsonConvert.SerializeObject(session);
+            _mockSessionService.Setup(s => s.Get(nameof(CertificateSession))).Returns(sessionString);
+
+            vm.StandardUId = StandardUId;
+            standardVersion.StandardUId = StandardUId;
+            approvedVersions.Add(standardVersion);
+            _mockStandardVersionClient.Setup(s => s.GetStandardVersionByStandardUId(vm.StandardUId)).ReturnsAsync(standardVersion);
+            _mockStandardVersionClient.Setup(s => s.GetEpaoRegisteredStandardVersions(EpaoId, session.StandardCode)).ReturnsAsync(approvedVersions);
+            _mockStandardServiceClient.Setup(s => s.GetStandardOptions(vm.StandardUId)).ReturnsAsync(options);
+
+            var expectedValue = true;
+            _mockSessionService.Setup(s => s.TryGet<bool>("redirecttocheck", out expectedValue));
+
+            var result = await _certificateVersionController.Version(vm) as RedirectToActionResult;
+
+            result.ControllerName.Should().Be("CertificateOption");
+            result.ActionName.Should().Be("Option");
+            result.RouteValues.Should().ContainKey("redirecttocheck");
+            result.RouteValues.Should().ContainValue(true);
+            _mockSessionService.Verify(s => s.Set("redirectedfromversion", true), Times.Once);
+        }
+
+        [Test, MoqAutoData]
         public async Task WhenPostingToSelectAVersion_WhenSavingModel_ClearOptionSessionCache(CertificateVersionViewModel vm, StandardVersion standardVersion, CertificateSession session, List<StandardVersion> approvedVersions)
         {
             standardVersion.StandardUId = vm.StandardUId;
