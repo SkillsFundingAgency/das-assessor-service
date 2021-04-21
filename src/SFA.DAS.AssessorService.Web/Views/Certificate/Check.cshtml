@@ -40,6 +40,7 @@ else
                     </h2>
                     <div class="govuk-error-summary__body">
                         <ul class="govuk-list govuk-error-summary__list">
+                            <li><a sfa-validation-for="Option"></a></li>
                             <li><a sfa-validation-for="Name"></a></li>
                             <li><a sfa-validation-for="Dept"></a></li>
                             <li><a sfa-validation-for="Employer"></a></li>
@@ -130,7 +131,7 @@ else
                         @Model.Version
                     </dd>
                     <dd class="govuk-summary-list__actions">
-                        @if ((bool)TempData["HideChangeVersion"] == false)
+                        @if (Model.StandardHasSingleVersion == false)
                         {
                             <a class="govuk-link" asp-controller="CertificateVersion" asp-action="Version" asp-route-redirecttocheck="true">
                                 Change<span class="govuk-visually-hidden"> version</span>
@@ -139,17 +140,18 @@ else
                     </dd>
                 </div>
 
-                @if ((bool)TempData["HideOption"] == false)
+                @if (Model.StandardHasOptions)
                 {
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">
                             Option
                         </dt>
                         <dd class="govuk-summary-list__value">
+                            <span id="Option" class="govuk-error-message" asp-validation-for="Option"></span>
                             @Model.Option
                         </dd>
                         <dd class="govuk-summary-list__actions">
-                            @if ((bool)TempData["HideChangeOption"] == false)
+                            @if (Model.StandardHasSingleOption == false)
                             {
                                 <a class="govuk-link" asp-controller="CertificateOption" asp-action="Option" asp-route-redirecttocheck="true">
                                     Change<span class="govuk-visually-hidden"> option</span>
@@ -314,6 +316,8 @@ else
                 @Html.HiddenFor(c => c.AddressLine1)
                 @Html.HiddenFor(c => c.City)
                 @Html.HiddenFor(c => c.Postcode)
+                @Html.HiddenFor(c => c.Option)
+                @Html.HiddenFor(c => c.StandardHasOptions)
                 <button type="submit" class="govuk-button">@Localizer["ContinueButton"]</button>
             </form>
         </div>

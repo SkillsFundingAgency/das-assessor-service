@@ -129,4 +129,7 @@
   <data name="PostcodeCannotBeEmpty" xml:space="preserve">
     <value>Enter a postcode</value>
   </data>
+  <data name="SelectAnOption" xml:space="preserve">
+    <value>Select an option</value>
+  </data>
 </root>

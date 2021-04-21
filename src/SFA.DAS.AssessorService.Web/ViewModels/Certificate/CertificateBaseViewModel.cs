@@ -22,7 +22,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
             Uln = cert.Uln.ToString();
             StandardUId = cert.StandardUId;            
         }
-                
+
         public Guid Id { get; set; }
         public string FamilyName { get; set; }
         public string GivenNames { get; set; }
