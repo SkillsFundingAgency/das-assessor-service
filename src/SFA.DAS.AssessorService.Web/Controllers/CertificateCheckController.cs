@@ -55,24 +55,5 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 returnToIfModelNotValid: "~/Views/Certificate/Check.cshtml",
                 nextAction: RedirectToAction("Confirm", "CertificateConfirmation"), action: CertificateActions.Submit);
         }
-
-        private async Task<IActionResult> LoadViewModel(string view)
-        {
-            var viewModel = await base.LoadViewModel<CertificateCheckViewModel>(view);
-            var username = GetUsernameFromClaim();
-            if (!TryGetCertificateSession(typeof(CertificateCheckViewModel).Name, username, out var certSession))
-            {
-                return RedirectToAction("Index", "Search");
-            }
-
-            var result = viewModel as ViewResult;
-
-            var viewModelResult = result.ViewData.Model as CertificateCheckViewModel;
-
-            viewModelResult.StandardHasOptions = true;
-
-            return result;
-
-        }
     }
 }
