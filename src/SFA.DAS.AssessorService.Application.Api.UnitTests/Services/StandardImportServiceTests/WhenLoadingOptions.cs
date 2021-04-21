@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services.StandardImportServiceTests
 {
-    public class WhenLoadingStandards
+    public class WhenLoadingOptions
     {
         Mock<IStandardRepository> standardRepositoryMock;
         IEnumerable<StandardDetailResponse> standards;
@@ -25,13 +25,13 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services.StandardImp
 
             var sut = new StandardImportService(standardRepositoryMock.Object);
 
-            await sut.LoadStandards(standards);
+            await sut.LoadOptions(standards);
         }
 
         [Test]
         public void Then_Inserts_Data_Into_Standards_Table()
         {
-            standardRepositoryMock.Verify(r => r.InsertStandards(It.IsAny<IEnumerable<Standard>>()), Times.Once);
+            standardRepositoryMock.Verify(r => r.InsertOptions(It.IsAny<IEnumerable<StandardOption>>()), Times.Once);
         }
     }
 }

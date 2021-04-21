@@ -21,13 +21,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers
     public class CertificateVersionController : CertificateBaseController
     {
         private readonly IStandardVersionClient _standardVersionClient;
-        private readonly IStandardServiceClient _standardServiceClient;
         public CertificateVersionController(ILogger<CertificateController> logger, IHttpContextAccessor contextAccessor,
-            ICertificateApiClient certificateApiClient, IStandardVersionClient standardVersionClient, IStandardServiceClient standardServiceClient, ISessionService sessionService)
+            ICertificateApiClient certificateApiClient, IStandardVersionClient standardVersionClient, ISessionService sessionService)
             : base(logger, contextAccessor, certificateApiClient, sessionService)
         {
             _standardVersionClient = standardVersionClient;
-            _standardServiceClient = standardServiceClient;
         }
 
         [HttpGet]
@@ -68,7 +66,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             {
                 // Only 1 version no need for a selection
                 var singularStandard = certSession.Versions.First();
-                var options = await _standardServiceClient.GetStandardOptions(singularStandard.StandardUId);
+                var options = await _standardVersionClient.GetStandardOptions(singularStandard.StandardUId);
                 if (options != null & options.HasOptions())
                 {
                     certSession.StandardUId = singularStandard.StandardUId;
@@ -121,7 +119,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
             var standardVersion = await _standardVersionClient.GetStandardVersionByStandardUId(vm.StandardUId);
             var approvedStandardVersions = await _standardVersionClient.GetEpaoRegisteredStandardVersions(epaoid, certSession.StandardCode);
-            var options = await _standardServiceClient.GetStandardOptions(vm.StandardUId);
+            var options = await _standardVersionClient.GetStandardOptions(vm.StandardUId);
 
             if (!approvedStandardVersions.Any(v => v.StandardUId == vm.StandardUId))
             {

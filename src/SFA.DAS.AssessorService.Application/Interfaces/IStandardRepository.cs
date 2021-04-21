@@ -29,9 +29,15 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<IEnumerable<Standard>> GetStandardVersionsByLarsCode(int larsCode);
         Task<Standard> GetStandardVersionByStandardUId(string standardUId);
         Task<Standard> GetStandardByStandardReferenceAndVersion(string standardReference, string version);
-        Task Insert(IEnumerable<Standard> standard);
+        Task InsertStandards(IEnumerable<Standard> standard);
+        Task InsertOptions(IEnumerable<StandardOption> optionsToInsert);
+        Task<IEnumerable<StandardOptions>> GetAllStandardOptions();
+        Task<StandardOptions> GetStandardOptionsByStandardUId(string standardUId);
+        Task<StandardOptions> GetStandardOptionsByLarsCode(int larsCode);
+        Task<StandardOptions> GetStandardOptionsByIFateReferenceNumber(string iFateReferenceNumber);
         Task Update(Standard standard);
-        Task DeleteAll();
+        Task DeleteAllStandards();
+        Task DeleteAllOptions();
         Task<IEnumerable<StandardVersion>> GetEpaoRegisteredStandardVersions(string endPointAssessorOrganisationId);
         Task<IEnumerable<StandardVersion>> GetEpaoRegisteredStandardVersions(string endPointAssessorOrganisationId, int larsCode);
     }

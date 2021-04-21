@@ -56,6 +56,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
+        public async Task<StandardOptions> GetStandardOptions(string standardId)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/standard-version/standard-options/{standardId}"))
+            {
+                return await RequestAndDeserialiseAsync<StandardOptions>(request, $"Could not find the standard options for {standardId}");
+            }
+        }
+
     }
 
     public interface IStandardVersionClient
@@ -65,5 +73,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         Task<StandardVersion> GetStandardVersionByStandardUId(string standardUId);
         Task<IEnumerable<StandardVersion>> GetEpaoRegisteredStandardVersions(string epaOrgId);
         Task<IEnumerable<StandardVersion>> GetEpaoRegisteredStandardVersions(string epaOrgId, int larsCode);
+        Task<StandardOptions> GetStandardOptions(string standardId);
     }
 }

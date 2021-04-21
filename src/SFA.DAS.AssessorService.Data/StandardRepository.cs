@@ -22,21 +22,38 @@ namespace SFA.DAS.AssessorService.Data
             SqlMapper.AddTypeHandler(typeof(StandardNonApprovedData), new StandardNonApprovedDataHandler());
         }
 
-        public async Task Insert(IEnumerable<Standard> standardsToInsert)
+        public async Task InsertStandards(IEnumerable<Standard> standardsToInsert)
         {
             var bulkCopyOptions = SqlBulkCopyOptions.TableLock;
             var dataTable = ConstructStandardsDataTable(standardsToInsert);
 
             using (var bulkCopy = new SqlBulkCopy(_unitOfWork.Connection as SqlConnection, bulkCopyOptions, _unitOfWork.Transaction as SqlTransaction))
-            {                
+            {
                 bulkCopy.DestinationTableName = "Standards";
                 await bulkCopy.WriteToServerAsync(dataTable);
             }
         }
 
-        public async Task DeleteAll()
+        public async Task InsertOptions(IEnumerable<StandardOption> optionsToInsert)
+        {
+            var bulkCopyOptions = SqlBulkCopyOptions.TableLock;
+            var dataTable = ConstructStandardOptionsDataTable(optionsToInsert);
+
+            using (var bulkCopy = new SqlBulkCopy(_unitOfWork.Connection as SqlConnection, bulkCopyOptions, _unitOfWork.Transaction as SqlTransaction))
+            {
+                bulkCopy.DestinationTableName = "StandardOptions";
+                await bulkCopy.WriteToServerAsync(dataTable);
+            }
+        }
+
+        public async Task DeleteAllStandards()
         {
             await _unitOfWork.Connection.ExecuteAsync("DELETE FROM Standards", transaction: _unitOfWork.Transaction);
+        }
+
+        public async Task DeleteAllOptions()
+        {
+            await _unitOfWork.Connection.ExecuteAsync("DELETE FROM StandardOptions", transaction: _unitOfWork.Transaction);
         }
 
         public async Task Update(Standard standard)
@@ -132,6 +149,91 @@ namespace SFA.DAS.AssessorService.Data
             var result = await _unitOfWork.Connection.QuerySingleAsync<Standard>(
                 sql,
                 param: new { standardUId },
+                transaction: _unitOfWork.Transaction);
+
+            return result;
+        }
+
+        public async Task<IEnumerable<StandardOptions>> GetAllStandardOptions()
+        {
+            var sql = @"SELECT [StandardUId],[Version],[IFateReferenceNumber],[LarsCode] FROM [Standards]
+                        SELECT [StandardUId],[OptionName] FROM [StandardOptions]";
+
+            var filterResults = await _unitOfWork.Connection.QueryMultipleAsync(
+                sql,
+                transaction: _unitOfWork.Transaction);
+
+            var standards = filterResults.Read<Standard>();
+            var options = filterResults.Read<StandardOption>();
+
+            var results = standards.Select(s => new StandardOptions
+            {
+                StandardUId = s.StandardUId,
+                StandardCode = s.LarsCode,
+                StandardReference = s.IfateReferenceNumber,
+                Version = s.Version.GetValueOrDefault(1).ToString("#.0"),
+                CourseOption = options.Where(o => o.StandardUId == s.StandardUId).Select(p => p.OptionName)
+            });
+
+            return results;
+        }
+
+        public async Task<StandardOptions> GetStandardOptionsByStandardUId(string standardUId)
+        {
+            var sql = @"SELECT [StandardUId],[Version],[IFateReferenceNumber],[LarsCode] FROM [Standards] WHERE [StandardUId] = @standardUId
+                        SELECT [StandardUId],[OptionName] FROM [StandardOptions] WHERE [StandardUId] = @standardUId";
+
+            var filterResults = await _unitOfWork.Connection.QueryMultipleAsync(
+                sql,
+                param: new { standardUId },
+                transaction: _unitOfWork.Transaction);
+
+            var standard = filterResults.Read<Standard>().Single();
+            var options = filterResults.Read<StandardOption>();
+
+            var results = new StandardOptions
+            {
+                StandardUId = standard.StandardUId,
+                StandardCode = standard.LarsCode,
+                StandardReference = standard.IfateReferenceNumber,
+                Version = standard.Version.GetValueOrDefault(1).ToString("#.0"),
+                CourseOption = options.Select(p => p.OptionName)
+            };
+
+            return results;
+        }
+
+        public async Task<StandardOptions> GetStandardOptionsByLarsCode(int larsCode)
+        {
+            var standard = await GetLatestVersionOfAStandardByLarsCode(larsCode);
+            return await GetStandardOptionsByStandardUId(standard.StandardUId);
+        }
+
+        public async Task<StandardOptions> GetStandardOptionsByIFateReferenceNumber(string iFateReferenceNumber)
+        {
+            var standard = await GetLatestVersionOfAStandardByIFateReferenceNumber(iFateReferenceNumber);
+            return await GetStandardOptionsByStandardUId(standard.StandardUId);
+        }
+
+        private async Task<Standard> GetLatestVersionOfAStandardByLarsCode(int larsCode)
+        {
+            var sql = @"SELECT TOP 1 [StandardUId] FROM [Standards] WHERE [LarsCode] = @larsCode ORDER BY [Version] desc";
+
+            var result = await _unitOfWork.Connection.QueryFirstOrDefaultAsync<Standard>(
+                sql,
+                param: new { larsCode },
+                transaction: _unitOfWork.Transaction);
+
+            return result;
+        }
+
+        private async Task<Standard> GetLatestVersionOfAStandardByIFateReferenceNumber(string iFateReferenceNumber)
+        {
+            var sql = @"SELECT TOP 1 [StandardUId] FROM [Standards] WHERE [IfateReferenceNumber] = @iFateReferenceNumber ORDER BY [Version] desc";
+
+            var result = await _unitOfWork.Connection.QueryFirstOrDefaultAsync<Standard>(
+                sql,
+                param: new { iFateReferenceNumber },
                 transaction: _unitOfWork.Transaction);
 
             return result;
@@ -651,6 +753,21 @@ namespace SFA.DAS.AssessorService.Data
                     standard.Status, standard.TypicalDuration, standard.MaxFunding, standard.IsActive, standard.LastDateStarts, standard.EffectiveFrom, standard.EffectiveTo,
                     standard.VersionEarliestStartDate, standard.VersionLatestStartDate, standard.VersionLatestEndDate, standard.VersionApprovedForDelivery,
                     standard.ProposedTypicalDuration, standard.ProposedMaxFunding);
+            }
+
+            return dataTable;
+        }
+
+        private DataTable ConstructStandardOptionsDataTable(IEnumerable<StandardOption> options)
+        {
+            var dataTable = new DataTable();
+
+            dataTable.Columns.Add("StandardUId");
+            dataTable.Columns.Add("Option");
+
+            foreach (var option in options)
+            {
+                dataTable.Rows.Add(option.StandardUId, option.OptionName);
             }
 
             return dataTable;

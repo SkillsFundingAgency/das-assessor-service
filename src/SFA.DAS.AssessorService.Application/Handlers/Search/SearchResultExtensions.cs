@@ -17,7 +17,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
         public static List<SearchResult> PopulateStandards(this List<SearchResult> searchResults, IStandardService standardService, ILogger<SearchHandler> logger)
         {
             var allStandards = standardService.GetAllStandardVersions().Result;
-            var allOptions = standardService.GetStandardOptions().Result;
+            var allOptions = standardService.GetAllStandardOptions().Result;
 
             foreach (var searchResult in searchResults)
             {
@@ -37,7 +37,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
                 {
                     Title = s.Title,
                     StandardUId = s.StandardUId,
-                    Version = s.Version.ToString(),
+                    Version = s.Version.GetValueOrDefault(1).ToString("#.0"),
                     Options = allOptions.Where(o => o.StandardUId == s.StandardUId).SingleOrDefault()?.CourseOption
                 }).ToList();
             }

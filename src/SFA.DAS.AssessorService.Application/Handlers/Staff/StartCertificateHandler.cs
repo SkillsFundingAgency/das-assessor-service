@@ -119,7 +119,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
                 certData.StandardName = standard.Title;
                 certData.StandardLevel = standard.Level;
                 certData.StandardPublicationDate = standard.EffectiveFrom;
-                certData.Version = standard.Version.ToString();               
+                certData.Version = standard.Version.GetValueOrDefault(1).ToString("#.0");               
 
                 certificate.StandardUId = standard.StandardUId;
                 certificate.CertificateData = JsonConvert.SerializeObject(certData);

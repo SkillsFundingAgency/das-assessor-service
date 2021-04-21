@@ -4,23 +4,19 @@ using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using SFA.DAS.AssessorService.Application.Infrastructure.OuterApi;
 
 namespace SFA.DAS.AssessorService.Application.Api.Services
 {
     public class StandardService : IStandardService
     {
         private readonly CacheService _cacheService;
-        private readonly IOuterApiClient _outerApiClient;
         private readonly ILogger<StandardService> _logger;
         private readonly IStandardRepository _standardRepository;
 
-        public StandardService(CacheService cacheService, IOuterApiClient outerApiClient, ILogger<StandardService> logger, IStandardRepository standardRepository)
+        public StandardService(CacheService cacheService, ILogger<StandardService> logger, IStandardRepository standardRepository)
         {
             _cacheService = cacheService;
-            _outerApiClient = outerApiClient;
             _logger = logger;
             _standardRepository = standardRepository;
         }
@@ -83,7 +79,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
             return standards;
         }
 
-
         public async Task<Standard> GetStandardVersionByStandardUId(string standardUId)
         {
             Standard standard = null;
@@ -117,20 +112,13 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
         }
 
 
-        public async Task<IEnumerable<StandardOptions>> GetStandardOptions()
+        public async Task<IEnumerable<StandardOptions>> GetAllStandardOptions()
         {
             try
             {
-                var standardOptionsResponse = await _outerApiClient.Get<GetStandardOptionsListResponse>(new GetStandardOptionsRequest());
+                var options = await _standardRepository.GetAllStandardOptions();
 
-                return standardOptionsResponse.StandardOptions.Select(standard => new StandardOptions
-                {
-                    StandardUId = standard.StandardUId,
-                    StandardCode = standard.LarsCode,
-                    StandardReference = standard.IfateReferenceNumber,
-                    Version = standard.Version.ToString("#.0"),
-                    CourseOption = standard.Options
-                });
+                return options;
             }
             catch (Exception ex)
             {
@@ -142,25 +130,28 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
 
         public async Task<StandardOptions> GetStandardOptionsByStandardId(string id)
         {
+            StandardOptions options = null;
             try
             {
-                var standard = await _outerApiClient.Get<StandardDetailResponse>(new GetStandardByIdRequest(id));
-
-                return new StandardOptions
+                if (int.TryParse(id, out var larsCode)) // Lars Code
                 {
-                    StandardUId = standard.StandardUId,
-                    StandardCode = standard.LarsCode,
-                    StandardReference = standard.IfateReferenceNumber,
-                    Version = standard.Version.ToString("#.0"),
-                    CourseOption = standard.Options
-                };
+                    options = await _standardRepository.GetStandardOptionsByLarsCode(larsCode);
+                }
+                else if (id.Length == 6) // Ifate Ref
+                {
+                    options = await _standardRepository.GetStandardOptionsByIFateReferenceNumber(id);
+                }
+                else // Assume StandardUId
+                {
+                    options = await _standardRepository.GetStandardOptionsByStandardUId(id);
+                }
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"STANDARD OPTIONS: Failed to get standard options for id {id}");
             }
 
-            return null;
+            return options;
         }
 
         public async Task<StandardOptions> GetStandardOptionsByStandardReferenceAndVersion(string standardReference, string version)
