@@ -89,6 +89,8 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
 
             _mockCertificateApiClient.Setup(s => s.GetCertificate(It.IsAny<Guid>())).ReturnsAsync(_certificate);
 
+            vm.StandardHasOptions = true;
+
             var result = await _certificateCheckController.Check(vm) as ViewResult;
 
             result.ViewName.Should().Be("~/Views/Certificate/Check.cshtml");
