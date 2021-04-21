@@ -33,11 +33,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             {
                 return RedirectToAction("Index", "Search");
             }
-            var certSession = JsonConvert.DeserializeObject<CertificateSession>(sessionString);
-            TempData["HideOption"] = certSession.Options == null || !certSession.Options.Any();
-            TempData["HideChangeOption"] = certSession.Options == null || certSession.Options.Count <= 1;
-            TempData["HideChangeVersion"] = certSession.Versions == null || certSession.Versions.Count <= 1;
-
+           
             return await LoadViewModel<CertificateCheckViewModel>("~/Views/Certificate/Check.cshtml");
         }
 
@@ -58,6 +54,25 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             return await SaveViewModel(vm,
                 returnToIfModelNotValid: "~/Views/Certificate/Check.cshtml",
                 nextAction: RedirectToAction("Confirm", "CertificateConfirmation"), action: CertificateActions.Submit);
+        }
+
+        private async Task<IActionResult> LoadViewModel(string view)
+        {
+            var viewModel = await base.LoadViewModel<CertificateCheckViewModel>(view);
+            var username = GetUsernameFromClaim();
+            if (!TryGetCertificateSession(typeof(CertificateCheckViewModel).Name, username, out var certSession))
+            {
+                return RedirectToAction("Index", "Search");
+            }
+
+            var result = viewModel as ViewResult;
+
+            var viewModelResult = result.ViewData.Model as CertificateCheckViewModel;
+
+            viewModelResult.StandardHasOptions = true;
+
+            return result;
+
         }
     }
 }

@@ -51,6 +51,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             Logger.LogInformation($"Got Certificate for {typeof(T).Name} requested by {username} with Id {certificate.Id}");
 
             viewModel.FromCertificate(certificate);
+            viewModel.SetStandardHasVersionsAndOptions(certSession);
 
             Logger.LogInformation($"Got View Model of type {typeof(T).Name} requested by {username}");
 

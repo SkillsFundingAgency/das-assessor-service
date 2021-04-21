@@ -6,7 +6,6 @@
 
 @{
     ViewBag.Title = (!ViewData.ModelState.IsValid ? "Error: " : "") + "Check and approve the assessment details";
-    Model.StandardHasOptions = (bool)TempData["HideOption"] == false;
     Layout = "_DashboardLayout";
 }
 
@@ -132,7 +131,7 @@ else
                         @Model.Version
                     </dd>
                     <dd class="govuk-summary-list__actions">
-                        @if ((bool)TempData["HideChangeVersion"] == false)
+                        @if (Model.StandardHasSingleVersion == false)
                         {
                             <a class="govuk-link" asp-controller="CertificateVersion" asp-action="Version" asp-route-redirecttocheck="true">
                                 Change<span class="govuk-visually-hidden"> version</span>
@@ -152,7 +151,7 @@ else
                             @Model.Option
                         </dd>
                         <dd class="govuk-summary-list__actions">
-                            @if ((bool)TempData["HideChangeOption"] == false)
+                            @if (Model.StandardHasSingleOption == false)
                             {
                                 <a class="govuk-link" asp-controller="CertificateOption" asp-action="Option" asp-route-redirecttocheck="true">
                                     Change<span class="govuk-visually-hidden"> option</span>
