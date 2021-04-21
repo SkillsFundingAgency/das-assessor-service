@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Linq;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.JsonData;
+using SFA.DAS.AssessorService.Web.Controllers;
 
 namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
 {
@@ -14,6 +16,9 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
         public string SelectedStandard { get; set; }
         public DateTime? AchievementDate { get; set; }
         public DateTime? LearnerStartDate { get; set; }
+        public bool StandardHasSingleOption { get; set; }
+        public bool StandardHasOptions { get; set; }
+        public bool StandardHasSingleVersion { get; set; }
 
         public string Name { get; set; }
         public string Dept { get; set; }
@@ -55,6 +60,13 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
             certificate.Status = CertificateStatus.Submitted;
             certificate.CertificateData = JsonConvert.SerializeObject(data);
             return certificate;
+        }
+
+        public void SetStandardHasVersionsAndOptions(CertificateSession certSession)
+        {
+            StandardHasOptions = certSession.Options != null && certSession.Options.Any();
+            StandardHasSingleOption = certSession.Options == null || certSession.Options.Count <= 1;
+            StandardHasSingleVersion = certSession.Versions == null || certSession.Versions.Count <= 1;
         }
     }
 }

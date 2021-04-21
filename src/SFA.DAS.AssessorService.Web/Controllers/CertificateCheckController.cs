@@ -34,7 +34,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 return RedirectToAction("Index", "Search");
             }
            
-            return await LoadViewModel<CertificateCheckViewModel>("~/Views/Certificate/Check.cshtml");
+            return await LoadViewModel("~/Views/Certificate/Check.cshtml");
         }
 
         [HttpPost(Name = "Check")]
@@ -54,6 +54,33 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             return await SaveViewModel(vm,
                 returnToIfModelNotValid: "~/Views/Certificate/Check.cshtml",
                 nextAction: RedirectToAction("Confirm", "CertificateConfirmation"), action: CertificateActions.Submit);
+        }
+
+        private async Task<IActionResult> LoadViewModel(string view)
+        {
+            var username = GetUsernameFromClaim();
+
+            Logger.LogInformation($"Load View Model for CertificateCheckViewModel for {username}");
+
+            var viewModel = new CertificateCheckViewModel();
+
+            CheckAndSetRedirectToCheck(viewModel);
+
+            if (!TryGetCertificateSession("CertificateCheckViewModel", username, out var certSession))
+            {
+                return RedirectToAction("Index", "Search");
+            }
+
+            var certificate = await CertificateApiClient.GetCertificate(certSession.CertificateId);
+
+            Logger.LogInformation($"Got Certificate for CertificateCheckViewModel requested by {username} with Id {certificate.Id}");
+
+            viewModel.FromCertificate(certificate);
+            viewModel.SetStandardHasVersionsAndOptions(certSession);
+
+            Logger.LogInformation($"Got View Model of type CertificateCheckViewModel requested by {username}");
+
+            return View(view, viewModel);
         }
     }
 }
