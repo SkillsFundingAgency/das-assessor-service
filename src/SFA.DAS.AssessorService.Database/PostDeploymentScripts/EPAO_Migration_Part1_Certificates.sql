@@ -69,7 +69,7 @@ ON MasterCerts.id = ceupd.certificateid
 WHEN matched AND MasterCerts.standardUId IS NULL 
 THEN  UPDATE 
 SET MasterCerts.standardUId = ceupd.EstimatedUId,
-      MasterCerts.Certificatedata = JSON_MODIFY(MasterCerts.Certificatedata,'$.version',''); 
+      MasterCerts.Certificatedata = JSON_MODIFY(MasterCerts.Certificatedata,'$.Version',''); 
 -- set version as an empty string (as it is not known!)
 
 
