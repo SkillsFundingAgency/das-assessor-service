@@ -19,8 +19,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Learners
         private readonly IOrganisationQueryRepository _organisationRepository;
         private readonly IStandardService _standardService;
 
-        public GetBatchLearnerHandler(ILogger<GetBatchLearnerHandler> logger, IIlrRepository ilrRepository, IOrganisationQueryRepository organisationRepository, IStandardService standardService)
+        public GetBatchLearnerHandler(IMediator mediator, ILogger<GetBatchLearnerHandler> logger, IIlrRepository ilrRepository, IOrganisationQueryRepository organisationRepository, IStandardService standardService)
         {
+            _mediator = mediator;
             _logger = logger;
             _ilrRepository = ilrRepository;
             _organisationRepository = organisationRepository;
