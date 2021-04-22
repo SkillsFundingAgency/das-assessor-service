@@ -12,6 +12,7 @@ using SFA.DAS.AssessorService.Api.Types.Models.ProviderRegister;
 using SFA.DAS.AssessorService.Application.Infrastructure;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Application.Logging;
+using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using CertificateStatus = SFA.DAS.AssessorService.Domain.Consts.CertificateStatus;
@@ -42,25 +43,39 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
         public async Task<Certificate> Handle(StartCertificateRequest request, CancellationToken cancellationToken)
         {
             var certificate = await _certificateRepository.GetCertificate(request.Uln, request.StandardCode);
+
             if (certificate == null)
                 certificate = await CreateNewCertificate(request);
-            else if(certificate.Status == Domain.Consts.CertificateStatus.Deleted)
+            else
             {
-                _logger.LogInformation("CreateNewCertificate Before Get Ilr from db");
-                var ilr = await _ilrRepository.Get(request.Uln, request.StandardCode);
-                if (ilr != null)
+                var certData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
+
+                if (certificate.Status == CertificateStatus.Deleted)
                 {
-                    var certData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
-                    certData.LearnerGivenNames = ilr.GivenNames;
-                    certData.LearnerFamilyName = ilr.FamilyName;
-                    certData.LearningStartDate = ilr.LearnStartDate;
-                    certData.FullName = $"{ilr.GivenNames} {ilr.FamilyName}";
-                    certificate.CertificateData = JsonConvert.SerializeObject(certData);
-                                        
-                    certificate.IsPrivatelyFunded = ilr?.FundingModel == PrivateFundingModelNumber;
-                    await _certificateRepository.Update(certificate, request.Username, null);
+                    _logger.LogInformation("CreateNewCertificate Before Get Ilr from db");
+                    var ilr = await _ilrRepository.Get(request.Uln, request.StandardCode);
+                    if (ilr != null)
+                    {
+                        certData.LearnerGivenNames = ilr.GivenNames;
+                        certData.LearnerFamilyName = ilr.FamilyName;
+                        certData.LearningStartDate = ilr.LearnStartDate;
+                        certData.FullName = $"{ilr.GivenNames} {ilr.FamilyName}";
+                        certificate.CertificateData = JsonConvert.SerializeObject(certData);
+
+                        certificate.IsPrivatelyFunded = ilr?.FundingModel == PrivateFundingModelNumber;
+                        await _certificateRepository.Update(certificate, request.Username, null);
+                    }
+                }
+                else if (certData.OverallGrade == CertificateGrade.Fail)
+                {
+                    _logger.LogInformation($"Starting retake of apprenticeship for ULN: {certificate.Uln}, Standard: {certificate.StandardCode}");
+
+                    certificate.Status = CertificateStatus.Draft;
+
+                    await _certificateRepository.Update(certificate, request.Username, CertificateActions.StartRetake, updateLog: true, "Retake failed apprenticeship");
                 }
             }
+           
             return certificate;
         }
 
