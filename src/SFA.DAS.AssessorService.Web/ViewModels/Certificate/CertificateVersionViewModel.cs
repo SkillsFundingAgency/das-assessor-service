@@ -26,7 +26,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
             certData.StandardName = SelectedStandardVersion.Title;
             certData.StandardLevel = SelectedStandardVersion.Level;
             certData.StandardPublicationDate = SelectedStandardVersion.EffectiveFrom;
-            certData.Version = SelectedStandardVersion.Version.ToString();
+            certData.Version = SelectedStandardVersion.Version;
 
             if (SelectedStandardOptions != null && SelectedStandardOptions.OnlyOneOption())
             {

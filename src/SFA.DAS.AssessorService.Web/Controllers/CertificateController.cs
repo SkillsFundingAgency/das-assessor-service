@@ -23,20 +23,17 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly ICertificateApiClient _certificateApiClient;
         private readonly IStandardVersionClient _standardVersionClient;
-        private readonly IStandardServiceClient _standardServiceClient;
         private readonly ISessionService _sessionService;
 
         public CertificateController(ILogger<CertificateController> logger, IHttpContextAccessor contextAccessor,
             ICertificateApiClient certificateApiClient, 
             IStandardVersionClient standardVersionClient,
-            IStandardServiceClient standardServiceClient,
             ISessionService sessionService)
         {
             _logger = logger;
             _contextAccessor = contextAccessor;
             _certificateApiClient = certificateApiClient;
             _standardVersionClient = standardVersionClient;
-            _standardServiceClient = standardServiceClient;
             _sessionService = sessionService;
         }
 
@@ -80,7 +77,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             {
                 var singularVersion = versions.Single();
                 certificateSession.StandardUId = singularVersion.StandardUId;
-                var options = await _standardServiceClient.GetStandardOptions(singularVersion.StandardUId);
+                var options = await _standardVersionClient.GetStandardOptions(singularVersion.StandardUId);
 
                 if(options != null && options.HasOptions())
                 {

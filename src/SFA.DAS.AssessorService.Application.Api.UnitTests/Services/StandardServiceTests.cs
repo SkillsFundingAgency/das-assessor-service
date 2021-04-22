@@ -20,7 +20,6 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
 {
     public class StandardServiceTests
     {
-        private Mock<IOuterApiClient> _mockOuterApiClient;
         private Mock<ILogger<StandardService>> _mockLogger;
         private Mock<IStandardRepository> _mockStandardRepository;
 
@@ -29,35 +28,31 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
         [SetUp]
         public void Setup()
         {
-            _mockOuterApiClient = new Mock<IOuterApiClient>();
             _mockLogger = new Mock<ILogger<StandardService>>();
             _mockStandardRepository = new Mock<IStandardRepository>();
 
             _standardService = new StandardService(new CacheService(Mock.Of<IDistributedCache>()),
-                _mockOuterApiClient.Object,
                 _mockLogger.Object,
                 _mockStandardRepository.Object);
         }
 
         [Test, AutoData]
-        public async Task When_GettingStandardOptions_And_OuterApiReturnsStandardOptionsListResponse_Then_ReturnsListOfStandardOptions(GetStandardOptionsListResponse response)
+        public async Task When_GettingStandardOptions_Then_ReturnsListOfStandardOptions(IEnumerable<StandardOptions> options)
         {
-            _mockOuterApiClient.Setup(client => client.Get<GetStandardOptionsListResponse>(It.IsAny<GetStandardOptionsRequest>()))
-                .ReturnsAsync(response);
+            _mockStandardRepository.Setup(s => s.GetAllStandardOptions()).ReturnsAsync(options);
 
-            var result = await _standardService.GetStandardOptions();
+            var result = await _standardService.GetAllStandardOptions();
 
             Assert.IsInstanceOf<IEnumerable<StandardOptions>>(result);
-            Assert.AreEqual(result.Count(), response.StandardOptions.Count());
+            Assert.AreEqual(result.Count(), options.Count());
         }
 
         [Test]
-        public async Task When_GettingStandardOptions_And_OuterApiDoesNotReturnResponse_Then_LogError_And_ReturnNull()
+        public async Task When_GettingStandardOptions_And_ExceptionIsThrown_Then_LogError_And_ReturnNull()
         {
-            _mockOuterApiClient.Setup(client => client.Get<GetStandardOptionsListResponse>(It.IsAny<GetStandardOptionsRequest>()))
-                .ReturnsAsync((GetStandardOptionsListResponse)null);
+            _mockStandardRepository.Setup(s => s.GetAllStandardOptions()).Throws<TimeoutException>();
 
-            var result = await _standardService.GetStandardOptions();
+            var result = await _standardService.GetAllStandardOptions();
 
             Assert.IsNull(result);
 
@@ -69,35 +64,51 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
         }
 
         [Test, AutoData]
-        public async Task When_GettingStandardOptionsByStandardId_And_OuterApiReturnsStandardDetailResponse_Then_ReturnsStandardOptions(StandardDetailResponse response, string id)
+        public async Task When_GettingStandardOptionsByStandardId_AndIdIsStandardUId_Then_ReturnsStandardOptions(StandardOptions option)
         {
-            _mockOuterApiClient.Setup(client => client.Get<StandardDetailResponse>(It.Is<GetStandardByIdRequest>(x => x.Id == id)))
-                .ReturnsAsync(response);
+            var standardUId = "ST0023_1.0";
+            _mockStandardRepository.Setup(s => s.GetStandardOptionsByStandardUId(standardUId)).ReturnsAsync(option);
+            
+            var result = await _standardService.GetStandardOptionsByStandardId(standardUId);
 
-            var result = await _standardService.GetStandardOptionsByStandardId(id);
-
-            Assert.IsInstanceOf<StandardOptions>(result);
-            Assert.AreEqual(result.CourseOption, response.Options);
-            Assert.AreEqual(result.StandardUId, response.StandardUId);
-            Assert.AreEqual(result.StandardCode, response.LarsCode);
-            Assert.AreEqual(result.StandardReference, response.IfateReferenceNumber);
-            Assert.AreEqual(result.Version, response.Version.ToString("#.0"));
+            result.Should().BeEquivalentTo(option);
         }
 
         [Test, AutoData]
-        public async Task When_GettingStandardOptionsByStandardId_And_OuterApiDoesNotReturnResponse_Then_LogError_And_ReturnNull(string id)
+        public async Task When_GettingStandardOptionsByStandardId_AndIdIsLarsCode_Then_ReturnsStandardOptions(StandardOptions option, int larsCode)
         {
-            _mockOuterApiClient.Setup(client => client.Get<StandardDetailResponse>(It.Is<GetStandardByIdRequest>(x => x.Id == id)))
-                .ReturnsAsync((StandardDetailResponse)null);
+            _mockStandardRepository.Setup(s => s.GetStandardOptionsByLarsCode(larsCode)).ReturnsAsync(option);
 
-            var result = await _standardService.GetStandardOptionsByStandardId(id);
+            var result = await _standardService.GetStandardOptionsByStandardId(larsCode.ToString());
+
+            result.Should().BeEquivalentTo(option);
+        }
+
+        [Test, AutoData]
+        public async Task When_GettingStandardOptionsByStandardId_AndIdIsStandardReferenceNumber_Then_ReturnsStandardOptions(StandardOptions option)
+        {
+            var ifateReferenceNumber = "ST0023";
+            _mockStandardRepository.Setup(s => s.GetStandardOptionsByIFateReferenceNumber(ifateReferenceNumber)).ReturnsAsync(option);
+
+            var result = await _standardService.GetStandardOptionsByStandardId(ifateReferenceNumber);
+
+            result.Should().BeEquivalentTo(option);
+        }
+
+        [Test, AutoData]
+        public async Task When_GettingStandardOptionsByStandardId_AndAnExceptionIsThrown_Then_LogError_And_ReturnNull()
+        {
+            var standardUId = "ST0023_1.0";
+            _mockStandardRepository.Setup(s => s.GetStandardOptionsByStandardUId(standardUId)).Throws<TimeoutException>();
+
+            var result = await _standardService.GetStandardOptionsByStandardId(standardUId);
             Assert.IsNull(result);
 
             _mockLogger.Verify(logger => logger.Log(LogLevel.Error, It.IsAny<EventId>(),
                     It.IsAny<FormattedLogValues>(),
                     It.IsAny<Exception>(),
                     It.IsAny<Func<object, Exception, string>>()),
-                Times.Once, $"STANDARD OPTIONS: Failed to get standard options for id {id}");
+                Times.Once, $"STANDARD OPTIONS: Failed to get standard options for id {standardUId}");
         }
 
         [Test, AutoData]
@@ -129,18 +140,16 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
         }
 
         [Test, AutoData]
-        public async Task When_GettingStandardOptionsByStandardReferenceAndVersion_Then_UseStandardUIdToCallOuterApi(string standardReference, string version, Standard getStandardResponse, StandardDetailResponse StandardDetailResponse)
+        public async Task When_GettingStandardOptionsByStandardReferenceAndVersion_Then_UseStandardUIdToCallOuterApi(string standardReference, string version, Standard getStandardResponse, StandardOptions option)
         {
             _mockStandardRepository.Setup(repository => repository.GetStandardByStandardReferenceAndVersion(standardReference, version))
                 .ReturnsAsync(getStandardResponse);
 
-            _mockOuterApiClient.Setup(client => client.Get<StandardDetailResponse>(It.Is<GetStandardByIdRequest>(x => x.Id == getStandardResponse.StandardUId)))
-                .ReturnsAsync(StandardDetailResponse);
+            _mockStandardRepository.Setup(repository => repository.GetStandardOptionsByStandardUId(getStandardResponse.StandardUId)).ReturnsAsync(option);
 
             var result = await _standardService.GetStandardOptionsByStandardReferenceAndVersion(standardReference, version);
 
-            Assert.IsInstanceOf<StandardOptions>(result);
-            _mockOuterApiClient.Verify(client => client.Get<StandardDetailResponse>(It.Is<GetStandardByIdRequest>(x => x.Id == getStandardResponse.StandardUId)), Times.Once);
+            result.Should().BeEquivalentTo(option);
         }
 
         [Test, AutoData]

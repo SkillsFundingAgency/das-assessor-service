@@ -18,9 +18,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
             this.standardRepository = standardRepository;
         }
 
-        public async Task DeleteAllStandards()
+        public async Task DeleteAllStandardsAndOptions()
         {
-            await standardRepository.DeleteAll();
+            await Task.WhenAll(standardRepository.DeleteAllStandards(), standardRepository.DeleteAllOptions());
         }
 
         public async Task LoadStandards(IEnumerable<StandardDetailResponse> standards)
@@ -48,7 +48,20 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
                 ProposedTypicalDuration = source.VersionDetail.ProposedTypicalDuration
             };
 
-            await standardRepository.Insert(standards.Select(MapGetStandardsListItemToStandard));
+            await standardRepository.InsertStandards(standards.Select(MapGetStandardsListItemToStandard));
+        }
+
+        public async Task LoadOptions(IEnumerable<StandardDetailResponse> standards)
+        {
+            var standardsWithOptions = standards.Where(s => s.Options != null && s.Options.Any());
+            IEnumerable<StandardOption> optionsToInsert = new List<StandardOption>();
+            foreach(var standard in standardsWithOptions)
+            {
+                // Union to ensure no duplicates.
+                optionsToInsert = optionsToInsert.Union(standard.Options.Select(s => new StandardOption { StandardUId = standard.StandardUId, OptionName = s }));
+            }
+
+            await standardRepository.InsertOptions(optionsToInsert);
         }
 
         public async Task UpsertStandardCollations(IEnumerable<StandardDetailResponse> standards)

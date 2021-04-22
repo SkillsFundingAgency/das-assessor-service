@@ -24,7 +24,6 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
 {
     public class CertificateControllerTests
     {
-        private Mock<IStandardServiceClient> _mockStandardServiceClient;
         private Mock<IStandardVersionClient> _mockStandardVersionClient;
         private Mock<ICertificateApiClient> _mockCertificateApiClient;
         private Mock<IHttpContextAccessor> _mockContextAccessor;
@@ -44,7 +43,6 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
                 cfg.CreateMap<StandardVersionViewModel, StandardVersion>();
             });
 
-            _mockStandardServiceClient = new Mock<IStandardServiceClient>();
             _mockStandardVersionClient = new Mock<IStandardVersionClient>();
             _mockCertificateApiClient = new Mock<ICertificateApiClient>();
             _mockContextAccessor = new Mock<IHttpContextAccessor>();
@@ -64,7 +62,6 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
                 _mockContextAccessor.Object,
                 _mockCertificateApiClient.Object,
                 _mockStandardVersionClient.Object,
-                _mockStandardServiceClient.Object,
                 _mockSessionService.Object);
 
         }
@@ -74,7 +71,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
         {
             CertificateSession setSession = new CertificateSession();
             _mockStandardVersionClient.Setup(s => s.GetStandardVersionsByLarsCode(model.StdCode)).ReturnsAsync(new List<StandardVersion> { standard });
-            _mockStandardServiceClient.Setup(s => s.GetStandardOptions(standard.StandardUId)).ReturnsAsync(new StandardOptions());
+            _mockStandardVersionClient.Setup(s => s.GetStandardOptions(standard.StandardUId)).ReturnsAsync(new StandardOptions());
             _mockSessionService.Setup(c => c.Set(nameof(CertificateSession), It.IsAny<object>()))
                 .Callback<string, object>((key, session) =>
                 {
@@ -134,7 +131,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
         {
             CertificateSession setSession = new CertificateSession();
             _mockStandardVersionClient.Setup(s => s.GetStandardVersionsByLarsCode(model.StdCode)).ReturnsAsync(new List<StandardVersion> { standard });
-            _mockStandardServiceClient.Setup(s => s.GetStandardOptions(standard.StandardUId)).ReturnsAsync(options);
+            _mockStandardVersionClient.Setup(s => s.GetStandardOptions(standard.StandardUId)).ReturnsAsync(options);
             _mockSessionService.Setup(c => c.Set(nameof(CertificateSession), It.IsAny<object>()))
                 .Callback<string, object>((key, session) =>
                 {
@@ -165,7 +162,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
             CertificateSession setSession = new CertificateSession();
             options.CourseOption = new List<string> { option };
             _mockStandardVersionClient.Setup(s => s.GetStandardVersionsByLarsCode(model.StdCode)).ReturnsAsync(new List<StandardVersion> { standard });
-            _mockStandardServiceClient.Setup(s => s.GetStandardOptions(standard.StandardUId)).ReturnsAsync(options);
+            _mockStandardVersionClient.Setup(s => s.GetStandardOptions(standard.StandardUId)).ReturnsAsync(options);
             _mockSessionService.Setup(c => c.Set(nameof(CertificateSession), It.IsAny<object>()))
                 .Callback<string, object>((key, session) =>
                 {
