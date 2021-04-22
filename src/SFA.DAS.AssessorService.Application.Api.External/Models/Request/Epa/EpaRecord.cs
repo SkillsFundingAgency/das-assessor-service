@@ -11,6 +11,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Models.Request.Epa
         public string EpaOutcome { get; set; }
         public bool? Resit { get; set; }
         public bool? Retake { get; set; }
+        public string Version { get; set; }
 
         #region GetHashCode, Equals and IEquatable
         public override int GetHashCode()

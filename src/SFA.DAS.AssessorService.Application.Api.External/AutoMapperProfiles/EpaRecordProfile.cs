@@ -12,6 +12,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.AutoMapperProfiles
                 .ForMember(dest => dest.EpaOutcome, opt => opt.MapFrom(source => source.EpaOutcome))
                 .ForMember(dest => dest.Resit, opt => opt.MapFrom(source => source.Resit))
                 .ForMember(dest => dest.Retake, opt => opt.MapFrom(source => source.Retake))
+                .ForMember(dest => dest.Version, opt => opt.MapFrom(source => source.Version))
                 .ForAllOtherMembers(dest => dest.Ignore());
 
             // Response from Int API
@@ -20,6 +21,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.AutoMapperProfiles
                 .ForMember(dest => dest.EpaOutcome, opt => opt.MapFrom(source => source.EpaOutcome))
                 .ForMember(dest => dest.Resit, opt => opt.MapFrom(source => source.Resit))
                 .ForMember(dest => dest.Retake, opt => opt.MapFrom(source => source.Retake))
+                .ForMember(dest => dest.Version, opt => opt.MapFrom(source => source.Version))
                 .ForAllOtherMembers(dest => dest.Ignore());
         }
     }

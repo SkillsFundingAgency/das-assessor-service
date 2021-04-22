@@ -16,7 +16,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.SwaggerHelpers.Exampl
             {
                 LearnerData = new LearnerData
                 {
-                    Standard = new Standard { StandardCode = 1, StandardReference = "ST0001", Level = 1, StandardName = "Example Standard" },
+                    Standard = new Standard { StandardCode = 1, StandardReference = "ST0001", Level = 1, StandardName = "Example Standard", Version = "1.0" },
                     Learner = new Learner { GivenNames = "John", FamilyName = "Smith", Uln = 1234567890 },
                     LearningDetails = new Models.Response.Learners.LearningDetails { LearnerReferenceNumber = "A1234567890", LearningStartDate = DateTime.UtcNow.AddYears(-1), PlannedEndDate = DateTime.UtcNow, ProviderUkPrn = 12345678, ProviderName = "Example Provider" },
                 },
@@ -26,7 +26,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.SwaggerHelpers.Exampl
                     EpaReference = "12345678",
                     LatestEpaDate = DateTime.UtcNow,
                     LatestEpaOutcome = EpaOutcome.Pass,
-                    Epas = new List<EpaRecord> { new EpaRecord { EpaDate = DateTime.UtcNow, EpaOutcome = EpaOutcome.Pass } }
+                    Epas = new List<EpaRecord> { new EpaRecord { EpaDate = DateTime.UtcNow, EpaOutcome = EpaOutcome.Pass, Version = "1.0" } }
                 }
             };
         }

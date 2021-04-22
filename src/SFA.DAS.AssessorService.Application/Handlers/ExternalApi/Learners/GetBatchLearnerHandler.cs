@@ -17,47 +17,32 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Learners
         private readonly ILogger<GetBatchLearnerHandler> _logger;
         private readonly IIlrRepository _ilrRepository;
         private readonly IOrganisationQueryRepository _organisationRepository;
+        private readonly IStandardService _standardService;
 
-        public GetBatchLearnerHandler(IMediator mediator, ILogger<GetBatchLearnerHandler> logger, IIlrRepository ilrRepository, IOrganisationQueryRepository organisationRepository)
+        public GetBatchLearnerHandler(ILogger<GetBatchLearnerHandler> logger, IIlrRepository ilrRepository, IOrganisationQueryRepository organisationRepository, IStandardService standardService)
         {
-            _mediator = mediator;
             _logger = logger;
             _ilrRepository = ilrRepository;
             _organisationRepository = organisationRepository;
+            _standardService = standardService;
         }
 
         public async Task<GetBatchLearnerResponse> Handle(GetBatchLearnerRequest request, CancellationToken cancellationToken)
         {
-            var standard = await GetStandard(request);
+            var standard = await _standardService.GetStandardVersionById(request.Standard);
             var learner = await GetLearnerDetails(request, standard);
             var certificate = await GetCertificate(request, standard);
 
             return new GetBatchLearnerResponse { Learner = learner, Certificate = certificate };
         }
 
-        private async Task<StandardCollation> GetStandard(GetBatchLearnerRequest request)
-        {
-            StandardCollation standard;
-
-            if (int.TryParse(request.Standard, out var standardCode))
-            {
-                standard = await _mediator.Send(new GetCollatedStandardRequest { StandardId = standardCode });
-            }
-            else
-            {
-                standard = await _mediator.Send(new GetCollatedStandardRequest { ReferenceNumber = request.Standard });
-            }
-
-            return standard;
-        }
-
-        private async Task<LearnerDetailForExternalApi> GetLearnerDetails(GetBatchLearnerRequest request, StandardCollation standard)
+        private async Task<LearnerDetailForExternalApi> GetLearnerDetails(GetBatchLearnerRequest request, Standard standard)
         {
             LearnerDetailForExternalApi learnerDetail = null;
 
             if (standard != null)
             {
-                var learner = await _ilrRepository.Get(request.Uln, standard.StandardId.GetValueOrDefault());
+                var learner = await _ilrRepository.Get(request.Uln, standard.LarsCode);
 
                 if (learner != null)
                 {
@@ -80,14 +65,14 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Learners
                 }
                 else
                 {
-                    _logger.LogError($"Could not find learner for ULN {request.Uln} and StandardCode {standard.StandardId.GetValueOrDefault()}");
+                    _logger.LogError($"Could not find learner for ULN {request.Uln} and StandardCode {standard.LarsCode}");
                 }
             }
 
             return learnerDetail;
         }
 
-        private async Task<Certificate> GetCertificate(GetBatchLearnerRequest request, StandardCollation standard)
+        private async Task<Certificate> GetCertificate(GetBatchLearnerRequest request, Standard standard)
         {
             Certificate certificate = null;
 
@@ -97,8 +82,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Learners
                 {
                     Uln = request.Uln,
                     FamilyName = request.FamilyName,
-                    StandardCode = standard.StandardId.GetValueOrDefault(),
-                    StandardReference = standard.ReferenceNumber,
+                    StandardCode = standard.LarsCode,
+                    StandardReference = standard.IfateReferenceNumber,
                     UkPrn = request.UkPrn
                 };
 

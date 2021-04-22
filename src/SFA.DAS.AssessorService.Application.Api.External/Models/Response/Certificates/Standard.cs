@@ -8,6 +8,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Models.Response.Certi
         public string StandardReference { get; set; }
         public string StandardName { get; set; }
         public int Level { get; set; }
+        public string Version { get; set; }
 
         #region GetHashCode, Equals and IEquatable
         public override int GetHashCode()

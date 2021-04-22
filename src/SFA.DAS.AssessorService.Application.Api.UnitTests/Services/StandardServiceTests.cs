@@ -179,7 +179,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
         {
             _mockStandardRepository.Setup(s => s.GetStandardVersionByStandardUId(standardUId)).ReturnsAsync(standard);
 
-            var result = await _standardService.GetStandardVersionByStandardUId(standardUId);
+            var result = await _standardService.GetStandardVersionById(standardUId);
 
             result.Should().BeEquivalentTo(standard);
         }

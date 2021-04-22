@@ -62,6 +62,37 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
 
             return standardCollation;
         }
+                
+        public async Task<Standard> GetStandardVersionById(string id)
+        {
+            Standard standard = null;
+            try
+            {
+                var standardId = new StandardId(id);
+                
+                switch (standardId.IdType)
+                {
+                    case StandardId.StandardIdType.LarsCode:
+                        standard = await _standardRepository.GetLatestStandardVersionByLarsCode(standardId.LarsCode);
+                        break;
+                    case StandardId.StandardIdType.IFateReferenceNumber:
+                        standard = await _standardRepository.GetLatestStandardVersionByIFateReferenceNumber(standardId.IFateReferenceNumber);
+                        break;
+                    case StandardId.StandardIdType.StandardUId:
+                        standard = await _standardRepository.GetStandardVersionByStandardUId(standardId.StandardUId);
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException("id", "StandardId was not of type StandardUId, LarsCode or IfateReferenceNumber");
+
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"STANDARD VERSION: Failed to get for standard id: {id}");
+            }
+
+            return standard;
+        }
 
         public async Task<IEnumerable<Standard>> GetStandardVersionsByLarsCode(int larsCode)
         {
@@ -79,22 +110,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
             return standards;
         }
 
-        public async Task<Standard> GetStandardVersionByStandardUId(string standardUId)
-        {
-            Standard standard = null;
-
-            try
-            {
-                standard = await _standardRepository.GetStandardVersionByStandardUId(standardUId);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"STANDARD: Failed to get for standard id: {standardUId}");
-            }
-
-            return standard;
-        }
-
         public async Task<StandardCollation> GetStandard(string referenceNumber)
         {
             StandardCollation standardCollation = null;
@@ -110,7 +125,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
 
             return standardCollation;
         }
-
 
         public async Task<IEnumerable<StandardOptions>> GetAllStandardOptions()
         {
@@ -133,17 +147,18 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
             StandardOptions options = null;
             try
             {
-                if (int.TryParse(id, out var larsCode)) // Lars Code
+                var standardId = new StandardId(id);
+                switch (standardId.IdType)
                 {
-                    options = await _standardRepository.GetStandardOptionsByLarsCode(larsCode);
-                }
-                else if (id.Length == 6) // Ifate Ref
-                {
-                    options = await _standardRepository.GetStandardOptionsByIFateReferenceNumber(id);
-                }
-                else // Assume StandardUId
-                {
-                    options = await _standardRepository.GetStandardOptionsByStandardUId(id);
+                    case StandardId.StandardIdType.LarsCode:
+                        options = await _standardRepository.GetStandardOptionsByLarsCode(standardId.LarsCode);
+                        break;
+                    case StandardId.StandardIdType.IFateReferenceNumber:
+                        options = await _standardRepository.GetStandardOptionsByIFateReferenceNumber(standardId.IFateReferenceNumber);
+                        break;
+                    case StandardId.StandardIdType.StandardUId:
+                        options = await _standardRepository.GetStandardOptionsByStandardUId(standardId.StandardUId);
+                        break;
                 }
             }
             catch (Exception ex)
@@ -186,6 +201,44 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
             }
 
             return await _standardRepository.GetEpaoRegisteredStandardVersions(endPointAssessorOrganisationId);
+        }
+
+        public struct StandardId
+        {
+            public string StandardUId { get; }
+            public string IFateReferenceNumber { get; }
+            public int LarsCode { get; }
+            public StandardIdType IdType { get; }
+
+            public StandardId(string id)
+            {
+                StandardUId = null;
+                IFateReferenceNumber = null;
+                LarsCode = -1;
+
+                if (int.TryParse(id, out var larsCode)) // Lars Code
+                {
+                    LarsCode = larsCode;
+                    IdType = StandardIdType.LarsCode;
+                }
+                else if (id.Length == 6) // Ifate Ref
+                {
+                    IdType = StandardIdType.IFateReferenceNumber;
+                    IFateReferenceNumber = id;
+                }
+                else // Assume StandardUId
+                {
+                    IdType = StandardIdType.StandardUId;
+                    StandardUId = id;
+                }
+            }
+
+            public enum StandardIdType
+            {
+                StandardUId,
+                LarsCode,
+                IFateReferenceNumber
+            }
         }
     }
 }

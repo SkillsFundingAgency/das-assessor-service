@@ -48,5 +48,6 @@ namespace SFA.DAS.AssessorService.Domain.JsonData
         public string EpaOutcome { get; set; }
         public bool? Resit { get; set; }
         public bool? Retake { get; set; }
+        public string Version { get; set; }
     }
 }

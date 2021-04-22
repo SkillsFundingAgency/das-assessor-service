@@ -58,7 +58,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         public async Task<IActionResult> GetStandardVersionByStandardUId(string standardUId)
         {
             _logger.LogInformation($@"Get Standard Version for StandardUId {standardUId} from Standard Service");
-            var standard = await _standardService.GetStandardVersionByStandardUId(standardUId);
+            var standard = await _standardService.GetStandardVersionById(standardUId);
             if(standard == null)
             {
                 return NotFound();
