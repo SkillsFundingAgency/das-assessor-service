@@ -65,7 +65,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
                     var recordedBy = certificate.CertificateLogs
                             .OrderByDescending(q => q.EventTime)
                             .FirstOrDefault(certificateLog =>
-                                certificateLog.Action == CertificateActions.Submit)?.Username;
+                                certificateLog.Action == Domain.Consts.CertificateActions.Submit)?.Username;
                     
                     var printStatusAt =
                         certificate.CertificateBatchLog?.StatusAt;
