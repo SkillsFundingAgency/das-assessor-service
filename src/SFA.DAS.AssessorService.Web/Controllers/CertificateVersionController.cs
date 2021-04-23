@@ -90,7 +90,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         {
             return await SaveViewModel(vm,
                 returnToIfModelNotValid: "~/Views/Certificate/Version.cshtml",
-                nextAction: RedirectToAction("Declare", "CertificateDeclaration"), action: CertificateActions.Option);
+                nextAction: RedirectToAction("Declare", "CertificateDeclaration"), action: CertificateActions.Version);
         }
 
         private async Task<IActionResult> SaveViewModel(CertificateVersionViewModel vm, string returnToIfModelNotValid, RedirectToActionResult nextAction, string action)
