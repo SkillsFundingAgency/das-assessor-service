@@ -6,7 +6,6 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Models.Request.Certif
     {
         public int? StandardCode { get; set; }
         public string StandardReference { get; set; }
-
         public string Version { get; set; }
 
         #region GetHashCode, Equals and IEquatable
