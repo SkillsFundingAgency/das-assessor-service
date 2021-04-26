@@ -107,20 +107,20 @@ namespace SFA.DAS.AssessorService.Web.Resources.Validators {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Select an option.
+        /// </summary>
+        internal static string OptionCannotBeNull {
+            get {
+                return ResourceManager.GetString("OptionCannotBeNull", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Enter a postcode.
         /// </summary>
         internal static string PostcodeCannotBeEmpty {
             get {
                 return ResourceManager.GetString("PostcodeCannotBeEmpty", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Select an option.
-        /// </summary>
-        internal static string SelectAnOption {
-            get {
-                return ResourceManager.GetString("SelectAnOption", resourceCulture);
             }
         }
         

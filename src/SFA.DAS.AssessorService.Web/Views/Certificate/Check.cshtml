@@ -312,6 +312,7 @@ else
             <form class="js-disable-on-submit" method="post" asp-controller="CertificateCheck">
                 @Html.HiddenFor(c => c.Id)
                 @Html.HiddenFor(c => c.SelectedGrade)
+                @Html.HiddenFor(c => c.AchievementDate)
                 @Html.HiddenFor(c => c.Name)
                 @Html.HiddenFor(c => c.AddressLine1)
                 @Html.HiddenFor(c => c.City)

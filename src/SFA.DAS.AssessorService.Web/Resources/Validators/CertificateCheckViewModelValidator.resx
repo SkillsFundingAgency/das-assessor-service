@@ -132,11 +132,11 @@
   <data name="NameCannotBeEmpty" xml:space="preserve">
     <value>Enter a name</value>
   </data>
+  <data name="OptionCannotBeNull" xml:space="preserve">
+    <value>Select an option</value>
+  </data>
   <data name="PostcodeCannotBeEmpty" xml:space="preserve">
     <value>Enter a postcode</value>
-  </data>
-  <data name="SelectAnOption" xml:space="preserve">
-    <value>Select an option</value>
   </data>
   <data name="VersionCannotBeNull" xml:space="preserve">
     <value>Select a version</value>
