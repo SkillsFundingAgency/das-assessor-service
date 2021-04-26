@@ -117,11 +117,17 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AchievementDateCannotBeEmpty" xml:space="preserve">
+    <value>Enter the achievement date</value>
+  </data>
   <data name="AddressLine1CannotBeEmpty" xml:space="preserve">
     <value>Enter an address</value>
   </data>
   <data name="CityCannotBeEmpty" xml:space="preserve">
     <value>Enter a city or town</value>
+  </data>
+  <data name="GradeCannotBeNull" xml:space="preserve">
+    <value>Select a grade</value>
   </data>
   <data name="NameCannotBeEmpty" xml:space="preserve">
     <value>Enter a name</value>
@@ -131,5 +137,8 @@
   </data>
   <data name="SelectAnOption" xml:space="preserve">
     <value>Select an option</value>
+  </data>
+  <data name="VersionCannotBeNull" xml:space="preserve">
+    <value>Select a version</value>
   </data>
 </root>

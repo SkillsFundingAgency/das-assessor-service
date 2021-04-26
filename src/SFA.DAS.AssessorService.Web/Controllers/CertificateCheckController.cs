@@ -1,12 +1,11 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using FluentValidation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Web.Infrastructure;
-using SFA.DAS.AssessorService.Web.Validators;
 using SFA.DAS.AssessorService.Web.ViewModels.Certificate;
 using System.Linq;
 using System.Threading.Tasks;
@@ -17,10 +16,10 @@ namespace SFA.DAS.AssessorService.Web.Controllers
     [Route("certificate/check")]
     public class CertificateCheckController : CertificateBaseController
     {
-        private readonly CertificateCheckViewModelValidator _validator;
+        private readonly IValidator<CertificateCheckViewModel> _validator;
 
         public CertificateCheckController(ILogger<CertificateController> logger, IHttpContextAccessor contextAccessor,
-            ICertificateApiClient certificateApiClient, CertificateCheckViewModelValidator validator, ISessionService sessionService) : base(logger, contextAccessor, certificateApiClient, sessionService)
+            ICertificateApiClient certificateApiClient, IValidator<CertificateCheckViewModel> validator, ISessionService sessionService) : base(logger, contextAccessor, certificateApiClient, sessionService)
         {
             _validator = validator;
         }
