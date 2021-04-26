@@ -89,6 +89,24 @@ namespace SFA.DAS.AssessorService.Web.Resources.Validators {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Enter the achievement/fail date.
+        /// </summary>
+        internal static string DateCannotBeEmpty {
+            get {
+                return ResourceManager.GetString("DateCannotBeEmpty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enter the fail date.
+        /// </summary>
+        internal static string FailDateCannotBeEmpty {
+            get {
+                return ResourceManager.GetString("FailDateCannotBeEmpty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Select a grade.
         /// </summary>
         internal static string GradeCannotBeNull {

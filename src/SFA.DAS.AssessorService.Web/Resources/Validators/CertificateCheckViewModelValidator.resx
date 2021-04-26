@@ -126,6 +126,12 @@
   <data name="CityCannotBeEmpty" xml:space="preserve">
     <value>Enter a city or town</value>
   </data>
+  <data name="DateCannotBeEmpty" xml:space="preserve">
+    <value>Enter the achievement/fail date</value>
+  </data>
+  <data name="FailDateCannotBeEmpty" xml:space="preserve">
+    <value>Enter the fail date</value>
+  </data>
   <data name="GradeCannotBeNull" xml:space="preserve">
     <value>Select a grade</value>
   </data>

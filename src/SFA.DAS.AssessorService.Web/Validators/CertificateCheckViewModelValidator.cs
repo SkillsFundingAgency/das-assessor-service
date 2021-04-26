@@ -21,9 +21,6 @@ namespace SFA.DAS.AssessorService.Web.Validators
             RuleFor(vm => vm.SelectedGrade).NotNull()
                 .WithMessage(localizer["GradeCannotBeNull"]);
 
-            RuleFor(vm => vm.AchievementDate).NotNull()
-                .WithMessage(localizer["AchievementDateCannotBeEmpty"]);
-
             When(vm => vm.SelectedGrade != CertificateGrade.Fail, () =>
             {
                 RuleFor(vm => vm.Postcode).NotEmpty()
@@ -34,6 +31,25 @@ namespace SFA.DAS.AssessorService.Web.Validators
                     .WithMessage(localizer["AddressLine1CannotBeEmpty"]);
                 RuleFor(vm => vm.Name).NotEmpty()
                     .WithMessage(localizer["NameCannotBeEmpty"]);
+                
+                When(vm => vm.SelectedGrade != null, () =>
+                {
+                    RuleFor(vm => vm.AchievementDate).NotNull()
+                       .WithMessage(localizer["AchievementDateCannotBeEmpty"]);
+
+                });
+            });
+
+            When(vm => vm.SelectedGrade == CertificateGrade.Fail, () =>
+            {
+                RuleFor(vm => vm.AchievementDate).NotNull()
+                .WithMessage(localizer["FailDateCannotBeEmpty"]);
+            });
+
+            When(vm => vm.SelectedGrade == null, () =>
+            {
+                RuleFor(vm => vm.AchievementDate).NotNull()
+                .WithMessage(localizer["DateCannotBeEmpty"]);
             });
         }
     }
