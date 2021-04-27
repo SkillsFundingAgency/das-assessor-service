@@ -138,9 +138,6 @@
   <data name="InfoLine4" xml:space="preserve">
     <value>the apprentice has achieved all the requirements of the assessment plan, including the end-point assessment</value>
   </data>
-  <data name="InfoLine5" xml:space="preserve">
-    <value>the apprentice has achieved the English and maths requirements of the apprenticeship programme</value>
-  </data>
   <data name="ContinueButton" xml:space="preserve">
     <value>Confirm and record a grade</value>
   </data>
