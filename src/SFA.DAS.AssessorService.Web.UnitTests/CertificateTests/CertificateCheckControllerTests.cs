@@ -1,5 +1,7 @@
 ﻿using FizzWare.NBuilder;
 using FluentAssertions;
+using FluentValidation;
+using FluentValidation.Results;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
@@ -8,6 +10,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using Newtonsoft.Json;
 using NUnit.Framework;
+using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
@@ -19,7 +22,6 @@ using SFA.DAS.AssessorService.Web.ViewModels.Certificate;
 using SFA.DAS.Testing.AutoFixture;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -31,7 +33,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
         private Mock<ICertificateApiClient> _mockCertificateApiClient;
         private Mock<ISessionService> _mockSessionService;
         private Mock<IStringLocalizer<CertificateCheckViewModelValidator>> _mockLocalizer;
-        private CertificateCheckViewModelValidator _validator;
+        private Mock<IValidator<CertificateCheckViewModel>> _validator;
 
         private CertificateCheckController _certificateCheckController;
             
@@ -58,7 +60,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
 
             _mockLocalizer.Setup(localizer => localizer[It.IsAny<string>()]).Returns(new LocalizedString("Key", "Error"));
             
-            _validator = new CertificateCheckViewModelValidator(_mockLocalizer.Object);
+            _validator = new Mock<IValidator<CertificateCheckViewModel>>();
 
             var certSessionString = JsonConvert.SerializeObject(_builder.CreateNew<CertificateSession>()
                 .With(x => x.Options = null).Build());
@@ -70,26 +72,22 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
                 Mock.Of<ILogger<CertificateController>>(),
                 _mockContextAccessor.Object,
                 _mockCertificateApiClient.Object,
-                _validator,
+                _validator.Object,
                 _mockSessionService.Object);
 
             _certificateCheckController.TempData = new TempDataDictionary(_mockContextAccessor.Object.HttpContext, Mock.Of<ITempDataProvider>());
+
+            _certificate = SetupValidCertificate();
+
+            _mockCertificateApiClient.Setup(s => s.GetCertificate(It.IsAny<Guid>())).ReturnsAsync(_certificate);
         }
 
         [Test, MoqAutoData]
-        public async Task WhenSubmittingCertificate_AndOptionIsNotSet_ThenShouldRedirectToCheckPage(CertificateCheckViewModel vm)
+        public async Task When_CertificateCheckViewModelIsValid(CertificateCheckViewModel vm)
         {
-            _certificate = _builder.CreateNew<Certificate>()
-              .With(q => q.CertificateData = JsonConvert.SerializeObject(_builder.CreateNew<CertificateData>()
-                  .With(x => x.OverallGrade = CertificateGrade.Pass)
-                  .With(x => x.AchievementDate = DateTime.Now)
-                  .With(x => x.CourseOption = null)
-                  .Build()))
-              .Build();
-
-            _mockCertificateApiClient.Setup(s => s.GetCertificate(It.IsAny<Guid>())).ReturnsAsync(_certificate);
-
-            vm.StandardHasOptions = true;
+            _validator.Setup(s => s.Validate(It.IsAny<CertificateCheckViewModel>())).Returns(new ValidationResult(new List<ValidationFailure> {
+                new ValidationFailure("Error", "Error message")
+            }));
 
             var result = await _certificateCheckController.Check(vm) as ViewResult;
 
@@ -97,26 +95,34 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
         }
 
         [Test, MoqAutoData]
-        public async Task WhenSubmittingPass_AndNoRecipientIsEntered_ThenRedirectToCheckPage(CertificateCheckViewModel vm)
+        public async Task When_CertificateCheckViewModelIsValid_Then_CallUpdateCertificate(CertificateCheckViewModel vm)
         {
-            _certificate = _builder.CreateNew<Certificate>()
+            _validator.Setup(s => s.Validate(It.IsAny<CertificateCheckViewModel>())).Returns(new ValidationResult());
+
+            await _certificateCheckController.Check(vm);
+
+            _mockCertificateApiClient.Verify(client => client.UpdateCertificate(It.IsAny<UpdateCertificateRequest>()), Times.Once);
+        }
+
+        [Test, MoqAutoData]
+        public async Task When_CertificateCheckViewModelIsValid_Then_ReturnRedirectToCertificateConfirmation(CertificateCheckViewModel vm)
+        {
+            _validator.Setup(s => s.Validate(It.IsAny<CertificateCheckViewModel>())).Returns(new ValidationResult());
+
+            var result = await _certificateCheckController.Check(vm) as RedirectToActionResult;
+
+            result.ActionName.Should().Be("Confirm");
+            result.ControllerName.Should().Be("CertificateConfirmation");
+        }
+
+        private Certificate SetupValidCertificate()
+        {
+            return _builder.CreateNew<Certificate>()
                 .With(q => q.CertificateData = JsonConvert.SerializeObject(_builder.CreateNew<CertificateData>()
                     .With(x => x.OverallGrade = CertificateGrade.Pass)
                     .With(x => x.AchievementDate = DateTime.Now)
-                    .With(x => x.ContactName = null)
-                    .With(x => x.ContactAddLine1 = null)
-                    .With(x => x.ContactAddLine2 = null)
-                    .With(x => x.ContactAddLine3 = null)
-                    .With(x => x.ContactAddLine4 = null)
-                    .With(x => x.ContactPostCode = null)
                     .Build()))
                 .Build();
-
-            _mockCertificateApiClient.Setup(s => s.GetCertificate(It.IsAny<Guid>())).ReturnsAsync(_certificate);
-            
-            var result = await _certificateCheckController.Check(vm) as ViewResult;
-
-            result.ViewName.Should().Be("~/Views/Certificate/Check.cshtml");
         }
     }
 }

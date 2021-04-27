@@ -40,7 +40,10 @@ else
                     </h2>
                     <div class="govuk-error-summary__body">
                         <ul class="govuk-list govuk-error-summary__list">
+                            <li><a sfa-validation-for="Version"></a></li>
                             <li><a sfa-validation-for="Option"></a></li>
+                            <li><a sfa-validation-for="SelectedGrade"></a></li>
+                            <li><a sfa-validation-for="AchievementDate"></a></li>
                             <li><a sfa-validation-for="Name"></a></li>
                             <li><a sfa-validation-for="Dept"></a></li>
                             <li><a sfa-validation-for="Employer"></a></li>
@@ -128,6 +131,7 @@ else
                         Version
                     </dt>
                     <dd class="govuk-summary-list__value">
+                        <span id="Option" class="govuk-error-message" asp-validation-for="Version"></span>
                         @Model.Version
                     </dd>
                     <dd class="govuk-summary-list__actions">
@@ -166,6 +170,7 @@ else
                         Grade
                     </dt>
                     <dd class="govuk-summary-list__value">
+                        <span id="Option" class="govuk-error-message" asp-validation-for="SelectedGrade"></span>
                         @Model.SelectedGrade
                     </dd>
                     <dd class="govuk-summary-list__actions">
@@ -187,6 +192,7 @@ else
                         }
                     </dt>
                     <dd class="govuk-summary-list__value">
+                        <span id="Option" class="govuk-error-message" asp-validation-for="AchievementDate"></span>
                         @Model.AchievementDate?.ToSfaShortDateString()
                     </dd>
                     <dd class="govuk-summary-list__actions">
@@ -312,11 +318,13 @@ else
             <form class="js-disable-on-submit" method="post" asp-controller="CertificateCheck">
                 @Html.HiddenFor(c => c.Id)
                 @Html.HiddenFor(c => c.SelectedGrade)
+                @Html.HiddenFor(c => c.AchievementDate)
                 @Html.HiddenFor(c => c.Name)
                 @Html.HiddenFor(c => c.AddressLine1)
                 @Html.HiddenFor(c => c.City)
                 @Html.HiddenFor(c => c.Postcode)
                 @Html.HiddenFor(c => c.Option)
+                @Html.HiddenFor(c => c.Version)
                 @Html.HiddenFor(c => c.StandardHasOptions)
                 <button type="submit" class="govuk-button">@Localizer["ContinueButton"]</button>
             </form>

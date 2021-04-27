@@ -62,6 +62,15 @@ namespace SFA.DAS.AssessorService.Web.Resources.Validators {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Enter the achievement date.
+        /// </summary>
+        internal static string AchievementDateCannotBeEmpty {
+            get {
+                return ResourceManager.GetString("AchievementDateCannotBeEmpty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Enter an address.
         /// </summary>
         internal static string AddressLine1CannotBeEmpty {
@@ -80,11 +89,47 @@ namespace SFA.DAS.AssessorService.Web.Resources.Validators {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Enter the achievement/fail date.
+        /// </summary>
+        internal static string DateCannotBeEmpty {
+            get {
+                return ResourceManager.GetString("DateCannotBeEmpty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enter the fail date.
+        /// </summary>
+        internal static string FailDateCannotBeEmpty {
+            get {
+                return ResourceManager.GetString("FailDateCannotBeEmpty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select a grade.
+        /// </summary>
+        internal static string GradeCannotBeNull {
+            get {
+                return ResourceManager.GetString("GradeCannotBeNull", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Enter a name.
         /// </summary>
         internal static string NameCannotBeEmpty {
             get {
                 return ResourceManager.GetString("NameCannotBeEmpty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select an option.
+        /// </summary>
+        internal static string OptionCannotBeNull {
+            get {
+                return ResourceManager.GetString("OptionCannotBeNull", resourceCulture);
             }
         }
         
@@ -98,11 +143,11 @@ namespace SFA.DAS.AssessorService.Web.Resources.Validators {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Select an option.
+        ///   Looks up a localized string similar to Select a version.
         /// </summary>
-        internal static string SelectAnOption {
+        internal static string VersionCannotBeNull {
             get {
-                return ResourceManager.GetString("SelectAnOption", resourceCulture);
+                return ResourceManager.GetString("VersionCannotBeNull", resourceCulture);
             }
         }
     }
