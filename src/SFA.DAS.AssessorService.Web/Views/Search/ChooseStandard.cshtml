@@ -62,7 +62,7 @@
                     Once the training provider updates the Individual Learner Record (<abbr title="Individualised Learner Record">ILR</abbr>), return here and continue.
                 </p>
 
-                @if (Model.SearchResults.Any(sr => sr.CertificateReference != null && sr.OverallGrade != CertificateGrade.Fail))
+                @if (Model.SearchResults.Any(sr => sr.CertificateReference != null))
                 {
                     <details class="govuk-details">
                         <summary class="govuk-details__summary">
@@ -70,17 +70,21 @@
                                 View certificate history
                             </span>
                         </summary>
-                        <div class="govuk-details__text govuk-details__text--no-indent">
+                        <div class="govuk-details__text">
                             <h2 class="govuk-heading-m">@Localizer["CompletedStandardsHeading"]</h2>
-                            @foreach (var result in Model.SearchResults.Where(sr => sr.CertificateReference != null && sr.OverallGrade != CertificateGrade.Fail))
+                            @foreach (var result in Model.SearchResults.Where(sr => sr.CertificateReference != null))
                             {
-                                <dl class="govuk-summary-list">
+                                <dl class="govuk-summary-list govuk-summary-list--no-border">
                                     <div class="govuk-summary-list__row">
-                                        <dt class="govuk-summary-list__key">Standard name</dt>
+                                        <dt class="govuk-summary-list__key">Recorded by</dt>
+                                        <dd class="govuk-summary-list__value">@result.SubmittedBy</dd>
+                                    </div>
+                                    <div class="govuk-summary-list__row">
+                                        <dt class="govuk-summary-list__key">Standard</dt>
                                         <dd class="govuk-summary-list__value">@result.Standard</dd>
                                     </div>
                                     <div class="govuk-summary-list__row">
-                                        <dt class="govuk-summary-list__key">Standard level</dt>
+                                        <dt class="govuk-summary-list__key">Level</dt>
                                         <dd class="govuk-summary-list__value">Level @result.Level</dd>
                                     </div>
                                     @if (!string.IsNullOrEmpty(result.Version))
@@ -95,8 +99,20 @@
                                         <dd class="govuk-summary-list__value">@result.OverallGrade</dd>
                                     </div>
                                     <div class="govuk-summary-list__row">
-                                        <dt class="govuk-summary-list__key">Achievement date</dt>
-                                        <dd class="govuk-summary-list__value">@result.AchDate.ToSfaShortDateString()</dd>
+                                        <dt class="govuk-summary-list__key">Apprenticeship start date</dt>
+                                        <dd class="govuk-summary-list__value">@result.LearnStartDate.ToNumericalDateString()</dd>
+                                    </div>
+                                    <div class="govuk-summary-list__row">
+                                        <dt class="govuk-summary-list__key">@(result.OverallGrade == CertificateGrade.Fail ? "Failed date" : "Achievement date")</dt>
+                                        <dd class="govuk-summary-list__value">@result.AchDate.ToNumericalDateString()</dd>
+                                    </div>
+                                    <div class="govuk-summary-list__row">
+                                        <dt class="govuk-summary-list__key">Certificate number</dt>
+                                        <dd class="govuk-summary-list__value">@result.CertificateReference</dd>
+                                    </div>
+                                    <div class="govuk-summary-list__row">
+                                        <dt class="govuk-summary-list__key">Certificate status</dt>
+                                        <dd class="govuk-summary-list__value">@result.CertificateStatus</dd>
                                     </div>
                                 </dl>
                             }

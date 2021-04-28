@@ -133,9 +133,9 @@
     <value>Confirm and continue</value>
   </data>
   <data name="CompletedStandardsHeading" xml:space="preserve">
-    <value>Completed standards</value>
+    <value>Assessment details</value>
   </data>
   <data name="SelectStandardHeading" xml:space="preserve">
-    <value>Select the standard</value>
+    <value>Which standard did you assess?</value>
   </data>
 </root>
