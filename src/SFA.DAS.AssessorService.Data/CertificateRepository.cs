@@ -524,26 +524,27 @@ namespace SFA.DAS.AssessorService.Data
         {
             var statuses = new[] { CertificateStatus.Submitted }.Concat(CertificateStatus.PrintProcessStatus).ToList();
 
-            var certificateAddress = await (from certificateLog in _context.CertificateLogs
-                join certificate in _context.Certificates on certificateLog.CertificateId equals certificate.Id
-                where statuses.Contains(certificate.Status) && certificateLog.Username == userName
-                                                            && certificate.IsPrivatelyFunded == isPrivatelyFunded
-                let certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData)
-                orderby certificate.UpdatedAt descending 
-                select new CertificateAddress
-                {
-                    OrganisationId = certificate.OrganisationId,
-                    ContactOrganisation = certificateData.ContactOrganisation,
-                    ContactName = certificateData.ContactName,
-                    Department = certificateData.Department,
-                    CreatedAt = certificate.CreatedAt,
-                    AddressLine1 = certificateData.ContactAddLine1,
-                    AddressLine2 = certificateData.ContactAddLine2,
-                    AddressLine3 = certificateData.ContactAddLine3,
-                    City = certificateData.ContactAddLine4,
-                    PostCode = certificateData.ContactPostCode
-                }).FirstOrDefaultAsync();
-
+            var certificateAddress = await (from certificate in _context.Certificates
+                                     where 
+                                        statuses.Contains(certificate.Status) 
+                                        && certificate.UpdatedBy == userName
+                                        && certificate.IsPrivatelyFunded == isPrivatelyFunded
+                                     let certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData)
+                                     orderby certificate.UpdatedAt descending
+                                     select new CertificateAddress
+                                     {
+                                         OrganisationId = certificate.OrganisationId,
+                                         ContactOrganisation = certificateData.ContactOrganisation,
+                                         ContactName = certificateData.ContactName,
+                                         Department = certificateData.Department,
+                                         CreatedAt = certificate.CreatedAt,
+                                         AddressLine1 = certificateData.ContactAddLine1,
+                                         AddressLine2 = certificateData.ContactAddLine2,
+                                         AddressLine3 = certificateData.ContactAddLine3,
+                                         City = certificateData.ContactAddLine4,
+                                         PostCode = certificateData.ContactPostCode
+                                     }).FirstOrDefaultAsync();
+            
             return certificateAddress;
         }
 
