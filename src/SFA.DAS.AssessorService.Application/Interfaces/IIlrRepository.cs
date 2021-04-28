@@ -11,14 +11,11 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<int> GetEpaoPipelinesCount(string epaOrgId, int? stdCode = null);
 
         Task<Ilr> Get(long uln, int stdCode);
-        Task<Ilr> GetImport(long uln, int stdCode);
 
         Task StoreSearchLog(SearchLog log);
         
         Task Create(Ilr ilr);
-        Task CreateImport(Ilr ilr);
 
         Task Update(Ilr ilr);
-        Task UpdateImport(Ilr ilr);
     }
 }
