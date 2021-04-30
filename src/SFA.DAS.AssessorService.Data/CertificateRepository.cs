@@ -108,7 +108,7 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<Certificate> GetCertificate(Guid id)
         {
-            return await _context.Certificates.SingleOrDefaultAsync(c => c.Id == id);
+            return await _context.Certificates.Include(l => l.CertificateLogs).SingleOrDefaultAsync(c => c.Id == id);
         }
 
         public async Task<Certificate> GetCertificate(long uln, int standardCode)

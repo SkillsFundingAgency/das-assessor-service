@@ -1,4 +1,5 @@
 ﻿@using Microsoft.AspNetCore.Mvc.Localization
+@using SFA.DAS.AssessorService.Domain.Extensions
 @inject IViewLocalizer Localizer
 @model SFA.DAS.AssessorService.Web.ViewModels.Certificate.CertificateVersionViewModel
 
@@ -19,7 +20,7 @@ else
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-        
+
             <form class="apprentice-version-form js-disable-on-submit" method="post" asp-controller="Certificate" asp-method="Version">
                 @Html.HiddenFor(c => c.Id)
 
@@ -47,7 +48,7 @@ else
                 }
 
                 <h1 class="govuk-heading-xl">
-                     @Localizer["Heading", Model.Standard]
+                    @Localizer["Heading", Model.Standard]
                 </h1>
 
                 <div class="govuk-form-group" sfa-anyvalidationerror-class="govuk-form-group--error">
@@ -60,6 +61,13 @@ else
                                 <label class="govuk-label govuk-radios__label" for="versions_@version.StandardUId">
                                     Version @version.Version
                                 </label>
+                                @if (Model.PreviousFailData != null)
+                                {
+                                    @if (version.Version == Model.PreviousFailData.Version)
+                                    {
+                                        <span class="govuk-hint govuk-radios__hint"> Failed on @Model.PreviousFailData.AchievementDate?.ToSfaShortDateString() </span>
+                                    }
+                                }
                             </div>
                         }
                     </div>
