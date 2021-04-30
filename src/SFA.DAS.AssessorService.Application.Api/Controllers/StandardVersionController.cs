@@ -50,15 +50,15 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             return Ok(standards.Select(s => (StandardVersion)s));
         }
 
-        [HttpGet("standards/{standardUId}", Name = "GetStandardVersionByStandardUId")]
+        [HttpGet("standards/{id}", Name = "GetStandardVersionById")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(StandardVersion))]
         [SwaggerResponse((int)HttpStatusCode.NotFound)]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> GetStandardVersionByStandardUId(string standardUId)
+        public async Task<IActionResult> GetStandardVersionById(string id)
         {
-            _logger.LogInformation($@"Get Standard Version for StandardUId {standardUId} from Standard Service");
-            var standard = await _standardService.GetStandardVersionByStandardUId(standardUId);
+            _logger.LogInformation($@"Get Standard Version for Id {id} from Standard Service");
+            var standard = await _standardService.GetStandardVersionById(id);
             if(standard == null)
             {
                 return NotFound();

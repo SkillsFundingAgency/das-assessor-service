@@ -28,6 +28,8 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<IEnumerable<Standard>> GetAllStandards();
         Task<IEnumerable<Standard>> GetStandardVersionsByLarsCode(int larsCode);
         Task<Standard> GetStandardVersionByStandardUId(string standardUId);
+        Task<Standard> GetLatestStandardVersionByLarsCode(int larsCode);
+        Task<Standard> GetLatestStandardVersionByIFateReferenceNumber(string iFateReferenceNumber);
         Task<Standard> GetStandardByStandardReferenceAndVersion(string standardReference, string version);
         Task InsertStandards(IEnumerable<Standard> standard);
         Task InsertOptions(IEnumerable<StandardOption> optionsToInsert);

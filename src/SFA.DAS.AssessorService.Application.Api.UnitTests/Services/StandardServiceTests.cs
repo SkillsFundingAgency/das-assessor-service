@@ -183,6 +183,23 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
 
             result.Should().BeEquivalentTo(standard);
         }
+        public async Task When_GettingAStandardVersion_ByLarsCode(int larsCode, Standard standard)
+        {
+            _mockStandardRepository.Setup(s => s.GetLatestStandardVersionByLarsCode(larsCode)).ReturnsAsync(standard);
+
+            var result = await _standardService.GetStandardVersionById(larsCode.ToString());
+
+            result.Should().BeEquivalentTo(standard);
+        }
+
+        public async Task When_GettingAStandardVersion_IFateReferenceNumber(string ifateReferenceNumber, Standard standard)
+        {
+            _mockStandardRepository.Setup(s => s.GetLatestStandardVersionByIFateReferenceNumber(ifateReferenceNumber)).ReturnsAsync(standard);
+
+            var result = await _standardService.GetStandardVersionById(ifateReferenceNumber);
+
+            result.Should().BeEquivalentTo(standard);
+        }
 
         [Test, AutoData]
         public async Task When_GettingEpaoRegisteredStandardVersionsByEpaoId_ReturnsApprovedStandardVersions(string epaoId, IEnumerable<StandardVersion> standards)
