@@ -85,7 +85,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
                 return new List<SearchResult>();
             }
 
-            var intStandards = await GetEpaoStandards(thisEpao);
+            var approvedStandards = await GetEpaoApprovedStandardsWithAtLeastOneVersion(thisEpao);
 
             var ilrResults = await _ilrRepository.SearchForLearnerByUln(request.Uln);
 
@@ -95,7 +95,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
 
             likedSurname = DealWithSpecialCharactersAndSpaces(request, likedSurname, listOfIlrResults);
 
-            ilrResults = listOfIlrResults?.Where(r => intStandards.Contains(r.StdCode) &&
+            ilrResults = listOfIlrResults?.Where(r => approvedStandards.Contains(r.StdCode) &&
                 string.Equals(r.FamilyNameForSearch.Trim(), likedSurname.Trim(), StringComparison.CurrentCultureIgnoreCase))
                 .ToList();
 
@@ -108,12 +108,11 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
             return searchResults;
         }
 
-        private async Task<List<int>> GetEpaoStandards(Organisation thisEpao)
+        private async Task<IEnumerable<int>> GetEpaoApprovedStandardsWithAtLeastOneVersion(Organisation thisEpao)
         {
-            var approvedStandardVersions = (await _standardService.GetEPAORegisteredStandardVersions(thisEpao
-                .EndPointAssessorOrganisationId, null));
+            var approvedStandardVersions = await _standardService.GetEPAORegisteredStandardVersions(thisEpao.EndPointAssessorOrganisationId);
 
-            var approvedStandardCodes = approvedStandardVersions.Select(standard => standard.LarsCode).Distinct().ToList();
+            var approvedStandardCodes = approvedStandardVersions.Select(standard => standard.LarsCode).Distinct();
           
             return approvedStandardCodes;
         }
