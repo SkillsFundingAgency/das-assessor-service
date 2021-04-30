@@ -46,3 +46,6 @@ GO
 
 CREATE INDEX [IX_Certificates_CertificateReference] ON [Certificates] ([CertificateReference]) INCLUDE ([Id])
 GO
+
+CREATE INDEX [IX_Certificates_OrganisationId] ON [Certificates] ([OrganisationId]) INCLUDE ([CreatedAt], [Status])
+GO
