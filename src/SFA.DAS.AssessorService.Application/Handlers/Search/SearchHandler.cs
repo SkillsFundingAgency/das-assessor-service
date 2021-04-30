@@ -94,13 +94,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
             var listOfIlrResults = ilrResults?.ToList();
 
             likedSurname = DealWithSpecialCharactersAndSpaces(request, likedSurname, listOfIlrResults);
-            
-            ilrResults = listOfIlrResults?.Where(r =>(
-                r.EpaOrgId == thisEpao.EndPointAssessorOrganisationId ||
-                (r.EpaOrgId != thisEpao.EndPointAssessorOrganisationId && intStandards.Contains(r.StdCode)))
-            && string.Equals(r.FamilyNameForSearch.Trim(), likedSurname.Trim(), StringComparison.CurrentCultureIgnoreCase)).ToList();
 
-            ilrResults = listOfIlrResults?.Where(r => intStandards.Contains(r.StdCode) && 
+            ilrResults = listOfIlrResults?.Where(r => intStandards.Contains(r.StdCode) &&
                 string.Equals(r.FamilyNameForSearch.Trim(), likedSurname.Trim(), StringComparison.CurrentCultureIgnoreCase))
                 .ToList();
 
