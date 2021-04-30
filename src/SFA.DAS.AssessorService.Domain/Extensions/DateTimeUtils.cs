@@ -63,10 +63,5 @@ namespace SFA.DAS.AssessorService.Domain.Extensions
             return time == null ? 
                 string.Empty : time.Value.ToString("dd MMM yy");
         }
-
-        public static string ToNumericalDateString(this DateTime? time)
-        {
-            return time == null ? string.Empty : time.Value.ToString("d");
-        }
     }
 }

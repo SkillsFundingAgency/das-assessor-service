@@ -100,11 +100,11 @@
                                     </div>
                                     <div class="govuk-summary-list__row">
                                         <dt class="govuk-summary-list__key">Apprenticeship start date</dt>
-                                        <dd class="govuk-summary-list__value">@result.LearnStartDate.ToNumericalDateString()</dd>
+                                        <dd class="govuk-summary-list__value">@result.LearnStartDate.ToSfaShortDateString()</dd>
                                     </div>
                                     <div class="govuk-summary-list__row">
                                         <dt class="govuk-summary-list__key">@(result.OverallGrade == CertificateGrade.Fail ? "Failed date" : "Achievement date")</dt>
-                                        <dd class="govuk-summary-list__value">@result.AchDate.ToNumericalDateString()</dd>
+                                        <dd class="govuk-summary-list__value">@result.AchDate.ToSfaShortDateString()</dd>
                                     </div>
                                     <div class="govuk-summary-list__row">
                                         <dt class="govuk-summary-list__key">Certificate number</dt>
