@@ -100,6 +100,10 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
                 (r.EpaOrgId != thisEpao.EndPointAssessorOrganisationId && intStandards.Contains(r.StdCode)))
             && string.Equals(r.FamilyNameForSearch.Trim(), likedSurname.Trim(), StringComparison.CurrentCultureIgnoreCase)).ToList();
 
+            ilrResults = listOfIlrResults?.Where(r => intStandards.Contains(r.StdCode) && 
+                string.Equals(r.FamilyNameForSearch.Trim(), likedSurname.Trim(), StringComparison.CurrentCultureIgnoreCase))
+                .ToList();
+
             _logger.LogInformation((ilrResults != null && ilrResults.Any())? LoggingConstants.SearchSuccess : LoggingConstants.SearchFailure);
 
             var searchResults = Mapper.Map<List<SearchResult>>(ilrResults)
@@ -111,10 +115,12 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
 
         private async Task<List<int>> GetEpaoStandards(Organisation thisEpao)
         {
-            var filteredStandardCodes = (await _registerQueryRepository.GetOrganisationStandardByOrganisationId(thisEpao
-                .EndPointAssessorOrganisationId)).Select(q => q.StandardCode).ToList(); 
+            var approvedStandardVersions = (await _standardService.GetEPAORegisteredStandardVersions(thisEpao
+                .EndPointAssessorOrganisationId, null));
 
-            return filteredStandardCodes;
+            var approvedStandardCodes = approvedStandardVersions.Select(standard => standard.LarsCode).Distinct().ToList();
+          
+            return approvedStandardCodes;
         }
 
         private string DealWithSpecialCharactersAndSpaces(SearchQuery request, string likedSurname, IEnumerable<Ilr> ilrResults)
