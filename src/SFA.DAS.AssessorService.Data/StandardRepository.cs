@@ -155,6 +155,16 @@ namespace SFA.DAS.AssessorService.Data
             return result;
         }
 
+        public async Task<Standard> GetLatestStandardVersionByLarsCode(int larsCode)
+        {
+            return await GetLatestStandardVersionByLarsCodeInternal(larsCode);
+        }
+
+        public async Task<Standard> GetLatestStandardVersionByIFateReferenceNumber(string iFateReferenceNumber)
+        {
+            return await GetLatestStandardVersionByIFateReferenceNumberInternal(iFateReferenceNumber);
+        }
+
         public async Task<IEnumerable<StandardOptions>> GetAllStandardOptions()
         {
             var sql = @"SELECT [StandardUId],[Version],[IFateReferenceNumber],[LarsCode] FROM [Standards]
@@ -206,19 +216,23 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<StandardOptions> GetStandardOptionsByLarsCode(int larsCode)
         {
-            var standard = await GetLatestVersionOfAStandardByLarsCode(larsCode);
+            var standard = await GetLatestStandardVersionByLarsCodeInternal(larsCode);
             return await GetStandardOptionsByStandardUId(standard.StandardUId);
         }
 
         public async Task<StandardOptions> GetStandardOptionsByIFateReferenceNumber(string iFateReferenceNumber)
         {
-            var standard = await GetLatestVersionOfAStandardByIFateReferenceNumber(iFateReferenceNumber);
+            var standard = await GetLatestStandardVersionByIFateReferenceNumberInternal(iFateReferenceNumber);
             return await GetStandardOptionsByStandardUId(standard.StandardUId);
         }
 
-        private async Task<Standard> GetLatestVersionOfAStandardByLarsCode(int larsCode)
+        private async Task<Standard> GetLatestStandardVersionByLarsCodeInternal(int larsCode)
         {
-            var sql = @"SELECT TOP 1 [StandardUId] FROM [Standards] WHERE [LarsCode] = @larsCode ORDER BY [Version] desc";
+            var sql = @"SELECT TOP 1 [StandardUId],[IFateReferenceNumber],[LarsCode],[Title],[Version],
+                                     [Level],[Status],[TypicalDuration],[MaxFunding],[IsActive],[LastDateStarts],
+                                     [EffectiveFrom],[EffectiveTo],[VersionEarliestStartDate],[VersionLatestStartDate],[VersionLatestEndDate],
+                                     [VersionApprovedForDelivery],[ProposedTypicalDuration],[ProposedMaxFunding]  
+                        FROM [Standards] WHERE [LarsCode] = @larsCode ORDER BY [Version] desc";
 
             var result = await _unitOfWork.Connection.QueryFirstOrDefaultAsync<Standard>(
                 sql,
@@ -228,9 +242,13 @@ namespace SFA.DAS.AssessorService.Data
             return result;
         }
 
-        private async Task<Standard> GetLatestVersionOfAStandardByIFateReferenceNumber(string iFateReferenceNumber)
+        private async Task<Standard> GetLatestStandardVersionByIFateReferenceNumberInternal(string iFateReferenceNumber)
         {
-            var sql = @"SELECT TOP 1 [StandardUId] FROM [Standards] WHERE [IfateReferenceNumber] = @iFateReferenceNumber ORDER BY [Version] desc";
+            var sql = @"SELECT TOP 1 [StandardUId],[IFateReferenceNumber],[LarsCode],[Title],[Version],
+                                     [Level],[Status],[TypicalDuration],[MaxFunding],[IsActive],[LastDateStarts],
+                                     [EffectiveFrom],[EffectiveTo],[VersionEarliestStartDate],[VersionLatestStartDate],[VersionLatestEndDate],
+                                     [VersionApprovedForDelivery],[ProposedTypicalDuration],[ProposedMaxFunding]
+                        FROM [Standards] WHERE [IfateReferenceNumber] = @iFateReferenceNumber ORDER BY [Version] desc";
 
             var result = await _unitOfWork.Connection.QueryFirstOrDefaultAsync<Standard>(
                 sql,
