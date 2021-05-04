@@ -105,7 +105,7 @@
                                         <dt class="govuk-summary-list__key">Apprenticeship start date</dt>
                                         <dd class="govuk-summary-list__value">@result.LearnStartDate.ToSfaShortDateString()</dd>
                                     </div>
-                                    @if (result.AchDate.HasValue))
+                                    @if (result.AchDate.HasValue)
                                     {
                                         <div class="govuk-summary-list__row">
                                             <dt class="govuk-summary-list__key">@(result.OverallGrade == CertificateGrade.Fail ? "Failed date" : "Achievement date")</dt>
