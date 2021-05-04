@@ -64,7 +64,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Standard
         [Test, MoqAutoData]
         public async Task WhenRequestingGetStandardVersionByStandardUId_ThenAStandardVersionsIsReturned(string standardUId, Standard standard)
         {
-            _mockStandardService.Setup(s => s.GetStandardVersionById(standardUId)).ReturnsAsync(standard);
+            _mockStandardService.Setup(s => s.GetStandardVersionById(standardUId, null)).ReturnsAsync(standard);
 
             var controllerResult = await _standardVersionController.GetStandardVersionById(standardUId) as ObjectResult;
 
@@ -80,7 +80,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Standard
         public async Task WhenRequestingGetStandardVersionByStandardUId_ButTheStandardCannotBeFound(string standardUId)
         {
             Standard result = null;
-            _mockStandardService.Setup(s => s.GetStandardVersionById(standardUId)).ReturnsAsync(result);
+            _mockStandardService.Setup(s => s.GetStandardVersionById(standardUId, null)).ReturnsAsync(result);
 
             var controllerResult = await _standardVersionController.GetStandardVersionById(standardUId) as NotFoundResult;
 

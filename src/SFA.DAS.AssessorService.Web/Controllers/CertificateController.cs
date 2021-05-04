@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
+using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.ViewModels.Certificate;
@@ -26,7 +27,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         private readonly ISessionService _sessionService;
 
         public CertificateController(ILogger<CertificateController> logger, IHttpContextAccessor contextAccessor,
-            ICertificateApiClient certificateApiClient, 
+            ICertificateApiClient certificateApiClient,
             IStandardVersionClient standardVersionClient,
             ISessionService sessionService)
         {
@@ -45,6 +46,27 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             var username = _contextAccessor.HttpContext.User
                 .FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
 
+            string singleVersionStandardUid = null;
+            string singleOption = null;
+            List<string> options = null;
+            var versions = await _standardVersionClient.GetStandardVersionsByLarsCode(vm.StdCode);
+
+            if (versions.Count() == 1)
+            {
+                singleVersionStandardUid = versions.Single().StandardUId;
+                var optionsResult = await _standardVersionClient.GetStandardOptions(singleVersionStandardUid);
+
+                if (optionsResult != null && optionsResult.HasOptions())
+                {
+                    if (optionsResult.OnlyOneOption())
+                    {
+                        singleOption = optionsResult.CourseOption.Single();
+                    }
+
+                    options = optionsResult.CourseOption.ToList();
+                }
+            }
+
             _logger.LogInformation(
                 $"Start of Certificate Start for ULN {vm.Uln} and Standard Code: {vm.StdCode} by user {username}");
 
@@ -53,44 +75,35 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 UkPrn = int.Parse(ukprn),
                 StandardCode = vm.StdCode,
                 Uln = vm.Uln,
-                Username = username
+                Username = username,
+                StandardUId = singleVersionStandardUid,
+                CourseOption = singleOption
             });
-
-            var versions = await _standardVersionClient.GetStandardVersionsByLarsCode(vm.StdCode);
 
             var certificateSession = new CertificateSession()
             {
                 CertificateId = cert.Id,
                 Uln = vm.Uln,
                 StandardCode = vm.StdCode,
-                Versions = Mapper.Map<List<StandardVersionViewModel>>(versions)
+                StandardUId = singleVersionStandardUid,
+                Versions = Mapper.Map<List<StandardVersionViewModel>>(versions),
+                Options = options
             };
 
             _sessionService.Set(nameof(CertificateSession), certificateSession);
             _logger.LogInformation($"New Certificate received for ULN {vm.Uln} and Standard Code: {vm.StdCode} with ID {cert.Id}");
-            
+
             if (versions.Count() > 1)
-            {   
-                return RedirectToAction("Version", "CertificateVersion");
-            } 
-            else if(versions.Count() == 1)
             {
-                var singularVersion = versions.Single();
-                certificateSession.StandardUId = singularVersion.StandardUId;
-                var options = await _standardVersionClient.GetStandardOptions(singularVersion.StandardUId);
-
-                if(options != null && options.HasOptions())
-                {
-                    certificateSession.Options = options.CourseOption.ToList();
-                    _sessionService.Set(nameof(CertificateSession), certificateSession);
-
-                    if(options.OnlyOneOption())
-                    {
-                        return RedirectToAction("Declare", "CertificateDeclaration");
-                    }
-
-                    return RedirectToAction("Option", "CertificateOption");
-                } 
+                return RedirectToAction("Version", "CertificateVersion");
+            }
+            else if (!string.IsNullOrWhiteSpace(singleOption))
+            {
+                return RedirectToAction("Declare", "CertificateDeclaration");
+            }
+            else if (options != null)
+            {
+                return RedirectToAction("Option", "CertificateOption");
             }
 
             return RedirectToAction("Declare", "CertificateDeclaration");

@@ -29,7 +29,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
         private readonly IStandardService _standardService;
         private readonly int PrivateFundingModelNumber = 99;
 
-        public StartCertificateHandler(ICertificateRepository certificateRepository, IIlrRepository ilrRepository, IRoatpApiClient roatpApiClient, 
+        public StartCertificateHandler(ICertificateRepository certificateRepository, IIlrRepository ilrRepository, IRoatpApiClient roatpApiClient,
             IOrganisationQueryRepository organisationQueryRepository, ILogger<StartCertificateHandler> logger, IStandardService standardService)
         {
             _certificateRepository = certificateRepository;
@@ -75,7 +75,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
                     await _certificateRepository.Update(certificate, request.Username, CertificateActions.StartRetake, updateLog: true, "Retake failed apprenticeship");
                 }
             }
-           
+
             return certificate;
         }
 
@@ -89,7 +89,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
             var standardVersions = await _standardService.GetStandardVersionsByLarsCode(ilr.StdCode);
             _logger.LogInformation("CreateNewCertificate Before Get Provider from API");
             var provider = await GetProviderFromUkprn(ilr.UkPrn);
-                        
+
             var certData = new CertificateData()
             {
                 LearnerGivenNames = ilr.GivenNames,
@@ -98,9 +98,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
                 FullName = $"{ilr.GivenNames} {ilr.FamilyName}",
                 ProviderName = provider.ProviderName,
                 EpaDetails = new EpaDetails { Epas = new List<EpaRecord>() },
-                // Pre-fil latest version title for use in pages, to be updated later by a specific version
-                // when it's known
-                StandardName = standardVersions.OrderByDescending(s => s.Version).First().Title                
+                StandardName = standardVersions.OrderByDescending(s => s.Version).First().Title,
             };
 
             var certificate = new Certificate()
@@ -115,31 +113,34 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
                 CertificateReference = string.Empty,
                 LearnRefNumber = ilr.LearnRefNumber,
                 CreateDay = DateTime.UtcNow.Date,
-                IsPrivatelyFunded = ilr?.FundingModel == PrivateFundingModelNumber
+                IsPrivatelyFunded = ilr?.FundingModel == PrivateFundingModelNumber,
             };
 
-            if (standardVersions.Count() == 1)
+            // Only one StandardUid Available, fill out fields
+            if (!string.IsNullOrWhiteSpace(request.StandardUId))
             {
-                // If one version, populate data, otherwise await for version update later in journey.
-                var standard = standardVersions.First();
+                _logger.LogInformation("CreateNewCertificate Before Get Single StandardVersion from API");
+                var standardVersion = await _standardService.GetStandardVersionById(request.StandardUId);
 
-                // If only one option, also set on cert data
-                var options = await _standardService.GetStandardOptionsByStandardId(standard.StandardUId);
-                if(options.CourseOption != null && options.CourseOption.Count() == 1)
+                if(standardVersion == null)
                 {
-                    certData.CourseOption = options.CourseOption.Single();
+                    throw new InvalidOperationException("StandardUId Provided not recognised, unable to start certificate request");
                 }
 
-                certData.StandardReference = standard.IfateReferenceNumber;
-                certData.StandardName = standard.Title;
-                certData.StandardLevel = standard.Level;
-                certData.StandardPublicationDate = standard.EffectiveFrom;
-                certData.Version = standard.Version.GetValueOrDefault(1).ToString("#.0");               
+                certData.StandardName = standardVersion.Title;
+                certData.StandardReference = standardVersion.IfateReferenceNumber;
+                certData.StandardLevel = standardVersion.Level;
+                certData.StandardPublicationDate = standardVersion.EffectiveFrom;
+                certData.Version = standardVersion.Version.GetValueOrDefault(1).ToString("#.0");
 
-                certificate.StandardUId = standard.StandardUId;
+                if(!string.IsNullOrWhiteSpace(request.CourseOption))
+                {
+                    certData.CourseOption = request.CourseOption;
+                }
+
+                certificate.StandardUId = standardVersion.StandardUId;
                 certificate.CertificateData = JsonConvert.SerializeObject(certData);
             }
-
 
             _logger.LogInformation("CreateNewCertificate Before create new Certificate");
             var newCertificate = await _certificateRepository.New(certificate);
@@ -181,7 +182,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
             }
             else
             {
-                provider = new Provider{ProviderName = searchResult.ProviderName, Ukprn =  ukprn};
+                provider = new Provider { ProviderName = searchResult.ProviderName, Ukprn = ukprn };
             }
 
             return provider;

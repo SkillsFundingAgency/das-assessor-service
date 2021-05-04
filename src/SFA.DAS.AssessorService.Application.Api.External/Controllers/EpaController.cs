@@ -53,6 +53,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
                     UkPrn = _headerInfo.Ukprn,
                     RequestId = req.RequestId,
                     Learner = req.Learner,
+                    LearningDetails = req.LearningDetails,
                     Standard = req.Standard,
                     EpaDetails = req.EpaDetails
                 });

@@ -39,10 +39,10 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Epas
             _logger.LogInformation("CreateNewEpa Before Get Certificate from db");
             var certificate = await _certificateRepository.GetCertificate(request.Uln, request.StandardCode);
 
-            if(certificate is null)
-            { 
+            if (certificate is null)
+            {
                 _logger.LogInformation("CreateNewEpa Before StartCertificateRequest");
-                var startCertificateRequest = new StartCertificateRequest { StandardCode = request.StandardCode, UkPrn = request.UkPrn, Uln = request.Uln, Username = ExternalApiConstants.ApiUserName };
+                var startCertificateRequest = new StartCertificateRequest { StandardCode = request.StandardCode, UkPrn = request.UkPrn, Uln = request.Uln, Username = ExternalApiConstants.ApiUserName, CourseOption = request.CourseOption, StandardUId = request.StandardUId };
                 certificate = await _mediator.Send(startCertificateRequest);
             }
             else
