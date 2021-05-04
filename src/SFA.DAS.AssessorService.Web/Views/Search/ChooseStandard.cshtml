@@ -90,14 +90,20 @@
                                             <dd class="govuk-summary-list__value">@result.Version</dd>
                                         </div>
                                     }
-                                    <div class="govuk-summary-list__row">
-                                        <dt class="govuk-summary-list__key">Grade</dt>
-                                        <dd class="govuk-summary-list__value">@result.OverallGrade</dd>
-                                    </div>
-                                    <div class="govuk-summary-list__row">
-                                        <dt class="govuk-summary-list__key">Achievement date</dt>
-                                        <dd class="govuk-summary-list__value">@result.AchDate.ToSfaShortDateString()</dd>
-                                    </div>
+                                    @if (!string.IsNullOrEmpty(result.OverallGrade))
+                                    {
+                                        <div class="govuk-summary-list__row">
+                                            <dt class="govuk-summary-list__key">Grade</dt>
+                                            <dd class="govuk-summary-list__value">@result.OverallGrade</dd>
+                                        </div>
+                                    }
+                                    @if (result.AchDate.HasValue)
+                                    {
+                                        <div class="govuk-summary-list__row">
+                                            <dt class="govuk-summary-list__key">Achievement date</dt>
+                                            <dd class="govuk-summary-list__value">@result.AchDate.ToSfaShortDateString()</dd>
+                                        </div>
+                                    }
                                 </dl>
                             }
                         </div>
