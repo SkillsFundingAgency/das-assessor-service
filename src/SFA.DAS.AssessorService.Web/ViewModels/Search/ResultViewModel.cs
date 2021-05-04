@@ -15,6 +15,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Search
         public IEnumerable<StandardVersionViewModel> Versions { get; set; } = new List<StandardVersionViewModel>();
         public string OverallGrade { get; set; }
         public string CertificateReference { get; set; }
+        public string CertificateStatus { get; set; }
         public string Level { get; set; }
         public string Version { get; set; }
         public DateTime? SubmittedAt { get; set; }

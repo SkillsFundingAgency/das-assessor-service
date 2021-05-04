@@ -55,6 +55,7 @@ namespace SFA.DAS.AssessorService.Web.Orchestrators.Search
                     Versions = Mapper.Map<List<StandardVersionViewModel>>(result.Versions),
                     OverallGrade = result.OverallGrade,
                     CertificateReference = result.CertificateReference,
+                    CertificateStatus = result.CertificateStatus,
                     Level = Convert.ToString(result.Level),
                     SubmittedAt = result.SubmittedAt,
                     SubmittedBy = result.SubmittedBy,
