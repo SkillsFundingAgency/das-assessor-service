@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
@@ -25,7 +26,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
         private StartCertificateHandler _startCertificateHandler;
         private Guid _organisationId;
         private Certificate _returnedCertificate;
-        private Certificate _savedCertificate;
+        private List<Certificate> _savedCertificates;
 
         [SetUp]
         public void Arrange()
@@ -33,8 +34,9 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
             _certificateRepository = new Mock<ICertificateRepository>();
             _certificateRepository.Setup(r => r.GetCertificate(1111111111, 30)).ReturnsAsync(default(Certificate));
 
+            _savedCertificates = new List<Certificate>();
             _certificateRepository.Setup(r => r.New(It.IsAny<Certificate>())).ReturnsAsync(new Certificate() { CertificateReferenceId = 10000 })
-                .Callback<Certificate>(c => _savedCertificate = c);
+                .Callback<Certificate>(c => _savedCertificates.Add(c));
 
             var ilrRepository = new Mock<IIlrRepository>();
             ilrRepository.Setup(r => r.Get(1111111111, 30)).ReturnsAsync(new Ilr()
@@ -57,6 +59,16 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
                 FundingModel = 99,
             });
 
+            ilrRepository.Setup(r => r.Get(333333333, 30)).ReturnsAsync(new Ilr()
+            {
+                GivenNames = "Dave",
+                FamilyName = "Smith",
+                StdCode = 30,
+                LearnStartDate = new DateTime(2016, 01, 09),
+                UkPrn = 12345678,
+                FundingModel = 81,
+            });
+
             var organisationQueryRepository = new Mock<IOrganisationQueryRepository>();
 
             _organisationId = Guid.NewGuid();
@@ -76,7 +88,15 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
 
                 } });
 
-            standardService.Setup(c => c.GetStandardOptionsByStandardId("ST0016")).ReturnsAsync(new StandardOptions() { CourseOption = new List<string> { "singleOption" } });
+            standardService.Setup(c => c.GetStandardVersionById("ST0016", null))
+                .ReturnsAsync(new Standard()
+                {
+                    Title = "Standard Name",
+                    EffectiveFrom = new DateTime(2016, 09, 01),
+                    StandardUId = "ST0016",
+                    Version = 1.0m
+
+                });
 
             roatpApiClientMock.Setup(c => c.GetOrganisationByUkprn(It.IsAny<long>()))
                 .ReturnsAsync(new OrganisationSearchResult { ProviderName = "A Provider" });
@@ -93,6 +113,18 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
                         UkPrn = 88888888,
                         Uln = 1111111111,
                         Username = "user"
+                    }, new CancellationToken()).Wait();
+
+            _startCertificateHandler
+                .Handle(
+                    new StartCertificateRequest()
+                    {
+                        StandardCode = 30,
+                        UkPrn = 88888888,
+                        Uln = 333333333,
+                        Username = "user",
+                        CourseOption = "CourseOption",
+                        StandardUId = "ST0016",
                     }, new CancellationToken()).Wait();
 
             _returnedCertificate = _startCertificateHandler
@@ -117,14 +149,28 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
                 c.CreatedBy == "user" &&
                 c.Status == Domain.Consts.CertificateStatus.Draft &&
                 c.CertificateReference == "" &&
+                c.IsPrivatelyFunded == false)));
+        }
+
+        [Test]
+        public void Then_a_new_certificate_is_created_with_option_and_standardUId()
+        {
+            _certificateRepository.Verify(r => r.New(It.Is<Certificate>(c =>
+                c.Uln == 333333333 &&
+                c.StandardCode == 30 &&
+                c.ProviderUkPrn == 12345678 &&
+                c.OrganisationId == _organisationId &&
+                c.CreatedBy == "user" &&
+                c.Status == Domain.Consts.CertificateStatus.Draft &&
+                c.CertificateReference == "" &&
                 c.IsPrivatelyFunded == false &&
                 c.StandardUId == "ST0016")));
 
-            var certData = JsonConvert.DeserializeObject<CertificateData>(_savedCertificate.CertificateData);
-            certData.CourseOption.Should().Be("singleOption");
+            var savedCertificate = _savedCertificates.First(s => s.Uln == 333333333);
+            var certData = JsonConvert.DeserializeObject<CertificateData>(savedCertificate.CertificateData);
+            certData.CourseOption.Should().Be("CourseOption");
             certData.Version.Should().Be("1.0");
-            _savedCertificate.StandardUId.Should().Be("ST0016");
-
+            savedCertificate.StandardUId.Should().Be("ST0016");
         }
 
         [Test]
