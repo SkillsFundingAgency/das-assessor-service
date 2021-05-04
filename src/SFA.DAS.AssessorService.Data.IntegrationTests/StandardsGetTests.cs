@@ -43,7 +43,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         {
             var expectedStandard = _standards.Single(s => s.StandardUId == standardUId);
 
-            var standard = await _repository.GetStandardByStandardReferenceAndVersion(standardReference, version);
+            var standard = await _repository.GetStandardVersionByIFateReferenceNumber(standardReference, version);
 
             Assert.AreEqual(expectedStandard.StandardUId, standard.StandardUId);
         }

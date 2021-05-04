@@ -64,7 +64,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
             return standardCollation;
         }
 
-        public async Task<Standard> GetStandardVersionById(string id)
+        public async Task<Standard> GetStandardVersionById(string id, string version = null)
         {
             Standard standard = null;
             try
@@ -74,10 +74,10 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
                 switch (standardId.IdType)
                 {
                     case StandardId.StandardIdType.LarsCode:
-                        standard = await _standardRepository.GetLatestStandardVersionByLarsCode(standardId.LarsCode);
+                        standard = await _standardRepository.GetStandardVersionByLarsCode(standardId.LarsCode, version);
                         break;
                     case StandardId.StandardIdType.IFateReferenceNumber:
-                        standard = await _standardRepository.GetLatestStandardVersionByIFateReferenceNumber(standardId.IFateReferenceNumber);
+                        standard = await _standardRepository.GetStandardVersionByIFateReferenceNumber(standardId.IFateReferenceNumber, version);
                         break;
                     case StandardId.StandardIdType.StandardUId:
                         standard = await _standardRepository.GetStandardVersionByStandardUId(standardId.StandardUId);
@@ -193,7 +193,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
 
             try
             {
-                standard = await _standardRepository.GetStandardByStandardReferenceAndVersion(standardReference, version);
+                standard = await _standardRepository.GetStandardVersionByIFateReferenceNumber(standardReference, version);
             }
             catch (Exception ex)
             {
