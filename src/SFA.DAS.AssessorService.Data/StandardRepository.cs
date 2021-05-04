@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Data.DapperTypeHandlers;
+using SFA.DAS.AssessorService.Data.Extensions;
 using SFA.DAS.AssessorService.Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -171,7 +172,7 @@ namespace SFA.DAS.AssessorService.Data
                 StandardUId = s.StandardUId,
                 StandardCode = s.LarsCode,
                 StandardReference = s.IfateReferenceNumber,
-                Version = s.Version.GetValueOrDefault(1).ToString("#.0"),
+                Version = s.Version.VersionToString(),
                 CourseOption = options.Where(o => o.StandardUId == s.StandardUId).Select(p => p.OptionName)
             });
 
