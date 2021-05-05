@@ -87,12 +87,12 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
                 });
 
             standardServiceMock.Setup(c => c.GetEpaoRegisteredStandards("12345678"))
-                .ReturnsAsync(new List<EPORegisteredStandards> { 
+                .ReturnsAsync(new List<EPORegisteredStandards> {
                     GenerateEPORegisteredStandard(1),
                     GenerateEPORegisteredStandard(98),
                     GenerateEPORegisteredStandard(99),
                     GenerateEPORegisteredStandard(101)
-                    
+
             });
 
             standardServiceMock.Setup(c => c.GetEpaoRegisteredStandards("99999999"))
@@ -127,6 +127,12 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
             standardServiceMock.Setup(c => c.GetStandardVersionById("98", null)).ReturnsAsync(standard98);
             standardServiceMock.Setup(c => c.GetStandardVersionById("99", null)).ReturnsAsync(standard99);
             standardServiceMock.Setup(c => c.GetStandardVersionById("101", null)).ReturnsAsync(standard101);
+
+            standardServiceMock.Setup(c => c.GetStandardOptionsByStandardId(standard99.StandardUId)).
+                ReturnsAsync(GenerateStandardOptions(new List<string> { "English", "French" }));
+
+            standardServiceMock.Setup(c => c.GetStandardOptionsByStandardId(standard98.StandardUId)).
+                ReturnsAsync(GenerateStandardOptions(new List<string>()));
 
             standardServiceMock.Setup(c => c.GetEPAORegisteredStandardVersions("12345678", 1))
                 .ReturnsAsync(new List<StandardVersion> { GenerateEPORegisteredStandardVersion(1) });
@@ -305,9 +311,10 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
             return Builder<Standard>.CreateNew()
                 .With(i => i.Title = $"{standardCode}")
                 .With(i => i.LarsCode = standardCode)
-                .With(i => i.IfateReferenceNumber = $"{standardCode}")
+                .With(i => i.IfateReferenceNumber = $"ST{standardCode}")
                 .With(i => i.Level = standardCode)
-                .With(i => i.Version = 1.0m).Build();
+                .With(i => i.Version = 1.0m)
+                .With(i => i.StandardUId = $"ST{standardCode}_{1.0m}").Build();
         }
 
         private static StandardCollation GenerateStandardCollation(int standardCode, List<string> options)
@@ -326,6 +333,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
                 .With(i => i.Title = $"{standardCode}")
                 .With(i => i.LarsCode = standardCode)
                 .With(i => i.Level = standardCode)
+                .With(i => i.Version = "1.0")
                 .Build();
         }
 
@@ -349,11 +357,10 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
                 .Build();
         }
 
-        private static Option GenerateOption(int standardCode, string optionName)
+        private static StandardOptions GenerateStandardOptions(IEnumerable<string> options)
         {
-            return Builder<Option>.CreateNew()
-                .With(o => o.StdCode = standardCode)
-                .With(o => o.OptionName = optionName)
+            return Builder<StandardOptions>.CreateNew()
+                .With(o => o.CourseOption = options)
                 .Build();
         }
     }

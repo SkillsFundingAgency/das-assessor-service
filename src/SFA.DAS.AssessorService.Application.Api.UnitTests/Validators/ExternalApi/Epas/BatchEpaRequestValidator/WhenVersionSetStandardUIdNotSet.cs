@@ -6,13 +6,12 @@ using SFA.DAS.AssessorService.Api.Types.Models.ExternalApi.Epas;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalApi.Epas.CreateBatchEpaRequestValidator
+namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalApi.Epas.BatchEpaRequestValidator
 {
-    public class WhenLearnerHasWithdrawnFromTheILR : CreateBatchEpaRequestValidatorTestBase
+    public class WhenVersionSetStandardUIdNotSet : BatchEpaRequestValidatorTestBase
     {
         private ValidationResult _validationResult;
 
@@ -24,15 +23,16 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
                 .With(i => i.EpaOutcome = EpaOutcome.Pass)
                 .Build().ToList();
 
-            var request = Builder<CreateBatchEpaRequest>.CreateNew()
-                .With(i => i.Uln = 1234567891)
-                .With(i => i.StandardCode = 1)
-                .With(i => i.StandardReference = null)
-                .With(i => i.Version = "1.0")
-                .With(i => i.CourseOption = null)
+            var request = Builder<BatchEpaRequest>.CreateNew()
+                .With(i => i.Uln = 1234567890)
+                .With(i => i.StandardCode = 99)
+                .With(i => i.StandardReference = "99")
                 .With(i => i.UkPrn = 12345678)
                 .With(i => i.FamilyName = "Test")
                 .With(i => i.EpaDetails = new EpaDetails { Epas = epas })
+                .With(i => i.Version = "1.0")
+                .With(i => i.StandardUId = null)
+                .With(i => i.CourseOption = null)
                 .Build();
 
             _validationResult = await Validator.ValidateAsync(request);
@@ -43,6 +43,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
         {
             _validationResult.IsValid.Should().BeFalse();
             _validationResult.Errors.Count.Should().Be(1);
+            _validationResult.Errors.First().ErrorMessage.Should().Be("Invalid version for Standard");
         }
     }
 }

@@ -27,6 +27,8 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
                 .With(i => i.Uln = 5555555555)
                 .With(i => i.StandardCode = 1)
                 .With(i => i.StandardReference = null)
+                .With(i => i.Version = "1.0")
+                .With(i => i.CourseOption = null)
                 .With(i => i.UkPrn = 12345678)
                 .With(i => i.FamilyName = "Test")
                 .With(i => i.EpaDetails = new EpaDetails { Epas = epas, EpaReference = "5555555555-1" })

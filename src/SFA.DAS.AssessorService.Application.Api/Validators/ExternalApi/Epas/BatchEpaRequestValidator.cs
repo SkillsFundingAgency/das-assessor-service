@@ -58,7 +58,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Epas
                         {
                             var standardOptions = await standardService.GetStandardOptionsByStandardId(m.StandardUId);
 
-                            if(standardOptions != null && !standardOptions.HasOptions())
+                            if(standardOptions == null || !standardOptions.HasOptions())
                             {
                                 context.AddFailure(new ValidationFailure("CourseOption", "No course option available for this Standard and version. Must be empty"));
                             }
@@ -66,9 +66,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Epas
                             {
                                 var validOptions = string.Join(",", standardOptions.CourseOption);
                                 context.AddFailure(new ValidationFailure("CourseOption",
-                                    $@"Invalid course option for this Standard and version. 
-                                     Must be one of the following: '{validOptions}' where '{validOptions}' depends on the standard code, 
-                                     and can be obtained with GET /api/v1/standard/options/{m.StandardReference}/{m.Version}"));
+                                    $@"Invalid course option for this Standard and version. Must be one of the following: '{validOptions}' where '{validOptions}' depends on the standard code, and can be obtained with GET /api/v1/standard/options/{m.StandardReference}/{m.Version}"));
                             }
                         }
                     });
