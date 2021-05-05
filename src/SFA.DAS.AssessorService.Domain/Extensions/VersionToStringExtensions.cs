@@ -1,5 +1,5 @@
 ﻿
-namespace SFA.DAS.AssessorService.Data.Extensions
+namespace SFA.DAS.AssessorService.Domain.Extensions
 {
     public static class VersionToStringExtensions
     {

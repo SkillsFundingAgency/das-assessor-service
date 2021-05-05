@@ -14,6 +14,7 @@ using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Application.Logging;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.AssessorService.Domain.Extensions;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using CertificateStatus = SFA.DAS.AssessorService.Domain.Consts.CertificateStatus;
 
@@ -128,7 +129,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
                 certData.StandardReference = standardVersion.IfateReferenceNumber;
                 certData.StandardLevel = standardVersion.Level;
                 certData.StandardPublicationDate = standardVersion.EffectiveFrom;
-                certData.Version = standardVersion.Version.GetValueOrDefault(1).ToString("#.0");
+                certData.Version = standardVersion.Version.VersionToString();
 
                 if(!string.IsNullOrWhiteSpace(request.CourseOption))
                 {
@@ -136,7 +137,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
                 }
 
                 certificate.StandardUId = standardVersion.StandardUId;
-                certificate.CertificateData = JsonConvert.SerializeObject(certData);
             }
             else
             {
@@ -144,8 +144,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
                 var standardVersions = await _standardService.GetStandardVersionsByLarsCode(ilr.StdCode);
 
                 certData.StandardName = standardVersions.OrderByDescending(s => s.Version).First().Title;
-                certificate.CertificateData = JsonConvert.SerializeObject(certData);
             }
+            
+            certificate.CertificateData = JsonConvert.SerializeObject(certData);
 
             _logger.LogInformation("CreateNewCertificate Before create new Certificate");
             var newCertificate = await _certificateRepository.New(certificate);
