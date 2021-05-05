@@ -22,8 +22,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<List<Certificate>> GetCertificates(List<string> statuses);
         
         Task<int> GetCertificatesReadyToPrintCount(string[] excludedOverallGrades, string[] includedStatus);
-        Task<Guid[]> GetCertificatesReadyToPrint(int numberOfCertifictes, string[] excludedOverallGrades, string[] includedStatus);
-        Task<List<CertificatePrintSummary>> GetCertificatesForBatch(int batchNumber);
+        Task<Guid[]> GetCertificatesReadyToPrint(int numberOfCertificates, string[] excludedOverallGrades, string[] includedStatus);
         Task UpdateCertificatesReadyToPrintInBatch(Guid[] certificateIds, int batchNumber);
 
         Task<Certificate> Update(Certificate certificate, string username, string action, bool updateLog = true, string reasonForChange = null);

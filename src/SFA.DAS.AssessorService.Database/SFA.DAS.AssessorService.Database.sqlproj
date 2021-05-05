@@ -157,6 +157,7 @@
     <Build Include="Security\Roles\DatabaseRoles\DatabaseMaintenance.sql" />
     <None Include="PostDeploymentScripts\GrantOrDenyPermissions.sql" />
     <None Include="PostDeploymentScripts\EPAO_Migration_Part0_Patch.sql" />
+    <Build Include="StoredProcedures\StaffReports_MissingCertificateData.sql" />
     <None Include="PostDeploymentScripts\EPAO_Migration_Part1_Certificates.sql" />
     <None Include="PostDeploymentScripts\EPAO_Migration_Part2_OrganisationStandard.sql" />
     <None Include="PostDeploymentScripts\EPAO_Migration_Part3_OrganisationStandardVersion.sql" />
