@@ -108,7 +108,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Epas
                             {
                                 context.AddFailure(new ValidationFailure("StandardCode", "Your organisation is not approved to assess this Standard"));
                             }
-                            else if (!string.IsNullOrWhiteSpace(m.Version) && providedStandardVersions.Any(v => v.Version.Equals(m.Version, StringComparison.InvariantCultureIgnoreCase)))
+                            else if (!string.IsNullOrWhiteSpace(m.Version) && !providedStandardVersions.Any(v => v.Version.Equals(m.Version, StringComparison.InvariantCultureIgnoreCase)))
                             {
                                 context.AddFailure(new ValidationFailure("Version", "Your organisation is not approved to assess this Standard Version"));
                             }

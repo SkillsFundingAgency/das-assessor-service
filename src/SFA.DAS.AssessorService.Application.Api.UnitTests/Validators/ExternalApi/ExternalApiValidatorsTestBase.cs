@@ -63,45 +63,51 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
         {
             var standardServiceMock = new Mock<IStandardService>();
 
-            var standardCollation1 = GenerateStandard(1, new List<string>());
-            var standardCollation98 = GenerateStandard(98, new List<string>());
-            var standardCollation99 = GenerateStandard(99, 
-                new List<string>
+            var standard1 = GenerateStandard(1);
+            var standard98 = GenerateStandard(98);
+            var standard99 = GenerateStandard(99);
+            /* for standard 99
+             *                 new List<string>
                 {
                     "English",
                     "French"
                 });
-            var standardCollation101 = GenerateStandard(101, new List<string>());
 
-            standardServiceMock.Setup(c => c.GetAllStandards())
-                .ReturnsAsync(new List<StandardCollation>
+             */
+            var standard101 = GenerateStandard(101);
+
+            standardServiceMock.Setup(c => c.GetAllStandardVersions())
+                .ReturnsAsync(new List<Standard>
                 {
-                    standardCollation1,
-                    standardCollation98,
-                    standardCollation99,
-                    standardCollation101
+                    standard1,
+                    standard98,
+                    standard99,
+                    standard101
                 });
 
-            standardServiceMock.Setup(c => c.GetStandard(1)).ReturnsAsync(standardCollation1);
-            standardServiceMock.Setup(c => c.GetStandard(98)).ReturnsAsync(standardCollation98);
-            standardServiceMock.Setup(c => c.GetStandard(99)).ReturnsAsync(standardCollation99);
-            standardServiceMock.Setup(c => c.GetStandard(101)).ReturnsAsync(standardCollation101);
+            standardServiceMock.Setup(c => c.GetStandardVersionById("1", null)).ReturnsAsync(standard1);
+            standardServiceMock.Setup(c => c.GetStandardVersionById("98", null)).ReturnsAsync(standard98);
+            standardServiceMock.Setup(c => c.GetStandardVersionById("99", null)).ReturnsAsync(standard99);
+            standardServiceMock.Setup(c => c.GetStandardVersionById("101", null)).ReturnsAsync(standard101);
 
-            standardServiceMock.Setup(c => c.GetEpaoRegisteredStandards("12345678"))
-                .ReturnsAsync(new List<EPORegisteredStandards>
+            // change epao registered standards -> versions
+            // should make life easier and fix a number of tests
+
+            standardServiceMock.Setup(c => c.GetEPAORegisteredStandardVersions("12345678", It.IsAny<int>()))
+                .ReturnsAsync(new List<StandardVersion>
                 {
-                    GenerateEPORegisteredStandard(1),
-                    GenerateEPORegisteredStandard(98),
-                    GenerateEPORegisteredStandard(99),
-                    GenerateEPORegisteredStandard(101)
+                    GenerateEPORegisteredStandardVersion(1),
+                    GenerateEPORegisteredStandardVersion(98),
+                    GenerateEPORegisteredStandardVersion(99),
+                    GenerateEPORegisteredStandardVersion(101)
                 });
 
-            standardServiceMock.Setup(c => c.GetEpaoRegisteredStandards("99999999"))
-                .ReturnsAsync(new List<EPORegisteredStandards>
+            standardServiceMock.Setup(c => c.GetEPAORegisteredStandardVersions("99999999", It.IsAny<int>()))
+                .ReturnsAsync(new List<StandardVersion>
                 {
-                    GenerateEPORegisteredStandard(1),
-                    GenerateEPORegisteredStandard(99),
-                    GenerateEPORegisteredStandard(101)
+                    GenerateEPORegisteredStandardVersion(1),
+                    GenerateEPORegisteredStandardVersion(99),
+                    GenerateEPORegisteredStandardVersion(101)
                 });
 
             return standardServiceMock;
@@ -255,21 +261,21 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
                 .Build();
         }
 
-        private static StandardCollation GenerateStandard(int standardCode, List<string> options)
+        private static Standard GenerateStandard(int standardCode)
         {
-            return Builder<StandardCollation>.CreateNew()
+            return Builder<Standard>.CreateNew()
                 .With(i => i.Title = $"{standardCode}")
-                .With(i => i.StandardId = standardCode)
-                .With(i => i.ReferenceNumber = $"{standardCode}")
-                .With(i => i.StandardData = new StandardData() { Level = standardCode })
-                .With(i => i.Options = options).Build();
+                .With(i => i.LarsCode = standardCode)
+                .With(i => i.IfateReferenceNumber = $"{standardCode}")
+                .With(i => i.Level = standardCode)
+                .With(i => i.Version = 1.0m).Build();
         }
 
-        private static EPORegisteredStandards GenerateEPORegisteredStandard(int standardCode)
+        private static StandardVersion GenerateEPORegisteredStandardVersion(int standardCode)
         {
-            return Builder<EPORegisteredStandards>.CreateNew()
-                .With(i => i.StandardName = $"{standardCode}")
-                .With(i => i.StandardCode = standardCode)
+            return Builder<StandardVersion>.CreateNew()
+                .With(i => i.Title = $"{standardCode}")
+                .With(i => i.LarsCode = standardCode)
                 .With(i => i.Level = standardCode)
                 .Build();
         }
