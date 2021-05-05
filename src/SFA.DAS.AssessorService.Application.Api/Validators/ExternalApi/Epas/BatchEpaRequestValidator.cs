@@ -13,6 +13,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Epas
     {
         public BatchEpaRequestValidator(IStringLocalizer<BatchEpaRequestValidator> localiser, IOrganisationQueryRepository organisationQueryRepository, IIlrRepository ilrRepository, IStandardService standardService)
         {
+            var invalidVersionForStandard = false;
             RuleFor(m => m.UkPrn).InclusiveBetween(10000000, 99999999).WithMessage("The UKPRN should contain exactly 8 numbers");
 
             RuleFor(m => m.FamilyName).NotEmpty().WithMessage("Provide apprentice family name");
@@ -46,6 +47,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Epas
                     // StandardUId is set if version is supplied and a valid version is found.
                     if (string.IsNullOrWhiteSpace(m.StandardUId))
                     {
+                        invalidVersionForStandard = true;
                         context.AddFailure(new ValidationFailure("Standard", "Invalid version for Standard"));
                     }
                 });
@@ -106,7 +108,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Epas
                             {
                                 context.AddFailure(new ValidationFailure("StandardCode", "Your organisation is not approved to assess this Standard"));
                             }
-                            else if (!string.IsNullOrWhiteSpace(m.Version) && !providedStandardVersions.Any(v => v.Version.Equals(m.Version, StringComparison.InvariantCultureIgnoreCase)))
+                            else if (!invalidVersionForStandard && !string.IsNullOrWhiteSpace(m.Version) && !providedStandardVersions.Any(v => v.Version.Equals(m.Version, StringComparison.InvariantCultureIgnoreCase)))
                             {
                                 context.AddFailure(new ValidationFailure("Version", "Your organisation is not approved to assess this Standard Version"));
                             }
