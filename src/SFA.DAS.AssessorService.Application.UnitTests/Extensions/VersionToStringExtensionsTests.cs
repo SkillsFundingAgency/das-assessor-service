@@ -1,8 +1,8 @@
 ﻿using FluentAssertions;
 using NUnit.Framework;
-using SFA.DAS.AssessorService.Data.Extensions;
+using SFA.DAS.AssessorService.Domain.Extensions;
 
-namespace SFA.DAS.AssessorService.Data.UnitTests.Extensions
+namespace SFA.DAS.AssessorService.Application.UnitTests.Extensions
 {
     public class VersionToStringExtensionsTests
     {
