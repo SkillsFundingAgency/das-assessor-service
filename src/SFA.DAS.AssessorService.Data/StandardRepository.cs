@@ -162,7 +162,7 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<Standard> GetStandardVersionByIFateReferenceNumber(string iFateReferenceNumber, string version = null)
         {
-            if(!string.IsNullOrWhiteSpace(version))
+            if (!string.IsNullOrWhiteSpace(version))
             {
                 return await GetStandardByIFateReferenceNumberAndVersionInternal(iFateReferenceNumber, version);
             }
@@ -265,10 +265,10 @@ namespace SFA.DAS.AssessorService.Data
 
         private async Task<Standard> GetStandardByIFateReferenceNumberAndVersionInternal(string ifateReferenceNumber, string version)
         {
-            var sql = @"SELECT StandardUId, IfateReferenceNumber, LarsCode, Title, Version, Level, Status, TypicalDuration, 
-                            MaxFunding, IsActive, LastDateStarts, EffectiveTo, EffectiveFrom, VersionEarliestStartDate, 
-                            VersionLatestStartDate, VersionLatestEndDate, VersionApprovedForDelivery, ProposedTypicalDuration, ProposedMaxFunding
-                       FROM [Standards] WHERE IFateReferenceNumber = @standardReference AND Version = @version";
+            var sql = @"SELECT [StandardUId], [IfateReferenceNumber], [LarsCode], [Title], [Version], [Level], [Status], [TypicalDuration], 
+                            [MaxFunding], [IsActive], [LastDateStarts], [EffectiveTo], [EffectiveFrom], [VersionEarliestStartDate], 
+                            [VersionLatestStartDate], [VersionLatestEndDate], [VersionApprovedForDelivery], [ProposedTypicalDuration], [ProposedMaxFunding]
+                       FROM [Standards] WHERE [IfateReferenceNumber] = @standardReference AND Version = @version";
 
             var results = await _unitOfWork.Connection.QueryAsync<Standard>(
                 sql,
@@ -280,9 +280,9 @@ namespace SFA.DAS.AssessorService.Data
 
         private async Task<Standard> GetStandardByLarsCodeAndVersionInternal(int larsCode, string version)
         {
-            var sql = @"SELECT StandardUId, IfateReferenceNumber, LarsCode, Title, Version, Level, Status, TypicalDuration, 
-                            MaxFunding, IsActive, LastDateStarts, EffectiveTo, EffectiveFrom, VersionEarliestStartDate, 
-                            VersionLatestStartDate, VersionLatestEndDate, VersionApprovedForDelivery, ProposedTypicalDuration, ProposedMaxFunding
+            var sql = @"SELECT [StandardUId], [IfateReferenceNumber], [LarsCode], [Title], [Version], [Level], [Status], [TypicalDuration], 
+                            [MaxFunding], [IsActive], [LastDateStarts], [EffectiveTo], [EffectiveFrom], [VersionEarliestStartDate], 
+                            [VersionLatestStartDate], [VersionLatestEndDate], [VersionApprovedForDelivery], [ProposedTypicalDuration], [ProposedMaxFunding]
                        FROM [Standards] WHERE LarsCode = @larsCode AND Version = @version";
 
             var results = await _unitOfWork.Connection.QueryAsync<Standard>(
