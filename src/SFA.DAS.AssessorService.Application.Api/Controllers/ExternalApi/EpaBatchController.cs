@@ -3,12 +3,12 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.ExternalApi.Epas;
-using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Api.Extensions;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
 using SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Epas;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Domain.Entities;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,19 +27,16 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.ExternalApi
         private readonly CreateBatchEpaRequestValidator _createValidator;
         private readonly UpdateBatchEpaRequestValidator _updateValidator;
         private readonly DeleteBatchEpaRequestValidator _deleteValidator;
-        private readonly IStandardService _standardService;
 
-        public EpaBatchController(IMediator mediator, 
-            CreateBatchEpaRequestValidator createValidator, 
-            UpdateBatchEpaRequestValidator updateValidator, 
-            DeleteBatchEpaRequestValidator deleteValidator,
-            IStandardService standardService)
+        public EpaBatchController(IMediator mediator,
+            CreateBatchEpaRequestValidator createValidator,
+            UpdateBatchEpaRequestValidator updateValidator,
+            DeleteBatchEpaRequestValidator deleteValidator)
         {
             _mediator = mediator;
             _createValidator = createValidator;
             _updateValidator = updateValidator;
             _deleteValidator = deleteValidator;
-            _standardService = standardService;
         }
 
         [HttpPost]
@@ -54,8 +51,18 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.ExternalApi
             {
                 var validationErrors = new List<string>();
                 var isRequestValid = false;
+                Standard standard = null;
+                
+                if (!string.IsNullOrEmpty(request.Version))
+                {
+                    standard = await _mediator.Send(
+                        new GetStandardVersionRequest { StandardId = request.GetStandardId(), Version = request.Version });
+                }
+                else
+                {
+                    standard = await _mediator.Send(new GetCalculatedStandardVersionForApprenticeshipRequest { StandardId = request.GetStandardId(), Uln = request.Uln });
+                }
 
-                var standard = await _standardService.GetStandardVersionById(request.GetStandardId(), request.Version);
                 request.PopulateMissingFields(standard);
 
                 var validationResult = await _createValidator.ValidateAsync(request);
@@ -93,9 +100,10 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.ExternalApi
 
             foreach (var request in batchRequest)
             {
-                var standard = await _standardService.GetStandardVersionById(request.GetStandardId());
+                var standard = await _mediator.Send(
+                    new GetStandardVersionRequest { StandardId = request.GetStandardId(), Version = request.Version });
                 request.PopulateMissingFields(standard);
-                
+
                 var validationResult = await _updateValidator.ValidateAsync(request);
                 var isRequestValid = validationResult.IsValid;
                 var validationErrors = validationResult.Errors.Select(error => error.ErrorMessage).ToList();
@@ -137,7 +145,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.ExternalApi
                 UkPrn = ukPrn
             };
 
-            var standardVersion = await _standardService.GetStandardVersionById(standard);
+            var standardVersion = await _mediator.Send(new GetStandardVersionRequest { StandardId = standard });
             if (standardVersion != null)
             {
                 request.StandardCode = standardVersion.LarsCode;
