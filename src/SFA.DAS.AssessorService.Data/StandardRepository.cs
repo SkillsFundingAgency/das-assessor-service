@@ -268,7 +268,7 @@ namespace SFA.DAS.AssessorService.Data
             var sql = @"SELECT [StandardUId], [IfateReferenceNumber], [LarsCode], [Title], [Version], [Level], [Status], [TypicalDuration], 
                             [MaxFunding], [IsActive], [LastDateStarts], [EffectiveTo], [EffectiveFrom], [VersionEarliestStartDate], 
                             [VersionLatestStartDate], [VersionLatestEndDate], [VersionApprovedForDelivery], [ProposedTypicalDuration], [ProposedMaxFunding]
-                       FROM [Standards] WHERE [IfateReferenceNumber] = @standardReference AND Version = @version";
+                       FROM [Standards] WHERE [IfateReferenceNumber] = @ifateReferenceNumber AND Version = @version";
 
             var results = await _unitOfWork.Connection.QueryAsync<Standard>(
                 sql,
