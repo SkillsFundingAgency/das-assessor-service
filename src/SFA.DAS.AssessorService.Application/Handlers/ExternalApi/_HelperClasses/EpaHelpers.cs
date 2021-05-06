@@ -28,6 +28,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi._HelperClasse
                     LearnerFamilyName = certData.LearnerFamilyName,
                     LearningStartDate = certData.LearningStartDate,
                     StandardReference = certData.StandardReference,
+                    Version = certData.Version,
+                    CourseOption = certData.CourseOption,
                     StandardName = certData.StandardName,
                     StandardLevel = certData.StandardLevel,
                     StandardPublicationDate = certData.StandardPublicationDate,

@@ -13,6 +13,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Epas
     {
         public BatchEpaRequestValidator(IStringLocalizer<BatchEpaRequestValidator> localiser, IOrganisationQueryRepository organisationQueryRepository, IIlrRepository ilrRepository, IStandardService standardService)
         {
+            var invalidVersionForStandard = false;
             RuleFor(m => m.UkPrn).InclusiveBetween(10000000, 99999999).WithMessage("The UKPRN should contain exactly 8 numbers");
 
             RuleFor(m => m.FamilyName).NotEmpty().WithMessage("Provide apprentice family name");
@@ -22,12 +23,55 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Epas
                 {
                     if (!string.IsNullOrEmpty(m.StandardReference))
                     {
-                        var collatedStandard = await standardService.GetStandard(m.StandardReference);
-                        if (m.StandardCode != collatedStandard?.StandardId)
+                        var standard = await standardService.GetStandardVersionById(m.StandardReference);
+                        if (m.StandardCode != standard?.LarsCode)
                         {
                             context.AddFailure("StandardReference and StandardCode must be for the same Standard");
                         }
                     }
+                });
+            });
+
+            When(m => !string.IsNullOrWhiteSpace(m.CourseOption) && string.IsNullOrWhiteSpace(m.Version), () =>
+            {
+                RuleFor(m => m.CourseOption).Custom((m, context) =>
+                {
+                    context.AddFailure(new ValidationFailure("CourseOption", "Version must be set, when submitting a CourseOption value"));
+                });
+            });
+
+            When(m => !string.IsNullOrWhiteSpace(m.Version), () =>
+            {
+                RuleFor(m => m).Custom((m, context) =>
+                {
+                    // StandardUId is set if version is supplied and a valid version is found.
+                    if (string.IsNullOrWhiteSpace(m.StandardUId))
+                    {
+                        invalidVersionForStandard = true;
+                        context.AddFailure(new ValidationFailure("Standard", "Invalid version for Standard"));
+                    }
+                });
+
+                When(m => !string.IsNullOrWhiteSpace(m.CourseOption), () =>
+                {
+                    RuleFor(m => m).CustomAsync(async (m, context, cancellation) =>
+                    {
+                        if (!string.IsNullOrWhiteSpace(m.StandardUId))
+                        {
+                            var standardOptions = await standardService.GetStandardOptionsByStandardId(m.StandardUId);
+
+                            if(standardOptions == null || !standardOptions.HasOptions())
+                            {
+                                context.AddFailure(new ValidationFailure("CourseOption", "No course option available for this Standard and version. Must be empty"));
+                            }
+                            else if (standardOptions != null && standardOptions.HasOptions() && standardOptions.CourseOption.All(a => a.IndexOf(m.CourseOption, StringComparison.OrdinalIgnoreCase) == -1))
+                            {
+                                var validOptions = string.Join(",", standardOptions.CourseOption);
+                                context.AddFailure(new ValidationFailure("CourseOption",
+                                    $@"Invalid course option for this Standard and version. Must be one of the following: '{validOptions}' where '{validOptions}' depends on the standard code, and can be obtained with GET /api/v1/standard/options/{m.StandardReference}/{m.Version}"));
+                            }
+                        }
+                    });
                 });
             });
 
@@ -39,7 +83,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Epas
                     {
                         var requestedIlr = await ilrRepository.Get(m.Uln, m.StandardCode);
                         var sumbittingEpao = await organisationQueryRepository.GetByUkPrn(m.UkPrn);
-                        
+
                         if (requestedIlr is null || !string.Equals(requestedIlr.FamilyName, m.FamilyName, StringComparison.InvariantCultureIgnoreCase))
                         {
                             context.AddFailure(new ValidationFailure("Uln", "ULN, FamilyName and Standard not found."));
@@ -58,11 +102,15 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Epas
                         }
                         else
                         {
-                            var providedStandards = await standardService.GetEpaoRegisteredStandards(sumbittingEpao.EndPointAssessorOrganisationId);
+                            var providedStandardVersions = await standardService.GetEPAORegisteredStandardVersions(sumbittingEpao.EndPointAssessorOrganisationId, m.StandardCode);
 
-                            if (!providedStandards.Any(s => s.StandardCode == m.StandardCode))
+                            if (!providedStandardVersions.Any())
                             {
                                 context.AddFailure(new ValidationFailure("StandardCode", "Your organisation is not approved to assess this Standard"));
+                            }
+                            else if (!invalidVersionForStandard && !string.IsNullOrWhiteSpace(m.Version) && !providedStandardVersions.Any(v => v.Version.Equals(m.Version, StringComparison.InvariantCultureIgnoreCase)))
+                            {
+                                context.AddFailure(new ValidationFailure("Version", "Your organisation is not approved to assess this Standard Version"));
                             }
                         }
                     });

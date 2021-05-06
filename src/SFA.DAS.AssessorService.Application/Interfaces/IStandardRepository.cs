@@ -28,7 +28,23 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<IEnumerable<Standard>> GetAllStandards();
         Task<IEnumerable<Standard>> GetStandardVersionsByLarsCode(int larsCode);
         Task<Standard> GetStandardVersionByStandardUId(string standardUId);
-        Task<Standard> GetStandardByStandardReferenceAndVersion(string standardReference, string version);
+        
+        /// <summary>
+        /// Returns Specific version based on given lars code and version if the latter is supplied
+        /// Or returns the latest version of a standard if only lars code supplied
+        /// </summary>
+        /// <param name="larsCode">if just lars code, latest version returned</param>
+        /// <param name="version">optional parameter for specific version</param>
+        /// <returns></returns>
+        Task<Standard> GetStandardVersionByLarsCode(int larsCode, string version = null);
+        /// <summary>
+        /// Returns Specific version based on given ifate reference number and version if the latter is supplied
+        /// Or returns the latest version of a standard if only ifate reference number is supplied
+        /// </summary>
+        /// <param name="iFateReferenceNumber">if just iFateReferenceNumber, latest version returned</param>
+        /// <param name="version">optional parameter for specific version</param>
+        /// <returns></returns>
+        Task<Standard> GetStandardVersionByIFateReferenceNumber(string standardReference, string version = null);
         Task InsertStandards(IEnumerable<Standard> standard);
         Task InsertOptions(IEnumerable<StandardOption> optionsToInsert);
         Task<IEnumerable<StandardOptions>> GetAllStandardOptions();

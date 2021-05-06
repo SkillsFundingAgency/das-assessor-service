@@ -4,9 +4,11 @@ using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.ExternalApi.Epas;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
+using SFA.DAS.AssessorService.Application.Api.Extensions;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
 using SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Epas;
+using SFA.DAS.AssessorService.Application.Interfaces;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,13 +27,19 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.ExternalApi
         private readonly CreateBatchEpaRequestValidator _createValidator;
         private readonly UpdateBatchEpaRequestValidator _updateValidator;
         private readonly DeleteBatchEpaRequestValidator _deleteValidator;
+        private readonly IStandardService _standardService;
 
-        public EpaBatchController(IMediator mediator, CreateBatchEpaRequestValidator createValidator, UpdateBatchEpaRequestValidator updateValidator, DeleteBatchEpaRequestValidator deleteValidator)
+        public EpaBatchController(IMediator mediator, 
+            CreateBatchEpaRequestValidator createValidator, 
+            UpdateBatchEpaRequestValidator updateValidator, 
+            DeleteBatchEpaRequestValidator deleteValidator,
+            IStandardService standardService)
         {
             _mediator = mediator;
             _createValidator = createValidator;
             _updateValidator = updateValidator;
             _deleteValidator = deleteValidator;
+            _standardService = standardService;
         }
 
         [HttpPost]
@@ -47,20 +55,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.ExternalApi
                 var validationErrors = new List<string>();
                 var isRequestValid = false;
 
-                var collatedStandard = request.StandardCode > 0 ? await GetCollatedStandard(request.StandardCode) : await GetCollatedStandard(request.StandardReference);
-
-                if (collatedStandard != null)
-                {
-                    // Only fill in the missing bits...
-                    if (request.StandardCode < 1)
-                    {
-                        request.StandardCode = collatedStandard.StandardId ?? int.MinValue;
-                    }
-                    else if (string.IsNullOrEmpty(request.StandardReference))
-                    {
-                        request.StandardReference = collatedStandard.ReferenceNumber;
-                    }
-                }
+                var standard = await _standardService.GetStandardVersionById(request.GetStandardId(), request.Version);
+                request.PopulateMissingFields(standard);
 
                 var validationResult = await _createValidator.ValidateAsync(request);
                 isRequestValid = validationResult.IsValid;
@@ -97,21 +93,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.ExternalApi
 
             foreach (var request in batchRequest)
             {
-                var collatedStandard = request.StandardCode > 0 ? await GetCollatedStandard(request.StandardCode) : await GetCollatedStandard(request.StandardReference);
-
-                if (collatedStandard != null)
-                {
-                    // Only fill in the missing bits...
-                    if (request.StandardCode < 1)
-                    {
-                        request.StandardCode = collatedStandard.StandardId ?? int.MinValue;
-                    }
-                    else if (string.IsNullOrEmpty(request.StandardReference))
-                    {
-                        request.StandardReference = collatedStandard.ReferenceNumber;
-                    }
-                }
-
+                var standard = await _standardService.GetStandardVersionById(request.GetStandardId());
+                request.PopulateMissingFields(standard);
+                
                 var validationResult = await _updateValidator.ValidateAsync(request);
                 var isRequestValid = validationResult.IsValid;
                 var validationErrors = validationResult.Errors.Select(error => error.ErrorMessage).ToList();
@@ -153,12 +137,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.ExternalApi
                 UkPrn = ukPrn
             };
 
-            var collatedStandard = int.TryParse(standard, out int standardCode) ? await GetCollatedStandard(standardCode) : await GetCollatedStandard(standard);
-
-            if (collatedStandard != null)
+            var standardVersion = await _standardService.GetStandardVersionById(standard);
+            if (standardVersion != null)
             {
-                request.StandardCode = collatedStandard.StandardId ?? int.MinValue;
-                request.StandardReference = collatedStandard.ReferenceNumber;
+                request.StandardCode = standardVersion.LarsCode;
+                request.StandardReference = standardVersion.IfateReferenceNumber;
             }
 
             var validationResult = await _deleteValidator.ValidateAsync(request);
@@ -182,16 +165,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.ExternalApi
                 ApiResponse response = new ApiResponse((int)HttpStatusCode.Forbidden, string.Join("; ", validationErrors));
                 return StatusCode(response.StatusCode, response);
             }
-        }
-
-        private async Task<StandardCollation> GetCollatedStandard(string referenceNumber)
-        {
-            return await _mediator.Send(new GetCollatedStandardRequest { ReferenceNumber = referenceNumber });
-        }
-
-        private async Task<StandardCollation> GetCollatedStandard(int standardId)
-        {
-            return await _mediator.Send(new GetCollatedStandardRequest { StandardId = standardId });
         }
     }
 }
