@@ -272,13 +272,16 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<int> GetCertificatesReadyToPrintCount(string[] excludedOverallGrades, string[] includedStatus)
         {
-            var sql = "SELECT COUNT(1)" +
-                "FROM" +
-                    "[Certificates] c " +
-                "WHERE " +
-                    "JSON_VALUE(CertificateData, '$.OverallGrade') NOT IN @excludedOverallGrades " +
-                    "AND c.Status IN @includedStatus " +
-                    "AND c.BatchNumber IS NULL";
+            var sql = 
+              @"SELECT COUNT(1) 
+                FROM 
+                    [Certificates] c 
+                WHERE 
+                    JSON_VALUE(CertificateData, '$.ContactAddLine1') IS NOT NULL 
+                    AND JSON_VALUE(CertificateData, '$.ContactPostCode') IS NOT NULL 
+                    AND JSON_VALUE(CertificateData, '$.OverallGrade') NOT IN @excludedOverallGrades 
+                    AND c.Status IN @includedStatus 
+                    AND c.BatchNumber IS NULL";
 
             var count = await _unitOfWork.Connection.QueryFirstAsync<int>(
                 sql,
@@ -288,18 +291,20 @@ namespace SFA.DAS.AssessorService.Data
             return count;
         }
 
-        public async Task<Guid[]> GetCertificatesReadyToPrint(int numberOfCertifictes, string[] excludedOverallGrades, string[] includedStatus )
+        public async Task<Guid[]> GetCertificatesReadyToPrint(int numberOfCertificates, string[] excludedOverallGrades, string[] includedStatus )
         {
             var certificateIds = await _unitOfWork.Connection.QueryAsync<Guid>(
-                "SELECT TOP(@numberOfCertifictes)" +
-                    "c.[Id] " +
-                "FROM" + 
-                    "[Certificates] c " + 
-                "WHERE " +
-                    "JSON_VALUE(CertificateData, '$.OverallGrade') NOT IN @excludedOverallGrades " +
-                    "AND c.Status IN @includedStatus " +
-                    "AND BatchNumber IS NULL",
-                param: new { numberOfCertifictes, excludedOverallGrades, includedStatus },
+              @"SELECT TOP(@numberOfCertificates) 
+                    c.[Id] 
+                FROM 
+                    [Certificates] c 
+                WHERE 
+                    JSON_VALUE(CertificateData, '$.ContactAddLine1') IS NOT NULL 
+                    AND JSON_VALUE(CertificateData, '$.ContactPostCode') IS NOT NULL 
+                    AND JSON_VALUE(CertificateData, '$.OverallGrade') NOT IN @excludedOverallGrades 
+                    AND c.Status IN @includedStatus 
+                    AND BatchNumber IS NULL",
+                param: new { numberOfCertificates, excludedOverallGrades, includedStatus },
                 transaction: _unitOfWork.Transaction);
 
             return certificateIds.ToArray();
@@ -307,76 +312,21 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task UpdateCertificatesReadyToPrintInBatch(Guid[] certificateIds, int batchNumber)
         {
+            var sql =
+              @"UPDATE [Certificates] SET 
+                    UpdatedAt = GETUTCDATE(), 
+                    UpdatedBy = @updatedBy, 
+                    BatchNumber = @batchNumber 
+                WHERE 
+                    Id IN @certificateIds";
+
             await _unitOfWork.Connection.ExecuteAsync(
-                "UPDATE [Certificates] SET " +
-                    "UpdatedAt = GETUTCDATE(), " +
-                    "UpdatedBy = @updatedBy, " +
-                    "BatchNumber = @batchNumber " +
-                "WHERE " +
-                    "Id IN @certificateIds",
+                sql,
                 param: new { certificateIds, batchNumber, updatedBy = SystemUsers.PrintFunction },
                 transaction: _unitOfWork.Transaction);
 
             await AddMultipleCertificateLogs(certificateIds, CertificateActions.Status, null, null, null, SystemUsers.PrintFunction, batchNumber, null);
         }        
-
-        public async Task<List<CertificatePrintSummary>> GetCertificatesForBatch(int batchNumber)
-        {
-            var sql =
-                "SELECT " +
-                    "c.[Uln], " +
-                    "c.[StandardCode], " +
-                    "c.[ProviderUkPrn], " +
-                    "c.[CertificateReference], " +
-                    "c.[BatchNumber], " +
-                    "c.[Status], " +
-                    "o.[EndPointAssessorOrganisationId], " +
-                    "o.[EndPointAssessorName], " +
-                    "c.[CertificateData] " +
-                "FROM " +
-                    "[Certificates] c INNER JOIN [Organisations] o " +
-                    "   ON c.OrganisationId = o.Id " +
-                "WHERE " +
-                    "BatchNumber = @batchNumber";
-
-            var certificates = await _unitOfWork.Connection.QueryAsync<Certificate, Organisation, CertificateData, CertificatePrintSummary>(
-                sql, (certificate, organisation, certificateData) =>
-                {
-                    var certificatePrintSummary = new CertificatePrintSummary()
-                    {
-                        Uln = certificate.Uln,
-                        StandardCode = certificate.StandardCode,
-                        ProviderUkPrn = certificate.ProviderUkPrn,
-                        EndPointAssessorOrganisationId = organisation.EndPointAssessorOrganisationId,
-                        EndPointAssessorOrganisationName = organisation.EndPointAssessorName,
-                        CertificateReference = certificate.CertificateReference,
-                        BatchNumber = certificate.BatchNumber.GetValueOrDefault().ToString(),
-                        LearnerGivenNames = certificateData.LearnerGivenNames,
-                        LearnerFamilyName = certificateData.LearnerFamilyName,
-                        StandardName = certificateData.StandardName,
-                        StandardLevel = certificateData.StandardLevel,
-                        ContactName = certificateData.ContactName,
-                        ContactOrganisation = certificateData.ContactOrganisation,
-                        ContactAddLine1 = certificateData.ContactAddLine1,
-                        ContactAddLine2 = certificateData.ContactAddLine2,
-                        ContactAddLine3 = certificateData.ContactAddLine3,
-                        ContactAddLine4 = certificateData.ContactAddLine4,
-                        ContactPostCode = certificateData.ContactPostCode,
-                        AchievementDate = certificateData.AchievementDate,
-                        CourseOption = certificateData.CourseOption,
-                        OverallGrade = certificateData.OverallGrade,
-                        Department = certificateData.Department,
-                        FullName = certificateData.FullName,
-                        Status = certificate.Status
-                    };
-                    return certificatePrintSummary;
-                },
-                splitOn: "Uln, EndPointAssessorOrganisationId, CertificateData",
-                param: new { batchNumber },
-                transaction: _unitOfWork.Transaction) ;
-
-            return certificates.ToList();
-        }
 
         public async Task<PaginatedList<Certificate>> GetCertificatesForApproval(int pageIndex, int pageSize,string status, string privatelyFundedStatus)
         {
@@ -601,15 +551,15 @@ namespace SFA.DAS.AssessorService.Data
         public Task<string> GetPreviousProviderName(int providerUkPrn)
         {
             var sql =
-                "SELECT " +
-                "   TOP(1) JSON_VALUE(CertificateData, '$.ProviderName') " +
-                "FROM " +
-                "   Certificates " +
-                "WHERE " +
-                "   ProviderUkPrn = @providerUkPrn " +
-                "   AND JSON_VALUE(CertificateData, '$.ProviderName') IS NOT NULL " +
-                "ORDER BY " +
-                "   CreatedAt DESC";
+              @"SELECT 
+                   TOP(1) JSON_VALUE(CertificateData, '$.ProviderName') 
+                FROM 
+                   Certificates 
+                WHERE 
+                   ProviderUkPrn = @providerUkPrn 
+                   AND JSON_VALUE(CertificateData, '$.ProviderName') IS NOT NULL 
+                ORDER BY 
+                   CreatedAt DESC";
 
             return _unitOfWork.Connection.QueryFirstOrDefaultAsync<string>(
                 sql,
@@ -700,33 +650,36 @@ namespace SFA.DAS.AssessorService.Data
 
         private async Task AddMultipleCertificateLogs(Guid[] certificateIds, string action, string status, DateTime? eventTime, string certificateData, string username, int? batchNumber, string reasonForChange = null)
         {
+            var sql =
+                $@"INSERT INTO [CertificateLogs] 
+                   (
+                       Id, 
+                       Action, 
+                       CertificateId, 
+                       EventTime, 
+                       Status, 
+                       CertificateData, 
+                       Username, 
+                       BatchNumber, 
+                       ReasonForChange
+                   ) 
+                   SELECT 
+                       NEWID(), 
+                       @action, 
+                       c.Id, 
+                       {(eventTime.HasValue ? "@eventTime" : "c.UpdatedAt")}, 
+                       {(!string.IsNullOrEmpty(status) ? "@status" : "c.Status")}, 
+                       {(!string.IsNullOrEmpty(certificateData) ? "@certificateData" : "c.CertificateData")}, 
+                       @username, 
+                       @batchNumber, 
+                       @reasonForChange 
+                  FROM 
+                       [Certificates] c 
+                   WHERE 
+                       c.Id IN @certificateIds";
+
             await _unitOfWork.Connection.ExecuteAsync(
-                   "INSERT INTO [CertificateLogs] " +
-                   "(" +
-                       "Id, " +
-                       "Action, " +
-                       "CertificateId, " +
-                       "EventTime, " +
-                       "Status, " +
-                       "CertificateData, " +
-                       "Username, " +
-                       "BatchNumber," +
-                       "ReasonForChange" +
-                   ") " +
-                   "SELECT " +
-                       "NEWID(), " +
-                       "@action, " +
-                       "c.Id, " +
-                       (eventTime.HasValue ? "@eventTime," : "c.UpdatedAt, ") +
-                       (!string.IsNullOrEmpty(status) == true ? "@status," : "c.Status, ") +
-                       (!string.IsNullOrEmpty(certificateData) == true ? "@certificateData," : "c.CertificateData, ") +
-                       "@username," +
-                       "@batchNumber, " +
-                       "@reasonForChange " +
-                   "FROM " +
-                       "[Certificates] c " +
-                   "WHERE " +
-                       "c.Id IN @certificateIds",
+                   sql,
                    param: new { certificateIds, action, status, eventTime, certificateData, username, batchNumber, reasonForChange },
                    transaction: _unitOfWork.Transaction);
         }
