@@ -28,6 +28,7 @@
 :r .\PostDeploymentScripts\EPAO_Migration_Part2_OrganisationStandard.sql
 :r .\PostDeploymentScripts\EPAO_Migration_Part3_OrganisationStandardVersion.sql
 :r .\PostDeploymentScripts\EPAO_Migration_Part4_Apply.sql
+:r .\PostDeploymentScripts\EPAO_Migration_Part5_Fails.sql
 
 -- CON-3359
 :r .\PostDeploymentScripts\CON-3359_Remove_IlrsImport.sql
