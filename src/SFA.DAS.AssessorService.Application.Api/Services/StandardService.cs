@@ -178,7 +178,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
             return results.PageOfResults;
         }
 
-        public async Task<IEnumerable<StandardVersion>> GetEPAORegisteredStandardVersions(string endPointAssessorOrganisationId, int? larsCode)
+        public async Task<IEnumerable<StandardVersion>> GetEPAORegisteredStandardVersions(string endPointAssessorOrganisationId, int? larsCode = null)
         {
             if (larsCode.HasValue && larsCode.Value > 0)
             {
