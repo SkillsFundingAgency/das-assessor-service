@@ -1,4 +1,5 @@
-﻿using SFA.DAS.AssessorService.Web.ViewModels.Shared;
+﻿using SFA.DAS.AssessorService.Domain.Consts;
+using SFA.DAS.AssessorService.Web.ViewModels.Shared;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -15,6 +16,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Search
     {
         public string StdCode { get; set; }
         public IEnumerable<ResultViewModel> SearchResults { get; set; }
+        public bool AllAssessmentsCompleted => !SearchResults.Any(r => r.CertificateReference == null || r.OverallGrade == CertificateGrade.Fail);
     }
 
     public class SelectedStandardViewModel
