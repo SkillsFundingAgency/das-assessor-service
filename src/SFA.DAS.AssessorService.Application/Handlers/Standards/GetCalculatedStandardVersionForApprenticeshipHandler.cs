@@ -24,30 +24,21 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Standards
         }
         public async Task<Standard> Handle(GetCalculatedStandardVersionForApprenticeshipRequest request, CancellationToken cancellationToken)
         {
-            var standardId = new StandardId(request.StandardId);
-            int larsCode;
-            if (standardId.IdType != StandardId.StandardIdType.LarsCode)
-            {
-                var result = await _standardService.GetStandardVersionById(request.StandardId);
-                larsCode = result.LarsCode;
-            }
-            else
-            {
-                larsCode = standardId.LarsCode;
-            }
+            //request.StandardId will be IFateRef or LarsCode, this will get latest version of the standard
+            var standard = await _standardService.GetStandardVersionById(request.StandardId);
 
-            var ilr = await _ilrRepository.Get(request.Uln, larsCode);
-            var versions = await _standardService.GetStandardVersionsByLarsCode(larsCode);
+            var ilr = await _ilrRepository.Get(request.Uln, standard.LarsCode);
+            var versions = await _standardService.GetStandardVersionsByLarsCode(standard.LarsCode);
 
-            foreach (var version in versions.OrderBy(s => s.VersionEarliestStartDate))
+            foreach (var version in versions.OrderBy(s => s.Version))
             {
-                if (ilr.LearnStartDate > version.VersionEarliestStartDate && (ilr.LearnStartDate < version.VersionLatestStartDate || version.VersionLatestStartDate == null))
+                if (ilr.LearnStartDate <= version.VersionLatestStartDate || version.VersionLatestStartDate == null)
                 {
                     return version;
                 }
             }
 
-            throw new InvalidOperationException($"Unable to find a version for Standard {request.StandardId} that accepts earliest start date for learner with date {ilr.LearnStartDate}");
+            return standard;
         }
     }
 }
