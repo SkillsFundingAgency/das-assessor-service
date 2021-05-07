@@ -1,5 +1,6 @@
-﻿-- set CertificateLogs action = 'Submit' , status = 'Submitted' for Fails recorded via API
+﻿-- Migration Part5
 
+-- set CertificateLogs action = 'Submit' , status = 'Submitted' for Fails recorded via API
 MERGE INTO CertificateLogs cl1
 USING (
 SELECT id FROM (
