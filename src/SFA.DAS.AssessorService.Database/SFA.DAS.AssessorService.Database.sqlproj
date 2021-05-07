@@ -162,6 +162,7 @@
     <None Include="PostDeploymentScripts\EPAO_Migration_Part2_OrganisationStandard.sql" />
     <None Include="PostDeploymentScripts\EPAO_Migration_Part3_OrganisationStandardVersion.sql" />
     <None Include="PostDeploymentScripts\EPAO_Migration_Part4_Apply.sql" />
+    <None Include="PostDeploymentScripts\EPAO_Migration_Part5_Fails.sql" />
     <Build Include="Tables\StandardOptions.sql" />
     <None Include="PostDeploymentScripts\CON-3359_Remove_IlrsImport.sql" />
   </ItemGroup>
