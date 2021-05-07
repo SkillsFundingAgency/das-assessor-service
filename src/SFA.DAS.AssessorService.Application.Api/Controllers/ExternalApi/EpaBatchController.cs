@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Api.Types.Models.ExternalApi.Epas;
 using SFA.DAS.AssessorService.Application.Api.Extensions;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
@@ -100,9 +101,20 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.ExternalApi
 
             foreach (var request in batchRequest)
             {
-                var standard = await _mediator.Send(
-                    new GetStandardVersionRequest { StandardId = request.GetStandardId(), Version = request.Version });
-                request.PopulateMissingFields(standard);
+                Standard standard = null;
+                if (!string.IsNullOrEmpty(request.Version))
+                {
+                    standard = await _mediator.Send(
+                        new GetStandardVersionRequest { StandardId = request.GetStandardId(), Version = request.Version });
+                }
+                else
+                {
+                    standard = await _mediator.Send(new GetCalculatedStandardVersionForApprenticeshipRequest { StandardId = request.GetStandardId(), Uln = request.Uln });
+                }
+
+                // Get Existing Certificate if it exists
+                var existingCertificate = await _mediator.Send(new GetCertificateForUlnRequest { StandardCode = standard.LarsCode, Uln = request.Uln });
+                request.PopulateMissingFields(standard, existingCertificate);
 
                 var validationResult = await _updateValidator.ValidateAsync(request);
                 var isRequestValid = validationResult.IsValid;

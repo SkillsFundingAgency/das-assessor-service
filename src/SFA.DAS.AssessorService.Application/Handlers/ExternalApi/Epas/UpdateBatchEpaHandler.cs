@@ -48,6 +48,12 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Epas
             var certData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
             certData.EpaDetails = new EpaDetails { EpaReference = certificate.CertificateReference, Epas = new List<EpaRecord>() };
 
+            // Always Update Version & Option
+            // It was either retrieved from the old epa record if set, or overwriting the previous auto select
+            // This could wipe out option if it was previously set and not supplied but that is a valid scenario.
+            certData.Version = request.Version;
+            certData.CourseOption = request.CourseOption;
+
             if (request.EpaDetails?.Epas != null)
             {
                 foreach (var epa in request.EpaDetails.Epas)
@@ -61,11 +67,20 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Epas
             certData.EpaDetails.LatestEpaDate = latestEpaRecord?.EpaDate;
             certData.EpaDetails.LatestEpaOutcome = latestEpaRecord?.EpaOutcome;
 
+            var epaAction = CertificateActions.Epa;
+            if (latestEpaRecord?.EpaOutcome.Equals(EpaOutcome.Fail, System.StringComparison.InvariantCultureIgnoreCase) == true)
+            {
+                certData.AchievementDate = latestEpaRecord?.EpaDate;
+                certData.OverallGrade = CertificateGrade.Fail;
+                certificate.Status = CertificateStatus.Submitted;
+                epaAction = CertificateActions.Submit;
+            }
+
             _logger.LogInformation("UpdateEpaDetails Before Update CertificateData");
             certificate.CertificateData = JsonConvert.SerializeObject(certData);
 
             _logger.LogInformation("UpdateEpaDetails Before Update Cert in db");
-            await _certificateRepository.Update(certificate, ExternalApiConstants.ApiUserName, CertificateActions.Epa);
+            await _certificateRepository.Update(certificate, ExternalApiConstants.ApiUserName, epaAction);
 
             return certData.EpaDetails;
         }

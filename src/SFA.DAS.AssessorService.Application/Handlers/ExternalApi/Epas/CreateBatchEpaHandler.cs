@@ -8,6 +8,7 @@ using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -75,7 +76,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Epas
             certData.EpaDetails.LatestEpaOutcome = latestEpaRecord?.EpaOutcome;
 
             var epaAction = CertificateActions.Epa;
-            if (latestEpaRecord?.EpaOutcome.Equals(EpaOutcome.Fail, System.StringComparison.OrdinalIgnoreCase) == true)
+            if (latestEpaRecord?.EpaOutcome.Equals(EpaOutcome.Fail, StringComparison.InvariantCultureIgnoreCase) == true)
             {
                 certData.AchievementDate = latestEpaRecord?.EpaDate;
                 certData.OverallGrade = CertificateGrade.Fail;
