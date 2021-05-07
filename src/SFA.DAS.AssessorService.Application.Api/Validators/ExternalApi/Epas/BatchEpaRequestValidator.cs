@@ -17,8 +17,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Epas
             RuleFor(m => m.UkPrn).InclusiveBetween(10000000, 99999999).WithMessage("The UKPRN should contain exactly 8 numbers");
 
             RuleFor(m => m.FamilyName).NotEmpty().WithMessage("Provide apprentice family name");
-            // Should this be allowed?
-            RuleFor(m => m.StandardUId).NotEmpty().WithMessage("Standard Version was not able to be found for the provided Learner and Standard Code");
             RuleFor(m => m.StandardCode).GreaterThan(0).WithMessage("Provide a valid Standard").DependentRules(() =>
             {
                 RuleFor(m => m).CustomAsync(async (m, context, cancellation) =>
@@ -39,6 +37,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Epas
                 RuleFor(m => m).Custom((m, context) =>
                 {
                     // If Version specified but StandardUId not populated, must be invalid version
+                    // Otherwise we assume the auto-select process succeeded.
                     if (string.IsNullOrWhiteSpace(m.StandardUId))
                     {
                         invalidVersionForStandard = true;
