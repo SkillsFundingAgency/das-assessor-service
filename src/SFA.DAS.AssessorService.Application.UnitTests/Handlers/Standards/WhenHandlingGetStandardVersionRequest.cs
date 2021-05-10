@@ -10,7 +10,7 @@ using SFA.DAS.Testing.AutoFixture;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ImportStandards
+namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Standards
 {
     public class WhenHandlingGetStandardVersionRequest
     {
