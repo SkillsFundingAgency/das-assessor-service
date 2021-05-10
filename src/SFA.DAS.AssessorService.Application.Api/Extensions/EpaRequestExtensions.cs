@@ -1,5 +1,6 @@
 ﻿using SFA.DAS.AssessorService.Api.Types.Models.ExternalApi.Epas;
 using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.AssessorService.Domain.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,11 +25,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Extensions
                     request.StandardReference = standard.IfateReferenceNumber;
                 }
 
-                // only populate the standardUID if version was supplied
-                if(!string.IsNullOrWhiteSpace(request.Version))
+                if(string.IsNullOrWhiteSpace(request.Version))
                 {
-                    request.StandardUId = standard.StandardUId;
+                    request.Version = standard.Version.VersionToString();
                 }
+
+                // StandardUId always populated, either from version supplied
+                // Or Auto Calculated
+                request.StandardUId = standard.StandardUId;
             }
         }
     }

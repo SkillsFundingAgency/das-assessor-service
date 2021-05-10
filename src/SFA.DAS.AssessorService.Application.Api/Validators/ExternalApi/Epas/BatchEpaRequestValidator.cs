@@ -32,46 +32,36 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Epas
                 });
             });
 
-            When(m => !string.IsNullOrWhiteSpace(m.CourseOption) && string.IsNullOrWhiteSpace(m.Version), () =>
-            {
-                RuleFor(m => m.CourseOption).Custom((m, context) =>
-                {
-                    context.AddFailure(new ValidationFailure("CourseOption", "Version must be set, when submitting a CourseOption value"));
-                });
-            });
-
             When(m => !string.IsNullOrWhiteSpace(m.Version), () =>
             {
                 RuleFor(m => m).Custom((m, context) =>
                 {
-                    // StandardUId is set if version is supplied and a valid version is found.
+                    // If Version specified but StandardUId not populated, must be invalid version
+                    // Otherwise we assume the auto-select process succeeded.
                     if (string.IsNullOrWhiteSpace(m.StandardUId))
                     {
                         invalidVersionForStandard = true;
                         context.AddFailure(new ValidationFailure("Standard", "Invalid version for Standard"));
                     }
                 });
+            });
 
-                When(m => !string.IsNullOrWhiteSpace(m.CourseOption), () =>
+            When(m => !string.IsNullOrWhiteSpace(m.CourseOption) && !string.IsNullOrWhiteSpace(m.StandardUId), () =>
+            {
+                RuleFor(m => m).CustomAsync(async (m, context, cancellation) =>
                 {
-                    RuleFor(m => m).CustomAsync(async (m, context, cancellation) =>
-                    {
-                        if (!string.IsNullOrWhiteSpace(m.StandardUId))
-                        {
-                            var standardOptions = await standardService.GetStandardOptionsByStandardId(m.StandardUId);
+                    var standardOptions = await standardService.GetStandardOptionsByStandardId(m.StandardUId);
 
-                            if(standardOptions == null || !standardOptions.HasOptions())
-                            {
-                                context.AddFailure(new ValidationFailure("CourseOption", "No course option available for this Standard and version. Must be empty"));
-                            }
-                            else if (standardOptions != null && standardOptions.HasOptions() && standardOptions.CourseOption.All(a => a.IndexOf(m.CourseOption, StringComparison.OrdinalIgnoreCase) == -1))
-                            {
-                                var validOptions = string.Join(",", standardOptions.CourseOption);
-                                context.AddFailure(new ValidationFailure("CourseOption",
-                                    $@"Invalid course option for this Standard and version. Must be one of the following: '{validOptions}' where '{validOptions}' depends on the standard code, and can be obtained with GET /api/v1/standard/options/{m.StandardReference}/{m.Version}"));
-                            }
-                        }
-                    });
+                    if (standardOptions == null || !standardOptions.HasOptions())
+                    {
+                        context.AddFailure(new ValidationFailure("CourseOption", "No course option available for this Standard and version. Must be empty"));
+                    }
+                    else if (standardOptions != null && standardOptions.HasOptions() && standardOptions.CourseOption.All(a => a.IndexOf(m.CourseOption, StringComparison.OrdinalIgnoreCase) == -1))
+                    {
+                        var validOptions = string.Join(",", standardOptions.CourseOption);
+                        context.AddFailure(new ValidationFailure("CourseOption",
+                            $@"Invalid course option for this Standard and version. Must be one of the following: '{validOptions}' where '{validOptions}' depends on the standard code, and can be obtained with GET /api/v1/standard/options/{m.StandardReference}/{m.Version}"));
+                    }
                 });
             });
 
@@ -108,9 +98,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Epas
                             {
                                 context.AddFailure(new ValidationFailure("StandardCode", "Your organisation is not approved to assess this Standard"));
                             }
-                            else if (!invalidVersionForStandard && !string.IsNullOrWhiteSpace(m.Version) && !providedStandardVersions.Any(v => v.Version.Equals(m.Version, StringComparison.InvariantCultureIgnoreCase)))
+                            else if (!(invalidVersionForStandard || providedStandardVersions.Any(v => v.Version.Equals(m.Version, StringComparison.InvariantCultureIgnoreCase))))
                             {
-                                context.AddFailure(new ValidationFailure("Version", "Your organisation is not approved to assess this Standard Version"));
+                                context.AddFailure(new ValidationFailure("Version", $"Your organisation is not approved to assess this Standard Version: {m.Version}"));
                             }
                         }
                     });
