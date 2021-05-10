@@ -42,7 +42,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
         {
             _validationResult.IsValid.Should().BeFalse();
             _validationResult.Errors.Count.Should().Be(1);
-            _validationResult.Errors.First().ErrorMessage.Should().Be("Your organisation is not approved to assess this Standard Version");
+            _validationResult.Errors.First().ErrorMessage.Should().Be("Your organisation is not approved to assess this Standard Version: 1.1");
         }
     }
 }

@@ -74,11 +74,21 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Epas
             certData.EpaDetails.LatestEpaDate = latestEpaRecord?.EpaDate;
             certData.EpaDetails.LatestEpaOutcome = latestEpaRecord?.EpaOutcome;
 
+            var epaAction = CertificateActions.Epa;
+            if (latestEpaRecord?.EpaOutcome.Equals(EpaOutcome.Fail, System.StringComparison.OrdinalIgnoreCase) == true)
+            {
+                certData.AchievementDate = latestEpaRecord?.EpaDate;
+                certData.OverallGrade = CertificateGrade.Fail;
+                certificate.Status = CertificateStatus.Submitted;
+                epaAction = CertificateActions.Submit;
+            }
+
             _logger.LogInformation("CreateNewEpa Before Update CertificateData");
             certificate.CertificateData = JsonConvert.SerializeObject(certData);
 
             _logger.LogInformation("CreateNewEpa Before Update Cert in db");
-            await _certificateRepository.Update(certificate, ExternalApiConstants.ApiUserName, CertificateActions.Epa);
+            
+            await _certificateRepository.Update(certificate, ExternalApiConstants.ApiUserName, epaAction);
 
             return certData.EpaDetails;
         }
