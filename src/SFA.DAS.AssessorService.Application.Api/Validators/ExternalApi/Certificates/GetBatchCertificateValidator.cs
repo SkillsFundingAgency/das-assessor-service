@@ -25,6 +25,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Certifi
                     if (!string.IsNullOrEmpty(m.StandardReference))
                     {
                         var standard = await standardService.GetStandardVersionById(m.StandardReference);
+                        
                         if (m.StandardCode != standard.LarsCode)
                         {
                             context.AddFailure("StandardReference and StandardCode must be for the same Standard");
