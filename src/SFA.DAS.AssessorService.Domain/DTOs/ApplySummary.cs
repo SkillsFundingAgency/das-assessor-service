@@ -18,7 +18,7 @@ namespace SFA.DAS.AssessorService.Domain.DTOs
         public string CreatedBy { get; set; }
         public string UpdatedBy { get; set; }
         public string DeletedBy { get; set; }
-        public string ContactName { get; set; }
-        public string ContactEmail { get; set; }
+        public string CreatedByName { get; set; }
+        public string CreatedByEmail { get; set; }
     }
 }

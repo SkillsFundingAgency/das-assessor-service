@@ -8,6 +8,7 @@ using SFA.DAS.AssessorService.Api.Types.Models.Apply;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.Domain.Consts;
+using SFA.DAS.AssessorService.Web.StartupConfiguration;
 using SFA.DAS.AssessorService.Web.ViewModels.Apply;
 
 namespace SFA.DAS.AssessorService.Web.Controllers.Apply
@@ -53,6 +54,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         }
 
         [HttpGet("standard/{id}/confirm-standard/{standardCode}")]
+        [ApplicationAuthorize(routeId: "Id")]
         public async Task<IActionResult> ConfirmStandard(Guid id, int standardCode)
         {
             var application = await _apiClient.GetApplication(id);
