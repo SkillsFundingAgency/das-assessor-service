@@ -82,10 +82,10 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.Apply
             return Ok(await _mediator.Send(new GetApplicationRequest(Guid.Parse(id))));
         }
 
-        [HttpGet("{id}/user/{userId}", Name = "GetApplicationForUser")]
+        [HttpGet("user/{userId}/application/{id}", Name = "GetApplicationForUser")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(ApplicationResponse))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<ActionResult<ApplicationResponse>> GetApplicationForUser(string id, string userId)
+        public async Task<ActionResult<ApplicationResponse>> GetApplicationForUser(string userId, string id)
         {
             _logger.LogInformation($"Received request to retrieve application with ApplicationId {id} for UserId {userId}");
             return Ok(await _mediator.Send(new GetApplicationRequest(Guid.Parse(id), Guid.Parse(userId))));
