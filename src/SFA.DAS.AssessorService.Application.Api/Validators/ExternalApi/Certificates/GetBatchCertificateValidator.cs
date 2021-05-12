@@ -53,12 +53,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Certifi
                     {
                         var existingCertificate = await certificateRepository.GetCertificate(m.Uln, m.StandardCode);
 
-                        if (existingCertificate is null)
-                        {
-                            // TODO: FUTURE WORK - ON-2130 Do Alan's Certificate Search THEN the ILR Search (which may be the validation down below)
-                        }
-                        else
-                        {
+                        if (existingCertificate != null)
+                        { 
                             var certData = JsonConvert.DeserializeObject<CertificateData>(existingCertificate.CertificateData ?? "{}");
 
                             if (!certData.LearnerFamilyName.Equals(m.FamilyName, StringComparison.InvariantCultureIgnoreCase))
@@ -67,7 +63,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Certifi
                             }
                             else if (!EpaOutcome.Pass.Equals(certData.EpaDetails?.LatestEpaOutcome, StringComparison.InvariantCultureIgnoreCase))
                             {
-                                context.AddFailure(new ValidationFailure("Uln", $"Latest EPA Outcome has not passed"));
+                                context.AddFailure(new ValidationFailure("Uln", $"Cannot find certificate with the specified Uln, FamilyName & Standard"));
                             }
                         }
                     });
