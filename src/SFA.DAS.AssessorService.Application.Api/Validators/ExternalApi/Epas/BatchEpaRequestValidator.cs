@@ -13,7 +13,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Epas
     {
         public BatchEpaRequestValidator(IStringLocalizer<BatchEpaRequestValidator> localiser, IOrganisationQueryRepository organisationQueryRepository, IIlrRepository ilrRepository, IStandardService standardService)
         {
-            var invalidVersionForStandard = false;
+            var invalidVersionOrStandardMismatch = false;
             RuleFor(m => m.UkPrn).InclusiveBetween(10000000, 99999999).WithMessage("The UKPRN should contain exactly 8 numbers");
 
             RuleFor(m => m.FamilyName).NotEmpty().WithMessage("Provide apprentice family name");
@@ -26,6 +26,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Epas
                         var standard = await standardService.GetStandardVersionById(m.StandardReference);
                         if (m.StandardCode != standard?.LarsCode)
                         {
+                            invalidVersionOrStandardMismatch = true;
                             context.AddFailure("StandardReference and StandardCode must be for the same Standard");
                         }
                     }
@@ -38,9 +39,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Epas
                 {
                     // If Version specified but StandardUId not populated, must be invalid version
                     // Otherwise we assume the auto-select process succeeded.
-                    if (string.IsNullOrWhiteSpace(m.StandardUId))
+                    if (string.IsNullOrWhiteSpace(m.StandardUId) && !invalidVersionOrStandardMismatch)
                     {
-                        invalidVersionForStandard = true;
+                        invalidVersionOrStandardMismatch = true;
                         context.AddFailure(new ValidationFailure("Standard", "Invalid version for Standard"));
                     }
                 });
@@ -98,7 +99,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Epas
                             {
                                 context.AddFailure(new ValidationFailure("StandardCode", "Your organisation is not approved to assess this Standard"));
                             }
-                            else if (!(invalidVersionForStandard || providedStandardVersions.Any(v => v.Version.Equals(m.Version, StringComparison.InvariantCultureIgnoreCase))))
+                            else if (!(invalidVersionOrStandardMismatch || providedStandardVersions.Any(v => v.Version.Equals(m.Version, StringComparison.InvariantCultureIgnoreCase))))
                             {
                                 context.AddFailure(new ValidationFailure("Version", $"Your organisation is not approved to assess this Standard Version: {m.Version}"));
                             }

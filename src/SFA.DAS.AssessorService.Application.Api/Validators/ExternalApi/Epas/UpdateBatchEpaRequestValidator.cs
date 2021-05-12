@@ -10,7 +10,7 @@ using System;
 
 namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Epas
 {
-    public class UpdateBatchEpaRequestValidator : AbstractValidator<BatchEpaRequest>
+    public class UpdateBatchEpaRequestValidator : AbstractValidator<UpdateBatchEpaRequest>
     {
         public UpdateBatchEpaRequestValidator(IStringLocalizer<BatchEpaRequestValidator> localiser, IOrganisationQueryRepository organisationQueryRepository, IIlrRepository ilrRepository, ICertificateRepository certificateRepository, IStandardService standardService)
         {

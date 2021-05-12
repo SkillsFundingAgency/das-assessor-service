@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using FluentValidation;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.AssessorService.Api.Types.Models;
@@ -25,14 +26,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.ExternalApi
     public class EpaBatchController : Controller
     {
         private readonly IMediator _mediator;
-        private readonly CreateBatchEpaRequestValidator _createValidator;
-        private readonly UpdateBatchEpaRequestValidator _updateValidator;
-        private readonly DeleteBatchEpaRequestValidator _deleteValidator;
+        private readonly IValidator<CreateBatchEpaRequest> _createValidator;
+        private readonly IValidator<UpdateBatchEpaRequest> _updateValidator;
+        private readonly IValidator<DeleteBatchEpaRequest> _deleteValidator;
 
         public EpaBatchController(IMediator mediator,
-            CreateBatchEpaRequestValidator createValidator,
-            UpdateBatchEpaRequestValidator updateValidator,
-            DeleteBatchEpaRequestValidator deleteValidator)
+            IValidator<CreateBatchEpaRequest> createValidator,
+            IValidator<UpdateBatchEpaRequest> updateValidator,
+            IValidator<DeleteBatchEpaRequest> deleteValidator)
         {
             _mediator = mediator;
             _createValidator = createValidator;
@@ -53,7 +54,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.ExternalApi
                 var validationErrors = new List<string>();
                 var isRequestValid = false;
                 Standard standard = null;
-                
+
                 if (!string.IsNullOrEmpty(request.Version))
                 {
                     standard = await _mediator.Send(
@@ -113,8 +114,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.ExternalApi
                 }
 
                 // Get Existing Certificate if it exists
-                var existingCertificate = await _mediator.Send(new GetCertificateForUlnRequest { StandardCode = standard.LarsCode, Uln = request.Uln });
-                request.PopulateMissingFields(standard, existingCertificate);
+                if (standard != null)
+                {
+                    var existingCertificate = await _mediator.Send(new GetCertificateForUlnRequest { StandardCode = standard.LarsCode, Uln = request.Uln });
+                    request.PopulateMissingFields(standard, existingCertificate);
+                }
 
                 var validationResult = await _updateValidator.ValidateAsync(request);
                 var isRequestValid = validationResult.IsValid;

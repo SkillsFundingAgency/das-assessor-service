@@ -9,7 +9,7 @@ using SFA.DAS.AssessorService.Domain.JsonData;
 
 namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Epas
 {
-    public class CreateBatchEpaRequestValidator : AbstractValidator<BatchEpaRequest>
+    public class CreateBatchEpaRequestValidator : AbstractValidator<CreateBatchEpaRequest>
     {
         public CreateBatchEpaRequestValidator(IStringLocalizer<BatchEpaRequestValidator> localiser, IOrganisationQueryRepository organisationQueryRepository, IIlrRepository ilrRepository, ICertificateRepository certificateRepository, IStandardService standardService)
         {

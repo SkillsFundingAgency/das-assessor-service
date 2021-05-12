@@ -47,12 +47,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Epas
             _logger.LogInformation("UpdateEpaDetails Before Combining EpaDetails");
             var certData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
             certData.EpaDetails = new EpaDetails { EpaReference = certificate.CertificateReference, Epas = new List<EpaRecord>() };
-
-            // Always Update Version & Option
-            // It was either retrieved from the old epa record if set, or overwriting the previous auto select
-            // This could wipe out option if it was previously set and not supplied but that is a valid scenario.
-            certData.Version = request.Version;
-            certData.CourseOption = request.CourseOption;
+            certData.Version = string.IsNullOrWhiteSpace(request.Version) ? null : request.Version;
+            certData.CourseOption = string.IsNullOrWhiteSpace(request.CourseOption) ? null : request.CourseOption;
 
             if (request.EpaDetails?.Epas != null)
             {
@@ -74,6 +70,12 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Epas
                 certData.OverallGrade = CertificateGrade.Fail;
                 certificate.Status = CertificateStatus.Submitted;
                 epaAction = CertificateActions.Submit;
+            }
+            else
+            {
+                certData.AchievementDate = null;
+                certData.OverallGrade = null;
+                certificate.Status = CertificateStatus.Draft;
             }
 
             _logger.LogInformation("UpdateEpaDetails Before Update CertificateData");

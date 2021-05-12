@@ -14,7 +14,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Extensions
 {
     public static class EpaRequestExtensions
     {
-        public static string GetStandardId(this BatchEpaRequest request) => request.StandardCode > 0 ? request.StandardCode.ToString() : request.StandardReference;
+        public static string GetStandardId(this BatchEpaRequest request) => !string.IsNullOrWhiteSpace(request.StandardReference) ? request.StandardReference : request.StandardCode > 0 ? request.StandardCode.ToString() : string.Empty;
         public static void PopulateMissingFields(this BatchEpaRequest request, Standard standard, Certificate existingCertificate = null)
         {
             if (standard != null)
