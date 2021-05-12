@@ -1,11 +1,13 @@
 ﻿using SFA.DAS.AssessorService.Application.Api.External.Models.Response.Certificates;
 using SFA.DAS.AssessorService.Domain.Consts;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace SFA.DAS.AssessorService.Application.Api.External.Helpers
 {
     public static class CertificateHelpers
     {
-        public static bool IsDraftCertificateDeemedAsReady(Certificate certificate)
+        public static bool IsDraftCertificateDeemedAsReady(Certificate certificate, IEnumerable<string> potentialOptions = null)
         {
             // Note: This allows the caller to know if a Draft Certificate is 'Ready' for submitting
             // It is deemed ready if the mandatory fields have been filled out.
@@ -14,6 +16,10 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Helpers
                 return false;
             }
             else if (certificate.CertificateData.Standard is null || certificate.CertificateData.Standard.StandardCode < 1)
+            {
+                return false;
+            }
+            else if (certificate.CertificateData.LearningDetails.Version is null)
             {
                 return false;
             }
@@ -33,6 +39,13 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Helpers
                         || !certificate.CertificateData.LearningDetails.AchievementDate.HasValue)
             {
                 return false;
+            } 
+            else if (potentialOptions != null)
+            {
+                if (certificate.CertificateData.LearningDetails.CourseOption is null || !potentialOptions.Contains(certificate.CertificateData.LearningDetails.CourseOption))
+                {
+                    return false;
+                }
             }
 
             return true;

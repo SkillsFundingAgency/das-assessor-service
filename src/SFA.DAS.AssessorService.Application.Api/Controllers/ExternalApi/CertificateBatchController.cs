@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using FluentValidation;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.AssessorService.Api.Types.Models;
@@ -6,7 +7,6 @@ using SFA.DAS.AssessorService.Api.Types.Models.ExternalApi.Certificates;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
-using SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Certificates;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,13 +23,13 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.ExternalApi
     public class CertificateBatchController : Controller
     {
         private readonly IMediator _mediator;
-        private readonly GetBatchCertificateRequestValidator _getValidator;
-        private readonly CreateBatchCertificateRequestValidator _createValidator;
-        private readonly UpdateBatchCertificateRequestValidator _updateValidator;
-        private readonly SubmitBatchCertificateRequestValidator _submitValidator;
-        private readonly DeleteBatchCertificateRequestValidator _deleteValidator;
+        private readonly IValidator<GetBatchCertificateRequest> _getValidator;
+        private readonly IValidator<CreateBatchCertificateRequest> _createValidator;
+        private readonly IValidator<UpdateBatchCertificateRequest> _updateValidator;
+        private readonly IValidator<SubmitBatchCertificateRequest> _submitValidator;
+        private readonly IValidator<DeleteBatchCertificateRequest> _deleteValidator;
 
-        public CertificateBatchController(IMediator mediator, GetBatchCertificateRequestValidator getValidator, CreateBatchCertificateRequestValidator createValidator, UpdateBatchCertificateRequestValidator updateValidator, SubmitBatchCertificateRequestValidator submitValidator, DeleteBatchCertificateRequestValidator deleteValidator)
+        public CertificateBatchController(IMediator mediator, IValidator<GetBatchCertificateRequest> getValidator, IValidator<CreateBatchCertificateRequest> createValidator, IValidator<UpdateBatchCertificateRequest> updateValidator, IValidator<SubmitBatchCertificateRequest> submitValidator, IValidator<DeleteBatchCertificateRequest> deleteValidator)
         {
             _mediator = mediator;
             _getValidator = getValidator;
@@ -43,7 +43,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.ExternalApi
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(GetBatchCertificateResponse))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> Get(long uln, string lastname, string standard, int ukPrn)
+        public async Task<IActionResult> Get(long uln, string lastname, string standardId, int ukPrn)
         {
             var request = new GetBatchCertificateRequest
             {
@@ -52,29 +52,29 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.ExternalApi
                 UkPrn = ukPrn
             };
 
-            var collatedStandard = int.TryParse(standard, out int standardCode) ? await GetCollatedStandard(standardCode) : await GetCollatedStandard(standard);
-
-            if (collatedStandard != null)
+            var standard = await _mediator.Send(new GetStandardVersionRequest { StandardId = standardId });
+            
+            if (standard != null)
             {
-                request.StandardCode = collatedStandard.StandardId ?? int.MinValue;
-                request.StandardReference = collatedStandard.ReferenceNumber;
+                request.StandardCode = standard.LarsCode;
+                request.StandardReference = standard.IfateReferenceNumber;
             }
 
             var validationResult = await _getValidator.ValidateAsync(request);
             var isRequestValid = validationResult.IsValid;
             var validationErrors = validationResult.Errors.Select(error => error.ErrorMessage).ToList();
-
+            
             GetBatchCertificateResponse getResponse = new GetBatchCertificateResponse
             {
                 Uln = request.Uln,
-                Standard = standard,
+                Standard = standardId,
                 FamilyName = request.FamilyName,
                 ValidationErrors = validationErrors
             };
 
             if (!validationErrors.Any() && isRequestValid)
             {
-                getResponse.Certificate = await _mediator.Send(request);
+                getResponse.Certificate = await _mediator.Send(request);  
             }
 
             return Ok(getResponse);
