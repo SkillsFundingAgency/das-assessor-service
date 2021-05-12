@@ -5,6 +5,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Models.Response.Certi
 {
     public sealed class LearningDetails : IEquatable<LearningDetails>
     {
+        public string Version { get; set; }
         public string CourseOption { get; set; }
         [Required]
         public string OverallGrade { get; set; }

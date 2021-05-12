@@ -46,8 +46,9 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
         public async Task<IActionResult> GetCertificate(long uln, string familyName, [SwaggerParameter("Standard Code or Standard Reference Number")] string standard)
         {
             var getRequest = new GetBatchCertificateRequest { UkPrn = _headerInfo.Ukprn, Uln = uln, FamilyName = familyName, Standard = standard };
+            
             var response = await _apiClient.GetCertificate(getRequest);
-
+            
             if (response.ValidationErrors.Any())
             {
                 ApiResponse error = new ApiResponse((int)HttpStatusCode.Forbidden, string.Join("; ", response.ValidationErrors));
@@ -59,7 +60,11 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
             }
             else
             {
-                if(CertificateHelpers.IsDraftCertificateDeemedAsReady(response.Certificate))
+                var certificateData = response.Certificate.CertificateData;
+
+                var options = await _apiClient.GetStandardOptionsByStandardReferenceAndVersion(certificateData.Standard.StandardReference, certificateData.LearningDetails.Version);
+
+                if (CertificateHelpers.IsDraftCertificateDeemedAsReady(response.Certificate, options?.CourseOption))
                 {
                     response.Certificate.Status.CurrentStatus = CertificateStatus.Ready;
                 }
