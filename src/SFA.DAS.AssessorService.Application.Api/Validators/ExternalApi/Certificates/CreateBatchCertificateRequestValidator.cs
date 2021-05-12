@@ -10,7 +10,7 @@ using System;
 
 namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Certificates
 {
-    public class CreateBatchCertificateRequestValidator : AbstractValidator<BatchCertificateRequest>
+    public class CreateBatchCertificateRequestValidator : AbstractValidator<CreateBatchCertificateRequest>
     {
         public CreateBatchCertificateRequestValidator(
             IStringLocalizer<BatchCertificateRequestValidator> localiser,
