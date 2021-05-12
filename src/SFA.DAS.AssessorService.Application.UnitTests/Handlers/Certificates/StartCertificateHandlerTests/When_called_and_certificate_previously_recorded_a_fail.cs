@@ -70,7 +70,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
             await _startCertificateHandler.Handle(_request, new CancellationToken());
 
             _certificateRepository.Verify(r => r.Update(It.Is<Certificate>(c => c.Status == CertificateStatus.Draft && c.Uln == _uln && c.StandardCode == _standardCode),
-                It.IsAny<string>(), CertificateActions.StartRetake, true, "Retake failed apprenticeship"), Times.Once);
+                It.IsAny<string>(), CertificateActions.Restart, true, It.IsAny<string>()), Times.Once);
         }
 
         [Test]

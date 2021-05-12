@@ -72,7 +72,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
 
                     certificate.Status = CertificateStatus.Draft;
 
-                    await _certificateRepository.Update(certificate, request.Username, CertificateActions.StartRetake, updateLog: true, "Retake failed apprenticeship");
+                    await _certificateRepository.Update(certificate, request.Username, CertificateActions.Restart, updateLog: true);
                 }
             }
            
