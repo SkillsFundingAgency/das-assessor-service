@@ -39,7 +39,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.ExternalApi
             _deleteValidator = deleteValidator;
         }
 
-        [HttpGet("{uln}/{lastname}/{standard}/{ukPrn}")]
+        [HttpGet("{uln}/{lastname}/{standardId}/{ukPrn}")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(GetBatchCertificateResponse))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
