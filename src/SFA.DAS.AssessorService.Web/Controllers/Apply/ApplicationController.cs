@@ -650,27 +650,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             }
         }
 
-
-        [HttpPost("/Application/{Id}/RefreshApplicationData")]
-        public async Task<IActionResult> RefreshApplicationData(Guid Id)
-        {
-            var application = await _applicationApiClient.GetApplication(Id);
-            var applicationData = await _qnaApiClient.GetApplicationData(application.ApplicationId);
-
-            if (applicationData != null)
-            {
-                var companyDetails = !string.IsNullOrWhiteSpace(applicationData.CompanySummary?.CompanyNumber) ? await _orgApiClient.GetCompanyDetails(applicationData.CompanySummary.CompanyNumber) : null;
-                var charityDetails = int.TryParse(applicationData.CharitySummary?.CharityNumber, out var charityNumber) ? await _orgApiClient.GetCharityDetails(charityNumber) : null;
-
-                applicationData.CompanySummary = Mapper.Map<CompaniesHouseSummary>(companyDetails);
-                applicationData.CharitySummary = Mapper.Map<CharityCommissionSummary>(charityDetails);
-
-                await _qnaApiClient.UpdateApplicationData(application.ApplicationId, applicationData);
-            }
-
-            return RedirectToAction("SequenceSignPost", new { Id });
-        }
-
         [HttpPost("/Application/DeleteAnswer")]
         public async Task<IActionResult> DeleteAnswer(Guid Id, int sequenceNo, int sectionNo, string pageId, Guid answerId, string __redirectAction, string __summaryLink = "False")
         {
