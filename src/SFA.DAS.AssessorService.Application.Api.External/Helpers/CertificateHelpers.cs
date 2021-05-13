@@ -31,7 +31,8 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Helpers
                 return false;
             }
             else if (certificate.CertificateData.Learner is null || string.IsNullOrEmpty(certificate.CertificateData.Learner.FamilyName)
-                        || certificate.CertificateData.Learner.Uln < 1000000000 || certificate.CertificateData.Learner.Uln > 9999999999)
+//                      || certificate.CertificateData.Learner.Uln < 1000000000 || certificate.CertificateData.Learner.Uln > 9999999999)
+                        || certificate.CertificateData.Learner.Uln <= 1000000000 || certificate.CertificateData.Learner.Uln >= 9999999999)
             {
                 return false;
             }
@@ -40,9 +41,9 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Helpers
             {
                 return false;
             } 
-            else if (potentialOptions != null)
+            else if (potentialOptions != null && potentialOptions.Any())
             {
-                if (certificate.CertificateData.LearningDetails.CourseOption is null || !potentialOptions.Contains(certificate.CertificateData.LearningDetails.CourseOption))
+                if (certificate.CertificateData.LearningDetails.CourseOption is null ) //|| !potentialOptions.Contains(certificate.CertificateData.LearningDetails.CourseOption))
                 {
                     return false;
                 }

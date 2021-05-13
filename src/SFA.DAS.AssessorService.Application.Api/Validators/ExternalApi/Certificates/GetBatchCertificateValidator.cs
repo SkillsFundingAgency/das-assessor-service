@@ -26,15 +26,12 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Certifi
                 {
                     RuleFor(m => m).CustomAsync(async (m, context, cancellation) =>
                     {
-                        // NOTE: Currently we're making the Certificate & ILR record both mandatory
+                        // NOTE: Currently we're making the Certificate & ILR record both mandatory - this is wrong fixing it!
                         var requestedIlr = await ilrRepository.Get(m.Uln, m.StandardCode);
                         var sumbittingEpao = await organisationQueryRepository.GetByUkPrn(m.UkPrn);
+                        var existingCertificate = await certificateRepository.GetCertificate(m.Uln, m.StandardCode);
 
-                        if (requestedIlr is null || !string.Equals(requestedIlr.FamilyName, m.FamilyName, StringComparison.InvariantCultureIgnoreCase))
-                        {
-                            context.AddFailure(new ValidationFailure("Uln", "Cannot find apprentice with the specified Uln, FamilyName & Standard"));
-                        }
-                        else if (sumbittingEpao is null)
+                        if (sumbittingEpao is null)
                         {
                             context.AddFailure(new ValidationFailure("UkPrn", "Specified UKPRN not found"));
                         }
@@ -46,24 +43,23 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Certifi
                             {
                                 context.AddFailure(new ValidationFailure("StandardCode", "Your organisation is not approved to assess this Standard"));
                             }
-                        }
-                    });
 
-                    RuleFor(m => m).CustomAsync(async (m, context, cancellation) =>
-                    {
-                        var existingCertificate = await certificateRepository.GetCertificate(m.Uln, m.StandardCode);
-
-                        if (existingCertificate != null)
-                        { 
-                            var certData = JsonConvert.DeserializeObject<CertificateData>(existingCertificate.CertificateData ?? "{}");
-
-                            if (!certData.LearnerFamilyName.Equals(m.FamilyName, StringComparison.InvariantCultureIgnoreCase))
+                            if (existingCertificate != null) 
                             {
-                                context.AddFailure(new ValidationFailure("FamilyName", $"Invalid family name"));
+                                var certData = JsonConvert.DeserializeObject<CertificateData>(existingCertificate.CertificateData ?? "{}");
+
+                                if (!certData.LearnerFamilyName.Equals(m.FamilyName, StringComparison.InvariantCultureIgnoreCase))
+                                {
+                                    context.AddFailure(new ValidationFailure("FamilyName", $"Invalid family name"));
+                                }
+                                else if (!EpaOutcome.Pass.Equals(certData.EpaDetails?.LatestEpaOutcome, StringComparison.InvariantCultureIgnoreCase))
+                                {
+                                    context.AddFailure(new ValidationFailure("Uln", $"Cannot find certificate with the specified Uln, FamilyName & Standard"));
+                                }
                             }
-                            else if (!EpaOutcome.Pass.Equals(certData.EpaDetails?.LatestEpaOutcome, StringComparison.InvariantCultureIgnoreCase))
+                            else if (requestedIlr is null || !string.Equals(requestedIlr.FamilyName, m.FamilyName, StringComparison.InvariantCultureIgnoreCase) )
                             {
-                                context.AddFailure(new ValidationFailure("Uln", $"Cannot find certificate with the specified Uln, FamilyName & Standard"));
+                                context.AddFailure(new ValidationFailure("Uln", "Cannot find apprentice with the specified Uln, FamilyName & Standard"));
                             }
                         }
                     });

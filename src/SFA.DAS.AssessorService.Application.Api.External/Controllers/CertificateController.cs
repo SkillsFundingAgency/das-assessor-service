@@ -60,19 +60,21 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
             }
             else
             {
-                var certificateData = response.Certificate.CertificateData;
-
-                var options = await _apiClient.GetStandardOptionsByStandardReferenceAndVersion(certificateData.Standard.StandardReference, certificateData.LearningDetails.Version);
-
-                if (CertificateHelpers.IsDraftCertificateDeemedAsReady(response.Certificate, options?.CourseOption))
-                {
-                    response.Certificate.Status.CurrentStatus = CertificateStatus.Ready;
-                }
-                else if (CertificateStatus.HasPrintProcessStatus(response.Certificate.Status.CurrentStatus))
+                if (CertificateStatus.HasPrintProcessStatus(response.Certificate.Status.CurrentStatus))
                 {
                     response.Certificate.Status.CurrentStatus = CertificateStatus.Submitted;
                 }
+                else // status could be Draft or Deleted
+				{
+                    var certificateData = response.Certificate.CertificateData;
+                    var options = await _apiClient.GetStandardOptionsByStandardReferenceAndVersion(certificateData.Standard.StandardReference, certificateData.LearningDetails.Version);
 
+                    if (CertificateHelpers.IsDraftCertificateDeemedAsReady(response.Certificate, options?.CourseOption))
+                    {
+                        response.Certificate.Status.CurrentStatus = CertificateStatus.Ready;
+                    }
+
+                }
                 return Ok(response.Certificate);
             }
         }
