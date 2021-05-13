@@ -18,20 +18,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Certifi
             RuleFor(m => m.UkPrn).InclusiveBetween(10000000, 99999999).WithMessage("The UKPRN should contain exactly 8 numbers");
 
             RuleFor(m => m.FamilyName).NotEmpty().WithMessage("Provide apprentice family name");
-            RuleFor(m => m.StandardCode).GreaterThan(0).WithMessage("Provide a valid Standard").DependentRules(() =>
-            {
-                RuleFor(m => m).CustomAsync(async (m, context, cancellation) =>
-                {
-                    if (!string.IsNullOrEmpty(m.StandardReference))
-                    {
-                        var collatedStandard = await standardService.GetStandard(m.StandardReference);
-                        if (m.StandardCode != collatedStandard?.StandardId)
-                        {
-                            context.AddFailure("StandardReference and StandardCode must be for the same Standard");
-                        }
-                    }
-                });
-            });
+            RuleFor(m => m.StandardCode).GreaterThan(0).WithMessage("Provide a valid Standard");
 
             RuleFor(m => m.Uln).InclusiveBetween(1000000000, 9999999999).WithMessage("ULN should contain exactly 10 numbers").DependentRules(() =>
             {
@@ -45,7 +32,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Certifi
 
                         if (requestedIlr is null || !string.Equals(requestedIlr.FamilyName, m.FamilyName, StringComparison.InvariantCultureIgnoreCase))
                         {
-                            context.AddFailure(new ValidationFailure("Uln", "ULN, FamilyName and Standard not found"));
+                            context.AddFailure(new ValidationFailure("Uln", "Cannot find apprentice with the specified Uln, FamilyName & Standard"));
                         }
                         else if (sumbittingEpao is null)
                         {
