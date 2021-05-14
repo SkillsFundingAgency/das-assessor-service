@@ -23,6 +23,8 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         private List<StandardOptionModel> _options;
         private List<StandardModel> _standards;
 
+        private StandardOptions _expectedStandardResult;
+
         [OneTimeSetUp]
         public void SetupStandardOptionsTable()
         {
@@ -35,28 +37,37 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
 
             StandardOptionsHandler.InsertRecords(_options);
             StandardsHandler.InsertRecords(_standards);
+
+            _expectedStandardResult = new StandardOptions
+            {
+                StandardUId = "ST0001_1.1",
+                StandardReference = "ST0001",
+                StandardCode = 1,
+                Version = "1.1",
+                CourseOption = new List<string>
+                {
+                    "ST0001_1.1 Option 1",
+                    "ST0001_1.1 Option 2"
+                }
+            };
         }
 
         [Test]
         public async Task GetAllStandardOptions_ReturnsFullListOfStandardOptions()
         {
-            var expectedOptions = _options.Where(option => option.StandardUId == "ST0001_1.0").Select(option => option.OptionName).ToList();
-
             var results = await _repository.GetAllStandardOptions();
 
             results.Count().Should().Be(_standards.Count);
-            results.First(result => result.StandardUId == "ST0001_1.0").CourseOption.Should().Contain(expectedOptions);
+            results.First(result => result.StandardUId == "ST0001_1.1").Should().BeEquivalentTo(_expectedStandardResult);
         }
 
         [Test]
         public async Task GetLatestVersionStandardOptions_ReturnsListOfStandardOptions()
         {
-            var expectedOptions = _options.Where(option => option.StandardUId == "ST0001_1.1").Select(option => option.OptionName);
-
             var results = await _repository.GetStandardOptionsForLatestStandardVersions();
 
             results.Count().Should().Be(2);
-            results.First(result => result.StandardUId == "ST0001_1.1").CourseOption.Should().Contain(expectedOptions);
+            results.First(result => result.StandardUId == "ST0001_1.1").Should().BeEquivalentTo(_expectedStandardResult);
         }
 
         [OneTimeTearDown]
@@ -91,6 +102,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
                 {
                     StandardUId = "ST0001_1.0",
                     IFateReferenceNumber = "ST0001",
+                    LarsCode = 1,
                     Version = 1.0m,
                     Title = "Standard",
                     Level = 4,
@@ -105,6 +117,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
                 {
                     StandardUId = "ST0001_1.1",
                     IFateReferenceNumber = "ST0001",
+                    LarsCode = 1,
                     Version = 1.1m,
                     Title = "Standard",
                     Level = 4,
@@ -119,6 +132,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
                 {
                     StandardUId = "ST0002_1.0",
                     IFateReferenceNumber = "ST0002",
+                    LarsCode = 2,
                     Version = 1.0m,
                     Title = "Standard",
                     Level = 4,
@@ -133,6 +147,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
                 {
                     StandardUId = "ST0003_1.0",
                     IFateReferenceNumber = "ST0003",
+                    LarsCode = 3,
                     Version = 1.0m,
                     Title = "Standard",
                     Level = 4,

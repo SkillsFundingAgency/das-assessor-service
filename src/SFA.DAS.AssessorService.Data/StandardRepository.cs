@@ -220,14 +220,14 @@ namespace SFA.DAS.AssessorService.Data
             var results = standardVersionOptions.GroupBy(version => new 
                 { 
                     version.StandardUId, 
-                    version.StandardCode, 
-                    version.StandardReference, 
+                    version.LarsCode, 
+                    version.IfateReferenceNumber, 
                     version.Version 
                 })
                 .Select(group => new StandardOptions { 
                     StandardUId = group.Key.StandardUId,
-                    StandardReference = group.Key.StandardReference,
-                    StandardCode = group.Key.StandardCode,
+                    StandardReference = group.Key.IfateReferenceNumber,
+                    StandardCode = group.Key.LarsCode,
                     Version = group.Key.Version,
                     CourseOption = group.Select(opt => opt.OptionName)
                 });
