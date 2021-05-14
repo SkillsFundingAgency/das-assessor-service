@@ -64,16 +64,18 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
                 {
                     response.Certificate.Status.CurrentStatus = CertificateStatus.Submitted;
                 }
-                else // status could be Draft or Deleted
+                else // status could be Draft or Deleted (or Privately Funded statuses)
 				{
                     var certificateData = response.Certificate.CertificateData;
-                    var options = await _apiClient.GetStandardOptionsByStandardReferenceAndVersion(certificateData.Standard.StandardReference, certificateData.LearningDetails.Version);
+                    if (!string.IsNullOrEmpty(certificateData.Standard?.StandardReference) && !string.IsNullOrEmpty(certificateData?.LearningDetails?.Version))
+					{
+                        var options = await _apiClient.GetStandardOptionsByStandardReferenceAndVersion(certificateData.Standard.StandardReference, certificateData.LearningDetails.Version);
 
-                    if (CertificateHelpers.IsDraftCertificateDeemedAsReady(response.Certificate, options?.CourseOption))
-                    {
-                        response.Certificate.Status.CurrentStatus = CertificateStatus.Ready;
+                        if (CertificateHelpers.IsDraftCertificateDeemedAsReady(response.Certificate, options.CourseOption))
+                        {
+                            response.Certificate.Status.CurrentStatus = CertificateStatus.Ready;
+                        }
                     }
-
                 }
                 return Ok(response.Certificate);
             }

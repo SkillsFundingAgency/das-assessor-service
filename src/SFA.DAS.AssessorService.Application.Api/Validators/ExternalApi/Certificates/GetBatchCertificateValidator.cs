@@ -30,6 +30,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Certifi
                         var requestedIlr = await ilrRepository.Get(m.Uln, m.StandardCode);
                         var sumbittingEpao = await organisationQueryRepository.GetByUkPrn(m.UkPrn);
                         var existingCertificate = await certificateRepository.GetCertificate(m.Uln, m.StandardCode);
+                        var createdByCertificate = await certificateRepository.GetCertificateByOrgIdLastname(m.Uln, sumbittingEpao.EndPointAssessorOrganisationId, m.FamilyName);
 
                         if (sumbittingEpao is null)
                         {
@@ -39,7 +40,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Certifi
                         {
                             var providedStandards = await standardService.GetEpaoRegisteredStandards(sumbittingEpao.EndPointAssessorOrganisationId);
 
-                            if (!providedStandards.Any(s => s.StandardCode == m.StandardCode))
+                            if (!providedStandards.Any(s => s.StandardCode == m.StandardCode) && createdByCertificate == null )
                             {
                                 context.AddFailure(new ValidationFailure("StandardCode", "Your organisation is not approved to assess this Standard"));
                             }

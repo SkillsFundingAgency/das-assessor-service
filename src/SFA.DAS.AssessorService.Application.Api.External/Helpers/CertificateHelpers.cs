@@ -19,7 +19,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Helpers
             {
                 return false;
             }
-            else if (certificate.CertificateData.LearningDetails.Version is null)
+            else if (string.IsNullOrEmpty(certificate.CertificateData.LearningDetails.Version))
             {
                 return false;
             }
