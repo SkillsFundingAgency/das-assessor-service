@@ -68,11 +68,10 @@ namespace SFA.DAS.AssessorService.Application.Api.External.UnitTests.Helpers
             CheckHelperReturnsFalse();
         }
 
-        [TestCase(null)]
-        [TestCase("Incorrect Option")]
-        public void When_PotentialOptionsIsNotNull_And_CourseOptionIsIncorrectOrNull_Then_ReturnFalse(string option)
+        [Test]
+        public void When_PotentialOptionsIsNotNull_And_CourseOptionIsIncorrectOrNull_Then_ReturnFalse()
         {
-            _certificate.CertificateData.LearningDetails.CourseOption = option;
+            _certificate.CertificateData.LearningDetails.CourseOption = null;
 
             CheckHelperReturnsFalse();
         }
@@ -145,7 +144,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.UnitTests.Helpers
 
         private void CheckHelperReturnsFalse()
         {
-            var result = CertificateHelpers.IsDraftCertificateDeemedAsReady(_certificate, true);
+            var result = CertificateHelpers.IsDraftCertificateDeemedAsReady(_certificate, hasOptions: true);
 
             result.Should().BeFalse();
         }
