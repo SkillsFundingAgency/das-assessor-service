@@ -24,7 +24,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.UnitTests.Helpers
             // Create a draft certificate with valid uln and selected option
             _certificate = autoFixture.Create<Certificate>();
             _certificate.Status.CurrentStatus = CertificateStatus.Draft;
-            _certificate.CertificateData.Learner.Uln = 1000000000;
+            _certificate.CertificateData.Learner.Uln = 1000000001;
             _certificate.CertificateData.LearningDetails.CourseOption = _potentialOptions.First();
         }
 
@@ -145,7 +145,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.UnitTests.Helpers
 
         private void CheckHelperReturnsFalse()
         {
-            var result = CertificateHelpers.IsDraftCertificateDeemedAsReady(_certificate, _potentialOptions);
+            var result = CertificateHelpers.IsDraftCertificateDeemedAsReady(_certificate, true);
 
             result.Should().BeFalse();
         }
