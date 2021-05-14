@@ -33,16 +33,16 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
         [SwaggerResponseExample((int)HttpStatusCode.OK, typeof(SwaggerHelpers.Examples.GetOptionsForAllStandardResponseExample))]
         [SwaggerResponse((int)HttpStatusCode.OK, "The list of options for each Standard.", typeof(IEnumerable<StandardOptions>))]
         [SwaggerOperation("Get Options", "Gets the latest list of course options by Standard.", Produces = new string[] { "application/json" })]
-        public async Task<IActionResult> GetOptionsForAllStandards()
+        public async Task<IActionResult> GetStandardOptionsForLatestStandardVersions()
         {
-            var standards = await _apiClient.GetStandardOptionsList();
+            var standards = await _apiClient.GetStandardOptionsForLatestStandardVersions();
 
             if(standards is null)
             {
                 return StatusCode((int)HttpStatusCode.ServiceUnavailable);
             }
 
-            return Ok(standards.Where(s => s.CourseOption != null && s.CourseOption.Any()).OrderBy(s => s.StandardCode));
+            return Ok(standards);
         }
 
         [HttpGet("options/{*standard}")]

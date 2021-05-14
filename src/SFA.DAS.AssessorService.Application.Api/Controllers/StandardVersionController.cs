@@ -88,6 +88,17 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             return Ok(standardOptions);
         }
 
+        [HttpGet("standard-options/latest-version", Name = "GetStandardOptionsForLatestStandardVersions")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(IEnumerable<StandardOptions>))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> GetStandardOptionsForLatestStandardVersions()
+        {
+            _logger.LogInformation("Get standard options for latest version of each standard from Standard Service");
+            var standardOptions = await _standardService.GetStandardOptionsForLatestStandardVersions();
+            return Ok(standardOptions);
+        }
+
         [HttpGet("standard-options/{id}", Name = "GetStandardOptionsByStandardId")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(StandardOptions))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]

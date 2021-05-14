@@ -212,9 +212,9 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
             return apiResponse;
         }
 
-        public virtual async Task<IEnumerable<StandardOptions>> GetStandardOptionsList()
+        public virtual async Task<IEnumerable<StandardOptions>> GetStandardOptionsForLatestStandardVersions()
         {
-            var response = await Get<IEnumerable<StandardOptions>>("/api/v1/standard-version/standard-options");
+            var response = await Get<IEnumerable<StandardOptions>>("/api/v1/standard-version/standard-options/latest-version");
 
             return response;
         }

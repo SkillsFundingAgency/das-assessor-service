@@ -160,6 +160,22 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
             return null;
         }
 
+        public async Task<IEnumerable<StandardOptions>> GetStandardOptionsForLatestStandardVersions()
+        {
+            try
+            {
+                var options = await _standardRepository.GetStandardOptionsForLatestStandardVersions();
+
+                return options;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "STANDARD OPTIONS: Failed to get latest version of each standard");
+            }
+
+            return null;
+        }
+
         public async Task<StandardOptions> GetStandardOptionsByStandardId(string id)
         {
             StandardOptions options = null;

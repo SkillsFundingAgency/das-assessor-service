@@ -7,13 +7,11 @@ using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Api.Services;
-using SFA.DAS.AssessorService.Application.Infrastructure.OuterApi;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
@@ -61,6 +59,33 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
                     It.IsAny<Exception>(), 
                     It.IsAny<Func<object, Exception, string>>()), 
                 Times.Once, "STANDARD OPTIONS: Failed to get standard options");
+        }
+
+        [Test, AutoData]
+        public async Task When_GettingStandardOptionsForLatestVersion_Then_ReturnsListOfStandardOptions(IEnumerable<StandardOptions> standardOptions)
+        {
+            _mockStandardRepository.Setup(s => s.GetAllStandardOptions()).ReturnsAsync(standardOptions);
+
+            var result = await _standardService.GetStandardOptionsForLatestStandardVersions();
+
+            Assert.IsInstanceOf<IEnumerable<StandardOptions>>(result);
+            Assert.AreEqual(result.Count(), standardOptions.Count());
+        }
+
+        [Test]
+        public async Task When_GettingStandardOptionsForLatestVersionThrowsException_Then_LogError_And_ReturnNull()
+        {
+            _mockStandardRepository.Setup(s => s.GetStandardOptionsForLatestStandardVersions()).Throws<TimeoutException>();
+
+            var result = await _standardService.GetStandardOptionsForLatestStandardVersions();
+
+            Assert.IsNull(result);
+
+            _mockLogger.Verify(logger => logger.Log(LogLevel.Error, It.IsAny<EventId>(),
+                    It.IsAny<FormattedLogValues>(),
+                    It.IsAny<Exception>(),
+                    It.IsAny<Func<object, Exception, string>>()),
+                Times.Once);
         }
 
         [Test, AutoData]

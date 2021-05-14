@@ -27,6 +27,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         /// <returns></returns>
         Task<Standard> GetStandardVersionById(string standardId, string version = null);
         Task<IEnumerable<StandardOptions>> GetAllStandardOptions();
+        Task<IEnumerable<StandardOptions>> GetStandardOptionsForLatestStandardVersions();
         Task<StandardOptions> GetStandardOptionsByStandardId(string id);
         Task<StandardOptions> GetStandardOptionsByStandardReferenceAndVersion(string standardReference, string version);
         Task<IEnumerable<StandardVersion>> GetEPAORegisteredStandardVersions(string endPointAssessorOrganisationId, int? larsCode);
