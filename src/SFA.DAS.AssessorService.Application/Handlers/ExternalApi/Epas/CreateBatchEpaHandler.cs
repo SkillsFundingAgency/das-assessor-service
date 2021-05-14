@@ -83,6 +83,12 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Epas
                 certificate.Status = CertificateStatus.Submitted;
                 epaAction = CertificateActions.Submit;
             }
+            else
+            {
+                certData.AchievementDate = null;
+                certData.OverallGrade = null;
+                certificate.Status = CertificateStatus.Draft;
+            }
 
             _logger.LogInformation("CreateNewEpa Before Update CertificateData");
             certificate.CertificateData = JsonConvert.SerializeObject(certData);

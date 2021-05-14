@@ -77,7 +77,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Epas
             _mockCertificateRepository.Setup(s => s.GetCertificate(request.Uln, request.StandardCode)).ReturnsAsync(certificate);
             var latestEpa = request.EpaDetails.Epas.OrderByDescending(s => s.EpaDate).FirstOrDefault();
             latestEpa.EpaOutcome = EpaOutcome.Fail;
-            var certificateAction = CertificateActions.Submit;
+            var epaAction = CertificateActions.Submit;
 
             //Act
             var result = await _sut.Handle(request, new CancellationToken());
@@ -87,7 +87,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Epas
             data.AchievementDate.Should().Be(latestEpa.EpaDate);
             data.OverallGrade.Should().Be(CertificateGrade.Fail);
             certificate.Status.Should().Be(CertificateStatus.Submitted);
-            _mockCertificateRepository.Verify(s => s.Update(It.IsAny<Certificate>(), "API", certificateAction, true, null), Times.Once);
+            _mockCertificateRepository.Verify(s => s.Update(It.IsAny<Certificate>(), "API", epaAction, true, null), Times.Once);
         }
 
         [Test, RecursiveMoqAutoData]
@@ -101,7 +101,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Epas
             _mockCertificateRepository.Setup(s => s.GetCertificate(request.Uln, request.StandardCode)).ReturnsAsync(certificate);
             var latestEpa = request.EpaDetails.Epas.OrderByDescending(s => s.EpaDate).FirstOrDefault();
             latestEpa.EpaOutcome = EpaOutcome.Pass;
-            var certificateAction = CertificateActions.Epa;
+            var epaAction = CertificateActions.Epa;
 
             //Act
             var result = await _sut.Handle(request, new CancellationToken());
@@ -111,7 +111,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Epas
             data.AchievementDate.Should().BeNull();
             data.OverallGrade.Should().BeNull();
             certificate.Status.Should().Be(CertificateStatus.Draft);
-            _mockCertificateRepository.Verify(s => s.Update(It.IsAny<Certificate>(), "API", certificateAction, true, null), Times.Once);
+            _mockCertificateRepository.Verify(s => s.Update(It.IsAny<Certificate>(), "API", epaAction, true, null), Times.Once);
         }
     }
 }
