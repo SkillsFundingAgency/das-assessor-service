@@ -64,7 +64,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
         [Test, AutoData]
         public async Task When_GettingStandardOptionsForLatestVersion_Then_ReturnsListOfStandardOptions(IEnumerable<StandardOptions> standardOptions)
         {
-            _mockStandardRepository.Setup(s => s.GetAllStandardOptions()).ReturnsAsync(standardOptions);
+            _mockStandardRepository.Setup(s => s.GetStandardOptionsForLatestStandardVersions()).ReturnsAsync(standardOptions);
 
             var result = await _standardService.GetStandardOptionsForLatestStandardVersions();
 
