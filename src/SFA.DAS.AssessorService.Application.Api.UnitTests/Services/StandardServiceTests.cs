@@ -137,14 +137,29 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
         }
 
         [Test, AutoData]
-        public async Task When_GettingStandardOptionsByStandardReferenceAndVersion_Then_StandardIsRetrievedFromAssessorStandardsTable(string standardReference, string version, Standard getStandardResponse)
+        public async Task When_GettingStandardOptionsByStandardIdAndVersion_And_IdIsIfateReferenceNumber_Then_StandardIsRetrievedFromAssessorStandardsTable(string version, Standard getStandardResponse)
         {
-            _mockStandardRepository.Setup(repository => repository.GetStandardVersionByIFateReferenceNumber(standardReference, version))
+            var id = "ST0001";
+
+            _mockStandardRepository.Setup(repository => repository.GetStandardVersionByIFateReferenceNumber(id, version))
                 .ReturnsAsync(getStandardResponse);
 
-            await _standardService.GetStandardOptionsByStandardReferenceAndVersion(standardReference, version);
+            await _standardService.GetStandardOptionsByStandardIdAndVersion(id, version);
 
-            _mockStandardRepository.Verify(repository => repository.GetStandardVersionByIFateReferenceNumber(standardReference, version), Times.Once);
+            _mockStandardRepository.Verify(repository => repository.GetStandardVersionByIFateReferenceNumber(id, version), Times.Once);
+        }
+
+        [Test, AutoData]
+        public async Task When_GettingStandardOptionsByStandardIdAndVersion_And_IdIsLarsCode_Then_StandardIsRetrievedFromAssessorStandardsTable(string version, Standard getStandardResponse)
+        {
+            var id = "1";
+
+            _mockStandardRepository.Setup(repository => repository.GetStandardVersionByLarsCode(int.Parse(id), version))
+                .ReturnsAsync(getStandardResponse);
+
+            await _standardService.GetStandardOptionsByStandardIdAndVersion(id, version);
+
+            _mockStandardRepository.Verify(repository => repository.GetStandardVersionByLarsCode(int.Parse(id), version), Times.Once);
         }
 
         [Test, AutoData]
@@ -153,7 +168,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
             _mockStandardRepository.Setup(repository => repository.GetStandardVersionByIFateReferenceNumber(It.IsAny<string>(), It.IsAny<string>()))
                 .Throws(new Exception());
 
-            var result = await _standardService.GetStandardOptionsByStandardReferenceAndVersion(standardReference, version);
+            var result = await _standardService.GetStandardOptionsByStandardIdAndVersion(standardReference, version);
             
             _mockLogger.Verify(logger => logger.Log(LogLevel.Error, It.IsAny<EventId>(),
                     It.IsAny<FormattedLogValues>(),
@@ -165,14 +180,31 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
         }
 
         [Test, AutoData]
-        public async Task When_GettingStandardOptionsByStandardReferenceAndVersion_Then_UseStandardUIdToCallOuterApi(string standardReference, string version, Standard getStandardResponse, StandardOptions option)
+        public async Task When_GettingStandardOptionsByStandardReferenceAndVersion_Then_UseStandardUIdToCallOuterApi(string version, Standard getStandardResponse, StandardOptions option)
         {
+            var standardReference = "ST0001";
+
             _mockStandardRepository.Setup(repository => repository.GetStandardVersionByIFateReferenceNumber(standardReference, version))
                 .ReturnsAsync(getStandardResponse);
 
             _mockStandardRepository.Setup(repository => repository.GetStandardOptionsByStandardUId(getStandardResponse.StandardUId)).ReturnsAsync(option);
 
-            var result = await _standardService.GetStandardOptionsByStandardReferenceAndVersion(standardReference, version);
+            var result = await _standardService.GetStandardOptionsByStandardIdAndVersion(standardReference, version);
+
+            result.Should().BeEquivalentTo(option);
+        }
+
+        [Test, AutoData]
+        public async Task When_GettingStandardOptionsByLarsCodeAndVersion_Then_UseStandardUIdToCallOuterApi(string version, Standard getStandardResponse, StandardOptions option)
+        {
+            var standardId = "1";
+
+            _mockStandardRepository.Setup(repository => repository.GetStandardVersionByLarsCode(int.Parse(standardId), version))
+                .ReturnsAsync(getStandardResponse);
+
+            _mockStandardRepository.Setup(repository => repository.GetStandardOptionsByStandardUId(getStandardResponse.StandardUId)).ReturnsAsync(option);
+
+            var result = await _standardService.GetStandardOptionsByStandardIdAndVersion(standardId, version);
 
             result.Should().BeEquivalentTo(option);
         }

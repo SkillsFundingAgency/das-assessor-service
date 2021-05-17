@@ -316,7 +316,7 @@ namespace SFA.DAS.AssessorService.Data
                 param: new { ifateReferenceNumber, version },
                 transaction: _unitOfWork.Transaction);
 
-            return results.FirstOrDefault();
+            return results.First();
         }
 
         private async Task<Standard> GetStandardByLarsCodeAndVersionInternal(int larsCode, string version)
@@ -331,7 +331,7 @@ namespace SFA.DAS.AssessorService.Data
                 param: new { larsCode, version },
                 transaction: _unitOfWork.Transaction);
 
-            return results.FirstOrDefault();
+            return results.First();
         }
 
         public async Task<List<Option>> GetOptions(int stdCode)

@@ -67,15 +67,15 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
             return Ok(requestedStandard);
         }
 
-        [HttpGet("options/{standardReference}/{version}")]
+        [HttpGet("options/{standard}/{version}")]
         [SwaggerResponseExample((int)HttpStatusCode.OK, typeof(SwaggerHelpers.Examples.GetStandardVersionOptionsResponseExample))]
         [SwaggerResponse((int)HttpStatusCode.OK, "The list of options.", typeof(StandardOptions))]
         [SwaggerResponse((int)HttpStatusCode.NoContent, "The standard version was found, however it has no options.")]
         [SwaggerResponse((int)HttpStatusCode.NotFound, "The standard version was not found.")]
         [SwaggerOperation("Get Options for a standard version", "Gets the latest list of course options for the specified Standard version.", Produces = new string[] { "application/json" })]
-        public async Task<IActionResult> GetOptionsForStandardVersion(string standardReference, string version)
+        public async Task<IActionResult> GetOptionsForStandardVersion([SwaggerParameter("Standard Code or Standard Reference Number")] string standard, string version)
         {
-            var standardVersion = await _apiClient.GetStandardOptionsByStandardReferenceAndVersion(standardReference, version);
+            var standardVersion = await _apiClient.GetStandardOptionsByStandardIdAndVersion(standard, version);
 
             if (standardVersion is null)
             {

@@ -117,7 +117,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         public async Task<IActionResult> GetStandardOptionsForStandardReferenceAndVersion(string standardReference, string version)
         {
             _logger.LogInformation($"Get standard options from Standard Service for standard with standard reference {standardReference} and verion {version}");
-            var standardOptions = await _standardService.GetStandardOptionsByStandardReferenceAndVersion(standardReference, version);
+            var standardOptions = await _standardService.GetStandardOptionsByStandardIdAndVersion(standardReference, version);
             return Ok(standardOptions);
         }
 
