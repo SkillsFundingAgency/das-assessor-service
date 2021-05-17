@@ -27,18 +27,19 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Certifi
                     RuleFor(m => m).CustomAsync(async (m, context, cancellation) =>
                     {
                         // NOTE: Currently we're making the Certificate & ILR record both mandatory - this is wrong fixing it!
-                        var requestedIlr = await ilrRepository.Get(m.Uln, m.StandardCode);
-                        var sumbittingEpao = await organisationQueryRepository.GetByUkPrn(m.UkPrn);
-                        var existingCertificate = await certificateRepository.GetCertificate(m.Uln, m.StandardCode);
-                        var createdByCertificate = await certificateRepository.GetCertificateByOrgIdLastname(m.Uln, sumbittingEpao.EndPointAssessorOrganisationId, m.FamilyName);
-
-                        if (sumbittingEpao is null)
+                        var submittingEpao = await organisationQueryRepository.GetByUkPrn(m.UkPrn);
+                       
+                        if (submittingEpao is null)
                         {
                             context.AddFailure(new ValidationFailure("UkPrn", "Specified UKPRN not found"));
                         }
                         else
                         {
-                            var providedStandards = await standardService.GetEpaoRegisteredStandards(sumbittingEpao.EndPointAssessorOrganisationId);
+                            var requestedIlr = await ilrRepository.Get(m.Uln, m.StandardCode);
+                            var existingCertificate = await certificateRepository.GetCertificate(m.Uln, m.StandardCode);
+                            var createdByCertificate = await certificateRepository.GetCertificateByOrgIdLastname(m.Uln, submittingEpao.EndPointAssessorOrganisationId, m.FamilyName);
+
+                            var providedStandards = await standardService.GetEpaoRegisteredStandards(submittingEpao.EndPointAssessorOrganisationId);
 
                             if (!providedStandards.Any(s => s.StandardCode == m.StandardCode) && createdByCertificate == null )
                             {
