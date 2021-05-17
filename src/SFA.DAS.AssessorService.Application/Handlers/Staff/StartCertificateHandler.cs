@@ -68,7 +68,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
                 }
                 else if (certificate.Status == CertificateStatus.Submitted && certData.OverallGrade == CertificateGrade.Fail)
                 {
-                    _logger.LogInformation($"Starting retake of apprenticeship for ULN: {certificate.Uln}, Standard: {certificate.StandardCode}");
+                    _logger.LogInformation($"Restarting apprenticeship for ULN: {certificate.Uln}, Standard: {certificate.StandardCode}");
 
                     certificate.Status = CertificateStatus.Draft;
 
