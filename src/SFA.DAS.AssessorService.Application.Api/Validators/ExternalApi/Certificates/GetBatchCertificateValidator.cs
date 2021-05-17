@@ -35,33 +35,36 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Certifi
                         }
                         else
                         {
-                            var requestedIlr = await ilrRepository.Get(m.Uln, m.StandardCode);
-                            var existingCertificate = await certificateRepository.GetCertificate(m.Uln, m.StandardCode);
-                            var createdByCertificate = await certificateRepository.GetCertificateByOrgIdLastname(m.Uln, submittingEpao.EndPointAssessorOrganisationId, m.FamilyName);
+                            var existingCertificateCreatedByCallingEpao = await certificateRepository.GetCertificateByOrgIdLastname(m.Uln, submittingEpao.EndPointAssessorOrganisationId, m.FamilyName);
 
-                            var providedStandards = await standardService.GetEpaoRegisteredStandards(submittingEpao.EndPointAssessorOrganisationId);
-
-                            if (!providedStandards.Any(s => s.StandardCode == m.StandardCode) && createdByCertificate == null )
+                            if (existingCertificateCreatedByCallingEpao == null)
                             {
-                                context.AddFailure(new ValidationFailure("StandardCode", "Your organisation is not approved to assess this Standard"));
-                            }
+                                var requestedIlr = await ilrRepository.Get(m.Uln, m.StandardCode);
+                                var existingCertificate = await certificateRepository.GetCertificate(m.Uln, m.StandardCode);
+                                var providedStandards = await standardService.GetEpaoRegisteredStandards(submittingEpao.EndPointAssessorOrganisationId);
 
-                            if (existingCertificate != null) 
-                            {
-                                var certData = JsonConvert.DeserializeObject<CertificateData>(existingCertificate.CertificateData ?? "{}");
-
-                                if (!certData.LearnerFamilyName.Equals(m.FamilyName, StringComparison.InvariantCultureIgnoreCase))
+                                if (!providedStandards.Any(s => s.StandardCode == m.StandardCode))
                                 {
-                                    context.AddFailure(new ValidationFailure("FamilyName", $"Invalid family name"));
+                                    context.AddFailure(new ValidationFailure("StandardCode", "Your organisation is not approved to assess this Standard"));
                                 }
-                                else if (!EpaOutcome.Pass.Equals(certData.EpaDetails?.LatestEpaOutcome, StringComparison.InvariantCultureIgnoreCase))
+
+                                if (existingCertificate != null)
                                 {
-                                    context.AddFailure(new ValidationFailure("Uln", $"Cannot find certificate with the specified Uln, FamilyName & Standard"));
+                                    var certData = JsonConvert.DeserializeObject<CertificateData>(existingCertificate.CertificateData ?? "{}");
+
+                                    if (!certData.LearnerFamilyName.Equals(m.FamilyName, StringComparison.InvariantCultureIgnoreCase))
+                                    {
+                                        context.AddFailure(new ValidationFailure("FamilyName", $"Invalid family name"));
+                                    }
+                                    else if (!EpaOutcome.Pass.Equals(certData.EpaDetails?.LatestEpaOutcome, StringComparison.InvariantCultureIgnoreCase))
+                                    {
+                                        context.AddFailure(new ValidationFailure("Uln", $"Cannot find certificate with the specified Uln, FamilyName & Standard"));
+                                    }
                                 }
-                            }
-                            else if (requestedIlr is null || !string.Equals(requestedIlr.FamilyName, m.FamilyName, StringComparison.InvariantCultureIgnoreCase) )
-                            {
-                                context.AddFailure(new ValidationFailure("Uln", "Cannot find apprentice with the specified Uln, FamilyName & Standard"));
+                                else if (requestedIlr is null || !string.Equals(requestedIlr.FamilyName, m.FamilyName, StringComparison.InvariantCultureIgnoreCase) )
+                                {
+                                    context.AddFailure(new ValidationFailure("Uln", "Cannot find apprentice with the specified Uln, FamilyName & Standard"));
+                                }
                             }
                         }
                     });
