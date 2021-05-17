@@ -110,14 +110,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             return Ok(standardOptions);
         }
 
-        [HttpGet("standard-options/{standardReference}/{version}", Name = "GetStandardOptionsByStandardReferenceAndVersion")]
+        [HttpGet("standard-options/{standardId}/{version}", Name = "GetStandardOptionsByStandardIdAndVersion")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(StandardOptions))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> GetStandardOptionsForStandardReferenceAndVersion(string standardReference, string version)
+        public async Task<IActionResult> GetStandardOptionsForStandardIdAndVersion(string standardId, string version)
         {
-            _logger.LogInformation($"Get standard options from Standard Service for standard with standard reference {standardReference} and verion {version}");
-            var standardOptions = await _standardService.GetStandardOptionsByStandardIdAndVersion(standardReference, version);
+            _logger.LogInformation($"Get standard options from Standard Service for standard {standardId} and verion {version}");
+            var standardOptions = await _standardService.GetStandardOptionsByStandardIdAndVersion(standardId, version);
             return Ok(standardOptions);
         }
 
