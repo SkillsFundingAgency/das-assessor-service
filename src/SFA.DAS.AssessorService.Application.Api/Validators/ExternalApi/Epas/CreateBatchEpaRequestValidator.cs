@@ -23,25 +23,24 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Epas
 
                     if (existingCertificate != null)
                     {
-                        switch (existingCertificate.Status)
-                        {
-                            case CertificateStatus.Deleted:
-                                break;
-                            case CertificateStatus.Draft:
-                                var certData = JsonConvert.DeserializeObject<CertificateData>(existingCertificate.CertificateData);
+                        var certData = JsonConvert.DeserializeObject<CertificateData>(existingCertificate.CertificateData);
 
-                                if (!string.IsNullOrEmpty(certData.OverallGrade) && certData.AchievementDate.HasValue && !string.IsNullOrEmpty(certData.ContactPostCode))
-                                {
-                                    context.AddFailure(new ValidationFailure("EpaDetails", $"Certificate already exists, cannot create EPA record"));
-                                }
-                                else if (!string.IsNullOrEmpty(certData.EpaDetails?.LatestEpaOutcome))
-                                {
-                                    context.AddFailure(new ValidationFailure("EpaDetails", $"EPA already provided for the learner"));
-                                }
-                                break;
-                            default:
-                                context.AddFailure(new ValidationFailure("EpaDetails", $"Certificate already exists, cannot create EPA record"));
-                                break;
+                        var submittedCertificate = !(existingCertificate.Status == CertificateStatus.Draft || existingCertificate.Status == CertificateStatus.Deleted);
+                        var outcomeIsAFail = certData.OverallGrade == CertificateGrade.Fail;
+                        var outcomeIsAPass = !outcomeIsAFail;
+                        var canUpdateDraftCertificate = existingCertificate.Status == CertificateStatus.Draft && string.IsNullOrEmpty(certData.EpaDetails?.LatestEpaOutcome);
+
+                        if (submittedCertificate && outcomeIsAPass)
+                        {
+                            context.AddFailure(new ValidationFailure("EpaDetails", $"Certificate already exists, cannot create EPA record"));
+                        }
+                        else if (submittedCertificate && outcomeIsAFail)
+                        {
+                            context.AddFailure(new ValidationFailure("EpaDetails", $"EPA already provided for the learner"));
+                        }
+                        else if (!canUpdateDraftCertificate)
+                        {
+                            context.AddFailure(new ValidationFailure("EpaDetails", $"EPA already provided for the learner"));
                         }
                     }
                 });

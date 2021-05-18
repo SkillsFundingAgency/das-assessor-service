@@ -73,13 +73,13 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Epas
                     RuleFor(m => m).CustomAsync(async (m, context, canellation) =>
                     {
                         var requestedIlr = await ilrRepository.Get(m.Uln, m.StandardCode);
-                        var sumbittingEpao = await organisationQueryRepository.GetByUkPrn(m.UkPrn);
+                        var submittingEpao = await organisationQueryRepository.GetByUkPrn(m.UkPrn);
 
                         if (requestedIlr is null || !string.Equals(requestedIlr.FamilyName, m.FamilyName, StringComparison.InvariantCultureIgnoreCase))
                         {
                             context.AddFailure(new ValidationFailure("Uln", "ULN, FamilyName and Standard not found."));
                         }
-                        else if (sumbittingEpao is null)
+                        else if (submittingEpao is null)
                         {
                             context.AddFailure(new ValidationFailure("UkPrn", "Specified UKPRN not found"));
                         }
@@ -93,7 +93,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Epas
                         }
                         else
                         {
-                            var providedStandardVersions = await standardService.GetEPAORegisteredStandardVersions(sumbittingEpao.EndPointAssessorOrganisationId, m.StandardCode);
+                            var providedStandardVersions = await standardService.GetEPAORegisteredStandardVersions(submittingEpao.EndPointAssessorOrganisationId, m.StandardCode);
 
                             if (!providedStandardVersions.Any())
                             {
