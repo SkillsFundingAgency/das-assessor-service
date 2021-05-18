@@ -70,8 +70,11 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
                 {
                     _logger.LogInformation($"Restarting apprenticeship for ULN: {certificate.Uln}, Standard: {certificate.StandardCode}");
 
+                    certData.AchievementDate = null;
+                    certData.OverallGrade = null;
+                    certificate.CertificateData = JsonConvert.SerializeObject(certData);
                     certificate.Status = CertificateStatus.Draft;
-
+                    
                     await _certificateRepository.Update(certificate, request.Username, CertificateActions.Restart, updateLog: true);
                 }
             }

@@ -76,9 +76,20 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
         [Test]
         public async Task Then_certificate_is_return_with_status_set_to_draft()
         {
-            var cert = await _startCertificateHandler.Handle(_request, new CancellationToken());
+            var certificate = await _startCertificateHandler.Handle(_request, new CancellationToken());
 
-            cert.Status.Should().Be(CertificateStatus.Draft);
+            certificate.Status.Should().Be(CertificateStatus.Draft);
+        }
+
+        [Test]
+        public async Task Then_certificate_grade_data_is_reset()
+        {
+            var certificate = await _startCertificateHandler.Handle(_request, new CancellationToken());
+
+            var certData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
+
+            certData.OverallGrade.Should().BeNull();
+            certData.AchievementDate.Should().BeNull();
         }
     }
 }
