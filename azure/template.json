@@ -200,7 +200,10 @@
                         "value": "[variables('uiAppServiceName')]"
                     }
                 }
-            }
+            },
+            "dependsOn": [
+                "[variables('resourceGroupName')]"
+            ]
         },
         {
             "name": "ui-app-service",
@@ -311,7 +314,10 @@
                         "value": "[variables('apiAppServiceName')]"
                     }
                 }
-            }
+            },
+            "dependsOn": [
+                "[variables('resourceGroupName')]"
+            ]
         },
         {
             "name": "api-app-service",
@@ -430,7 +436,10 @@
                         "value": "[variables('externalApiAppServiceName')]"
                     }
                 }
-            }
+            },
+            "dependsOn": [
+                "[variables('resourceGroupName')]"
+            ]
         },
         {
             "apiVersion": "2020-10-01",
@@ -545,7 +554,10 @@
                         "value": "[variables('externalApiSandboxAppServiceName')]"
                     }
                 }
-            }
+            },
+            "dependsOn": [
+                "[variables('resourceGroupName')]"
+            ]
         },
         {
             "apiVersion": "2020-10-01",
@@ -636,7 +648,10 @@
                         "value": "[variables('storageAccountName')]"
                     }
                 }
-            }
+            },
+            "dependsOn": [
+                "[variables('resourceGroupName')]"
+            ]
         },
         {
             "apiVersion": "2020-10-01",
@@ -686,7 +701,10 @@
                         "value": "[parameters('serviceBusName')]"
                     }
                 }
-            }
+            },
+            "dependsOn": [
+                "[variables('resourceGroupName')]"
+            ]
         },
         {
             "apiVersion": "2020-10-01",
