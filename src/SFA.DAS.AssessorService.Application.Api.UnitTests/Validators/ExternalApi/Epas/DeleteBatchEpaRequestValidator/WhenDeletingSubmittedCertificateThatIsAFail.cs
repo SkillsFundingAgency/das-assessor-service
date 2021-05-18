@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalApi.Epas.DeleteBatchEpaRequestValidator
 {
-    public class WhenDeletingDraftCertificate : DeleteBatchEpaRequestValidatorTestBase
+    public class WhenDeletingSubmittedCertificateThatIsAFail : DeleteBatchEpaRequestValidatorTestBase
     {
         private ValidationResult _validationResult;
 
@@ -18,12 +18,12 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
         public async Task Arrange()
         {
             var request = Builder<DeleteBatchEpaRequest>.CreateNew()
-                .With(i => i.Uln = 1234567890)
-                .With(i => i.StandardCode = 1)
+                .With(i => i.Uln = 9999999999)
+                .With(i => i.StandardCode = 99)
                 .With(i => i.StandardReference = null)
-                .With(i => i.UkPrn = 12345678)
+                .With(i => i.UkPrn = 99999999)
                 .With(i => i.FamilyName = "Test")
-                .With(i => i.EpaReference = "1234567890-1")
+                .With(i => i.EpaReference = "9999999999-99")
                 .Build();
 
             _validationResult = await Validator.ValidateAsync(request);
@@ -33,6 +33,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
         public void ThenValidationResultShouldBeTrue()
         {
             _validationResult.IsValid.Should().BeTrue();
+            
         }
     }
 
