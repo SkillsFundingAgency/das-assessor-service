@@ -37,8 +37,9 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
 
             var assessmentOrgsApiClient = new Mock<IRegisterQueryRepository>();
             var standardService = new Mock<IStandardService>();
-            standardService.Setup(c => c.GetAllStandards())
-                .ReturnsAsync(new List<StandardCollation> { new StandardCollation{Title = "Standard Title", StandardData = new StandardData{ Level = 2}}});
+            standardService.Setup(c => c.GetEPAORegisteredStandardVersions(It.IsAny<string>(), null))
+                .ReturnsAsync(new List<StandardVersion> { new StandardVersion { Title = "Standard One", Version = "1.0", LarsCode = 1 },
+                                                            new StandardVersion { Title = "Standard Two", Version = "1.0", LarsCode = 2 } });
             assessmentOrgsApiClient.Setup(c => c.GetOrganisationStandardByOrganisationId("EPA0001"))
                 .ReturnsAsync(new List<OrganisationStandardSummary>(){new OrganisationStandardSummary(){StandardCode = 5}});
             standardService.Setup(c => c.GetStandard(It.IsAny<int>()))
@@ -81,8 +82,12 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
 
             var assessmentOrgsApiClient = new Mock<IRegisterQueryRepository>();
             var standardService = new Mock<IStandardService>();
-            standardService.Setup(c => c.GetAllStandards())
-                .ReturnsAsync(new List<StandardCollation> { new StandardCollation{Title = "Standard Title", StandardData = new StandardData{ Level = 2}}});
+           
+            standardService.Setup(c => c.GetEPAORegisteredStandardVersions(It.IsAny<string>(), null))
+                .ReturnsAsync(new List<StandardVersion> { new StandardVersion { Title = "Standard One", Version = "1.0", LarsCode = 1 },
+                                                          new StandardVersion { Title = "Standard Two", Version = "1.0", LarsCode = 2 },
+                                                          new StandardVersion { Title = "Standard Three", Version = "1.0", LarsCode = 3 }});
+
             assessmentOrgsApiClient.Setup(c => c.GetOrganisationStandardByOrganisationId("EPA0001"))
                 .ReturnsAsync(new List<OrganisationStandardSummary>(){new OrganisationStandardSummary(){StandardCode = 2}});
             standardService.Setup(c => c.GetStandard(It.IsAny<int>()))

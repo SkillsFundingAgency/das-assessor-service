@@ -3,7 +3,7 @@
     public static class CertificateActions
     {
         public const string Start = "Start";
-        public const string StartRetake = "StartRetake";
+        public const string Restart = "Restart";
         public const string Address = "Address";
         public const string AddressSummary = "AddressSummary";
         public const string Date = "Date";

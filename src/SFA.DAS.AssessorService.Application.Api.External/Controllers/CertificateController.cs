@@ -62,7 +62,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
             {
                 var certificateData = response.Certificate.CertificateData;
 
-                var options = await _apiClient.GetStandardOptionsByStandardReferenceAndVersion(certificateData.Standard.StandardReference, certificateData.LearningDetails.Version);
+                var options = await _apiClient.GetStandardOptionsByStandardIdAndVersion(certificateData.Standard.StandardReference, certificateData.LearningDetails.Version);
 
                 if (CertificateHelpers.IsDraftCertificateDeemedAsReady(response.Certificate, options?.CourseOption))
                 {

@@ -33,16 +33,16 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
         [SwaggerResponseExample((int)HttpStatusCode.OK, typeof(SwaggerHelpers.Examples.GetOptionsForAllStandardResponseExample))]
         [SwaggerResponse((int)HttpStatusCode.OK, "The list of options for each Standard.", typeof(IEnumerable<StandardOptions>))]
         [SwaggerOperation("Get Options", "Gets the latest list of course options by Standard.", Produces = new string[] { "application/json" })]
-        public async Task<IActionResult> GetOptionsForAllStandards()
+        public async Task<IActionResult> GetStandardOptionsForLatestStandardVersions()
         {
-            var standards = await _apiClient.GetStandardOptionsList();
+            var standards = await _apiClient.GetStandardOptionsForLatestStandardVersions();
 
             if(standards is null)
             {
                 return StatusCode((int)HttpStatusCode.ServiceUnavailable);
             }
 
-            return Ok(standards.Where(s => s.CourseOption != null && s.CourseOption.Any()).OrderBy(s => s.StandardCode));
+            return Ok(standards);
         }
 
         [HttpGet("options/{*standard}")]
@@ -67,15 +67,15 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
             return Ok(requestedStandard);
         }
 
-        [HttpGet("options/{standardReference}/{version}")]
+        [HttpGet("options/{standard}/{version}")]
         [SwaggerResponseExample((int)HttpStatusCode.OK, typeof(SwaggerHelpers.Examples.GetStandardVersionOptionsResponseExample))]
         [SwaggerResponse((int)HttpStatusCode.OK, "The list of options.", typeof(StandardOptions))]
         [SwaggerResponse((int)HttpStatusCode.NoContent, "The standard version was found, however it has no options.")]
         [SwaggerResponse((int)HttpStatusCode.NotFound, "The standard version was not found.")]
         [SwaggerOperation("Get Options for a standard version", "Gets the latest list of course options for the specified Standard version.", Produces = new string[] { "application/json" })]
-        public async Task<IActionResult> GetOptionsForStandardVersion(string standardReference, string version)
+        public async Task<IActionResult> GetOptionsForStandardVersion([SwaggerParameter("Standard Code or Standard Reference Number")] string standard, string version)
         {
-            var standardVersion = await _apiClient.GetStandardOptionsByStandardReferenceAndVersion(standardReference, version);
+            var standardVersion = await _apiClient.GetStandardOptionsByStandardIdAndVersion(standard, version);
 
             if (standardVersion is null)
             {

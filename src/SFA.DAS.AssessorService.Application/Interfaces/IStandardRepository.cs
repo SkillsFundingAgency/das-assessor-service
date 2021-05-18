@@ -48,6 +48,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task InsertStandards(IEnumerable<Standard> standard);
         Task InsertOptions(IEnumerable<StandardOption> optionsToInsert);
         Task<IEnumerable<StandardOptions>> GetAllStandardOptions();
+        Task<IEnumerable<StandardOptions>> GetStandardOptionsForLatestStandardVersions();
         Task<StandardOptions> GetStandardOptionsByStandardUId(string standardUId);
         Task<StandardOptions> GetStandardOptionsByLarsCode(int larsCode);
         Task<StandardOptions> GetStandardOptionsByIFateReferenceNumber(string iFateReferenceNumber);

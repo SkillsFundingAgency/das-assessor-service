@@ -160,6 +160,22 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
             return null;
         }
 
+        public async Task<IEnumerable<StandardOptions>> GetStandardOptionsForLatestStandardVersions()
+        {
+            try
+            {
+                var options = await _standardRepository.GetStandardOptionsForLatestStandardVersions();
+
+                return options;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "STANDARD OPTIONS: Failed to get options for latest version of each standard");
+            }
+
+            return null;
+        }
+
         public async Task<StandardOptions> GetStandardOptionsByStandardId(string id)
         {
             StandardOptions options = null;
@@ -187,17 +203,27 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
             return options;
         }
 
-        public async Task<StandardOptions> GetStandardOptionsByStandardReferenceAndVersion(string standardReference, string version)
+        public async Task<StandardOptions> GetStandardOptionsByStandardIdAndVersion(string id, string version)
         {
-            Standard standard;
+            Standard standard = new Standard();
 
             try
             {
-                standard = await _standardRepository.GetStandardVersionByIFateReferenceNumber(standardReference, version);
+                var standardId = new StandardId(id);
+
+                switch (standardId.IdType)
+                {
+                    case StandardId.StandardIdType.IFateReferenceNumber:
+                        standard = await _standardRepository.GetStandardVersionByIFateReferenceNumber(standardId.IFateReferenceNumber, version);
+                        break;
+                    case StandardId.StandardIdType.LarsCode:
+                        standard = await _standardRepository.GetStandardVersionByLarsCode(standardId.LarsCode, version);
+                        break;
+                }
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Could not find standard with StandardReference: {standardReference} and Version: {version}");
+                _logger.LogError(ex, $"Could not find standard with id: {id} and Version: {version}");
 
                 return null;
             }
@@ -211,7 +237,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
             return results.PageOfResults;
         }
 
-        public async Task<IEnumerable<StandardVersion>> GetEPAORegisteredStandardVersions(string endPointAssessorOrganisationId, int? larsCode)
+        public async Task<IEnumerable<StandardVersion>> GetEPAORegisteredStandardVersions(string endPointAssessorOrganisationId, int? larsCode = null)
         {
             if (larsCode.HasValue && larsCode.Value > 0)
             {
