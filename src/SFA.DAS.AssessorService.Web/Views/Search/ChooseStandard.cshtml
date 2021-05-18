@@ -15,150 +15,164 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
 
-            <form class="apprentice-choose-standard-form js-disable-on-submit" asp-controller="Certificate" asp-action="Start" method="post">
+            <div class="js-error-summary govuk-error-summary" role="alert" aria-labelledby="error-summary-title" tabindex="-1" data-module="govuk-error-summary">
+                <h2 class="govuk-error-summary__title" id="error-summary-title">
+                    There is a problem
+                </h2>
+                <div class="govuk-error-summary__body">
+                    <ul class="js-error-summary-list govuk-list govuk-error-summary__list"></ul>
+                </div>
+            </div>
 
-                <div class="js-error-summary govuk-error-summary" role="alert" aria-labelledby="error-summary-title" tabindex="-1" data-module="govuk-error-summary">
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
                     <h2 class="govuk-error-summary__title" id="error-summary-title">
-                        There is a problem
+                        @Localizer["ErrorsWithSubmission"]
                     </h2>
                     <div class="govuk-error-summary__body">
-                        <ul class="js-error-summary-list govuk-list govuk-error-summary__list"></ul>
+                        <ul class="govuk-list govuk-error-summary__list">
+                            <li><a sfa-validation-for="StdCode"></a></li>
+                        </ul>
                     </div>
                 </div>
+            }
 
-                @if (!ViewData.ModelState.IsValid)
-                {
-                    <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
-                        <h2 class="govuk-error-summary__title" id="error-summary-title">
-                            @Localizer["ErrorsWithSubmission"]
-                        </h2>
-                        <div class="govuk-error-summary__body">
-                            <ul class="govuk-list govuk-error-summary__list">
-                                <li><a sfa-validation-for="StdCode"></a></li>
-                            </ul>
-                        </div>
-                    </div>
-                }
+            <h1 class="govuk-heading-xl">
+                @(Model.AllAssessmentsCompleted ? Localizer["AllAssessmentsCompletedHeading"].Value : Localizer["PageHeading"].Value)
+            </h1>
 
+            <table class="govuk-table">
+                <tbody class="govuk-table__body">
+                    <tr class="govuk-table__row">
+                        <th scope="row" class="govuk-table__header">Name</th>
+                        <td class="govuk-table__cell">@Model.SearchResults.First().GivenNames @Model.SearchResults.First().FamilyName</td>
+                    </tr>
+                    <tr class="govuk-table__row">
+                        <th scope="row" class="govuk-table__header"><abbr title="Unique learner number">ULN</abbr></th>
+                        <td class="govuk-table__cell">@Model.SearchResults.First().Uln</td>
+                    </tr>
+                </tbody>
+            </table>
 
-                <h1 class="govuk-heading-xl">@Localizer["PageHeading"]</h1>
+            <p class="govuk-body">
+                If the name is incorrect, you need to agree the correct details with the training provider and employer.
+                Once the training provider updates the Individualised Learner Record (<abbr title="Individualised Learner Record">ILR</abbr>), return here and continue.
+            </p>
 
-
-                <table class="govuk-table">
-                    <tbody class="govuk-table__body">
-                        <tr class="govuk-table__row">
-                            <th scope="row" class="govuk-table__header">Name</th>
-                            <td class="govuk-table__cell">@Model.SearchResults.First().GivenNames @Model.SearchResults.First().FamilyName</td>
-                        </tr>
-                        <tr class="govuk-table__row">
-                            <th scope="row" class="govuk-table__header"><abbr title="Unique learner number">ULN</abbr></th>
-                            <td class="govuk-table__cell">@Model.SearchResults.First().Uln</td>
-                        </tr>
-                    </tbody>
-                </table>
-
-                <p class="govuk-body">
-                    If the name is incorrect, you need to agree the correct details with the training provider and employer.
-                    Once the training provider updates the Individual Learner Record (<abbr title="Individualised Learner Record">ILR</abbr>), return here and continue.
-                </p>
-
-                @if (Model.SearchResults.Any(sr => sr.CertificateReference != null))
-                {
-                    <details class="govuk-details">
-                        <summary class="govuk-details__summary">
-                            <span class="govuk-details__summary-text">
-                                View certificate history
-                            </span>
-                        </summary>
-                        <div class="govuk-details__text">
-                            <h2 class="govuk-heading-m">@Localizer["CompletedStandardsHeading"]</h2>
-                            @foreach (var result in Model.SearchResults.Where(sr => sr.CertificateReference != null))
-                            {
-                                <dl class="govuk-summary-list govuk-summary-list--no-border">
+            @if (Model.SearchResults.Any(sr => sr.CertificateReference != null))
+            {
+                <details class="govuk-details">
+                    <summary class="govuk-details__summary">
+                        <span class="govuk-details__summary-text">
+                            View certificate history
+                        </span>
+                    </summary>
+                    <div class="govuk-details__text">
+                        <h2 class="govuk-heading-m">@Localizer["CompletedStandardsHeading"]</h2>
+                        @foreach (var result in Model.SearchResults.Where(sr => sr.CertificateReference != null))
+                        {
+                            <dl class="govuk-summary-list govuk-summary-list--no-border">
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">Recorded by</dt>
+                                    <dd class="govuk-summary-list__value">@result.SubmittedBy</dd>
+                                </div>
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">Standard</dt>
+                                    <dd class="govuk-summary-list__value">@result.Standard</dd>
+                                </div>
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">Level</dt>
+                                    <dd class="govuk-summary-list__value">Level @result.Level</dd>
+                                </div>
+                                @if (!string.IsNullOrEmpty(result.Version))
+                                {
                                     <div class="govuk-summary-list__row">
-                                        <dt class="govuk-summary-list__key">Recorded by</dt>
-                                        <dd class="govuk-summary-list__value">@result.SubmittedBy</dd>
+                                        <dt class="govuk-summary-list__key">Version </dt>
+                                        <dd class="govuk-summary-list__value">@result.Version</dd>
                                     </div>
-                                    <div class="govuk-summary-list__row">
-                                        <dt class="govuk-summary-list__key">Standard</dt>
-                                        <dd class="govuk-summary-list__value">@result.Standard</dd>
-                                    </div>
-                                    <div class="govuk-summary-list__row">
-                                        <dt class="govuk-summary-list__key">Level</dt>
-                                        <dd class="govuk-summary-list__value">Level @result.Level</dd>
-                                    </div>
-                                    @if (!string.IsNullOrEmpty(result.Version))
-                                    {
-                                        <div class="govuk-summary-list__row">
-                                            <dt class="govuk-summary-list__key">Version </dt>
-                                            <dd class="govuk-summary-list__value">@result.Version</dd>
-                                        </div>
-                                    }
+                                }
+                                @if (!string.IsNullOrEmpty(result.OverallGrade))
+                                {
                                     <div class="govuk-summary-list__row">
                                         <dt class="govuk-summary-list__key">Grade</dt>
                                         <dd class="govuk-summary-list__value">@result.OverallGrade</dd>
                                     </div>
-                                    <div class="govuk-summary-list__row">
-                                        <dt class="govuk-summary-list__key">Apprenticeship start date</dt>
-                                        <dd class="govuk-summary-list__value">@result.LearnStartDate.ToSfaShortDateString()</dd>
-                                    </div>
+                                }
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">Apprenticeship start date</dt>
+                                    <dd class="govuk-summary-list__value">@result.LearnStartDate.ToSfaShortDateString()</dd>
+                                </div>
+                                @if (result.AchDate.HasValue)
+                                {
                                     <div class="govuk-summary-list__row">
                                         <dt class="govuk-summary-list__key">@(result.OverallGrade == CertificateGrade.Fail ? "Failed date" : "Achievement date")</dt>
                                         <dd class="govuk-summary-list__value">@result.AchDate.ToSfaShortDateString()</dd>
                                     </div>
+                                }
+                                @if (!string.IsNullOrEmpty(result.CertificateReference))
+                                {
                                     <div class="govuk-summary-list__row">
                                         <dt class="govuk-summary-list__key">Certificate number</dt>
                                         <dd class="govuk-summary-list__value">@result.CertificateReference</dd>
                                     </div>
+                                }
+                                @if (!string.IsNullOrEmpty(result.CertificateStatus))
+                                {
                                     <div class="govuk-summary-list__row">
                                         <dt class="govuk-summary-list__key">Certificate status</dt>
                                         <dd class="govuk-summary-list__value">@result.CertificateStatus</dd>
                                     </div>
-                                </dl>
-                            }
-                        </div>
-                    </details>
-                }
+                                }
+                            </dl>
+                        }
+                    </div>
+                </details>
+            }
 
-                <div class="govuk-form-group" sfa-validation-for="StdCode" sfa-validationerror-class="govuk-form-group--error">
-                    <span class="govuk-error-message" asp-validation-for="StdCode"></span>
+            @if (Model.AllAssessmentsCompleted == false)
+            {
+                <form class="apprentice-choose-standard-form js-disable-on-submit" asp-controller="Certificate" asp-action="Start" method="post">
+                    <div class="govuk-form-group" sfa-validation-for="StdCode" sfa-validationerror-class="govuk-form-group--error">
+                        <span class="govuk-error-message" asp-validation-for="StdCode"></span>
 
-                    @if (Model.SearchResults.Any(sr => sr.CertificateReference == null || sr.OverallGrade == CertificateGrade.Fail))
-                    {
-                        <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
-                            <h1 class="govuk-fieldset__heading">
-                                @Localizer["SelectStandardHeading"]
-                            </h1>
-                        </legend>
-                        <div class="govuk-radios">
-                            @foreach (var result in Model.SearchResults.Where(sr => sr.CertificateReference == null))
-                            {
-                                <div class="govuk-radios__item">
-                                    <input class="govuk-radios__input" id=@("standard_" + result.StdCode) type="radio" name="StdCode" value="@result.StdCode">
-                                    <label class="govuk-label govuk-radios__label govuk-!-padding-bottom-0" for=@("standard_" + result.StdCode)>
-                                        @result.Standard
-                                    </label>
-                                </div>
-                            }
-                            @foreach (var result in Model.SearchResults.Where(sr => sr.OverallGrade == CertificateGrade.Fail))
-                            {
-                                <div class="govuk-radios__item">
-                                    <input class="govuk-radios__input" id=@("standard_" + result.StdCode) type="radio" name="StdCode" value="@result.StdCode">
-                                    <label class="govuk-label govuk-radios__label govuk-!-padding-bottom-0" for=@("standard_" + result.StdCode)>
-                                        @result.Standard
-                                    </label>
-                                    <span class="govuk-hint govuk-radios__hint">
-                                        Failed on @result.AchDate.ToSfaShortDateString()
-                                    </span>
-                                </div>
-                            }
-                        </div>
-                    }
-                </div>
+                        @if (Model.SearchResults.Any(sr => sr.CertificateReference == null || sr.OverallGrade == CertificateGrade.Fail))
+                        {
+                            <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+                                <h1 class="govuk-fieldset__heading">
+                                    @Localizer["SelectStandardHeading"]
+                                </h1>
+                            </legend>
+                            <div class="govuk-radios">
+                                @foreach (var result in Model.SearchResults.Where(sr => sr.CertificateReference == null))
+                                {
+                                    <div class="govuk-radios__item">
+                                        <input class="govuk-radios__input" id=@("standard_" + result.StdCode) type="radio" name="StdCode" value="@result.StdCode">
+                                        <label class="govuk-label govuk-radios__label govuk-!-padding-bottom-0" for=@("standard_" + result.StdCode)>
+                                            @result.Standard
+                                        </label>
+                                    </div>
+                                }
+                                @foreach (var result in Model.SearchResults.Where(sr => sr.OverallGrade == CertificateGrade.Fail))
+                                {
+                                    <div class="govuk-radios__item">
+                                        <input class="govuk-radios__input" id=@("standard_" + result.StdCode) type="radio" name="StdCode" value="@result.StdCode">
+                                        <label class="govuk-label govuk-radios__label govuk-!-padding-bottom-0" for=@("standard_" + result.StdCode)>
+                                            @result.Standard
+                                        </label>
+                                        <span class="govuk-hint govuk-radios__hint">
+                                            Failed on @result.AchDate.ToSfaShortDateString()
+                                        </span>
+                                    </div>
+                                }
+                            </div>
+                        }
+                    </div>
 
-                @Html.HiddenFor(m => m.SearchResults.First().Uln)
-                <button class="govuk-button" type="submit">@Localizer["SelectStandardButton"]</button>
-            </form>
+                    @Html.HiddenFor(m => m.SearchResults.First().Uln)
+                    <button class="govuk-button" type="submit">@Localizer["SelectStandardButton"]</button>
+                </form>
+            }
 
             <p class="govuk-body"><a class="govuk-link" asp-controller="Search" asp-action="Index">Search again</a> if this isn’t the correct apprentice.</p>
         </div>

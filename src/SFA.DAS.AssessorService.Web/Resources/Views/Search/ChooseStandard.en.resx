@@ -138,4 +138,7 @@
   <data name="SelectStandardHeading" xml:space="preserve">
     <value>Which standard did you assess?</value>
   </data>
+  <data name="AllAssessmentsCompletedHeading" xml:space="preserve">
+    <value>Assessments have already been recorded against this apprentice</value>
+  </data>
 </root>
