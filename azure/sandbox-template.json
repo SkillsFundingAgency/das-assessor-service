@@ -469,6 +469,10 @@
         }
     ],
     "outputs": {
+        "ResourceGroupName": {
+            "type": "string",
+            "value": "[variables('resourceGroupName')]"
+        },
         "ExternalApiActiveSandboxAppServiceName": {
             "type": "string",
             "value": "[variables('externalApiActiveSandboxAppServiceName')]"
