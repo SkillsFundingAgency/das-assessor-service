@@ -264,7 +264,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
 
             // Assertions
             response.Status.Should().Be(CertificateStatus.Draft);
-            _mockCertificateRepository.Verify(s => s.Update(existingCertificate, request.Username, CertificateActions.Restart, true, "Retake failed apprenticeship"), Times.Once);
+            _mockCertificateRepository.Verify(s => s.Update(existingCertificate, request.Username, CertificateActions.Restart, true, null), Times.Once);
         }
 
         [Test, RecursiveMoqAutoData]
