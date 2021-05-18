@@ -70,7 +70,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
 
                     if (!string.IsNullOrEmpty(certificateData.Standard?.StandardReference) && !string.IsNullOrEmpty(certificateData?.LearningDetails?.Version))
 					{
-                        var standardOptions = await _apiClient.GetStandardOptionsByStandardReferenceAndVersion(certificateData.Standard.StandardReference, certificateData.LearningDetails.Version);
+                        var standardOptions = await _apiClient.GetStandardOptionsByStandardIdAndVersion(certificateData.Standard.StandardReference, certificateData.LearningDetails.Version);
 
                         var hasOptions = standardOptions != null && standardOptions.CourseOption?.Count() > 0;
 
