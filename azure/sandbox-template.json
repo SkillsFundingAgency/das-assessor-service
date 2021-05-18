@@ -1,7 +1,13 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json",
     "contentVersion": "1.0.0.0",
     "parameters": {
+        "serviceName": {
+            "type": "string"
+        },
+        "resourceEnvironmentName": {
+            "type": "string"
+        },
         "environmentName": {
             "type": "string"
         },
@@ -20,30 +26,16 @@
         "deploySandbox": {
             "type": "bool"
         },
-        "activeSandboxAppServicePlanName": {
-            "type": "string"
-        },
         "aspSize": {
             "type": "string"
         },
         "aspInstances": {
             "type": "int"
         },
-        "externalApiActiveSandboxAppServiceName": {
-            "type": "string"
-        },
-        "internalApiSandboxAppServiceName": {
-            "type": "string"
-        },
         "internalApiSandboxCustomHostName": {
             "type": "string"
         },
         "appServiceAllowedIPs": {
-            "type": "array",
-            "defaultValue": [
-            ]
-        },
-        "sandboxFunctionAppNames": {
             "type": "array"
         },
         "externalActiveApiSandboxCustomHostname": {
@@ -55,15 +47,8 @@
         "internalApiSandboxAppServiceCertificateName": {
             "type": "string"
         },
-        "sandboxFunctionAppStorageAccountName": {
-            "type": "string"
-        },
         "sandboxSqlDbConnectionString": {
             "type": "string"
-        },
-        "functionsExtensionVersion": {
-            "type": "string",
-            "defaultValue": "~2.0"
         },
         "sharedEnvResourceGroup": {
             "type": "string"
@@ -92,17 +77,35 @@
         },
         "logAnalyticsWorkspaceName": {
             "type": "string"
+        },
+        "sharedEnvVirtualNetworkName": {
+            "type": "string"
+        },
+        "activeSandboxSubnetObject": {
+            "type": "object"
+        },
+        "subnetServiceEndpointList": {
+            "type": "array"
+        },
+        "subnetDelegations": {
+            "type": "array"
         }
     },
     "variables": {
-        "instanceName": "[if(equals(toUpper(parameters('environmentName')),'PROD'),'',parameters('environmentName'))]",
-        "deploymentUrlBase": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/"
+        "deploymentUrlBase": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/",
+        "resourceNamePrefix": "[toLower(concat('das-', parameters('resourceEnvironmentName'),'-', parameters('serviceName')))]",
+        "resourceGroupName": "[concat(variables('resourceNamePrefix'), '-rg')]",
+        "activeSandboxAppServicePlanName": "[concat(variables('resourceNamePrefix'), 'ac-sbox-asp')]",
+        "externalApiActiveSandboxAppServiceName": "[concat(variables('resourceNamePrefix'), 'acextapi-sbox-as')]",
+        "internalApiActiveSandboxAppServiceName": "[concat(variables('resourceNamePrefix'), 'acintapi-sbox-as')]",
+        "instanceName": "[if(equals(toUpper(parameters('environmentName')),'PROD'),'',parameters('environmentName'))]"
     },
     "resources": [
         {
-            "apiVersion": "2017-05-10",
+            "apiVersion": "2020-10-01",
             "name": "sandbox-app-service-plan",
             "type": "Microsoft.Resources/deployments",
+            "resourceGroup": "[variables('resourceGroupName')]",
             "condition": "[parameters('deploySandbox')]",
             "properties": {
                 "mode": "Incremental",
@@ -112,7 +115,7 @@
                 },
                 "parameters": {
                     "appServicePlanName": {
-                        "value": "[parameters('activeSandboxAppServicePlanName')]"
+                        "value": "[variables('activeSandboxAppServicePlanName')]"
                     },
                     "aspSize": {
                         "value": "[parameters('aspSize')]"
@@ -124,9 +127,40 @@
             }
         },
         {
-            "apiVersion": "2017-05-10",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "active-sandbox-app-service-subnet",
+            "resourceGroup": "[parameters('sharedEnvResourceGroup')]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('deploymentUrlBase'),'subnet.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "virtualNetworkName": {
+                        "value": "[parameters('sharedEnvVirtualNetworkName')]"
+                    },
+                    "subnetName": {
+                        "value": "[parameters('activeSandboxSubnetObject').name]"
+                    },
+                    "subnetAddressPrefix": {
+                        "value": "[parameters('activeSandboxSubnetObject').addressSpace]"
+                    },
+                    "serviceEndpointList": {
+                        "value": "[parameters('subnetServiceEndpointList')]"
+                    },
+                    "delegations": {
+                        "value": "[parameters('subnetDelegations')]"
+                    }
+                }
+            }
+        },
+        {
+            "apiVersion": "2020-10-01",
             "name": "sandbox-external-app-service-certificate",
             "type": "Microsoft.Resources/deployments",
+            "resourceGroup": "[variables('resourceGroupName')]",
             "condition": "[greater(length(parameters('externalApiSandboxAppServiceCertificateName')), 0)]",
             "properties": {
                 "mode": "Incremental",
@@ -151,9 +185,10 @@
             }
         },
         {
-            "apiVersion": "2017-05-10",
+            "apiVersion": "2020-10-01",
             "name": "sandbox-internal-app-service-certificate",
             "type": "Microsoft.Resources/deployments",
+            "resourceGroup": "[variables('resourceGroupName')]",
             "condition": "[greater(length(parameters('internalApiSandboxAppServiceCertificateName')), 0)]",
             "properties": {
                 "mode": "Incremental",
@@ -181,9 +216,10 @@
             ]
         },
         {
-            "apiVersion": "2017-05-10",
-            "name": "[concat('app-service-', parameters('externalApiActiveSandboxAppServiceName'))]",
+            "apiVersion": "2020-10-01",
+            "name": "external-api-active-sandbox-app-service",
             "type": "Microsoft.Resources/deployments",
+            "resourceGroup": "[variables('resourceGroupName')]",
             "condition": "[parameters('deploySandbox')]",
             "properties": {
                 "mode": "Incremental",
@@ -193,20 +229,23 @@
                 },
                 "parameters": {
                     "appServiceName": {
-                        "value": "[parameters('externalApiActiveSandboxAppServiceName')]"
+                        "value": "[variables('externalApiActiveSandboxAppServiceName')]"
                     },
                     "appServicePlanName": {
-                        "value": "[parameters('activeSandboxAppServicePlanName')]"
+                        "value": "[variables('activeSandboxAppServicePlanName')]"
                     },
                     "appServicePlanResourceGroup": {
-                        "value": "[resourceGroup().name]"
+                        "value": "[variables('resourceGroupName')]"
+                    },
+                    "subnetResourceId": {
+                        "value": "[reference('active-sandbox-app-service-subnet').outputs.subnetResourceId.value]"
                     },
                     "appServiceAppSettings": {
                         "value": {
                             "array": [
                                 {
                                     "name": "ApplicationInsights:InstrumentationKey",
-                                    "value": "[reference(concat(parameters('externalApiActiveSandboxAppServiceName'),'-ai')).outputs.InstrumentationKey.value]"
+                                    "value": "[reference('external-api-active-sandbox-app-service-app-insights').outputs.InstrumentationKey.value]"
                                 },
                                 {
                                     "name": "EnvironmentName",
@@ -254,9 +293,10 @@
             ]
         },
         {
-            "name": "[concat('app-service-', parameters('internalApiSandboxAppServiceName'))]",
+            "name": "internal-api-active-sandbox-app-service",
             "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2017-05-10",
+            "apiVersion": "2020-10-01",
+            "resourceGroup": "[variables('resourceGroupName')]",
             "condition": "[parameters('deploySandbox')]",
             "properties": {
                 "mode": "Incremental",
@@ -266,20 +306,23 @@
                 },
                 "parameters": {
                     "appServiceName": {
-                        "value": "[parameters('internalApiSandboxAppServiceName')]"
+                        "value": "[variables('internalApiActiveSandboxAppServiceName')]"
                     },
                     "appServicePlanName": {
-                        "value": "[parameters('activeSandboxAppServicePlanName')]"
+                        "value": "[variables('activeSandboxAppServicePlanName')]"
                     },
                     "appServicePlanResourceGroup": {
-                        "value": "[resourceGroup().name]"
+                        "value": "[variables('resourceGroupName')]"
+                    },
+                    "subnetResourceId": {
+                        "value": "[reference('active-sandbox-app-service-subnet').outputs.subnetResourceId.value]"
                     },
                     "appServiceAppSettings": {
                         "value": {
                             "array": [
                                 {
                                     "name": "ApplicationInsights:InstrumentationKey",
-                                    "value": "[reference(concat(parameters('internalApiSandboxAppServiceName'),'-ai')).outputs.InstrumentationKey.value]"
+                                    "value": "[reference('internal-api-active-sandbox-app-service-app-insights').outputs.InstrumentationKey.value]"
                                 },
                                 {
                                     "name": "ConfigurationStorageConnectionString",
@@ -336,103 +379,10 @@
             ]
         },
         {
-            "name": "sandbox-storage-account",
+            "apiVersion": "2020-10-01",
+            "name": "external-api-active-sandbox-app-service-app-insights",
             "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2017-05-10",
-            "condition": "[parameters('deploySandbox')]",
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[concat(variables('deploymentUrlBase'), 'storage-account-arm.json')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "storageAccountName": {
-                        "value": "[parameters('sandboxFunctionAppStorageAccountName')]"
-                    }
-                }
-            }
-        },
-        {
-            "name": "[concat('function-app-', parameters('sandboxFunctionAppNames')[copyIndex()])]",
-            "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2017-05-10",
-            "condition": "[parameters('deploySandbox')]",
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[concat(variables('deploymentUrlBase'), 'function-app-v2.json')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "functionAppName": {
-                        "value": "[parameters('sandboxFunctionAppNames')[copyIndex()]]"
-                    },
-                    "appServicePlanName": {
-                        "value": "[parameters('activeSandboxAppServicePlanName')]"
-                    },
-                    "appServicePlanResourceGroup": {
-                        "value": "[resourceGroup().name]"
-                    },
-                    "functionAppAppSettings": {
-                        "value": {
-                            "array": [
-                                {
-                                    "name": "AzureWebJobsStorage",
-                                    "value": "[reference('sandbox-storage-account').outputs.StorageConnectionString.value]"
-                                },
-                                {
-                                    "name": "FUNCTIONS_EXTENSION_VERSION",
-                                    "value": "[parameters('functionsExtensionVersion')]"
-                                },
-                                {
-                                    "name": "MSDEPLOY_RENAME_LOCKED_FILES",
-                                    "value": "1"
-                                },
-                                {
-                                    "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-                                    "value": "[reference(concat(parameters('sandBoxFunctionAppNames')[copyIndex()],'-ai')).outputs.InstrumentationKey.value]"
-                                },
-                                {
-                                    "name": "ConfigurationStorageConnectionString",
-                                    "value": "[parameters('configurationStorageConnectionString')]"
-                                },
-                                {
-                                    "name": "EnvironmentName",
-                                    "value": "[toUpper(parameters('environmentName'))]"
-                                },
-                                {
-                                    "name": "FUNCTIONS_WORKER_RUNTIME",
-                                    "value": "dotnet"
-                                }
-                            ]
-                        }
-                    },
-                    "functionAppConnectionStrings": {
-                        "value": {
-                            "array": [
-                                {
-                                    "name": "Redis",
-                                    "connectionString": "[parameters('loggingRedisConnectionString')]",
-                                    "type": "Custom"
-                                }
-                            ]
-                        }
-                    }
-                }
-            },
-            "copy": {
-                "name": "function-app-copy",
-                "count": "[length(parameters('sandboxFunctionAppNames'))]"
-            },
-            "dependsOn": [
-                "sandbox-storage-account"
-            ]
-        },
-        {
-            "apiVersion": "2017-08-01",
-            "name": "[concat(parameters('externalApiActiveSandboxAppServiceName'),'-ai')]",
-            "type": "Microsoft.Resources/deployments",
+            "resourceGroup": "[variables('resourceGroupName')]",
             "condition": "[parameters('deploySandbox')]",
             "properties": {
                 "mode": "Incremental",
@@ -442,19 +392,20 @@
                 },
                 "parameters": {
                     "appInsightsName": {
-                        "value": "[parameters('externalApiActiveSandboxAppServiceName')]"
+                        "value": "[variables('externalApiActiveSandboxAppServiceName')]"
                     },
                     "attachedService": {
-                        "value": "[parameters('externalApiActiveSandboxAppServiceName')]"
+                        "value": "[variables('externalApiActiveSandboxAppServiceName')]"
                     }
                 }
             },
             "dependsOn": []
         },
         {
-            "apiVersion": "2017-08-01",
-            "name": "[concat(parameters('internalApiSandboxAppServiceName'),'-ai')]",
+            "apiVersion": "2020-10-01",
+            "name": "internal-api-active-sandbox-app-service-app-insights",
             "type": "Microsoft.Resources/deployments",
+            "resourceGroup": "[variables('resourceGroupName')]",
             "condition": "[parameters('deploySandbox')]",
             "properties": {
                 "mode": "Incremental",
@@ -464,43 +415,17 @@
                 },
                 "parameters": {
                     "appInsightsName": {
-                        "value": "[parameters('internalApiSandboxAppServiceName')]"
+                        "value": "[variables('internalApiActiveSandboxAppServiceName')]"
                     },
                     "attachedService": {
-                        "value": "[parameters('internalApiSandboxAppServiceName')]"
+                        "value": "[variables('internalApiActiveSandboxAppServiceName')]"
                     }
                 }
             },
             "dependsOn": []
         },
         {
-            "apiVersion": "2017-08-01",
-            "name": "[concat(parameters('sandboxFunctionAppNames')[copyIndex()], '-ai')]",
-            "type": "Microsoft.Resources/deployments",
-            "condition": "[parameters('deploySandbox')]",
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[concat(variables('deploymentUrlBase'), 'application-insights.json')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "appInsightsName": {
-                        "value": "[parameters('sandBoxFunctionAppNames')[copyIndex()]]"
-                    },
-                    "attachedService": {
-                        "value": "[parameters('sandBoxFunctionAppNames')[copyIndex()]]"
-                    }
-                }
-            },
-            "copy": {
-                "name": "AppInsightCopy",
-                "count": "[length(parameters('sandBoxFunctionAppNames'))]"
-            },
-            "dependsOn": []
-        },
-        {
-            "apiVersion": "2017-05-10",
+            "apiVersion": "2020-10-01",
             "name": "sql-database",
             "type": "Microsoft.Resources/deployments",
             "resourceGroup": "[parameters('sharedEnvResourceGroup')]",
@@ -539,5 +464,14 @@
             }
         }
     ],
-    "outputs": {}
+    "outputs": {
+        "ExternalApiActiveSandboxAppServiceName": {
+            "type": "string",
+            "value": "[variables('externalApiActiveSandboxAppServiceName')]"
+        },
+        "InternalApiActiveSandboxAppServiceName": {
+            "type": "string",
+            "value": "[variables('internalApiActiveSandboxAppServiceName')]"
+        }
+    }
 }
