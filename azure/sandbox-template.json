@@ -177,9 +177,6 @@
                     },
                     "keyVaultResourceGroup": {
                         "value": "[parameters('sharedManagementResourceGroup')]"
-                    },
-                    "serverFarmId": {
-                        "value": "[reference('sandbox-app-service-plan').outputs.appServicePlanId.value]"
                     }
                 }
             }
@@ -205,9 +202,6 @@
                     },
                     "keyVaultResourceGroup": {
                         "value": "[parameters('sharedManagementResourceGroup')]"
-                    },
-                    "serverFarmId": {
-                        "value": "[reference('sandbox-app-service-plan').outputs.appServicePlanId.value]"
                     }
                 }
             },
