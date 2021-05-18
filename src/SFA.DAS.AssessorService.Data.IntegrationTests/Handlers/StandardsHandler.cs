@@ -14,6 +14,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
                 "INSERT INTO [dbo].[Standards]" +
                     "([StandardUId]" +
                     ", [IFateReferenceNumber]" +
+                    ", [LarsCode]" +
                     ", [Version]" +
                     ", [Title]" +
                     ", [Level]" +
@@ -26,6 +27,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
                 "VALUES " +
                     "(@StandardUId" +
                     ", @iFateReferenceNumber" +
+                    ", @larsCode" +
                     ", @version" +
                     ", @title" +
                     ", @level" +

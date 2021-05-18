@@ -194,6 +194,47 @@ namespace SFA.DAS.AssessorService.Data
             return results;
         }
 
+        public async Task<IEnumerable<StandardOptions>> GetStandardOptionsForLatestStandardVersions()
+        {
+            var sql = @"SELECT ab1.[StandardUId]
+                              ,[IfateReferenceNumber]
+                              ,[LarsCode]
+                              ,[Version],[OptionName] FROM (
+                        SELECT ROW_NUMBER() OVER (PARTITION BY [IfateReferenceNumber] ORDER BY [Version] DESC ) rownumber
+                        , [StandardUId]
+                              ,[IfateReferenceNumber]
+                              ,[LarsCode]
+                              ,[Version]
+                          FROM [dbo].[Standards]
+                          ) ab1
+                          JOIN StandardOptions so2 on ab1.[StandardUId] = so2.StandardUId
+                          WHERE rownumber = 1
+                          ORDER BY [IfateReferenceNumber],[OptionName]";
+
+            var filterResults = await _unitOfWork.Connection.QueryMultipleAsync(
+                sql,
+                transaction: _unitOfWork.Transaction);
+
+            var standardVersionOptions = filterResults.Read<StandardVersionOption>();
+
+            var results = standardVersionOptions.GroupBy(version => new 
+                { 
+                    version.StandardUId, 
+                    version.LarsCode, 
+                    version.IfateReferenceNumber, 
+                    version.Version 
+                })
+                .Select(group => new StandardOptions { 
+                    StandardUId = group.Key.StandardUId,
+                    StandardReference = group.Key.IfateReferenceNumber,
+                    StandardCode = group.Key.LarsCode,
+                    Version = group.Key.Version,
+                    CourseOption = group.Select(opt => opt.OptionName)
+                });
+           
+            return results;
+        }
+
         public async Task<StandardOptions> GetStandardOptionsByStandardUId(string standardUId)
         {
             var sql = @"SELECT [StandardUId],[Version],[IFateReferenceNumber],[LarsCode] FROM [Standards] WHERE [StandardUId] = @standardUId
@@ -275,7 +316,7 @@ namespace SFA.DAS.AssessorService.Data
                 param: new { ifateReferenceNumber, version },
                 transaction: _unitOfWork.Transaction);
 
-            return results.FirstOrDefault();
+            return results.First();
         }
 
         private async Task<Standard> GetStandardByLarsCodeAndVersionInternal(int larsCode, string version)
@@ -290,7 +331,7 @@ namespace SFA.DAS.AssessorService.Data
                 param: new { larsCode, version },
                 transaction: _unitOfWork.Transaction);
 
-            return results.FirstOrDefault();
+            return results.First();
         }
 
         public async Task<List<Option>> GetOptions(int stdCode)
