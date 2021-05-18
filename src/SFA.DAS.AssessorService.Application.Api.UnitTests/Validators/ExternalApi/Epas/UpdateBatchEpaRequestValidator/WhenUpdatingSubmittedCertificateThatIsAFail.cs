@@ -31,7 +31,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
                 .With(i => i.CourseOption = null)
                 .With(i => i.UkPrn = 99999999)
                 .With(i => i.FamilyName = "Test")
-                .With(i => i.EpaDetails = new EpaDetails { Epas = epas, EpaReference = "9999999999-9" })
+                .With(i => i.EpaDetails = new EpaDetails { Epas = epas, EpaReference = "9999999999-99" })
                 .Build();
 
             _validationResult = await Validator.ValidateAsync(request);
