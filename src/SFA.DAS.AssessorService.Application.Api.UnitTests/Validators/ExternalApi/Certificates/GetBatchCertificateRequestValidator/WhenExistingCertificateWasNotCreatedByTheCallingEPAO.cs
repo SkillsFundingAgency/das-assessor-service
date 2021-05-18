@@ -28,26 +28,16 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
         }
 
         [Test]
-        public void ThenValidationResultShouldBeTrue()
+        public async Task Then_ValidationResultShouldBeTrue()
         {
             _validationResult.IsValid.Should().BeTrue();
         }
 
         [Test]
-        public void ThenIlrGetLearnerIsCalled()
+        public async Task Then_GetLearner_GetCertificate_GetEpaoStandards_AreCalledOnce()
         {
             IlrRepositoryMock.Verify(repo => repo.Get(_request.Uln, _request.StandardCode), Times.Once());
-        }
-
-        [Test]
-        public void ThenGetCertificateIsCalled()
-        {
             CertificateRepositoryMock.Verify(repo => repo.GetCertificate(_request.Uln, _request.StandardCode), Times.Once());
-        }
-
-        [Test]
-        public void ThenGetEpaoRegisteredStandardsIsCalled()
-        {
             StandardServiceMock.Verify(service => service.GetEpaoRegisteredStandards("99999999"), Times.Once());
         }
     }
