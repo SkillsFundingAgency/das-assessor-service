@@ -127,8 +127,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
             if (!approvedStandardVersions.Any(v => v.StandardUId == vm.StandardUId))
             {
-                //certSession.StandardUId = vm.StandardUId;
-                //SessionService.Set(nameof(CertificateSession), certSession);
                 SessionService.Set("AttemptedStandardVersion", vm.StandardUId);
                 
                 return RedirectToAction("NotApprovedToAssess", "CertificateVersionNotApproved", redirectToCheck ? new { redirectToCheck } : null);
