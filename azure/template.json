@@ -766,6 +766,10 @@
         "ExternalApiSandboxAppServiceName": {
             "type": "string",
             "value": "[variables('externalApiSandboxAppServiceName')]"
+        },
+        "StorageAccountName": {
+            "type": "string",
+            "value": "[variables('storageAccountName')]"
         }
     }
 }
