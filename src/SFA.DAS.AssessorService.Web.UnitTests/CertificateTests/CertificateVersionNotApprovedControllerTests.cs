@@ -38,7 +38,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
         {
             var result = _controller.NotApprovedToAssess() as ViewResult;
 
-            result.ViewName.Should().Be("~/Views/Certificate/NotApprovedForVersion.cshtml");
+            result.ViewName.Should().Be("~/Views/Certificate/VersionNotApproved.cshtml");
         }
 
         [Test]
