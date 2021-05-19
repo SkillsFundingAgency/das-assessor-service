@@ -751,7 +751,7 @@
             "type": "string",
             "value": "[variables('resourceGroupName')]"
         },
-        "UiAppService": {
+        "UiAppServiceName": {
             "type": "string",
             "value": "[variables('uiAppServiceName')]"
         },
