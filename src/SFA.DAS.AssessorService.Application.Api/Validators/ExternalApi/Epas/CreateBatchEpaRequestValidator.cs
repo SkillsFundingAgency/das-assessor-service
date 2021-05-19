@@ -28,7 +28,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Epas
                         var submittedCertificate = !(existingCertificate.Status == CertificateStatus.Draft || existingCertificate.Status == CertificateStatus.Deleted);
                         var outcomeIsAFail = certData.OverallGrade == CertificateGrade.Fail;
                         var outcomeIsAPass = !outcomeIsAFail;
-                        var canUpdateDraftCertificate = existingCertificate.Status == CertificateStatus.Draft && string.IsNullOrEmpty(certData.EpaDetails?.LatestEpaOutcome);
+                        var isDraftCertificate = existingCertificate.Status == CertificateStatus.Draft;
+                        var canUpdateDraftCertificate = string.IsNullOrEmpty(certData.EpaDetails?.LatestEpaOutcome);
 
                         if (submittedCertificate && outcomeIsAPass)
                         {
@@ -38,7 +39,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Epas
                         {
                             context.AddFailure(new ValidationFailure("EpaDetails", $"EPA already provided for the learner"));
                         }
-                        else if (!canUpdateDraftCertificate)
+                        else if (isDraftCertificate && !canUpdateDraftCertificate)
                         {
                             context.AddFailure(new ValidationFailure("EpaDetails", $"EPA already provided for the learner"));
                         }
