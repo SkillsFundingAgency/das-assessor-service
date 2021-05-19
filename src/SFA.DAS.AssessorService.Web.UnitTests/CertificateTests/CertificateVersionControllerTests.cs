@@ -337,5 +337,25 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
             result.ActionName.Should().Be("Option");
             _mockSessionService.Verify(s => s.Set("redirectedfromversion", true), Times.Never);
         }
+
+        public async Task When_RequestingSelectVersion_And_AttemptedStandardVersion_Then_SetStandardUIdToAttemptedStandardVersion()
+        {
+            _mockSessionService.Setup(s => s.Get("AttemptedStandardVersion")).Returns("ST0001_1.2");
+
+            var result = await _certificateVersionController.Version() as ViewResult;
+
+            var model = result.Model as CertificateVersionViewModel;
+
+            model.StandardUId.Should().Be("ST0001_1.2");
+        }
+
+        public async Task When_RequestingSelectVersion_And_AttemptedStandardVersion_Then_RemoveFromSession()
+        {
+            _mockSessionService.Setup(s => s.Get("AttemptedStandardVersion")).Returns("ST0001_1.2");
+
+            await _certificateVersionController.Version();
+
+            _mockSessionService.Verify(s => s.Remove("AttemptedStandardVersion"), Times.Once);
+        }
     }
 }

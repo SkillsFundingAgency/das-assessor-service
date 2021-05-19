@@ -80,6 +80,14 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
             viewModel.FromCertificate(certificate, certSession.Versions);
 
+            var attemptedStandardVersion = SessionService.Get("AttemptedStandardVersion");
+
+            if (attemptedStandardVersion != null)
+            {
+                viewModel.StandardUId = attemptedStandardVersion;
+                SessionService.Remove("AttemptedStandardVersion");
+            }
+
             Logger.LogInformation($"Got View Model of type CertificateVersionViewModel requested by {username}");
 
             return View(view, viewModel);
@@ -119,7 +127,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
             if (!approvedStandardVersions.Any(v => v.StandardUId == vm.StandardUId))
             {
-                SessionService.Set("AttemptedStandardVersion", standardVersion.Version);
+                //certSession.StandardUId = vm.StandardUId;
+                //SessionService.Set(nameof(CertificateSession), certSession);
+                SessionService.Set("AttemptedStandardVersion", vm.StandardUId);
                 
                 return RedirectToAction("NotApprovedToAssess", "CertificateVersionNotApproved", redirectToCheck ? new { redirectToCheck } : null);
             }
