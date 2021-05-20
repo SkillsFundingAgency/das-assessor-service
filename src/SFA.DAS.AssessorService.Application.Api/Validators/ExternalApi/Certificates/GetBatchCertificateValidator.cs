@@ -54,7 +54,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Certifi
 
                                     if (!certData.LearnerFamilyName.Equals(m.FamilyName, StringComparison.InvariantCultureIgnoreCase))
                                     {
-                                        context.AddFailure(new ValidationFailure("FamilyName", $"Invalid family name"));
+                                        context.AddFailure(new ValidationFailure("FamilyName", $"Cannot find apprentice with the specified Uln, FamilyName & Standard"));
                                     }
                                     else if (!EpaOutcome.Pass.Equals(certData.EpaDetails?.LatestEpaOutcome, StringComparison.InvariantCultureIgnoreCase))
                                     {
