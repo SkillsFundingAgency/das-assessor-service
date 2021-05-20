@@ -80,6 +80,14 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
             viewModel.FromCertificate(certificate, certSession.Versions);
 
+            var attemptedStandardVersion = SessionService.Get("AttemptedStandardVersion");
+
+            if (attemptedStandardVersion != null)
+            {
+                viewModel.StandardUId = attemptedStandardVersion;
+                SessionService.Remove("AttemptedStandardVersion");
+            }
+
             Logger.LogInformation($"Got View Model of type CertificateVersionViewModel requested by {username}");
 
             return View(view, viewModel);
@@ -88,12 +96,10 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [HttpPost(Name = "Version")]
         public async Task<IActionResult> Version(CertificateVersionViewModel vm)
         {
-            return await SaveViewModel(vm,
-                returnToIfModelNotValid: "~/Views/Certificate/Version.cshtml",
-                nextAction: RedirectToAction("Declare", "CertificateDeclaration"), action: CertificateActions.Version);
+            return await SaveViewModel(vm, nextAction: RedirectToAction("Declare", "CertificateDeclaration"), action: CertificateActions.Version);
         }
 
-        private async Task<IActionResult> SaveViewModel(CertificateVersionViewModel vm, string returnToIfModelNotValid, RedirectToActionResult nextAction, string action)
+        private async Task<IActionResult> SaveViewModel(CertificateVersionViewModel vm, RedirectToActionResult nextAction, string action)
         {
             var username = GetUsernameFromClaim();
             var epaoid = GetEpaOrgIdFromClaim();
@@ -112,7 +118,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             if (!ModelState.IsValid)
             {
                 Logger.LogInformation($"Model State not valid for CertificateVersionViewModel requested by {username} with Id {certificate.Id}. Errors: {ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage)}");
-                return View(returnToIfModelNotValid, vm);
+                return View("~/Views/Certificate/Version.cshtml", vm);
             }
 
             var standardVersion = await _standardVersionClient.GetStandardVersionById(vm.StandardUId);
@@ -121,11 +127,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
             if (!approvedStandardVersions.Any(v => v.StandardUId == vm.StandardUId))
             {
-                // Epao not approved for this version
-                ModelState.AddModelError("StandardUId", $"Your organisation is not approved to assess version {standardVersion.Version} of {standardVersion.Title}");
-                vm.Versions = certSession.Versions;
-                vm.BackToCheckPage = redirectToCheck;
-                return View(returnToIfModelNotValid, vm);
+                SessionService.Set("AttemptedStandardVersion", vm.StandardUId);
+                
+                return RedirectToAction("NotApprovedToAssess", "CertificateVersionNotApproved", redirectToCheck ? new { redirectToCheck } : null);
             }
 
             var versionChanged = certificate.StandardUId != vm.StandardUId;
