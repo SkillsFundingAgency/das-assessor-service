@@ -153,7 +153,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
         }
 
         [Test, MoqAutoData]
-        public async Task WhenPostingToSelectAVersion_WhenSavingModel_AndEpaoIsNotApprovedToRecordAGrade_ErrorsAndReturnsToSelectVersionsAndPersistsRedirectToCheckIfSet(CertificateVersionViewModel vm, StandardVersion standardVersion, CertificateSession session)
+        public async Task WhenPostingToSelectAVersion_AndEpaoIsNotApprovedForSelectedVersion_ThenRedirectToNotApprovedToAssessPage(CertificateVersionViewModel vm, StandardVersion standardVersion, CertificateSession session)
         {
             var sessionString = JsonConvert.SerializeObject(session);
             _mockSessionService.Setup(s => s.Get(nameof(CertificateSession))).Returns(sessionString);
@@ -165,15 +165,10 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
             _mockStandardVersionClient.Setup(s => s.GetEpaoRegisteredStandardVersions(EpaoId, session.StandardCode)).ReturnsAsync(approvedVersions);
             _mockStandardVersionClient.Setup(s => s.GetStandardOptions(vm.StandardUId)).ReturnsAsync(new StandardOptions());
 
-            var result = await _certificateVersionController.Version(vm) as ViewResult;
-            result.ViewName.Should().Be("~/Views/Certificate/Version.cshtml");
+            var result = await _certificateVersionController.Version(vm) as RedirectToActionResult;
 
-            var model = result.Model as CertificateVersionViewModel;
-            model.StandardUId.Should().Be(vm.StandardUId);
-            model.BackToCheckPage.Should().Be(true);
-
-            _certificateVersionController.ModelState.ErrorCount.Should().Be(1);
-            _certificateVersionController.ModelState.IsValid.Should().Be(false);
+            result.ActionName.Should().Be("NotApprovedToAssess");
+            result.ControllerName.Should().Be("CertificateVersionNotApproved");
         }
 
         [Test, MoqAutoData]
@@ -341,6 +336,26 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
             result.ControllerName.Should().Be("CertificateOption");
             result.ActionName.Should().Be("Option");
             _mockSessionService.Verify(s => s.Set("redirectedfromversion", true), Times.Never);
+        }
+
+        public async Task When_RequestingSelectVersion_And_AttemptedStandardVersion_Then_SetStandardUIdToAttemptedStandardVersion()
+        {
+            _mockSessionService.Setup(s => s.Get("AttemptedStandardVersion")).Returns("ST0001_1.2");
+
+            var result = await _certificateVersionController.Version() as ViewResult;
+
+            var model = result.Model as CertificateVersionViewModel;
+
+            model.StandardUId.Should().Be("ST0001_1.2");
+        }
+
+        public async Task When_RequestingSelectVersion_And_AttemptedStandardVersion_Then_RemoveFromSession()
+        {
+            _mockSessionService.Setup(s => s.Get("AttemptedStandardVersion")).Returns("ST0001_1.2");
+
+            await _certificateVersionController.Version();
+
+            _mockSessionService.Verify(s => s.Remove("AttemptedStandardVersion"), Times.Once);
         }
     }
 }
