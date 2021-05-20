@@ -29,7 +29,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
 
             _mockSessionService.Setup(s => s.Get("AttemptedStandardVersion")).Returns("ST0001_1.2");
 
-            _mockStandardVersionClient.Setup(c => c.GetStandardVersionByStandardUId("ST0001_1.2"))
+            _mockStandardVersionClient.Setup(c => c.GetStandardVersionById("ST0001_1.2"))
                 .ReturnsAsync(new StandardVersion { Version = "1.2" });
 
             _controller = new CertificateVersionNotApprovedController(
