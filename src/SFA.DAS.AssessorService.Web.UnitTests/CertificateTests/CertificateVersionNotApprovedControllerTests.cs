@@ -35,9 +35,6 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
                 .ReturnsAsync(new StandardVersion { Version = "1.2" });
 
             _controller = new CertificateVersionNotApprovedController(
-                Mock.Of<ILogger<CertificateController>>(),
-                Mock.Of<IHttpContextAccessor>(),
-                Mock.Of<ICertificateApiClient>(),
                 _mockStandardVersionClient.Object,
                 _mockSessionService.Object);
         }

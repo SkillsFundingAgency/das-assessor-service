@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.ViewModels.Certificate;
@@ -12,26 +11,27 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 {
     [Authorize]
     [Route("certificate/version")]
-    public class CertificateVersionNotApprovedController : CertificateBaseController
+    public class CertificateVersionNotApprovedController : Controller
     {
         private readonly IStandardVersionClient _standardVersionClient;
-        public CertificateVersionNotApprovedController(ILogger<CertificateController> logger, IHttpContextAccessor contextAccessor,
-            ICertificateApiClient certificateApiClient, IStandardVersionClient standardVersionClient, ISessionService sessionService)
-            : base(logger, contextAccessor, certificateApiClient, sessionService)
+        private readonly ISessionService _sessionService;
+
+        public CertificateVersionNotApprovedController(IStandardVersionClient standardVersionClient, ISessionService sessionService)
         {
             _standardVersionClient = standardVersionClient;
+            _sessionService = sessionService;
         }
 
         [HttpGet("not-approved")]
         public async Task<IActionResult> NotApprovedToAssess(bool? redirectToCheck = false)
         {
-            var sessionString = SessionService.Get(nameof(CertificateSession));
-            if (sessionString == null)
+            var sessionString = _sessionService.Get(nameof(CertificateSession));
+            var standardUId = _sessionService.Get("AttemptedStandardVersion");
+
+            if (sessionString == null || standardUId == null)
             {
                 return RedirectToAction("Index", "Search");
             }
-
-            var standardUId = SessionService.Get("AttemptedStandardVersion");
 
             var standardVersion = await _standardVersionClient.GetStandardVersionByStandardUId(standardUId);
 
