@@ -124,10 +124,7 @@
                         "value": "[parameters('aspInstances')]"
                     }
                 }
-            },
-            "dependsOn": [
-                "[variables('resourceGroupName')]"
-            ]
+            }
         },
         {
             "type": "Microsoft.Resources/deployments",
@@ -182,10 +179,7 @@
                         "value": "[parameters('sharedManagementResourceGroup')]"
                     }
                 }
-            },
-            "dependsOn": [
-                "[variables('resourceGroupName')]"
-            ]
+            }
         },
         {
             "apiVersion": "2020-10-01",
@@ -210,10 +204,7 @@
                         "value": "[parameters('sharedManagementResourceGroup')]"
                     }
                 }
-            },
-            "dependsOn": [
-                "[variables('resourceGroupName')]"
-            ]
+            }
         },
         {
             "apiVersion": "2020-10-01",
@@ -398,10 +389,7 @@
                         "value": "[variables('externalApiActiveSandboxAppServiceName')]"
                     }
                 }
-            },
-            "dependsOn": [
-                "[variables('resourceGroupName')]"
-            ]
+            }
         },
         {
             "apiVersion": "2020-10-01",
@@ -423,10 +411,7 @@
                         "value": "[variables('internalApiActiveSandboxAppServiceName')]"
                     }
                 }
-            },
-            "dependsOn": [
-                "[variables('resourceGroupName')]"
-            ]
+            }
         },
         {
             "apiVersion": "2020-10-01",
