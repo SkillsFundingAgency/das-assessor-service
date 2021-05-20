@@ -14,6 +14,7 @@ using SFA.DAS.AssessorService.Domain.Exceptions;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using SFA.DAS.Testing.AutoFixture;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -127,6 +128,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Epas
             Certificate certificate)
         {
             //Arrange
+            certificateData.EpaDetails = new EpaDetails { Epas = new List<EpaRecord>() }; // reset details for fail.
             certificate.CertificateData = JsonConvert.SerializeObject(certificateData);
             _mockCertificateRepository.Setup(s => s.GetCertificate(request.Uln, request.StandardCode)).ReturnsAsync((Certificate)null);
             _mockMediator.Setup(s => s.Send(It.IsAny<StartCertificateRequest>(), new CancellationToken())).ReturnsAsync(certificate);
@@ -144,7 +146,5 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Epas
             certificate.Status.Should().Be(CertificateStatus.Submitted);
             _mockCertificateRepository.Verify(s => s.Update(It.IsAny<Certificate>(), "API", epaAction, true, null), Times.Once);
         }
-
-
     }
 }
