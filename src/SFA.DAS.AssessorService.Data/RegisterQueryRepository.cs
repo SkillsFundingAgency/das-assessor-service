@@ -238,10 +238,7 @@ namespace SFA.DAS.AssessorService.Data
                 var standard = await connection.QueryAsync<OrganisationStandardSummary, StandardCollation, OrganisationStandardSummary>(
                     sqlForStandardByOrganisationId, (summary, collation) =>
                     {
-                        summary.StandardCollation = new StandardCollation()
-                        {
-                            Title = collation.Title
-                        };
+                        summary.StandardCollation = collation;
                         return summary;
                     }, new {organisationId});
                 
