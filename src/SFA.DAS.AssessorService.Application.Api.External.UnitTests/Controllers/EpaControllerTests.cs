@@ -20,7 +20,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.UnitTests.Controllers
     public class EpaControllerTests
     {
         [Test, MoqAutoData]
-        public async Task When_CreatintEpaRecord_CallsInternalApi_Then_ReturnEpaResponseWithResponseCode200(
+        public async Task When_CreatingEpaRecord_CallsInternalApi_Then_ReturnEpaResponseWithResponseCode200(
             [Frozen] Mock<IHeaderInfo> headerInfo,
             [Frozen] Mock<IApiClient> apiClient,
             CreateEpaRequest request,
@@ -44,6 +44,26 @@ namespace SFA.DAS.AssessorService.Application.Api.External.UnitTests.Controllers
             var model = result.Value as IEnumerable<CreateEpaResponse>;
 
             model.Should().BeEquivalentTo(response);
+        }
+
+        [Test, MoqAutoData]
+        public async Task When_CreatingEpaRecord_WithTooManyRequestsInBatch_CallsInternalApi_Then_ReturnApiResponseWithResponseCode403(
+            CreateEpaRequest request,
+            EpaController sut)
+        {
+            //Arrange
+            var requests = new List<CreateEpaRequest>();
+            for(var i = 0; i < 26; i++)
+            {
+                requests.Add(request);
+            }
+
+            //Act
+            var result = await sut.CreateEpaRecords(requests) as ObjectResult;
+
+            //Assert
+            result.StatusCode.Should().Be((int)HttpStatusCode.Forbidden);
+            ((ApiResponse)result.Value).Message.Should().Be("Batch limited to 25 requests");
         }
 
         [Test, MoqAutoData]
@@ -72,6 +92,27 @@ namespace SFA.DAS.AssessorService.Application.Api.External.UnitTests.Controllers
             var model = result.Value as IEnumerable<UpdateEpaResponse>;
 
             model.Should().BeEquivalentTo(response);
+        }
+
+
+        [Test, MoqAutoData]
+        public async Task When_UpdatingEpaRecord_WithTooManyRequestsInBatch_CallsInternalApi_Then_ReturnApiResponseWithResponseCode403(
+            UpdateEpaRequest request,
+            EpaController sut)
+        {
+            //Arrange
+            var requests = new List<UpdateEpaRequest>();
+            for (var i = 0; i < 26; i++)
+            {
+                requests.Add(request);
+            }
+
+            //Act
+            var result = await sut.UpdateEpaRecords(requests) as ObjectResult;
+
+            //Assert
+            result.StatusCode.Should().Be((int)HttpStatusCode.Forbidden);
+            ((ApiResponse)result.Value).Message.Should().Be("Batch limited to 25 requests");
         }
 
         [Test, MoqAutoData]
