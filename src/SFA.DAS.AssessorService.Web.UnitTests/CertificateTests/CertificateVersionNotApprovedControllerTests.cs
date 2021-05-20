@@ -27,8 +27,6 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
             _mockSessionService = new Mock<ISessionService>();
             _mockStandardVersionClient = new Mock<IStandardVersionClient>();
 
-            _mockSessionService.Setup(s => s.Get(nameof(CertificateSession))).Returns("string");
-
             _mockSessionService.Setup(s => s.Get("AttemptedStandardVersion")).Returns("ST0001_1.2");
 
             _mockStandardVersionClient.Setup(c => c.GetStandardVersionByStandardUId("ST0001_1.2"))
@@ -58,9 +56,9 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
         }
 
         [Test]
-        public async Task When_RequestingCertificateVersionNotApproved_And_NoCertificateStoredInSession_Then_RedirectToRecordAGradeSearch()
+        public async Task When_RequestingCertificateVersionNotApproved_And_NoAttemptedVersionIsStoredInSession_Then_RedirectToRecordAGradeSearch()
         {
-            _mockSessionService.Setup(s => s.Get(nameof(CertificateSession))).Returns((string)null);
+            _mockSessionService.Setup(s => s.Get("AttemptedStandardVersion")).Returns((string)null);
 
             var result = await _controller.NotApprovedToAssess() as RedirectToActionResult;
 

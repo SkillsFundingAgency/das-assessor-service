@@ -25,10 +25,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [HttpGet("not-approved")]
         public async Task<IActionResult> NotApprovedToAssess(bool? redirectToCheck = false)
         {
-            var sessionString = _sessionService.Get(nameof(CertificateSession));
             var standardUId = _sessionService.Get("AttemptedStandardVersion");
 
-            if (sessionString == null || standardUId == null)
+            if (standardUId == null)
             {
                 return RedirectToAction("Index", "Search");
             }
