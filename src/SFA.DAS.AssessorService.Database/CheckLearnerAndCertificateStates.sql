@@ -100,10 +100,10 @@ ON it1.larscode = os2.standardcode
 WHERE 1=1
 GROUP BY it1.EndPointAssessorOrganisationId, it1.larscode, it1.uln
 ) it2 
-) -- end of WhoCanSeeCertificate
+) -- end of WhoCanSeeILR
 -- Main Query
 SELECT  
-"Rule No", 
+"Rule No", Variant,
 CASE "Rule No" WHEN 1 THEN 'Certificate Submitted'
                WHEN 2 THEN 'EPA Fail'
 			   WHEN 3 THEN 'EPA Pass'
@@ -120,7 +120,9 @@ What_is_allowed_for_ILR "What can EPAO do with ILR",
 uln, familyname, StandardReference, Larscode, "Version", "Has certificate", "Status=Deleted", OverallGrade, "Status=Draft","Status=Submitted", LatestEpaOutcome, AchievementDate, "Has ILR"
 FROM
 (
-SELECT ROW_NUMBER() OVER (PARTITION BY "Rule No", Larscode ORDER BY ULN) rownumber, *
+SELECT ROW_NUMBER() OVER (PARTITION BY "Rule No", Larscode ORDER BY ULN) rownumber, 
+row_number() OVER (PARTITION BY "Rule No", What_is_allowed_for_Certificate, What_is_allowed_for_ILR, "Has ILR", "Has certificate" order by certificate_createdAt desc) Variant,
+*
 FROM (
 --matches to the GET Certificate rules
 SELECT  ab2.uln, familyname, StandardReference, ab2.Larscode, "Has certificate", "Status=Deleted", OverallGrade, "Status=Draft","Status=Submitted", LatestEpaOutcome, AchievementDate, "Version", "Has ILR",
@@ -144,7 +146,7 @@ WHEN "Has certificate" = 'N'                                                    
 -- 9. No match
 WHEN "Has certificate" = 'N'                                                                                                                                                                        AND "Has ILR" = 'N' THEN 9 
 -- bad data ?
-ELSE 9 END "Rule No", certificate_by_EPAOrgId, ILR_for_EPAOrgId, @epaorgid Chosen_EPAO, What_is_allowed_for_Certificate, 
+ELSE 9 END "Rule No", certificate_by_EPAOrgId, certificate_CreatedAt, ILR_for_EPAOrgId, @epaorgid Chosen_EPAO, What_is_allowed_for_Certificate, 
 CASE WHEN What_is_allowed_for_ILR IS NULL THEN 'No match' ELSE What_is_allowed_for_ILR END What_is_allowed_for_ILR
 FROM
 (
@@ -161,11 +163,12 @@ SELECT
 ,MAX(CASE WHEN recordType = 'ILR' THEN 'Y' ELSE 'N' END) "Has ILR"
 ,MAX(CASE WHEN recordType = 'ILR' THEN status ELSE NULL END) ILR_status
 ,MAX(CASE WHEN recordType = 'certificate' THEN EpaOrgId ELSE NULL END) certificate_by_EPAOrgId
+,MAX(CASE WHEN recordType = 'certificate' THEN CreatedAt ELSE NULL END) certificate_CreatedAt
 ,MAX(CASE WHEN recordType = 'ILR' THEN EpaOrgId ELSE NULL END) ILR_for_EPAOrgId
 
 FROM 
 (
-select   'certificate' recordType,
+select   'certificate' recordType,ce1.CreatedAt,
   ce1.uln, json_value(ce1.certificatedata, '$.LearnerFamilyName') FamilyName, json_value(ce1.certificatedata, '$.StandardReference') StandardReference, ce1.standardcode Larscode, 
   ce1.Status,
   json_value(ce1.certificatedata, '$.EpaDetails.LatestEpaOutcome') LatestEpaOutcome, 
@@ -178,7 +181,7 @@ join Organisations og1 on og1.id = ce1.OrganisationId
 --
 UNION ALL
 --
-SELECT  'ILR' recordType,
+SELECT  'ILR' recordType,il1.CreatedAt,
 il1.uln, il1.FamilyName, (select top 1 IFateReferenceNumber from Standards so1 where so1.LarsCode = il1.stdcode) StandardReference, il1.stdcode Larscode,
 CASE il1.completionstatus WHEN 1 THEN 'Active' WHEN 2 THEN 'Complete' WHEN 3 THEN  'Withdrawn' WHEN 6 THEN   'Temporarily Withdrawn' ELSE 'Invalid' END status,
 NULL LatestEpaOutcome, NULL OverallGrade, NULL AchievementDate, Null Version,  EpaOrgId
@@ -192,7 +195,9 @@ LEFT JOIN WhoCanSeeILR wt1 on wt1.larscode = ab2.Larscode and wt1.uln = ab2.Uln
 ) ab3
 
 ) ab4
-WHERE rownumber = 1
---AND "Rule No" = 9
+WHERE 1=1
+--AND rownumber = 1
+AND Variant = 1
+--AND "Rule No" = 1
 --AND "Rule No" NOT IN (0,1)
-ORDER BY "Rule No", larscode
+ORDER BY "Rule No", certificate_createdAt desc, larscode
