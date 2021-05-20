@@ -13,7 +13,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Epas
     {
         public BatchEpaRequestValidator(IStringLocalizer<BatchEpaRequestValidator> localiser, IOrganisationQueryRepository organisationQueryRepository, IIlrRepository ilrRepository, IStandardService standardService)
         {
-            var invalidVersionForStandard = false;
+            var invalidVersionOrStandardMismatch = false;
             RuleFor(m => m.UkPrn).InclusiveBetween(10000000, 99999999).WithMessage("The UKPRN should contain exactly 8 numbers");
 
             RuleFor(m => m.FamilyName).NotEmpty().WithMessage("Provide apprentice family name");
@@ -26,6 +26,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Epas
                         var standard = await standardService.GetStandardVersionById(m.StandardReference);
                         if (m.StandardCode != standard?.LarsCode)
                         {
+                            invalidVersionOrStandardMismatch = true;
                             context.AddFailure("StandardReference and StandardCode must be for the same Standard");
                         }
                     }
@@ -38,9 +39,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Epas
                 {
                     // If Version specified but StandardUId not populated, must be invalid version
                     // Otherwise we assume the auto-select process succeeded.
-                    if (string.IsNullOrWhiteSpace(m.StandardUId))
+                    if (string.IsNullOrWhiteSpace(m.StandardUId) && !invalidVersionOrStandardMismatch)
                     {
-                        invalidVersionForStandard = true;
+                        invalidVersionOrStandardMismatch = true;
                         context.AddFailure(new ValidationFailure("Standard", "Invalid version for Standard"));
                     }
                 });
@@ -72,13 +73,13 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Epas
                     RuleFor(m => m).CustomAsync(async (m, context, canellation) =>
                     {
                         var requestedIlr = await ilrRepository.Get(m.Uln, m.StandardCode);
-                        var sumbittingEpao = await organisationQueryRepository.GetByUkPrn(m.UkPrn);
+                        var submittingEpao = await organisationQueryRepository.GetByUkPrn(m.UkPrn);
 
                         if (requestedIlr is null || !string.Equals(requestedIlr.FamilyName, m.FamilyName, StringComparison.InvariantCultureIgnoreCase))
                         {
                             context.AddFailure(new ValidationFailure("Uln", "ULN, FamilyName and Standard not found."));
                         }
-                        else if (sumbittingEpao is null)
+                        else if (submittingEpao is null)
                         {
                             context.AddFailure(new ValidationFailure("UkPrn", "Specified UKPRN not found"));
                         }
@@ -92,13 +93,13 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Epas
                         }
                         else
                         {
-                            var providedStandardVersions = await standardService.GetEPAORegisteredStandardVersions(sumbittingEpao.EndPointAssessorOrganisationId, m.StandardCode);
+                            var providedStandardVersions = await standardService.GetEPAORegisteredStandardVersions(submittingEpao.EndPointAssessorOrganisationId, m.StandardCode);
 
                             if (!providedStandardVersions.Any())
                             {
                                 context.AddFailure(new ValidationFailure("StandardCode", "Your organisation is not approved to assess this Standard"));
                             }
-                            else if (!(invalidVersionForStandard || providedStandardVersions.Any(v => v.Version.Equals(m.Version, StringComparison.InvariantCultureIgnoreCase))))
+                            else if (!(invalidVersionOrStandardMismatch || providedStandardVersions.Any(v => v.Version.Equals(m.Version, StringComparison.InvariantCultureIgnoreCase))))
                             {
                                 context.AddFailure(new ValidationFailure("Version", $"Your organisation is not approved to assess this Standard Version: {m.Version}"));
                             }

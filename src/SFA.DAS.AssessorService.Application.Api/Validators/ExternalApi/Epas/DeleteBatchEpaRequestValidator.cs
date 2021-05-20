@@ -80,20 +80,17 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Epas
                     }
                     else
                     {
+                        var certData = JsonConvert.DeserializeObject<CertificateData>(existingCertificate.CertificateData);
                         switch (existingCertificate.Status)
                         {
                             case CertificateStatus.Deleted:
-                                break;
                             case CertificateStatus.Draft:
-                                var certData = JsonConvert.DeserializeObject<CertificateData>(existingCertificate.CertificateData);
-
-                                if (!string.IsNullOrEmpty(certData.OverallGrade) && certData.AchievementDate.HasValue && !string.IsNullOrEmpty(certData.ContactPostCode))
+                                break;
+                            default:
+                                if (!string.IsNullOrEmpty(certData.OverallGrade) && certData.OverallGrade != CertificateGrade.Fail)
                                 {
                                     context.AddFailure(new ValidationFailure("EpaReference", $"Certificate already exists, cannot delete EPA record"));
                                 }
-                                break;
-                            default:
-                                context.AddFailure(new ValidationFailure("EpaReference", $"Certificate already exists, cannot delete EPA record"));
                                 break;
                         }
                     }

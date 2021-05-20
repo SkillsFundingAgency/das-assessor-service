@@ -69,11 +69,14 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
                 }
                 else if (certificate.Status == CertificateStatus.Submitted && certData.OverallGrade == CertificateGrade.Fail)
                 {
-                    _logger.LogInformation($"Starting retake of apprenticeship for ULN: {certificate.Uln}, Standard: {certificate.StandardCode}");
+                    _logger.LogInformation($"Restarting apprenticeship for ULN: {certificate.Uln}, Standard: {certificate.StandardCode}");
 
+                    certData.AchievementDate = null;
+                    certData.OverallGrade = null;
+                    certificate.CertificateData = JsonConvert.SerializeObject(certData);
                     certificate.Status = CertificateStatus.Draft;
-
-                    await _certificateRepository.Update(certificate, request.Username, CertificateActions.StartRetake, updateLog: true, "Retake failed apprenticeship");
+                    
+                    await _certificateRepository.Update(certificate, request.Username, CertificateActions.Restart, updateLog: true);
                 }
             }
 

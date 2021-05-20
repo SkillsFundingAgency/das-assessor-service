@@ -44,6 +44,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
             // These allow us to test EPAs, which is the initial stage of a Certificate
             certificateRepositoryMock.Setup(q => q.GetCertificate(1234567890, 101)).ReturnsAsync(GenerateEpaCertificate(1234567890, 101, "test", new Guid("12345678123456781234567812345678"), true));
             certificateRepositoryMock.Setup(q => q.GetCertificate(9999999999, 101)).ReturnsAsync(GenerateEpaCertificate(9999999999, 101, "test", new Guid("99999999999999999999999999999999"), false));
+            certificateRepositoryMock.Setup(q => q.GetCertificate(9876543210, 101)).ReturnsAsync(GenerateEpaCertificate(9876543210, 101, "test", new Guid("99999999999999999999999999999999"), false));
 
             // This allows us to test, retrieving by ilr data if the calling organisation was not the one that created it
             certificateRepositoryMock.Setup(q => q.GetCertificateByOrgIdLastname(1234567890, "99999999", "Test"))
@@ -174,6 +175,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
             ilrRepositoryMock.Setup(q => q.Get(9999999999, 1)).ReturnsAsync(GenerateIlr(9999999999, 1, "Test", "99999999", CompletionStatus.Complete));
             ilrRepositoryMock.Setup(q => q.Get(9999999999, 99)).ReturnsAsync(GenerateIlr(9999999999, 99, "Test", "99999999", CompletionStatus.Complete));
             ilrRepositoryMock.Setup(q => q.Get(9999999999, 101)).ReturnsAsync(GenerateIlr(9999999999, 101, "Test", "99999999", CompletionStatus.Complete));
+            ilrRepositoryMock.Setup(q => q.Get(9876543210, 101)).ReturnsAsync(GenerateIlr(9876543210, 101, "Test", "99999999", CompletionStatus.Complete));
 
             // Leave this ILR without a EPA or a Certificate!
             ilrRepositoryMock.Setup(q => q.Get(5555555555, 1)).ReturnsAsync(GenerateIlr(5555555555, 1, "Test", "12345678", CompletionStatus.Complete));
@@ -215,7 +217,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
                 .Build();
         }
 
-        private static Certificate GenerateEpaCertificate(long uln, int standardCode, string familyName, Guid organisationId, bool hasPassedEpa)
+        private static Certificate GenerateEpaCertificate(long uln, int standardCode, string familyName, Guid organisationId, bool hasPassedEpa, bool createEpaDetails = true)
         {
             // NOTE: This is to simulate a certificate that has only the EPA part submitted
             var reference = $"{uln}-{standardCode}";
@@ -225,13 +227,18 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
             .With(i => i.EpaOutcome = hasPassedEpa ? EpaOutcome.Pass : EpaOutcome.Fail)
             .Build().ToList();
 
-            var epaDetails = new EpaDetails
+            var epaDetails = new EpaDetails();
+
+            if (createEpaDetails)
             {
-                EpaReference = reference,
-                LatestEpaDate = epas[0].EpaDate,
-                LatestEpaOutcome = epas[0].EpaOutcome,
-                Epas = epas
-            };
+                epaDetails = new EpaDetails
+                {
+                    EpaReference = reference,
+                    LatestEpaDate = epas[0].EpaDate,
+                    LatestEpaOutcome = epas[0].EpaOutcome,
+                    Epas = epas
+                };
+            }
 
             return Builder<Certificate>.CreateNew()
                 .With(i => i.Uln = uln)
