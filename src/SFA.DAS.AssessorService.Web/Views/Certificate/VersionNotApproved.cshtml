@@ -3,9 +3,11 @@
 @{
     ViewBag.Title = $"Error: Your Organisation is not currently approved to assess version {Model.AttemptedVersion}";
     Layout = "_DashboardLayout";
+
+    var routeData = Model.BackToCheckPage ? new Dictionary<string, string>() { { "redirectToCheck", "True" } } : null;
 }
 
-<a class="govuk-back-link" asp-controller="CertificateVersion" asp-action="Version" asp-route-redirectToCheck="@(Model.BackToCheckPage)">Back</a>
+<a class="govuk-back-link" asp-controller="CertificateVersion" asp-action="Version" asp-all-route-data="routeData">Back</a>
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
 
