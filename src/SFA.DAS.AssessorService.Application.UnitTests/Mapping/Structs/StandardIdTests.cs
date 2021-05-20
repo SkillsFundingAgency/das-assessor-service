@@ -35,7 +35,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Mapping.Structs
         [Test, AutoData]
         public void WhenCreatingStandardId_With_IFateReferenceNumber_SetsUpCorrectly()
         {
-            string ifateReferenceNumber = fixture.Create<string>().Substring(0, 6);
+            string ifateReferenceNumber = string.Concat(fixture.Create<string>().Substring(0, 5),"A");
             var id = new StandardId(ifateReferenceNumber);
 
             id.IdType.Should().Be(StandardId.StandardIdType.IFateReferenceNumber);

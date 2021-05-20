@@ -1,7 +1,9 @@
-﻿using MediatR;
+﻿using FluentValidation;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Api.Types.Models.ExternalApi.Epas;
 using SFA.DAS.AssessorService.Application.Api.Extensions;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
@@ -24,14 +26,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.ExternalApi
     public class EpaBatchController : Controller
     {
         private readonly IMediator _mediator;
-        private readonly CreateBatchEpaRequestValidator _createValidator;
-        private readonly UpdateBatchEpaRequestValidator _updateValidator;
-        private readonly DeleteBatchEpaRequestValidator _deleteValidator;
+        private readonly IValidator<CreateBatchEpaRequest> _createValidator;
+        private readonly IValidator<UpdateBatchEpaRequest> _updateValidator;
+        private readonly IValidator<DeleteBatchEpaRequest> _deleteValidator;
 
         public EpaBatchController(IMediator mediator,
-            CreateBatchEpaRequestValidator createValidator,
-            UpdateBatchEpaRequestValidator updateValidator,
-            DeleteBatchEpaRequestValidator deleteValidator)
+            IValidator<CreateBatchEpaRequest> createValidator,
+            IValidator<UpdateBatchEpaRequest> updateValidator,
+            IValidator<DeleteBatchEpaRequest> deleteValidator)
         {
             _mediator = mediator;
             _createValidator = createValidator;
@@ -52,7 +54,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.ExternalApi
                 var validationErrors = new List<string>();
                 var isRequestValid = false;
                 Standard standard = null;
-                
+
                 if (!string.IsNullOrEmpty(request.Version))
                 {
                     standard = await _mediator.Send(
@@ -100,9 +102,23 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.ExternalApi
 
             foreach (var request in batchRequest)
             {
-                var standard = await _mediator.Send(
-                    new GetStandardVersionRequest { StandardId = request.GetStandardId(), Version = request.Version });
-                request.PopulateMissingFields(standard);
+                Standard standard = null;
+                if (!string.IsNullOrEmpty(request.Version))
+                {
+                    standard = await _mediator.Send(
+                        new GetStandardVersionRequest { StandardId = request.GetStandardId(), Version = request.Version });
+                }
+                else
+                {
+                    standard = await _mediator.Send(new GetCalculatedStandardVersionForApprenticeshipRequest { StandardId = request.GetStandardId(), Uln = request.Uln });
+                }
+
+                // Get Existing Certificate if it exists
+                if (standard != null)
+                {
+                    var existingCertificate = await _mediator.Send(new GetCertificateForUlnRequest { StandardCode = standard.LarsCode, Uln = request.Uln });
+                    request.PopulateMissingFields(standard, existingCertificate);
+                }
 
                 var validationResult = await _updateValidator.ValidateAsync(request);
                 var isRequestValid = validationResult.IsValid;

@@ -47,6 +47,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Epas
             _logger.LogInformation("UpdateEpaDetails Before Combining EpaDetails");
             var certData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
             certData.EpaDetails = new EpaDetails { EpaReference = certificate.CertificateReference, Epas = new List<EpaRecord>() };
+            certData.Version = string.IsNullOrWhiteSpace(request.Version) ? null : request.Version;
+            certData.CourseOption = string.IsNullOrWhiteSpace(request.CourseOption) ? null : request.CourseOption;
 
             if (request.EpaDetails?.Epas != null)
             {
@@ -61,11 +63,26 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Epas
             certData.EpaDetails.LatestEpaDate = latestEpaRecord?.EpaDate;
             certData.EpaDetails.LatestEpaOutcome = latestEpaRecord?.EpaOutcome;
 
+            var epaAction = CertificateActions.Epa;
+            if (latestEpaRecord?.EpaOutcome.Equals(EpaOutcome.Fail, System.StringComparison.InvariantCultureIgnoreCase) == true)
+            {
+                certData.AchievementDate = latestEpaRecord?.EpaDate;
+                certData.OverallGrade = CertificateGrade.Fail;
+                certificate.Status = CertificateStatus.Submitted;
+                epaAction = CertificateActions.Submit;
+            }
+            else
+            {
+                certData.AchievementDate = null;
+                certData.OverallGrade = null;
+                certificate.Status = CertificateStatus.Draft;
+            }
+
             _logger.LogInformation("UpdateEpaDetails Before Update CertificateData");
             certificate.CertificateData = JsonConvert.SerializeObject(certData);
 
             _logger.LogInformation("UpdateEpaDetails Before Update Cert in db");
-            await _certificateRepository.Update(certificate, ExternalApiConstants.ApiUserName, CertificateActions.Epa);
+            await _certificateRepository.Update(certificate, ExternalApiConstants.ApiUserName, epaAction);
 
             return certData.EpaDetails;
         }

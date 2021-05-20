@@ -9,9 +9,9 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalApi.Epas.CreateBatchEpaRequestValidator
+namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalApi.Epas.UpdateBatchEpaRequestValidator
 {
-    public class WhenEpaExists : CreateBatchEpaRequestValidatorTestBase
+    public class WhenUpdatingSubmittedCertificateThatIsAFail : UpdateBatchEpaRequestValidatorTestBase
     {
         private ValidationResult _validationResult;
 
@@ -23,26 +23,24 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
                 .With(i => i.EpaOutcome = EpaOutcome.Pass)
                 .Build().ToList();
 
-            var request = Builder<CreateBatchEpaRequest>.CreateNew()
-                .With(i => i.Uln = 1234567890)
-                .With(i => i.StandardCode = 101)
+            var request = Builder<UpdateBatchEpaRequest>.CreateNew()
+                .With(i => i.Uln = 9999999999)
+                .With(i => i.StandardCode = 99)
                 .With(i => i.StandardReference = null)
                 .With(i => i.Version = "1.0")
                 .With(i => i.CourseOption = null)
-                .With(i => i.UkPrn = 12345678)
+                .With(i => i.UkPrn = 99999999)
                 .With(i => i.FamilyName = "Test")
-                .With(i => i.EpaDetails = new EpaDetails { Epas = epas })
+                .With(i => i.EpaDetails = new EpaDetails { Epas = epas, EpaReference = "9999999999-99" })
                 .Build();
 
             _validationResult = await Validator.ValidateAsync(request);
         }
 
         [Test]
-        public void ThenValidationResultShouldBeFalse()
+        public void ThenValidationResultShouldBeTrue()
         {
-            _validationResult.IsValid.Should().BeFalse();
-            _validationResult.Errors.Count.Should().Be(1);
-            _validationResult.Errors.First().ErrorMessage.Should().Be("EPA already provided for the learner");
+            _validationResult.IsValid.Should().BeTrue();
         }
     }
 }

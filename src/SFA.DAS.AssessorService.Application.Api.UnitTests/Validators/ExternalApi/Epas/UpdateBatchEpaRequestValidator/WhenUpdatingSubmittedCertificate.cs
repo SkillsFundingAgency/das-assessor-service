@@ -42,6 +42,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
         {
             _validationResult.IsValid.Should().BeFalse();
             _validationResult.Errors.Count.Should().Be(1);
+            _validationResult.Errors.First().ErrorMessage.Should().Be("Certificate already exists, cannot update EPA record");
         }
     }
 
