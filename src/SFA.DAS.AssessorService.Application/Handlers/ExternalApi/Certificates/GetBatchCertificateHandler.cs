@@ -55,10 +55,15 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
 
             certificate = await CertificateHelpers.ApplyStatusInformation(_certificateRepository, _contactQueryRepository, certificate);
 
-            if (!EpaOutcome.Pass.Equals(certData.EpaDetails?.LatestEpaOutcome, StringComparison.InvariantCultureIgnoreCase))
+            if ((certificate.Status == CertificateStatus.Submitted || CertificateStatus.HasPrintProcessStatus(certificate.Status)) && certData.OverallGrade == CertificateGrade.Fail)
             {
-                // As EPA has not passed, only give access to basic information & EPA Details
-                certificate = RedactCertificateInformation(certificate, true);
+                return null;
+            }
+            else if (certificate.Status == CertificateStatus.Draft && 
+                EpaOutcome.Pass.Equals(certData.EpaDetails?.LatestEpaOutcome, StringComparison.InvariantCultureIgnoreCase) && 
+                certData.OverallGrade == null)
+            {
+                return null;
             }
 
             if (certificate.OrganisationId != searchingOrganisation.Id)

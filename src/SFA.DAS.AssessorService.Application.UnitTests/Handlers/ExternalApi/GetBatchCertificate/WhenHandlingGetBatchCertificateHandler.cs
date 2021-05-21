@@ -7,6 +7,7 @@ using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models.ExternalApi.Certificates;
 using SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using System;
@@ -138,16 +139,29 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ExternalApi.Get
             result.Should().BeNull();
         }
 
-        [TestCase("Fail")]
-        [TestCase("Withdrawn")]
-        public async Task And_LatestEpaOutComeIsNotPass_Then_ReturnNull(string epaOutcome)
+        [Test]
+        public async Task And_OverallGradeIsFail_And_CertificateStatusIsSubmitted_Then_ReturnNull()
         {
-            _certificateData.EpaDetails.LatestEpaOutcome = epaOutcome;
+            _certResponse.Status = CertificateStatus.Submitted;
+            _certificateData.OverallGrade = CertificateGrade.Fail;
             RefreshCertificateResponse();
 
             var result = await _handler.Handle(_request, CancellationToken.None);
 
-            VerifyRedactedCertificate(result);
+            result.Should().BeNull();
+        }
+
+        [Test]
+        public async Task And_OverallGradeIsNull_And_CertificateStatusIsDraft_And_LatestEpaOutcomeIsPass_Then_ReturnNull()
+        {
+            _certResponse.Status = CertificateStatus.Draft;
+            _certificateData.OverallGrade = null;
+            _certificateData.EpaDetails.LatestEpaOutcome = "Pass";
+            RefreshCertificateResponse();
+
+            var result = await _handler.Handle(_request, CancellationToken.None);
+
+            result.Should().BeNull();
         }
 
         [Test]
@@ -176,8 +190,6 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ExternalApi.Get
 
             VerifyRedactedCertificate(result);
         }
-
-
 
         private void RefreshCertificateResponse()
         {
