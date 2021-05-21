@@ -15,7 +15,7 @@ possible also bad data - which shouldn't happen!
 */
 
 -- !!! set the EPAO in context, to check the state of its learners !!!
-DECLARE @epaorgid varchar(100) = 'EPA0670';
+DECLARE @epaorgid varchar(100) = 'EPA0008';
 
 WITH WhoCanSeeCertificate AS
 (SELECT @epaorgid Chosen_EPAO, Find_EPAO,
@@ -125,7 +125,8 @@ row_number() OVER (PARTITION BY "Rule No", What_is_allowed_for_Certificate, What
 *
 FROM (
 --matches to the GET Certificate rules
-SELECT  ab2.uln, familyname, StandardReference, ab2.Larscode, "Has certificate", "Status=Deleted", OverallGrade, "Status=Draft","Status=Submitted", LatestEpaOutcome, AchievementDate, "Version", "Has ILR",
+SELECT  ab2.uln, CASE WHEN familyname_on_certifiate IS NOT NULL THEN familyname_on_certifiate ELSE familyname_on_ILR END familyname, 
+StandardReference, ab2.Larscode, "Has certificate", "Status=Deleted", OverallGrade, "Status=Draft","Status=Submitted", LatestEpaOutcome, AchievementDate, "Version", "Has ILR",
 CASE 
 -- 1. Certificate Submitted
 WHEN "Has certificate" = 'Y' AND "Status=Deleted" = 'N' AND OverallGrade IS NOT NULL AND OverallGrade != 'Fail' AND "Status=Draft" = 'N' AND "Status=Submitted" = 'Y' AND LatestEpaOutcome = 'Pass'                     THEN 1 
@@ -151,7 +152,9 @@ CASE WHEN What_is_allowed_for_ILR IS NULL THEN 'No match' ELSE What_is_allowed_f
 FROM
 (
 SELECT 
- uln, familyname, StandardReference, Larscode
+ uln,  StandardReference, Larscode
+,MAX(CASE WHEN recordType = 'certificate' THEN familyname ELSE NULL END) familyname_on_certifiate
+,MAX(CASE WHEN recordType = 'ILR' THEN familyname ELSE NULL END) familyname_on_ILR
 ,MAX(CASE WHEN recordType = 'certificate' THEN 'Y' ELSE 'N' END) "Has certificate"
 ,MAX(CASE WHEN recordType = 'certificate' THEN (CASE WHEN status = 'Deleted' THEN 'Y' ELSE 'N' END) ELSE NULL END) "Status=Deleted"
 ,MAX(CASE WHEN recordType = 'certificate' THEN (CASE WHEN status = 'Draft' THEN 'Y' ELSE 'N' END) ELSE NULL END)  "Status=Draft"
@@ -169,7 +172,9 @@ SELECT
 FROM 
 (
 select   'certificate' recordType,ce1.CreatedAt,
-  ce1.uln, json_value(ce1.certificatedata, '$.LearnerFamilyName') FamilyName, json_value(ce1.certificatedata, '$.StandardReference') StandardReference, ce1.standardcode Larscode, 
+  ce1.uln, json_value(ce1.certificatedata, '$.LearnerFamilyName') FamilyName, 
+  CASE WHEN ce1.standardUid IS NOT NULL THEN SUBSTRING(ce1.standardUid,1,6) ELSE json_value(ce1.certificatedata, '$.StandardReference') END StandardReference, 
+  ce1.standardcode Larscode, 
   ce1.Status,
   json_value(ce1.certificatedata, '$.EpaDetails.LatestEpaOutcome') LatestEpaOutcome, 
   json_value(ce1.certificatedata, '$.OverallGrade') OverallGrade, 
@@ -177,8 +182,8 @@ select   'certificate' recordType,ce1.CreatedAt,
   json_value(ce1.certificatedata, '$.Version') Version, 
 og1.EndPointAssessorOrganisationId EpaOrgId from certificates ce1
 join Organisations og1 on og1.id = ce1.OrganisationId
---where uln = 1067050804
---
+where uln between 1000000001 AND 9999999998
+--and uln = 1067027105
 UNION ALL
 --
 SELECT  'ILR' recordType,il1.CreatedAt,
@@ -186,9 +191,11 @@ il1.uln, il1.FamilyName, (select top 1 IFateReferenceNumber from Standards so1 w
 CASE il1.completionstatus WHEN 1 THEN 'Active' WHEN 2 THEN 'Complete' WHEN 3 THEN  'Withdrawn' WHEN 6 THEN   'Temporarily Withdrawn' ELSE 'Invalid' END status,
 NULL LatestEpaOutcome, NULL OverallGrade, NULL AchievementDate, Null Version,  EpaOrgId
 from ilrs il1
---where uln = 1067050804
+where uln  between 1000000001 AND 9999999998
+--and uln = 1067027105
 ) ab1
-GROUP BY uln, familyname, StandardReference, Larscode
+GROUP BY uln, StandardReference, Larscode
+HAVING MAX(StandardReference) = MIN(StandardReference)  -- ignore duff data 
 ) ab2
 LEFT JOIN WhoCanSeeCertificate wh1 on wh1.larscode = ab2.Larscode and wh1.uln = ab2.Uln
 LEFT JOIN WhoCanSeeILR wt1 on wt1.larscode = ab2.Larscode and wt1.uln = ab2.Uln
