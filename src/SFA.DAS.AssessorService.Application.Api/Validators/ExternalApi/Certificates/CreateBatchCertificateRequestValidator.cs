@@ -10,7 +10,7 @@ using System;
 
 namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Certificates
 {
-    public class CreateBatchCertificateRequestValidator : AbstractValidator<BatchCertificateRequest>
+    public class CreateBatchCertificateRequestValidator : AbstractValidator<CreateBatchCertificateRequest>
     {
         public CreateBatchCertificateRequestValidator(
             IStringLocalizer<BatchCertificateRequestValidator> localiser,
@@ -27,7 +27,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Certifi
                 {
                     var existingCertificate = await certificateRepository.GetCertificate(m.Uln, m.StandardCode);
                     var sumbittingEpao = await organisationQueryRepository.GetByUkPrn(m.UkPrn);
-                    var learnerDetails = await ilrRepository.Get(m.Uln, m.StandardId.GetValueOrDefault());
+                    var learnerDetails = await ilrRepository.Get(m.Uln, m.StandardCode);
 
                     if (existingCertificate != null && existingCertificate.Status != CertificateStatus.Deleted)
                     {

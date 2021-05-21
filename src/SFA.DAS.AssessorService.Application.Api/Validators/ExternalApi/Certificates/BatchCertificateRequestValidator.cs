@@ -12,11 +12,13 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Certifi
     public class BatchCertificateRequestValidator : AbstractValidator<BatchCertificateRequest>
     {
         public BatchCertificateRequestValidator(
-            IStringLocalizer<BatchCertificateRequestValidator> localiser, 
-            IOrganisationQueryRepository organisationQueryRepository, 
-            IIlrRepository ilrRepository,  
+            IStringLocalizer<BatchCertificateRequestValidator> localiser,
+            IOrganisationQueryRepository organisationQueryRepository,
+            IIlrRepository ilrRepository,
             IStandardService standardService)
         {
+            bool invalidVersionOrStandardMismatch = false;
+
             RuleFor(m => m.UkPrn).InclusiveBetween(10000000, 99999999).WithMessage("The UKPRN should contain exactly 8 numbers");
 
             RuleFor(m => m.FamilyName).NotEmpty().WithMessage("Provide apprentice family name");
@@ -24,62 +26,80 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Certifi
             {
                 RuleFor(m => m).CustomAsync(async (m, context, cancellation) =>
                 {
-                    bool validateCourseOption = true;
-
-                    var collatedStandard = await standardService.GetStandard(m.StandardCode);
+                    var standard = await standardService.GetStandardVersionById(m.StandardCode.ToString(), m.CertificateData.Version);
                     if (!string.IsNullOrEmpty(m.StandardReference))
                     {
-                        if (m.StandardReference != collatedStandard?.ReferenceNumber)
+                        if (m.StandardReference != standard?.IfateReferenceNumber)
                         {
-                            validateCourseOption = false;
+                            invalidVersionOrStandardMismatch = true;
                             context.AddFailure("StandardReference and StandardCode must be for the same Standard");
                         }
                     }
 
-                    // NOTE: This is not a nice way to do this BUT we cannot use another DependantRules()
-                    if (validateCourseOption)
+                    if (!invalidVersionOrStandardMismatch)
                     {
-                        if (!collatedStandard.Options.Any() && !string.IsNullOrEmpty(m.CertificateData?.CourseOption))
+                        var standardOptions = await standardService.GetStandardOptionsByStandardId(standard.StandardUId);
+                        var noOptions = standardOptions == null || !standardOptions.HasOptions();
+                        var hasOptions = standardOptions != null && standardOptions.HasOptions();
+                        if (noOptions && !string.IsNullOrEmpty(m.CertificateData?.CourseOption))
                         {
-                            context.AddFailure(new ValidationFailure("CourseOption", $"No course option available for this Standard. Must be empty"));
+                            context.AddFailure(new ValidationFailure("CourseOption", $"No course option available for this Standard and version. Must be empty"));
                         }
-                        else if (collatedStandard.Options.Any() && !collatedStandard.Options.Any(o => o.Equals(m.CertificateData?.CourseOption, StringComparison.InvariantCultureIgnoreCase)))
+                        else if (hasOptions && !standardOptions.CourseOption.Any(o => o.Equals(m.CertificateData?.CourseOption, StringComparison.InvariantCultureIgnoreCase)))
                         {
-                            string courseOptionsString = string.Join(", ", collatedStandard.Options);
-                            context.AddFailure(new ValidationFailure("CourseOption", $"Invalid course option for this Standard. Must be one of the following: {courseOptionsString}"));
+                            string courseOptionsString = string.Join(", ", standardOptions.CourseOption);
+                            context.AddFailure(new ValidationFailure("CourseOption", $"Invalid course option for this Standard and version. Must be one of the following: {courseOptionsString} where {courseOptionsString} depends on the standard code, and can be obtained with GET /api/v1/standard/options/{standard.LarsCode}/{standard.Version}"));
                         }
+                    }
+                });
+            });
+
+            When(m => !string.IsNullOrWhiteSpace(m.CertificateData.Version), () =>
+            {
+                RuleFor(m => m).Custom((m, context) =>
+                {
+                    // If Version specified but StandardUId not populated, must be invalid version
+                    // Otherwise we assume the auto-select process succeeded.
+                    if (string.IsNullOrWhiteSpace(m.StandardUId) && !invalidVersionOrStandardMismatch)
+                    {
+                        invalidVersionOrStandardMismatch = true;
+                        context.AddFailure(new ValidationFailure("Standard", "Invalid version for Standard"));
                     }
                 });
             });
 
             RuleFor(m => m.Uln).InclusiveBetween(1000000000, 9999999999).WithMessage("ULN should contain exactly 10 numbers").DependentRules(() =>
             {
-                When(m => m.StandardCode > 0 && !string.IsNullOrEmpty(m.FamilyName) , () =>
-               {
-                   RuleFor(m => m).CustomAsync(async (m, context, canellation) =>
-                   {
-                       var requestedIlr = await ilrRepository.Get(m.Uln, m.StandardCode);
-                       var sumbittingEpao = await organisationQueryRepository.GetByUkPrn(m.UkPrn);
+                When(m => m.StandardCode > 0 && !string.IsNullOrEmpty(m.FamilyName), () =>
+              {
+                  RuleFor(m => m).CustomAsync(async (m, context, canellation) =>
+                  {
+                      var requestedIlr = await ilrRepository.Get(m.Uln, m.StandardCode);
+                      var submittingEpao = await organisationQueryRepository.GetByUkPrn(m.UkPrn);
 
-                       if (requestedIlr is null || !string.Equals(requestedIlr.FamilyName, m.FamilyName, StringComparison.InvariantCultureIgnoreCase))
-                       {
-                           context.AddFailure(new ValidationFailure("Uln", "ULN, FamilyName and Standard not found."));
-                       }
-                       else if (sumbittingEpao is null)
-                       {
-                           context.AddFailure(new ValidationFailure("UkPrn", "Specified UKPRN not found"));
-                       }
-                       else
-                       {
-                           var providedStandards = await standardService.GetEpaoRegisteredStandards(sumbittingEpao.EndPointAssessorOrganisationId);
+                      if (requestedIlr is null || !string.Equals(requestedIlr.FamilyName, m.FamilyName, StringComparison.InvariantCultureIgnoreCase))
+                      {
+                          context.AddFailure(new ValidationFailure("Uln", "ULN, FamilyName and Standard not found."));
+                      }
+                      else if (submittingEpao is null)
+                      {
+                          context.AddFailure(new ValidationFailure("UkPrn", "Specified UKPRN not found"));
+                      }
+                      else
+                      {
+                          var providedStandardVersions = await standardService.GetEPAORegisteredStandardVersions(submittingEpao.EndPointAssessorOrganisationId, m.StandardCode);
 
-                           if (!providedStandards.Any(s => s.StandardCode == m.StandardCode))
-                           {
-                               context.AddFailure(new ValidationFailure("StandardCode", "Your organisation is not approved to assess this Standard"));
-                           }
-                       }
-                   });
-               });
+                          if (!providedStandardVersions.Any())
+                          {
+                              context.AddFailure(new ValidationFailure("StandardCode", "Your organisation is not approved to assess this Standard"));
+                          }
+                          else if (!(invalidVersionOrStandardMismatch || providedStandardVersions.Any(v => v.Version.Equals(m.CertificateData.Version, StringComparison.InvariantCultureIgnoreCase))))
+                          {
+                              context.AddFailure(new ValidationFailure("Version", $"Your organisation is not approved to assess this Standard Version: {m.CertificateData.Version}"));
+                          }
+                      }
+                  });
+              });
             });
 
             RuleFor(m => m.CertificateData).NotEmpty().WithMessage("Provide Certificate Data").DependentRules(() =>
@@ -88,9 +108,10 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Certifi
                 RuleFor(m => m.CertificateData.ContactAddLine1).NotEmpty().WithMessage("Provide an address");
                 RuleFor(m => m.CertificateData.ContactAddLine4).NotEmpty().WithMessage("Provide a city or town");
                 RuleFor(m => m.CertificateData.ContactPostCode).NotEmpty().WithMessage("Provide a postcode").DependentRules(() =>
-                { 
+                {
                     RuleFor(m => m.CertificateData.ContactPostCode).Matches("^(([gG][iI][rR] {0,}0[aA]{2})|((([a-pr-uwyzA-PR-UWYZ][a-hk-yA-HK-Y]?[0-9][0-9]?)|(([a-pr-uwyzA-PR-UWYZ][0-9][a-hjkstuwA-HJKSTUW])|([a-pr-uwyzA-PR-UWYZ][a-hk-yA-HK-Y][0-9][abehmnprv-yABEHMNPRV-Y]))) {0,}[0-9][abd-hjlnp-uw-zABD-HJLNP-UW-Z]{2}))$").WithMessage("Provide a valid UK postcode");
                 });
+                RuleFor(m => m.CertificateData.ContactOrganisation).NotEmpty().WithMessage("Provide an organisation");
 
                 RuleFor(m => m.CertificateData.OverallGrade)
                     .Custom((overallGrade, context) =>
@@ -108,7 +129,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Certifi
                         else if (!grades.Contains(overallGrade, StringComparer.InvariantCultureIgnoreCase))
                         {
                             string gradesString = string.Join(", ", grades);
-                            context.AddFailure(new ValidationFailure("OverallGrade", $"You must enter a valid grade. Must be one of the following: {gradesString}"));
+                            context.AddFailure(new ValidationFailure("OverallGrade", $"You must enter a valid grade. Must be one of the following: {gradesString}, where {gradesString} can be obtained with /api/v1/certificate/grades"));
                         }
                     });
 

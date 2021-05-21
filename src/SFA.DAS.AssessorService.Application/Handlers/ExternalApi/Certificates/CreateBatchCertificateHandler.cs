@@ -79,6 +79,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
                     {
                         Uln = request.Uln,
                         StandardCode = request.StandardCode,
+                        StandardUId = request.StandardUId,
                         ProviderUkPrn = ilr.UkPrn,
                         OrganisationId = organisation.Id,
                         CreatedBy = ExternalApiConstants.ApiUserName,
@@ -94,6 +95,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
                 _logger.LogInformation("CreateNewCertificate Before resurrecting deleted Certificate");
                 certData.EpaDetails.EpaReference = certificate.CertificateReference;
                 certificate.CertificateData = JsonConvert.SerializeObject(certData);
+                certificate.StandardUId = request.StandardUId;
                 certificate.Status = CertificateStatus.Draft;
                 await _certificateRepository.Update(certificate, ExternalApiConstants.ApiUserName, CertificateActions.Start);
             }
@@ -181,6 +183,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
                 AchievementDate = data.AchievementDate,
                 CourseOption = CertificateHelpers.NormalizeCourseOption(standard, data.CourseOption),
                 OverallGrade = CertificateHelpers.NormalizeOverallGrade(data.OverallGrade),
+                Version = data.Version,
 
                 EpaDetails = epaDetails
             };
