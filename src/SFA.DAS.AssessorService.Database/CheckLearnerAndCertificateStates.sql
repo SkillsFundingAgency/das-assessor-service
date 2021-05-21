@@ -14,7 +14,7 @@ possible also bad data - which shouldn't happen!
 
 */
 
--- !!! set the EPAO in context, to check the state of its learners !!!
+-- !!! set this to see the data from the perspective of this EPAO !!!
 DECLARE @epaorgid varchar(100) = 'EPA0008';
 
 WITH WhoCanSeeCertificate AS
@@ -204,7 +204,7 @@ LEFT JOIN WhoCanSeeILR wt1 on wt1.larscode = ab2.Larscode and wt1.uln = ab2.Uln
 ) ab4
 WHERE 1=1
 --AND rownumber = 1
-AND Variant = 1
---AND "Rule No" = 1
---AND "Rule No" NOT IN (0,1)
+AND Variant = 1                         -- comment this to get multiple examples of the different data scenarios
+--AND "Rule No" = 1                     -- uncomment this to focus on a specific rule
+--AND "Rule No" NOT IN (0,1)            -- uncomment this to focus on specific rules
 ORDER BY "Rule No", certificate_createdAt desc, larscode
