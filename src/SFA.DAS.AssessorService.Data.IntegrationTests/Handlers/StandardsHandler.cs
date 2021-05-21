@@ -22,7 +22,8 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
                     ", [MaxFunding]" +
                     ", [IsActive]" +
                     ", [ProposedTypicalDuration]" +
-                    ", [ProposedMaxFunding])" +
+                    ", [ProposedMaxFunding]" +
+                    ", [EPAChanged])" +
                 "VALUES " +
                     "(@StandardUId" +
                     ", @iFateReferenceNumber" +
@@ -34,7 +35,8 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
                     ", @maxFunding" +
                     ", @isActive" +
                     ", @proposedTypicalDuration" +
-                    ", @proposedMaxFunding)";
+                    ", @proposedMaxFunding" +
+                    ", @epaChanged)";
 
             DatabaseService.Execute(sqlToInsertStandard, standard);
         }

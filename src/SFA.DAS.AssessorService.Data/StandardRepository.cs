@@ -747,13 +747,14 @@ namespace SFA.DAS.AssessorService.Data
             dataTable.Columns.Add("VersionApprovedForDelivery");
             dataTable.Columns.Add("ProposedTypicalDuration");
             dataTable.Columns.Add("ProposedMaxFunding");
+            dataTable.Columns.Add("EPAChanged");
 
             foreach (var standard in standards)
             {
                 dataTable.Rows.Add(standard.StandardUId, standard.IfateReferenceNumber, standard.LarsCode, standard.Title, standard.Version, standard.Level,
                     standard.Status, standard.TypicalDuration, standard.MaxFunding, standard.IsActive, standard.LastDateStarts, standard.EffectiveFrom, standard.EffectiveTo,
                     standard.VersionEarliestStartDate, standard.VersionLatestStartDate, standard.VersionLatestEndDate, standard.VersionApprovedForDelivery,
-                    standard.ProposedTypicalDuration, standard.ProposedMaxFunding);
+                    standard.ProposedTypicalDuration, standard.ProposedMaxFunding, standard.EPAChanged);
             }
 
             return dataTable;
