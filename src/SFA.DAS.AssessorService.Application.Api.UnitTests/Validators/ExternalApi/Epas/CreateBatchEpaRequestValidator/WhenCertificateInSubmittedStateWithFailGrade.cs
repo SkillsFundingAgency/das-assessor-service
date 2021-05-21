@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalApi.Epas.CreateBatchEpaRequestValidator
 {
-    public class WhenEpaExists : CreateBatchEpaRequestValidatorTestBase
+    public class WhenCertificateInSubmittedStateWithFailGrade : CreateBatchEpaRequestValidatorTestBase
     {
         private ValidationResult _validationResult;
 
@@ -20,16 +20,16 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
         {
             var epas = Builder<EpaRecord>.CreateListOfSize(1).All()
                 .With(i => i.EpaDate = DateTime.UtcNow.AddDays(-1))
-                .With(i => i.EpaOutcome = EpaOutcome.Pass)
+                .With(i => i.EpaOutcome = EpaOutcome.Fail)
                 .Build().ToList();
 
             var request = Builder<CreateBatchEpaRequest>.CreateNew()
-                .With(i => i.Uln = 1234567890)
-                .With(i => i.StandardCode = 101)
+                .With(i => i.Uln = 9999999999)
+                .With(i => i.StandardCode = 99)
                 .With(i => i.StandardReference = null)
                 .With(i => i.Version = "1.0")
                 .With(i => i.CourseOption = null)
-                .With(i => i.UkPrn = 12345678)
+                .With(i => i.UkPrn = 99999999)
                 .With(i => i.FamilyName = "Test")
                 .With(i => i.EpaDetails = new EpaDetails { Epas = epas })
                 .Build();
