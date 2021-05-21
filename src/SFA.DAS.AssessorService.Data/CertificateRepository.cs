@@ -122,6 +122,9 @@ namespace SFA.DAS.AssessorService.Data
         public async Task<Certificate> GetCertificate(long uln, int standardCode, string familyName)
         {
             var certificate = await GetCertificate(uln, standardCode);
+            
+            if (certificate is null)
+                return certificate;
 
             return CheckCertificateData(certificate, familyName) ? certificate : null;
         }
@@ -174,7 +177,8 @@ namespace SFA.DAS.AssessorService.Data
         private bool CheckCertificateData(Certificate certificate, string lastName)
         {
             var certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
-            return (certificateData.LearnerFamilyName == lastName);
+            
+            return certificateData.LearnerFamilyName.Equals(lastName, StringComparison.InvariantCultureIgnoreCase);            
         }
 
         public async Task<Certificate> GetCertificate(

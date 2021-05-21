@@ -45,9 +45,33 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
         }
 
         [Test]
+        public async Task And_NameMatchesWhenIgnoringCase_Then_ReturnResult()
+        {
+            var result = await _certificateRepository.GetCertificate(_certificate.Uln, _certificate.StandardCode, _certificateData.LearnerFamilyName.ToUpper());
+
+            result.Should().BeEquivalentTo(_certificate);
+        }
+
+        [Test]
         public async Task And_FamilyNameIsNotCorrect_Then_ReturnNull()
         {
             var result = await _certificateRepository.GetCertificate(_certificate.Uln, _certificate.StandardCode, "IncorrectName");
+
+            result.Should().BeNull();
+        }
+
+        [Test]
+        public async Task And_UlnIsIncorrect_Then_ReturnNull()
+        {
+            var result = await _certificateRepository.GetCertificate(9999999999, _certificate.StandardCode, _certificateData.LearnerFamilyName);
+
+            result.Should().BeNull();
+        }
+
+        [Test]
+        public async Task And_StandardCodeIsIncorrect_Then_ReturnNull()
+        {
+            var result = await _certificateRepository.GetCertificate(_certificate.Uln, 2, _certificateData.LearnerFamilyName);
 
             result.Should().BeNull();
         }
