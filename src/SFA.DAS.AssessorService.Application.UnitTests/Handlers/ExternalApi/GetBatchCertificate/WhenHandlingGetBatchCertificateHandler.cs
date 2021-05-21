@@ -70,7 +70,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ExternalApi.Get
             _mockStandardRepository.Setup(sr => sr.GetEpaoRegisteredStandards(_organisationResponse.EndPointAssessorOrganisationId, It.IsAny<int>(), It.IsAny<int>()))
                 .ReturnsAsync(_registeredStandards);
 
-            _mockCertificateRepository.Setup(cr => cr.GetCertificate(_request.Uln, _request.StandardCode))
+            _mockCertificateRepository.Setup(cr => cr.GetCertificate(_request.Uln, _request.StandardCode, _request.FamilyName))
                 .ReturnsAsync(_certResponse);
             
             _mockCertificateRepository.Setup(cr => cr.GetCertificateLogsFor(_certResponse.Id))
@@ -98,7 +98,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ExternalApi.Get
         [Test]
         public async Task And_CertificateIsNull_Then_ReturnNull()
         {
-            _mockCertificateRepository.Setup(cr => cr.GetCertificate(_request.Uln, _request.StandardCode))
+            _mockCertificateRepository.Setup(cr => cr.GetCertificate(_request.Uln, _request.StandardCode, _request.FamilyName))
                 .ReturnsAsync((Certificate)null);
 
             var result = await _handler.Handle(_request, CancellationToken.None);
@@ -131,8 +131,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ExternalApi.Get
         [Test]
         public async Task And_FamilyNameIsIncorrect_Then_ReturnNull()
         {
-            _certificateData.LearnerFamilyName = "Different name";
-            RefreshCertificateResponse();
+            _request.FamilyName = "Different name";
 
             var result = await _handler.Handle(_request, CancellationToken.None);
 
@@ -178,6 +177,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ExternalApi.Get
             VerifyRedactedCertificate(result);
         }
 
+
+
         private void RefreshCertificateResponse()
         {
             var certDataJson = JsonConvert.SerializeObject(_certificateData);
@@ -206,6 +207,5 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ExternalApi.Get
                 .Including(cd => cd.StandardLevel)
                 .Including(cd => cd.StandardPublicationDate));
         }
-
     }
 }

@@ -119,6 +119,13 @@ namespace SFA.DAS.AssessorService.Data
                 c.Uln == uln && c.StandardCode == standardCode);
         }
 
+        public async Task<Certificate> GetCertificate(long uln, int standardCode, string familyName)
+        {
+            var certificate = await GetCertificate(uln, standardCode);
+
+            return CheckCertificateData(certificate, familyName) ? certificate : null;
+        }
+
         public async Task<Certificate> GetCertificateByOrgIdLastname(long uln,
             string endpointOrganisationId, string lastName)
         {
