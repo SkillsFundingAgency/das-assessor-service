@@ -36,7 +36,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Certifi
                         }
                     }
 
-                    if (!invalidVersionOrStandardMismatch)
+                    if (!invalidVersionOrStandardMismatch && standard != null)
                     {
                         var standardOptions = await standardService.GetStandardOptionsByStandardId(standard.StandardUId);
                         var noOptions = standardOptions == null || !standardOptions.HasOptions();

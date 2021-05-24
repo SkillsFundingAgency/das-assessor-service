@@ -38,15 +38,15 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
 
         private async Task<Certificate> UpdateCertificate(UpdateBatchCertificateRequest request)
         {
-            _logger.LogInformation("UpdateCertificate Before Get Standard from API");
-            var standard = await _standardService.GetStandard(request.StandardCode);
+            _logger.LogInformation("CreateNewCertificate Before Get StandardOptions from API");
+            var options = await _standardService.GetStandardOptionsByStandardId(request.StandardUId);
 
             _logger.LogInformation("UpdateCertificate Before Get Certificate from db");
             var certificate = await _certificateRepository.GetCertificate(request.Uln, request.StandardCode);
 
-            if (standard != null && certificate != null)
+            if (options != null && certificate != null)
             {
-                var certData = CombineCertificateData(JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData), request.CertificateData, standard);
+                var certData = CombineCertificateData(JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData), request.CertificateData, options);
 
                 _logger.LogInformation("UpdateCertificate Before Update CertificateData");
 
@@ -72,7 +72,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
             }
         }
 
-        private CertificateData CombineCertificateData(CertificateData certData, CertificateData requestData, StandardCollation standard)
+        private CertificateData CombineCertificateData(CertificateData certData, CertificateData requestData, StandardOptions options)
         {
             var epaDetails = certData.EpaDetails ?? new EpaDetails();
             if (epaDetails.Epas is null) epaDetails.Epas = new List<EpaRecord>();
@@ -115,7 +115,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
                 ContactPostCode = requestData.ContactPostCode,
                 Registration = requestData.Registration,
                 AchievementDate = requestData.AchievementDate,
-                CourseOption = CertificateHelpers.NormalizeCourseOption(standard, requestData.CourseOption),
+                CourseOption = CertificateHelpers.NormalizeCourseOption(options, requestData.CourseOption),
                 OverallGrade = CertificateHelpers.NormalizeOverallGrade(requestData.OverallGrade),
 
                 EpaDetails = epaDetails

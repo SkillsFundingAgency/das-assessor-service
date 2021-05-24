@@ -93,7 +93,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.ExternalApi
             foreach (var request in batchRequest)
             {
                 Standard standard = null;
-                if (!string.IsNullOrEmpty(request?.CertificateData?.Version))
+                if (!string.IsNullOrEmpty(request.CertificateData?.Version))
                 {
                     standard = await _mediator.Send(
                         new GetStandardVersionRequest { StandardId = request.GetStandardId(), Version = request.CertificateData.Version });
