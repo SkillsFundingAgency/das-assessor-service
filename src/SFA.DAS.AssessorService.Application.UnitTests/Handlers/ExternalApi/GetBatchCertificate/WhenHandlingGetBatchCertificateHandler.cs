@@ -209,6 +209,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ExternalApi.Get
             result.UpdatedBy.Should().BeNull();
             result.DeletedBy.Should().BeNull();
             result.DeletedAt.Should().BeNull();
+            result.ToBePrinted.Should().BeNull();
+            result.BatchNumber.Should().BeNull();
 
             var resultCertificateData = JsonConvert.DeserializeObject<CertificateData>(result.CertificateData);
 

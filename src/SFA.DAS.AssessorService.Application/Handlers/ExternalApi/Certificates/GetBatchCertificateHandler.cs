@@ -112,6 +112,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
             cert.UpdatedBy = null;
             cert.DeletedBy = null;
             cert.DeletedAt = null;
+            cert.BatchNumber = null;
+            cert.ToBePrinted = null;
 
             return cert;
         }
