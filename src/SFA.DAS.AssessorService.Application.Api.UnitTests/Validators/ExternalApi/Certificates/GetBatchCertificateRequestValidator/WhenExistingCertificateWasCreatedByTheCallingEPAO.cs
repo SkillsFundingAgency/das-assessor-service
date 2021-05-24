@@ -4,6 +4,7 @@ using FluentValidation.Results;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models.ExternalApi.Certificates;
+using SFA.DAS.AssessorService.Domain.Entities;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalApi.Certificates.GetBatchCertificateRequestValidator
@@ -25,6 +26,16 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
                 .With(i => i.FamilyName = "Test")
                 .Build();
 
+            var organisationResponse = Builder<Organisation>.CreateNew().Build();
+            var certificateResponse = Builder<Certificate>.CreateNew().Build();
+
+            OrganisationQueryRepositoryMock.Setup(o => o.GetByUkPrn(_request.UkPrn))
+                .ReturnsAsync(organisationResponse);
+
+            CertificateRepositoryMock.Setup(c => c.GetCertificateByUlnOrgIdLastnameAndStandardCode(_request.Uln,
+                organisationResponse.EndPointAssessorOrganisationId, _request.FamilyName, _request.StandardCode))
+                .ReturnsAsync(certificateResponse);
+
             _validationResult = await Validator.ValidateAsync(_request);
         }
 
@@ -32,12 +43,6 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
         public void ThenValidationResultShouldBeTrue()
         {
             _validationResult.IsValid.Should().BeTrue();
-        }
-
-        [Test]
-        public void ThenIlrGetLearnerIsNotCalled()
-        {
-            IlrRepositoryMock.Verify(repo => repo.Get(_request.Uln, _request.StandardCode), Times.Never());
         }
 
         [Test]

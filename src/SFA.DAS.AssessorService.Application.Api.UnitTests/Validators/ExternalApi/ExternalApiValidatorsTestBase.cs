@@ -47,9 +47,9 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
             certificateRepositoryMock.Setup(q => q.GetCertificate(9876543210, 101)).ReturnsAsync(GenerateEpaCertificate(9876543210, 101, "test", new Guid("99999999999999999999999999999999"), false));
 
             // This allows us to test, retrieving by ilr data if the calling organisation was not the one that created it
-            certificateRepositoryMock.Setup(q => q.GetCertificateByOrgIdLastname(1234567890, "99999999", "Test"))
+            certificateRepositoryMock.Setup(q => q.GetCertificateByUlnOrgIdLastnameAndStandardCode(1234567890, "99999999", "Test", 1))
                 .ReturnsAsync((Certificate)null);
-            certificateRepositoryMock.Setup(q => q.GetCertificateByOrgIdLastname(1234567890, "12345678", "Test"))
+            certificateRepositoryMock.Setup(q => q.GetCertificateByUlnOrgIdLastnameAndStandardCode(1234567890, "12345678", "Test", 1))
                 .ReturnsAsync(GenerateCertificate(1234567890, 1, "Test", CertificateStatus.Draft, new Guid("12345678123456781234567812345678")));
 
             return certificateRepositoryMock;

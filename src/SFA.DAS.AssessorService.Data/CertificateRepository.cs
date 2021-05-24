@@ -129,14 +129,15 @@ namespace SFA.DAS.AssessorService.Data
             return CheckCertificateData(certificate, familyName) ? certificate : null;
         }
 
-        public async Task<Certificate> GetCertificateByOrgIdLastname(long uln,
-            string endpointOrganisationId, string lastName)
+        public async Task<Certificate> GetCertificateByUlnOrgIdLastnameAndStandardCode(long uln,
+            string endpointOrganisationId, string lastName, int standardCode)
         {
             var existingCert = await _context.Certificates
                 .Include(q => q.Organisation)
                 .FirstOrDefaultAsync(c =>
                     c.Uln == uln &&
                     c.Organisation.EndPointAssessorOrganisationId == endpointOrganisationId &&
+                    c.StandardCode == standardCode &&
                     CheckCertificateData(c, lastName));
             return existingCert;
         }
