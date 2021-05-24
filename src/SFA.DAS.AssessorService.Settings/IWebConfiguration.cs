@@ -6,8 +6,6 @@
         AzureApiAuthentication AzureApiAuthentication { get; set; }
         ClientApiAuthentication AssessorApiAuthentication { get; set; }
         NotificationsApiClientConfiguration NotificationsApiClientConfiguration { get; set; }
-        string IfaApiClientBaseUrl { get; set; }
-        string IFATemplateStorageConnectionString { get; set; } 
         string AssessmentOrgsApiClientBaseUrl { get; set; }
         string SqlConnectionString { get; set; }
         string SessionRedisConnectionString { get; set; }
