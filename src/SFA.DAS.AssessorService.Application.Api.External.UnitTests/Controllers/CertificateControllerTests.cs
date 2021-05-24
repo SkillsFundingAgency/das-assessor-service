@@ -9,10 +9,12 @@ using SFA.DAS.AssessorService.Application.Api.External.Controllers;
 using SFA.DAS.AssessorService.Application.Api.External.Infrastructure;
 using SFA.DAS.AssessorService.Application.Api.External.Middleware;
 using SFA.DAS.AssessorService.Application.Api.External.Models.Internal;
+using SFA.DAS.AssessorService.Application.Api.External.Models.Request;
 using SFA.DAS.AssessorService.Application.Api.External.Models.Response;
 using SFA.DAS.AssessorService.Application.Api.External.Models.Response.Certificates;
 using SFA.DAS.Testing.AutoFixture;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -23,7 +25,8 @@ namespace SFA.DAS.AssessorService.Application.Api.External.UnitTests.Controllers
         public  GetCertificateResponse _response;
 
         private Mock<IApiClient> _mockApiClient;
-
+        private Mock<IHeaderInfo> _headerInfo;
+        
         private CertificateController _controller;
 
         [SetUp]
@@ -36,8 +39,9 @@ namespace SFA.DAS.AssessorService.Application.Api.External.UnitTests.Controllers
                 .Create();
 
             _mockApiClient = new Mock<IApiClient>();
+            _headerInfo = new Mock<IHeaderInfo>();
 
-            _controller = new CertificateController(Mock.Of<ILogger<CertificateController>>(), Mock.Of<IHeaderInfo>(), _mockApiClient.Object);
+            _controller = new CertificateController(Mock.Of<ILogger<CertificateController>>(), _headerInfo.Object, _mockApiClient.Object);
         }
 
         [Test, MoqAutoData]
@@ -80,5 +84,55 @@ namespace SFA.DAS.AssessorService.Application.Api.External.UnitTests.Controllers
 
             result.StatusCode.Should().Be((int)HttpStatusCode.Forbidden);
         }
+
+        [Test, MoqAutoData]
+        public async Task When_CreatingCertificateRecord_WithTooManyRequestsInBatch_CallsApi_Then_ReturnApiResponseWithResponseCode403()
+        {
+            //Arrange
+            var fixture = new Fixture();
+            var requests = fixture.CreateMany<CreateCertificateRequest>(26);
+            
+            //Act
+            var result = await _controller.CreateCertificates(requests) as ObjectResult;
+
+            //Assert
+            result.StatusCode.Should().Be((int)HttpStatusCode.Forbidden);
+            ((ApiResponse)result.Value).Message.Should().Be("Batch limited to 25 requests");
+        }
+
+
+        [Test, MoqAutoData]
+        public async Task When_CreatingCertificateRecord_WithTooManyRequestsInBatch_CallsInternalApi_Then_ReturnApiResponseWithResponseCode403(
+            CreateCertificateRequest request,
+            IEnumerable<CreateCertificateResponse> response)
+        {
+            //Arrange
+            CreateBatchCertificateRequest transformedRequest = null;
+            var requests = new List<CreateCertificateRequest> { request };
+            _mockApiClient.Setup(s => s.CreateCertificates(It.IsAny<IEnumerable<CreateBatchCertificateRequest>>()))
+                .Callback<IEnumerable<CreateBatchCertificateRequest>>((input) => transformedRequest = input.First())
+                .ReturnsAsync(response);
+
+            //Act
+            var result = await _controller.CreateCertificates(requests) as ObjectResult;
+
+            //Assert
+            transformedRequest.Should().NotBeNull();
+            transformedRequest.Should().BeEquivalentTo(new
+            {
+                UkPrn = _headerInfo.Object.Ukprn,
+                request.RequestId,
+                CertificateData = new
+                {
+                    request.Standard,
+                    request.Learner,
+                    request.LearningDetails,
+                    request.PostalContact
+                }
+            });
+
+            result.Value.Should().Be(response);        
+        }
+
     }
 }
