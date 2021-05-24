@@ -29,6 +29,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
                                 .With(cd => cd.AchievementDate = DateTime.UtcNow)
                                 .With(cd => cd.OverallGrade = CertificateGrade.Pass)
                                 .With(cd => cd.CourseOption = "English")
+                                .With(cd => cd.Version = "1.0")
                                 .Build())
                 .Build();
 
@@ -36,10 +37,10 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
         }
 
         [Test]
-        public void ThenValidationResultShouldBeTrue()
+        public void ThenValidationResultShouldBeFalse()
         {
-            _validationResult.IsValid.Should().BeTrue();
-            _validationResult.Errors.Count.Should().Be(0);
+            _validationResult.IsValid.Should().BeFalse();
+            _validationResult.Errors.Count.Should().Be(1);
         }
     }
 }

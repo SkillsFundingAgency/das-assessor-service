@@ -5,6 +5,7 @@ using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Extensions;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -61,15 +62,15 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi._HelperClasse
             return grades.FirstOrDefault(g => g.Equals(overallGrade, StringComparison.InvariantCultureIgnoreCase)) ?? overallGrade;
         }
 
-        public static string NormalizeCourseOption(StandardCollation standard, string courseOption)
+        public static string NormalizeCourseOption(StandardOptions standardOptions, string courseOption)
         {
-            if (standard.Options is null)
+            if (standardOptions is null || !standardOptions.HasOptions())
             {
                 return courseOption;
             }
             else
             {
-                return standard.Options.FirstOrDefault(g => g.Equals(courseOption, StringComparison.InvariantCultureIgnoreCase)) ?? courseOption;
+                return standardOptions.CourseOption.FirstOrDefault(g => g.Equals(courseOption, StringComparison.InvariantCultureIgnoreCase)) ?? courseOption;
             }
         }
     }

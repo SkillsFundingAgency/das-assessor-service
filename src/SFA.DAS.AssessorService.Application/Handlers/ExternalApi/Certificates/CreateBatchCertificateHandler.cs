@@ -62,12 +62,15 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
             var organisation = await _organisationQueryRepository.GetByUkPrn(request.UkPrn);
 
             _logger.LogInformation("CreateNewCertificate Before Get Standard from API");
-            var standard = await _standardService.GetStandard(ilr.StdCode);
+            var standard = await _standardService.GetStandardVersionById(request.StandardUId);
 
             _logger.LogInformation("CreateNewCertificate Before Get Provider from API");
             var provider = await GetProviderFromUkprn(ilr.UkPrn);
 
-            var certData = CombineCertificateData(request.CertificateData, ilr, standard, provider);
+            _logger.LogInformation("CreateNewCertificate Before Get StandardOptions from API");
+            var options = await _standardService.GetStandardOptionsByStandardId(request.StandardUId);
+
+            var certData = CombineCertificateData(request.CertificateData, ilr, standard, provider, options);
 
             var certificate = await _certificateRepository.GetCertificate(request.Uln, request.StandardCode);
 
@@ -79,6 +82,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
                     {
                         Uln = request.Uln,
                         StandardCode = request.StandardCode,
+                        StandardUId = request.StandardUId,
                         ProviderUkPrn = ilr.UkPrn,
                         OrganisationId = organisation.Id,
                         CreatedBy = ExternalApiConstants.ApiUserName,
@@ -94,6 +98,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
                 _logger.LogInformation("CreateNewCertificate Before resurrecting deleted Certificate");
                 certData.EpaDetails.EpaReference = certificate.CertificateReference;
                 certificate.CertificateData = JsonConvert.SerializeObject(certData);
+                certificate.StandardUId = request.StandardUId;
                 certificate.Status = CertificateStatus.Draft;
                 await _certificateRepository.Update(certificate, ExternalApiConstants.ApiUserName, CertificateActions.Start);
             }
@@ -141,7 +146,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
             return provider;
         }
 
-        private CertificateData CombineCertificateData(CertificateData data, Ilr ilr, StandardCollation standard, Provider provider)
+        private CertificateData CombineCertificateData(CertificateData data, Ilr ilr, Standard standard, Provider provider, StandardOptions options)
         {
             var epaDetails = data.EpaDetails ?? new EpaDetails();
             if (epaDetails.Epas is null) epaDetails.Epas = new List<EpaRecord>();
@@ -162,10 +167,10 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
                 LearnerGivenNames = ilr.GivenNames,
                 LearnerFamilyName = ilr.FamilyName,
                 LearningStartDate = ilr.LearnStartDate,
-                StandardReference = standard.ReferenceNumber,
+                StandardReference = standard.IfateReferenceNumber,
                 StandardName = standard.Title,   
-                StandardLevel = standard.StandardData.Level.GetValueOrDefault(),
-                StandardPublicationDate = standard.StandardData.EffectiveFrom,
+                StandardLevel = standard.Level,
+                StandardPublicationDate = standard.EffectiveFrom,
                 FullName = $"{ilr.GivenNames} {ilr.FamilyName}",
                 ProviderName = provider.ProviderName,
 
@@ -179,8 +184,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
                 ContactPostCode = data.ContactPostCode,
                 Registration = data.Registration,
                 AchievementDate = data.AchievementDate,
-                CourseOption = CertificateHelpers.NormalizeCourseOption(standard, data.CourseOption),
+                CourseOption = CertificateHelpers.NormalizeCourseOption(options, data.CourseOption),
                 OverallGrade = CertificateHelpers.NormalizeOverallGrade(data.OverallGrade),
+                Version = data.Version,
 
                 EpaDetails = epaDetails
             };
