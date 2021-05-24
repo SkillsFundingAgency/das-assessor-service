@@ -103,7 +103,10 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.ExternalApi
                     standard = await _mediator.Send(new GetCalculatedStandardVersionForApprenticeshipRequest { StandardId = request.GetStandardId(), Uln = request.Uln });
                 }
 
-                request.PopulateMissingFields(standard);
+                if (standard != null)
+                {
+                    request.PopulateMissingFields(standard);
+                }
 
                 var validationResult = await _createValidator.ValidateAsync(request);
                 var isRequestValid = validationResult.IsValid;
