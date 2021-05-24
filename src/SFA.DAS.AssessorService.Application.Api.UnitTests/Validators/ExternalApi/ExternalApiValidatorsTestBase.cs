@@ -124,10 +124,10 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
                     standard101
                 });
 
-            standardServiceMock.Setup(c => c.GetStandardVersionById("1", null)).ReturnsAsync(standard1);
-            standardServiceMock.Setup(c => c.GetStandardVersionById("98", null)).ReturnsAsync(standard98);
-            standardServiceMock.Setup(c => c.GetStandardVersionById("99", null)).ReturnsAsync(standard99);
-            standardServiceMock.Setup(c => c.GetStandardVersionById("101", null)).ReturnsAsync(standard101);
+            standardServiceMock.Setup(c => c.GetStandardVersionById("1", It.IsAny<string>())).ReturnsAsync(standard1);
+            standardServiceMock.Setup(c => c.GetStandardVersionById("98", It.IsAny<string>())).ReturnsAsync(standard98);
+            standardServiceMock.Setup(c => c.GetStandardVersionById("99", It.IsAny<string>())).ReturnsAsync(standard99);
+            standardServiceMock.Setup(c => c.GetStandardVersionById("101", It.IsAny<string>())).ReturnsAsync(standard101);
 
             standardServiceMock.Setup(c => c.GetStandardOptionsByStandardId(standard99.StandardUId)).
                 ReturnsAsync(GenerateStandardOptions(new List<string> { "English", "French" }));

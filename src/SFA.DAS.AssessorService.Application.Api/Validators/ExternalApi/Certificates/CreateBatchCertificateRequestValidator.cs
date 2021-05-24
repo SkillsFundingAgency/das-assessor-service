@@ -14,9 +14,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Certifi
     {
         public CreateBatchCertificateRequestValidator(
             IStringLocalizer<BatchCertificateRequestValidator> localiser,
-            IOrganisationQueryRepository organisationQueryRepository, 
-            IIlrRepository ilrRepository, 
-            ICertificateRepository certificateRepository, 
+            IOrganisationQueryRepository organisationQueryRepository,
+            IIlrRepository ilrRepository,
+            ICertificateRepository certificateRepository,
             IStandardService standardService)
         {
             Include(new BatchCertificateRequestValidator(localiser, organisationQueryRepository, ilrRepository, standardService));
@@ -31,15 +31,15 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Certifi
 
                     if (existingCertificate != null && existingCertificate.Status != CertificateStatus.Deleted)
                     {
+                        var certData = JsonConvert.DeserializeObject<CertificateData>(existingCertificate.CertificateData);
+
                         if (sumbittingEpao?.Id != existingCertificate.OrganisationId)
                         {
                             context.AddFailure(new ValidationFailure("CertificateData", $"Your organisation is not the creator of the EPA"));
                         }
                         else if (existingCertificate.Status == CertificateStatus.Draft)
                         {
-                            var certData = JsonConvert.DeserializeObject<CertificateData>(existingCertificate.CertificateData);
-
-                            if (!string.IsNullOrEmpty(certData.OverallGrade) && certData.AchievementDate.HasValue && !string.IsNullOrEmpty(certData.ContactPostCode))
+                            if (!string.IsNullOrEmpty(certData.OverallGrade))
                             {
                                 context.AddFailure(new ValidationFailure("CertificateData", $"Certificate already exists: {existingCertificate.CertificateReference}"));
                             }
@@ -47,6 +47,10 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Certifi
                             {
                                 context.AddFailure(new ValidationFailure("CertificateData", $"Latest EPA Outcome has not passed"));
                             }
+                        }
+                        else if (existingCertificate.Status == CertificateStatus.Submitted && !string.IsNullOrWhiteSpace(certData.OverallGrade) && certData.OverallGrade.Equals(CertificateGrade.Fail, StringComparison.OrdinalIgnoreCase))
+                        { 
+                            // A submitted fail can be re-created
                         }
                         else
                         {
@@ -69,7 +73,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Certifi
                     {
                         context.AddFailure(new ValidationFailure("LearnerDetails", $"Learner details for ULN: {m.Uln} not found"));
                     }
-                    
+
                 });
             });
         }
