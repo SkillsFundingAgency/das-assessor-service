@@ -41,6 +41,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.External
             _mockUpdateBatchValidator = new Mock<IValidator<UpdateBatchCertificateRequest>>();
             _mockGetBatchValidator  = new Mock<IValidator<GetBatchCertificateRequest>>();
             _mockSubmitBatchValidator = new Mock<IValidator<SubmitBatchCertificateRequest>>();
+            _mockDeleteBatchValidator = new Mock<IValidator<DeleteBatchCertificateRequest>>();
 
             _certificateBatchController = new CertificateBatchController(_mockMediator.Object, 
                 _mockGetBatchValidator.Object, _mockCreateBatchValidator.Object, 
@@ -121,7 +122,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.External
             result.ValidationErrors.Should().BeEquivalentTo(failures.Select(s => s.ErrorMessage));
         }
 
-        [Test, MoqAutoData]
+        [Test, RecursiveMoqAutoData]
         public async Task WhenCallingCreateCertificate_ValidationSuccessful_ReturnsCertificateDetails(
             Standard standard,
             Certificate certificate,
