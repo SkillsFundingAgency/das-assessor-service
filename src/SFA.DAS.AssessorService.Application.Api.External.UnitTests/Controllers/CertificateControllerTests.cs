@@ -40,6 +40,8 @@ namespace SFA.DAS.AssessorService.Application.Api.External.UnitTests.Controllers
 
             _mockApiClient = new Mock<IApiClient>();
             _headerInfo = new Mock<IHeaderInfo>();
+            _headerInfo.SetupGet(s => s.Ukprn).Returns(fixture.Create<int>());
+            _headerInfo.SetupGet(s => s.Email).Returns(fixture.Create<string>());
 
             _controller = new CertificateController(Mock.Of<ILogger<CertificateController>>(), _headerInfo.Object, _mockApiClient.Object);
         }
