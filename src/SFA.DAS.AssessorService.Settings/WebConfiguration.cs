@@ -12,12 +12,6 @@ namespace SFA.DAS.AssessorService.Settings
 
         [JsonRequired] public NotificationsApiClientConfiguration NotificationsApiClientConfiguration { get; set; }
 
-        [JsonRequired] public string AssessmentOrgsApiClientBaseUrl { get; set; }
-
-        [JsonRequired] public string IfaApiClientBaseUrl { get; set; }
-
-        [JsonRequired] public string IFATemplateStorageConnectionString { get; set; } 
-
         [JsonRequired] public string SqlConnectionString { get; set; }
 
         [JsonRequired] public string SessionRedisConnectionString { get; set; }
