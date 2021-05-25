@@ -21,6 +21,24 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Standards
     public class WhenHandlingGetCalculatedStandardVersionForApprenticeshipHandler
     {
         [Test, MoqAutoData]
+        public async Task ThenReturnsNullWhenNoILRRecord(
+            [Frozen] Mock<IStandardService> standardService,
+            [Frozen] Mock<IIlrRepository> ilrRepository,
+            Standard latestStandard,
+            GetCalculatedStandardVersionForApprenticeshipRequest request,
+            GetCalculatedStandardVersionForApprenticeshipHandler sut)
+        {
+            standardService.Setup(s => s.GetStandardVersionById(request.StandardId, null)).ReturnsAsync(latestStandard);
+            ilrRepository.Setup(s => s.Get(request.Uln, latestStandard.LarsCode)).ReturnsAsync((Ilr)null);
+
+            //Act
+            var result = await sut.Handle(request, new CancellationToken());
+
+            //Assert
+            result.Should().BeNull();
+        }
+
+        [Test, MoqAutoData]
         public async Task ThenSelectsCorrectVersionBasedOnILRLearnerStartDate(
             [Frozen] Mock<IStandardService> standardService,
             [Frozen] Mock<IIlrRepository> ilrRepository,
