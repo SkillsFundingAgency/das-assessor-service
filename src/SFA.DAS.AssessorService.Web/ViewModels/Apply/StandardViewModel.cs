@@ -19,6 +19,8 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Apply
         public bool IsConfirmed { get; set; }
 
         public string ApplicationStatus { get; set; }
+
+        public Dictionary<string, bool> OrganisationHasStandardWithVersions { get; set; }
     }
 
 

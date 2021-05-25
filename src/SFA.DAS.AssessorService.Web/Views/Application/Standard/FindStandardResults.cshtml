@@ -38,7 +38,16 @@
                                     <td class="govuk-table__cell" data-label="Name">@result.Title</td>
                                     <td class="govuk-table__cell" data-label="Reference">@result.ReferenceNumber</td>
                                     <td class="govuk-table__cell govuk-table__cell--numeric">
-                                        <a href="/standard/@Model.Id/confirm-standard/@result.StandardId" class="govuk-link">Apply for standard</a>
+
+                                        @if (Model.OrganisationHasStandardWithVersions[result.ReferenceNumber])
+                                        {
+                                            <a href="/standard/@Model.Id/confirm-standard-versions/@result.StandardId" class="govuk-link">Apply for standard</a>
+                                        }
+                                        else
+                                        {
+                                            <a href="/standard/@Model.Id/confirm-standard/@result.StandardId" class="govuk-link">Apply for standard</a>
+                                        }
+
                                     </td>
                                 </tr>
                             }

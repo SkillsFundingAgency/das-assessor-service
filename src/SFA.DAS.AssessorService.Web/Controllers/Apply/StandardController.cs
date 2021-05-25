@@ -20,13 +20,15 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         private readonly IOrganisationsApiClient _orgApiClient;
         private readonly IQnaApiClient _qnaApiClient;
         private readonly IContactsApiClient _contactsApiClient;
+        private readonly IStandardVersionClient _standardVersionApiClient;
 
-        public StandardController(IApplicationApiClient apiClient, IOrganisationsApiClient orgApiClient, IQnaApiClient qnaApiClient, IContactsApiClient contactsApiClient)
+        public StandardController(IApplicationApiClient apiClient, IOrganisationsApiClient orgApiClient, IQnaApiClient qnaApiClient, IContactsApiClient contactsApiClient, IStandardVersionClient standardVersionApiClient)
         {
             _apiClient = apiClient;
             _orgApiClient = orgApiClient;
             _qnaApiClient = qnaApiClient;
             _contactsApiClient = contactsApiClient;
+            _standardVersionApiClient = standardVersionApiClient;
         }
 
         [HttpGet("Standard/{id}")]
@@ -49,6 +51,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             var standards = await _apiClient.GetStandards();
 
             model.Results = standards.Where(s => s.Title.Contains(model.StandardToFind, StringComparison.InvariantCultureIgnoreCase)).ToList();
+          
+            model.OrganisationHasStandardWithVersions = await GenerateOrganisationHasStandardWithVersionsMapping(model.Id, model.Results);
 
             return View("~/Views/Application/Standard/FindStandardResults.cshtml", model);
         }
@@ -163,6 +167,37 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             var contact =  await _contactsApiClient.GetContactBySignInId(signinId);
 
             return contact?.Id ?? Guid.Empty;
+        }
+
+
+        // SV-643
+        // Standards results page needs to use a different hyperlink depending whether or not the 
+        // organisation is already approved for a standard that has version(s). So for every element in the search
+        // results we'll set a flag to indicate whether or not the org is already approved for a version of that standard.
+        private async Task<Dictionary<string, bool>> GenerateOrganisationHasStandardWithVersionsMapping(Guid id, List<Api.Types.Models.Standards.StandardCollation> searchResults)
+        {
+            var application = await _apiClient.GetApplication(id);
+            var org = await _orgApiClient.GetEpaOrganisation(application.OrganisationId.ToString());
+            var orgStandards = await _orgApiClient.GetOrganisationStandardsByOrganisation(org?.OrganisationId);
+
+            var organisationHasStandard = new Dictionary<string, bool>();
+
+            var allStandardVersions = await _standardVersionApiClient.GetAllStandardVersions();   // might be slow / a memory hog?
+
+            foreach (var result in searchResults)
+            {
+                var hasStandard = orgStandards.Any(s => s.StandardCode == result.StandardId);
+                var hasStandardWithVersions = false;
+                if(hasStandard)
+                {
+                    // OK so we have the standard, but does it have any versions?
+                    var standardVersions = allStandardVersions.Where(s => s.IFateReferenceNumber == result.ReferenceNumber);
+                    hasStandardWithVersions = (null != allStandardVersions && allStandardVersions.Any());
+                }
+                organisationHasStandard.Add(result.ReferenceNumber, hasStandardWithVersions);
+            }
+
+            return organisationHasStandard;
         }
     }
 }
