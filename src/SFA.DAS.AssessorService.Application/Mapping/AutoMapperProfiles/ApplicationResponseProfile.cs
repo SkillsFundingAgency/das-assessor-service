@@ -22,8 +22,8 @@ namespace SFA.DAS.AssessorService.Application.Mapping.AutoMapperProfiles
                 .ForMember(dest => dest.ApplyData, opt => opt.MapFrom(source => source.ApplyData))
                 .ForMember(dest => dest.StandardCode, opt => opt.MapFrom(source => source.StandardCode))
                 .ForMember(dest => dest.CreatedBy, opt => opt.MapFrom(source => source.CreatedBy))
-                .ForMember(dest => dest.ContactName, opt => opt.MapFrom(source => source.ContactName))
-                .ForMember(dest => dest.ContactEmail, opt => opt.MapFrom(source => source.ContactEmail))
+                .ForMember(dest => dest.ContactName, opt => opt.MapFrom(source => source.CreatedByName))
+                .ForMember(dest => dest.ContactEmail, opt => opt.MapFrom(source => source.CreatedByEmail))
                 .ForMember(dest => dest.ApplicationType, opts => { opts.ResolveUsing<ApplicationTypeResolver>(); })
                 .ForAllOtherMembers(dest => dest.Ignore());
         }
