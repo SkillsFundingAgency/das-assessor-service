@@ -33,7 +33,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.AutoMapperProfiles
                 .ForPath(dest => dest.LearningDetails.AchievementDate, opt => opt.MapFrom(source => source.AchievementDate))
                 .ForPath(dest => dest.LearningDetails.CourseOption, opt => opt.MapFrom(source => source.CourseOption))
                 .ForPath(dest => dest.LearningDetails.Version, opt => {
-                        opt.Condition(version => !string.IsNullOrEmpty(version.DestinationMember));
+                        opt.Condition(version => !string.IsNullOrEmpty(version.SourceMember));
                         opt.MapFrom(source => source.Version);
                     })
                 .ForPath(dest => dest.LearningDetails.LearningStartDate, opt => opt.MapFrom(source => source.LearningStartDate))
