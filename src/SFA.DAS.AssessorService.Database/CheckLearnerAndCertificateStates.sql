@@ -19,7 +19,8 @@ DECLARE @epaorgid varchar(100) = 'EPA0008';
 
 WITH WhoCanSeeCertificate AS
 (SELECT @epaorgid Chosen_EPAO, Find_EPAO,
-CASE WHEN Find_EPAO = 0 THEN 'No match' 
+CASE WHEN Find_EPAO = 0 AND EPAO_restrictions NOT IN (5,4) THEN 'No match' 
+     WHEN Find_EPAO = 1 AND EPAO_restrictions in (3) AND qa2.certificateStatus IN ('Draft','Deleted') THEN 'EPAO cannot see '+qa2.certificateStatus +' certificate record'
 	 ELSE CASE EPAO_restrictions
 	    	WHEN 5 THEN 'EPAO is creator and approved'
 			WHEN 4 THEN 'EPAO is creator, no longer approved'
@@ -27,10 +28,11 @@ CASE WHEN Find_EPAO = 0 THEN 'No match'
 			WHEN 2 THEN 'Other EPAO is creator #1'
 			WHEN 1 THEN 'Other EPAO is creator #2'
 			WHEN 0 THEN 'Other EPAO is creator #3'
+			ELSE 'Not Approved'
 		END
 	 END What_is_allowed_for_Certificate
 , EPAO_restrictions,
-qa2.EndPointAssessorOrganisationId, qa2.larscode, qa2.certificatereference, qa2.uln
+qa2.EndPointAssessorOrganisationId, qa2.larscode, qa2.certificatereference, qa2.uln, qa2.certificateStatus
 FROM (
 SELECT 
 MAX ( CASE WHEN os2.EndPointAssessorOrganisationId = @epaorgid  THEN
@@ -42,18 +44,19 @@ MAX ( CASE WHEN os2.EndPointAssessorOrganisationId = @epaorgid  THEN
 		ELSE
 	   (CASE WHEN qa1.EndPointAssessorOrganisationId = os2.EndPointAssessorOrganisationId AND ( os2.EffectiveTo IS NULL OR os2.EffectiveTo >= GETDATE()) THEN  2 -- other EPAO is creator and approved
              WHEN qa1.EndPointAssessorOrganisationId = os2.EndPointAssessorOrganisationId AND NOT ( os2.EffectiveTo IS NULL OR os2.EffectiveTo >= GETDATE()) THEN  1 -- other EPAO is creator, no longer approved
-			 WHEN qa1.EndPointAssessorOrganisationId != os2.EndPointAssessorOrganisationId THEN 0 -- other EPAO can see redacted certificate
+			 WHEN qa1.EndPointAssessorOrganisationId != os2.EndPointAssessorOrganisationId THEN 0 -- creator was never approved (?) /other EPAO can see redacted certificate
 			 ELSE NULL
 			 END )
 END ) EPAO_restrictions
-,qa1.EndPointAssessorOrganisationId, qa1.larscode, qa1.certificatereference, qa1.uln,
+,qa1.EndPointAssessorOrganisationId, qa1.larscode, qa1.certificatereference, qa1.uln, qa1.certificateStatus,
 (SELECT COUNT(*) FROM OrganisationStandard WHERE EndPointAssessorOrganisationId = @epaorgid AND standardcode = qa1.larscode) Find_EPAO
 FROM 
-( SELECT EndPointAssessorOrganisationId, standardcode larscode,certificatereference, Uln FROM certificates ce2 JOIN Organisations og2 on og2.Id = ce2.OrganisationId ) qa1
+( SELECT EndPointAssessorOrganisationId, standardcode larscode,certificatereference, Uln, ce2.status certificateStatus FROM certificates ce2 JOIN Organisations og2 on og2.Id = ce2.OrganisationId ) qa1
   LEFT JOIN OrganisationStandard os2
 ON qa1.larscode = os2.standardcode
-WHERE 1=1
-GROUP BY qa1.EndPointAssessorOrganisationId, qa1.larscode, qa1.certificatereference, qa1.uln
+WHERE 1=1 
+--and qa1.uln in ( 6417214655, 1009988667 )
+GROUP BY qa1.EndPointAssessorOrganisationId, qa1.larscode, qa1.certificatereference, qa1.uln, qa1.certificateStatus
 ) qa2 
 )  -- end of WhoCanSeeCertificate
 ,
@@ -183,7 +186,7 @@ select   'certificate' recordType,ce1.CreatedAt,
 og1.EndPointAssessorOrganisationId EpaOrgId from certificates ce1
 join Organisations og1 on og1.id = ce1.OrganisationId
 where uln between 1000000001 AND 9999999998
---and uln = 1067027105
+--and uln in ( 6417214655, 1009988667 )
 UNION ALL
 --
 SELECT  'ILR' recordType,il1.CreatedAt,
@@ -192,7 +195,7 @@ CASE il1.completionstatus WHEN 1 THEN 'Active' WHEN 2 THEN 'Complete' WHEN 3 THE
 NULL LatestEpaOutcome, NULL OverallGrade, NULL AchievementDate, Null Version,  EpaOrgId
 from ilrs il1
 where uln  between 1000000001 AND 9999999998
---and uln = 1067027105
+--and uln in ( 6417214655, 1009988667 )
 ) ab1
 GROUP BY uln, StandardReference, Larscode
 HAVING MAX(StandardReference) = MIN(StandardReference)  -- ignore duff data 
