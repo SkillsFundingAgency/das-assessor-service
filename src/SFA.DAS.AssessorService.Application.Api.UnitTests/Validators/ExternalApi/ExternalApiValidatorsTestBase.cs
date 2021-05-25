@@ -38,8 +38,8 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
             certificateRepositoryMock.Setup(q => q.GetCertificate(1234567890, 99)).ReturnsAsync(GenerateCertificate(1234567890, 99, "Test", CertificateStatus.Draft, new Guid("12345678123456781234567812345678")));
 
             // This is simulating a Certificate that started it's life on the Web App, but was never submitted
-            certificateRepositoryMock.Setup(q => q.GetCertificate(1234567890, 99)).ReturnsAsync(GeneratePartialCertificate(1234567890, 99, "test", new Guid("12345678123456781234567812345678"), null));
-            certificateRepositoryMock.Setup(q => q.GetCertificate(9999999999, 99)).ReturnsAsync(GeneratePartialCertificate(9999999999, 99, "test", new Guid("99999999999999999999999999999999"), CertificateGrade.Fail));
+            certificateRepositoryMock.Setup(q => q.GetCertificate(1234567890, 99)).ReturnsAsync(GeneratePartialCertificate(1234567890, 99, "test", new Guid("12345678123456781234567812345678"), null, CertificateStatus.Draft));
+            certificateRepositoryMock.Setup(q => q.GetCertificate(9999999999, 99)).ReturnsAsync(GeneratePartialCertificate(9999999999, 99, "test", new Guid("99999999999999999999999999999999"), CertificateGrade.Fail, CertificateStatus.Submitted));
 
             // These allow us to test EPAs, which is the initial stage of a Certificate
             certificateRepositoryMock.Setup(q => q.GetCertificate(1234567890, 101)).ReturnsAsync(GenerateEpaCertificate(1234567890, 101, "test", new Guid("12345678123456781234567812345678"), true));
@@ -263,7 +263,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
                 .Build();
         }
 
-        private static Certificate GeneratePartialCertificate(long uln, int standardCode, string familyName, Guid organisationId, string overallGrade)
+        private static Certificate GeneratePartialCertificate(long uln, int standardCode, string familyName, Guid organisationId, string overallGrade, string status)
         {
             var reference = $"{uln}-{standardCode}";
 
@@ -289,7 +289,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
             return Builder<Certificate>.CreateNew()
                 .With(i => i.Uln = uln)
                 .With(i => i.StandardCode = standardCode)
-                .With(i => i.Status = CertificateStatus.Draft)
+                .With(i => i.Status = status)
                 .With(i => i.OrganisationId = organisationId)
                 .With(i => i.CertificateReference = reference)
                                 .With(i => i.CertificateData = JsonConvert.SerializeObject(Builder<CertificateData>.CreateNew()

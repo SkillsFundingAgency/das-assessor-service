@@ -53,6 +53,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
                 // need to update EPA Reference too
                 certData.EpaDetails.EpaReference = certificate.CertificateReference;
                 certificate.CertificateData = JsonConvert.SerializeObject(certData);
+                certificate.StandardUId = request.StandardUId;
 
                 // adjust Status appropriately
                 if (certificate.Status == CertificateStatus.Deleted)
