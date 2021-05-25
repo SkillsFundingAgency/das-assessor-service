@@ -73,13 +73,22 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.Apply
             return Ok(await _mediator.Send(new GetApplicationsRequest(Guid.Parse(userId), ApplicationTypes.StandardWithdrawal)));
         }
 
-        [HttpGet("{Id}/application", Name = "GetApplication")]
+        [HttpGet("{id}/application", Name = "GetApplication")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(ApplicationResponse))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<ActionResult<ApplicationResponse>> GetApplication(string Id)
+        public async Task<ActionResult<ApplicationResponse>> GetApplication(string id)
         {
-            _logger.LogInformation($"Received request to retrieve application for ApplicationId {Id}");
-            return Ok(await _mediator.Send(new GetApplicationRequest(Guid.Parse(Id))));
+            _logger.LogInformation($"Received request to retrieve application with ApplicationId {id}");
+            return Ok(await _mediator.Send(new GetApplicationRequest(Guid.Parse(id))));
+        }
+
+        [HttpGet("user/{userId}/application/{id}", Name = "GetApplicationForUser")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(ApplicationResponse))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<ActionResult<ApplicationResponse>> GetApplicationForUser(string userId, string id)
+        {
+            _logger.LogInformation($"Received request to retrieve application with ApplicationId {id} for UserId {userId}");
+            return Ok(await _mediator.Send(new GetApplicationRequest(Guid.Parse(id), Guid.Parse(userId))));
         }
 
         [HttpPost("createApplication", Name = "CreateApplication")]

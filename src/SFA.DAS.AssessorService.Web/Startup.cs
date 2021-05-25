@@ -59,9 +59,11 @@ namespace SFA.DAS.AssessorService.Web
                 options.RequestCultureProviders.Clear();
             });
             
-            services.AddSingleton<IAuthorizationPolicyProvider, PrivilegePolicyProvider>();
-            services.AddSingleton<IAuthorizationHandler, PrivilegeHandler>();
+            services.AddSingleton<IAuthorizationPolicyProvider, AssessorPolicyProvider>();
             
+            services.AddSingleton<IAuthorizationHandler, ApplicationAuthorizationHandler>();
+            services.AddSingleton<IAuthorizationHandler, PrivilegeAuthorizationHandler>();
+
             services.AddMvc(options => { options.Filters.Add<CheckSessionFilter>();})
                 .AddControllersAsServices()
                 .AddSessionStateTempDataProvider()

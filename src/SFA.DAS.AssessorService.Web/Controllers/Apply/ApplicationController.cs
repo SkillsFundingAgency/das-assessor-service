@@ -14,7 +14,6 @@ using SFA.DAS.AssessorService.ApplyTypes.CharityCommission;
 using SFA.DAS.AssessorService.ApplyTypes.CompaniesHouse;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Settings;
-using SFA.DAS.AssessorService.Web.Extensions;
 using SFA.DAS.AssessorService.Web.Helpers;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.StartupConfiguration;
@@ -143,6 +142,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         }
 
         [HttpGet("/Application/{Id}")]
+        [ApplicationAuthorize(routeId: "Id")]
         public async Task<IActionResult> SequenceSignPost(Guid Id)
         {
             var userId = await GetUserId();
@@ -204,6 +204,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         }
 
         [HttpGet("/Application/{Id}/Sequence/{sequenceNo}")]
+        [ApplicationAuthorize(routeId: "Id")]
         public async Task<IActionResult> Sequence(Guid Id, int sequenceNo)
         {
             var application = await _applicationApiClient.GetApplication(Id);
@@ -234,6 +235,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         }
 
         [HttpGet("/Application/{Id}/Sequences/{sequenceNo}/Sections/{sectionNo}")]
+        [ApplicationAuthorize(routeId: "Id")]
         public async Task<IActionResult> Section(Guid Id, int sequenceNo, int sectionNo)
         {
             var application = await _applicationApiClient.GetApplication(Id);
@@ -263,6 +265,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         }
 
         [HttpGet("/Application/{id}/Cancelled")]
+        [ApplicationAuthorize(routeId: "Id")]
         public IActionResult ApplicationCancelled(Guid id)
         {
             var standardWithReference = TempData["StandardWithReference"]?.ToString();
@@ -276,6 +279,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
         [HttpGet("/Application/{id}/ConfirmCancel")]
         [ModelStatePersist(ModelStatePersist.RestoreEntry)]
+        [ApplicationAuthorize(routeId: "Id")]
         public async Task<IActionResult> ConfirmCancelApplication(Guid id)
         {
             var application = await _applicationApiClient.GetApplication(id);
@@ -300,6 +304,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
         [HttpPost("/Application/{id}/ConfirmCancel")]
         [ModelStatePersist(ModelStatePersist.Store)]
+        [ApplicationAuthorize(routeId: "Id")]
         public async Task<IActionResult> ConfirmCancelApplication(ConfirmCancelApplicationViewModel viewModel)
         {
             if (string.IsNullOrEmpty(viewModel.AreYouSure))
@@ -343,7 +348,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             return RedirectToAction(nameof(ConfirmCancelApplication));
         }
 
-        [HttpGet("/Application/{Id}/Sequences/{sequenceNo}/Sections/{sectionNo}/Pages/{pageId}"), ModelStatePersist(ModelStatePersist.RestoreEntry)]
+        [HttpGet("/Application/{Id}/Sequences/{sequenceNo}/Sections/{sectionNo}/Pages/{pageId}")]
+        [ModelStatePersist(ModelStatePersist.RestoreEntry)]
+        [ApplicationAuthorize(routeId: "Id")]
         public async Task<IActionResult> Page(Guid Id, int sequenceNo, int sectionNo, string pageId, string __redirectAction, string __summaryLink = "Show")
         {
             var application = await _applicationApiClient.GetApplication(Id);
@@ -438,7 +445,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             return View("~/Views/Application/Pages/Index.cshtml", viewModel);
         }
 
-        [HttpPost("/Application/{Id}/Sequences/{sequenceNo}/Sections/{sectionNo}/Pages/{pageId}/multiple"), ModelStatePersist(ModelStatePersist.Store)]
+        [HttpPost("/Application/{Id}/Sequences/{sequenceNo}/Sections/{sectionNo}/Pages/{pageId}/multiple")]
+        [ModelStatePersist(ModelStatePersist.Store)]
+        [ApplicationAuthorize(routeId: "Id")]
         public async Task<IActionResult> SaveMultiplePageAnswers(Guid Id, int sequenceNo, int sectionNo, string pageId, string formAction, string __redirectAction, string __summaryLink)
         {
             var application = await _applicationApiClient.GetApplication(Id);
@@ -535,7 +544,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             }
         }
 
-        [HttpPost("/Application/{Id}/Sequences/{sequenceNo}/Sections/{sectionNo}/Pages/{pageId}"), ModelStatePersist(ModelStatePersist.Store)]
+        [HttpPost("/Application/{Id}/Sequences/{sequenceNo}/Sections/{sectionNo}/Pages/{pageId}")]
+        [ModelStatePersist(ModelStatePersist.Store)]
+        [ApplicationAuthorize(routeId: "Id")]
         public async Task<IActionResult> SaveAnswers(Guid Id, int sequenceNo, int sectionNo, string pageId, string __redirectAction, string __summaryLink)
         {
             var application = await _applicationApiClient.GetApplication(Id);
@@ -651,6 +662,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         }
 
         [HttpPost("/Application/DeleteAnswer")]
+        [ApplicationAuthorize(routeId: "Id")]
         public async Task<IActionResult> DeleteAnswer(Guid Id, int sequenceNo, int sectionNo, string pageId, Guid answerId, string __redirectAction, string __summaryLink = "False")
         {
             var application = await _applicationApiClient.GetApplication(Id);
@@ -673,6 +685,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         }
 
         [HttpGet("Application/{Id}/Section/{sectionId}/Page/{pageId}/Question/{questionId}/{filename}/Download")]
+        [ApplicationAuthorize(routeId: "Id")]
         public async Task<IActionResult> Download(Guid Id, Guid sectionId, string pageId, string questionId, string filename)
         {
             var application = await _applicationApiClient.GetApplication(Id);
@@ -686,6 +699,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         }
 
         [HttpGet("Application/{Id}/SequenceNo/{sequenceNo}/Section/{sectionId}/Page/{pageId}/Question/{questionId}/Filename/{filename}/RedirectAction/{__redirectAction}")]
+        [ApplicationAuthorize(routeId: "Id")]
         public async Task<IActionResult> DeleteFile(Guid Id, int sequenceNo, Guid sectionId, string pageId, string questionId, string filename, string __redirectAction)
         {
             var application = await _applicationApiClient.GetApplication(Id);
@@ -702,6 +716,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         }
 
         [HttpPost("/Application/{Id}/Submit/{sequenceNo}")]
+        [ApplicationAuthorize(routeId: "Id")]
         public async Task<IActionResult> Submit(Guid Id, int sequenceNo)
         {
             var application = await _applicationApiClient.GetApplication(Id);
@@ -748,6 +763,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         }
 
         [HttpGet("/Application/{Id}/Submitted")]
+        [ApplicationAuthorize(routeId: "Id")]
         public async Task<IActionResult> Submitted(Guid Id)
         {
             var application = await _applicationApiClient.GetApplication(Id);
@@ -760,6 +776,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         }
 
         [HttpGet("/Application/{Id}/NotSubmitted")]
+        [ApplicationAuthorize(routeId: "Id")]
         public async Task<IActionResult> NotSubmitted(Guid Id)
         {
             var application = await _applicationApiClient.GetApplication(Id);
@@ -772,6 +789,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         }
 
         [HttpGet("/Application/{id}/Feedback")]
+        [ApplicationAuthorize(routeId: "Id")]
         public async Task<IActionResult> Feedback(Guid id)
         {
             var application = await _applicationApiClient.GetApplication(id);
@@ -815,7 +833,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
             return page;
         }
-
 
         private void SetAnswerNotUpdated(Page page)
         {
@@ -924,7 +941,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
             return page;
         }
-
 
         private RedirectToActionResult RedirectToNextAction(Guid Id, int sequenceNo, int sectionNo, string nextAction, string nextActionId, string __redirectAction, string __summaryLink = "Show")
         {
