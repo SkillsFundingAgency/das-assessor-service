@@ -10,8 +10,6 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Services
         public AzureApiAuthentication AzureApiAuthentication { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public ClientApiAuthentication AssessorApiAuthentication { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public NotificationsApiClientConfiguration NotificationsApiClientConfiguration { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public string IfaApiClientBaseUrl { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public string IFATemplateStorageConnectionString { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public string SqlConnectionString { get; set; }
         public string SpecflowDBTestConnectionString { get; set; }
         public string SessionRedisConnectionString { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
