@@ -3,6 +3,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Api.Types.Models.ExternalApi.Certificates;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Api.Extensions;
@@ -55,7 +56,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.ExternalApi
             };
 
             var standard = await _mediator.Send(new GetStandardVersionRequest { StandardId = standardId });
-            
+
             if (standard != null)
             {
                 request.StandardCode = standard.LarsCode;
@@ -65,7 +66,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.ExternalApi
             var validationResult = await _getValidator.ValidateAsync(request);
             var isRequestValid = validationResult.IsValid;
             var validationErrors = validationResult.Errors.Select(error => error.ErrorMessage).ToList();
-            
+
             GetBatchCertificateResponse getResponse = new GetBatchCertificateResponse
             {
                 Uln = request.Uln,
@@ -76,7 +77,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.ExternalApi
 
             if (!validationErrors.Any() && isRequestValid)
             {
-                getResponse.Certificate = await _mediator.Send(request);  
+                getResponse.Certificate = await _mediator.Send(request);
             }
 
             return Ok(getResponse);
@@ -92,20 +93,13 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.ExternalApi
 
             foreach (var request in batchRequest)
             {
-                Standard standard = null;
-                if (!string.IsNullOrEmpty(request.CertificateData?.Version))
-                {
-                    standard = await _mediator.Send(
-                        new GetStandardVersionRequest { StandardId = request.GetStandardId(), Version = request.CertificateData.Version });
-                }
-                else
-                {
-                    standard = await _mediator.Send(new GetCalculatedStandardVersionForApprenticeshipRequest { StandardId = request.GetStandardId(), Uln = request.Uln });
-                }
+                Standard standard = await GetOrCalculateStandardVersion(request?.CertificateData?.Version, request.GetStandardId(), request.Uln);
 
                 if (standard != null)
                 {
-                    request.PopulateMissingFields(standard);
+                    //Certificate may alraedy exist from EPA creation record, use as fallback for version information
+                    var existingCertificate = await _mediator.Send(new GetCertificateForUlnRequest { StandardCode = standard.LarsCode, Uln = request.Uln });
+                    request.PopulateMissingFields(standard, existingCertificate);
                 }
 
                 var validationResult = await _createValidator.ValidateAsync(request);
@@ -143,19 +137,13 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.ExternalApi
 
             foreach (var request in batchRequest)
             {
-                var collatedStandard = request.StandardCode > 0 ? await GetCollatedStandard(request.StandardCode) : await GetCollatedStandard(request.StandardReference);
+                Standard standard = await GetOrCalculateStandardVersion(request?.CertificateData?.Version, request.GetStandardId(), request.Uln);
 
-                if (collatedStandard != null)
+                if (standard != null)
                 {
-                    // Only fill in the missing bits...
-                    if (request.StandardCode < 1)
-                    {
-                        request.StandardCode = collatedStandard.StandardId ?? int.MinValue;
-                    }
-                    else if (string.IsNullOrEmpty(request.StandardReference))
-                    {
-                        request.StandardReference = collatedStandard.ReferenceNumber;
-                    }
+                    //Certificate should already exist, populate version information
+                    var existingCertificate = await _mediator.Send(new GetCertificateForUlnRequest { StandardCode = standard.LarsCode, Uln = request.Uln });
+                    request.PopulateMissingFields(standard, existingCertificate);
                 }
 
                 var validationResult = await _updateValidator.ValidateAsync(request, new CancellationToken());
@@ -193,19 +181,12 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.ExternalApi
 
             foreach (var request in batchRequest)
             {
-                var collatedStandard = request.StandardCode > 0 ? await GetCollatedStandard(request.StandardCode) : await GetCollatedStandard(request.StandardReference);
+                var standard = await _mediator.Send(new GetStandardVersionRequest { StandardId = request.GetStandardId() });
 
-                if (collatedStandard != null)
+                if (standard != null)
                 {
-                    // Only fill in the missing bits...
-                    if (request.StandardCode < 1)
-                    {
-                        request.StandardCode = collatedStandard.StandardId ?? int.MinValue;
-                    }
-                    else if (string.IsNullOrEmpty(request.StandardReference))
-                    {
-                        request.StandardReference = collatedStandard.ReferenceNumber;
-                    }
+                    request.StandardCode = standard.LarsCode;
+                    request.StandardReference = standard.IfateReferenceNumber;
                 }
 
                 var validationResult = await _submitValidator.ValidateAsync(request);
@@ -245,12 +226,12 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.ExternalApi
                 UkPrn = ukPrn
             };
 
-            var collatedStandard = int.TryParse(standard, out int standardCode) ? await GetCollatedStandard(standardCode) : await GetCollatedStandard(standard);
-
-            if (collatedStandard != null)
+            var standardVersion = await _mediator.Send(new GetStandardVersionRequest { StandardId = standard });
+            
+            if (standardVersion != null)
             {
-                request.StandardCode = collatedStandard.StandardId ?? int.MinValue;
-                request.StandardReference = collatedStandard.ReferenceNumber;
+                request.StandardCode = standardVersion.LarsCode;
+                request.StandardReference = standardVersion.IfateReferenceNumber;
             }
 
             var validationResult = await _deleteValidator.ValidateAsync(request);
@@ -276,15 +257,16 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.ExternalApi
             }
         }
 
-
-        private async Task<StandardCollation> GetCollatedStandard(string referenceNumber)
+        private async Task<Standard> GetOrCalculateStandardVersion(string version, string standardId, long uln)
         {
-            return await _mediator.Send(new GetCollatedStandardRequest { ReferenceNumber = referenceNumber });
-        }
-
-        private async Task<StandardCollation> GetCollatedStandard(int standardId)
-        {
-            return await _mediator.Send(new GetCollatedStandardRequest { StandardId = standardId });
+            if (!string.IsNullOrEmpty(version))
+            {
+                return await _mediator.Send(new GetStandardVersionRequest { StandardId = standardId, Version = version });
+            }
+            else
+            {
+                return await _mediator.Send(new GetCalculatedStandardVersionForApprenticeshipRequest { StandardId = standardId, Uln = uln });
+            }
         }
     }
 }

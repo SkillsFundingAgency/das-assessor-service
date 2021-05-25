@@ -116,6 +116,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
                 Registration = requestData.Registration,
                 AchievementDate = requestData.AchievementDate,
                 CourseOption = CertificateHelpers.NormalizeCourseOption(options, requestData.CourseOption),
+                Version = requestData.Version,
                 OverallGrade = CertificateHelpers.NormalizeOverallGrade(requestData.OverallGrade),
 
                 EpaDetails = epaDetails
