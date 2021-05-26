@@ -39,10 +39,14 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
         public async Task<Certificate> Handle(StartCertificateRequest request, CancellationToken cancellationToken)
         {
             var certificate = await _certificateRepository.GetCertificate(request.Uln, request.StandardCode);
+
+            _logger.LogInformation("CreateNewCertificate Before Get Organisation from db");
+            var organisation = await _organisationQueryRepository.GetByUkPrn(request.UkPrn);
+
             if (certificate == null)
-                certificate = await CreateNewCertificate(request);
+                certificate = await CreateNewCertificate(request, organisation);
             else if(certificate.Status == Domain.Consts.CertificateStatus.Deleted)
-            {
+            {                
                 _logger.LogInformation("CreateNewCertificate Before Get Ilr from db");
                 var ilr = await _ilrRepository.Get(request.Uln, request.StandardCode);
                 if (ilr != null)
@@ -54,18 +58,19 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
                     certData.FullName = $"{ilr.GivenNames} {ilr.FamilyName}";
                     certificate.CertificateData = JsonConvert.SerializeObject(certData);
                     certificate.IsPrivatelyFunded = false;
+                    certificate.OrganisationId = organisation.Id;
                     await _certificateRepository.Update(certificate, request.Username, null);
                 }
             }
             return certificate;
         }
 
-        private async Task<Certificate> CreateNewCertificate(StartCertificateRequest request)
+        private async Task<Certificate> CreateNewCertificate(StartCertificateRequest request, Organisation organisation)        
         {
             _logger.LogInformation("CreateNewCertificate Before Get Ilr from db");
             var ilr = await _ilrRepository.Get(request.Uln, request.StandardCode);
-            _logger.LogInformation("CreateNewCertificate Before Get Organisation from db");
-            var organisation = await _organisationQueryRepository.GetByUkPrn(request.UkPrn);
+            //_logger.LogInformation("CreateNewCertificate Before Get Organisation from db");
+            //var organisation = await _organisationQueryRepository.GetByUkPrn(request.UkPrn);
             _logger.LogInformation("CreateNewCertificate Before Get Standard from API");
             var standard = await _standardService.GetStandard(ilr.StdCode);
             _logger.LogInformation("CreateNewCertificate Before Get Provider from API");
