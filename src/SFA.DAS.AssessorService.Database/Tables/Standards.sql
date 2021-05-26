@@ -19,6 +19,6 @@
     [VersionApprovedForDelivery] DATETIME NULL, 
     [ProposedTypicalDuration] INT NOT NULL, 
     [ProposedMaxFunding] INT NOT NULL,
-	[EPAChanged] BIT NOT NULL,
+	[EPAChanged] BIT NOT NULL DEFAULT 0,
 	[StandardPageUrl] VARCHAR(500) NULL
 )
