@@ -18,5 +18,6 @@
     [VersionLatestEndDate] DATETIME NULL, 
     [VersionApprovedForDelivery] DATETIME NULL, 
     [ProposedTypicalDuration] INT NOT NULL, 
-    [ProposedMaxFunding] INT NOT NULL
+    [ProposedMaxFunding] INT NOT NULL,
+	[EPAChanged] BIT NOT NULL DEFAULT 0
 )
