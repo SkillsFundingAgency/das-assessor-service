@@ -142,7 +142,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
                 transaction: _unitOfWork.Transaction);
         }
 
-        public async Task<bool> UpdateStandardData(Guid id, int standardCode, string referenceNumber, string standardName)
+        public async Task<bool> UpdateStandardData(Guid id, int standardCode, string referenceNumber, string standardName, List<string> versions)
         {
             var application = await GetApply(id);
             var applyData = application?.ApplyData;
@@ -159,6 +159,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
                 applyData.Apply.StandardCode = standardCode;
                 applyData.Apply.StandardReference = referenceNumber;
                 applyData.Apply.StandardName = standardName;
+                applyData.Apply.Versions = versions;
 
                 await _unitOfWork.Connection.ExecuteAsync(
                     @"UPDATE Apply

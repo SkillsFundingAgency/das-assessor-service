@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using System;
+using System.Collections.Generic;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models.Apply
 {
@@ -9,5 +10,6 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Apply
         public string StandardName { get; set; }
         public string ReferenceNumber { get; set; }
         public int StandardCode { get; set; }
+        public List<string> Versions { get; set; }
     }
 }

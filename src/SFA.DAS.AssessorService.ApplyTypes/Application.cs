@@ -77,6 +77,7 @@ namespace SFA.DAS.AssessorService.ApplyTypes
         public int? StandardCode { get; set; }
         public string StandardReference { get; set; }
         public string StandardName { get; set; }
+        public List<string> Versions { get; set; }
 
         public List<Submission> InitSubmissions { get; private set; } = new List<Submission>();
 

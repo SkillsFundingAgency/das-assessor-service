@@ -755,7 +755,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             {
                 ReferenceNumber = application?.ApplyData?.Apply?.ReferenceNumber,
                 FeedbackUrl = _config.FeedbackUrl,
-                StandardName = application?.ApplyData?.Apply?.StandardName
+                StandardName = application?.ApplyData?.Apply?.StandardName,
+                Versions = application?.ApplyData?.Apply?.Versions
             });
         }
 

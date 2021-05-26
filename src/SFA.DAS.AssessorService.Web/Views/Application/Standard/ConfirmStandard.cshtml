@@ -1,6 +1,6 @@
 ﻿@using SFA.DAS.AssessorService.Web.ViewModels
 @using SFA.DAS.AssessorService.Domain.Extensions
-@model SFA.DAS.AssessorService.Web.ViewModels.Apply.StandardViewModel
+@model SFA.DAS.AssessorService.Web.ViewModels.Apply.StandardVersionViewModel
 
 @{
     ViewBag.Title = "Confirm Standard";
@@ -9,7 +9,7 @@
     var standardCode = Model.StandardCode;
 }
 
-<a href="/standard/@Model.Id" class="govuk-back-link">Return to standards search</a>
+<a href="/standard/@Model.Id" class="govuk-back-link">Return to search</a>
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
@@ -35,24 +35,24 @@
                 }
                 @Model.SelectedStandard?.Title
             </h1>
-            <p class="govuk-body-l">Reference: @Model.SelectedStandard?.ReferenceNumber</p>
+            <p class="govuk-body-l">Reference: @Model.SelectedStandard?.IFateReferenceNumber</p>
 
             <table class="govuk-table govuk-!-margin-bottom-7">
                 <tbody class="govuk-table__body">
                     <tr class="govuk-table__row">
                         <th class="govuk-table__header" scope="row">Effective from</th>
-                        <td class="govuk-table__cell">@Model.SelectedStandard?.StandardData?.EffectiveFrom.ToSfaShortDateString()</td>
+                        <td class="govuk-table__cell">@Model.SelectedStandard?.EffectiveFrom.ToSfaShortDateString()</td>
                     </tr>
                     <tr class="govuk-table__row">
                         <th class="govuk-table__header" scope="row">Effective to</th>
                         <td class="govuk-table__cell">
-                            @if (@Model.SelectedStandard?.StandardData?.EffectiveTo == null)
+                            @if (@Model.SelectedStandard?.EffectiveTo == null)
                             {
                                 @Html.Raw("Expiry date not set")
                             }
                             else
                             {
-                                @Model.SelectedStandard?.StandardData?.EffectiveTo.ToSfaShortDateString()
+                                @Model.SelectedStandard?.EffectiveTo.ToSfaShortDateString()
                             }
                         </td>
                     </tr>
@@ -60,7 +60,31 @@
             </table>
 
             <form asp-action="ConfirmStandard" asp-controller="Standard" asp-route-applicationId="@Model.Id">
-                <input asp-for="@Model.StandardCode" value="@standardCode" type="hidden" />
+                <input asp-for="StandardCode" value="@standardCode" type="hidden" />
+
+                <fieldset class="govuk-fieldset">
+                    <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">Select all that apply</legend>
+                    <div class="govuk-checkboxes govuk-checkboxes--small">
+                        @foreach (var version in Model.Results)
+                        {
+                            <div class="govuk-checkboxes__item">
+                                <input class="govuk-checkboxes__input" id="@version.Version" value="@version.Version" name="SelectedVersions" type="checkbox">
+                                <label class="govuk-label govuk-checkboxes__label" for="@version.Version">
+                                    Version @version.Version
+                                </label>
+                            </div>
+                        }
+                    </div>
+                </fieldset>
+
+                <table class="govuk-table govuk-!-margin-bottom-7">
+                    <tbody class="govuk-table__body">
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__cell">
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
 
                 @if (string.IsNullOrEmpty(Model.ApplicationStatus))
                 {
@@ -75,12 +99,12 @@
                             <div class="govuk-checkboxes__item">
                                 <input class="govuk-checkboxes__input" asp-for="@Model.IsConfirmed" name="IsConfirmed" type="checkbox">
                                 <label class="govuk-label govuk-checkboxes__label" for="IsConfirmed">
-                                    By continuing with this application you are confirming you have <a href="@Model.SelectedStandard.StandardData.AssessmentPlanUrl" target="_blank" class="govuk-link">read the assessment plan</a> (PDF).
+                                    By continuing, you confirm you have read and understood the relevant assessment plan(s) for <a href="@Model.SelectedStandard?.StandardPageUrl" target="_blank" class="govuk-link">this standard.</a>
                                 </label>
                             </div>
                         </div>
                     </div>
-                    <button type="submit" class="govuk-button">Confirm and apply</button>
+                    <button type="submit" class="govuk-button">Confirm and continue</button>
                 }
 
                 @if (!string.IsNullOrEmpty(Model.ApplicationStatus))
