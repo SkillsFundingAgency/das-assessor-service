@@ -27,6 +27,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
                                 .With(cd => cd.AchievementDate = DateTime.UtcNow)
                                 .With(cd => cd.OverallGrade = "INVALID")
                                 .With(cd => cd.CourseOption = "English")
+                                .With(cd => cd.Version = "1.0")
                                 .Build())
                 .Build();
 

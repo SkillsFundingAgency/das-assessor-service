@@ -7,7 +7,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Helpers
 {
     public static class CertificateHelpers
     {
-        public static bool IsDraftCertificateDeemedAsReady(Certificate certificate, IEnumerable<string> potentialOptions = null)
+        public static bool IsDraftCertificateDeemedAsReady(Certificate certificate, bool? hasOptions = null)
         {
             // Note: This allows the caller to know if a Draft Certificate is 'Ready' for submitting
             // It is deemed ready if the mandatory fields have been filled out.
@@ -19,7 +19,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Helpers
             {
                 return false;
             }
-            else if (certificate.CertificateData.LearningDetails.Version is null)
+            else if (string.IsNullOrEmpty(certificate.CertificateData.LearningDetails.Version))
             {
                 return false;
             }
@@ -31,7 +31,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Helpers
                 return false;
             }
             else if (certificate.CertificateData.Learner is null || string.IsNullOrEmpty(certificate.CertificateData.Learner.FamilyName)
-                        || certificate.CertificateData.Learner.Uln < 1000000000 || certificate.CertificateData.Learner.Uln > 9999999999)
+                        || certificate.CertificateData.Learner.Uln <= 1000000000 || certificate.CertificateData.Learner.Uln >= 9999999999)
             {
                 return false;
             }
@@ -40,9 +40,9 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Helpers
             {
                 return false;
             } 
-            else if (potentialOptions != null)
+            else if (hasOptions.HasValue && hasOptions == true)
             {
-                if (certificate.CertificateData.LearningDetails.CourseOption is null || !potentialOptions.Contains(certificate.CertificateData.LearningDetails.CourseOption))
+                if (string.IsNullOrEmpty(certificate.CertificateData.LearningDetails.CourseOption))
                 {
                     return false;
                 }

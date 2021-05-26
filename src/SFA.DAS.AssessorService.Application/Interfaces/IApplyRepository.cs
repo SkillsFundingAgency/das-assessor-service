@@ -10,7 +10,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
     public interface IApplyRepository
     {
         Task<Domain.Entities.Apply> GetApply(Guid applicationId);
-        Task<ApplySummary> GetApplication(Guid applicationId);
+        Task<ApplySummary> GetApplication(Guid applicationId, Guid? userId);
         Task<List<ApplySummary>> GetOrganisationApplications(Guid userId);
         Task<List<ApplySummary>> GetStandardApplications(Guid userId);
         Task<List<ApplySummary>> GetWithdrawalApplications(Guid userId);

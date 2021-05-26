@@ -119,14 +119,25 @@ namespace SFA.DAS.AssessorService.Data
                 c.Uln == uln && c.StandardCode == standardCode);
         }
 
-        public async Task<Certificate> GetCertificateByOrgIdLastname(long uln,
-            string endpointOrganisationId, string lastName)
+        public async Task<Certificate> GetCertificate(long uln, int standardCode, string familyName)
+        {
+            var certificate = await GetCertificate(uln, standardCode);
+            
+            if (certificate is null)
+                return certificate;
+
+            return CheckCertificateData(certificate, familyName) ? certificate : null;
+        }
+
+        public async Task<Certificate> GetCertificateByUlnOrgIdLastnameAndStandardCode(long uln,
+            string endpointOrganisationId, string lastName, int standardCode)
         {
             var existingCert = await _context.Certificates
                 .Include(q => q.Organisation)
                 .FirstOrDefaultAsync(c =>
                     c.Uln == uln &&
                     c.Organisation.EndPointAssessorOrganisationId == endpointOrganisationId &&
+                    c.StandardCode == standardCode &&
                     CheckCertificateData(c, lastName));
             return existingCert;
         }
@@ -167,7 +178,8 @@ namespace SFA.DAS.AssessorService.Data
         private bool CheckCertificateData(Certificate certificate, string lastName)
         {
             var certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
-            return (certificateData.LearnerFamilyName == lastName);
+            
+            return certificateData.LearnerFamilyName.Equals(lastName, StringComparison.InvariantCultureIgnoreCase);            
         }
 
         public async Task<Certificate> GetCertificate(

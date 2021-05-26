@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
-using SFA.DAS.AssessorService.Domain.DTOs;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Paging;
 
@@ -13,8 +12,9 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<Certificate> New(Certificate certificate);        
         Task<Certificate> GetCertificate(Guid id);
         Task<Certificate> GetCertificate(long uln, int standardCode);
+        Task<Certificate> GetCertificate(long uln, int standardCode, string familyName);
         Task<Certificate> GetCertificate(string certificateReference);
-        Task<Certificate> GetCertificateByOrgIdLastname(long uln, string endpointOrganisationId, string lastName);
+        Task<Certificate> GetCertificateByUlnOrgIdLastnameAndStandardCode(long uln, string endpointOrganisationId, string lastName, int standardCode);
         Task<Certificate> GetCertificateByUlnLastname(long uln, string lastName);
         Task<Certificate> GetCertificate(string certificateReference, string lastName, DateTime? achievementDate);
 

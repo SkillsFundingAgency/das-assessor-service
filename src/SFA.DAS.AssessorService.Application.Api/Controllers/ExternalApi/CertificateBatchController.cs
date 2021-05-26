@@ -5,8 +5,10 @@ using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.ExternalApi.Certificates;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
+using SFA.DAS.AssessorService.Application.Api.Extensions;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
+using SFA.DAS.AssessorService.Domain.Entities;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Collections.Generic;
 using System.Linq;
@@ -39,7 +41,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.ExternalApi
             _deleteValidator = deleteValidator;
         }
 
-        [HttpGet("{uln}/{lastname}/{standard}/{ukPrn}")]
+        [HttpGet("{uln}/{lastname}/{standardId}/{ukPrn}")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(GetBatchCertificateResponse))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
@@ -90,21 +92,20 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.ExternalApi
 
             foreach (var request in batchRequest)
             {
-                var collatedStandard = request.StandardCode > 0 ? await GetCollatedStandard(request.StandardCode) : await GetCollatedStandard(request.StandardReference);
-                
-                if (collatedStandard != null)
+                Standard standard = null;
+                if (!string.IsNullOrEmpty(request.CertificateData?.Version))
                 {
-                    request.StandardId = collatedStandard.StandardId;
+                    standard = await _mediator.Send(
+                        new GetStandardVersionRequest { StandardId = request.GetStandardId(), Version = request.CertificateData.Version });
+                }
+                else
+                {
+                    standard = await _mediator.Send(new GetCalculatedStandardVersionForApprenticeshipRequest { StandardId = request.GetStandardId(), Uln = request.Uln });
+                }
 
-                    // Only fill in the missing bits...
-                    if (request.StandardCode < 1)
-                    {
-                        request.StandardCode = collatedStandard.StandardId ?? int.MinValue;
-                    }
-                    else if (string.IsNullOrEmpty(request.StandardReference))
-                    {
-                        request.StandardReference = collatedStandard.ReferenceNumber;
-                    }
+                if (standard != null)
+                {
+                    request.PopulateMissingFields(standard);
                 }
 
                 var validationResult = await _createValidator.ValidateAsync(request);

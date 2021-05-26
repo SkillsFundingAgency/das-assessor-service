@@ -4,24 +4,31 @@ using Microsoft.Extensions.Options;
 
 namespace SFA.DAS.AssessorService.Web.StartupConfiguration
 {
-    public class PrivilegePolicyProvider : IAuthorizationPolicyProvider
+    public class AssessorPolicyProvider : IAuthorizationPolicyProvider
     {
         private DefaultAuthorizationPolicyProvider FallbackPolicyProvider { get; }
-        private const string POLICY_PREFIX = "PrivilegePolicy_";
         
-        public PrivilegePolicyProvider(IOptions<AuthorizationOptions> options)
+        public AssessorPolicyProvider(IOptions<AuthorizationOptions> options)
         {
             FallbackPolicyProvider = new DefaultAuthorizationPolicyProvider(options);
         }
         
         public Task<AuthorizationPolicy> GetPolicyAsync(string policyName)
         {
-            if (policyName.StartsWith(POLICY_PREFIX))
+            if (policyName.StartsWith(PrivilegeAuthorizeAttribute.POLICY_PREFIX))
             {
-                var privilege = policyName.Substring(POLICY_PREFIX.Length);
+                var privilege = policyName.Substring(PrivilegeAuthorizeAttribute.POLICY_PREFIX.Length);
                 
                 var policy = new AuthorizationPolicyBuilder();
                 policy.AddRequirements(new PrivilegeRequirement(privilege));
+                return Task.FromResult(policy.Build());
+            }
+            else if(policyName.StartsWith(ApplicationAuthorizeAttribute.POLICY_PREFIX))
+            {
+                var routeId = policyName.Substring(ApplicationAuthorizeAttribute.POLICY_PREFIX.Length);
+
+                var policy = new AuthorizationPolicyBuilder();
+                policy.AddRequirements(new ApplicationRequirement(routeId));
                 return Task.FromResult(policy.Build());
             }
             
