@@ -232,22 +232,5 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
 
             return response;
         }
-
-        public virtual async Task<StandardOptions> GetStandard(string standard)
-        {
-            AssessorService.Api.Types.Models.Standards.StandardCollation apiResponse = null;
-
-            if (int.TryParse(standard, out int standardId))
-            {
-                apiResponse = await Get<AssessorService.Api.Types.Models.Standards.StandardCollation>($"/api/ao/assessment-organisations/collated-standards/{standardId}");
-            }
-
-            if (apiResponse is null)
-            {
-                apiResponse = await Get<AssessorService.Api.Types.Models.Standards.StandardCollation>($"/api/ao/assessment-organisations/collated-standards/by-reference/{standard}");
-            }
-
-            return Mapper.Map<AssessorService.Api.Types.Models.Standards.StandardCollation, StandardOptions>(apiResponse);
-        }
     }
 }
