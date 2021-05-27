@@ -77,7 +77,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
                 epao = await _organisationRepository.Get(certificate.OrganisationId) ?? new Organisation();
             }
 
-            var standard = await _standardRepository.GetStandardVersionByLarsCode(request.StdCode, certificateData.Version);
+            var standard = await _standardRepository.GetStandardVersionByLarsCode(request.StdCode, certificateData?.Version);
 
             var learnerDetail = new LearnerDetailResult()
             {
