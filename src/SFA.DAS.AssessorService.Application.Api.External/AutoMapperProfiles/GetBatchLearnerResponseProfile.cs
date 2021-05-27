@@ -27,10 +27,9 @@ namespace SFA.DAS.AssessorService.Application.Api.External.AutoMapperProfiles
         {
             CreateMap<AssessorService.Api.Types.Models.ExternalApi.Learners.GetBatchLearnerResponse, GetLearner>()
                 .ForMember(dest => dest.Certificate, opt => opt.MapFrom(source => Mapper.Map<Domain.Entities.Certificate, Certificate>(source.Certificate)))
-                .ForMember(dest => dest.EpaDetails, opt => opt.ResolveUsing(source => Mapper.Map<Domain.JsonData.CertificateData, EpaDetails>(JsonConvert.DeserializeObject<Domain.JsonData.CertificateData>(source.Certificate?.CertificateData ?? ""))))
+                .ForMember(dest => dest.EpaDetails, opt => opt.MapFrom(source => source.EpaDetails))
                 .AfterMap<MapStatusAction>()
                 .AfterMap<MapLearnerDataAction>()
-                //.AfterMap<AddVersionAndOptionFromCertificateDetailsToLearningDetails>()
                 .AfterMap<HideCertificateAction>()
                 .AfterMap<CollapseNullsAction>()
                 .ForAllOtherMembers(dest => dest.Ignore());
@@ -99,7 +98,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.AutoMapperProfiles
             {
                 if (!string.IsNullOrEmpty(source.Learner.CourseOption))
                 {
-                    return source.Learner.Version;
+                    return source.Learner.CourseOption;
                 }
                 else if (!string.IsNullOrWhiteSpace(destination.Certificate?.CertificateData?.LearningDetails?.CourseOption))
                 {
@@ -151,22 +150,6 @@ namespace SFA.DAS.AssessorService.Application.Api.External.AutoMapperProfiles
             }
         }
 
-        //public class AddVersionAndOptionFromCertificateDetailsToLearningDetails : IMappingAction<AssessorService.Api.Types.Models.ExternalApi.Learners.GetBatchLearnerResponse, GetLearner>
-        //{
-        //    public void Process(GetBatchLearnerResponse source, GetLearner destination)
-        //    {
-        //        if (destination.LearnerData.LearningDetails.Version is null)
-        //        {
-        //            destination.LearnerData.LearningDetails.Version = destination.Certificate.CertificateData.LearningDetails.Version;
-        //        }
-
-        //        if (destination.LearnerData.LearningDetails.CourseOption is null)
-        //        {
-        //            destination.LearnerData.LearningDetails.CourseOption = destination.Certificate.CertificateData.LearningDetails.CourseOption;
-        //        }
-        //    }
-        //}
-
         public class HideCertificateAction : IMappingAction<AssessorService.Api.Types.Models.ExternalApi.Learners.GetBatchLearnerResponse, GetLearner>
         {
             public void Process(AssessorService.Api.Types.Models.ExternalApi.Learners.GetBatchLearnerResponse source, GetLearner destination)
@@ -177,20 +160,20 @@ namespace SFA.DAS.AssessorService.Application.Api.External.AutoMapperProfiles
                 {
                     destination.Certificate = null;
                 }
-                else if (destination.Certificate.Status?.CurrentStatus == CertificateStatus.Draft)
-                {
-                    if (!EpaOutcome.Pass.Equals(destination.EpaDetails?.LatestEpaOutcome, StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        destination.Certificate = null;
-                    }
-                    else if (string.IsNullOrEmpty(destination.Certificate?.CertificateData?.LearningDetails?.OverallGrade)
-                        || destination.Certificate?.CertificateData?.LearningDetails?.AchievementDate is null
-                        || string.IsNullOrEmpty(destination.Certificate?.CertificateData?.PostalContact?.PostCode))
-                    {
-                        // Ensure we have a OverallGrade, AchievementDate and a PostalContact before seeing any Cert details
-                        destination.Certificate = null;
-                    }
-                }
+                //else if (destination.Certificate.Status?.CurrentStatus == CertificateStatus.Draft)
+                //{
+                //    if (!EpaOutcome.Pass.Equals(destination.EpaDetails?.LatestEpaOutcome, StringComparison.InvariantCultureIgnoreCase))
+                //    {
+                //        destination.Certificate = null;
+                //    }
+                //    else if (string.IsNullOrEmpty(destination.Certificate?.CertificateData?.LearningDetails?.OverallGrade)
+                //        || destination.Certificate?.CertificateData?.LearningDetails?.AchievementDate is null
+                //        || string.IsNullOrEmpty(destination.Certificate?.CertificateData?.PostalContact?.PostCode))
+                //    {
+                //        // Ensure we have a OverallGrade, AchievementDate and a PostalContact before seeing any Cert details
+                //        destination.Certificate = null;
+                //    }
+                //}
             }
         }
 
