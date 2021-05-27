@@ -82,7 +82,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
                         StandardCode = 30,
                         UkPrn = 88888888,
                         Uln = 1111111111,
-                        Username = "user"                        
+                        Username = "user"             
                     }, new CancellationToken()).Result;
         }
 
@@ -101,7 +101,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
 
 
         [Test]
-        public void Then_certificate_exists_with_delete_status_then_update_certificate()
+        public void when_certificate_exists_with_delete_status_then_update_certificate()
         {
             //Arrange
             _certificateData = Builder<CertificateData>.CreateNew()

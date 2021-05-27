@@ -40,7 +40,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
         {
             var certificate = await _certificateRepository.GetCertificate(request.Uln, request.StandardCode);
 
-            _logger.LogInformation("CreateNewCertificate Before Get Organisation from db");
+            _logger.LogInformation($"CreateNewCertificate Before Get Organisation from db by Endpointassessor ukprn {request.UkPrn}");
             var organisation = await _organisationQueryRepository.GetByUkPrn(request.UkPrn);
 
             if (certificate == null)
@@ -68,9 +68,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
         private async Task<Certificate> CreateNewCertificate(StartCertificateRequest request, Organisation organisation)        
         {
             _logger.LogInformation("CreateNewCertificate Before Get Ilr from db");
-            var ilr = await _ilrRepository.Get(request.Uln, request.StandardCode);
-            //_logger.LogInformation("CreateNewCertificate Before Get Organisation from db");
-            //var organisation = await _organisationQueryRepository.GetByUkPrn(request.UkPrn);
+            var ilr = await _ilrRepository.Get(request.Uln, request.StandardCode);           
             _logger.LogInformation("CreateNewCertificate Before Get Standard from API");
             var standard = await _standardService.GetStandard(ilr.StdCode);
             _logger.LogInformation("CreateNewCertificate Before Get Provider from API");
