@@ -53,6 +53,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
                 // need to update EPA Reference too
                 certData.EpaDetails.EpaReference = certificate.CertificateReference;
                 certificate.CertificateData = JsonConvert.SerializeObject(certData);
+                certificate.StandardUId = request.StandardUId;
 
                 // adjust Status appropriately
                 if (certificate.Status == CertificateStatus.Deleted)
@@ -116,6 +117,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
                 Registration = requestData.Registration,
                 AchievementDate = requestData.AchievementDate,
                 CourseOption = CertificateHelpers.NormalizeCourseOption(options, requestData.CourseOption),
+                Version = requestData.Version,
                 OverallGrade = CertificateHelpers.NormalizeOverallGrade(requestData.OverallGrade),
 
                 EpaDetails = epaDetails

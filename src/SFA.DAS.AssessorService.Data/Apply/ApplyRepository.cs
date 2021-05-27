@@ -36,33 +36,51 @@ namespace SFA.DAS.AssessorService.Data.Apply
                 transaction: _unitOfWork.Transaction);
         }
 
-        public async Task<ApplySummary> GetApplication(Guid applicationId)
+        public async Task<ApplySummary> GetApplication(Guid applicationId, Guid? userId)
         {
+            var query = @"SELECT 
+                            a.Id, a.ApplicationId, a.OrganisationId, a.ApplicationStatus, a.ReviewStatus, 
+                            a.ApplyData, a.FinancialReviewStatus, a.FinancialGrade, 
+                            a.StandardCode, a.CreatedBy, a.UpdatedBy, a.DeletedBy, 
+                            o.EndPointAssessorName, c1.DisplayName [CreatedByName] , c1.Email [CreatedByEmail]
+                          FROM Contacts c
+                            INNER JOIN Apply a ON a.OrganisationId = c.OrganisationId
+                            INNER JOIN Organisations o ON a.OrganisationId = o.Id
+                            INNER JOIN Contacts c1 ON c1.Id = a.CreatedBy
+                          WHERE 
+                            a.Id = @applicationId
+                            AND (c.Id = @userId OR @userId IS NULL)
+                          GROUP BY 
+	                        a.Id, a.ApplicationId, a.OrganisationId, a.ApplicationStatus, a.ReviewStatus, 
+	                        a.ApplyData, a.FinancialReviewStatus, a.FinancialGrade, 
+	                        a.StandardCode, a.CreatedAt, a.CreatedBy, a.UpdatedAt, a.UpdatedBy, a.DeletedAt, a.DeletedBy, 
+	                        o.EndPointAssessorName, c1.DisplayName, c1.Email";
+
             return await _unitOfWork.Connection.QuerySingleOrDefaultAsync<ApplySummary>(
-                @"SELECT a.*, o.EndPointAssessorName, c.DisplayName [ContactName] , c.Email [ContactEmail] FROM Apply a
-                  LEFT JOIN Organisations o ON a.OrganisationId = o.Id
-                  LEFT JOIN Contacts c ON c.Id = a.CreatedBy
-                  WHERE a.Id = @applicationId",
-                param: new { applicationId },
+                sql: query,
+                param: new { applicationId, userId },
                 transaction: _unitOfWork.Transaction);
         }
 
         public async Task<List<ApplySummary>> GetApplications(Guid userId, int[] sequenceNos)
         {
-            string query = @"SELECT a.Id, a.ApplicationId, a.OrganisationId, a.ApplicationStatus, a.ReviewStatus, 
-                    a.ApplyData, a.FinancialReviewStatus, a.FinancialGrade, 
-                    a.StandardCode, a.CreatedAt, a.CreatedBy, a.UpdatedAt, a.UpdatedBy, a.DeletedAt, a.DeletedBy, o.EndPointAssessorName 
-                  FROM Contacts c
-                  INNER JOIN Apply a ON a.OrganisationId = c.OrganisationId
-                  LEFT JOIN Organisations o ON a.OrganisationId = o.Id
-                  CROSS APPLY OPENJSON(ApplyData,'$.Sequences') WITH (SequenceNo INT, NotRequired BIT) sequence
-                  WHERE c.Id = @userId
-                  AND sequence.SequenceNo IN @sequenceNos AND sequence.NotRequired = 0
-                  GROUP BY 
-                    a.Id, a.ApplicationId, a.OrganisationId, a.ApplicationStatus, a.ReviewStatus, 
-                    a.ApplyData, a.FinancialReviewStatus, a.FinancialGrade, 
-                    a.StandardCode, a.CreatedAt, a.CreatedBy, a.UpdatedAt, a.UpdatedBy, a.DeletedAt, a.DeletedBy, 
-                    o.EndPointAssessorName";
+            var query = @"SELECT 
+                            a.Id, a.ApplicationId, a.OrganisationId, a.ApplicationStatus, a.ReviewStatus, 
+                            a.ApplyData, a.FinancialReviewStatus, a.FinancialGrade, 
+                            a.StandardCode, a.CreatedBy, a.UpdatedBy, a.DeletedBy, 
+                            o.EndPointAssessorName, c1.DisplayName [CreatedByName] , c1.Email [CreatedByEmail] 
+                         FROM Contacts c
+                            INNER JOIN Apply a ON a.OrganisationId = c.OrganisationId
+                            INNER JOIN Organisations o ON a.OrganisationId = o.Id
+                            INNER JOIN Contacts c1 ON c1.Id = a.CreatedBy
+                            CROSS APPLY OPENJSON(ApplyData,'$.Sequences') WITH (SequenceNo INT, NotRequired BIT) sequence
+                         WHERE c.Id = @userId
+                            AND sequence.SequenceNo IN @sequenceNos AND sequence.NotRequired = 0
+                         GROUP BY 
+                            a.Id, a.ApplicationId, a.OrganisationId, a.ApplicationStatus, a.ReviewStatus, 
+                            a.ApplyData, a.FinancialReviewStatus, a.FinancialGrade, 
+                            a.StandardCode, a.CreatedAt, a.CreatedBy, a.UpdatedAt, a.UpdatedBy, a.DeletedAt, a.DeletedBy, 
+                            o.EndPointAssessorName, c1.DisplayName, c1.Email";
 
             return (await _unitOfWork.Connection.QueryAsync<ApplySummary>(
                 sql: query,
