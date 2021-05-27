@@ -87,7 +87,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
                 LearnStartDate = certificateData.LearningStartDate.HasValue ? certificateData.LearningStartDate : learner?.LearnStartDate,
                 StandardCode = (certificate?.StandardCode).HasValue ? certificate.StandardCode : standard?.LarsCode ?? 0,
                 Standard = !string.IsNullOrEmpty(certificateData.StandardName) ? certificateData.StandardName : standard?.Title,
-                StandardVersion = certificateData.Version,
+                Version = certificateData.Version,
                 Level = certificateData.StandardLevel > 0 ? certificateData.StandardLevel : standard?.Level ?? 0,
                 CertificateReference = certificate?.CertificateReference,
                 CertificateStatus = certificate?.Status,
