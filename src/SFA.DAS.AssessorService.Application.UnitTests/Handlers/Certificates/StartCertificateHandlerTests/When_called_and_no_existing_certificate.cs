@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using FizzWare.NBuilder;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -12,6 +13,7 @@ using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Handlers.Certificates;
 using SFA.DAS.AssessorService.Application.Handlers.Staff;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
@@ -27,13 +29,14 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
         private StartCertificateHandler _startCertificateHandler;
         private Guid _organisationId;
         private Certificate _returnedCertificate;
+        private CertificateData _certificateData;
 
         [SetUp]
         public void Arrange()
         {
-            _certificateRepository = new Mock<ICertificateRepository>();
+            _certificateRepository = new Mock<ICertificateRepository>();           
             _certificateRepository.Setup(r => r.GetCertificate(1111111111, 30)).ReturnsAsync(default(Certificate));
-
+           
             _certificateRepository.Setup(r => r.New(It.IsAny<Certificate>()))
                 .ReturnsAsync(new Certificate() {CertificateReferenceId = 10000});
 
@@ -79,7 +82,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
                         StandardCode = 30,
                         UkPrn = 88888888,
                         Uln = 1111111111,
-                        Username = "user"
+                        Username = "user"                        
                     }, new CancellationToken()).Result;
         }
 
@@ -87,13 +90,55 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
         public void Then_a_new_certificate_is_created()
         {
             _certificateRepository.Verify(r => r.New(It.Is<Certificate>(c =>
-                c.Uln == 1111111111 && 
-                c.StandardCode == 30 && 
+                c.Uln == 1111111111 &&
+                c.StandardCode == 30 &&
                 c.ProviderUkPrn == 12345678 &&
-                c.OrganisationId == _organisationId && 
-                c.CreatedBy == "user" && 
+                c.OrganisationId == _organisationId &&
+                c.CreatedBy == "user" &&
                 c.Status == Domain.Consts.CertificateStatus.Draft &&
                 c.CertificateReference == "")));
         }
-    }
+
+
+        [Test]
+        public void Then_certificate_exists_with_delete_status_then_update_certificate()
+        {
+            //Arrange
+            _certificateData = Builder<CertificateData>.CreateNew()
+             .With(ecd => ecd.LearnerGivenNames = "Dave")
+             .With(ecd => ecd.LearnerFamilyName = "Smith")
+             .With(ecd => ecd.LearningStartDate = new DateTime(2016, 01, 09))
+             .Build();
+
+            _certificateRepository.Setup(r => r.GetCertificate(1111111111, 30)).ReturnsAsync(new Certificate()
+            {
+                CertificateReferenceId = 10000,
+                Status = CertificateStatus.Deleted,
+                CertificateData = JsonConvert.SerializeObject(_certificateData)
+            });
+
+            _certificateRepository.Setup(r => r.Update(It.IsAny<Certificate>(), It.IsAny<string>(), It.IsAny<string>(),
+             It.IsAny<bool>(), It.IsAny<string>())).ReturnsAsync(new Certificate()
+             { CertificateReferenceId = 10000, Status = CertificateStatus.Deleted, CertificateData = JsonConvert.SerializeObject(_certificateData) });
+
+            //Act
+            _returnedCertificate = _startCertificateHandler
+              .Handle(
+                  new StartCertificateRequest()
+                  {
+                      StandardCode = 30,
+                      UkPrn = 88888888,
+                      Uln = 1111111111,
+                      Username = "user"
+                  }, new CancellationToken()).Result;
+          
+
+            //Assert
+            _certificateRepository.Verify(v => v.Update(
+              It.IsAny<Certificate>(),
+              It.IsAny<string>(), It.IsAny<string>(),
+               It.IsAny<bool>(), It.IsAny<string>()),
+              Times.Once);
+        }      
+    }    
 }
