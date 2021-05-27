@@ -86,6 +86,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
                 LearnStartDate = certificateData.LearningStartDate.HasValue ? certificateData.LearningStartDate : learner?.LearnStartDate,
                 StandardCode = (certificate?.StandardCode).HasValue ? certificate.StandardCode : standard?.StandardId ?? 0,
                 Standard = !string.IsNullOrEmpty(certificateData.StandardName) ? certificateData.StandardName : standard?.Title,
+                StandardVersion = certificateData.Version,
                 Level = certificateData.StandardLevel > 0 ? certificateData.StandardLevel : standard?.StandardData?.Level ?? 0,
                 CertificateReference = certificate?.CertificateReference,
                 CertificateStatus = certificate?.Status,
@@ -109,7 +110,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
                 ContactAddLine3 = certificateData.ContactAddLine3,
                 ContactAddLine4 = certificateData.ContactAddLine4,
                 ContactPostCode = certificateData.ContactPostCode,
-                LastUpdatedAt = certificate?.LatestChange()
+                LastUpdatedAt = certificate?.LatestChange(),
             };
 
             return learnerDetail;
