@@ -59,7 +59,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.AutoMapperProfiles
                             LearningStartDate = source.Learner.LearnerStartDate, 
                             PlannedEndDate = source.Learner.PlannedEndDate,
                             Version = GetVersionFromGetBatchLearnerResponse(source, destination),
-                            CourseOption = GetCourseOptionnFromGetBatchLearnerResponse(source, destination)
+                            CourseOption = GetCourseOptionFromGetBatchLearnerResponse(source, destination)
                         }
                     };
                 }
@@ -94,7 +94,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.AutoMapperProfiles
                 return null;
             }
 
-            private string GetCourseOptionnFromGetBatchLearnerResponse(GetBatchLearnerResponse source, GetLearner destination)
+            private string GetCourseOptionFromGetBatchLearnerResponse(GetBatchLearnerResponse source, GetLearner destination)
             {
                 if (!string.IsNullOrEmpty(source.Learner.CourseOption))
                 {
@@ -160,20 +160,6 @@ namespace SFA.DAS.AssessorService.Application.Api.External.AutoMapperProfiles
                 {
                     destination.Certificate = null;
                 }
-                //else if (destination.Certificate.Status?.CurrentStatus == CertificateStatus.Draft)
-                //{
-                //    if (!EpaOutcome.Pass.Equals(destination.EpaDetails?.LatestEpaOutcome, StringComparison.InvariantCultureIgnoreCase))
-                //    {
-                //        destination.Certificate = null;
-                //    }
-                //    else if (string.IsNullOrEmpty(destination.Certificate?.CertificateData?.LearningDetails?.OverallGrade)
-                //        || destination.Certificate?.CertificateData?.LearningDetails?.AchievementDate is null
-                //        || string.IsNullOrEmpty(destination.Certificate?.CertificateData?.PostalContact?.PostCode))
-                //    {
-                //        // Ensure we have a OverallGrade, AchievementDate and a PostalContact before seeing any Cert details
-                //        destination.Certificate = null;
-                //    }
-                //}
             }
         }
 
