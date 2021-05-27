@@ -93,7 +93,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.ExternalApi
 
             foreach (var request in batchRequest)
             {
-                Standard standard = await GetOrCalculateStandardVersion(request?.CertificateData?.Version, request.GetStandardId(), request.Uln);
+                Standard standard = await GetOrCalculateStandardVersion(request.CertificateData?.Version, request.GetStandardId(), request.Uln);
 
                 if (standard != null)
                 {
@@ -137,7 +137,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.ExternalApi
 
             foreach (var request in batchRequest)
             {
-                Standard standard = await GetOrCalculateStandardVersion(request?.CertificateData?.Version, request.GetStandardId(), request.Uln);
+                Standard standard = await GetOrCalculateStandardVersion(request.CertificateData?.Version, request.GetStandardId(), request.Uln);
 
                 if (standard != null)
                 {
