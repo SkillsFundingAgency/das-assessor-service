@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.AssessorService.Api.Types.Models.Apply;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
@@ -22,14 +23,17 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         private readonly IQnaApiClient _qnaApiClient;
         private readonly IContactsApiClient _contactsApiClient;
         private readonly IStandardVersionClient _standardVersionApiClient;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public StandardController(IApplicationApiClient apiClient, IOrganisationsApiClient orgApiClient, IQnaApiClient qnaApiClient, IContactsApiClient contactsApiClient, IStandardVersionClient standardVersionApiClient)
+        public StandardController(IApplicationApiClient apiClient, IOrganisationsApiClient orgApiClient, IQnaApiClient qnaApiClient, IContactsApiClient contactsApiClient, 
+            IStandardVersionClient standardVersionApiClient, IHttpContextAccessor httpContextAccessor)
         {
             _apiClient = apiClient;
             _orgApiClient = orgApiClient;
             _qnaApiClient = qnaApiClient;
             _contactsApiClient = contactsApiClient;
             _standardVersionApiClient = standardVersionApiClient;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         [HttpGet("Standard/{id}")]
@@ -77,7 +81,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
             var standards = (await _standardVersionApiClient.GetAllStandardVersions())
                             .Where(s => s.IFateReferenceNumber == standardCode)
-                            .OrderBy(s => s.Version).ToList()
+                            .OrderBy(s => s.Version)
                             .ToList();
             standardViewModel.SelectedStandard = standards.LastOrDefault();
             standardViewModel.Results = standards;
@@ -96,7 +100,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
             var standards = (await _standardVersionApiClient.GetAllStandardVersions())
                            .Where(s => s.IFateReferenceNumber == standardCode)
-                           .OrderBy(s => s.Version).ToList()
+                           .OrderBy(s => s.Version)
                            .ToList();
 
             model.SelectedStandard = standards.LastOrDefault();
@@ -111,7 +115,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             }
 
             // if there is only one version then it is automatically selected 
-            if (standards.Count() > 1 && (model.SelectedVersions == null || !model.SelectedVersions.Any()))
+            if (standards.Count > 1 && (model.SelectedVersions == null || !model.SelectedVersions.Any()))
             {
                 ModelState.AddModelError(nameof(model.SelectedVersions), "You must select at least one version");
                 TempData["ShowVersionError"] = true;
@@ -123,7 +127,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 return View("~/Views/Application/Standard/ConfirmStandard.cshtml", model);
             }
 
-            var versions = (standards.Count() > 1) ? model.SelectedVersions : new List<string>() { model.SelectedStandard.Version };
+            var versions = (standards.Count > 1) ? model.SelectedVersions : new List<string>() { model.SelectedStandard.Version };
             await _apiClient.UpdateStandardData(id, model.SelectedStandard.LarsCode, model.SelectedStandard.IFateReferenceNumber, model.SelectedStandard.Title, versions);
 
             return RedirectToAction("SequenceSignPost","Application", new { Id = id });
@@ -188,7 +192,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
         private async Task<Guid> GetUserId()
         {
-            var signinId = User.Claims.First(c => c.Type == "sub")?.Value;
+            var signinId = _httpContextAccessor.HttpContext.User.Claims.First(c => c.Type == "sub")?.Value;
             var contact =  await _contactsApiClient.GetContactBySignInId(signinId);
 
             return contact?.Id ?? Guid.Empty;
