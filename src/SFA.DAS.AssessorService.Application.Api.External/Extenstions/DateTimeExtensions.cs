@@ -11,8 +11,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Extenstions
 
         public static DateTime DropMilliseconds(this DateTime dt)
         {
-            return dt.AddMilliseconds((dt.Millisecond * -1));
-            //return new DateTime(dt.Year, dt.Month, dt.Day, dt.Hour, dt.Minute, dt.Second);
+            return new DateTime(dt.Year, dt.Month, dt.Day, dt.Hour, dt.Minute, dt.Second);
         }
     }
 }
