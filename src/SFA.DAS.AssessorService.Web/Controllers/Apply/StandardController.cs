@@ -69,7 +69,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         public async Task<IActionResult> ConfirmStandard(Guid id, string standardCode)
         {
             var application = await _apiClient.GetApplication(id);
-            var standardViewModel = new StandardVersionViewModel { Id = id, StandardCode = standardCode };
+            var standardViewModel = new StandardVersionViewModel { Id = id, StandardReference = standardCode };
             if (!CanUpdateApplicationAsync(application))
             {
                 return RedirectToAction("Applications", "Application");
@@ -106,7 +106,15 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             if (!model.IsConfirmed)
             {
                 ModelState.AddModelError(nameof(model.IsConfirmed), "Please tick to confirm");
-                TempData["ShowErrors"] = true;
+                TempData["ShowConfirmedError"] = true;
+                return View("~/Views/Application/Standard/ConfirmStandard.cshtml", model);
+            }
+
+            // if there is only one version then it is automatically selected 
+            if (standards.Count() > 1 && (model.SelectedVersions == null || !model.SelectedVersions.Any()))
+            {
+                ModelState.AddModelError(nameof(model.SelectedVersions), "You must select at least one version");
+                TempData["ShowVersionError"] = true;
                 return View("~/Views/Application/Standard/ConfirmStandard.cshtml", model);
             }
 
@@ -115,7 +123,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 return View("~/Views/Application/Standard/ConfirmStandard.cshtml", model);
             }
 
-            await _apiClient.UpdateStandardData(id, model.SelectedStandard.LarsCode, model.SelectedStandard.IFateReferenceNumber, model.SelectedStandard.Title, model.SelectedVersions);
+            var versions = (standards.Count() > 1) ? model.SelectedVersions : new List<string>() { model.SelectedStandard.Version };
+            await _apiClient.UpdateStandardData(id, model.SelectedStandard.LarsCode, model.SelectedStandard.IFateReferenceNumber, model.SelectedStandard.Title, versions);
 
             return RedirectToAction("SequenceSignPost","Application", new { Id = id });
         }

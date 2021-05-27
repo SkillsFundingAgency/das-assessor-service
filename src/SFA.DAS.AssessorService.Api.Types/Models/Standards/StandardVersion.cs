@@ -12,7 +12,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Standards
         public string IFateReferenceNumber { get; set; }
         public int LarsCode { get; set; }
         public int Level { get; set; }
-        public DateTime EffectiveFrom { get; set; }
+        public DateTime? EffectiveFrom { get; set; }
         public DateTime? EffectiveTo { get; set; }
         public IEnumerable<string> Options { get; set; }
         public string StandardPageUrl { get; set; }
@@ -28,7 +28,8 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Standards
                 LarsCode = standard.LarsCode,
                 Level = standard.Level,
                 EffectiveFrom = standard.EffectiveFrom.GetValueOrDefault(),
-                EffectiveTo = standard.EffectiveTo
+                EffectiveTo = standard.EffectiveTo,
+                StandardPageUrl = standard.StandardPageUrl
             };
         }
     }

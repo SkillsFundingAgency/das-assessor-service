@@ -5,8 +5,10 @@
 @{
     ViewBag.Title = "Confirm Standard";
     Layout = "_Layout";
-    bool showErrors = TempData["ShowErrors"] as bool? ?? false;
-    var standardCode = Model.StandardCode;
+    bool showConfirmedError = TempData["ShowConfirmedError"] as bool? ?? false;
+    bool showVersionError = TempData["ShowVersionError"] as bool? ?? false;
+    var standardCode = Model.StandardReference;
+    var multipleVersions = Model.Results != null && Model.Results.Count() > 1;
 }
 
 <a href="/standard/@Model.Id" class="govuk-back-link">Return to search</a>
@@ -14,7 +16,7 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
 
-            @if (!ViewData.ModelState.IsValid || showErrors)
+            @if (!ViewData.ModelState.IsValid || showConfirmedError || showVersionError)
             {
                 <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
                     <h2 class="govuk-error-summary__title" id="error-summary-title">
@@ -22,7 +24,14 @@
                     </h2>
                     <div class="govuk-error-summary__body">
                         <ul class="govuk-list govuk-error-summary__list">
-                            <li><a href="#IsConfirmed">Confirm you have read the assessment plan</a></li>
+                            @if (showConfirmedError)
+                            {
+                                <li><a href="#IsConfirmed"><span asp-validation-for="IsConfirmed"></span></a></li>
+                            }
+                            @if (showVersionError)
+                            {
+                                <li><a href="#SelectedVersions"><span asp-validation-for="SelectedVersions"></span></a></li>
+                            }
                         </ul>
                     </div>
                 </div>
@@ -56,41 +65,57 @@
                             }
                         </td>
                     </tr>
+                    @if (!multipleVersions)
+                    {
+                        <tr class="govuk-table__row">
+                            <th class="govuk-table__header" scope="row">Version</th>
+                            <td class="govuk-table__cell">@Model.SelectedStandard?.Version</td>
+                        </tr>
+                    }
                 </tbody>
             </table>
 
             <form asp-action="ConfirmStandard" asp-controller="Standard" asp-route-applicationId="@Model.Id">
-                <input asp-for="StandardCode" value="@standardCode" type="hidden" />
+                <input asp-for="StandardReference" value="@standardCode" type="hidden" />
 
-                <fieldset class="govuk-fieldset">
-                    <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">Select all that apply</legend>
-                    <div class="govuk-checkboxes govuk-checkboxes--small">
-                        @foreach (var version in Model.Results)
-                        {
-                            <div class="govuk-checkboxes__item">
-                                <input class="govuk-checkboxes__input" id="@version.Version" value="@version.Version" name="SelectedVersions" type="checkbox">
-                                <label class="govuk-label govuk-checkboxes__label" for="@version.Version">
-                                    Version @version.Version
-                                </label>
+                @if (multipleVersions)
+                {
+                    <div class="govuk-form-group @(showVersionError ? "govuk-form-group--error" : "")">
+                        <fieldset class="govuk-fieldset" id="SelectedVersions">
+                            <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">Select all that apply</legend>
+                            @if (showVersionError)
+                            {
+                                <span id="search-string-error" class="govuk-error-message" asp-validation-for="SelectedVersions"></span>
+                            }
+                            <div class="govuk-checkboxes govuk-checkboxes--small">
+                                @foreach (var version in Model.Results)
+                                {
+                                    <div class="govuk-checkboxes__item">
+                                        <input class="govuk-checkboxes__input" id="@version.Version" value="@version.Version" name="SelectedVersions" type="checkbox">
+                                        <label class="govuk-label govuk-checkboxes__label" for="@version.Version">
+                                            Version @version.Version
+                                        </label>
+                                    </div>
+                                }
                             </div>
-                        }
+                        </fieldset>
                     </div>
-                </fieldset>
 
-                <table class="govuk-table govuk-!-margin-bottom-7">
-                    <tbody class="govuk-table__body">
-                        <tr class="govuk-table__row">
-                            <td class="govuk-table__cell">
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                    <table class="govuk-table govuk-!-margin-bottom-7">
+                        <tbody class="govuk-table__body">
+                            <tr class="govuk-table__row">
+                                <td class="govuk-table__cell">
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                }
 
                 @if (string.IsNullOrEmpty(Model.ApplicationStatus))
                 {
-                    <div class="govuk-form-group @(!ViewData.ModelState.IsValid || showErrors ? "govuk-form-group--error" : "")">
+                    <div class="govuk-form-group @(showConfirmedError ? "govuk-form-group--error" : "")">
 
-                        @if (!ViewData.ModelState.IsValid || showErrors)
+                        @if (showConfirmedError)
                         {
                             <span id="search-string-error" class="govuk-error-message">Confirm you have read the assessment plan</span>
                         }

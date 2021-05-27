@@ -167,7 +167,8 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Standard
                 Level = standard.Level,
                 StandardUId = standard.StandardUId,
                 Title = standard.Title,
-                Version = standard.Version.ToString()
+                Version = standard.Version.ToString(),
+                StandardPageUrl = standard.StandardPageUrl
             };
         }
     }

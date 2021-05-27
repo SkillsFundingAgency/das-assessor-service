@@ -23,5 +23,6 @@ namespace SFA.DAS.AssessorService.Domain.Entities
         public DateTime? VersionApprovedForDelivery { get; set; }
         public int ProposedTypicalDuration { get; set; }
         public int ProposedMaxFunding { get; set; }
+        public string StandardPageUrl { get; set; }
     }
 }

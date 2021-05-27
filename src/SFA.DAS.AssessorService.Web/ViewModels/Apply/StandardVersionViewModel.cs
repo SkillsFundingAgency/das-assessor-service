@@ -10,7 +10,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Apply
 
         public string StandardToFind { get; set; }
 
-        public string StandardCode { get; set; }
+        public string StandardReference { get; set; }
 
         public List<StandardVersion> Results { get; set; }
 
