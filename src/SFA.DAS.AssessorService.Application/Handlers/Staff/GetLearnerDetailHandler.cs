@@ -39,8 +39,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
         public async Task<LearnerDetailResult> Handle(GetLearnerDetailRequest request,
             CancellationToken cancellationToken)
         {
-            var learner = await _ilrRepository.Get(request.Uln, request.StdCode);
-            var standard = await _standardRepository.GetStandardCollationByStandardId(request.StdCode);
+            var learner = await _ilrRepository.Get(request.Uln, request.StdCode);            
             var certificate = await _certificateRepository.GetCertificate(request.Uln, request.StdCode);
 
             var logs = new List<CertificateLogSummary>();
@@ -78,16 +77,18 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
                 epao = await _organisationRepository.Get(certificate.OrganisationId) ?? new Organisation();
             }
 
+            var standard = await _standardRepository.GetStandardVersionByLarsCode(request.StdCode, certificateData.Version);
+
             var learnerDetail = new LearnerDetailResult()
             {
                 Uln = request.Uln,
                 FamilyName = !string.IsNullOrEmpty(certificateData.LearnerFamilyName) ? certificateData.LearnerFamilyName : learner?.FamilyName,
                 GivenNames = !string.IsNullOrEmpty(certificateData.LearnerGivenNames) ? certificateData.LearnerGivenNames : learner?.GivenNames,
                 LearnStartDate = certificateData.LearningStartDate.HasValue ? certificateData.LearningStartDate : learner?.LearnStartDate,
-                StandardCode = (certificate?.StandardCode).HasValue ? certificate.StandardCode : standard?.StandardId ?? 0,
+                StandardCode = (certificate?.StandardCode).HasValue ? certificate.StandardCode : standard?.LarsCode ?? 0,
                 Standard = !string.IsNullOrEmpty(certificateData.StandardName) ? certificateData.StandardName : standard?.Title,
                 StandardVersion = certificateData.Version,
-                Level = certificateData.StandardLevel > 0 ? certificateData.StandardLevel : standard?.StandardData?.Level ?? 0,
+                Level = certificateData.StandardLevel > 0 ? certificateData.StandardLevel : standard?.Level ?? 0,
                 CertificateReference = certificate?.CertificateReference,
                 CertificateStatus = certificate?.Status,
                 OverallGrade = certificateData.OverallGrade,
