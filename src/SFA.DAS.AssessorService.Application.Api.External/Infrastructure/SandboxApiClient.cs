@@ -34,7 +34,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
 
                 if (details != null)
                 {
-                    request.Standard = details.Standard?.ReferenceNumber ?? details.Standard?.StandardId.ToString();
+                    request.Standard = details.Standard?.IFateReferenceNumber ?? details.Standard?.LarsCode.ToString();
                     request.UkPrn = details.UkPrn;
                 }
             }
@@ -58,8 +58,8 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
 
                     if (details != null)
                     {
-                        req.Standard.StandardReference = details.Standard?.ReferenceNumber;
-                        req.Standard.StandardCode = details.Standard?.StandardId;
+                        req.Standard.StandardReference = details.Standard?.IFateReferenceNumber;
+                        req.Standard.StandardCode = details.Standard?.LarsCode;
                         req.UkPrn = details.UkPrn;
                     }
                 }
@@ -86,8 +86,8 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
 
                     if (details != null)
                     {
-                        req.Standard.StandardReference = details.Standard?.ReferenceNumber;
-                        req.Standard.StandardCode = details.Standard?.StandardId;
+                        req.Standard.StandardReference = details.Standard?.IFateReferenceNumber;
+                        req.Standard.StandardCode = details.Standard?.LarsCode;
                         req.UkPrn = details.UkPrn;
                     }
                 }
@@ -109,7 +109,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
 
                 if (details != null)
                 {
-                    request.Standard = details.Standard?.ReferenceNumber ?? details.Standard?.StandardId.ToString();
+                    request.Standard = details.Standard?.IFateReferenceNumber ?? details.Standard?.LarsCode.ToString();
                     request.UkPrn = details.UkPrn;
                 }
             }
@@ -128,7 +128,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
 
                 if (details != null)
                 {
-                    request.Standard = details.Standard?.ReferenceNumber ?? details.Standard?.StandardId.ToString();
+                    request.Standard = details.Standard?.IFateReferenceNumber ?? details.Standard?.LarsCode.ToString();
                     request.UkPrn = details.UkPrn;
                 }
             }
@@ -152,8 +152,8 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
 
                     if (details != null)
                     {
-                        req.CertificateData.Standard.StandardReference = details.Standard?.ReferenceNumber;
-                        req.CertificateData.Standard.StandardCode = details.Standard?.StandardId;
+                        req.CertificateData.Standard.StandardReference = details.Standard?.IFateReferenceNumber;
+                        req.CertificateData.Standard.StandardCode = details.Standard?.LarsCode;
                         req.UkPrn = details.UkPrn;
                     }
                 }
@@ -180,8 +180,8 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
 
                     if (details != null)
                     {
-                        req.CertificateData.Standard.StandardReference = details.Standard?.ReferenceNumber;
-                        req.CertificateData.Standard.StandardCode = details.Standard?.StandardId;
+                        req.CertificateData.Standard.StandardReference = details.Standard?.IFateReferenceNumber;
+                        req.CertificateData.Standard.StandardCode = details.Standard?.LarsCode;
                         req.UkPrn = details.UkPrn;
                     }
                 }
@@ -208,8 +208,8 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
 
                     if (details != null)
                     {
-                        req.StandardReference = details.Standard?.ReferenceNumber;
-                        req.StandardCode = details.Standard?.StandardId;
+                        req.StandardReference = details.Standard?.IFateReferenceNumber;
+                        req.StandardCode = details.Standard?.LarsCode;
                         req.UkPrn = details.UkPrn;
                     }
                 }
@@ -231,7 +231,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
 
                 if (details != null)
                 {
-                    request.Standard = details.Standard?.ReferenceNumber ?? details.Standard?.StandardId.ToString();
+                    request.Standard = details.Standard?.IFateReferenceNumber ?? details.Standard?.LarsCode.ToString();
                     request.UkPrn = details.UkPrn;
                 }
             }

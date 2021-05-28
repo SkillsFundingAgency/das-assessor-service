@@ -161,7 +161,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
             _mockSessionService.Setup(s => s.TryGet("redirecttocheck", out redirect));
             var approvedVersions = new List<StandardVersion>();
 
-            _mockStandardVersionClient.Setup(s => s.GetStandardVersionByStandardUId(vm.StandardUId)).ReturnsAsync(standardVersion);
+            _mockStandardVersionClient.Setup(s => s.GetStandardVersionById(vm.StandardUId)).ReturnsAsync(standardVersion);
             _mockStandardVersionClient.Setup(s => s.GetEpaoRegisteredStandardVersions(EpaoId, session.StandardCode)).ReturnsAsync(approvedVersions);
             _mockStandardVersionClient.Setup(s => s.GetStandardOptions(vm.StandardUId)).ReturnsAsync(new StandardOptions());
 
@@ -178,7 +178,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
             _mockSessionService.Setup(s => s.Get(nameof(CertificateSession))).Returns(sessionString);
             standardVersion.StandardUId = vm.StandardUId;
             approvedVersions.Add(standardVersion);
-            _mockStandardVersionClient.Setup(s => s.GetStandardVersionByStandardUId(vm.StandardUId)).ReturnsAsync(standardVersion);
+            _mockStandardVersionClient.Setup(s => s.GetStandardVersionById(vm.StandardUId)).ReturnsAsync(standardVersion);
             _mockStandardVersionClient.Setup(s => s.GetEpaoRegisteredStandardVersions(EpaoId, session.StandardCode)).ReturnsAsync(approvedVersions);
             _mockStandardVersionClient.Setup(s => s.GetStandardOptions(vm.StandardUId)).ReturnsAsync(new StandardOptions());
 
@@ -200,7 +200,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
             standardVersion.StandardUId = vm.StandardUId;
             approvedVersions.Add(standardVersion);
 
-            _mockStandardVersionClient.Setup(s => s.GetStandardVersionByStandardUId(vm.StandardUId)).ReturnsAsync(standardVersion);
+            _mockStandardVersionClient.Setup(s => s.GetStandardVersionById(vm.StandardUId)).ReturnsAsync(standardVersion);
             _mockStandardVersionClient.Setup(s => s.GetEpaoRegisteredStandardVersions(EpaoId, session.StandardCode)).ReturnsAsync(approvedVersions);
             _mockStandardVersionClient.Setup(s => s.GetStandardOptions(vm.StandardUId)).ReturnsAsync(options);
 
@@ -221,7 +221,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
             standardVersion.StandardUId = vm.StandardUId;
             approvedVersions.Add(standardVersion);
 
-            _mockStandardVersionClient.Setup(s => s.GetStandardVersionByStandardUId(vm.StandardUId)).ReturnsAsync(standardVersion);
+            _mockStandardVersionClient.Setup(s => s.GetStandardVersionById(vm.StandardUId)).ReturnsAsync(standardVersion);
             _mockStandardVersionClient.Setup(s => s.GetEpaoRegisteredStandardVersions(EpaoId, session.StandardCode)).ReturnsAsync(approvedVersions);
             _mockStandardVersionClient.Setup(s => s.GetStandardOptions(vm.StandardUId)).ReturnsAsync(options);
 
@@ -240,7 +240,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
             vm.StandardUId = StandardUId;
             standardVersion.StandardUId = StandardUId;
             approvedVersions.Add(standardVersion);
-            _mockStandardVersionClient.Setup(s => s.GetStandardVersionByStandardUId(vm.StandardUId)).ReturnsAsync(standardVersion);
+            _mockStandardVersionClient.Setup(s => s.GetStandardVersionById(vm.StandardUId)).ReturnsAsync(standardVersion);
             _mockStandardVersionClient.Setup(s => s.GetEpaoRegisteredStandardVersions(EpaoId, session.StandardCode)).ReturnsAsync(approvedVersions);
             var expectedValue = true;
             _mockSessionService.Setup(s => s.TryGet<bool>("redirecttocheck", out expectedValue));
@@ -261,7 +261,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
 
             standardVersion.StandardUId = vm.StandardUId;
             approvedVersions.Add(standardVersion);
-            _mockStandardVersionClient.Setup(s => s.GetStandardVersionByStandardUId(vm.StandardUId)).ReturnsAsync(standardVersion);
+            _mockStandardVersionClient.Setup(s => s.GetStandardVersionById(vm.StandardUId)).ReturnsAsync(standardVersion);
             _mockStandardVersionClient.Setup(s => s.GetEpaoRegisteredStandardVersions(EpaoId, session.StandardCode)).ReturnsAsync(approvedVersions);
             _mockStandardVersionClient.Setup(s => s.GetStandardOptions(vm.StandardUId)).ReturnsAsync(options);
 
@@ -286,7 +286,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
             vm.StandardUId = StandardUId;
             standardVersion.StandardUId = StandardUId;
             approvedVersions.Add(standardVersion);
-            _mockStandardVersionClient.Setup(s => s.GetStandardVersionByStandardUId(vm.StandardUId)).ReturnsAsync(standardVersion);
+            _mockStandardVersionClient.Setup(s => s.GetStandardVersionById(vm.StandardUId)).ReturnsAsync(standardVersion);
             _mockStandardVersionClient.Setup(s => s.GetEpaoRegisteredStandardVersions(EpaoId, session.StandardCode)).ReturnsAsync(approvedVersions);
             _mockStandardVersionClient.Setup(s => s.GetStandardOptions(vm.StandardUId)).ReturnsAsync(options);
 
@@ -307,7 +307,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
         {
             standardVersion.StandardUId = vm.StandardUId;
             approvedVersions.Add(standardVersion);
-            _mockStandardVersionClient.Setup(s => s.GetStandardVersionByStandardUId(vm.StandardUId)).ReturnsAsync(standardVersion);
+            _mockStandardVersionClient.Setup(s => s.GetStandardVersionById(vm.StandardUId)).ReturnsAsync(standardVersion);
             _mockStandardVersionClient.Setup(s => s.GetEpaoRegisteredStandardVersions(EpaoId, session.StandardCode)).ReturnsAsync(approvedVersions);
             _mockStandardVersionClient.Setup(s => s.GetStandardOptions(vm.StandardUId)).ReturnsAsync(new StandardOptions());
 
@@ -327,7 +327,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
 
             standardVersion.StandardUId = vm.StandardUId;
             approvedVersions.Add(standardVersion);
-            _mockStandardVersionClient.Setup(s => s.GetStandardVersionByStandardUId(vm.StandardUId)).ReturnsAsync(standardVersion);
+            _mockStandardVersionClient.Setup(s => s.GetStandardVersionById(vm.StandardUId)).ReturnsAsync(standardVersion);
             _mockStandardVersionClient.Setup(s => s.GetEpaoRegisteredStandardVersions(EpaoId, session.StandardCode)).ReturnsAsync(approvedVersions);
             _mockStandardVersionClient.Setup(s => s.GetStandardOptions(vm.StandardUId)).ReturnsAsync(new StandardOptions());
 

@@ -121,7 +121,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 return View("~/Views/Certificate/Version.cshtml", vm);
             }
 
-            var standardVersion = await _standardVersionClient.GetStandardVersionByStandardUId(vm.StandardUId);
+            var standardVersion = await _standardVersionClient.GetStandardVersionById(vm.StandardUId);
             var approvedStandardVersions = await _standardVersionClient.GetEpaoRegisteredStandardVersions(epaoid, certSession.StandardCode);
             var options = await _standardVersionClient.GetStandardOptions(vm.StandardUId);
 

@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Application.Mapping.Structs;
 using SFA.DAS.AssessorService.Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -61,6 +62,37 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
             }
 
             return standardCollation;
+        }
+
+        public async Task<Standard> GetStandardVersionById(string id, string version = null)
+        {
+            Standard standard = null;
+            try
+            {
+                var standardId = new StandardId(id);
+
+                switch (standardId.IdType)
+                {
+                    case StandardId.StandardIdType.LarsCode:
+                        standard = await _standardRepository.GetStandardVersionByLarsCode(standardId.LarsCode, version);
+                        break;
+                    case StandardId.StandardIdType.IFateReferenceNumber:
+                        standard = await _standardRepository.GetStandardVersionByIFateReferenceNumber(standardId.IFateReferenceNumber, version);
+                        break;
+                    case StandardId.StandardIdType.StandardUId:
+                        standard = await _standardRepository.GetStandardVersionByStandardUId(standardId.StandardUId);
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException("id", "StandardId was not of type StandardUId, LarsCode or IfateReferenceNumber");
+
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"STANDARD VERSION: Failed to get for standard id: {id}");
+            }
+
+            return standard;
         }
 
         public async Task<IEnumerable<Standard>> GetStandardVersionsByLarsCode(int larsCode)
@@ -128,22 +160,39 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
             return null;
         }
 
+        public async Task<IEnumerable<StandardOptions>> GetStandardOptionsForLatestStandardVersions()
+        {
+            try
+            {
+                var options = await _standardRepository.GetStandardOptionsForLatestStandardVersions();
+
+                return options;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "STANDARD OPTIONS: Failed to get options for latest version of each standard");
+            }
+
+            return null;
+        }
+
         public async Task<StandardOptions> GetStandardOptionsByStandardId(string id)
         {
             StandardOptions options = null;
             try
             {
-                if (int.TryParse(id, out var larsCode)) // Lars Code
+                var standardId = new StandardId(id);
+                switch (standardId.IdType)
                 {
-                    options = await _standardRepository.GetStandardOptionsByLarsCode(larsCode);
-                }
-                else if (id.Length == 6) // Ifate Ref
-                {
-                    options = await _standardRepository.GetStandardOptionsByIFateReferenceNumber(id);
-                }
-                else // Assume StandardUId
-                {
-                    options = await _standardRepository.GetStandardOptionsByStandardUId(id);
+                    case StandardId.StandardIdType.LarsCode:
+                        options = await _standardRepository.GetStandardOptionsByLarsCode(standardId.LarsCode);
+                        break;
+                    case StandardId.StandardIdType.IFateReferenceNumber:
+                        options = await _standardRepository.GetStandardOptionsByIFateReferenceNumber(standardId.IFateReferenceNumber);
+                        break;
+                    case StandardId.StandardIdType.StandardUId:
+                        options = await _standardRepository.GetStandardOptionsByStandardUId(standardId.StandardUId);
+                        break;
                 }
             }
             catch (Exception ex)
@@ -154,17 +203,27 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
             return options;
         }
 
-        public async Task<StandardOptions> GetStandardOptionsByStandardReferenceAndVersion(string standardReference, string version)
+        public async Task<StandardOptions> GetStandardOptionsByStandardIdAndVersion(string id, string version)
         {
-            Standard standard;
+            Standard standard = new Standard();
 
             try
             {
-                standard = await _standardRepository.GetStandardByStandardReferenceAndVersion(standardReference, version);
+                var standardId = new StandardId(id);
+
+                switch (standardId.IdType)
+                {
+                    case StandardId.StandardIdType.IFateReferenceNumber:
+                        standard = await _standardRepository.GetStandardVersionByIFateReferenceNumber(standardId.IFateReferenceNumber, version);
+                        break;
+                    case StandardId.StandardIdType.LarsCode:
+                        standard = await _standardRepository.GetStandardVersionByLarsCode(standardId.LarsCode, version);
+                        break;
+                }
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Could not find standard with StandardReference: {standardReference} and Version: {version}");
+                _logger.LogError(ex, $"Could not find standard with id: {id} and Version: {version}");
 
                 return null;
             }

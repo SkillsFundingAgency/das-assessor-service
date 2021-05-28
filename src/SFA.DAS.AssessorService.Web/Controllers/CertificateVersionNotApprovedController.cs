@@ -32,7 +32,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 return RedirectToAction("Index", "Search");
             }
 
-            var standardVersion = await _standardVersionClient.GetStandardVersionByStandardUId(standardUId);
+            var standardVersion = await _standardVersionClient.GetStandardVersionById(standardUId);
 
             var viewModel = new CertificateVersionNotApprovedViewModel()
             {
