@@ -111,7 +111,7 @@ namespace SFA.DAS.AssessorService.Data
             var sql = @"SELECT [StandardUId],[IFateReferenceNumber],[LarsCode],[Title],[Version],
 [Level],[Status],[TypicalDuration],[MaxFunding],[IsActive],[LastDateStarts],
 [EffectiveFrom],[EffectiveTo],[VersionEarliestStartDate],[VersionLatestStartDate],[VersionLatestEndDate],
-[VersionApprovedForDelivery],[ProposedTypicalDuration],[ProposedMaxFunding] FROM [Standards]";
+[VersionApprovedForDelivery],[ProposedTypicalDuration],[ProposedMaxFunding],[StandardPageUrl] FROM [Standards]";
 
             var results = await _unitOfWork.Connection.QueryAsync<Standard>(
                 sql,
@@ -125,7 +125,7 @@ namespace SFA.DAS.AssessorService.Data
             var sql = @"SELECT [StandardUId],[IFateReferenceNumber],[LarsCode],[Title],[Version],
 [Level],[Status],[TypicalDuration],[MaxFunding],[IsActive],[LastDateStarts],
 [EffectiveFrom],[EffectiveTo],[VersionEarliestStartDate],[VersionLatestStartDate],[VersionLatestEndDate],
-[VersionApprovedForDelivery],[ProposedTypicalDuration],[ProposedMaxFunding] FROM [Standards] Where [LarsCode] = @larsCode";
+[VersionApprovedForDelivery],[ProposedTypicalDuration],[ProposedMaxFunding],[StandardPageUrl] FROM [Standards] Where [LarsCode] = @larsCode";
 
             var results = await _unitOfWork.Connection.QueryAsync<Standard>(
                 sql,
@@ -140,7 +140,7 @@ namespace SFA.DAS.AssessorService.Data
             var sql = @"SELECT [StandardUId],[IFateReferenceNumber],[LarsCode],[Title],[Version],
 [Level],[Status],[TypicalDuration],[MaxFunding],[IsActive],[LastDateStarts],
 [EffectiveFrom],[EffectiveTo],[VersionEarliestStartDate],[VersionLatestStartDate],[VersionLatestEndDate],
-[VersionApprovedForDelivery],[ProposedTypicalDuration],[ProposedMaxFunding] FROM [Standards] Where [StandardUId] = @standardUId";
+[VersionApprovedForDelivery],[ProposedTypicalDuration],[ProposedMaxFunding],[StandardPageUrl] FROM [Standards] Where [StandardUId] = @standardUId";
 
             var result = await _unitOfWork.Connection.QuerySingleAsync<Standard>(
                 sql,
@@ -827,13 +827,14 @@ namespace SFA.DAS.AssessorService.Data
             dataTable.Columns.Add("ProposedTypicalDuration");
             dataTable.Columns.Add("ProposedMaxFunding");
             dataTable.Columns.Add("EPAChanged");
+            dataTable.Columns.Add("StandardPageUrl");
 
             foreach (var standard in standards)
             {
                 dataTable.Rows.Add(standard.StandardUId, standard.IfateReferenceNumber, standard.LarsCode, standard.Title, standard.Version, standard.Level,
                     standard.Status, standard.TypicalDuration, standard.MaxFunding, standard.IsActive, standard.LastDateStarts, standard.EffectiveFrom, standard.EffectiveTo,
                     standard.VersionEarliestStartDate, standard.VersionLatestStartDate, standard.VersionLatestEndDate, standard.VersionApprovedForDelivery,
-                    standard.ProposedTypicalDuration, standard.ProposedMaxFunding, standard.EPAChanged);
+                    standard.ProposedTypicalDuration, standard.ProposedMaxFunding, standard.EPAChanged, standard.StandardPageUrl);
             }
 
             return dataTable;

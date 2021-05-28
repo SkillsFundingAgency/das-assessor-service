@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.AssessorService.Api.Types.Models.Apply;
+using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.Domain.Consts;
@@ -20,24 +22,29 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         private readonly IOrganisationsApiClient _orgApiClient;
         private readonly IQnaApiClient _qnaApiClient;
         private readonly IContactsApiClient _contactsApiClient;
+        private readonly IStandardVersionClient _standardVersionApiClient;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public StandardController(IApplicationApiClient apiClient, IOrganisationsApiClient orgApiClient, IQnaApiClient qnaApiClient, IContactsApiClient contactsApiClient)
+        public StandardController(IApplicationApiClient apiClient, IOrganisationsApiClient orgApiClient, IQnaApiClient qnaApiClient, IContactsApiClient contactsApiClient, 
+            IStandardVersionClient standardVersionApiClient, IHttpContextAccessor httpContextAccessor)
         {
             _apiClient = apiClient;
             _orgApiClient = orgApiClient;
             _qnaApiClient = qnaApiClient;
             _contactsApiClient = contactsApiClient;
+            _standardVersionApiClient = standardVersionApiClient;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         [HttpGet("Standard/{id}")]
         public IActionResult Index(Guid id)
         {
-            var standardViewModel = new StandardViewModel { Id = id };
+            var standardViewModel = new StandardVersionViewModel { Id = id };
             return View("~/Views/Application/Standard/FindStandard.cshtml", standardViewModel);
         }
 
         [HttpPost("Standard/{id}")]
-        public async Task<IActionResult> Search(StandardViewModel model)
+        public async Task<IActionResult> Search(StandardVersionViewModel model)
         {
             if (string.IsNullOrEmpty(model.StandardToFind) || model.StandardToFind.Length <= 2)
             {
@@ -46,32 +53,44 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 return RedirectToAction(nameof(Index), new { model.Id });
             }
 
-            var standards = await _apiClient.GetStandards();
+            var standards = await _standardVersionApiClient.GetAllStandardVersions();
 
-            model.Results = standards.Where(s => s.Title.Contains(model.StandardToFind, StringComparison.InvariantCultureIgnoreCase)).ToList();
+            model.Results = standards.Where(s => s.Title.Contains(model.StandardToFind, StringComparison.InvariantCultureIgnoreCase))
+                .GroupBy(
+                    s => s.IFateReferenceNumber,
+                    (key, stds)  => new StandardVersion()
+                    {
+                        IFateReferenceNumber = key,
+                        Title = stds.FirstOrDefault()?.Title
+                    })
+                .ToList();
 
             return View("~/Views/Application/Standard/FindStandardResults.cshtml", model);
         }
 
-        [HttpGet("standard/{id}/confirm-standard/{standardCode}")]
+        [HttpGet("standard/{id}/confirm-standard/{standardReference}")]
         [ApplicationAuthorize(routeId: "Id")]
-        public async Task<IActionResult> ConfirmStandard(Guid id, int standardCode)
+        public async Task<IActionResult> ConfirmStandard(Guid id, string standardReference)
         {
             var application = await _apiClient.GetApplication(id);
-            var standardViewModel = new StandardViewModel { Id = id, StandardCode = standardCode };
+            var standardViewModel = new StandardVersionViewModel { Id = id, StandardReference = standardReference };
             if (!CanUpdateApplicationAsync(application))
             {
                 return RedirectToAction("Applications", "Application");
             }
 
-            var standards = await _apiClient.GetStandards();
-            standardViewModel.SelectedStandard = standards.FirstOrDefault(s => s.StandardId == standardCode);
-            standardViewModel.ApplicationStatus = await ApplicationStandardStatus(application, standardCode);
+            var standards = (await _standardVersionApiClient.GetAllStandardVersions())
+                            .Where(s => s.IFateReferenceNumber == standardReference)
+                            .OrderBy(s => s.Version)
+                            .ToList();
+            standardViewModel.SelectedStandard = standards.LastOrDefault();
+            standardViewModel.Results = standards;
+            standardViewModel.ApplicationStatus = await ApplicationStandardStatus(application, standardViewModel.SelectedStandard.LarsCode);
             return View("~/Views/Application/Standard/ConfirmStandard.cshtml", standardViewModel);
         }
 
-        [HttpPost("standard/{id}/confirm-standard/{standardCode}")]
-        public async Task<IActionResult> ConfirmStandard(StandardViewModel model, Guid id, int standardCode)
+        [HttpPost("standard/{id}/confirm-standard/{standardReference}")]
+        public async Task<IActionResult> ConfirmStandard(StandardVersionViewModel model, Guid id, string standardReference)
         {
             var application = await _apiClient.GetApplication(id);
             if (!CanUpdateApplicationAsync(application))
@@ -79,14 +98,27 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 return RedirectToAction("Applications", "Application");
             }
 
-            var standards = await _apiClient.GetStandards();
-            model.SelectedStandard = standards.FirstOrDefault(s => s.StandardId == standardCode);
-            model.ApplicationStatus = await ApplicationStandardStatus(application, standardCode);
+            var standards = (await _standardVersionApiClient.GetAllStandardVersions())
+                           .Where(s => s.IFateReferenceNumber == standardReference)
+                           .OrderBy(s => s.Version)
+                           .ToList();
+
+            model.SelectedStandard = standards.LastOrDefault();
+            model.Results = standards;
+            model.ApplicationStatus = await ApplicationStandardStatus(application, model.SelectedStandard.LarsCode);
 
             if (!model.IsConfirmed)
             {
                 ModelState.AddModelError(nameof(model.IsConfirmed), "Please tick to confirm");
-                TempData["ShowErrors"] = true;
+                TempData["ShowConfirmedError"] = true;
+                return View("~/Views/Application/Standard/ConfirmStandard.cshtml", model);
+            }
+
+            // if there is only one version then it is automatically selected 
+            if (standards.Count > 1 && (model.SelectedVersions == null || !model.SelectedVersions.Any()))
+            {
+                ModelState.AddModelError(nameof(model.SelectedVersions), "You must select at least one version");
+                TempData["ShowVersionError"] = true;
                 return View("~/Views/Application/Standard/ConfirmStandard.cshtml", model);
             }
 
@@ -95,7 +127,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 return View("~/Views/Application/Standard/ConfirmStandard.cshtml", model);
             }
 
-            await _apiClient.UpdateStandardData(id, standardCode, model.SelectedStandard?.ReferenceNumber, model.SelectedStandard.Title);
+            var versions = (standards.Count > 1) ? model.SelectedVersions : new List<string>() { model.SelectedStandard.Version };
+            await _apiClient.UpdateStandardData(id, model.SelectedStandard.LarsCode, model.SelectedStandard.IFateReferenceNumber, model.SelectedStandard.Title, versions);
 
             return RedirectToAction("SequenceSignPost","Application", new { Id = id });
         }
@@ -159,7 +192,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
         private async Task<Guid> GetUserId()
         {
-            var signinId = User.Claims.First(c => c.Type == "sub")?.Value;
+            var signinId = _httpContextAccessor.HttpContext.User.Claims.First(c => c.Type == "sub")?.Value;
             var contact =  await _contactsApiClient.GetContactBySignInId(signinId);
 
             return contact?.Id ?? Guid.Empty;

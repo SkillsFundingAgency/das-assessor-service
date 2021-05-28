@@ -11,6 +11,9 @@
             <h1 class="govuk-heading-xl">
                 Select application
             </h1>
+            <form asp-action="StartApplication" asp-controller="Application" method="post">
+                <button class="govuk-button" type="submit">Start new application</button>
+            </form>
             <table class="govuk-table">
                 <thead class="govuk-table__head">
                     <tr class="govuk-table__row">
@@ -26,23 +29,24 @@
                     {
                         if (!string.IsNullOrEmpty(application.ApplyData?.Apply?.StandardName))
                         {
-                        <tr>
-                            <th class="govuk-table__header" scope="row">
-                                @application.ApplyData?.Apply?.StandardName
-                            </th>
-                            <!--<td class="govuk-table__cell">@application.ApplicationId</td>-->
-                            <td class="govuk-table__cell govuk-table__cell--numeric">@application.ApplicationStatus</td>
-                            <td class="govuk-table__cell govuk-table__cell--numeric">
-                                <a class="govuk-link" href="@Url.Action("SequenceSignPost", "Application", new { Id = application.Id })">View</a>
-                            </td>
-                        </tr>
+                            <tr>
+                                <th class="govuk-table__header" scope="row">
+                                    @application.ApplyData?.Apply?.StandardName
+                                    @if (application.ApplyData?.Apply?.Versions != null && application.ApplyData?.Apply?.Versions.Count > 0)
+                                    {
+                                        <p class="govuk-body">Version(s) @string.Join(",", application.ApplyData?.Apply?.Versions)</p>
+                                    }
+                                </th>
+                                <!--<td class="govuk-table__cell">@application.ApplicationId</td>-->
+                                <td class="govuk-table__cell govuk-table__cell--numeric">@application.ApplicationStatus</td>
+                                <td class="govuk-table__cell govuk-table__cell--numeric">
+                                    <a class="govuk-link" href="@Url.Action("SequenceSignPost", "Application", new { Id = application.Id })">View</a>
+                                </td>
+                            </tr>
                         }
                     }
                 </tbody>
             </table>
         </div>
     </div>
-    <form asp-action="StartApplication" asp-controller="Application" method="post">
-        <button class="govuk-button" type="submit">Start Application</button>
-    </form>
 </main>

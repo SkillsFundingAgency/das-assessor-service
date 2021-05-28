@@ -46,7 +46,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
                 VersionLatestStartDate = source.VersionDetail.LatestStartDate,
                 ProposedMaxFunding = source.VersionDetail.ProposedMaxFunding,
                 ProposedTypicalDuration = source.VersionDetail.ProposedTypicalDuration,
-                EPAChanged = source.EPAChanged
+                EPAChanged = source.EPAChanged,
+                StandardPageUrl = source.StandardPageUrl
             };
 
             await standardRepository.InsertStandards(standards.Select(MapGetStandardsListItemToStandard));

@@ -24,5 +24,6 @@ namespace SFA.DAS.AssessorService.Domain.Entities
         public int ProposedTypicalDuration { get; set; }
         public int ProposedMaxFunding { get; set; }
         public bool EPAChanged { get; set; }
+        public string StandardPageUrl { get; set; }
     }
 }
