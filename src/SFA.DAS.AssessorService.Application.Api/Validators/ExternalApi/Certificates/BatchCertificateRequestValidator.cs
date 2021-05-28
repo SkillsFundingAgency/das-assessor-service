@@ -120,7 +120,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Certifi
 
                         if (string.IsNullOrWhiteSpace(overallGrade))
                         {
-                            context.AddFailure(new ValidationFailure("OverallGrade", "Select the grade the apprentice achieved"));
+                            context.AddFailure(new ValidationFailure("OverallGrade", "Select the grade achieved"));
                         }
                         else if (overallGrade.Equals(CertificateGrade.Fail, StringComparison.InvariantCultureIgnoreCase))
                         {
