@@ -68,19 +68,19 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             return View("~/Views/Application/Standard/FindStandardResults.cshtml", model);
         }
 
-        [HttpGet("standard/{id}/confirm-standard/{standardCode}")]
+        [HttpGet("standard/{id}/confirm-standard/{standardReference}")]
         [ApplicationAuthorize(routeId: "Id")]
-        public async Task<IActionResult> ConfirmStandard(Guid id, string standardCode)
+        public async Task<IActionResult> ConfirmStandard(Guid id, string standardReference)
         {
             var application = await _apiClient.GetApplication(id);
-            var standardViewModel = new StandardVersionViewModel { Id = id, StandardReference = standardCode };
+            var standardViewModel = new StandardVersionViewModel { Id = id, StandardReference = standardReference };
             if (!CanUpdateApplicationAsync(application))
             {
                 return RedirectToAction("Applications", "Application");
             }
 
             var standards = (await _standardVersionApiClient.GetAllStandardVersions())
-                            .Where(s => s.IFateReferenceNumber == standardCode)
+                            .Where(s => s.IFateReferenceNumber == standardReference)
                             .OrderBy(s => s.Version)
                             .ToList();
             standardViewModel.SelectedStandard = standards.LastOrDefault();
@@ -89,8 +89,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             return View("~/Views/Application/Standard/ConfirmStandard.cshtml", standardViewModel);
         }
 
-        [HttpPost("standard/{id}/confirm-standard/{standardCode}")]
-        public async Task<IActionResult> ConfirmStandard(StandardVersionViewModel model, Guid id, string standardCode)
+        [HttpPost("standard/{id}/confirm-standard/{standardReference}")]
+        public async Task<IActionResult> ConfirmStandard(StandardVersionViewModel model, Guid id, string standardReference)
         {
             var application = await _apiClient.GetApplication(id);
             if (!CanUpdateApplicationAsync(application))
@@ -99,7 +99,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             }
 
             var standards = (await _standardVersionApiClient.GetAllStandardVersions())
-                           .Where(s => s.IFateReferenceNumber == standardCode)
+                           .Where(s => s.IFateReferenceNumber == standardReference)
                            .OrderBy(s => s.Version)
                            .ToList();
 
