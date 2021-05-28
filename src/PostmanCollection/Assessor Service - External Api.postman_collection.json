@@ -1,0 +1,568 @@
+{
+	"info": {
+		"_postman_id": "714ed14a-e8cf-4f02-904b-17cbdfb29bd5",
+		"name": "Assessor Service - External Api",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Get Learner",
+			"item": [
+				{
+					"name": "Get Learner",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "x-request-context-user-email",
+								"value": "ben@test.com",
+								"type": "text"
+							},
+							{
+								"key": "x-request-context-user-note",
+								"value": "ukprn=10000000",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{external-api-base-url}}api/v1/learner/{uln}/{familyName}/{standard}",
+							"host": [
+								"{{external-api-base-url}}api"
+							],
+							"path": [
+								"v1",
+								"learner",
+								"{uln}",
+								"{familyName}",
+								"{standard}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Get Certificate",
+			"item": [
+				{
+					"name": "Get Certificate",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Successful GET Certificate\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([200]);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "x-request-context-user-email",
+								"value": "ben@test.com",
+								"type": "text"
+							},
+							{
+								"key": "x-request-context-user-note",
+								"value": "ukprn=10000000",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{external-api-base-url}}api/v1/certificate/{uln}/{family name}/{standard}",
+							"host": [
+								"{{external-api-base-url}}api"
+							],
+							"path": [
+								"v1",
+								"certificate",
+								"{uln}",
+								"{family name}",
+								"{standard}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Create Certificate",
+			"item": [
+				{
+					"name": "Create single certificate",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "x-request-context-user-email",
+								"value": "ben@test.com",
+								"type": "text"
+							},
+							{
+								"key": "x-request-context-user-note",
+								"value": "ukprn=10000000",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"requestId\" : \"\",\r\n    \"standard\": {\r\n        \"standardCode\":0,\r\n        \"standardReference\":\"\"\r\n    },\r\n    \"learner\":{\r\n        \"uln\":0,\r\n        \"familyName\":\"\"\r\n    },\r\n    \"learnerDetails\":{\r\n        \"version\":\"1.0\",\r\n        \"courseOption\":\"\" // Required for some standards\r\n    },\r\n    \"postalContact\":{\r\n        \"contactName\":\"Contact name\",\r\n        \"department\":\"\", // optional\r\n        \"organisation\":\"Organisation name\",\r\n        \"addressLine1\":\"Address line 1\",\r\n        \"addressLine2\":\"\", // optional\r\n        \"addressLine3\":\"\", // optional\r\n        \"city\":\"City\",\r\n        \"postCode\":\"CV1 2WT\"\r\n    }\r\n}"
+						},
+						"url": {
+							"raw": "{{external-api-base-url}}api/v1/certificate",
+							"host": [
+								"{{external-api-base-url}}api"
+							],
+							"path": [
+								"v1",
+								"certificate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create multiple certificates",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "x-request-context-user-email",
+								"value": "ben@test.com",
+								"type": "text"
+							},
+							{
+								"key": "x-request-context-user-note",
+								"value": "ukprn=10000000",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "[{\r\n    \"requestId\" : \"\",\r\n    \"standard\": {\r\n        \"standardCode\":0,\r\n        \"standardReference\":\"\"\r\n    },\r\n    \"learner\":{\r\n        \"uln\":0,\r\n        \"familyName\":\"\"\r\n    },\r\n    \"learnerDetails\":{\r\n        \"version\":\"1.0\",\r\n        \"courseOption\":\"\" // Required for some standards\r\n    },\r\n    \"postalContact\":{\r\n        \"contactName\":\"Contact name\",\r\n        \"department\":\"\", // optional\r\n        \"organisation\":\"Organisation name\",\r\n        \"addressLine1\":\"Address line 1\",\r\n        \"addressLine2\":\"\", // optional\r\n        \"addressLine3\":\"\", // optional\r\n        \"city\":\"City\",\r\n        \"postCode\":\"CV1 2WT\"\r\n    }\r\n},\r\n{\r\n    \"requestId\" : \"\",\r\n    \"standard\": {\r\n        \"standardCode\":0,\r\n        \"standardReference\":\"\"\r\n    },\r\n    \"learner\":{\r\n        \"uln\":0,\r\n        \"familyName\":\"\"\r\n    },\r\n    \"learnerDetails\":{\r\n        \"version\":\"1.0\",\r\n        \"courseOption\":\"\" // Required for some standards\r\n    },\r\n    \"postalContact\":{\r\n        \"contactName\":\"Contact name\",\r\n        \"department\":\"\", // optional\r\n        \"organisation\":\"Organisation name\",\r\n        \"addressLine1\":\"Address line 1\",\r\n        \"addressLine2\":\"\", // optional\r\n        \"addressLine3\":\"\", // optional\r\n        \"city\":\"City\",\r\n        \"postCode\":\"CV1 2WT\"\r\n    }\r\n}]"
+						},
+						"url": {
+							"raw": "{{external-api-base-url}}api/v1/certificate",
+							"host": [
+								"{{external-api-base-url}}api"
+							],
+							"path": [
+								"v1",
+								"certificate"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Update Certificate",
+			"item": [
+				{
+					"name": "Update single certificate",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "x-request-context-user-email",
+								"value": "ben@test.com",
+								"type": "text"
+							},
+							{
+								"key": "x-request-context-user-note",
+								"value": "ukprn=10000000",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"requestId\" : \"requestId\",\r\n    \"certificateReference\":\"\",\r\n    \"standard\": {\r\n        \"standardCode\":2,\r\n        \"standardReference\":\"\"\r\n    },\r\n    \"learner\":{\r\n        \"uln\":0,\r\n        \"familyName\":\"\"\r\n    },\r\n    \"learnerDetails\":{\r\n        \"version\":\"1.0\", \r\n        \"courseOption\":\"\" // Required for some standards\r\n    },\r\n    \"postalContact\":{\r\n        \"contactName\":\"Contact name\",\r\n        \"department\":\"\", // optional\r\n        \"organisation\":\"Organisation name\",\r\n        \"addressLine1\":\"Address line 1\",\r\n        \"addressLine2\":\"\", // optional\r\n        \"addressLine3\":\"\", // optional\r\n        \"city\":\"City\",\r\n        \"postCode\":\"CV1 2WT\"\r\n    }\r\n}"
+						},
+						"url": {
+							"raw": "{{external-api-base-url}}api/v1/certificate",
+							"host": [
+								"{{external-api-base-url}}api"
+							],
+							"path": [
+								"v1",
+								"certificate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update multiple certificates",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "x-request-context-user-email",
+								"value": "ben@test.com",
+								"type": "text"
+							},
+							{
+								"key": "x-request-context-user-note",
+								"value": "ukprn=10000000",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "[{\r\n    \"requestId\" : \"\",\r\n    \"certificateReference\":\"\",\r\n    \"standard\": {\r\n        \"standardCode\":0,\r\n        \"standardReference\":\"\"\r\n    },\r\n    \"learner\":{\r\n        \"uln\":0,\r\n        \"familyName\":\"\"\r\n    },\r\n    \"learnerDetails\":{\r\n        \"version\":\"\",\r\n        \"courseOption\":\"\"\r\n    },\r\n    \"postalContact\":{\r\n        \"contactName\":\"\",\r\n        \"department\":\"\",\r\n        \"organisation\":\"\",\r\n        \"addressLine1\":\"\",\r\n        \"addressLine2\":\"\",\r\n        \"addressLine3\":\"\",\r\n        \"city\":\"\",\r\n        \"postCode\":\"\"\r\n    }\r\n},\r\n{\r\n    \"requestId\" : \"\",\r\n    \"certificateReference\":\"\",\r\n    \"standard\": {\r\n        \"standardCode\":0,\r\n        \"standardReference\":\"\"\r\n    },\r\n    \"learner\":{\r\n        \"uln\":0,\r\n        \"familyName\":\"\"\r\n    },\r\n    \"learnerDetails\":{\r\n        \"version\":\"\",\r\n        \"courseOption\":\"\"\r\n    },\r\n    \"postalContact\":{\r\n        \"contactName\":\"\",\r\n        \"department\":\"\",\r\n        \"organisation\":\"\",\r\n        \"addressLine1\":\"\",\r\n        \"addressLine2\":\"\",\r\n        \"addressLine3\":\"\",\r\n        \"city\":\"\",\r\n        \"postCode\":\"\"\r\n    }\r\n}]"
+						},
+						"url": {
+							"raw": "{{external-api-base-url}}api/v1/certificate",
+							"host": [
+								"{{external-api-base-url}}api"
+							],
+							"path": [
+								"v1",
+								"certificate"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Create EPA",
+			"item": [
+				{
+					"name": "Create single EPA",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "x-request-context-user-email",
+								"value": "ben@test.com",
+								"type": "text"
+							},
+							{
+								"key": "x-request-context-user-note",
+								"value": "ukprn=10000000",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"requestId\" : \"\",\r\n    \"standard\": {\r\n        \"standardCode\":0,\r\n        \"standardReference\":\"\"\r\n    },\r\n    \"learner\":{\r\n        \"uln\":0,\r\n        \"familyName\":\"\"\r\n    },\r\n    \"learnerDetails\":{\r\n        \"version\":\"\",\r\n        \"courseOption\":\"\"\r\n    },\r\n    \"epaDetails\":{\r\n        \"epa\":[{\r\n            \"epaDate\":\"\",\r\n            \"epaOutcome\":\"\"\r\n        }]\r\n    }\r\n}"
+						},
+						"url": {
+							"raw": "{{external-api-base-url}}api/v1/epa",
+							"host": [
+								"{{external-api-base-url}}api"
+							],
+							"path": [
+								"v1",
+								"epa"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Multiple EPAs",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "x-request-context-user-email",
+								"value": "ben@test.com",
+								"type": "text"
+							},
+							{
+								"key": "x-request-context-user-note",
+								"value": "ukprn=10000000",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "[{\r\n    \"requestId\" : \"\",\r\n    \"standard\": {\r\n        \"standardCode\":0,\r\n        \"standardReference\":\"\"\r\n    },\r\n    \"learner\":{\r\n        \"uln\":0,\r\n        \"familyName\":\"\"\r\n    },\r\n    \"learnerDetails\":{\r\n        \"version\":\"\",\r\n        \"courseOption\":\"\"\r\n    },\r\n    \"epaDetails\":{\r\n        \"epa\":[{\r\n            \"epaDate\":\"\",\r\n            \"epaOutcome\":\"\"\r\n        }]\r\n    }\r\n},\r\n{\r\n    \"requestId\" : \"\",\r\n    \"standard\": {\r\n        \"standardCode\":0,\r\n        \"standardReference\":\"\"\r\n    },\r\n    \"learner\":{\r\n        \"uln\":0,\r\n        \"familyName\":\"\"\r\n    },\r\n    \"learnerDetails\":{\r\n        \"version\":\"\",\r\n        \"courseOption\":\"\"\r\n    },\r\n    \"epaDetails\":{\r\n        \"epa\":[{\r\n            \"epaDate\":\"\",\r\n            \"epaOutcome\":\"\"\r\n        }]\r\n    }\r\n}]"
+						},
+						"url": {
+							"raw": "{{external-api-base-url}}api/v1/epa",
+							"host": [
+								"{{external-api-base-url}}api"
+							],
+							"path": [
+								"v1",
+								"epa"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Update EPA",
+			"item": [
+				{
+					"name": "Update single EPA",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "x-request-context-user-email",
+								"value": "ben@test.com",
+								"type": "text"
+							},
+							{
+								"key": "x-request-context-user-note",
+								"value": "ukprn=10000000",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"requestId\" : \"\",\r\n    \"standard\": {\r\n        \"standardCode\":0,\r\n        \"standardReference\":\"\"\r\n    },\r\n    \"learner\":{\r\n        \"uln\":0,\r\n        \"familyName\":\"\"\r\n    },\r\n    \"learnerDetails\":{\r\n        \"version\":\"\",\r\n        \"courseOption\":\"\"\r\n    },\r\n    \"epaDetails\":{\r\n        \"epa\":[{\r\n            \"epaDate\":\"\",\r\n            \"epaOutcome\":\"\" // \"pass | fail | withdrawn\"\r\n        }]\r\n    }\r\n}"
+						},
+						"url": {
+							"raw": "{{external-api-base-url}}api/v1/epa",
+							"host": [
+								"{{external-api-base-url}}api"
+							],
+							"path": [
+								"v1",
+								"epa"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Multiple EPAs",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "x-request-context-user-email",
+								"value": "ben@test.com",
+								"type": "text"
+							},
+							{
+								"key": "x-request-context-user-note",
+								"value": "ukprn=10000000",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "[{\r\n    \"requestId\" : \"\",\r\n    \"standard\": {\r\n        \"standardCode\":0,\r\n        \"standardReference\":\"\"\r\n    },\r\n    \"learner\":{\r\n        \"uln\":0,\r\n        \"familyName\":\"\"\r\n    },\r\n    \"learnerDetails\":{\r\n        \"version\":\"\",\r\n        \"courseOption\":\"\"\r\n    },\r\n    \"epaDetails\":{\r\n        \"epa\":[{\r\n            \"epaDate\":\"\",\r\n            \"epaOutcome\":\"\"\r\n        }]\r\n    }\r\n},\r\n{\r\n    \"requestId\" : \"\",\r\n    \"standard\": {\r\n        \"standardCode\":0,\r\n        \"standardReference\":\"\"\r\n    },\r\n    \"learner\":{\r\n        \"uln\":0,\r\n        \"familyName\":\"\"\r\n    },\r\n    \"learnerDetails\":{\r\n        \"version\":\"\",\r\n        \"courseOption\":\"\"\r\n    },\r\n    \"epaDetails\":{\r\n        \"epa\":[{\r\n            \"epaDate\":\"\",\r\n            \"epaOutcome\":\"\"\r\n        }]\r\n    }\r\n}]"
+						},
+						"url": {
+							"raw": "{{external-api-base-url}}api/v1/epa",
+							"host": [
+								"{{external-api-base-url}}api"
+							],
+							"path": [
+								"v1",
+								"epa"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Delete EPA Record",
+			"item": [
+				{
+					"name": "Delete EPA record",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "x-request-context-user-email",
+								"value": "ben@test.com",
+								"type": "text"
+							},
+							{
+								"key": "x-request-context-user-note",
+								"value": "ukprn=10000000",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{external-api-base-url}}api/v1/epa/{uln}/{familyName}/{standard}/{epaReference}\n",
+							"host": [
+								"{{external-api-base-url}}api"
+							],
+							"path": [
+								"v1",
+								"epa",
+								"{uln}",
+								"{familyName}",
+								"{standard}",
+								"{epaReference}\n"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
