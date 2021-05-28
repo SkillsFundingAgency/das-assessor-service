@@ -120,7 +120,9 @@ CASE "Rule No" WHEN 1 THEN 'Certificate Submitted'
 certificate_by_EPAOrgId "EPAOrgId certificate createdby", ILR_for_EPAOrgId "EPAOrgId on ILR", @epaorgid "Results for EPAO", 
 What_is_allowed_for_Certificate "What can EPAO do with Certificate", 
 What_is_allowed_for_ILR "What can EPAO do with ILR",
-uln, familyname, StandardReference, Larscode, "Version", "Has certificate", "Status=Deleted", OverallGrade, "Status=Draft","Status=Submitted", LatestEpaOutcome, AchievementDate, "Has ILR"
+uln, familyname, StandardReference, Larscode, 
+(SELECT TOP 1 Certificatereference from certificates ce3 WHERE ce3.uln = ab4.uln AND ce3.standardcode = ab4.Larscode) Certificatereference,
+"Version", "Has certificate", "Status=Deleted", OverallGrade, "Status=Draft","Status=Submitted", LatestEpaOutcome, AchievementDate, "Has ILR"
 FROM
 (
 SELECT ROW_NUMBER() OVER (PARTITION BY "Rule No", Larscode ORDER BY ULN) rownumber, 
