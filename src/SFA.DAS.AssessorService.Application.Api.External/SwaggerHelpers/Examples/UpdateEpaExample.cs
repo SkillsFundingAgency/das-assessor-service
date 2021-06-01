@@ -20,7 +20,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.SwaggerHelpers.Exampl
                     EpaReference = "09876543",
                     Standard = new Standard { StandardCode = 1 },
                     Learner = new Learner { FamilyName = "Smith", Uln = 1234567890 },
-                    LearningDetails = new LearningDetails{ CourseOption = "French", Version="1.0" }
+                    LearningDetails = new LearningDetails{ CourseOption = "French", Version="1.0" },
                     EpaDetails = new EpaDetails { Epas = new List<EpaRecord> { new EpaRecord { EpaDate = DateTime.UtcNow, EpaOutcome = EpaOutcome.Pass } } }
                 },
                 new UpdateEpaRequest
