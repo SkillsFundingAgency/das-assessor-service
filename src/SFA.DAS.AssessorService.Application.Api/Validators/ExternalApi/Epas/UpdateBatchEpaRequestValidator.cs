@@ -41,6 +41,10 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Epas
                                 context.AddFailure(new ValidationFailure("EpaReference", $"EPA not found"));
                                 break;
                             case CertificateStatus.Draft:
+                                if(!string.IsNullOrWhiteSpace(certData.OverallGrade))
+                                {
+                                    context.AddFailure(new ValidationFailure("EpaReference", $"Certificate already exists, cannot update EPA record"));
+                                }
                                 if (string.IsNullOrWhiteSpace(certData.EpaDetails?.LatestEpaOutcome))
                                 {
                                     context.AddFailure(new ValidationFailure("EpaReference", $"EPA not found"));
