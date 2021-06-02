@@ -31,7 +31,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
         {
             var certificateRepositoryMock = new Mock<ICertificateRepository>();
 
-            // Having a range of certificates for 2 EPAO's (with a shared standard) allows us to test the suite of validation ruleS
+            // Having a range of certificates for 2 EPAO's (with a shared standard) allows us to test the suite of validation rules
             certificateRepositoryMock.Setup(q => q.GetCertificate(1234567890, 1)).ReturnsAsync(GenerateCertificate(1234567890, 1, "test", CertificateStatus.Draft, new Guid("12345678123456781234567812345678")));
             certificateRepositoryMock.Setup(q => q.GetCertificate(1234567890, 98)).ReturnsAsync(GenerateCertificate(1234567890, 98, "test", CertificateStatus.Deleted, new Guid("12345678123456781234567812345678")));
             certificateRepositoryMock.Setup(q => q.GetCertificate(9999999999, 1)).ReturnsAsync(GenerateCertificate(9999999999, 1, "test", CertificateStatus.Printed, new Guid("99999999999999999999999999999999")));
@@ -45,6 +45,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
             certificateRepositoryMock.Setup(q => q.GetCertificate(1234567890, 101)).ReturnsAsync(GenerateEpaCertificate(1234567890, 101, "test", new Guid("12345678123456781234567812345678"), true));
             certificateRepositoryMock.Setup(q => q.GetCertificate(9999999999, 101)).ReturnsAsync(GenerateEpaCertificate(9999999999, 101, "test", new Guid("99999999999999999999999999999999"), false));
             certificateRepositoryMock.Setup(q => q.GetCertificate(9876543210, 101)).ReturnsAsync(GenerateEpaCertificate(9876543210, 101, "test", new Guid("99999999999999999999999999999999"), false));
+            certificateRepositoryMock.Setup(q => q.GetCertificate(9876543211, 101)).ReturnsAsync(GenerateEpaCertificate(9876543211, 101, "test", new Guid("99999999999999999999999999999999"), false, overallGrade: "Pass"));
 
             // This allows us to test, retrieving by ilr data if the calling organisation was not the one that created it
             certificateRepositoryMock.Setup(q => q.GetCertificateByUlnOrgIdLastnameAndStandardCode(1234567890, "99999999", "Test", 1))
@@ -88,7 +89,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
             var standard98 = GenerateStandard(98);
             var standard99 = GenerateStandard(99);
             var standard101 = GenerateStandard(101);
-                        
+
             standardServiceMock.Setup(c => c.GetAllStandardVersions())
                 .ReturnsAsync(new List<Standard>
                 {
@@ -145,6 +146,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
             ilrRepositoryMock.Setup(q => q.Get(9999999999, 99)).ReturnsAsync(GenerateIlr(9999999999, 99, "Test", "99999999", CompletionStatus.Complete));
             ilrRepositoryMock.Setup(q => q.Get(9999999999, 101)).ReturnsAsync(GenerateIlr(9999999999, 101, "Test", "99999999", CompletionStatus.Complete));
             ilrRepositoryMock.Setup(q => q.Get(9876543210, 101)).ReturnsAsync(GenerateIlr(9876543210, 101, "Test", "99999999", CompletionStatus.Complete));
+            ilrRepositoryMock.Setup(q => q.Get(9876543211, 101)).ReturnsAsync(GenerateIlr(9876543211, 101, "Test", "99999999", CompletionStatus.Complete));
 
             // Leave this ILR without a EPA or a Certificate!
             ilrRepositoryMock.Setup(q => q.Get(5555555555, 1)).ReturnsAsync(GenerateIlr(5555555555, 1, "Test", "12345678", CompletionStatus.Complete));
@@ -186,7 +188,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
                 .Build();
         }
 
-        private static Certificate GenerateEpaCertificate(long uln, int standardCode, string familyName, Guid organisationId, bool hasPassedEpa, bool createEpaDetails = true)
+        private static Certificate GenerateEpaCertificate(long uln, int standardCode, string familyName, Guid organisationId, bool hasPassedEpa, bool createEpaDetails = true, string overallGrade = null)
         {
             // NOTE: This is to simulate a certificate that has only the EPA part submitted
             var reference = $"{uln}-{standardCode}";
@@ -217,7 +219,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
                 .With(i => i.CertificateReference = $"{uln}-{standardCode}")
                                 .With(i => i.CertificateData = JsonConvert.SerializeObject(Builder<CertificateData>.CreateNew()
                                 .With(cd => cd.LearnerFamilyName = familyName)
-                                .With(cd => cd.OverallGrade = null)
+                                .With(cd => cd.OverallGrade = overallGrade)
                                 .With(cd => cd.AchievementDate = null)
                                 .With(cd => cd.EpaDetails = epaDetails)
                                 .With(cd => cd.ContactName = null)
