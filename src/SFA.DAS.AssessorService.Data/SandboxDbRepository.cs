@@ -89,7 +89,9 @@ namespace SFA.DAS.AssessorService.Data
             // repopulated in Step 3
             transaction.Connection.Execute(
                 @"  DELETE FROM Options;
-                            DELETE FROM StandardCollation;", transaction: transaction);
+                            DELETE FROM StandardCollation;
+                            DELETE FROM Standards;
+                            DELETE FROM StandardOptions;", transaction: transaction);
 
             // repopulated in Step 2
             transaction.Connection.Execute(
@@ -123,7 +125,7 @@ namespace SFA.DAS.AssessorService.Data
         private void Step3_Standard_Data(SqlTransaction transaction)
         {
             _logger.LogInformation("Step 3: Syncing Standard Data");
-            BulkCopyData(transaction, new List<string> { "StandardCollation", "Options" });
+            BulkCopyData(transaction, new List<string> { "StandardCollation", "Options", "Standards", "StandardOptions" });
             _logger.LogInformation("Step 3: Completed");
         }
 
@@ -218,7 +220,14 @@ namespace SFA.DAS.AssessorService.Data
                 foreach (var table in tablesToCopy)
                 {
                     _logger.LogDebug($"\tSyncing table: {table}");
-                    using (var commandSourceData = new SqlCommand($"SELECT * FROM {table} ORDER BY [Id]", sourceSqlConnection))
+                    var idField = "[Id]";
+
+                    if(table.Equals("Standards",StringComparison.OrdinalIgnoreCase) || table.Equals("StandardOptions", StringComparison.OrdinalIgnoreCase))
+                    {
+                        idField = "[StandardUId]";
+                    }
+
+                    using (var commandSourceData = new SqlCommand($"SELECT * FROM {table} ORDER BY {idField}", sourceSqlConnection))
                     {
                         using (var reader = commandSourceData.ExecuteReader())
                         {
