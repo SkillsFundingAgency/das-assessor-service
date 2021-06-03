@@ -156,6 +156,36 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Standard
             model.Should().BeEquivalentTo(options);
         }
 
+        [Test, MoqAutoData]
+        public async Task WhenRequestingGetLatestStandardVersions_ThenLatestStandardVersionsAreReturned(List<Standard> standards)
+        {
+            _mockStandardService.Setup(service => service.GetLatestStandardVersions()).ReturnsAsync(standards);
+
+            var controllerResult = await _standardVersionController.GetLatestStandardVersions() as ObjectResult;
+
+            controllerResult.StatusCode.Should().Be((int)HttpStatusCode.OK);
+
+            var model = controllerResult.Value as List<StandardVersion>;
+
+            model.Count.Should().Equals(standards.Count);
+            model[0].IFateReferenceNumber.Should().Equals(standards[0].IfateReferenceNumber);
+        }
+
+        [Test, MoqAutoData]
+        public async Task WhenRequestingGetStandardVersionsByIFateReferenceNumber_ThenStandardVersionsAreReturned(string standardReference, List<Standard> standards)
+        {
+            _mockStandardService.Setup(service => service.GetStandardVersionsByIFateReferenceNumber(standardReference)).ReturnsAsync(standards);
+
+            var controllerResult = await _standardVersionController.GetStandardVersionsByIFateReferenceNumber(standardReference) as ObjectResult;
+
+            controllerResult.StatusCode.Should().Be((int)HttpStatusCode.OK);
+
+            var model = controllerResult.Value as List<StandardVersion>;
+
+            model.Count.Should().Equals(standards.Count);
+            model[0].IFateReferenceNumber.Should().Equals(standards[0].IfateReferenceNumber);
+        }
+
         private StandardVersion ConvertFromStandard(Standard standard)
         {
             return new StandardVersion

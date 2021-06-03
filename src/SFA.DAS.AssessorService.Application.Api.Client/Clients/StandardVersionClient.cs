@@ -23,7 +23,23 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                 return await RequestAndDeserialiseAsync<IEnumerable<StandardVersion>>(request, $"Could not get the list of standards");
             }
         }
-        
+
+        public async Task<IEnumerable<StandardVersion>> GetLatestStandardVersions()
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/standard-version/standards/latest"))
+            {
+                return await RequestAndDeserialiseAsync<IEnumerable<StandardVersion>>(request, $"Could not get the list of standards");
+            }
+        }
+
+        public async Task<IEnumerable<StandardVersion>> GetStandardVersionsByIFateReferenceNumber(string standardReference)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/standard-version/standards/versions/{standardReference}"))
+            {
+                return await RequestAndDeserialiseAsync<IEnumerable<StandardVersion>>(request, $"Could not find the standard {standardReference}");
+            }
+        }
+
         public async Task<IEnumerable<StandardVersion>> GetStandardVersionsByLarsCode(int larsCode)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/standard-version/standards/versions/{larsCode}"))
@@ -69,6 +85,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
     public interface IStandardVersionClient
     {
         Task<IEnumerable<StandardVersion>> GetAllStandardVersions();
+        Task<IEnumerable<StandardVersion>> GetLatestStandardVersions();
+        Task<IEnumerable<StandardVersion>> GetStandardVersionsByIFateReferenceNumber(string standardReference);
         Task<IEnumerable<StandardVersion>> GetStandardVersionsByLarsCode(int standardId);
         /// <summary>
         /// Method can take LarsCode, IFateReferenceNumber or StandardUId and will return a standard.

@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
-using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Paging;
+using Organisation = SFA.DAS.AssessorService.Domain.Entities.Organisation;
 
 namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 {
@@ -366,6 +366,16 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             {
                 return await RequestAndDeserialiseAsync<List<OrganisationStandardSummary>>(request,
                     $"Could not retrieve standards for organisation with Id of {endPointAssessorOrganisationId}");
+            }
+        }
+
+        public async Task<OrganisationStandard> GetOrganisationStandardByOrganisationAndReference(string endPointAssessorOrganisationId, string standardReference)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get,
+               $"/api/ao/assessment-organisations/{endPointAssessorOrganisationId}/standard/{standardReference}"))
+            {
+                return await RequestAndDeserialiseAsync<AssessorService.Api.Types.Models.AO.OrganisationStandard>(request,
+                    $"Could not retrieve standard for organisation with Id of {endPointAssessorOrganisationId} and standard reference {standardReference}", true);
             }
         }
 

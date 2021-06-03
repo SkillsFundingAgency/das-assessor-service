@@ -261,6 +261,39 @@ namespace SFA.DAS.AssessorService.Data
             }
         }
 
+        public async Task<OrganisationStandard> GetOrganisationStandardFromOrganisationIdAndStandardRefence(string organisationId, string standardReference)
+        {
+            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            {
+                if (connection.State != ConnectionState.Open)
+                    await connection.OpenAsync();
+
+                var sqlForStandardByOrganisationIdAndStandardReference =
+                    "SELECT Id, EndPointAssessorOrganisationId as OrganisationId, StandardCode as StandardId, EffectiveFrom, EffectiveTo, " +
+                    "DateStandardApprovedOnRegister, Comments, Status, ContactId, OrganisationStandardData " +
+                    "FROM [OrganisationStandard] " +
+                    "WHERE EndPointAssessorOrganisationId = @organisationId AND StandardReference = @standardReference";
+                return await connection.QuerySingleAsync<OrganisationStandard>(sqlForStandardByOrganisationIdAndStandardReference, new { organisationId=organisationId, standardReference = standardReference });
+            }
+        }
+
+        public async Task<IEnumerable<OrganisationStandardVersion>> GetOrganisationStandardVersionsByOrganisationStandardId(int organisationStandardId)
+        {
+            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            {
+                if (connection.State != ConnectionState.Open)
+                    await connection.OpenAsync();
+
+                var sqlForStandardVersionsByOrganisationStandardId =
+                    "SELECT StandardUId, Version, OrganisationStandardId, EffectiveFrom, EffectiveTo, DateVersionApproved, Comments, Status " +
+                    "FROM [OrganisationStandardVersion] " +
+                    "WHERE OrganisationStandardId = @organisationStandardId";
+
+                return await connection.QueryAsync<OrganisationStandardVersion>(
+                    sqlForStandardVersionsByOrganisationStandardId, new { organisationStandardId = organisationStandardId });
+            }
+        }
+
         public async Task<IEnumerable<OrganisationStandardPeriod>> GetOrganisationStandardPeriodsByOrganisationStandard(string organisationId, int standardId)
         {
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))

@@ -5,7 +5,6 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
@@ -20,7 +19,7 @@ using SFA.DAS.AssessorService.Web.ViewModels.Apply;
 namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
 {
     [TestFixture]
-    public class When_ConfirmStandard_Is_Posted_To
+    public class When_ConfirmStandard_Is_Called_With_Specific_Version
     {
         private StandardController _sut;
         private Mock<IApplicationApiClient> _mockApiClient;
@@ -82,7 +81,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
              });
 
             _mockOrgApiClient
-             .Setup(r => r.GetEpaOrganisationById(It.IsAny<String>()))
+             .Setup(r => r.GetEpaOrganisation(It.IsAny<String>()))
              .ReturnsAsync(new EpaOrganisation()
              {
                  OrganisationId = "12345"
@@ -93,82 +92,42 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
             .ReturnsAsync(new List<OrganisationStandardSummary>());
 
             _sut = new StandardController(_mockApiClient.Object, _mockOrgApiClient.Object, _mockQnaApiClient.Object,
-               _mockContactsApiClient.Object, _mockStandardVersionApiClient.Object, _mockHttpContextAccessor.Object)
-            {
-                TempData = new TempDataDictionary(new DefaultHttpContext(), Mock.Of<ITempDataProvider>())
-            };
+               _mockContactsApiClient.Object, _mockStandardVersionApiClient.Object, _mockHttpContextAccessor.Object);
         }
 
         [Test]
-        public async Task Then_UpdateStandardData_Is_Called()
+        public async Task Then_One_Version_Is_Returned()
         {
             // Arrange
             _mockStandardVersionApiClient
                .Setup(r => r.GetStandardVersionsByIFateReferenceNumber("ST0001"))
                .ReturnsAsync(new List<StandardVersion> { 
-                   new StandardVersion { IFateReferenceNumber = "ST0001", Title = "Title 1", Version = "1.0", LarsCode = 1},
-                   new StandardVersion { IFateReferenceNumber = "ST0001", Title = "Title 1", Version = "1.1", LarsCode = 1}
+                   new StandardVersion { IFateReferenceNumber = "ST0001", Title = "Title 1", Version = "1.0", LarsCode = 1, EPAChanged = false},
+                   new StandardVersion { IFateReferenceNumber = "ST0001", Title = "Title 1", Version = "1.1", LarsCode = 1, EPAChanged = false},
+                   new StandardVersion { IFateReferenceNumber = "ST0001", Title = "Title 1", Version = "1.2", LarsCode = 1, EPAChanged = false},
+                   new StandardVersion { IFateReferenceNumber = "ST0001", Title = "Title 1", Version = "1.3", LarsCode = 1, EPAChanged = true},
+               });
+
+            _mockOrgApiClient
+               .Setup(r => r.GetOrganisationStandardByOrganisationAndReference("12345", "ST0001"))
+               .ReturnsAsync(new OrganisationStandard()
+               {
+                   Versions = new List<OrganisationStandardVersion>()
+                   {
+                       new OrganisationStandardVersion() { Status = "Live", Version = "1.1"}
+                   }
                });
 
             // Act
-            var model = new StandardVersionViewModel()
-            {
-                IsConfirmed = true,
-                SelectedVersions = new List<string>() { "1.1" }
-            };
-            await _sut.ConfirmStandard(model, Guid.NewGuid(), "ST0001", null);
+            var results = (await _sut.ConfirmStandard(Guid.NewGuid(), "ST0001", "1.2")) as ViewResult;
 
             // Assert
-            _mockApiClient.Verify(m => m.UpdateStandardData(It.IsAny<Guid>(), 1, "ST0001", "Title 1",
-                It.Is<List<string>>(x => x.Count == 1 && x[0] == "1.1"), null));
-        }
+            var vm = results.Model as StandardVersionViewModel;
+            Assert.AreEqual(1, vm.Results.Count);
+            Assert.AreEqual("1.2", vm.Results[0].Version);
+            Assert.AreEqual("1.2", vm.SelectedStandard.Version);
 
-        [Test]
-        public async Task Then_Error_If_Confirmed_Is_False()
-        {
-            // Arrange
-            _mockStandardVersionApiClient
-               .Setup(r => r.GetStandardVersionsByIFateReferenceNumber("ST0001"))
-               .ReturnsAsync(new List<StandardVersion> {
-                   new StandardVersion { IFateReferenceNumber = "ST0001", Title = "Title 1", Version = "1.0", LarsCode = 1},
-                   new StandardVersion { IFateReferenceNumber = "ST0001", Title = "Title 1", Version = "1.1", LarsCode = 1}
-               });
-
-            // Act
-            var model = new StandardVersionViewModel()
-            {
-                IsConfirmed = false,
-                SelectedVersions = new List<string>() { "1.1" }
-            };
-            var result = (await _sut.ConfirmStandard(model, Guid.NewGuid(), "ST0001", null)) as ViewResult;
-
-            // Assert
-            Assert.AreEqual("~/Views/Application/Standard/ConfirmStandard.cshtml", result.ViewName);
-            Assert.IsTrue(_sut.ModelState["IsConfirmed"].Errors.Any(x => x.ErrorMessage == "Please tick to confirm"));
-        }
-
-        [Test]
-        public async Task Then_Error_If_No_Versions_Selected()
-        {
-            // Arrange
-            _mockStandardVersionApiClient
-               .Setup(r => r.GetStandardVersionsByIFateReferenceNumber("ST0001"))
-               .ReturnsAsync(new List<StandardVersion> {
-                   new StandardVersion { IFateReferenceNumber = "ST0001", Title = "Title 1", Version = "1.0", LarsCode = 1},
-                   new StandardVersion { IFateReferenceNumber = "ST0001", Title = "Title 1", Version = "1.1", LarsCode = 1}
-               });
-
-            // Act
-            var model = new StandardVersionViewModel()
-            {
-                IsConfirmed = true,
-                SelectedVersions = new List<string>() { }
-            };
-            var result = (await _sut.ConfirmStandard(model, Guid.NewGuid(), "ST0001", null)) as ViewResult;
-
-            // Assert
-            Assert.AreEqual("~/Views/Application/Standard/ConfirmStandard.cshtml", result.ViewName);
-            Assert.IsTrue(_sut.ModelState["SelectedVersions"].Errors.Any(x => x.ErrorMessage == "You must select at least one version"));
+            Assert.AreEqual("~/Views/Application/Standard/ConfirmStandard.cshtml", results.ViewName);
         }
 
         private HttpContext SetupHttpContextSubAuthorityClaim()

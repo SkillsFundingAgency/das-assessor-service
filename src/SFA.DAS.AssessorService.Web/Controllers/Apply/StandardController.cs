@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Apply;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
@@ -53,24 +54,18 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 return RedirectToAction(nameof(Index), new { model.Id });
             }
 
-            var standards = await _standardVersionApiClient.GetAllStandardVersions();
-
-            model.Results = standards.Where(s => s.Title.Contains(model.StandardToFind, StringComparison.InvariantCultureIgnoreCase))
-                .GroupBy(
-                    s => s.IFateReferenceNumber,
-                    (key, stds)  => new StandardVersion()
-                    {
-                        IFateReferenceNumber = key,
-                        Title = stds.FirstOrDefault()?.Title
-                    })
+            var standards = await _standardVersionApiClient.GetLatestStandardVersions();
+            model.Results = standards
+                .Where(s => s.Title.Contains(model.StandardToFind, StringComparison.InvariantCultureIgnoreCase))
                 .ToList();
 
             return View("~/Views/Application/Standard/FindStandardResults.cshtml", model);
         }
 
         [HttpGet("standard/{id}/confirm-standard/{standardReference}")]
+        [HttpGet("standard/{id}/confirm-standard/{standardReference}/{version}")]
         [ApplicationAuthorize(routeId: "Id")]
-        public async Task<IActionResult> ConfirmStandard(Guid id, string standardReference)
+        public async Task<IActionResult> ConfirmStandard(Guid id, string standardReference, string version)
         {
             var application = await _apiClient.GetApplication(id);
             var standardViewModel = new StandardVersionViewModel { Id = id, StandardReference = standardReference };
@@ -79,18 +74,42 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 return RedirectToAction("Applications", "Application");
             }
 
-            var standards = (await _standardVersionApiClient.GetAllStandardVersions())
-                            .Where(s => s.IFateReferenceNumber == standardReference)
-                            .OrderBy(s => s.Version)
-                            .ToList();
-            standardViewModel.SelectedStandard = standards.LastOrDefault();
-            standardViewModel.Results = standards;
-            standardViewModel.ApplicationStatus = await ApplicationStandardStatus(application, standardViewModel.SelectedStandard.LarsCode);
-            return View("~/Views/Application/Standard/ConfirmStandard.cshtml", standardViewModel);
+            var org = await _orgApiClient.GetEpaOrganisation(application.OrganisationId.ToString());
+            var orgStandard = await _orgApiClient.GetOrganisationStandardByOrganisationAndReference(org?.OrganisationId, standardReference);
+
+            IEnumerable<StandardVersion> standards = (await _standardVersionApiClient.GetStandardVersionsByIFateReferenceNumber(standardReference))
+                            .OrderBy(s => s.Version);
+            var latestStandard = standards.LastOrDefault();
+            bool anyExistingVersions = orgStandard?.Versions?.Any(x => x.Status == OrganisationStatus.Live) ?? false;
+
+            if (!anyExistingVersions)
+            {
+                // no existing approved versions for this standard
+                standardViewModel.Results = standards.ToList();
+                standardViewModel.SelectedStandard = latestStandard;
+                standardViewModel.ApplicationStatus = await ApplicationStandardStatus(application, standardViewModel.SelectedStandard.LarsCode);
+                return View("~/Views/Application/Standard/ConfirmStandard.cshtml", standardViewModel);
+            }
+            else if (!string.IsNullOrWhiteSpace(version))
+            {
+                // specific version selected (from standversion view)
+                standardViewModel.SelectedStandard = standards.FirstOrDefault(x => x.Version.Equals(version, StringComparison.InvariantCultureIgnoreCase));
+                standardViewModel.Results = new List<StandardVersion>() { standardViewModel.SelectedStandard };
+                return View("~/Views/Application/Standard/ConfirmStandard.cshtml", standardViewModel);
+            }
+            else
+            {
+                // existing approved versions for this standard
+                ApplyVersionStatuses(standards, orgStandard.Versions);
+                standardViewModel.SelectedStandard = latestStandard;
+                standardViewModel.Results = standards.Reverse().ToList();
+                return View("~/Views/Application/Standard/StandardVersion.cshtml", standardViewModel);
+            }
         }
 
         [HttpPost("standard/{id}/confirm-standard/{standardReference}")]
-        public async Task<IActionResult> ConfirmStandard(StandardVersionViewModel model, Guid id, string standardReference)
+        [HttpPost("standard/{id}/confirm-standard/{standardReference}/{version}")]
+        public async Task<IActionResult> ConfirmStandard(StandardVersionViewModel model, Guid id, string standardReference, string version)
         {
             var application = await _apiClient.GetApplication(id);
             if (!CanUpdateApplicationAsync(application))
@@ -98,12 +117,14 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 return RedirectToAction("Applications", "Application");
             }
 
-            var standards = (await _standardVersionApiClient.GetAllStandardVersions())
-                           .Where(s => s.IFateReferenceNumber == standardReference)
+            var standards = (await _standardVersionApiClient.GetStandardVersionsByIFateReferenceNumber(standardReference))
                            .OrderBy(s => s.Version)
                            .ToList();
 
-            model.SelectedStandard = standards.LastOrDefault();
+            var org = await _orgApiClient.GetEpaOrganisation(application.OrganisationId.ToString());
+            var orgStandard = await _orgApiClient.GetOrganisationStandardByOrganisationAndReference(org?.OrganisationId, standardReference);
+
+            model.SelectedStandard = string.IsNullOrWhiteSpace(version)? standards.LastOrDefault() : standards.FirstOrDefault(x => x.Version.Equals(version, StringComparison.InvariantCultureIgnoreCase));
             model.Results = standards;
             model.ApplicationStatus = await ApplicationStandardStatus(application, model.SelectedStandard.LarsCode);
 
@@ -114,23 +135,52 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 return View("~/Views/Application/Standard/ConfirmStandard.cshtml", model);
             }
 
-            // if there is only one version then it is automatically selected 
-            if (standards.Count > 1 && (model.SelectedVersions == null || !model.SelectedVersions.Any()))
+            if (string.IsNullOrWhiteSpace(version))
             {
-                ModelState.AddModelError(nameof(model.SelectedVersions), "You must select at least one version");
-                TempData["ShowVersionError"] = true;
-                return View("~/Views/Application/Standard/ConfirmStandard.cshtml", model);
+                // if there is only one version then it is automatically selected 
+                if (standards.Count > 1 && (model.SelectedVersions == null || !model.SelectedVersions.Any()))
+                {
+                    ModelState.AddModelError(nameof(model.SelectedVersions), "You must select at least one version");
+                    TempData["ShowVersionError"] = true;
+                    return View("~/Views/Application/Standard/ConfirmStandard.cshtml", model);
+                }
+
+                if (!string.IsNullOrEmpty(model.ApplicationStatus))
+                {
+                    return View("~/Views/Application/Standard/ConfirmStandard.cshtml", model);
+                }
             }
 
-            if (!string.IsNullOrEmpty(model.ApplicationStatus))
-            {
-                return View("~/Views/Application/Standard/ConfirmStandard.cshtml", model);
-            }
+            var versions = (standards.Count > 1 && string.IsNullOrWhiteSpace(version)) ? model.SelectedVersions : new List<string>() { model.SelectedStandard.Version };
+            bool anyExistingVersions = orgStandard?.Versions?.Any(x => x.Status == OrganisationStatus.Live) ?? false;
 
-            var versions = (standards.Count > 1) ? model.SelectedVersions : new List<string>() { model.SelectedStandard.Version };
-            await _apiClient.UpdateStandardData(id, model.SelectedStandard.LarsCode, model.SelectedStandard.IFateReferenceNumber, model.SelectedStandard.Title, versions);
+            if (anyExistingVersions)
+            {
+                await _apiClient.UpdateStandardData(id, model.SelectedStandard.LarsCode, model.SelectedStandard.IFateReferenceNumber, model.SelectedStandard.Title, versions, ApplicationTypes.Version);
+
+                // update QnA application data for the Application Type
+                var applicationData = await _qnaApiClient.GetApplicationData(application.ApplicationId);
+                applicationData.ApplicationType = ApplicationTypes.Version;
+                await _qnaApiClient.UpdateApplicationData(application.ApplicationId, applicationData);
+            }
+            else
+                await _apiClient.UpdateStandardData(id, model.SelectedStandard.LarsCode, model.SelectedStandard.IFateReferenceNumber, model.SelectedStandard.Title, versions, application.ApplicationType);
 
             return RedirectToAction("SequenceSignPost","Application", new { Id = id });
+        }
+
+        [HttpGet("standard/{id}/opt-in/{standardReference}/{version}")]
+        [ApplicationAuthorize(routeId: "Id")]
+        public async Task<IActionResult> OptIn(Guid id, string standardReference, string version)
+        {
+            var application = await _apiClient.GetApplication(id);
+            var standardViewModel = new StandardVersionViewModel { Id = id, StandardReference = standardReference };
+            if (!CanUpdateApplicationAsync(application))
+            {
+                return RedirectToAction("Applications", "Application");
+            }
+
+            return View("~/Views/Application/Standard/OptIn.cshtml");
         }
 
         private  bool CanUpdateApplicationAsync(ApplicationResponse application)
@@ -196,6 +246,41 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             var contact =  await _contactsApiClient.GetContactBySignInId(signinId);
 
             return contact?.Id ?? Guid.Empty;
+        }
+
+        private IEnumerable<StandardVersion> ApplyVersionStatuses(IEnumerable<StandardVersion> allVersions, IEnumerable<OrganisationStandardVersion> organisationVersions)
+        {
+            bool approved = false;
+            bool changed = false;
+
+            foreach(var version in allVersions.OrderBy(s => s.Version))
+            {
+                var existingOrgVersion = organisationVersions.FirstOrDefault(x => x.Version == version.Version);
+
+                if (existingOrgVersion != null)
+                {
+                    approved = true;
+                    changed = false;
+
+                    if ((existingOrgVersion.EffectiveTo.HasValue && version.EffectiveTo.Value < DateTime.Today)
+                         || existingOrgVersion.Status != OrganisationStatus.Live)
+                        version.VersionStatus = VersionStatus.Withdrawn;
+                    else
+                        version.VersionStatus = VersionStatus.Approved;
+                }
+                else if (approved)
+                {
+                    if (version.EPAChanged || changed)
+                    {
+                        version.VersionStatus = VersionStatus.NewVersionChanged;
+                        changed = true;
+                    }
+                    else
+                        version.VersionStatus = VersionStatus.NewVersionNoChange;
+                }
+            }
+
+            return allVersions;
         }
     }
 }

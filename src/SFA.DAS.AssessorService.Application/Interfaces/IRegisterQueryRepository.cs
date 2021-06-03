@@ -30,6 +30,9 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<IEnumerable<OrganisationStandardSummary>> GetOrganisationStandardByOrganisationId(string organisationId);
         Task<OrganisationStandard> GetOrganisationStandardFromOrganisationStandardId(int organisationStandardId);
 
+        Task<OrganisationStandard> GetOrganisationStandardFromOrganisationIdAndStandardRefence(string organisationId, string standardReference);
+        Task<IEnumerable<OrganisationStandardVersion>> GetOrganisationStandardVersionsByOrganisationStandardId(int organisationStandardId);
+
         Task<EpaContact> GetContactByContactId(Guid contactId);
         Task<EpaContact> GetContactByEmail(string email);
         Task<EpaContact> GetContactBySignInId(string signinId);

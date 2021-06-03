@@ -19,7 +19,7 @@ using SFA.DAS.AssessorService.Web.ViewModels.Apply;
 namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
 {
     [TestFixture]
-    public class When_ConfirmStandard_Is_Called
+    public class When_ConfirmStandard_Is_Called_With_No_Approved_Versions
     {
         private StandardController _sut;
         private Mock<IApplicationApiClient> _mockApiClient;
@@ -81,6 +81,13 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
              });
 
             _mockOrgApiClient
+             .Setup(r => r.GetEpaOrganisation(It.IsAny<String>()))
+             .ReturnsAsync(new EpaOrganisation()
+             {
+                 OrganisationId = "12345"
+             });
+
+            _mockOrgApiClient
             .Setup(r => r.GetOrganisationStandardsByOrganisation(It.IsAny<String>()))
             .ReturnsAsync(new List<OrganisationStandardSummary>());
 
@@ -93,20 +100,24 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
         {
             // Arrange
             _mockStandardVersionApiClient
-               .Setup(r => r.GetAllStandardVersions())
+               .Setup(r => r.GetStandardVersionsByIFateReferenceNumber("ST0001"))
                .ReturnsAsync(new List<StandardVersion> { 
                    new StandardVersion { IFateReferenceNumber = "ST0001", Title = "Title 1", Version = "1.0", LarsCode = 1},
                    new StandardVersion { IFateReferenceNumber = "ST0001", Title = "Title 1", Version = "1.1", LarsCode = 1},
-                   new StandardVersion { IFateReferenceNumber = "ST0002", Title = "Title 2", Version = "1.0", LarsCode = 2},
                });
 
+            _mockOrgApiClient
+               .Setup(r => r.GetOrganisationStandardByOrganisationAndReference("12345", "ST0001"))
+               .ReturnsAsync((OrganisationStandard)null);
+
             // Act
-            var results = (await _sut.ConfirmStandard(Guid.NewGuid(), "ST0001")) as ViewResult;
+            var results = (await _sut.ConfirmStandard(Guid.NewGuid(), "ST0001", null)) as ViewResult;
 
             // Assert
             var vm = results.Model as StandardVersionViewModel;
             Assert.AreEqual(2, vm.Results.Count);
             Assert.AreEqual("1.1", vm.SelectedStandard.Version);
+            Assert.AreEqual("~/Views/Application/Standard/ConfirmStandard.cshtml", results.ViewName);
         }
 
         private HttpContext SetupHttpContextSubAuthorityClaim()

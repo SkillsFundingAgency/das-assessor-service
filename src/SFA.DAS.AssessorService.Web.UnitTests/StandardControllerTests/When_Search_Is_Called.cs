@@ -53,13 +53,12 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
         }
 
         [Test]
-        public async Task Then_The_Results_Are_Grouped()
+        public async Task Then_The_Results_Are_Returned()
         {
             // Arrange
             _mockStandardVersionApiClient
-               .Setup(r => r.GetAllStandardVersions())
+               .Setup(r => r.GetLatestStandardVersions())
                .ReturnsAsync(new List<StandardVersion> { 
-                   new StandardVersion { IFateReferenceNumber = "ST0001", Title = "Title 1", Version = "1.0"},
                    new StandardVersion { IFateReferenceNumber = "ST0001", Title = "Title 1", Version = "1.1"},
                    new StandardVersion { IFateReferenceNumber = "ST0002", Title = "Title 2", Version = "1.0"},
                });
