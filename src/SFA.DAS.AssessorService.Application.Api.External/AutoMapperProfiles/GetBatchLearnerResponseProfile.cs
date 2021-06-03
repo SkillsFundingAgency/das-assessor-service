@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models.ExternalApi.Learners;
+using SFA.DAS.AssessorService.Application.Api.External.Extenstions;
 using SFA.DAS.AssessorService.Application.Api.External.Models.Response;
 using SFA.DAS.AssessorService.Application.Api.External.Models.Response.Certificates;
 using SFA.DAS.AssessorService.Application.Api.External.Models.Response.Epa;
@@ -56,8 +57,8 @@ namespace SFA.DAS.AssessorService.Application.Api.External.AutoMapperProfiles
                             LearnerReferenceNumber = source.Learner.LearnerReferenceNumber, 
                             ProviderUkPrn = source.Learner.UkPrn, 
                             ProviderName = source.Learner.OrganisationName, 
-                            LearningStartDate = source.Learner.LearnerStartDate, 
-                            PlannedEndDate = source.Learner.PlannedEndDate,
+                            LearningStartDate = source.Learner.LearnerStartDate.DropMilliseconds(), 
+                            PlannedEndDate = source.Learner.PlannedEndDate.DropMilliseconds(),
                             Version = GetVersionFromGetBatchLearnerResponse(source, destination),
                             CourseOption = GetCourseOptionFromGetBatchLearnerResponse(source, destination)
                         }
@@ -74,7 +75,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.AutoMapperProfiles
                         { 
                             ProviderUkPrn = certData.LearningDetails.ProviderUkPrn, 
                             ProviderName = certData.LearningDetails.ProviderName, 
-                            LearningStartDate = certData.LearningDetails.LearningStartDate
+                            LearningStartDate = certData.LearningDetails.LearningStartDate.DropMilliseconds()
                         }
                     };
                 }
