@@ -81,6 +81,7 @@ namespace SFA.DAS.AssessorService.Data
             transaction.Connection.Execute(
                 @"  DELETE FROM OrganisationStandardDeliveryArea;
                             DELETE FROM OrganisationStandard;
+                            DELETE FROM OrganisationStandardVersion;
                             DELETE FROM DeliveryArea;
                             DBCC CHECKIDENT('OrganisationStandardDeliveryArea', RESEED, 1);
                             DBCC CHECKIDENT('OrganisationStandard', RESEED, 1);
@@ -132,7 +133,7 @@ namespace SFA.DAS.AssessorService.Data
         private void Step4_OrganisationStandard_Data(SqlTransaction transaction)
         {
             _logger.LogInformation("Step 4: Syncing Organisation Standard Data");
-            BulkCopyData(transaction, new List<string> { "DeliveryArea", "OrganisationStandard", "OrganisationStandardDeliveryArea" });
+            BulkCopyData(transaction, new List<string> { "DeliveryArea", "OrganisationStandard", "OrganisationStandardVersion", "OrganisationStandardDeliveryArea" });
             _logger.LogInformation("Step 4: Completed");
         }
 
@@ -222,7 +223,7 @@ namespace SFA.DAS.AssessorService.Data
                     _logger.LogDebug($"\tSyncing table: {table}");
                     var idField = "[Id]";
 
-                    if(table.Equals("Standards",StringComparison.OrdinalIgnoreCase) || table.Equals("StandardOptions", StringComparison.OrdinalIgnoreCase))
+                    if (IsStandardUIdIdentityField(table))
                     {
                         idField = "[StandardUId]";
                     }
@@ -241,6 +242,11 @@ namespace SFA.DAS.AssessorService.Data
                 }
             }
         }
+
+        private bool IsStandardUIdIdentityField(string table) =>
+            table.Equals("Standards", StringComparison.OrdinalIgnoreCase) ||
+            table.Equals("StandardOptions", StringComparison.OrdinalIgnoreCase) ||
+            table.Equals("OrganisationStandardVersion", StringComparison.OrdinalIgnoreCase);
     }
 }
 
