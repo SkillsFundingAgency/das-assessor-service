@@ -174,7 +174,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         public async Task<IActionResult> OptIn(Guid id, string standardReference, string version)
         {
             var application = await _apiClient.GetApplication(id);
-            var standardViewModel = new StandardVersionViewModel { Id = id, StandardReference = standardReference };
+           
             if (!CanUpdateApplicationAsync(application))
             {
                 return RedirectToAction("Applications", "Application");
@@ -248,7 +248,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             return contact?.Id ?? Guid.Empty;
         }
 
-        private IEnumerable<StandardVersion> ApplyVersionStatuses(IEnumerable<StandardVersion> allVersions, IEnumerable<OrganisationStandardVersion> organisationVersions)
+        private void ApplyVersionStatuses(IEnumerable<StandardVersion> allVersions, IEnumerable<OrganisationStandardVersion> organisationVersions)
         {
             bool approved = false;
             bool changed = false;
@@ -279,8 +279,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                         version.VersionStatus = VersionStatus.NewVersionNoChange;
                 }
             }
-
-            return allVersions;
         }
     }
 }
