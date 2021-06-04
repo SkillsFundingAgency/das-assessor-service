@@ -50,11 +50,19 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
             else
             {
                 var certData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
+                
+                _logger.LogInformation("CreateNewCertificate Before Get Ilr from db");
+                var ilr = await _ilrRepository.Get(request.Uln, request.StandardCode);
+
+                if (ilr != null)
+                {
+                    // If ILR not null, and certificate exists, reset privately funded
+                    // In case it's an old draft privately funded with a new ILR record 
+                    certificate.IsPrivatelyFunded = ilr?.FundingModel == PrivateFundingModelNumber;
+                }
 
                 if (certificate.Status == CertificateStatus.Deleted)
                 {
-                    _logger.LogInformation("CreateNewCertificate Before Get Ilr from db");
-                    var ilr = await _ilrRepository.Get(request.Uln, request.StandardCode);
                     if (ilr != null)
                     {
                         certData.LearnerGivenNames = ilr.GivenNames;
