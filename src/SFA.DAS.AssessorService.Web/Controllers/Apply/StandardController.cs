@@ -5,36 +5,37 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Apply;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.Domain.Consts;
+using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Web.StartupConfiguration;
 using SFA.DAS.AssessorService.Web.ViewModels.Apply;
 
 namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 {
     [Authorize]
-    public class StandardController : Controller
+    public class StandardController : AssessorController
     {
-        private readonly IApplicationApiClient _apiClient;
         private readonly IOrganisationsApiClient _orgApiClient;
         private readonly IQnaApiClient _qnaApiClient;
-        private readonly IContactsApiClient _contactsApiClient;
         private readonly IStandardVersionClient _standardVersionApiClient;
-        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IApplicationService _applicationService;
+        private readonly IWebConfiguration _config;
 
         public StandardController(IApplicationApiClient apiClient, IOrganisationsApiClient orgApiClient, IQnaApiClient qnaApiClient, IContactsApiClient contactsApiClient, 
-            IStandardVersionClient standardVersionApiClient, IHttpContextAccessor httpContextAccessor)
+            IStandardVersionClient standardVersionApiClient, IApplicationService applicationService, IHttpContextAccessor httpContextAccessor, IWebConfiguration config)
+            : base(apiClient, contactsApiClient, httpContextAccessor)
         {
-            _apiClient = apiClient;
             _orgApiClient = orgApiClient;
             _qnaApiClient = qnaApiClient;
-            _contactsApiClient = contactsApiClient;
             _standardVersionApiClient = standardVersionApiClient;
-            _httpContextAccessor = httpContextAccessor;
+            _applicationService = applicationService;
+            _config = config;
         }
 
         [HttpGet("Standard/{id}")]
@@ -62,12 +63,35 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             return View("~/Views/Application/Standard/FindStandardResults.cshtml", model);
         }
 
+        [HttpGet("standard/confirm-standard/{standardReference}")]
+        public async Task<IActionResult> ConfirmStandard(string standardReference)
+        {
+            var contact = await GetUserContact();
+            var org = await _orgApiClient.GetOrganisationByUserId(contact.Id);
+
+            var existingApplications = (await _applicationApiClient.GetStandardApplications(contact.Id))?
+                .Where(p => p.ApplicationStatus != ApplicationStatus.Declined);
+
+            if (existingApplications != null)
+            {
+                var existingEmptyApplication = existingApplications.SingleOrDefault(x => x.StandardCode == null);
+                if (existingEmptyApplication != null)
+                    return RedirectToAction("SequenceSignPost", new { existingEmptyApplication.Id });
+            }
+
+            var createApplicationRequest = await _applicationService.BuildInitialRequest(contact, org, _config.ReferenceFormat);
+
+            var id = await _applicationApiClient.CreateApplication(createApplicationRequest);
+
+            return RedirectToAction("ConfirmStandard", new { Id = id, StandardReference = standardReference });
+        }
+
         [HttpGet("standard/{id}/confirm-standard/{standardReference}")]
         [HttpGet("standard/{id}/confirm-standard/{standardReference}/{version}")]
         [ApplicationAuthorize(routeId: "Id")]
         public async Task<IActionResult> ConfirmStandard(Guid id, string standardReference, string version)
         {
-            var application = await _apiClient.GetApplication(id);
+            var application = await _applicationApiClient.GetApplication(id);
             var standardViewModel = new StandardVersionViewModel { Id = id, StandardReference = standardReference };
             if (!CanUpdateApplicationAsync(application))
             {
@@ -111,7 +135,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         [HttpPost("standard/{id}/confirm-standard/{standardReference}/{version}")]
         public async Task<IActionResult> ConfirmStandard(StandardVersionViewModel model, Guid id, string standardReference, string version)
         {
-            var application = await _apiClient.GetApplication(id);
+            var application = await _applicationApiClient.GetApplication(id);
             if (!CanUpdateApplicationAsync(application))
             {
                 return RedirectToAction("Applications", "Application");
@@ -156,7 +180,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
             if (anyExistingVersions)
             {
-                await _apiClient.UpdateStandardData(id, model.SelectedStandard.LarsCode, model.SelectedStandard.IFateReferenceNumber, model.SelectedStandard.Title, versions, ApplicationTypes.Version);
+                await _applicationApiClient.UpdateStandardData(id, model.SelectedStandard.LarsCode, model.SelectedStandard.IFateReferenceNumber, model.SelectedStandard.Title, versions, ApplicationTypes.Version);
 
                 // update QnA application data for the Application Type
                 var applicationData = await _qnaApiClient.GetApplicationData(application.ApplicationId);
@@ -164,7 +188,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 await _qnaApiClient.UpdateApplicationData(application.ApplicationId, applicationData);
             }
             else
-                await _apiClient.UpdateStandardData(id, model.SelectedStandard.LarsCode, model.SelectedStandard.IFateReferenceNumber, model.SelectedStandard.Title, versions, application.ApplicationType);
+                await _applicationApiClient.UpdateStandardData(id, model.SelectedStandard.LarsCode, model.SelectedStandard.IFateReferenceNumber, model.SelectedStandard.Title, versions, application.ApplicationType);
 
             return RedirectToAction("SequenceSignPost","Application", new { Id = id });
         }
@@ -173,7 +197,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         [ApplicationAuthorize(routeId: "Id")]
         public async Task<IActionResult> OptIn(Guid id, string standardReference, string version)
         {
-            var application = await _apiClient.GetApplication(id);
+            var application = await _applicationApiClient.GetApplication(id);
            
             if (!CanUpdateApplicationAsync(application))
             {
@@ -217,7 +241,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             if(standard == null && application?.ApplyData != null)
             {
                 var userId = await GetUserId();
-                var applications = await _apiClient.GetStandardApplications(userId);
+                var applications = await _applicationApiClient.GetStandardApplications(userId);
                 foreach( var app in applications)
                 {
                     if (app.OrganisationId == org?.Id && app.ApplyData.Apply.StandardCode == standardCode)
@@ -238,14 +262,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 return ApplicationStatus.Approved;
 
             return string.Empty;
-        }
-
-        private async Task<Guid> GetUserId()
-        {
-            var signinId = _httpContextAccessor.HttpContext.User.Claims.First(c => c.Type == "sub")?.Value;
-            var contact =  await _contactsApiClient.GetContactBySignInId(signinId);
-
-            return contact?.Id ?? Guid.Empty;
         }
 
         private void ApplyVersionStatuses(IEnumerable<StandardVersion> allVersions, IEnumerable<OrganisationStandardVersion> organisationVersions)

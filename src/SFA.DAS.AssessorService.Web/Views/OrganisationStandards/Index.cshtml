@@ -9,12 +9,13 @@
     Layout = "_DashboardLayout";
 }
 
+<a href="/dashboard" class="govuk-back-link">Return to dashboard</a>
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <h1 class="govuk-heading-xl">Standards</h1>
+            <h1 class="govuk-heading-xl">Approved standards and versions</h1>
         </div>
     </div>
 
@@ -30,7 +31,7 @@
                                 @Localizer["Standard"]
                             </th>
                             <th class="govuk-table__header govuk-table__header--numeric" scope="col">
-                                @Localizer["Code"]
+                                @Localizer["Reference"]
                             </th>
                             <th class="govuk-table__header govuk-table__header--numeric" scope="col">
                                 @Localizer["Level"]
@@ -42,10 +43,14 @@
                     {
                         <tr class="govuk-table__row">
                             <td data-label="@Localizer["Standard name"]" class="govuk-table__cell das-no-wrap">
-                                @Html.DisplayFor(modelItem => item.StandardName)
+                                <a class="govuk-link--no-visited-state" href="\xxx">@Html.DisplayFor(modelItem => item.StandardName)</a>
+                                @if (item.NewVersionAvailable)
+                                {
+                                    <strong class="govuk-tag govuk-tag--blue govuk-!-margin-left-8">New version available</strong>
+                                }
                             </td>
                             <td data-label="@Localizer["Standard code"]" class="govuk-table__cell govuk-table__cell--numeric">
-                                @Html.DisplayFor(modelItem => item.StandardCode)
+                                @Html.DisplayFor(modelItem => item.ReferenceNumber)
                             </td>
                             <td data-label="@Localizer["Standard level"]" class="govuk-table__cell govuk-table__cell--numeric">
                                 @Html.DisplayFor(modelItem => item.Level)
