@@ -77,14 +77,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
                 new GetCertificateHistoryRequest { PageIndex = pageIndex, EndPointAssessorOrganisationId = endPointAssessorOrganisationId }));
         }
 
-        [HttpGet("options", Name = "GetOptions")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<Option>))]
-        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> GetOptions(int stdCode)
-        {
-            return Ok(await _mediator.Send(new GetOptionsRequest { StdCode = stdCode }));
-        }
-
         [HttpGet("approvals", Name = "GetApprovedCertificates")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(PaginatedList<CertificateSummaryResponse>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]

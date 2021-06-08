@@ -334,16 +334,6 @@ namespace SFA.DAS.AssessorService.Data
             return results.First();
         }
 
-        public async Task<List<Option>> GetOptions(int stdCode)
-        {
-            return await GetOptionsInternal(new List<int> { stdCode }, true);
-        }
-
-        public async Task<List<Option>> GetOptions(List<int> stdCodes)
-        {
-            return await GetOptionsInternal(stdCodes, true);
-        }
-
         private async Task<List<Option>> GetOptionsInternal(List<int> stdCodes, bool? isLive = null)
         {
             var sql = "SELECT * FROM [Options] WHERE StdCode IN @stdCodes";

@@ -172,7 +172,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
                 var prevProperty = propertyInfo.GetValue(prevData)?.ToString();
                 if (prevProperty != thisProperty)
                 {
-                    if (DateTime.TryParse(thisProperty, out var result))
+                    var ignoreProperties = propertyInfo.Name.Equals("Version", StringComparison.OrdinalIgnoreCase);
+                    if (!ignoreProperties && DateTime.TryParse(thisProperty, out var result))
                     {
                         thisProperty = result.UtcToTimeZoneTime().ToShortDateString();
                     }
