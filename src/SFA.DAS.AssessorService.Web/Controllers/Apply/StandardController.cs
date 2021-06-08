@@ -119,7 +119,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                                         .OrderBy(s => s.Version);
 
             model.SelectedStandard = version.HasValue ? (StandardVersion)standardVersions.FirstOrDefault(x => x.Version == version) : (StandardVersion)standardVersions.LastOrDefault();
-            model.Results = standardVersions.Select(s => (StandardVersion)s).ToList(); ;
+            model.Results = standardVersions.Select(s => (StandardVersion)s).ToList();
             model.ApplicationStatus = await ApplicationStandardStatus(application, model.SelectedStandard.LarsCode);
 
             if (!model.IsConfirmed)
@@ -263,12 +263,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                     if (version.ApprovedStatus == ApprovedStatus.ApplyInProgress)
                         stdVersion.VersionStatus = VersionStatus.InProgress;
                     else if (version.ApprovedStatus == ApprovedStatus.NotYetApplied && approved)
-                    {
-                        if (version.EPAChanged || changed)
-                            stdVersion.VersionStatus = VersionStatus.NewVersionChanged;
-                        else
-                            stdVersion.VersionStatus = VersionStatus.NewVersionNoChange;
-                    }
+                        stdVersion.VersionStatus = (version.EPAChanged || changed)? VersionStatus.NewVersionChanged : VersionStatus.NewVersionNoChange;
 
                     if (approved && version.EPAChanged)
                         changed = true;
