@@ -17,7 +17,6 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<List<StandardNonApprovedCollation>> GetStandardNonApprovedCollations();
         Task<StandardNonApprovedCollation> GetStandardNonApprovedCollationByReferenceNumber(string referenceNumber);
 
-        Task<List<Option>> GetOptions(int stdCode);
         Task<int> GetEpaoStandardsCount(string endPointAssessorOrganisationId);
         Task<EpoRegisteredStandardsResult> GetEpaoRegisteredStandards(string endPointAssessorOrganisationId,int pageSize, int pageIndex);
         Task<EpaoPipelineStandardsResult> GetEpaoPipelineStandards(string endPointAssessorOrganisationId,
