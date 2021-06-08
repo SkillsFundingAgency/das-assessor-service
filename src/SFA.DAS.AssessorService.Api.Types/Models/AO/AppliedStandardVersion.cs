@@ -5,6 +5,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.AO
     public class AppliedStandardVersion
     {
         public string ApprovedStatus { get; set; }
+        public Guid ApplicationId { get; set; }
         public string StandardUId { get; set; }
         public string Title { get; set; }
         public string IFateReferenceNumber { get; set; }

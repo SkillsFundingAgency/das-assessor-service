@@ -318,7 +318,8 @@ namespace SFA.DAS.AssessorService.Data
                              WHEN va1.StandardUId IS NOT NULL THEN 'Apply In progress'
                              ELSE 'Not yet applied'
                         END ApprovedStatus,
-                         va1.ApplicationStatus,
+                        va1.ApplyId AS ApplicationId,
+                        va1.ApplicationStatus,
                         so1.StandardUId, so1.title, so1.EffectiveFrom LarsEffectiveFrom, so1.EffectiveTo LarsEffectiveTo, so1.IFateReferenceNumber, so1.VersionEarliestStartDate, so1.VersionLatestStartDate, 
                         so1.version, so1.level,so1.status , so1.EPAChanged, so1.StandardPageUrl, so1.LarsCode,
                         os1.EffectiveFrom StdEffectiveFrom, os1.EffectiveTo StdEffectiveTo,
