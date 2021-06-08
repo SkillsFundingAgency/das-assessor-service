@@ -32,6 +32,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
 
         Task<OrganisationStandard> GetOrganisationStandardFromOrganisationIdAndStandardRefence(string organisationId, string standardReference);
         Task<IEnumerable<OrganisationStandardVersion>> GetOrganisationStandardVersionsByOrganisationStandardId(int organisationStandardId);
+        Task<IEnumerable<AppliedStandardVersion>> GetStandardVersionsByOrganisationIdAndStandardReference(string organisationId, string standardReference);
 
         Task<EpaContact> GetContactByContactId(Guid contactId);
         Task<EpaContact> GetContactByEmail(string email);

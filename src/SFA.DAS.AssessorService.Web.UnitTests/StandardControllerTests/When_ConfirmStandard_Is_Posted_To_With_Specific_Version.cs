@@ -96,30 +96,20 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
         public async Task Then_UpdateStandardData_Is_Called()
         {
             // Arrange
-            _mockStandardVersionApiClient
-               .Setup(r => r.GetStandardVersionsByIFateReferenceNumber("ST0001"))
-               .ReturnsAsync(new List<StandardVersion> { 
-                   new StandardVersion { IFateReferenceNumber = "ST0001", Title = "Title 1", Version = "1.0", LarsCode = 1},
-                   new StandardVersion { IFateReferenceNumber = "ST0001", Title = "Title 1", Version = "1.1", LarsCode = 1},
-                   new StandardVersion { IFateReferenceNumber = "ST0001", Title = "Title 1", Version = "1.2", LarsCode = 1},
-               });
-
             _mockOrgApiClient
-              .Setup(r => r.GetOrganisationStandardByOrganisationAndReference("12345", "ST0001"))
-              .ReturnsAsync(new OrganisationStandard()
-              {
-                  Versions = new List<OrganisationStandardVersion>()
-                  {
-                       new OrganisationStandardVersion() { Status = "Live", Version = "1.1"}
-                  }
-              });
+             .Setup(r => r.GetStandardVersionsByOrganisationIdAndStandardReference(It.IsAny<string>(), "ST0001"))
+             .ReturnsAsync(new List<AppliedStandardVersion> {
+                   new AppliedStandardVersion { IFateReferenceNumber = "ST0001", Title = "Title 1", Version = 1.0M, LarsCode = 1, EPAChanged = false, ApprovedStatus = ApprovedStatus.NotYetApplied},
+                   new AppliedStandardVersion { IFateReferenceNumber = "ST0001", Title = "Title 1", Version = 1.1M, LarsCode = 1, EPAChanged = false, ApprovedStatus = ApprovedStatus.Approved},
+                   new AppliedStandardVersion { IFateReferenceNumber = "ST0001", Title = "Title 1", Version = 1.2M, LarsCode = 1, EPAChanged = false, ApprovedStatus = ApprovedStatus.NotYetApplied},
+             });
 
             // Act
             var model = new StandardVersionViewModel()
             {
                 IsConfirmed = true,
             };
-            await _sut.ConfirmStandard(model, Guid.NewGuid(), "ST0001", "1.2");
+            await _sut.ConfirmStandard(model, Guid.NewGuid(), "ST0001", 1.2M);
 
             // Assert
             _mockApiClient.Verify(m => m.UpdateStandardData(It.IsAny<Guid>(), 1, "ST0001", "Title 1",

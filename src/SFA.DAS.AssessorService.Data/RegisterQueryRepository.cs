@@ -294,6 +294,48 @@ namespace SFA.DAS.AssessorService.Data
             }
         }
 
+        public async Task<IEnumerable<AppliedStandardVersion>> GetStandardVersionsByOrganisationIdAndStandardReference(string organisationId, string standardReference)
+        {
+            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            {
+                if (connection.State != ConnectionState.Open)
+                    await connection.OpenAsync();
+
+                var sql =
+                    @"WITH VersionApply AS
+                    (--Apply records for specific versions
+                        SELECT ab1.*, og1.EndPointAssessorOrganisationId FROM(
+                        SELECT ap1.Id ApplyId, ap1.ApplicationStatus, ap1.OrganisationId, StandardReference, StandardReference + '_' + TRIM(version) StandardUId FROM Apply ap1
+                        CROSS APPLY OPENJSON(ApplyData, '$.Apply.Versions') WITH(version CHAR(10) '$')
+                        ) ab1
+                        JOIN Organisations og1 on og1.id = ab1.OrganisationId
+                        WHERE ab1.standardreference IS NOT NULL
+                        AND ab1.ApplicationStatus NOT IN('Approved', 'Declined')
+                    )
+                    --main query
+                    SELECT
+                        CASE WHEN osv.StandardUId IS NOT NULL THEN 'Approved'
+                             WHEN va1.StandardUId IS NOT NULL THEN 'Apply In progress'
+                             ELSE 'Not yet applied'
+                        END ApprovedStatus,
+                         va1.ApplicationStatus,
+                        so1.StandardUId, so1.title, so1.EffectiveFrom LarsEffectiveFrom, so1.EffectiveTo LarsEffectiveTo, so1.IFateReferenceNumber, so1.VersionEarliestStartDate, so1.VersionLatestStartDate, 
+                        so1.version, so1.level,so1.status , so1.EPAChanged, so1.StandardPageUrl, so1.LarsCode,
+                        os1.EffectiveFrom StdEffectiveFrom, os1.EffectiveTo StdEffectiveTo,
+                        osv.EffectiveFrom StdVersionEffectiveFrom, osv.EffectiveTo StdVersionEffectiveTo
+                        FROM organisationstandard os1
+                        join standards so1 on so1.IFateReferenceNumber = os1.StandardReference
+                        left join VersionApply va1 on va1.StandardUId = so1.StandardUId
+                        left join[OrganisationStandardVersion] osv on osv.standardUid = so1.standardUid AND osv.OrganisationStandardId = os1.Id
+                        WHERE
+                            os1.EndPointAssessorOrganisationId = @organisationId
+                            AND os1.StandardReference = @standardReference  
+                        ORDER BY so1.Version;";
+                return await connection.QueryAsync<AppliedStandardVersion>(
+                    sql, new { organisationId = organisationId, standardReference = standardReference });
+            }
+        }
+
         public async Task<IEnumerable<OrganisationStandardPeriod>> GetOrganisationStandardPeriodsByOrganisationStandard(string organisationId, int standardId)
         {
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))

@@ -99,23 +99,14 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
         public async Task Then_All_Versions_For_Standard_Are_Returned()
         {
             // Arrange
-            _mockStandardVersionApiClient
-               .Setup(r => r.GetStandardVersionsByIFateReferenceNumber("ST0001"))
-               .ReturnsAsync(new List<StandardVersion> { 
-                   new StandardVersion { IFateReferenceNumber = "ST0001", Title = "Title 1", Version = "1.0", LarsCode = 1, EPAChanged = false},
-                   new StandardVersion { IFateReferenceNumber = "ST0001", Title = "Title 1", Version = "1.1", LarsCode = 1, EPAChanged = false},
-                   new StandardVersion { IFateReferenceNumber = "ST0001", Title = "Title 1", Version = "1.2", LarsCode = 1, EPAChanged = false},
-                   new StandardVersion { IFateReferenceNumber = "ST0001", Title = "Title 1", Version = "1.3", LarsCode = 1, EPAChanged = true},
-               });
-
             _mockOrgApiClient
-               .Setup(r => r.GetOrganisationStandardByOrganisationAndReference("12345", "ST0001"))
-               .ReturnsAsync(new OrganisationStandard()
-               {
-                   Versions = new List<OrganisationStandardVersion>()
-                   {
-                       new OrganisationStandardVersion() { Status = "Live", Version = "1.1"}
-                   }
+               .Setup(r => r.GetStandardVersionsByOrganisationIdAndStandardReference(It.IsAny<string>(), "ST0001"))
+               .ReturnsAsync(new List<AppliedStandardVersion> { 
+                   new AppliedStandardVersion { IFateReferenceNumber = "ST0001", Title = "Title 1", Version = 1.0M, LarsCode = 1, EPAChanged = false, ApprovedStatus = ApprovedStatus.NotYetApplied},
+                   new AppliedStandardVersion { IFateReferenceNumber = "ST0001", Title = "Title 1", Version = 1.1M, LarsCode = 1, EPAChanged = false, ApprovedStatus = ApprovedStatus.Approved},
+                   new AppliedStandardVersion { IFateReferenceNumber = "ST0001", Title = "Title 1", Version = 1.2M, LarsCode = 1, EPAChanged = false, ApprovedStatus = ApprovedStatus.NotYetApplied},
+                   new AppliedStandardVersion { IFateReferenceNumber = "ST0001", Title = "Title 1", Version = 1.3M, LarsCode = 1, EPAChanged = true, ApprovedStatus = ApprovedStatus.ApplyInProgress},
+                   new AppliedStandardVersion { IFateReferenceNumber = "ST0001", Title = "Title 1", Version = 1.4M, LarsCode = 1, EPAChanged = true, ApprovedStatus = ApprovedStatus.NotYetApplied},
                });
 
             // Act
@@ -123,15 +114,17 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
 
             // Assert
             var vm = results.Model as StandardVersionViewModel;
-            Assert.AreEqual(4, vm.Results.Count);
-            Assert.AreEqual("1.3", vm.Results[0].Version);
+            Assert.AreEqual(5, vm.Results.Count);
+            Assert.AreEqual("1.4", vm.Results[0].Version);
             Assert.AreEqual(VersionStatus.NewVersionChanged, vm.Results[0].VersionStatus);
-            Assert.AreEqual("1.2", vm.Results[1].Version);
-            Assert.AreEqual(VersionStatus.NewVersionNoChange, vm.Results[1].VersionStatus);
-            Assert.AreEqual("1.1", vm.Results[2].Version);
-            Assert.AreEqual(VersionStatus.Approved, vm.Results[2].VersionStatus);
-            Assert.AreEqual("1.0", vm.Results[3].Version);
-            Assert.Null(vm.Results[3].VersionStatus);
+            Assert.AreEqual("1.3", vm.Results[1].Version);
+            Assert.AreEqual(VersionStatus.InProgress, vm.Results[1].VersionStatus);
+            Assert.AreEqual("1.2", vm.Results[2].Version);
+            Assert.AreEqual(VersionStatus.NewVersionNoChange, vm.Results[2].VersionStatus);
+            Assert.AreEqual("1.1", vm.Results[3].Version);
+            Assert.AreEqual(VersionStatus.Approved, vm.Results[3].VersionStatus);
+            Assert.AreEqual("1.0", vm.Results[4].Version);
+            Assert.Null(vm.Results[4].VersionStatus);
 
             Assert.AreEqual("~/Views/Application/Standard/StandardVersion.cshtml", results.ViewName);
         }

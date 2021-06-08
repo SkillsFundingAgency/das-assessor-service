@@ -58,6 +58,11 @@
                             <td class="govuk-table__cell">You can opt-in</td>
                             <td class="govuk-table__cell"><a class="govuk-link--no-visited-state" href="/standard/@Model.Id/opt-in/@Model.StandardReference/@version.Version">Opt into standard version</a></td>
                         }
+                        else if (version.VersionStatus == VersionStatus.InProgress)
+                        {
+                            <td class="govuk-table__cell">@version.ApplicationStatus</td>
+                            <td class="govuk-table__cell"></td>
+                        }
                         else if (version.VersionStatus == VersionStatus.Withdrawn)
                         {
                             <td class="govuk-table__cell">Withdrawn</td>

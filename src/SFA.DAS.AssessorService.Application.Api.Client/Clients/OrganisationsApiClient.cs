@@ -379,6 +379,16 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
+        public async Task<IEnumerable<AppliedStandardVersion>> GetStandardVersionsByOrganisationIdAndStandardReference(string endPointAssessorOrganisationId, string standardReference)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get,
+               $"/api/ao/assessment-organisations/{endPointAssessorOrganisationId}/standardversions/{standardReference}"))
+            {
+                return await RequestAndDeserialiseAsync<IEnumerable<AppliedStandardVersion>>(request,
+                    $"Could not retrieve standard versions for organisation with Id of {endPointAssessorOrganisationId} and standard reference {standardReference}", true);
+            }
+        }
+
         public async Task<PaginatedList<OrganisationSearchResult>> SearchForOrganisations(string searchTerm, int pageSize, int pageIndex)
         {
             try

@@ -99,16 +99,12 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
         public async Task Then_All_Versions_For_Standard_Are_Returned()
         {
             // Arrange
-            _mockStandardVersionApiClient
-               .Setup(r => r.GetStandardVersionsByIFateReferenceNumber("ST0001"))
-               .ReturnsAsync(new List<StandardVersion> { 
-                   new StandardVersion { IFateReferenceNumber = "ST0001", Title = "Title 1", Version = "1.0", LarsCode = 1},
-                   new StandardVersion { IFateReferenceNumber = "ST0001", Title = "Title 1", Version = "1.1", LarsCode = 1},
-               });
-
             _mockOrgApiClient
-               .Setup(r => r.GetOrganisationStandardByOrganisationAndReference("12345", "ST0001"))
-               .ReturnsAsync((OrganisationStandard)null);
+               .Setup(r => r.GetStandardVersionsByOrganisationIdAndStandardReference(It.IsAny<string>(), "ST0001"))
+               .ReturnsAsync(new List<AppliedStandardVersion> {
+                   new AppliedStandardVersion { IFateReferenceNumber = "ST0001", Title = "Title 1", Version = 1.0M, LarsCode = 1, EPAChanged = false, ApprovedStatus = ApprovedStatus.NotYetApplied},
+                   new AppliedStandardVersion { IFateReferenceNumber = "ST0001", Title = "Title 1", Version = 1.1M, LarsCode = 1, EPAChanged = false, ApprovedStatus = ApprovedStatus.NotYetApplied},
+               });
 
             // Act
             var results = (await _sut.ConfirmStandard(Guid.NewGuid(), "ST0001", null)) as ViewResult;
