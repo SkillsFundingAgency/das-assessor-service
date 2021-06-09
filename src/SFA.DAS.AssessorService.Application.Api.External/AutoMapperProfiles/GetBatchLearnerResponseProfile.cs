@@ -1,13 +1,10 @@
 ﻿using AutoMapper;
-using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models.ExternalApi.Learners;
 using SFA.DAS.AssessorService.Application.Api.External.Extenstions;
 using SFA.DAS.AssessorService.Application.Api.External.Models.Response;
 using SFA.DAS.AssessorService.Application.Api.External.Models.Response.Certificates;
-using SFA.DAS.AssessorService.Application.Api.External.Models.Response.Epa;
 using SFA.DAS.AssessorService.Application.Api.External.Models.Response.Learners;
 using SFA.DAS.AssessorService.Domain.Consts;
-using System;
 
 namespace SFA.DAS.AssessorService.Application.Api.External.AutoMapperProfiles
 {

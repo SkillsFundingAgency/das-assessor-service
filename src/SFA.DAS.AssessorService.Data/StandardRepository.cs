@@ -23,10 +23,10 @@ namespace SFA.DAS.AssessorService.Data
             SqlMapper.AddTypeHandler(typeof(StandardNonApprovedData), new StandardNonApprovedDataHandler());
         }
 
-        public async Task InsertStandards(IEnumerable<Standard> standardsToInsert)
+        public async Task InsertStandards(IEnumerable<Standard> standards)
         {
             var bulkCopyOptions = SqlBulkCopyOptions.TableLock;
-            var dataTable = ConstructStandardsDataTable(standardsToInsert);
+            var dataTable = ConstructStandardsDataTable(standards);
 
             using (var bulkCopy = new SqlBulkCopy(_unitOfWork.Connection as SqlConnection, bulkCopyOptions, _unitOfWork.Transaction as SqlTransaction))
             {

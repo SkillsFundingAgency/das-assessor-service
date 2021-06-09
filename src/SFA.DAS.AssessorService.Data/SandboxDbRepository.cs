@@ -221,15 +221,22 @@ namespace SFA.DAS.AssessorService.Data
                 foreach (var table in tablesToCopy)
                 {
                     _logger.LogDebug($"\tSyncing table: {table}");
-                    var idField = "[Id]";
+                    
 
-                    if (IsStandardUIdIdentityField(table))
-                    {
-                        idField = "[StandardUId]";
-                    }
+                    using (var commandSourceData = new SqlCommand(
+                        @"SELECT @subQuery = 'SELECT @sort_column = MAX(column_name) FROM INFORMATION_SCHEMA.COLUMNS 
+                        WHERE table_name = ''' + @tableName + ''' AND column_name IN ( ''StandardUId'' , ''Id'')';
 
-                    using (var commandSourceData = new SqlCommand($"SELECT * FROM {table} ORDER BY {idField}", sourceSqlConnection))
+                        EXEC sp_executesql @subQuery, N'@sort_column varchar(100) out', @sort_column out
+
+                        SELECT @sqlQuery = 'SELECT * FROM ' + @tableName + ' ORDER BY ' + @sort_column;
+                        Exec(@sqlQuery)", sourceSqlConnection))
                     {
+                        commandSourceData.Parameters.AddWithValue("@tableName", table);
+                        commandSourceData.Parameters.AddWithValue("@subQuery", string.Empty);
+                        commandSourceData.Parameters.AddWithValue("@sqlQuery", string.Empty);
+                        commandSourceData.Parameters.AddWithValue("@sort_column", string.Empty);
+
                         using (var reader = commandSourceData.ExecuteReader())
                         {
                             using (var bulkCopy = new SqlBulkCopy(transaction.Connection, _bulkCopyOptions, transaction))
@@ -242,11 +249,6 @@ namespace SFA.DAS.AssessorService.Data
                 }
             }
         }
-
-        private bool IsStandardUIdIdentityField(string table) =>
-            table.Equals("Standards", StringComparison.OrdinalIgnoreCase) ||
-            table.Equals("StandardOptions", StringComparison.OrdinalIgnoreCase) ||
-            table.Equals("OrganisationStandardVersion", StringComparison.OrdinalIgnoreCase);
     }
 }
 

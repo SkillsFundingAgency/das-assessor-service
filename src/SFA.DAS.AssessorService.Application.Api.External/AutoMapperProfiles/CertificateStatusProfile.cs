@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using SFA.DAS.AssessorService.Application.Api.External.Extenstions;
 using SFA.DAS.AssessorService.Application.Api.External.Models.Response.Certificates;
-using System;
 
 namespace SFA.DAS.AssessorService.Application.Api.External.AutoMapperProfiles
 {

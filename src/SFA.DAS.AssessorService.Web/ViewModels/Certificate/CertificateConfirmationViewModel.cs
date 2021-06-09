@@ -18,9 +18,9 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
       FamilyName = CertificateData.LearnerFamilyName;
     }
 
-    public override Domain.Entities.Certificate GetCertificateFromViewModel(Domain.Entities.Certificate certificate, CertificateData data)
+    public override Domain.Entities.Certificate GetCertificateFromViewModel(Domain.Entities.Certificate certificate, CertificateData certData)
     {
-      certificate.CertificateData = JsonConvert.SerializeObject(data);
+      certificate.CertificateData = JsonConvert.SerializeObject(certData);
       return certificate;
     }
   }

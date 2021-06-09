@@ -1,7 +1,6 @@
-﻿using System;
-using Newtonsoft.Json;
-using SFA.DAS.AssessorService.Domain.Consts;
+﻿using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Domain.JsonData;
+using System;
 
 namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
 {
@@ -28,11 +27,11 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
             WarningShown = "false";
         }
 
-        public override Domain.Entities.Certificate GetCertificateFromViewModel(Domain.Entities.Certificate certificate, CertificateData data)
+        public override Domain.Entities.Certificate GetCertificateFromViewModel(Domain.Entities.Certificate certificate, CertificateData certData)
         {
-            data.AchievementDate = new DateTime(int.Parse(Year), int.Parse(Month), int.Parse(Day));
+            certData.AchievementDate = new DateTime(int.Parse(Year), int.Parse(Month), int.Parse(Day));
 
-            certificate.CertificateData = JsonConvert.SerializeObject(data);
+            certificate.CertificateData = JsonConvert.SerializeObject(certData);
 
             return certificate;
         }

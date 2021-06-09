@@ -1,6 +1,4 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -11,6 +9,8 @@ using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.ViewModels.Certificate;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Web.Controllers
 {
@@ -55,12 +55,12 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
             var certificate = await CertificateApiClient.GetCertificate(certSession.CertificateId);
 
-            if (certSession.Versions == null || certSession.Versions.Count() == 0)
+            if (certSession.Versions == null || certSession.Versions.Count == 0)
             {
                 return RedirectToAction("Index", "Search");
             }
 
-            if (certSession.Versions.Count() == 1)
+            if (certSession.Versions.Count == 1)
             {
                 // Only 1 version no need for a selection
                 var singularStandard = certSession.Versions.First();
