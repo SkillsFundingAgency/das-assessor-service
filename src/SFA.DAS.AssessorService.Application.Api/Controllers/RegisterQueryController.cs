@@ -124,6 +124,18 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             return Ok(result);
         }
 
+        [HttpGet("assessment-organisations/{organisationId}/standardversions/{standardReference}", Name =
+            "GetStandardVersionsByOrganisationIdAndStandardReference")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(IEnumerable<AppliedStandardVersion>))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> GetStandardVersionsByOrganisationIdAndStandardReference(string organisationId, string standardReference)
+        {
+            _logger.LogInformation($@"Get Organisations Standard Versions by OrganisationId [{organisationId}] and Standard Reference[{standardReference}]");
+            var result = await _mediator.Send(new GetStandardVersionsByOrganisationIdAndStandardReferenceRequest { OrganisationId = organisationId, StandardReference = standardReference });
+
+            return Ok(result);
+        }
+
         [HttpGet("assessment-organisations/contacts/{contactId}", Name = "GetContact")]
         [SwaggerResponse((int) HttpStatusCode.OK, Type = typeof(AssessmentOrganisationContact))]
         [SwaggerResponse((int) HttpStatusCode.NotFound, null)]

@@ -55,6 +55,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         Task<OrganisationResponse> GetOrganisationByUserId(Guid userId);
         Task<List<OrganisationStandardSummary>> GetOrganisationStandardsByOrganisation(string endPointAssessorOrganisationId);
         Task<OrganisationStandard> GetOrganisationStandardByOrganisationAndReference(string endPointAssessorOrganisationId, string standardReference);
+        Task<IEnumerable<AppliedStandardVersion>> GetStandardVersionsByOrganisationIdAndStandardReference(string endPointAssessorOrganisationId, string standardReference);
         Task<PaginatedList<OrganisationSearchResult>> SearchForOrganisations(string searchTerm, int pageSize, int pageIndex);
 
         Task<bool> IsCompanyActivelyTrading(string companyNumber);

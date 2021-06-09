@@ -88,10 +88,6 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
                  OrganisationId = "12345"
              });
 
-            _mockOrgApiClient
-            .Setup(r => r.GetOrganisationStandardsByOrganisation(It.IsAny<String>()))
-            .ReturnsAsync(new List<OrganisationStandardSummary>());
-
             _sut = new StandardController(_mockApiClient.Object, _mockOrgApiClient.Object, _mockQnaApiClient.Object,
                _mockContactsApiClient.Object, _mockStandardVersionApiClient.Object, _mockHttpContextAccessor.Object)
             {
@@ -103,12 +99,12 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
         public async Task Then_UpdateStandardData_Is_Called()
         {
             // Arrange
-            _mockStandardVersionApiClient
-               .Setup(r => r.GetStandardVersionsByIFateReferenceNumber("ST0001"))
-               .ReturnsAsync(new List<StandardVersion> { 
-                   new StandardVersion { IFateReferenceNumber = "ST0001", Title = "Title 1", Version = "1.0", LarsCode = 1},
-                   new StandardVersion { IFateReferenceNumber = "ST0001", Title = "Title 1", Version = "1.1", LarsCode = 1}
-               });
+            _mockOrgApiClient
+              .Setup(r => r.GetStandardVersionsByOrganisationIdAndStandardReference(It.IsAny<string>(), "ST0001"))
+              .ReturnsAsync(new List<AppliedStandardVersion> {
+                   new AppliedStandardVersion { IFateReferenceNumber = "ST0001", Title = "Title 1", Version = 1.0M, LarsCode = 1, EPAChanged = false, ApprovedStatus = ApprovedStatus.NotYetApplied},
+                   new AppliedStandardVersion { IFateReferenceNumber = "ST0001", Title = "Title 1", Version = 1.1M, LarsCode = 1, EPAChanged = false, ApprovedStatus = ApprovedStatus.NotYetApplied},
+              });
 
             // Act
             var model = new StandardVersionViewModel()
@@ -127,12 +123,12 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
         public async Task Then_Error_If_Confirmed_Is_False()
         {
             // Arrange
-            _mockStandardVersionApiClient
-               .Setup(r => r.GetStandardVersionsByIFateReferenceNumber("ST0001"))
-               .ReturnsAsync(new List<StandardVersion> {
-                   new StandardVersion { IFateReferenceNumber = "ST0001", Title = "Title 1", Version = "1.0", LarsCode = 1},
-                   new StandardVersion { IFateReferenceNumber = "ST0001", Title = "Title 1", Version = "1.1", LarsCode = 1}
-               });
+            _mockOrgApiClient
+              .Setup(r => r.GetStandardVersionsByOrganisationIdAndStandardReference(It.IsAny<string>(), "ST0001"))
+              .ReturnsAsync(new List<AppliedStandardVersion> {
+                   new AppliedStandardVersion { IFateReferenceNumber = "ST0001", Title = "Title 1", Version = 1.0M, LarsCode = 1, EPAChanged = false, ApprovedStatus = ApprovedStatus.NotYetApplied},
+                   new AppliedStandardVersion { IFateReferenceNumber = "ST0001", Title = "Title 1", Version = 1.1M, LarsCode = 1, EPAChanged = false, ApprovedStatus = ApprovedStatus.NotYetApplied},
+              });
 
             // Act
             var model = new StandardVersionViewModel()
@@ -151,12 +147,12 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
         public async Task Then_Error_If_No_Versions_Selected()
         {
             // Arrange
-            _mockStandardVersionApiClient
-               .Setup(r => r.GetStandardVersionsByIFateReferenceNumber("ST0001"))
-               .ReturnsAsync(new List<StandardVersion> {
-                   new StandardVersion { IFateReferenceNumber = "ST0001", Title = "Title 1", Version = "1.0", LarsCode = 1},
-                   new StandardVersion { IFateReferenceNumber = "ST0001", Title = "Title 1", Version = "1.1", LarsCode = 1}
-               });
+            _mockOrgApiClient
+              .Setup(r => r.GetStandardVersionsByOrganisationIdAndStandardReference(It.IsAny<string>(), "ST0001"))
+              .ReturnsAsync(new List<AppliedStandardVersion> {
+                   new AppliedStandardVersion { IFateReferenceNumber = "ST0001", Title = "Title 1", Version = 1.0M, LarsCode = 1, EPAChanged = false, ApprovedStatus = ApprovedStatus.NotYetApplied},
+                   new AppliedStandardVersion { IFateReferenceNumber = "ST0001", Title = "Title 1", Version = 1.1M, LarsCode = 1, EPAChanged = false, ApprovedStatus = ApprovedStatus.NotYetApplied},
+              });
 
             // Act
             var model = new StandardVersionViewModel()
