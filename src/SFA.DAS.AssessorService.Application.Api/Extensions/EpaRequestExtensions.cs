@@ -1,14 +1,8 @@
-﻿using MediatR;
-using Newtonsoft.Json;
-using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
+﻿using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models.ExternalApi.Epas;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Extensions;
 using SFA.DAS.AssessorService.Domain.JsonData;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Api.Extensions
 {

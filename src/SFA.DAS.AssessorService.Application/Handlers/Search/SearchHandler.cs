@@ -1,18 +1,15 @@
-﻿using System;
+﻿using AutoMapper;
+using MediatR;
+using Microsoft.Extensions.Logging;
+using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Application.Logging;
+using SFA.DAS.AssessorService.Domain.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using AutoMapper;
-using MediatR;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using SFA.DAS.AssessorService.Api.Types.Models;
-using SFA.DAS.AssessorService.Api.Types.Models.Standards;
-using SFA.DAS.AssessorService.Application.Interfaces;
-using SFA.DAS.AssessorService.Application.Logging;
-using SFA.DAS.AssessorService.Domain.Consts;
-using SFA.DAS.AssessorService.Domain.Entities;
 using Organisation = SFA.DAS.AssessorService.Domain.Entities.Organisation;
 using SearchData = SFA.DAS.AssessorService.Domain.Entities.SearchData;
 
@@ -21,7 +18,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
     public class SearchHandler : IRequestHandler<SearchQuery, List<SearchResult>>
     {
         private readonly IOrganisationQueryRepository _organisationRepository;
-        private readonly IRegisterQueryRepository _registerQueryRepository;
         private readonly IIlrRepository _ilrRepository;
         private readonly ICertificateRepository _certificateRepository;
         private readonly ILogger<SearchHandler> _logger;
@@ -29,10 +25,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
         private readonly IStandardService _standardService;
         private Dictionary<char, char[]> _alternates;
 
-        public SearchHandler(IRegisterQueryRepository registerQueryRepository, IOrganisationQueryRepository organisationRepository, 
+        public SearchHandler(IOrganisationQueryRepository organisationRepository, 
             IIlrRepository ilrRepository, ICertificateRepository certificateRepository, ILogger<SearchHandler> logger, IContactQueryRepository contactRepository, IStandardService standardService)
         {
-            _registerQueryRepository = registerQueryRepository;
             _organisationRepository = organisationRepository;
             _ilrRepository = ilrRepository;
             _certificateRepository = certificateRepository;

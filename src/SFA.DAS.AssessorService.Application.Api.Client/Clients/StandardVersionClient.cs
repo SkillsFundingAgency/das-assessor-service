@@ -32,11 +32,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task<StandardVersion> GetStandardVersionById(string Id)
+        public async Task<StandardVersion> GetStandardVersionById(string id)
         {
-            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/standard-version/standards/{Id}"))
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/standard-version/standards/{id}"))
             {
-                return await RequestAndDeserialiseAsync<StandardVersion>(request, $"Could not find the standard {Id}");
+                return await RequestAndDeserialiseAsync<StandardVersion>(request, $"Could not find the standard {id}");
             }
         }
 
@@ -69,7 +69,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
     public interface IStandardVersionClient
     {
         Task<IEnumerable<StandardVersion>> GetAllStandardVersions();
-        Task<IEnumerable<StandardVersion>> GetStandardVersionsByLarsCode(int standardId);
+        Task<IEnumerable<StandardVersion>> GetStandardVersionsByLarsCode(int larsCode);
         /// <summary>
         /// Method can take LarsCode, IFateReferenceNumber or StandardUId and will return a standard.
         /// If LarsCode or IFateReferenceNumber is supplied, One Standard, the latest version will 

@@ -16,12 +16,12 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
             Dept = CertificateData.Department;
         }
 
-        public override Domain.Entities.Certificate GetCertificateFromViewModel(Domain.Entities.Certificate certificate, CertificateData data)
+        public override Domain.Entities.Certificate GetCertificateFromViewModel(Domain.Entities.Certificate certificate, CertificateData certData)
         {
-            data.ContactName = Name;
-            data.Department = Dept;
+            certData.ContactName = Name;
+            certData.Department = Dept;
            
-            certificate.CertificateData = JsonConvert.SerializeObject(data);
+            certificate.CertificateData = JsonConvert.SerializeObject(certData);
 
             return certificate;
         }

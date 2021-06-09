@@ -43,8 +43,8 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         /// <param name="iFateReferenceNumber">if just iFateReferenceNumber, latest version returned</param>
         /// <param name="version">optional parameter for specific version</param>
         /// <returns></returns>
-        Task<Standard> GetStandardVersionByIFateReferenceNumber(string standardReference, string version = null);
-        Task InsertStandards(IEnumerable<Standard> standard);
+        Task<Standard> GetStandardVersionByIFateReferenceNumber(string iFateReferenceNumber, string version = null);
+        Task InsertStandards(IEnumerable<Standard> standards);
         Task InsertOptions(IEnumerable<StandardOption> optionsToInsert);
         Task<IEnumerable<StandardOptions>> GetAllStandardOptions();
         Task<IEnumerable<StandardOptions>> GetStandardOptionsForLatestStandardVersions();

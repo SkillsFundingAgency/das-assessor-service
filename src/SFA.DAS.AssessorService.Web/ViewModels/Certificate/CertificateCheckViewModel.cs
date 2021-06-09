@@ -55,10 +55,10 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
             Postcode = CertificateData.ContactPostCode;
         }
 
-        public override Domain.Entities.Certificate GetCertificateFromViewModel(Domain.Entities.Certificate certificate, CertificateData data)
+        public override Domain.Entities.Certificate GetCertificateFromViewModel(Domain.Entities.Certificate certificate, CertificateData certData)
         {
             certificate.Status = CertificateStatus.Submitted;
-            certificate.CertificateData = JsonConvert.SerializeObject(data);
+            certificate.CertificateData = JsonConvert.SerializeObject(certData);
             return certificate;
         }
 
