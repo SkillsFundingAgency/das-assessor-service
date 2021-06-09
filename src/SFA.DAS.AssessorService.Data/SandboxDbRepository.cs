@@ -224,10 +224,13 @@ namespace SFA.DAS.AssessorService.Data
                     
 
                     using (var commandSourceData = new SqlCommand(
-$@"SELECT @subQuery = 'SELECT @sort_column = MAX(column_name) FROM INFORMATION_SCHEMA.COLUMNS WHERE table_name = ''' + @tableName + ''' AND column_name IN ( ''StandardUId'' , ''Id'')';
-EXEC sp_executesql @subQuery, N'@sort_column varchar(100) out', @sort_column out
-SELECT @sqlQuery = 'SELECT * FROM ' + @tableName + ' ORDER BY ' + @sort_column;
-Exec(@sqlQuery)", sourceSqlConnection))
+                        @"SELECT @subQuery = 'SELECT @sort_column = MAX(column_name) FROM INFORMATION_SCHEMA.COLUMNS 
+                        WHERE table_name = ''' + @tableName + ''' AND column_name IN ( ''StandardUId'' , ''Id'')';
+
+                        EXEC sp_executesql @subQuery, N'@sort_column varchar(100) out', @sort_column out
+
+                        SELECT @sqlQuery = 'SELECT * FROM ' + @tableName + ' ORDER BY ' + @sort_column;
+                        Exec(@sqlQuery)", sourceSqlConnection))
                     {
                         commandSourceData.Parameters.AddWithValue("@tableName", table);
                         commandSourceData.Parameters.AddWithValue("@subQuery", string.Empty);
@@ -246,11 +249,6 @@ Exec(@sqlQuery)", sourceSqlConnection))
                 }
             }
         }
-
-        private bool IsStandardUIdIdentityField(string table) =>
-            table.Equals("Standards", StringComparison.OrdinalIgnoreCase) ||
-            table.Equals("StandardOptions", StringComparison.OrdinalIgnoreCase) ||
-            table.Equals("OrganisationStandardVersion", StringComparison.OrdinalIgnoreCase);
     }
 }
 
