@@ -50,30 +50,20 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
             else
             {
                 var certData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
-                
+
                 _logger.LogInformation("CreateNewCertificate Before Get Ilr from db");
                 var ilr = await _ilrRepository.Get(request.Uln, request.StandardCode);
 
-                if (ilr != null)
+                if (certificate.Status == CertificateStatus.Deleted && ilr != null)
                 {
-                    // If ILR not null, and certificate exists, reset privately funded
-                    // In case it's an old draft privately funded with a new ILR record 
+                    certData.LearnerGivenNames = ilr.GivenNames;
+                    certData.LearnerFamilyName = ilr.FamilyName;
+                    certData.LearningStartDate = ilr.LearnStartDate;
+                    certData.FullName = $"{ilr.GivenNames} {ilr.FamilyName}";
+                    certificate.CertificateData = JsonConvert.SerializeObject(certData);
                     certificate.IsPrivatelyFunded = ilr?.FundingModel == PrivateFundingModelNumber;
-                }
 
-                if (certificate.Status == CertificateStatus.Deleted)
-                {
-                    if (ilr != null)
-                    {
-                        certData.LearnerGivenNames = ilr.GivenNames;
-                        certData.LearnerFamilyName = ilr.FamilyName;
-                        certData.LearningStartDate = ilr.LearnStartDate;
-                        certData.FullName = $"{ilr.GivenNames} {ilr.FamilyName}";
-                        certificate.CertificateData = JsonConvert.SerializeObject(certData);
-
-                        certificate.IsPrivatelyFunded = ilr?.FundingModel == PrivateFundingModelNumber;
-                        await _certificateRepository.Update(certificate, request.Username, null);
-                    }
+                    await _certificateRepository.Update(certificate, request.Username, null);
                 }
                 else if (certificate.Status == CertificateStatus.Submitted && certData.OverallGrade == CertificateGrade.Fail)
                 {
@@ -81,10 +71,18 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
 
                     certData.AchievementDate = null;
                     certData.OverallGrade = null;
+                    certificate.IsPrivatelyFunded = ilr?.FundingModel == PrivateFundingModelNumber;
                     certificate.CertificateData = JsonConvert.SerializeObject(certData);
                     certificate.Status = CertificateStatus.Draft;
-                    
+
                     await _certificateRepository.Update(certificate, request.Username, CertificateActions.Restart, updateLog: true);
+                }
+                else if (ilr != null)
+                {
+                    // If ILR not null, and certificate exists, reset privately funded
+                    // In case it's an old draft privately funded with a new ILR record 
+                    certificate.IsPrivatelyFunded = ilr?.FundingModel == PrivateFundingModelNumber;
+                    await _certificateRepository.Update(certificate, request.Username, null);
                 }
             }
 
@@ -131,7 +129,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
                 _logger.LogInformation("CreateNewCertificate Before Get Single StandardVersion from API");
                 var standardVersion = await _standardService.GetStandardVersionById(request.StandardUId);
 
-                if(standardVersion == null)
+                if (standardVersion == null)
                 {
                     throw new InvalidOperationException("StandardUId Provided not recognised, unable to start certificate request");
                 }
@@ -142,7 +140,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
                 certData.StandardPublicationDate = standardVersion.EffectiveFrom;
                 certData.Version = standardVersion.Version.VersionToString();
 
-                if(!string.IsNullOrWhiteSpace(request.CourseOption))
+                if (!string.IsNullOrWhiteSpace(request.CourseOption))
                 {
                     certData.CourseOption = request.CourseOption;
                 }
@@ -156,7 +154,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
 
                 certData.StandardName = standardVersions.OrderByDescending(s => s.Version).First().Title;
             }
-            
+
             certificate.CertificateData = JsonConvert.SerializeObject(certData);
 
             _logger.LogInformation("CreateNewCertificate Before create new Certificate");
