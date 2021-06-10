@@ -4,6 +4,7 @@ using System.Linq;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Extensions;
@@ -15,24 +16,30 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
     {
         public static List<SearchResult> PopulateStandards(this List<SearchResult> searchResults, IStandardService standardService, ILogger<SearchHandler> logger)
         {
-            var allStandards = standardService.GetAllStandards().Result;
+            var allStandards = standardService.GetAllStandardVersions().Result;
+            var allOptions = standardService.GetAllStandardOptions().Result;
 
             foreach (var searchResult in searchResults)
             {
-                var standard = allStandards.SingleOrDefault(s => s.StandardId == searchResult.StdCode);
-                if (standard == null)
+                var standards = allStandards.Where(s => s.LarsCode == searchResult.StdCode)
+                    .OrderByDescending(o => o.Version);
+
+                if(!standards.Any())
                 {
-                    try
-                    {
-                        standard = standardService.GetStandard(searchResult.StdCode)?.Result;
-                    }
-                    catch (Exception e)
-                    {
-                        logger.LogInformation($"Failed to get standard for {searchResult.StdCode}, error message: {e.Message}");
-                    }
+                    logger.LogInformation($"Failed to get standard for {searchResult.StdCode}");
+                    continue;
                 }
-                searchResult.Standard = standard?.Title;
-                searchResult.Level = standard?.StandardData.Level.GetValueOrDefault()??0;
+                                
+                var firstStandard = standards.First();
+                searchResult.Standard = firstStandard.Title;
+                searchResult.Level = firstStandard.Level;
+                searchResult.Versions = standards.Select(s => new StandardVersion
+                {
+                    Title = s.Title,
+                    StandardUId = s.StandardUId,
+                    Version = s.Version.GetValueOrDefault(1).ToString("#.0"),
+                    Options = allOptions.SingleOrDefault(o => o.StandardUId == s.StandardUId)?.CourseOption
+                }).ToList();
             }
 
             return searchResults;
@@ -54,19 +61,14 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
                 searchResult.CertificateId = certificate.Id;
                 searchResult.CertificateStatus = certificate.Status;
                 searchResult.LearnStartDate = certificateData.LearningStartDate;
+                searchResult.Version = certificateData.Version;
                 searchResult.Option = certificateData.CourseOption;
-
+                
                 var certificateLogs = certificateRepository.GetCertificateLogsFor(certificate.Id).Result;
                 logger.LogInformation("MatchUpExistingCompletedStandards After GetCertificateLogsFor");
-                var submittedLogEntry = certificateLogs.FirstOrDefault(l => l.Status == CertificateStatus.Submitted);
                 var createdLogEntry = certificateLogs.FirstOrDefault(l => l.Status == CertificateStatus.Draft);
-                if (request.IsPrivatelyFunded)
-                {
-                    var toBeApprovedLogEntry = certificateLogs.FirstOrDefault(l => l.Status == CertificateStatus.ToBeApproved);
-                    if (toBeApprovedLogEntry == null)
-                        continue;
-                    submittedLogEntry = toBeApprovedLogEntry;
-                }
+                                
+                var submittedLogEntry = certificateLogs.FirstOrDefault(l => l.Action == CertificateActions.Submit);
 
                 if (submittedLogEntry == null) continue;
 

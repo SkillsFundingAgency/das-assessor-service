@@ -76,7 +76,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ImportStandards
         [Test]
         public void Then_Deletes_Existing_Standards()
         {
-            _standardServiceMock.Verify(s => s.DeleteAllStandards(), Times.Once);
+            _standardServiceMock.Verify(s => s.DeleteAllStandardsAndOptions(), Times.Once);
         }
 
         [Test]

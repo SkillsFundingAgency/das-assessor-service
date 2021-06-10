@@ -107,45 +107,12 @@
     <Content Update="Views\Certificate\AddressSummary.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
-    <Content Update="Views\Certificate\LastName.cshtml">
-      <Pack>$(IncludeRazorContentInPack)</Pack>
-    </Content>
-    <Content Update="Views\Certificate\StandardCode.cshtml">
-      <Pack>$(IncludeRazorContentInPack)</Pack>
-    </Content>
-    <Content Update="Views\Certificate\Ukprn.cshtml">
-      <Pack>$(IncludeRazorContentInPack)</Pack>
-    </Content>
-    <Content Update="Views\Certificate\LearnerStartDate.cshtml">
-      <Pack>$(IncludeRazorContentInPack)</Pack>
-    </Content>
-    <Content Update="Views\Certificate\PrivateDeclaration.cshtml">
-      <Pack>$(IncludeRazorContentInPack)</Pack>
-    </Content>
-    <Content Update="Views\Certificate\FirstName.cshtml">
-      <Pack>$(IncludeRazorContentInPack)</Pack>
-    </Content>
   </ItemGroup>
   <ItemGroup>
     <Content Update="Views\Certificate\Recipient.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
     <Content Update="Validators\_LastNameScriptsPartial.cshtml">
-      <Pack>$(IncludeRazorContentInPack)</Pack>
-    </Content>
-    <Content Update="Views\Certificate\Uln.cshtml">
-      <Pack>$(IncludeRazorContentInPack)</Pack>
-    </Content>
-    <Content Update="Views\Certificate\_UkprnScriptsPartial.cshtml">
-      <Pack>$(IncludeRazorContentInPack)</Pack>
-    </Content>
-    <Content Update="Views\Certificate\_LearnerDateScriptsPartial.cshtml">
-      <Pack>$(IncludeRazorContentInPack)</Pack>
-    </Content>
-    <Content Update="Views\Certificate\_FirstNameScriptsPartial.cshtml">
-      <Pack>$(IncludeRazorContentInPack)</Pack>
-    </Content>
-    <Content Update="Views\Certificate\_UlnScriptsPartial.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
     <Content Update="Views\OrganisationStandards\Index.cshtml">
@@ -163,6 +130,9 @@
     <EmbeddedResource Update="Resources\Validators\CertificateCheckViewModelValidator.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>CertificateCheckViewModelValidator.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Validators\CertificateVersionViewModelValidator.en.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Resources\Validators\CertificateUlnViewModelValidator.resx">
       <LastGenOutput>CertificateUlnViewModelValidator.Designer.cs</LastGenOutput>
@@ -211,6 +181,9 @@
       <Generator>ResXFileCodeGenerator</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Resources\Views\Certificate\AddressSummary.en.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Views\Certificate\Version.en.resx">
       <Generator>ResXFileCodeGenerator</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Resources\Views\Certificate\Uln.en.resx">

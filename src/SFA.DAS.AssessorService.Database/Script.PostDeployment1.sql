@@ -28,6 +28,7 @@
 :r .\PostDeploymentScripts\EPAO_Migration_Part2_OrganisationStandard.sql
 :r .\PostDeploymentScripts\EPAO_Migration_Part3_OrganisationStandardVersion.sql
 :r .\PostDeploymentScripts\EPAO_Migration_Part4_Apply.sql
+:r .\PostDeploymentScripts\EPAO_Migration_Part5_Fails.sql
 
 -- CON-3359
 :r .\PostDeploymentScripts\CON-3359_Remove_IlrsImport.sql
@@ -36,7 +37,7 @@
 -- AB 11/03/19 Keep this active for new deployments, for now
 -- AB 31/07/19 Still seeing existance of certs without Standard reference (need to understand why)
 -- ****************************************************************************
-/* AB 17/03/21 - time to retire this "fix"
+-- AB 10/05/21 Keeping this for now to patch FAILs recorded via the API
 MERGE INTO certificates ma1
 USING (
 SELECT ce1.[Id],JSON_MODIFY([CertificateData],'$.StandardReference',st1.ReferenceNumber) newData
@@ -46,4 +47,4 @@ SELECT ce1.[Id],JSON_MODIFY([CertificateData],'$.StandardReference',st1.Referenc
   AND JSON_VALUE([CertificateData],'$.StandardReference') IS NULL) up1
 ON (ma1.id = up1.id)
 WHEN MATCHED THEN UPDATE SET ma1.[CertificateData] = up1.[newData];
-*/
+

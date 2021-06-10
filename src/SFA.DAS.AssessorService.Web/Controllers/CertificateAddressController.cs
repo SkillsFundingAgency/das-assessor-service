@@ -16,13 +16,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers
     [Route("certificate/address")]
     public class CertificateAddressController : CertificateBaseController
     {
-        private readonly IHttpContextAccessor _contextAccessor;
         private readonly ICertificateApiClient _certificateApiClient;
 
         public CertificateAddressController(ILogger<CertificateController> logger, IHttpContextAccessor contextAccessor,
             ICertificateApiClient certificateApiClient, ISessionService sessionService) : base(logger, contextAccessor, certificateApiClient, sessionService)
         {
-            _contextAccessor = contextAccessor;
             _certificateApiClient = certificateApiClient;
         }
 
@@ -32,7 +30,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             bool? reset,
             bool? redirectToCheck = false)
         {
-            var username = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
+            var username = GetUsernameFromClaim();
 
             var certificateAddressViewModel = await LoadViewModel<CertificateAddressViewModel>("~/Views/Certificate/Address.cshtml");            
 
@@ -51,12 +49,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [HttpPost(Name = "Address")]
         public async Task<IActionResult> Address(CertificateAddressViewModel vm)
         {
-            var username = _contextAccessor.HttpContext.User
-                .FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
+            var username = GetUsernameFromClaim();
 
             if (vm.SelectPreviousAddress)
             {
-                var certificatePreviousAddress = await _certificateApiClient.GetContactPreviousAddress(username, vm.IsPrivatelyFunded);
+                var certificatePreviousAddress = await _certificateApiClient.GetContactPreviousAddress(username);
                 vm = vm.CopyFromCertificateAddress(certificatePreviousAddress);             
             }
 
@@ -84,7 +81,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [HttpGet("resetaddress", Name = "ResetAddress")]
         public async Task<IActionResult> ResetAddress(bool? redirectToCheck = false)
         {
-            var username = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
+            var username = GetUsernameFromClaim();
 
             var viewModel = await LoadViewModel<CertificateAddressViewModel>("~/Views/Certificate/Address.cshtml");
             var viewResult = viewModel as ViewResult;
@@ -122,8 +119,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         {
             try
             {
-                var certificatePreviousAddress = await _certificateApiClient.GetContactPreviousAddress(username,
-                    certificateAddress.IsPrivatelyFunded);
+                var certificatePreviousAddress = await _certificateApiClient.GetContactPreviousAddress(username);
 
                 certificateAddress.PreviousAddress =
                     new CertificatePreviousAddressViewModel(certificatePreviousAddress);

@@ -130,12 +130,15 @@
     <value>Previously recorded assessment|Previously recorded assessments</value>
   </data>
   <data name="SelectStandardButton" xml:space="preserve">
-    <value>Continue</value>
+    <value>Confirm and continue</value>
   </data>
   <data name="CompletedStandardsHeading" xml:space="preserve">
-    <value>Completed standards</value>
+    <value>Assessment details</value>
   </data>
   <data name="SelectStandardHeading" xml:space="preserve">
-    <value>Select the standard</value>
+    <value>Which standard did you assess?</value>
+  </data>
+  <data name="AllAssessmentsCompletedHeading" xml:space="preserve">
+    <value>Assessments have already been recorded against this apprentice</value>
   </data>
 </root>

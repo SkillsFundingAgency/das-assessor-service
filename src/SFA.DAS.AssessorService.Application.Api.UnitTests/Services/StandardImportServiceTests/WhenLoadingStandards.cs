@@ -31,7 +31,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services.StandardImp
         [Test]
         public void Then_Inserts_Data_Into_Standards_Table()
         {
-            standardRepositoryMock.Verify(r => r.Insert(It.IsAny<IEnumerable<Standard>>()), Times.Once);
+            standardRepositoryMock.Verify(r => r.InsertStandards(It.IsAny<IEnumerable<Standard>>()), Times.Once);
         }
     }
 }

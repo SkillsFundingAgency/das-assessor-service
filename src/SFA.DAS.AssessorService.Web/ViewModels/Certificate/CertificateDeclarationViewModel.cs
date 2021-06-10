@@ -4,9 +4,9 @@ using SFA.DAS.AssessorService.Domain.JsonData;
 
 namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
 {
-    public class CertificateDeclarationViewModel : CertificateBaseViewModel, ICertificateViewModel
+    public class CertificateDeclarationViewModel : CertificateBaseViewModel
     {
-        public Domain.Entities.Certificate GetCertificateFromViewModel(Domain.Entities.Certificate certificate, CertificateData certData)
+        public override Domain.Entities.Certificate GetCertificateFromViewModel(Domain.Entities.Certificate certificate, CertificateData certData)
         {       
             certificate.CertificateData = JsonConvert.SerializeObject(certData);
             return certificate;

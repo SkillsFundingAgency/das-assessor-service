@@ -18,20 +18,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Certifi
             RuleFor(m => m.UkPrn).InclusiveBetween(10000000, 99999999).WithMessage("The UKPRN should contain exactly 8 numbers");
 
             RuleFor(m => m.FamilyName).NotEmpty().WithMessage("Provide apprentice family name");
-            RuleFor(m => m.StandardCode).GreaterThan(0).WithMessage("Provide a valid Standard").DependentRules(() =>
-            {
-                RuleFor(m => m).CustomAsync(async (m, context, cancellation) =>
-                {
-                    if (!string.IsNullOrEmpty(m.StandardReference))
-                    {
-                        var collatedStandard = await standardService.GetStandard(m.StandardReference);
-                        if (m.StandardCode != collatedStandard?.StandardId)
-                        {
-                            context.AddFailure("StandardReference and StandardCode must be for the same Standard");
-                        }
-                    }
-                });
-            });
+            RuleFor(m => m.StandardCode).GreaterThan(0).WithMessage("Provide a valid Standard");
 
             RuleFor(m => m.Uln).InclusiveBetween(1000000000, 9999999999).WithMessage("ULN should contain exactly 10 numbers").DependentRules(() =>
             {
@@ -39,48 +26,45 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Certifi
                 {
                     RuleFor(m => m).CustomAsync(async (m, context, cancellation) =>
                     {
-                        // NOTE: Currently we're making the Certificate & ILR record both mandatory
-                        var requestedIlr = await ilrRepository.Get(m.Uln, m.StandardCode);
-                        var sumbittingEpao = await organisationQueryRepository.GetByUkPrn(m.UkPrn);
-
-                        if (requestedIlr is null || !string.Equals(requestedIlr.FamilyName, m.FamilyName, StringComparison.InvariantCultureIgnoreCase))
-                        {
-                            context.AddFailure(new ValidationFailure("Uln", "ULN, FamilyName and Standard not found"));
-                        }
-                        else if (sumbittingEpao is null)
+                        // NOTE: Currently we're making the Certificate & ILR record both mandatory - this is wrong fixing it!
+                        var submittingEpao = await organisationQueryRepository.GetByUkPrn(m.UkPrn);
+                       
+                        if (submittingEpao is null)
                         {
                             context.AddFailure(new ValidationFailure("UkPrn", "Specified UKPRN not found"));
                         }
                         else
                         {
-                            var providedStandards = await standardService.GetEpaoRegisteredStandards(sumbittingEpao.EndPointAssessorOrganisationId);
+                            var existingCertificateCreatedByCallingEpao = await certificateRepository.GetCertificateByUlnOrgIdLastnameAndStandardCode(m.Uln, submittingEpao.EndPointAssessorOrganisationId, m.FamilyName, m.StandardCode);
 
-                            if (!providedStandards.Any(s => s.StandardCode == m.StandardCode))
+                            if (existingCertificateCreatedByCallingEpao == null)
                             {
-                                context.AddFailure(new ValidationFailure("StandardCode", "Your organisation is not approved to assess this Standard"));
-                            }
-                        }
-                    });
+                                var requestedIlr = await ilrRepository.Get(m.Uln, m.StandardCode);
+                                var existingCertificate = await certificateRepository.GetCertificate(m.Uln, m.StandardCode);
+                                var providedStandards = await standardService.GetEpaoRegisteredStandards(submittingEpao.EndPointAssessorOrganisationId);
 
-                    RuleFor(m => m).CustomAsync(async (m, context, cancellation) =>
-                    {
-                        var existingCertificate = await certificateRepository.GetCertificate(m.Uln, m.StandardCode);
+                                if (!providedStandards.Any(s => s.StandardCode == m.StandardCode))
+                                {
+                                    context.AddFailure(new ValidationFailure("StandardCode", "Your organisation is not approved to assess this Standard"));
+                                }
 
-                        if (existingCertificate is null)
-                        {
-                            // TODO: FUTURE WORK - ON-2130 Do Alan's Certificate Search THEN the ILR Search (which may be the validation down below)
-                        }
-                        else
-                        {
-                            var certData = JsonConvert.DeserializeObject<CertificateData>(existingCertificate.CertificateData ?? "{}");
+                                if (existingCertificate != null)
+                                {
+                                    var certData = JsonConvert.DeserializeObject<CertificateData>(existingCertificate.CertificateData ?? "{}");
 
-                            if (!certData.LearnerFamilyName.Equals(m.FamilyName, StringComparison.InvariantCultureIgnoreCase))
-                            {
-                                context.AddFailure(new ValidationFailure("FamilyName", $"Invalid family name"));
-                            }
-                            else if (!EpaOutcome.Pass.Equals(certData.EpaDetails?.LatestEpaOutcome, StringComparison.InvariantCultureIgnoreCase))
-                            {
-                                context.AddFailure(new ValidationFailure("Uln", $"Latest EPA Outcome has not passed"));
+                                    if (!certData.LearnerFamilyName.Equals(m.FamilyName, StringComparison.InvariantCultureIgnoreCase))
+                                    {
+                                        context.AddFailure(new ValidationFailure("FamilyName", $"Cannot find apprentice with the specified Uln, FamilyName & Standard"));
+                                    }
+                                    else if (!EpaOutcome.Pass.Equals(certData.EpaDetails?.LatestEpaOutcome, StringComparison.InvariantCultureIgnoreCase))
+                                    {
+                                        context.AddFailure(new ValidationFailure("Uln", $"Cannot find certificate with the specified Uln, FamilyName & Standard"));
+                                    }
+                                }
+                                else if (requestedIlr is null || !string.Equals(requestedIlr.FamilyName, m.FamilyName, StringComparison.InvariantCultureIgnoreCase) )
+                                {
+                                    context.AddFailure(new ValidationFailure("Uln", "Cannot find apprentice with the specified Uln, FamilyName & Standard"));
+                                }
                             }
                         }
                     });

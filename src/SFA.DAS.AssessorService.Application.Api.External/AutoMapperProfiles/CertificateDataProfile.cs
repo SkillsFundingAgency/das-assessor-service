@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using SFA.DAS.AssessorService.Application.Api.External.Extenstions;
 
 namespace SFA.DAS.AssessorService.Application.Api.External.AutoMapperProfiles
 {
@@ -12,6 +13,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.AutoMapperProfiles
                 .ForMember(dest => dest.AchievementDate, opt => opt.MapFrom(source => source.LearningDetails.AchievementDate))
                 .ForMember(dest => dest.StandardReference, opt => opt.MapFrom(source => source.Standard.StandardReference))
                 .ForMember(dest => dest.CourseOption, opt => opt.MapFrom(source => source.LearningDetails.CourseOption))
+                .ForMember(dest => dest.Version, opt => opt.MapFrom(source => source.LearningDetails.Version))
                 .ForMember(dest => dest.OverallGrade, opt => opt.MapFrom(source => source.LearningDetails.OverallGrade))
                 .ForMember(dest => dest.ContactName, opt => opt.MapFrom(source => source.PostalContact.ContactName))
                 .ForMember(dest => dest.ContactOrganisation, opt => opt.MapFrom(source => source.PostalContact.Organisation))
@@ -28,8 +30,13 @@ namespace SFA.DAS.AssessorService.Application.Api.External.AutoMapperProfiles
                 .ForMember(dest => dest.CertificateReference, opt => opt.MapFrom(source => string.Empty))
                 .ForPath(dest => dest.Learner.FamilyName, opt => opt.MapFrom(source => source.LearnerFamilyName))
                 .ForPath(dest => dest.Learner.GivenNames, opt => opt.MapFrom(source => source.LearnerGivenNames))
-                .ForPath(dest => dest.LearningDetails.AchievementDate, opt => opt.MapFrom(source => source.AchievementDate))
+                .ForPath(dest => dest.LearningDetails.Version, opt => opt.MapFrom(source => source.Version))
+                .ForPath(dest => dest.LearningDetails.AchievementDate, opt => opt.MapFrom(source => source.AchievementDate.DropMilliseconds()))
                 .ForPath(dest => dest.LearningDetails.CourseOption, opt => opt.MapFrom(source => source.CourseOption))
+                .ForPath(dest => dest.LearningDetails.Version, opt => {
+                        opt.Condition(version => !string.IsNullOrEmpty(version.SourceMember));
+                        opt.MapFrom(source => source.Version);
+                    })
                 .ForPath(dest => dest.LearningDetails.LearningStartDate, opt => opt.MapFrom(source => source.LearningStartDate))
                 .ForPath(dest => dest.LearningDetails.OverallGrade, opt => opt.MapFrom(source => source.OverallGrade))
                 .ForPath(dest => dest.LearningDetails.ProviderName, opt => opt.MapFrom(source => source.ProviderName))
