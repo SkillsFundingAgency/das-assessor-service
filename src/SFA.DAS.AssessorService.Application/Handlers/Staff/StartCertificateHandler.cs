@@ -154,6 +154,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
 
                 certData.StandardName = standardVersions.OrderByDescending(s => s.Version).First().Title;
             }
+
             certificate.CertificateData = JsonConvert.SerializeObject(certData);
 
             _logger.LogInformation("CreateNewCertificate Before create new Certificate");

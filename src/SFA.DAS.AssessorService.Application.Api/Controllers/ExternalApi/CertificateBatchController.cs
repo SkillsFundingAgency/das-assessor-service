@@ -55,6 +55,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.ExternalApi
             };
 
             var standard = await _mediator.Send(new GetStandardVersionRequest { StandardId = standardId });
+
             if (standard != null)
             {
                 request.StandardCode = standard.LarsCode;
@@ -64,7 +65,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.ExternalApi
             var validationResult = await _getValidator.ValidateAsync(request);
             var isRequestValid = validationResult.IsValid;
             var validationErrors = validationResult.Errors.Select(error => error.ErrorMessage).ToList();
-            
+
             GetBatchCertificateResponse getResponse = new GetBatchCertificateResponse
             {
                 Uln = request.Uln,
@@ -75,7 +76,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.ExternalApi
 
             if (!validationErrors.Any() && isRequestValid)
             {
-                getResponse.Certificate = await _mediator.Send(request);  
+                getResponse.Certificate = await _mediator.Send(request);
             }
 
             return Ok(getResponse);

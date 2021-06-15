@@ -48,10 +48,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Certifi
                         { 
                             // A submitted fail can be re-created
                         }
-                        else if (existingCertificate.Status == CertificateStatus.Submitted && !string.IsNullOrWhiteSpace(certData.OverallGrade) && certData.OverallGrade.Equals(CertificateGrade.Fail, StringComparison.OrdinalIgnoreCase))
-                        { 
-                            // A submitted fail can be re-created
-                        }
                         else
                         {
                             context.AddFailure(new ValidationFailure("CertificateData", $"Certificate already exists: {existingCertificate.CertificateReference}"));

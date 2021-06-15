@@ -76,7 +76,6 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
                     GenerateEPORegisteredStandard(98),
                     GenerateEPORegisteredStandard(99),
                     GenerateEPORegisteredStandard(101)
-
             });
 
             standardServiceMock.Setup(c => c.GetEpaoRegisteredStandards("99999999"))
