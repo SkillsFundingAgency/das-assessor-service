@@ -63,8 +63,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             return View("~/Views/Application/Standard/FindStandardResults.cshtml", model);
         }
 
-        [HttpGet("standard/confirm-standard/{standardReference}")]
-        public async Task<IActionResult> ConfirmStandard(string standardReference)
+        [HttpGet("standard/view-standard/{standardReference}")]
+        public async Task<IActionResult> ViewStandard(string standardReference)
         {
             var contact = await GetUserContact();
             var org = await _orgApiClient.GetOrganisationByUserId(contact.Id);
@@ -72,18 +72,15 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             var existingApplications = (await _applicationApiClient.GetStandardApplications(contact.Id))?
                 .Where(p => p.ApplicationStatus != ApplicationStatus.Declined);
 
-            if (existingApplications != null)
+            var existingEmptyApplication = existingApplications.SingleOrDefault(x => x.StandardCode == null);
+            if (existingEmptyApplication != null)
+                return RedirectToAction("ConfirmStandard", new { Id = existingEmptyApplication.Id, StandardReference = standardReference });
+            else
             {
-                var existingEmptyApplication = existingApplications.SingleOrDefault(x => x.StandardCode == null);
-                if (existingEmptyApplication != null)
-                    return RedirectToAction("SequenceSignPost", new { existingEmptyApplication.Id });
+                var createApplicationRequest = await _applicationService.BuildInitialRequest(contact, org, _config.ReferenceFormat);
+                var id = await _applicationApiClient.CreateApplication(createApplicationRequest);
+                return RedirectToAction("ConfirmStandard", new { Id = id, StandardReference = standardReference });
             }
-
-            var createApplicationRequest = await _applicationService.BuildInitialRequest(contact, org, _config.ReferenceFormat);
-
-            var id = await _applicationApiClient.CreateApplication(createApplicationRequest);
-
-            return RedirectToAction("ConfirmStandard", new { Id = id, StandardReference = standardReference });
         }
 
         [HttpGet("standard/{id}/confirm-standard/{standardReference}")]
@@ -189,7 +186,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
         [HttpGet("standard/{id}/opt-in/{standardReference}/{version}")]
         [ApplicationAuthorize(routeId: "Id")]
-        public async Task<IActionResult> OptIn(Guid id, string standardReference, string version)
+        public async Task<IActionResult> OptIn(Guid id, string standardReference, decimal version)
         {
             var application = await _applicationApiClient.GetApplication(id);
            
@@ -198,7 +195,41 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 return RedirectToAction("Applications", "Application");
             }
 
-            return View("~/Views/Application/Standard/OptIn.cshtml");
+            var standards = await _standardVersionApiClient.GetStandardVersionsByIFateReferenceNumber(standardReference);
+            var stdVersion = standards.First(x => x.Version.Equals(version.ToString(), StringComparison.InvariantCultureIgnoreCase));
+
+            var model = new StandardOptInViewModel()
+            {
+                Id = id,
+                StandardReference = stdVersion.IFateReferenceNumber,
+                StandardTitle = stdVersion.Title,
+                Version = stdVersion.Version,
+                EffectiveFrom = stdVersion.VersionEarliestStartDate ?? DateTime.Today,
+                EffectiveTo = stdVersion.VersionLatestEndDate
+            };
+
+            return View("~/Views/Application/Standard/OptIn.cshtml", model);
+        }
+
+        [HttpPost("standard/{id}/opt-in/{standardReference}/{version}")]
+        public async Task<IActionResult> OptInPost(Guid id, string standardReference, decimal version)
+        {
+            var application = await _applicationApiClient.GetApplication(id);
+            var contact = await GetUserContact();
+
+            if (!CanUpdateApplicationAsync(application))
+            {
+                return RedirectToAction("Applications", "Application");
+            }
+
+            var org = await _orgApiClient.GetEpaOrganisation(application.OrganisationId.ToString());
+            var standards = await _standardVersionApiClient.GetStandardVersionsByIFateReferenceNumber(standardReference);
+            var stdVersion = standards.First(x => x.Version.Equals(version.ToString(), StringComparison.InvariantCultureIgnoreCase));
+
+            await _orgApiClient.OrganisationStandardVersionOptIn(id, contact.Id, org.OrganisationId, standardReference, version,
+            stdVersion.StandardUId, DateTime.Today, null, DateTime.Now, null, OrganisationStatus.Live);
+
+            return RedirectToAction("OptInConfirmation", "Application", new { Id = id });
         }
 
         private bool CanUpdateApplicationAsync(ApplicationResponse application)

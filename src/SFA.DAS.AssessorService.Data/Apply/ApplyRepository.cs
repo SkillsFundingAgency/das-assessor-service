@@ -154,9 +154,9 @@ namespace SFA.DAS.AssessorService.Data.Apply
         {
             await _unitOfWork.Connection.ExecuteAsync(
                 @"UPDATE Apply
-                  SET  ApplicationStatus = @ApplicationStatus, ApplyData = @ApplyData, StandardCode = @StandardCode, ReviewStatus = @ReviewStatus, FinancialReviewStatus = @FinancialReviewStatus, UpdatedBy = @UpdatedBy, UpdatedAt = GETUTCDATE() 
+                  SET  ApplicationStatus = @ApplicationStatus, ApplyData = @ApplyData, StandardCode = @StandardCode, StandardReference = @StandardReference, ReviewStatus = @ReviewStatus, FinancialReviewStatus = @FinancialReviewStatus, UpdatedBy = @UpdatedBy, UpdatedAt = GETUTCDATE() 
                   WHERE  (Apply.Id = @Id)",
-                param: new { apply.ApplicationStatus, apply.ApplyData, apply.StandardCode, apply.ReviewStatus, apply.FinancialReviewStatus, apply.Id, apply.UpdatedBy},
+                param: new { apply.ApplicationStatus, apply.ApplyData, apply.StandardCode, apply.StandardReference, apply.ReviewStatus, apply.FinancialReviewStatus, apply.Id, apply.UpdatedBy},
                 transaction: _unitOfWork.Transaction);
         }
 

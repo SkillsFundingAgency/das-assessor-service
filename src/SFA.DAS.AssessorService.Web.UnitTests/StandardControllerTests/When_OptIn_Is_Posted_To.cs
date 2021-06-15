@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
+using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Apply;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
@@ -15,12 +11,15 @@ using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Web.Controllers.Apply;
-using SFA.DAS.AssessorService.Web.ViewModels.Apply;
+using System;
+using System.Collections.Generic;
+using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
 {
     [TestFixture]
-    public class When_ConfirmStandard_Is_Called_With_Specific_Version
+    public class When_OptIn_Is_Posted_To
     {
         private StandardController _sut;
         private Mock<IApplicationApiClient> _mockApiClient;
@@ -96,34 +95,34 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
             .Setup(r => r.GetOrganisationStandardsByOrganisation(It.IsAny<String>()))
             .ReturnsAsync(new List<OrganisationStandardSummary>());
 
+            _mockContactsApiClient.Setup(r => r.GetContactBySignInId(It.IsAny<String>()))
+            .ReturnsAsync(new ContactResponse());
+
             _sut = new StandardController(_mockApiClient.Object, _mockOrgApiClient.Object, _mockQnaApiClient.Object,
                _mockContactsApiClient.Object, _mockStandardVersionApiClient.Object, _mockApplicationService.Object,
                _mockHttpContextAccessor.Object, _mockConfig.Object);
         }
 
         [Test]
-        public async Task Then_One_Version_Is_Returned()
+        public async Task Then_Version_Is_Opted_In()
         {
             // Arrange
-            _mockOrgApiClient
-              .Setup(r => r.GetStandardVersionsByOrganisationIdAndStandardReference(It.IsAny<string>(), "ST0001"))
-              .ReturnsAsync(new List<AppliedStandardVersion> {
-                   new AppliedStandardVersion { IFateReferenceNumber = "ST0001", Title = "Title 1", Version = 1.0M, LarsCode = 1, EPAChanged = false, ApprovedStatus = ApprovedStatus.NotYetApplied},
-                   new AppliedStandardVersion { IFateReferenceNumber = "ST0001", Title = "Title 1", Version = 1.1M, LarsCode = 1, EPAChanged = false, ApprovedStatus = ApprovedStatus.Approved},
-                   new AppliedStandardVersion { IFateReferenceNumber = "ST0001", Title = "Title 1", Version = 1.2M, LarsCode = 1, EPAChanged = false, ApprovedStatus = ApprovedStatus.NotYetApplied},
-                   new AppliedStandardVersion { IFateReferenceNumber = "ST0001", Title = "Title 1", Version = 1.3M, LarsCode = 1, EPAChanged = true, ApprovedStatus = ApprovedStatus.NotYetApplied},
-              });
+            _mockStandardVersionApiClient
+               .Setup(r => r.GetStandardVersionsByIFateReferenceNumber("ST0001"))
+               .ReturnsAsync(new List<StandardVersion> {
+                   new StandardVersion { IFateReferenceNumber = "ST0001", Title = "Title 1", Version = "1.0", LarsCode = 1, EPAChanged = false},
+                   new StandardVersion { IFateReferenceNumber = "ST0001", Title = "Title 1", Version = "1.1", LarsCode = 1, EPAChanged = false},
+                   new StandardVersion { IFateReferenceNumber = "ST0001", Title = "Title 1", Version = "1.2", LarsCode = 1, EPAChanged = false},
+               });                                                                                     
 
             // Act
-            var results = (await _sut.ConfirmStandard(Guid.NewGuid(), "ST0001", 1.2M)) as ViewResult;
+            var results = (await _sut.OptInPost(Guid.NewGuid(), "ST0001", 1.2M)) as RedirectToActionResult;
 
             // Assert
-            var vm = results.Model as StandardVersionViewModel;
-            Assert.AreEqual(1, vm.Results.Count);
-            Assert.AreEqual("1.2", vm.Results[0].Version);
-            Assert.AreEqual("1.2", vm.SelectedStandard.Version);
+            _mockOrgApiClient.Verify(m => m.OrganisationStandardVersionOptIn(It.IsAny<Guid>(), It.IsAny<Guid>(), "12345", "ST0001", 1.2M,
+            It.IsAny<string>(), It.IsAny<DateTime>(), null, It.IsAny<DateTime>(), null, OrganisationStatus.Live));
 
-            Assert.AreEqual("~/Views/Application/Standard/ConfirmStandard.cshtml", results.ViewName);
+            Assert.AreEqual("OptInConfirmation", results.ActionName);
         }
 
         private HttpContext SetupHttpContextSubAuthorityClaim()

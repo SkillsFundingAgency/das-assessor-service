@@ -43,7 +43,7 @@
                     {
                         <tr class="govuk-table__row">
                             <td data-label="@Localizer["Standard name"]" class="govuk-table__cell das-no-wrap">
-                                <a class="govuk-link--no-visited-state" href="\xxx">@Html.DisplayFor(modelItem => item.StandardName)</a>
+                                <a class="govuk-link--no-visited-state" href="/standard/view-standard/@item.ReferenceNumber">@Html.DisplayFor(modelItem => item.StandardName)</a>
                                 @if (item.NewVersionAvailable)
                                 {
                                     <strong class="govuk-tag govuk-tag--blue govuk-!-margin-left-8">New version available</strong>

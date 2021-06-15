@@ -64,5 +64,10 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 
         Task<EpaOrganisationResponse> CreateEpaOrganisation(CreateEpaOrganisationRequest epaoOrganisationModel);
         Task<EpaOrganisation> GetEpaOrganisationById(string Id);
+
+        Task<OrganisationStandardVersion> OrganisationStandardVersionOptIn(Guid applicationId, Guid contactId, string endPointAssessorOrganisationId, 
+           string standardReference, decimal? version, string standardUId, 
+           DateTime? effectiveFrom, DateTime? effectiveTo, DateTime? dateVersionApproved,
+           string comments, string status);
     }
 }

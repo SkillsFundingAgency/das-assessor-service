@@ -1,26 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
-using SFA.DAS.AssessorService.Api.Types.Models.AO;
+using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Apply;
-using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Web.Controllers.Apply;
-using SFA.DAS.AssessorService.Web.ViewModels.Apply;
+using System;
+using System.Collections.Generic;
+using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
 {
     [TestFixture]
-    public class When_ConfirmStandard_Is_Called_With_Specific_Version
+    public class When_ViewStandard_Is_Called
     {
         private StandardController _sut;
         private Mock<IApplicationApiClient> _mockApiClient;
@@ -67,34 +64,13 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
                  }
              });
 
-            _mockApiClient
-                .Setup(r => r.GetStandardApplications(It.IsAny<Guid>()))
-                .ReturnsAsync(new List<ApplicationResponse>());
 
-            _mockQnaApiClient
-             .Setup(r => r.GetApplicationData(It.IsAny<Guid>()))
-             .ReturnsAsync(new ApplicationData()
-             {
-                 OrganisationReferenceId = "12345"
-             });
+            _mockContactsApiClient.Setup(r => r.GetContactBySignInId(It.IsAny<String>()))
+             .ReturnsAsync(new ContactResponse());
 
             _mockOrgApiClient
-             .Setup(r => r.GetEpaOrganisationById(It.IsAny<String>()))
-             .ReturnsAsync(new EpaOrganisation()
-             {
-                 OrganisationId = "12345"
-             });
-
-            _mockOrgApiClient
-             .Setup(r => r.GetEpaOrganisation(It.IsAny<String>()))
-             .ReturnsAsync(new EpaOrganisation()
-             {
-                 OrganisationId = "12345"
-             });
-
-            _mockOrgApiClient
-            .Setup(r => r.GetOrganisationStandardsByOrganisation(It.IsAny<String>()))
-            .ReturnsAsync(new List<OrganisationStandardSummary>());
+             .Setup(r => r.GetOrganisationByUserId(It.IsAny<Guid>()))
+             .ReturnsAsync(new OrganisationResponse());
 
             _sut = new StandardController(_mockApiClient.Object, _mockOrgApiClient.Object, _mockQnaApiClient.Object,
                _mockContactsApiClient.Object, _mockStandardVersionApiClient.Object, _mockApplicationService.Object,
@@ -102,28 +78,52 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
         }
 
         [Test]
-        public async Task Then_One_Version_Is_Returned()
+        public async Task Then_Use_exisiting_Application_if_exisits()
         {
             // Arrange
-            _mockOrgApiClient
-              .Setup(r => r.GetStandardVersionsByOrganisationIdAndStandardReference(It.IsAny<string>(), "ST0001"))
-              .ReturnsAsync(new List<AppliedStandardVersion> {
-                   new AppliedStandardVersion { IFateReferenceNumber = "ST0001", Title = "Title 1", Version = 1.0M, LarsCode = 1, EPAChanged = false, ApprovedStatus = ApprovedStatus.NotYetApplied},
-                   new AppliedStandardVersion { IFateReferenceNumber = "ST0001", Title = "Title 1", Version = 1.1M, LarsCode = 1, EPAChanged = false, ApprovedStatus = ApprovedStatus.Approved},
-                   new AppliedStandardVersion { IFateReferenceNumber = "ST0001", Title = "Title 1", Version = 1.2M, LarsCode = 1, EPAChanged = false, ApprovedStatus = ApprovedStatus.NotYetApplied},
-                   new AppliedStandardVersion { IFateReferenceNumber = "ST0001", Title = "Title 1", Version = 1.3M, LarsCode = 1, EPAChanged = true, ApprovedStatus = ApprovedStatus.NotYetApplied},
-              });
+            var applicationId = Guid.NewGuid();
+
+            _mockApiClient
+            .Setup(r => r.GetStandardApplications(It.IsAny<Guid>()))
+            .ReturnsAsync(new List<ApplicationResponse>()
+            {
+                new ApplicationResponse() { Id = applicationId, StandardCode = null },
+                new ApplicationResponse() { Id = Guid.NewGuid(), StandardCode = 123 }
+            });
 
             // Act
-            var results = (await _sut.ConfirmStandard(Guid.NewGuid(), "ST0001", 1.2M)) as ViewResult;
+            var results = (await _sut.ViewStandard("ST0001")) as RedirectToActionResult;
 
             // Assert
-            var vm = results.Model as StandardVersionViewModel;
-            Assert.AreEqual(1, vm.Results.Count);
-            Assert.AreEqual("1.2", vm.Results[0].Version);
-            Assert.AreEqual("1.2", vm.SelectedStandard.Version);
+            Assert.AreEqual("ConfirmStandard", results.ActionName);
+            Assert.AreEqual(applicationId, results.RouteValues["Id"]);
+        }
 
-            Assert.AreEqual("~/Views/Application/Standard/ConfirmStandard.cshtml", results.ViewName);
+        [Test]
+        public async Task Then_Use_new_Application_if_none_exisits()
+        {
+            // Arrange
+            var applicationId = Guid.NewGuid();
+
+            _mockApiClient
+            .Setup(r => r.GetStandardApplications(It.IsAny<Guid>()))
+            .ReturnsAsync(new List<ApplicationResponse>()
+            {
+                new ApplicationResponse() { Id = Guid.NewGuid(), StandardCode = 456 },
+                new ApplicationResponse() { Id = Guid.NewGuid(), StandardCode = 123 }
+            });
+
+            _mockApplicationService.Setup(r => r.BuildInitialRequest(It.IsAny<ContactResponse>(), It.IsAny<OrganisationResponse>(), It.IsAny<string>()))
+                        .ReturnsAsync(new CreateApplicationRequest());
+            _mockApiClient.Setup(r => r.CreateApplication(It.IsAny<CreateApplicationRequest>()))
+                        .ReturnsAsync(applicationId);
+
+            // Act
+            var results = (await _sut.ViewStandard("ST0001")) as RedirectToActionResult;
+
+            // Assert
+            Assert.AreEqual("ConfirmStandard", results.ActionName);
+            Assert.AreEqual(applicationId, results.RouteValues["Id"]);
         }
 
         private HttpContext SetupHttpContextSubAuthorityClaim()
