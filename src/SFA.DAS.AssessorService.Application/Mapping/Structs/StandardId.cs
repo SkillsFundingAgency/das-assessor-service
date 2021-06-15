@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace SFA.DAS.AssessorService.Application.Mapping.Structs
+﻿namespace SFA.DAS.AssessorService.Application.Mapping.Structs
 {
     public struct StandardId
     {

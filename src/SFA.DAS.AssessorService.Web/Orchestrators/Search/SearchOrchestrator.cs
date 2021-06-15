@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
@@ -10,7 +6,9 @@ using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Web.Controllers;
 using SFA.DAS.AssessorService.Web.ViewModels.Search;
 using SFA.DAS.AssessorService.Web.ViewModels.Shared;
-using static SFA.DAS.AssessorService.Web.ViewModels.Search.ResultViewModel;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Web.Orchestrators.Search
 {

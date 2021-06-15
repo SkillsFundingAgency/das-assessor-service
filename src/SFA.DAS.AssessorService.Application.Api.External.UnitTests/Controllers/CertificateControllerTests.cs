@@ -1,5 +1,4 @@
-﻿
-using AutoFixture;
+﻿using AutoFixture;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -102,9 +101,8 @@ namespace SFA.DAS.AssessorService.Application.Api.External.UnitTests.Controllers
             ((ApiResponse)result.Value).Message.Should().Be("Batch limited to 25 requests");
         }
 
-
         [Test, MoqAutoData]
-        public async Task When_CreatingCertificateRecord_WithTooManyRequestsInBatch_CallsInternalApi_Then_ReturnApiResponseWithResponseCode403(
+        public async Task When_CreatingCertificateRecord_CallsInternalApi_Then_ReturnCertificateWithResponseCode200(
             CreateCertificateRequest request,
             IEnumerable<CreateCertificateResponse> response)
         {
@@ -119,6 +117,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.UnitTests.Controllers
             var result = await _controller.CreateCertificates(requests) as ObjectResult;
 
             //Assert
+            result.StatusCode.Value.Should().Be((int)HttpStatusCode.OK);
             transformedRequest.Should().NotBeNull();
             transformedRequest.Should().BeEquivalentTo(new
             {
@@ -136,5 +135,53 @@ namespace SFA.DAS.AssessorService.Application.Api.External.UnitTests.Controllers
             result.Value.Should().Be(response);        
         }
 
+        [Test, MoqAutoData]
+        public async Task When_UpdatingCertificateRecord_WithTooManyRequestsInBatch_CallsApi_Then_ReturnApiResponseWithResponseCode403()
+        {
+            //Arrange
+            var fixture = new Fixture();
+            var requests = fixture.CreateMany<UpdateCertificateRequest>(26);
+
+            //Act
+            var result = await _controller.UpdateCertificates(requests) as ObjectResult;
+
+            //Assert
+            result.StatusCode.Should().Be((int)HttpStatusCode.Forbidden);
+            ((ApiResponse)result.Value).Message.Should().Be("Batch limited to 25 requests");
+        }
+
+        [Test, MoqAutoData]
+        public async Task When_UpdatingCertificateRecord_CallsInternalApi_Then_ReturnCertificateWithResponseCode200(
+            UpdateCertificateRequest request,
+            IEnumerable<UpdateCertificateResponse> response)
+        {
+            //Arrange
+            UpdateBatchCertificateRequest transformedRequest = null;
+            var requests = new List<UpdateCertificateRequest> { request };
+            _mockApiClient.Setup(s => s.UpdateCertificates(It.IsAny<IEnumerable<UpdateBatchCertificateRequest>>()))
+                .Callback<IEnumerable<UpdateBatchCertificateRequest>>((input) => transformedRequest = input.First())
+                .ReturnsAsync(response);
+
+            //Act
+            var result = await _controller.UpdateCertificates(requests) as ObjectResult;
+
+            //Assert
+            result.StatusCode.Value.Should().Be((int)HttpStatusCode.OK);
+            transformedRequest.Should().NotBeNull();
+            transformedRequest.Should().BeEquivalentTo(new
+            {
+                UkPrn = _headerInfo.Object.Ukprn,
+                request.RequestId,
+                CertificateData = new
+                {
+                    request.Standard,
+                    request.Learner,
+                    request.LearningDetails,
+                    request.PostalContact
+                }
+            });
+
+            result.Value.Should().Be(response);
+        }
     }
 }

@@ -33,7 +33,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Standards
                 LarsCode = standard.LarsCode,
                 Level = standard.Level,
                 EffectiveFrom = standard.EffectiveFrom.GetValueOrDefault(),
-                EffectiveTo = standard.EffectiveTo,
+                EffectiveTo = standard.EffectiveTo.GetValueOrDefault(),
                 EPAChanged = standard.EPAChanged,
                 StandardPageUrl = standard.StandardPageUrl
             };

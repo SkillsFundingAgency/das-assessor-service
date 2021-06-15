@@ -38,7 +38,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
                     Title = s.Title,
                     StandardUId = s.StandardUId,
                     Version = s.Version.GetValueOrDefault(1).ToString("#.0"),
-                    Options = allOptions.Where(o => o.StandardUId == s.StandardUId).SingleOrDefault()?.CourseOption
+                    Options = allOptions.SingleOrDefault(o => o.StandardUId == s.StandardUId)?.CourseOption
                 }).ToList();
             }
 
