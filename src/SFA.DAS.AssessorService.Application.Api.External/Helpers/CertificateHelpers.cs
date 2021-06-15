@@ -1,7 +1,5 @@
 ﻿using SFA.DAS.AssessorService.Application.Api.External.Models.Response.Certificates;
 using SFA.DAS.AssessorService.Domain.Consts;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace SFA.DAS.AssessorService.Application.Api.External.Helpers
 {
@@ -39,13 +37,6 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Helpers
                         || !certificate.CertificateData.LearningDetails.AchievementDate.HasValue)
             {
                 return false;
-            } 
-            else if (hasOptions.HasValue && hasOptions == true)
-            {
-                if (string.IsNullOrEmpty(certificate.CertificateData.LearningDetails.CourseOption))
-                {
-                    return false;
-                }
             }
             else if (hasOptions.HasValue && hasOptions == true && string.IsNullOrEmpty(certificate.CertificateData.LearningDetails.CourseOption))
             {
