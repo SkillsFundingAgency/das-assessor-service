@@ -81,6 +81,7 @@ namespace SFA.DAS.AssessorService.Data
             transaction.Connection.Execute(
                 @"  DELETE FROM OrganisationStandardDeliveryArea;
                             DELETE FROM OrganisationStandard;
+                            DELETE FROM OrganisationStandardVersion;
                             DELETE FROM DeliveryArea;
                             DBCC CHECKIDENT('OrganisationStandardDeliveryArea', RESEED, 1);
                             DBCC CHECKIDENT('OrganisationStandard', RESEED, 1);
@@ -89,7 +90,9 @@ namespace SFA.DAS.AssessorService.Data
             // repopulated in Step 3
             transaction.Connection.Execute(
                 @"  DELETE FROM Options;
-                            DELETE FROM StandardCollation;", transaction: transaction);
+                            DELETE FROM StandardCollation;
+                            DELETE FROM Standards;
+                            DELETE FROM StandardOptions;", transaction: transaction);
 
             // repopulated in Step 2
             transaction.Connection.Execute(
@@ -123,14 +126,14 @@ namespace SFA.DAS.AssessorService.Data
         private void Step3_Standard_Data(SqlTransaction transaction)
         {
             _logger.LogInformation("Step 3: Syncing Standard Data");
-            BulkCopyData(transaction, new List<string> { "StandardCollation", "Options" });
+            BulkCopyData(transaction, new List<string> { "StandardCollation", "Options", "Standards", "StandardOptions" });
             _logger.LogInformation("Step 3: Completed");
         }
 
         private void Step4_OrganisationStandard_Data(SqlTransaction transaction)
         {
             _logger.LogInformation("Step 4: Syncing Organisation Standard Data");
-            BulkCopyData(transaction, new List<string> { "DeliveryArea", "OrganisationStandard", "OrganisationStandardDeliveryArea" });
+            BulkCopyData(transaction, new List<string> { "DeliveryArea", "OrganisationStandard", "OrganisationStandardVersion", "OrganisationStandardDeliveryArea" });
             _logger.LogInformation("Step 4: Completed");
         }
 
@@ -218,8 +221,22 @@ namespace SFA.DAS.AssessorService.Data
                 foreach (var table in tablesToCopy)
                 {
                     _logger.LogDebug($"\tSyncing table: {table}");
-                    using (var commandSourceData = new SqlCommand($"SELECT * FROM {table} ORDER BY [Id]", sourceSqlConnection))
+                    
+
+                    using (var commandSourceData = new SqlCommand(
+                        @"SELECT @subQuery = 'SELECT @sort_column = MAX(column_name) FROM INFORMATION_SCHEMA.COLUMNS 
+                        WHERE table_name = ''' + @tableName + ''' AND column_name IN ( ''StandardUId'' , ''Id'')';
+
+                        EXEC sp_executesql @subQuery, N'@sort_column varchar(100) out', @sort_column out
+
+                        SELECT @sqlQuery = 'SELECT * FROM ' + @tableName + ' ORDER BY ' + @sort_column;
+                        Exec(@sqlQuery)", sourceSqlConnection))
                     {
+                        commandSourceData.Parameters.AddWithValue("@tableName", table);
+                        commandSourceData.Parameters.AddWithValue("@subQuery", string.Empty);
+                        commandSourceData.Parameters.AddWithValue("@sqlQuery", string.Empty);
+                        commandSourceData.Parameters.AddWithValue("@sort_column", string.Empty);
+
                         using (var reader = commandSourceData.ExecuteReader())
                         {
                             using (var bulkCopy = new SqlBulkCopy(transaction.Connection, _bulkCopyOptions, transaction))

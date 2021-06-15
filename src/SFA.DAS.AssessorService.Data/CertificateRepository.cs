@@ -485,14 +485,14 @@ namespace SFA.DAS.AssessorService.Data
                 .ToListAsync();
         }
         
-        public async Task<CertificateAddress> GetContactPreviousAddress(string userName)
+        public async Task<CertificateAddress> GetContactPreviousAddress(string username)
         {
             var statuses = new[] { CertificateStatus.Submitted }.Concat(CertificateStatus.PrintProcessStatus).ToList();
 
             var certificateAddress = await (from certificate in _context.Certificates
                                      where 
                                         statuses.Contains(certificate.Status) 
-                                        && certificate.UpdatedBy == userName
+                                        && certificate.UpdatedBy == username
                                      let certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData)
                                      orderby certificate.UpdatedAt descending
                                      select new CertificateAddress

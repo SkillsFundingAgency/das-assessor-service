@@ -57,6 +57,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.ExternalApi
 
                 getResponse.Learner = result.Learner;
                 getResponse.Certificate = result.Certificate;
+                getResponse.EpaDetails = result.EpaDetails;
             }
 
             return Ok(getResponse);

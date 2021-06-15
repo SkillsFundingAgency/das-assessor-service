@@ -42,14 +42,22 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Certifi
                     {
                         var certData = JsonConvert.DeserializeObject<CertificateData>(existingCertificate.CertificateData);
 
-                        if (!EpaOutcome.Pass.Equals(certData.EpaDetails?.LatestEpaOutcome, StringComparison.InvariantCultureIgnoreCase))
+                        if (string.IsNullOrEmpty(certData.OverallGrade))
                         {
-                            context.AddFailure(new ValidationFailure("CertificateReference", $"Latest EPA Outcome has not passed"));
-                        }
+                            context.AddFailure(new ValidationFailure("CertificateReference", $"Certificate not found"));
+                        }                        
                     }
                     else
                     {
-                        context.AddFailure(new ValidationFailure("CertificateReference", $"Certificate does not exist in {CertificateStatus.Draft} status"));
+                        var certData = JsonConvert.DeserializeObject<CertificateData>(existingCertificate.CertificateData);
+                        if (certData.OverallGrade == CertificateGrade.Fail)
+                        {
+                            context.AddFailure(new ValidationFailure("CertificateReference", $"Certificate not found"));
+                        }
+                        else
+                        {
+                            context.AddFailure(new ValidationFailure("CertificateReference", $"Certificate does not exist in {CertificateStatus.Draft} status"));
+                        }
                     }
                 });
             });

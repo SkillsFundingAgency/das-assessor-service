@@ -57,7 +57,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Epas
                     {
                         context.AddFailure(new ValidationFailure("CourseOption", "No course option available for this Standard and version. Must be empty"));
                     }
-                    else if (standardOptions != null && standardOptions.HasOptions() && standardOptions.CourseOption.All(a => a.IndexOf(m.CourseOption, StringComparison.OrdinalIgnoreCase) == -1))
+                    else if (standardOptions.HasOptions() && standardOptions.CourseOption.All(a => a.IndexOf(m.CourseOption, StringComparison.OrdinalIgnoreCase) == -1))
                     {
                         var validOptions = string.Join(",", standardOptions.CourseOption);
                         context.AddFailure(new ValidationFailure("CourseOption",

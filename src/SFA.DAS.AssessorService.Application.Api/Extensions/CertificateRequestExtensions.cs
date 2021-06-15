@@ -24,15 +24,17 @@ namespace SFA.DAS.AssessorService.Application.Api.Extensions
 
                 if (string.IsNullOrWhiteSpace(request.CertificateData.Version))
                 {
-                    // As we had to calculate version and standardUid, if existing certificate is not null, 
-                    // Prioritise those values
+                    // As version not specified, version and standardUid are calculated, 
+                    // but if existing certificate is not null, Prioritise those values
                     if (existingCertificate != null)
                     {
                         var certificateData = JsonConvert.DeserializeObject<CertificateData>(existingCertificate.CertificateData);
                         request.CertificateData.Version = certificateData.Version;
                         request.StandardUId = existingCertificate.StandardUId;
                     }
-                    else
+
+                    // If certificate was null, or the values were not there... override with calculated
+                    if (string.IsNullOrWhiteSpace(request.CertificateData.Version))
                     {
                         // if version is null or empty, set version to the calculated version as a default.
                         request.CertificateData.Version = standard.Version.VersionToString();

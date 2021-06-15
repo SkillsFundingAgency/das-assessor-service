@@ -7,7 +7,6 @@ using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.ViewModels.Certificate;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Web.Controllers

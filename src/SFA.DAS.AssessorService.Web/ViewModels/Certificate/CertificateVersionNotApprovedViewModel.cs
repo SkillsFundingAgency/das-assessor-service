@@ -1,7 +1,4 @@
-﻿
-using SFA.DAS.AssessorService.Domain.JsonData;
-
-namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
+﻿namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
 {
     public class CertificateVersionNotApprovedViewModel
     {
