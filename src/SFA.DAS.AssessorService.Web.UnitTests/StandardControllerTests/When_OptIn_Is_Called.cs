@@ -19,87 +19,8 @@ using System.Threading.Tasks;
 namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
 {
     [TestFixture]
-    public class When_OptIn_Is_Called
+    public class When_OptIn_Is_Called : StandardControllerTestBase
     {
-        private StandardController _sut;
-        private Mock<IApplicationApiClient> _mockApiClient;
-        private Mock<IOrganisationsApiClient> _mockOrgApiClient;
-        private Mock<IQnaApiClient> _mockQnaApiClient;
-        private Mock<IContactsApiClient> _mockContactsApiClient;
-        private Mock<IStandardVersionClient> _mockStandardVersionApiClient;
-        private Mock<IHttpContextAccessor> _mockHttpContextAccessor;
-        private Mock<IApplicationService> _mockApplicationService;
-        private Mock<IWebConfiguration> _mockConfig;
-
-        [SetUp]
-        public void Arrange()
-        {
-            _mockApiClient = new Mock<IApplicationApiClient>();
-            _mockOrgApiClient = new Mock<IOrganisationsApiClient>();
-            _mockQnaApiClient = new Mock<IQnaApiClient>();
-            _mockContactsApiClient = new Mock<IContactsApiClient>();
-            _mockStandardVersionApiClient = new Mock<IStandardVersionClient>();
-            _mockHttpContextAccessor = new Mock<IHttpContextAccessor>();
-            _mockApplicationService = new Mock<IApplicationService>();
-            _mockConfig = new Mock<IWebConfiguration>();
-
-            _mockHttpContextAccessor
-                .Setup(r => r.HttpContext)
-                .Returns(SetupHttpContextSubAuthorityClaim());
-
-            _mockApiClient
-             .Setup(r => r.GetApplication(It.IsAny<Guid>()))
-             .ReturnsAsync(new ApplicationResponse()
-             {
-                 ApplicationStatus = ApplicationStatus.InProgress,
-                 ApplyData = new ApplyData()
-                 {
-                     Sequences = new List<ApplySequence>()
-                     {
-                         new ApplySequence()
-                         {
-                             IsActive = true,
-                             SequenceNo = ApplyConst.STANDARD_SEQUENCE_NO,
-                             Status = ApplicationSequenceStatus.Draft
-                         }
-                    }
-                 }
-             });
-
-            _mockApiClient
-                .Setup(r => r.GetStandardApplications(It.IsAny<Guid>()))
-                .ReturnsAsync(new List<ApplicationResponse>());
-
-            _mockQnaApiClient
-             .Setup(r => r.GetApplicationData(It.IsAny<Guid>()))
-             .ReturnsAsync(new ApplicationData()
-             {
-                 OrganisationReferenceId = "12345"
-             });
-
-            _mockOrgApiClient
-             .Setup(r => r.GetEpaOrganisationById(It.IsAny<String>()))
-             .ReturnsAsync(new EpaOrganisation()
-             {
-                 OrganisationId = "12345"
-             });
-
-            _mockOrgApiClient
-             .Setup(r => r.GetEpaOrganisation(It.IsAny<String>()))
-             .ReturnsAsync(new EpaOrganisation()
-             {
-                 OrganisationId = "12345"
-             });
-
-            _mockOrgApiClient
-            .Setup(r => r.GetOrganisationStandardsByOrganisation(It.IsAny<String>()))
-            .ReturnsAsync(new List<OrganisationStandardSummary>());
-
-            _sut = new StandardController(_mockApiClient.Object, _mockOrgApiClient.Object, _mockQnaApiClient.Object,
-               _mockContactsApiClient.Object, _mockStandardVersionApiClient.Object, _mockApplicationService.Object,
-               _mockHttpContextAccessor.Object, _mockConfig.Object);
-        }
-
         [Test]
         public async Task Then_All_Versions_For_Standard_Are_Returned()
         {
@@ -120,22 +41,6 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
             Assert.AreEqual("ST0001", vm.StandardReference);
             Assert.AreEqual("1.2", vm.Version);
             Assert.AreEqual("~/Views/Application/Standard/OptIn.cshtml", results.ViewName);
-        }
-
-        private HttpContext SetupHttpContextSubAuthorityClaim()
-        {
-            var fakeClaims = new List<Claim>()
-            {
-                new Claim("sub", "")
-            };
-
-            var fakeIdentity = new ClaimsIdentity(fakeClaims, "TestAuthType");
-            var fakeClaimsPrincipal = new ClaimsPrincipal(fakeIdentity);
-
-            return new DefaultHttpContext
-            {
-                User = fakeClaimsPrincipal
-            };
         }
     }
 }
