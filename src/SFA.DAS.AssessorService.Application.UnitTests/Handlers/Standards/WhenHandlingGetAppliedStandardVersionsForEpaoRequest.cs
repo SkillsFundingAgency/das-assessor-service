@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Standards
 {
-    public class WhenHandlingGetStandardVersionsByOrganisationIdAndStandardReferenceRequest
+    public class WhenHandlingGetAppliedStandardVersionsForEpaoRequest
     {
         [Test, MoqAutoData]
         public async Task ThenGetsAllStandardVersions(

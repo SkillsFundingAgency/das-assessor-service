@@ -109,12 +109,12 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         }
 
         [HttpGet("assessment-organisations/{organisationId}/standardversions/{standardReference}", Name =
-            "GetAppliedStandardVersionsForEPAO")]
+            "GetAppliedStandardVersionsForEpao")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(IEnumerable<AppliedStandardVersion>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> GetAppliedStandardVersionsForEPAO(string organisationId, string standardReference)
+        public async Task<IActionResult> GetAppliedStandardVersionsForEpao(string organisationId, string standardReference)
         {
-            _logger.LogInformation($@"Get Organisations Standard Versions by OrganisationId [{organisationId}] and Standard Reference[{standardReference}]");
+            _logger.LogInformation($@"Get Standard Versions and their applications by OrganisationId [{organisationId}] and Standard Reference[{standardReference}]");
             var result = await _mediator.Send(new GetAppliedStandardVersionsForEpaoRequest { OrganisationId = organisationId, StandardReference = standardReference });
 
             return Ok(result);
