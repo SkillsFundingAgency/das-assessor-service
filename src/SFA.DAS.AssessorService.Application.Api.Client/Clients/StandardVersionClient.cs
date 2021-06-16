@@ -28,15 +28,15 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/standard-version/standards/latest"))
             {
-                return await RequestAndDeserialiseAsync<IEnumerable<StandardVersion>>(request, $"Could not get the list of standards");
+                return await RequestAndDeserialiseAsync<IEnumerable<StandardVersion>>(request, $"Could not get the list of latest standards");
             }
         }
 
-        public async Task<IEnumerable<StandardVersion>> GetStandardVersionsByIFateReferenceNumber(string standardReference)
+        public async Task<IEnumerable<StandardVersion>> GetStandardVersionsByIFateReferenceNumber(string iFateReferenceNumber)
         {
-            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/standard-version/standards/versions/{standardReference}"))
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/standard-version/standards/versions/{iFateReferenceNumber}"))
             {
-                return await RequestAndDeserialiseAsync<IEnumerable<StandardVersion>>(request, $"Could not find the standard {standardReference}");
+                return await RequestAndDeserialiseAsync<IEnumerable<StandardVersion>>(request, $"Could not find the standard {iFateReferenceNumber}");
             }
         }
 

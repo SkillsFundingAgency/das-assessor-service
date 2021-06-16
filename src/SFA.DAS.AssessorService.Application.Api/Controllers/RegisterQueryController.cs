@@ -108,30 +108,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             return Ok(result);
         }
 
-        [HttpGet("assessment-organisations/{organisationId}/standard/{standardReference}", Name =
-            "GetOrganisationStandardByOrganisationAndReference")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(OrganisationStandard))]
-        [SwaggerResponse((int)HttpStatusCode.NotFound, null)]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
-        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> GetOrganisationStandardByOrganisationAndReference(string organisationId, string standardReference)
-        {
-            _logger.LogInformation($@"Get Organisations Standard by OrganisationId [{organisationId}] and Standard Reference[{standardReference}]"); 
-            var result = await _mediator.Send(new GetStandardByOrganisationAndReferenceRequest { OrganisationId = organisationId, StandardReference = standardReference });
-            
-            if (result == null) 
-                return NotFound();
-            return Ok(result);
-        }
-
         [HttpGet("assessment-organisations/{organisationId}/standardversions/{standardReference}", Name =
-            "GetStandardVersionsByOrganisationIdAndStandardReference")]
+            "GetAppliedStandardVersionsForEPAO")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(IEnumerable<AppliedStandardVersion>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> GetStandardVersionsByOrganisationIdAndStandardReference(string organisationId, string standardReference)
+        public async Task<IActionResult> GetAppliedStandardVersionsForEPAO(string organisationId, string standardReference)
         {
             _logger.LogInformation($@"Get Organisations Standard Versions by OrganisationId [{organisationId}] and Standard Reference[{standardReference}]");
-            var result = await _mediator.Send(new GetStandardVersionsByOrganisationIdAndStandardReferenceRequest { OrganisationId = organisationId, StandardReference = standardReference });
+            var result = await _mediator.Send(new GetAppliedStandardVersionsForEPAORequest { OrganisationId = organisationId, StandardReference = standardReference });
 
             return Ok(result);
         }

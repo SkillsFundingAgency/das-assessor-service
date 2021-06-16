@@ -18,9 +18,6 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Standards
         public IEnumerable<string> Options { get; set; }
         public bool EPAChanged { get; set; }
         public string StandardPageUrl { get; set; }
-        public string VersionStatus { get; set; }
-        public string ApplicationStatus { get; set; }
-        public Guid ApplicationId { get; set; }
 
         public static implicit operator StandardVersion(Standard standard)
         {
@@ -52,9 +49,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Standards
                 EffectiveFrom = standard.LarsEffectiveFrom.GetValueOrDefault(),
                 EffectiveTo = standard.LarsEffectiveTo,
                 EPAChanged = standard.EPAChanged,
-                StandardPageUrl = standard.StandardPageUrl,
-                ApplicationStatus = standard.ApplicationStatus,
-                ApplicationId = standard.ApplicationId
+                StandardPageUrl = standard.StandardPageUrl
             };
         }
     }

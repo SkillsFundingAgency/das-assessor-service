@@ -144,22 +144,6 @@ WHERE RowNum = 1";
             return results;
         }
 
-        public async Task<IEnumerable<Standard>> GetStandardVersionsByIFateReferenceNumber(string standardReference)
-        {
-            var sql = @"SELECT [StandardUId],[IFateReferenceNumber],[LarsCode],[Title],[Version],
-[Level],[Status],[TypicalDuration],[MaxFunding],[IsActive],[LastDateStarts],
-[EffectiveFrom],[EffectiveTo],[VersionEarliestStartDate],[VersionLatestStartDate],[VersionLatestEndDate],
-[VersionApprovedForDelivery],[ProposedTypicalDuration],[ProposedMaxFunding],[EPAChanged],[StandardPageUrl] 
-FROM [Standards] Where [IFateReferenceNumber] = @standardReference";
-
-            var results = await _unitOfWork.Connection.QueryAsync<Standard>(
-                sql,
-                param: new { standardReference },
-                transaction: _unitOfWork.Transaction);
-
-            return results;
-        }
-
         public async Task<IEnumerable<Standard>> GetStandardVersionsByLarsCode(int larsCode)
         {
             var sql = @"SELECT [StandardUId],[IFateReferenceNumber],[LarsCode],[Title],[Version],

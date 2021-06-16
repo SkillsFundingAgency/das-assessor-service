@@ -287,15 +287,5 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
 
             result.Should().BeEquivalentTo(standards);
         }
-
-        [Test, AutoData]
-        public async Task When_GetStandardVersionsByIFateReferenceNumber_ReturnsStandards(string standardReference, IEnumerable<Standard> standards)
-        {
-            _mockStandardRepository.Setup(s => s.GetStandardVersionsByIFateReferenceNumber(standardReference)).ReturnsAsync(standards);
-
-            var result = await _standardService.GetStandardVersionsByIFateReferenceNumber(standardReference);
-
-            result.Should().BeEquivalentTo(standards);
-        }
     }
 }

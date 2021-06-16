@@ -369,17 +369,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task<OrganisationStandard> GetOrganisationStandardByOrganisationAndReference(string endPointAssessorOrganisationId, string standardReference)
-        {
-            using (var request = new HttpRequestMessage(HttpMethod.Get,
-               $"/api/ao/assessment-organisations/{endPointAssessorOrganisationId}/standard/{standardReference}"))
-            {
-                return await RequestAndDeserialiseAsync<AssessorService.Api.Types.Models.AO.OrganisationStandard>(request,
-                    $"Could not retrieve standard for organisation with Id of {endPointAssessorOrganisationId} and standard reference {standardReference}", true);
-            }
-        }
-
-        public async Task<IEnumerable<AppliedStandardVersion>> GetStandardVersionsByOrganisationIdAndStandardReference(string endPointAssessorOrganisationId, string standardReference)
+        public async Task<IEnumerable<AppliedStandardVersion>> GetAppliedStandardVersionsForEPAO(string endPointAssessorOrganisationId, string standardReference)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get,
                $"/api/ao/assessment-organisations/{endPointAssessorOrganisationId}/standardversions/{standardReference}"))

@@ -18,12 +18,12 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Standards
         [Test, MoqAutoData]
         public async Task ThenGetsAllStandardVersions(
             [Frozen] Mock<IRegisterQueryRepository> repository,
-            GetStandardVersionsByOrganisationIdAndStandardReferenceRequest request,
+            GetAppliedStandardVersionsForEPAORequest request,
             List<AppliedStandardVersion> versions,
-            GetStandardVersionsByOrganisationIdAndStandardReferenceHandler sut)
+            GetAppliedStandardVersionsForEPAOHandler sut)
         {
             //Arrange
-            repository.Setup(s => s.GetStandardVersionsByOrganisationIdAndStandardReference(request.OrganisationId, request.StandardReference)).ReturnsAsync(versions);
+            repository.Setup(s => s.GetAppliedStandardVersionsForEPAO(request.OrganisationId, request.StandardReference)).ReturnsAsync(versions);
 
             //Act
             var result = await sut.Handle(request, new CancellationToken());
