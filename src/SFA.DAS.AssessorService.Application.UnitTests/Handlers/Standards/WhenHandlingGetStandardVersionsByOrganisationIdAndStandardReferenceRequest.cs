@@ -18,9 +18,9 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Standards
         [Test, MoqAutoData]
         public async Task ThenGetsAllStandardVersions(
             [Frozen] Mock<IRegisterQueryRepository> repository,
-            GetAppliedStandardVersionsForEPAORequest request,
+            GetAppliedStandardVersionsForEpaoRequest request,
             List<AppliedStandardVersion> versions,
-            GetAppliedStandardVersionsForEPAOHandler sut)
+            GetAppliedStandardVersionsForEpaoHandler sut)
         {
             //Arrange
             repository.Setup(s => s.GetAppliedStandardVersionsForEPAO(request.OrganisationId, request.StandardReference)).ReturnsAsync(versions);

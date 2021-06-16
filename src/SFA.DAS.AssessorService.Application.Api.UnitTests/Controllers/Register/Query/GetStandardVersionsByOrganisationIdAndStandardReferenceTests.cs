@@ -42,7 +42,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
                };
 
             _mediator.Setup(m =>
-                m.Send(It.IsAny<GetAppliedStandardVersionsForEPAORequest>(),
+                m.Send(It.IsAny<GetAppliedStandardVersionsForEpaoRequest>(),
                     new CancellationToken())).ReturnsAsync(_expectedVersions);
             _queryController = new RegisterQueryController(_mediator.Object, _logger.Object);
 
@@ -58,7 +58,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
         [Test]
         public void MediatorSendsExpectedGetStandardVersionsByOrganisationIdAndStandardReferenceRequest()
         {
-            _mediator.Verify(m => m.Send(It.IsAny<GetAppliedStandardVersionsForEPAORequest>(), new CancellationToken()));
+            _mediator.Verify(m => m.Send(It.IsAny<GetAppliedStandardVersionsForEpaoRequest>(), new CancellationToken()));
         }
 
         [Test]

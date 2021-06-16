@@ -9,18 +9,18 @@ using SFA.DAS.AssessorService.Application.Interfaces;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.ao
 {
-    public class GetAppliedStandardVersionsForEPAOHandler : IRequestHandler<GetAppliedStandardVersionsForEPAORequest, IEnumerable<AppliedStandardVersion>>
+    public class GetAppliedStandardVersionsForEpaoHandler : IRequestHandler<GetAppliedStandardVersionsForEpaoRequest, IEnumerable<AppliedStandardVersion>>
     {
         private readonly IRegisterQueryRepository _registerQueryRepository;
-        private readonly ILogger<GetAppliedStandardVersionsForEPAOHandler> _logger;
+        private readonly ILogger<GetAppliedStandardVersionsForEpaoHandler> _logger;
 
-        public GetAppliedStandardVersionsForEPAOHandler(IRegisterQueryRepository registerQueryRepository, ILogger<GetAppliedStandardVersionsForEPAOHandler> logger)
+        public GetAppliedStandardVersionsForEpaoHandler(IRegisterQueryRepository registerQueryRepository, ILogger<GetAppliedStandardVersionsForEpaoHandler> logger)
         {
             _registerQueryRepository = registerQueryRepository;
             _logger = logger;
         }
 
-        public async Task<IEnumerable<AppliedStandardVersion>> Handle(GetAppliedStandardVersionsForEPAORequest request, CancellationToken cancellationToken)
+        public async Task<IEnumerable<AppliedStandardVersion>> Handle(GetAppliedStandardVersionsForEpaoRequest request, CancellationToken cancellationToken)
         {
             _logger.LogInformation($@"Handling GetStandardVersionsByOrganisationIdAndStandardReference Request for OrganisationId [{request.OrganisationId}] and Standard Reference[{request.StandardReference}]");
             

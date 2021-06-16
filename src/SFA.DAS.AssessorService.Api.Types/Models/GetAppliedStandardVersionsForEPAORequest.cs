@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models
 {
-    public class GetAppliedStandardVersionsForEPAORequest : IRequest<IEnumerable<AppliedStandardVersion>>
+    public class GetAppliedStandardVersionsForEpaoRequest : IRequest<IEnumerable<AppliedStandardVersion>>
     {
         public string OrganisationId { get; set; }
 

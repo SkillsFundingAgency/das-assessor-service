@@ -115,7 +115,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         public async Task<IActionResult> GetAppliedStandardVersionsForEPAO(string organisationId, string standardReference)
         {
             _logger.LogInformation($@"Get Organisations Standard Versions by OrganisationId [{organisationId}] and Standard Reference[{standardReference}]");
-            var result = await _mediator.Send(new GetAppliedStandardVersionsForEPAORequest { OrganisationId = organisationId, StandardReference = standardReference });
+            var result = await _mediator.Send(new GetAppliedStandardVersionsForEpaoRequest { OrganisationId = organisationId, StandardReference = standardReference });
 
             return Ok(result);
         }

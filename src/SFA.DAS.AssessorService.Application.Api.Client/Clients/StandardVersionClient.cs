@@ -86,7 +86,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
     {
         Task<IEnumerable<StandardVersion>> GetAllStandardVersions();
         Task<IEnumerable<StandardVersion>> GetLatestStandardVersions();
-        Task<IEnumerable<StandardVersion>> GetStandardVersionsByIFateReferenceNumber(string standardReference);
+        Task<IEnumerable<StandardVersion>> GetStandardVersionsByIFateReferenceNumber(string iFateReferenceNumber);
         Task<IEnumerable<StandardVersion>> GetStandardVersionsByLarsCode(int larsCode);
         
         /// <summary>
