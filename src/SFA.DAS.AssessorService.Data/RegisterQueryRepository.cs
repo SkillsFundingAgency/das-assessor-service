@@ -282,10 +282,14 @@ namespace SFA.DAS.AssessorService.Data
                     )
                     --main query
                     SELECT
-                        CASE WHEN osv.StandardUId IS NOT NULL THEN 'Approved'
-                             WHEN va1.StandardUId IS NOT NULL THEN 'Apply In progress'
-                             ELSE 'Not yet applied'
-                        END ApprovedStatus,
+                        CASE 
+                            WHEN NOT (os1.status = 'Live' AND (os1.EffectiveTo IS NULL OR os1.EffectiveTo > GETDATE())) THEN 'Withdrawn'
+		                    WHEN osv.StandardUId IS NOT NULL 
+                            THEN (CASE WHEN osv.status = 'Live' AND (osv.EffectiveTo IS NULL OR osv.EffectiveTo > GETDATE()) THEN 'Approved' ELSE 'Withdrawn' END)
+		                    WHEN va1.StandardUId IS NOT NULL 
+		                    THEN (CASE WHEN ApplicationStatus = 'FeedbackAdded' THEN 'Feedback Added' ELSE ApplicationStatus END)
+		                    ELSE 'Not yet applied'
+		                END ApprovedStatus,
                         va1.ApplyId AS ApplicationId,
                         va1.ApplicationStatus,
                         so1.StandardUId, so1.title, so1.EffectiveFrom LarsEffectiveFrom, so1.EffectiveTo LarsEffectiveTo, so1.IFateReferenceNumber, so1.VersionEarliestStartDate, so1.VersionLatestStartDate, 
@@ -293,12 +297,8 @@ namespace SFA.DAS.AssessorService.Data
                         os1.EffectiveFrom StdEffectiveFrom, os1.EffectiveTo StdEffectiveTo,
                         osv.EffectiveFrom StdVersionEffectiveFrom, osv.EffectiveTo StdVersionEffectiveTo
                         FROM standards so1 
-                        LEFT JOIN organisationstandard os1 on so1.IFateReferenceNumber = os1.StandardReference AND 
-																os1.status = 'Live' AND
-																(os1.EffectiveTo IS NULL OR os1.EffectiveTo > GETDATE())
-						LEFT JOIN OrganisationStandardVersion osv on osv.standardUid = so1.standardUid AND osv.OrganisationStandardId = os1.Id AND
-															 osv.Status = 'Live' AND 
-															 (osv.EffectiveTo IS NULL OR osv.EffectiveTo > GETDATE())
+                        LEFT JOIN organisationstandard os1 on so1.IFateReferenceNumber = os1.StandardReference AND os1.EndPointAssessorOrganisationId = @organisationId
+						LEFT JOIN OrganisationStandardVersion osv on osv.standardUid = so1.standardUid AND osv.OrganisationStandardId = os1.Id 
                         LEFT JOIN VersionApply va1 on va1.StandardUId = so1.StandardUId
                         WHERE
                             so1.IFateReferenceNumber = @standardReference  
