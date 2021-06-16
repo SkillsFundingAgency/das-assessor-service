@@ -38,7 +38,29 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             return Ok(standards.Select(s => (StandardVersion)s));
         }
 
-        [HttpGet("standards/versions/{larsCode}", Name = "GetStandardVersionsByLarsCode")]
+        [HttpGet("standards/latest", Name = "GetLatestStandardVersions")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(IEnumerable<StandardVersion>))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> GetLatestStandardVersions()
+        {
+            _logger.LogInformation($@"Get latest standards from Standard Service");
+            var standards = await _standardService.GetLatestStandardVersions();
+            return Ok(standards.Select(s => (StandardVersion)s).ToList());
+        }
+
+        [HttpGet("standards/versions/{standardReference}", Name = "GetStandardVersionsByIFateReferenceNumber")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(IEnumerable<StandardVersion>))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> GetStandardVersionsByIFateReferenceNumber(string iFateReferenceNumber)
+        {
+            _logger.LogInformation($@"Get Standard Versions for IFateReferenceNumber {iFateReferenceNumber} from Standard Service");
+            var standards = await _standardService.GetStandardVersionsByIFateReferenceNumber(iFateReferenceNumber);
+            return Ok(standards.Select(s => (StandardVersion)s).ToList());
+        }
+
+        [HttpGet("standards/versions/{larsCode:int}", Name = "GetStandardVersionsByLarsCode")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(IEnumerable<StandardVersion>))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]

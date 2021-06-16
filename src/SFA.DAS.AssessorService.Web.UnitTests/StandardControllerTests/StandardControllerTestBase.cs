@@ -1,33 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Apply;
-using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Web.Controllers.Apply;
-using SFA.DAS.AssessorService.Web.ViewModels.Apply;
+using System;
+using System.Collections.Generic;
+using System.Security.Claims;
 
 namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
 {
-    [TestFixture]
-    public class When_ConfirmStandard_Is_Called
+    public class StandardControllerTestBase
     {
-        private StandardController _sut;
-        private Mock<IApplicationApiClient> _mockApiClient;
-        private Mock<IOrganisationsApiClient> _mockOrgApiClient;
-        private Mock<IQnaApiClient> _mockQnaApiClient;
-        private Mock<IContactsApiClient> _mockContactsApiClient;
-        private Mock<IStandardVersionClient> _mockStandardVersionApiClient;
-        private Mock<IHttpContextAccessor> _mockHttpContextAccessor;
+        protected StandardController _sut;
+        protected Mock<IApplicationApiClient> _mockApiClient;
+        protected Mock<IOrganisationsApiClient> _mockOrgApiClient;
+        protected Mock<IQnaApiClient> _mockQnaApiClient;
+        protected Mock<IContactsApiClient> _mockContactsApiClient;
+        protected Mock<IStandardVersionClient> _mockStandardVersionApiClient;
+        protected Mock<IHttpContextAccessor> _mockHttpContextAccessor;
 
         [SetUp]
         public void Arrange()
@@ -81,33 +76,23 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
              });
 
             _mockOrgApiClient
+             .Setup(r => r.GetEpaOrganisation(It.IsAny<String>()))
+             .ReturnsAsync(new EpaOrganisation()
+             {
+                 OrganisationId = "12345"
+             });
+
+            _mockOrgApiClient
             .Setup(r => r.GetOrganisationStandardsByOrganisation(It.IsAny<String>()))
             .ReturnsAsync(new List<OrganisationStandardSummary>());
 
             _sut = new StandardController(_mockApiClient.Object, _mockOrgApiClient.Object, _mockQnaApiClient.Object,
-               _mockContactsApiClient.Object, _mockStandardVersionApiClient.Object, _mockHttpContextAccessor.Object);
+               _mockContactsApiClient.Object, _mockStandardVersionApiClient.Object, _mockHttpContextAccessor.Object)
+            {
+                TempData = new TempDataDictionary(new DefaultHttpContext(), Mock.Of<ITempDataProvider>())
+            };
         }
 
-        [Test]
-        public async Task Then_All_Versions_For_Standard_Are_Returned()
-        {
-            // Arrange
-            _mockStandardVersionApiClient
-               .Setup(r => r.GetAllStandardVersions())
-               .ReturnsAsync(new List<StandardVersion> { 
-                   new StandardVersion { IFateReferenceNumber = "ST0001", Title = "Title 1", Version = "1.0", LarsCode = 1},
-                   new StandardVersion { IFateReferenceNumber = "ST0001", Title = "Title 1", Version = "1.1", LarsCode = 1},
-                   new StandardVersion { IFateReferenceNumber = "ST0002", Title = "Title 2", Version = "1.0", LarsCode = 2},
-               });
-
-            // Act
-            var results = (await _sut.ConfirmStandard(Guid.NewGuid(), "ST0001")) as ViewResult;
-
-            // Assert
-            var vm = results.Model as StandardVersionViewModel;
-            Assert.AreEqual(2, vm.Results.Count);
-            Assert.AreEqual("1.1", vm.SelectedStandard.Version);
-        }
 
         private HttpContext SetupHttpContextSubAuthorityClaim()
         {

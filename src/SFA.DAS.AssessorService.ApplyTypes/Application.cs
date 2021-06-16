@@ -15,8 +15,9 @@ namespace SFA.DAS.AssessorService.ApplyTypes
         public string OrganisationReferenceId { get; set; }
         public string OrganisationName { get; set; }
         public string OrganisationType { get; set; }
-        
-        
+        public string ApplicationType { get; set; }
+
+
         // These are preamble answers, but are currently unused and stored instead in ApplyData.Apply
         public int? StandardCode { get; set; }
         public string StandardReference { get; set; }

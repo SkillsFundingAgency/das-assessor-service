@@ -111,10 +111,50 @@ namespace SFA.DAS.AssessorService.Data
             var sql = @"SELECT [StandardUId],[IFateReferenceNumber],[LarsCode],[Title],[Version],
 [Level],[Status],[TypicalDuration],[MaxFunding],[IsActive],[LastDateStarts],
 [EffectiveFrom],[EffectiveTo],[VersionEarliestStartDate],[VersionLatestStartDate],[VersionLatestEndDate],
-[VersionApprovedForDelivery],[ProposedTypicalDuration],[ProposedMaxFunding],[StandardPageUrl] FROM [Standards]";
+[VersionApprovedForDelivery],[ProposedTypicalDuration],[ProposedMaxFunding],[EPAChanged],[StandardPageUrl] FROM [Standards]";
 
             var results = await _unitOfWork.Connection.QueryAsync<Standard>(
                 sql,
+                transaction: _unitOfWork.Transaction);
+
+            return results;
+        }
+
+        public async Task<IEnumerable<Standard>> GetLatestStandardVersions()
+        {
+            var sql = @"SELECT [StandardUId],[IFateReferenceNumber],[LarsCode],[Title],[Version],
+[Level],[Status],[TypicalDuration],[MaxFunding],[IsActive],[LastDateStarts],
+[EffectiveFrom],[EffectiveTo],[VersionEarliestStartDate],[VersionLatestStartDate],[VersionLatestEndDate],
+[VersionApprovedForDelivery],[ProposedTypicalDuration],[ProposedMaxFunding],[EPAChanged],[StandardPageUrl] 
+FROM 
+(
+	SELECT ROW_NUMBER() OVER(PARTITION BY [IFateReferenceNumber] ORDER BY Version DESC) AS RowNum,
+	[StandardUId],[IFateReferenceNumber],[LarsCode],[Title],[Version],
+	[Level],[Status],[TypicalDuration],[MaxFunding],[IsActive],[LastDateStarts],
+	[EffectiveFrom],[EffectiveTo],[VersionEarliestStartDate],[VersionLatestStartDate],[VersionLatestEndDate],
+	[VersionApprovedForDelivery],[ProposedTypicalDuration],[ProposedMaxFunding],[EPAChanged],[StandardPageUrl]
+	FROM [Standards]
+) AS Stds
+WHERE RowNum = 1";
+
+            var results = await _unitOfWork.Connection.QueryAsync<Standard>(
+                sql,
+                transaction: _unitOfWork.Transaction);
+
+            return results;
+        }
+
+        public async Task<IEnumerable<Standard>> GetStandardVersionsByIFateReferenceNumber(string iFateReferenceNumber)
+        {
+            var sql = @"SELECT [StandardUId],[IFateReferenceNumber],[LarsCode],[Title],[Version],
+[Level],[Status],[TypicalDuration],[MaxFunding],[IsActive],[LastDateStarts],
+[EffectiveFrom],[EffectiveTo],[VersionEarliestStartDate],[VersionLatestStartDate],[VersionLatestEndDate],
+[VersionApprovedForDelivery],[ProposedTypicalDuration],[ProposedMaxFunding],[EPAChanged],[StandardPageUrl] 
+FROM [Standards] Where [IFateReferenceNumber] = @iFateReferenceNumber";
+
+            var results = await _unitOfWork.Connection.QueryAsync<Standard>(
+                sql,
+                param: new { iFateReferenceNumber },
                 transaction: _unitOfWork.Transaction);
 
             return results;
@@ -125,7 +165,7 @@ namespace SFA.DAS.AssessorService.Data
             var sql = @"SELECT [StandardUId],[IFateReferenceNumber],[LarsCode],[Title],[Version],
 [Level],[Status],[TypicalDuration],[MaxFunding],[IsActive],[LastDateStarts],
 [EffectiveFrom],[EffectiveTo],[VersionEarliestStartDate],[VersionLatestStartDate],[VersionLatestEndDate],
-[VersionApprovedForDelivery],[ProposedTypicalDuration],[ProposedMaxFunding],[StandardPageUrl] FROM [Standards] Where [LarsCode] = @larsCode";
+[VersionApprovedForDelivery],[ProposedTypicalDuration],[ProposedMaxFunding],[EPAChanged],[StandardPageUrl] FROM [Standards] Where [LarsCode] = @larsCode";
 
             var results = await _unitOfWork.Connection.QueryAsync<Standard>(
                 sql,
@@ -140,7 +180,7 @@ namespace SFA.DAS.AssessorService.Data
             var sql = @"SELECT [StandardUId],[IFateReferenceNumber],[LarsCode],[Title],[Version],
 [Level],[Status],[TypicalDuration],[MaxFunding],[IsActive],[LastDateStarts],
 [EffectiveFrom],[EffectiveTo],[VersionEarliestStartDate],[VersionLatestStartDate],[VersionLatestEndDate],
-[VersionApprovedForDelivery],[ProposedTypicalDuration],[ProposedMaxFunding],[StandardPageUrl] FROM [Standards] Where [StandardUId] = @standardUId";
+[VersionApprovedForDelivery],[ProposedTypicalDuration],[ProposedMaxFunding],[EPAChanged],[StandardPageUrl] FROM [Standards] Where [StandardUId] = @standardUId";
 
             var result = await _unitOfWork.Connection.QuerySingleAsync<Standard>(
                 sql,

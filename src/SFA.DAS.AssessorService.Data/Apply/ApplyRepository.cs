@@ -160,7 +160,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
                 transaction: _unitOfWork.Transaction);
         }
 
-        public async Task<bool> UpdateStandardData(Guid id, int standardCode, string referenceNumber, string standardName, List<string> versions)
+        public async Task<bool> UpdateStandardData(Guid id, int standardCode, string referenceNumber, string standardName, List<string> versions, string applicationType)
         {
             var application = await GetApply(id);
             var applyData = application?.ApplyData;
@@ -168,6 +168,8 @@ namespace SFA.DAS.AssessorService.Data.Apply
             if(application != null && applyData != null)
             {
                 application.StandardCode = standardCode;
+                application.StandardReference = referenceNumber;
+                application.ApplicationType = applicationType;
 
                 if (applyData.Apply == null)
                 {
@@ -181,9 +183,9 @@ namespace SFA.DAS.AssessorService.Data.Apply
 
                 await _unitOfWork.Connection.ExecuteAsync(
                     @"UPDATE Apply
-                      SET  ApplyData = @ApplyData, StandardCode = @StandardCode
+                      SET  ApplyData = @ApplyData, StandardCode = @StandardCode, StandardReference = @standardReference, ApplicationType = @applicationType
                       WHERE  Id = @Id",
-                    param: new { application.Id, application.ApplyData, application.StandardCode },
+                    param: new { application.Id, application.ApplyData, application.StandardCode, application.StandardReference, application.ApplicationType },
                     transaction: _unitOfWork.Transaction);
                 
                 return true;

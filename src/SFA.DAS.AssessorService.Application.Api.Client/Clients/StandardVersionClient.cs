@@ -23,7 +23,23 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                 return await RequestAndDeserialiseAsync<IEnumerable<StandardVersion>>(request, $"Could not get the list of standards");
             }
         }
-        
+
+        public async Task<IEnumerable<StandardVersion>> GetLatestStandardVersions()
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/standard-version/standards/latest"))
+            {
+                return await RequestAndDeserialiseAsync<IEnumerable<StandardVersion>>(request, $"Could not get the list of latest standards");
+            }
+        }
+
+        public async Task<IEnumerable<StandardVersion>> GetStandardVersionsByIFateReferenceNumber(string iFateReferenceNumber)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/standard-version/standards/versions/{iFateReferenceNumber}"))
+            {
+                return await RequestAndDeserialiseAsync<IEnumerable<StandardVersion>>(request, $"Could not find the standard {iFateReferenceNumber}");
+            }
+        }
+
         public async Task<IEnumerable<StandardVersion>> GetStandardVersionsByLarsCode(int larsCode)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/standard-version/standards/versions/{larsCode}"))
@@ -69,7 +85,10 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
     public interface IStandardVersionClient
     {
         Task<IEnumerable<StandardVersion>> GetAllStandardVersions();
+        Task<IEnumerable<StandardVersion>> GetLatestStandardVersions();
+        Task<IEnumerable<StandardVersion>> GetStandardVersionsByIFateReferenceNumber(string iFateReferenceNumber);
         Task<IEnumerable<StandardVersion>> GetStandardVersionsByLarsCode(int larsCode);
+        
         /// <summary>
         /// Method can take LarsCode, IFateReferenceNumber or StandardUId and will return a standard.
         /// If LarsCode or IFateReferenceNumber is supplied, One Standard, the latest version will 

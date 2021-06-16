@@ -6,6 +6,7 @@ namespace SFA.DAS.AssessorService.Domain.Entities
     public class Apply: BaseEntity
     {
         public Guid Id { get; set; }
+        public string ApplicationType { get; set; }
         public Guid ApplicationId { get; set; }
         public Guid OrganisationId { get; set; }
         public virtual Organisation Organisation { get; set; }
@@ -18,5 +19,6 @@ namespace SFA.DAS.AssessorService.Domain.Entities
         public string CreatedBy { get; set; }
         public string UpdatedBy { get; set; }
         public string DeletedBy { get; set; }
+        public string StandardReference { get; set; }
     }
 }

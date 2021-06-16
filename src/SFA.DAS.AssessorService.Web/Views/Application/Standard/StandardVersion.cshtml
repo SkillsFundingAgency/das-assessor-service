@@ -1,0 +1,84 @@
+﻿@using SFA.DAS.AssessorService.Domain.Consts
+@model SFA.DAS.AssessorService.Web.ViewModels.Apply.StandardVersionApplicationViewModel
+
+@{
+    ViewBag.Title = "Confirm Standard";
+    Layout = "_Layout";
+}
+
+<a href="/organisationstandards" class="govuk-back-link">Return to approved standards and versions</a>
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+
+            <h1 class="govuk-heading-xl govuk-!-margin-bottom-1">
+                <span class="govuk-caption-l govuk-!-margin-bottom-2">Standard details</span>
+                @Model.SelectedStandard?.Title
+            </h1>
+
+            <p class="govuk-body-l">Reference: @Model.SelectedStandard?.IFateReferenceNumber</p>
+            <p class="govuk-body">For more information visit <a class="govuk-link--no-visited-state" target="_blank" href="@Model.SelectedStandard?.StandardPageUrl">the iFATE page for this standard (opens in a new tab or window)</a>.</p>
+            <div class="govuk-inset-text" wfd-id="10">
+                <strong> What does it mean to opt-in or apply for a standard version?</strong>
+                <br><br>
+
+                You can opt into a new standard version if you've already been approved for a different version with the same assessment plan.
+                This means you'll be automatically approved and won't have to answer questions about your organisation's assessment capabilities and capacity.
+                <br><br>
+                You can apply for a new standard version if you've already been approved for a different version of the same standard.
+                This means you won't have to answer as many questions to get approved.
+            </div>
+
+            <table class="govuk-table govuk-!-margin-bottom-7">
+                <caption class="govuk-table__caption govuk-table__caption--m"><p></p></caption>
+                <thead class="govuk-table__head">
+                    <tr class="govuk-table__row">
+                        <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">Version</th>
+                        <th scope="col" class="govuk-table__header govuk-!-width-one-half">Status</th>
+                        <th scope="col" class="govuk-table__header govuk-!-width-one-half">Action</th>
+                    </tr>
+                </thead>
+                <tbody class="govuk-table__body">
+                    @foreach (var version in Model.Results)
+                    {
+                    <tr class="govuk-table__row">
+                        <th scope="row" class="govuk-table__header">@version.Version</th>
+                        @if (version.VersionStatus == VersionStatus.Approved)
+                        {
+                            <td class="govuk-table__cell">Approved</td>
+                            <td class="govuk-table__cell"></td>
+                        }
+                        else if (version.VersionStatus == VersionStatus.NewVersionChanged)
+                        {
+                            <td class="govuk-table__cell">You can apply</td>
+                            <td class="govuk-table__cell"><a class="govuk-link--no-visited-state" href="/standard/@Model.Id/confirm-standard/@Model.StandardReference/@version.Version">Apply for standard version</a></td>
+                        }
+                        else if (version.VersionStatus == VersionStatus.NewVersionNoChange)
+                        {
+                            <td class="govuk-table__cell">You can opt-in</td>
+                            <td class="govuk-table__cell"><a class="govuk-link--no-visited-state" href="/standard/@Model.Id/opt-in/@Model.StandardReference/@version.Version">Opt into standard version</a></td>
+                        }
+                        else if (version.VersionStatus == VersionStatus.InProgress)
+                        {
+                            <td class="govuk-table__cell">@version.ApplicationStatus</td>
+                            <td class="govuk-table__cell">
+                                <a class="govuk-link" href="@Url.Action("SequenceSignPost", "Application", new { Id = version.ApplicationId })">View</a>
+                            </td>
+                        }
+                        else if (version.VersionStatus == VersionStatus.Withdrawn)
+                        {
+                            <td class="govuk-table__cell">Withdrawn</td>
+                            <td class="govuk-table__cell"></td>
+                        }
+                        else 
+                        {
+                            <td class="govuk-table__cell"></td>
+                            <td class="govuk-table__cell"></td>
+                        }
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>

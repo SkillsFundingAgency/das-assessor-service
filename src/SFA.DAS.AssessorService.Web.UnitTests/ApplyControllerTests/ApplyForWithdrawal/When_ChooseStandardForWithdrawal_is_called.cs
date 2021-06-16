@@ -132,7 +132,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ApplyControllerTests.ApplyForWit
 
             // Assert
             _mockApplicationsApiClient
-                .Verify(r => r.UpdateStandardData(It.IsAny<Guid>(), 10, "ST0300", "A standard title", null));
+                .Verify(r => r.UpdateStandardData(It.IsAny<Guid>(), 10, "ST0300", "A standard title", null, null));
         }
 
         private HttpContext SetupHttpContextSubAuthorityClaim()

@@ -91,7 +91,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task<bool> UpdateStandardData(Guid Id, int standardCode, string referenceNumber, string standardName, List<string> versions)
+        public async Task<bool> UpdateStandardData(Guid Id, int standardCode, string referenceNumber, string standardName, List<string> versions, string applicationType)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Post, $"api/v1/applications/updateStandardData"))
             {
@@ -101,7 +101,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                     StandardCode = standardCode,
                     ReferenceNumber = referenceNumber,
                     StandardName = standardName,
-                    Versions = versions
+                    Versions = versions,
+                    ApplicationType = applicationType
                 });
             }
         }

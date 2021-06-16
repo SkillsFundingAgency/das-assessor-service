@@ -48,6 +48,35 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
             return standards;
         }
 
+        public async Task<IEnumerable<Standard>> GetLatestStandardVersions()
+        {
+            var results = await _cacheService.RetrieveFromCache<IEnumerable<Standard>>("LatestStandards");
+
+            if (results != null)
+                return results;
+
+            var standards = await _standardRepository.GetLatestStandardVersions();
+
+            await _cacheService.SaveToCache("LatestStandards", standards, 8);
+            return standards;
+        }
+
+        public async Task<IEnumerable<Standard>> GetStandardVersionsByIFateReferenceNumber(string iFateReferenceNumber)
+        {
+            IEnumerable<Standard> standards = null;
+
+            try
+            {
+                standards = await _standardRepository.GetStandardVersionsByIFateReferenceNumber(iFateReferenceNumber);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"STANDARD VERSION: Failed to get for iFateReferenceNumber: {iFateReferenceNumber}");
+            }
+
+            return standards;
+        }
+
         public async Task<StandardCollation> GetStandard(int standardId)
         {
             StandardCollation standardCollation = null;

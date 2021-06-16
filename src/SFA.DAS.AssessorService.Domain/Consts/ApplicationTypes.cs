@@ -30,5 +30,7 @@
         public const string OrganisationWithdrawal = "OrganisationWithdrawal";
 
         public const string StandardWithdrawal = "StandardWithdrawal";
+
+        public const string Version = "version";
     }
 }

@@ -156,6 +156,21 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Standard
             model.Should().BeEquivalentTo(options);
         }
 
+        [Test, MoqAutoData]
+        public async Task WhenRequestingGetLatestStandardVersions_ThenLatestStandardVersionsAreReturned(List<Standard> standards)
+        {
+            _mockStandardService.Setup(service => service.GetLatestStandardVersions()).ReturnsAsync(standards);
+
+            var controllerResult = await _standardVersionController.GetLatestStandardVersions() as ObjectResult;
+
+            controllerResult.StatusCode.Should().Be((int)HttpStatusCode.OK);
+
+            var model = controllerResult.Value as List<StandardVersion>;
+
+            model.Count.Should().Be(standards.Count);
+            model[0].IFateReferenceNumber.Should().Be(standards[0].IfateReferenceNumber);
+        }
+
         private StandardVersion ConvertFromStandard(Standard standard)
         {
             return new StandardVersion

@@ -277,5 +277,15 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
 
             result.Should().BeEquivalentTo(standards);
         }
+
+        [Test, AutoData]
+        public async Task When_GetLatestStandardVersions_ReturnsLatestStandards(IEnumerable<Standard> standards)
+        {
+            _mockStandardRepository.Setup(s => s.GetLatestStandardVersions()).ReturnsAsync(standards);
+
+            var result = await _standardService.GetLatestStandardVersions();
+
+            result.Should().BeEquivalentTo(standards);
+        }
     }
 }
