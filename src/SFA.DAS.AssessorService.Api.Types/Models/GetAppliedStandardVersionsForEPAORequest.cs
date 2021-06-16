@@ -1,9 +1,10 @@
 ﻿using MediatR;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
+using System.Collections.Generic;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models
 {
-    public class GetStandardByOrganisationAndReferenceRequest : IRequest<OrganisationStandard>
+    public class GetAppliedStandardVersionsForEpaoRequest : IRequest<IEnumerable<AppliedStandardVersion>>
     {
         public string OrganisationId { get; set; }
 

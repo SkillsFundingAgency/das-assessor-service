@@ -116,11 +116,13 @@ CASE "Rule No" WHEN 1 THEN 'Certificate Submitted'
 			   WHEN 7 THEN 'Deleted Certificate'
 			   WHEN 8 THEN 'No EPA / Certificate'
 			   WHEN 9 THEN 'No match'
-			   ELSE 'bas data' END "Rule Description",
+			   ELSE 'bad data' END "Rule Description",
 certificate_by_EPAOrgId "EPAOrgId certificate createdby", ILR_for_EPAOrgId "EPAOrgId on ILR", @epaorgid "Results for EPAO", 
 What_is_allowed_for_Certificate "What can EPAO do with Certificate", 
 What_is_allowed_for_ILR "What can EPAO do with ILR",
-uln, familyname, StandardReference, Larscode, "Version", "Has certificate", "Status=Deleted", OverallGrade, "Status=Draft","Status=Submitted", LatestEpaOutcome, AchievementDate, "Has ILR"
+uln, familyname, StandardReference, Larscode, 
+(SELECT TOP 1 Certificatereference from certificates ce3 WHERE ce3.uln = ab4.uln AND ce3.standardcode = ab4.Larscode) Certificatereference,
+"Version", "Has certificate", "Status=Deleted", OverallGrade, "Status=Draft","Status=Submitted", LatestEpaOutcome, AchievementDate, "Has ILR"
 FROM
 (
 SELECT ROW_NUMBER() OVER (PARTITION BY "Rule No", Larscode ORDER BY ULN) rownumber, 
@@ -150,7 +152,7 @@ WHEN "Has certificate" = 'N'                                                    
 -- 9. No match
 WHEN "Has certificate" = 'N'                                                                                                                                                                        AND "Has ILR" = 'N' THEN 9 
 -- bad data ?
-ELSE 9 END "Rule No", certificate_by_EPAOrgId, certificate_CreatedAt, ILR_for_EPAOrgId, @epaorgid Chosen_EPAO, What_is_allowed_for_Certificate, 
+ELSE 10 END "Rule No", certificate_by_EPAOrgId, certificate_CreatedAt, ILR_for_EPAOrgId, @epaorgid Chosen_EPAO, What_is_allowed_for_Certificate, 
 CASE WHEN What_is_allowed_for_ILR IS NULL THEN 'No match' ELSE What_is_allowed_for_ILR END What_is_allowed_for_ILR
 FROM
 (

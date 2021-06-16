@@ -261,40 +261,7 @@ namespace SFA.DAS.AssessorService.Data
             }
         }
 
-        public async Task<OrganisationStandard> GetOrganisationStandardFromOrganisationIdAndStandardRefence(string organisationId, string standardReference)
-        {
-            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
-            {
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
-
-                var sqlForStandardByOrganisationIdAndStandardReference =
-                    "SELECT Id, EndPointAssessorOrganisationId as OrganisationId, StandardCode as StandardId, EffectiveFrom, EffectiveTo, " +
-                    "DateStandardApprovedOnRegister, Comments, Status, ContactId, OrganisationStandardData " +
-                    "FROM [OrganisationStandard] " +
-                    "WHERE EndPointAssessorOrganisationId = @organisationId AND StandardReference = @standardReference";
-                return await connection.QuerySingleAsync<OrganisationStandard>(sqlForStandardByOrganisationIdAndStandardReference, new { organisationId=organisationId, standardReference = standardReference });
-            }
-        }
-
-        public async Task<IEnumerable<OrganisationStandardVersion>> GetOrganisationStandardVersionsByOrganisationStandardId(int organisationStandardId)
-        {
-            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
-            {
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
-
-                var sqlForStandardVersionsByOrganisationStandardId =
-                    "SELECT StandardUId, Version, OrganisationStandardId, EffectiveFrom, EffectiveTo, DateVersionApproved, Comments, Status " +
-                    "FROM [OrganisationStandardVersion] " +
-                    "WHERE OrganisationStandardId = @organisationStandardId";
-
-                return await connection.QueryAsync<OrganisationStandardVersion>(
-                    sqlForStandardVersionsByOrganisationStandardId, new { organisationStandardId = organisationStandardId });
-            }
-        }
-
-        public async Task<IEnumerable<AppliedStandardVersion>> GetStandardVersionsByOrganisationIdAndStandardReference(string organisationId, string standardReference)
+        public async Task<IEnumerable<AppliedStandardVersion>> GetAppliedStandardVersionsForEPAO(string organisationId, string standardReference)
         {
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))
             {
@@ -326,9 +293,13 @@ namespace SFA.DAS.AssessorService.Data
                         os1.EffectiveFrom StdEffectiveFrom, os1.EffectiveTo StdEffectiveTo,
                         osv.EffectiveFrom StdVersionEffectiveFrom, osv.EffectiveTo StdVersionEffectiveTo
                         FROM standards so1 
-                        left join organisationstandard os1 on so1.IFateReferenceNumber = os1.StandardReference
-                        left join VersionApply va1 on va1.StandardUId = so1.StandardUId
-                        left join[OrganisationStandardVersion] osv on osv.standardUid = so1.standardUid AND osv.OrganisationStandardId = os1.Id
+                        LEFT JOIN organisationstandard os1 on so1.IFateReferenceNumber = os1.StandardReference AND 
+																os1.status = 'Live' AND
+																(os1.EffectiveTo IS NULL OR os1.EffectiveTo > GETDATE())
+						LEFT JOIN OrganisationStandardVersion osv on osv.standardUid = so1.standardUid AND osv.OrganisationStandardId = os1.Id AND
+															 osv.Status = 'Live' AND 
+															 (osv.EffectiveTo IS NULL OR osv.EffectiveTo > GETDATE())
+                        LEFT JOIN VersionApply va1 on va1.StandardUId = so1.StandardUId
                         WHERE
                             so1.IFateReferenceNumber = @standardReference  
                         ORDER BY so1.Version;";

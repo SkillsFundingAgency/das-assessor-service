@@ -61,22 +61,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
             return standards;
         }
 
-        public async Task<IEnumerable<Standard>> GetStandardVersionsByIFateReferenceNumber(string standardReference)
-        {
-            IEnumerable<Standard> standards = null;
-
-            try
-            {
-                standards = await _standardRepository.GetStandardVersionsByIFateReferenceNumber(standardReference);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"STANDARD: Failed to get for standard reference: {standardReference}");
-            }
-
-            return standards;
-        }
-
         public async Task<StandardCollation> GetStandard(int standardId)
         {
             StandardCollation standardCollation = null;

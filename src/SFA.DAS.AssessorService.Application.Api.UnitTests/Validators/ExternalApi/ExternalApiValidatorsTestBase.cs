@@ -31,20 +31,21 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
         {
             var certificateRepositoryMock = new Mock<ICertificateRepository>();
 
-            // Having a range of certificates for 2 EPAO's (with a shared standard) allows us to test the suite of validation ruleS
+            // Having a range of certificates for 2 EPAO's (with a shared standard) allows us to test the suite of validation rules
             certificateRepositoryMock.Setup(q => q.GetCertificate(1234567890, 1)).ReturnsAsync(GenerateCertificate(1234567890, 1, "test", CertificateStatus.Draft, new Guid("12345678123456781234567812345678")));
             certificateRepositoryMock.Setup(q => q.GetCertificate(1234567890, 98)).ReturnsAsync(GenerateCertificate(1234567890, 98, "test", CertificateStatus.Deleted, new Guid("12345678123456781234567812345678")));
             certificateRepositoryMock.Setup(q => q.GetCertificate(9999999999, 1)).ReturnsAsync(GenerateCertificate(9999999999, 1, "test", CertificateStatus.Printed, new Guid("99999999999999999999999999999999")));
             certificateRepositoryMock.Setup(q => q.GetCertificate(1234567890, 99)).ReturnsAsync(GenerateCertificate(1234567890, 99, "Test", CertificateStatus.Draft, new Guid("12345678123456781234567812345678")));
 
             // This is simulating a Certificate that started it's life on the Web App, but was never submitted
-            certificateRepositoryMock.Setup(q => q.GetCertificate(1234567890, 99)).ReturnsAsync(GeneratePartialCertificate(1234567890, 99, "test", new Guid("12345678123456781234567812345678"), null));
-            certificateRepositoryMock.Setup(q => q.GetCertificate(9999999999, 99)).ReturnsAsync(GeneratePartialCertificate(9999999999, 99, "test", new Guid("99999999999999999999999999999999"), CertificateGrade.Fail));
+            certificateRepositoryMock.Setup(q => q.GetCertificate(1234567890, 99)).ReturnsAsync(GeneratePartialCertificate(1234567890, 99, "test", new Guid("12345678123456781234567812345678"), null, CertificateStatus.Draft));
+            certificateRepositoryMock.Setup(q => q.GetCertificate(9999999999, 99)).ReturnsAsync(GeneratePartialCertificate(9999999999, 99, "test", new Guid("99999999999999999999999999999999"), CertificateGrade.Fail, CertificateStatus.Submitted));
 
             // These allow us to test EPAs, which is the initial stage of a Certificate
             certificateRepositoryMock.Setup(q => q.GetCertificate(1234567890, 101)).ReturnsAsync(GenerateEpaCertificate(1234567890, 101, "test", new Guid("12345678123456781234567812345678"), true));
             certificateRepositoryMock.Setup(q => q.GetCertificate(9999999999, 101)).ReturnsAsync(GenerateEpaCertificate(9999999999, 101, "test", new Guid("99999999999999999999999999999999"), false));
             certificateRepositoryMock.Setup(q => q.GetCertificate(9876543210, 101)).ReturnsAsync(GenerateEpaCertificate(9876543210, 101, "test", new Guid("99999999999999999999999999999999"), false));
+            certificateRepositoryMock.Setup(q => q.GetCertificate(9876543211, 101)).ReturnsAsync(GenerateEpaCertificate(9876543211, 101, "test", new Guid("99999999999999999999999999999999"), false, overallGrade: "Pass"));
 
             // This allows us to test, retrieving by ilr data if the calling organisation was not the one that created it
             certificateRepositoryMock.Setup(q => q.GetCertificateByUlnOrgIdLastnameAndStandardCode(1234567890, "99999999", "Test", 1))
@@ -69,37 +70,13 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
         {
             var standardServiceMock = new Mock<IStandardService>();
 
-            // Original Setup as the test class is shared by multiple validators
-            // Can be removed at end of external api development work
-            // Begin
-
-            var standardCollation1 = GenerateStandardCollation(1, new List<string>());
-            var standardCollation98 = GenerateStandardCollation(98, new List<string>());
-            var standardCollation99 = GenerateStandardCollation(99,
-                new List<string>
-                {
-                    "English",
-                    "French"
-                });
-            var standardCollation101 = GenerateStandardCollation(101, new List<string>());
-
-            standardServiceMock.Setup(c => c.GetAllStandards())
-                .ReturnsAsync(new List<StandardCollation>
-                {
-                        standardCollation1,
-                        standardCollation98,
-                        standardCollation99,
-                        standardCollation101
-                });
-
             standardServiceMock.Setup(c => c.GetEpaoRegisteredStandards("12345678"))
                 .ReturnsAsync(new List<EPORegisteredStandards> {
                     GenerateEPORegisteredStandard(1),
                     GenerateEPORegisteredStandard(98),
                     GenerateEPORegisteredStandard(99),
                     GenerateEPORegisteredStandard(101)
-
-            });
+                });
 
             standardServiceMock.Setup(c => c.GetEpaoRegisteredStandards("99999999"))
                 .ReturnsAsync(new List<EPORegisteredStandards> {
@@ -108,17 +85,10 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
                     GenerateEPORegisteredStandard(101)
                 });
 
-            // End Original Setup
-
             var standard1 = GenerateStandard(1);
             var standard98 = GenerateStandard(98);
-            var standard99 = GenerateStandard(99); // Missing Options From Above
+            var standard99 = GenerateStandard(99);
             var standard101 = GenerateStandard(101);
-
-            standardServiceMock.Setup(c => c.GetStandard(1)).ReturnsAsync(standardCollation1);
-            standardServiceMock.Setup(c => c.GetStandard(98)).ReturnsAsync(standardCollation98);
-            standardServiceMock.Setup(c => c.GetStandard(99)).ReturnsAsync(standardCollation99);
-            standardServiceMock.Setup(c => c.GetStandard(101)).ReturnsAsync(standardCollation101);
 
             standardServiceMock.Setup(c => c.GetAllStandardVersions())
                 .ReturnsAsync(new List<Standard>
@@ -176,6 +146,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
             ilrRepositoryMock.Setup(q => q.Get(9999999999, 99)).ReturnsAsync(GenerateIlr(9999999999, 99, "Test", "99999999", CompletionStatus.Complete));
             ilrRepositoryMock.Setup(q => q.Get(9999999999, 101)).ReturnsAsync(GenerateIlr(9999999999, 101, "Test", "99999999", CompletionStatus.Complete));
             ilrRepositoryMock.Setup(q => q.Get(9876543210, 101)).ReturnsAsync(GenerateIlr(9876543210, 101, "Test", "99999999", CompletionStatus.Complete));
+            ilrRepositoryMock.Setup(q => q.Get(9876543211, 101)).ReturnsAsync(GenerateIlr(9876543211, 101, "Test", "99999999", CompletionStatus.Complete));
 
             // Leave this ILR without a EPA or a Certificate!
             ilrRepositoryMock.Setup(q => q.Get(5555555555, 1)).ReturnsAsync(GenerateIlr(5555555555, 1, "Test", "12345678", CompletionStatus.Complete));
@@ -217,7 +188,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
                 .Build();
         }
 
-        private static Certificate GenerateEpaCertificate(long uln, int standardCode, string familyName, Guid organisationId, bool hasPassedEpa, bool createEpaDetails = true)
+        private static Certificate GenerateEpaCertificate(long uln, int standardCode, string familyName, Guid organisationId, bool hasPassedEpa, bool createEpaDetails = true, string overallGrade = null)
         {
             // NOTE: This is to simulate a certificate that has only the EPA part submitted
             var reference = $"{uln}-{standardCode}";
@@ -248,7 +219,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
                 .With(i => i.CertificateReference = $"{uln}-{standardCode}")
                                 .With(i => i.CertificateData = JsonConvert.SerializeObject(Builder<CertificateData>.CreateNew()
                                 .With(cd => cd.LearnerFamilyName = familyName)
-                                .With(cd => cd.OverallGrade = null)
+                                .With(cd => cd.OverallGrade = overallGrade)
                                 .With(cd => cd.AchievementDate = null)
                                 .With(cd => cd.EpaDetails = epaDetails)
                                 .With(cd => cd.ContactName = null)
@@ -263,7 +234,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
                 .Build();
         }
 
-        private static Certificate GeneratePartialCertificate(long uln, int standardCode, string familyName, Guid organisationId, string overallGrade)
+        private static Certificate GeneratePartialCertificate(long uln, int standardCode, string familyName, Guid organisationId, string overallGrade, string status)
         {
             var reference = $"{uln}-{standardCode}";
 
@@ -289,7 +260,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
             return Builder<Certificate>.CreateNew()
                 .With(i => i.Uln = uln)
                 .With(i => i.StandardCode = standardCode)
-                .With(i => i.Status = CertificateStatus.Draft)
+                .With(i => i.Status = status)
                 .With(i => i.OrganisationId = organisationId)
                 .With(i => i.CertificateReference = reference)
                                 .With(i => i.CertificateData = JsonConvert.SerializeObject(Builder<CertificateData>.CreateNew()
@@ -327,16 +298,6 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
                 .With(i => i.Level = standardCode)
                 .With(i => i.Version = 1.0m)
                 .With(i => i.StandardUId = $"ST{standardCode}_{1.0m}").Build();
-        }
-
-        private static StandardCollation GenerateStandardCollation(int standardCode, List<string> options)
-        {
-            return Builder<StandardCollation>.CreateNew()
-                .With(i => i.Title = $"{standardCode}")
-                .With(i => i.StandardId = standardCode)
-                .With(i => i.ReferenceNumber = $"{standardCode}")
-                .With(i => i.StandardData = new StandardData() { Level = standardCode })
-                .With(i => i.Options = options).Build();
         }
 
         private static StandardVersion GenerateEPORegisteredStandardVersion(int standardCode)

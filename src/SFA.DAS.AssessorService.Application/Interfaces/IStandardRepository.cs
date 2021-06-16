@@ -17,7 +17,6 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<List<StandardNonApprovedCollation>> GetStandardNonApprovedCollations();
         Task<StandardNonApprovedCollation> GetStandardNonApprovedCollationByReferenceNumber(string referenceNumber);
 
-        Task<List<Option>> GetOptions(int stdCode);
         Task<int> GetEpaoStandardsCount(string endPointAssessorOrganisationId);
         Task<EpoRegisteredStandardsResult> GetEpaoRegisteredStandards(string endPointAssessorOrganisationId,int pageSize, int pageIndex);
         Task<EpaoPipelineStandardsResult> GetEpaoPipelineStandards(string endPointAssessorOrganisationId,
@@ -27,7 +26,6 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         // New Standard Version Methods
         Task<IEnumerable<Standard>> GetAllStandards();
         Task<IEnumerable<Standard>> GetLatestStandardVersions();
-        Task<IEnumerable<Standard>> GetStandardVersionsByIFateReferenceNumber(string standardReference);
         Task<IEnumerable<Standard>> GetStandardVersionsByLarsCode(int larsCode);
         Task<Standard> GetStandardVersionByStandardUId(string standardUId);
         
@@ -46,8 +44,8 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         /// <param name="iFateReferenceNumber">if just iFateReferenceNumber, latest version returned</param>
         /// <param name="version">optional parameter for specific version</param>
         /// <returns></returns>
-        Task<Standard> GetStandardVersionByIFateReferenceNumber(string standardReference, string version = null);
-        Task InsertStandards(IEnumerable<Standard> standard);
+        Task<Standard> GetStandardVersionByIFateReferenceNumber(string iFateReferenceNumber, string version = null);
+        Task InsertStandards(IEnumerable<Standard> standards);
         Task InsertOptions(IEnumerable<StandardOption> optionsToInsert);
         Task<IEnumerable<StandardOptions>> GetAllStandardOptions();
         Task<IEnumerable<StandardOptions>> GetStandardOptionsForLatestStandardVersions();

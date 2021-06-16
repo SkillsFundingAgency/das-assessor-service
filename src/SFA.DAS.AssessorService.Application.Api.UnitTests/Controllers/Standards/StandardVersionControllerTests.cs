@@ -167,23 +167,8 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Standard
 
             var model = controllerResult.Value as List<StandardVersion>;
 
-            model.Count.Should().Equals(standards.Count);
-            model[0].IFateReferenceNumber.Should().Equals(standards[0].IfateReferenceNumber);
-        }
-
-        [Test, MoqAutoData]
-        public async Task WhenRequestingGetStandardVersionsByIFateReferenceNumber_ThenStandardVersionsAreReturned(string standardReference, List<Standard> standards)
-        {
-            _mockStandardService.Setup(service => service.GetStandardVersionsByIFateReferenceNumber(standardReference)).ReturnsAsync(standards);
-
-            var controllerResult = await _standardVersionController.GetStandardVersionsByIFateReferenceNumber(standardReference) as ObjectResult;
-
-            controllerResult.StatusCode.Should().Be((int)HttpStatusCode.OK);
-
-            var model = controllerResult.Value as List<StandardVersion>;
-
-            model.Count.Should().Equals(standards.Count);
-            model[0].IFateReferenceNumber.Should().Equals(standards[0].IfateReferenceNumber);
+            model.Count.Should().Be(standards.Count);
+            model[0].IFateReferenceNumber.Should().Be(standards[0].IfateReferenceNumber);
         }
 
         private StandardVersion ConvertFromStandard(Standard standard)

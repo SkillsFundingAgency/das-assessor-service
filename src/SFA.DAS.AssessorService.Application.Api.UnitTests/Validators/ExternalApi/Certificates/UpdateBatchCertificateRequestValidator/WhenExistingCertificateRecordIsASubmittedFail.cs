@@ -6,11 +6,12 @@ using SFA.DAS.AssessorService.Api.Types.Models.ExternalApi.Certificates;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalApi.Certificates.UpdateBatchCertificateRequestValidator
 {
-    public class WhenLatestEpaOutcomeInvalid : UpdateBatchCertificateRequestValidatorTestBase
+    public class WhenExistingCertificateRecordIsASubmittedFail : UpdateBatchCertificateRequestValidatorTestBase
     {
         private ValidationResult _validationResult;
 
@@ -41,6 +42,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
         {
             _validationResult.IsValid.Should().BeFalse();
             _validationResult.Errors.Count.Should().Be(1);
+            _validationResult.Errors.First().ErrorMessage.Should().Be("Certificate not found");
         }
     }
 

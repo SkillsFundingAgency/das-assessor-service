@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using SFA.DAS.AssessorService.Application.Api.External.Extenstions;
 
 namespace SFA.DAS.AssessorService.Application.Api.External.AutoMapperProfiles
 {
@@ -30,7 +31,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.AutoMapperProfiles
                 .ForPath(dest => dest.Learner.FamilyName, opt => opt.MapFrom(source => source.LearnerFamilyName))
                 .ForPath(dest => dest.Learner.GivenNames, opt => opt.MapFrom(source => source.LearnerGivenNames))
                 .ForPath(dest => dest.LearningDetails.Version, opt => opt.MapFrom(source => source.Version))
-                .ForPath(dest => dest.LearningDetails.AchievementDate, opt => opt.MapFrom(source => source.AchievementDate))
+                .ForPath(dest => dest.LearningDetails.AchievementDate, opt => opt.MapFrom(source => source.AchievementDate.DropMilliseconds()))
                 .ForPath(dest => dest.LearningDetails.CourseOption, opt => opt.MapFrom(source => source.CourseOption))
                 .ForPath(dest => dest.LearningDetails.Version, opt => {
                         opt.Condition(version => !string.IsNullOrEmpty(version.SourceMember));
