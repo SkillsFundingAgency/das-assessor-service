@@ -18,7 +18,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
 {
 
     [TestFixture]
-    public class GetStandardVersionsByOrganisationIdAndStandardReferenceTests
+    public class GetAppliedStandardVersionsForEpaoTests
     {
         private static RegisterQueryController _queryController;
         private static object _result;
@@ -46,7 +46,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
                     new CancellationToken())).ReturnsAsync(_expectedVersions);
             _queryController = new RegisterQueryController(_mediator.Object, _logger.Object);
 
-            _result = _queryController.GetAppliedStandardVersionsForEPAO(OrganisationId, StandardReference).Result;
+            _result = _queryController.GetAppliedStandardVersionsForEpao(OrganisationId, StandardReference).Result;
         }
 
         [Test]
