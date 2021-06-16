@@ -1,14 +1,8 @@
-﻿using MediatR;
-using Newtonsoft.Json;
-using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
+﻿using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models.ExternalApi.Epas;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Extensions;
 using SFA.DAS.AssessorService.Domain.JsonData;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Api.Extensions
 {
@@ -31,15 +25,17 @@ namespace SFA.DAS.AssessorService.Application.Api.Extensions
 
                 if (string.IsNullOrWhiteSpace(request.Version))
                 {
-                    // As we had to calculate version and standardUid, if existing certificate is not null, 
-                    // Prioritise those values
+                    // As version not specified, version and standardUid are calculated, 
+                    // but if existing certificate is not null, Prioritise those values
                     if (existingCertificate != null)
                     {
                         var certificateData = JsonConvert.DeserializeObject<CertificateData>(existingCertificate.CertificateData);
                         request.Version = certificateData.Version;
                         request.StandardUId = existingCertificate.StandardUId;
                     }
-                    else
+
+                    // If certificate was null, or the values were not there... override with calculated
+                    if (string.IsNullOrWhiteSpace(request.Version))
                     {
                         // if version is null or empty, set version to the calculated version as a default.
                         request.Version = standard.Version.VersionToString();

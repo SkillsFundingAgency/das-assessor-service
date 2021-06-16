@@ -1,7 +1,5 @@
 ﻿using SFA.DAS.AssessorService.Application.Api.External.Models.Response.Certificates;
 using SFA.DAS.AssessorService.Domain.Consts;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace SFA.DAS.AssessorService.Application.Api.External.Helpers
 {
@@ -23,9 +21,9 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Helpers
             {
                 return false;
             }
-            else if (certificate.CertificateData.PostalContact is null 
+            else if (certificate.CertificateData.PostalContact is null
                     || string.IsNullOrEmpty(certificate.CertificateData.PostalContact.ContactName)
-                    || string.IsNullOrEmpty(certificate.CertificateData.PostalContact.City) 
+                    || string.IsNullOrEmpty(certificate.CertificateData.PostalContact.City)
                     || string.IsNullOrEmpty(certificate.CertificateData.PostalContact.PostCode))
             {
                 return false;
@@ -39,13 +37,10 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Helpers
                         || !certificate.CertificateData.LearningDetails.AchievementDate.HasValue)
             {
                 return false;
-            } 
-            else if (hasOptions.HasValue && hasOptions == true)
+            }
+            else if (hasOptions.HasValue && hasOptions == true && string.IsNullOrEmpty(certificate.CertificateData.LearningDetails.CourseOption))
             {
-                if (string.IsNullOrEmpty(certificate.CertificateData.LearningDetails.CourseOption))
-                {
-                    return false;
-                }
+                return false;
             }
 
             return true;

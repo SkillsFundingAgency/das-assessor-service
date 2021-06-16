@@ -16,13 +16,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers
     [Route("certificate/address")]
     public class CertificateAddressController : CertificateBaseController
     {
-        private readonly IHttpContextAccessor _contextAccessor;
         private readonly ICertificateApiClient _certificateApiClient;
 
         public CertificateAddressController(ILogger<CertificateController> logger, IHttpContextAccessor contextAccessor,
             ICertificateApiClient certificateApiClient, ISessionService sessionService) : base(logger, contextAccessor, certificateApiClient, sessionService)
         {
-            _contextAccessor = contextAccessor;
             _certificateApiClient = certificateApiClient;
         }
 

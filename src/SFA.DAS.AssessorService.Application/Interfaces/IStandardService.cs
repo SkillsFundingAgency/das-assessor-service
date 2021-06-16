@@ -26,7 +26,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         /// <param name="id">LarsCode, IFateReferenceNumber or StandardUId</param>
         /// <param name="version">Optional parameter version, taken into account if LarsCode or IFateReference Supplied</param>
         /// <returns></returns>
-        Task<Standard> GetStandardVersionById(string standardId, string version = null);
+        Task<Standard> GetStandardVersionById(string id, string version = null);
         Task<IEnumerable<StandardOptions>> GetAllStandardOptions();
         Task<IEnumerable<StandardOptions>> GetStandardOptionsForLatestStandardVersions();
         Task<StandardOptions> GetStandardOptionsByStandardId(string id);
