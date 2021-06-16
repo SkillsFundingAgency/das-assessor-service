@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
 
 namespace SFA.DAS.AssessorService.ApplyTypes
 {
@@ -12,6 +14,24 @@ namespace SFA.DAS.AssessorService.ApplyTypes
         public string StandardReference { get; set; }
         public string Standard => StandardCode.HasValue ? $"{StandardName} ({StandardCode})" : StandardName;
         public string Versions { get; set; }
+        public IEnumerable<string> VersionsList
+        {
+            get
+            {
+                if (string.IsNullOrWhiteSpace(Versions))
+                {
+                    return new List<string>();
+                }
+                try
+                {
+                    return JsonConvert.DeserializeObject<IEnumerable<string>>(Versions);
+                }
+                catch
+                {
+                    return new List<string>();
+                }
+            }
+        }
         public DateTime? SubmittedDate { get; set; }
         public DateTime? FeedbackAddedDate { get; set; }
         public DateTime? ClosedDate { get; set; }
