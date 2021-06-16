@@ -11,6 +11,8 @@ using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.Orchestrators.Search;
 using SFA.DAS.AssessorService.Web.StartupConfiguration;
 using SFA.DAS.AssessorService.Web.ViewModels.Search;
+using SFA.DAS.AssessorService.Web.ViewModels.Shared;
+using static SFA.DAS.AssessorService.Web.ViewModels.Search.SelectedStandardViewModel;
 
 namespace SFA.DAS.AssessorService.Web.Controllers
 {
@@ -51,37 +53,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
             var result = await _searchOrchestrator.Search(vm);
 
-            if (result.IsPrivatelyFunded)
-            {
-                //When there is no certficate found
-                if (!result.SearchResults.Any())
-                {
-                    return RedirectToAction("Index", "CertificatePrivateDeclaration", vm);
-                }
-                //When certificate found but ULN already being used and a different familyname used
-                if (result.SearchResults.Any(x => x.UlnAlreadyExists && x.IsPrivatelyFunded))
-                {
-                    GetSelectedStandardViewModel(result);
-                    return RedirectToAction("Result");
-                }
-                //Certificate found but was for a uln assocaited with a user in another org
-                if (result.SearchResults.Any(x => x.Uln == "0" && x.GivenNames == null && x.IsPrivatelyFunded))
-                {
-                    vm.SearchResults = new List<ResultViewModel>();
-                    return View("Index", vm);
-                }
-                //Certifcate found but no standard set or a certificate reference not set, this could be a draft certificate
-                if (result.SearchResults.Any(x => x.Standard == null || x.CertificateReference == null))
-                {
-                    return RedirectToAction("Index", "CertificatePrivateDeclaration", vm);
-                }
-                
-            }
-
             if (!result.SearchResults.Any())
                 return View("Index", vm);
 
-          
             _sessionService.Set("SearchResults", result);
             
             if (result.SearchResults.Count() > 1)
@@ -98,7 +72,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         {
             var chooseStandardViewModel = new ChooseStandardViewModel
             {
-                SearchResults = vm.SearchResults
+                SearchResults = vm.SearchResults.OrderByDescending(s => s.StandardReferenceNumber)
             };
 
             _sessionService.Set("SearchResultsChooseStandard", chooseStandardViewModel);
@@ -117,14 +91,15 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 CertificateReference = resultViewModel.CertificateReference,
                 OverallGrade = resultViewModel.OverallGrade,
                 Level = resultViewModel.Level,
+                Version = resultViewModel.Version,
                 SubmittedAt = GetSubmittedAtString(resultViewModel.SubmittedAt),
                 SubmittedBy = resultViewModel.SubmittedBy,
                 LearnerStartDate = resultViewModel.LearnStartDate.GetValueOrDefault().ToString("d MMMM yyyy"),
                 AchievementDate = resultViewModel.AchDate.GetValueOrDefault().ToString("d MMMM yyyy"),
                 ShowExtraInfo = resultViewModel.ShowExtraInfo,
                 UlnAlreadyExists = resultViewModel.UlnAlreadyExists,
-                IsNoMatchingFamilyName = resultViewModel.IsNoMatchingFamilyName
-
+                IsNoMatchingFamilyName = resultViewModel.IsNoMatchingFamilyName,
+                Versions = resultViewModel.Versions
             };
 
             _sessionService.Set("SelectedStandard", selectedStandardViewModel);
@@ -166,46 +141,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             }
 
             return View("ChooseStandard", vm);
-        }
-
-        [HttpPost(Name = "choose")]
-        public IActionResult ChooseStandard(ChooseStandardViewModel chooseStandardViewModel)
-        {
-            if (!ModelState.IsValid)
-            {
-                var viewModel = _sessionService.Get<ChooseStandardViewModel>("SearchResultsChooseStandard");
-                return View("ChooseStandard", viewModel);
-            }
-
-            var vm = _sessionService.Get<SearchRequestViewModel>("SearchResults");
-            if (vm == null)
-            {
-                return RedirectToAction("Index");
-            }
-
-            var selected = vm.SearchResults
-                .Single(sr => sr.StdCode == chooseStandardViewModel.StdCode);
-
-            var selectedStandardViewModel = new SelectedStandardViewModel()
-            {
-                Standard = selected.Standard,
-                StdCode = selected.StdCode,
-                Uln = selected.Uln,
-                GivenNames = selected.GivenNames,
-                FamilyName = selected.FamilyName,
-                CertificateReference = selected.CertificateReference,
-                OverallGrade = selected.OverallGrade,
-                Level = selected.Level,
-                SubmittedAt = GetSubmittedAtString(selected.SubmittedAt),
-                SubmittedBy = selected.SubmittedBy,
-                LearnerStartDate = selected.LearnStartDate.GetValueOrDefault().ToString("d MMMM yyyy"),
-                AchievementDate = selected.AchDate.GetValueOrDefault().ToString("d MMMM yyyy"),
-                ShowExtraInfo = selected.ShowExtraInfo
-            };
-
-            _sessionService.Set("SelectedStandard", selectedStandardViewModel);
-            
-            return RedirectToAction("Result");
         }
     }
 }

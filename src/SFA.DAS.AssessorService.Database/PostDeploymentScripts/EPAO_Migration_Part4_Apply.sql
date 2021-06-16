@@ -1,4 +1,4 @@
-﻿-- Migrate Apply table - set the Standardreference
+﻿-- Migrate part 4 Apply table - set the Standardreference
 
 UPDATE Apply
 SET StandardReference = JSON_VALUE(ApplyData,'$.Apply.StandardReference') 

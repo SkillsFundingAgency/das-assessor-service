@@ -41,7 +41,9 @@ WHERE rownumber = 1 AND EarliestStartDate IS NOT NULL
 ),
 certs AS
 -- certificates
-(SELECT certificateid,standardcode,standardreference,CONVERT(datetime,LearningStartDate) LearnStartDate
+(SELECT certificateid,standardcode
+,CASE WHEN standardreference IS NULL THEN (SELECT TOP 1 IfateReferenceNumber  from [Standards] so2 WHERE so2.LARScode = ce1.standardcode) ELSE standardreference END standardreference
+,CONVERT(datetime,LearningStartDate) LearnStartDate
 FROM 
 (
 SELECT [Id] certificateid, standardcode
@@ -69,7 +71,7 @@ ON MasterCerts.id = ceupd.certificateid
 WHEN matched AND MasterCerts.standardUId IS NULL 
 THEN  UPDATE 
 SET MasterCerts.standardUId = ceupd.EstimatedUId,
-      MasterCerts.Certificatedata = JSON_MODIFY(MasterCerts.Certificatedata,'$.version',''); 
+      MasterCerts.Certificatedata = JSON_MODIFY(MasterCerts.Certificatedata,'$.Version',''); 
 -- set version as an empty string (as it is not known!)
 
 

@@ -74,7 +74,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
 
             var logs = await _certificateRepository.GetCertificateLogsFor(request.Certificate.Id);
             var latestLogEntry = logs.OrderByDescending(l => l.EventTime).FirstOrDefault();
-            if (latestLogEntry != null && latestLogEntry.Action == request.Action && string.IsNullOrWhiteSpace(request.ReasonForChange))
+            
+            if (latestLogEntry != null && latestLogEntry.Action == request.Action && latestLogEntry.CertificateData == request.Certificate.CertificateData && string.IsNullOrWhiteSpace(request.ReasonForChange))
             {
                 return await _certificateRepository.Update(request.Certificate, request.Username, request.Action, updateLog:false);
             }

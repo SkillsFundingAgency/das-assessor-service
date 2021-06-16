@@ -24,8 +24,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Epas
                 {
                     if (!string.IsNullOrEmpty(m.StandardReference))
                     {
-                        var collatedStandard = await standardService.GetStandard(m.StandardReference);
-                        if (m.StandardCode != collatedStandard?.StandardId)
+                        var standard = await standardService.GetStandardVersionById(m.StandardReference);
+                        if (m.StandardCode != standard?.LarsCode)
                         {
                             context.AddFailure("StandardReference and StandardCode must be for the same Standard");
                         }
@@ -80,20 +80,17 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Epas
                     }
                     else
                     {
+                        var certData = JsonConvert.DeserializeObject<CertificateData>(existingCertificate.CertificateData);
                         switch (existingCertificate.Status)
                         {
                             case CertificateStatus.Deleted:
-                                break;
                             case CertificateStatus.Draft:
-                                var certData = JsonConvert.DeserializeObject<CertificateData>(existingCertificate.CertificateData);
-
-                                if (!string.IsNullOrEmpty(certData.OverallGrade) && certData.AchievementDate.HasValue && !string.IsNullOrEmpty(certData.ContactPostCode))
+                                break;
+                            default:
+                                if (!string.IsNullOrEmpty(certData.OverallGrade) && certData.OverallGrade != CertificateGrade.Fail)
                                 {
                                     context.AddFailure(new ValidationFailure("EpaReference", $"Certificate already exists, cannot delete EPA record"));
                                 }
-                                break;
-                            default:
-                                context.AddFailure(new ValidationFailure("EpaReference", $"Certificate already exists, cannot delete EPA record"));
                                 break;
                         }
                     }

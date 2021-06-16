@@ -37,13 +37,14 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         [TestCase("ST0001", "1.00", "ST0001_1.0")]
         [TestCase("ST0001", "1.1", "ST0001_1.1")]
         [TestCase("ST0001", "1.2", "ST0001_1.2")]
+        [TestCase("ST0001", "", "ST0001_1.2")]
         [TestCase("ST0001", "1.10", "ST0001_1.10", Ignore = "Test will fail until version is stored as string (SV-568)")]
         [TestCase("ST0001", "1.12", "ST0001_1.12", Ignore = "Test will fail until version is stored as string (SV-568)")]
         public async Task GetStandardByStandardReferenceAndVersion_ReturnsCorrectStandard(string standardReference, string version, string standardUId)
         {
             var expectedStandard = _standards.Single(s => s.StandardUId == standardUId);
 
-            var standard = await _repository.GetStandardByStandardReferenceAndVersion(standardReference, version);
+            var standard = await _repository.GetStandardVersionByIFateReferenceNumber(standardReference, version);
 
             Assert.AreEqual(expectedStandard.StandardUId, standard.StandardUId);
         }

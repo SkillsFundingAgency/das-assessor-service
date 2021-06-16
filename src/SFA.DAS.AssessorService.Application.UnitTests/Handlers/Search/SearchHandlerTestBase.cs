@@ -5,6 +5,7 @@ using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Handlers.Search;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Domain.Entities;
 using Organisation = SFA.DAS.AssessorService.Domain.Entities.Organisation;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
@@ -25,9 +26,13 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
             RegisterQueryRepository = new Mock<IRegisterQueryRepository>();
             StandardService = new Mock<IStandardService>();
 
-            StandardService.Setup(c => c.GetAllStandards())
-                .ReturnsAsync(new List<StandardCollation> { new StandardCollation{Title = "Standard Name 12", StandardData = new StandardData{Level = 2}}, 
-                    new StandardCollation{Title = "Standard Name 13", StandardData = new StandardData{Level = 3}} });
+            StandardService.Setup(c => c.GetAllStandardVersions())
+                .ReturnsAsync(new List<Standard> { new Standard{LarsCode = 12, Title = "Standard Name 12", Level = 2},
+                    new Standard{LarsCode = 13, Title = "Standard Name 13", Level=3}});
+
+            StandardService.Setup(s => s.GetEPAORegisteredStandardVersions(It.IsAny<string>(), null))
+                .ReturnsAsync(new List<StandardVersion> { new StandardVersion { Title = "Standard 12", Version = "1.0", LarsCode = 12 },
+                                                          new StandardVersion { Title = "Standard 13", Version = "1.0", LarsCode = 13 } });
 
             RegisterQueryRepository.Setup(c => c.GetOrganisationStandardByOrganisationId("EPA001"))
                 .ReturnsAsync(new List<OrganisationStandardSummary>
@@ -35,26 +40,21 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
                     new OrganisationStandardSummary {StandardCode = 12},
                     new OrganisationStandardSummary {StandardCode = 13}
                 });
-                      StandardService.Setup(c => c.GetStandard(12))
-                .ReturnsAsync(new StandardCollation { Title = "Standard Name 12", StandardData = new StandardData{Level = 2} });
-            StandardService.Setup(c => c.GetStandard(13))
-                .ReturnsAsync(new StandardCollation { Title = "Standard Name 13", StandardData = new StandardData{Level = 3}});
-
 
             var orgQueryRepo = new Mock<IOrganisationQueryRepository>();
             orgQueryRepo.Setup(r => r.Get("12345"))
-                .ReturnsAsync(new Organisation() {EndPointAssessorOrganisationId = "EPA001"});
-            
+                .ReturnsAsync(new Organisation() { EndPointAssessorOrganisationId = "EPA001" });
+
             orgQueryRepo.Setup(r => r.Get("99999"))
-                .ReturnsAsync(new Organisation() {EndPointAssessorOrganisationId = "EPA0050"});
+                .ReturnsAsync(new Organisation() { EndPointAssessorOrganisationId = "EPA0050" });
 
             IlrRepository = new Mock<IIlrRepository>();
-            
+
 
             CertificateRepository = new Mock<ICertificateRepository>();
 
             ContactRepository = new Mock<IContactQueryRepository>();
-            SearchHandler = new SearchHandler(RegisterQueryRepository.Object, orgQueryRepo.Object, IlrRepository.Object,
+            SearchHandler = new SearchHandler(orgQueryRepo.Object, IlrRepository.Object,
                 CertificateRepository.Object, new Mock<ILogger<SearchHandler>>().Object, ContactRepository.Object, StandardService.Object);
         }
     }

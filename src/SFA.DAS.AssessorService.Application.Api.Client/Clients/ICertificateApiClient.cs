@@ -10,13 +10,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
     public interface ICertificateApiClient
     {
         Task<Certificate> Start(StartCertificateRequest request);
-        Task<Certificate> StartPrivate(StartCertificatePrivateRequest request);
         Task<Certificate> GetCertificate(Guid certificateId);
         Task<Certificate> UpdateCertificate(UpdateCertificateRequest updateGradeRequest);
         Task<PaginatedList<CertificateSummaryResponse>> GetCertificateHistory(int pageIndex, string userName);
-        Task<CertificateAddress> GetContactPreviousAddress(string userName, bool isPrivatelyFunded);
+        Task<CertificateAddress> GetContactPreviousAddress(string userName);
         Task<List<CertificateAddress>> GetPreviousAddressess(string userName);
-        Task<List<Option>> GetOptions(int stdCode);
         Task Delete(DeleteCertificateRequest deleteCertificateRequest);
     }
 }

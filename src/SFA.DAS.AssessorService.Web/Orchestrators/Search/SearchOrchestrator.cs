@@ -1,13 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Web.Controllers;
 using SFA.DAS.AssessorService.Web.ViewModels.Search;
+using SFA.DAS.AssessorService.Web.ViewModels.Shared;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Web.Orchestrators.Search
 {
@@ -35,8 +36,7 @@ namespace SFA.DAS.AssessorService.Web.Orchestrators.Search
                 Surname = vm.Surname,
                 Uln = long.Parse(vm.Uln),
                 EpaOrgId = epaOrgId,
-                Username = username,
-                IsPrivatelyFunded = vm.IsPrivatelyFunded
+                Username = username
             });
 
             var viewModelSearchResults = new List<ResultViewModel>();
@@ -49,8 +49,11 @@ namespace SFA.DAS.AssessorService.Web.Orchestrators.Search
                     Uln = Convert.ToString(result.Uln),
                     Standard = result.Standard,
                     StdCode = Convert.ToString(result.StdCode),
+                    Version = result.Version,
+                    Versions = Mapper.Map<List<StandardVersionViewModel>>(result.Versions),
                     OverallGrade = result.OverallGrade,
                     CertificateReference = result.CertificateReference,
+                    CertificateStatus = result.CertificateStatus,
                     Level = Convert.ToString(result.Level),
                     SubmittedAt = result.SubmittedAt,
                     SubmittedBy = result.SubmittedBy,
@@ -58,7 +61,6 @@ namespace SFA.DAS.AssessorService.Web.Orchestrators.Search
                     LearnStartDate = result.LearnStartDate,
                     ShowExtraInfo = result.ShowExtraInfo,
                     UlnAlreadyExists = result.UlnAlreadyExits,
-                    IsPrivatelyFunded = result.IsPrivatelyFunded,
                     IsNoMatchingFamilyName = result.IsNoMatchingFamilyName
                 });
             }

@@ -35,12 +35,13 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
                     new Ilr{ EpaOrgId = "EPA0001", StdCode = 3, FamilyName = "James"}
                 });
 
-            var assessmentOrgsApiClient = new Mock<IRegisterQueryRepository>();
             var standardService = new Mock<IStandardService>();
             standardService.Setup(c => c.GetAllStandards())
                 .ReturnsAsync(new List<StandardCollation> { new StandardCollation { Title = "Standard Title", StandardData = new StandardData{ Level = 2}}});
-            assessmentOrgsApiClient.Setup(c => c.GetOrganisationStandardByOrganisationId("EPA0001"))
-                .ReturnsAsync(new List<OrganisationStandardSummary>(){new OrganisationStandardSummary(){StandardCode = 5}});
+            standardService.Setup(s => s.GetEPAORegisteredStandardVersions(It.IsAny<string>(), null))
+                .ReturnsAsync(new List<StandardVersion> { new StandardVersion { Title = "Standard 1", Version = "1.0", LarsCode = 1 },
+                                                          new StandardVersion { Title = "Standard 2", Version = "1.0", LarsCode = 2 },
+                                                          new StandardVersion { Title = "Standard 3", Version = "1.0", LarsCode = 3 }});
             standardService.Setup(c => c.GetStandard(It.IsAny<int>()))
                 .ReturnsAsync(new StandardCollation {Title = "Standard Title", StandardData = new StandardData{ Level = 2}});
             
@@ -53,8 +54,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
                 .ReturnsAsync(new List<Certificate>());
             
             
-            var handler = new SearchHandler(assessmentOrgsApiClient.Object,
-                organisationRepository.Object, ilrRepository.Object,
+            var handler = new SearchHandler(organisationRepository.Object, ilrRepository.Object,
                 certificateRepository.Object, new Mock<ILogger<SearchHandler>>().Object, new Mock<IContactQueryRepository>().Object, standardService.Object);
 
             var result = handler.Handle(new SearchQuery{ Surname = "James", Uln = 1111111111, EpaOrgId = "12345", Username = "user@name"}, new CancellationToken()).Result;

@@ -20,7 +20,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
 
         public async Task<CertificateAddress> Handle(GetContactPreviousAddressesRequest request, CancellationToken cancellationToken)
         {
-            var certificateAddress = await _certificateRepository.GetContactPreviousAddress(request.Username, request.IsPrivatelyFunded);
+            var certificateAddress = await _certificateRepository.GetContactPreviousAddress(request.Username);
             return certificateAddress;
         }
     }

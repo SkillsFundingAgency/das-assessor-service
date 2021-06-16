@@ -6,8 +6,9 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
 {
     public interface IStandardImportService
     {
-        Task DeleteAllStandards();
+        Task DeleteAllStandardsAndOptions();
         Task LoadStandards(IEnumerable<StandardDetailResponse> standards);
+        Task LoadOptions(IEnumerable<StandardDetailResponse> standards);
         Task UpsertStandardCollations(IEnumerable<StandardDetailResponse> standards);
         Task UpsertStandardNonApprovedCollations(IEnumerable<StandardDetailResponse> standards);
     }
