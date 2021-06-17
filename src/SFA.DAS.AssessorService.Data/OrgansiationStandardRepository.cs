@@ -1,5 +1,4 @@
 ﻿using Dapper;
-using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
 using System.Linq;
