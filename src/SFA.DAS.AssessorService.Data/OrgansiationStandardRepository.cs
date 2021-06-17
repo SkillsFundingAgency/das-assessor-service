@@ -9,12 +9,9 @@ namespace SFA.DAS.AssessorService.Data
 {
     public class OrgansiationStandardRepository : Repository, IOrgansiationStandardRepository
     {
-        private readonly ILogger<OrgansiationStandardRepository> _logger;
-
-        public OrgansiationStandardRepository(IUnitOfWork unitOfWork, ILogger<OrgansiationStandardRepository> logger)
+        public OrgansiationStandardRepository(IUnitOfWork unitOfWork)
             : base(unitOfWork)
         {
-            _logger = logger;
         }
 
         public async Task<OrganisationStandard> GetOrganisationStandardByOrganisationIdAndStandardReference(string organisationId, string standardReference)

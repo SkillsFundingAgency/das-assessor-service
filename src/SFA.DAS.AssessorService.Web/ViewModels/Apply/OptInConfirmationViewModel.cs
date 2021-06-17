@@ -1,7 +1,4 @@
-﻿using SFA.DAS.AssessorService.Api.Types.Models.Apply;
-using System.Collections.Generic;
-
-namespace SFA.DAS.AssessorService.Web.ViewModels.Apply
+﻿namespace SFA.DAS.AssessorService.Web.ViewModels.Apply
 {
     public class OptInConfirmationViewModel
     {

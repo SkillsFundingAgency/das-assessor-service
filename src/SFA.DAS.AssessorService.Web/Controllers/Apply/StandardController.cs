@@ -228,8 +228,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             var standards = await _standardVersionApiClient.GetStandardVersionsByIFateReferenceNumber(standardReference);
             var stdVersion = standards.First(x => x.Version.Equals(version.ToString(), StringComparison.InvariantCultureIgnoreCase));
 
-            await _orgApiClient.OrganisationStandardVersionOptIn(id, contact.Id, org.OrganisationId, standardReference, version,
-            stdVersion.StandardUId, DateTime.Today, null, DateTime.Now, null, OrganisationStatus.Live);
+            await _orgApiClient.OrganisationStandardVersionOptIn(id, contact.Id, org.OrganisationId, standardReference, version, stdVersion.StandardUId, null);
 
             return RedirectToAction("OptInConfirmation", "Application", new { Id = id });
         }
