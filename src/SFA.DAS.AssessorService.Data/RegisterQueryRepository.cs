@@ -287,7 +287,7 @@ namespace SFA.DAS.AssessorService.Data
 		                    WHEN osv.StandardUId IS NOT NULL 
                             THEN (CASE WHEN osv.status = 'Live' AND (osv.EffectiveTo IS NULL OR osv.EffectiveTo > GETDATE()) THEN 'Approved' ELSE 'Withdrawn' END)
 		                    WHEN va1.StandardUId IS NOT NULL 
-		                    THEN (CASE WHEN ApplicationStatus = 'FeedbackAdded' THEN 'Feedback Added' ELSE ApplicationStatus END)
+		                    THEN (CASE WHEN ApplicationStatus = 'FeedbackAdded' THEN 'Feedback Added' ELSE 'Apply in progress' END)
 		                    ELSE 'Not yet applied'
 		                END ApprovedStatus,
                         va1.ApplyId AS ApplicationId,
