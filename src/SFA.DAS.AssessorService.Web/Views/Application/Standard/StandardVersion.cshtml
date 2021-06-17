@@ -65,12 +65,19 @@
                                 <a class="govuk-link" href="@Url.Action("SequenceSignPost", "Application", new { Id = version.ApplicationId })">View</a>
                             </td>
                         }
+                        else if (version.VersionStatus == VersionStatus.FeedbackAdded)
+                        {
+                            <td class="govuk-table__cell">Feedback added</td>
+                            <td class="govuk-table__cell">
+                                <a class="govuk-link" href="@Url.Action("SequenceSignPost", "Application", new { Id = version.ApplicationId })">View</a>
+                            </td>
+                        }
                         else if (version.VersionStatus == VersionStatus.Withdrawn)
                         {
                             <td class="govuk-table__cell">Withdrawn</td>
                             <td class="govuk-table__cell"></td>
                         }
-                        else 
+                        else
                         {
                             <td class="govuk-table__cell"></td>
                             <td class="govuk-table__cell"></td>

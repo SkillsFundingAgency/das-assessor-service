@@ -7,6 +7,7 @@ using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.ApplyTypes;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -96,11 +97,12 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
         private async Task NotifyContact(Domain.Entities.Contact contactToNotify, ApplyData applyData, CancellationToken cancellationToken)
         {
             var email = contactToNotify.Email;
-            var contact = contactToNotify.DisplayName;
+            var contactname = contactToNotify.DisplayName;
             var standard = applyData.Apply.StandardName;
+            var version = applyData.Apply.Versions.First();
 
-            var emailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.APPLY_EPAO_RESPONSE);
-            await _mediator.Send(new SendEmailRequest(email, emailTemplate, new { contact, standard }), cancellationToken);
+            var emailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.ApplyEPAOStandardOptin);
+            await _mediator.Send(new SendEmailRequest(email, emailTemplate, new { contactname, standard, version }), cancellationToken);
         }
     }
 }

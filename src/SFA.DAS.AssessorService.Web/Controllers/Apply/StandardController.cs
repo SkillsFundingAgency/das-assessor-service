@@ -328,6 +328,10 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
             if (version.ApprovedStatus == ApprovedStatus.ApplyInProgress)
                 versionStatus =  VersionStatus.InProgress;
+            else if (version.ApprovedStatus == ApprovedStatus.Withdrawn)
+                versionStatus = VersionStatus.Withdrawn;
+            else if (version.ApprovedStatus == ApprovedStatus.FeedbackAdded)
+                versionStatus = VersionStatus.FeedbackAdded;
             else if (version.ApprovedStatus == ApprovedStatus.NotYetApplied && approved)
             {
                 if (version.EPAChanged || previouslyChanged)
