@@ -31,13 +31,13 @@ try {
 
     # --- Build context and retrieve apiid
     Write-Host "Building APIM context for $ResourceGroupName\$ServiceName"
-    $ApimContext = New-AzureRmApiManagementContext -ResourceGroupName $ResourceGroupName -ServiceName $ServiceName
+    $ApimContext = New-AzApiManagementContext -ResourceGroupName $ResourceGroupName -ServiceName $ServiceName
 
     # Ensure policy file exists
     Write-Host "Test that policy file exists"
     if (Test-Path -Path $ApimApiPolicyFilePath) {
         Write-Host "Set API policy"
-        Set-AzureRmApiManagementPolicy -Context $ApimContext -Format application/vnd.ms-azure-apim.policy.raw+xml -ApiId $($ApiId) -PolicyFilePath $($ApimApiPolicyFilePath) -ErrorAction Stop -Verbose:$VerbosePreference
+        Set-AzApiManagementPolicy -Context $ApimContext -Format application/vnd.ms-azure-apim.policy.raw+xml -ApiId $ApiId -PolicyFilePath $ApimApiPolicyFilePath -ErrorAction Stop -Verbose:$VerbosePreference
     } else {
         Write-Host "Please specify a valid policy file path"
     }

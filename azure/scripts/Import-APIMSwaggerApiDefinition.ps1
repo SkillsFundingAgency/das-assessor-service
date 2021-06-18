@@ -40,7 +40,7 @@ Param(
 try {
     # --- Build context and retrieve apiid
     Write-Host "Building APIM context for $ResourceGroupName\$ServiceName"
-    $Context = New-AzureRmApiManagementContext -ResourceGroupName $ResourceGroupName -ServiceName $ServiceName
+    $Context = New-AzApiManagementContext -ResourceGroupName $ResourceGroupName -ServiceName $ServiceName
 
     if ($PSBoundParameters.ContainsKey("ApiUrlSuffix")) {
         $ApiSuf = $ApiUrlSuffix.ToLower()
@@ -49,8 +49,8 @@ try {
     }    
 
     # --- Import swagger definition
-    Write-Host "Updating API $ApiId\$ServiceName from definition $SwaggerSpecficiationUrl"
-    Import-AzureRmApiManagementApi -Context $Context -SpecificationFormat "Swagger" -SpecificationUrl $($SwaggerSpecificationUrl) -ApiId $($ApiId) -Path $($ApiSuf) -ErrorAction Stop -Verbose:$VerbosePreference
+    Write-Host "Updating API $ApiId\$ServiceName from definition $SwaggerSpecificationUrl"
+    Import-AzApiManagementApi -Context $Context -SpecificationFormat "Swagger" -SpecificationUrl $SwaggerSpecificationUrl -ApiId $ApiId -Path $ApiSuf -ErrorAction Stop -Verbose:$VerbosePreference
 } catch {
    throw $_
 }
