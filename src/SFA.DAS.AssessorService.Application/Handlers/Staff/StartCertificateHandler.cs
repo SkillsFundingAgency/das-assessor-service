@@ -43,9 +43,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
 
         public async Task<Certificate> Handle(StartCertificateRequest request, CancellationToken cancellationToken)
         {
-            _logger.LogInformation($"CreateNewCertificate Before Get Organisation from db by Endpointassessor ukprn {request.UkPrn}");
+            _logger.LogInformation($"StartCertificateRequest for EPAO Ukprn: {request.UkPrn}");
             var organisation = await _organisationQueryRepository.GetByUkPrn(request.UkPrn);
-
             var certificate = await _certificateRepository.GetCertificate(request.Uln, request.StandardCode);
 
             if (certificate == null)
@@ -53,12 +52,12 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
             else
             {
                 var certData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
-
-                _logger.LogInformation("CreateNewCertificate Before Get Ilr from db");
                 var ilr = await _ilrRepository.Get(request.Uln, request.StandardCode);
 
                 if (certificate.Status == CertificateStatus.Deleted && ilr != null)
                 {
+                    _logger.LogInformation($"Recreating deleted certificate for ULN: {certificate.Uln}, Standard: {certificate.StandardCode}");
+
                     certData.LearnerGivenNames = ilr.GivenNames;
                     certData.LearnerFamilyName = ilr.FamilyName;
                     certData.LearningStartDate = ilr.LearnStartDate;
