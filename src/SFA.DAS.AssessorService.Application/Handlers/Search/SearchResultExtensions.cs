@@ -13,7 +13,7 @@ using SFA.DAS.AssessorService.Domain.JsonData;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Search
 {
-    static class SearchResultExtensions
+    public static class SearchResultExtensions
     {
         public static List<SearchResult> PopulateStandards(this List<SearchResult> searchResults, IStandardService standardService, ILogger<SearchHandler> logger)
         {
@@ -116,62 +116,65 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
 
             var submittedLogEntry = certificateLogs.FirstOrDefault(l => l.Action == CertificateActions.Submit);
 
-            if (submittedLogEntry != null)
+            if (submittedLogEntry == null)
             {
-                var submittingContact = contactRepository.GetContact(submittedLogEntry.Username).Result ?? contactRepository.GetContact(certificate.UpdatedBy).Result;
-                var createdContact = contactRepository.GetContact(createdLogEntry?.Username).Result ?? contactRepository.GetContact(certificate.CreatedBy).Result;
-
-                var lastUpdatedLogEntry = certificateLogs.Aggregate((i1, i2) => i1.EventTime > i2.EventTime ? i1 : i2) ?? submittedLogEntry;
-                var lastUpdatedContact = contactRepository.GetContact(lastUpdatedLogEntry.Username).Result;
-
-                logger.LogInformation("MatchUpExistingCompletedStandards After GetContact");
-
-                var searchingContact = contactRepository.GetContact(request.Username).Result;
-
-                var certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
-
-                if (submittingContact != null && submittingContact.OrganisationId == searchingContact.OrganisationId)
-                {
-                    searchResult.ShowExtraInfo = true;
-                    searchResult.OverallGrade = certificateData.OverallGrade;
-                    searchResult.SubmittedBy = submittingContact.DisplayName; // This needs to be contact real name
-                    searchResult.SubmittedAt = submittedLogEntry.EventTime.UtcToTimeZoneTime(); // This needs to be local time 
-                    searchResult.AchDate = certificateData.AchievementDate;
-                    searchResult.UpdatedBy = lastUpdatedContact != null ? lastUpdatedContact.DisplayName : lastUpdatedLogEntry.Username; // This needs to be contact real name
-                    searchResult.UpdatedAt = lastUpdatedLogEntry.EventTime.UtcToTimeZoneTime(); // This needs to be local time
-                }
-                else if (createdContact != null && searchingContact != null && createdContact.OrganisationId == searchingContact.OrganisationId)
-                {
-                    searchResult.ShowExtraInfo = true;
-                    searchResult.OverallGrade = certificateData.OverallGrade;
-                    searchResult.SubmittedBy = submittedLogEntry.Username; // This needs to be contact real name
-                    searchResult.SubmittedAt = submittedLogEntry.EventTime.UtcToTimeZoneTime(); // This needs to be local time 
-                    searchResult.AchDate = certificateData.AchievementDate;
-                    searchResult.UpdatedBy = lastUpdatedContact != null ? lastUpdatedContact.DisplayName : lastUpdatedLogEntry.Username; // This needs to be contact real name
-                    searchResult.UpdatedAt = lastUpdatedLogEntry.EventTime.UtcToTimeZoneTime(); // This needs to be local time
-                }
-                else if (certificate.OrganisationId == searchingEpao?.Id)
-                {
-                    searchResult.ShowExtraInfo = true;
-                    searchResult.OverallGrade = certificateData.OverallGrade;
-                    searchResult.SubmittedBy = submittedLogEntry.Username ?? certificate.UpdatedBy;
-                    searchResult.SubmittedAt = submittedLogEntry.EventTime.UtcToTimeZoneTime(); // This needs to be local time 
-                    searchResult.AchDate = certificateData.AchievementDate;
-                    searchResult.UpdatedBy = lastUpdatedLogEntry.Username ?? certificate.UpdatedBy;
-                    searchResult.UpdatedAt = lastUpdatedLogEntry.EventTime.UtcToTimeZoneTime(); // This needs to be local time
-                }
-                else
-                {
-                    searchResult.ShowExtraInfo = false;
-                    searchResult.OverallGrade = "";
-                    searchResult.SubmittedBy = "";
-                    searchResult.SubmittedAt = null;
-                    searchResult.LearnStartDate = null;
-                    searchResult.AchDate = null;
-                    searchResult.UpdatedBy = null;
-                    searchResult.UpdatedAt = null;
-                }
+                return searchResult;
             }
+
+            var submittingContact = contactRepository.GetContact(submittedLogEntry.Username).Result ?? contactRepository.GetContact(certificate.UpdatedBy).Result;
+            var createdContact = contactRepository.GetContact(createdLogEntry?.Username).Result ?? contactRepository.GetContact(certificate.CreatedBy).Result;
+
+            var lastUpdatedLogEntry = certificateLogs.Aggregate((i1, i2) => i1.EventTime > i2.EventTime ? i1 : i2) ?? submittedLogEntry;
+            var lastUpdatedContact = contactRepository.GetContact(lastUpdatedLogEntry.Username).Result;
+
+            logger.LogInformation("MatchUpExistingCompletedStandards After GetContact");
+
+            var searchingContact = contactRepository.GetContact(request.Username).Result;
+
+            var certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
+
+            if (submittingContact.OrganisationId == searchingContact.OrganisationId)
+            {
+                searchResult.ShowExtraInfo = true;
+                searchResult.OverallGrade = certificateData.OverallGrade;
+                searchResult.SubmittedBy = submittingContact.DisplayName; // This needs to be contact real name
+                searchResult.SubmittedAt = submittedLogEntry.EventTime.UtcToTimeZoneTime(); // This needs to be local time 
+                searchResult.AchDate = certificateData.AchievementDate;
+                searchResult.UpdatedBy = lastUpdatedContact != null ? lastUpdatedContact.DisplayName : lastUpdatedLogEntry.Username; // This needs to be contact real name
+                searchResult.UpdatedAt = lastUpdatedLogEntry.EventTime.UtcToTimeZoneTime(); // This needs to be local time
+            }
+            else if (createdContact != null && searchingContact != null && createdContact.OrganisationId == searchingContact.OrganisationId)
+            {
+                searchResult.ShowExtraInfo = true;
+                searchResult.OverallGrade = certificateData.OverallGrade;
+                searchResult.SubmittedBy = submittedLogEntry.Username; // This needs to be contact real name
+                searchResult.SubmittedAt = submittedLogEntry.EventTime.UtcToTimeZoneTime(); // This needs to be local time 
+                searchResult.AchDate = certificateData.AchievementDate;
+                searchResult.UpdatedBy = lastUpdatedContact != null ? lastUpdatedContact.DisplayName : lastUpdatedLogEntry.Username; // This needs to be contact real name
+                searchResult.UpdatedAt = lastUpdatedLogEntry.EventTime.UtcToTimeZoneTime(); // This needs to be local time
+            }
+            else if (certificate.OrganisationId == searchingEpao?.Id)
+            {
+                searchResult.ShowExtraInfo = true;
+                searchResult.OverallGrade = certificateData.OverallGrade;
+                searchResult.SubmittedBy = submittedLogEntry.Username ?? certificate.UpdatedBy;
+                searchResult.SubmittedAt = submittedLogEntry.EventTime.UtcToTimeZoneTime(); // This needs to be local time 
+                searchResult.AchDate = certificateData.AchievementDate;
+                searchResult.UpdatedBy = lastUpdatedLogEntry.Username ?? certificate.UpdatedBy;
+                searchResult.UpdatedAt = lastUpdatedLogEntry.EventTime.UtcToTimeZoneTime(); // This needs to be local time
+            }
+            else
+            {
+                searchResult.ShowExtraInfo = false;
+                searchResult.OverallGrade = "";
+                searchResult.SubmittedBy = "";
+                searchResult.SubmittedAt = null;
+                searchResult.LearnStartDate = null;
+                searchResult.AchDate = null;
+                searchResult.UpdatedBy = null;
+                searchResult.UpdatedAt = null;
+            }
+            
 
             return searchResult;
         }
