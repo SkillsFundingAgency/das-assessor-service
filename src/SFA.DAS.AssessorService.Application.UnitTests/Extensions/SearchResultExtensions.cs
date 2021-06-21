@@ -37,13 +37,19 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Extensions
             _mockOrganisationQueryRepository = new Mock<IOrganisationQueryRepository>();
 
             SetUpCertificateAndLogEntries();
+            SetUpContactQuery();
         }
 
         [Test]
         public void When_MatchingExistingCompletedStandard_GetCompletedCertificatesByUln()
         {
-            MatchUpExistingCompletedStandards();
-
+          
+                _searchResults.MatchUpExistingCompletedStandards(_searchQuery,
+                                _mockCertificateRepository.Object,
+                                _mockContactQueryRepository.Object,
+                                _mockOrganisationQueryRepository.Object,
+                                Mock.Of<ILogger<SearchHandler>>());
+            
             _mockCertificateRepository.Verify(r => r.GetCompletedCertificatesFor(_searchQuery.Uln), Times.Once);
         }
 
@@ -130,6 +136,14 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Extensions
 
             _mockCertificateRepository.Setup(r => r.GetCertificateLogsFor(certificate.Id))
                 .ReturnsAsync(certificateLogEntries);
+        }
+
+        private void SetUpContactQuery()
+        {
+            var contact = Builder<Contact>.CreateNew().Build();
+            
+            _mockContactQueryRepository.Setup(r => r.GetContact(It.IsAny<string>()))
+                .ReturnsAsync(contact);
         }
     }
 }
