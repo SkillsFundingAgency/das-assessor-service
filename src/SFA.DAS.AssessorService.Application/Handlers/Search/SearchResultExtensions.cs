@@ -175,7 +175,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
                 searchResult.UpdatedAt = null;
             }
             
-
             return searchResult;
         }
     }

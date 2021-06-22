@@ -16,7 +16,7 @@ using System.Linq;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Extensions
 {
-    public class SearchResultExtensions
+    public class SearchResultExtensionsTests
     {
         private List<SearchResult> _searchResults;
         private List<Certificate> _certificates;
@@ -43,13 +43,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Extensions
         [Test]
         public void When_MatchingExistingCompletedStandard_GetCompletedCertificatesByUln()
         {
-          
-                _searchResults.MatchUpExistingCompletedStandards(_searchQuery,
-                                _mockCertificateRepository.Object,
-                                _mockContactQueryRepository.Object,
-                                _mockOrganisationQueryRepository.Object,
-                                Mock.Of<ILogger<SearchHandler>>());
-            
+            MatchUpExistingCompletedStandards();
+
             _mockCertificateRepository.Verify(r => r.GetCompletedCertificatesFor(_searchQuery.Uln), Times.Once);
         }
 
