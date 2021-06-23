@@ -13,7 +13,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             _localizer = localizer;
         }
 
-        public ValidationResult Validate(int ukprn)
+        public ValidationResult Validate(long ukprn)
         {
             var validationResult = new ValidationResult();
 

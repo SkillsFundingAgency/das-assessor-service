@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net;
-using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using AutoMapper;
 using MediatR;
@@ -31,11 +29,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         private readonly IOrganisationQueryRepository _organisationQueryRepository;
         private readonly UkPrnValidator _ukPrnValidator;
         private readonly IStringLocalizer<OrganisationQueryController> _localizer;
-        private readonly IWebConfiguration _config;
 
         public OrganisationQueryController(
-            ILogger<OrganisationQueryController> logger, IMediator mediator, IOrganisationQueryRepository organisationQueryRepository, UkPrnValidator ukPrnValidator, IStringLocalizer<OrganisationQueryController> localizer,
-            IWebConfiguration config
+            ILogger<OrganisationQueryController> logger, IMediator mediator, IOrganisationQueryRepository organisationQueryRepository, UkPrnValidator ukPrnValidator, IStringLocalizer<OrganisationQueryController> localizer
         )
         {
             _logger = logger;
@@ -43,7 +39,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             _organisationQueryRepository = organisationQueryRepository;
             _ukPrnValidator = ukPrnValidator;
             _localizer = localizer;
-            _config = config;
         }
         
         [HttpGet("ukprn/{ukprn}", Name = "SearchOrganisation")]
@@ -51,7 +46,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [SwaggerResponse((int) HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int) HttpStatusCode.NotFound, Type = typeof(string))]
         [SwaggerResponse((int) HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> SearchOrganisation(int ukprn)
+        public async Task<IActionResult> SearchOrganisation(long ukprn)
         {
             _logger.LogInformation($"Received Search for an Organisation Request using ukprn {ukprn}");
 
@@ -59,7 +54,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             if (!result.IsValid)
                 throw new BadRequestException(result.Errors[0].ErrorMessage);
 
-            var organisation = Mapper.Map<OrganisationResponse>(await _organisationQueryRepository.GetByUkPrn(ukprn));
+            var organisation = await _mediator.Send(new GetOrganisationByUkprnRequest(ukprn));
             if (organisation == null)
             {
                 var ex = new ResourceNotFoundException(
@@ -69,7 +64,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
             return Ok(organisation);
         }
-        
+
         [HttpGet(Name="GetAllOrganisations")]
         [SwaggerResponse((int) HttpStatusCode.OK, Type = typeof(List<OrganisationResponse>))]
         [SwaggerResponse((int) HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]

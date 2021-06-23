@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
+using SFA.DAS.AssessorService.Application.Api.AutoMapperProfiles;
 using SFA.DAS.AssessorService.Application.Api.Consts;
 using SFA.DAS.AssessorService.Application.Api.Controllers;
 using SFA.DAS.AssessorService.Application.Api.UnitTests.Helpers;
@@ -27,30 +28,24 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Organisa
 
         protected Mock<IOrganisationQueryRepository> OrganisationQueryRepositoryMock;
 
-        protected Mock<IMediator> Mediator = new Mock<IMediator>();
+        protected Mock<IMediator> MediatorMock = new Mock<IMediator>();
 
         protected Mock<IStringLocalizer<OrganisationQueryController>> OrganisationControllerLocaliserMock;
 
         protected Mock<ILogger<OrganisationQueryController>> ControllerLoggerMock;
 
-        protected Mock<IWebConfiguration> ConfigMock = new Mock<IWebConfiguration>();
-
-
         private MockStringLocaliserBuilder _mockStringLocaliserBuilder;
 
         protected  void Setup()
         {
-            Mediator = new Mock<IMediator>();
+            MediatorMock = new Mock<IMediator>();
 
             Mapper.Reset();
-            Mapper.Initialize(cfg =>
-            {
-                cfg.CreateMap<Organisation, OrganisationResponse>();
-            });
+            Mapper.Initialize(cfg => cfg.AddProfile<AssessorServiceOrganisationResponse>());
 
             SetupControllerMocks();
 
-            OrganisationQueryController = new OrganisationQueryController(ControllerLoggerMock.Object, Mediator.Object, OrganisationQueryRepositoryMock.Object, UkPrnValidator, OrganisationControllerLocaliserMock.Object, ConfigMock.Object);
+            OrganisationQueryController = new OrganisationQueryController(ControllerLoggerMock.Object, MediatorMock.Object, OrganisationQueryRepositoryMock.Object, UkPrnValidator, OrganisationControllerLocaliserMock.Object);
         }
 
         private void SetupControllerMocks()
@@ -75,6 +70,5 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Organisa
 
             ControllerLoggerMock = new Mock<ILogger<OrganisationQueryController>>();
         }
-        
     }
 }
