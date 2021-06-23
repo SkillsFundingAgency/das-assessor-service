@@ -48,11 +48,17 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
             var certificate = await _certificateRepository.GetCertificate(request.Uln, request.StandardCode);
 
             if (certificate == null)
+            {
                 certificate = await CreateNewCertificate(request, organisation);
+            }
             else
             {
                 var certData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
                 var ilr = await _ilrRepository.Get(request.Uln, request.StandardCode);
+
+                // when re-using an existing certificate ensure that the organistion matches the Ukprn for
+                // the latest organisation which is assessing the learner
+                certificate.OrganisationId = organisation.Id;
 
                 if (certificate.Status == CertificateStatus.Deleted && ilr != null)
                 {
@@ -64,7 +70,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
                     certData.FullName = $"{ilr.GivenNames} {ilr.FamilyName}";
                     certificate.CertificateData = JsonConvert.SerializeObject(certData);
                     certificate.IsPrivatelyFunded = ilr?.FundingModel == PrivateFundingModelNumber;
-                    certificate.OrganisationId = organisation.Id;
                     await _certificateRepository.Update(certificate, request.Username, null);
                 }
                 else if (certificate.Status == CertificateStatus.Submitted && certData.OverallGrade == CertificateGrade.Fail)
