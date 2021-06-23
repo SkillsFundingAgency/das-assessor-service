@@ -250,6 +250,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
         [Test, RecursiveMoqAutoData]
         public async Task WhenHandlingStartCertificateRequest_AndThereIsExistingCertificate_NotDeleted_UpdatesCertificateForNewGrade(
             StartCertificateRequest request,
+            Organisation organisationRecord,
             Certificate existingCertificate,
             CertificateData certificateData)
         {
@@ -257,6 +258,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
             existingCertificate.Status = CertificateStatus.Submitted;
             certificateData.OverallGrade = CertificateGrade.Fail;
             existingCertificate.CertificateData = JsonConvert.SerializeObject(certificateData);
+            _mockOrganisationQueryRepository.Setup(s => s.GetByUkPrn(request.UkPrn)).ReturnsAsync(organisationRecord);
             _mockCertificateRepository.Setup(s => s.GetCertificate(request.Uln, request.StandardCode)).ReturnsAsync(existingCertificate);
 
             // Act
