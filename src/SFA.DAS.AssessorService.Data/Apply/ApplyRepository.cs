@@ -619,7 +619,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
             @params.Add("pageIndex", pageIndex);
             @params.Add("totalCount", dbType: DbType.Int32, direction: ParameterDirection.Output);
 
-            var results = await _unitOfWork.Connection.QueryAsync<ApplicationSummaryItem>(
+            var results = await _unitOfWork.Connection.QueryAsync<ApplicationListItem>(
                 "Apply_List_Applications",
                 param: @params,
                 transaction: _unitOfWork.Transaction,
@@ -627,7 +627,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
 
             var result = new ApplicationsResult
             {
-                PageOfResults = results?.ToList() ?? new List<ApplicationSummaryItem>(),
+                PageOfResults = results?.ToList() ?? new List<ApplicationListItem>(),
                 TotalCount = @params.Get<int?>("totalCount") ?? 0
             };
 
