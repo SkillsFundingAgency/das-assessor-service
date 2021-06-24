@@ -15,7 +15,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
 {
     public class OrganisationStandardVersionOptInHandler : IRequestHandler<OrganisationStandardVersionOptInRequest, OrganisationStandardVersion>
     {
-        private readonly IOrgansiationStandardRepository _repository;
+        private readonly IOrganisationStandardRepository _repository;
         private readonly IApplyRepository _applyRepository;
         private readonly IStandardRepository _standardRepository;
         private readonly IContactQueryRepository _contactQueryRepository;
@@ -24,7 +24,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
         private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger<OrganisationStandardVersionOptInHandler> _logger;
 
-        public OrganisationStandardVersionOptInHandler(IOrgansiationStandardRepository repository, IApplyRepository applyRepository, IStandardRepository standardRepository,
+        public OrganisationStandardVersionOptInHandler(IOrganisationStandardRepository repository, IApplyRepository applyRepository, IStandardRepository standardRepository,
             IContactQueryRepository contactQueryRepository, IEMailTemplateQueryRepository eMailTemplateQueryRepository, IMediator mediator,
             IUnitOfWork unitOfWork, ILogger<OrganisationStandardVersionOptInHandler> logger)
         {
@@ -44,51 +44,50 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
             {
                 _unitOfWork.Begin();
 
-                OrganisationStandardVersion orgStandardVersion = null;
-
                 var orgStandard = await _repository.GetOrganisationStandardByOrganisationIdAndStandardReference(request.EndPointAssessorOrganisationId, request.StandardReference);
-                if (orgStandard != null)
+
+                var entity = new Domain.Entities.OrganisationStandardVersion
                 {
-                    var entity = new Domain.Entities.OrganisationStandardVersion
-                    {
-                        StandardUId = request.StandardUId,
-                        Version = request.Version,
-                        OrganisationStandardId = orgStandard.Id,
-                        EffectiveFrom = request.EffectiveFrom,
-                        EffectiveTo = request.EffectiveTo,
-                        DateVersionApproved = request.DateVersionApproved,
-                        Comments = request.Comments,
-                        Status = request.Status
-                    };
+                    StandardUId = request.StandardUId,
+                    Version = request.Version,
+                    OrganisationStandardId = orgStandard.Id,
+                    EffectiveFrom = request.EffectiveFrom,
+                    EffectiveTo = request.EffectiveTo,
+                    DateVersionApproved = request.DateVersionApproved,
+                    Comments = request.Comments,
+                    Status = request.Status
+                };
 
-                    await _repository.CreateOrganisationStandardVersion(entity);
-                    orgStandardVersion = (OrganisationStandardVersion)entity;
+                var existingVersion = await _repository.GetOrganisationStandardVersionByOrganisationStandardIdAndVersion(orgStandard.Id, request.Version.Value);
+                if (existingVersion != null)
+                    throw new Exception("OrganisationStandardVersion already exists");
 
-                    var application = await _applyRepository.GetApply(request.ApplicationId);
-                    var submittingContact = await _contactQueryRepository.GetContactById(request.SubmittingContactId);
-                    var standard = await _standardRepository.GetStandardVersionByStandardUId(request.StandardUId);
+                await _repository.CreateOrganisationStandardVersion(entity);
+                var orgStandardVersion = (OrganisationStandardVersion)entity;
 
-                    application.ApplicationStatus = ApplicationStatus.Approved;
-                    application.ReviewStatus = ApplicationStatus.Approved;
-                    application.StandardReference = request.StandardReference;
-                    application.StandardCode = standard.LarsCode;
-                    application.ApplyData.Apply.StandardCode = standard.LarsCode;
-                    application.ApplyData.Apply.StandardReference = request.StandardReference;
-                    application.ApplyData.Apply.StandardName = standard.Title;
-                    application.ApplyData.Apply.Versions = new List<String>() { request.Version.ToString() };
+                var application = await _applyRepository.GetApply(request.ApplicationId);
+                var submittingContact = await _contactQueryRepository.GetContactById(request.SubmittingContactId);
+                var standard = await _standardRepository.GetStandardVersionByStandardUId(request.StandardUId);
 
-                    await _applyRepository.SubmitApplicationSequence(application);
+                application.ApplicationStatus = ApplicationStatus.Approved;
+                application.ReviewStatus = ApplicationStatus.Approved;
+                application.StandardReference = request.StandardReference;
+                application.StandardCode = standard.LarsCode;
+                application.ApplyData.Apply.StandardCode = standard.LarsCode;
+                application.ApplyData.Apply.StandardReference = request.StandardReference;
+                application.ApplyData.Apply.StandardName = standard.Title;
+                application.ApplyData.Apply.Versions = new List<string>() { request.Version.ToString() };
 
-                    await NotifyContact(submittingContact, application.ApplyData, cancellationToken);
+                await _applyRepository.SubmitApplicationSequence(application);
 
-                    _unitOfWork.Commit();
-                }
-                    
+                await NotifyContact(submittingContact, application.ApplyData, cancellationToken);
+
+                _unitOfWork.Commit();
                 return orgStandardVersion;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Failed to opt-in standard version {request.StandardReference} for Organisation {request.EndPointAssessorOrganisationId}");
+                _logger.LogError(ex, $"Failed to opt-in standard version {request.StandardReference} {request.Version} for Organisation {request.EndPointAssessorOrganisationId}");
                 _unitOfWork.Rollback();
                 throw;
             }

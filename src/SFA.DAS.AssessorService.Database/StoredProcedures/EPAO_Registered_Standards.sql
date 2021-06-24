@@ -12,7 +12,7 @@ AS
 	WHERE Status IN ('Approved for delivery')
 	GROUP BY IFateReferenceNumber
 ),
-AppliedVerisons AS
+AppliedVersions AS
 (
 	SELECT ab1.StandardReference, MAX(ab1.[Version]) As MaxVersion
 	FROM(
@@ -41,7 +41,7 @@ FROM OrganisationStandard os
 	INNER join Organisations o on os.EndPointAssessorOrganisationId = o.EndPointAssessorOrganisationId and o.EndPointAssessorOrganisationId = @EPAOID
 	LEFT outer join StandardCollation sc on os.StandardCode = sc.StandardId
 	LEFT outer join LatestVersions lv on lv.IFateReferenceNumber = ReferenceNumber
-	LEFT outer join AppliedVerisons av on av.StandardReference = ReferenceNumber
+	LEFT outer join AppliedVersions av on av.StandardReference = ReferenceNumber
 	WHERE os.Status = 'Live' 
 	and (os.EffectiveTo is null OR os.EffectiveTo > GETDATE())
 	and (

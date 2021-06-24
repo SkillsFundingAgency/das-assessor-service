@@ -819,7 +819,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
             var model = new OptInConfirmationViewModel()
             {
-                StandardReference = application?.ApplyData?.Apply?.StandardReference,
                 StandardTitle = application?.ApplyData?.Apply?.StandardName,
                 Version = application?.ApplyData?.Apply?.Versions.FirstOrDefault(),
                 FeedbackUrl = _config.FeedbackUrl,

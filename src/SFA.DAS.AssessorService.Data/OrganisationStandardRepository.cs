@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Data
 {
-    public class OrgansiationStandardRepository : Repository, IOrgansiationStandardRepository
+    public class OrganisationStandardRepository : Repository, IOrganisationStandardRepository
     {
-        public OrgansiationStandardRepository(IUnitOfWork unitOfWork)
+        public OrganisationStandardRepository(IUnitOfWork unitOfWork)
             : base(unitOfWork)
         {
         }
@@ -36,6 +36,21 @@ namespace SFA.DAS.AssessorService.Data
                 transaction: _unitOfWork.Transaction);
 
             return version;
+        }
+
+        public async Task<OrganisationStandardVersion> GetOrganisationStandardVersionByOrganisationStandardIdAndVersion(int organisationStandardId, decimal version)
+        {
+            var sql = @"SELECT StandardUId, Version ,OrganisationStandardId, EffectiveFrom, EffectiveTo, DateVersionApproved, 
+                            Comments, Status
+                        FROM OrganisationStandardVersion 
+                        WHERE OrganisationStandardId = @organisationStandardId AND Version = @version";
+
+            var results = await _unitOfWork.Connection.QueryAsync<OrganisationStandardVersion>(
+                sql,
+                param: new { organisationStandardId, version},
+                transaction: _unitOfWork.Transaction);
+
+            return results.FirstOrDefault();
         }
     }
 }

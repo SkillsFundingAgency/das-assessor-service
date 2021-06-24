@@ -34,13 +34,16 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
                });
 
             _mockContactsApiClient.Setup(r => r.GetContactBySignInId(It.IsAny<String>()))
-            .ReturnsAsync(new ContactResponse());
+            .ReturnsAsync(new ContactResponse()
+            {
+                Username = "USERNAME"
+            });
 
             // Act
             var results = (await _sut.OptInPost(Guid.NewGuid(), "ST0001", 1.2M)) as RedirectToActionResult;
 
             // Assert
-            _mockOrgApiClient.Verify(m => m.OrganisationStandardVersionOptIn(It.IsAny<Guid>(), It.IsAny<Guid>(), "12345", "ST0001", 1.2M, It.IsAny<string>(), null));
+            _mockOrgApiClient.Verify(m => m.OrganisationStandardVersionOptIn(It.IsAny<Guid>(), It.IsAny<Guid>(), "12345", "ST0001", 1.2M, It.IsAny<string>(), "Opted in by EPAO by USERNAME"));
 
             Assert.AreEqual("OptInConfirmation", results.ActionName);
         }

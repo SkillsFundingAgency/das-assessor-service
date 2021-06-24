@@ -7,6 +7,7 @@ using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Api.Controllers;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.AssessorService.Domain.Extensions;
 using SFA.DAS.Testing.AutoFixture;
 using System;
 using System.Collections.Generic;
@@ -177,7 +178,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Standard
             {
                 StandardUId = standard.StandardUId,
                 Title = standard.Title,
-                Version = standard.Version?.ToString() ?? string.Empty,
+                Version = standard.Version.VersionToString(),
                 IFateReferenceNumber = standard.IfateReferenceNumber,
                 LarsCode = standard.LarsCode,
                 Level = standard.Level,

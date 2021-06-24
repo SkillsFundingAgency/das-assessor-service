@@ -228,7 +228,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             var standards = await _standardVersionApiClient.GetStandardVersionsByIFateReferenceNumber(standardReference);
             var stdVersion = standards.First(x => x.Version.Equals(version.ToString(), StringComparison.InvariantCultureIgnoreCase));
 
-            await _orgApiClient.OrganisationStandardVersionOptIn(id, contact.Id, org.OrganisationId, standardReference, version, stdVersion.StandardUId, null);
+            await _orgApiClient.OrganisationStandardVersionOptIn(id, contact.Id, org.OrganisationId, standardReference, version, stdVersion.StandardUId, $"Opted in by EPAO by {contact.Username}");
 
             return RedirectToAction("OptInConfirmation", "Application", new { Id = id });
         }

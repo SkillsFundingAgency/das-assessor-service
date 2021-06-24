@@ -3,11 +3,11 @@
 @model SFA.DAS.AssessorService.Web.ViewModels.Apply.StandardOptInViewModel
 
 @{
-    ViewBag.Title = "Opt In";
+    ViewBag.Title = "Confirm you want to opt in to standard version";
     Layout = "_Layout";
 }
 
-<a href="/standard/@Model.Id/confirm-standard/@Model.StandardReference" class="govuk-back-link">Return to standard details</a>
+<a href="@Url.Action("ConfirmStandard", "Standard", new {id = Model.Id, standardReference = Model.StandardReference})" class="govuk-back-link">Return to standard details</a>
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
