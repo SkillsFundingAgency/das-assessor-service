@@ -9,8 +9,10 @@ using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Apply;
+using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Domain.Consts;
+using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Web.Controllers;
 using SFA.DAS.AssessorService.Web.Controllers.Apply;
@@ -20,7 +22,7 @@ using SFA.DAS.AssessorService.Web.ViewModels.ApplyForWithdrawal;
 namespace SFA.DAS.AssessorService.Web.UnitTests.ApplyControllerTests.ApplyForWithdrawal
 {
     [TestFixture]
-    public class When_TypeOfWithdrawal_is_called_to_withdraw_from_register
+    public class When_ChooseStandardForWithdrawal_is_called_with_multiple_versions
     {
         private ApplyForWithdrawalController _sut;
         private Mock<IApplicationService> _mockApplicationService;
@@ -63,45 +65,34 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ApplyControllerTests.ApplyForWit
             _mockApplicationsApiClient
                 .Setup(r => r.CreateApplication(It.IsAny<CreateApplicationRequest>()))
                 .ReturnsAsync(Guid.NewGuid());
-            
+
+            _mockStandardVersionApiClient.Setup(r => r.GetEpaoRegisteredStandardVersions(It.IsAny<string>(), "ST0300"))
+              .ReturnsAsync(new List<StandardVersion>()
+              {
+                    new StandardVersion(),
+                    new StandardVersion(),
+              });
+
             _sut = new ApplyForWithdrawalController(_mockApplicationService.Object, _mockOrganisationsApiClient.Object, _mockApplicationsApiClient.Object,
                 _mockContactsApiClient.Object, _mockHttpContextAccessor.Object, _mockStandardsApiClient.Object, _mockStandardVersionApiClient.Object, _mockWebConfiguration.Object);
         }
         
         [Test]
-        public async Task Then_BuildOrganisationWithdrawalRequest_is_called()
+        public async Task Then_Redirected_To_ChooseStandardVersionForWithdrawal()
         {
-            // Act
-            await _sut.TypeOfWithdrawal(new TypeOfWithdrawalViewModel { TypeOfWithdrawal = ApplicationTypes.OrganisationWithdrawal });
-            
-            // Assert
-            _mockApplicationService
-                .Verify(r => r.BuildOrganisationWithdrawalRequest(It.IsAny<ContactResponse>(), It.IsAny<OrganisationResponse>(), It.IsAny<string>()), Times.Once);
-        }
-
-        [Test]
-        public async Task Then_CreateApplication_is_called()
-        {
-            // Act
-            await _sut.TypeOfWithdrawal(new TypeOfWithdrawalViewModel { TypeOfWithdrawal = ApplicationTypes.OrganisationWithdrawal });
-
-            // Assert
+            // Arrange
             _mockApplicationsApiClient
-                .Verify(r => r.CreateApplication(It.IsAny<CreateApplicationRequest>()), Times.Once);
-        }
+                .Setup(r => r.GetStandards())
+                .ReturnsAsync(new List<StandardCollation> { new StandardCollation { Id = 10, StandardId = 287, ReferenceNumber = "ST0300", Title = "A standard title" } });
 
-        [Test]
-        public async Task Then_Redirect_To_Sequence()
-        {
             // Act
-            var result = await _sut.TypeOfWithdrawal(new TypeOfWithdrawalViewModel { TypeOfWithdrawal = ApplicationTypes.OrganisationWithdrawal }) as RedirectToActionResult;
+            var result = await _sut.ChooseStandardForWithdrawal(new ChooseStandardForWithdrawalViewModel { SelectedStandardForWithdrawal = 287 }) as RedirectToActionResult;
 
             // Assert
-            result.ActionName.Should().Be(nameof(ApplicationController.Sequence));
-            result.ControllerName.Should().Be(nameof(ApplicationController).RemoveController());
-            
-            result.RouteValues.TryGetValue("sequenceNo", out object organisationWithdrawalSequenceNo).Should().BeTrue();
-            ((int)organisationWithdrawalSequenceNo).Should().Be(ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO);
+            result.ActionName.Should().Be(nameof(ApplyForWithdrawalController.ChooseStandardVersionForWithdrawal));
+            result.ControllerName.Should().Be(nameof(ApplyForWithdrawalController).RemoveController());
+
+            result.RouteValues.GetValueOrDefault("iFateReferenceNumber").Should().Be("ST0300");
         }
 
         private HttpContext SetupHttpContextSubAuthorityClaim()

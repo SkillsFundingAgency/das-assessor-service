@@ -9,8 +9,10 @@ using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Apply;
+using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Domain.Consts;
+using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Web.Controllers;
 using SFA.DAS.AssessorService.Web.Controllers.Apply;
@@ -20,7 +22,7 @@ using SFA.DAS.AssessorService.Web.ViewModels.ApplyForWithdrawal;
 namespace SFA.DAS.AssessorService.Web.UnitTests.ApplyControllerTests.ApplyForWithdrawal
 {
     [TestFixture]
-    public class When_TypeOfWithdrawal_is_called_to_withdraw_from_register
+    public class When_ChooseStandardVersionForWithdrawal_is_called
     {
         private ApplyForWithdrawalController _sut;
         private Mock<IApplicationService> _mockApplicationService;
@@ -63,45 +65,82 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ApplyControllerTests.ApplyForWit
             _mockApplicationsApiClient
                 .Setup(r => r.CreateApplication(It.IsAny<CreateApplicationRequest>()))
                 .ReturnsAsync(Guid.NewGuid());
-            
+
+
+            _mockStandardVersionApiClient.Setup(r => r.GetEpaoRegisteredStandardVersions(It.IsAny<string>(), "ST0300"))
+              .ReturnsAsync(new List<StandardVersion>()
+              {
+                    new StandardVersion() { Version = "1.0" },
+                    new StandardVersion() { Version = "1.1" },
+                    new StandardVersion() { Version = "1.2" },
+              });
+
             _sut = new ApplyForWithdrawalController(_mockApplicationService.Object, _mockOrganisationsApiClient.Object, _mockApplicationsApiClient.Object,
                 _mockContactsApiClient.Object, _mockHttpContextAccessor.Object, _mockStandardsApiClient.Object, _mockStandardVersionApiClient.Object, _mockWebConfiguration.Object);
         }
         
         [Test]
-        public async Task Then_BuildOrganisationWithdrawalRequest_is_called()
+        public async Task Then_WholeStandardDisabled_Is_True()
         {
-            // Act
-            await _sut.TypeOfWithdrawal(new TypeOfWithdrawalViewModel { TypeOfWithdrawal = ApplicationTypes.OrganisationWithdrawal });
-            
-            // Assert
-            _mockApplicationService
-                .Verify(r => r.BuildOrganisationWithdrawalRequest(It.IsAny<ContactResponse>(), It.IsAny<OrganisationResponse>(), It.IsAny<string>()), Times.Once);
-        }
-
-        [Test]
-        public async Task Then_CreateApplication_is_called()
-        {
-            // Act
-            await _sut.TypeOfWithdrawal(new TypeOfWithdrawalViewModel { TypeOfWithdrawal = ApplicationTypes.OrganisationWithdrawal });
-
-            // Assert
+            // Arrange
             _mockApplicationsApiClient
-                .Verify(r => r.CreateApplication(It.IsAny<CreateApplicationRequest>()), Times.Once);
+                .Setup(r => r.GetWithdrawalApplications(It.IsAny<Guid>()))
+                .ReturnsAsync(new List<ApplicationResponse>()
+                  {
+                        new ApplicationResponse()
+                        {
+                            ApplyData = new ApplyTypes.ApplyData()
+                            {
+                                Apply = new ApplyTypes.Apply()
+                                {
+                                    StandardReference = "ST0300",
+                                    Versions = new List<string>() { "1.0", "1.1" }
+                                }
+                            }
+                        }
+                  });
+            
+            // Act
+            var result = await _sut.ChooseStandardVersionForWithdrawal("ST0300") as ViewResult;
+
+            // Assert
+            var vm = result.Model as ChooseStandardVersionForWithdrawalViewModel;
+            vm.WholeStandardDisabled.Should().BeTrue();
+            vm.Versions.Count.Should().Be(1);
+            vm.Versions[0].Version.Should().Be("1.2");
         }
 
         [Test]
-        public async Task Then_Redirect_To_Sequence()
+        public async Task Then_WholeStandardDisabled_Is_False()
         {
+            // Arrange
+            _mockApplicationsApiClient
+                .Setup(r => r.GetWithdrawalApplications(It.IsAny<Guid>()))
+                .ReturnsAsync(new List<ApplicationResponse>()
+                  {
+                        new ApplicationResponse()
+                        {
+                            ApplyData = new ApplyTypes.ApplyData()
+                            {
+                                Apply = new ApplyTypes.Apply()
+                                {
+                                    StandardReference = "ST0100",
+                                    Versions = new List<string>() { "1.0", "1.1" }
+                                }
+                            }
+                        }
+                  });
+
             // Act
-            var result = await _sut.TypeOfWithdrawal(new TypeOfWithdrawalViewModel { TypeOfWithdrawal = ApplicationTypes.OrganisationWithdrawal }) as RedirectToActionResult;
+            var result = await _sut.ChooseStandardVersionForWithdrawal("ST0300") as ViewResult;
 
             // Assert
-            result.ActionName.Should().Be(nameof(ApplicationController.Sequence));
-            result.ControllerName.Should().Be(nameof(ApplicationController).RemoveController());
-            
-            result.RouteValues.TryGetValue("sequenceNo", out object organisationWithdrawalSequenceNo).Should().BeTrue();
-            ((int)organisationWithdrawalSequenceNo).Should().Be(ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO);
+            var vm = result.Model as ChooseStandardVersionForWithdrawalViewModel;
+            vm.WholeStandardDisabled.Should().BeFalse();
+            vm.Versions.Count.Should().Be(3);
+            vm.Versions[0].Version.Should().Be("1.0");
+            vm.Versions[1].Version.Should().Be("1.1");
+            vm.Versions[2].Version.Should().Be("1.2");
         }
 
         private HttpContext SetupHttpContextSubAuthorityClaim()

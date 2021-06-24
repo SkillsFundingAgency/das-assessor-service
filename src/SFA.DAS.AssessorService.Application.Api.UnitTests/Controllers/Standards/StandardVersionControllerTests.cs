@@ -90,9 +90,9 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Standard
         [Test, MoqAutoData]
         public async Task WhenRequestingGetEPAORegisteredStandardVersions_ReturnsListOfApprovedStandardVersions(string epaoId, IEnumerable<StandardVersion> versions)
         {
-            _mockStandardService.Setup(s => s.GetEPAORegisteredStandardVersions(epaoId, null)).ReturnsAsync(versions);
+            _mockStandardService.Setup(s => s.GetEPAORegisteredStandardVersions(epaoId, (int?)null)).ReturnsAsync(versions);
 
-            var controllerResult = await _standardVersionController.GetEpaoRegisteredStandardVersions(epaoId, null) as ObjectResult;
+            var controllerResult = await _standardVersionController.GetEpaoRegisteredStandardVersions(epaoId, (int?)null) as ObjectResult;
 
             controllerResult.StatusCode.Should().Be((int)HttpStatusCode.OK);
 
@@ -169,6 +169,20 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Standard
 
             model.Count.Should().Be(standards.Count);
             model[0].IFateReferenceNumber.Should().Be(standards[0].IfateReferenceNumber);
+        }
+
+        [Test, MoqAutoData]
+        public async Task WhenRequestingGetEpaoRegisteredStandardVersions_ThenStandardVersionsAreReturned(string epaoId, string iFateReferenceNumber, List<StandardVersion> versions)
+        {
+            _mockStandardService.Setup(service => service.GetEPAORegisteredStandardVersions(epaoId, iFateReferenceNumber)).ReturnsAsync(versions);
+
+            var controllerResult = await _standardVersionController.GetEpaoRegisteredStandardVersions(epaoId, iFateReferenceNumber) as ObjectResult;
+
+            controllerResult.StatusCode.Should().Be((int)HttpStatusCode.OK);
+
+            var model = controllerResult.Value as List<StandardVersion>;
+
+            model.Should().BeEquivalentTo(versions);
         }
 
         private StandardVersion ConvertFromStandard(Standard standard)

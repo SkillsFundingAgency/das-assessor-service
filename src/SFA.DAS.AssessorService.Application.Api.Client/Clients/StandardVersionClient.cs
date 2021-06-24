@@ -72,6 +72,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
+        public async Task<IEnumerable<StandardVersion>> GetEpaoRegisteredStandardVersions(string epaOrgId, string iFateReferenceNumber)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/standard-version/standards/epao/{epaOrgId}/{iFateReferenceNumber}"))
+            {
+                return await RequestAndDeserialiseAsync<IEnumerable<StandardVersion>>(request, $"Could not find the registered standards versions for EPAO {epaOrgId} and IFateReferenceNumber {iFateReferenceNumber}");
+            }
+        }
+
         public async Task<StandardOptions> GetStandardOptions(string standardId)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/standard-version/standard-options/{standardId}"))
@@ -99,6 +107,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         Task<StandardVersion> GetStandardVersionById(string id);
         Task<IEnumerable<StandardVersion>> GetEpaoRegisteredStandardVersions(string epaOrgId);
         Task<IEnumerable<StandardVersion>> GetEpaoRegisteredStandardVersions(string epaOrgId, int larsCode);
+        Task<IEnumerable<StandardVersion>> GetEpaoRegisteredStandardVersions(string epaOrgId, string iFateReferenceNumber);
         Task<StandardOptions> GetStandardOptions(string standardId);
     }
 }

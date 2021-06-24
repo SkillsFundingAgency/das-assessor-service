@@ -36,7 +36,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
                 });
 
             var standardService = new Mock<IStandardService>();
-            standardService.Setup(c => c.GetEPAORegisteredStandardVersions(It.IsAny<string>(), null))
+            standardService.Setup(c => c.GetEPAORegisteredStandardVersions(It.IsAny<string>(), (int?)null))
                 .ReturnsAsync(new List<StandardVersion> { new StandardVersion { Title = "Standard One", Version = "1.0", LarsCode = 1 },
                                                             new StandardVersion { Title = "Standard Two", Version = "1.0", LarsCode = 2 } });
             standardService.Setup(c => c.GetStandard(It.IsAny<int>()))
@@ -79,7 +79,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
             var assessmentOrgsApiClient = new Mock<IRegisterQueryRepository>();
             var standardService = new Mock<IStandardService>();
            
-            standardService.Setup(c => c.GetEPAORegisteredStandardVersions(It.IsAny<string>(), null))
+            standardService.Setup(c => c.GetEPAORegisteredStandardVersions(It.IsAny<string>(), (int?)null))
                 .ReturnsAsync(new List<StandardVersion> { new StandardVersion { Title = "Standard One", Version = "1.0", LarsCode = 1 },
                                                           new StandardVersion { Title = "Standard Two", Version = "1.0", LarsCode = 2 },
                                                           new StandardVersion { Title = "Standard Three", Version = "1.0", LarsCode = 3 }});

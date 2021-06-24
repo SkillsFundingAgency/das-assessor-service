@@ -1,5 +1,6 @@
 @using SFA.DAS.AssessorService.Domain.Consts;
 @using SFA.DAS.AssessorService.Web.Extensions;
+@using System.Linq;
 @model List<SFA.DAS.AssessorService.Api.Types.Models.Apply.ApplicationResponse>;
 
 @{
@@ -12,7 +13,7 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
             <h1 class="govuk-heading-xl">
-                Your withdrawal notifications
+                Your withdrawal requests
             </h1>
             <table class="govuk-table">
                 <thead class="govuk-table__head">
@@ -46,6 +47,11 @@
                                 else if (application.ApplyData.RequiredSequences.Contains(ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO))
                                 {
                                     @application.ApplyData?.Apply?.StandardName
+                                    @if (application.ApplyData.Apply.Versions != null && application.ApplyData.Apply.Versions.Any())
+                                    {
+                                        <br />
+                                        <text>Version @string.Join(",", application.ApplyData.Apply.Versions)</text>
+                                    }
                                 }
                             </td>
                             <td class="govuk-table__cell govuk-table__cell--numeric">@application.ApplicationStatus.FormatStatus()</td>

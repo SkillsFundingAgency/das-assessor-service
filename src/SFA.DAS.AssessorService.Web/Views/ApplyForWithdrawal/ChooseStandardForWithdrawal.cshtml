@@ -25,20 +25,20 @@
             <h1 class="govuk-heading-xl">Which standard do you want to withdraw from assessing? </h1>
 
             <p class="govuk-inset-text">
-                You can only withdraw from one standard at a time.
+                You can only withdraw from one standard at a time.You can select the version(s) of the standard you wish to withdraw from assessing on the next page.
             </p>
-            
-            @if (Model.Standards.Items.Any())
+
+            @if (Model.Standards.Any())
             {
                 <form asp-action="ChooseStandardForWithdrawal" asp-controller="ApplyForWithdrawal" method="post">
                     <div class="govuk-form-group" sfa-validation-for="SelectedStandardForWithdrawal" sfa-validationerror-class="govuk-form-group--error">
                         <fieldset class="govuk-fieldset">
                             <sfa-validationerror-detail sfa-validation-for="SelectedStandardForWithdrawal" sfa-validationerror-class="govuk-error-message"></sfa-validationerror-detail>
                             <div class="govuk-radios">
-                                @foreach (var item in Model.Standards.Items)
+                                @foreach (var item in Model.Standards)
                                 {
                                     <div class="govuk-radios__item">
-                                        <input class="govuk-radios__input" 
+                                        <input class="govuk-radios__input"
                                                id="SelectedStandardForWithdrawal"
                                                name="SelectedStandardForWithdrawal"
                                                sfa-validation-for="SelectedStandardForWithdrawal"

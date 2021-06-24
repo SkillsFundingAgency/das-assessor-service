@@ -1,11 +1,11 @@
 ﻿using SFA.DAS.AssessorService.Api.Types.Models;
-using SFA.DAS.AssessorService.Domain.Paging;
+using System.Collections.Generic;
 
 namespace SFA.DAS.AssessorService.Web.ViewModels.ApplyForWithdrawal
 {
     public class ChooseStandardForWithdrawalViewModel
     {
-        public PaginatedList<GetEpaoRegisteredStandardsResponse> Standards { get; set; }
+        public List<GetEpaoRegisteredStandardsResponse> Standards { get; set; }
         public int? SelectedStandardForWithdrawal { get; set; }
     }
 }

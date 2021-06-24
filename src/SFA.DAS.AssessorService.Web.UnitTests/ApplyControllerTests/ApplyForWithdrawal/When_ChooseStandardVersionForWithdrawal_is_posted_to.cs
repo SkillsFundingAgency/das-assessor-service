@@ -22,7 +22,7 @@ using SFA.DAS.AssessorService.Web.ViewModels.ApplyForWithdrawal;
 namespace SFA.DAS.AssessorService.Web.UnitTests.ApplyControllerTests.ApplyForWithdrawal
 {
     [TestFixture]
-    public class When_ChooseStandardForWithdrawal_is_called
+    public class When_ChooseStandardVersionForWithdrawal_is_posted_to
     {
         private ApplyForWithdrawalController _sut;
         private Mock<IApplicationService> _mockApplicationService;
@@ -31,6 +31,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ApplyControllerTests.ApplyForWit
         private Mock<IContactsApiClient> _mockContactsApiClient;
         private Mock<IHttpContextAccessor> _mockHttpContextAccessor;
         private Mock<IStandardsApiClient> _mockStandardsApiClient;
+        private Mock<IStandardVersionClient> _mockStandardVersionApiClient;
         private Mock<IWebConfiguration> _mockWebConfiguration;
 
         [SetUp]
@@ -42,6 +43,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ApplyControllerTests.ApplyForWit
             _mockContactsApiClient = new Mock<IContactsApiClient>();
             _mockHttpContextAccessor = new Mock<IHttpContextAccessor>();
             _mockStandardsApiClient = new Mock<IStandardsApiClient>();
+            _mockStandardVersionApiClient = new Mock<IStandardVersionClient>();
             _mockWebConfiguration = new Mock<IWebConfiguration>();
 
             _mockHttpContextAccessor
@@ -63,76 +65,91 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ApplyControllerTests.ApplyForWit
             _mockApplicationsApiClient
                 .Setup(r => r.CreateApplication(It.IsAny<CreateApplicationRequest>()))
                 .ReturnsAsync(Guid.NewGuid());
-            
+
+
+            _mockStandardVersionApiClient.Setup(r => r.GetEpaoRegisteredStandardVersions(It.IsAny<string>(), "ST0300"))
+              .ReturnsAsync(new List<StandardVersion>()
+              {
+                    new StandardVersion() { LarsCode = 123, Title = "TITLE", IFateReferenceNumber = "ST0300", Version = "1.0" },
+                    new StandardVersion() { LarsCode = 123, Title = "TITLE", IFateReferenceNumber = "ST0300", Version = "1.1" },
+                    new StandardVersion() { LarsCode = 123, Title = "TITLE", IFateReferenceNumber = "ST0300", Version = "1.2" },
+              });
+
             _sut = new ApplyForWithdrawalController(_mockApplicationService.Object, _mockOrganisationsApiClient.Object, _mockApplicationsApiClient.Object,
-                _mockContactsApiClient.Object, _mockHttpContextAccessor.Object, _mockStandardsApiClient.Object, _mockWebConfiguration.Object);
+                _mockContactsApiClient.Object, _mockHttpContextAccessor.Object, _mockStandardsApiClient.Object, _mockStandardVersionApiClient.Object, _mockWebConfiguration.Object);
         }
         
         [Test]
-        public async Task Then_BuildStandardWithdrawalRequest_is_called()
+        public async Task Then_Redirected_To_Sequence()
         {
             // Arrange
-            _mockApplicationsApiClient
-                .Setup(r => r.GetStandards())
-                .ReturnsAsync(new List<StandardCollation> { new StandardCollation { Id = 10, StandardId = 287, ReferenceNumber = "ST0300", Title = "A standard title" } });
+            var model = new ChooseStandardVersionForWithdrawalViewModel()
+            {
+                WithdrawalType = WithdrawalType.SpecificVersions,
+                SelectedVersions = new List<string>() {  "1.0", "1.1" }
+            };
 
             // Act
-            await _sut.ChooseStandardForWithdrawal(new ChooseStandardForWithdrawalViewModel { SelectedStandardForWithdrawal = 287 });
-            
+            var result = await _sut.ChooseStandardVersionForWithdrawal("ST0300", model) as RedirectToActionResult;
+
             // Assert
-            _mockApplicationService
-                .Verify(r => r.BuildStandardWithdrawalRequest(It.IsAny<ContactResponse>(), It.IsAny<OrganisationResponse>(), It.IsAny<int>(), It.IsAny<string>()), Times.Once);
+            result.ActionName.Should().Be(nameof(ApplicationController.Sequence));
+            result.ControllerName.Should().Be(nameof(ApplicationController).RemoveController());
+
+            result.RouteValues.GetValueOrDefault("sequenceNo").Should().Be(ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO);
         }
 
         [Test]
         public async Task Then_CreateApplication_is_called()
         {
             // Arrange
-            _mockApplicationsApiClient
-                .Setup(r => r.GetStandards())
-                .ReturnsAsync(new List<StandardCollation> { new StandardCollation { Id = 10, StandardId = 287, ReferenceNumber = "ST0300", Title = "A standard title" } });
+            var model = new ChooseStandardVersionForWithdrawalViewModel()
+            {
+                WithdrawalType = WithdrawalType.SpecificVersions,
+                SelectedVersions = new List<string>() { "1.0", "1.1" }
+            };
 
             // Act
-            await _sut.ChooseStandardForWithdrawal(new ChooseStandardForWithdrawalViewModel { SelectedStandardForWithdrawal = 287 });
+            var result = await _sut.ChooseStandardVersionForWithdrawal("ST0300", model) as RedirectToActionResult;
 
             // Assert
-            _mockApplicationsApiClient
-                .Verify(r => r.CreateApplication(It.IsAny<CreateApplicationRequest>()), Times.Once);
+            _mockApplicationsApiClient.Verify(r => r.CreateApplication(It.IsAny<CreateApplicationRequest>()), Times.Once);
         }
 
         [Test]
-        public async Task Then_Redirect_To_Sequence()
+        public async Task Then_UpdateStandardData_is_called_with_versions()
         {
             // Arrange
-            _mockApplicationsApiClient
-                .Setup(r => r.GetStandards())
-                .ReturnsAsync(new List<StandardCollation> { new StandardCollation { Id = 10, StandardId = 287, ReferenceNumber = "ST0300", Title = "A standard title" } });
+            var model = new ChooseStandardVersionForWithdrawalViewModel()
+            {
+                WithdrawalType = WithdrawalType.SpecificVersions,
+                SelectedVersions = new List<string>() { "1.0", "1.1" }
+            };
 
             // Act
-            var result = await _sut.ChooseStandardForWithdrawal(new ChooseStandardForWithdrawalViewModel { SelectedStandardForWithdrawal = 287 }) as RedirectToActionResult;
+            var result = await _sut.ChooseStandardVersionForWithdrawal("ST0300", model) as RedirectToActionResult;
 
             // Assert
-            result.ActionName.Should().Be(nameof(ApplicationController.Sequence));
-            result.ControllerName.Should().Be(nameof(ApplicationController).RemoveController());
-            
-            result.RouteValues.TryGetValue("sequenceNo", out object standardWithdrawlSequenceNo).Should().BeTrue();
-            ((int)standardWithdrawlSequenceNo).Should().Be(ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO);
+            _mockApplicationsApiClient
+                .Verify(r => r.UpdateStandardData(It.IsAny<Guid>(), 123, "ST0300", "TITLE", It.Is<List<string>>(x => x[0] == "1.0" && x[1] == "1.1"), ApplicationTypes.StandardWithdrawal));
         }
 
         [Test]
-        public async Task Then_UpdateStandardData_is_called()
+        public async Task Then_UpdateStandardData_is_called_with_standard()
         {
             // Arrange
-            _mockApplicationsApiClient
-                .Setup(r => r.GetStandards())
-                .ReturnsAsync(new List<StandardCollation> { new StandardCollation { Id = 10, StandardId = 287, ReferenceNumber = "ST0300", Title = "A standard title" } });
+            var model = new ChooseStandardVersionForWithdrawalViewModel()
+            {
+                WithdrawalType = WithdrawalType.WholeStandard,
+                SelectedVersions = null
+            };
 
             // Act
-            var result = await _sut.ChooseStandardForWithdrawal(new ChooseStandardForWithdrawalViewModel { SelectedStandardForWithdrawal = 287 }) as RedirectToActionResult;
+            var result = await _sut.ChooseStandardVersionForWithdrawal("ST0300", model) as RedirectToActionResult;
 
             // Assert
             _mockApplicationsApiClient
-                .Verify(r => r.UpdateStandardData(It.IsAny<Guid>(), 10, "ST0300", "A standard title", null, null));
+                .Verify(r => r.UpdateStandardData(It.IsAny<Guid>(), 123, "ST0300", "TITLE", null, ApplicationTypes.StandardWithdrawal));
         }
 
         private HttpContext SetupHttpContextSubAuthorityClaim()

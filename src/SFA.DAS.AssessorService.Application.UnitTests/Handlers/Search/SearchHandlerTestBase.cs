@@ -30,7 +30,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
                 .ReturnsAsync(new List<Standard> { new Standard{LarsCode = 12, Title = "Standard Name 12", Level = 2},
                     new Standard{LarsCode = 13, Title = "Standard Name 13", Level=3}});
 
-            StandardService.Setup(s => s.GetEPAORegisteredStandardVersions(It.IsAny<string>(), null))
+            StandardService.Setup(s => s.GetEPAORegisteredStandardVersions(It.IsAny<string>(), (int?)null))
                 .ReturnsAsync(new List<StandardVersion> { new StandardVersion { Title = "Standard 12", Version = "1.0", LarsCode = 12 },
                                                           new StandardVersion { Title = "Standard 13", Version = "1.0", LarsCode = 13 } });
 

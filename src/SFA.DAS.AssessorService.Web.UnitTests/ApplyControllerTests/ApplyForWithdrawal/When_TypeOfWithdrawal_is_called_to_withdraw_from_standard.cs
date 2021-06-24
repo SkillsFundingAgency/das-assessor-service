@@ -30,6 +30,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ApplyControllerTests.ApplyForWit
         private Mock<IContactsApiClient> _mockContactsApiClient;
         private Mock<IHttpContextAccessor> _mockHttpContextAccessor;
         private Mock<IStandardsApiClient> _mockStandardsApiClient;
+        private Mock<IStandardVersionClient> _mockStandardVersionApiClient;
         private Mock<IWebConfiguration> _mockWebConfiguration;
 
         [SetUp]
@@ -41,6 +42,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ApplyControllerTests.ApplyForWit
             _mockContactsApiClient = new Mock<IContactsApiClient>();
             _mockHttpContextAccessor = new Mock<IHttpContextAccessor>();
             _mockStandardsApiClient = new Mock<IStandardsApiClient>();
+            _mockStandardVersionApiClient = new Mock<IStandardVersionClient>();
             _mockWebConfiguration = new Mock<IWebConfiguration>();
 
             _mockHttpContextAccessor
@@ -64,7 +66,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ApplyControllerTests.ApplyForWit
                 .ReturnsAsync(Guid.NewGuid());
             
             _sut = new ApplyForWithdrawalController(_mockApplicationService.Object, _mockOrganisationsApiClient.Object, _mockApplicationsApiClient.Object,
-                _mockContactsApiClient.Object, _mockHttpContextAccessor.Object, _mockStandardsApiClient.Object, _mockWebConfiguration.Object);
+                _mockContactsApiClient.Object, _mockHttpContextAccessor.Object, _mockStandardsApiClient.Object, _mockStandardVersionApiClient.Object, _mockWebConfiguration.Object);
         }
         
         [Test]
