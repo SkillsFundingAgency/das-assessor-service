@@ -79,14 +79,15 @@ namespace SFA.DAS.AssessorService.Data
 
 
                 var osdaId = connection.Query<string>(
-                    "INSERT INTO [dbo].[OrganisationStandard] ([EndPointAssessorOrganisationId],[StandardCode],[EffectiveFrom],[EffectiveTo],[DateStandardApprovedOnRegister] ,[Comments],[Status], [ContactId], [OrganisationStandardData]) VALUES (" +
-                    "@organisationId, @standardCode, @effectiveFrom, @effectiveTo, getutcdate(), @comments, 'Live', @ContactId,  @OrganisationStandardData); SELECT CAST(SCOPE_IDENTITY() as varchar); ",
+                    "INSERT INTO [dbo].[OrganisationStandard] ([EndPointAssessorOrganisationId],[StandardCode],[EffectiveFrom],[EffectiveTo],[DateStandardApprovedOnRegister] ,[Comments],[Status], [ContactId], [OrganisationStandardData], StandardReference) VALUES (" +
+                    "@organisationId, @standardCode, @effectiveFrom, @effectiveTo, getutcdate(), @comments, 'Live', @ContactId,  @OrganisationStandardData, @StandardReference); SELECT CAST(SCOPE_IDENTITY() as varchar); ",
                     new
                     {
                         organisationStandard.OrganisationId, organisationStandard.StandardCode,
                         organisationStandard.EffectiveFrom, organisationStandard.EffectiveTo,
                         organisationStandard.DateStandardApprovedOnRegister, organisationStandard.Comments,
-                        organisationStandard.ContactId, organisationStandard.OrganisationStandardData
+                        organisationStandard.ContactId, organisationStandard.OrganisationStandardData,
+                        organisationStandard.StandardReference
                     }).Single();
 
                 foreach (var deliveryAreaId in deliveryAreas.Distinct())
@@ -95,11 +96,28 @@ namespace SFA.DAS.AssessorService.Data
                                         "(@osdaId, @deliveryAreaId,'Live'); ",
                                     new { osdaId, deliveryAreaId}
                                     );
-                }                      
+                }    
+                
+                foreach (var version in organisationStandard.StandardVersions)
+                {
+                    var standardUid = $"{organisationStandard.StandardReference.Trim()}_{version.Trim()}";
+
+                    connection.Execute("INSERT INTO OrganisationStandardVersion (StandardUid, Version, OrganisationStandardId, EffectiveFrom, EffectiveTo, DateVersionApproved, Comments, Status) " +
+                        "VALUES(@StandardUid, @Version, @OrganisationStandardId, @EffectiveFrom, @EffectiveTo, @DateVersionApproved, @Comments, 'Live')",
+                        new
+                        {
+                            standardUid,
+                            version,
+                            OrganisationStandardId = osdaId,
+                            organisationStandard.EffectiveFrom,
+                            organisationStandard.EffectiveTo,
+                            DateVersionApproved = organisationStandard.DateStandardApprovedOnRegister,
+                            organisationStandard.Comments
+                        });
+                }
                         
                 return osdaId;
-            }
-            
+            }            
         }
 
         public async Task<string> UpdateEpaOrganisationStandard(EpaOrganisationStandard orgStandard,
