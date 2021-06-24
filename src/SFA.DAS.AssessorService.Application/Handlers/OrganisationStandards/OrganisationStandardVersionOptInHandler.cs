@@ -60,7 +60,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
 
                 var existingVersion = await _repository.GetOrganisationStandardVersionByOrganisationStandardIdAndVersion(orgStandard.Id, request.Version.Value);
                 if (existingVersion != null)
-                    throw new Exception("OrganisationStandardVersion already exists");
+                    throw new InvalidOperationException("OrganisationStandardVersion already exists");
 
                 await _repository.CreateOrganisationStandardVersion(entity);
                 var orgStandardVersion = (OrganisationStandardVersion)entity;
