@@ -182,7 +182,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Standard
                 IFateReferenceNumber = standard.IfateReferenceNumber,
                 LarsCode = standard.LarsCode,
                 Level = standard.Level,
-                EffectiveFrom = standard.EffectiveFrom.GetValueOrDefault(),
+                EffectiveFrom = standard.EffectiveFrom,
                 EffectiveTo = standard.EffectiveTo,
                 VersionEarliestStartDate = standard.VersionEarliestStartDate,
                 VersionLatestEndDate = standard.VersionLatestEndDate,
