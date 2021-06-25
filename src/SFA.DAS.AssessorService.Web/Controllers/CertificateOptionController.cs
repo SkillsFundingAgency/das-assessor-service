@@ -107,9 +107,17 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             }
 
             var updatedCertificate = vm.GetCertificateFromViewModel(certificate, certData);
-
-            await CertificateApiClient.UpdateCertificate(new UpdateCertificateRequest(updatedCertificate) { Username = username, Action = action });
-
+            
+            try
+            {
+                await CertificateApiClient.UpdateCertificate(new UpdateCertificateRequest(updatedCertificate) { Username = username, Action = action });
+            }
+            catch
+            {
+                Logger.LogError($"Unable to update certificate with Id {certificate.Id}.");
+                return RedirectToAction("Error", "Home");
+            }
+                  
             Logger.LogInformation($"Certificate for CertificateOptionViewModel requested by {username} with Id {certificate.Id} updated.");
 
             if (SessionService.TryGet<bool>("redirecttocheck", out var redirectToCheck) && redirectToCheck)
