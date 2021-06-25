@@ -263,7 +263,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
         {
             _mockStandardRepository.Setup(s => s.GetEpaoRegisteredStandardVersions(epaoId)).ReturnsAsync(standards);
 
-            var result = await _standardService.GetEPAORegisteredStandardVersions(epaoId, (int?)null);
+            var result = await _standardService.GetEPAORegisteredStandardVersions(epaoId, null);
 
             result.Should().BeEquivalentTo(standards);
         }
@@ -291,9 +291,9 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
         [Test, AutoData]
         public async Task When_GetEPAORegisteredStandardVersions_Returns_The_Orgs_Standards(string endPointAssessorOrganisationId, string iFateReferenceNumber, IEnumerable<StandardVersion> versions)
         {
-            _mockStandardRepository.Setup(s => s.GetEpaoRegisteredStandardVersions(endPointAssessorOrganisationId, iFateReferenceNumber)).ReturnsAsync(versions);
+            _mockStandardRepository.Setup(s => s.GetEpaoRegisteredStandardVersionsByIFateReferenceNumber(endPointAssessorOrganisationId, iFateReferenceNumber)).ReturnsAsync(versions);
 
-            var result = await _standardService.GetEPAORegisteredStandardVersions(endPointAssessorOrganisationId, iFateReferenceNumber);
+            var result = await _standardService.GetEpaoRegisteredStandardVersionsByIFateReferenceNumber(endPointAssessorOrganisationId, iFateReferenceNumber);
 
             result.Should().BeEquivalentTo(versions);
         }

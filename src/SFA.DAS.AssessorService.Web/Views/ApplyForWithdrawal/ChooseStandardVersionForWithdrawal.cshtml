@@ -55,6 +55,7 @@
                             <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="conditional-versions">
                                 <div class="govuk-form-group" sfa-validation-for="SelectedVersions" sfa-validationerror-class="govuk-form-group--error">
                                     <fieldset class="govuk-fieldset">
+                                        <legend>standard versions</legend>
                                         <sfa-validationerror-detail sfa-validation-for="SelectedVersions" sfa-validationerror-class="govuk-error-message"></sfa-validationerror-detail>
                                         <div class="govuk-hint">
                                             You can select one or multiple versions. Selecting all versions will result in withdrawal from the whole standard.
@@ -81,44 +82,6 @@
                     Save and continue
                 </button>
             </form>
-
-             @*@if (Model.Standards.Items.Any())
-            {
-
-                    <div class="govuk-form-group" sfa-validation-for="SelectedStandardForWithdrawal" sfa-validationerror-class="govuk-form-group--error">
-                        <fieldset class="govuk-fieldset">
-                            <sfa-validationerror-detail sfa-validation-for="SelectedStandardForWithdrawal" sfa-validationerror-class="govuk-error-message"></sfa-validationerror-detail>
-                            <div class="govuk-radios">
-                                @foreach (var item in Model.Standards.Items)
-                                {
-                                    <div class="govuk-radios__item">
-                                        <input class="govuk-radios__input"
-                                               id="SelectedStandardForWithdrawal"
-                                               name="SelectedStandardForWithdrawal"
-                                               sfa-validation-for="SelectedStandardForWithdrawal"
-                                               sfa-validationerror-class="govuk-input--error"
-                                               asp-for="SelectedStandardForWithdrawal"
-                                               type="radio"
-                                               value="@item.StandardCode">
-                                        <label class="govuk-label govuk-radios__label" asp-for="SelectedStandardForWithdrawal">
-                                            @item.StandardName (Level @item.Level)
-                                        </label>
-                                        <span class="govuk-hint govuk-radios__hint">
-                                            @item.ReferenceNumber
-                                        </span>
-                                    </div>
-                                }
-                            </div>
-                        </fieldset>
-                    </div>
-                    
-            }
-            else
-            {
-                <div class="info-summary">
-                    <h2 class="govuk-heading-m">You are not yet approved to assess any standards.</h2>
-                </div>
-            }*@
         </div>
     </div>
 </main>

@@ -38,7 +38,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
         [Test]
         public void And_epao_not_approved_to_assess_any_standard_version_then_result_is_not_returned()
         {
-            StandardService.Setup(s => s.GetEPAORegisteredStandardVersions(It.IsAny<string>(), (int?)null))
+            StandardService.Setup(s => s.GetEPAORegisteredStandardVersions(It.IsAny<string>(), null))
                 .ReturnsAsync(new List<StandardVersion> { new StandardVersion { Title = "Standard 13", Version = "1.0", LarsCode = 13 } });
 
             var result =

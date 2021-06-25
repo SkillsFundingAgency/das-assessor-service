@@ -38,7 +38,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
             var standardService = new Mock<IStandardService>();
             standardService.Setup(c => c.GetAllStandards())
                 .ReturnsAsync(new List<StandardCollation> { new StandardCollation { Title = "Standard Title", StandardData = new StandardData{ Level = 2}}});
-            standardService.Setup(s => s.GetEPAORegisteredStandardVersions(It.IsAny<string>(), (int?)null))
+            standardService.Setup(s => s.GetEPAORegisteredStandardVersions(It.IsAny<string>(), null))
                 .ReturnsAsync(new List<StandardVersion> { new StandardVersion { Title = "Standard 1", Version = "1.0", LarsCode = 1 },
                                                           new StandardVersion { Title = "Standard 2", Version = "1.0", LarsCode = 2 },
                                                           new StandardVersion { Title = "Standard 3", Version = "1.0", LarsCode = 3 }});

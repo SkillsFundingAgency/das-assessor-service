@@ -276,9 +276,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
             return await _standardRepository.GetEpaoRegisteredStandardVersions(endPointAssessorOrganisationId);
         }
 
-        public async Task<IEnumerable<StandardVersion>> GetEPAORegisteredStandardVersions(string endPointAssessorOrganisationId, string iFateReferenceNumber)
+        public async Task<IEnumerable<StandardVersion>> GetEpaoRegisteredStandardVersionsByIFateReferenceNumber(string endPointAssessorOrganisationId, string iFateReferenceNumber)
         {
-            return await _standardRepository.GetEpaoRegisteredStandardVersions(endPointAssessorOrganisationId, iFateReferenceNumber);
+            return await _standardRepository.GetEpaoRegisteredStandardVersionsByIFateReferenceNumber(endPointAssessorOrganisationId, iFateReferenceNumber);
         }
     }
 }

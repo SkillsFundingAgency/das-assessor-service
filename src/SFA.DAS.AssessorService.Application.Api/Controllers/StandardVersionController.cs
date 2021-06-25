@@ -101,10 +101,10 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [HttpGet("standards/epao/{epaoId}/{iFateReferenceNumber}", Name = "GetEpaoRegisteredStandardVersionsByIFateReferenceNumber")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(int))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> GetEpaoRegisteredStandardVersions(string epaoId, string iFateReferenceNumber)
+        public async Task<IActionResult> GetEpaoRegisteredStandardVersionsByIFateReferenceNumber(string epaoId, string iFateReferenceNumber)
         {
             _logger.LogInformation($"Received request to retrieve StandardVersions for Organisation {epaoId} and IFateReferenceNumber {iFateReferenceNumber}");
-            var standardVersions = await _standardService.GetEPAORegisteredStandardVersions(epaoId, iFateReferenceNumber);
+            var standardVersions = await _standardService.GetEpaoRegisteredStandardVersionsByIFateReferenceNumber(epaoId, iFateReferenceNumber);
             return Ok(standardVersions);
         }
 

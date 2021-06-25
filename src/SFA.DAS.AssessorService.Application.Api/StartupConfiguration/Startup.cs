@@ -227,7 +227,9 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
 
                 config.For<ITokenService>().Use<TokenService>();
                 config.For<ITokenService>().Add<QnaTokenService>().Named("qnaTokenService");
-                config.For<ITokenService>().Use<TokenService>().Ctor<bool>("useSandbox").Is(false); // Always false unless we want to start integrating with the sandbox environment;
+                // Always false unless we want to start integrating with the sandbox environment;
+                config.For<ITokenService>().Use<TokenService>().Ctor<bool>("useSandbox").Is(false); 
+                
 
                 config.For<IQnaApiClient>().Use<QnaApiClient>()
                   .Ctor<ITokenService>("qnaTokenService").Is(c => c.GetInstance<ITokenService>("qnaTokenService"))
