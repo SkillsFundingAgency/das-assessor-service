@@ -15,6 +15,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
     using SFA.DAS.AssessorService.Api.Types.CharityCommission;
     using SFA.DAS.AssessorService.Api.Types.CompaniesHouse;
     using SFA.DAS.AssessorService.Api.Types.Models.Register;
+    using SFA.DAS.AssessorService.Domain.Consts;
     using System.Net;
 
     public class OrganisationsApiClient : ApiClientBase, IOrganisationsApiClient
@@ -452,6 +453,30 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                 {
                     throw;
                 }
+            }
+        }
+
+        public async Task<OrganisationStandardVersion> OrganisationStandardVersionOptIn(Guid applicationId, Guid contactId, string endPointAssessorOrganisationId, 
+            string standardReference, decimal? version, string standardUId, string comments)
+        {
+            var createVersionRequest = new OrganisationStandardVersionOptInRequest
+            {
+                ApplicationId = applicationId,
+                EndPointAssessorOrganisationId = endPointAssessorOrganisationId,
+                StandardReference = standardReference,
+                Version = version,
+                StandardUId = standardUId,
+                EffectiveFrom = DateTime.Today,
+                EffectiveTo = null,
+                DateVersionApproved = null,
+                Comments = comments,
+                Status = OrganisationStatus.Live,
+                SubmittingContactId = contactId
+            };
+
+            using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/v1/organisationstandardversion"))
+            {
+                return await PostPutRequestWithResponse<OrganisationStandardVersionOptInRequest, OrganisationStandardVersion>(request, createVersionRequest);
             }
         }
     }

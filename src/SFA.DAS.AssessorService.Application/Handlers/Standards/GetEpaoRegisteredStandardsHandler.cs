@@ -30,7 +30,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Standards
                     Level = o.Level,
                     StandardCode = o.StandardCode,
                     StandardName = o.StandardName,
-                    ReferenceNumber = o.ReferenceNumber
+                    ReferenceNumber = o.ReferenceNumber,
+                    NewVersionAvailable = o.NewVersionAvailable 
                 }).ToList();
 
            return new PaginatedList<GetEpaoRegisteredStandardsResponse>(epaoRegisteredStandardsResult, result.TotalCount, request.PageIndex, request.PageSize);

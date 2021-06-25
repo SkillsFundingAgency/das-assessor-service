@@ -20,6 +20,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.AO
         public DateTime? LarsEffectiveTo { get; set; }
         public DateTime? VersionEarliestStartDate { get; set; }
         public DateTime? VersionLatestStartDate { get; set; }
+        public DateTime? VersionLatestEndDate { get; set; }
         public DateTime? StdEffectiveFrom { get; set; }
         public DateTime? StdEffectiveTo { get; set; }
         public DateTime? StdVersionEffectiveFrom { get; set; }
