@@ -85,7 +85,6 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
 
             // Assert
             var model = results.Model as OptInConfirmationViewModel;
-            Assert.AreEqual("ST0001", model.StandardReference);
             Assert.AreEqual("TITLE 1", model.StandardTitle);
             Assert.AreEqual("1.2", model.Version);
         }

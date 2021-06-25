@@ -1,3 +1,4 @@
+using SFA.DAS.AssessorService.Domain.Extensions;
 using System;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models.AO
@@ -18,7 +19,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.AO
             return new OrganisationStandardVersion
             {
                 StandardUId = version.StandardUId,
-                Version = version.Version.ToString(),
+                Version = version.Version.VersionToString(),
                 OrganisationStandardId = version.OrganisationStandardId,
                 EffectiveFrom = version.EffectiveFrom,
                 EffectiveTo = version.EffectiveTo,

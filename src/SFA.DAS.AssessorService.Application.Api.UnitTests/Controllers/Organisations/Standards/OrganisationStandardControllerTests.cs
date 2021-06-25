@@ -40,7 +40,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Organisa
         {
             var request = new OrganisationStandardVersionOptInRequest();
 
-            _mockMediator.Setup(s => s.Send(Moq.It.IsAny<OrganisationStandardVersionOptInRequest>(), Moq.It.IsAny<CancellationToken>()))
+            _mockMediator.Setup(s => s.Send(request, Moq.It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(new OrganisationStandardVersion() { Version = "1.2", StandardUId = "ST0001_1_2" }));
 
             var controllerResult = await _controller.CreateOrganisationStandardVersion(request) as CreatedAtRouteResult;

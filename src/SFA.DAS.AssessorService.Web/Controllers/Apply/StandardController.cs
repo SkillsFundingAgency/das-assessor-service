@@ -145,11 +145,13 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             model.Results = standardVersions.Select(s => (StandardVersion)s).ToList(); 
             model.ApplicationStatus = await ApplicationStandardStatus(application, model.SelectedStandard.LarsCode);
 
+            var hasErrors = false;
+
             if (!model.IsConfirmed)
             {
                 ModelState.AddModelError(nameof(model.IsConfirmed), "Please tick to confirm");
                 TempData["ShowConfirmedError"] = true;
-                return View("~/Views/Application/Standard/ConfirmStandard.cshtml", model);
+                hasErrors = true;
             }
 
             if (string.IsNullOrWhiteSpace(version))
@@ -159,13 +161,18 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 {
                     ModelState.AddModelError(nameof(model.SelectedVersions), "You must select at least one version");
                     TempData["ShowVersionError"] = true;
-                    return View("~/Views/Application/Standard/ConfirmStandard.cshtml", model);
+                    hasErrors = true;
                 }
 
                 if (!string.IsNullOrEmpty(model.ApplicationStatus))
                 {
-                    return View("~/Views/Application/Standard/ConfirmStandard.cshtml", model);
+                    hasErrors = true;
                 }
+            }
+
+            if(hasErrors)
+            {
+                return View("~/Views/Application/Standard/ConfirmStandard.cshtml", model);
             }
 
             var versions = (standardVersions.Count() > 1 && string.IsNullOrWhiteSpace(version)) ? model.SelectedVersions : new List<string>() { model.SelectedStandard.Version };
@@ -228,7 +235,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             var standards = await _standardVersionApiClient.GetStandardVersionsByIFateReferenceNumber(standardReference);
             var stdVersion = standards.First(x => x.Version.Equals(version.ToString(), StringComparison.InvariantCultureIgnoreCase));
 
-            await _orgApiClient.OrganisationStandardVersionOptIn(id, contact.Id, org.OrganisationId, standardReference, version, stdVersion.StandardUId, null);
+            await _orgApiClient.OrganisationStandardVersionOptIn(id, contact.Id, org.OrganisationId, standardReference, version, stdVersion.StandardUId, $"Opted in by EPAO by {contact.Username}");
 
             return RedirectToAction("OptInConfirmation", "Application", new { Id = id });
         }

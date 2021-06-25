@@ -1,6 +1,7 @@
 ﻿using SFA.DAS.AssessorService.Api.Types.Models.Apply.Review;
 using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.Domain.DTOs;
+using SFA.DAS.AssessorService.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -39,7 +40,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
 
     public class ApplicationsResult
     {
-        public IEnumerable<ApplicationSummaryItem> PageOfResults { get; set; }
+        public IEnumerable<ApplicationListItem> PageOfResults { get; set; }
         public int TotalCount { get; set; }
     }
 }
