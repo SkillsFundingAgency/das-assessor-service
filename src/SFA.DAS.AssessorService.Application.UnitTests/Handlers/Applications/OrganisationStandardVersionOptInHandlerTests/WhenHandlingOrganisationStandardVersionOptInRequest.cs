@@ -107,22 +107,6 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.OrganisationSta
                 ApplicationId = _applicationId
             };
 
-            //Arrange
-            _mockRepository.Setup(m => m.GetOrganisationStandardByOrganisationIdAndStandardReference("ORG", "ST0001"))
-                                    .ReturnsAsync(new Domain.Entities.OrganisationStandard() { Id = 123 });
-
-            _mockApplyRepository.Setup(m => m.GetApply(applicationId))
-                                .ReturnsAsync(apply);
-
-            _mockContactQueryRepository.Setup(m => m.GetContactById(It.IsAny<Guid>()))
-                                .ReturnsAsync(new Domain.Entities.Contact() { Email = "a@b.com", DisplayName = "Bob Smith" });
-
-            _mockStandardRepository.Setup(m => m.GetStandardVersionByStandardUId("ST0001_1_2"))
-                                .ReturnsAsync(new Domain.Entities.Standard());
-
-            _mockEMailTemplateQueryRepository.Setup(m => m.GetEmailTemplate(EmailTemplateNames.APPLY_EPAO_RESPONSE))
-                                .ReturnsAsync(new Domain.DTOs.EmailTemplateSummary());
-
             //Act
             var result = await _sut.Handle(request, new CancellationToken());
 

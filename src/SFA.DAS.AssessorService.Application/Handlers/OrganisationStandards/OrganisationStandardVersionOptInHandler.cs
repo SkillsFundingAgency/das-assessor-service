@@ -44,8 +44,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
             {
                 _unitOfWork.Begin();
 
-                OrganisationStandardVersion orgStandardVersion = null;
-
                 var orgStandard = await _repository.GetOrganisationStandardByOrganisationIdAndStandardReference(request.EndPointAssessorOrganisationId, request.StandardReference);
 
                 var entity = new Domain.Entities.OrganisationStandardVersion
@@ -85,7 +83,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
                 await NotifyContact(submittingContact, application.ApplyData, cancellationToken);
 
                 _unitOfWork.Commit();
-                }
                     
                 return orgStandardVersion;
             }
