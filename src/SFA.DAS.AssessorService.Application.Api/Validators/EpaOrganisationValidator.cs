@@ -187,6 +187,13 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
                 : string.Empty;
         }
 
+        public string CheckIfOrganisationStandardVersionAlreadyExists(string organisationId, int standardCode, List<string> standardVersions)
+        {
+            return _registerRepository.EpaOrganisationStandardVersionExists(organisationId, standardCode, standardVersions).Result
+                ? FormatErrorMessage(EpaOrganisationValidatorMessageName.OrganisationStandardVersionAlreadyExists)
+                : string.Empty;
+        }
+
         public string CheckIfOrganisationStandardDoesNotExist(string organisationId, int standardCode)
         {
             return _registerRepository.EpaOrganisationStandardExists(organisationId, standardCode).Result
@@ -513,10 +520,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             RunValidationCheckAndAppendAnyError("OrganisationId", CheckIfOrganisationNotFound(request.OrganisationId), validationResult, ValidationStatusCode.NotFound);
             if (!validationResult.IsValid) return validationResult;
 
-            //  SV-658 / SV-659 Now that we have versions, it is possible to register a version where the organisation+standard already exists.
-            //  So this validation is now redundant.
-            //RunValidationCheckAndAppendAnyError("OrganisationId", CheckIfOrganisationStandardAlreadyExists(request.OrganisationId, request.StandardCode), validationResult, ValidationStatusCode.AlreadyExists);
-            //if (!validationResult.IsValid) return validationResult;
+            //  SV-658 / SV-659 Now that we have versions, this will check will include versions too.
+            RunValidationCheckAndAppendAnyError("OrganisationId", CheckIfOrganisationStandardVersionAlreadyExists(request.OrganisationId, request.StandardCode, request.StandardVersions), validationResult, ValidationStatusCode.AlreadyExists);
+            if (!validationResult.IsValid) return validationResult;
 
             var standard = GetStandard(request.StandardCode).Result;
             if (standard is null)
