@@ -104,7 +104,7 @@ namespace SFA.DAS.AssessorService.Data
                     {
                         connection.Execute("INSERT INTO OrganisationStandardDeliveryArea ([OrganisationStandardId],DeliveryAreaId, Status) VALUES " +
                                             "(@osdaId, @deliveryAreaId,'Live'); ",
-                                        new { orgStandardId, deliveryAreaId }
+                                        new { osdaId = orgStandardId, deliveryAreaId }
                                         );
                     }
                 }
