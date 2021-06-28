@@ -9,7 +9,7 @@ namespace SFA.DAS.AssessorService.Web.Validators
     {
         public CertificateCheckViewModelValidator(IStringLocalizer<CertificateCheckViewModelValidator> localizer)
         {
-            RuleFor(vm => vm.Version).NotNull()
+            RuleFor(vm => vm.Version).NotEmpty()
                 .WithMessage(localizer["VersionCannotBeNull"]);
 
             When(vm => vm.StandardHasOptions, () =>
