@@ -3,7 +3,14 @@
 @model SFA.DAS.AssessorService.Web.ViewModels.Apply.SequenceViewModel;
 
 @{
-    ViewBag.Title = "Application overview";
+    if (Model.SequenceNo == ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO)
+    {
+        ViewBag.Title = "Withdrawal request overview";
+    }
+    else
+    {
+        ViewBag.Title = "Application overview";
+    }
     Layout = "_Layout";
 }
 
@@ -17,7 +24,7 @@
                 </span>
             }
 
-            <h1 class="govuk-heading-xl">Application overview</h1>
+            <h1 class="govuk-heading-xl">@ViewBag.Title</h1>
 
             @if (!ViewData.ModelState.IsValid || Model.ErrorMessages?.Any() is true)
             {
