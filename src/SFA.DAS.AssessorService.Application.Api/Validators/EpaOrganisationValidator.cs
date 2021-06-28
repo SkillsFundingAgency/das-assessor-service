@@ -513,8 +513,10 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             RunValidationCheckAndAppendAnyError("OrganisationId", CheckIfOrganisationNotFound(request.OrganisationId), validationResult, ValidationStatusCode.NotFound);
             if (!validationResult.IsValid) return validationResult;
 
-            RunValidationCheckAndAppendAnyError("OrganisationId", CheckIfOrganisationStandardAlreadyExists(request.OrganisationId, request.StandardCode), validationResult, ValidationStatusCode.AlreadyExists);
-            if (!validationResult.IsValid) return validationResult;
+            //  SV-658 / SV-659 Now that we have versions, it is possible to register a version where the organisation+standard already exists.
+            //  So this validation is now redundant.
+            //RunValidationCheckAndAppendAnyError("OrganisationId", CheckIfOrganisationStandardAlreadyExists(request.OrganisationId, request.StandardCode), validationResult, ValidationStatusCode.AlreadyExists);
+            //if (!validationResult.IsValid) return validationResult;
 
             var standard = GetStandard(request.StandardCode).Result;
             if (standard is null)
