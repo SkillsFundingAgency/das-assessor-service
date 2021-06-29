@@ -124,8 +124,7 @@
                     </div>
                     <button type="submit" class="govuk-button">Confirm and continue</button>
                 }
-
-                @if (!string.IsNullOrEmpty(Model.ApplicationStatus))
+                else
                 {
                     if (Model.ApplicationStatus == "Approved")
                     {

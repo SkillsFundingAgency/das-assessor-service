@@ -59,7 +59,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
 
             // Assert
             Assert.AreEqual("~/Views/Application/Standard/ConfirmStandard.cshtml", result.ViewName);
-            Assert.IsTrue(_sut.ModelState["IsConfirmed"].Errors.Any(x => x.ErrorMessage == "Please tick to confirm"));
+            Assert.IsTrue(_sut.ModelState["IsConfirmed"].Errors.Any(x => x.ErrorMessage == "Confirm you have read the assessment plan"));
         }
 
         [Test]

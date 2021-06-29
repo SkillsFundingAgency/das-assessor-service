@@ -10,6 +10,7 @@ using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Data.DapperTypeHandlers;
 using System;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
+using SFA.DAS.AssessorService.ApplyTypes;
 
 namespace SFA.DAS.AssessorService.Data
 {
@@ -20,6 +21,7 @@ namespace SFA.DAS.AssessorService.Data
         public RegisterQueryRepository(IWebConfiguration configuration)
         {
             _configuration = configuration;
+            SqlMapper.AddTypeHandler(typeof(ApplyData), new ApplyDataHandler());
             SqlMapper.AddTypeHandler(typeof(OrganisationData), new OrganisationDataHandler());
             SqlMapper.AddTypeHandler(typeof(OrganisationStandardData), new OrganisationStandardDataHandler());
         }
@@ -272,7 +274,7 @@ namespace SFA.DAS.AssessorService.Data
                     @"WITH VersionApply AS
                     (--Apply records for specific versions
                         SELECT ab1.*, og1.EndPointAssessorOrganisationId FROM(
-                        SELECT ap1.Id ApplyId, ap1.ApplicationStatus, ap1.OrganisationId, StandardReference, StandardReference + '_' + TRIM(version) StandardUId FROM Apply ap1
+                        SELECT ap1.Id ApplyId, ap1.ApplicationStatus, ap1.OrganisationId, StandardReference, StandardReference + '_' + TRIM(version) StandardUId, ap1.ApplyData FROM Apply ap1
                         CROSS APPLY OPENJSON(ApplyData, '$.Apply.Versions') WITH(version CHAR(10) '$')
                         ) ab1
                         JOIN Organisations og1 on og1.id = ab1.OrganisationId
@@ -295,7 +297,8 @@ namespace SFA.DAS.AssessorService.Data
                         so1.StandardUId, so1.title, so1.EffectiveFrom LarsEffectiveFrom, so1.EffectiveTo LarsEffectiveTo, so1.IFateReferenceNumber, so1.VersionEarliestStartDate, so1.VersionLatestStartDate, so1.VersionLatestEndDate, 
                         so1.version, so1.level,so1.status , so1.EPAChanged, so1.StandardPageUrl, so1.LarsCode,
                         os1.EffectiveFrom StdEffectiveFrom, os1.EffectiveTo StdEffectiveTo,
-                        osv.EffectiveFrom StdVersionEffectiveFrom, osv.EffectiveTo StdVersionEffectiveTo
+                        osv.EffectiveFrom StdVersionEffectiveFrom, osv.EffectiveTo StdVersionEffectiveTo,
+                        va1.ApplyData
                         FROM standards so1 
                         LEFT JOIN organisationstandard os1 on so1.IFateReferenceNumber = os1.StandardReference AND os1.EndPointAssessorOrganisationId = @organisationId
 						LEFT JOIN OrganisationStandardVersion osv on osv.standardUid = so1.standardUid AND osv.OrganisationStandardId = os1.Id 

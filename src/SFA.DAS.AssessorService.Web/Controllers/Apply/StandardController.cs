@@ -1,20 +1,20 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Apply;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.Domain.Consts;
+using SFA.DAS.AssessorService.Domain.Extensions;
 using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Web.StartupConfiguration;
 using SFA.DAS.AssessorService.Web.ViewModels.Apply;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 {
@@ -100,30 +100,32 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             var latestStandard = standardVersions.LastOrDefault();
             bool anyExistingVersions = standardVersions.Any(x => x.ApprovedStatus == ApprovedStatus.Approved);
 
-            if (!anyExistingVersions)
-            {
-                // no existing approved versions for this standard
-                var standardViewModel = new StandardVersionViewModel { Id = id, StandardReference = standardReference };
-                standardViewModel.Results = standardVersions.Select(s => (StandardVersion)s).ToList();
-                standardViewModel.SelectedStandard = (StandardVersion)latestStandard;
-                standardViewModel.ApplicationStatus = await ApplicationStandardStatus(application, standardViewModel.SelectedStandard.LarsCode);
-                return View("~/Views/Application/Standard/ConfirmStandard.cshtml", standardViewModel);
-            }
-            else if (!string.IsNullOrWhiteSpace(version))
+            if (!string.IsNullOrWhiteSpace(version))
             {
                 // specific version selected (from standversion view)
                 var standardViewModel = new StandardVersionViewModel { Id = id, StandardReference = standardReference };
                 standardViewModel.SelectedStandard = (StandardVersion)standardVersions.FirstOrDefault(x => x.Version.ToString() == version);
                 standardViewModel.Results = new List<StandardVersion>() { standardViewModel.SelectedStandard };
+                standardViewModel.ApplicationStatus = await ApplicationStandardStatus(application, standardReference, new List<string>() { version });
                 return View("~/Views/Application/Standard/ConfirmStandard.cshtml", standardViewModel);
             }
-            else
+            else if (anyExistingVersions)
             {
                 // existing approved versions for this standard
                 var model = new StandardVersionApplicationViewModel { Id = id, StandardReference = standardReference };
                 model.SelectedStandard = new StandardVersionApplication(latestStandard);
                 model.Results = ApplyVersionStatuses(standardVersions).OrderByDescending(x => x.Version).ToList();
                 return View("~/Views/Application/Standard/StandardVersion.cshtml", model);
+            }
+            else
+            {
+                // no existing approved versions for this standard
+                var standardViewModel = new StandardVersionViewModel { Id = id, StandardReference = standardReference };
+                standardViewModel.Results = standardVersions.Select(s => (StandardVersion)s).ToList();
+                standardViewModel.SelectedStandard = (StandardVersion)latestStandard;
+                if (standardVersions.Count() == 1)
+                    standardViewModel.ApplicationStatus = await ApplicationStandardStatus(application, standardReference, new List<string>() { standardVersions.First().Version.VersionToString() });
+                return View("~/Views/Application/Standard/ConfirmStandard.cshtml", standardViewModel);
             }
         }
 
@@ -141,17 +143,15 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             var standardVersions = (await _orgApiClient.GetAppliedStandardVersionsForEPAO(org?.OrganisationId, standardReference))
                                         .OrderBy(s => s.Version);
 
-            model.SelectedStandard = string.IsNullOrWhiteSpace(version) ? (StandardVersion)standardVersions.LastOrDefault() :(StandardVersion)standardVersions.FirstOrDefault(x => x.Version.ToString() == version);
-            model.Results = standardVersions.Select(s => (StandardVersion)s).ToList(); 
-            model.ApplicationStatus = await ApplicationStandardStatus(application, model.SelectedStandard.LarsCode);
+            var selectedStandard = string.IsNullOrWhiteSpace(version) ?
+                standardVersions.LastOrDefault() : standardVersions.FirstOrDefault(x => x.Version.ToString() == version);
 
-            var hasErrors = false;
-
+            bool anyExistingVersions = standardVersions.Any(x => x.ApprovedStatus == ApprovedStatus.Approved);
+            
             if (!model.IsConfirmed)
             {
-                ModelState.AddModelError(nameof(model.IsConfirmed), "Please tick to confirm");
+                ModelState.AddModelError(nameof(model.IsConfirmed), "Confirm you have read the assessment plan");
                 TempData["ShowConfirmedError"] = true;
-                hasErrors = true;
             }
 
             if (string.IsNullOrWhiteSpace(version))
@@ -161,36 +161,50 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 {
                     ModelState.AddModelError(nameof(model.SelectedVersions), "You must select at least one version");
                     TempData["ShowVersionError"] = true;
-                    hasErrors = true;
                 }
-
-                if (!string.IsNullOrEmpty(model.ApplicationStatus))
-                {
-                    hasErrors = true;
-                }
+                else
+                    model.ApplicationStatus = await ApplicationStandardStatus(application, standardReference, model.SelectedVersions);
             }
 
-            if(hasErrors)
+            if (!ModelState.IsValid || !string.IsNullOrWhiteSpace(model.ApplicationStatus))
             {
+                if (!string.IsNullOrWhiteSpace(version))
+                {
+                    // specific version selected (from standversion view)
+                    model.SelectedStandard = (StandardVersion)selectedStandard;
+                    model.Results = new List<StandardVersion>() { selectedStandard };
+                }
+                else
+                {
+                    // no existing approved versions for this standard
+                    model.Results = standardVersions.Select(s => (StandardVersion)s).ToList();
+                    model.SelectedStandard = (StandardVersion)selectedStandard;
+                }
+
                 return View("~/Views/Application/Standard/ConfirmStandard.cshtml", model);
             }
-
-            var versions = (standardVersions.Count() > 1 && string.IsNullOrWhiteSpace(version)) ? model.SelectedVersions : new List<string>() { model.SelectedStandard.Version };
-            bool anyExistingVersions = standardVersions.Any(x => x.ApprovedStatus == ApprovedStatus.Approved);
-
-            if (anyExistingVersions)
-            {
-                await _applicationApiClient.UpdateStandardData(id, model.SelectedStandard.LarsCode, model.SelectedStandard.IFateReferenceNumber, model.SelectedStandard.Title, versions, ApplicationTypes.Version);
-
-                // update QnA application data for the Application Type
-                var applicationData = await _qnaApiClient.GetApplicationData(application.ApplicationId);
-                applicationData.ApplicationType = ApplicationTypes.Version;
-                await _qnaApiClient.UpdateApplicationData(application.ApplicationId, applicationData);
-            }
             else
-                await _applicationApiClient.UpdateStandardData(id, model.SelectedStandard.LarsCode, model.SelectedStandard.IFateReferenceNumber, model.SelectedStandard.Title, versions, application.ApplicationType);
+            {
+                List<string> versions = null;
+                if (!string.IsNullOrWhiteSpace(version) || standardVersions.Count() == 1)
+                    versions = new List<string> { selectedStandard.Version.VersionToString() };
+                else
+                    versions = model.SelectedVersions;
 
-            return RedirectToAction("SequenceSignPost", "Application", new { Id = id });
+                if (anyExistingVersions)
+                {
+                    await _applicationApiClient.UpdateStandardData(id, selectedStandard.LarsCode, selectedStandard.IFateReferenceNumber, selectedStandard.Title, versions, ApplicationTypes.Version);
+
+                    // update QnA application data for the Application Type
+                    var applicationData = await _qnaApiClient.GetApplicationData(application.ApplicationId);
+                    applicationData.ApplicationType = ApplicationTypes.Version;
+                    await _qnaApiClient.UpdateApplicationData(application.ApplicationId, applicationData);
+                }
+                else
+                    await _applicationApiClient.UpdateStandardData(id, selectedStandard.LarsCode, selectedStandard.IFateReferenceNumber, selectedStandard.Title, versions, application.ApplicationType);
+
+                return RedirectToAction("SequenceSignPost", "Application", new { Id = id });
+            }
         }
 
         [HttpGet("standard/{id}/opt-in/{standardReference}/{version}")]
@@ -260,39 +274,30 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             return canUpdate;
         }
 
-        private async Task<string> ApplicationStandardStatus(ApplicationResponse application, int standardCode)
+        private async Task<string> ApplicationStandardStatus(ApplicationResponse application, string iFateReferenceNumber, List<string> versions)
         {
             var validApplicationStatuses = new string[] { ApplicationStatus.InProgress };
             var validApplicationSequenceStatuses = new string[] { ApplicationSequenceStatus.Draft };
 
-            var applicationData = await _qnaApiClient.GetApplicationData(application.ApplicationId);
-            var org = await _orgApiClient.GetEpaOrganisationById(applicationData.OrganisationReferenceId);
-            var standards = await _orgApiClient.GetOrganisationStandardsByOrganisation(org?.OrganisationId);
-            var standard = standards?.SingleOrDefault(x => x.StandardCode == standardCode);
+            var org = await _orgApiClient.GetEpaOrganisation(application.OrganisationId.ToString());
+            var standards = await _orgApiClient.GetAppliedStandardVersionsForEPAO(org?.OrganisationId, iFateReferenceNumber);
+            var matchingStandards = standards.Where(x => versions.Contains(x.Version.VersionToString()));
 
-            // does the org or the application not have the standard && 
-            if (standard == null && application?.ApplyData != null)
+            if (matchingStandards.Any(x => x.ApprovedStatus == ApprovedStatus.Approved))
+                return ApplicationStatus.Approved;
+            else
             {
-                var userId = await GetUserId();
-                var applications = await _applicationApiClient.GetStandardApplications(userId);
-                foreach( var app in applications)
+                var inProgressApplications = matchingStandards.Where(x => x.ApprovedStatus == ApprovedStatus.ApplyInProgress &&
+                                                validApplicationStatuses.Contains(x.ApplicationStatus));
+                foreach(var app in inProgressApplications)
                 {
-                    if (app.OrganisationId == org?.Id && app.ApplyData.Apply.StandardCode == standardCode)
+                    var sequence = app.ApplyData.Sequences?.FirstOrDefault(seq => seq.IsActive && seq.SequenceNo == ApplyConst.STANDARD_SEQUENCE_NO);
+                    if (sequence != null && validApplicationSequenceStatuses.Contains(sequence.Status))
                     {
-                        if (validApplicationStatuses.Contains(application.ApplicationStatus))
-                        {
-                            var sequence = application.ApplyData.Sequences?.FirstOrDefault(seq => seq.IsActive && seq.SequenceNo == ApplyConst.STANDARD_SEQUENCE_NO);
-
-                            if (sequence != null && validApplicationSequenceStatuses.Contains(sequence.Status))
-                            {
-                                return sequence.Status;
-                            }
-                        }
+                        return sequence.Status;
                     }
                 }
             }
-            else if ((standard.EffectiveTo == null || standard.EffectiveTo > DateTime.UtcNow) && org.Status == OrganisationStatus.Live)
-                return ApplicationStatus.Approved;
 
             return string.Empty;
         }
