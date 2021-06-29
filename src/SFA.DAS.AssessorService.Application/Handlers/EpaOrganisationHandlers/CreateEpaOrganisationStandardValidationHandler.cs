@@ -28,6 +28,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
             {
                 OrganisationId = request.OrganisationId,
                 StandardCode = request.StandardCode,
+                StandardVersions = request.StandardVersions,
                 EffectiveTo = request.EffectiveTo,
                 EffectiveFrom = request.EffectiveFrom,
                 ContactId = request.ContactId,
