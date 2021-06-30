@@ -14,5 +14,6 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Register
         public DateTime? EffectiveTo { get; set; }
         public string ContactId { get; set; }
         public List<int> DeliveryAreas { get; set; }
+        public string StandardApplicationType { get; set; }
     }
 }
