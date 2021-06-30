@@ -43,26 +43,33 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
 
         public async Task<Certificate> Handle(StartCertificateRequest request, CancellationToken cancellationToken)
         {
+            _logger.LogInformation($"StartCertificateRequest for EPAO Ukprn: {request.UkPrn}");
+            var organisation = await _organisationQueryRepository.GetByUkPrn(request.UkPrn);
             var certificate = await _certificateRepository.GetCertificate(request.Uln, request.StandardCode);
 
             if (certificate == null)
-                certificate = await CreateNewCertificate(request);
+            {
+                certificate = await CreateNewCertificate(request, organisation);
+            }
             else
             {
                 var certData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
-
-                _logger.LogInformation("CreateNewCertificate Before Get Ilr from db");
                 var ilr = await _ilrRepository.Get(request.Uln, request.StandardCode);
+
+                // when re-using an existing certificate ensure that the organistion matches the Ukprn for
+                // the latest organisation which is assessing the learner
+                certificate.OrganisationId = organisation.Id;
 
                 if (certificate.Status == CertificateStatus.Deleted && ilr != null)
                 {
+                    _logger.LogInformation($"Recreating deleted certificate for ULN: {certificate.Uln}, Standard: {certificate.StandardCode}");
+
                     certData.LearnerGivenNames = ilr.GivenNames;
                     certData.LearnerFamilyName = ilr.FamilyName;
                     certData.LearningStartDate = ilr.LearnStartDate;
                     certData.FullName = $"{ilr.GivenNames} {ilr.FamilyName}";
                     certificate.CertificateData = JsonConvert.SerializeObject(certData);
                     certificate.IsPrivatelyFunded = ilr?.FundingModel == PrivateFundingModelNumber;
-
                     await _certificateRepository.Update(certificate, request.Username, null);
                 }
                 else if (certificate.Status == CertificateStatus.Submitted && certData.OverallGrade == CertificateGrade.Fail)
@@ -89,12 +96,10 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
             return certificate;
         }
 
-        private async Task<Certificate> CreateNewCertificate(StartCertificateRequest request)
+        private async Task<Certificate> CreateNewCertificate(StartCertificateRequest request, Organisation organisation)
         {
             _logger.LogInformation("CreateNewCertificate Before Get Ilr from db");
             var ilr = await _ilrRepository.Get(request.Uln, request.StandardCode);
-            _logger.LogInformation("CreateNewCertificate Before Get Organisation from db");
-            var organisation = await _organisationQueryRepository.GetByUkPrn(request.UkPrn);
             _logger.LogInformation("CreateNewCertificate Before Get Provider from API");
             var provider = await GetProviderFromUkprn(ilr.UkPrn);
 
