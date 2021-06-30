@@ -1,3 +1,4 @@
+using SFA.DAS.AssessorService.Domain.Extensions;
 using System;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models.AO
@@ -12,5 +13,20 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.AO
         public DateTime? DateVersionApproved { get; set; }
         public string Comments { get; set; }
         public string Status { get; set; }
+
+        public static explicit operator OrganisationStandardVersion(Domain.Entities.OrganisationStandardVersion version)
+        {
+            return new OrganisationStandardVersion
+            {
+                StandardUId = version.StandardUId,
+                Version = version.Version.VersionToString(),
+                OrganisationStandardId = version.OrganisationStandardId,
+                EffectiveFrom = version.EffectiveFrom,
+                EffectiveTo = version.EffectiveTo,
+                DateVersionApproved = version.DateVersionApproved,
+                Comments = version.Comments,
+                Status = version.Status
+            };
+        }
     }
 }
