@@ -219,8 +219,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             {
                 var firstVersion = versions.First();
                 var id = await CreateWithdrawalApplication(contact, organisation, 
-                    firstVersion.LarsCode, 
-                    firstVersion.IFateReferenceNumber, 
+                    firstVersion.LarsCode,
+                    iFateReferenceNumber, 
                     firstVersion.Title,
                     (model.WithdrawalType == WithdrawalType.SpecificVersions)? StandardOrVersion.Version : StandardOrVersion.Standard,
                     (model.WithdrawalType == WithdrawalType.SpecificVersions) ? model.SelectedVersions : null);
