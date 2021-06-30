@@ -55,12 +55,13 @@
                             <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="conditional-versions">
                                 <div class="govuk-form-group" sfa-validation-for="SelectedVersions" sfa-validationerror-class="govuk-form-group--error">
                                     <fieldset class="govuk-fieldset">
-                                        <legend>standard versions</legend>
                                         <sfa-validationerror-detail sfa-validation-for="SelectedVersions" sfa-validationerror-class="govuk-error-message"></sfa-validationerror-detail>
-                                        <div class="govuk-hint">
-                                            You can select one or multiple versions. Selecting all versions will result in withdrawal from the whole standard.
-                                            The same withdrawal date will apply to all versions selected. If you want to withdraw from more than one version on different dates, you will need to make a separate withdrawal request for each version.
-                                        </div>
+                                        <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
+                                            <span class="govuk-hint">
+                                                You can select one or multiple versions. Selecting all versions will result in withdrawal from the whole standard.
+                                                The same withdrawal date will apply to all versions selected. If you want to withdraw from more than one version on different dates, you will need to make a separate withdrawal request for each version.
+                                            </span>
+                                        </legend>
                                         <div class="govuk-checkboxes">
                                             @foreach (var item in Model.Versions)
                                             {
