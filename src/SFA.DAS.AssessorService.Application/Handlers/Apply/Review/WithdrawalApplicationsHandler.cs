@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models.Apply.Review;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.ApplyTypes;
+using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Paging;
 using System.Collections.Generic;
@@ -17,11 +18,13 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply.Review
     {
         private readonly IApplyRepository _repository;
         private readonly ILogger<WithdrawalApplicationsHandler> _logger;
+        private readonly IStandardRepository _standardRepository;
 
-        public WithdrawalApplicationsHandler(IApplyRepository repository, ILogger<WithdrawalApplicationsHandler> logger)
+        public WithdrawalApplicationsHandler(IApplyRepository repository, ILogger<WithdrawalApplicationsHandler> logger, IStandardRepository standardRepository)
         {
             _repository = repository;
             _logger = logger;
+            _standardRepository = standardRepository;
         }
 
         public async Task<PaginatedList<ApplicationSummaryItem>> Handle(WithdrawalApplicationsRequest request, CancellationToken cancellationToken)
@@ -33,8 +36,33 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply.Review
 
             var items = Mapper.Map<IEnumerable<ApplicationListItem>, IEnumerable<ApplicationSummaryItem>>(organisationApplicationsResult.PageOfResults);
 
+            // Get versions for each standard and determine the withdrawal application type.
+            foreach(var item in items)
+            {
+                var allVersionsForStandard = await _standardRepository.GetStandardVersionsByIFateReferenceNumber(item.StandardReference);
+                item.WithdrawalType = GetWithdrawalApplicationType(item, allVersionsForStandard);
+            }
+
             return new PaginatedList<ApplicationSummaryItem>(items.ToList(),
                     organisationApplicationsResult.TotalCount, request.PageIndex, request.PageSize, request.PageSetSize);
+        }
+
+        // SV-912 Helper to generate the type of withdrawal
+        private string GetWithdrawalApplicationType(ApplicationSummaryItem item, IEnumerable<Standard> allVersionsForStandard)
+        {
+            string withdrawalApplicationType = WithdrawalTypes.Version;
+            var allVersions = allVersionsForStandard.Select(s => s.Version.ToString()).ToList();
+
+            if (null == item.Versions || !item.Versions.Any())
+            {
+                withdrawalApplicationType = WithdrawalTypes.Register;
+            }
+            else if (!allVersions.Except(item.Versions).ToList().Any())
+            {
+                withdrawalApplicationType = WithdrawalTypes.Standard;
+            }
+
+            return withdrawalApplicationType;
         }
     }
 }
