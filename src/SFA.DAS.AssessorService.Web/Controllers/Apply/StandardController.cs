@@ -180,15 +180,15 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
             if (anyExistingVersions)
             {
-                await _applicationApiClient.UpdateStandardData(id, model.SelectedStandard.LarsCode, model.SelectedStandard.IFateReferenceNumber, model.SelectedStandard.Title, versions, ApplicationTypes.Version);
+                await _applicationApiClient.UpdateStandardData(id, model.SelectedStandard.LarsCode, model.SelectedStandard.IFateReferenceNumber, model.SelectedStandard.Title, versions, StandardApplicationTypes.Version);
 
                 // update QnA application data for the Application Type
                 var applicationData = await _qnaApiClient.GetApplicationData(application.ApplicationId);
-                applicationData.ApplicationType = ApplicationTypes.Version;
+                applicationData.ApplicationType = StandardApplicationTypes.Version;
                 await _qnaApiClient.UpdateApplicationData(application.ApplicationId, applicationData);
             }
             else
-                await _applicationApiClient.UpdateStandardData(id, model.SelectedStandard.LarsCode, model.SelectedStandard.IFateReferenceNumber, model.SelectedStandard.Title, versions, application.ApplicationType);
+                await _applicationApiClient.UpdateStandardData(id, model.SelectedStandard.LarsCode, model.SelectedStandard.IFateReferenceNumber, model.SelectedStandard.Title, versions, StandardApplicationTypes.Full);
 
             return RedirectToAction("SequenceSignPost", "Application", new { Id = id });
         }
