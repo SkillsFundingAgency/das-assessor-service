@@ -1,5 +1,6 @@
 ﻿using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.AssessorService.Domain.Extensions;
 using System;
 using System.Collections.Generic;
 
@@ -15,6 +16,8 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Standards
         public int Level { get; set; }
         public DateTime? EffectiveFrom { get; set; }
         public DateTime? EffectiveTo { get; set; }
+        public DateTime? VersionEarliestStartDate { get; set; }
+        public DateTime? VersionLatestEndDate { get; set; }
         public IEnumerable<string> Options { get; set; }
         public bool EPAChanged { get; set; }
         public string StandardPageUrl { get; set; }
@@ -25,12 +28,14 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Standards
             {
                 StandardUId = standard.StandardUId,
                 Title = standard.Title,
-                Version = standard.Version?.ToString() ?? string.Empty,
+                Version = standard.Version.VersionToString(),
                 IFateReferenceNumber = standard.IfateReferenceNumber,
                 LarsCode = standard.LarsCode,
                 Level = standard.Level,
-                EffectiveFrom = standard.EffectiveFrom.GetValueOrDefault(),
-                EffectiveTo = standard.EffectiveTo.GetValueOrDefault(),
+                EffectiveFrom = standard.EffectiveFrom,
+                EffectiveTo = standard.EffectiveTo,
+                VersionEarliestStartDate = standard.VersionEarliestStartDate,
+                VersionLatestEndDate = standard.VersionLatestEndDate,
                 EPAChanged = standard.EPAChanged,
                 StandardPageUrl = standard.StandardPageUrl
             };
@@ -42,12 +47,14 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Standards
             {
                 StandardUId = standard.StandardUId,
                 Title = standard.Title,
-                Version = standard.Version.ToString(),
+                Version = standard.Version.VersionToString(),
                 IFateReferenceNumber = standard.IFateReferenceNumber,
                 LarsCode = standard.LarsCode,
                 Level = standard.Level,
-                EffectiveFrom = standard.LarsEffectiveFrom.GetValueOrDefault(),
+                EffectiveFrom = standard.LarsEffectiveFrom,
                 EffectiveTo = standard.LarsEffectiveTo,
+                VersionEarliestStartDate = standard.VersionEarliestStartDate,
+                VersionLatestEndDate = standard.VersionLatestEndDate,
                 EPAChanged = standard.EPAChanged,
                 StandardPageUrl = standard.StandardPageUrl
             };

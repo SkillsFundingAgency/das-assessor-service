@@ -9,6 +9,7 @@ using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Api.Services;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.Testing.AutoFixture;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -258,24 +259,24 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
             result.Should().BeEquivalentTo(standard);
         }
 
-        [Test, AutoData]
-        public async Task When_GettingEpaoRegisteredStandardVersionsByEpaoId_ReturnsApprovedStandardVersions(string epaoId, IEnumerable<StandardVersion> standards)
+        [Test, RecursiveMoqAutoData]
+        public async Task When_GettingEpaoRegisteredStandardVersionsByEpaoId_ReturnsApprovedStandardVersions(string epaoId, IEnumerable<OrganisationStandardVersion> standards)
         {
             _mockStandardRepository.Setup(s => s.GetEpaoRegisteredStandardVersions(epaoId)).ReturnsAsync(standards);
 
             var result = await _standardService.GetEPAORegisteredStandardVersions(epaoId, null);
 
-            result.Should().BeEquivalentTo(standards);
+            result.Should().BeEquivalentTo(standards.Select(s => new { StandardUId = s.StandardUId, Version = s.Version.Value.ToString("0.0#") }));
         }
 
-        [Test, AutoData]
-        public async Task When_GettingEpaoRegisteredStandardVersionsByEpaoIdAndLarsCode_ReturnsApprovedStandardVersionsForThatStandard(string epaoId, int larsCode, IEnumerable<StandardVersion> standards)
+        [Test, RecursiveMoqAutoData]
+        public async Task When_GettingEpaoRegisteredStandardVersionsByEpaoIdAndLarsCode_ReturnsApprovedStandardVersionsForThatStandard(string epaoId, int larsCode, IEnumerable<OrganisationStandardVersion> standards)
         {
             _mockStandardRepository.Setup(s => s.GetEpaoRegisteredStandardVersions(epaoId, larsCode)).ReturnsAsync(standards);
 
             var result = await _standardService.GetEPAORegisteredStandardVersions(epaoId, larsCode);
 
-            result.Should().BeEquivalentTo(standards);
+            result.Should().BeEquivalentTo(standards.Select(s => new { StandardUId = s.StandardUId, Version = s.Version.Value.ToString("0.0#") }));
         }
 
         [Test, AutoData]

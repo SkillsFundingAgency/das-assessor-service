@@ -83,7 +83,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
         }
 
         [Test, MoqAutoData]
-        public async Task When_CertificateCheckViewModelIsValid(CertificateCheckViewModel vm)
+        public async Task When_CertificateCheckViewModelIsInvalid(CertificateCheckViewModel vm)
         {
             _validator.Setup(s => s.Validate(It.IsAny<CertificateCheckViewModel>())).Returns(new ValidationResult(new List<ValidationFailure> {
                 new ValidationFailure("Error", "Error message")
@@ -114,7 +114,6 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
             result.ActionName.Should().Be("Confirm");
             result.ControllerName.Should().Be("CertificateConfirmation");
         }
-
         private Certificate SetupValidCertificate()
         {
             return _builder.CreateNew<Certificate>()

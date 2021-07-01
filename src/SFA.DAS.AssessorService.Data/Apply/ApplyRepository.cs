@@ -154,13 +154,13 @@ namespace SFA.DAS.AssessorService.Data.Apply
         {
             await _unitOfWork.Connection.ExecuteAsync(
                 @"UPDATE Apply
-                  SET  ApplicationStatus = @ApplicationStatus, ApplyData = @ApplyData, StandardCode = @StandardCode, ReviewStatus = @ReviewStatus, FinancialReviewStatus = @FinancialReviewStatus, UpdatedBy = @UpdatedBy, UpdatedAt = GETUTCDATE() 
+                  SET  ApplicationStatus = @ApplicationStatus, ApplyData = @ApplyData, StandardCode = @StandardCode, StandardReference = @StandardReference, ReviewStatus = @ReviewStatus, FinancialReviewStatus = @FinancialReviewStatus, UpdatedBy = @UpdatedBy, UpdatedAt = GETUTCDATE() 
                   WHERE  (Apply.Id = @Id)",
-                param: new { apply.ApplicationStatus, apply.ApplyData, apply.StandardCode, apply.ReviewStatus, apply.FinancialReviewStatus, apply.Id, apply.UpdatedBy},
+                param: new { apply.ApplicationStatus, apply.ApplyData, apply.StandardCode, apply.StandardReference, apply.ReviewStatus, apply.FinancialReviewStatus, apply.Id, apply.UpdatedBy},
                 transaction: _unitOfWork.Transaction);
         }
 
-        public async Task<bool> UpdateStandardData(Guid id, int standardCode, string referenceNumber, string standardName, List<string> versions, string applicationType)
+        public async Task<bool> UpdateStandardData(Guid id, int standardCode, string referenceNumber, string standardName, List<string> versions, string standardApplicationType)
         {
             var application = await GetApply(id);
             var applyData = application?.ApplyData;
@@ -169,7 +169,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
             {
                 application.StandardCode = standardCode;
                 application.StandardReference = referenceNumber;
-                application.ApplicationType = applicationType;
+                application.StandardApplicationType = standardApplicationType;
 
                 if (applyData.Apply == null)
                 {
@@ -183,9 +183,9 @@ namespace SFA.DAS.AssessorService.Data.Apply
 
                 await _unitOfWork.Connection.ExecuteAsync(
                     @"UPDATE Apply
-                      SET  ApplyData = @ApplyData, StandardCode = @StandardCode, StandardReference = @standardReference, ApplicationType = @applicationType
+                      SET  ApplyData = @ApplyData, StandardCode = @StandardCode, StandardReference = @standardReference, StandardApplicationType = @standardApplicationType
                       WHERE  Id = @Id",
-                    param: new { application.Id, application.ApplyData, application.StandardCode, application.StandardReference, application.ApplicationType },
+                    param: new { application.Id, application.ApplyData, application.StandardCode, application.StandardReference, application.StandardApplicationType },
                     transaction: _unitOfWork.Transaction);
                 
                 return true;
@@ -619,7 +619,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
             @params.Add("pageIndex", pageIndex);
             @params.Add("totalCount", dbType: DbType.Int32, direction: ParameterDirection.Output);
 
-            var results = await _unitOfWork.Connection.QueryAsync<ApplicationSummaryItem>(
+            var results = await _unitOfWork.Connection.QueryAsync<ApplicationListItem>(
                 "Apply_List_Applications",
                 param: @params,
                 transaction: _unitOfWork.Transaction,
@@ -627,7 +627,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
 
             var result = new ApplicationsResult
             {
-                PageOfResults = results?.ToList() ?? new List<ApplicationSummaryItem>(),
+                PageOfResults = results?.ToList() ?? new List<ApplicationListItem>(),
                 TotalCount = @params.Get<int?>("totalCount") ?? 0
             };
 

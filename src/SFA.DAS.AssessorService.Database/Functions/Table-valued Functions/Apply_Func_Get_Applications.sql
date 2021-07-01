@@ -53,9 +53,9 @@ RETURN
 		END As SubmissionCount,
         ap1.ApplicationStatus As ApplicationStatus,
         ap1.ReviewStatus As ReviewStatus,
-		ap1.ApplicationType as ApplicationType,
+		ap1.StandardApplicationType as StandardApplicationType,
         ap1.FinancialReviewStatus As FinancialStatus,
-		JSON_VALUE(ap1.ApplyData, '$.Apply.Versions') as Versions,
+		JSON_QUERY(ap1.ApplyData, '$.Apply.Versions') as Versions,
         JSON_VALUE(ap1.FinancialGrade,'$.SelectedGrade') AS FinancialGrade,		
         seq.Status As SequenceStatus,
 		TotalCount = COUNT(1) OVER()

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace SFA.DAS.AssessorService.ApplyTypes
 {
@@ -11,7 +12,7 @@ namespace SFA.DAS.AssessorService.ApplyTypes
         public int? StandardCode { get; set; }
         public string StandardReference { get; set; }
         public string Standard => StandardCode.HasValue ? $"{StandardName} ({StandardCode})" : StandardName;
-        public string Versions { get; set; }
+        public List<string> Versions { get; set; }
         public DateTime? SubmittedDate { get; set; }
         public DateTime? FeedbackAddedDate { get; set; }
         public DateTime? ClosedDate { get; set; }
@@ -21,6 +22,6 @@ namespace SFA.DAS.AssessorService.ApplyTypes
         public string FinancialStatus { get; set; }
         public string FinancialGrade { get; set; }
         public string SequenceStatus { get; set; } // NOTE: Only used for Closed Applications
-        public string ApplicationType { get; set; }
+        public string StandardApplicationType { get; set; }
     }
 }

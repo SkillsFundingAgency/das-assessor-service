@@ -17,7 +17,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
 
         public async Task<bool> Handle(UpdateStandardDataRequest request, CancellationToken cancellationToken)
         {
-            return await _applyRepository.UpdateStandardData(request.Id, request.StandardCode, request.ReferenceNumber, request.StandardName, request.Versions, request.ApplicationType);
+            return await _applyRepository.UpdateStandardData(request.Id, request.StandardCode, request.ReferenceNumber, request.StandardName, request.Versions, request.StandardApplicationType);
         }
     }
 }

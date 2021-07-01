@@ -7,5 +7,6 @@
         public const string NewVersionChanged = "NewVersionChanged";
         public const string Withdrawn = "Withdrawn";
         public const string InProgress = "InProgress";
+        public const string FeedbackAdded = "FeedbackAdded";
     }
 }
