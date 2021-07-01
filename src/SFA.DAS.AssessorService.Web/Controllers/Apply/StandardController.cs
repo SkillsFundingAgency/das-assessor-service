@@ -103,7 +103,12 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             if (!string.IsNullOrWhiteSpace(version))
             {
                 // specific version selected (from standversion view)
-                var standardViewModel = new StandardVersionViewModel { Id = id, StandardReference = standardReference };
+                var standardViewModel = new StandardVersionViewModel 
+                { 
+                    Id = id, 
+                    StandardReference = standardReference,
+                    FromStandardsVersion = true
+                };
                 standardViewModel.SelectedStandard = (StandardVersion)standardVersions.FirstOrDefault(x => x.Version.ToString() == version);
                 standardViewModel.Results = new List<StandardVersion>() { standardViewModel.SelectedStandard };
                 standardViewModel.ApplicationStatus = await ApplicationStandardStatus(application, standardReference, new List<string>() { version });
@@ -120,7 +125,12 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             else
             {
                 // no existing approved versions for this standard
-                var standardViewModel = new StandardVersionViewModel { Id = id, StandardReference = standardReference };
+                var standardViewModel = new StandardVersionViewModel
+                {
+                    Id = id,
+                    StandardReference = standardReference,
+                    FromStandardsVersion = false
+                };
                 standardViewModel.Results = standardVersions.Select(s => (StandardVersion)s).ToList();
                 standardViewModel.SelectedStandard = (StandardVersion)latestStandard;
                 if (standardVersions.Count() == 1)
