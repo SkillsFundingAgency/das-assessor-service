@@ -88,7 +88,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             return Ok((StandardVersion)standard);
         }
 
-        [HttpGet("standards/epao/{epaoId}/{larsCode}", Name = "GetEpaoRegisteredStandardVersions")]
+        [HttpGet("standards/epao/{epaoId}/{larsCode?}", Name = "GetEpaoRegisteredStandardVersions")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(int))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> GetEpaoRegisteredStandardVersions(string epaoId, int? larsCode = null)
