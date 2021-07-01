@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using OrganisationStandardVersion = SFA.DAS.AssessorService.Api.Types.Models.AO.OrganisationStandardVersion;
 
 namespace SFA.DAS.AssessorService.Application.Api.Services
 {
@@ -267,18 +268,18 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
             return results.PageOfResults;
         }
 
-        public async Task<IEnumerable<AssessorService.Api.Types.Models.AO.OrganisationStandardVersion>> GetEPAORegisteredStandardVersions(string endPointAssessorOrganisationId, int? larsCode = null)
+        public async Task<IEnumerable<OrganisationStandardVersion>> GetEPAORegisteredStandardVersions(string endPointAssessorOrganisationId, int? larsCode = null)
         {
             if (larsCode.HasValue && larsCode.Value > 0)
             {
                 var versionsOfStandard = await _standardRepository.GetEpaoRegisteredStandardVersions(endPointAssessorOrganisationId, larsCode.Value);
                     
-                return versionsOfStandard.Select(version => (AssessorService.Api.Types.Models.AO.OrganisationStandardVersion)version);
+                return versionsOfStandard.Select(version => (OrganisationStandardVersion)version);
             }
 
             var versions = await _standardRepository.GetEpaoRegisteredStandardVersions(endPointAssessorOrganisationId);
 
-            return versions.Select(version => (AssessorService.Api.Types.Models.AO.OrganisationStandardVersion)version);
+            return versions.Select(version => (OrganisationStandardVersion)version);
         }
     }
 }
