@@ -1,6 +1,6 @@
 ﻿namespace SFA.DAS.AssessorService.Domain.Consts
 {
-    public class StandardApplicationTypes
+    public static class StandardApplicationTypes
     {
         /// <summary>
         /// This is intended to be different from the ApplicationTypes constant. This is not to be used
