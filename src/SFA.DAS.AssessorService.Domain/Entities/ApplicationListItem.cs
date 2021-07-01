@@ -17,7 +17,7 @@ namespace SFA.DAS.AssessorService.Domain.Entities
         public DateTime? ClosedDate { get; set; }
         public int SubmissionCount { get; set; }
         public string ApplicationStatus { get; set; }
-        public string ApplicationType { get; set; }
+        public string StandardApplicationType { get; set; }
         public string ReviewStatus { get; set; }
         public string FinancialStatus { get; set; }
         public string FinancialGrade { get; set; }

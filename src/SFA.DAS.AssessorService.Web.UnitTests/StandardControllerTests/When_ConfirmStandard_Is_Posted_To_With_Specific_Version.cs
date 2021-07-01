@@ -34,9 +34,9 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
 
             // Assert
             _mockApiClient.Verify(m => m.UpdateStandardData(It.IsAny<Guid>(), 1, "ST0001", "Title 1",
-                It.Is<List<string>>(x => x.Count == 1 && x[0] == "1.2"), ApplicationTypes.Version));
+                It.Is<List<string>>(x => x.Count == 1 && x[0] == "1.2"), StandardApplicationTypes.Version));
 
-            _mockQnaApiClient.Verify(m => m.UpdateApplicationData(It.IsAny<Guid>(), It.Is<ApplicationData>(x => x.ApplicationType == ApplicationTypes.Version)));
+            _mockQnaApiClient.Verify(m => m.UpdateApplicationData(It.IsAny<Guid>(), It.Is<ApplicationData>(x => x.ApplicationType == StandardApplicationTypes.Version)));
         }
     }
 }
