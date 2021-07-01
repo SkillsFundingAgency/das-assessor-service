@@ -6,12 +6,12 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models;
-using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Handlers.Search;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
 using Organisation = SFA.DAS.AssessorService.Domain.Entities.Organisation;
+using OrganisationStandardVersion = SFA.DAS.AssessorService.Api.Types.Models.AO.OrganisationStandardVersion;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
 {
@@ -37,8 +37,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
 
             var standardService = new Mock<IStandardService>();
             standardService.Setup(c => c.GetEPAORegisteredStandardVersions(It.IsAny<string>(), null))
-                .ReturnsAsync(new List<StandardVersion> { new StandardVersion { Title = "Standard One", Version = "1.0", LarsCode = 1 },
-                                                            new StandardVersion { Title = "Standard Two", Version = "1.0", LarsCode = 2 } });
+                .ReturnsAsync(new List<OrganisationStandardVersion> { new OrganisationStandardVersion { Title = "Standard One", Version = "1.0", LarsCode = 1 },
+                                                            new OrganisationStandardVersion { Title = "Standard Two", Version = "1.0", LarsCode = 2 } });
             standardService.Setup(c => c.GetStandard(It.IsAny<int>()))
                 .ReturnsAsync(new StandardCollation {Title = "Standard Title", StandardData = new StandardData{ Level = 2}});
             
@@ -80,9 +80,9 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
             var standardService = new Mock<IStandardService>();
            
             standardService.Setup(c => c.GetEPAORegisteredStandardVersions(It.IsAny<string>(), null))
-                .ReturnsAsync(new List<StandardVersion> { new StandardVersion { Title = "Standard One", Version = "1.0", LarsCode = 1 },
-                                                          new StandardVersion { Title = "Standard Two", Version = "1.0", LarsCode = 2 },
-                                                          new StandardVersion { Title = "Standard Three", Version = "1.0", LarsCode = 3 }});
+                .ReturnsAsync(new List<OrganisationStandardVersion> { new OrganisationStandardVersion { Title = "Standard One", Version = "1.0", LarsCode = 1 },
+                                                          new OrganisationStandardVersion { Title = "Standard Two", Version = "1.0", LarsCode = 2 },
+                                                          new OrganisationStandardVersion { Title = "Standard Three", Version = "1.0", LarsCode = 3 }});
 
             standardService.Setup(c => c.GetStandard(It.IsAny<int>()))
                 .ReturnsAsync(new StandardCollation {Title = "Standard Title", StandardData = new StandardData{ Level = 2}});
