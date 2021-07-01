@@ -5,6 +5,7 @@ using SFA.DAS.AssessorService.Application.Mapping.Structs;
 using SFA.DAS.AssessorService.Domain.Entities;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Api.Services
@@ -266,14 +267,18 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
             return results.PageOfResults;
         }
 
-        public async Task<IEnumerable<StandardVersion>> GetEPAORegisteredStandardVersions(string endPointAssessorOrganisationId, int? larsCode = null)
+        public async Task<IEnumerable<AssessorService.Api.Types.Models.AO.OrganisationStandardVersion>> GetEPAORegisteredStandardVersions(string endPointAssessorOrganisationId, int? larsCode = null)
         {
             if (larsCode.HasValue && larsCode.Value > 0)
             {
-                return await _standardRepository.GetEpaoRegisteredStandardVersions(endPointAssessorOrganisationId, larsCode.Value);
+                var versionsOfStandard = await _standardRepository.GetEpaoRegisteredStandardVersions(endPointAssessorOrganisationId, larsCode.Value);
+                    
+                return versionsOfStandard.Select(version => (AssessorService.Api.Types.Models.AO.OrganisationStandardVersion)version);
             }
 
-            return await _standardRepository.GetEpaoRegisteredStandardVersions(endPointAssessorOrganisationId);
+            var versions = await _standardRepository.GetEpaoRegisteredStandardVersions(endPointAssessorOrganisationId);
+
+            return versions.Select(version => (AssessorService.Api.Types.Models.AO.OrganisationStandardVersion)version);
         }
     }
 }
