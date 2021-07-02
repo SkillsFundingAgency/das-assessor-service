@@ -9,11 +9,11 @@ using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Extensions;
 using SFA.DAS.Testing.AutoFixture;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using OrganisationStandardVersion = SFA.DAS.AssessorService.Api.Types.Models.AO.OrganisationStandardVersion;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Standards
 {
@@ -89,7 +89,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Standard
         }
 
         [Test, MoqAutoData]
-        public async Task WhenRequestingGetEPAORegisteredStandardVersions_ReturnsListOfApprovedStandardVersions(string epaoId, IEnumerable<StandardVersion> versions)
+        public async Task WhenRequestingGetEPAORegisteredStandardVersions_ReturnsListOfApprovedStandardVersions(string epaoId, IEnumerable<OrganisationStandardVersion> versions)
         {
             _mockStandardService.Setup(s => s.GetEPAORegisteredStandardVersions(epaoId, null)).ReturnsAsync(versions);
 
@@ -97,13 +97,13 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Standard
 
             controllerResult.StatusCode.Should().Be((int)HttpStatusCode.OK);
 
-            var model = controllerResult.Value as IEnumerable<StandardVersion>;
+            var model = controllerResult.Value as IEnumerable<OrganisationStandardVersion>;
 
             model.Should().BeEquivalentTo(versions);
         }
 
         [Test, MoqAutoData]
-        public async Task WhenRequestingGetEPAORegisteredStandardVersionsWithLarsCode_ReturnsListOfApprovedStandardVersionsForThatLarsCode(string epaoId, int larsCode, IEnumerable<StandardVersion> versions)
+        public async Task WhenRequestingGetEPAORegisteredStandardVersionsWithLarsCode_ReturnsListOfApprovedStandardVersionsForThatLarsCode(string epaoId, int larsCode, IEnumerable<OrganisationStandardVersion> versions)
         {
             _mockStandardService.Setup(s => s.GetEPAORegisteredStandardVersions(epaoId, larsCode)).ReturnsAsync(versions);
 
@@ -111,7 +111,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Standard
 
             controllerResult.StatusCode.Should().Be((int)HttpStatusCode.OK);
 
-            var model = controllerResult.Value as IEnumerable<StandardVersion>;
+            var model = controllerResult.Value as IEnumerable<OrganisationStandardVersion>;
 
             model.Should().BeEquivalentTo(versions);
         }

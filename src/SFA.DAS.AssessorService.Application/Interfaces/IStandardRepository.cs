@@ -56,8 +56,8 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task Update(Standard standard);
         Task DeleteAllStandards();
         Task DeleteAllOptions();
-        Task<IEnumerable<StandardVersion>> GetEpaoRegisteredStandardVersions(string endPointAssessorOrganisationId);
-        Task<IEnumerable<StandardVersion>> GetEpaoRegisteredStandardVersions(string endPointAssessorOrganisationId, int larsCode);
+        Task<IEnumerable<OrganisationStandardVersion>> GetEpaoRegisteredStandardVersions(string endPointAssessorOrganisationId);
+        Task<IEnumerable<OrganisationStandardVersion>> GetEpaoRegisteredStandardVersions(string endPointAssessorOrganisationId, int larsCode);
     }
 
     public class EpoRegisteredStandardsResult
