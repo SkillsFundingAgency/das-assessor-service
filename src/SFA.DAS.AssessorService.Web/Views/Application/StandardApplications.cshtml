@@ -11,9 +11,7 @@
             <h1 class="govuk-heading-xl">
                 Select application
             </h1>
-            <form asp-action="StartApplication" asp-controller="Application" method="post">
-                <button class="govuk-button" type="submit">Start new application</button>
-            </form>
+            <a class="govuk-button" href="@Url.Action("Index", "Standard")">Start new application</a>
             <table class="govuk-table">
                 <thead class="govuk-table__head">
                     <tr class="govuk-table__row">
