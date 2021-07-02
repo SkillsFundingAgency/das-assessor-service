@@ -6,7 +6,7 @@ namespace SFA.DAS.AssessorService.Domain.Entities
     public class Apply: BaseEntity
     {
         public Guid Id { get; set; }
-        public string ApplicationType { get; set; }
+        public string StandardApplicationType { get; set; }
         public Guid ApplicationId { get; set; }
         public Guid OrganisationId { get; set; }
         public virtual Organisation Organisation { get; set; }
