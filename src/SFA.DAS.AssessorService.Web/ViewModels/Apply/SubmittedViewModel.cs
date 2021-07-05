@@ -12,6 +12,8 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Apply
             _applicationResponse = applicationResponse;
         }
 
+        public bool IsInitialApplication => _applicationResponse.IsInitialApplication;
+        public bool IsStandardApplication => _applicationResponse.IsStandardApplication;
         public bool IsWithdrawalApplication => _applicationResponse.IsWithdrawalApplication;
 
         public bool IsStandardWithdrawalApplication => _applicationResponse.IsStandardWithdrawalApplication;

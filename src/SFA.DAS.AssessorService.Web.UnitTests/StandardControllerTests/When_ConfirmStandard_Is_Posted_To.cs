@@ -35,7 +35,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
 
             // Assert
             _mockApiClient.Verify(m => m.UpdateStandardData(It.IsAny<Guid>(), 1, "ST0001", "Title 1",
-                It.Is<List<string>>(x => x.Count == 1 && x[0] == "1.1"), null));
+                It.Is<List<string>>(x => x.Count == 1 && x[0] == "1.1"), StandardApplicationTypes.Full));
         }
 
         [Test]
@@ -59,7 +59,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
 
             // Assert
             Assert.AreEqual("~/Views/Application/Standard/ConfirmStandard.cshtml", result.ViewName);
-            Assert.IsTrue(_sut.ModelState["IsConfirmed"].Errors.Any(x => x.ErrorMessage == "Please tick to confirm"));
+            Assert.IsTrue(_sut.ModelState["IsConfirmed"].Errors.Any(x => x.ErrorMessage == "Confirm you have read the assessment plan"));
         }
 
         [Test]
