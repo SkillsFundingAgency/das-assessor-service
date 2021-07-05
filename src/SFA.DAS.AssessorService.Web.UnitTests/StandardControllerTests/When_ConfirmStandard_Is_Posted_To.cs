@@ -31,7 +31,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
                 IsConfirmed = true,
                 SelectedVersions = new List<string>() { "1.1" }
             };
-            await _sut.ConfirmStandard(model, Guid.NewGuid(), "ST0001", null);
+            await _sut.ConfirmStandard(model, "ST0001", null);
 
             // Assert
             _mockApiClient.Verify(m => m.UpdateStandardData(It.IsAny<Guid>(), 1, "ST0001", "Title 1",
@@ -55,7 +55,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
                 IsConfirmed = false,
                 SelectedVersions = new List<string>() { "1.1" }
             };
-            var result = (await _sut.ConfirmStandard(model, Guid.NewGuid(), "ST0001", null)) as ViewResult;
+            var result = (await _sut.ConfirmStandard(model, "ST0001", null)) as ViewResult;
 
             // Assert
             Assert.AreEqual("~/Views/Application/Standard/ConfirmStandard.cshtml", result.ViewName);
@@ -79,7 +79,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
                 IsConfirmed = true,
                 SelectedVersions = new List<string>() { }
             };
-            var result = (await _sut.ConfirmStandard(model, Guid.NewGuid(), "ST0001", null)) as ViewResult;
+            var result = (await _sut.ConfirmStandard(model, "ST0001", null)) as ViewResult;
 
             // Assert
             Assert.AreEqual("~/Views/Application/Standard/ConfirmStandard.cshtml", result.ViewName);

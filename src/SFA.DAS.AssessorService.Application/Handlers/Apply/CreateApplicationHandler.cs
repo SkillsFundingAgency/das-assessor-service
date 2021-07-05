@@ -40,7 +40,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
                 var orgType = orgTypes.FirstOrDefault(x => x.Id == org.OrganisationTypeId);
 
                 var sequences = request.ApplySequences;
-                RemoveSequencesAndSections(sequences, org, orgType, request.ApplicationType);
+                RemoveSequencesAndSections(sequences, org, orgType, request.ApplicationType, request.StandardApplicationType);
               
                 var applyData = new ApplyData
                 {
@@ -57,7 +57,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
                     ApplicationId = request.QnaApplicationId,
                     ApplicationStatus = ApplicationStatus.InProgress,
                     ReviewStatus = ApplicationReviewStatus.Draft,
-                    FinancialReviewStatus = IsFinancialExempt(org.OrganisationData?.FHADetails, orgType) ? FinancialReviewStatus.Exempt : FinancialReviewStatus.Required,
+                    FinancialReviewStatus = IsFinancialExempt(org.OrganisationData?.FHADetails, orgType, request.StandardApplicationType) ? FinancialReviewStatus.Exempt : FinancialReviewStatus.Required,
                     OrganisationId = org.Id,
                     CreatedBy = creatingContact.Id.ToString(),
                     CreatedAt = DateTime.UtcNow
@@ -69,7 +69,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
             return Guid.Empty;
         }
 
-        private void RemoveSequencesAndSections(List<ApplySequence> sequences, Domain.Entities.Organisation org, OrganisationType orgType, string applicationType)
+        private void RemoveSequencesAndSections(List<ApplySequence> sequences, Domain.Entities.Organisation org, OrganisationType orgType, 
+                                                    string applicationType, string standardApplicationType)
         {
             if (applicationType == ApplicationTypes.Initial)
             {
@@ -83,7 +84,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
                     RemoveSections(sequences, ApplyConst.ORGANISATION_SEQUENCE_NO, ApplyConst.ORGANISATION_DETAILS_SECTION_NO, ApplyConst.DECLARATIONS_SECTION_NO);
                 }
 
-                bool isFinancialExempt = IsFinancialExempt(org.OrganisationData?.FHADetails, orgType);
+                bool isFinancialExempt = IsFinancialExempt(org.OrganisationData?.FHADetails, orgType, standardApplicationType);
                 if (isFinancialExempt)
                 {
                     RemoveSections(sequences, ApplyConst.ORGANISATION_SEQUENCE_NO, ApplyConst.FINANCIAL_DETAILS_SECTION_NO);
@@ -120,14 +121,15 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
             return org.OrganisationData.RoEPAOApproved || org.Status == "Live";
         }
 
-        private static bool IsFinancialExempt(ApplyTypes.FHADetails financials, OrganisationType orgType)
+        private static bool IsFinancialExempt(ApplyTypes.FHADetails financials, OrganisationType orgType, string standardApplicationType)
         {
             if (financials == null) return false;
 
             bool financialExempt = financials.FinancialExempt ?? false;
             bool orgTypeFinancialExempt = (orgType != null) && orgType.FinancialExempt;
 
-            bool financialIsNotDue = (financials.FinancialDueDate?.Date ?? DateTime.MinValue) > DateTime.Today;
+            bool applyingForVersion = standardApplicationType == StandardApplicationTypes.Version;
+            bool financialIsNotDue = applyingForVersion || (financials.FinancialDueDate?.Date ?? DateTime.MinValue) > DateTime.Today;
 
             return financialExempt || financialIsNotDue || orgTypeFinancialExempt;
         }

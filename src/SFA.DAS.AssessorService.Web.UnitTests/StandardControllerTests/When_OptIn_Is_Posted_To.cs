@@ -40,7 +40,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
             });
 
             // Act
-            var results = (await _sut.OptInPost(Guid.NewGuid(), "ST0001", 1.2M)) as RedirectToActionResult;
+            var results = (await _sut.OptInPost("ST0001", 1.2M)) as RedirectToActionResult;
 
             // Assert
             _mockOrgApiClient.Verify(m => m.OrganisationStandardVersionOptIn(It.IsAny<Guid>(), It.IsAny<Guid>(), "12345", "ST0001", 1.2M, It.IsAny<string>(), "Opted in by EPAO by USERNAME"));

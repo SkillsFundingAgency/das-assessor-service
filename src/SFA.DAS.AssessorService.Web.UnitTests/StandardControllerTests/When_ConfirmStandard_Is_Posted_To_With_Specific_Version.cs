@@ -30,7 +30,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
             {
                 IsConfirmed = true,
             };
-            await _sut.ConfirmStandard(model, Guid.NewGuid(), "ST0001", "1.2");
+            await _sut.ConfirmStandard(model, "ST0001", "1.2");
 
             // Assert
             _mockApiClient.Verify(m => m.UpdateStandardData(It.IsAny<Guid>(), 1, "ST0001", "Title 1",

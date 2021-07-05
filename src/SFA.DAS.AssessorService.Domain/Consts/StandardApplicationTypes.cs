@@ -11,5 +11,6 @@
         /// </summary>
         public const string Version = "version";
         public const string Full = "full";
+        public const string OptIn = "opt_in";
     }
 }

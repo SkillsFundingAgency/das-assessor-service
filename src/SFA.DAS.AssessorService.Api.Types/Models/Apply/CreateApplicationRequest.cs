@@ -8,6 +8,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Apply
     public class CreateApplicationRequest: IRequest<Guid>
     {
         public string ApplicationType { get; set; }
+        public string StandardApplicationType { get; set; }
         public Guid QnaApplicationId { get; set; }
         public List<ApplySequence> ApplySequences { get; set; }
         public Guid OrganisationId { get; set; }
