@@ -8,7 +8,8 @@
 	[Username] NVARCHAR(256) NOT NULL,
 	[BatchNumber] [int] NULL,
 	[ReasonForChange] NVARCHAR(MAX) NULL,
-	[LatestEpaOutcome] AS JSON_VALUE([CertificateData],'$.EpaDetails.LatestEpaOutcome'),
+	[LatestEpaOutcome] AS CAST(JSON_VALUE([CertificateData],'$.EpaDetails.LatestEpaOutcome') AS NVARCHAR(64))
+
 	CONSTRAINT [PK_CertificateLogs] PRIMARY KEY NONCLUSTERED 
 	(
 		[Id] ASC
@@ -39,11 +40,6 @@ GO
 
 CREATE NONCLUSTERED INDEX [IX_CertificateLogs_Action_EventTime] ON [dbo].[CertificateLogs] ([Action], [EventTime])
 INCLUDE ( [CertificateId], [Status], [CertificateData]) 
-WITH (ONLINE = ON)
-GO
-
-CREATE NONCLUSTERED INDEX [IX_CertificateLogs_Action_CertificateId] ON [dbo].[CertificateLogs] ([Action], [CertificateId])
-INCLUDE ( [EventTime], [Status], [LatestEpaOutcome], [CertificateData]) 
 WITH (ONLINE = ON)
 GO
 
