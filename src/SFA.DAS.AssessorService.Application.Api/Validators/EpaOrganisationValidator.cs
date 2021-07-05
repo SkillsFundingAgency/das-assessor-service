@@ -540,7 +540,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             RunValidationCheckAndAppendAnyError("ContactId", CheckIfContactIdIsValid(request.ContactId, request.OrganisationId), validationResult, ValidationStatusCode.BadRequest);
             
             // SV-658 Only validate areas if this is not a short application.
-            if(string.IsNullOrWhiteSpace(request.StandardApplicationType) || !request.StandardApplicationType.Equals(Domain.Consts.ApplicationTypes.Version)) {
+            if(string.IsNullOrWhiteSpace(request.StandardApplicationType) || !request.StandardApplicationType.Equals(Domain.Consts.StandardApplicationTypes.Version)) {
                 RunValidationCheckAndAppendAnyError("DeliveryAreas", CheckIfDeliveryAreasAreValid(request.DeliveryAreas), validationResult, ValidationStatusCode.BadRequest);
             }
 
