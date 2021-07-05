@@ -80,7 +80,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 // specific version selected (from standversion view)
                 var standardViewModel = new StandardVersionViewModel 
                 { 
-                    Id = id, 
                     StandardReference = standardReference,
                     FromStandardsVersion = true
                 };
@@ -102,7 +101,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 // no existing approved versions for this standard
                 var standardViewModel = new StandardVersionViewModel
                 {
-                    Id = id,
                     StandardReference = standardReference,
                     FromStandardsVersion = false
                 };

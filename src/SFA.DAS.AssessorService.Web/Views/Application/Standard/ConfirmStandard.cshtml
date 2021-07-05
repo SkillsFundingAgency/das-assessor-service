@@ -13,11 +13,11 @@
 
 @if (Model.FromStandardsVersion)
 {
-    <a href="@Url.Action("ConfirmStandard", "Standard", new { id = Model.Id, standardReference = Model.StandardReference})" class="govuk-back-link">Back to standard details</a>
+    <a href="@Url.Action("ConfirmStandard", "Standard", new { standardReference = Model.StandardReference})" class="govuk-back-link">Back to standard details</a>
 }
 else
 {
-    <a href="@Url.Action("Index", "Standard", new { Id = Model.Id })" class="govuk-back-link">Return to search</a>
+    <a href="@Url.Action("Index", "Standard")" class="govuk-back-link">Return to search</a>
 }
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
