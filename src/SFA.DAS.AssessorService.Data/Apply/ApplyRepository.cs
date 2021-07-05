@@ -39,22 +39,22 @@ namespace SFA.DAS.AssessorService.Data.Apply
         public async Task<ApplySummary> GetApplication(Guid applicationId, Guid? userId)
         {
             var query = @"SELECT 
-                            a.Id, a.ApplicationId, a.OrganisationId, a.ApplicationStatus, a.ReviewStatus, 
-                            a.ApplyData, a.FinancialReviewStatus, a.FinancialGrade, 
-                            a.StandardCode, a.CreatedBy, a.UpdatedBy, a.DeletedBy, 
-                            o.EndPointAssessorName, c1.DisplayName [CreatedByName] , c1.Email [CreatedByEmail]
-                          FROM Contacts c
-                            INNER JOIN Apply a ON a.OrganisationId = c.OrganisationId
-                            INNER JOIN Organisations o ON a.OrganisationId = o.Id
-                            INNER JOIN Contacts c1 ON c1.Id = a.CreatedBy
-                          WHERE 
-                            a.Id = @applicationId
-                            AND (c.Id = @userId OR @userId IS NULL)
-                          GROUP BY 
-	                        a.Id, a.ApplicationId, a.OrganisationId, a.ApplicationStatus, a.ReviewStatus, 
-	                        a.ApplyData, a.FinancialReviewStatus, a.FinancialGrade, 
-	                        a.StandardCode, a.CreatedAt, a.CreatedBy, a.UpdatedAt, a.UpdatedBy, a.DeletedAt, a.DeletedBy, 
-	                        o.EndPointAssessorName, c1.DisplayName, c1.Email";
+                        a.Id, a.ApplicationId, a.OrganisationId, a.ApplicationStatus, a.ReviewStatus, a.StandardApplicationType,
+                        a.ApplyData, a.FinancialReviewStatus, a.FinancialGrade, 
+                        a.StandardCode, a.CreatedBy, a.UpdatedBy, a.DeletedBy, 
+                        o.EndPointAssessorName, c1.DisplayName [CreatedByName] , c1.Email [CreatedByEmail]
+                        FROM Contacts c
+                        INNER JOIN Apply a ON a.OrganisationId = c.OrganisationId
+                        INNER JOIN Organisations o ON a.OrganisationId = o.Id
+                        INNER JOIN Contacts c1 ON c1.Id = a.CreatedBy
+                        WHERE 
+                        a.Id = @applicationId
+                        AND (c.Id = @userId OR @userId IS NULL)
+                        GROUP BY 
+	                    a.Id, a.ApplicationId, a.OrganisationId, a.ApplicationStatus, a.ReviewStatus, a.StandardApplicationType,
+	                    a.ApplyData, a.FinancialReviewStatus, a.FinancialGrade, 
+	                    a.StandardCode, a.CreatedAt, a.CreatedBy, a.UpdatedAt, a.UpdatedBy, a.DeletedAt, a.DeletedBy, 
+	                    o.EndPointAssessorName, c1.DisplayName, c1.Email";
 
             return await _unitOfWork.Connection.QuerySingleOrDefaultAsync<ApplySummary>(
                 sql: query,

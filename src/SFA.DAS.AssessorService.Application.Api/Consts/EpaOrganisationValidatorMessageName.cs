@@ -18,6 +18,7 @@
         public const string UkprnIsInvalid = "UkprnIsInvalid";
         public const string ContactIdInvalidForOrganisationId = "ContactIdInvalidForOrganisationId";
         public const string OrganisationStandardAlreadyExists = "This organisation/standard already exists";
+        public const string OrganisationStandardVersionAlreadyExists = "One or more versions already exist";
         public const string StandardNotFound = "StandardNotFound";
         public const string OrganisationStandardDoesNotExist = "OrganisationStandardDoesNotExist";
         public const string EmailIsMissing = "EmailIsMissing";

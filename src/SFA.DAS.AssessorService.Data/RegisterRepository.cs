@@ -77,29 +77,71 @@ namespace SFA.DAS.AssessorService.Data
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
 
+                var sqlToSelectExisting =
+                    "select Id FROM [OrganisationStandard] " +
+                    "WHERE EndPointAssessorOrganisationId = @organisationId and standardCode = @standardCode";
+                var orgStandardId = await connection.ExecuteScalarAsync<int>(sqlToSelectExisting, new { organisationId = organisationStandard.OrganisationId, standardCode = organisationStandard.StandardCode });
 
-                var osdaId = connection.Query<string>(
-                    "INSERT INTO [dbo].[OrganisationStandard] ([EndPointAssessorOrganisationId],[StandardCode],[EffectiveFrom],[EffectiveTo],[DateStandardApprovedOnRegister] ,[Comments],[Status], [ContactId], [OrganisationStandardData]) VALUES (" +
-                    "@organisationId, @standardCode, @effectiveFrom, @effectiveTo, getutcdate(), @comments, 'Live', @ContactId,  @OrganisationStandardData); SELECT CAST(SCOPE_IDENTITY() as varchar); ",
-                    new
-                    {
-                        organisationStandard.OrganisationId, organisationStandard.StandardCode,
-                        organisationStandard.EffectiveFrom, organisationStandard.EffectiveTo,
-                        organisationStandard.DateStandardApprovedOnRegister, organisationStandard.Comments,
-                        organisationStandard.ContactId, organisationStandard.OrganisationStandardData
-                    }).Single();
-
-                foreach (var deliveryAreaId in deliveryAreas.Distinct())
+                if(default(int) == orgStandardId)
                 {
-                    connection.Execute("INSERT INTO OrganisationStandardDeliveryArea ([OrganisationStandardId],DeliveryAreaId, Status) VALUES " + 
-                                        "(@osdaId, @deliveryAreaId,'Live'); ",
-                                    new { osdaId, deliveryAreaId}
-                                    );
-                }                      
-                        
-                return osdaId;
-            }
-            
+                    orgStandardId = connection.Query<int>(
+                        "INSERT INTO [dbo].[OrganisationStandard] ([EndPointAssessorOrganisationId],[StandardCode],[EffectiveFrom],[EffectiveTo],[DateStandardApprovedOnRegister] ,[Comments],[Status], [ContactId], [OrganisationStandardData], StandardReference) VALUES (" +
+                        "@organisationId, @standardCode, @effectiveFrom, @effectiveTo, getutcdate(), @comments, 'Live', @ContactId,  @OrganisationStandardData, @StandardReference); SELECT CAST(SCOPE_IDENTITY() as varchar); ",
+                        new
+                        {
+                            organisationStandard.OrganisationId,
+                            organisationStandard.StandardCode,
+                            organisationStandard.EffectiveFrom,
+                            organisationStandard.EffectiveTo,
+                            organisationStandard.DateStandardApprovedOnRegister,
+                            organisationStandard.Comments,
+                            organisationStandard.ContactId,
+                            organisationStandard.OrganisationStandardData,
+                            organisationStandard.StandardReference
+                        }).Single();
+
+                    foreach (var deliveryAreaId in deliveryAreas.Distinct())
+                    {
+                        connection.Execute("INSERT INTO OrganisationStandardDeliveryArea ([OrganisationStandardId],DeliveryAreaId, Status) VALUES " +
+                                            "(@osdaId, @deliveryAreaId,'Live'); ",
+                                        new { osdaId = orgStandardId, deliveryAreaId }
+                                        );
+                    }
+                }
+                else
+                {
+                    // Fix StandardReference on the existing record
+                    connection.Execute("UPDATE [dbo].[OrganisationStandard] SET StandardReference = @standardReference WHERE Id = @id",
+                        new 
+                        {
+                            standardReference = organisationStandard.StandardReference,
+                            id = orgStandardId
+                        });
+                }
+
+                if(null != organisationStandard.StandardVersions)
+                {
+                    foreach (var version in organisationStandard.StandardVersions)
+                    {
+                        var standardUid = $"{organisationStandard.StandardReference.Trim()}_{version.Trim()}";
+
+                        connection.Execute("INSERT INTO OrganisationStandardVersion (StandardUid, Version, OrganisationStandardId, EffectiveFrom, EffectiveTo, DateVersionApproved, Comments, Status) " +
+                            "VALUES(@StandardUid, @Version, @OrganisationStandardId, @EffectiveFrom, @EffectiveTo, @DateVersionApproved, @Comments, 'Live')",
+                            new
+                            {
+                                standardUid,
+                                version,
+                                OrganisationStandardId = orgStandardId,
+                                organisationStandard.EffectiveFrom,
+                                organisationStandard.EffectiveTo,
+                                DateVersionApproved = organisationStandard.DateStandardApprovedOnRegister,
+                                organisationStandard.Comments
+                            });
+                    }
+                }
+
+                return orgStandardId.ToString();
+            }            
         }
 
         public async Task<string> UpdateEpaOrganisationStandard(EpaOrganisationStandard orgStandard,

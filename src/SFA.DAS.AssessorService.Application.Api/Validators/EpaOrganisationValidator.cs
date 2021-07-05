@@ -187,6 +187,13 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
                 : string.Empty;
         }
 
+        public string CheckIfOrganisationStandardVersionAlreadyExists(string organisationId, int standardCode, List<string> standardVersions)
+        {
+            return _registerRepository.EpaOrganisationStandardVersionExists(organisationId, standardCode, standardVersions).Result
+                ? FormatErrorMessage(EpaOrganisationValidatorMessageName.OrganisationStandardVersionAlreadyExists)
+                : string.Empty;
+        }
+
         public string CheckIfOrganisationStandardDoesNotExist(string organisationId, int standardCode)
         {
             return _registerRepository.EpaOrganisationStandardExists(organisationId, standardCode).Result
@@ -513,7 +520,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             RunValidationCheckAndAppendAnyError("OrganisationId", CheckIfOrganisationNotFound(request.OrganisationId), validationResult, ValidationStatusCode.NotFound);
             if (!validationResult.IsValid) return validationResult;
 
-            RunValidationCheckAndAppendAnyError("OrganisationId", CheckIfOrganisationStandardAlreadyExists(request.OrganisationId, request.StandardCode), validationResult, ValidationStatusCode.AlreadyExists);
+            //  SV-658 / SV-659 Now that we have versions, this will check will include versions too.
+            RunValidationCheckAndAppendAnyError("OrganisationId", CheckIfOrganisationStandardVersionAlreadyExists(request.OrganisationId, request.StandardCode, request.StandardVersions), validationResult, ValidationStatusCode.AlreadyExists);
             if (!validationResult.IsValid) return validationResult;
 
             var standard = GetStandard(request.StandardCode).Result;
@@ -530,7 +538,12 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
 
             RunValidationCheckAndAppendAnyError("OrganisationId", CheckOrganisationIdIsPresentAndValid(request.OrganisationId), validationResult, ValidationStatusCode.BadRequest);
             RunValidationCheckAndAppendAnyError("ContactId", CheckIfContactIdIsValid(request.ContactId, request.OrganisationId), validationResult, ValidationStatusCode.BadRequest);
-            RunValidationCheckAndAppendAnyError("DeliveryAreas", CheckIfDeliveryAreasAreValid(request.DeliveryAreas), validationResult, ValidationStatusCode.BadRequest);
+            
+            // SV-658 Only validate areas if this is not a short application.
+            if(string.IsNullOrWhiteSpace(request.StandardApplicationType) || !request.StandardApplicationType.Equals(Domain.Consts.StandardApplicationTypes.Version)) {
+                RunValidationCheckAndAppendAnyError("DeliveryAreas", CheckIfDeliveryAreasAreValid(request.DeliveryAreas), validationResult, ValidationStatusCode.BadRequest);
+            }
+
             RunValidationCheckAndAppendAnyError("EffectiveTo", CheckOrganisationStandardToDateIsWithinStandardDateRanges(request.EffectiveTo, standard.StandardData.EffectiveFrom, standard.StandardData.EffectiveTo), validationResult, ValidationStatusCode.BadRequest);
    
             return validationResult;
