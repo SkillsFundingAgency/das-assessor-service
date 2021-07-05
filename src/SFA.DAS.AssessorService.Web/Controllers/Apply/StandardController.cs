@@ -10,7 +10,6 @@ using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Extensions;
 using SFA.DAS.AssessorService.Settings;
-using SFA.DAS.AssessorService.Web.StartupConfiguration;
 using SFA.DAS.AssessorService.Web.ViewModels.Apply;
 using System;
 using System.Collections.Generic;
@@ -160,11 +159,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             }
             else
             {
-                ApplicationResponse application;
-                if (anyExistingVersions)
-                    application = await CreateStandardApplication(contact, org, selectedStandard.LarsCode, selectedStandard.IFateReferenceNumber, selectedStandard.Title, versions, StandardApplicationTypes.Version);
-                else
-                    application = await CreateStandardApplication(contact, org, selectedStandard.LarsCode, selectedStandard.IFateReferenceNumber, selectedStandard.Title, versions, StandardApplicationTypes.Full);
+                var application = await CreateStandardApplication(contact, org, selectedStandard.LarsCode, 
+                    selectedStandard.IFateReferenceNumber, selectedStandard.Title, versions,
+                    anyExistingVersions? StandardApplicationTypes.Version : StandardApplicationTypes.Full);
 
                 return RedirectToAction("SequenceSignPost", "Application", new { application.Id });
             }
@@ -219,26 +216,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             }
 
             return application;
-        }
-
-        private bool CanUpdateApplicationAsync(ApplicationResponse application)
-        {
-            bool canUpdate = false;
-
-            var validApplicationStatuses = new string[] { ApplicationStatus.InProgress };
-            var validApplicationSequenceStatuses = new string[] { ApplicationSequenceStatus.Draft };
-
-            if (application?.ApplyData != null && validApplicationStatuses.Contains(application.ApplicationStatus))
-            {
-                var sequence = application.ApplyData.Sequences?.FirstOrDefault(seq => seq.IsActive && seq.SequenceNo == ApplyConst.STANDARD_SEQUENCE_NO);
-
-                if (sequence != null && validApplicationSequenceStatuses.Contains(sequence.Status))
-                {
-                    canUpdate = true;
-                }
-            }
-
-            return canUpdate;
         }
 
         private async Task<string> ApplicationStandardStatus(OrganisationResponse org, string iFateReferenceNumber, List<string> versions)
