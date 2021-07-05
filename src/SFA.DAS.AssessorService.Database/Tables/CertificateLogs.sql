@@ -43,11 +43,6 @@ INCLUDE ( [CertificateId], [Status], [CertificateData])
 WITH (ONLINE = ON)
 GO
 
-CREATE NONCLUSTERED INDEX [IX_CertificateLogs_Action_CertificateId] ON [dbo].[CertificateLogs] ([Action], [CertificateId])
-INCLUDE ( [EventTime], [Status], [LatestEpaOutcome], [CertificateData]) 
-WITH (ONLINE = ON)
-GO
-
 CREATE NONCLUSTERED INDEX [IX_CertificateLogs_Action_EventTime_LatestEpaOutcome] ON [dbo].[CertificateLogs] ([Action], [EventTime], [LatestEpaOutcome]) 
 INCLUDE ([CertificateId])
 WITH (ONLINE = ON)
