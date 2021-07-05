@@ -149,7 +149,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 var standards = await _applicationApiClient.GetStandards();
                 var selectedStandard = standards.FirstOrDefault(s => s.StandardId == viewModel.SelectedStandardForWithdrawal);
                 
-                await _applicationApiClient.UpdateStandardData(id, selectedStandard.Id, selectedStandard.ReferenceNumber, selectedStandard.Title, null, null);
+                await _applicationApiClient.UpdateStandardData(id, selectedStandard.Id, selectedStandard.ReferenceNumber, selectedStandard.Title, null);
 
                 return RedirectToAction(
                     nameof(ApplicationController.Sequence),

@@ -10,6 +10,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Organisation = SFA.DAS.AssessorService.Domain.Entities.Organisation;
+using OrganisationStandardVersion = SFA.DAS.AssessorService.Api.Types.Models.AO.OrganisationStandardVersion;
+
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalApi
 {
     public class ExternalApiValidatorsTestBase
@@ -111,25 +113,25 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
                 ReturnsAsync(GenerateStandardOptions(new List<string>()));
 
             standardServiceMock.Setup(c => c.GetEPAORegisteredStandardVersions("12345678", 1))
-                .ReturnsAsync(new List<StandardVersion> { GenerateEPORegisteredStandardVersion(1) });
+                .ReturnsAsync(new List<OrganisationStandardVersion> { GenerateEPORegisteredStandardVersion(1) });
 
             standardServiceMock.Setup(c => c.GetEPAORegisteredStandardVersions("12345678", 98))
-                .ReturnsAsync(new List<StandardVersion> { GenerateEPORegisteredStandardVersion(98) });
+                .ReturnsAsync(new List<OrganisationStandardVersion> { GenerateEPORegisteredStandardVersion(98) });
 
             standardServiceMock.Setup(c => c.GetEPAORegisteredStandardVersions("12345678", 99))
-                .ReturnsAsync(new List<StandardVersion> { GenerateEPORegisteredStandardVersion(99) });
+                .ReturnsAsync(new List<OrganisationStandardVersion> { GenerateEPORegisteredStandardVersion(99) });
 
             standardServiceMock.Setup(c => c.GetEPAORegisteredStandardVersions("12345678", 101))
-                .ReturnsAsync(new List<StandardVersion> { GenerateEPORegisteredStandardVersion(101) });
+                .ReturnsAsync(new List<OrganisationStandardVersion> { GenerateEPORegisteredStandardVersion(101) });
 
             standardServiceMock.Setup(c => c.GetEPAORegisteredStandardVersions("99999999", 1))
-                .ReturnsAsync(new List<StandardVersion> { GenerateEPORegisteredStandardVersion(1) });
+                .ReturnsAsync(new List<OrganisationStandardVersion> { GenerateEPORegisteredStandardVersion(1) });
 
             standardServiceMock.Setup(c => c.GetEPAORegisteredStandardVersions("99999999", 99))
-                .ReturnsAsync(new List<StandardVersion> { GenerateEPORegisteredStandardVersion(99) });
+                .ReturnsAsync(new List<OrganisationStandardVersion> { GenerateEPORegisteredStandardVersion(99) });
 
             standardServiceMock.Setup(c => c.GetEPAORegisteredStandardVersions("99999999", 101))
-                .ReturnsAsync(new List<StandardVersion> { GenerateEPORegisteredStandardVersion(101) });
+                .ReturnsAsync(new List<OrganisationStandardVersion> { GenerateEPORegisteredStandardVersion(101) });
 
             return standardServiceMock;
         }
@@ -300,9 +302,9 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
                 .With(i => i.StandardUId = $"ST{standardCode}_{1.0m}").Build();
         }
 
-        private static StandardVersion GenerateEPORegisteredStandardVersion(int standardCode)
+        private static OrganisationStandardVersion GenerateEPORegisteredStandardVersion(int standardCode)
         {
-            return Builder<StandardVersion>.CreateNew()
+            return Builder<OrganisationStandardVersion>.CreateNew()
                 .With(i => i.Title = $"{standardCode}")
                 .With(i => i.LarsCode = standardCode)
                 .With(i => i.Level = standardCode)
