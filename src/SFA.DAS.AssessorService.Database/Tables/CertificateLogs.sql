@@ -8,7 +8,8 @@
 	[Username] NVARCHAR(256) NOT NULL,
 	[BatchNumber] [int] NULL,
 	[ReasonForChange] NVARCHAR(MAX) NULL,
-	[LatestEpaOutcome] AS JSON_VALUE([CertificateData],'$.EpaDetails.LatestEpaOutcome'),
+	[LatestEpaOutcome] AS CAST(JSON_VALUE([CertificateData],'$.EpaDetails.LatestEpaOutcome') AS NVARCHAR(64))
+
 	CONSTRAINT [PK_CertificateLogs] PRIMARY KEY NONCLUSTERED 
 	(
 		[Id] ASC
