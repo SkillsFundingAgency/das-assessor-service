@@ -11,7 +11,14 @@
     var multipleVersions = Model.Results != null && Model.Results.Count() > 1;
 }
 
-<a href="/standard" class="govuk-back-link">Return to search</a>
+@if (Model.FromStandardsVersion)
+{
+    <a href="@Url.Action("ConfirmStandard", "Standard", new { id = Model.Id, standardReference = Model.StandardReference})" class="govuk-back-link">Back to standard details</a>
+}
+else
+{
+    <a href="@Url.Action("Index", "Standard", new { Id = Model.Id })" class="govuk-back-link">Return to search</a>
+}
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
@@ -101,7 +108,7 @@
                         </fieldset>
                     </div>
 
-                    <hr class="govuk-!-margin-bottom-7"/>
+                    <hr class="govuk-!-margin-bottom-7" />
                 }
 
                 @if (string.IsNullOrEmpty(Model.ApplicationStatus))
