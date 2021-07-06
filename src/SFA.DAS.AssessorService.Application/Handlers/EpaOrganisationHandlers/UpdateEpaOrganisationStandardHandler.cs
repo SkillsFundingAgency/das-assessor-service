@@ -31,7 +31,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
 
         public async Task<string> Handle(UpdateEpaOrganisationStandardRequest request, CancellationToken cancellationToken)
         {
-         
             ProcessRequestFieldsForSpecialCharacters(request);
             var validationResponse = _validator.ValidatorUpdateEpaOrganisationStandardRequest(request);
 

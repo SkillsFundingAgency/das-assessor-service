@@ -6,6 +6,7 @@ using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
 using Swashbuckle.AspNetCore.Annotations;
+using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
@@ -53,13 +54,19 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         public async Task <IActionResult> UpdateOrganisationStandardVersion(
             [FromBody] UpdateOrganisationStandardVersionRequest request)
         {
-            _logger.LogInformation("Recieved Update Organisation Standard Version Request");
+            try
+            {
+                _logger.LogInformation("Recieved Update Organisation Standard Version Request");
 
-            var updatedVersion = await _mediator.Send(request);
+                var updatedVersion = await _mediator.Send(request);
 
-            var response = new EpaoStandardVersionResponse(updatedVersion.Version);
-
-            return Ok(response);
+                return Ok(new EpaoStandardVersionResponse(updatedVersion.Version));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new EpaoStandardVersionResponse(ex.Message));
+            }
+            
         }
     }
 }

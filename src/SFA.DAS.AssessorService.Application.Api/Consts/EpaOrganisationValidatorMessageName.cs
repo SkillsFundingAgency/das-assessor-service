@@ -44,6 +44,15 @@
         public const string OrganisationStandardEffectiveToBeforeStandardEffectiveFrom = "OrganisationStandardEffectiveToBeforeStandardEffectiveFrom";
         public const string OrganisationStandardEffectiveToAfterStandardEffectiveTo = "OrganisationStandardEffectiveToAfterStandardEffectiveTo";
         public const string OrganisationStandardEffectiveFromAfterEffectiveTo = "OrganisationStandardEffectiveFromAfterEffectiveTo";
+
+        public const string OrganisationStandardVersionEffectiveToBeforeStandardEffectiveFrom = "OrganisationStandardVersionEffectiveToBeforeStandardEffectiveFrom";
+        public const string OrganisationStandardVersionEffectiveToAfterStandardEffectiveTo = "OrganisationStandardVersionEffectiveToAfterStandardEffectiveTo";
+        public const string OrganisationStandardVersionEffectiveFromAfterEffectiveTo = "OrganisationStandardVersionEffectiveFromAfterEffectiveTo";
+        public const string OrganisationStandardVersionEffectiveFromBeforeStandardEffectiveFrom = "OrganisationStandardVersionEffectiveFromBeforeStandardEffectiveFrom";
+        public const string OrganisationStandardVersionEffectiveFromAfterStandardEffectiveTo = "OrganisationStandardVersionEffectiveFromAfterStandardEffectiveTo";
+        public const string OrganisationStandardVersionEffectiveFromAfterStandardLastDayForNewStarts = "OrganisationStandardVersionEffectiveFromAfterStandardLastDayForNewStarts";
+        public const string OrganisationStandardVersionEffectiveToBeforeEffectiveFrom = "OrganisationStandardVersionEffectiveToBeforeEffectiveFrom";
+
         public const string ContactDetailsAreDuplicates = "ContactDetailsAreDuplicates";
         public const string OrganisationStandardCannotBeUpdatedBecauseOrganisationNotLive = "OrganisationStandardCannotBeUpdatedBecauseOrganisationNotLive";
         public const string OrganisationStandardCannotBeMadeLiveBecauseEffectiveFromNotSet = "OrganisationStandardCannotBeMadeLiveBecauseEffectiveFromNotSet";

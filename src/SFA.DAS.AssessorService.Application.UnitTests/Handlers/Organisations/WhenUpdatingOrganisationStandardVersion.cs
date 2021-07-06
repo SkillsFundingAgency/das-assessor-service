@@ -13,6 +13,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Organisations
 {
     public class WhenUpdatingOrganisationStandardVersion
     {
+        private Mock<IEpaOrganisationValidator> _mockValidator;
         private Mock<IOrganisationStandardRepository> _mockOrganisationStandardRepository;
         private Mock<IUnitOfWork> _mockUnitOfWork;
 
@@ -23,6 +24,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Organisations
         [SetUp]
         public void Arrange()
         {
+            _mockValidator = new Mock<IEpaOrganisationValidator>();
             _mockOrganisationStandardRepository = new Mock<IOrganisationStandardRepository>();
             _mockUnitOfWork = new Mock<IUnitOfWork>();
 
@@ -30,7 +32,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Organisations
 
             _request = fixture.Build<UpdateOrganisationStandardVersionRequest>().Create();
 
-            _handler = new UpdateOrganisationStandardVersionHandler(_mockOrganisationStandardRepository.Object, _mockUnitOfWork.Object);
+            _handler = new UpdateOrganisationStandardVersionHandler(_mockValidator.Object, _mockOrganisationStandardRepository.Object, _mockUnitOfWork.Object);
         }
 
         [Test, RecursiveMoqAutoData]

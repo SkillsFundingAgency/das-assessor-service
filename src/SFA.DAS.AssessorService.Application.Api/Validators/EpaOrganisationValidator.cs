@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Localization;
+using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
@@ -367,6 +368,58 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             return FormatErrorMessage(EpaOrganisationValidatorMessageName.AddressIsNotEntered);
         }
 
+        public string CheckOrganisationStandardVersionFromDateIsWithinStandardDateRanges(DateTime? effectiveFrom, DateTime? standardEffectiveFrom,
+            DateTime? standardEffectiveTo, DateTime? lastDateForNewStarts)
+        {
+            if (effectiveFrom == null || standardEffectiveFrom == null)
+                return string.Empty;
+
+            if (effectiveFrom < standardEffectiveFrom)
+                return FormatErrorMessage(EpaOrganisationValidatorMessageName.OrganisationStandardVersionEffectiveFromBeforeStandardEffectiveFrom);
+
+
+            if (standardEffectiveTo.HasValue && effectiveFrom > standardEffectiveTo)
+                return FormatErrorMessage(EpaOrganisationValidatorMessageName.OrganisationStandardVersionEffectiveFromAfterStandardEffectiveTo);
+
+
+            if (lastDateForNewStarts.HasValue && effectiveFrom > lastDateForNewStarts)
+                return
+                    FormatErrorMessage(EpaOrganisationValidatorMessageName.OrganisationStandardVersionEffectiveFromAfterStandardLastDayForNewStarts);
+
+            return string.Empty;
+        }
+
+
+        public string CheckOrganisationStandardVersionToDateIsWithinStandardDateRanges(DateTime? effectiveTo, DateTime? standardEffectiveFrom, DateTime? standardEffectiveTo)
+        {
+            if (effectiveTo == null)
+                return string.Empty;
+
+            if (effectiveTo < standardEffectiveFrom)
+                return FormatErrorMessage(EpaOrganisationValidatorMessageName.OrganisationStandardVersionEffectiveToBeforeStandardEffectiveFrom);
+
+            if (standardEffectiveTo.HasValue && effectiveTo > standardEffectiveTo)
+                return FormatErrorMessage(EpaOrganisationValidatorMessageName.OrganisationStandardVersionEffectiveToAfterStandardEffectiveTo);
+
+            return string.Empty;
+        }
+
+
+        public string CheckVersionEffectiveFromIsOnOrBeforeEffectiveTo(DateTime? effectiveFrom, DateTime? effectiveTo)
+        {
+            if (!effectiveFrom.HasValue || !effectiveTo.HasValue || effectiveFrom.Value <= effectiveTo.Value) return string.Empty;
+
+            return FormatErrorMessage(EpaOrganisationValidatorMessageName.OrganisationStandardVersionEffectiveFromAfterEffectiveTo);
+
+        }
+
+        public string CheckVersionEffectiveToIsOnOrAfterEffectiveFrom(DateTime? effectiveTo, DateTime? effectiveFrom)
+        {
+            if (!effectiveFrom.HasValue || !effectiveTo.HasValue || effectiveTo.Value >= effectiveFrom.Value) return string.Empty;
+
+            return FormatErrorMessage(EpaOrganisationValidatorMessageName.OrganisationStandardVersionEffectiveToBeforeEffectiveFrom);
+
+        }
         public string CheckPostcodeIsPresentForOrganisation(string postcode)
         {
             var postcodeCleansed = _cleanserService.CleanseStringForSpecialCharacters(postcode);
@@ -555,6 +608,26 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             RunValidationCheckAndAppendAnyError("EffectiveTo", CheckOrganisationStandardToDateIsWithinStandardDateRanges(request.EffectiveTo, standard.StandardData.EffectiveFrom, standard.StandardData.EffectiveTo), validationResult, ValidationStatusCode.BadRequest);
             RunValidationCheckAndAppendAnyError("EffectiveFrom", CheckOrganisationStandardEffectiveFromIsEntered(request.EffectiveFrom), validationResult, ValidationStatusCode.BadRequest);   
 
+            return validationResult;
+        }
+
+        public async Task<ValidationResponse> ValidatorUpdateOrganisationStandardVersionRequest(UpdateOrganisationStandardVersionRequest request)
+        {
+            var validationResult = new ValidationResponse();
+
+            var organisationStandard = await _registerQueryRepository.GetOrganisationStandardFromOrganisationStandardId(request.OrganisationStandardId);
+            
+            if (organisationStandard is null)
+            {
+                var standardErrorMessage = FormatErrorMessage(EpaOrganisationValidatorMessageName.StandardNotFound);
+                RunValidationCheckAndAppendAnyError("StandardCode", standardErrorMessage, validationResult, ValidationStatusCode.NotFound);
+                return validationResult;
+            }
+
+            RunValidationCheckAndAppendAnyError("EffectiveFrom", CheckOrganisationStandardFromDateIsWithinStandardDateRanges(request.EffectiveFrom, organisationStandard.StandardEffectiveFrom, organisationStandard.StandardEffectiveTo, organisationStandard.StandardLastDateForNewStarts), validationResult, ValidationStatusCode.BadRequest);
+            RunValidationCheckAndAppendAnyError("EffectiveTo", CheckOrganisationStandardVersionToDateIsWithinStandardDateRanges(request.EffectiveTo, organisationStandard.StandardEffectiveFrom, organisationStandard.StandardEffectiveTo), validationResult, ValidationStatusCode.BadRequest);
+            RunValidationCheckAndAppendAnyError("EffectiveFrom", CheckVersionEffectiveFromIsOnOrBeforeEffectiveTo(request.EffectiveFrom, request.EffectiveTo), validationResult, ValidationStatusCode.BadRequest);
+            RunValidationCheckAndAppendAnyError("EffectiveTo", CheckVersionEffectiveToIsOnOrAfterEffectiveFrom(request.EffectiveTo, request.EffectiveFrom), validationResult, ValidationStatusCode.BadRequest);
             return validationResult;
         }
 
