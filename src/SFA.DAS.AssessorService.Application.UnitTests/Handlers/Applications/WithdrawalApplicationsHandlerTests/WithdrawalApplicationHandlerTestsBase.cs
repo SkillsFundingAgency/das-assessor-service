@@ -35,13 +35,13 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Applications.Wi
             Logger = new Mock<ILogger<WithdrawalApplicationsHandler>>();
             
             StandardRepository = new Mock<IStandardRepository>();
-            StandardRepository.Setup(m => m.GetStandardVersionsByIFateReferenceNumber(It.IsAny<string>()))
+            StandardRepository.Setup(m => m.GetEpaoRegisteredStandardVersions(It.IsAny<string>()))
                 .ReturnsAsync(
-                    new List<Standard>() {
-                        new Standard() { Version = 1.0m },
-                        new Standard() { Version = 1.1m },
-                        new Standard() { Version = 1.2m },
-                        new Standard() { Version = 1.3m },
+                    new List<OrganisationStandardVersion>() {
+                        new OrganisationStandardVersion() { Version = 1.0m },
+                        new OrganisationStandardVersion() { Version = 1.1m },
+                        new OrganisationStandardVersion() { Version = 1.2m },
+                        new OrganisationStandardVersion() { Version = 1.3m },
                     });
 
             Handler = new WithdrawalApplicationsHandler(ApplyRepository.Object, Logger.Object, StandardRepository.Object);
