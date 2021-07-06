@@ -54,7 +54,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply.Review
         }
 
         // SV-912 Helper to generate the type of withdrawal
-        private string GetWithdrawalApplicationType(ApplicationSummaryItem item, IEnumerable<StandardVersion> enrolledVersionsForStandard)
+        private string GetWithdrawalApplicationType(ApplicationSummaryItem item, IEnumerable<OrganisationStandardVersion> enrolledVersionsForStandard)
         {
             string withdrawalApplicationType = WithdrawalTypes.Version;
             var versionNumberList = enrolledVersionsForStandard.Select(s => s.Version.ToString()).ToList();
