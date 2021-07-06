@@ -39,14 +39,12 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply.Review
 
             if(items.Any())
             {
-                // only want to do this once.
                 var allEnrolledVersions = await _standardRepository.GetEpaoRegisteredStandardVersions(items.First().EndPointAssessorOrganisationId);
 
-                // Get versions for each standard and determine the withdrawal application type.
                 foreach (var item in items)
                 {
-                    var allEnrolledStandardVersions = allEnrolledVersions.Where(v => v.IFateReferenceNumber == item.StandardReference).ToList();
-                    item.WithdrawalType = GetWithdrawalApplicationType(item, allEnrolledStandardVersions);
+                    var enrolledVersionsForStandard = allEnrolledVersions.Where(v => v.IFateReferenceNumber == item.StandardReference).ToList();
+                    item.WithdrawalType = GetWithdrawalApplicationType(item, enrolledVersionsForStandard);
                 }
             }
 
@@ -56,16 +54,16 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply.Review
         }
 
         // SV-912 Helper to generate the type of withdrawal
-        private string GetWithdrawalApplicationType(ApplicationSummaryItem item, IEnumerable<StandardVersion> allEnrolledVersions)
+        private string GetWithdrawalApplicationType(ApplicationSummaryItem item, IEnumerable<StandardVersion> enrolledVersionsForStandard)
         {
             string withdrawalApplicationType = WithdrawalTypes.Version;
-            var allVersions = allEnrolledVersions.Select(s => s.Version.ToString()).ToList();
+            var versionNumberList = enrolledVersionsForStandard.Select(s => s.Version.ToString()).ToList();
 
             if (null == item.Versions || !item.Versions.Any())
             {
                 withdrawalApplicationType = WithdrawalTypes.Register;
             }
-            else if (!allVersions.Except(item.Versions).ToList().Any())
+            else if (!versionNumberList.Except(item.Versions).ToList().Any())
             {
                 withdrawalApplicationType = WithdrawalTypes.Standard;
             }
