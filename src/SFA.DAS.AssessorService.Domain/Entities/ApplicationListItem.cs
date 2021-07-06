@@ -8,6 +8,7 @@ namespace SFA.DAS.AssessorService.Domain.Entities
         public Guid ApplicationId { get; set; }
         public int SequenceNo { get; set; }
         public string OrganisationName { get; set; }
+        public string EndPointAssessorOrganisationId { get; set; }
         public string StandardName { get; set; }
         public int? StandardCode { get; set; }
         public string StandardReference { get; set; }
