@@ -44,5 +44,22 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
                 new {id = version.StandardUId},
                 version);
         }
+
+        [HttpPut("organisationstandardversion/update")]
+        [ValidateBadRequest]
+        [SwaggerResponse((int)HttpStatusCode.Created, Type = typeof(EpaoStandardVersionResponse))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task <IActionResult> UpdateOrganisationStandardVersion(
+            [FromBody] UpdateOrganisationStandardVersionRequest request)
+        {
+            _logger.LogInformation("Recieved Update Organisation Standard Version Request");
+
+            var updatedVersion = await _mediator.Send(request);
+
+            var response = new EpaoStandardVersionResponse(updatedVersion.Version);
+
+            return Ok(response);
+        }
     }
 }
