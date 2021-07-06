@@ -2,6 +2,7 @@
 using MediatR;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models.Apply.Review;
+using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.Domain.Consts;
@@ -36,22 +37,29 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply.Review
 
             var items = Mapper.Map<IEnumerable<ApplicationListItem>, IEnumerable<ApplicationSummaryItem>>(organisationApplicationsResult.PageOfResults);
 
-            // Get versions for each standard and determine the withdrawal application type.
-            foreach(var item in items)
+            if(items.Any())
             {
-                var allVersionsForStandard = await _standardRepository.GetStandardVersionsByIFateReferenceNumber(item.StandardReference);
-                item.WithdrawalType = GetWithdrawalApplicationType(item, allVersionsForStandard);
+                // only want to do this once.
+                var allEnrolledVersions = await _standardRepository.GetEpaoRegisteredStandardVersions(items.First().EndPointAssessorOrganisationId);
+
+                // Get versions for each standard and determine the withdrawal application type.
+                foreach (var item in items)
+                {
+                    var allEnrolledStandardVersions = allEnrolledVersions.Where(v => v.IFateReferenceNumber == item.StandardReference).ToList();
+                    item.WithdrawalType = GetWithdrawalApplicationType(item, allEnrolledStandardVersions);
+                }
             }
+
 
             return new PaginatedList<ApplicationSummaryItem>(items.ToList(),
                     organisationApplicationsResult.TotalCount, request.PageIndex, request.PageSize, request.PageSetSize);
         }
 
         // SV-912 Helper to generate the type of withdrawal
-        private string GetWithdrawalApplicationType(ApplicationSummaryItem item, IEnumerable<Standard> allVersionsForStandard)
+        private string GetWithdrawalApplicationType(ApplicationSummaryItem item, IEnumerable<StandardVersion> allEnrolledVersions)
         {
             string withdrawalApplicationType = WithdrawalTypes.Version;
-            var allVersions = allVersionsForStandard.Select(s => s.Version.ToString()).ToList();
+            var allVersions = allEnrolledVersions.Select(s => s.Version.ToString()).ToList();
 
             if (null == item.Versions || !item.Versions.Any())
             {
