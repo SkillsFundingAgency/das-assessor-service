@@ -2,10 +2,14 @@
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Api.Types.Models.Validation;
+using SFA.DAS.AssessorService.Application.Exceptions;
 using SFA.DAS.AssessorService.Application.Handlers.OrganisationStandards;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.Testing.AutoFixture;
+using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -38,7 +42,11 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Organisations
         [Test, RecursiveMoqAutoData]
         public async Task Then_UpdateOrganisationStandardVersion(OrganisationStandardVersion version)
         {
-            SetupGetOrganisationStandardVersions(version);
+            _mockOrganisationStandardRepository.Setup(repository => repository.GetOrganisationStandardVersionByOrganisationStandardIdAndVersion(It.IsAny<int>(), It.IsAny<decimal>()))
+               .ReturnsAsync(version);
+
+            _mockValidator.Setup(v => v.ValidatorUpdateOrganisationStandardVersionRequest(_request))
+                .ReturnsAsync(new ValidationResponse());
 
             await _handler.Handle(_request, CancellationToken.None);
 
@@ -48,10 +56,19 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Organisations
                 Times.Once);
         }
 
-        private void SetupGetOrganisationStandardVersions(OrganisationStandardVersion version)
+        [Test]
+        public async Task And_ValidatorReturnsError_Then_ThrowException()
         {
-            _mockOrganisationStandardRepository.Setup(repository => repository.GetOrganisationStandardVersionByOrganisationStandardIdAndVersion(It.IsAny<int>(), It.IsAny<decimal>()))
-                .ReturnsAsync(version);
+            _mockValidator.Setup(v => v.ValidatorUpdateOrganisationStandardVersionRequest(_request))
+                .ReturnsAsync(new ValidationResponse()
+                {
+                    Errors = new List<ValidationErrorDetail>()
+                    {
+                        new ValidationErrorDetail("Error", "Error message")
+                    }
+                });
+
+            var ex = Assert.ThrowsAsync<BadRequestException>(() => _handler.Handle(_request, CancellationToken.None));
         }
     }
 }
