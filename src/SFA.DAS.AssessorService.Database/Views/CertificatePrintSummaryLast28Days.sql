@@ -1,7 +1,7 @@
 ﻿CREATE VIEW [DashboardReporting].[CertificatePrintSummaryLast28Days]
 AS
 	SELECT 
-		[PivotPrintCertificateLogsInLast7Days].BatchNumber,
+		[PivotPrintCertificateLogsInLast28Days].BatchNumber,
 		FORMAT([BatchLogs].ScheduledDate, 'g', 'en-gb' ) ScheduledDate,
 		FORMAT([BatchLogs].FileUploadEndTime, 'g', 'en-gb' ) UploadedDate,
 		FORMAT(PARSE(JSON_VALUE([BatchLogs].BatchData, '$.PrintedDate') AS DATETIME), 'g', 'en-gb') PrintedDate,
@@ -17,11 +17,11 @@ AS
 				 OR (Action = 'Status' AND Status = 'Delivered')
 				 OR (Action = 'Status' AND Status = 'NotDelivered'))
 			AND BatchNumber IS NOT NULL
-	) AS [PrintCertificateLogsInLast7Days]
+	) AS [PrintCertificateLogsInLast28Days]
 	PIVOT  
 	(  
 	  COUNT(Status)
 	  FOR Status IN ([SentToPrinter], [Printed], [Delivered], [NotDelivered])
-	) AS [PivotPrintCertificateLogsInLast7Days]
+	) AS [PivotPrintCertificateLogsInLast28Days]
 	JOIN BatchLogs 
-		ON [PivotPrintCertificateLogsInLast7Days].BatchNumber = [BatchLogs].BatchNumber
+		ON [PivotPrintCertificateLogsInLast28Days].BatchNumber = [BatchLogs].BatchNumber
