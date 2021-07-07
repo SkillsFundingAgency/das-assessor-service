@@ -28,3 +28,6 @@ GO
 ALTER TABLE [dbo].[CertificateBatchLogs] CHECK CONSTRAINT [FK_CertificateBatchLogs_BatchLogs];
 GO
 
+CREATE NONCLUSTERED INDEX [IX_CertificateBatchLogs_BatchNumber] ON [dbo].[CertificateBatchLogs] ([BatchNumber]) 
+WITH (ONLINE = ON)
+GO
