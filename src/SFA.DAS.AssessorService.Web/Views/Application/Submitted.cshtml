@@ -100,14 +100,11 @@
                         @if (!string.IsNullOrEmpty(Model.StandardName))
                         {
                             <div class="govuk-!-margin-bottom-4">
-                                <span class="govuk-!-font-size-24">Standard and version(s) applied for</span>
+                                <span class="govuk-!-font-size-24">Standard version(s) applied for</span>
                                 <br />
                                 <strong>@Model.StandardName</strong>
-                                @foreach (var version in Model.Versions)
-                                {
-                                    <br />
-                                    <span class="govuk-!-font-size-24">Version @version</span>
-                                }
+                                <br />
+                                <span class="govuk-!-font-size-19">Version @string.Join(", ", Model.Versions)</span>
                             </div>
                         }
                         @if (!string.IsNullOrEmpty(Model.ReferenceNumber))
