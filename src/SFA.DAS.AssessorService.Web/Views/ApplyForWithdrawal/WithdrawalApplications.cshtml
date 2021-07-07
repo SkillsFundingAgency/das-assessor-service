@@ -15,6 +15,9 @@
             <h1 class="govuk-heading-xl">
                 Your withdrawal requests
             </h1>
+            <a asp-action="TypeOfWithdrawal" asp-controller="ApplyForWithdrawal" class="govuk-button">
+                Create a new withdrawal request
+            </a>
             <table class="govuk-table">
                 <thead class="govuk-table__head">
                     <tr class="govuk-table__row">
@@ -64,7 +67,4 @@
             </table>
         </div>
     </div>
-    <a asp-action="TypeOfWithdrawal" asp-controller="ApplyForWithdrawal" class="govuk-button">
-        Create a new withdrawal request
-    </a>
 </main>

@@ -83,7 +83,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ApplyControllerTests.ApplyForWit
         public async Task Then_Redirected_To_Sequence()
         {
             // Arrange
-            var model = new ChooseStandardVersionForWithdrawalViewModel()
+            var model = new WholeStandardOrVersionViewModel()
             {
                 WithdrawalType = WithdrawalType.SpecificVersions,
                 SelectedVersions = new List<string>() {  "1.0", "1.1" }
@@ -103,7 +103,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ApplyControllerTests.ApplyForWit
         public async Task Then_CreateApplication_is_called()
         {
             // Arrange
-            var model = new ChooseStandardVersionForWithdrawalViewModel()
+            var model = new WholeStandardOrVersionViewModel()
             {
                 WithdrawalType = WithdrawalType.SpecificVersions,
                 SelectedVersions = new List<string>() { "1.0", "1.1" }
@@ -120,7 +120,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ApplyControllerTests.ApplyForWit
         public async Task Then_UpdateStandardData_is_called_with_versions()
         {
             // Arrange
-            var model = new ChooseStandardVersionForWithdrawalViewModel()
+            var model = new WholeStandardOrVersionViewModel()
             {
                 WithdrawalType = WithdrawalType.SpecificVersions,
                 SelectedVersions = new List<string>() { "1.0", "1.1" }
@@ -138,7 +138,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ApplyControllerTests.ApplyForWit
         public async Task Then_UpdateStandardData_is_called_with_standard()
         {
             // Arrange
-            var model = new ChooseStandardVersionForWithdrawalViewModel()
+            var model = new WholeStandardOrVersionViewModel()
             {
                 WithdrawalType = WithdrawalType.WholeStandard,
                 SelectedVersions = null

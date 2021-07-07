@@ -1,0 +1,15 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace SFA.DAS.AssessorService.Web.ViewModels.ApplyForWithdrawal
+{
+    public class RegisteredStandardsViewModel
+    {
+        public string StandardName { get; set; }
+        public int Level { get; set; }
+        public string ReferenceNumber { get; set; }
+        public Guid? ApplicationId { get; set; }
+    }
+}

@@ -1,10 +1,10 @@
 @model SFA.DAS.AssessorService.Web.ViewModels.ApplyForWithdrawal.ChooseStandardVersionForWithdrawalViewModel;
 @{
-    ViewData["Title"] = "Which version do you want to withdraw from assessing?";
+    ViewData["Title"] = "Which standard version(s) do you want to withdraw from assessing?";
     Layout = "_DashboardLayout";
 }
 
-<a asp-action="TypeOfWithdrawal" asp-controller="ApplyForWithdrawal" class="govuk-back-link">Back</a>
+<a asp-action="ReviewStandardVersions" asp-controller="ApplyForWithdrawal" asp-route-iFateReferenceNumber="@Model.IFateReferenceNumber" class="govuk-back-link">Back</a>
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
     @if (!ViewData.ModelState.IsValid)
@@ -15,7 +15,6 @@
             </h2>
             <div class="govuk-error-summary__body">
                 <ul class="govuk-list govuk-error-summary__list">
-                    <li><a sfa-validation-for="WithdrawalType"></a></li>
                     <li><a sfa-validation-for="SelectedVersions"></a></li>
                 </ul>
             </div>
@@ -23,59 +22,32 @@
     }
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <h1 class="govuk-heading-xl">Do you want to withdraw from the whole standard or version(s) of the standard? </h1>
+            <h1 class="govuk-heading-xl">Which standard version(s) do you want to withdraw from assessing?</h1>
 
-            <p class="govuk-inset-text">
-                Select either the whole standard or version(s) of the standard from which you wish to withdraw.
-            </p>
+            <h2 class="govuk-heading-m govuk-!-margin-bottom-1">@Model.StandardName</h2>
+            <p class="govuk-hint govuk-!-margin-top-1 govuk-!-margin-bottom-7">@Model.IFateReferenceNumber</p>
 
             <form asp-action="ChooseStandardVersionForWithdrawal" asp-controller="ApplyForWithdrawal" method="post">
 
-                <div class="govuk-form-group" sfa-validation-for="WithdrawalType" sfa-validationerror-class="govuk-form-group--error">
+                <div class="govuk-form-group" sfa-validation-for="SelectedVersions" sfa-validationerror-class="govuk-form-group--error">
                     <fieldset class="govuk-fieldset">
-                        <sfa-validationerror-detail sfa-validation-for="WithdrawalType" sfa-validationerror-class="govuk-error-message"></sfa-validationerror-detail>
-                        <div class="govuk-hint">
-                            Select one option.
-                        </div>
+                        <sfa-validationerror-detail sfa-validation-for="SelectedVersions" sfa-validationerror-class="govuk-error-message"></sfa-validationerror-detail>
 
-                        <div class="govuk-radios govuk-radios--conditional" data-module="govuk-radios">
-                            <div class="govuk-radios__item" wfd-id="18">
-                                <input class="govuk-radios__input" id="wholeStandard" name="WithdrawalType" asp-for="WithdrawalType" type="radio" value="wholeStandard" disabled="@Model.WholeStandardDisabled">
-                                <label class="govuk-label govuk-radios__label" for="wholeStandard">
-                                    Whole standard
-                                </label>
-                            </div>
-                            <div class="govuk-radios__item">
-                                <input class="govuk-radios__input" id="specificVersions" name="WithdrawalType" asp-for="WithdrawalType" type="radio" value="specificVersions" aria-controls="conditional-versions" aria-expanded="false">
-                                <label class="govuk-label govuk-radios__label" for="specificVersions">
-                                    Version(s) of the standard
-                                </label>
-                            </div>
-
-                            <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="conditional-versions">
-                                <div class="govuk-form-group" sfa-validation-for="SelectedVersions" sfa-validationerror-class="govuk-form-group--error">
-                                    <fieldset class="govuk-fieldset">
-                                        <sfa-validationerror-detail sfa-validation-for="SelectedVersions" sfa-validationerror-class="govuk-error-message"></sfa-validationerror-detail>
-                                        <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
-                                            <span class="govuk-hint">
-                                                You can select one or multiple versions. Selecting all versions will result in withdrawal from the whole standard.
-                                                The same withdrawal date will apply to all versions selected. If you want to withdraw from more than one version on different dates, you will need to make a separate withdrawal request for each version.
-                                            </span>
-                                        </legend>
-                                        <div class="govuk-checkboxes">
-                                            @foreach (var item in Model.Versions)
-                                            {
-                                                <div class="govuk-checkboxes__item">
-                                                    <input class="govuk-checkboxes__input" id="@item.Version" name="SelectedVersions" type="checkbox" value="@item.Version">
-                                                    <label class="govuk-label govuk-checkboxes__label" for="@item.Version">
-                                                        Version @item.Version
-                                                    </label>
-                                                </div>
-                                            }
-                                        </div>
-                                    </fieldset>
+                        <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
+                            <span class="govuk-hint">
+                                Select at least one version.
+                            </span>
+                        </legend>
+                        <div class="govuk-checkboxes">
+                            @foreach (var item in Model.Versions)
+                            {
+                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="@item.Version" name="SelectedVersions" type="checkbox" value="@item.Version">
+                                    <label class="govuk-label govuk-checkboxes__label" for="@item.Version">
+                                        Version @item.Version
+                                    </label>
                                 </div>
-                            </div>
+                            }
                         </div>
                     </fieldset>
                 </div>

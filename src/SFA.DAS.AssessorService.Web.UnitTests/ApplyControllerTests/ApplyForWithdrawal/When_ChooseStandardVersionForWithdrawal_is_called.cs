@@ -104,7 +104,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ApplyControllerTests.ApplyForWit
             var result = await _sut.ChooseStandardVersionForWithdrawal("ST0300") as ViewResult;
 
             // Assert
-            var vm = result.Model as ChooseStandardVersionForWithdrawalViewModel;
+            var vm = result.Model as WholeStandardOrVersionViewModel;
             vm.WholeStandardDisabled.Should().BeTrue();
             vm.Versions.Count.Should().Be(1);
             vm.Versions[0].Version.Should().Be("1.2");
@@ -135,7 +135,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ApplyControllerTests.ApplyForWit
             var result = await _sut.ChooseStandardVersionForWithdrawal("ST0300") as ViewResult;
 
             // Assert
-            var vm = result.Model as ChooseStandardVersionForWithdrawalViewModel;
+            var vm = result.Model as WholeStandardOrVersionViewModel;
             vm.WholeStandardDisabled.Should().BeFalse();
             vm.Versions.Count.Should().Be(3);
             vm.Versions[0].Version.Should().Be("1.0");

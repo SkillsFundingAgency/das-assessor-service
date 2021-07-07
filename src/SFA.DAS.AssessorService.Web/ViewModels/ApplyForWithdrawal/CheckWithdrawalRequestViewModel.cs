@@ -3,12 +3,12 @@ using System.Collections.Generic;
 
 namespace SFA.DAS.AssessorService.Web.ViewModels.ApplyForWithdrawal
 {
-    public class ChooseStandardVersionForWithdrawalViewModel
+    public class CheckWithdrawalRequestViewModel
     {
         public string StandardName { get; set; }
         public int Level { get; set; }
         public string IFateReferenceNumber { get; set; }
-        public List<StandardVersion> Versions { get; set; }
-        public List<string> SelectedVersions { get; set; }
+        public string Versions { get; set; }
+        public string Continue { get; set; }
     }
 }
