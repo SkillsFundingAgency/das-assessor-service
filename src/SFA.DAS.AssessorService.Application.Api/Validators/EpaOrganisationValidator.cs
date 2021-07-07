@@ -493,6 +493,15 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             return string.Empty;
         }
 
+        public string CheckOrganisationStandardId(int organisationStandardId)
+        {
+            if (organisationStandardId == 0)
+            {
+                return FormatErrorMessage(EpaOrganisationValidatorMessageName.OrganisationStandardIdIsRequired);
+            }
+            return string.Empty;
+        }
+
         public ValidationResponse ValidatorCreateEpaOrganisationRequest(CreateEpaOrganisationRequest request)
         {
             var validationResult = new ValidationResponse();
@@ -600,6 +609,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
                 return validationResult;
             }
 
+            RunValidationCheckAndAppendAnyError("OrganisationStandardId", CheckOrganisationStandardId(request.OrganisationStandardId), validationResult, ValidationStatusCode.BadRequest);
             RunValidationCheckAndAppendAnyError("OrganisationId", CheckIfOrganisationStandardDoesNotExist(request.OrganisationId, request.StandardCode), validationResult, ValidationStatusCode.BadRequest);
             RunValidationCheckAndAppendAnyError("ContactId", CheckIfContactIdIsValid(request.ContactId,request.OrganisationId), validationResult, ValidationStatusCode.BadRequest);
             RunValidationCheckAndAppendAnyError("DeliveryAreas", CheckIfDeliveryAreasAreValid(request.DeliveryAreas), validationResult, ValidationStatusCode.BadRequest);

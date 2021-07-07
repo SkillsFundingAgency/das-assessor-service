@@ -276,4 +276,7 @@
   <data name="OrganisationStandardVersionEffectiveFromAfterStandardLastDayForNewStarts" xml:space="preserve">
     <value>The organisation standard version effective from date must be on or before the standard last day for new starts</value>
   </data>
+  <data name="OrganisationStandardIdIsRequired" xml:space="preserve">
+    <value>Organisation standard id is required</value>
+  </data>
 </root>
