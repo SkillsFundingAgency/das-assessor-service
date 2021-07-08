@@ -103,8 +103,13 @@
                                 <span class="govuk-!-font-size-24">Standard version(s) applied for</span>
                                 <br />
                                 <strong>@Model.StandardName</strong>
-                                <br />
-                                <span class="govuk-!-font-size-19">Version @string.Join(", ", Model.Versions)</span>
+
+                                @if (Model.Versions != null)
+                                {
+                                    <br />
+                                    <span class="govuk-!-font-size-19">Version @string.Join(", ", Model.Versions)</span>
+                                }
+                                
                             </div>
                         }
                         @if (!string.IsNullOrEmpty(Model.ReferenceNumber))
