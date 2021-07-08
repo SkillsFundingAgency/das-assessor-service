@@ -27,6 +27,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
             var result = _validator.ValidatorUpdateEpaOrganisationStandardRequest(new UpdateEpaOrganisationStandardRequest
             {
                 OrganisationId = request.OrganisationId,
+                OrganisationStandardId = request.OrganisationStandardId,
                 StandardCode = request.StandardCode,
                 EffectiveTo = request.EffectiveTo,
                 EffectiveFrom = request.EffectiveFrom,
