@@ -23,6 +23,8 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Apply
         public string ApplicationStatus { get; set; }
 
         public bool FromStandardsVersion { get; set; }
+
+        public DateTime? EarliestVersionEffectiveFrom { get; set; }
     }
 
 
