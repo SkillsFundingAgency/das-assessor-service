@@ -165,7 +165,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             if(string.IsNullOrWhiteSpace(version))
             {
                 selectedStandard = standardVersions.LastOrDefault();
-                versions = model.SelectedVersions;
+                versions = model.SelectedVersions ?? new List<string> { selectedStandard.Version.VersionToString() }; 
                 if (model.SelectedVersions != null)
                     applicationStatus = await ApplicationStandardStatus(application, standardReference, model.SelectedVersions);
             }
