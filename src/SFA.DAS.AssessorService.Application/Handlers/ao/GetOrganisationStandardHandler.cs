@@ -38,8 +38,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ao
             organisationStandard.StandardEffectiveFrom = standard?.StandardData.EffectiveFrom;
             organisationStandard.StandardEffectiveTo = standard?.StandardData.EffectiveTo;
             organisationStandard.StandardLastDateForNewStarts = standard?.StandardData.LastDateForNewStarts;
-
-            var versions = await _standardService.GetEPAORegisteredStandardVersions(organisation.OrganisationId, standard.StandardId);
+            organisationStandard.IFateReferenceNumber = standard?.ReferenceNumber;
+    
+            var versions = await _standardService.GetEPAORegisteredStandardVersions(organisation?.OrganisationId, standard?.StandardId);
             organisationStandard.Versions = versions.ToList();
 
             if (organisationStandard.ContactId != null)
