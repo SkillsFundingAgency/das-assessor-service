@@ -42,7 +42,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
               });
 
             // Act
-            var results = (await _sut.ConfirmStandard(Guid.NewGuid(), "ST0001", "1.1")) as ViewResult;
+            var results = (await _sut.ConfirmStandard("ST0001", "1.1")) as ViewResult;
 
             // Assert
             var vm = results.Model as StandardVersionViewModel;

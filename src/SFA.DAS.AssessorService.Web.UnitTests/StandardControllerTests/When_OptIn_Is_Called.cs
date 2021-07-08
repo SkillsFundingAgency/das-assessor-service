@@ -34,7 +34,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
                });                                                                                     
 
             // Act
-            var results = (await _sut.OptIn(Guid.NewGuid(), "ST0001", 1.2M)) as ViewResult;
+            var results = (await _sut.OptIn("ST0001", 1.2M)) as ViewResult;
 
             // Assert
             var vm = results.Model as StandardOptInViewModel;

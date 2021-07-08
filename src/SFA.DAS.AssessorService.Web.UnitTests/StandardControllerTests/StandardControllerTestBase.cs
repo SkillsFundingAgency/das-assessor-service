@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Moq;
 using NUnit.Framework;
+using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Apply;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
@@ -39,9 +40,13 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
             _mockApplicationService = new Mock<IApplicationService>();
             _mockConfig = new Mock<IWebConfiguration>();
 
-        _mockHttpContextAccessor
+            _mockHttpContextAccessor
                 .Setup(r => r.HttpContext)
                 .Returns(SetupHttpContextSubAuthorityClaim());
+
+            _mockContactsApiClient
+                .Setup(r => r.GetContactBySignInId(It.IsAny<string>()))
+                .ReturnsAsync(new ContactResponse());
 
             _mockApiClient
              .Setup(r => r.GetApplication(It.IsAny<Guid>()))
@@ -74,22 +79,19 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
              });
 
             _mockOrgApiClient
-             .Setup(r => r.GetEpaOrganisationById(It.IsAny<String>()))
-             .ReturnsAsync(new EpaOrganisation()
+             .Setup(r => r.GetOrganisationByUserId(It.IsAny<Guid>()))
+             .ReturnsAsync(new OrganisationResponse()
              {
-                 OrganisationId = "12345"
+                 EndPointAssessorOrganisationId = "12345"
              });
 
             _mockOrgApiClient
-             .Setup(r => r.GetEpaOrganisation(It.IsAny<String>()))
-             .ReturnsAsync(new EpaOrganisation()
-             {
-                 OrganisationId = "12345"
-             });
-
-            _mockOrgApiClient
-            .Setup(r => r.GetOrganisationStandardsByOrganisation(It.IsAny<String>()))
+            .Setup(r => r.GetOrganisationStandardsByOrganisation(It.IsAny<string>()))
             .ReturnsAsync(new List<OrganisationStandardSummary>());
+
+            _mockApplicationService
+            .Setup(r => r.BuildInitialRequest(It.IsAny<ContactResponse>(), It.IsAny<OrganisationResponse>(), It.IsAny<string>()))
+            .ReturnsAsync(new CreateApplicationRequest());
 
             _sut = new StandardController(_mockApiClient.Object, _mockOrgApiClient.Object, _mockQnaApiClient.Object,
                _mockContactsApiClient.Object, _mockStandardVersionApiClient.Object, _mockApplicationService.Object, _mockHttpContextAccessor.Object, _mockConfig.Object)
