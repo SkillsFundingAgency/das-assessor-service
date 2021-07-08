@@ -18,6 +18,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.AO
 
         public StandardCollation StandardCollation { get; set; }
         public List<int> DeliveryAreas { get; set; }
+        public List<OrganisationStandardVersion> StandardVersions { get; set; }
 
         public OrganisationStandardData OrganisationStandardData { get; set; }
     }
