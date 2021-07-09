@@ -1,7 +1,4 @@
-﻿using SFA.DAS.AssessorService.Api.Types.Models.Standards;
-using System.Collections.Generic;
-
-namespace SFA.DAS.AssessorService.Web.ViewModels.ApplyForWithdrawal
+﻿namespace SFA.DAS.AssessorService.Web.ViewModels.ApplyForWithdrawal
 {
     public class CheckWithdrawalRequestViewModel
     {

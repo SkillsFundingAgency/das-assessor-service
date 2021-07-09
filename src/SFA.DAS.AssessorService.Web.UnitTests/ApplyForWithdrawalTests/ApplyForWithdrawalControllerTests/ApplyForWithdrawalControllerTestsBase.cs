@@ -14,7 +14,6 @@ using System.Security.Claims;
 
 namespace SFA.DAS.AssessorService.Web.UnitTests.ApplyForWithdrawalTests.ApplyForWithdrawalControllerTests
 {
-    [TestFixture]
     public class ApplyForWithdrawalControllerTestsBase
     {
         protected ApplyForWithdrawalController _sut;

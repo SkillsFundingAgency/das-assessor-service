@@ -246,7 +246,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
             if (model.SelectedVersions == null || !model.SelectedVersions.Any())
                 ModelState.AddModelError(nameof(model.SelectedVersions), "Select at least one version");
-            else if (model.SelectedVersions.Count == versions.Count())
+            else if (model.SelectedVersions.Count == versions.Count)
                 ModelState.AddModelError(nameof(model.SelectedVersions), "Select less versions or go back and select whole standard");
 
             if (ModelState.IsValid)
@@ -305,48 +305,46 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             if (string.IsNullOrWhiteSpace(model.Continue))
                 ModelState.AddModelError(nameof(model.Continue), "Select Yes or No");
 
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                if (model.Continue.Equals("yes", StringComparison.InvariantCultureIgnoreCase))
-                {
-                    if (string.IsNullOrWhiteSpace(versionsToWithdrawal))
-                    {
-                        var applications = await GetInProgressWithdrawalVersionApplications(contact.Id, iFateReferenceNumber);
-                        if (applications.Any())
-                        {
-                            await _applicationApiClient.DeleteApplications(new DeleteApplicationsRequest()
-                            {
-                                ApplicationIds = applications.Select(x => x.Id),
-                                DeletingContactId = null
-                            });
-                        }
-                    }
-
-                    var id = await CreateWithdrawalApplication(contact, organisation,
-                                standard.LarsCode,
-                                iFateReferenceNumber,
-                                standard.Title,
-                                string.IsNullOrWhiteSpace(versionsToWithdrawal) ? StandardOrVersion.Standard : StandardOrVersion.Version,
-                                string.IsNullOrWhiteSpace(versionsToWithdrawal) ? null : versionsToWithdrawal.Split(","));
-
-                    return RedirectToAction(
-                            nameof(ApplicationController.Sequence),
-                            nameof(ApplicationController).RemoveController(),
-                            new { Id = id, sequenceNo = ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO });
-                }
-                else
-                    return RedirectToAction(
-                            nameof(WithdrawalApplications),
-                            nameof(ApplyForWithdrawalController).RemoveController());
-            }
-            else
-            {
-                model.IFateReferenceNumber = model.IFateReferenceNumber;
+                model.IFateReferenceNumber = iFateReferenceNumber;
                 model.Level = standard.Level;
                 model.StandardName = standard.Title;
                 model.BackAction = backAction;
                 return View(model);
             }
+
+            if (model.Continue.Equals("yes", StringComparison.InvariantCultureIgnoreCase))
+            {
+                if (string.IsNullOrWhiteSpace(versionsToWithdrawal))
+                {
+                    var applications = await GetInProgressWithdrawalVersionApplications(contact.Id, iFateReferenceNumber);
+                    if (applications.Any())
+                    {
+                        await _applicationApiClient.DeleteApplications(new DeleteApplicationsRequest()
+                        {
+                            ApplicationIds = applications.Select(x => x.Id),
+                            DeletingContactId = null
+                        });
+                    }
+                }
+
+                var id = await CreateWithdrawalApplication(contact, organisation,
+                            standard.LarsCode,
+                            iFateReferenceNumber,
+                            standard.Title,
+                            string.IsNullOrWhiteSpace(versionsToWithdrawal) ? StandardOrVersion.Standard : StandardOrVersion.Version,
+                            versionsToWithdrawal?.Split(","));
+
+                return RedirectToAction(
+                        nameof(ApplicationController.Sequence),
+                        nameof(ApplicationController).RemoveController(),
+                        new { Id = id, sequenceNo = ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO });
+            }
+            else
+                return RedirectToAction(
+                        nameof(WithdrawalApplications),
+                        nameof(ApplyForWithdrawalController).RemoveController());
         }
 
         private async Task<Guid> CreateWithdrawalApplication(ContactResponse contact, OrganisationResponse organisation, int larsCode, string iFateReferenceNumber, string standardTitle, string standardOrVersion, IEnumerable<string> versions)

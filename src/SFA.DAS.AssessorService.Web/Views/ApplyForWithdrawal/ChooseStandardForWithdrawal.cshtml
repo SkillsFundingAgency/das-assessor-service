@@ -16,6 +16,7 @@
                 <div class="govuk-grid-row">
                     <div class="govuk-grid-column-full">
                         <table class="govuk-table">
+                            <caption class="govuk-table__caption"></caption>
                             <thead class="govuk-table__head">
                                 <tr class="govuk-table__row">
                                     <th class="govuk-table__header" scope="col">Standard</th>
@@ -41,7 +42,7 @@
                                             }
                                             else
                                             {
-                                                <a asp-action="CheckWithdrawalRequest" asp-controller="ApplyForWithdrawal" asp-route-iFateReferenceNumber="@item.ReferenceNumber" asp-route-backAction = "ChooseStandardForWithdrawal" class="govuk-link">Select</a>
+                                                <a asp-action="CheckWithdrawalRequest" asp-controller="ApplyForWithdrawal" asp-route-iFateReferenceNumber="@item.ReferenceNumber" asp-route-backAction="ChooseStandardForWithdrawal" class="govuk-link">Select</a>
                                             }
                                         </td>
                                     </tr>
@@ -63,7 +64,7 @@
                                     asp-controller="ApplyForWithdrawal"
                                     asp-route-pageIndex="@(Model.Standards.PageIndex - 1)"
                                     class="govuk-link previous">
-                                        <i class="arrow-button icon-left-open">&#xe800;</i>
+                                        <em class="arrow-button icon-left-open">&#xe800;</em>
                                         <span class="description">Previous <span class="hide-mob">page</span></span>
                                         <span class="counter">Page <span class="prevPage">@(Model.Standards.PageIndex - 1)</span> of <span class="totalPage">@(Model.Standards.TotalPages)</span></span>
                                     </a>
@@ -75,7 +76,7 @@
                                     asp-controller="ApplyForWithdrawal"
                                     asp-route-pageIndex="@(Model.Standards.PageIndex + 1)"
                                     class="govuk-link next">
-                                        <i class="arrow-button icon-right-open">&#xe801;</i>
+                                        <em class="arrow-button icon-right-open">&#xe801;</em>
                                         <span class="description">Next <span class="hide-mob">page</span></span>
                                         <span class="counter">Page <span class="nextPage">@(Model.Standards.PageIndex + 1)</span> of <span class="totalPage">@(Model.Standards.TotalPages)</span></span>
                                     </a>
