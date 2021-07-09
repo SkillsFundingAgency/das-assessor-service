@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
+using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Apply;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
@@ -26,7 +27,6 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Validati
     public class WithdrawalDateValidationControllerTests
     {
         private Mock<IMediator> _mockMediator;
-        private Mock<IQnaApiClient> _mockQnaApiClient;
 
         private WithdrawalDateValidationController _controller;
 
@@ -34,18 +34,24 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Validati
         public void SetUp()
         {
             _mockMediator = new Mock<IMediator>();
-            _mockQnaApiClient = new Mock<IQnaApiClient>();
 
             _mockMediator.Setup(r => r.Send<ApplicationResponse>(It.IsAny<GetApplicationRequest>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(new ApplicationResponse());
-            
-            _mockQnaApiClient.Setup(r => r.GetApplicationData(It.IsAny<Guid>()))
-                .ReturnsAsync(new ApplicationData()
+                .ReturnsAsync(new ApplicationResponse()
                 {
-                    EarliestDateOfWithdrawal = new DateTime(2021, 6, 1, 10, 30, 12)
+                    ApplyData = new ApplyData()
+                    {
+                        Apply = new ApplyTypes.Apply()
+                        {
+                            StandardCode = 123
+                        }
+                    }
                 });
-
-            _controller = new WithdrawalDateValidationController(_mockQnaApiClient.Object, _mockMediator.Object, Mock.Of<ILogger<WithdrawalDateValidationController>>());
+            
+            _mockMediator.Setup(r => r.Send<DateTime>(It.Is<GetEarliestWithdrawalDateRequest>(
+                x => x.StandardId == 123), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new DateTime(2021, 6, 1, 10, 30, 12));
+            
+            _controller = new WithdrawalDateValidationController(_mockMediator.Object, Mock.Of<ILogger<WithdrawalDateValidationController>>());
         }
 
         [Test]

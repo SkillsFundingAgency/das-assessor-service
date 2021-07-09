@@ -18,7 +18,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.Validations
         private readonly IMediator _mediator;
         private readonly ILogger<WithdrawalDateValidationController> _logger;
 
-        public WithdrawalDateValidationController(IQnaApiClient qnaApiClient, IMediator mediator, ILogger<WithdrawalDateValidationController> logger)
+        public WithdrawalDateValidationController(IMediator mediator, ILogger<WithdrawalDateValidationController> logger)
         {
             _mediator = mediator;
             _logger = logger;

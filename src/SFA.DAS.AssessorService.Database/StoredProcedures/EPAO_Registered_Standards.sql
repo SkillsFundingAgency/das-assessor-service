@@ -30,10 +30,11 @@ SELECT
 	sc.Title as 'StandardName',
 	JSON_VALUE(sc.StandardData, '$.Level') as [Level],
 	sc.ReferenceNumber as ReferenceNumber,
-	IIF(lv.MaxVersion > osv.MaxVersion AND (av.MaxVersion IS NULL OR lv.MaxVersion > av.MaxVersion), 1, 0) AS NewVersionAvailable
+	IIF(lv.MaxVersion > osv.MaxVersion AND (av.MaxVersion IS NULL OR lv.MaxVersion > av.MaxVersion), 1, 0) AS NewVersionAvailable,
+	osv.NumVersions AS NumVersions
 FROM OrganisationStandard os 
 	INNER join (
-		SELECT OrganisationStandardId, MAX([Version]) AS MaxVersion
+		SELECT OrganisationStandardId, MAX([Version]) AS MaxVersion, Count(*) AS NumVersions
 		FROM OrganisationStandardVersion 
 		WHERE EffectiveTo is null OR EffectiveTo > GETDATE()
 		GROUP BY OrganisationStandardId

@@ -4,7 +4,14 @@
     Layout = "_DashboardLayout";
 }
 
-<a asp-action="ChooseStandardVersionForWithdrawal" asp-controller="ApplyForWithdrawal" asp-route-iFateReferenceNumber="@Model.IFateReferenceNumber" class="govuk-back-link">Back</a>
+@if (Model.BackAction == "ChooseStandardForWithdrawal")
+{
+    <a asp-action="@Model.BackAction" asp-controller="ApplyForWithdrawal" class="govuk-back-link">Back</a>
+}
+else
+{
+    <a asp-action="@Model.BackAction" asp-controller="ApplyForWithdrawal" asp-route-iFateReferenceNumber="@Model.IFateReferenceNumber" class="govuk-back-link">Back</a>
+}
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
     @if (!ViewData.ModelState.IsValid)
@@ -24,23 +31,28 @@
         <div class="govuk-grid-column-two-thirds">
             <h1 class="govuk-heading-xl">Check withdrawal request</h1>
 
+            @if (Model.InProgressVersionWithdrawals)
+            {
+                <div class="govuk-inset-text">
+                    A withdrawal request is already in progress for a version of this standard. 
+                    If you continue with this new withdrawal request then the previous request will be deleted and replaced with this one.
+                </div>
+            }
+
             @if (Model.Versions != null)
             {
                 <p class="govuk-body">
-                You are about to start a withdrawal request for @Model.StandardName (Level @Model.Level), @Model.IFateReferenceNumber, Version @Model.Versions
+                    You are about to start a withdrawal request for @Model.StandardName (Level @Model.Level), @Model.IFateReferenceNumber, Version @Model.Versions
                 </p>
             }
             else
             {
                 <p class="govuk-body">
-                You are about to start a withdrawal request for @Model.StandardName (Level @Model.Level), @Model.IFateReferenceNumber
+                    You are about to start a withdrawal request for @Model.StandardName (Level @Model.Level), @Model.IFateReferenceNumber
                 </p>
             }
 
             <form asp-action="CheckWithdrawalRequest" asp-controller="ApplyForWithdrawal" method="post">
-                <input asp-for="IFateReferenceNumber" type="hidden" />
-                <input asp-for="Versions" type="hidden" />
-
                 <div class="govuk-form-group" sfa-validation-for="Continue" sfa-validationerror-class="govuk-form-group--error">
                     <fieldset class="govuk-fieldset">
                         <sfa-validationerror-detail sfa-validation-for="Continue" sfa-validationerror-class="govuk-error-message"></sfa-validationerror-detail>
@@ -63,11 +75,11 @@
                             </div>
                         </div>
                     </fieldset>
-            </div>
-            <button class="govuk-button govuk-!-margin-top-4" data-module="govuk-button">
-                Continue
-            </button>
-        </form>
+                </div>
+                <button class="govuk-button govuk-!-margin-top-4" data-module="govuk-button">
+                    Continue
+                </button>
+            </form>
         </div>
     </div>
 </main>

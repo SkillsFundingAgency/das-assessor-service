@@ -76,6 +76,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
                             CROSS APPLY OPENJSON(ApplyData,'$.Sequences') WITH (SequenceNo INT, NotRequired BIT) sequence
                          WHERE c.Id = @userId
                             AND sequence.SequenceNo IN @sequenceNos AND sequence.NotRequired = 0
+                            AND a.DeletedAt IS NULL
                          GROUP BY 
                             a.Id, a.ApplicationId, a.OrganisationId, a.ApplicationStatus, a.ReviewStatus, 
                             a.ApplyData, a.FinancialReviewStatus, a.FinancialGrade, 
@@ -192,6 +193,16 @@ namespace SFA.DAS.AssessorService.Data.Apply
             }
 
             return false;
+        }
+
+        public async Task DeleteApplication(Guid id, string deletedBy)
+        {
+            await _unitOfWork.Connection.ExecuteAsync(
+                @"UPDATE Apply
+                      SET  DeletedBy = @deletedBy, DeletedAt = GETUTCDATE()
+                      WHERE  Id = @id",
+                param: new { id, deletedBy },
+                transaction: _unitOfWork.Transaction);
         }
 
         public async Task<bool> ResetApplicatonToStage1(Guid id, Guid userId)

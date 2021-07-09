@@ -33,11 +33,15 @@
                                         <td class="govuk-table__cell">
                                             @if (item.ApplicationId.HasValue)
                                             {
-                                                <a asp-action="TypeOfWithdrawal" asp-controller="Application" asp-route-id="@item.ApplicationId" class="govuk-link">Select</a>
+                                                <a asp-action="SequenceSignPost" asp-controller="Application" asp-route-id="@item.ApplicationId" class="govuk-link">Select</a>
+                                            }
+                                            else if (item.NumVersions > 1)
+                                            {
+                                                <a asp-action="WholeStandardOrVersion" asp-controller="ApplyForWithdrawal" asp-route-iFateReferenceNumber="@item.ReferenceNumber" class="govuk-link">Select</a>
                                             }
                                             else
                                             {
-                                                <a asp-action="WholeStandardOrVersion" asp-controller="ApplyForWithdrawal" asp-route-iFateReferenceNumber="@item.ReferenceNumber" class="govuk-link">Select</a>
+                                                <a asp-action="CheckWithdrawalRequest" asp-controller="ApplyForWithdrawal" asp-route-iFateReferenceNumber="@item.ReferenceNumber" asp-route-backAction = "ChooseStandardForWithdrawal" class="govuk-link">Select</a>
                                             }
                                         </td>
                                     </tr>

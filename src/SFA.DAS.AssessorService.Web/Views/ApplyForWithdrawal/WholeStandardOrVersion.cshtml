@@ -29,8 +29,6 @@
             </p>
 
             <form asp-action="WholeStandardOrVersion" asp-controller="ApplyForWithdrawal" method="post">
-                <input asp-for="IFateReferenceNumber" type="hidden" />
-
                 <div class="govuk-form-group" sfa-validation-for="WithdrawalType" sfa-validationerror-class="govuk-form-group--error">
                     <fieldset class="govuk-fieldset">
                         <sfa-validationerror-detail sfa-validation-for="WithdrawalType" sfa-validationerror-class="govuk-error-message"></sfa-validationerror-detail>
