@@ -10,9 +10,9 @@ WHERE StandardReference IS NULL AND StandardCode IS NOT NULL
 MERGE INTO APPLY masterApply
 USING (
 SELECT * FROM (
-SELECT ApplyId, Versions, REPLACE(ApplyData,'"Apply":{','"Apply":{'+Versions+',') NewApplyData
+SELECT ApplyId, Versions, REPLACE(REPLACE(ApplyData,'"Apply": {','"Apply":{'),'"Apply":{','"Apply":{'+Versions+',') NewApplyData
 FROM (
-SELECT ApplyId, Applydata,'"Versions":'+string_agg('"'+cast(version as varchar(max))+'"',', ') WITHIN GROUP (ORDER BY IFateReferenceNumber ASC) +'' Versions, MAX(standardUid) standardUid
+SELECT ApplyId, Applydata,'"Versions":['+string_agg('"'+cast(version as varchar(max))+'"',', ') WITHIN GROUP (ORDER BY IFateReferenceNumber ASC) +']' Versions, MAX(standardUid) standardUid
 FROM (
 SELECT Id ApplyId, version, standardUid, IFateReferenceNumber,Applydata,so1.versionearlieststartdate, dated
 FROM (

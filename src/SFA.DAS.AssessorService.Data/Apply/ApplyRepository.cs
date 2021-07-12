@@ -76,6 +76,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
                             CROSS APPLY OPENJSON(ApplyData,'$.Sequences') WITH (SequenceNo INT, NotRequired BIT) sequence
                          WHERE c.Id = @userId
                             AND sequence.SequenceNo IN @sequenceNos AND sequence.NotRequired = 0
+                            AND a.DeletedAt IS NULL
                          GROUP BY 
                             a.Id, a.ApplicationId, a.OrganisationId, a.ApplicationStatus, a.ReviewStatus, 
                             a.ApplyData, a.FinancialReviewStatus, a.FinancialGrade, 
@@ -160,7 +161,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
                 transaction: _unitOfWork.Transaction);
         }
 
-        public async Task<bool> UpdateStandardData(Guid id, int standardCode, string referenceNumber, string standardName, List<string> versions, string applicationType)
+        public async Task<bool> UpdateStandardData(Guid id, int standardCode, string referenceNumber, string standardName, List<string> versions, string standardApplicationType)
         {
             var application = await GetApply(id);
             var applyData = application?.ApplyData;
@@ -169,7 +170,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
             {
                 application.StandardCode = standardCode;
                 application.StandardReference = referenceNumber;
-                application.ApplicationType = applicationType;
+                application.StandardApplicationType = standardApplicationType;
 
                 if (applyData.Apply == null)
                 {
@@ -183,15 +184,25 @@ namespace SFA.DAS.AssessorService.Data.Apply
 
                 await _unitOfWork.Connection.ExecuteAsync(
                     @"UPDATE Apply
-                      SET  ApplyData = @ApplyData, StandardCode = @StandardCode, StandardReference = @standardReference, ApplicationType = @applicationType
+                      SET  ApplyData = @ApplyData, StandardCode = @StandardCode, StandardReference = @standardReference, StandardApplicationType = @standardApplicationType
                       WHERE  Id = @Id",
-                    param: new { application.Id, application.ApplyData, application.StandardCode, application.StandardReference, application.ApplicationType },
+                    param: new { application.Id, application.ApplyData, application.StandardCode, application.StandardReference, application.StandardApplicationType },
                     transaction: _unitOfWork.Transaction);
                 
                 return true;
             }
 
             return false;
+        }
+
+        public async Task DeleteApplication(Guid id, string deletedBy)
+        {
+            await _unitOfWork.Connection.ExecuteAsync(
+                @"UPDATE Apply
+                      SET  DeletedBy = @deletedBy, DeletedAt = GETUTCDATE()
+                      WHERE  Id = @id",
+                param: new { id, deletedBy },
+                transaction: _unitOfWork.Transaction);
         }
 
         public async Task<bool> ResetApplicatonToStage1(Guid id, Guid userId)

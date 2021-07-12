@@ -7,60 +7,85 @@
 <a asp-action="TypeOfWithdrawal" asp-controller="ApplyForWithdrawal" class="govuk-back-link">Back</a>
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
-    @if (!ViewData.ModelState.IsValid)
-    {
-        <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
-            <h2 class="govuk-error-summary__title" id="error-summary-title">
-                There is a problem
-            </h2>
-            <div class="govuk-error-summary__body">
-                <ul class="govuk-list govuk-error-summary__list">
-                    <li><a sfa-validation-for="SelectedStandardForWithdrawal"></a></li>
-                </ul>
-            </div>
-        </div>
-    }
     <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
+         <div class="govuk-grid-column-full">
             <h1 class="govuk-heading-xl">Which standard do you want to withdraw from assessing? </h1>
 
-            <p class="govuk-inset-text">
-                You can only withdraw from one standard at a time.You can select the version(s) of the standard you wish to withdraw from assessing on the next page.
-            </p>
-
-            @if (Model.Standards.Any())
+            @if (Model.Standards.Items.Any())
             {
-                <form asp-action="ChooseStandardForWithdrawal" asp-controller="ApplyForWithdrawal" method="post">
-                    <div class="govuk-form-group" sfa-validation-for="SelectedStandardForWithdrawal" sfa-validationerror-class="govuk-form-group--error">
-                        <fieldset class="govuk-fieldset">
-                            <sfa-validationerror-detail sfa-validation-for="SelectedStandardForWithdrawal" sfa-validationerror-class="govuk-error-message"></sfa-validationerror-detail>
-                            <div class="govuk-radios">
-                                @foreach (var item in Model.Standards)
+                <div class="govuk-grid-row">
+                    <div class="govuk-grid-column-full">
+                        <table class="govuk-table">
+                            <caption class="govuk-table__caption"></caption>
+                            <thead class="govuk-table__head">
+                                <tr class="govuk-table__row">
+                                    <th class="govuk-table__header" scope="col">Standard</th>
+                                    <th class="govuk-table__header" scope="col">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody class="govuk-table__body" scope="col">
+                                @foreach (var item in Model.Standards.Items)
                                 {
-                                    <div class="govuk-radios__item">
-                                        <input class="govuk-radios__input"
-                                               id="SelectedStandardForWithdrawal"
-                                               name="SelectedStandardForWithdrawal"
-                                               sfa-validation-for="SelectedStandardForWithdrawal"
-                                               sfa-validationerror-class="govuk-input--error"
-                                               asp-for="SelectedStandardForWithdrawal"
-                                               type="radio"
-                                               value="@item.StandardCode">
-                                        <label class="govuk-label govuk-radios__label" asp-for="SelectedStandardForWithdrawal">
+                                    <tr class="govuk-table__row">
+                                        <th class="govuk-table__header" scope="row">
                                             @item.StandardName (Level @item.Level)
-                                        </label>
-                                        <span class="govuk-hint govuk-radios__hint">
-                                            @item.ReferenceNumber
-                                        </span>
-                                    </div>
+                                            <p class="govuk-body">@item.ReferenceNumber</p>
+                                        </th>
+                                        <td class="govuk-table__cell">
+                                            @if (item.ApplicationId.HasValue)
+                                            {
+                                                <a asp-action="SequenceSignPost" asp-controller="Application" asp-route-id="@item.ApplicationId" class="govuk-link">Select</a>
+                                            }
+                                            else if (item.NumVersions > 1)
+                                            {
+                                                <a asp-action="WholeStandardOrVersion" asp-controller="ApplyForWithdrawal" asp-route-iFateReferenceNumber="@item.ReferenceNumber" class="govuk-link">Select</a>
+                                            }
+                                            else
+                                            {
+                                                <a asp-action="CheckWithdrawalRequest" asp-controller="ApplyForWithdrawal" asp-route-iFateReferenceNumber="@item.ReferenceNumber" asp-route-backAction="ChooseStandardForWithdrawal" class="govuk-link">Select</a>
+                                            }
+                                        </td>
+                                    </tr>
                                 }
-                            </div>
-                        </fieldset>
+                            </tbody>
+                        </table>
                     </div>
-                    <button class="govuk-button govuk-!-margin-top-4" data-module="govuk-button">
-                        Save and continue
-                    </button>
-                </form>
+                </div>
+
+                @if (Model.Standards.HasPreviousPage || Model.Standards.HasNextPage)
+                {
+                    <div class="govuk-grid-row">
+                        <div class="govuk-grid-column-full">
+                            <div class="page-navigation">
+
+                                @if (Model.Standards.HasPreviousPage)
+                                {
+                                    <a asp-action="ChooseStandardForWithdrawal"
+                                    asp-controller="ApplyForWithdrawal"
+                                    asp-route-pageIndex="@(Model.Standards.PageIndex - 1)"
+                                    class="govuk-link previous">
+                                        <em class="arrow-button icon-left-open">&#xe800;</em>
+                                        <span class="description">Previous <span class="hide-mob">page</span></span>
+                                        <span class="counter">Page <span class="prevPage">@(Model.Standards.PageIndex - 1)</span> of <span class="totalPage">@(Model.Standards.TotalPages)</span></span>
+                                    </a>
+                                }
+
+                                @if (Model.Standards.HasNextPage)
+                                {
+                                    <a asp-action="ChooseStandardForWithdrawal"
+                                    asp-controller="ApplyForWithdrawal"
+                                    asp-route-pageIndex="@(Model.Standards.PageIndex + 1)"
+                                    class="govuk-link next">
+                                        <em class="arrow-button icon-right-open">&#xe801;</em>
+                                        <span class="description">Next <span class="hide-mob">page</span></span>
+                                        <span class="counter">Page <span class="nextPage">@(Model.Standards.PageIndex + 1)</span> of <span class="totalPage">@(Model.Standards.TotalPages)</span></span>
+                                    </a>
+                                }
+
+                            </div>
+                        </div>
+                    </div>
+                }
             }
             else
             {

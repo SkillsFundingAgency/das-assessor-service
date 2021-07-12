@@ -36,7 +36,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Apply
 
         public bool IsOrganisationApplication => IsInitialApplication || IsAdditionalStandardWithFinancialHealthChecks;
 
-        public bool ISStandardApplication => IsInitialApplication || IsAdditionalStandardApplication;
+        public bool IsStandardApplication => ApplicationType == ApplicationTypes.Standard || IsAdditionalStandardApplication;
 
         public bool IsStandardWithdrawalApplication => ApplicationType == ApplicationTypes.StandardWithdrawal;
 

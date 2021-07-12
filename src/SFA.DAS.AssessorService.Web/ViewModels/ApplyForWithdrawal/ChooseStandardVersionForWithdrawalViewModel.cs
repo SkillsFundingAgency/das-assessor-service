@@ -5,10 +5,10 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.ApplyForWithdrawal
 {
     public class ChooseStandardVersionForWithdrawalViewModel
     {
+        public string StandardName { get; set; }
+        public int Level { get; set; }
+        public string IFateReferenceNumber { get; set; }
         public List<StandardVersion> Versions { get; set; }
-        public string WithdrawalType { get; set; }
         public List<string> SelectedVersions { get; set; }
-        public bool WholeStandardDisabled { get; set; }
-
     }
 }

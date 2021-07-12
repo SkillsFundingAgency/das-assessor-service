@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using Newtonsoft.Json;
 using NUnit.Framework;
+using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
@@ -119,6 +120,19 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateOptionsTests
             result.ControllerName.Should().Be("CertificateDeclaration");
             result.ActionName.Should().Be("Declare");
         }               
+
+        [Test, MoqAutoData]
+        public async Task WhenPostingOptionSelected_And_UpdateCertificateFails_Then_RedirectToError(CertificateSession session, CertificateOptionViewModel model)
+        {
+            var sessionString = JsonConvert.SerializeObject(session);
+            _mockSessionService.Setup(s => s.Get(nameof(CertificateSession))).Returns(sessionString);
+            _mockCertificateApiClient.Setup(c => c.UpdateCertificate(It.IsAny<UpdateCertificateRequest>())).ThrowsAsync(new Exception());
+
+            var result = await _certificateOptionController.Option(model) as RedirectToActionResult;
+
+            result.ControllerName.Should().Be("Home");
+            result.ActionName.Should().Be("Error");
+        }
 
         [Test, MoqAutoData]
         public void AndClickingBack_RedirectsToSearchIndex_IfNoSession()

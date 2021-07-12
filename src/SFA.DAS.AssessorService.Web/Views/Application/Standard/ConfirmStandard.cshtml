@@ -11,7 +11,14 @@
     var multipleVersions = Model.Results != null && Model.Results.Count() > 1;
 }
 
-<a href="/standard/@Model.Id" class="govuk-back-link">Return to search</a>
+@if (Model.FromStandardsVersion)
+{
+    <a href="@Url.Action("ConfirmStandard", "Standard", new { id = Model.Id, standardReference = Model.StandardReference})" class="govuk-back-link">Back to standard details</a>
+}
+else
+{
+    <a href="@Url.Action("Index", "Standard", new { Id = Model.Id })" class="govuk-back-link">Return to search</a>
+}
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
@@ -50,18 +57,18 @@
                 <tbody class="govuk-table__body">
                     <tr class="govuk-table__row">
                         <th class="govuk-table__header" scope="row">Effective from</th>
-                        <td class="govuk-table__cell">@Model.SelectedStandard?.EffectiveFrom.ToSfaShortDateString()</td>
+                        <td class="govuk-table__cell">@Model.SelectedStandard?.VersionEarliestStartDate.ToSfaShortDateString()</td>
                     </tr>
                     <tr class="govuk-table__row">
                         <th class="govuk-table__header" scope="row">Effective to</th>
                         <td class="govuk-table__cell">
-                            @if (@Model.SelectedStandard?.EffectiveTo == null)
+                            @if (@Model.SelectedStandard?.VersionLatestEndDate == null)
                             {
                                 @Html.Raw("Expiry date not set")
                             }
                             else
                             {
-                                @Model.SelectedStandard?.EffectiveTo.ToSfaShortDateString()
+                                @Model.SelectedStandard?.VersionLatestEndDate.ToSfaShortDateString()
                             }
                         </td>
                     </tr>
@@ -101,7 +108,7 @@
                         </fieldset>
                     </div>
 
-                    <hr class="govuk-!-margin-bottom-7"/>
+                    <hr class="govuk-!-margin-bottom-7" />
                 }
 
                 @if (string.IsNullOrEmpty(Model.ApplicationStatus))
@@ -124,8 +131,7 @@
                     </div>
                     <button type="submit" class="govuk-button">Confirm and continue</button>
                 }
-
-                @if (!string.IsNullOrEmpty(Model.ApplicationStatus))
+                else
                 {
                     if (Model.ApplicationStatus == "Approved")
                     {

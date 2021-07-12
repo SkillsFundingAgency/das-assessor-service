@@ -2,9 +2,9 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Apply;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
-using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -15,12 +15,10 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.Validations
     public class WithdrawalDateValidationController : Controller
     {
         private readonly IMediator _mediator;
-        private readonly IQnaApiClient _qnaApiClient;
         private readonly ILogger<WithdrawalDateValidationController> _logger;
 
-        public WithdrawalDateValidationController(IQnaApiClient qnaApiClient, IMediator mediator, ILogger<WithdrawalDateValidationController> logger)
+        public WithdrawalDateValidationController(IMediator mediator, ILogger<WithdrawalDateValidationController> logger)
         {
-            _qnaApiClient = qnaApiClient;
             _mediator = mediator;
             _logger = logger;
         }
@@ -31,17 +29,17 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.Validations
             try
             {
                 var application = await _mediator.Send(new GetApplicationRequest(id));
-                var appData = await _qnaApiClient.GetApplicationData(application.ApplicationId);
+                var earliestDateOfWithdrawal =  await _mediator.Send(new GetEarliestWithdrawalDateRequest(application.OrganisationId, application.ApplyData.Apply.StandardCode));
 
                 var dateComponents = q.Split(",");
                 var enteredDate = new DateTime(int.Parse(dateComponents[2]), int.Parse(dateComponents[1]), int.Parse(dateComponents[0]));
-                if (enteredDate < appData.EarliestDateOfWithdrawal.Date)
+                if (enteredDate < earliestDateOfWithdrawal.Date)
                     return new ApiValidationResult 
                     { 
                         IsValid = false,
                         ErrorMessages = new List<KeyValuePair<string, string>>()
                         {
-                            new KeyValuePair<string, string>("", $"Date must not be before {appData.EarliestDateOfWithdrawal.Date:d MMM yyyy}")
+                            new KeyValuePair<string, string>("", $"Date must not be before {earliestDateOfWithdrawal.Date:d MMM yyyy}")
                         }
                     };
                 else

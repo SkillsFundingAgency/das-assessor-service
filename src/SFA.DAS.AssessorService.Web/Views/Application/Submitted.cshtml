@@ -52,7 +52,7 @@
                     @if (Model.IsOrganisationWithdrawalApplication)
                     {
                         <p class="govuk-body">
-                            We'll review your withdrawal notification within 4 weeks, then email the outcome to you. If any of your answers need clarification, we'll send you a notification by email.
+                            We'll review your withdrawal request within 4 weeks, then email the outcome to you. If any of your answers need clarification, we'll send you a notification by email.
                         </p>
 
                         <p class="govuk-body">
@@ -68,7 +68,7 @@
                     @if (Model.IsStandardWithdrawalApplication)
                     {
                         <p class="govuk-body">
-                            We'll review your withdrawal notification within 4 weeks, then email the outcome to you. If any of your answers need clarification, we'll send you a notification by email.
+                            We'll review your withdrawal request within 4 weeks, then email the outcome to you. If any of your answers need clarification, we'll send you a notification by email.
                         </p>
 
                         <p class="govuk-body">
@@ -110,7 +110,7 @@
                                 <strong>@Model.StandardName</strong>
                                 @foreach (var version in Model.Versions)
                                 {
-                                    <br/>
+                                    <br />
                                     <span class="govuk-!-font-size-24">Version @version</span>
                                 }
                             </div>
@@ -133,6 +133,22 @@
                 <p class="govuk-body">Once we've reviewed your application, we'll email the outcome to you. If any of your answers need clarification, we'll send you a notification by email.</p>
 
                 <p class="govuk-body"><a href="@Model.FeedbackUrl" target="_blank" class="govuk-link">What do you think of this service?</a> (Takes 60 seconds)</p>
+
+                @if (Model.IsInitialApplication == false)
+                {
+                    <h3 class="govuk-heading-m">What do you want to do next?</h3>
+
+                    <p class="govuk-body">
+                        @if (Model.IsStandardApplication)
+                        {
+                            <a class="govuk-link govuk-link--no-visited-state" asp-controller="ApplyToAssessStandard" asp-action="Index">Apply for another standard version(s)</a>
+                            <br />
+                            <span>or</span>
+                            <br />
+                        }
+                        <a class="govuk-link govuk-link--no-visited-state" asp-controller="Dashboard" asp-action="Index">Return to account home</a>
+                    </p>
+                }
             }
 
         </div>

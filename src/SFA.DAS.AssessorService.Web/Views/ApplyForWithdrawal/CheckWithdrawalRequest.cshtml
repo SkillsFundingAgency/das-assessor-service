@@ -1,0 +1,85 @@
+@model SFA.DAS.AssessorService.Web.ViewModels.ApplyForWithdrawal.CheckWithdrawalRequestViewModel;
+@{
+    ViewData["Title"] = "Check withdrawal request";
+    Layout = "_DashboardLayout";
+}
+
+@if (Model.BackAction == "ChooseStandardForWithdrawal")
+{
+    <a asp-action="@Model.BackAction" asp-controller="ApplyForWithdrawal" class="govuk-back-link">Back</a>
+}
+else
+{
+    <a asp-action="@Model.BackAction" asp-controller="ApplyForWithdrawal" asp-route-iFateReferenceNumber="@Model.IFateReferenceNumber" class="govuk-back-link">Back</a>
+}
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
+            <h2 class="govuk-error-summary__title" id="error-summary-title">
+                There is a problem
+            </h2>
+            <div class="govuk-error-summary__body">
+                <ul class="govuk-list govuk-error-summary__list">
+                    <li><a sfa-validation-for="Continue"></a></li>
+                </ul>
+            </div>
+        </div>
+    }
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <h1 class="govuk-heading-xl">Check withdrawal request</h1>
+
+            @if (Model.InProgressVersionWithdrawals)
+            {
+                <div class="govuk-inset-text">
+                    A withdrawal request is already in progress for a version of this standard. 
+                    If you continue with this new withdrawal request then the previous request will be deleted and replaced with this one.
+                </div>
+            }
+
+            @if (Model.Versions != null)
+            {
+                <p class="govuk-body">
+                    You are about to start a withdrawal request for @Model.StandardName (Level @Model.Level), @Model.IFateReferenceNumber, Version @Model.Versions
+                </p>
+            }
+            else
+            {
+                <p class="govuk-body">
+                    You are about to start a withdrawal request for @Model.StandardName (Level @Model.Level), @Model.IFateReferenceNumber
+                </p>
+            }
+
+            <form asp-action="CheckWithdrawalRequest" asp-controller="ApplyForWithdrawal" method="post">
+                <div class="govuk-form-group" sfa-validation-for="Continue" sfa-validationerror-class="govuk-form-group--error">
+                    <fieldset class="govuk-fieldset">
+                        <sfa-validationerror-detail sfa-validation-for="Continue" sfa-validationerror-class="govuk-error-message"></sfa-validationerror-detail>
+                        <legend class="govuk-heading-m">
+                            <strong>Do you want to continues with this withdrawal request?</strong>
+                        </legend>
+
+                        <div class="govuk-radios govuk-radios--inline" data-module="govuk-radios">
+                            <div class="govuk-radios__item">
+                                <input class="govuk-radios__input" id="yes" name="Continue" asp-for="Continue" type="radio" value="yes">
+                                <label class="govuk-label govuk-radios__label" for="Continue">
+                                    Yes
+                                </label>
+                            </div>
+                            <div class="govuk-radios__item">
+                                <input class="govuk-radios__input" id="specificVersions" name="Continue" asp-for="Continue" type="radio" value="no">
+                                <label class="govuk-label govuk-radios__label" for="Continue">
+                                    No, return to your withdrawal requests
+                                </label>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+                <button class="govuk-button govuk-!-margin-top-4" data-module="govuk-button">
+                    Continue
+                </button>
+            </form>
+        </div>
+    </div>
+</main>
