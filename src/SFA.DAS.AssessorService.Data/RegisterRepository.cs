@@ -102,7 +102,7 @@ namespace SFA.DAS.AssessorService.Data
             
         }
 
-        public async Task<string> UpdateEpaOrganisationStandard(EpaOrganisationStandard orgStandard,
+        public async Task<string> UpdateEpaOrganisationStandardAndOrganisationStandardVersions(EpaOrganisationStandard orgStandard,
             List<int> deliveryAreas)
         {
 
@@ -140,10 +140,25 @@ namespace SFA.DAS.AssessorService.Data
                     );
                 }
 
-                    connection.Execute(
-                        "UPDATE [OrganisationStandard] SET [DateStandardApprovedOnRegister] = getutcdate() where Id = @osdaId and [DateStandardApprovedOnRegister] is null",
-                        new { osdaId }
-                    );
+                connection.Execute(
+                    "UPDATE [OrganisationStandard] SET [DateStandardApprovedOnRegister] = getutcdate() where Id = @osdaId and [DateStandardApprovedOnRegister] is null",
+                    new { osdaId }
+                );
+
+                connection.Execute(
+                    @"UPDATE [OrganisationStandardVersion] 
+                        SET [EffectiveFrom] = @effectiveFrom,
+                            [EffectiveTo] = @effectiveTo
+                        WHERE
+                            [OrganisationStandardId] = @id",
+                    new 
+                    {
+                        orgStandard.EffectiveFrom,
+                        orgStandard.EffectiveTo,
+                        orgStandard.Id
+                    }
+                );
+
               
                 return osdaId;
             }

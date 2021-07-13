@@ -6,6 +6,7 @@ using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
 using Swashbuckle.AspNetCore.Annotations;
+using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
@@ -43,6 +44,29 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             return CreatedAtRoute("CreateOrganisationStandardVersion",
                 new {id = version.StandardUId},
                 version);
+        }
+
+        [HttpPut("organisationstandardversion/update")]
+        [ValidateBadRequest]
+        [SwaggerResponse((int)HttpStatusCode.Created, Type = typeof(EpaoStandardVersionResponse))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task <IActionResult> UpdateOrganisationStandardVersion(
+            [FromBody] UpdateOrganisationStandardVersionRequest request)
+        {
+            try
+            {
+                _logger.LogInformation("Recieved Update Organisation Standard Version Request");
+
+                var updatedVersion = await _mediator.Send(request);
+
+                return Ok(new EpaoStandardVersionResponse(updatedVersion.Version));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new EpaoStandardVersionResponse(ex.Message));
+            }
+            
         }
     }
 }

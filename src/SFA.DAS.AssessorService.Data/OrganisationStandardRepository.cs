@@ -52,5 +52,31 @@ namespace SFA.DAS.AssessorService.Data
 
             return results.FirstOrDefault();
         }
+
+        public async Task<OrganisationStandardVersion> UpdateOrganisationStandardVersion(OrganisationStandardVersion orgStandardVersion)
+        {
+            var sql = @"UPDATE [OrganisationStandardVersion] 
+                        SET
+                            [EffectiveFrom] = @effectiveFrom,
+                            [EffectiveTo] = @effectiveTo,
+                            [DateVersionApproved] = @dateVersionApproved,
+                            [Status] = @status
+                        WHERE
+                            [OrganisationStandardId] = @orgStandardId AND [Version] = @version";
+
+            await _unitOfWork.Connection.ExecuteAsync(
+                sql,
+                param: new { 
+                        effectiveFrom = orgStandardVersion.EffectiveFrom,
+                        effectiveTo = orgStandardVersion.EffectiveTo,
+                        dateVersionApproved = orgStandardVersion.DateVersionApproved,
+                        Status = orgStandardVersion.Status,
+                        orgStandardId = orgStandardVersion.OrganisationStandardId,
+                        version = orgStandardVersion.Version
+                    },
+                transaction: _unitOfWork.Transaction);
+
+            return orgStandardVersion;
+        }
     }
 }
