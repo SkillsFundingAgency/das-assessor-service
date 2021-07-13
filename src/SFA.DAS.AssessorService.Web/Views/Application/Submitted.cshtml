@@ -27,6 +27,11 @@
                             Withdrawal request submitted
                         </h1>
 
+                        @if (Model.IsOrganisationWithdrawalApplication)
+                        {
+                            <p class="govuk-panel__body"> You have requested to withdraw from the register of end-point assessment organisations.</p>
+                        }
+
                         <div class="govuk-panel__body">
                             Your reference number
                             <br>
