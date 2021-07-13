@@ -36,6 +36,7 @@
         public const string NoDeliveryAreasPresent = "NoDeliveryAreasPresent";
         public const string DeliveryAreaNotValid = "DeliveryAreaNotValid";
         public const string SearchStandardsTooShort = "SearchStandardsTooShort";
+        public const string OrganisationStandardIdIsRequired = "OrganisationStandardIdIsRequired";
 
         public const string OrganisationStandardEffectiveFromBeforeStandardEffectiveFrom = "OrganisationStandardEffectiveFromBeforeStandardEffectiveFrom";
         public const string OrganisationStandardEffectiveFromAfterStandardEffectiveTo = "OrganisationStandardEffectiveFromAfterStandardEffectiveTo";
