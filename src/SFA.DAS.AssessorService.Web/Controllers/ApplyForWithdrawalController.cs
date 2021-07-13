@@ -132,7 +132,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                     StandardName = x.StandardName,
                     Level = x.Level,
                     ReferenceNumber = x.ReferenceNumber,
-                    NumVersions = x.NumVersions,
+                    NumberOfVersions = x.NumberOfVersions,
                     ApplicationId = applications.FirstOrDefault(a => a.ApplyData.Apply.StandardReference.Equals(x.ReferenceNumber, StringComparison.InvariantCultureIgnoreCase)
                                                                                         && a.ApplyData.Apply.Versions == null)?.Id
                 })

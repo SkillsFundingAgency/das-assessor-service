@@ -36,7 +36,7 @@
                                             {
                                                 <a asp-action="SequenceSignPost" asp-controller="Application" asp-route-id="@item.ApplicationId" class="govuk-link">Select</a>
                                             }
-                                            else if (item.NumVersions > 1)
+                                            else if (item.NumberOfVersions > 1)
                                             {
                                                 <a asp-action="WholeStandardOrVersion" asp-controller="ApplyForWithdrawal" asp-route-iFateReferenceNumber="@item.ReferenceNumber" class="govuk-link">Select</a>
                                             }

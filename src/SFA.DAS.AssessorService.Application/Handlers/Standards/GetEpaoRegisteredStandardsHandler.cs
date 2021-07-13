@@ -32,7 +32,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Standards
                     StandardName = o.StandardName,
                     ReferenceNumber = o.ReferenceNumber,
                     NewVersionAvailable = o.NewVersionAvailable,
-                    NumVersions = o.NumVersions
+                    NumberOfVersions = o.NumberOfVersions
                 }).ToList();
 
            return new PaginatedList<GetEpaoRegisteredStandardsResponse>(epaoRegisteredStandardsResult, result.TotalCount, request.PageIndex, request.PageSize);
