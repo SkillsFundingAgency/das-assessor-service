@@ -64,5 +64,10 @@ namespace SFA.DAS.AssessorService.Domain.Paging
         {
             return new PaginatedList<T1>(Items.ConvertAll(p => p as T1), TotalRecordCount, PageIndex, PageSize, PageSetSize);
         }
+
+        public PaginatedList<T1> Convert<T1>(Converter<T, T1> converter) where T1 : class
+        {
+            return new PaginatedList<T1>(Items.ConvertAll(converter), TotalRecordCount, PageIndex, PageSize, PageSetSize);
+        }
     }
 }

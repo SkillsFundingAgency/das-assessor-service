@@ -1,8 +1,16 @@
 @using SFA.DAS.AssessorService.ApplyTypes
+@using SFA.DAS.AssessorService.Domain.Consts
 @model SFA.DAS.AssessorService.Web.ViewModels.Apply.SequenceViewModel
 
 @{
-    ViewBag.Title = "Application overview";
+    if (Model.SequenceNo == ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO)
+    {
+        ViewBag.Title = "Withdrawal request overview";
+    }
+    else
+    {
+        ViewBag.Title = "Application overview";
+    }
     Layout = "_Layout";
 }
 
@@ -18,7 +26,15 @@
                     @Html.Raw(Model.PageContext)
                 </span>
             }
-            <h1 class="govuk-heading-xl">Application overview</h1>
+
+            @if (Model.SequenceNo == ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO)
+            {
+                <h1 class="govuk-heading-xl">Withdrawal request overview</h1>
+            }
+            else
+            {
+                <h1 class="govuk-heading-xl">Application overview</h1>
+            }
 
             @if (!ViewData.ModelState.IsValid || Model.ErrorMessages?.Any() is true)
             {
