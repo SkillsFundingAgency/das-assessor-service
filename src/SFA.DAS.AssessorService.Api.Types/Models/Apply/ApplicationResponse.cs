@@ -10,6 +10,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Apply
         public Guid Id { get; set; }
         public Guid ApplicationId { get; set; }
         public string ApplicationType { get; set; }
+        public string StandardApplicationType { get; set; }
         public Guid OrganisationId { get; set; }
         public string EndPointAssessorName { get; set; }
         public FinancialGrade FinancialGrade { get; set; }
