@@ -5,6 +5,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
@@ -133,6 +134,25 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             try
             {
                 _logger.LogInformation("Validation of creating new organisation standard");
+                var result = await _mediator.Send(request);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($@"Bad request, Message: [{ex.Message}]");
+                return BadRequest(ex);
+            }
+
+        }
+
+        [HttpPost("standards/version/validate-existing", Name = "UpdateEpaOrganisationStandardVersionValidate")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(ValidationResponse))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> UpdateOrganisationStandardVersionValidation([FromBody] UpdateOrganisationStandardVersionValidationRequest request)
+        {
+            try
+            {
+                _logger.LogInformation("Validation of updating organisation standard version");
                 var result = await _mediator.Send(request);
                 return Ok(result);
             }
