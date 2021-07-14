@@ -122,7 +122,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 : (int?)null;
 
             var applications = await GetWithdrawalApplications(contact.Id);
-            var standards = await _standardsApiClient.GetEpaoRegisteredStandards(org.OrganisationId, pageIndex ?? 1, 3);
+            var standards = await _standardsApiClient.GetEpaoRegisteredStandards(org.OrganisationId, pageIndex ?? 1, 10);
 
             var viewModel = new ChooseStandardForWithdrawalViewModel()
             {
