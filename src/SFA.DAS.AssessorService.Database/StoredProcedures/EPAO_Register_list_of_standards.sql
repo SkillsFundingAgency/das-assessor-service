@@ -7,26 +7,23 @@ SET NOCOUNT ON;
 -- Get all the effective standards for each organisation in a sequenced order
 ------------------------------------------------------------------------------------------------------------------------------------------------------
 SELECT
-	StandardCode, EndPointAssessorName,
-    row_number() over(partition by StandardCode order by StandardCode) Seq 
-INTO 
-	#SequencedOrgStandardDetails
+	StandardReference, EndPointAssessorName,
+    row_number() over(partition by StandardReference order by StandardReference) Seq 
+--INTO 
+--	#SequencedOrgStandardDetails
 FROM
 	(
 		SELECT
-			os.StandardCode, EndPointAssessorName
+			os.StandardReference, EndPointAssessorName
 		FROM
 			OrganisationStandard os
-			INNER JOIN Organisations o on os.EndPointAssessorOrganisationId = o.EndPointAssessorOrganisationId AND o.[Status] = 'Live'
-			LEFT OUTER JOIN StandardCollation sc on os.StandardCode = sc.StandardId
+			JOIN (SELECT OrganisationStandardId FROM OrganisationStandardVersion WHERE (EffectiveTo is null OR EffectiveTo > GETDATE()) AND [Status] = 'Live' ) osv on osv.OrganisationStandardId = os.Id
+			JOIN Organisations o on os.EndPointAssessorOrganisationId = o.EndPointAssessorOrganisationId AND o.[Status] = 'Live'
+			JOIN (SELECT DISTINCT IFateReferenceNumber , EffectiveFrom, EffectiveTo FROM Standards WHERE Larscode != 0)  sc on os.StandardReference = sc.IFateReferenceNumber
 		WHERE
 			o.EndPointAssessorOrganisationId <> 'EPA0000'
 			AND (os.EffectiveTo is null OR os.EffectiveTo > GETDATE())
-			AND 
-			(
-				JSON_Value(StandardData,'$.EffectiveTo') is null OR
-				JSON_Value(StandardData,'$.EffectiveTo') > GETDATE()
-			)
+			AND (sc.EffectiveTo is null OR sc.EffectiveTo > GETDATE())
 			AND os.[Status] = 'Live'
 	) 
 	AS OrgStandards
