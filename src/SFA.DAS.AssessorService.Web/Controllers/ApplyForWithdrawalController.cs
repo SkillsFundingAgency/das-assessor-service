@@ -247,10 +247,23 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
             if (model.SelectedVersions == null || !model.SelectedVersions.Any())
                 ModelState.AddModelError(nameof(model.SelectedVersions), "Select at least one version");
-            else if (model.SelectedVersions.Count == versions.Count)
-                ModelState.AddModelError(nameof(model.SelectedVersions), "Select less versions or go back and select whole standard");
 
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
+            {
+                model.IFateReferenceNumber = iFateReferenceNumber;
+                model.Level = standard.Level;
+                model.StandardName = standard.Title;
+                model.Versions = versions;
+                return View(model);
+            }
+            else if (model.SelectedVersions.Count == versions.Count)
+            {
+                return RedirectToAction(
+                nameof(CheckWithdrawalRequest),
+                nameof(ApplyForWithdrawalController).RemoveController(),
+                new { iFateReferenceNumber = iFateReferenceNumber, backAction = nameof(ChooseStandardVersionForWithdrawal) });
+            }
+            else
             {
                 var selectedVersions = model.SelectedVersions
                     .OrderBy(x => decimal.Parse(x));
@@ -259,14 +272,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 nameof(CheckWithdrawalRequest),
                 nameof(ApplyForWithdrawalController).RemoveController(),
                 new { iFateReferenceNumber = iFateReferenceNumber, versionsToWithdrawal = string.Join(",", selectedVersions), backAction = nameof(ChooseStandardVersionForWithdrawal) });
-            }
-            else
-            {
-                model.IFateReferenceNumber = iFateReferenceNumber;
-                model.Level = standard.Level;
-                model.StandardName = standard.Title;
-                model.Versions = versions;
-                return View(model);
             }
         }
 

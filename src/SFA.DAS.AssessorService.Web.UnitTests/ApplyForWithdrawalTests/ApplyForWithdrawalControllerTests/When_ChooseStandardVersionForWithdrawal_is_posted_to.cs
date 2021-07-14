@@ -105,7 +105,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ApplyForWithdrawalTests.ApplyFor
         }
 
         [Test]
-        public async Task And_All_Versions_Are_Selected_Then_Error_Is_Returned()
+        public async Task And_All_Versions_Are_Selected_Then_Server_Withdrawal_Is_Used()
         {
             // Arrange
             var applicationId = Guid.NewGuid();
@@ -143,8 +143,10 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ApplyForWithdrawalTests.ApplyFor
             var result = await _sut.ChooseStandardVersionForWithdrawal("ST0001", model) as RedirectToActionResult;
 
             // Assert
-            _sut.ModelState.IsValid.Should().BeFalse();
-            _sut.ModelState["SelectedVersions"].Errors.Should().Contain(x => x.ErrorMessage == "Select less versions or go back and select whole standard");
+            result.ActionName.Should().Be(nameof(ApplyForWithdrawalController.CheckWithdrawalRequest));
+            result.ControllerName.Should().Be(nameof(ApplyForWithdrawalController).RemoveController());
+            result.RouteValues.GetValueOrDefault("iFateReferenceNumber").Should().Be("ST0001");
+            result.RouteValues.GetValueOrDefault("versionsToWithdrawal").Should().BeNull();
         }
     }
 }
