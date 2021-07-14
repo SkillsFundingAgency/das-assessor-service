@@ -44,7 +44,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ApplyForWithdrawalTests.ApplyFor
                 new GetEpaoRegisteredStandardsResponse() { ReferenceNumber = "ST0002" }
             };
 
-            _mockStandardsApiClient.Setup(m => m.GetEpaoRegisteredStandards(It.IsAny<string>(), 1, 3))
+            _mockStandardsApiClient.Setup(m => m.GetEpaoRegisteredStandards(It.IsAny<string>(), 1, 10))
                     .ReturnsAsync(new Domain.Paging.PaginatedList<GetEpaoRegisteredStandardsResponse>(registeredStandards, 2, 1, 3));
                 
             // Act
