@@ -133,8 +133,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                     Level = x.Level,
                     ReferenceNumber = x.ReferenceNumber,
                     NumberOfVersions = x.NumberOfVersions,
-                    ApplicationId = applications.FirstOrDefault(a => a.StandardReference?.Equals(x.ReferenceNumber, StringComparison.InvariantCultureIgnoreCase) ?? false
-                                                                                        && a.ApplyData.Apply.Versions == null)?.Id
+                    ApplicationId = applications.FirstOrDefault(a => !string.IsNullOrWhiteSpace(a.StandardReference) &&
+                                                                    a.StandardReference.Equals(x.ReferenceNumber, StringComparison.InvariantCultureIgnoreCase) &&
+                                                                    a.ApplyData.Apply.Versions == null)?.Id
                 })
             };
 
@@ -368,7 +369,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             return (await _applicationApiClient.GetWithdrawalApplications(contactId))
                     .Where(x => x.IsStandardWithdrawalApplication &&
                                 (iFateReferenceNumber == null || 
-                                    x.StandardReference.Equals(iFateReferenceNumber, StringComparison.InvariantCultureIgnoreCase)) &&
+                                    (!string.IsNullOrWhiteSpace(x.StandardReference) &&
+                                        x.StandardReference.Equals(iFateReferenceNumber, StringComparison.InvariantCultureIgnoreCase))) &&
                                 (x.ApplicationStatus == ApplicationStatus.InProgress ||
                                     x.ApplicationStatus == ApplicationStatus.Submitted ||
                                     x.ApplicationStatus == ApplicationStatus.FeedbackAdded ||
@@ -382,6 +384,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         {
             return (await GetWithdrawalApplications(contactId))
                     .Where(x => x.IsStandardWithdrawalApplication &&
+                                !string.IsNullOrWhiteSpace(x.StandardReference) &&
                                 x.StandardReference.Equals(iFateReferenceNumber, StringComparison.InvariantCultureIgnoreCase) &&
                                 (x.ApplicationStatus == ApplicationStatus.InProgress ||
                                     x.ApplicationStatus == ApplicationStatus.Submitted ||
