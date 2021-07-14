@@ -106,6 +106,8 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ApplyForWithdrawalTests.ApplyFor
                     {
                         Id = existingApplicationId1,
                         ApplicationStatus = ApplicationStatus.InProgress,
+                        ApplicationType = ApplicationTypes.StandardWithdrawal,
+                        StandardReference = "ST0001",
                         ApplyData = new ApplyData()
                         {
                             Apply = new ApplyTypes.Apply() { StandardReference = "ST0001", Versions = new List<string> { "1.0" } }
@@ -115,6 +117,8 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ApplyForWithdrawalTests.ApplyFor
                     {
                         Id = existingApplicationId2,
                         ApplicationStatus = ApplicationStatus.InProgress,
+                        ApplicationType = ApplicationTypes.StandardWithdrawal,
+                        StandardReference = "ST0001",
                         ApplyData = new ApplyData()
                         {
                             Apply = new ApplyTypes.Apply() { StandardReference = "ST0001", Versions = new List<string> { "1.1" } }

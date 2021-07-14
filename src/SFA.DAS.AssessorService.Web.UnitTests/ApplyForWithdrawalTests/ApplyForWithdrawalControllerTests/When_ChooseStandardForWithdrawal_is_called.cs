@@ -5,6 +5,7 @@ using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Apply;
 using SFA.DAS.AssessorService.ApplyTypes;
+using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Web.ViewModels.ApplyForWithdrawal;
 using System;
 using System.Collections.Generic;
@@ -28,6 +29,8 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ApplyForWithdrawalTests.ApplyFor
                     {
                         Id = applicationId,
                         ApplicationStatus = ApplicationStatus.InProgress,
+                        ApplicationType = ApplicationTypes.StandardWithdrawal,
+                        StandardReference = "ST0001",
                         ApplyData = new ApplyData()
                         {
                             Apply = new ApplyTypes.Apply() { StandardReference = "ST0001", Versions = null }
@@ -41,7 +44,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ApplyForWithdrawalTests.ApplyFor
                 new GetEpaoRegisteredStandardsResponse() { ReferenceNumber = "ST0002" }
             };
 
-            _mockStandardsApiClient.Setup(m => m.GetEpaoRegisteredStandards(It.IsAny<string>(), 1, 3))
+            _mockStandardsApiClient.Setup(m => m.GetEpaoRegisteredStandards(It.IsAny<string>(), 1, 10))
                     .ReturnsAsync(new Domain.Paging.PaginatedList<GetEpaoRegisteredStandardsResponse>(registeredStandards, 2, 1, 3));
                 
             // Act
