@@ -67,7 +67,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
             var query = @"SELECT 
                             a.Id, a.ApplicationId, a.OrganisationId, a.ApplicationStatus, a.ReviewStatus, 
                             a.ApplyData, a.FinancialReviewStatus, a.FinancialGrade, 
-                            a.StandardCode, a.CreatedBy, a.UpdatedBy, a.DeletedBy, 
+                            a.StandardCode, a.StandardReference, a.CreatedBy, a.UpdatedBy, a.DeletedBy, 
                             o.EndPointAssessorName, c1.DisplayName [CreatedByName] , c1.Email [CreatedByEmail] 
                          FROM Contacts c
                             INNER JOIN Apply a ON a.OrganisationId = c.OrganisationId
@@ -80,7 +80,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
                          GROUP BY 
                             a.Id, a.ApplicationId, a.OrganisationId, a.ApplicationStatus, a.ReviewStatus, 
                             a.ApplyData, a.FinancialReviewStatus, a.FinancialGrade, 
-                            a.StandardCode, a.CreatedAt, a.CreatedBy, a.UpdatedAt, a.UpdatedBy, a.DeletedAt, a.DeletedBy, 
+                            a.StandardCode, a.StandardReference, a.CreatedAt, a.CreatedBy, a.UpdatedAt, a.UpdatedBy, a.DeletedAt, a.DeletedBy, 
                             o.EndPointAssessorName, c1.DisplayName, c1.Email";
 
             return (await _unitOfWork.Connection.QueryAsync<ApplySummary>(

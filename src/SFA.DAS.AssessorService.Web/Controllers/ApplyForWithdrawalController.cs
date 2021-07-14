@@ -133,7 +133,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                     Level = x.Level,
                     ReferenceNumber = x.ReferenceNumber,
                     NumberOfVersions = x.NumberOfVersions,
-                    ApplicationId = applications.FirstOrDefault(a => a.ApplyData.Apply.StandardReference.Equals(x.ReferenceNumber, StringComparison.InvariantCultureIgnoreCase)
+                    ApplicationId = applications.FirstOrDefault(a => a.StandardReference?.Equals(x.ReferenceNumber, StringComparison.InvariantCultureIgnoreCase) ?? false
                                                                                         && a.ApplyData.Apply.Versions == null)?.Id
                 })
             };
@@ -366,8 +366,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         private async Task<List<ApplicationResponse>> GetWithdrawalApplications(Guid contactId, string iFateReferenceNumber = null)
         {
             return (await _applicationApiClient.GetWithdrawalApplications(contactId))
-                    .Where(x => (iFateReferenceNumber == null || 
-                                    x.ApplyData.Apply.StandardReference.Equals(iFateReferenceNumber, StringComparison.InvariantCultureIgnoreCase)) &&
+                    .Where(x => x.IsStandardWithdrawalApplication &&
+                                (iFateReferenceNumber == null || 
+                                    x.StandardReference.Equals(iFateReferenceNumber, StringComparison.InvariantCultureIgnoreCase)) &&
                                 (x.ApplicationStatus == ApplicationStatus.InProgress ||
                                     x.ApplicationStatus == ApplicationStatus.Submitted ||
                                     x.ApplicationStatus == ApplicationStatus.FeedbackAdded ||
@@ -379,8 +380,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
         private async Task<List<ApplicationResponse>> GetInProgressWithdrawalVersionApplications(Guid contactId, string iFateReferenceNumber)
         {
-            return (await _applicationApiClient.GetWithdrawalApplications(contactId))
-                    .Where(x => x.ApplyData.Apply.StandardReference.Equals(iFateReferenceNumber, StringComparison.InvariantCultureIgnoreCase) &&
+            return (await GetWithdrawalApplications(contactId))
+                    .Where(x => x.IsStandardWithdrawalApplication &&
+                                x.StandardReference.Equals(iFateReferenceNumber, StringComparison.InvariantCultureIgnoreCase) &&
                                 (x.ApplicationStatus == ApplicationStatus.InProgress ||
                                     x.ApplicationStatus == ApplicationStatus.Submitted ||
                                     x.ApplicationStatus == ApplicationStatus.FeedbackAdded ||
