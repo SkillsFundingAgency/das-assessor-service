@@ -37,7 +37,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply.Review
 
             var items = Mapper.Map<IEnumerable<ApplicationListItem>, IEnumerable<ApplicationSummaryItem>>(organisationApplicationsResult.PageOfResults);
 
-            if(items.Any())
+            if (items.Any())
             {
                 var allEnrolledVersions = await _standardRepository.GetEpaoRegisteredStandardVersions(items.First().EndPointAssessorOrganisationId);
 
@@ -56,19 +56,20 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply.Review
         // SV-912 Helper to generate the type of withdrawal
         private string GetWithdrawalApplicationType(ApplicationSummaryItem item, IEnumerable<OrganisationStandardVersion> enrolledVersionsForStandard)
         {
-            string withdrawalApplicationType = WithdrawalTypes.Version;
-            var versionNumberList = enrolledVersionsForStandard.Select(s => s.Version.ToString()).ToList();
-
-            if (null == item.Versions || !item.Versions.Any())
+            if (item.StandardReference == null)
             {
-                withdrawalApplicationType = WithdrawalTypes.Register;
+                return WithdrawalTypes.Register;
             }
-            else if (!versionNumberList.Except(item.Versions).ToList().Any())
+            else if (item.StandardApplicationType == StandardApplicationTypes.VersionWithdrawal)
             {
-                withdrawalApplicationType = WithdrawalTypes.Standard;
+                return WithdrawalTypes.Version;
+            }
+            else if (item.StandardApplicationType == StandardApplicationTypes.StandardWithdrawal)
+            {
+                return WithdrawalTypes.Standard;
             }
 
-            return withdrawalApplicationType;
+            return null;
         }
     }
 }
