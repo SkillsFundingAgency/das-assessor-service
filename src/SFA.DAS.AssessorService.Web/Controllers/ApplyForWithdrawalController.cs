@@ -364,7 +364,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
             var id = await _applicationApiClient.CreateApplication(createApplicationRequest);
 
-            await _applicationApiClient.UpdateStandardData(id, larsCode, iFateReferenceNumber, standardTitle, versions?.ToList(), ApplicationTypes.StandardWithdrawal);
+            var standardApplicationType = versions != null && versions.Any() ? StandardApplicationTypes.VersionWithdrawal : StandardApplicationTypes.StandardWithdrawal;
+            await _applicationApiClient.UpdateStandardData(id, larsCode, iFateReferenceNumber, standardTitle, versions?.ToList(), standardApplicationType);
 
             return id;
         }

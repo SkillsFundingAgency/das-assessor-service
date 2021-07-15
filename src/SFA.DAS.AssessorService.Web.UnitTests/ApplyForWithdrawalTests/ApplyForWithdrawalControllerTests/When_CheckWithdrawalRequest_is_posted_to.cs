@@ -51,7 +51,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ApplyForWithdrawalTests.ApplyFor
             result.RouteValues.GetValueOrDefault("Id").Should().Be(applicationId);
 
             _mockApplicationApiClient.Verify(m => m.UpdateStandardData(applicationId, It.IsAny<int>(), "ST0001", It.IsAny<string>(), 
-                It.Is<List<string>>(x => x.Contains("1.1") && x.Contains("1.2")), ApplicationTypes.StandardWithdrawal));
+                It.Is<List<string>>(x => x.Contains("1.1") && x.Contains("1.2")), StandardApplicationTypes.VersionWithdrawal));
         }
 
         [Test]
@@ -88,7 +88,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ApplyForWithdrawalTests.ApplyFor
             result.RouteValues.GetValueOrDefault("Id").Should().Be(applicationId);
 
             _mockApplicationApiClient.Verify(m => m.UpdateStandardData(applicationId, It.IsAny<int>(), "ST0001", It.IsAny<string>(),
-               null, ApplicationTypes.StandardWithdrawal));
+               null, StandardApplicationTypes.StandardWithdrawal));
         }
 
         [Test]
