@@ -147,7 +147,7 @@ DROP TABLE #SequencedOrgStandardDetails
 SELECT @Dynamic_sql = 
 '
     
-    SELECT ab2.Trailblazer
+    SELECT '''' Trailblazer
 	, [Industry Sector] 
 	, Apprentice_standards
 	, Larscode [Standard Code]
@@ -158,7 +158,7 @@ SELECT @Dynamic_sql =
 '   
 	FROM (
     SELECT 
-    MAX(CASE WHEN latestcheck = 1 THEN TrailBlazerContact ELSE NULL END) Trailblazer 
+      MAX(CASE WHEN latestcheck = 1 THEN TrailBlazerContact ELSE NULL END) Trailblazer 
     , MAX(CASE WHEN latestcheck = 1 THEN Route ELSE NULL END) [Industry Sector] 
     , MAX(CASE WHEN latestcheck = 1 THEN Title ELSE NULL END) Apprentice_standards 
     , Larscode 
