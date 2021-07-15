@@ -71,6 +71,8 @@
     <Folder Include="Security" />
     <Folder Include="Security\Roles" />
     <Folder Include="Security\Roles\DatabaseRoles" />
+    <Folder Include="Security\Schemas" />
+    <Folder Include="StoredProcedures\DashboardReporting" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Tables\CertificateLogs.sql" />
@@ -165,6 +167,9 @@
     <None Include="PostDeploymentScripts\EPAO_Migration_Part5_Fails.sql" />
     <Build Include="Tables\StandardOptions.sql" />
     <None Include="PostDeploymentScripts\CON-3359_Remove_IlrsImport.sql" />
+    <Build Include="Security\Roles\DatabaseRoles\DashboardReporting.sql" />
+    <Build Include="Security\Schemas\DashboardReporting.sql" />
+    <Build Include="StoredProcedures\DashboardReporting\CertificatePrintSummary.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="SFA.DAS.AssessorService.Database.refactorlog" />
