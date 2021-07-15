@@ -13,6 +13,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Application.Api.Client;
+using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Application.Api.Infrastructure;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Services;
@@ -222,6 +224,15 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                     : new HttpClientBuilder().WithBearerAuthorisationHeader(new AzureActiveDirectoryBearerTokenGenerator(NotificationConfiguration())).Build());
 
                 config.For<Notifications.Api.Client.Configuration.INotificationsApiClientConfiguration>().Use(NotificationConfiguration());
+
+                config.For<ITokenService>().Use<TokenService>();
+                config.For<ITokenService>().Add<QnaTokenService>().Named("qnaTokenService");
+                // Always false unless we want to start integrating with the sandbox environment;
+                config.For<ITokenService>().Use<TokenService>().Ctor<bool>("useSandbox").Is(false);
+
+                config.For<IQnaApiClient>().Use<QnaApiClient>()
+                  .Ctor<ITokenService>("qnaTokenService").Is(c => c.GetInstance<ITokenService>("qnaTokenService"))
+                  .Ctor<string>().Is(Configuration.QnaApiAuthentication.ApiBaseAddress);
 
                 // NOTE: These are SOAP Services. Their client interfaces are contained within the generated Proxy code.
                 config.For<CharityCommissionService.ISearchCharitiesV1SoapClient>().Use<CharityCommissionService.SearchCharitiesV1SoapClient>();
