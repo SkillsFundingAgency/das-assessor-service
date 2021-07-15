@@ -54,7 +54,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Applications.Wi
         }
 
         [Test]
-        public async Task When_Versions_Is_Empty_Then_WithdrawalType_Should_Be_Register()
+        public async Task When_StandardReference_Not_Set_WithdrawalType_Should_Be_Register()
         {
             // Arrange
 
@@ -66,8 +66,6 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Applications.Wi
                     {
                             new Domain.Entities.ApplicationListItem()
                             {
-
-                                Versions = "[]"
                             }
                     }
                 });
@@ -94,7 +92,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Applications.Wi
         }
 
         [Test]
-        public async Task When_Versions_Has_One_Version_Then_WithdrawalType_Should_Be_Version()
+        public async Task When_Versions_Has_One_Version_And_StandardReference_Set_Then_WithdrawalType_Should_Be_Version()
         {
             // Arrange
 
@@ -106,7 +104,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Applications.Wi
                     {
                             new Domain.Entities.ApplicationListItem()
                             {
-
+                                StandardApplicationType = StandardApplicationTypes.VersionWithdrawal,
+                                StandardReference = "ST0205",
                                 Versions = "[\"1.0\"]" 
                             }
                     }
@@ -134,7 +133,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Applications.Wi
         }
 
         [Test]
-        public async Task When_Versions_Has_All_Versions_Then_WithdrawalType_Should_Be_Standard()
+        public async Task When_Versions_Is_Null_And_StandardReferenceSet_Then_WithdrawalType_Should_Be_Standard()
         {
             // Arrange
 
@@ -146,8 +145,9 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Applications.Wi
                     {
                             new Domain.Entities.ApplicationListItem()
                             {
-
-                                Versions = "[\"1.0\",\"1.1\",\"1.2\",\"1.3\"]"
+                                StandardApplicationType = StandardApplicationTypes.StandardWithdrawal,
+                                StandardReference = "ST0205",
+                                Versions = null
                             }
                     }
                 });

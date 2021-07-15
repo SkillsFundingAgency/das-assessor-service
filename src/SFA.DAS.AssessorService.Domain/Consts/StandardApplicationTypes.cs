@@ -11,5 +11,8 @@
         /// </summary>
         public const string Version = "version";
         public const string Full = "full";
+
+        public const string StandardWithdrawal = "standardWithdrawal";
+        public const string VersionWithdrawal = "versionWithdrawal";
     }
 }
