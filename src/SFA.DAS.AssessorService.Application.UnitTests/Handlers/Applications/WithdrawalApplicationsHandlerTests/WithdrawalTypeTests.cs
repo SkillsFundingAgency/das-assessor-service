@@ -104,6 +104,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Applications.Wi
                     {
                             new Domain.Entities.ApplicationListItem()
                             {
+                                StandardApplicationType = StandardApplicationTypes.VersionWithdrawal,
                                 StandardReference = "ST0205",
                                 Versions = "[\"1.0\"]" 
                             }
@@ -144,6 +145,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Applications.Wi
                     {
                             new Domain.Entities.ApplicationListItem()
                             {
+                                StandardApplicationType = StandardApplicationTypes.StandardWithdrawal,
                                 StandardReference = "ST0205",
                                 Versions = null
                             }
