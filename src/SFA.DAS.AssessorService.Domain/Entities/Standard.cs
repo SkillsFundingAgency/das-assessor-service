@@ -25,5 +25,7 @@ namespace SFA.DAS.AssessorService.Domain.Entities
         public int ProposedMaxFunding { get; set; }
         public bool EPAChanged { get; set; }
         public string StandardPageUrl { get; set; }
+        public string TrailBlazerContact { get; set; }
+        public string Route { get; set; }
     }
 }
