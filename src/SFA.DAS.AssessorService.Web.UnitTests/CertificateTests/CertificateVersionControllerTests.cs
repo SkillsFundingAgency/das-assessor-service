@@ -192,6 +192,25 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
         }
 
         [Test, MoqAutoData]
+        public async Task When_SelectingVersion_And_UpdateCertificateFails_Then_RedirectToError(CertificateVersionViewModel vm, StandardVersion standardVersion, CertificateSession session, List<StandardVersion> approvedVersions)
+        {
+            var sessionString = JsonConvert.SerializeObject(session);
+            _mockSessionService.Setup(s => s.Get(nameof(CertificateSession))).Returns(sessionString);
+            standardVersion.StandardUId = vm.StandardUId;
+            approvedVersions.Add(standardVersion);
+            _mockStandardVersionClient.Setup(s => s.GetStandardVersionById(vm.StandardUId)).ReturnsAsync(standardVersion);
+            _mockStandardVersionClient.Setup(s => s.GetEpaoRegisteredStandardVersions(EpaoId, session.StandardCode)).ReturnsAsync(approvedVersions);
+            _mockStandardVersionClient.Setup(s => s.GetStandardOptions(vm.StandardUId)).ReturnsAsync(new StandardOptions());
+
+            _mockCertificateApiClient.Setup(c => c.UpdateCertificate(It.IsAny<UpdateCertificateRequest>())).ThrowsAsync(new Exception());
+
+            var result = await _certificateVersionController.Version(vm) as RedirectToActionResult;
+
+            result.ControllerName.Should().Be("Home");
+            result.ActionName.Should().Be("Error");
+        }
+
+        [Test, MoqAutoData]
         public async Task WhenPostingToSelectAVersion_WhenSavingModel_IfVersionHasOptions_RedirectToOptionsPage(CertificateVersionViewModel vm, StandardVersion standardVersion, StandardOptions options, CertificateSession session, List<StandardVersion> approvedVersions)
         {
             var sessionString = JsonConvert.SerializeObject(session);

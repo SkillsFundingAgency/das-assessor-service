@@ -74,6 +74,9 @@ namespace SFA.DAS.AssessorService.Application.Infrastructure.OuterApi
 
         [JsonProperty("isActive")]
         public bool IsActive { get; set; }
+
+        [JsonProperty("epaChanged")]
+        public bool EPAChanged { get; set; }
     }
 
     public class StandardDates

@@ -23,7 +23,23 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                 return await RequestAndDeserialiseAsync<IEnumerable<StandardVersion>>(request, $"Could not get the list of standards");
             }
         }
-        
+
+        public async Task<IEnumerable<StandardVersion>> GetLatestStandardVersions()
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/standard-version/standards/latest"))
+            {
+                return await RequestAndDeserialiseAsync<IEnumerable<StandardVersion>>(request, $"Could not get the list of latest standards");
+            }
+        }
+
+        public async Task<IEnumerable<StandardVersion>> GetStandardVersionsByIFateReferenceNumber(string iFateReferenceNumber)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/standard-version/standards/versions/{iFateReferenceNumber}"))
+            {
+                return await RequestAndDeserialiseAsync<IEnumerable<StandardVersion>>(request, $"Could not find the standard {iFateReferenceNumber}");
+            }
+        }
+
         public async Task<IEnumerable<StandardVersion>> GetStandardVersionsByLarsCode(int larsCode)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/standard-version/standards/versions/{larsCode}"))
@@ -56,6 +72,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
+        public async Task<IEnumerable<StandardVersion>> GetEpaoRegisteredStandardVersions(string epaOrgId, string iFateReferenceNumber)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/standard-version/standards/epao/{epaOrgId}/{iFateReferenceNumber}"))
+            {
+                return await RequestAndDeserialiseAsync<IEnumerable<StandardVersion>>(request, $"Could not find the registered standards versions for EPAO {epaOrgId} and IFateReferenceNumber {iFateReferenceNumber}");
+            }
+        }
+
         public async Task<StandardOptions> GetStandardOptions(string standardId)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/standard-version/standard-options/{standardId}"))
@@ -69,7 +93,10 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
     public interface IStandardVersionClient
     {
         Task<IEnumerable<StandardVersion>> GetAllStandardVersions();
+        Task<IEnumerable<StandardVersion>> GetLatestStandardVersions();
+        Task<IEnumerable<StandardVersion>> GetStandardVersionsByIFateReferenceNumber(string iFateReferenceNumber);
         Task<IEnumerable<StandardVersion>> GetStandardVersionsByLarsCode(int larsCode);
+        
         /// <summary>
         /// Method can take LarsCode, IFateReferenceNumber or StandardUId and will return a standard.
         /// If LarsCode or IFateReferenceNumber is supplied, One Standard, the latest version will 
@@ -80,6 +107,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         Task<StandardVersion> GetStandardVersionById(string id);
         Task<IEnumerable<StandardVersion>> GetEpaoRegisteredStandardVersions(string epaOrgId);
         Task<IEnumerable<StandardVersion>> GetEpaoRegisteredStandardVersions(string epaOrgId, int larsCode);
+        Task<IEnumerable<StandardVersion>> GetEpaoRegisteredStandardVersions(string epaOrgId, string iFateReferenceNumber);
         Task<StandardOptions> GetStandardOptions(string standardId);
     }
 }

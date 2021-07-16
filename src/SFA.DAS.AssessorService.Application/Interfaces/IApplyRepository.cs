@@ -1,6 +1,7 @@
 ﻿using SFA.DAS.AssessorService.Api.Types.Models.Apply.Review;
 using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.Domain.DTOs;
+using SFA.DAS.AssessorService.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -18,6 +19,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<List<ApplySummary>> GetStandardWithdrawalApplications(Guid userId);
         
         Task<Guid> CreateApplication(Domain.Entities.Apply apply);
+        Task DeleteApplication(Guid id, string deletedBy);
         Task<bool> CanSubmitApplication(Guid applicationId);
         Task SubmitApplicationSequence(Domain.Entities.Apply apply);
         Task<int> GetNextAppReferenceSequence();
@@ -33,13 +35,13 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task StartApplicationSectionReview(Guid id, int sequenceNo, int sectionNo, string reviewer);
         Task EvaluateApplicationSection(Guid id, int sequenceNo, int sectionNo, bool isSectionComplete, string evaluatedBy);
         Task ReturnApplicationSequence(Guid id, int sequenceNo, string sequenceStatus, string returnedBy);
-        Task<bool> UpdateStandardData(Guid id, int standardCode, string referenceNumber, string standardName);
+        Task<bool> UpdateStandardData(Guid id, int standardCode, string referenceNumber, string standardName, List<string> versions, string standardApplicationType);
         Task<bool> ResetApplicatonToStage1(Guid id, Guid userId);
     }
 
     public class ApplicationsResult
     {
-        public IEnumerable<ApplicationSummaryItem> PageOfResults { get; set; }
+        public IEnumerable<ApplicationListItem> PageOfResults { get; set; }
         public int TotalCount { get; set; }
     }
 }

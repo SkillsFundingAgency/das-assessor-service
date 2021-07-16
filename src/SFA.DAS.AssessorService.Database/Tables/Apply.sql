@@ -14,7 +14,7 @@ CREATE TABLE [Apply](
 	[UpdatedBy] [nvarchar](256) NULL,
 	[DeletedAt] [datetime2](7) NULL,
 	[DeletedBy] [nvarchar](256) NULL,
-    [ApplicationType]  NVARCHAR(60) NULL ,  
+    [StandardApplicationType]  NVARCHAR(60) NULL ,  
     [StandardReference] NVARCHAR(10) NULL ,    
  CONSTRAINT [PK_Apply] PRIMARY KEY CLUSTERED 
  (

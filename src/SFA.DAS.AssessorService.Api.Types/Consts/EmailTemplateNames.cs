@@ -22,5 +22,10 @@
         /// Requires tokens: { contactname, standard }
         /// </summary>
         public const string APPLY_EPAO_RESPONSE = "ApplyEPAOResponse";
+
+        /// <summary>
+        /// Requires tokens: { contactname, standard, version }
+        /// </summary>
+        public const string ApplyEPAOStandardOptin = "ApplyEPAOStandardOptin";
     }
 }

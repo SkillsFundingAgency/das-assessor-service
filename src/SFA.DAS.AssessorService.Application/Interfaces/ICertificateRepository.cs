@@ -10,14 +10,14 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
     public interface ICertificateRepository
     {
         Task<Certificate> New(Certificate certificate);        
-        Task<Certificate> GetCertificate(Guid id);
+        Task<Certificate> GetCertificate(Guid id, bool includeLogs = true);
         Task<Certificate> GetCertificate(long uln, int standardCode);
         Task<Certificate> GetCertificate(long uln, int standardCode, string familyName);
         Task<Certificate> GetCertificate(string certificateReference);
+        Task<Certificate> GetCertificate(string certificateReference, string lastName, DateTime? achievementDate);
         Task<Certificate> GetCertificateByUlnOrgIdLastnameAndStandardCode(long uln, string endpointOrganisationId, string lastName, int standardCode);
         Task<Certificate> GetCertificateByUlnLastname(long uln, string lastName);
-        Task<Certificate> GetCertificate(string certificateReference, string lastName, DateTime? achievementDate);
-
+        
         Task<List<Certificate>> GetCompletedCertificatesFor(long uln);
         Task<List<Certificate>> GetCertificates(List<string> statuses);
         

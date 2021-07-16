@@ -7,6 +7,7 @@ using SFA.DAS.AssessorService.Application.Handlers.Search;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
 using Organisation = SFA.DAS.AssessorService.Domain.Entities.Organisation;
+using OrganisationStandardVersion = SFA.DAS.AssessorService.Api.Types.Models.AO.OrganisationStandardVersion;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
 {
@@ -31,8 +32,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
                     new Standard{LarsCode = 13, Title = "Standard Name 13", Level=3}});
 
             StandardService.Setup(s => s.GetEPAORegisteredStandardVersions(It.IsAny<string>(), null))
-                .ReturnsAsync(new List<StandardVersion> { new StandardVersion { Title = "Standard 12", Version = "1.0", LarsCode = 12 },
-                                                          new StandardVersion { Title = "Standard 13", Version = "1.0", LarsCode = 13 } });
+                .ReturnsAsync(new List<OrganisationStandardVersion> { new OrganisationStandardVersion { Title = "Standard 12", Version = "1.0", LarsCode = 12 },
+                                                          new OrganisationStandardVersion { Title = "Standard 13", Version = "1.0", LarsCode = 13 } });
 
             RegisterQueryRepository.Setup(c => c.GetOrganisationStandardByOrganisationId("EPA001"))
                 .ReturnsAsync(new List<OrganisationStandardSummary>

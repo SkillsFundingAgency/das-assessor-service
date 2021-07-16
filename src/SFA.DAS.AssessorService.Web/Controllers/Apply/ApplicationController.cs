@@ -605,7 +605,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                     }
                 }
 
-                var apiValidationResult = await _apiValidationService.CallApiValidation(page, answers);
+                var apiValidationResult = await _apiValidationService.CallApiValidation(Id, page, answers);
                 if (!apiValidationResult.IsValid)
                 {
                     if (updatePageResult is null) updatePageResult = new SetPageAnswersResponse { ValidationPassed = false };
@@ -615,6 +615,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                         updatePageResult.ValidationErrors = new List<KeyValuePair<string, string>>();
                     }
 
+                    updatePageResult.ValidationPassed = false;
                     updatePageResult.ValidationErrors.AddRange(apiValidationResult.ErrorMessages);
                 }
 
@@ -771,7 +772,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             {
                 ReferenceNumber = application?.ApplyData?.Apply?.ReferenceNumber,
                 FeedbackUrl = _config.FeedbackUrl,
-                StandardName = application?.ApplyData?.Apply?.StandardName
+                StandardName = application?.ApplyData?.Apply?.StandardName,
+                Versions = application?.ApplyData?.Apply?.Versions
             });
         }
 
@@ -808,6 +810,22 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             var sequenceVm = new SequenceViewModel(sequence, application.Id, BuildPageContext(application, sequence), allowCancel, sections, applyData.Sections, null);
 
             return View("~/Views/Application/Feedback.cshtml", sequenceVm);
+        }
+
+        [HttpGet("/application/{id}/opt-in/confirmation")]
+        [ApplicationAuthorize(routeId: "Id")]
+        public async Task<IActionResult> OptInConfirmation(Guid id)
+        {
+            var application = await _applicationApiClient.GetApplication(id);
+
+            var model = new OptInConfirmationViewModel()
+            {
+                StandardTitle = application?.ApplyData?.Apply?.StandardName,
+                Version = application?.ApplyData?.Apply?.Versions.FirstOrDefault(),
+                FeedbackUrl = _config.FeedbackUrl,
+            };
+
+            return View("~/Views/Application/OptInConfirmation.cshtml", model);
         }
 
         private async Task<Page> GetDataFedOptions(Page page)

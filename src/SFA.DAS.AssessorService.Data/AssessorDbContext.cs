@@ -27,6 +27,7 @@ namespace SFA.DAS.AssessorService.Data
         public virtual DbSet<Contact> Contacts { get; set; }
         public virtual DbSet<Organisation> Organisations { get; set; }
         public virtual DbSet<OrganisationStandard> OrganisationStandard { get; set; }
+        public virtual DbSet<OrganisationStandardVersion> OrganisationStandardVersion { get; set; }
         public virtual DbSet<Ilr> Ilrs { get; set; }
         public virtual DbSet<EMailTemplate> EMailTemplates { get; set; }
         public virtual DbSet<BatchLog> BatchLogs { get; set; }
@@ -99,6 +100,16 @@ namespace SFA.DAS.AssessorService.Data
                 .WithMany(c => c.OrganisationStandards)
                 .HasPrincipalKey(c => c.EndPointAssessorOrganisationId)
                 .HasForeignKey(c => c.EndPointAssessorOrganisationId);
+            
+            modelBuilder.Entity<OrganisationStandardVersion>()
+                .ToTable("OrganisationStandardVersion")
+                .HasKey(c => new { c.OrganisationStandardId, c.StandardUId });
+
+            modelBuilder.Entity<OrganisationStandardVersion>()
+                .HasOne(c => c.OrganisationStandard)
+                .WithMany(c => c.OrganisationStandardVersions)
+                .HasPrincipalKey(c => c.Id)
+                .HasForeignKey(c => c.OrganisationStandardId);
 
             modelBuilder.Entity<OrganisationStandardDeliveryArea>()
                 .ToTable("OrganisationStandardDeliveryArea");

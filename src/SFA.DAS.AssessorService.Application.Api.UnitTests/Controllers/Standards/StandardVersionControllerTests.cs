@@ -7,12 +7,13 @@ using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Api.Controllers;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.AssessorService.Domain.Extensions;
 using SFA.DAS.Testing.AutoFixture;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using OrganisationStandardVersion = SFA.DAS.AssessorService.Api.Types.Models.AO.OrganisationStandardVersion;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Standards
 {
@@ -88,7 +89,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Standard
         }
 
         [Test, MoqAutoData]
-        public async Task WhenRequestingGetEPAORegisteredStandardVersions_ReturnsListOfApprovedStandardVersions(string epaoId, IEnumerable<StandardVersion> versions)
+        public async Task WhenRequestingGetEPAORegisteredStandardVersions_ReturnsListOfApprovedStandardVersions(string epaoId, IEnumerable<OrganisationStandardVersion> versions)
         {
             _mockStandardService.Setup(s => s.GetEPAORegisteredStandardVersions(epaoId, null)).ReturnsAsync(versions);
 
@@ -96,13 +97,13 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Standard
 
             controllerResult.StatusCode.Should().Be((int)HttpStatusCode.OK);
 
-            var model = controllerResult.Value as IEnumerable<StandardVersion>;
+            var model = controllerResult.Value as IEnumerable<OrganisationStandardVersion>;
 
             model.Should().BeEquivalentTo(versions);
         }
 
         [Test, MoqAutoData]
-        public async Task WhenRequestingGetEPAORegisteredStandardVersionsWithLarsCode_ReturnsListOfApprovedStandardVersionsForThatLarsCode(string epaoId, int larsCode, IEnumerable<StandardVersion> versions)
+        public async Task WhenRequestingGetEPAORegisteredStandardVersionsWithLarsCode_ReturnsListOfApprovedStandardVersionsForThatLarsCode(string epaoId, int larsCode, IEnumerable<OrganisationStandardVersion> versions)
         {
             _mockStandardService.Setup(s => s.GetEPAORegisteredStandardVersions(epaoId, larsCode)).ReturnsAsync(versions);
 
@@ -110,7 +111,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Standard
 
             controllerResult.StatusCode.Should().Be((int)HttpStatusCode.OK);
 
-            var model = controllerResult.Value as IEnumerable<StandardVersion>;
+            var model = controllerResult.Value as IEnumerable<OrganisationStandardVersion>;
 
             model.Should().BeEquivalentTo(versions);
         }
@@ -156,17 +157,51 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Standard
             model.Should().BeEquivalentTo(options);
         }
 
+        [Test, MoqAutoData]
+        public async Task WhenRequestingGetLatestStandardVersions_ThenLatestStandardVersionsAreReturned(List<Standard> standards)
+        {
+            _mockStandardService.Setup(service => service.GetLatestStandardVersions()).ReturnsAsync(standards);
+
+            var controllerResult = await _standardVersionController.GetLatestStandardVersions() as ObjectResult;
+
+            controllerResult.StatusCode.Should().Be((int)HttpStatusCode.OK);
+
+            var model = controllerResult.Value as List<StandardVersion>;
+
+            model.Count.Should().Be(standards.Count);
+            model[0].IFateReferenceNumber.Should().Be(standards[0].IfateReferenceNumber);
+        }
+
+        [Test, MoqAutoData]
+        public async Task WhenRequestingGetEpaoRegisteredStandardVersions_ThenStandardVersionsAreReturned(string epaoId, string iFateReferenceNumber, List<StandardVersion> versions)
+        {
+            _mockStandardService.Setup(service => service.GetEpaoRegisteredStandardVersionsByIFateReferenceNumber(epaoId, iFateReferenceNumber)).ReturnsAsync(versions);
+
+            var controllerResult = await _standardVersionController.GetEpaoRegisteredStandardVersionsByIFateReferenceNumber(epaoId, iFateReferenceNumber) as ObjectResult;
+
+            controllerResult.StatusCode.Should().Be((int)HttpStatusCode.OK);
+
+            var model = controllerResult.Value as List<StandardVersion>;
+
+            model.Should().BeEquivalentTo(versions);
+        }
+
         private StandardVersion ConvertFromStandard(Standard standard)
         {
             return new StandardVersion
             {
-                EffectiveFrom = standard.EffectiveFrom.GetValueOrDefault(),
+                StandardUId = standard.StandardUId,
+                Title = standard.Title,
+                Version = standard.Version.VersionToString(),
                 IFateReferenceNumber = standard.IfateReferenceNumber,
                 LarsCode = standard.LarsCode,
                 Level = standard.Level,
-                StandardUId = standard.StandardUId,
-                Title = standard.Title,
-                Version = standard.Version.ToString()
+                EffectiveFrom = standard.EffectiveFrom,
+                EffectiveTo = standard.EffectiveTo,
+                VersionEarliestStartDate = standard.VersionEarliestStartDate,
+                VersionLatestEndDate = standard.VersionLatestEndDate,
+                EPAChanged = standard.EPAChanged,
+                StandardPageUrl = standard.StandardPageUrl
             };
         }
     }

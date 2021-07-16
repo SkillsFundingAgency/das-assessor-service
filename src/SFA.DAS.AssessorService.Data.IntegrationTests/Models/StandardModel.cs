@@ -15,5 +15,6 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Models
         public int IsActive { get; set; }
         public int ProposedTypicalDuration { get; set; }
         public int ProposedMaxFunding { get; set; }
+        public bool EPAChanged { get; set; }
     }
 }

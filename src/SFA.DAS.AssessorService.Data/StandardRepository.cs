@@ -111,10 +111,50 @@ namespace SFA.DAS.AssessorService.Data
             var sql = @"SELECT [StandardUId],[IFateReferenceNumber],[LarsCode],[Title],[Version],
 [Level],[Status],[TypicalDuration],[MaxFunding],[IsActive],[LastDateStarts],
 [EffectiveFrom],[EffectiveTo],[VersionEarliestStartDate],[VersionLatestStartDate],[VersionLatestEndDate],
-[VersionApprovedForDelivery],[ProposedTypicalDuration],[ProposedMaxFunding] FROM [Standards]";
+[VersionApprovedForDelivery],[ProposedTypicalDuration],[ProposedMaxFunding],[EPAChanged],[StandardPageUrl] FROM [Standards]";
 
             var results = await _unitOfWork.Connection.QueryAsync<Standard>(
                 sql,
+                transaction: _unitOfWork.Transaction);
+
+            return results;
+        }
+
+        public async Task<IEnumerable<Standard>> GetLatestStandardVersions()
+        {
+            var sql = @"SELECT [StandardUId],[IFateReferenceNumber],[LarsCode],[Title],[Version],
+[Level],[Status],[TypicalDuration],[MaxFunding],[IsActive],[LastDateStarts],
+[EffectiveFrom],[EffectiveTo],[VersionEarliestStartDate],[VersionLatestStartDate],[VersionLatestEndDate],
+[VersionApprovedForDelivery],[ProposedTypicalDuration],[ProposedMaxFunding],[EPAChanged],[StandardPageUrl] 
+FROM 
+(
+	SELECT ROW_NUMBER() OVER(PARTITION BY [IFateReferenceNumber] ORDER BY Version DESC) AS RowNum,
+	[StandardUId],[IFateReferenceNumber],[LarsCode],[Title],[Version],
+	[Level],[Status],[TypicalDuration],[MaxFunding],[IsActive],[LastDateStarts],
+	[EffectiveFrom],[EffectiveTo],[VersionEarliestStartDate],[VersionLatestStartDate],[VersionLatestEndDate],
+	[VersionApprovedForDelivery],[ProposedTypicalDuration],[ProposedMaxFunding],[EPAChanged],[StandardPageUrl]
+	FROM [Standards]
+) AS Stds
+WHERE RowNum = 1";
+
+            var results = await _unitOfWork.Connection.QueryAsync<Standard>(
+                sql,
+                transaction: _unitOfWork.Transaction);
+
+            return results;
+        }
+
+        public async Task<IEnumerable<Standard>> GetStandardVersionsByIFateReferenceNumber(string iFateReferenceNumber)
+        {
+            var sql = @"SELECT [StandardUId],[IFateReferenceNumber],[LarsCode],[Title],[Version],
+[Level],[Status],[TypicalDuration],[MaxFunding],[IsActive],[LastDateStarts],
+[EffectiveFrom],[EffectiveTo],[VersionEarliestStartDate],[VersionLatestStartDate],[VersionLatestEndDate],
+[VersionApprovedForDelivery],[ProposedTypicalDuration],[ProposedMaxFunding],[EPAChanged],[StandardPageUrl] 
+FROM [Standards] Where [IFateReferenceNumber] = @iFateReferenceNumber";
+
+            var results = await _unitOfWork.Connection.QueryAsync<Standard>(
+                sql,
+                param: new { iFateReferenceNumber },
                 transaction: _unitOfWork.Transaction);
 
             return results;
@@ -125,7 +165,7 @@ namespace SFA.DAS.AssessorService.Data
             var sql = @"SELECT [StandardUId],[IFateReferenceNumber],[LarsCode],[Title],[Version],
 [Level],[Status],[TypicalDuration],[MaxFunding],[IsActive],[LastDateStarts],
 [EffectiveFrom],[EffectiveTo],[VersionEarliestStartDate],[VersionLatestStartDate],[VersionLatestEndDate],
-[VersionApprovedForDelivery],[ProposedTypicalDuration],[ProposedMaxFunding] FROM [Standards] Where [LarsCode] = @larsCode";
+[VersionApprovedForDelivery],[ProposedTypicalDuration],[ProposedMaxFunding],[EPAChanged],[StandardPageUrl] FROM [Standards] Where [LarsCode] = @larsCode";
 
             var results = await _unitOfWork.Connection.QueryAsync<Standard>(
                 sql,
@@ -140,7 +180,7 @@ namespace SFA.DAS.AssessorService.Data
             var sql = @"SELECT [StandardUId],[IFateReferenceNumber],[LarsCode],[Title],[Version],
 [Level],[Status],[TypicalDuration],[MaxFunding],[IsActive],[LastDateStarts],
 [EffectiveFrom],[EffectiveTo],[VersionEarliestStartDate],[VersionLatestStartDate],[VersionLatestEndDate],
-[VersionApprovedForDelivery],[ProposedTypicalDuration],[ProposedMaxFunding] FROM [Standards] Where [StandardUId] = @standardUId";
+[VersionApprovedForDelivery],[ProposedTypicalDuration],[ProposedMaxFunding],[EPAChanged],[StandardPageUrl] FROM [Standards] Where [StandardUId] = @standardUId";
 
             var result = await _unitOfWork.Connection.QuerySingleAsync<Standard>(
                 sql,
@@ -540,10 +580,10 @@ namespace SFA.DAS.AssessorService.Data
             return epoRegisteredStandardsResult;
         }
 
-        public async Task<IEnumerable<StandardVersion>> GetEpaoRegisteredStandardVersions(string endPointAssessorOrganisationId)
+        public async Task<IEnumerable<OrganisationStandardVersion>> GetEpaoRegisteredStandardVersions(string endPointAssessorOrganisationId)
         {
 
-            var sql = @"SELECT osv.StandardUId, os.StandardCode as LarsCode, s.Title, s.Level, s.IFateReferenceNumber, s.Version
+            var sql = @"SELECT osv.StandardUId, os.StandardCode as LarsCode, s.Title, s.Level, s.IFateReferenceNumber, s.Version, osv.EffectiveFrom, osv.EffectiveTo, osv.DateVersionApproved, osv.Status
                         FROM [dbo].[OrganisationStandardVersion] osv
                         INNER JOIN [dbo].[OrganisationStandard] os on osv.OrganisationStandardId = os.Id
                         INNER JOIN [dbo].[Organisations] o on os.EndPointAssessorOrganisationId = o.EndPointAssessorOrganisationId AND o.EndPointAssessorOrganisationId = @endPointAssessorOrganisationId
@@ -552,7 +592,7 @@ namespace SFA.DAS.AssessorService.Data
                         AND (os.EffectiveTo IS NULL OR os.EffectiveTo > GETDATE())
                         AND (osv.EffectiveTo IS NULL OR osv.EffectiveTo > GETDATE())";
 
-            var results = await _unitOfWork.Connection.QueryAsync<StandardVersion>(
+            var results = await _unitOfWork.Connection.QueryAsync<OrganisationStandardVersion>(
                 sql,
                 param: new { endPointAssessorOrganisationId },
                 transaction: _unitOfWork.Transaction);
@@ -560,10 +600,10 @@ namespace SFA.DAS.AssessorService.Data
             return results;
         }
 
-        public async Task<IEnumerable<StandardVersion>> GetEpaoRegisteredStandardVersions(string endPointAssessorOrganisationId, int larsCode)
+        public async Task<IEnumerable<OrganisationStandardVersion>> GetEpaoRegisteredStandardVersions(string endPointAssessorOrganisationId, int larsCode)
         {
 
-            var sql = @"SELECT osv.StandardUId, os.StandardCode as LarsCode, s.Title, s.Level, s.IFateReferenceNumber, s.Version
+            var sql = @"SELECT osv.StandardUId, os.StandardCode as LarsCode, s.Title, s.Level, s.IFateReferenceNumber, s.Version, osv.EffectiveFrom, osv.EffectiveTo, osv.DateVersionApproved, osv.Status
                         FROM [dbo].[OrganisationStandardVersion] osv
                         INNER JOIN [dbo].[OrganisationStandard] os on osv.OrganisationStandardId = os.Id
                         INNER JOIN [dbo].[Organisations] o on os.EndPointAssessorOrganisationId = o.EndPointAssessorOrganisationId AND o.EndPointAssessorOrganisationId = @endPointAssessorOrganisationId
@@ -572,9 +612,29 @@ namespace SFA.DAS.AssessorService.Data
                         AND (os.EffectiveTo IS NULL OR os.EffectiveTo > GETDATE())
                         AND (osv.EffectiveTo IS NULL OR osv.EffectiveTo > GETDATE())";
 
-            var results = await _unitOfWork.Connection.QueryAsync<StandardVersion>(
+            var results = await _unitOfWork.Connection.QueryAsync<OrganisationStandardVersion>(
                 sql,
                 param: new { endPointAssessorOrganisationId, larsCode },
+                transaction: _unitOfWork.Transaction);
+
+            return results;
+        }
+
+        public async Task<IEnumerable<StandardVersion>> GetEpaoRegisteredStandardVersionsByIFateReferenceNumber(string endPointAssessorOrganisationId, string iFateReferenceNumber)
+        {
+
+            var sql = @"SELECT osv.StandardUId, os.StandardCode as LarsCode, s.Title, s.Level, s.IFateReferenceNumber, s.Version
+                        FROM [dbo].[OrganisationStandardVersion] osv
+                        INNER JOIN [dbo].[OrganisationStandard] os on osv.OrganisationStandardId = os.Id
+                        INNER JOIN [dbo].[Organisations] o on os.EndPointAssessorOrganisationId = o.EndPointAssessorOrganisationId AND o.EndPointAssessorOrganisationId = @endPointAssessorOrganisationId
+                        INNER JOIN [dbo].[Standards] s on osv.StandardUId = s.StandardUId
+                        WHERE osv.Status = 'Live' AND os.status = 'Live' AND s.IFateReferenceNumber = @iFateReferenceNumber
+                        AND (os.EffectiveTo IS NULL OR os.EffectiveTo > GETDATE())
+                        AND (osv.EffectiveTo IS NULL OR osv.EffectiveTo > GETDATE())";
+
+            var results = await _unitOfWork.Connection.QueryAsync<StandardVersion>(
+                sql,
+                param: new { endPointAssessorOrganisationId, iFateReferenceNumber },
                 transaction: _unitOfWork.Transaction);
 
             return results;
@@ -816,13 +876,15 @@ namespace SFA.DAS.AssessorService.Data
             dataTable.Columns.Add("VersionApprovedForDelivery");
             dataTable.Columns.Add("ProposedTypicalDuration");
             dataTable.Columns.Add("ProposedMaxFunding");
+            dataTable.Columns.Add("EPAChanged");
+            dataTable.Columns.Add("StandardPageUrl");
 
             foreach (var standard in standards)
             {
                 dataTable.Rows.Add(standard.StandardUId, standard.IfateReferenceNumber, standard.LarsCode, standard.Title, standard.Version, standard.Level,
                     standard.Status, standard.TypicalDuration, standard.MaxFunding, standard.IsActive, standard.LastDateStarts, standard.EffectiveFrom, standard.EffectiveTo,
                     standard.VersionEarliestStartDate, standard.VersionLatestStartDate, standard.VersionLatestEndDate, standard.VersionApprovedForDelivery,
-                    standard.ProposedTypicalDuration, standard.ProposedMaxFunding);
+                    standard.ProposedTypicalDuration, standard.ProposedMaxFunding, standard.EPAChanged, standard.StandardPageUrl);
             }
 
             return dataTable;

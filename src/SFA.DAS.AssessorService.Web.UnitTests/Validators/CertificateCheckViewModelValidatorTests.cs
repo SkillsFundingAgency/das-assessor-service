@@ -60,10 +60,11 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.Validators
             result.IsValid.Should().Be(true);       
         }
 
-        [Test]
-        public void When_VersionIsNull_Then_ValidatorReturnsInvalid()
+        [TestCase(null)]
+        [TestCase("")]
+        public void When_VersionIsNullOrEmpty_Then_ValidatorReturnsInvalid(string version)
         {
-            _viewModel.Version = null;
+            _viewModel.Version = version;
 
             _validator.ShouldHaveValidationErrorFor(vm => vm.Version, _viewModel);
         }

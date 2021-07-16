@@ -10,6 +10,7 @@ using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Data.DapperTypeHandlers;
 using System;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
+using SFA.DAS.AssessorService.ApplyTypes;
 
 namespace SFA.DAS.AssessorService.Data
 {
@@ -20,6 +21,7 @@ namespace SFA.DAS.AssessorService.Data
         public RegisterQueryRepository(IWebConfiguration configuration)
         {
             _configuration = configuration;
+            SqlMapper.AddTypeHandler(typeof(ApplyData), new ApplyDataHandler());
             SqlMapper.AddTypeHandler(typeof(OrganisationData), new OrganisationDataHandler());
             SqlMapper.AddTypeHandler(typeof(OrganisationStandardData), new OrganisationStandardDataHandler());
         }
@@ -258,6 +260,54 @@ namespace SFA.DAS.AssessorService.Data
                     "DateStandardApprovedOnRegister, Comments, Status, ContactId, OrganisationStandardData "+
                     "FROM [OrganisationStandard] WHERE Id = @organisationStandardId";
                 return await connection.QuerySingleAsync<OrganisationStandard>(sqlForStandardByOrganisationStandardId, new {organisationStandardId});
+            }
+        }
+
+        public async Task<IEnumerable<AppliedStandardVersion>> GetAppliedStandardVersionsForEPAO(string organisationId, string standardReference)
+        {
+            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            {
+                if (connection.State != ConnectionState.Open)
+                    await connection.OpenAsync();
+
+                var sql =
+                    @"WITH VersionApply AS
+                    (--Apply records for specific versions
+                        SELECT ab1.*, og1.EndPointAssessorOrganisationId FROM(
+                        SELECT ap1.Id ApplyId, ap1.ApplicationStatus, ap1.OrganisationId, StandardReference, StandardReference + '_' + TRIM(version) StandardUId, ap1.ApplyData FROM Apply ap1
+                        CROSS APPLY OPENJSON(ApplyData, '$.Apply.Versions') WITH(version CHAR(10) '$')
+                        ) ab1
+                        JOIN Organisations og1 on og1.id = ab1.OrganisationId
+                        WHERE ab1.standardreference IS NOT NULL
+							AND og1.EndPointAssessorOrganisationId = @organisationId
+                        AND ab1.ApplicationStatus NOT IN('Approved', 'Declined')
+                    )
+                    --main query
+                    SELECT
+                        CASE 
+                            WHEN NOT (os1.status = 'Live' AND (os1.EffectiveTo IS NULL OR os1.EffectiveTo > GETDATE())) THEN 'Withdrawn'
+		                    WHEN osv.StandardUId IS NOT NULL 
+                            THEN (CASE WHEN osv.status = 'Live' AND (osv.EffectiveTo IS NULL OR osv.EffectiveTo > GETDATE()) THEN 'Approved' ELSE 'Withdrawn' END)
+		                    WHEN va1.StandardUId IS NOT NULL 
+		                    THEN (CASE WHEN ApplicationStatus = 'FeedbackAdded' THEN 'Feedback Added' ELSE 'Apply in progress' END)
+		                    ELSE 'Not yet applied'
+		                END ApprovedStatus,
+                        va1.ApplyId AS ApplicationId,
+                        va1.ApplicationStatus,
+                        so1.StandardUId, so1.title, so1.EffectiveFrom LarsEffectiveFrom, so1.EffectiveTo LarsEffectiveTo, so1.IFateReferenceNumber, so1.VersionEarliestStartDate, so1.VersionLatestStartDate, so1.VersionLatestEndDate, 
+                        so1.version, so1.level,so1.status , so1.EPAChanged, so1.StandardPageUrl, so1.LarsCode,
+                        os1.EffectiveFrom StdEffectiveFrom, os1.EffectiveTo StdEffectiveTo,
+                        osv.EffectiveFrom StdVersionEffectiveFrom, osv.EffectiveTo StdVersionEffectiveTo,
+                        va1.ApplyData
+                        FROM standards so1 
+                        LEFT JOIN organisationstandard os1 on so1.IFateReferenceNumber = os1.StandardReference AND os1.EndPointAssessorOrganisationId = @organisationId
+						LEFT JOIN OrganisationStandardVersion osv on osv.standardUid = so1.standardUid AND osv.OrganisationStandardId = os1.Id 
+                        LEFT JOIN VersionApply va1 on va1.StandardUId = so1.StandardUId
+                        WHERE
+                            so1.IFateReferenceNumber = @standardReference  
+                        ORDER BY so1.Version;";
+                return await connection.QueryAsync<AppliedStandardVersion>(
+                    sql, new { organisationId = organisationId, standardReference = standardReference });
             }
         }
 

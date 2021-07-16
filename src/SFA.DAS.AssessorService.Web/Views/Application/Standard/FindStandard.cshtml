@@ -1,5 +1,5 @@
 @using SFA.DAS.AssessorService.Web.ViewModels
-@model SFA.DAS.AssessorService.Web.ViewModels.Apply.StandardViewModel
+@model SFA.DAS.AssessorService.Web.ViewModels.Apply.StandardVersionViewModel
 
 @{
     ViewBag.Title = "Apply for a Standard";
@@ -32,7 +32,7 @@
                     </h1>
 
                     <span id="standard-hint" class="govuk-hint">
-                        Enter 3 or more characters to search. For example, financial adviser
+                        Enter 3 or more characters to search.<br/>For example, financial adviser
                     </span>
 
                     @if (!ViewData.ModelState.IsValid || showErrors)
@@ -40,7 +40,7 @@
                         <span id="search-string-error" class="govuk-error-message">Enter 3 or more characters to search</span>
                     }
 
-                    <input class="govuk-input govuk-input--width-20 ui-autocomplete-input @(!ViewData.ModelState.IsValid || showErrors ? "govuk-input--error" : "")" id="standard-name" name="StandardToFind" asp-for="@Model.StandardToFind"type="text" value="" autocomplete="off" maxlength="10000">
+                    <input class="govuk-input govuk-input--width-20 ui-autocomplete-input @(!ViewData.ModelState.IsValid || showErrors ? "govuk-input--error" : "")" id="standard-name" name="StandardToFind" asp-for="@Model.StandardToFind" type="text" value="" autocomplete="off" maxlength="10000">
                 </div>
 
                 @*

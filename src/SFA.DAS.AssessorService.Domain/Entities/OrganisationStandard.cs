@@ -14,7 +14,9 @@ namespace SFA.DAS.AssessorService.Domain.Entities
         public string Comments { get; set; }
         public string Status { get; set; }
         public Guid? ContactId { get; set; }
+        public string StandardReference { get; set; }
         public virtual Organisation Organisation { get; set; }
+        public virtual ICollection<OrganisationStandardVersion> OrganisationStandardVersions { get; set; }
         public virtual ICollection<OrganisationStandardDeliveryArea> OrganisationStandardDeliveryAreas { get; set; }
     }
 }
