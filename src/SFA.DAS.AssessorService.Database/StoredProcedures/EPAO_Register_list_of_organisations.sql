@@ -134,19 +134,40 @@ drop table #sequencedAreaList
 
 -- OPERATION 3 Gather and pivot Standard title and level
 -- GAther standard details, excluding those that have expired or expire today
-select os.EndPointAssessorOrganisationId as OrganisationId, Title + ' - Level ' + JSON_Value(StandardData,'$.Level') as StandardDetails 
-    into #StandardDetails
-    from OrganisationStandard os 
-    inner join Organisations o on os.EndPointAssessorOrganisationId = o.EndPointAssessorOrganisationId and o.[Status] = 'Live'
-    inner join StandardCollation sc on os.StandardCode = sc.StandardId 
-    where StandardData is not NULL
-    and (os.EffectiveTo is null OR os.EffectiveTo > GETDATE())
+select o.EndPointAssessorOrganisationId as OrganisationId, ss.StandardDetails as StandardDetails
+into #StandardDetails
+from OrganisationStandardVersion osv
+inner join OrganisationStandard os on osv.OrganisationStandardId = os.Id
+inner join Organisations o on os.EndPointAssessorOrganisationId = o.EndPointAssessorOrganisationId
+inner join 
+(
+select LARS_Code, Title + ' - Level ' + CAST(ss.Level as varchar) + ', Version ' + ss.[Available Versions] as StandardDetails
+from (
+  SELECT 
+  MAX(CASE WHEN latestcheck = 1 THEN Title ELSE NULL END) Title 
+, Larscode LARS_Code
+, IFateReferenceNumber IFA_Code
+, STRING_AGG(Version,',') WITHIN GROUP (ORDER BY CONVERT(decimal(5,2), Version) ASC) [Available Versions]
+, MAX(CASE WHEN latestcheck = 1 THEN Level ELSE NULL END) Level 
+FROM (
+SELECT TRIM(IFateReferenceNumber) IFateReferenceNumber, Larscode, Title, Level, Version, '' TrailBlazerContact, '' Route 
+, ROW_NUMBER() OVER (PARTITION BY IFateReferenceNumber, Larscode ORDER BY CONVERT(decimal(5,2), Version) DESC) latestcheck
+FROM Standards 
+WHERE LarsCode != 0
+AND IFateReferenceNumber IS NOT NULL
+AND EffectiveFrom IS NOT NULL
+AND (EffectiveTo IS NULL OR EffectiveTo > GETDATE() )
+) ab1
+GROUP BY IFateReferenceNumber, Larscode)
+as ss
+) as ss on ss.LARS_Code = os.StandardCode
+where (os.EffectiveTo is null OR os.EffectiveTo > GETDATE())
     and (
-        JSON_Value(StandardData,'$.EffectiveTo') is null OR
-        JSON_Value(StandardData,'$.EffectiveTo') > GETDATE()
+        osv.EffectiveTo is null OR
+        osv.EffectiveTo > GETDATE()
         )
     AND os.Status = 'Live' 
-    order by os.EndPointAssessorOrganisationId, sc.Title
+
 
 select OrganisationId, StandardDetails,
     row_number() over(partition by OrganisationId order by OrganisationId) seq into #sequencedStandardDetails
