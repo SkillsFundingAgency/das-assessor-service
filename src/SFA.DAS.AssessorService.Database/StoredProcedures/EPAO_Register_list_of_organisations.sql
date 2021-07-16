@@ -134,19 +134,22 @@ drop table #sequencedAreaList
 
 -- OPERATION 3 Gather and pivot Standard title and level
 -- GAther standard details, excluding those that have expired or expire today
-select os.EndPointAssessorOrganisationId as OrganisationId, Title + ' - Level ' + JSON_Value(StandardData,'$.Level') as StandardDetails 
-    into #StandardDetails
-    from OrganisationStandard os 
-    inner join Organisations o on os.EndPointAssessorOrganisationId = o.EndPointAssessorOrganisationId and o.[Status] = 'Live'
-    inner join StandardCollation sc on os.StandardCode = sc.StandardId 
-    where StandardData is not NULL
-    and (os.EffectiveTo is null OR os.EffectiveTo > GETDATE())
+select OrganisationId, Title + ' - Level ' + CAST(Level as varchar) + ', Version ' + STRING_AGG(Version, ', ') as StandardDetails
+into #StandardDetails
+from (
+select o.EndPointAssessorOrganisationId as OrganisationId, s.Title as Title, s.Level, osv.Version
+from OrganisationStandardVersion osv
+inner join OrganisationStandard os on osv.OrganisationStandardId = os.Id
+inner join Organisations o on os.EndPointAssessorOrganisationId = o.EndPointAssessorOrganisationId
+inner join (select LarsCode, max(title) as Title, max(Level) as Level, max(EffectiveTo) as EffectiveTo from Standards group by LarsCode) as s on s.LarsCode = os.StandardCode
+where (os.EffectiveTo is null OR os.EffectiveTo > GETDATE())
     and (
-        JSON_Value(StandardData,'$.EffectiveTo') is null OR
-        JSON_Value(StandardData,'$.EffectiveTo') > GETDATE()
+        s.EffectiveTo is null OR
+        s.EffectiveTo > GETDATE()
         )
     AND os.Status = 'Live' 
-    order by os.EndPointAssessorOrganisationId, sc.Title
+) as st
+group by OrganisationId, Title, Level
 
 select OrganisationId, StandardDetails,
     row_number() over(partition by OrganisationId order by OrganisationId) seq into #sequencedStandardDetails
