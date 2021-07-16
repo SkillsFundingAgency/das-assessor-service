@@ -217,6 +217,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
                 application.ApplicationStatus = ApplicationStatus.InProgress;
                 application.ReviewStatus = ApplicationReviewStatus.Approved;
                 application.StandardCode = null;
+                application.StandardReference = null;
                 application.UpdatedAt = DateTime.UtcNow;
                 application.UpdatedBy = userId.ToString();
 
@@ -238,6 +239,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
                 applyData.Apply.StandardCode = null;
                 applyData.Apply.StandardReference = null;
                 applyData.Apply.StandardName = null;
+                applyData.Apply.Versions = null;
 
                 applyData.Apply.ResetStandardSubmissions();
 
@@ -249,6 +251,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
                     "   ApplicationStatus = @ApplicationStatus, " +
                     "   ReviewStatus = @ReviewStatus, " +
                     "   StandardCode = @StandardCode, " +
+                    "   StandardReference = @StandardReference, " +
                     "   UpdatedAt = @UpdatedAt, " + 
                     "   UpdatedBy = @UpdatedBy " +
                     "WHERE " +
@@ -257,8 +260,9 @@ namespace SFA.DAS.AssessorService.Data.Apply
                         application.Id, 
                         application.ApplyData, 
                         application.ApplicationStatus, 
-                        application.ReviewStatus, 
-                        application.StandardCode, 
+                        application.ReviewStatus,
+                        application.StandardCode,
+                        application.StandardReference,
                         application.UpdatedAt, 
                         application.UpdatedBy 
                     },
