@@ -134,22 +134,40 @@ drop table #sequencedAreaList
 
 -- OPERATION 3 Gather and pivot Standard title and level
 -- GAther standard details, excluding those that have expired or expire today
-select OrganisationId, Title + ' - Level ' + CAST(Level as varchar) + ', Version ' + STRING_AGG(Version, ', ') as StandardDetails
+select o.EndPointAssessorOrganisationId as OrganisationId, ss.StandardDetails as StandardDetails
 into #StandardDetails
-from (
-select o.EndPointAssessorOrganisationId as OrganisationId, s.Title as Title, s.Level, osv.Version
 from OrganisationStandardVersion osv
 inner join OrganisationStandard os on osv.OrganisationStandardId = os.Id
 inner join Organisations o on os.EndPointAssessorOrganisationId = o.EndPointAssessorOrganisationId
-inner join (select LarsCode, max(title) as Title, max(Level) as Level, max(EffectiveTo) as EffectiveTo from Standards group by LarsCode) as s on s.LarsCode = os.StandardCode
+inner join 
+(
+select LARS_Code, Title + ' - Level ' + CAST(ss.Level as varchar) + ', Version ' + ss.[Available Versions] as StandardDetails
+from (
+  SELECT 
+  MAX(CASE WHEN latestcheck = 1 THEN Title ELSE NULL END) Title 
+, Larscode LARS_Code
+, IFateReferenceNumber IFA_Code
+, STRING_AGG(Version,',') WITHIN GROUP (ORDER BY CONVERT(decimal(5,2), Version) ASC) [Available Versions]
+, MAX(CASE WHEN latestcheck = 1 THEN Level ELSE NULL END) Level 
+FROM (
+SELECT TRIM(IFateReferenceNumber) IFateReferenceNumber, Larscode, Title, Level, Version, '' TrailBlazerContact, '' Route 
+, ROW_NUMBER() OVER (PARTITION BY IFateReferenceNumber, Larscode ORDER BY CONVERT(decimal(5,2), Version) DESC) latestcheck
+FROM Standards 
+WHERE LarsCode != 0
+AND IFateReferenceNumber IS NOT NULL
+AND EffectiveFrom IS NOT NULL
+AND (EffectiveTo IS NULL OR EffectiveTo > GETDATE() )
+) ab1
+GROUP BY IFateReferenceNumber, Larscode)
+as ss
+) as ss on ss.LARS_Code = os.StandardCode
 where (os.EffectiveTo is null OR os.EffectiveTo > GETDATE())
     and (
-        s.EffectiveTo is null OR
-        s.EffectiveTo > GETDATE()
+        osv.EffectiveTo is null OR
+        osv.EffectiveTo > GETDATE()
         )
     AND os.Status = 'Live' 
-) as st
-group by OrganisationId, Title, Level
+
 
 select OrganisationId, StandardDetails,
     row_number() over(partition by OrganisationId order by OrganisationId) seq into #sequencedStandardDetails
