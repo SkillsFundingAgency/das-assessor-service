@@ -22,8 +22,8 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
             _mockOrgApiClient
               .Setup(r => r.GetAppliedStandardVersionsForEPAO(It.IsAny<string>(), "ST0001"))
               .ReturnsAsync(new List<AppliedStandardVersion> {
-                   new AppliedStandardVersion { IFateReferenceNumber = "ST0001", Title = "Title 1", Version = 1.0M, LarsCode = 1, EPAChanged = false, ApprovedStatus = ApprovedStatus.Approved},
-                   new AppliedStandardVersion { IFateReferenceNumber = "ST0001", Title = "Title 1", Version = 1.1M, LarsCode = 1, EPAChanged = false, ApplicationStatus="In Progress",  ApprovedStatus = ApprovedStatus.ApplyInProgress, 
+                   new AppliedStandardVersion { ApplicationId = Guid.NewGuid(), IFateReferenceNumber = "ST0001", Title = "Title 1", Version = 1.0M, LarsCode = 1, EPAChanged = false, ApprovedStatus = ApprovedStatus.Approved},
+                   new AppliedStandardVersion { ApplicationId = Guid.NewGuid(), IFateReferenceNumber = "ST0001", Title = "Title 1", Version = 1.1M, LarsCode = 1, EPAChanged = false, ApplicationStatus="In Progress",  ApprovedStatus = ApprovedStatus.ApplyInProgress, 
                         ApplyData = new ApplyTypes.ApplyData()
                         {
                             Sequences = new List<ApplyTypes.ApplySequence>()

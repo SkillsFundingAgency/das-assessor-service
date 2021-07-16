@@ -288,7 +288,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
             var org = await _orgApiClient.GetEpaOrganisation(application.OrganisationId.ToString());
             var standards = await _orgApiClient.GetAppliedStandardVersionsForEPAO(org?.OrganisationId, iFateReferenceNumber);
-            var matchingStandards = standards.Where(x => versions.Contains(x.Version.VersionToString()));
+            var matchingStandards = standards.Where(x => x.ApplicationId != application.Id &&
+                                                            versions.Contains(x.Version.VersionToString()));
 
             if (matchingStandards.Any(x => x.ApprovedStatus == ApprovedStatus.Approved))
                 return ApplicationStatus.Approved;
