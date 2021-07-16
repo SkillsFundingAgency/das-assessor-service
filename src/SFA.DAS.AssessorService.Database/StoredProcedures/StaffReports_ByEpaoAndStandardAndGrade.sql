@@ -5,7 +5,9 @@ AS
 	  org.[EndPointAssessorOrganisationId] AS 'EPAO ID',
 	  REPLACE(UPPER(REPLACE(JSON_VALUE(ce.[CertificateData], '$.StandardName'), NCHAR(0x00A0), ' ')), 'Á', ' ') AS 'Standard Name',
 	  CONVERT(CHAR(10), ce.[StandardCode]) AS 'Standard Code',
+	  UPPER(JSON_VALUE(ce.[CertificateData], '$.StandardReference')) 'Standard Reference',		
 	  'LEVEL ' + JSON_VALUE(ce.[CertificateData], '$.StandardLevel') AS 'Level',
+	  JSON_VALUE(ce.[CertificateData], '$.Version') 'Standard Version',
 	  (CASE WHEN JSON_VALUE(ce.[CertificateData], '$.OverallGrade') IS NULL THEN '' ELSE  UPPER(JSON_VALUE(ce.[CertificateData], '$.OverallGrade')) END) AS 'Grade',
 	  COUNT(*) AS 'Total', 
 	  SUM(CASE WHEN ce.[CertificateReferenceId] < 10000 THEN 1 ELSE 0 END) AS 'Manual Total',
@@ -23,7 +25,9 @@ AS
 	  org.[EndPointAssessorOrganisationId],
 	  REPLACE(UPPER(REPLACE(JSON_VALUE(ce.[CertificateData], '$.StandardName'), NCHAR(0x00A0), ' ')), 'Á', ' '),
 	  ce.[StandardCode],
+	  UPPER(JSON_VALUE(ce.[CertificateData], '$.StandardReference')),
 	  'LEVEL ' + JSON_VALUE(ce.[CertificateData], '$.StandardLevel'),
+	  JSON_VALUE(ce.[CertificateData], '$.Version'),
 	  (CASE WHEN JSON_VALUE(ce.[CertificateData], '$.OverallGrade') IS NULL THEN '' ELSE  UPPER(JSON_VALUE(ce.[CertificateData], '$.OverallGrade')) END)
 
   UNION
@@ -33,7 +37,9 @@ AS
 	  '' AS 'EPAO ID',
 	  '' AS 'Standard Name',
 	  '' 'Standard Code',
+	  '' 'Standard Reference',
 	  '' AS 'Level',
+	  '' 'Standard Version',
 	  '' AS 'Grade',
 	  COUNT(*) AS 'Total', 
 	  SUM(CASE WHEN ce.[CertificateReferenceId] < 10000 THEN 1 ELSE 0 END) AS 'Manual Total',
