@@ -11,6 +11,8 @@ AS
 		CAST(JSON_VALUE([Certificates].[CertificateData], '$.AchievementDate') AS DATE) 'Achievement Date',
 		UPPER(JSON_VALUE([Certificates].[CertificateData], '$.StandardName')) 'Standard Name',
 		[Certificates].[StandardCode] 'Standard Code',
+		UPPER(JSON_VALUE([Certificates].[CertificateData], '$.StandardReference')) 'Standard Reference',
+		JSON_VALUE([Certificates].[CertificateData], '$.Version') 'Standard Version',
 		[Organisations].[EndPointAssessorOrganisationId] 'EPAO ID',
 		[Organisations].[EndPointAssessorName] 'EPAO Name',
 		[Certificates].[ProviderUkPrn] 'Provider UkPrn',
