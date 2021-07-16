@@ -3,7 +3,7 @@
 @model SFA.DAS.AssessorService.Web.ViewModels.Apply.SequenceViewModel;
 
 @{
-    if (Model.SequenceNo == ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO)
+    if (Model.SequenceNo == ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO || Model.SequenceNo == ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO)
     {
         ViewBag.Title = "Withdrawal request overview";
     }
