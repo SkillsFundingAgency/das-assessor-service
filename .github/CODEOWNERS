@@ -1,4 +1,1 @@
-# CODEOWNERS file for das-assessor-service.
-# The following users will be automatically added as Reviewers to all PRs.
-
-@ChrisJWoodcock @cofaulco @shomavg @VasanthaKasirajan3008
+/src/SFA.DAS.AssessorService.Database/PostDeploymentScripts/    @SkillsFundingAgency/das-sql-permissions
