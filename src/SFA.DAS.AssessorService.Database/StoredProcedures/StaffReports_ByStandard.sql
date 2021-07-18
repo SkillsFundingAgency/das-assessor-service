@@ -2,7 +2,8 @@
 AS
   SELECT
 		REPLACE(UPPER(REPLACE(JSON_VALUE(ce.[CertificateData], '$.StandardName'), NCHAR(0x00A0), ' ')), 'Á', ' ') AS 'Standard Name',
-		CONVERT(CHAR(10), ce.[StandardCode]) AS 'Standard Code',
+		JSON_VALUE(ce.CertificateData, '$.StandardReference') 'Standard Reference',
+		JSON_VALUE(ce.CertificateData, '$.Version') 'Standard Version',
 		COUNT(*) AS 'Total',
 		SUM(CASE WHEN ce.[CertificateReferenceId] < 10000 THEN 1 ELSE 0 END) AS 'Manual Total',
 		SUM(CASE WHEN ce.[CertificateReferenceId] >= 10000 THEN 1 ELSE 0 END) AS 'EPA Service Total',
@@ -13,12 +14,13 @@ AS
 		SUM(CASE WHEN ce.[CertificateReferenceId] >= 10000 AND ce.[DeletedAt] IS NULL AND ce.[Status] = 'Printed' THEN 1 ELSE 0 END) AS 'EPA Printed',
 		SUM(CASE WHEN ce.[CertificateReferenceId] >= 10000 AND ce.[DeletedAt] IS NOT NULL THEN 1 ELSE 0 END) AS 'Deleted'
   FROM [dbo].[Certificates] ce
-  GROUP BY REPLACE(UPPER(REPLACE(JSON_VALUE(ce.[CertificateData], '$.StandardName'), NCHAR(0x00A0), ' ')), 'Á', ' '), ce.[StandardCode]
+  GROUP BY REPLACE(UPPER(REPLACE(JSON_VALUE(ce.[CertificateData], '$.StandardName'), NCHAR(0x00A0), ' ')), 'Á', ' '), ce.[StandardCode],  ce.CertificateData
 
   UNION 
   SELECT
 		' Summary' AS 'Standard Name',
-		''  AS 'Standard Code',
+		''  AS 'Standard Reference',
+		''  AS 'Standard Version',
 		COUNT(*) AS 'Total',
 		SUM(CASE WHEN ce.[CertificateReferenceId] < 10000 THEN 1 ELSE 0 END) AS 'Manual Total',
 		SUM(CASE WHEN ce.[CertificateReferenceId] >= 10000 THEN 1 ELSE 0 END) AS 'EPA Service Total',
