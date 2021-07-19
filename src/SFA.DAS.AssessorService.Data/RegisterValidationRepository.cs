@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
 using SFA.DAS.AssessorService.Application.Interfaces;
@@ -136,6 +138,35 @@ namespace SFA.DAS.AssessorService.Data
             }
         }
 
+        public async Task<bool> EpaOrganisationStandardVersionExists(string organisationId, int standardCode, List<string> standardVersions)
+        {
+            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            {
+                if (connection.State != ConnectionState.Open)
+                    await connection.OpenAsync();
+                
+                var selectOrganisationStandardId =
+                    "select id FROM [OrganisationStandard] " +
+                    "WHERE EndPointAssessorOrganisationId = @organisationId and standardCode = @standardCode";
+                var organisationStandardId = await connection.ExecuteScalarAsync<int>(selectOrganisationStandardId, new { organisationId, standardCode });
+                if (default(int) == organisationStandardId) return false;
+
+                if (null == standardVersions || !standardVersions.Any()) return false;
+
+                var standardExists = false;
+                foreach(var sv in standardVersions)
+                {
+                    var sqlToCheckExists =
+                        "select CASE count(0) WHEN 0 THEN 0 else 1 end result FROM [OrganisationStandardVersion] " +
+                        "WHERE OrganisationStandardId = @organisationStandardId and Version = @version";
+                    standardExists = await connection.ExecuteScalarAsync<bool>(sqlToCheckExists, new { organisationStandardId, version = sv });
+                    if (standardExists) continue;
+                }
+
+                return standardExists;
+            }
+        }
+       
         public async Task<bool> EpaOrganisationAlreadyUsingName(string organisationName, string organisationIdToExclude)
         {
          

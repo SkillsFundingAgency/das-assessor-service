@@ -106,8 +106,13 @@ namespace SFA.DAS.AssessorService.Data
             return certificate;
         }
 
-        public async Task<Certificate> GetCertificate(Guid id)
+        public async Task<Certificate> GetCertificate(Guid id, bool includeLogs = true)
         {
+            if (!includeLogs)
+            {
+                return await _context.Certificates.SingleOrDefaultAsync(c => c.Id == id);
+            }
+
             return await _context.Certificates.Include(l => l.CertificateLogs).SingleOrDefaultAsync(c => c.Id == id);
         }
 
@@ -356,7 +361,11 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<Certificate> Update(Certificate certificate, string username, string action, bool updateLog = true, string reasonForChange = null)
         {
-            var cert = await GetCertificate(certificate.Id);
+            var cert = updateLog 
+                ? await GetCertificate(certificate.Id) 
+                : await GetCertificate(certificate.Id, includeLogs: false);
+
+            if (cert == null) throw new NotFound();
 
             cert.Uln = certificate.Uln;
             cert.StandardUId = certificate.StandardUId;

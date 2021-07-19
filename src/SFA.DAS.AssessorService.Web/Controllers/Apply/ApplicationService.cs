@@ -29,7 +29,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             _organisationsApiClient = organisationsApiClient;
         }
 
-        public async Task<CreateApplicationRequest> BuildStandardWithdrawalRequest(ContactResponse contact, OrganisationResponse organisation, int standardCode, string referenceFormat)
+        public async Task<CreateApplicationRequest> BuildStandardWithdrawalRequest(ContactResponse contact, OrganisationResponse organisation, int standardCode, string referenceFormat, string standardOrVersion)
         {
             var pipelinesCount = _learnerDetailsApiClient.GetPipelinesCount(organisation.EndPointAssessorOrganisationId, standardCode);
             var earliestWithdrawalDate = _organisationsApiClient.GetEarliestWithdrawalDate(organisation.Id, standardCode);
@@ -46,7 +46,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                     OrganisationName = organisation.EndPointAssessorName,
                     OrganisationReferenceId = organisation.Id.ToString(),
                     PipelinesCount = pipelinesCount.Result,
-                    EarliestDateOfWithdrawal = earliestWithdrawalDate.Result
+                    EarliestDateOfWithdrawal = earliestWithdrawalDate.Result,
+                    StandardOrVersion = standardOrVersion
                 })
             };
 

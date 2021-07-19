@@ -16,6 +16,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.AO
         public DateTime? StandardLastDateForNewStarts { get; set; }
 
         public int StandardId { get; set; }
+        public string IFateReferenceNumber { get; set; }
         public string StandardTitle { get; set; }
         public DateTime? EffectiveFrom { get; set; }
         public DateTime? EffectiveTo { get; set; }
@@ -26,7 +27,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.AO
         public EpaContact Contact { get; set; }
         public List<int> DeliveryAreas { get; set; }
         public List<OrganisationStandardDeliveryArea> DeliveryAreasDetails { get; set; }
-
+        public List<OrganisationStandardVersion> Versions { get; set; }
         public OrganisationStandardData OrganisationStandardData { get; set; }
     }
 }

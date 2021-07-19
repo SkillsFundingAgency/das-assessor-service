@@ -16,6 +16,8 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
 
         // New Standard Versioning Methods
         Task<IEnumerable<Standard>> GetAllStandardVersions();
+        Task<IEnumerable<Standard>> GetLatestStandardVersions();
+        Task<IEnumerable<Standard>> GetStandardVersionsByIFateReferenceNumber(string iFateReferenceNumber);
         Task<IEnumerable<Standard>> GetStandardVersionsByLarsCode(int larsCode);
         /// <summary>
         /// Method can take LarsCode, IFateReferenceNumber or StandardUId and will return a standard.
@@ -30,6 +32,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<IEnumerable<StandardOptions>> GetStandardOptionsForLatestStandardVersions();
         Task<StandardOptions> GetStandardOptionsByStandardId(string id);
         Task<StandardOptions> GetStandardOptionsByStandardIdAndVersion(string id, string version);
-        Task<IEnumerable<StandardVersion>> GetEPAORegisteredStandardVersions(string endPointAssessorOrganisationId, int? larsCode = null);
+        Task<IEnumerable<StandardVersion>> GetEpaoRegisteredStandardVersionsByIFateReferenceNumber(string endPointAssessorOrganisationId, string iFateReferenceNumber);
+        Task<IEnumerable<AssessorService.Api.Types.Models.AO.OrganisationStandardVersion>> GetEPAORegisteredStandardVersions(string endPointAssessorOrganisationId, int? larsCode = null);
     }
 }

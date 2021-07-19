@@ -10,6 +10,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Apply
         public Guid Id { get; set; }
         public Guid ApplicationId { get; set; }
         public string ApplicationType { get; set; }
+        public string StandardApplicationType { get; set; }
         public Guid OrganisationId { get; set; }
         public string EndPointAssessorName { get; set; }
         public FinancialGrade FinancialGrade { get; set; }
@@ -18,6 +19,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Apply
         public string FinancialReviewStatus { get; set; }
         public ApplyData ApplyData { get; set; }
         public int? StandardCode { get; set; }
+        public string StandardReference { get; set; }
         public string CreatedBy { get; set; }
         public string ContactName { get; set; }
         public string ContactEmail { get; set; }
@@ -36,7 +38,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Apply
 
         public bool IsOrganisationApplication => IsInitialApplication || IsAdditionalStandardWithFinancialHealthChecks;
 
-        public bool ISStandardApplication => IsInitialApplication || IsAdditionalStandardApplication;
+        public bool IsStandardApplication => ApplicationType == ApplicationTypes.Standard || IsAdditionalStandardApplication;
 
         public bool IsStandardWithdrawalApplication => ApplicationType == ApplicationTypes.StandardWithdrawal;
 

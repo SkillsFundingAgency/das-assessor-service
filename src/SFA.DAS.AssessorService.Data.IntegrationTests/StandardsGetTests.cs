@@ -75,7 +75,8 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
                     MaxFunding = 10000,
                     TypicalDuration = 12,
                     ProposedMaxFunding = 10000,
-                    ProposedTypicalDuration = 12
+                    ProposedTypicalDuration = 12,
+                    EPAChanged = false
                 },
                 new StandardModel
                 {
@@ -89,7 +90,8 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
                     MaxFunding = 10000,
                     TypicalDuration = 12,
                     ProposedMaxFunding = 10000,
-                    ProposedTypicalDuration = 12
+                    ProposedTypicalDuration = 12,
+                    EPAChanged = false
                 },
                  new StandardModel
                 {
@@ -103,7 +105,8 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
                     MaxFunding = 10000,
                     TypicalDuration = 12,
                     ProposedMaxFunding = 10000,
-                    ProposedTypicalDuration = 12
+                    ProposedTypicalDuration = 12,
+                    EPAChanged = false
                 },
                 new StandardModel
                 {
@@ -117,7 +120,8 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
                     MaxFunding = 10000,
                     TypicalDuration = 12,
                     ProposedMaxFunding = 10000,
-                    ProposedTypicalDuration = 12
+                    ProposedTypicalDuration = 12,
+                    EPAChanged = false
                 },
                 new StandardModel
                 {
@@ -131,7 +135,8 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
                     MaxFunding = 10000,
                     TypicalDuration = 12,
                     ProposedMaxFunding = 10000,
-                    ProposedTypicalDuration = 12
+                    ProposedTypicalDuration = 12,
+                    EPAChanged = false
                 }
             };
         }

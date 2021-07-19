@@ -25,7 +25,9 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
 
         // New Standard Version Methods
         Task<IEnumerable<Standard>> GetAllStandards();
+        Task<IEnumerable<Standard>> GetLatestStandardVersions();
         Task<IEnumerable<Standard>> GetStandardVersionsByLarsCode(int larsCode);
+        Task<IEnumerable<Standard>> GetStandardVersionsByIFateReferenceNumber(string iFateReferenceNumber);
         Task<Standard> GetStandardVersionByStandardUId(string standardUId);
         
         /// <summary>
@@ -54,8 +56,9 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task Update(Standard standard);
         Task DeleteAllStandards();
         Task DeleteAllOptions();
-        Task<IEnumerable<StandardVersion>> GetEpaoRegisteredStandardVersions(string endPointAssessorOrganisationId);
-        Task<IEnumerable<StandardVersion>> GetEpaoRegisteredStandardVersions(string endPointAssessorOrganisationId, int larsCode);
+        Task<IEnumerable<OrganisationStandardVersion>> GetEpaoRegisteredStandardVersions(string endPointAssessorOrganisationId);
+        Task<IEnumerable<OrganisationStandardVersion>> GetEpaoRegisteredStandardVersions(string endPointAssessorOrganisationId, int larsCode);
+        Task<IEnumerable<StandardVersion>> GetEpaoRegisteredStandardVersionsByIFateReferenceNumber(string endPointAssessorOrganisationId, string iFateReferenceNumber);
     }
 
     public class EpoRegisteredStandardsResult

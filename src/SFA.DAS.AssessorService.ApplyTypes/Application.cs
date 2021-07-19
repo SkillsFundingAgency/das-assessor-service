@@ -15,8 +15,9 @@ namespace SFA.DAS.AssessorService.ApplyTypes
         public string OrganisationReferenceId { get; set; }
         public string OrganisationName { get; set; }
         public string OrganisationType { get; set; }
-        
-        
+        public string ApplicationType { get; set; }
+
+
         // These are preamble answers, but are currently unused and stored instead in ApplyData.Apply
         public int? StandardCode { get; set; }
         public string StandardReference { get; set; }
@@ -28,6 +29,7 @@ namespace SFA.DAS.AssessorService.ApplyTypes
         
         public int? PipelinesCount { get; set; }
         public DateTime EarliestDateOfWithdrawal { get; set; }
+        public string StandardOrVersion { get; set; }
 
         public CompaniesHouseSummary CompanySummary { get; set; }
         public CharityCommissionSummary CharitySummary { get; set; }
@@ -77,6 +79,7 @@ namespace SFA.DAS.AssessorService.ApplyTypes
         public int? StandardCode { get; set; }
         public string StandardReference { get; set; }
         public string StandardName { get; set; }
+        public List<string> Versions { get; set; }
 
         public List<Submission> InitSubmissions { get; private set; } = new List<Submission>();
 

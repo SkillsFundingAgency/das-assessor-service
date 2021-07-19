@@ -5,7 +5,9 @@ using SFA.DAS.AssessorService.Application.Mapping.Structs;
 using SFA.DAS.AssessorService.Domain.Entities;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using OrganisationStandardVersion = SFA.DAS.AssessorService.Api.Types.Models.AO.OrganisationStandardVersion;
 
 namespace SFA.DAS.AssessorService.Application.Api.Services
 {
@@ -45,6 +47,35 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
             var standards = await _standardRepository.GetAllStandards();
 
             await _cacheService.SaveToCache("Standards", standards, 8);
+            return standards;
+        }
+
+        public async Task<IEnumerable<Standard>> GetLatestStandardVersions()
+        {
+            var results = await _cacheService.RetrieveFromCache<IEnumerable<Standard>>("LatestStandards");
+
+            if (results != null)
+                return results;
+
+            var standards = await _standardRepository.GetLatestStandardVersions();
+
+            await _cacheService.SaveToCache("LatestStandards", standards, 8);
+            return standards;
+        }
+
+        public async Task<IEnumerable<Standard>> GetStandardVersionsByIFateReferenceNumber(string iFateReferenceNumber)
+        {
+            IEnumerable<Standard> standards = null;
+
+            try
+            {
+                standards = await _standardRepository.GetStandardVersionsByIFateReferenceNumber(iFateReferenceNumber);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"STANDARD VERSION: Failed to get for iFateReferenceNumber: {iFateReferenceNumber}");
+            }
+
             return standards;
         }
 
@@ -237,14 +268,23 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
             return results.PageOfResults;
         }
 
-        public async Task<IEnumerable<StandardVersion>> GetEPAORegisteredStandardVersions(string endPointAssessorOrganisationId, int? larsCode = null)
+        public async Task<IEnumerable<OrganisationStandardVersion>> GetEPAORegisteredStandardVersions(string endPointAssessorOrganisationId, int? larsCode = null)
         {
             if (larsCode.HasValue && larsCode.Value > 0)
             {
-                return await _standardRepository.GetEpaoRegisteredStandardVersions(endPointAssessorOrganisationId, larsCode.Value);
+                var versionsOfStandard = await _standardRepository.GetEpaoRegisteredStandardVersions(endPointAssessorOrganisationId, larsCode.Value);
+                    
+                return versionsOfStandard.Select(version => (OrganisationStandardVersion)version);
             }
 
-            return await _standardRepository.GetEpaoRegisteredStandardVersions(endPointAssessorOrganisationId);
+            var versions = await _standardRepository.GetEpaoRegisteredStandardVersions(endPointAssessorOrganisationId);
+
+            return versions.Select(version => (OrganisationStandardVersion)version);
+        }
+
+        public async Task<IEnumerable<StandardVersion>> GetEpaoRegisteredStandardVersionsByIFateReferenceNumber(string endPointAssessorOrganisationId, string iFateReferenceNumber)
+        {
+            return await _standardRepository.GetEpaoRegisteredStandardVersionsByIFateReferenceNumber(endPointAssessorOrganisationId, iFateReferenceNumber);
         }
     }
 }
