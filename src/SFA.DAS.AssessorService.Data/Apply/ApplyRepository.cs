@@ -67,7 +67,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
             var query = @"SELECT 
                             a.Id, a.ApplicationId, a.OrganisationId, a.ApplicationStatus, a.ReviewStatus, 
                             a.ApplyData, a.FinancialReviewStatus, a.FinancialGrade, 
-                            a.StandardCode, a.CreatedBy, a.UpdatedBy, a.DeletedBy, 
+                            a.StandardCode, a.StandardReference, a.CreatedBy, a.UpdatedBy, a.DeletedBy, 
                             o.EndPointAssessorName, c1.DisplayName [CreatedByName] , c1.Email [CreatedByEmail] 
                          FROM Contacts c
                             INNER JOIN Apply a ON a.OrganisationId = c.OrganisationId
@@ -76,10 +76,11 @@ namespace SFA.DAS.AssessorService.Data.Apply
                             CROSS APPLY OPENJSON(ApplyData,'$.Sequences') WITH (SequenceNo INT, NotRequired BIT) sequence
                          WHERE c.Id = @userId
                             AND sequence.SequenceNo IN @sequenceNos AND sequence.NotRequired = 0
+                            AND a.DeletedAt IS NULL
                          GROUP BY 
                             a.Id, a.ApplicationId, a.OrganisationId, a.ApplicationStatus, a.ReviewStatus, 
                             a.ApplyData, a.FinancialReviewStatus, a.FinancialGrade, 
-                            a.StandardCode, a.CreatedAt, a.CreatedBy, a.UpdatedAt, a.UpdatedBy, a.DeletedAt, a.DeletedBy, 
+                            a.StandardCode, a.StandardReference, a.CreatedAt, a.CreatedBy, a.UpdatedAt, a.UpdatedBy, a.DeletedAt, a.DeletedBy, 
                             o.EndPointAssessorName, c1.DisplayName, c1.Email";
 
             return (await _unitOfWork.Connection.QueryAsync<ApplySummary>(
@@ -194,6 +195,16 @@ namespace SFA.DAS.AssessorService.Data.Apply
             return false;
         }
 
+        public async Task DeleteApplication(Guid id, string deletedBy)
+        {
+            await _unitOfWork.Connection.ExecuteAsync(
+                @"UPDATE Apply
+                      SET  DeletedBy = @deletedBy, DeletedAt = GETUTCDATE()
+                      WHERE  Id = @id",
+                param: new { id, deletedBy },
+                transaction: _unitOfWork.Transaction);
+        }
+
         public async Task<bool> ResetApplicatonToStage1(Guid id, Guid userId)
         {
             var application = await GetApply(id);
@@ -206,6 +217,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
                 application.ApplicationStatus = ApplicationStatus.InProgress;
                 application.ReviewStatus = ApplicationReviewStatus.Approved;
                 application.StandardCode = null;
+                application.StandardReference = null;
                 application.UpdatedAt = DateTime.UtcNow;
                 application.UpdatedBy = userId.ToString();
 
@@ -227,6 +239,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
                 applyData.Apply.StandardCode = null;
                 applyData.Apply.StandardReference = null;
                 applyData.Apply.StandardName = null;
+                applyData.Apply.Versions = null;
 
                 applyData.Apply.ResetStandardSubmissions();
 
@@ -238,6 +251,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
                     "   ApplicationStatus = @ApplicationStatus, " +
                     "   ReviewStatus = @ReviewStatus, " +
                     "   StandardCode = @StandardCode, " +
+                    "   StandardReference = @StandardReference, " +
                     "   UpdatedAt = @UpdatedAt, " + 
                     "   UpdatedBy = @UpdatedBy " +
                     "WHERE " +
@@ -246,8 +260,9 @@ namespace SFA.DAS.AssessorService.Data.Apply
                         application.Id, 
                         application.ApplyData, 
                         application.ApplicationStatus, 
-                        application.ReviewStatus, 
-                        application.StandardCode, 
+                        application.ReviewStatus,
+                        application.StandardCode,
+                        application.StandardReference,
                         application.UpdatedAt, 
                         application.UpdatedBy 
                     },

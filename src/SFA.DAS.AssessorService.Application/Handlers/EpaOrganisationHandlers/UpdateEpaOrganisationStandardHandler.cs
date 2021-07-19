@@ -31,7 +31,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
 
         public async Task<string> Handle(UpdateEpaOrganisationStandardRequest request, CancellationToken cancellationToken)
         {
-         
             ProcessRequestFieldsForSpecialCharacters(request);
             var validationResponse = _validator.ValidatorUpdateEpaOrganisationStandardRequest(request);
 
@@ -49,7 +48,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
             
             var organisationStandard = MapOrganisationStandardRequestToOrganisationStandard(request);
 
-            return await _registerRepository.UpdateEpaOrganisationStandard(organisationStandard, request.DeliveryAreas);
+            return await _registerRepository.UpdateEpaOrganisationStandardAndOrganisationStandardVersions(organisationStandard, request.DeliveryAreas);
         }
 
         private void ProcessRequestFieldsForSpecialCharacters(UpdateEpaOrganisationStandardRequest request)
@@ -67,6 +66,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
 
             var organisationStandard = new EpaOrganisationStandard
             {
+                Id = request.OrganisationStandardId,
                 OrganisationId = request.OrganisationId,
                 StandardCode = request.StandardCode,
                 EffectiveFrom = request.EffectiveFrom,

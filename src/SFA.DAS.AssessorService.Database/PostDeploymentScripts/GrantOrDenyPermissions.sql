@@ -13,3 +13,6 @@ GO
 
 GRANT EXECUTE ON [dbo].[DatabaseMaintenance] TO [database_maintenance] AS [dbo]
 GO
+
+GRANT EXECUTE ON [DashboardReporting].[CertificatePrintSummary] TO [DashboardReporting]
+GO
