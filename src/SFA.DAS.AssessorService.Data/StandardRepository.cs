@@ -108,12 +108,14 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<IEnumerable<Standard>> GetAllStandards()
         {
-            var sql = @"SELECT [StandardUId],[IFateReferenceNumber],[LarsCode],[Title],[Version],
+			var sql = @"SELECT [StandardUId],[IFateReferenceNumber],[LarsCode],[Title],[Version],
 [Level],[Status],[TypicalDuration],[MaxFunding],[IsActive],[LastDateStarts],
 [EffectiveFrom],[EffectiveTo],[VersionEarliestStartDate],[VersionLatestStartDate],[VersionLatestEndDate],
-[VersionApprovedForDelivery],[ProposedTypicalDuration],[ProposedMaxFunding],[EPAChanged],[StandardPageUrl] FROM [Standards]";
+[VersionApprovedForDelivery],[ProposedTypicalDuration],[ProposedMaxFunding],[EPAChanged],[StandardPageUrl] FROM [Standards]
+            WHERE[VersionApprovedForDelivery] IS NOT NULL";
 
-            var results = await _unitOfWork.Connection.QueryAsync<Standard>(
+
+          var results = await _unitOfWork.Connection.QueryAsync<Standard>(
                 sql,
                 transaction: _unitOfWork.Transaction);
 
@@ -134,6 +136,7 @@ FROM
 	[EffectiveFrom],[EffectiveTo],[VersionEarliestStartDate],[VersionLatestStartDate],[VersionLatestEndDate],
 	[VersionApprovedForDelivery],[ProposedTypicalDuration],[ProposedMaxFunding],[EPAChanged],[StandardPageUrl]
 	FROM [Standards]
+    WHERE [VersionApprovedForDelivery] IS NOT NULL
 ) AS Stds
 WHERE RowNum = 1";
 
