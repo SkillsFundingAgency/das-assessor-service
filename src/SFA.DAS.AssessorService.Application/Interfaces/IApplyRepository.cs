@@ -19,6 +19,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<List<ApplySummary>> GetStandardWithdrawalApplications(Guid userId);
         
         Task<Guid> CreateApplication(Domain.Entities.Apply apply);
+        Task DeleteApplication(Guid id, string deletedBy);
         Task<bool> CanSubmitApplication(Guid applicationId);
         Task SubmitApplicationSequence(Domain.Entities.Apply apply);
         Task<int> GetNextAppReferenceSequence();

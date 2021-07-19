@@ -1,9 +1,10 @@
 @using SFA.DAS.AssessorService.Domain.Consts;
 @using SFA.DAS.AssessorService.Web.Extensions;
+@using System.Linq;
 @model List<SFA.DAS.AssessorService.Api.Types.Models.Apply.ApplicationResponse>;
 
 @{
-    ViewBag.Title = "Your withdrawal notifications";
+    ViewBag.Title = "Your withdrawal requests";
 }
 
 <a asp-action="Index" asp-controller="ApplyForWithdrawal" class="govuk-back-link">Back</a>
@@ -12,14 +13,18 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
             <h1 class="govuk-heading-xl">
-                Your withdrawal notifications
+                Your withdrawal requests
             </h1>
+            <a asp-action="TypeOfWithdrawal" asp-controller="ApplyForWithdrawal" class="govuk-button">
+                Create a new withdrawal request
+            </a>
             <table class="govuk-table">
+                <caption class="govuk-table__caption"></caption>
                 <thead class="govuk-table__head">
                     <tr class="govuk-table__row">
                         <th class="govuk-table__header" scope="col">Type</th>
                         <th class="govuk-table__header" scope="col">Name</th>
-                        <th class="govuk-table__header govuk-table__header--numeric" scope="col">Status</th>
+                        <th class="govuk-table__header" scope="col">Status</th>
                         <th class="govuk-table__header govuk-table__header--numeric" scope="col">Action</th>
                     </tr>
                 </thead>
@@ -46,9 +51,14 @@
                                 else if (application.ApplyData.RequiredSequences.Contains(ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO))
                                 {
                                     @application.ApplyData?.Apply?.StandardName
+                                    @if (application.ApplyData.Apply.Versions != null && application.ApplyData.Apply.Versions.Any())
+                                    {
+                                        <br />
+                                        <text>Version @string.Join(",", application.ApplyData.Apply.Versions)</text>
+                                    }
                                 }
                             </td>
-                            <td class="govuk-table__cell govuk-table__cell--numeric">@application.ApplicationStatus.FormatStatus()</td>
+                            <td class="govuk-table__cell">@application.ApplicationStatus.FormatStatus()</td>
                             <td class="govuk-table__cell govuk-table__cell--numeric">
                                 <a class="govuk-link" href="@Url.Action("SequenceSignPost", "Application", new { Id = application.Id })">View</a>
                             </td>
@@ -58,7 +68,4 @@
             </table>
         </div>
     </div>
-    <a asp-action="TypeOfWithdrawal" asp-controller="ApplyForWithdrawal" class="govuk-button">
-        Create a new withdrawal notification
-    </a>
 </main>

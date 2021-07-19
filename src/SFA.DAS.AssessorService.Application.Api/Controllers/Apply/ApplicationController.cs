@@ -106,6 +106,19 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.Apply
                 applicationResponse);
         }
 
+        [HttpPost("deleteApplications", Name = "DeleteApplications")]
+        [SwaggerResponse((int)HttpStatusCode.NoContent)]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> DeleteApplications(
+            [FromBody] DeleteApplicationsRequest request)
+        {
+            _logger.LogInformation("Received Delete Applications Request");
+
+            await _mediator.Send(request);
+
+            return NoContent();
+        }
+
         [HttpPost("submitApplicationSequence", Name = "SubmitApplicationSequence")]
         [SwaggerResponse((int)HttpStatusCode.Created, Type = typeof(bool))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]

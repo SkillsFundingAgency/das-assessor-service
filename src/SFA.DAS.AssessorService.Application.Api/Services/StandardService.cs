@@ -281,5 +281,10 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
 
             return versions.Select(version => (OrganisationStandardVersion)version);
         }
+
+        public async Task<IEnumerable<StandardVersion>> GetEpaoRegisteredStandardVersionsByIFateReferenceNumber(string endPointAssessorOrganisationId, string iFateReferenceNumber)
+        {
+            return await _standardRepository.GetEpaoRegisteredStandardVersionsByIFateReferenceNumber(endPointAssessorOrganisationId, iFateReferenceNumber);
+        }
     }
 }

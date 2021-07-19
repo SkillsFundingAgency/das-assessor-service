@@ -8,6 +8,7 @@ namespace SFA.DAS.AssessorService.ApplyTypes
         public Guid ApplicationId { get; set; }
         public int SequenceNo { get; set; }
         public string OrganisationName { get; set; }
+        public string EndPointAssessorOrganisationId { get; set; }
         public string StandardName { get; set; }
         public int? StandardCode { get; set; }
         public string StandardReference { get; set; }
@@ -23,5 +24,6 @@ namespace SFA.DAS.AssessorService.ApplyTypes
         public string FinancialGrade { get; set; }
         public string SequenceStatus { get; set; } // NOTE: Only used for Closed Applications
         public string StandardApplicationType { get; set; }
+        public string WithdrawalType { get; set; }
     }
 }

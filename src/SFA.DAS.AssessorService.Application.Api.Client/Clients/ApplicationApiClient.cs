@@ -82,6 +82,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
+        public async Task DeleteApplications(DeleteApplicationsRequest deleteApplicationsRequest)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Post, $"api/v1/applications/deleteApplications"))
+            {
+                await PostPutRequest<DeleteApplicationsRequest>(request, deleteApplicationsRequest);
+            }
+        }
+
         public async Task<bool> SubmitApplicationSequence(SubmitApplicationSequenceRequest submitApplicationRequest)
         {
           

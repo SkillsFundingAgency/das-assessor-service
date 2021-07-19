@@ -172,6 +172,20 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Standard
             model[0].IFateReferenceNumber.Should().Be(standards[0].IfateReferenceNumber);
         }
 
+        [Test, MoqAutoData]
+        public async Task WhenRequestingGetEpaoRegisteredStandardVersions_ThenStandardVersionsAreReturned(string epaoId, string iFateReferenceNumber, List<StandardVersion> versions)
+        {
+            _mockStandardService.Setup(service => service.GetEpaoRegisteredStandardVersionsByIFateReferenceNumber(epaoId, iFateReferenceNumber)).ReturnsAsync(versions);
+
+            var controllerResult = await _standardVersionController.GetEpaoRegisteredStandardVersionsByIFateReferenceNumber(epaoId, iFateReferenceNumber) as ObjectResult;
+
+            controllerResult.StatusCode.Should().Be((int)HttpStatusCode.OK);
+
+            var model = controllerResult.Value as List<StandardVersion>;
+
+            model.Should().BeEquivalentTo(versions);
+        }
+
         private StandardVersion ConvertFromStandard(Standard standard)
         {
             return new StandardVersion

@@ -605,7 +605,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                     }
                 }
 
-                var apiValidationResult = await _apiValidationService.CallApiValidation(page, answers);
+                var apiValidationResult = await _apiValidationService.CallApiValidation(Id, page, answers);
                 if (!apiValidationResult.IsValid)
                 {
                     if (updatePageResult is null) updatePageResult = new SetPageAnswersResponse { ValidationPassed = false };
@@ -615,6 +615,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                         updatePageResult.ValidationErrors = new List<KeyValuePair<string, string>>();
                     }
 
+                    updatePageResult.ValidationPassed = false;
                     updatePageResult.ValidationErrors.AddRange(apiValidationResult.ErrorMessages);
                 }
 

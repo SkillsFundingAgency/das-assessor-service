@@ -83,6 +83,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
                 await NotifyContact(submittingContact, application.ApplyData, cancellationToken);
 
                 _unitOfWork.Commit();
+                    
                 return orgStandardVersion;
             }
             catch (Exception ex)

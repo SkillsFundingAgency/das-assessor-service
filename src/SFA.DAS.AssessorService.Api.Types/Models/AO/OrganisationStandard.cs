@@ -16,6 +16,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.AO
         public DateTime? StandardLastDateForNewStarts { get; set; }
 
         public int StandardId { get; set; }
+        public string IFateReferenceNumber { get; set; }
         public string StandardTitle { get; set; }
         public DateTime? EffectiveFrom { get; set; }
         public DateTime? EffectiveTo { get; set; }

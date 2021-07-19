@@ -90,7 +90,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ApplicationServiceTests
                     Id = Guid.NewGuid(),
                     EndPointAssessorOrganisationId = endPointAssessorOrganisationId,
                     EndPointAssessorName = "Organisation Limited"
-                }, standardCode, string.Empty);
+                }, standardCode, string.Empty, StandardOrVersion.Standard);
 
             // Assert
             _mockQnaApiClient
