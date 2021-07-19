@@ -112,7 +112,7 @@ namespace SFA.DAS.AssessorService.Data
 [Level],[Status],[TypicalDuration],[MaxFunding],[IsActive],[LastDateStarts],
 [EffectiveFrom],[EffectiveTo],[VersionEarliestStartDate],[VersionLatestStartDate],[VersionLatestEndDate],
 [VersionApprovedForDelivery],[ProposedTypicalDuration],[ProposedMaxFunding],[EPAChanged],[StandardPageUrl] FROM [Standards]
-            WHERE[VersionApprovedForDelivery] IS NOT NULL";
+            WHERE [VersionApprovedForDelivery] IS NOT NULL";
 
 
           var results = await _unitOfWork.Connection.QueryAsync<Standard>(
