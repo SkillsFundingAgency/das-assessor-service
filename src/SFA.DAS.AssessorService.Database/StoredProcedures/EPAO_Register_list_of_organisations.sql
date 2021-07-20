@@ -133,20 +133,37 @@ drop table #sequencedAreaList
 -- OPERATION 2 COMPLETED
 
 -- OPERATION 3 Gather and pivot Standard title and level
+-- NOTE need to handle left and right of decimal version "number" separately - To be DONE 20/07/21
 -- GAther standard details, excluding those that have expired or expire today
-select os.EndPointAssessorOrganisationId as OrganisationId, Title + ' - Level ' + JSON_Value(StandardData,'$.Level') as StandardDetails 
-    into #StandardDetails
-    from OrganisationStandard os 
-    inner join Organisations o on os.EndPointAssessorOrganisationId = o.EndPointAssessorOrganisationId and o.[Status] = 'Live'
-    inner join StandardCollation sc on os.StandardCode = sc.StandardId 
-    where StandardData is not NULL
-    and (os.EffectiveTo is null OR os.EffectiveTo > GETDATE())
-    and (
-        JSON_Value(StandardData,'$.EffectiveTo') is null OR
-        JSON_Value(StandardData,'$.EffectiveTo') > GETDATE()
-        )
-    AND os.Status = 'Live' 
-    order by os.EndPointAssessorOrganisationId, sc.Title
+select o.EndPointAssessorOrganisationId as OrganisationId, ss2.StandardLevel + ', Version '+STRING_AGG(Version,',') WITHIN GROUP (ORDER BY osv.Version ASC) StandardDetails
+into #StandardDetails
+from OrganisationStandard os 
+inner join  OrganisationStandardVersion osv on osv.OrganisationStandardId = os.Id and osv.StandardUId like os.StandardReference+'%' AND ( osv.EffectiveTo is null OR osv.EffectiveTo > GETDATE() )
+inner join Organisations o on os.EndPointAssessorOrganisationId = o.EndPointAssessorOrganisationId AND o.status = 'Live'
+inner join 
+(
+select IFateReferenceNumber, Title + ' - Level ' + CAST(ss.Level as varchar)  as StandardLevel
+from (
+  SELECT 
+  MAX(CASE WHEN latestcheck = 1 THEN Title ELSE NULL END) Title 
+, IFateReferenceNumber 
+, MAX(CASE WHEN latestcheck = 1 THEN Level ELSE NULL END) Level 
+FROM (
+SELECT TRIM(IFateReferenceNumber) IFateReferenceNumber,  Title, Level 
+, ROW_NUMBER() OVER (PARTITION BY IFateReferenceNumber ORDER BY  Version DESC) latestcheck  
+FROM Standards 
+WHERE LarsCode != 0
+AND IFateReferenceNumber IS NOT NULL
+AND EffectiveFrom IS NOT NULL
+AND ( EffectiveTo IS NULL OR EffectiveTo > GETDATE() )
+) ab1
+GROUP BY IFateReferenceNumber
+) as ss
+) as ss2 on ss2.IFateReferenceNumber = os.StandardReference
+where ( os.EffectiveTo is null OR os.EffectiveTo > GETDATE() )
+  AND os.Status = 'Live' 
+GROUP BY o.EndPointAssessorOrganisationId, ss2.StandardLevel 
+
 
 select OrganisationId, StandardDetails,
     row_number() over(partition by OrganisationId order by OrganisationId) seq into #sequencedStandardDetails
