@@ -17,7 +17,8 @@ FROM
 			os.StandardReference, EndPointAssessorName, STRING_AGG(Version,', ') WITHIN GROUP (ORDER BY CONVERT(decimal(5,2), Version) ASC) Versions
 		FROM
 			OrganisationStandard os
-			JOIN (SELECT OrganisationStandardId, Version FROM OrganisationStandardVersion WHERE (EffectiveTo is null OR EffectiveTo > GETDATE()) AND [Status] = 'Live' ) osv on osv.OrganisationStandardId = os.Id
+			JOIN (SELECT OrganisationStandardId, StandardUId, Version FROM OrganisationStandardVersion WHERE (EffectiveTo is null OR EffectiveTo > GETDATE()) AND [Status] = 'Live' ) osv on osv.OrganisationStandardId = os.Id
+			AND osv.StandardUId LIKE os.StandardReference+'%'
 			JOIN Organisations o on os.EndPointAssessorOrganisationId = o.EndPointAssessorOrganisationId AND o.[Status] = 'Live'
 			JOIN (SELECT DISTINCT TRIM(IFateReferenceNumber) IFateReferenceNumber, EffectiveFrom, EffectiveTo FROM Standards WHERE Larscode != 0 AND (EffectiveTo is null OR EffectiveTo > GETDATE()))  sc on os.StandardReference = sc.IFateReferenceNumber
 		WHERE
