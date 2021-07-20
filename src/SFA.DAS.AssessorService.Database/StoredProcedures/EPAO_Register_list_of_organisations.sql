@@ -133,40 +133,36 @@ drop table #sequencedAreaList
 -- OPERATION 2 COMPLETED
 
 -- OPERATION 3 Gather and pivot Standard title and level
+-- NOTE need to handle left and right of decimal version "number" separately - To be DONE 20/07/21
 -- GAther standard details, excluding those that have expired or expire today
-select o.EndPointAssessorOrganisationId as OrganisationId, ss.StandardDetails as StandardDetails
+select o.EndPointAssessorOrganisationId as OrganisationId, ss2.StandardLevel + ', Version '+STRING_AGG(Version,',') WITHIN GROUP (ORDER BY osv.Version ASC) StandardDetails
 into #StandardDetails
-from OrganisationStandardVersion osv
-inner join OrganisationStandard os on osv.OrganisationStandardId = os.Id
-inner join Organisations o on os.EndPointAssessorOrganisationId = o.EndPointAssessorOrganisationId
+from OrganisationStandard os 
+inner join  OrganisationStandardVersion osv on osv.OrganisationStandardId = os.Id and osv.StandardUId like os.StandardReference+'%' AND ( osv.EffectiveTo is null OR osv.EffectiveTo > GETDATE() )
+inner join Organisations o on os.EndPointAssessorOrganisationId = o.EndPointAssessorOrganisationId AND o.status = 'Live'
 inner join 
 (
-select LARS_Code, Title + ' - Level ' + CAST(ss.Level as varchar) + ', Version ' + ss.[Available Versions] as StandardDetails
+select IFateReferenceNumber, Title + ' - Level ' + CAST(ss.Level as varchar)  as StandardLevel
 from (
   SELECT 
   MAX(CASE WHEN latestcheck = 1 THEN Title ELSE NULL END) Title 
-, Larscode LARS_Code
-, IFateReferenceNumber IFA_Code
-, STRING_AGG(Version,',') WITHIN GROUP (ORDER BY CONVERT(decimal(5,2), Version) ASC) [Available Versions]
+, IFateReferenceNumber 
 , MAX(CASE WHEN latestcheck = 1 THEN Level ELSE NULL END) Level 
 FROM (
-SELECT TRIM(IFateReferenceNumber) IFateReferenceNumber, Larscode, Title, Level, Version, '' TrailBlazerContact, '' Route 
-, ROW_NUMBER() OVER (PARTITION BY IFateReferenceNumber, Larscode ORDER BY CONVERT(decimal(5,2), Version) DESC) latestcheck
+SELECT TRIM(IFateReferenceNumber) IFateReferenceNumber,  Title, Level 
+, ROW_NUMBER() OVER (PARTITION BY IFateReferenceNumber ORDER BY  Version DESC) latestcheck  
 FROM Standards 
 WHERE LarsCode != 0
 AND IFateReferenceNumber IS NOT NULL
 AND EffectiveFrom IS NOT NULL
-AND (EffectiveTo IS NULL OR EffectiveTo > GETDATE() )
+AND ( EffectiveTo IS NULL OR EffectiveTo > GETDATE() )
 ) ab1
-GROUP BY IFateReferenceNumber, Larscode)
-as ss
-) as ss on ss.LARS_Code = os.StandardCode
-where (os.EffectiveTo is null OR os.EffectiveTo > GETDATE())
-    and (
-        osv.EffectiveTo is null OR
-        osv.EffectiveTo > GETDATE()
-        )
-    AND os.Status = 'Live' 
+GROUP BY IFateReferenceNumber
+) as ss
+) as ss2 on ss2.IFateReferenceNumber = os.StandardReference
+where ( os.EffectiveTo is null OR os.EffectiveTo > GETDATE() )
+  AND os.Status = 'Live' 
+GROUP BY o.EndPointAssessorOrganisationId, ss2.StandardLevel 
 
 
 select OrganisationId, StandardDetails,
