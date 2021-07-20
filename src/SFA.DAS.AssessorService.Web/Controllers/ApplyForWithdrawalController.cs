@@ -82,20 +82,25 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             {
                 if (viewModel.TypeOfWithdrawal == ApplicationTypes.OrganisationWithdrawal)
                 {
-                    var contact = await GetUserContact();
-                    var organisation = await _orgApiClient.GetOrganisationByUserId(contact.Id);
-
-                    var createApplicationRequest = await _applicationService.BuildOrganisationWithdrawalRequest(
-                        contact, 
-                        organisation, 
-                        _config.ReferenceFormat);
-
-                    var id = await _applicationApiClient.CreateApplication(createApplicationRequest);
-
                     return RedirectToAction(
-                        nameof(ApplicationController.Sequence), 
-                        nameof(ApplicationController).RemoveController(), 
-                        new { Id = id, sequenceNo = ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO });
+                       nameof(CheckWithdrawalRequest),
+                       nameof(ApplyForWithdrawalController).RemoveController(),
+                       new { backAction = nameof(TypeOfWithdrawal) });
+
+                    //var contact = await GetUserContact();
+                    //var organisation = await _orgApiClient.GetOrganisationByUserId(contact.Id);
+
+                    //var createApplicationRequest = await _applicationService.BuildOrganisationWithdrawalRequest(
+                    //    contact, 
+                    //    organisation, 
+                    //    _config.ReferenceFormat);
+
+                    //var id = await _applicationApiClient.CreateApplication(createApplicationRequest);
+
+                    //return RedirectToAction(
+                    //    nameof(ApplicationController.Sequence), 
+                    //    nameof(ApplicationController).RemoveController(), 
+                    //    new { Id = id, sequenceNo = ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO });
                 }
                 else if (viewModel.TypeOfWithdrawal == ApplicationTypes.StandardWithdrawal)
                 {
@@ -275,30 +280,42 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             }
         }
 
-        [HttpGet("CheckWithdrawalRequest/{iFateReferenceNumber}/{versionsToWithdrawal?}", Name = "CheckWithdrawalRequest")]
+        [HttpGet("CheckWithdrawalRequest/{iFateReferenceNumber?}/{versionsToWithdrawal?}", Name = "CheckWithdrawalRequest")]
         [ModelStatePersist(ModelStatePersist.RestoreEntry)]
         [TypeFilter(typeof(MenuFilter), Arguments = new object[] { Pages.Dashboard })]
-        public async Task<IActionResult> CheckWithdrawalRequest(string iFateReferenceNumber, string versionsToWithdrawal, [FromQuery]string backAction)
+        public async Task<IActionResult> CheckWithdrawalRequest(string iFateReferenceNumber, string versionsToWithdrawal, [FromQuery] string backAction)
         {
             var contact = await GetUserContact();
             var organisation = await _orgApiClient.GetOrganisationByUserId(contact.Id);
-            var versions = await _standardVersionApiClient.GetEpaoRegisteredStandardVersions(organisation.EndPointAssessorOrganisationId, iFateReferenceNumber);
-            var standard = versions.First();
 
-            var applications = await GetInProgressWithdrawalVersionApplications(contact.Id, iFateReferenceNumber);
-
-            return View(new CheckWithdrawalRequestViewModel()
+            if (string.IsNullOrWhiteSpace(iFateReferenceNumber))
             {
-                IFateReferenceNumber = iFateReferenceNumber,
-                Level = standard.Level,
-                StandardName = standard.Title,
-                Versions = versionsToWithdrawal,
-                InProgressVersionWithdrawals = string.IsNullOrWhiteSpace(versionsToWithdrawal) && applications.Any(),
-                BackAction = backAction
-            });
+                return View(new CheckWithdrawalRequestViewModel()
+                {
+                    OrganisationName = organisation.EndPointAssessorName,
+                    BackAction = backAction
+                });
+            }
+            else
+            {
+                var versions = await _standardVersionApiClient.GetEpaoRegisteredStandardVersions(organisation.EndPointAssessorOrganisationId, iFateReferenceNumber);
+                var standard = versions.First();
+
+                var applications = await GetInProgressWithdrawalVersionApplications(contact.Id, iFateReferenceNumber);
+
+                return View(new CheckWithdrawalRequestViewModel()
+                {
+                    IFateReferenceNumber = iFateReferenceNumber,
+                    Level = standard.Level,
+                    StandardName = standard.Title,
+                    Versions = versionsToWithdrawal,
+                    InProgressVersionWithdrawals = string.IsNullOrWhiteSpace(versionsToWithdrawal) && applications.Any(),
+                    BackAction = backAction
+                });
+            }
         }
 
-        [HttpPost("CheckWithdrawalRequest/{iFateReferenceNumber}/{versionsToWithdrawal?}")]
+        [HttpPost("CheckWithdrawalRequest/{iFateReferenceNumber?}/{versionsToWithdrawal?}")]
         [ModelStatePersist(ModelStatePersist.Store)]
         [TypeFilter(typeof(MenuFilter), Arguments = new object[] { Pages.Dashboard })]
         public async Task<IActionResult> CheckWithdrawalRequest(string iFateReferenceNumber, string versionsToWithdrawal, [FromQuery] string backAction, CheckWithdrawalRequestViewModel model)
@@ -306,7 +323,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             var contact = await GetUserContact();
             var organisation = await _orgApiClient.GetOrganisationByUserId(contact.Id);
             var versions = await _standardVersionApiClient.GetEpaoRegisteredStandardVersions(organisation.EndPointAssessorOrganisationId, iFateReferenceNumber);
-            var standard = versions.First();
+            var standard = versions.FirstOrDefault();
 
             if (string.IsNullOrWhiteSpace(model.Continue))
                 ModelState.AddModelError(nameof(model.Continue), "Select Yes or No");
@@ -314,13 +331,27 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             if (!ModelState.IsValid)
             {
                 model.IFateReferenceNumber = iFateReferenceNumber;
-                model.Level = standard.Level;
-                model.StandardName = standard.Title;
+                model.Level = standard?.Level ?? default;
+                model.StandardName = standard?.Title;
                 model.BackAction = backAction;
                 return View(model);
             }
 
-            if (model.Continue.Equals("yes", StringComparison.InvariantCultureIgnoreCase))
+            if (model.Continue.Equals("no", StringComparison.InvariantCultureIgnoreCase))
+                return RedirectToAction(
+                        nameof(WithdrawalApplications),
+                        nameof(ApplyForWithdrawalController).RemoveController());
+
+            if (string.IsNullOrWhiteSpace(iFateReferenceNumber))
+            {
+                var id = await CreateOrganisationWithdrawalApplication(contact, organisation);
+
+                return RedirectToAction(
+                    nameof(ApplicationController.Sequence),
+                    nameof(ApplicationController).RemoveController(),
+                    new { Id = id, sequenceNo = ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO });
+            }
+            else
             {
                 if (string.IsNullOrWhiteSpace(versionsToWithdrawal))
                 {
@@ -347,10 +378,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                         nameof(ApplicationController).RemoveController(),
                         new { Id = id, sequenceNo = ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO });
             }
-            else
-                return RedirectToAction(
-                        nameof(WithdrawalApplications),
-                        nameof(ApplyForWithdrawalController).RemoveController());
         }
 
         private async Task<Guid> CreateWithdrawalApplication(ContactResponse contact, OrganisationResponse organisation, int larsCode, string iFateReferenceNumber, string standardTitle, string standardOrVersion, IEnumerable<string> versions)
@@ -368,6 +395,16 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             await _applicationApiClient.UpdateStandardData(id, larsCode, iFateReferenceNumber, standardTitle, versions?.ToList(), standardApplicationType);
 
             return id;
+        }
+
+        private async Task<Guid> CreateOrganisationWithdrawalApplication(ContactResponse contact, OrganisationResponse organisation)
+        {
+            var createApplicationRequest = await _applicationService.BuildOrganisationWithdrawalRequest(
+                        contact,
+                        organisation,
+                        _config.ReferenceFormat);
+
+            return await _applicationApiClient.CreateApplication(createApplicationRequest);
         }
 
         private async Task<List<ApplicationResponse>> GetWithdrawalApplications(Guid contactId, string iFateReferenceNumber = null)
