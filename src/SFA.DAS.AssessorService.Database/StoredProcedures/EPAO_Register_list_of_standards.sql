@@ -155,8 +155,7 @@ SELECT @Dynamic_sql =
 	, IFateReferenceNumber [Standard reference]
 	, Level
 	, Versions [Standard version]
-	, ' + @EP_AAO_Columns +
-'   
+	, ' + @EP_AAO_Columns + '   
 	FROM (
     SELECT 
       MAX(CASE WHEN latestcheck = 1 THEN TrailBlazerContact ELSE NULL END) Trailblazer 
