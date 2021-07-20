@@ -71,7 +71,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [HttpPost]
         [ModelStatePersist(ModelStatePersist.Store)]
         [TypeFilter(typeof(MenuFilter), Arguments = new object[] { Pages.Dashboard })]
-        public async Task<IActionResult> TypeOfWithdrawal(TypeOfWithdrawalViewModel viewModel)
+        public IActionResult TypeOfWithdrawal(TypeOfWithdrawalViewModel viewModel)
         {
             if(string.IsNullOrEmpty(viewModel.TypeOfWithdrawal))
             {
@@ -86,21 +86,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                        nameof(CheckWithdrawalRequest),
                        nameof(ApplyForWithdrawalController).RemoveController(),
                        new { backAction = nameof(TypeOfWithdrawal) });
-
-                    //var contact = await GetUserContact();
-                    //var organisation = await _orgApiClient.GetOrganisationByUserId(contact.Id);
-
-                    //var createApplicationRequest = await _applicationService.BuildOrganisationWithdrawalRequest(
-                    //    contact, 
-                    //    organisation, 
-                    //    _config.ReferenceFormat);
-
-                    //var id = await _applicationApiClient.CreateApplication(createApplicationRequest);
-
-                    //return RedirectToAction(
-                    //    nameof(ApplicationController.Sequence), 
-                    //    nameof(ApplicationController).RemoveController(), 
-                    //    new { Id = id, sequenceNo = ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO });
                 }
                 else if (viewModel.TypeOfWithdrawal == ApplicationTypes.StandardWithdrawal)
                 {

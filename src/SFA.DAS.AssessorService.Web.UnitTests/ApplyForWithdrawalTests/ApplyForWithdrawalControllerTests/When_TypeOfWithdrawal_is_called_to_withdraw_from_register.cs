@@ -16,7 +16,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ApplyForWithdrawalTests.ApplyFor
         public async Task Then_Redirect_To_CheckWithdrawalRequest()
         {
             // Act
-            var result = await _sut.TypeOfWithdrawal(new TypeOfWithdrawalViewModel { TypeOfWithdrawal = ApplicationTypes.OrganisationWithdrawal }) as RedirectToActionResult;
+            var result = _sut.TypeOfWithdrawal(new TypeOfWithdrawalViewModel { TypeOfWithdrawal = ApplicationTypes.OrganisationWithdrawal }) as RedirectToActionResult;
 
             // Assert
             result.ActionName.Should().Be(nameof(ApplyForWithdrawalController.CheckWithdrawalRequest));
