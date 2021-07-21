@@ -26,7 +26,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
             var submittingEpaoOrgId = Guid.NewGuid();
             var searchingEpaoOrgId = Guid.NewGuid();
 
-            CertificateRepository.Setup(r => r.GetCompletedCertificatesFor(1111111111))
+            CertificateRepository.Setup(r => r.GetDraftAndCompletedCertificatesFor(1111111111))
                 .ReturnsAsync(new List<Certificate>
                 {
                     new Certificate
