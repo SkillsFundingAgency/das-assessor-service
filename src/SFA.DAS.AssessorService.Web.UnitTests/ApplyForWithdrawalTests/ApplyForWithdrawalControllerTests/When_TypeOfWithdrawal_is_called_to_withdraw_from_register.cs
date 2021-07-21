@@ -13,7 +13,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ApplyForWithdrawalTests.ApplyFor
     public class When_TypeOfWithdrawal_is_called_to_withdraw_from_register : ApplyForWithdrawalControllerTestsBase
     {
         [Test]
-        public async Task Then_Redirect_To_CheckWithdrawalRequest()
+        public void Then_Redirect_To_CheckWithdrawalRequest()
         {
             // Act
             var result = _sut.TypeOfWithdrawal(new TypeOfWithdrawalViewModel { TypeOfWithdrawal = ApplicationTypes.OrganisationWithdrawal }) as RedirectToActionResult;
