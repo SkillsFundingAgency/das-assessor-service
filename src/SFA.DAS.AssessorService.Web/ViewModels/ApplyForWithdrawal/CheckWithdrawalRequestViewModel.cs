@@ -2,6 +2,7 @@
 {
     public class CheckWithdrawalRequestViewModel
     {
+        public string OrganisationName { get; set; }
         public string StandardName { get; set; }
         public int Level { get; set; }
         public string IFateReferenceNumber { get; set; }
