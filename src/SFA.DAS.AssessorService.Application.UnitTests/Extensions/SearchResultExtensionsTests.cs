@@ -54,7 +54,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Extensions
         {
             MatchUpExistingCompletedStandards();
 
-            _mockCertificateRepository.Verify(r => r.GetCompletedCertificatesFor(_searchQuery.Uln), Times.Once);
+            _mockCertificateRepository.Verify(r => r.GetDraftAndCompletedCertificatesFor(_searchQuery.Uln), Times.Once);
         }
 
         [Test]
@@ -194,7 +194,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Extensions
 
             _certificates = new List<Certificate> { _certificate };
 
-            _mockCertificateRepository.Setup(r => r.GetCompletedCertificatesFor(_searchQuery.Uln))
+            _mockCertificateRepository.Setup(r => r.GetDraftAndCompletedCertificatesFor(_searchQuery.Uln))
                 .ReturnsAsync(_certificates);
 
             var certificateLogEntries = Builder<CertificateLog>.CreateListOfSize(1)
