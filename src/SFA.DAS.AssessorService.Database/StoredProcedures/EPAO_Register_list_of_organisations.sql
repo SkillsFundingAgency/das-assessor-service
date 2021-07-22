@@ -166,7 +166,7 @@ GROUP BY o.EndPointAssessorOrganisationId, ss2.StandardLevel
 
 
 select OrganisationId, StandardDetails,
-    row_number() over(partition by OrganisationId order by OrganisationId) seq into #sequencedStandardDetails
+    row_number() over(partition by OrganisationId order by OrganisationId, StandardDetails) seq into #sequencedStandardDetails
   from #StandardDetails
   order by OrganisationId, seq
 
