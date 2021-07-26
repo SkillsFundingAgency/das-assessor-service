@@ -21,7 +21,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
             CancellationToken cancellationToken)
         {
             var certificate = await _certificateRepository.GetCertificate(request.Id);
-
             if (CertificateStatus.CanRequestDuplicateCertificate(certificate.Status))
             {
                 certificate.Status = CertificateStatus.Reprint;

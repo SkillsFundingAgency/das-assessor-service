@@ -15,9 +15,10 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
         {
             _certificateRepository = certificateRepository;
         }
+
         public async Task<Certificate> Handle(GetCertificateRequest request, CancellationToken cancellationToken)
         {
-            return await _certificateRepository.GetCertificate(request.CertificateId);
+            return await _certificateRepository.GetCertificate(request.CertificateId, request.IncludeLogs);
         }
     }
 }
