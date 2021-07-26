@@ -26,7 +26,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         {
             var actionResult = await LoadViewModel<CertificateConfirmationViewModel>("~/Views/Certificate/Confirmation.cshtml");
 
-            _sessionService.Remove("CertificateSession");
+            _sessionService.Remove(nameof(CertificateSession));
 
             return actionResult;
         }

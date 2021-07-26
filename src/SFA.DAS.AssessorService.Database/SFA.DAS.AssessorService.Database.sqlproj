@@ -66,13 +66,19 @@
     <Folder Include="Functions" />
     <Folder Include="Functions\Scalar-valued Functions" />
     <Folder Include="Functions\Table-valued Functions" />
+    <Folder Include="PreDeploymentScripts" />
+    <Folder Include="PostDeploymentScripts\LookupData" />
+    <Folder Include="Security" />
+    <Folder Include="Security\Roles" />
+    <Folder Include="Security\Roles\DatabaseRoles" />
+    <Folder Include="Security\Schemas" />
+    <Folder Include="StoredProcedures\DashboardReporting" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Tables\CertificateLogs.sql" />
     <Build Include="Tables\Certificates.sql" />
     <Build Include="Tables\ContactInvitations.sql" />
     <Build Include="Tables\ContactLogs.sql" />
-    <Build Include="Tables\Contacts.sql" />
     <Build Include="Tables\Organisations.sql" />
     <Build Include="Tables\Ilrs.sql" />
     <Build Include="Tables\EMailTemplates.sql" />
@@ -82,6 +88,8 @@
     <Build Include="Tables\ScheduleRuns.sql" />
     <Build Include="Tables\DeliveryArea.sql" />
     <Build Include="Tables\OrganisationStandard.sql" />
+    <Build Include="Tables\Standards.sql" />
+    <Build Include="Tables\OrganisationStandardVersion.sql" />
     <Build Include="Tables\OrganisationStandardDeliveryArea.sql" />
     <Build Include="Tables\OrganisationType.sql" />
     <Build Include="StoredProcedures\StaffSearchCertificates.sql" />
@@ -112,7 +120,6 @@
     <Build Include="StoredProcedures\EPAO_Registered_Standards.sql" />
     <Build Include="Tables\ContactsPrivileges.sql" />
     <Build Include="Tables\Privileges.sql" />
-    <Build Include="Tables\ContactRoles.sql" />
     <Build Include="StoredProcedures\GetEPAO_DashboardCounts.sql" />
     <Build Include="StoredProcedures\GetEPAO_Pipelines_Extract.sql" />
     <Build Include="StoredProcedures\StaffSearchCertificates_Count.sql" />
@@ -128,7 +135,6 @@
     <Build Include="Functions\Scalar-valued Functions\OppFinder_Is_Proposed_StandardStatus.sql" />
     <Build Include="StoredProcedures\OppFinder_List_NonApproved_Standards.sql" />
     <Build Include="Tables\Audits.sql" />
-    <None Include="PostDeploymentScripts\on-2210-dashboard_api_subscriptions.sql" />
     <Build Include="StoredProcedures\OppFinder_Filter_Standards.sql" />
     <Build Include="StoredProcedures\OppFinder_Get_Approved_Standard_Details.sql" />
     <Build Include="Tables\ExpressionsOfInterest.sql" />
@@ -137,6 +143,33 @@
     <Build Include="StoredProcedures\Apply_Get_ReviewStatusCounts.sql" />
     <Build Include="StoredProcedures\Apply_List_Applications.sql" />
     <Build Include="Tables\Settings.sql" />
+    <Build Include="Tables\CertificateBatchLogs.sql" />
+    <Build Include="Tables\EmailTemplatesRecipients.sql" />
+    <Build Include="Functions\Scalar-valued Functions\OppFinder_GetPostCodePrefix.sql" />
+    <None Include="PostDeploymentScripts\LookupData\PrivilegesInsertOrUpdate.sql" />
+    <None Include="PostDeploymentScripts\LookupData\DeliveryAreaInsertOrUpdate.sql" />
+    <None Include="PostDeploymentScripts\LookupData\DeliveryAreaDelete.sql" />
+    <None Include="PostDeploymentScripts\LookupData\EmailTemplatesDelete.sql" />
+    <None Include="PostDeploymentScripts\LookupData\EmailTemplatesInsertOrUpdate.sql" />
+    <Build Include="Functions\Scalar-valued Functions\ApplyConst.sql" />
+    <Build Include="Functions\Table-valued Functions\EPAO_Func_Get_PipelineInfo.sql" />
+    <Build Include="StoredProcedures\GetEPAO_Pipelines_Count.sql" />
+    <Build Include="StoredProcedures\DatabaseMaintenance.sql" />
+    <Build Include="Security\Roles\DatabaseRoles\DatabaseMaintenance.sql" />
+    <None Include="PostDeploymentScripts\GrantOrDenyPermissions.sql" />
+    <None Include="PostDeploymentScripts\EPAO_Migration_Part0_Patch.sql" />
+    <Build Include="StoredProcedures\StaffReports_MissingCertificateData.sql" />
+    <None Include="PostDeploymentScripts\EPAO_Migration_Part1_Certificates.sql" />
+    <None Include="PostDeploymentScripts\EPAO_Migration_Part2_OrganisationStandard.sql" />
+    <None Include="PostDeploymentScripts\EPAO_Migration_Part3_OrganisationStandardVersion.sql" />
+    <None Include="PostDeploymentScripts\EPAO_Migration_Part4_Apply.sql" />
+    <None Include="PostDeploymentScripts\EPAO_Migration_Part5_Fails.sql" />
+    <Build Include="Tables\StandardOptions.sql" />
+    <None Include="PostDeploymentScripts\CON-3359_Remove_IlrsImport.sql" />
+    <Build Include="Tables\Contacts.sql" />
+    <Build Include="Security\Roles\DatabaseRoles\DashboardReporting.sql" />
+    <Build Include="Security\Schemas\DashboardReporting.sql" />
+    <Build Include="StoredProcedures\DashboardReporting\CertificatePrintSummary.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="SFA.DAS.AssessorService.Database.refactorlog" />
@@ -149,10 +182,16 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="DataToImport\assessmentorgs.xlsx" />
-    <None Include="PostDeploymentScripts\on-2033-anytime_updates.sql" />
-    <None Include="PostDeploymentScripts\on-2295-expression-of-interest.sql" />
     <Build Include="Functions\Table-valued Functions\Apply_Func_Get_Applications.sql" />
     <Build Include="Functions\Scalar-valued Functions\ToTicks.sql" />
+    <None Include="PostDeploymentScripts\LookupData\PrivilegesDelete.sql" />
+    <None Include="PostDeploymentScripts\LookupData\SynchronizeLookupData.sql" />
+    <None Include="PostDeploymentScripts\LookupData\OrganisationTypeInsertOrUpdate.sql" />
+    <None Include="PostDeploymentScripts\LookupData\OrganisationTypeDelete.sql" />
+    <None Include="PostDeploymentScripts\LookupData\PostCodeRegionInsertOrUpdate.sql" />
+    <None Include="PostDeploymentScripts\LookupData\PostCodeRegionDelete.sql" />
+    <None Include="PostDeploymentScripts\LookupData\StaffReportsInsertOrUpdate.sql" />
+    <None Include="PostDeploymentScripts\LookupData\StaffReportsDelete.sql" />
   </ItemGroup>
   <ItemGroup>
     <ArtifactReference Include="$(DacPacRootPath)\Extensions\Microsoft\SQLDB\Extensions\SqlServer\AzureV12\SqlSchemas\master.dacpac">

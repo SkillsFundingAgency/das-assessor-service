@@ -7,11 +7,15 @@
     <a class="govuk-back-link" asp-controller="Dashboard" asp-action="Index">Back</a>
     <main class="govuk-main-wrapper " id="main-content" role="main">
         <div class="govuk-grid-row">
-            <div class="govuk-grid-column-full">
+            <div class="govuk-grid-column-two-thirds">
                 <h1 class="govuk-heading-xl">Organisation details</h1>
                 <sfa-alert/>
-                <!-- tabs -->
-                <div class="govuk-tabs" data-module="tabs">
+            </div>
+        </div>
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
+
+                <div class="govuk-tabs" data-module="govuk-tabs">
                     <h2 class="govuk-tabs__title">
                         Organisation details
                     </h2>
@@ -21,11 +25,6 @@
                                 Register details
                             </a>
                         </li>
-                        <!-- <li class="govuk-tabs__list-item">
-                            <a class="govuk-tabs__tab" href="#financial-health">
-                                Financial health
-                            </a>
-                        </li> -->
                         <li class="govuk-tabs__list-item">
                             <a class="govuk-tabs__tab" href="#api-subscription">
                                 API subscription
@@ -33,112 +32,119 @@
                         </li>
                     </ul>
                     <section class="govuk-tabs__panel" id="register-details">
-                        <div id="organisationWrapper" class="govuk-!-margin-bottom-4">
-                            <h2 class="govuk-heading-l">Register details</h2>
-                            @if (string.IsNullOrEmpty(Model.PrimaryContactName))
-                            {
-                                <div class="govuk-warning-text">
-                                    <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
-                                    <strong class="govuk-warning-text__text">
-                                        <span class="govuk-warning-text__assistive">Warning</span>
-                                        We need to know your contact name for the register
-                                    </strong>
-                                </div>
-                            }
-                            <p class="govuk-body">This is the information that employers and training providers will use to contact you.</p>
-                            <dl class="govuk-summary-list govuk-!-margin-bottom-0">
-                                <div class="govuk-summary-list__row">
-                                    <dt class="govuk-summary-list__key">Contact name</dt>
-                                    <dd class="govuk-summary-list__value">
-                                        @if (string.IsNullOrEmpty(Model.PrimaryContactName))
-                                        {
-                                            <span class="govuk-hint">Select a user</span>
-                                        }
-                                        else
-                                        {
-                                            @Model.PrimaryContactName
-                                        }
-                                    </dd>
-                                    @if (Model.UserHasChangeOrganisationPrivilege == true)
-                                    {
-                                        <dd class="govuk-summary-list__actions">
-                                            <a class="govuk-link" asp-controller="Organisation" asp-action="SelectOrChangeContactName">
-                                                Change<span class="govuk-visually-hidden"> contact name</span>
-                                            </a>
-                                        </dd>
-                                    }
-                                </div>
-                                <div class="govuk-summary-list__row">
-                                    <dt class="govuk-summary-list__key">Phone number</dt>
-                                    <dd class="govuk-summary-list__value">@Model.PhoneNumber</dd>
-                                    @if (Model.UserHasChangeOrganisationPrivilege == true)
-                                    {
-                                        <dd class="govuk-summary-list__actions">
-                                            <a class="govuk-link" asp-controller="Organisation" asp-action="ChangePhoneNumber">
-                                                Change<span class="govuk-visually-hidden"> phone number</span>
-                                            </a>
-                                        </dd>
-                                    }
-                                </div>
-                                <div class="govuk-summary-list__row">
-                                    <dt class="govuk-summary-list__key">Address</dt>
-                                    <dd class="govuk-summary-list__value">
-                                        @if (@Model.Address1 != null)
-                                        {
-                                            @Model.Address1<br />
-                                        }
-                                        @if (@Model.Address2 != null)
-                                        {
-                                            @Model.Address2<br />
-                                        }
-                                        @if (@Model.Address3 != null)
-                                        {
-                                            @Model.Address3<br />
-                                        }
-                                        @if (@Model.Address4 != null)
-                                        {
-                                            @Model.Address4<br />
-                                        }
-                                        @if (@Model.Postcode != null)
-                                        {
-                                            @Model.Postcode
-                                        }
-                                    </dd>
-                                    @if (Model.UserHasChangeOrganisationPrivilege == true)
-                                    {
-                                        <dd class="govuk-summary-list__actions">
-                                            <a class="govuk-link" asp-controller="Organisation" asp-action="ChangeAddress">
-                                                Change<span class="govuk-visually-hidden"> address</span>
-                                            </a>
-                                        </dd>
-                                    }
-                                </div>
-                                <div class="govuk-summary-list__row">
-                                    <dt class="govuk-summary-list__key">Email</dt>
-                                    <dd class="govuk-summary-list__value">@Model.Email</dd>
-                                    @if (Model.UserHasChangeOrganisationPrivilege == true)
-                                    {
-                                        <dd class="govuk-summary-list__actions">
-                                            <a class="govuk-link" asp-controller="Organisation" asp-action="ChangeEmail">
-                                                Change<span class="govuk-visually-hidden"> email</span>
-                                            </a>
-                                        </dd>
-                                    }
-                                </div>
-                                <div class="govuk-summary-list__row">
-                                    <dt class="govuk-summary-list__key">Website</dt>
-                                    <dd class="govuk-summary-list__value">@Model.WebsiteLink</dd>
-                                    @if (Model.UserHasChangeOrganisationPrivilege == true)
-                                    {
-                                        <dd class="govuk-summary-list__actions">
-                                            <a class="govuk-link" asp-controller="Organisation" asp-action="ChangeWebsite">
-                                                Change<span class="govuk-visually-hidden"> website</span>
-                                            </a>
-                                        </dd>
-                                    }
-                                </div>
-                            </dl>
+                        <div class="govuk-grid-row">
+                            <div class="govuk-grid-column-two-thirds">
+                                <h2 class="govuk-heading-l">Register details</h2>
+                                @if (string.IsNullOrEmpty(Model.PrimaryContactName))
+                                {
+                                    <div class="govuk-warning-text">
+                                        <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                                        <strong class="govuk-warning-text__text">
+                                            <span class="govuk-warning-text__assistive">Warning</span>
+                                            We need to know your contact name for the register
+                                        </strong>
+                                    </div>
+                                }
+                                <p class="govuk-body">This is the information that employers and training providers will use to contact you.</p>
+                            </div>
                         </div>
+                        <div class="govuk-grid-row">
+                            <div class="govuk-grid-column-full">
+                                <dl class="govuk-summary-list govuk-!-margin-bottom-0">
+                                    <div class="govuk-summary-list__row">
+                                        <dt class="govuk-summary-list__key">Contact name</dt>
+                                        <dd class="govuk-summary-list__value">
+                                            @if (string.IsNullOrEmpty(Model.PrimaryContactName))
+                                            {
+                                                <span class="govuk-hint">Select a user</span>
+                                            }
+                                            else
+                                            {
+                                                @Model.PrimaryContactName
+                                            }
+                                        </dd>
+                                        @if (Model.UserHasChangeOrganisationPrivilege == true)
+                                        {
+                                            <dd class="govuk-summary-list__actions">
+                                                <a class="govuk-link" asp-controller="Organisation" asp-action="SelectOrChangeContactName">
+                                                    Change<span class="govuk-visually-hidden"> contact name</span>
+                                                </a>
+                                            </dd>
+                                        }
+                                    </div>
+                                    <div class="govuk-summary-list__row">
+                                        <dt class="govuk-summary-list__key">Phone number</dt>
+                                        <dd class="govuk-summary-list__value">@Model.PhoneNumber</dd>
+                                        @if (Model.UserHasChangeOrganisationPrivilege == true)
+                                        {
+                                            <dd class="govuk-summary-list__actions">
+                                                <a class="govuk-link" asp-controller="Organisation" asp-action="ChangePhoneNumber">
+                                                    Change<span class="govuk-visually-hidden"> phone number</span>
+                                                </a>
+                                            </dd>
+                                        }
+                                    </div>
+                                    <div class="govuk-summary-list__row">
+                                        <dt class="govuk-summary-list__key">Address</dt>
+                                        <dd class="govuk-summary-list__value">
+                                            @if (@Model.Address1 != null)
+                                            {
+                                                @Model.Address1<br />
+                                            }
+                                            @if (@Model.Address2 != null)
+                                            {
+                                                @Model.Address2<br />
+                                            }
+                                            @if (@Model.Address3 != null)
+                                            {
+                                                @Model.Address3<br />
+                                            }
+                                            @if (@Model.Address4 != null)
+                                            {
+                                                @Model.Address4<br />
+                                            }
+                                            @if (@Model.Postcode != null)
+                                            {
+                                                @Model.Postcode
+                                            }
+                                        </dd>
+                                        @if (Model.UserHasChangeOrganisationPrivilege == true)
+                                        {
+                                            <dd class="govuk-summary-list__actions">
+                                                <a class="govuk-link" asp-controller="Organisation" asp-action="ChangeAddress">
+                                                    Change<span class="govuk-visually-hidden"> address</span>
+                                                </a>
+                                            </dd>
+                                        }
+                                    </div>
+                                    <div class="govuk-summary-list__row">
+                                        <dt class="govuk-summary-list__key">Email</dt>
+                                        <dd class="govuk-summary-list__value">@Model.Email</dd>
+                                        @if (Model.UserHasChangeOrganisationPrivilege == true)
+                                        {
+                                            <dd class="govuk-summary-list__actions">
+                                                <a class="govuk-link" asp-controller="Organisation" asp-action="ChangeEmail">
+                                                    Change<span class="govuk-visually-hidden"> email</span>
+                                                </a>
+                                            </dd>
+                                        }
+                                    </div>
+                                    <div class="govuk-summary-list__row">
+                                        <dt class="govuk-summary-list__key">Website</dt>
+                                        <dd class="govuk-summary-list__value">@Model.WebsiteLink</dd>
+                                        @if (Model.UserHasChangeOrganisationPrivilege == true)
+                                        {
+                                            <dd class="govuk-summary-list__actions">
+                                                <a class="govuk-link" asp-controller="Organisation" asp-action="ChangeWebsite">
+                                                    Change<span class="govuk-visually-hidden"> website</span>
+                                                </a>
+                                            </dd>
+                                        }
+                                    </div>
+                                </dl>
+                            </div>
+                        </div>
+
                         @if (Model.UserHasChangeOrganisationPrivilege == false)
                         {
                             <form asp-controller="RequestAccess" asp-action="RequestAccess">
@@ -148,7 +154,7 @@
                                 @Html.Hidden("ReturnController", @Model.AccessDeniedViewModel.ReturnController)
                                 @Html.Hidden("ReturnAction", @Model.AccessDeniedViewModel.ReturnAction)
 
-                                <p class="govuk-body">
+                                <p class="govuk-body govuk-!-margin-top-6">
                                     <span>To make changes to organisation details you need to</span>
                                     <button class="govuk-button govuk-button--looks-like-link govuk-button--looks-like-link--inline" type="submit">
                                         @if (Model.AccessDeniedViewModel.UserHasUserManagement)
@@ -164,75 +170,131 @@
                             </form>
                         }
                     </section>
-                    <!-- <section class="govuk-tabs__panel govuk-tabs__panel--hidden" id="financial-health">
-                        <h2 class="govuk-heading-l">Financial health</h2>
-                    </section> -->
                     <section class="govuk-tabs__panel govuk-tabs__panel--hidden" id="api-subscription">
-                        <div id="organisationWrapper">
-                            @if (!Model.UserHasChangeOrganisationPrivilege || !Model.ExternalApiSubscriptions.Any())
-                            {
-                                <h2 class="govuk-heading-m">Record a grade API</h2>
-                                <p class="govuk-body">Use the Record a grade API to:</p>
-                                <ul class="govuk-list govuk-list--bullet">
-                                    <li>record a grade and request a single certificate</li>
-                                    <li>record a grade and request a batch of certificates</li>
-                                    <li>check if a certificate exists</li>
-                                    <li>delete a certificate before it is submitted</li>
-                                    <li>request a list of valid certificate grades</li>
-                                    <li>request the list of options for a Standard</li>
-                                </ul>
-
-                                @if (!Model.UserHasChangeOrganisationPrivilege)
-                                {
+                        @if (!Model.UserHasChangeOrganisationPrivilege || !Model.ExternalApiSubscriptions.Any())
+                        {
+                            <div class="govuk-grid-row">
+                                <div class="govuk-grid-column-two-thirds">
+                                    <h2 class="govuk-heading-l">
+                                        Record a grade API
+                                    </h2>
                                     <p class="govuk-body">
-                                        <span>To enable your API subscription you need to</span>
-                                        <a class="govuk-link" asp-controller="Organisation" asp-action="ApiSubscriptionRequestAccess">
-                                            request the Change organisation details permission
-                                        </a>
+                                        Use the Record a grade API to:
                                     </p>
-                                }
-                                else
-                                {
-                                    <div class="govuk-warning-text">
-                                        <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
-                                        <strong class="govuk-warning-text__text">
-                                            <span class="govuk-warning-text__assistive">Warning</span>
-                                            Before you continue to request your subscription key, you need to have tested your API on the Developer Hub.
-                                        </strong>
-                                    </div>
+                                    <ul class="govuk-list govuk-list--bullet">
+                                        <li>
+                                            record a grade and request a single certificate
+                                        </li>
+                                        <li>
+                                            record a grade and request a batch of certificates
+                                        </li>
+                                        <li>
+                                            check if a certificate exists
+                                        </li>
+                                        <li>
+                                            delete a certificate before it is submitted
+                                        </li>
+                                        <li>
+                                            request a list of valid certificate grades
+                                        </li>
+                                        <li>
+                                            request the list of options for a Standard
+                                        </li>
+                                    </ul>
 
-                                    <form asp-controller="Organisation" asp-action="OrganisationDetails">
-                                        <button class="govuk-button" type="submit" name="ActionChoice" value="Enable">Generate key</button>
-                                    </form>
-                                }
-                            }
-                            else
+                                    <h3 class="govuk-heading-m">
+                                        Declaration
+                                    </h3>
+                                    <p class="govuk-body">
+                                        By recording grades for these apprentices, you are confirming that:
+                                    </p>
+                                    <ul class="govuk-list govuk-list--bullet">
+                                        <li>
+                                            the assessments were independent of both the training providers and employers
+                                        </li>
+                                        <li>
+                                            the apprentices have met the minimum duration of their apprenticeships
+                                        </li>
+                                    </ul>
+                                    <p class="govuk-body">
+                                        By applying for apprenticeship certificates for successful grades, you are also confirming that:
+                                    </p>
+                                    <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-6">
+                                        <li>
+                                            the apprentices have given permission for you to apply for a certificate on their behalf
+                                        </li>
+                                        <li>
+                                            the apprentices have achieved all the requirements of their assessment plans, including the end-point assessment
+                                        </li>
+                                        <li>
+                                            the apprentices have achieved the English and maths requirements of the apprenticeship programmes
+                                        </li>
+                                    </ul>
+
+                                    @if (!Model.UserHasChangeOrganisationPrivilege)
+                                    {
+                                        <p class="govuk-body">
+                                            <span>To enable your API subscription you need to</span>
+                                            <a class="govuk-link" asp-controller="Organisation" asp-action="ApiSubscriptionRequestAccess">
+                                                request the Change organisation details permission
+                                            </a>
+                                        </p>
+                                    }
+                                    else
+                                    {
+                                        <div class="govuk-warning-text">
+                                            <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                                            <strong class="govuk-warning-text__text">
+                                                <span class="govuk-warning-text__assistive">Warning</span>
+                                                This declaration is binding for all future recorded grades. By generating a key, you are confirming you have tested your API on the Developer Hub.
+                                            </strong>
+                                        </div>
+
+                                        <form asp-controller="Organisation" asp-action="OrganisationDetails">
+                                            <button class="govuk-button" type="submit" name="ActionChoice" value="Enable">Generate key</button>
+                                        </form>
+                                    }
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="govuk-grid-row">
+                                <div class="govuk-grid-column-two-thirds">
+                                    <h2 class="govuk-heading-l">API subscription</h2>
+                                </div>
+                            </div>
+                            @foreach (var subscription in Model.ExternalApiSubscriptions)
                             {
-                                <h2 class="govuk-heading-l">API subscription</h2>
-                                @foreach (var subscription in Model.ExternalApiSubscriptions)
-                                {
-                                    <h2 class="govuk-heading-m">@subscription.ProductId</h2>
+                                <div class="govuk-grid-row">
+                                    <div class="govuk-grid-column-two-thirds">
+                                        <h2 class="govuk-heading-m">@subscription.ProductId</h2>
 
-                                    <p>
-                                        <dl class="govuk-summary-list govuk-summary-list--top-border govuk-!-margin-bottom-0">
+                                        <dl class="govuk-summary-list govuk-summary-list--top-border govuk-!-margin-bottom-6">
                                             <div class="govuk-summary-list__row">
                                                 <dt class="govuk-summary-list__key">Last renewed</dt>
                                                 <dd class="govuk-summary-list__value">@subscription.CreatedDate.ToString("dd MMMM yyyy")</dd>
                                             </div>
                                         </dl>
-                                    </p>
+                                    </div>
+                                </div>
 
-                                    <h3 class="govuk-heading-s govuk-!-margin-bottom-0">API endpoint</h3>
-                                    <p class="das-code">@subscription.ApiEndPointUrl</p>
+                                <div class="govuk-grid-row">
+                                    <div class="govuk-grid-column-full">
 
-                                    <h3 class="govuk-heading-s govuk-!-margin-bottom-0">Subscription key</h3>
-                                    <p class="das-code">@subscription.PrimaryKey</p>
-                                    <p>
-                                        <a class="govuk-button" asp-controller="Organisation" asp-action="RenewApiKey" asp-route-subscriptionId="@subscription.Id">Renew key</a>
-                                    </p>
-                                }
+                                        <h3 class="govuk-heading-s govuk-!-margin-bottom-0">API endpoint</h3>
+                                        <p class="das-code">@subscription.ApiEndPointUrl</p>
+
+                                        <h3 class="govuk-heading-s govuk-!-margin-bottom-0">Subscription key</h3>
+                                        <p class="das-code">@subscription.PrimaryKey</p>
+                                        <div>
+                                            <a class="govuk-button govuk-!-margin-bottom-0" asp-controller="Organisation" asp-action="RenewApiKey" asp-route-subscriptionId="@subscription.Id">Renew key</a>
+                                        </div>
+                                    </div>
+                                </div>
                             }
-                        </div>
+                        }
+
                     </section>
                 </div>
             </div>

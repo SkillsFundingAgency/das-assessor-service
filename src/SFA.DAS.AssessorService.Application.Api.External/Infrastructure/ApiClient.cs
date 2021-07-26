@@ -212,29 +212,25 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
             return apiResponse;
         }
 
-
-        public virtual async Task<IEnumerable<StandardOptions>> GetStandards()
+        public virtual async Task<IEnumerable<StandardOptions>> GetStandardOptionsForLatestStandardVersions()
         {
-            var apiResponse = await Get<IEnumerable<AssessorService.Api.Types.Models.Standards.StandardCollation>>($"/api/ao/assessment-organisations/collated-standards");
+            var response = await Get<IEnumerable<StandardOptions>>("/api/v1/standard-version/standard-options/latest-version");
 
-            return Mapper.Map<IEnumerable<AssessorService.Api.Types.Models.Standards.StandardCollation>, IEnumerable<StandardOptions>>(apiResponse);
+            return response;
         }
 
-        public virtual async Task<StandardOptions> GetStandard(string standard)
+        public virtual async Task<StandardOptions> GetStandardOptionsByStandard(string standard)
         {
-            AssessorService.Api.Types.Models.Standards.StandardCollation apiResponse = null;
+            var response = await Get<StandardOptions>($"/api/v1/standard-version/standard-options/{standard}");
 
-            if (int.TryParse(standard, out int standardId))
-            {
-                apiResponse = await Get<AssessorService.Api.Types.Models.Standards.StandardCollation>($"/api/ao/assessment-organisations/collated-standards/{standardId}");
-            }
+            return response;
+        }
 
-            if (apiResponse is null)
-            {
-                apiResponse = await Get<AssessorService.Api.Types.Models.Standards.StandardCollation>($"/api/ao/assessment-organisations/collated-standards/by-reference/{standard}");
-            }
+        public virtual async Task<StandardOptions> GetStandardOptionsByStandardIdAndVersion(string standard, string version)
+        {
+            var response = await Get<StandardOptions>($"/api/v1/standard-version/standard-options/{standard}/{version}");
 
-            return Mapper.Map<AssessorService.Api.Types.Models.Standards.StandardCollation, StandardOptions>(apiResponse);
+            return response;
         }
     }
 }

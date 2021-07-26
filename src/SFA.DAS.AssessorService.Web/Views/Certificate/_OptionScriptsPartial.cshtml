@@ -1,15 +1,15 @@
 <script>
-var epaoOptionFormElement = $('.apprentice-option-form');
-var epaoOptionValidationRulesObject = {
-  rules: {
-    Option: {
-      required: true
-    }
-  },
-  messages: {
-    Option  : 'Select an option'
-  }
-};
+    var epaoOptionFormElement = $('.apprentice-option-form');
+    var epaoOptionValidationRulesObject = {
+        rules: {
+            Option: {
+                required: true
+            }
+        },
+        messages: {
+            Option: 'Select an option'
+        }
+    };
 
-GOVUK.epaoValidate(epaoOptionFormElement, epaoOptionValidationRulesObject);
+    GOVUK.epaoValidate(epaoOptionFormElement, epaoOptionValidationRulesObject);
 </script>

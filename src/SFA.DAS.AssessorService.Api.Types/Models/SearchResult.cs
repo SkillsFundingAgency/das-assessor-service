@@ -1,4 +1,6 @@
-﻿using System;
+﻿using SFA.DAS.AssessorService.Api.Types.Models.Standards;
+using System;
+using System.Collections.Generic;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models
 {
@@ -9,10 +11,13 @@ namespace SFA.DAS.AssessorService.Api.Types.Models
         public string FamilyName { get; set; }
         public DateTime DateOfBirth { get; set; }
         public int StdCode { get; set; }
+        public string StandardReferenceNumber { get; set; }
+        public List<StandardVersion> Versions { get; set; }
         public string Standard { get; set; }
         public int Level { get; set; }
         public int? FundingModel { get; set; }
         public int UkPrn { get; set; }
+        public string Version { get; set; }
         public string Option { get; set; }
         public DateTime? LearnStartDate { get; set; }
         public string OverallGrade { get; set; }
@@ -28,7 +33,6 @@ namespace SFA.DAS.AssessorService.Api.Types.Models
         public string UpdatedBy { get; set; }
         public bool ShowExtraInfo { get; set; }
         public bool UlnAlreadyExits { get; set; }
-        public bool IsPrivatelyFunded { get; set; }
         public bool IsNoMatchingFamilyName { get; set; }
     }
 }

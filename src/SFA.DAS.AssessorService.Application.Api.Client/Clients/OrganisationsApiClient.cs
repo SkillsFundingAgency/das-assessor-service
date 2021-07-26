@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
-using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Paging;
+using Organisation = SFA.DAS.AssessorService.Domain.Entities.Organisation;
 
 namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 {
@@ -15,6 +15,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
     using SFA.DAS.AssessorService.Api.Types.CharityCommission;
     using SFA.DAS.AssessorService.Api.Types.CompaniesHouse;
     using SFA.DAS.AssessorService.Api.Types.Models.Register;
+    using SFA.DAS.AssessorService.Domain.Consts;
     using System.Net;
 
     public class OrganisationsApiClient : ApiClientBase, IOrganisationsApiClient
@@ -71,7 +72,25 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                 return await RequestAndDeserialiseAsync<Organisation>(request,$"Could not find the organisation {organisationId}");
             }
         }
-        
+
+        public async Task<DateTime> GetEarliestWithdrawalDate(Guid organisationId, int? standardCode)
+        {
+            if (standardCode.HasValue)
+            {
+                using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/organisations/organisation/earliest-withdrawal/{organisationId}/{standardCode}"))
+                {
+                    return await RequestAndDeserialiseAsync<DateTime>(request, $"Could not get the earliest withdrawal for the standard {standardCode} of the organisation {organisationId}");
+                }
+            }
+            else
+            {
+                using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/organisations/organisation/earliest-withdrawal/{organisationId}"))
+                {
+                    return await RequestAndDeserialiseAsync<DateTime>(request, $"Could not get the earliest withdrawal for the organisation {organisationId}");
+                }
+            }
+        }
+
         public async Task<OrganisationResponse> Create(CreateOrganisationRequest createOrganisationRequest)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/v1/organisations/"))
@@ -251,13 +270,13 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task<ValidationResponse> ValidateCreateOrganisationStandard(string organisationId, int standardId, DateTime? effectiveFrom,
+        public async Task<ValidationResponse> ValidateCreateOrganisationStandard(string organisationId, int standardCode, DateTime? effectiveFrom,
             DateTime? effectiveTo, Guid? contactId, List<int> deliveryAreas)
         {
             var validationRequest = new CreateEpaOrganisationStandardValidationRequest
             {
                 OrganisationId = organisationId,
-                StandardCode = standardId,
+                StandardCode = standardCode,
                 EffectiveFrom = effectiveFrom?.Date,
                 EffectiveTo = effectiveTo?.Date,
                 ContactId = contactId.HasValue ? contactId.Value.ToString() : string.Empty,
@@ -271,13 +290,13 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task<ValidationResponse> ValidateUpdateOrganisationStandard(string organisationId, int standardId, DateTime? effectiveFrom,
+        public async Task<ValidationResponse> ValidateUpdateOrganisationStandard(string organisationId, int standardCode, DateTime? effectiveFrom,
             DateTime? effectiveTo, Guid? contactId, List<int> deliveryAreas, string actionChoice, string organisationStandardStatus, string organisationStatus)
         {
             var validationRequest = new UpdateEpaOrganisationStandardValidationRequest
             {
                 OrganisationId = organisationId,
-                StandardCode = standardId,
+                StandardCode = standardCode,
                 EffectiveFrom = effectiveFrom?.Date,
                 EffectiveTo = effectiveTo?.Date,
                 ContactId = contactId.HasValue ? contactId.Value.ToString() : string.Empty,
@@ -348,6 +367,16 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             {
                 return await RequestAndDeserialiseAsync<List<OrganisationStandardSummary>>(request,
                     $"Could not retrieve standards for organisation with Id of {endPointAssessorOrganisationId}");
+            }
+        }
+
+        public async Task<IEnumerable<AppliedStandardVersion>> GetAppliedStandardVersionsForEPAO(string endPointAssessorOrganisationId, string standardReference)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get,
+               $"/api/ao/assessment-organisations/{endPointAssessorOrganisationId}/standardversions/{standardReference}"))
+            {
+                return await RequestAndDeserialiseAsync<IEnumerable<AppliedStandardVersion>>(request,
+                    $"Could not retrieve standard versions for organisation with Id of {endPointAssessorOrganisationId} and standard reference {standardReference}", true);
             }
         }
 
@@ -424,6 +453,30 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                 {
                     throw;
                 }
+            }
+        }
+
+        public async Task<OrganisationStandardVersion> OrganisationStandardVersionOptIn(Guid applicationId, Guid contactId, string endPointAssessorOrganisationId, 
+            string standardReference, decimal? version, string standardUId, string comments)
+        {
+            var createVersionRequest = new OrganisationStandardVersionOptInRequest
+            {
+                ApplicationId = applicationId,
+                EndPointAssessorOrganisationId = endPointAssessorOrganisationId,
+                StandardReference = standardReference,
+                Version = version,
+                StandardUId = standardUId,
+                EffectiveFrom = DateTime.Today,
+                EffectiveTo = null,
+                DateVersionApproved = null,
+                Comments = comments,
+                Status = OrganisationStatus.Live,
+                SubmittingContactId = contactId
+            };
+
+            using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/v1/organisationstandardversion"))
+            {
+                return await PostPutRequestWithResponse<OrganisationStandardVersionOptInRequest, OrganisationStandardVersion>(request, createVersionRequest);
             }
         }
     }

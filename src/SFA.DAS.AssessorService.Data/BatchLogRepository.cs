@@ -1,69 +1,164 @@
-﻿using System;
-using System.Data;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Threading.Tasks;
-using Dapper;
-using SFA.DAS.AssessorService.Api.Types.Models;
+﻿using Dapper;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Data.DapperTypeHandlers;
+using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData.Printing;
-using SFA.DAS.AssessorService.Settings;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Data
 {
-    public class BatchLogRepository : IBatchLogRepository
+    public class BatchLogRepository : Repository, IBatchLogRepository
     {
-        private readonly AssessorDbContext _assessorDbContext;
-        private readonly IWebConfiguration _configuration;
-
-        public BatchLogRepository(AssessorDbContext assessorDbContext, IWebConfiguration configuration)
+        public BatchLogRepository(IUnitOfWork unitOfWork)
+            : base(unitOfWork)
         {
-            _assessorDbContext = assessorDbContext;
-            _configuration = configuration;
             SqlMapper.AddTypeHandler(typeof(BatchData), new BatchDataHandler());
         }
 
         public async Task<BatchLog> Create(BatchLog batchLog)
         {
-            await _assessorDbContext.BatchLogs.AddAsync(batchLog);
-            _assessorDbContext.SaveChanges();
+            await _unitOfWork.Connection.ExecuteAsync(
+                @"INSERT INTO BatchLogs ([Period], [ScheduledDate], [BatchNumber]) 
+                  VALUES (@period, @scheduledDate, @batchNumber)",
+                param: new
+                {
+                    batchLog.Period,
+                    batchLog.ScheduledDate,
+                    batchLog.BatchNumber
+                },
+                transaction: _unitOfWork.Transaction);
 
             return batchLog;
         }
-
-        public async Task<BatchLogResponse> GetBatchLogFromBatchNumber(string batchNumber)
+        public async Task<ValidationResponse> UpdateBatchLogSentToPrinter(BatchLog updatedBatchLog)
         {
-            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            var rowsAffected = await _unitOfWork.Connection.ExecuteAsync(
+                @"UPDATE [BatchLogs] SET 
+                    [BatchCreated] = @batchCreated, 
+                    [NumberOfCertificates] = @numberOfCertificates, 
+                    [NumberOfCoverLetters] = @numberOfCoverLetters, 
+                    [CertificatesFileName] = @certificatesFileName, 
+                    [FileUploadStartTime] = @fileUploadStartTime, 
+                    [FileUploadEndTime] = @fileUploadEndTime, 
+                    [BatchData] = @batchData 
+                  WHERE 
+                    [BatchNumber] = @batchNumber",
+                param: new
+                {
+                    updatedBatchLog.BatchNumber,
+                    updatedBatchLog.BatchCreated,
+                    updatedBatchLog.NumberOfCertificates,
+                    updatedBatchLog.NumberOfCoverLetters,
+                    updatedBatchLog.CertificatesFileName,
+                    updatedBatchLog.FileUploadStartTime,
+                    updatedBatchLog.FileUploadEndTime,
+                    updatedBatchLog.BatchData
+                },
+                transaction: _unitOfWork.Transaction);
+
+            var response = new ValidationResponse();
+            if(rowsAffected == 0)
             {
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
-                var sqlForMainDetails =
-                    "select * FROM BatchLogs " +
-                    "WHERE BatchNumber = @batchNumber";
-                var orgs = await connection.QueryAsync<BatchLogResponse>(sqlForMainDetails, new { batchNumber });
-                var org = orgs.FirstOrDefault();
-                return org;
+                response.Errors.Add(new ValidationErrorDetail("BatchNumber", $"Error the batch log {updatedBatchLog.BatchNumber} does not exist."));
             }
+            
+            return response;
         }
 
-        public async Task<ValidationResponse> UpdateBatchLogBatchWithDataRequest(Guid id, BatchData batchData)
+        public async Task<ValidationResponse> UpdateBatchLogPrinted(BatchLog updatedBatchLog)
         {
-            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            var rowsAffected = await _unitOfWork.Connection.ExecuteAsync(
+                @"UPDATE [BatchLogs] SET 
+                    [BatchData] = @batchData 
+                  WHERE 
+                    [BatchNumber] = @batchNumber",
+                param: new
+                {
+                    updatedBatchLog.BatchNumber,
+                    updatedBatchLog.BatchData
+                },
+                transaction: _unitOfWork.Transaction);
+
+            var response = new ValidationResponse();
+            if (rowsAffected == 0)
             {
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
-
-                   connection.Execute(
-                    "UPDATE [BatchLogs] SET [BatchData] = @batchData WHERE [Id] = @id",
-                    new { batchData, id });
-
-                
+                response.Errors.Add(new ValidationErrorDetail("BatchNumber", $"Error the batch log {updatedBatchLog.BatchNumber} does not exist."));
             }
 
-            return new ValidationResponse();
+            return response;
+        }
+
+        public async Task UpsertCertificatesReadyToPrintInBatch(int batchNumber, Guid[] certificateIds)
+        {
+            var certificateIdsToUpdate = await _unitOfWork.Connection.QueryAsync<Guid>(
+                @"SELECT 
+                    c.[Id] 
+                  FROM 
+                    [Certificates] c
+                  INNER JOIN 
+                    [CertificateBatchLogs] cbl 
+                    ON cbl.CertificateReference = c.CertificateReference 
+                  WHERE 
+                    c.Id IN @certificateIds 
+                    AND cbl.BatchNumber = @batchNumber",
+                param: new { certificateIds, batchNumber },
+                transaction: _unitOfWork.Transaction);
+
+            if (certificateIdsToUpdate.Count() > 0)
+            {
+                await _unitOfWork.Connection.ExecuteAsync(
+                    @"UPDATE [CertificateBatchLogs] 
+                      SET 
+                          CertificateData = c.CertificateData, 
+                          Status = c.Status, 
+                          StatusAt = ISNULL(c.UpdatedAt, c.CreatedAt), 
+                          UpdatedAt = GETUTCDATE(), 
+                          UpdatedBy = @updatedBy 
+                      FROM 
+                          [Certificates] c
+                      INNER JOIN 
+                          [CertificateBatchLogs] cbl 
+                          ON cbl.CertificateReference = c.CertificateReference
+                      WHERE 
+                          c.Id IN @certificateIdsToUpdate
+                          AND cbl.BatchNumber = @batchNumber",
+                    param: new { certificateIdsToUpdate, batchNumber, updatedBy = SystemUsers.PrintFunction },
+                    transaction: _unitOfWork.Transaction);
+            }
+
+            var certificateIdsToInsert = certificateIds.Except(certificateIdsToUpdate);
+            if (certificateIdsToInsert.Count() > 0)
+            {
+                await _unitOfWork.Connection.ExecuteAsync(
+                    @"INSERT INTO [CertificateBatchLogs] 
+                      ( 
+                          CertificateReference, 
+                          BatchNumber, 
+                          CertificateData, 
+                          Status, 
+                          StatusAt, 
+                          CreatedAt, 
+                          CreatedBy 
+                      ) 
+                      SELECT 
+                        c.CertificateReference, 
+                        @batchNumber, 
+                        c.CertificateData, 
+                        c.Status, 
+                        ISNULL(c.UpdatedAt, c.CreatedAt) StatusAt, 
+                        GETUTCDATE(), 
+                        @createdBy 
+                      FROM 
+                        [Certificates] c 
+                      WHERE 
+                        c.Id IN @certificateIdsToInsert",
+                    param: new { certificateIdsToInsert, batchNumber, createdBy = SystemUsers.PrintFunction },
+                    transaction: _unitOfWork.Transaction);
+            }
         }
     }
 }

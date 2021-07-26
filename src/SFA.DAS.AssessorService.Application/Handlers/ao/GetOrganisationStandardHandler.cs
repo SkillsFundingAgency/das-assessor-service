@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -7,7 +6,6 @@ using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Application.Interfaces;
-using SFA.DAS.AssessorService.ExternalApis.Services;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.ao
 {
@@ -40,6 +38,10 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ao
             organisationStandard.StandardEffectiveFrom = standard?.StandardData.EffectiveFrom;
             organisationStandard.StandardEffectiveTo = standard?.StandardData.EffectiveTo;
             organisationStandard.StandardLastDateForNewStarts = standard?.StandardData.LastDateForNewStarts;
+            organisationStandard.IFateReferenceNumber = standard?.ReferenceNumber;
+    
+            var versions = await _standardService.GetEPAORegisteredStandardVersions(organisation?.OrganisationId, standard?.StandardId);
+            organisationStandard.Versions = versions.ToList();
 
             if (organisationStandard.ContactId != null)
                 organisationStandard.Contact =  await _registerQueryRepository.GetContactByContactId(organisationStandard.ContactId.GetValueOrDefault());

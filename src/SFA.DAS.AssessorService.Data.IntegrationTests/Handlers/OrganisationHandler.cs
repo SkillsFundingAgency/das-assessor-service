@@ -59,7 +59,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
             DatabaseService.Execute(sql);
         }
 
-        public static void DeleteRecordByOrganisationId(string organisationId)
+        public static void DeleteRecordByEndPointAssessorOrganisationId(string organisationId)
         {
             var idToDelete = SqlStringService.ConvertStringToSqlValueString(organisationId);
             var sql = $@"DELETE from Organisations where [EndPointAssessorOrganisationId] = {idToDelete}";

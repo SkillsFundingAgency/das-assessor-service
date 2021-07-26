@@ -6,10 +6,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using SFA.DAS.Apprenticeships.Api.Types.Exceptions;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Domain.Consts;
+using SFA.DAS.AssessorService.Domain.Exceptions;
 using SFA.DAS.AssessorService.Domain.Paging;
 using SFA.DAS.AssessorService.Web.Constants;
 using SFA.DAS.AssessorService.Web.Infrastructure;
@@ -57,7 +57,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 if (organisation != null)
                     epaoRegisteredStandardsResponse =
                         await _standardsApiClient.GetEpaoRegisteredStandards(
-                            organisation.OrganisationId, pageIndex ?? 1);
+                            organisation.OrganisationId, pageIndex ?? 1, 10);
             }
             catch (EntityNotFoundException)
             {

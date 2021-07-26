@@ -18,18 +18,43 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             _logger = logger;
         }
 
-        public async Task<List<ApplicationResponse>> GetApplications(Guid userId, bool createdBy)
+        public async Task<List<ApplicationResponse>> GetOrganisationApplications(Guid userId)
         {
-            if (!createdBy)
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/applications/{userId}/organisation-applications"))
             {
-                using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/applications/{userId}/Organisation"))
-                {
-                    return await RequestAndDeserialiseAsync <List<ApplicationResponse>>(request, $"Could not retrieve applications");
-                }
+                return await RequestAndDeserialiseAsync<List<ApplicationResponse>>(request, $"Could not retrieve organsisation applications");
             }
-            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/Applications/{userId}"))
+        }
+
+        public async Task<List<ApplicationResponse>> GetStandardApplications(Guid userId)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/applications/{userId}/standard-applications"))
             {
-                return await RequestAndDeserialiseAsync<List<ApplicationResponse>>(request, $"Could not retrieve applications");
+                return await RequestAndDeserialiseAsync<List<ApplicationResponse>>(request, $"Could not retrieve standard applications");
+            }
+        }
+
+        public async Task<List<ApplicationResponse>> GetWithdrawalApplications(Guid userId)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/applications/{userId}/withdrawal-applications"))
+            {
+                return await RequestAndDeserialiseAsync<List<ApplicationResponse>>(request, $"Could not retrieve withdrawal applications");
+            }
+        }
+
+        public async Task<List<ApplicationResponse>> GetOrganisationWithdrawalApplications(Guid userId)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/applications/{userId}/organisation-withdrawal-applications"))
+            {
+                return await RequestAndDeserialiseAsync<List<ApplicationResponse>>(request, $"Could not retrieve organisation withdrawal applications");
+            }
+        }
+
+        public async Task<List<ApplicationResponse>> GetStandardWithdrawalApplications(Guid userId)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/applications/{userId}/standard-withdrawal-applications"))
+            {
+                return await RequestAndDeserialiseAsync<List<ApplicationResponse>>(request, $"Could not retrieve standard withdrawal applications");
             }
         }
 
@@ -40,12 +65,28 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                 return await RequestAndDeserialiseAsync<ApplicationResponse>(request, $"Could not retrieve applications");
             }
         }
-    
+
+        public async Task<ApplicationResponse> GetApplicationForUser(Guid id, Guid userId)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/applications/user/{userId}/application/{id}"))
+            {
+                return await RequestAndDeserialiseAsync<ApplicationResponse>(request, $"Could not retrieve application {id} for user {userId}");
+            }
+        }
+
         public async Task<Guid> CreateApplication(CreateApplicationRequest createApplicationRequest)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Post, $"api/v1/applications/createApplication"))
             {
                 return await PostPutRequestWithResponse<CreateApplicationRequest, Guid>(request, createApplicationRequest);
+            }
+        }
+
+        public async Task DeleteApplications(DeleteApplicationsRequest deleteApplicationsRequest)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Post, $"api/v1/applications/deleteApplications"))
+            {
+                await PostPutRequest<DeleteApplicationsRequest>(request, deleteApplicationsRequest);
             }
         }
 
@@ -58,7 +99,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task<bool> UpdateStandardData(Guid Id, int standardCode, string referenceNumber, string standardName)
+        public async Task<bool> UpdateStandardData(Guid Id, int standardCode, string referenceNumber, string standardName, List<string> versions, string standardApplicationType = null)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Post, $"api/v1/applications/updateStandardData"))
             {
@@ -67,7 +108,20 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                     Id = Id,
                     StandardCode = standardCode,
                     ReferenceNumber = referenceNumber,
-                    StandardName = standardName
+                    StandardName = standardName,
+                    Versions = versions,
+                    StandardApplicationType = standardApplicationType
+                });
+            }
+        }
+
+        public async Task<bool> ResetApplicationToStage1(Guid id)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Post, $"api/v1/applications/resetApplicationToStage1"))
+            {
+                return await PostPutRequestWithResponse<ResetApplicationToStage1Request, bool>(request, new ResetApplicationToStage1Request
+                {
+                    Id = id
                 });
             }
         }

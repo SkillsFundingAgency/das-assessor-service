@@ -16,7 +16,7 @@
                 @if (!ViewData.ModelState.IsValid)
                 {
 
-                    <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
+                    <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
                         <h2 class="govuk-error-summary__title" id="error-summary-title">
                             There is a problem
                         </h2>
@@ -64,7 +64,7 @@
                         <h2 class="govuk-heading-l">Feedback</h2>
                         @foreach (var fb in Model.Feedback)
                         {
-                            <p class="govuk-body">@Html.Raw(fb.Message)</p>
+                            <p class="govuk-body">@fb.Message</p>
                         }
                     </div>
                 }
@@ -111,11 +111,11 @@
                                         @Html.Raw(Model.PageContext)
                                     </span>
                                 }
-                                <h2 class="govuk-label-wrapper">
+                                <h1 class="govuk-label-wrapper">
                                     <label class="govuk-label govuk-label--xl" for="@question.QuestionId">
                                         @Html.Raw(question.Label)
                                     </label>
-                                </h2>
+                                </h1>
                             }
 
                             @if (question.QuestionBodyText != null)

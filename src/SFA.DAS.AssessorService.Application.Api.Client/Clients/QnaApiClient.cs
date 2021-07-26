@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 {
-    public class QnaApiClient : ApiClientBase,IQnaApiClient
+    public class QnaApiClient : ApiClientBase, IQnaApiClient
     {
         private readonly ILogger<QnaApiClient> _logger;
 
@@ -36,6 +36,15 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             using (var request = new HttpRequestMessage(HttpMethod.Get, $"/applications/{applicationId}/applicationData"))
             {
                 return await RequestAndDeserialiseAsync<ApplicationData>(request,
+                    $"Could not find the application");
+            }
+        }
+
+        public async Task<Dictionary<string, object>> GetApplicationDataDictionary(Guid applicationId)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/applications/{applicationId}/applicationData"))
+            {
+                return await RequestAndDeserialiseAsync<Dictionary<string, object>>(request,
                     $"Could not find the application");
             }
         }
@@ -149,6 +158,16 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
+        public async Task<ResetPageAnswersResponse> ResetSectionAnswers(Guid applicationId, int sequenceId, int sectionId)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Post, $"/applications/{applicationId}/sequences/{sequenceId}/sections/{sectionId}/reset"))
+            {
+                JsonSerializerSettings settings = new JsonSerializerSettings();
+                settings.Converters.Add(new SetResultConverter());
+                return await PostPutRequestWithResponse<ResetPageAnswersResponse>(request, settings);
+            }
+        }
+
         public async Task<SetPageAnswersResponse> Upload(Guid applicationId, Guid sectionId, string pageId,  IFormFileCollection files)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Post, $"/applications/{applicationId}/sections/{sectionId}/pages/{pageId}/upload"))
@@ -162,7 +181,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                 }
                 JsonSerializerSettings settings = new JsonSerializerSettings();
                 settings.Converters.Add(new SetResultConverter());
-                return await PostRequestWithFileAndResponse<SetPageAnswersResponse>(request, formDataContent, settings);
+                return await PostPutRequestWithResponse<SetPageAnswersResponse>(request, formDataContent, settings);
             }
         }
 

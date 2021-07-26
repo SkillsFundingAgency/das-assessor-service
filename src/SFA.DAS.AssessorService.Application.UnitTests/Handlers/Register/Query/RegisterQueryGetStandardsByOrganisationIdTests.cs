@@ -1,21 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
-using SFA.DAS.Apprenticeships.Api.Types;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Handlers.ao;
 using SFA.DAS.AssessorService.Application.Interfaces;
-using SFA.DAS.AssessorService.Data;
-using SFA.DAS.AssessorService.ExternalApis.Services;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
 {
@@ -38,32 +34,36 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
 
         private DateTime effectiveFrom1;
         private DateTime effectiveFrom2;
+        private DateTime effectiveFrom3;
         private DateTime effectiveTo2;
         private int _id1;
         private int _id2;
         private int _id3;
         private List<int> _expectedDeliveryAreas;
-        private List<StandardCollation> _allStandardSummaries;
         private string _expectedTitle1;
         private string _expectedTitle2;
+        private string _expectedTitle3;
 
         [SetUp]
         public void Setup()
         {
             effectiveFrom1 = DateTime.Today.AddYears(-1);
             effectiveFrom2 = DateTime.Today.AddMonths(-1);
+            effectiveFrom3 = DateTime.Today.AddMonths(-2);
             effectiveTo2 = DateTime.Today.AddMonths(1);
             _id1 = 1;
             _id2 = 2;
             _id3 = 3;
             _expectedTitle1 = "Standard 1";
             _expectedTitle2 = "Standard 2";
+            _expectedTitle3 = "Standard 3";
 
             RegisterQueryRepository = new Mock<IRegisterQueryRepository>();
+            
             _standardService = new Mock<IStandardService>();
-            _standard1 = new OrganisationStandardSummary { Id = _id1, OrganisationId = _organisationId, StandardCode = _standardCode1, EffectiveFrom = effectiveFrom1 };
-            _standard2 = new OrganisationStandardSummary { Id = _id2, OrganisationId = _organisationId, StandardCode = _standardCode2, EffectiveFrom = effectiveFrom2, EffectiveTo = effectiveTo2 };
-            _standard3 = new OrganisationStandardSummary { Id = _id3, OrganisationId = _organisationId, StandardCode = _standardCode3 };
+            _standard1 = new OrganisationStandardSummary { Id = _id1, OrganisationId = _organisationId, StandardCode = _standardCode1, EffectiveFrom = effectiveFrom1, StandardCollation = new StandardCollation { StandardId = _id1, Title = _expectedTitle1 } };
+            _standard2 = new OrganisationStandardSummary { Id = _id2, OrganisationId = _organisationId, StandardCode = _standardCode2, EffectiveFrom = effectiveFrom2, EffectiveTo = effectiveTo2, StandardCollation = new StandardCollation { StandardId = _id2, Title = _expectedTitle2 } };
+            _standard3 = new OrganisationStandardSummary { Id = _id3, OrganisationId = _organisationId, StandardCode = _standardCode3, EffectiveFrom = effectiveFrom3, StandardCollation = new StandardCollation { StandardId = _id3, Title = _expectedTitle3 } };
 
             _expectedStandards = new List<OrganisationStandardSummary>
             {
@@ -73,14 +73,6 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
             };
 
             _expectedDeliveryAreas = new List<int>{1,2};
-
-            _allStandardSummaries = new List<StandardCollation>
-            {
-                new StandardCollation {StandardId = _id1, Title = _expectedTitle1},
-                new StandardCollation {StandardId = _id2, Title = _expectedTitle2},
-                new StandardCollation {StandardId = _id3, Title = "Standard 3"},
-                new StandardCollation {StandardId = 534, Title = "Unmapped standard"}
-            };
             
             _request = new GetStandardsByOrganisationRequest { OrganisationId = _organisationId };
 
@@ -91,8 +83,6 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
 
             RegisterQueryRepository.Setup(r => r.GetDeliveryAreaIdsByOrganisationStandardId(_id1))
                 .Returns(Task.FromResult(_expectedDeliveryAreas.AsEnumerable()));
-
-            _standardService.Setup(s => s.GetAllStandards()).Returns(Task.FromResult(_allStandardSummaries.AsEnumerable()));
             
             GetStandardsByAssessmentOrganisationHandler =
                 new GetStandardsByAssessmentOrganisationHandler(RegisterQueryRepository.Object, _standardService.Object,Logger.Object);
@@ -104,9 +94,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
             GetStandardsByAssessmentOrganisationHandler.Handle(_request, new CancellationToken()).Wait();
             RegisterQueryRepository.Verify(r => r.GetOrganisationStandardByOrganisationId(_organisationId));
             RegisterQueryRepository.Verify(r => r.GetDeliveryAreaIdsByOrganisationStandardId(_id1));
-            _standardService.Verify(s => s.GetAllStandards());
         }
-
 
         [Test]
         public void GetStandardsForOrganisationReturns3SetsOfStandards()

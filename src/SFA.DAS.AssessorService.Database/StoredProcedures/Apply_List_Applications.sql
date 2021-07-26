@@ -1,5 +1,5 @@
 ﻿CREATE PROCEDURE [dbo].[Apply_List_Applications]
-	@sequenceNo INT,
+	@sequenceNos VARCHAR(MAX),
 	@organisationId AS NVARCHAR(12),
 	@includedApplicationSequenceStatus AS NVARCHAR(MAX),
 	@excludedApplicationStatus AS NVARCHAR(MAX),
@@ -12,20 +12,23 @@
     @totalCount AS INT OUTPUT
 AS
 BEGIN
-	DECLARE @Skip INT = (@PageIndex - 1) * @PageSize
+	DECLARE @Skip INT = (@pageIndex - 1) * @pageSize
 	
 	SELECT 
 		ApplicationId,
 		SequenceNo,
 		OrganisationName,
+		EndPointAssessorOrganisationId,
 		StandardName,
 		StandardCode,
 		StandardReference,
+		Versions,
 		SubmittedDate,
 		FeedbackAddedDate,
 		ClosedDate,
 		SubmissionCount,
 		ApplicationStatus,
+		StandardApplicationType,
 		ReviewStatus,
 		FinancialStatus,
 		FinancialGrade,
@@ -34,7 +37,7 @@ BEGIN
 	INTO 
 		#Results
 	FROM
-		[dbo].[Apply_Func_Get_Applications] (@sequenceNo, @organisationId, @includedApplicationSequenceStatus, @excludedApplicationStatus, @excludedReviewStatus, @includedReviewStatus)
+		[dbo].[Apply_Func_Get_Applications] (@sequenceNos, @organisationId, @includedApplicationSequenceStatus, @excludedApplicationStatus, @excludedReviewStatus, @includedReviewStatus)
 	
 	-- the total number of results is returned as an out parameter
 	SELECT @totalCount = (SELECT MAX(TotalCount) FROM #Results)
@@ -43,51 +46,54 @@ BEGIN
 		ApplicationId,
 		SequenceNo,
 		OrganisationName,
+		EndPointAssessorOrganisationId,
 		StandardName,
 		StandardCode,
 		StandardReference,
+		Versions,
 		SubmittedDate,
 		FeedbackAddedDate,
 		ClosedDate,
 		SubmissionCount,
 		ApplicationStatus,
+		StandardApplicationType,
 		ReviewStatus,
 		FinancialStatus,
-		FinancialGrade,
+		FinancialGrade,		
 		SequenceStatus
 	FROM
 		#Results
 	ORDER BY
-		CASE WHEN @SortAscending = 0 THEN ''
+		CASE WHEN @sortAscending = 0 THEN ''
 		ELSE
            CASE 
-				WHEN @SortColumn = 'OrganisationName' THEN OrganisationName
-				WHEN @SortColumn = 'StandardReference' THEN StandardReference
-				WHEN @SortColumn = 'StandardName' THEN StandardName
-				WHEN @SortColumn = 'FinancialStatus' THEN FinancialStatus
-				WHEN @SortColumn = 'Status' THEN ApplicationStatus
+				WHEN @sortColumn = 'OrganisationName' THEN OrganisationName
+				WHEN @sortColumn = 'StandardReference' THEN StandardReference
+				WHEN @sortColumn = 'StandardName' THEN StandardName
+				WHEN @sortColumn = 'FinancialStatus' THEN FinancialStatus				
+				WHEN @sortColumn = 'Status' THEN ApplicationStatus
 				-- all dynamic order by columns must be the same type and using right aligned zero padded strings to sort as natural numbers
-				WHEN @SortColumn = 'SubmittedDate' THEN RIGHT(REPLICATE('0', 20) + LTRIM(RTRIM(CAST([dbo].[ToTicks](CONVERT(DATETIME2, SubmittedDate, 127)) AS VARCHAR(20)))), 20)
-				WHEN @SortColumn = 'FeedbackAddedDate' THEN RIGHT(REPLICATE('0', 20) + LTRIM(RTRIM(CAST([dbo].[ToTicks](CONVERT(DATETIME2, FeedbackAddedDate, 127)) AS VARCHAR(20)))), 20)
-				WHEN @SortColumn = 'ClosedDate' THEN RIGHT(REPLICATE('0', 20) + LTRIM(RTRIM(CAST([dbo].[ToTicks](CONVERT(DATETIME2, ClosedDate, 127)) AS VARCHAR(20)))), 20)
+				WHEN @sortColumn = 'SubmittedDate' THEN RIGHT(REPLICATE('0', 20) + LTRIM(RTRIM(CAST([dbo].[ToTicks](CONVERT(DATETIME2, SubmittedDate, 127)) AS VARCHAR(20)))), 20)
+				WHEN @sortColumn = 'FeedbackAddedDate' THEN RIGHT(REPLICATE('0', 20) + LTRIM(RTRIM(CAST([dbo].[ToTicks](CONVERT(DATETIME2, FeedbackAddedDate, 127)) AS VARCHAR(20)))), 20)
+				WHEN @sortColumn = 'ClosedDate' THEN RIGHT(REPLICATE('0', 20) + LTRIM(RTRIM(CAST([dbo].[ToTicks](CONVERT(DATETIME2, ClosedDate, 127)) AS VARCHAR(20)))), 20)
 				ELSE CAST(ApplicationId AS VARCHAR(36))
 			END
 		END ASC,
-		CASE WHEN @SortAscending = 1 THEN ''
+		CASE WHEN @sortAscending = 1 THEN ''
 		ELSE
            CASE 
-				WHEN @SortColumn = 'OrganisationName' THEN OrganisationName
-				WHEN @SortColumn = 'StandardReference' THEN StandardReference
-				WHEN @SortColumn = 'StandardName' THEN StandardName
-				WHEN @SortColumn = 'FinancialStatus' THEN FinancialStatus
-				WHEN @SortColumn = 'Status' THEN ApplicationStatus
+				WHEN @sortColumn = 'OrganisationName' THEN OrganisationName
+				WHEN @sortColumn = 'StandardReference' THEN StandardReference
+				WHEN @sortColumn = 'StandardName' THEN StandardName
+				WHEN @sortColumn = 'FinancialStatus' THEN FinancialStatus				
+				WHEN @sortColumn = 'Status' THEN ApplicationStatus
 				-- all dynamic order by columns must be the same type and using right aligned zero padded strings to sort as natural numbers
-				WHEN @SortColumn = 'SubmittedDate' THEN RIGHT(REPLICATE('0', 20) + LTRIM(RTRIM(CAST([dbo].[ToTicks](CONVERT(DATETIME2, SubmittedDate, 127)) AS VARCHAR(20)))), 20)
-				WHEN @SortColumn = 'FeedbackAddedDate' THEN RIGHT(REPLICATE('0', 20) + LTRIM(RTRIM(CAST([dbo].[ToTicks](CONVERT(DATETIME2, FeedbackAddedDate, 127)) AS VARCHAR(20)))), 20)
-				WHEN @SortColumn = 'ClosedDate' THEN RIGHT(REPLICATE('0', 20) + LTRIM(RTRIM(CAST([dbo].[ToTicks](CONVERT(DATETIME2, ClosedDate, 127)) AS VARCHAR(20)))), 20)
+				WHEN @sortColumn = 'SubmittedDate' THEN RIGHT(REPLICATE('0', 20) + LTRIM(RTRIM(CAST([dbo].[ToTicks](CONVERT(DATETIME2, SubmittedDate, 127)) AS VARCHAR(20)))), 20)
+				WHEN @sortColumn = 'FeedbackAddedDate' THEN RIGHT(REPLICATE('0', 20) + LTRIM(RTRIM(CAST([dbo].[ToTicks](CONVERT(DATETIME2, FeedbackAddedDate, 127)) AS VARCHAR(20)))), 20)
+				WHEN @sortColumn = 'ClosedDate' THEN RIGHT(REPLICATE('0', 20) + LTRIM(RTRIM(CAST([dbo].[ToTicks](CONVERT(DATETIME2, ClosedDate, 127)) AS VARCHAR(20)))), 20)
 				ELSE CAST(ApplicationId AS VARCHAR(36))
 			END
 		END DESC
 	OFFSET @Skip ROWS
-	FETCH NEXT @PageSize ROWS ONLY
+	FETCH NEXT @pageSize ROWS ONLY
 END

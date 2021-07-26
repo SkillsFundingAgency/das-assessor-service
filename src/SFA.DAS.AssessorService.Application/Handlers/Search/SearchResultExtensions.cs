@@ -4,35 +4,43 @@ using System.Linq;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
+using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Extensions;
 using SFA.DAS.AssessorService.Domain.JsonData;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Search
 {
-    static class SearchResultExtensions
+    public static class SearchResultExtensions
     {
         public static List<SearchResult> PopulateStandards(this List<SearchResult> searchResults, IStandardService standardService, ILogger<SearchHandler> logger)
         {
-            var allStandards = standardService.GetAllStandards().Result;
+            var allStandards = standardService.GetAllStandardVersions().Result;
+            var allOptions = standardService.GetAllStandardOptions().Result;
 
             foreach (var searchResult in searchResults)
             {
-                var standard = allStandards.SingleOrDefault(s => s.StandardId == searchResult.StdCode);
-                if (standard == null)
+                var standards = allStandards.Where(s => s.LarsCode == searchResult.StdCode)
+                    .OrderByDescending(o => o.Version);
+
+                if(!standards.Any())
                 {
-                    try
-                    {
-                        standard = standardService.GetStandard(searchResult.StdCode)?.Result;
-                    }
-                    catch (Exception e)
-                    {
-                        logger.LogInformation($"Failed to get standard for {searchResult.StdCode}, error message: {e.Message}");
-                    }
+                    logger.LogInformation($"Failed to get standard for {searchResult.StdCode}");
+                    continue;
                 }
-                searchResult.Standard = standard?.Title;
-                searchResult.Level = standard?.StandardData.Level.GetValueOrDefault()??0;
+                                
+                var firstStandard = standards.First();
+                searchResult.Standard = firstStandard.Title;
+                searchResult.Level = firstStandard.Level;
+                searchResult.Versions = standards.Select(s => new StandardVersion
+                {
+                    Title = s.Title,
+                    StandardUId = s.StandardUId,
+                    Version = s.Version.GetValueOrDefault(1).ToString("#.0"),
+                    Options = allOptions.SingleOrDefault(o => o.StandardUId == s.StandardUId)?.CourseOption
+                }).ToList();
             }
 
             return searchResults;
@@ -46,84 +54,128 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
 
             var searchingEpao = _organisationRepository.Get(request.EpaOrgId).Result;
 
-            foreach (var searchResult in searchResults.Where(r => completedCertificates.Select(s => s.StandardCode).Contains(r.StdCode)))
+            if (searchResults.Count > 0)
             {
-                var certificate = completedCertificates.Single(s => s.StandardCode == searchResult.StdCode);
-                var certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
-                searchResult.CertificateReference = certificate.CertificateReference;
-                searchResult.CertificateId = certificate.Id;
-                searchResult.CertificateStatus = certificate.Status;
-                searchResult.LearnStartDate = certificateData.LearningStartDate;
-                searchResult.Option = certificateData.CourseOption;
-
-                var certificateLogs = certificateRepository.GetCertificateLogsFor(certificate.Id).Result;
-                logger.LogInformation("MatchUpExistingCompletedStandards After GetCertificateLogsFor");
-                var submittedLogEntry = certificateLogs.FirstOrDefault(l => l.Status == CertificateStatus.Submitted);
-                var createdLogEntry = certificateLogs.FirstOrDefault(l => l.Status == CertificateStatus.Draft);
-                if (request.IsPrivatelyFunded)
+                foreach (var searchResult in searchResults.Where(r => completedCertificates.Select(s => s.StandardCode).Contains(r.StdCode)))
                 {
-                    var toBeApprovedLogEntry = certificateLogs.FirstOrDefault(l => l.Status == CertificateStatus.ToBeApproved);
-                    if (toBeApprovedLogEntry == null)
-                        continue;
-                    submittedLogEntry = toBeApprovedLogEntry;
-                }
-
-                if (submittedLogEntry == null) continue;
-
-                var submittingContact = contactRepository.GetContact(submittedLogEntry.Username).Result ?? contactRepository.GetContact(certificate.UpdatedBy).Result;
-                var createdContact = contactRepository.GetContact(createdLogEntry?.Username).Result ?? contactRepository.GetContact(certificate.CreatedBy).Result;
-
-                var lastUpdatedLogEntry = certificateLogs.Aggregate((i1, i2) => i1.EventTime > i2.EventTime ? i1 : i2) ?? submittedLogEntry;
-                var lastUpdatedContact = contactRepository.GetContact(lastUpdatedLogEntry.Username).Result;
-
-                logger.LogInformation("MatchUpExistingCompletedStandards After GetContact");
-
-                var searchingContact = contactRepository.GetContact(request.Username).Result;
-
-                if (submittingContact != null && submittingContact.OrganisationId == searchingContact.OrganisationId)
-                {
-                    searchResult.ShowExtraInfo = true;
-                    searchResult.OverallGrade = certificateData.OverallGrade;
-                    searchResult.SubmittedBy = submittingContact.DisplayName; // This needs to be contact real name
-                    searchResult.SubmittedAt = submittedLogEntry.EventTime.UtcToTimeZoneTime(); // This needs to be local time 
-                    searchResult.AchDate = certificateData.AchievementDate;
-                    searchResult.UpdatedBy = lastUpdatedContact != null ? lastUpdatedContact.DisplayName : lastUpdatedLogEntry.Username; // This needs to be contact real name
-                    searchResult.UpdatedAt = lastUpdatedLogEntry.EventTime.UtcToTimeZoneTime(); // This needs to be local time
-                }
-                else if (createdContact != null && searchingContact != null && createdContact.OrganisationId == searchingContact.OrganisationId)
-                {
-                    searchResult.ShowExtraInfo = true;
-                    searchResult.OverallGrade = certificateData.OverallGrade;
-                    searchResult.SubmittedBy = submittedLogEntry.Username; // This needs to be contact real name
-                    searchResult.SubmittedAt = submittedLogEntry.EventTime.UtcToTimeZoneTime(); // This needs to be local time 
-                    searchResult.AchDate = certificateData.AchievementDate;
-                    searchResult.UpdatedBy = lastUpdatedContact != null ? lastUpdatedContact.DisplayName : lastUpdatedLogEntry.Username; // This needs to be contact real name
-                    searchResult.UpdatedAt = lastUpdatedLogEntry.EventTime.UtcToTimeZoneTime(); // This needs to be local time
-                }
-                else if(certificate.OrganisationId == searchingEpao?.Id)
-                {
-                    searchResult.ShowExtraInfo = true;
-                    searchResult.OverallGrade = certificateData.OverallGrade;
-                    searchResult.SubmittedBy = submittedLogEntry.Username ?? certificate.UpdatedBy;
-                    searchResult.SubmittedAt = submittedLogEntry.EventTime.UtcToTimeZoneTime(); // This needs to be local time 
-                    searchResult.AchDate = certificateData.AchievementDate;
-                    searchResult.UpdatedBy = lastUpdatedLogEntry.Username ?? certificate.UpdatedBy;
-                    searchResult.UpdatedAt = lastUpdatedLogEntry.EventTime.UtcToTimeZoneTime(); // This needs to be local time
-                }
-                else
-                {
-                    searchResult.ShowExtraInfo = false;
-                    searchResult.OverallGrade = "";
-                    searchResult.SubmittedBy = "";
-                    searchResult.SubmittedAt = null;
-                    searchResult.LearnStartDate = null;
-                    searchResult.AchDate = null;
-                    searchResult.UpdatedBy = null;
-                    searchResult.UpdatedAt = null; 
+                    var certificate = completedCertificates.Single(s => s.StandardCode == searchResult.StdCode);
+                    
+                    searchResult.PopulateCertificateBasicInformation(certificate);
+                    searchResult.PopulateCertificateExtraInformationDependingOnPermission(request, certificateRepository, contactRepository, certificate, searchingEpao, logger);
                 }
             }
+            else if (completedCertificates.Count > 0)
+            {
+                foreach (var certificate in completedCertificates)
+                {
+                    var certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
 
+                    // Create a new search result as it would be when returned by the ILR record
+                    var searchResult = new SearchResult
+                    {
+                        Uln = certificate.Uln,
+                        FamilyName = certificateData.LearnerFamilyName,
+                        GivenNames = certificateData.LearnerGivenNames,
+                        StdCode = certificate.StandardCode,
+                        UkPrn = certificate.ProviderUkPrn,
+                        CreatedAt = certificate.CreatedAt,
+                        LearnStartDate = certificateData.LearningStartDate
+                    };
+
+                    searchResult.PopulateCertificateBasicInformation(certificate);
+                    searchResult.PopulateCertificateExtraInformationDependingOnPermission(request, certificateRepository, contactRepository, certificate, searchingEpao, logger);
+
+                    searchResults.Add(searchResult);
+                }
+            }
+           
             return searchResults;
+        }
+
+        public static SearchResult PopulateCertificateBasicInformation(this SearchResult searchResult, Certificate certificate)
+        {
+            var certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
+
+            searchResult.CertificateReference = certificate.CertificateReference;
+            searchResult.CertificateId = certificate.Id;
+            searchResult.CertificateStatus = certificate.Status;
+            searchResult.LearnStartDate = certificateData.LearningStartDate;
+            searchResult.Version = certificateData.Version;
+            searchResult.Option = certificateData.CourseOption;
+
+            return searchResult;
+        }
+
+        public static SearchResult PopulateCertificateExtraInformationDependingOnPermission(this SearchResult searchResult, 
+            SearchQuery request, ICertificateRepository certificateRepository, IContactQueryRepository contactRepository,
+            Certificate certificate, Organisation searchingEpao, ILogger<SearchHandler> logger)
+        {
+            var certificateLogs = certificateRepository.GetCertificateLogsFor(certificate.Id).Result;
+            logger.LogInformation("MatchUpExistingCompletedStandards After GetCertificateLogsFor");
+            var createdLogEntry = certificateLogs.FirstOrDefault(l => l.Status == CertificateStatus.Draft);
+
+            var submittedLogEntry = certificateLogs.FirstOrDefault(l => l.Action == CertificateActions.Submit);
+
+            if (submittedLogEntry == null)
+            {
+                return searchResult;
+            }
+
+            var submittingContact = contactRepository.GetContact(submittedLogEntry.Username).Result ?? contactRepository.GetContact(certificate.UpdatedBy).Result;
+            var createdContact = contactRepository.GetContact(createdLogEntry?.Username).Result ?? contactRepository.GetContact(certificate.CreatedBy).Result;
+
+            var lastUpdatedLogEntry = certificateLogs.Aggregate((i1, i2) => i1.EventTime > i2.EventTime ? i1 : i2) ?? submittedLogEntry;
+            var lastUpdatedContact = contactRepository.GetContact(lastUpdatedLogEntry.Username).Result;
+
+            logger.LogInformation("MatchUpExistingCompletedStandards After GetContact");
+
+            var searchingContact = contactRepository.GetContact(request.Username).Result;
+
+            var certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
+
+            if (submittingContact.OrganisationId == searchingContact.OrganisationId)
+            {
+                searchResult.ShowExtraInfo = true;
+                searchResult.OverallGrade = certificateData.OverallGrade;
+                searchResult.SubmittedBy = submittingContact.DisplayName; // This needs to be contact real name
+                searchResult.SubmittedAt = submittedLogEntry.EventTime.UtcToTimeZoneTime(); // This needs to be local time 
+                searchResult.AchDate = certificateData.AchievementDate;
+                searchResult.UpdatedBy = lastUpdatedContact != null ? lastUpdatedContact.DisplayName : lastUpdatedLogEntry.Username; // This needs to be contact real name
+                searchResult.UpdatedAt = lastUpdatedLogEntry.EventTime.UtcToTimeZoneTime(); // This needs to be local time
+            }
+            else if (createdContact != null && searchingContact != null && createdContact.OrganisationId == searchingContact.OrganisationId)
+            {
+                searchResult.ShowExtraInfo = true;
+                searchResult.OverallGrade = certificateData.OverallGrade;
+                searchResult.SubmittedBy = submittedLogEntry.Username; // This needs to be contact real name
+                searchResult.SubmittedAt = submittedLogEntry.EventTime.UtcToTimeZoneTime(); // This needs to be local time 
+                searchResult.AchDate = certificateData.AchievementDate;
+                searchResult.UpdatedBy = lastUpdatedContact != null ? lastUpdatedContact.DisplayName : lastUpdatedLogEntry.Username; // This needs to be contact real name
+                searchResult.UpdatedAt = lastUpdatedLogEntry.EventTime.UtcToTimeZoneTime(); // This needs to be local time
+            }
+            else if (certificate.OrganisationId == searchingEpao?.Id)
+            {
+                searchResult.ShowExtraInfo = true;
+                searchResult.OverallGrade = certificateData.OverallGrade;
+                searchResult.SubmittedBy = submittedLogEntry.Username ?? certificate.UpdatedBy;
+                searchResult.SubmittedAt = submittedLogEntry.EventTime.UtcToTimeZoneTime(); // This needs to be local time 
+                searchResult.AchDate = certificateData.AchievementDate;
+                searchResult.UpdatedBy = lastUpdatedLogEntry.Username ?? certificate.UpdatedBy;
+                searchResult.UpdatedAt = lastUpdatedLogEntry.EventTime.UtcToTimeZoneTime(); // This needs to be local time
+            }
+            else
+            {
+                searchResult.ShowExtraInfo = false;
+                searchResult.OverallGrade = "";
+                searchResult.SubmittedBy = "";
+                searchResult.SubmittedAt = null;
+                searchResult.LearnStartDate = null;
+                searchResult.AchDate = null;
+                searchResult.UpdatedBy = null;
+                searchResult.UpdatedAt = null;
+            }
+            
+            return searchResult;
         }
     }
 }

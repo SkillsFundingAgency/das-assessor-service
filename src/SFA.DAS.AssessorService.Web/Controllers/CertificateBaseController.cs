@@ -31,31 +31,20 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             CertificateApiClient = certificateApiClient;
             SessionService = sessionService;
         }
-        protected async Task<IActionResult> LoadViewModel<T>(string view) where T : ICertificateViewModel, new()
+        protected async Task<IActionResult> LoadViewModel<T>(string view) where T : CertificateBaseViewModel, new()
         {
-            var username = ContextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
+            var username = GetUsernameFromClaim();
 
             Logger.LogInformation($"Load View Model for {typeof(T).Name} for {username}");
-            
+
             var viewModel = new T();
 
-            var query = ContextAccessor.HttpContext.Request.Query;
-            if (query.ContainsKey("redirecttocheck") && bool.Parse(query["redirecttocheck"]))
+            CheckAndSetRedirectToCheck(viewModel);
+
+            if (!TryGetCertificateSession(typeof(T).Name, username, out var certSession))
             {
-                Logger.LogInformation($"RedirectToCheck for {typeof(T).Name} is true");
-                SessionService.Set("redirecttocheck", "true");
-                viewModel.BackToCheckPage = true;
-            }
-            else
-                SessionService.Remove("redirecttocheck");
-                
-            var sessionString = SessionService.Get("CertificateSession");
-            if (sessionString == null)
-            {
-                Logger.LogInformation($"Session for {typeof(T).Name} requested by {username} has been lost. Redirecting to Search Index");
                 return RedirectToAction("Index", "Search");
             }
-            var certSession = JsonConvert.DeserializeObject<CertificateSession>(sessionString);
 
             var certificate = await CertificateApiClient.GetCertificate(certSession.CertificateId);
 
@@ -68,10 +57,10 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             return View(view, viewModel);
         }
 
-        protected async Task<IActionResult> SaveViewModel<T>(T vm, string returnToIfModelNotValid, RedirectToActionResult nextAction, string action) where T : ICertificateViewModel
+        protected async Task<IActionResult> SaveViewModel<T>(T vm, string returnToIfModelNotValid, RedirectToActionResult nextAction, string action) where T : CertificateBaseViewModel
         {
-            var username = ContextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
-            
+            var username = GetUsernameFromClaim();
+
             Logger.LogInformation($"Save View Model for {typeof(T).Name} for {username} with values: {GetModelValues(vm)}");
 
             var certificate = await CertificateApiClient.GetCertificate(vm.Id);
@@ -85,15 +74,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 return View(returnToIfModelNotValid, vm);
             }
 
-            if (nextAction.ActionName == "Option")
-            {
-                var sessionString = RetrieveSessionString(username);
-                if (sessionString == null)
-                    return RedirectToAction("Index", "Search");
-                if (!IsOptionSet(sessionString))
-                    certData.CourseOption = null;
-            }
-
             var updatedCertificate = vm.GetCertificateFromViewModel(certificate, certData);
             if (updatedCertificate.Status == Domain.Consts.CertificateStatus.Deleted)
             {
@@ -102,22 +82,21 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                     updatedCertificate.PrivatelyFundedStatus = null;
             }
 
-            await CertificateApiClient.UpdateCertificate(new UpdateCertificateRequest(updatedCertificate) { Username = username, Action = action});
+            try
+            {
+                await CertificateApiClient.UpdateCertificate(new UpdateCertificateRequest(updatedCertificate) { Username = username, Action = action });
+            }
+            catch
+            {
+                Logger.LogError($"Unable to update certificate with Id {certificate.Id}.");
+                return RedirectToAction("Error", "Home");
+            }
 
             Logger.LogInformation($"Certificate for {typeof(T).Name} requested by {username} with Id {certificate.Id} updated.");
 
-            if (SessionService.Exists("redirecttocheck") && bool.Parse(SessionService.Get("redirecttocheck")))
+            if (SessionService.TryGet<bool>("redirecttocheck", out var redirectToCheck) && redirectToCheck)
             {
-                if (nextAction.ActionName == "Option")
-                {
-                    var sessionString = RetrieveSessionString(username);
-                    if (sessionString == null)
-                        return RedirectToAction("Index", "Search");
-                    if (IsOptionSet(sessionString))
-                        return new RedirectToActionResult("Option", "CertificateOption", new { redirecttocheck = "true", isFromStandard = true });
-                }
-
-                if(nextAction.ActionName == "AddressSummary")
+                if (nextAction.ActionName == "AddressSummary")
                 {
                     var certAddress = vm as CertificateAddressViewModel;
                     if (string.IsNullOrEmpty(certAddress.Employer))
@@ -135,6 +114,33 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             return nextAction;
         }
 
+        protected bool TryGetCertificateSession(string model, string username, out CertificateSession certSession)
+        {
+            var sessionString = SessionService.Get(nameof(CertificateSession));
+            if (sessionString == null)
+            {
+                Logger.LogInformation($"Session for {model} requested by {username} has been lost. Redirecting to Search Index");
+                certSession = null;
+                return false;
+            }
+
+            certSession = JsonConvert.DeserializeObject<CertificateSession>(sessionString);
+            return certSession != null;
+        }
+
+        protected void CheckAndSetRedirectToCheck<T>(T viewModel) where T : CertificateBaseViewModel
+        {
+            var query = ContextAccessor.HttpContext.Request.Query;
+            if (query.ContainsKey("redirecttocheck") && bool.Parse(query["redirecttocheck"]))
+            {
+                Logger.LogInformation($"RedirectToCheck for {typeof(T).Name} is true");
+                SessionService.Set("redirecttocheck", "true");
+                viewModel.BackToCheckPage = true;
+            }
+            else
+                SessionService.Remove("redirecttocheck");
+        }
+
         private string GetModelValues<T>(T viewModel)
         {
             var properties = typeof(T).GetProperties().ToList();
@@ -142,24 +148,19 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             return properties.Aggregate("", (current, prop) => current + $"{prop.Name}: {prop.GetValue(viewModel)}, ");
         }
 
-        private string RetrieveSessionString(string username)
+        protected string GetUsernameFromClaim()
         {
-            var sessionString = SessionService.Get("CertificateSession");
-            if (sessionString == null)
-            {
-                Logger.LogInformation(
-                    $"Session for CertificateOptionViewModel requested by {username} has been lost. Redirecting to Search Index");
-            }
-            return sessionString;
+            return GetClaimValue("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn");
         }
 
-        private bool IsOptionSet(string sessionString)
+        protected string GetEpaOrgIdFromClaim()
         {
-            var certSession = JsonConvert.DeserializeObject<CertificateSession>(sessionString);
-            if (certSession.Options == null || !certSession.Options.Any())
-                return false;
-            return true;
+            return GetClaimValue("http://schemas.portal.com/epaoid");
         }
-        
+
+        private string GetClaimValue(string key)
+        {
+            return ContextAccessor.HttpContext.User.FindFirst(key)?.Value;
+        }
     }
 }

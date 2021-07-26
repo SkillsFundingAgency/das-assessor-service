@@ -6,29 +6,30 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
+using SFA.DAS.AssessorService.Application.Infrastructure;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.AssessorService.Domain.Exceptions;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using SFA.DAS.AssessorService.Domain.Paging;
-using SFA.DAS.AssessorService.ExternalApis;
-using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
 {
     public class GetCertificatesHistoryHandler : IRequestHandler<GetCertificateHistoryRequest, PaginatedList<CertificateSummaryResponse>>
     {
         private readonly ICertificateRepository _certificateRepository;
-        private readonly IAssessmentOrgsApiClient _assessmentOrgsApiClient;
+        private readonly IRoatpApiClient _roatpApiClient;
         private readonly IContactQueryRepository _contactQueryRepository;
         private readonly ILogger<GetCertificatesHistoryHandler> _logger;
 
         public GetCertificatesHistoryHandler(ICertificateRepository certificateRepository,
-            IAssessmentOrgsApiClient assessmentOrgsApiClient,
+            IRoatpApiClient roatpApiClient,
             IContactQueryRepository contactQueryRepository,
             ILogger<GetCertificatesHistoryHandler> logger)
         {
             _certificateRepository = certificateRepository;
-            _assessmentOrgsApiClient = assessmentOrgsApiClient;
+            _roatpApiClient = roatpApiClient;
             _contactQueryRepository = contactQueryRepository;
             _logger = logger;
         }
@@ -56,32 +57,35 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
 
         private async Task<PaginatedList<CertificateSummaryResponse>> MapCertificates(PaginatedList<Certificate> certificates)
         {
-            var trainingProviderName = string.Empty;
-            var recordedBy = string.Empty;
             var certificateResponses = certificates?.Items.Select(
                 certificate =>
                 {
                     var certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
-                    if (certificate.IsPrivatelyFunded)
-                    {
-                        recordedBy = certificate.CreatedBy;
-                    }
-                    else
-                    {
-                        recordedBy = certificate.CertificateLogs
+                    
+                    var recordedBy = certificate.CertificateLogs
                             .OrderByDescending(q => q.EventTime)
                             .FirstOrDefault(certificateLog =>
-                                certificateLog.Status == Domain.Consts.CertificateStatus.Submitted)?.Username;
-                    }
+                                certificateLog.Action == Domain.Consts.CertificateActions.Submit)?.Username;
+                    
+                    var printStatusAt =
+                        certificate.CertificateBatchLog?.StatusAt;
 
+                    var printReasonForChange =
+                        certificate.CertificateBatchLog?.ReasonForChange;
+
+                    var trainingProviderName = string.Empty;
                     try
                     {
                         if (certificateData.ProviderName == null)
                         {
-                            var provider = _assessmentOrgsApiClient
-                                .GetProvider(certificate.ProviderUkPrn).GetAwaiter()
-                                .GetResult();
+                            var provider = _roatpApiClient
+                                .GetOrganisationByUkprn(certificate.ProviderUkPrn).Result;
 
+                            if (provider == null)
+                            {
+                                throw new EntityNotFoundException($"Provider {certificate.ProviderUkPrn} not found", null);
+                            }
+                            
                             trainingProviderName = provider.ProviderName;
                             _certificateRepository.UpdateProviderName(certificate.Id, trainingProviderName).GetAwaiter().GetResult();
                         }
@@ -104,6 +108,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
                         CreatedAt = certificate.CreatedAt,
                         CreatedDay = certificate.CreateDay,
                         UpdatedAt = certificate.UpdatedAt,
+                        PrintStatusAt = printStatusAt,
                         ContactOrganisation = certificateData.ContactOrganisation,
                         ContactName = certificateData.ContactName,
                         TrainingProvider = trainingProviderName,
@@ -113,6 +118,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
                         OverallGrade = certificateData.OverallGrade,
                         StandardReference = certificateData.StandardReference,
                         StandardName = certificateData.StandardName,
+                        Version = certificateData.Version,
                         Level = certificateData.StandardLevel,
                         AchievementDate = certificateData.AchievementDate,
                         LearningStartDate = certificateData.LearningStartDate,
@@ -120,7 +126,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
                         ContactAddLine2 = certificateData.ContactAddLine2,
                         ContactAddLine3 = certificateData.ContactAddLine3,
                         ContactAddLine4 = certificateData.ContactAddLine4,
-                        ContactPostCode = certificateData.ContactPostCode
+                        ContactPostCode = certificateData.ContactPostCode,
+                        Status = certificate.Status,
+                        ReasonForChange = printReasonForChange
                     };
                 });
 

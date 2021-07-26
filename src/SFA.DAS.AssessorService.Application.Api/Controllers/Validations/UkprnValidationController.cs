@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -5,12 +6,12 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.Application.Api.Infrastructure;
+using SFA.DAS.AssessorService.Application.Infrastructure;
 using SFA.DAS.AssessorService.Application.Interfaces;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers.Validations
 {
     [Authorize(Roles = "AssessorServiceInternalAPI")]
-    [Route("Validations/UkPrn")]
     public class UkprnValidationController : Controller
     {
         private readonly IRoatpApiClient _roatpApiClient;
@@ -22,8 +23,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.Validations
             _organisationQueryRepository = organisationQueryRepository;
         }
         
-        [HttpGet]
-        public async Task<ActionResult<ApiValidationResult>> ValidateUkPrn(int q)
+        [HttpGet("Validations/UkPrn/{id}")]
+        public async Task<ActionResult<ApiValidationResult>> ValidateUkPrn(Guid id, int q)
         {
             // false if on epao register already.
             var epaOrg = await _organisationQueryRepository.GetByUkPrn(q);

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
@@ -18,7 +19,6 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         string CheckOrganisationTypeExists(int? organisationTypeId);
         string CheckIfOrganisationNotFound(string organisationId); 
         string CheckUkprnIsValid(long? ukprn);
-        Task<StandardCollation> GetStandard(int standardCode);
         string CheckIfOrganisationStandardAlreadyExists(string organisationId, int standardCode);
         string CheckOrganisationNameNotUsed(string name);
         string CheckOrganisationNameNotUsedForOtherOrganisations(string name, string organisationIdToIgnore);
@@ -64,6 +64,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         ValidationResponse ValidatorUpdateEpaOrganisationRequest(UpdateEpaOrganisationRequest request);
         ValidationResponse ValidatorCreateEpaOrganisationStandardRequest(CreateEpaOrganisationStandardRequest request);
         ValidationResponse ValidatorUpdateEpaOrganisationStandardRequest(UpdateEpaOrganisationStandardRequest request);
+        Task<ValidationResponse> ValidatorUpdateOrganisationStandardVersionRequest(UpdateOrganisationStandardVersionRequest request);
         ValidationResponse ValidatorSearchStandardsRequest(SearchStandardsValidationRequest request);
 
     }

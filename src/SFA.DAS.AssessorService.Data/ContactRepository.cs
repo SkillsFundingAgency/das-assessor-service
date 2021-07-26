@@ -34,24 +34,6 @@ namespace SFA.DAS.AssessorService.Data
             return newContact;
         }
         
-
-        public async Task AssociateRoleWithContact(string roleName, Contact newContact)
-        {
-            var contactRoleEntity =
-                await _assessorDbContext.ContactRoles.FirstOrDefaultAsync(q =>
-                    q.ContactId == newContact.Id && q.RoleName == roleName);
-            if (contactRoleEntity == null)
-            {
-                _assessorDbContext.ContactRoles.Add(new ContactRole
-                {
-                    ContactId = newContact.Id,
-                    Id = Guid.NewGuid(),
-                    RoleName = roleName
-                });
-                await _assessorDbContext.SaveChangesAsync();
-            }
-        }
-
         public async Task AssociatePrivilegesWithContact(Guid contactId, IEnumerable<Privilege> privileges)
         {
             

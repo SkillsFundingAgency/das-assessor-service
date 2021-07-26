@@ -2,9 +2,9 @@
 using System.Threading;
 using Moq;
 using NUnit.Framework;
-using SFA.DAS.Apprenticeships.Api.Types.AssessmentOrgs;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
+using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
 {
@@ -28,6 +28,9 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
                     new OrganisationStandardSummary {StandardCode = 13},
                     new OrganisationStandardSummary {StandardCode = 14}
                 });
+
+            CertificateRepository.Setup(c => c.GetCompletedCertificatesFor(It.IsAny<long>()))
+                .ReturnsAsync(new List<Certificate>());
 
             SearchHandler
                 .Handle(new SearchQuery() {Surname = "smith", EpaOrgId = "99999", Uln = 12345, Username = "dave"},

@@ -1,32 +1,25 @@
 ﻿using Microsoft.Extensions.Logging;
-using SFA.DAS.Apprenticeships.Api.Types;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Application.Mapping.Structs;
 using SFA.DAS.AssessorService.Domain.Entities;
-using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
-using SFA.DAS.AssessorService.ExternalApis.IFAStandards;
-using SFA.DAS.AssessorService.ExternalApis.IFAStandards.Types;
-using SFA.DAS.AssessorService.ExternalApis.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using OrganisationStandardVersion = SFA.DAS.AssessorService.Api.Types.Models.AO.OrganisationStandardVersion;
 
 namespace SFA.DAS.AssessorService.Application.Api.Services
 {
     public class StandardService : IStandardService
     {
         private readonly CacheService _cacheService;
-        private readonly IAssessmentOrgsApiClient _assessmentOrgsApiClient;
-        private readonly IIfaStandardsApiClient _ifaStandardsApiClient;
         private readonly ILogger<StandardService> _logger;
         private readonly IStandardRepository _standardRepository;
 
-        public StandardService(CacheService cacheService, IAssessmentOrgsApiClient assessmentOrgsApiClient, IIfaStandardsApiClient ifaStandardsApiClient, ILogger<StandardService> logger, IStandardRepository standardRepository)
+        public StandardService(CacheService cacheService, ILogger<StandardService> logger, IStandardRepository standardRepository)
         {
             _cacheService = cacheService;
-            _assessmentOrgsApiClient = assessmentOrgsApiClient;
-            _ifaStandardsApiClient = ifaStandardsApiClient;
             _logger = logger;
             _standardRepository = standardRepository;
         }
@@ -42,6 +35,48 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
 
             await _cacheService.SaveToCache("StandardCollations", standardCollations, 8);
             return standardCollations;
+        }
+
+        public async Task<IEnumerable<Standard>> GetAllStandardVersions()
+        {
+            var results = await _cacheService.RetrieveFromCache<IEnumerable<Standard>>("Standards");
+
+            if (results != null)
+                return results;
+
+            var standards = await _standardRepository.GetAllStandards();
+
+            await _cacheService.SaveToCache("Standards", standards, 8);
+            return standards;
+        }
+
+        public async Task<IEnumerable<Standard>> GetLatestStandardVersions()
+        {
+            var results = await _cacheService.RetrieveFromCache<IEnumerable<Standard>>("LatestStandards");
+
+            if (results != null)
+                return results;
+
+            var standards = await _standardRepository.GetLatestStandardVersions();
+
+            await _cacheService.SaveToCache("LatestStandards", standards, 8);
+            return standards;
+        }
+
+        public async Task<IEnumerable<Standard>> GetStandardVersionsByIFateReferenceNumber(string iFateReferenceNumber)
+        {
+            IEnumerable<Standard> standards = null;
+
+            try
+            {
+                standards = await _standardRepository.GetStandardVersionsByIFateReferenceNumber(iFateReferenceNumber);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"STANDARD VERSION: Failed to get for iFateReferenceNumber: {iFateReferenceNumber}");
+            }
+
+            return standards;
         }
 
         public async Task<StandardCollation> GetStandard(int standardId)
@@ -60,6 +95,69 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
             return standardCollation;
         }
 
+        public async Task<Standard> GetStandardVersionById(string id, string version = null)
+        {
+            Standard standard = null;
+            try
+            {
+                var standardId = new StandardId(id);
+
+                switch (standardId.IdType)
+                {
+                    case StandardId.StandardIdType.LarsCode:
+                        standard = await _standardRepository.GetStandardVersionByLarsCode(standardId.LarsCode, version);
+                        break;
+                    case StandardId.StandardIdType.IFateReferenceNumber:
+                        standard = await _standardRepository.GetStandardVersionByIFateReferenceNumber(standardId.IFateReferenceNumber, version);
+                        break;
+                    case StandardId.StandardIdType.StandardUId:
+                        standard = await _standardRepository.GetStandardVersionByStandardUId(standardId.StandardUId);
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException("id", "StandardId was not of type StandardUId, LarsCode or IfateReferenceNumber");
+
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"STANDARD VERSION: Failed to get for standard id: {id}");
+            }
+
+            return standard;
+        }
+
+        public async Task<IEnumerable<Standard>> GetStandardVersionsByLarsCode(int larsCode)
+        {
+            IEnumerable<Standard> standards = null;
+
+            try
+            {
+                standards = await _standardRepository.GetStandardVersionsByLarsCode(larsCode);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"STANDARD: Failed to get for standard id: {larsCode}");
+            }
+
+            return standards;
+        }
+
+        public async Task<Standard> GetStandardVersionByStandardUId(string standardUId)
+        {
+            Standard standard = null;
+
+            try
+            {
+                standard = await _standardRepository.GetStandardVersionByStandardUId(standardUId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"STANDARD: Failed to get for standard id: {standardUId}");
+            }
+
+            return standard;
+        }
+
         public async Task<StandardCollation> GetStandard(string referenceNumber)
         {
             StandardCollation standardCollation = null;
@@ -76,151 +174,117 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
             return standardCollation;
         }
 
-        public async Task<IEnumerable<IfaStandard>> GetIfaStandards()
+
+        public async Task<IEnumerable<StandardOptions>> GetAllStandardOptions()
         {
             try
             {
-                _logger.LogInformation("STANDARD COLLATION: Starting gathering of all IFA Standard details");
-                return await _ifaStandardsApiClient.GetAllStandards();
+                var options = await _standardRepository.GetAllStandardOptions();
+
+                return options;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "STANDARD COLLATION: Failed to gather all IFA Standard details");
+                _logger.LogError(ex, "STANDARD OPTIONS: Failed to get standard options");
             }
 
             return null;
         }
 
-        public async Task<IEnumerable<StandardCollation>> GatherAllApprovedStandardDetails(List<IfaStandard> approvedIfaStandards)
+        public async Task<IEnumerable<StandardOptions>> GetStandardOptionsForLatestStandardVersions()
         {
-            _logger.LogInformation("STANDARD COLLATION: Starting gathering of all WIN Standard details");
-            var winResults = await _assessmentOrgsApiClient.GetAllStandardsV2();
+            try
+            {
+                var options = await _standardRepository.GetStandardOptionsForLatestStandardVersions();
 
-            _logger.LogInformation("STANDARD COLLATION: Start collating approved IFA and WIN standards");
-            var collation = CollateWinAndIfaStandardDetails(winResults, approvedIfaStandards);
+                return options;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "STANDARD OPTIONS: Failed to get options for latest version of each standard");
+            }
 
-            _logger.LogInformation($"STANDARD COLLATION: Add unmatched approved IFA Standards to collation");
-            AddIfaOnlyStandardsToCollatedStandards(approvedIfaStandards, collation);
-
-            _logger.LogInformation($"STANDARD COLLATION: Approved collation finished");
-
-            return collation;
+            return null;
         }
 
-        public IEnumerable<StandardNonApprovedCollation> GatherAllNonApprovedStandardDetails(List<IfaStandard> nonApprovedIfaStandards)
+        public async Task<StandardOptions> GetStandardOptionsByStandardId(string id)
         {
-            _logger.LogInformation("STANDARD COLLATION: Start collating non-approved IFA and WIN standards");
-            var collation = CollateNonApprovedIfaStandardDetails(nonApprovedIfaStandards);
+            StandardOptions options = null;
+            try
+            {
+                var standardId = new StandardId(id);
+                switch (standardId.IdType)
+                {
+                    case StandardId.StandardIdType.LarsCode:
+                        options = await _standardRepository.GetStandardOptionsByLarsCode(standardId.LarsCode);
+                        break;
+                    case StandardId.StandardIdType.IFateReferenceNumber:
+                        options = await _standardRepository.GetStandardOptionsByIFateReferenceNumber(standardId.IFateReferenceNumber);
+                        break;
+                    case StandardId.StandardIdType.StandardUId:
+                        options = await _standardRepository.GetStandardOptionsByStandardUId(standardId.StandardUId);
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"STANDARD OPTIONS: Failed to get standard options for id {id}");
+            }
 
-            _logger.LogInformation($"STANDARD COLLATION: Non-Approved collation finished");
+            return options;
+        }
 
-            return collation;
+        public async Task<StandardOptions> GetStandardOptionsByStandardIdAndVersion(string id, string version)
+        {
+            Standard standard = new Standard();
+
+            try
+            {
+                var standardId = new StandardId(id);
+
+                switch (standardId.IdType)
+                {
+                    case StandardId.StandardIdType.IFateReferenceNumber:
+                        standard = await _standardRepository.GetStandardVersionByIFateReferenceNumber(standardId.IFateReferenceNumber, version);
+                        break;
+                    case StandardId.StandardIdType.LarsCode:
+                        standard = await _standardRepository.GetStandardVersionByLarsCode(standardId.LarsCode, version);
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Could not find standard with id: {id} and Version: {version}");
+
+                return null;
+            }
+
+            return await GetStandardOptionsByStandardId(standard.StandardUId);
         }
 
         public async Task<IEnumerable<EPORegisteredStandards>> GetEpaoRegisteredStandards(string endPointAssessorOrganisationId)
         {
-            var results = await _standardRepository.GetEpaoRegisteredStandards(endPointAssessorOrganisationId, short.MaxValue, null);
+            var results = await _standardRepository.GetEpaoRegisteredStandards(endPointAssessorOrganisationId, int.MaxValue, 1);
             return results.PageOfResults;
         }
 
-        private void AddIfaOnlyStandardsToCollatedStandards(List<IfaStandard> ifaResults, List<StandardCollation> collation)
+        public async Task<IEnumerable<OrganisationStandardVersion>> GetEPAORegisteredStandardVersions(string endPointAssessorOrganisationId, int? larsCode = null)
         {
-            var uncollatedIfaStandards = ifaResults?.Where(ifaStandard => collation.All(s => s.StandardId != ifaStandard.LarsCode))
-                .ToList();
-
-            if (uncollatedIfaStandards != null)
+            if (larsCode.HasValue && larsCode.Value > 0)
             {
-                foreach (var ifaStandard in uncollatedIfaStandards)
-                {
-                    var standard = MapDataToStandardCollation(ifaStandard.LarsCode, ifaStandard, null);
-                    collation.Add(standard);
-                }
-            }
-        }
-
-        private List<StandardCollation> CollateWinAndIfaStandardDetails(List<StandardSummary> winResults, List<IfaStandard> ifaResults)
-        {
-            var collation = new List<StandardCollation>();
-            foreach (var winStandard in winResults)
-            {
-                if (!int.TryParse(winStandard.Id, out int standardId)) continue;
-                var ifaStandardToMatch = ifaResults?.FirstOrDefault(x => x.LarsCode.ToString() == winStandard.Id);
-                var standard = MapDataToStandardCollation(standardId, ifaStandardToMatch, winStandard);
-                collation.Add(standard);
+                var versionsOfStandard = await _standardRepository.GetEpaoRegisteredStandardVersions(endPointAssessorOrganisationId, larsCode.Value);
+                    
+                return versionsOfStandard.Select(version => (OrganisationStandardVersion)version);
             }
 
-            return collation;
+            var versions = await _standardRepository.GetEpaoRegisteredStandardVersions(endPointAssessorOrganisationId);
+
+            return versions.Select(version => (OrganisationStandardVersion)version);
         }
 
-        private List<StandardNonApprovedCollation> CollateNonApprovedIfaStandardDetails(List<IfaStandard> ifaResultsWithoutLarsCode)
+        public async Task<IEnumerable<StandardVersion>> GetEpaoRegisteredStandardVersionsByIFateReferenceNumber(string endPointAssessorOrganisationId, string iFateReferenceNumber)
         {
-            var collation = new List<StandardNonApprovedCollation>();
-            foreach (var ifaStandard in ifaResultsWithoutLarsCode)
-            {
-                var standard = MapDataToStandardNonApprovedCollation(ifaStandard);
-                collation.Add(standard);
-            }
-
-            return collation;
-        }
-
-        private StandardCollation MapDataToStandardCollation(int standardId, IfaStandard ifaStandard, StandardSummary winStandard)
-        {
-            return new StandardCollation
-            {
-                StandardId = standardId,
-                ReferenceNumber = ifaStandard?.ReferenceNumber,
-                Title = ifaStandard?.Title ?? winStandard?.Title,
-                StandardData = new StandardData
-                {
-                    Category = ifaStandard?.Route,
-                    IfaStatus = ifaStandard?.Status,
-                    EqaProviderName = ifaStandard?.EqaProvider?.ProviderName,
-                    EqaProviderContactName = ifaStandard?.EqaProvider?.ContactName,
-                    EqaProviderContactAddress = ifaStandard?.EqaProvider?.ContactAddress,
-                    EqaProviderContactEmail = ifaStandard?.EqaProvider?.ContactEmail,
-                    EqaProviderWebLink = ifaStandard?.EqaProvider?.WebLink,
-                    IntegratedDegree = ifaStandard?.IntegratedDegree,
-                    EffectiveFrom = winStandard?.EffectiveFrom,
-                    EffectiveTo = winStandard?.EffectiveTo,
-                    Level = winStandard?.Level ?? ifaStandard?.Level,
-                    LastDateForNewStarts = winStandard?.LastDateForNewStarts,
-                    IfaOnly = winStandard == null,
-                    Duration = winStandard?.Duration ?? ifaStandard?.TypicalDuration,
-                    MaxFunding = winStandard?.CurrentFundingCap ?? ifaStandard?.MaxFunding,
-                    Trailblazer = ifaStandard?.TbMainContact,
-                    PublishedDate = ifaStandard?.ApprovedForDelivery,
-                    IsPublished = winStandard?.IsPublished ?? ifaStandard?.IsPublished,
-                    Ssa1 = ifaStandard?.Ssa1,
-                    Ssa2 = ifaStandard?.Ssa2,
-                    OverviewOfRole = ifaStandard?.OverviewOfRole,
-                    IsActiveStandardInWin = winStandard?.IsActiveStandard,
-                    FatUri = winStandard?.Uri,
-                    IfaUri = ifaStandard?.Url,
-                    AssessmentPlanUrl = ifaStandard?.AssessmentPlanUrl,
-                    StandardPageUrl = ifaStandard?.StandardPageUrl
-                }
-            };
-        }
-
-        private StandardNonApprovedCollation MapDataToStandardNonApprovedCollation(IfaStandard ifaStandard)
-        {
-            return new StandardNonApprovedCollation
-            {
-                ReferenceNumber = ifaStandard.ReferenceNumber,
-                Title = ifaStandard.Title,
-                StandardData = new StandardNonApprovedData
-                {
-                    Category = ifaStandard.Route,
-                    IfaStatus = ifaStandard.Status,
-                    IntegratedDegree = ifaStandard.IntegratedDegree,
-                    Level = ifaStandard.Level,
-                    Duration = ifaStandard.TypicalDuration,
-                    Trailblazer = ifaStandard.TbMainContact,
-                    OverviewOfRole = ifaStandard.OverviewOfRole,
-                    StandardPageUrl = ifaStandard.StandardPageUrl
-                }
-            };
+            return await _standardRepository.GetEpaoRegisteredStandardVersionsByIFateReferenceNumber(endPointAssessorOrganisationId, iFateReferenceNumber);
         }
     }
 }

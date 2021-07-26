@@ -5,7 +5,7 @@ using SFA.DAS.AssessorService.Domain.JsonData;
 
 namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
 {
-    public class CertificateAddressViewModel : CertificateBaseViewModel, ICertificateViewModel
+    public class CertificateAddressViewModel : CertificateBaseViewModel
     {
         public string Employer { get; set; }
         public string Name { get; set; }
@@ -49,17 +49,17 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
             this.Postcode = String.Empty;
         }
 
-        public Domain.Entities.Certificate GetCertificateFromViewModel(Domain.Entities.Certificate certificate, CertificateData data)
+        public override Domain.Entities.Certificate GetCertificateFromViewModel(Domain.Entities.Certificate certificate, CertificateData certData)
         {
-            data.ContactOrganisation = Employer;
+            certData.ContactOrganisation = Employer;
 
-            data.ContactAddLine1 = AddressLine1;
-            data.ContactAddLine2 = AddressLine2;
-            data.ContactAddLine3 = AddressLine3;
-            data.ContactAddLine4 = City;
-            data.ContactPostCode = Postcode;
+            certData.ContactAddLine1 = AddressLine1;
+            certData.ContactAddLine2 = AddressLine2;
+            certData.ContactAddLine3 = AddressLine3;
+            certData.ContactAddLine4 = City;
+            certData.ContactPostCode = Postcode;
 
-            certificate.CertificateData = JsonConvert.SerializeObject(data);
+            certificate.CertificateData = JsonConvert.SerializeObject(certData);
 
             return certificate;
         }

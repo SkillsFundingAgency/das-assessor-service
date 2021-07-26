@@ -8,6 +8,7 @@ namespace SFA.DAS.AssessorService.Domain.JsonData
         public string LearnerGivenNames { get; set; }
         public string LearnerFamilyName { get; set; }
         public string StandardReference { get; set; }
+        public string Version { get; set; }
         public string StandardName { get; set; }
         public int StandardLevel { get; set; }
         public DateTime? StandardPublicationDate { get; set; }
@@ -27,6 +28,8 @@ namespace SFA.DAS.AssessorService.Domain.JsonData
         public string OverallGrade { get; set; }
         public string Department { get; set; }
         public string FullName { get; set; }
+
+        public string IncidentNumber { get; set; }
 
         public EpaDetails EpaDetails { get; set; }
     }

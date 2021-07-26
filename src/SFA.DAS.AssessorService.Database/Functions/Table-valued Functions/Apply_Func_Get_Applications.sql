@@ -1,6 +1,6 @@
 ﻿CREATE FUNCTION [dbo].[Apply_Func_Get_Applications]
 (	
-	@sequenceNo INT,
+	@sequenceNos AS NVARCHAR(MAX),
 	@organisationId AS NVARCHAR(12),
 	@includedApplicationSequenceStatus AS NVARCHAR(MAX),
 	@excludedApplicationStatus AS NVARCHAR(MAX),
@@ -12,46 +12,61 @@ AS
 RETURN 
 (
 	SELECT 
-        ap1.id AS ApplicationId,
+        ap1.Id AS ApplicationId,
         seq.SequenceNo AS SequenceNo,
         org.EndPointAssessorName AS OrganisationName,
-        CASE WHEN seq.SequenceNo = 1 THEN NULL
-		        ELSE JSON_VALUE(ap1.Applydata, '$.Apply.StandardName')
+		org.EndPointAssessorOrganisationId AS EndPointAssessorOrganisationId,
+        CASE WHEN seq.SequenceNo = [dbo].[ApplyConst_STANDARD_SEQUENCE_NO]() THEN JSON_VALUE(ap1.ApplyData, '$.Apply.StandardName')
+			 WHEN seq.SequenceNo = [dbo].[ApplyConst_STANDARD_WITHDRAWAL_SEQUENCE_NO]() THEN JSON_VALUE(ap1.ApplyData, '$.Apply.StandardName')
+		     ELSE NULL
         END As StandardName,
-        CASE WHEN seq.SequenceNo = 1 THEN NULL
-		        ELSE JSON_VALUE(ap1.Applydata, '$.Apply.StandardCode')
+        CASE WHEN seq.SequenceNo = [dbo].[ApplyConst_STANDARD_SEQUENCE_NO]() THEN JSON_VALUE(ap1.ApplyData, '$.Apply.StandardCode')
+			 WHEN seq.SequenceNo = [dbo].[ApplyConst_STANDARD_WITHDRAWAL_SEQUENCE_NO]() THEN JSON_VALUE(ap1.ApplyData, '$.Apply.StandardCode')
+		     ELSE NULL
         END As StandardCode,
-		CASE WHEN seq.SequenceNo = 1 THEN NULL
-		        ELSE JSON_VALUE(ap1.Applydata, '$.Apply.StandardReference')
+		CASE WHEN seq.SequenceNo = [dbo].[ApplyConst_STANDARD_SEQUENCE_NO]() THEN JSON_VALUE(ap1.ApplyData, '$.Apply.StandardReference')
+			 WHEN seq.SequenceNo = [dbo].[ApplyConst_STANDARD_WITHDRAWAL_SEQUENCE_NO]() THEN JSON_VALUE(ap1.ApplyData, '$.Apply.StandardReference')
+		     ELSE NULL
         END As StandardReference,
-		CASE WHEN seq.SequenceNo = 1 THEN JSON_VALUE(ap1.Applydata, '$.Apply.LatestInitSubmissionDate')
-		        WHEN seq.SequenceNo = 2 THEN JSON_VALUE(ap1.Applydata, '$.Apply.LatestStandardSubmissionDate')
-		        ELSE NULL
+		CASE WHEN seq.SequenceNo = [dbo].[ApplyConst_ORGANISATION_SEQUENCE_NO]() THEN JSON_VALUE(ap1.ApplyData, '$.Apply.LatestInitSubmissionDate')
+		     WHEN seq.SequenceNo = [dbo].[ApplyConst_STANDARD_SEQUENCE_NO]() THEN JSON_VALUE(ap1.ApplyData, '$.Apply.LatestStandardSubmissionDate')
+			 WHEN seq.SequenceNo = [dbo].[ApplyConst_ORGANISATION_WITHDRAWAL_SEQUENCE_NO]() THEN JSON_VALUE(ap1.ApplyData, '$.Apply.LatestOrganisationWithdrawalSubmissionDate')
+		     WHEN seq.SequenceNo = [dbo].[ApplyConst_STANDARD_WITHDRAWAL_SEQUENCE_NO]() THEN JSON_VALUE(ap1.ApplyData, '$.Apply.LatestStandardWithdrawalSubmissionDate')
+		     ELSE NULL
 		END As SubmittedDate,
-        CASE WHEN seq.SequenceNo = 1 THEN JSON_VALUE(ap1.Applydata, '$.Apply.InitSubmissionFeedbackAddedDate')
-		        WHEN seq.SequenceNo = 2 THEN JSON_VALUE(ap1.Applydata, '$.Apply.StandardSubmissionFeedbackAddedDate')
-		        ELSE NULL
+        CASE WHEN seq.SequenceNo = [dbo].[ApplyConst_ORGANISATION_SEQUENCE_NO]() THEN JSON_VALUE(ap1.ApplyData, '$.Apply.InitSubmissionFeedbackAddedDate')
+		     WHEN seq.SequenceNo = [dbo].[ApplyConst_STANDARD_SEQUENCE_NO]() THEN JSON_VALUE(ap1.ApplyData, '$.Apply.StandardSubmissionFeedbackAddedDate')
+			 WHEN seq.SequenceNo = [dbo].[ApplyConst_ORGANISATION_WITHDRAWAL_SEQUENCE_NO]() THEN JSON_VALUE(ap1.ApplyData, '$.Apply.OrganisationWithdrawalSubmissionFeedbackAddedDate')
+		     WHEN seq.SequenceNo = [dbo].[ApplyConst_STANDARD_WITHDRAWAL_SEQUENCE_NO]() THEN JSON_VALUE(ap1.ApplyData, '$.Apply.StandardWithdrawalSubmissionFeedbackAddedDate')
+		     ELSE NULL
 		END As FeedbackAddedDate,
-		CASE WHEN seq.SequenceNo = 1 THEN JSON_VALUE(ap1.Applydata, '$.Apply.InitSubmissionClosedDate')
-		        WHEN seq.SequenceNo = 2 THEN JSON_VALUE(ap1.Applydata, '$.Apply.StandardSubmissionClosedDate')
-		        ELSE NULL
+		CASE WHEN seq.SequenceNo = [dbo].[ApplyConst_ORGANISATION_SEQUENCE_NO]() THEN JSON_VALUE(ap1.ApplyData, '$.Apply.InitSubmissionClosedDate')
+		     WHEN seq.SequenceNo = [dbo].[ApplyConst_STANDARD_SEQUENCE_NO]() THEN JSON_VALUE(ap1.ApplyData, '$.Apply.StandardSubmissionClosedDate')
+			 WHEN seq.SequenceNo = [dbo].[ApplyConst_ORGANISATION_WITHDRAWAL_SEQUENCE_NO]() THEN JSON_VALUE(ap1.ApplyData, '$.Apply.OrganisationWithdrawalSubmissionClosedDate')
+		     WHEN seq.SequenceNo = [dbo].[ApplyConst_STANDARD_WITHDRAWAL_SEQUENCE_NO]() THEN JSON_VALUE(ap1.ApplyData, '$.Apply.StandardWithdrawalSubmissionClosedDate')
+		     ELSE NULL
 	    END As ClosedDate,
-        CASE WHEN seq.SequenceNo = 1 THEN JSON_VALUE(ap1.Applydata, '$.Apply.InitSubmissionCount')
-		        WHEN seq.SequenceNo = 2 THEN JSON_VALUE(ap1.Applydata, '$.Apply.StandardSubmissionsCount')
-		        ELSE 0
+        CASE WHEN seq.SequenceNo = [dbo].[ApplyConst_ORGANISATION_SEQUENCE_NO]() THEN JSON_VALUE(ap1.ApplyData, '$.Apply.InitSubmissionsCount')
+		     WHEN seq.SequenceNo = [dbo].[ApplyConst_STANDARD_SEQUENCE_NO]() THEN JSON_VALUE(ap1.ApplyData, '$.Apply.StandardSubmissionsCount')
+			 WHEN seq.SequenceNo = [dbo].[ApplyConst_ORGANISATION_WITHDRAWAL_SEQUENCE_NO]() THEN JSON_VALUE(ap1.ApplyData, '$.Apply.OrganisationWithdrawalSubmissionsCount')
+		     WHEN seq.SequenceNo = [dbo].[ApplyConst_STANDARD_WITHDRAWAL_SEQUENCE_NO]() THEN JSON_VALUE(ap1.ApplyData, '$.Apply.StandardWithdrawalSubmissionsCount')
+		     ELSE 0
 		END As SubmissionCount,
         ap1.ApplicationStatus As ApplicationStatus,
         ap1.ReviewStatus As ReviewStatus,
+		ap1.StandardApplicationType as StandardApplicationType,
         ap1.FinancialReviewStatus As FinancialStatus,
-        JSON_VALUE(ap1.FinancialGrade,'$.SelectedGrade') AS FinancialGrade,
+		JSON_QUERY(ap1.ApplyData, '$.Apply.Versions') as Versions,
+        JSON_VALUE(ap1.FinancialGrade,'$.SelectedGrade') AS FinancialGrade,		
         seq.Status As SequenceStatus,
 		TotalCount = COUNT(1) OVER()
 	FROM 
 		Apply ap1
 		INNER JOIN Organisations org ON ap1.OrganisationId = org.Id
-        CROSS APPLY OPENJSON(ApplyData,'$.Sequences') WITH (SequenceNo INT, Status VARCHAR(20), NotRequired BIT) seq
+		CROSS APPLY OPENJSON(ApplyData,'$.Sequences') WITH (SequenceNo INT, Status VARCHAR(20), NotRequired BIT) seq
 	WHERE 
-		seq.SequenceNo = @sequenceNo AND seq.NotRequired = 0
+		seq.SequenceNo IN (SELECT LTRIM(RTRIM(value)) FROM STRING_SPLIT ( @sequenceNos, '|' ))
+		AND seq.NotRequired = 0
 		AND (org.EndPointAssessorOrganisationId = @organisationId OR @organisationId IS NULL)
 		AND seq.Status IN (SELECT LTRIM(RTRIM(value)) FROM STRING_SPLIT ( @includedApplicationSequenceStatus, '|' )) 
         AND ap1.DeletedAt IS NULL

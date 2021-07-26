@@ -33,16 +33,16 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
         [SwaggerResponseExample((int)HttpStatusCode.OK, typeof(SwaggerHelpers.Examples.GetOptionsForAllStandardResponseExample))]
         [SwaggerResponse((int)HttpStatusCode.OK, "The list of options for each Standard.", typeof(IEnumerable<StandardOptions>))]
         [SwaggerOperation("Get Options", "Gets the latest list of course options by Standard.", Produces = new string[] { "application/json" })]
-        public async Task<IActionResult> GetOptionsForAllStandards()
+        public async Task<IActionResult> GetStandardOptionsForLatestStandardVersions()
         {
-            var standards = await _apiClient.GetStandards();
+            var standards = await _apiClient.GetStandardOptionsForLatestStandardVersions();
 
             if(standards is null)
             {
                 return StatusCode((int)HttpStatusCode.ServiceUnavailable);
             }
 
-            return Ok(standards.Where(s => s.CourseOption != null).OrderBy(s => s.StandardCode));
+            return Ok(standards);
         }
 
         [HttpGet("options/{*standard}")]
@@ -53,18 +53,40 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
         [SwaggerOperation("Get Options for Standard", "Gets the latest list of course options for the specified Standard.", Produces = new string[] { "application/json" })]
         public async Task<IActionResult> GetOptionsForStandard([SwaggerParameter("Standard Code or Standard Reference Number")] string standard)
         {
-            var requestedStandard = await _apiClient.GetStandard(standard);
+            var requestedStandard = await _apiClient.GetStandardOptionsByStandard(standard);
 
             if (requestedStandard is null)
             {
                 return NotFound();
             }
-            else if (requestedStandard.CourseOption is null)
+            else if (requestedStandard.CourseOption is null || requestedStandard.CourseOption.Any() == false)
             {
                 return NoContent();
             }
 
             return Ok(requestedStandard);
+        }
+
+        [HttpGet("options/{standard}/{version}")]
+        [SwaggerResponseExample((int)HttpStatusCode.OK, typeof(SwaggerHelpers.Examples.GetStandardVersionOptionsResponseExample))]
+        [SwaggerResponse((int)HttpStatusCode.OK, "The list of options.", typeof(StandardOptions))]
+        [SwaggerResponse((int)HttpStatusCode.NoContent, "The standard version was found, however it has no options.")]
+        [SwaggerResponse((int)HttpStatusCode.NotFound, "The standard version was not found.")]
+        [SwaggerOperation("Get Options for a standard version", "Gets the latest list of course options for the specified Standard version.", Produces = new string[] { "application/json" })]
+        public async Task<IActionResult> GetOptionsForStandardVersion([SwaggerParameter("Standard Code or Standard Reference Number")] string standard, string version)
+        {
+            var standardVersion = await _apiClient.GetStandardOptionsByStandardIdAndVersion(standard, version);
+
+            if (standardVersion is null)
+            {
+                return NotFound();
+            }
+            else if (standardVersion.CourseOption is null || standardVersion.CourseOption.Any() == false)
+            {
+                return NoContent();
+            }
+
+            return Ok(standardVersion);
         }
     }
 }

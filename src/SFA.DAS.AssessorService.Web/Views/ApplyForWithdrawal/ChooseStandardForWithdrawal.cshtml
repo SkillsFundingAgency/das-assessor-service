@@ -1,0 +1,98 @@
+@model SFA.DAS.AssessorService.Web.ViewModels.ApplyForWithdrawal.ChooseStandardForWithdrawalViewModel;
+@{
+    ViewData["Title"] = "Which standard do you want to withdraw from assessing?";
+    Layout = "_DashboardLayout";
+}
+
+<a asp-action="TypeOfWithdrawal" asp-controller="ApplyForWithdrawal" class="govuk-back-link">Back</a>
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+         <div class="govuk-grid-column-full">
+            <h1 class="govuk-heading-xl">Which standard do you want to withdraw from assessing? </h1>
+
+            @if (Model.Standards.Items.Any())
+            {
+                <div class="govuk-grid-row">
+                    <div class="govuk-grid-column-full">
+                        <table class="govuk-table">
+                            <caption class="govuk-table__caption"></caption>
+                            <thead class="govuk-table__head">
+                                <tr class="govuk-table__row">
+                                    <th class="govuk-table__header" scope="col">Standard</th>
+                                    <th class="govuk-table__header" scope="col">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody class="govuk-table__body" scope="col">
+                                @foreach (var item in Model.Standards.Items)
+                                {
+                                    <tr class="govuk-table__row">
+                                        <th class="govuk-table__header" scope="row">
+                                            @item.StandardName (Level @item.Level)
+                                            <p class="govuk-body">@item.ReferenceNumber</p>
+                                        </th>
+                                        <td class="govuk-table__cell">
+                                            @if (item.ApplicationId.HasValue)
+                                            {
+                                                <a asp-action="SequenceSignPost" asp-controller="Application" asp-route-id="@item.ApplicationId" class="govuk-link">Select</a>
+                                            }
+                                            else if (item.NumberOfVersions > 1)
+                                            {
+                                                <a asp-action="WholeStandardOrVersion" asp-controller="ApplyForWithdrawal" asp-route-iFateReferenceNumber="@item.ReferenceNumber" class="govuk-link">Select</a>
+                                            }
+                                            else
+                                            {
+                                                <a asp-action="CheckWithdrawalRequest" asp-controller="ApplyForWithdrawal" asp-route-iFateReferenceNumber="@item.ReferenceNumber" asp-route-backAction="ChooseStandardForWithdrawal" class="govuk-link">Select</a>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                @if (Model.Standards.HasPreviousPage || Model.Standards.HasNextPage)
+                {
+                    <div class="govuk-grid-row">
+                        <div class="govuk-grid-column-full">
+                            <div class="page-navigation">
+
+                                @if (Model.Standards.HasPreviousPage)
+                                {
+                                    <a asp-action="ChooseStandardForWithdrawal"
+                                    asp-controller="ApplyForWithdrawal"
+                                    asp-route-pageIndex="@(Model.Standards.PageIndex - 1)"
+                                    class="govuk-link previous">
+                                        <em class="arrow-button icon-left-open">&#xe800;</em>
+                                        <span class="description">Previous <span class="hide-mob">page</span></span>
+                                        <span class="counter">Page <span class="prevPage">@(Model.Standards.PageIndex - 1)</span> of <span class="totalPage">@(Model.Standards.TotalPages)</span></span>
+                                    </a>
+                                }
+
+                                @if (Model.Standards.HasNextPage)
+                                {
+                                    <a asp-action="ChooseStandardForWithdrawal"
+                                    asp-controller="ApplyForWithdrawal"
+                                    asp-route-pageIndex="@(Model.Standards.PageIndex + 1)"
+                                    class="govuk-link next">
+                                        <em class="arrow-button icon-right-open">&#xe801;</em>
+                                        <span class="description">Next <span class="hide-mob">page</span></span>
+                                        <span class="counter">Page <span class="nextPage">@(Model.Standards.PageIndex + 1)</span> of <span class="totalPage">@(Model.Standards.TotalPages)</span></span>
+                                    </a>
+                                }
+
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="info-summary">
+                    <h2 class="govuk-heading-m">You are not yet approved to assess any standards.</h2>
+                </div>
+            }
+        </div>
+    </div>
+</main>

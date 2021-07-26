@@ -145,9 +145,9 @@
     <value>Search for a different address</value>
   </data>
   <data name="Employer" xml:space="preserve">
-    <value>Company name</value>
+    <value>Organisation name (optional)</value>
   </data>
-    <data name="Heading" xml:space="preserve">
+  <data name="Heading" xml:space="preserve">
     <value>Confirm the address where we are sending the certificate</value>
   </data>
   <data name="LoadingAddress" xml:space="preserve">

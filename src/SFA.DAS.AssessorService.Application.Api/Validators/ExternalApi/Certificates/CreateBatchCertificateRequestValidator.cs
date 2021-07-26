@@ -10,11 +10,16 @@ using System;
 
 namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Certificates
 {
-    public class CreateBatchCertificateRequestValidator : AbstractValidator<BatchCertificateRequest>
+    public class CreateBatchCertificateRequestValidator : AbstractValidator<CreateBatchCertificateRequest>
     {
-        public CreateBatchCertificateRequestValidator(IStringLocalizer<BatchCertificateRequestValidator> localiser, IOrganisationQueryRepository organisationQueryRepository, IIlrRepository ilrRepository, ICertificateRepository certificateRepository, IStandardService standardService)
+        public CreateBatchCertificateRequestValidator(
+            IStringLocalizer<BatchCertificateRequestValidator> localiser,
+            IOrganisationQueryRepository organisationQueryRepository,
+            IIlrRepository ilrRepository,
+            ICertificateRepository certificateRepository,
+            IStandardService standardService)
         {
-            Include(new BatchCertificateRequestValidator(localiser, organisationQueryRepository, ilrRepository, certificateRepository, standardService));
+            Include(new BatchCertificateRequestValidator(localiser, organisationQueryRepository, ilrRepository, standardService));
 
             RuleFor(m => m.CertificateReference).Empty().WithMessage("Certificate reference must be empty").DependentRules(() =>
             {
@@ -22,31 +27,49 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Certifi
                 {
                     var existingCertificate = await certificateRepository.GetCertificate(m.Uln, m.StandardCode);
                     var sumbittingEpao = await organisationQueryRepository.GetByUkPrn(m.UkPrn);
+                    var learnerDetails = await ilrRepository.Get(m.Uln, m.StandardCode);
 
                     if (existingCertificate != null && existingCertificate.Status != CertificateStatus.Deleted)
                     {
+                        var certData = JsonConvert.DeserializeObject<CertificateData>(existingCertificate.CertificateData);
+
                         if (sumbittingEpao?.Id != existingCertificate.OrganisationId)
                         {
                             context.AddFailure(new ValidationFailure("CertificateData", $"Your organisation is not the creator of the EPA"));
                         }
                         else if (existingCertificate.Status == CertificateStatus.Draft)
                         {
-                            var certData = JsonConvert.DeserializeObject<CertificateData>(existingCertificate.CertificateData);
-
-                            if (!string.IsNullOrEmpty(certData.OverallGrade) && certData.AchievementDate.HasValue && !string.IsNullOrEmpty(certData.ContactPostCode))
+                            if (!string.IsNullOrEmpty(certData.OverallGrade))
                             {
                                 context.AddFailure(new ValidationFailure("CertificateData", $"Certificate already exists: {existingCertificate.CertificateReference}"));
                             }
-                            else if (!EpaOutcome.Pass.Equals(certData.EpaDetails?.LatestEpaOutcome, StringComparison.InvariantCultureIgnoreCase))
-                            {
-                                context.AddFailure(new ValidationFailure("CertificateData", $"Latest EPA Outcome has not passed"));
-                            }
+                        }
+                        else if (existingCertificate.Status == CertificateStatus.Submitted && !string.IsNullOrWhiteSpace(certData.OverallGrade) && certData.OverallGrade.Equals(CertificateGrade.Fail, StringComparison.OrdinalIgnoreCase))
+                        { 
+                            // A submitted fail can be re-created
                         }
                         else
                         {
                             context.AddFailure(new ValidationFailure("CertificateData", $"Certificate already exists: {existingCertificate.CertificateReference}"));
                         }
                     }
+
+                    if (learnerDetails != null)
+                    {
+                        if (learnerDetails.CompletionStatus == (int)CompletionStatus.Withdrawn)
+                        {
+                            context.AddFailure(new ValidationFailure("LearnerDetails", "Cannot find the apprentice details"));
+                        }
+                        else if (learnerDetails.CompletionStatus == (int)CompletionStatus.TemporarilyWithdrawn)
+                        {
+                            context.AddFailure(new ValidationFailure("LearnerDetails", "Cannot find the apprentice details"));
+                        }
+                    }
+                    else
+                    {
+                        context.AddFailure(new ValidationFailure("LearnerDetails", $"Learner details for ULN: {m.Uln} not found"));
+                    }
+
                 });
             });
         }

@@ -1,0 +1,71 @@
+@using SFA.DAS.AssessorService.Domain.Consts;
+@model SFA.DAS.AssessorService.Web.ViewModels.ApplyForWithdrawal.TypeOfWithdrawalViewModel;
+@{
+    ViewData["Title"] = "What are you withdrawing from?";
+    Layout = "_DashboardLayout";
+}
+
+<a asp-action="Index" asp-controller="ApplyForWithdrawal" class="govuk-back-link">Back</a>
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
+            <h2 class="govuk-error-summary__title" id="error-summary-title">
+                There is a problem
+            </h2>
+            <div class="govuk-error-summary__body">
+                <ul class="govuk-list govuk-error-summary__list">
+                    <li><a sfa-validation-for="TypeOfWithdrawal"></a></li>
+                </ul>
+            </div>
+        </div>
+    }
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <form asp-action="TypeOfWithdrawal" asp-controller="ApplyForWithdrawal" method="post">
+                <div class="govuk-form-group" sfa-validation-for="TypeOfWithdrawal" sfa-validationerror-class="govuk-form-group--error">
+                    <fieldset class="govuk-fieldset">
+                        <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
+                            <h1 class="govuk-fieldset__heading">
+                                What are you withdrawing from?
+                            </h1>
+                        </legend>
+                        <sfa-validationerror-detail sfa-validation-for="TypeOfWithdrawal" sfa-validationerror-class="govuk-error-message"></sfa-validationerror-detail>
+                        <div class="govuk-radios">
+                            <div class="govuk-radios__item">
+                                <input class="govuk-radios__input"
+                                       id="TypeOfWithdrawal"
+                                       name="TypeOfWithdrawal"
+                                       type="radio"
+                                       value="@ApplicationTypes.StandardWithdrawal"
+                                       asp-for="TypeOfWithdrawal"
+                                       sfa-validation-for="TypeOfWithdrawal"
+                                       sfa-validationerror-class="govuk-input--error">
+                                <label class="govuk-label govuk-radios__label" for="withdrawal-type">
+                                    Assessing a specific standard or version(s) of that standard
+                                </label>
+                            </div>
+                            <div class="govuk-radios__item">
+                                <input class="govuk-radios__input"
+                                       id="TypeOfWithdrawal-2"
+                                       name="TypeOfWithdrawal"
+                                       type="radio"
+                                       value="@ApplicationTypes.OrganisationWithdrawal"
+                                       asp-for="TypeOfWithdrawal"
+                                       sfa-validation-for="TypeOfWithdrawal"
+                                       sfa-validationerror-class="govuk-input--error">
+                                <label class="govuk-label govuk-radios__label" for="withdrawal-type-2">
+                                    The register of end-point assessment organisations
+                                </label>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+                <button class="govuk-button govuk-!-margin-top-4" data-module="govuk-button">
+                    Save and continue
+                </button>
+            </form>
+        </div>
+    </div>
+</main>

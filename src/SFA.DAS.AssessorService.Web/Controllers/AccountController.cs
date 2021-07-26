@@ -101,6 +101,12 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         {
             ResetCookies();
 
+            if(!User.Identity.IsAuthenticated)
+            {
+                // If they are no longer authenticated then the cookie has expired. Don't try to signout.
+                return RedirectToAction(nameof(HomeController.Index), "Home");
+            }
+
             return SignOut(
                 CookieAuthenticationDefaults.AuthenticationScheme, OpenIdConnectDefaults.AuthenticationScheme);
         }
@@ -108,7 +114,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [HttpGet]
         public IActionResult SignedOut()
         {
-
             if (User.Identity.IsAuthenticated)
             {
                 // Redirect to home page if the user is authenticated.
@@ -121,9 +126,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> AccessDenied()
         {
-            if (TempData.Keys.Contains("DeniedPrivilegeContext"))
+            if (TempData.Keys.Contains(nameof(PrivilegeAuthorizationDeniedContext)))
             {
-                var deniedPrivilegeContext = JsonConvert.DeserializeObject<DeniedPrivilegeContext>(TempData["DeniedPrivilegeContext"].ToString());
+                var deniedContext = JsonConvert
+                    .DeserializeObject<PrivilegeAuthorizationDeniedContext>(TempData[nameof(PrivilegeAuthorizationDeniedContext)]
+                    .ToString());
 
                 var userId = Guid.Parse(User.FindFirst("UserId").Value);
                 var user = await _contactsApiClient.GetById(userId);
@@ -132,26 +139,28 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 {
                     organisation = await _organisationsApiClient.GetOrganisationByUserId(userId);
 
-                }catch(Exception ex)
+                }
+                catch (Exception ex)
                 {
                     _logger.LogWarning(ex.Message, ex);
-                    if(user.OrganisationId == null && user.Status == ContactStatus.Live) {
-                        return RedirectToAction("Index","OrganisationSearch");
+                    if (user.OrganisationId == null && user.Status == ContactStatus.Live)
+                    {
+                        return RedirectToAction("Index", "OrganisationSearch");
                     }
                 }
 
-                if(user.OrganisationId != null && user.Status == ContactStatus.InvitePending)
+                if (user.OrganisationId != null && user.Status == ContactStatus.InvitePending)
                 {
                     return RedirectToAction("InvitePending", "Home");
                 }
 
-                if(organisation != null && organisation.Status == OrganisationStatus.Applying || 
+                if (organisation != null && organisation.Status == OrganisationStatus.Applying ||
                     organisation.Status == OrganisationStatus.New)
                 {
                     return RedirectToAction("Index", "Dashboard");
                 }
 
-                var privilege = (await _contactsApiClient.GetPrivileges()).Single(p => p.Id == deniedPrivilegeContext.PrivilegeId);
+                var privilege = (await _contactsApiClient.GetPrivileges()).Single(p => p.Id == deniedContext.PrivilegeId);
 
                 var usersPrivileges = await _contactsApiClient.GetContactPrivileges(userId);
                 
@@ -159,11 +168,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 {
                     Title = privilege.UserPrivilege,
                     Rights = privilege.PrivilegeData.Rights,
-                    PrivilegeId = deniedPrivilegeContext.PrivilegeId,
+                    PrivilegeId = deniedContext.PrivilegeId,
                     ContactId = userId,
                     UserHasUserManagement = usersPrivileges.Any(up => up.Privilege.Key == Privileges.ManageUsers),
-                    ReturnController = deniedPrivilegeContext.Controller,
-                    ReturnAction = deniedPrivilegeContext.Action,
+                    ReturnController = deniedContext.Controller,
+                    ReturnAction = deniedContext.Action,
                     IsUsersOrganisationLive = organisation?.Status == OrganisationStatus.Live
                 });
             }

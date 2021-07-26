@@ -5,10 +5,9 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Api.Types.Models.BatchLogs;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
-using SFA.DAS.AssessorService.Domain.Entities;
-using SFA.DAS.AssessorService.Domain.JsonData.Printing;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers
@@ -25,28 +24,27 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             _mediator = mediator;
         }
 
-        [HttpGet("latest", Name = "GetLastBatchLog")]
+        [HttpGet("{batchNumber}", Name = "GetBatchLog")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(BatchLogResponse))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> GetLastBatchLog()
+        public async Task<IActionResult> GetBatchLog(int batchNumber)
         {
-            var batchLog = await _mediator.Send(new GetLastBatchLogRequest());
-            if (batchLog.CertificatesFileName == null)
+            var batchLog = await _mediator.Send(new GetBatchLogRequest {BatchNumber = batchNumber});
+            if (batchLog == null)
+            {
                 return NoContent();
+            }
+
             return Ok(batchLog);
         }
 
-        [HttpGet("{batchNumber}", Name = "GetBatchLogForBatchNumber")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(BatchLogResponse))]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
+        [HttpGet("batch-number-ready-to-print", Name = "GetBatchNumberReadyToPrint")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(int?))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> GetBatchLogForPeriodAndBatchNumber(string batchNumber)
+        public async Task<IActionResult> GetBatchNumberReadyToPrint()
         {
-            var batchLog = await _mediator.Send(new GetBatchFromBatchNumberRequest {BatchNumber = batchNumber});
-            if (batchLog == null)
-                return NoContent();
-            return Ok(batchLog);
+            return Ok(await _mediator.Send(new GetBatchNumberReadyToPrintRequest()));
         }
     }
 }

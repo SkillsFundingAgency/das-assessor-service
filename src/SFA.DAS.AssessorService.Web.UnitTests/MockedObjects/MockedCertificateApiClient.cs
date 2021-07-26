@@ -10,7 +10,6 @@ using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Settings;
-using SFA.DAS.AssessorService.Web.ViewModels.Certificate.Private;
 
 namespace SFA.DAS.AssessorService.Web.UnitTests.MockedObjects
 {
@@ -40,20 +39,14 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.MockedObjects
                 .Respond("application/json", JsonConvert.SerializeObject(certificate));
 
             mockHttp.When($"http://localhost:59022/api/v1/certificates/options/?stdCode={93}")
-                .Respond("application/json", JsonConvert.SerializeObject(options));            
+                .Respond("application/json", JsonConvert.SerializeObject(options));
 
-            var certificateFirstNameViewModel = new CertificateFirstNameViewModel
-            {
-                Id = new Guid("1f120837-72d5-40eb-a785-b3936210d47a"),
-                FullName = "James Corley",
-                FirstName = "James",
-                FamilyName = "Corley",
-                GivenNames = "James",
-                Level = 2,
-                Standard = "91",
-                IsPrivatelyFunded = true
-            };
-            
+            mockHttp.When($"http://localhost:59022/api/v1/certificates/options/?stdCode={1}")
+                .Respond("application/json", JsonConvert.SerializeObject(options));
+
+            mockHttp.When($"http://localhost:59022/api/v1/certificates/start")
+                .Respond("application/json", JsonConvert.SerializeObject(certificate));
+           
             mockHttp
                 .When(System.Net.Http.HttpMethod.Put, "http://localhost:59022/api/v1/certificates/update")
                 .Respond(System.Net.HttpStatusCode.OK, "application/json", "{'status' : 'OK'}");

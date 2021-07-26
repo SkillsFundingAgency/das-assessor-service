@@ -9,6 +9,8 @@
         public DateTime? PlannedEndDate { get; set; }
         public string ProviderName { get; set; }
         public int ProviderUkPrn { get; set; }
+        public string Version { get; set; }
+        public string CourseOption { get; set; }
 
         #region GetHashCode, Equals and IEquatable
         public override int GetHashCode()

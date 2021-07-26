@@ -1,14 +1,12 @@
 using MediatR;
 using Microsoft.Extensions.Logging;
 using Moq;
-using SFA.DAS.Apprenticeships.Api.Types;
 using SFA.DAS.AssessorService.Application.Api.Controllers;
 using System.Collections.Generic;
 using System.Threading;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using NUnit.Framework;
-using SFA.DAS.AssessorService.Api.Types;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 

@@ -57,7 +57,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             try
             {
                 var epaoId = _sessionService.Get("EndPointAssessorOrganisationId");
-                var standards = await _standardsApiClient.GetEpaoRegisteredStandards(epaoId, 1);
+                var standards = await _standardsApiClient.GetEpaoRegisteredStandards(epaoId, 1, 10);
                 standard = standards.Items.FirstOrDefault(s => !string.IsNullOrEmpty(s.StandardName));
             }
             catch (Exception ex) when (ex is EntityNotFoundException || ex is NullReferenceException)

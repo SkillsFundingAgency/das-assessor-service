@@ -1,28 +1,44 @@
 ﻿@using SFA.DAS.AssessorService.Web.ViewModels
 @using SFA.DAS.AssessorService.Domain.Extensions
-@model SFA.DAS.AssessorService.Web.ViewModels.Apply.StandardViewModel
+@model SFA.DAS.AssessorService.Web.ViewModels.Apply.StandardVersionViewModel
 
 @{
     ViewBag.Title = "Confirm Standard";
     Layout = "_Layout";
-    bool showErrors = TempData["ShowErrors"] as bool? ?? false;
-    var standardCode = Model.StandardCode;
+    bool showConfirmedError = TempData["ShowConfirmedError"] as bool? ?? false;
+    bool showVersionError = TempData["ShowVersionError"] as bool? ?? false;
+    var standardCode = Model.StandardReference;
+    var multipleVersions = Model.Results != null && Model.Results.Count() > 1;
 }
 
-<a href="/standard/@Model.Id" class="govuk-back-link">Return to standards search</a>
+@if (Model.FromStandardsVersion)
+{
+    <a href="@Url.Action("ConfirmStandard", "Standard", new { id = Model.Id, standardReference = Model.StandardReference})" class="govuk-back-link">Back to standard details</a>
+}
+else
+{
+    <a href="@Url.Action("Index", "Standard", new { Id = Model.Id })" class="govuk-back-link">Return to search</a>
+}
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
 
-            @if (!ViewData.ModelState.IsValid || showErrors)
+            @if (!ViewData.ModelState.IsValid || showConfirmedError || showVersionError)
             {
-                <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
+                <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
                     <h2 class="govuk-error-summary__title" id="error-summary-title">
                         There is a problem
                     </h2>
                     <div class="govuk-error-summary__body">
                         <ul class="govuk-list govuk-error-summary__list">
-                            <li><a href="#IsConfirmed">Confirm you have read the assessment plan</a></li>
+                            @if (showConfirmedError)
+                            {
+                                <li><a href="#IsConfirmed"><span asp-validation-for="IsConfirmed"></span></a></li>
+                            }
+                            @if (showVersionError)
+                            {
+                                <li><a href="#SelectedVersions"><span asp-validation-for="SelectedVersions"></span></a></li>
+                            }
                         </ul>
                     </div>
                 </div>
@@ -35,38 +51,71 @@
                 }
                 @Model.SelectedStandard?.Title
             </h1>
-            <p class="govuk-body-l">Reference: @Model.SelectedStandard?.ReferenceNumber</p>
+            <p class="govuk-body-l">Reference: @Model.SelectedStandard?.IFateReferenceNumber</p>
 
             <table class="govuk-table govuk-!-margin-bottom-7">
                 <tbody class="govuk-table__body">
                     <tr class="govuk-table__row">
                         <th class="govuk-table__header" scope="row">Effective from</th>
-                        <td class="govuk-table__cell">@Model.SelectedStandard?.StandardData?.EffectiveFrom.ToSfaShortDateString()</td>
+                        <td class="govuk-table__cell">@Model.EarliestVersionEffectiveFrom.ToSfaShortDateString()</td>
                     </tr>
                     <tr class="govuk-table__row">
                         <th class="govuk-table__header" scope="row">Effective to</th>
                         <td class="govuk-table__cell">
-                            @if (@Model.SelectedStandard?.StandardData?.EffectiveTo == null)
+                            @if (@Model.SelectedStandard?.VersionLatestEndDate == null)
                             {
                                 @Html.Raw("Expiry date not set")
                             }
                             else
                             {
-                                @Model.SelectedStandard?.StandardData?.EffectiveTo.ToSfaShortDateString()
+                                @Model.SelectedStandard?.VersionLatestEndDate.ToSfaShortDateString()
                             }
                         </td>
                     </tr>
+                    @if (!multipleVersions)
+                    {
+                        <tr class="govuk-table__row">
+                            <th class="govuk-table__header" scope="row">Version</th>
+                            <td class="govuk-table__cell">@Model.SelectedStandard?.Version</td>
+                        </tr>
+                    }
                 </tbody>
             </table>
 
             <form asp-action="ConfirmStandard" asp-controller="Standard" asp-route-applicationId="@Model.Id">
-                <input asp-for="@Model.StandardCode" value="@standardCode" type="hidden" />
+                <input asp-for="StandardReference" value="@standardCode" type="hidden" />
+
+                @if (multipleVersions)
+                {
+                    <div class="govuk-form-group @(showVersionError ? "govuk-form-group--error" : "")">
+                        <fieldset class="govuk-fieldset" id="SelectedVersions">
+                            <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">Select all that apply</legend>
+                            @if (showVersionError)
+                            {
+                                <span id="search-string-error" class="govuk-error-message" asp-validation-for="SelectedVersions"></span>
+                            }
+                            <div class="govuk-checkboxes govuk-checkboxes--small">
+                                @foreach (var version in Model.Results)
+                                {
+                                    <div class="govuk-checkboxes__item">
+                                        <input class="govuk-checkboxes__input" id="@version.Version" value="@version.Version" name="SelectedVersions" type="checkbox">
+                                        <label class="govuk-label govuk-checkboxes__label" for="@version.Version">
+                                            Version @version.Version
+                                        </label>
+                                    </div>
+                                }
+                            </div>
+                        </fieldset>
+                    </div>
+
+                    <hr class="govuk-!-margin-bottom-7" />
+                }
 
                 @if (string.IsNullOrEmpty(Model.ApplicationStatus))
                 {
-                    <div class="govuk-form-group @(!ViewData.ModelState.IsValid || showErrors ? "govuk-form-group--error" : "")">
+                    <div class="govuk-form-group @(showConfirmedError ? "govuk-form-group--error" : "")">
 
-                        @if (!ViewData.ModelState.IsValid || showErrors)
+                        @if (showConfirmedError)
                         {
                             <span id="search-string-error" class="govuk-error-message">Confirm you have read the assessment plan</span>
                         }
@@ -75,15 +124,14 @@
                             <div class="govuk-checkboxes__item">
                                 <input class="govuk-checkboxes__input" asp-for="@Model.IsConfirmed" name="IsConfirmed" type="checkbox">
                                 <label class="govuk-label govuk-checkboxes__label" for="IsConfirmed">
-                                    By continuing with this application you are confirming you have <a href="@Model.SelectedStandard.StandardData.AssessmentPlanUrl" target="_blank" class="govuk-link">read the assessment plan</a> (PDF).
+                                    By continuing, you confirm you have read and understood the relevant assessment plan(s) for <a href="@Model.SelectedStandard?.StandardPageUrl" target="_blank" class="govuk-link">this standard.</a>
                                 </label>
                             </div>
                         </div>
                     </div>
-                    <button type="submit" class="govuk-button">Confirm and apply</button>
+                    <button type="submit" class="govuk-button">Confirm and continue</button>
                 }
-
-                @if (!string.IsNullOrEmpty(Model.ApplicationStatus))
+                else
                 {
                     if (Model.ApplicationStatus == "Approved")
                     {

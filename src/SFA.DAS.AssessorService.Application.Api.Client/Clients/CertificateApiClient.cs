@@ -28,14 +28,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task<Certificate> StartPrivate(StartCertificatePrivateRequest request)
-        {
-            using (var httpRequest = new HttpRequestMessage(HttpMethod.Post, "api/v1/certificates/startprivate"))
-            {
-                return await PostPutRequestWithResponse<StartCertificatePrivateRequest, Certificate>(httpRequest, request);
-            }
-        }
-
         public async Task<Certificate> GetCertificate(Guid certificateId)
         {
             using (var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"api/v1/certificates/{certificateId}"))
@@ -48,14 +40,13 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         {
             using (var httpRequest = new HttpRequestMessage(HttpMethod.Put, "api/v1/certificates/update"))
             {
-                return await PostPutRequestWithResponse<UpdateCertificateRequest, Certificate>(httpRequest, certificateRequest);                
+                return await PostPutRequestWithResponse<UpdateCertificateRequest, Certificate>(httpRequest, certificateRequest);
             }
         }
 
-        public async Task<CertificateAddress> GetContactPreviousAddress(string userName,
-            bool isPrivatelyFunded)
+        public async Task<CertificateAddress> GetContactPreviousAddress(string userName)
         {
-            using (var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"api/v1/certificates/contact/previousaddress?username={WebUtility.UrlEncode(userName)}&isPrivatelyFunded={isPrivatelyFunded}"))
+            using (var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"api/v1/certificates/contact/previousaddress?username={WebUtility.UrlEncode(userName)}"))
             {
                 return await RequestAndDeserialiseAsync<CertificateAddress>(httpRequest, "Could not get Certificate Address");
             }
@@ -77,11 +68,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task<List<Option>> GetOptions(int stdCode)
+        public async Task Delete(DeleteCertificateRequest deleteCertificateRequest)
         {
-            using (var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"api/v1/certificates/options/?stdCode={stdCode}"))
+            using (var httpRequest = new HttpRequestMessage(HttpMethod.Delete, "api/v1/certificates/DeleteCertificate"))
             {
-                return await RequestAndDeserialiseAsync<List<Option>>(httpRequest, "Could not get Options");
+                await PostPutRequest(httpRequest, deleteCertificateRequest);
             }
         }
     }

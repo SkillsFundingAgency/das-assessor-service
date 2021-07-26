@@ -33,9 +33,11 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
                     new StaffBatchLogResult
                     {
                         BatchNumber = sr.BatchNumber,
-                        ScheduledDate = sr.BatchCreated,
-                        NumberOfCertificates = sr.NumberOfCertificates,
-                        NumberOfCoverLetters = sr.NumberOfCoverLetters
+                        ScheduledDate = sr.ScheduledDate,
+                        SentToPrinterDate = sr.SentToPrinterAt,
+                        NumberOfCertificatesSent = sr.NumberOfCertificatesSent,
+                        PrintedDate = sr.PrintedAt,
+                        NumberOfCertificatesPrinted = sr.NumberOfCertificatesPrinted
                     }).ToList();
 
             return new PaginatedList<StaffBatchLogResult>(searchResults, result.TotalCount, request.Page, pageSize);

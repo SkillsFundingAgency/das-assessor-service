@@ -27,14 +27,14 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             _clientApiCallValidationName = "ClientApiCall";
         }
 
-        public async Task<ApiValidationResult> CallApiValidation(Page page, List<Answer> answers)
+        public async Task<ApiValidationResult> CallApiValidation(Guid Id, Page page, List<Answer> answers)
         {
-            if (page.Questions.Any(q => q.Input.Type == _clientApiCallValidationName))
+            if (page.Questions.Any(q => q.Input.Validations.Any(v => v.Name == _clientApiCallValidationName)))
             {
                 _logger.LogInformation("Page has question with api validation");
-                var validationResult = new ApiValidationResult();
+                var validationResult = new ApiValidationResult() { IsValid = true };
                 
-                var apiBaseUri = new Uri(_config.ClientApiAuthentication.ApiBaseAddress, UriKind.Absolute);
+                var apiBaseUri = new Uri(_config.AssessorApiAuthentication.ApiBaseAddress, UriKind.Absolute);
                 using (var httpClient = new HttpClient())
                 {
                     httpClient.BaseAddress = apiBaseUri;
@@ -49,7 +49,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                         {
                             _logger.LogInformation("Validation call: " + apiBaseUri.ToString() + apiCallValidation.Value);
                             
-                            var result = await (await httpClient.GetAsync($"{apiCallValidation.Value}?q={answers.Single(a => a.QuestionId == questionWithClientApiCall.QuestionId)}"))
+                            var result = await (await httpClient.GetAsync($"{apiCallValidation.Value}/{Id}?q={answers.Single(a => a.QuestionId == questionWithClientApiCall.QuestionId).Value}"))
                                 .Content.ReadAsAsync<ApiValidationResult>();
 
                             _logger.LogInformation("Api call result: Valid:" + result.IsValid);

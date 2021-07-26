@@ -8,6 +8,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Models.Response.Stand
     {
         public int? StandardCode { get; set; }
         public string StandardReference { get; set; }
+        public string Version { get; set; }
         public IEnumerable<string> CourseOption { get; set; }
 
         #region GetHashCode, Equals and IEquatable
@@ -20,6 +21,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Models.Response.Stand
 
                 int hash = hashBase;
                 hash = (hash * multiplier) ^ StandardCode.GetHashCode();
+                hash = (hash * multiplier) ^ Version.GetHashCode();
                 hash = (hash * multiplier) ^ (StandardReference is null ? 0 : StandardReference.GetHashCode());
                 hash = (hash * multiplier) ^ (CourseOption is null ? 0 : CourseOption.GetHashCode());
                 return hash;

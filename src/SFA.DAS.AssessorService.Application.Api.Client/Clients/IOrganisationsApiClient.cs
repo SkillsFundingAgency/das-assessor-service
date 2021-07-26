@@ -1,15 +1,13 @@
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using SFA.DAS.AssessorService.Api.Types.CharityCommission;
 using SFA.DAS.AssessorService.Api.Types.CompaniesHouse;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
-using SFA.DAS.AssessorService.ApplyTypes;
-using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Paging;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using CreateOrganisationRequest = SFA.DAS.AssessorService.Api.Types.Models.CreateOrganisationRequest;
 using Organisation = SFA.DAS.AssessorService.Domain.Entities.Organisation;
 using OrganisationType = SFA.DAS.AssessorService.Api.Types.Models.AO.OrganisationType;
@@ -21,7 +19,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         Task<IEnumerable<OrganisationResponse>> GetAll();
         Task<OrganisationResponse> Get(string ukprn);
         Task<Organisation> Get(Guid organisationId);
-       
+        Task<DateTime> GetEarliestWithdrawalDate(Guid organisationId, int? standardId);
+
+
         Task<OrganisationResponse> Create(CreateOrganisationRequest createOrganisationRequest);
         Task Update(UpdateOrganisationRequest updateOrganisationRequest);
         Task Delete(Guid id);
@@ -54,6 +54,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         Task<OrganisationResponse> GetOrganisationByName(string name);
         Task<OrganisationResponse> GetOrganisationByUserId(Guid userId);
         Task<List<OrganisationStandardSummary>> GetOrganisationStandardsByOrganisation(string endPointAssessorOrganisationId);
+        Task<IEnumerable<AppliedStandardVersion>> GetAppliedStandardVersionsForEPAO(string endPointAssessorOrganisationId, string standardReference);
         Task<PaginatedList<OrganisationSearchResult>> SearchForOrganisations(string searchTerm, int pageSize, int pageIndex);
 
         Task<bool> IsCompanyActivelyTrading(string companyNumber);
@@ -62,5 +63,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 
         Task<EpaOrganisationResponse> CreateEpaOrganisation(CreateEpaOrganisationRequest epaoOrganisationModel);
         Task<EpaOrganisation> GetEpaOrganisationById(string Id);
+
+        Task<OrganisationStandardVersion> OrganisationStandardVersionOptIn(Guid applicationId, Guid contactId, string endPointAssessorOrganisationId, 
+           string standardReference, decimal? version, string standardUId, string comments);
     }
 }

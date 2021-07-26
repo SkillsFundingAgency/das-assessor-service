@@ -46,8 +46,9 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
         public async Task<IActionResult> GetCertificate(long uln, string familyName, [SwaggerParameter("Standard Code or Standard Reference Number")] string standard)
         {
             var getRequest = new GetBatchCertificateRequest { UkPrn = _headerInfo.Ukprn, Uln = uln, FamilyName = familyName, Standard = standard };
+            
             var response = await _apiClient.GetCertificate(getRequest);
-
+            
             if (response.ValidationErrors.Any())
             {
                 ApiResponse error = new ApiResponse((int)HttpStatusCode.Forbidden, string.Join("; ", response.ValidationErrors));
@@ -59,15 +60,26 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
             }
             else
             {
-                if(CertificateHelpers.IsDraftCertificateDeemedAsReady(response.Certificate))
-                {
-                    response.Certificate.Status.CurrentStatus = CertificateStatus.Ready;
-                }
-                else if (response.Certificate.Status.CurrentStatus == CertificateStatus.Printed || response.Certificate.Status.CurrentStatus == CertificateStatus.Reprint)
+                if (CertificateStatus.HasPrintProcessStatus(response.Certificate.Status.CurrentStatus))
                 {
                     response.Certificate.Status.CurrentStatus = CertificateStatus.Submitted;
                 }
+                else // status could be Draft or Deleted (or Privately Funded statuses)
+				{
+                    var certificateData = response.Certificate.CertificateData;
 
+                    if (!string.IsNullOrEmpty(certificateData.Standard?.StandardReference) && !string.IsNullOrEmpty(certificateData?.LearningDetails?.Version))
+					{
+                        var standardOptions = await _apiClient.GetStandardOptionsByStandardIdAndVersion(certificateData.Standard.StandardReference, certificateData.LearningDetails.Version);
+
+                        var hasOptions = standardOptions != null && standardOptions.CourseOption?.Count() > 0;
+
+                        if (CertificateHelpers.IsDraftCertificateDeemedAsReady(response.Certificate, hasOptions))
+                        {
+                            response.Certificate.Status.CurrentStatus = CertificateStatus.Ready;
+                        }
+                    }
+                }
                 return Ok(response.Certificate);
             }
         }

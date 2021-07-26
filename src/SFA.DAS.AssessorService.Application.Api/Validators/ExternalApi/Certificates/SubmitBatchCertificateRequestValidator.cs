@@ -24,8 +24,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Certifi
                 {
                     if (!string.IsNullOrEmpty(m.StandardReference))
                     {
-                        var collatedStandard = await standardService.GetStandard(m.StandardReference);
-                        if (m.StandardCode != collatedStandard?.StandardId)
+                        var standard = await standardService.GetStandardVersionById(m.StandardReference);
+                        if (m.StandardCode != standard?.LarsCode)
                         {
                             context.AddFailure("StandardReference and StandardCode must be for the same Standard");
                         }
@@ -79,8 +79,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Certifi
                     {
                         context.AddFailure(new ValidationFailure("CertificateReference", $"Your organisation is not the creator of this Certificate"));
                     }
-                    else if (existingCertificate.Status == CertificateStatus.Submitted || existingCertificate.Status == CertificateStatus.Printed
-                                || existingCertificate.Status == CertificateStatus.Reprint)
+                    else if (existingCertificate.Status == CertificateStatus.Submitted || CertificateStatus.HasPrintProcessStatus(existingCertificate.Status))
                     {
                         context.AddFailure(new ValidationFailure("CertificateReference", $"Certificate has already been submitted"));
                     }

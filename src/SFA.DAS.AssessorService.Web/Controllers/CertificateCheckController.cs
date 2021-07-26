@@ -1,14 +1,12 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using FluentValidation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Web.Infrastructure;
-using SFA.DAS.AssessorService.Web.Validators;
 using SFA.DAS.AssessorService.Web.ViewModels.Certificate;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Web.Controllers
@@ -17,10 +15,10 @@ namespace SFA.DAS.AssessorService.Web.Controllers
     [Route("certificate/check")]
     public class CertificateCheckController : CertificateBaseController
     {
-        private readonly CertificateCheckViewModelValidator _validator;
+        private readonly IValidator<CertificateCheckViewModel> _validator;
 
         public CertificateCheckController(ILogger<CertificateController> logger, IHttpContextAccessor contextAccessor,
-            ICertificateApiClient certificateApiClient, CertificateCheckViewModelValidator validator, ISessionService sessionService) : base(logger, contextAccessor, certificateApiClient, sessionService)
+            ICertificateApiClient certificateApiClient, IValidator<CertificateCheckViewModel> validator, ISessionService sessionService) : base(logger, contextAccessor, certificateApiClient, sessionService)
         {
             _validator = validator;
         }
@@ -28,17 +26,15 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Check()
         {
-            var sessionString = SessionService.Get("CertificateSession");
+            var sessionString = SessionService.Get(nameof(CertificateSession));
             if (sessionString == null)
             {
                 return RedirectToAction("Index", "Search");
             }
-            var certSession = JsonConvert.DeserializeObject<CertificateSession>(sessionString);
-            TempData["HideOption"] = !certSession.Options.Any();
-
-            return await LoadViewModel<CertificateCheckViewModel>("~/Views/Certificate/Check.cshtml");
+           
+            return await LoadViewModel("~/Views/Certificate/Check.cshtml");
         }
-        
+
         [HttpPost(Name = "Check")]
         public async Task<IActionResult> Check(CertificateCheckViewModel vm)
         {
@@ -53,9 +49,36 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 return await Check();
             }
 
-            return await SaveViewModel(vm, 
+            return await SaveViewModel(vm,
                 returnToIfModelNotValid: "~/Views/Certificate/Check.cshtml",
                 nextAction: RedirectToAction("Confirm", "CertificateConfirmation"), action: CertificateActions.Submit);
+        }
+
+        private async Task<IActionResult> LoadViewModel(string view)
+        {
+            var username = GetUsernameFromClaim();
+
+            Logger.LogInformation($"Load View Model for CertificateCheckViewModel for {username}");
+
+            var viewModel = new CertificateCheckViewModel();
+
+            CheckAndSetRedirectToCheck(viewModel);
+
+            if (!TryGetCertificateSession("CertificateCheckViewModel", username, out var certSession))
+            {
+                return RedirectToAction("Index", "Search");
+            }
+
+            var certificate = await CertificateApiClient.GetCertificate(certSession.CertificateId);
+
+            Logger.LogInformation($"Got Certificate for CertificateCheckViewModel requested by {username} with Id {certificate.Id}");
+
+            viewModel.FromCertificate(certificate);
+            viewModel.SetStandardHasVersionsAndOptions(certSession);
+
+            Logger.LogInformation($"Got View Model of type CertificateCheckViewModel requested by {username}");
+
+            return View(view, viewModel);
         }
     }
 }

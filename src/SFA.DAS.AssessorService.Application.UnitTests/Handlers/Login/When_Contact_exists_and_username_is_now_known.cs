@@ -27,9 +27,6 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Login
                     Email = "email@domain.com"
                 }));
 
-            IList<ContactRole> listOfRoles = new List<ContactRole> {new ContactRole {RoleName = "SuperUser"}};
-            ContactQueryRepository.Setup(x => x.GetRolesFor(It.IsAny<Guid>()))
-                .Returns(Task.FromResult(listOfRoles));
             OrgQueryRepository.Setup(r => r.GetByUkPrn(12345)).ReturnsAsync(new Organisation
             {
                 Status = OrganisationStatus.Live,

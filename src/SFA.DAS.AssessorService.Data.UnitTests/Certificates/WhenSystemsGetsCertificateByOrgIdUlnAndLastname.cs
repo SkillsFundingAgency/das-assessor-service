@@ -8,6 +8,7 @@ using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 using NUnit.Framework;
+using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
@@ -16,7 +17,7 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
     {
         private CertificateRepository _certificateRepository;
         private Mock<AssessorDbContext> _mockDbContext;
-        private Mock<IDbConnection> _mockDbConnection;
+        private Mock<IUnitOfWork> _mockUnitOfWork;
         private Certificate _result;
 
         [SetUp]
@@ -26,14 +27,11 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
             
             var mockSet = CreateCertificateMockDbSet();
             _mockDbContext = CreateMockDbContext(mockSet);
+            _mockUnitOfWork = new Mock<IUnitOfWork>();
 
-            _mockDbConnection = new Mock<IDbConnection>();
+            _certificateRepository = new CertificateRepository(_mockUnitOfWork.Object, _mockDbContext.Object);
 
-            _certificateRepository = new CertificateRepository(_mockDbContext.Object,
-                _mockDbConnection.Object);
-            _certificateRepository = new CertificateRepository(_mockDbContext.Object, new Mock<IDbConnection>().Object);
-
-            _result = _certificateRepository.GetCertificateByOrgIdLastname(1111111111, "EPA0001", "Hawkins").Result;
+            _result = _certificateRepository.GetCertificateByUlnOrgIdLastnameAndStandardCode(1111111111, "EPA0001", "Hawkins", 1).Result;
         }
 
         [Test]
@@ -50,6 +48,7 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
                 .With(x => x.Uln = 1111111111)
                 .With(x => x.Organisation.EndPointAssessorOrganisationId = "EPA0001")
                 .With(x => x.CertificateData = "{'LearnerFamilyName':'Hawkins'}")
+                .With(x => x.StandardCode = 1)
                 .TheNext(9)
                 .With(x => x.Organisation = Builder<Organisation>.CreateNew().Build())
                 .With(x => x.Uln = 1111111111)

@@ -37,7 +37,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.Staff
         }
 
         [HttpGet("batch", Name = "StaffBatchSearch")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(PaginatedList<StaffBatchSearchResult>))]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(StaffBatchSearchResponse))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> StaffBatchSearch(int batchNumber, int? page = 1)

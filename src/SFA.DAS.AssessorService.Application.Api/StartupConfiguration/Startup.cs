@@ -1,11 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.SqlClient;
-using System.Globalization;
-using System.IO;
-using System.Net.Http;
-using System.Threading.Tasks;
 using FluentValidation.AspNetCore;
 using JWT;
 using MediatR;
@@ -26,18 +18,23 @@ using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Application.Api.Infrastructure;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Services;
-using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Application.Infrastructure;
+using SFA.DAS.AssessorService.Application.Infrastructure.OuterApi;
 using SFA.DAS.AssessorService.Data;
-using SFA.DAS.AssessorService.Data.TestData;
-using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
-using SFA.DAS.AssessorService.ExternalApis.IFAStandards;
 using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.Http;
 using SFA.DAS.Http.TokenGenerators;
 using SFA.DAS.Notifications.Api.Client;
 using StructureMap;
 using Swashbuckle.AspNetCore.Filters;
-using Swashbuckle.AspNetCore.Swagger;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
+using System.Globalization;
+using System.IO;
+using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
 {
@@ -79,15 +76,24 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                     })
                     .AddJwtBearer(o =>
                     {
+                        var validAudiences = new List<string>();
+
+                        if (UseSandbox)
+                        {
+                            validAudiences.Add(Configuration.SandboxApiAuthentication.Audience);
+                            validAudiences.Add(Configuration.SandboxApiAuthentication.ClientId);
+                        }
+                        else
+                        {
+                            validAudiences.AddRange(Configuration.ApiAuthentication.Audience.Split(","));
+                            validAudiences.Add(Configuration.ApiAuthentication.ClientId);
+                        }
+                        
                         o.Authority = $"https://login.microsoftonline.com/{Configuration.ApiAuthentication.TenantId}"; 
                         o.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
                         {
                             RoleClaimType = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role",
-                            ValidAudiences = new List<string>
-                            {
-                                UseSandbox ? Configuration.SandboxApiAuthentication.Audience : Configuration.ApiAuthentication.Audience,
-                                UseSandbox ? Configuration.SandboxApiAuthentication.ClientId : Configuration.ApiAuthentication.ClientId
-                            }
+                            ValidAudiences = validAudiences
                         };
                         o.Events = new JwtBearerEvents()
                         {
@@ -144,13 +150,6 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                         }
                     });
  
-                services.AddHttpClient<ProviderRegisterApiClient>("ProviderRegisterApiClient", config =>
-                    {
-                        config.BaseAddress = new Uri(Configuration.ProviderRegisterApiAuthentication.ApiBaseAddress); //  "https://findapprenticeshiptraining-api.sfa.bis.gov.uk"
-                        config.DefaultRequestHeaders.Add("Accept", "Application/json");
-                    })
-                    .SetHandlerLifetime(TimeSpan.FromMinutes(5));
-
                 services.AddHttpClient<ReferenceDataApiClient>("ReferenceDataApiClient", config =>
                     {
                         config.BaseAddress = new Uri(Configuration.ReferenceDataApiAuthentication.ApiBaseAddress); //  "https://at-refdata.apprenticeships.sfa.bis.gov.uk/api"
@@ -165,23 +164,19 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                     })
                     .SetHandlerLifetime(TimeSpan.FromMinutes(5));
 
-                services.AddHttpClient<RoatpApiClient>("RoatpApiClient", config =>
+                services.AddHttpClient<IRoatpApiClient, RoatpApiClient>("RoatpApiClient", config =>
                     {
                         config.BaseAddress = new Uri(Configuration.RoatpApiAuthentication.ApiBaseAddress); //  "https://at-providers-api.apprenticeships.education.gov.uk"
                         config.DefaultRequestHeaders.Add("Accept", "Application/json");
                     })
                     .SetHandlerLifetime(TimeSpan.FromMinutes(5));
 
+                
+                services.AddHttpClient<OuterApiClient>().SetHandlerLifetime(TimeSpan.FromMinutes(5));
+                
                 services.AddHealthChecks();
 
                 serviceProvider = ConfigureIOC(services);
-
-                if (_env.IsDevelopment())
-                {
-                    TestDataService.AddTestData(serviceProvider.GetService<AssessorDbContext>());
-                }
-                
-                
             }
             catch (Exception e)
             {
@@ -212,8 +207,6 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                 config.For<IWebConfiguration>().Use(Configuration);
                 config.For<ServiceFactory>().Use<ServiceFactory>(ctx => t => ctx.GetInstance(t));
                 config.For<IMediator>().Use<Mediator>();
-                config.For<IAssessmentOrgsApiClient>().Use(() => new AssessmentOrgsApiClient(Configuration.AssessmentOrgsApiClientBaseUrl));  
-                config.For<IIfaStandardsApiClient>().Use(() => new IfaStandardsApiClient(Configuration.IfaApiClientBaseUrl));
           
                 config.For<IDateTimeProvider>().Use<UtcDateTimeProvider>();
                 config.For<ISignInService>().Use<SignInService>();
@@ -231,6 +224,14 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                     : new HttpClientBuilder().WithBearerAuthorisationHeader(new AzureActiveDirectoryBearerTokenGenerator(NotificationConfiguration())).Build());
 
                 config.For<Notifications.Api.Client.Configuration.INotificationsApiClientConfiguration>().Use(NotificationConfiguration());
+
+                config.For<ITokenService>().Use<TokenService>();
+                config.For<ITokenService>().Add<QnaTokenService>().Named("qnaTokenService");
+                config.For<ITokenService>().Use<TokenService>().Ctor<bool>("useSandbox").Is(false);
+
+                config.For<IQnaApiClient>().Use<QnaApiClient>()
+                  .Ctor<ITokenService>("qnaTokenService").Is(c => c.GetInstance<ITokenService>("qnaTokenService"))
+                  .Ctor<string>().Is(Configuration.QnaApiAuthentication.ApiBaseAddress);
 
                 // NOTE: These are SOAP Services. Their client interfaces are contained within the generated Proxy code.
                 config.For<CharityCommissionService.ISearchCharitiesV1SoapClient>().Use<CharityCommissionService.SearchCharitiesV1SoapClient>();

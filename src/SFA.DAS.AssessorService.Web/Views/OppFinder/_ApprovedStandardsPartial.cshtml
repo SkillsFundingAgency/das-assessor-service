@@ -90,8 +90,8 @@ else
         <form asp-action="ShowApprovedStandardsPerPage" asp-controller="OppFinder" method="get" asp-fragment="approved">
             <div class="das-flex-space-around">
                 <div>
-                    <select class="approved-per-page govuk-select govuk-!-margin-right-2" asp-for="ApprovedStandardsPerPage" asp-items="Model.StandardsPerPage"></select>
-                    <label for="ApprovedStandardsPerPage">Standards per page</label>
+                    <select class="approved-per-page govuk-select govuk-!-margin-right-1" asp-for="ApprovedStandardsPerPage" asp-items="Model.StandardsPerPage"></select>
+                    <label class="govuk-body" for="ApprovedStandardsPerPage">Standards per page</label>
                 </div>
                 <div class="das-pagination-links">
                     @{await Html.RenderPartialAsync("_PaginationLinksPartial", new OppFinderPaginationViewModel

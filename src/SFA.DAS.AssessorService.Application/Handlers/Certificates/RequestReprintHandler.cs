@@ -1,11 +1,9 @@
-﻿using System;
-using System.Runtime.ConstrainedExecution;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
-using SFA.DAS.AssessorService.Application.Exceptions;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Domain.Consts;
 using NotFound = SFA.DAS.AssessorService.Domain.Exceptions.NotFound;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
@@ -25,21 +23,21 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
             if (certificate == null)
                 throw new NotFound();
 
-            if (certificate.Status == SFA.DAS.AssessorService.Domain.Consts.CertificateStatus.Reprint)
+            if (certificate.Status == CertificateStatus.Reprint)
             {
                 return Unit.Value;
             }
 
-            if (certificate.Status == SFA.DAS.AssessorService.Domain.Consts.CertificateStatus.Printed)
+            if (CertificateStatus.CanRequestDuplicateCertificate(certificate.Status))
             {
-                certificate.Status = SFA.DAS.AssessorService.Domain.Consts.CertificateStatus.Reprint;
-                await _certificateRepository.Update(certificate, request.Username,
-                    SFA.DAS.AssessorService.Domain.Consts.CertificateActions.Reprint);
+                certificate.Status = CertificateStatus.Reprint;
+                await _certificateRepository.Update(certificate, request.Username, CertificateActions.Reprint);
             }
             else
             {
                 throw new NotFound();
             }
+
             return Unit.Value;
         }
     }
