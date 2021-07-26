@@ -15,7 +15,7 @@ SELECT
 [Deleted]
 FROM (
   SELECT
-        REPLACE(UPPER(REPLACE(JSON_VALUE(ce.[CertificateData], '$.StandardName'), NCHAR(0x00A0), ' ')), 'Á', ' ') AS [Standard Name],
+        TRIM(REPLACE(UPPER(REPLACE(JSON_VALUE(ce.[CertificateData], '$.StandardName'), NCHAR(0x00A0), ' ')), 'Á', ' ')) AS [Standard Name],
         JSON_VALUE(ce.CertificateData, '$.StandardReference') AS [Standard Reference],
         ISNULL(JSON_VALUE(ce.CertificateData, '$.Version'),'') AS [Standard Version],
 		[dbo].[ExpandedVersion](ISNULL(JSON_VALUE(ce.CertificateData, '$.Version'),''))  AS [orderVersion],
@@ -30,7 +30,7 @@ FROM (
         SUM(CASE WHEN ce.[CertificateReferenceId] >= 10000 AND ce.[DeletedAt] IS NOT NULL THEN 1 ELSE 0 END) AS [Deleted]
   FROM [dbo].[Certificates] ce
   WHERE JSON_VALUE(ce.CertificateData, '$.StandardReference') IS NOT NULL
-  GROUP BY REPLACE(UPPER(REPLACE(JSON_VALUE(ce.[CertificateData], '$.StandardName'), NCHAR(0x00A0), ' ')), 'Á', ' '),
+  GROUP BY TRIM(REPLACE(UPPER(REPLACE(JSON_VALUE(ce.[CertificateData], '$.StandardName'), NCHAR(0x00A0), ' ')), 'Á', ' ')),
         JSON_VALUE(ce.CertificateData, '$.StandardReference'),ISNULL(JSON_VALUE(ce.CertificateData, '$.Version'),'') 
 
   UNION 

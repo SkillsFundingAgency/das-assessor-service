@@ -9,7 +9,7 @@ AS
 		[Certificates].[Uln] [Apprentice ULN],
 		UPPER(JSON_VALUE([Certificates].[CertificateData], '$.FullName')) [Apprentice Names],
 		CAST(JSON_VALUE([Certificates].[CertificateData], '$.AchievementDate') AS DATE) [Achievement Date],
-		UPPER(JSON_VALUE([Certificates].[CertificateData], '$.StandardName')) [Standard Name],
+		TRIM(UPPER(JSON_VALUE([Certificates].[CertificateData], '$.StandardName'))) [Standard Name],
 		[Certificates].[StandardCode] [Standard Code],
 		UPPER(JSON_VALUE([Certificates].[CertificateData], '$.StandardReference')) [Standard Reference],
 		ISNULL(JSON_VALUE([Certificates].[CertificateData], '$.Version'),'') [Standard Version],
