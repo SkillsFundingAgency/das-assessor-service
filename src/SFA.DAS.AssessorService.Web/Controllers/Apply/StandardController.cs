@@ -72,7 +72,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             var existingApplications = (await _applicationApiClient.GetStandardApplications(contact.Id))?
                 .Where(p => p.ApplicationStatus != ApplicationStatus.Declined);
 
-            var existingEmptyApplication = existingApplications.SingleOrDefault(x => x.StandardCode == null);
+            var existingEmptyApplication = existingApplications.FirstOrDefault(x => x.StandardCode == null);
             if (existingEmptyApplication != null)
                 return RedirectToAction("ConfirmStandard", new { Id = existingEmptyApplication.Id, StandardReference = standardReference });
             else
