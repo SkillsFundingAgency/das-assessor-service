@@ -13,7 +13,7 @@ SELECT
 [Manual Total], 
 [EPA Service Total], 
 [EPA Service], 
-[EPA Service Manual], 
+[EPA Service (Manual)], 
 [EPA Draft], 
 [EPA Submitted], 
 [EPA Printed], 

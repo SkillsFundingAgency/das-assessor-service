@@ -14,7 +14,7 @@ INTO
 FROM
 	(
 		SELECT
-			os.StandardReference, EndPointAssessorName, STRING_AGG(Version,', ') WITHIN GROUP (ORDER BY CONVERT(decimal(5,2), Version) ASC) Versions
+			os.StandardReference, EndPointAssessorName, STRING_AGG(Version,', ') WITHIN GROUP (ORDER BY [dbo].[ExpandedVersion](Version) ASC) Versions
 		FROM
 			OrganisationStandard os
 			JOIN (SELECT OrganisationStandardId, StandardUId, Version FROM OrganisationStandardVersion WHERE (EffectiveTo is null OR EffectiveTo > GETDATE()) AND [Status] = 'Live' ) osv on osv.OrganisationStandardId = os.Id
@@ -163,11 +163,11 @@ SELECT @Dynamic_sql =
     , MAX(CASE WHEN latestcheck = 1 THEN Title ELSE NULL END) Apprentice_standards 
     , Larscode 
     , IFateReferenceNumber 
-    , STRING_AGG(Version,'','') WITHIN GROUP (ORDER BY CONVERT(decimal(5,2), Version) ASC) [Available Versions]
+    , STRING_AGG(Version,'','') WITHIN GROUP (ORDER BY [dbo].[ExpandedVersion](Version) ASC) [Available Versions]
     , MAX(CASE WHEN latestcheck = 1 THEN Level ELSE NULL END) Level 
     FROM (
     SELECT TRIM(IFateReferenceNumber) IFateReferenceNumber, Larscode, Title, Level, Version, TrailBlazerContact, Route 
-    , ROW_NUMBER() OVER (PARTITION BY IFateReferenceNumber, Larscode ORDER BY CONVERT(decimal(5,2), Version) DESC) latestcheck
+    , ROW_NUMBER() OVER (PARTITION BY IFateReferenceNumber, Larscode ORDER BY [dbo].[ExpandedVersion](Version) DESC) latestcheck
     FROM Standards 
     WHERE LarsCode != 0 
     AND IFateReferenceNumber IS NOT NULL
