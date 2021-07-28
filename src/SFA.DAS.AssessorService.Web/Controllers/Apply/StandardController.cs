@@ -337,9 +337,25 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
                 results.Add(stdVersion);
             }
-        
+
+            // now do it again in reverse order to handle any versions prior to the first approved version
+            var firstApproved = results.OrderBy(s => s.Version).FirstOrDefault(s => s.VersionStatus == VersionStatus.Approved);
+            if (firstApproved != null)
+            { 
+                changed = firstApproved.EPAChanged;
+
+                foreach (var version in results
+                    .Where(s => s.VersionStatus == null)
+                    .OrderByDescending(s => s.Version))
+                {
+                    version.VersionStatus = changed ? VersionStatus.NewVersionChanged : VersionStatus.NewVersionNoChange;
+                    changed = version.EPAChanged || changed;
+                }
+            }
+
             return results;
         }
+
 
         private string MapUnapprovedVersionStatus(AppliedStandardVersion version, bool approved, bool previouslyChanged)
         {
