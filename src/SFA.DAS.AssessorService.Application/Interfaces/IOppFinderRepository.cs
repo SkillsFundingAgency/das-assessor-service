@@ -10,7 +10,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
 
         Task<OppFinderFilterStandardsResult> GetOppFinderFilterStandards(string searchTerm, string sectorFilters, string levelFilters);
         Task<OppFinderApprovedStandardsResult> GetOppFinderApprovedStandards(string searchTerm, string sectorFilters, string levelFilters, string sortColumn, int sortAscending, int pageSize, int pageIndex);
-        Task<OppFinderApprovedStandardDetailsResult> GetOppFinderApprovedStandardDetails(int? standardCode, string standardReference);
+        Task<OppFinderApprovedStandardDetailsResult> GetOppFinderApprovedStandardDetails(string standardReference);
         Task<OppFinderNonApprovedStandardsResult> GetOppFinderNonApprovedStandards(string searchTerm, string sectorFilters, string levelFilters, string sortColumn, int sortAscending, int pageSize, int pageIndex, string nonApprovedType);
 
         Task UpdateStandardSummary();       
@@ -38,6 +38,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
     {
         public OppFinderApprovedStandardOverviewResult OverviewResult { get; set; }
         public List<OppFinderApprovedStandardRegionResult> RegionResults { get; set; }
+        public List<OppFinderApprovedStandardVersionResult> VersionResults { get; set; }
     }
 
     public class OppFinderApprovedStandardOverviewResult
@@ -65,6 +66,14 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
     {
         public string Region { get; set; }
         public string EndPointAssessorsNames { get; set; }
+        public int EndPointAssessors { get; set; }
+        public int ActiveApprentices { get; set; }
+        public int CompletedAssessments { get; set; }
+    }
+
+    public class OppFinderApprovedStandardVersionResult
+    {
+        public decimal Version { get; set; }
         public int EndPointAssessors { get; set; }
         public int ActiveApprentices { get; set; }
         public int CompletedAssessments { get; set; }

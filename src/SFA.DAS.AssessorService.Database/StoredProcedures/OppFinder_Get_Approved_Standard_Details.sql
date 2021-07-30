@@ -1,5 +1,4 @@
 ﻿CREATE PROCEDURE [dbo].[OppFinder_Get_Approved_Standard_Details]
-	 @StandardCode AS INT,
 	 @StandardReference AS NVARCHAR(10)
 AS
 BEGIN
@@ -34,10 +33,8 @@ BEGIN
 			LEFT JOIN StandardCollation sc 
 			ON ss.StandardCode = sc.StandardId
 	WHERE 
-		(
-			StandardCode = @StandardCode OR 
-			(@StandardCode IS NULL AND StandardReference = @StandardReference)
-		) AND sc.IsLive = 1
+		StandardReference = @StandardReference
+		AND sc.IsLive = 1
 
 	-- there may be duplicates in either the StandardCode or the StandardReference in which case the Standard with the latest ApprovedForDelivery will be returned
 	SELECT TOP 1
@@ -71,4 +68,14 @@ BEGIN
 		ON [Results].StandardCode = [Details].StandardCode
 	ORDER BY 
 		Ordering
+
+	-- the third set is details about the standard versions
+	SELECT
+		Version, ActiveApprentices, CompletedAssessments, EndPointAssessors
+	FROM
+		StandardVersionSummary s
+	WHERE 
+		StandardReference = @StandardReference
+	ORDER BY 
+		Version DESC
 END

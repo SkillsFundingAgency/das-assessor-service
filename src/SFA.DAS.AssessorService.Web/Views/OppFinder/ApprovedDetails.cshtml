@@ -24,71 +24,90 @@
             <p class="govuk-body">@Model.OverviewOfRole</p>
             <dl class="govuk-summary-list">
                 <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">Level</dt>
-                    <dd class="govuk-summary-list__value">@Model.StandardLevel</dd>
-                </div>
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">Reference</dt>
-                    <dd class="govuk-summary-list__value">@Model.StandardReference</dd>
-                </div>
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">Sector</dt>
-                    <dd class="govuk-summary-list__value">@Model.Sector</dd>
-                </div>
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">Typical duration</dt>
-                    <dd class="govuk-summary-list__value">@string.Format("{0} months", Model.TypicalDuration)</dd>
-                </div>
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">Approved for delivery</dt>
-                    <dd class="govuk-summary-list__value">@Model.ApprovedForDelivery</dd>
-                </div>
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">Maximum funding</dt>
-                    <dd class="govuk-summary-list__value">@Model.MaxFunding</dd>
-                </div>
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">Trailblazer contact</dt>
-                    <dd class="govuk-summary-list__value">
-                        @foreach(var trailblazer in @Model.Trailblazer)
-                        {
-                        @trailblazer<br />
-                        }
-                    </dd>
-                </div>
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">External quality assurance (EQA) provider</dt>
-                    <dd class="govuk-summary-list__value">
-                        @Model.EqaProvider
-                    </dd>
-                </div>
-            </dl>
-            <p class="govuk-body govuk-!-margin-bottom-1">
-                Full information on <a class="govuk-link" href="@Model.StandardPageUrl" target="_blank" rel="noopener noreferrer">@Model.Title</a>
-            </p>
-            <p class="govuk-body-s govuk-!-margin-bottom-8">
-                Source: Institute for Apprenticeships and Technical Education
-            </p>
+                <dt class="govuk-summary-list__key">Level</dt>
+                <dd class="govuk-summary-list__value">@Model.StandardLevel</dd>
         </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Reference</dt>
+            <dd class="govuk-summary-list__value">@Model.StandardReference</dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Sector</dt>
+            <dd class="govuk-summary-list__value">@Model.Sector</dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Typical duration</dt>
+            <dd class="govuk-summary-list__value">@string.Format("{0} months", Model.TypicalDuration)</dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Approved for delivery</dt>
+            <dd class="govuk-summary-list__value">@Model.ApprovedForDelivery</dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Maximum funding</dt>
+            <dd class="govuk-summary-list__value">@Model.MaxFunding</dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Trailblazer contact</dt>
+            <dd class="govuk-summary-list__value">
+                @foreach (var trailblazer in @Model.Trailblazer)
+                {
+                    @trailblazer<br />
+                }
+            </dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">External quality assurance (EQA) provider</dt>
+            <dd class="govuk-summary-list__value">
+                @Model.EqaProvider
+            </dd>
+        </div>
+        </dl>
+        <p class="govuk-body govuk-!-margin-bottom-1">
+            Full information on <a class="govuk-link" href="@Model.StandardPageUrl" target="_blank" rel="noopener noreferrer">@Model.Title</a>
+        </p>
+        <p class="govuk-body-s govuk-!-margin-bottom-8">
+            Source: Institute for Apprenticeships and Technical Education
+        </p>
+    </div>
     </div>
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <h2 class="govuk-heading-l">Apprentices</h2>
+            <h2 class="govuk-heading-l">Standard version details</h2>
+            <div class="govuk-inset-text">
+                The version may be estimated where records did not previously exist.
+            </div>
         </div>
     </div>
 
-
-    <div class="govuk-grid-row das-flex">
-        <div class="govuk-grid-column-one-third das-highlight-box">
-            <h1 class="govuk-heading-xl govuk-!-margin-bottom-0">@Model.TotalActiveApprentices</h1>
-            <p class="govuk-body govuk-!-margin-bottom-0">Active</p>
-        </div>
-        <div class="govuk-grid-column-one-third das-highlight-box">
-            <h1 class="govuk-heading-xl govuk-!-margin-bottom-0">@Model.TotalCompletedAssessments</h1>
-            <p class="govuk-body govuk-!-margin-bottom-0">Completed assessments</p>
-        </div>
-    </div>
+    <table class="govuk-table">
+        <thead class="govuk-table__head">
+            <tr class="govuk-table__row">
+                <th scope="col" class="govuk-table__header">Version</th>
+                <th scope="col" class="govuk-table__header govuk-table__header--numeric">Active apprentices</th>
+                <th scope="col" class="govuk-table__header govuk-table__header--numeric">Registered EPAOs</th>
+                <th scope="col" class="govuk-table__header govuk-table__header--numeric">Completed assessments</th>
+            </tr>
+        </thead>
+        <tbody class="govuk-table__body">
+            @foreach (var version in @Model.VersionResults)
+            {
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">@version.Version</th>
+                    <td class="govuk-table__cell govuk-table__cell--numeric">@version.ActiveApprentices</td>
+                    <td class="govuk-table__cell govuk-table__cell--numeric">@version.EndPointAssessors</td>
+                    <td class="govuk-table__cell govuk-table__cell--numeric">@version.CompletedAssessments</td>
+                </tr>
+            }
+            <tr class="govuk-table__row">
+                <td scope="row" class="govuk-table__cell govuk-table__cell--no-border"></td>
+                <td class="govuk-table__cell govuk-table__cell--numeric govuk-table__cell--no-border"></td>
+                <td class="govuk-table__cell govuk-table__cell--numeric govuk-table__cell--no-border"></td>
+                <td class="govuk-table__cell govuk-table__cell--numeric govuk-table__cell--no-border"><span class="govuk-!-font-weight-bold">@Model.TotalCompletedAssessments</span></td>
+            </tr>
+        </tbody>
+    </table>
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
@@ -108,7 +127,7 @@
             </tr>
         </thead>
         <tbody class="govuk-table__body">
-            @foreach(var regionResult in @Model.RegionResults)
+            @foreach (var regionResult in @Model.RegionResults)
             {
                 <tr class="govuk-table__row">
                     <td scope="row" class="govuk-table__cell">
@@ -163,11 +182,11 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             @* THE EXPRESION OF INTEREST HAS BEEN TEMPORARILY REMOVED DUE TO BUSINESS ISSUES THIS CODE IS COMMENTED OUT TO PREVENT ACCESS
-            <h2 class="govuk-heading-l">Not ready to apply</h2>
-            <p class="govuk-body">
-                If you think you are interested in assessing this Standard but not yet ready to apply, complete the
-                <a class="govuk-link" asp-controller="OppFinder" asp-action="ExpressionOfInterest" asp-route-standardReference="@Model.StandardReference" asp-route-standardStatus="@StandardStatus.Approved" asp-route-backLink="true">expression of interest form</a>
-            </p>
+                <h2 class="govuk-heading-l">Not ready to apply</h2>
+                <p class="govuk-body">
+                    If you think you are interested in assessing this Standard but not yet ready to apply, complete the
+                    <a class="govuk-link" asp-controller="OppFinder" asp-action="ExpressionOfInterest" asp-route-standardReference="@Model.StandardReference" asp-route-standardStatus="@StandardStatus.Approved" asp-route-backLink="true">expression of interest form</a>
+                </p>
             *@
             <a class="govuk-button" href="/" target="_blank" rel="noopener noreferrer">Apply to assess this Standard</a>
 

@@ -1,15 +1,14 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Domain.Paging;
-using SFA.DAS.AssessorService.Web.Extensions;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.Models;
 using SFA.DAS.AssessorService.Web.ViewModels.OppFinder;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Web.Controllers.OppFinder
 {
@@ -377,10 +376,10 @@ namespace SFA.DAS.AssessorService.Web.Controllers.OppFinder
         }
 
         [HttpGet(nameof(ShowApprovedStandardDetails))]
-        public async Task<IActionResult> ShowApprovedStandardDetails(int standardCode)
+        public async Task<IActionResult> ShowApprovedStandardDetails(string standardReference)
         {
             var standardDetails = await _oppFinderApiClient.
-                GetApprovedStandardDetails(new GetOppFinderApprovedStandardDetailsRequest { StandardCode = standardCode });
+                GetApprovedStandardDetails(new GetOppFinderApprovedStandardDetailsRequest { StandardReference = standardReference });
 
             if (standardDetails == null)
                 return RedirectToAction(string.Empty, OppFinderRoute);
@@ -388,7 +387,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.OppFinder
             var vm = new OppFinderApprovedDetailsViewModel
             {
                 PageIndex = _oppFinderSession.ApprovedPageIndex,
-                StandardCode = standardCode,
+                StandardCode = standardDetails.StandardCode ?? default,
                 Title = standardDetails.Title,
                 OverviewOfRole = standardDetails.OverviewOfRole,
                 StandardLevel = standardDetails.StandardLevel,
@@ -403,7 +402,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers.OppFinder
                 StandardPageUrl = standardDetails.StandardPageUrl,
                 EqaProvider = standardDetails.EqaProvider,
                 EqaProviderLink = standardDetails.EqaProviderLink,
-                RegionResults = standardDetails.RegionResults
+                RegionResults = standardDetails.RegionResults,
+                VersionResults = standardDetails.VersionResults,
             };
 
             return View("ApprovedDetails", vm);

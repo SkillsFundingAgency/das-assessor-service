@@ -20,5 +20,6 @@ namespace SFA.DAS.AssessorService.Api.Types.Models
         public string EqaProvider { get; set; }
         public string EqaProviderLink { get; set; }
         public List<OppFinderApprovedStandardDetailsRegionResult> RegionResults { get; set; }
+        public List<OppFinderApprovedStandardDetailsVersionResult> VersionResults { get; set; }
     }
 }

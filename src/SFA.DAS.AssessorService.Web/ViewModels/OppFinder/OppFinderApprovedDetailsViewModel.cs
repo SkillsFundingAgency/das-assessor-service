@@ -14,5 +14,6 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.OppFinder
         public string MaxFunding { get; set; }
         public string EqaProviderLink { get; set; }
         public List<OppFinderApprovedStandardDetailsRegionResult> RegionResults { get; set; }
+        public List<OppFinderApprovedStandardDetailsVersionResult> VersionResults { get; set; }
     }
 }

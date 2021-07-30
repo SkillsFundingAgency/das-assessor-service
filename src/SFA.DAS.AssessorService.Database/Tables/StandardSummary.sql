@@ -13,7 +13,8 @@ CREATE TABLE [StandardSummary](
     [TotalEPAOs] INT NULL, 
     [EndPointAssessors] INT NULL, 
     [EndPointAssessorList] [nvarchar](max) NOT NULL,
-    [UpdatedAt] datetime NULL
+    [UpdatedAt] datetime NULL,
+    [Versions] [nvarchar](500) NULL
 ) 
 GO
 
