@@ -28,19 +28,16 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ao
             var organisationId = request.OrganisationId;
             _logger.LogInformation($@"Handling OrganisationStandards Request for OrganisationId [{organisationId}]");
             var orgStandards = await _registerQueryRepository.GetOrganisationStandardByOrganisationId(organisationId);
+
             foreach (var orgStandard in orgStandards)
             {
                 var deliveryAreas = await _registerQueryRepository.GetDeliveryAreaIdsByOrganisationStandardId(orgStandard.Id);
                 orgStandard.DeliveryAreas = deliveryAreas.ToList();
+
+                var versions = await _standardService.GetEPAORegisteredStandardVersions(organisationId, orgStandard.StandardCode);
+                orgStandard.StandardVersions = versions.ToList();
             }
 
-            var allStandards = _standardService.GetAllStandards().Result;
-
-            foreach (var organisationStandard in orgStandards)
-            {
-                var std = allStandards.FirstOrDefault(x => x.StandardId == organisationStandard.StandardCode);
-                organisationStandard.StandardCollation = std;
-            }
             return orgStandards.ToList();
         }
     } 

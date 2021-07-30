@@ -7,25 +7,8 @@
     Layout = "_DashboardLayout";
 }
 
-@if (Model.BackToCheckPage)
-{
-    @if (!Model.IsFromStandard)
-    {
-        <a class="govuk-back-link" asp-controller="CertificateCheck" asp-action="Check">Back</a>
-    }
-    else
-    {
-        <a class="govuk-back-link" asp-controller="CertificatePrivateStandardCode" asp-action="StandardCode" asp-route-redirecttocheck="true">Back</a>
-    }
-}
-else if (Model.IsPrivatelyFunded)
-{
-    <a class="govuk-back-link" asp-controller="CertificatePrivateStandardCode" asp-action="StandardCode">Back</a>
-}
-else
-{
-    <a class="govuk-back-link" asp-controller="CertificateDeclaration" asp-action="Declare">Back</a>
-}
+
+<a class="govuk-back-link" asp-controller="CertificateOption" asp-action="Back">Back</a>
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
@@ -58,10 +41,8 @@ else
                 }
 
                 <h1 class="govuk-heading-xl">
-                    @Localizer["Heading"]
+                    @Localizer["Heading", Model.Standard]
                 </h1>
-                <p class="govuk-body">You may know options as 'occupational options', 'pathways', 'specialisms' or 'specialist functions'.</p>
-                <p class="govuk-body">The option will appear on the certificate.</p>
 
                 <div class="govuk-form-group" sfa-anyvalidationerror-class="govuk-form-group--error">
                     <span class="govuk-error-message" asp-validation-for="Option"></span>
@@ -80,18 +61,6 @@ else
                 </div>
 
                 <button type="submit" class="govuk-button">@Localizer["ContinueButton"]</button>
-
-                <details class="govuk-details">
-                    <summary class="govuk-details__summary">
-                        <span class="govuk-details__summary-text">
-                            @Localizer["InfoHeader"]
-                        </span>
-                    </summary>
-                    <div class="govuk-details__text" id="what-is-a-learning-option">
-                        @Localizer["InfoBody"]
-                    </div>
-                </details>
-
             </form>
         </div>
     </div>

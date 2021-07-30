@@ -11,18 +11,18 @@ namespace SFA.DAS.AssessorService.Application.Handlers.BatchLogs
 {
     public class UpdateBatchLogReadyToPrintAddCertificatesHandler : IRequestHandler<UpdateBatchLogReadyToPrintAddCertificatesRequest, int>
     {
-        private readonly ICertificateBatchLogRepository _certificateBatchLogRepository;
+        private readonly IBatchLogRepository _batchLogRepository;
         private readonly ICertificateRepository _certificateRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger<UpdateBatchLogReadyToPrintAddCertificatesHandler> _logger;
 
         public UpdateBatchLogReadyToPrintAddCertificatesHandler(
-            ICertificateBatchLogRepository certificateBatchLogRepository,
+            IBatchLogRepository batchLogRepository,
             ICertificateRepository certificateRepository,
             IUnitOfWork unitOfWork,
             ILogger<UpdateBatchLogReadyToPrintAddCertificatesHandler> logger)
         {
-            _certificateBatchLogRepository = certificateBatchLogRepository;
+            _batchLogRepository = batchLogRepository;
             _certificateRepository = certificateRepository;
             _unitOfWork = unitOfWork;
             _logger = logger;
@@ -44,8 +44,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.BatchLogs
 
                 if (certificateIds.Length > 0)
                 {
-                    await _certificateBatchLogRepository
-                        .UpsertCertificatesReadyToPrintInBatch(certificateIds, request.BatchNumber);
+                    await _batchLogRepository
+                        .UpsertCertificatesReadyToPrintInBatch(request.BatchNumber, certificateIds);
 
                     await _certificateRepository.
                         UpdateCertificatesReadyToPrintInBatch(certificateIds, request.BatchNumber);

@@ -31,7 +31,7 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
 
             _certificateRepository = new CertificateRepository(_mockUnitOfWork.Object, _mockDbContext.Object);
 
-            _result = _certificateRepository.GetCertificateByOrgIdLastname(1111111111, "EPA0001", "Hawkins").Result;
+            _result = _certificateRepository.GetCertificateByUlnOrgIdLastnameAndStandardCode(1111111111, "EPA0001", "Hawkins", 1).Result;
         }
 
         [Test]
@@ -48,6 +48,7 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
                 .With(x => x.Uln = 1111111111)
                 .With(x => x.Organisation.EndPointAssessorOrganisationId = "EPA0001")
                 .With(x => x.CertificateData = "{'LearnerFamilyName':'Hawkins'}")
+                .With(x => x.StandardCode = 1)
                 .TheNext(9)
                 .With(x => x.Organisation = Builder<Organisation>.CreateNew().Build())
                 .With(x => x.Uln = 1111111111)

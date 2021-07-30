@@ -2,6 +2,5 @@
 {
     public class SearchData
     {
-        public bool? IsPrivatelyFunded { get; set; }
     }
 }

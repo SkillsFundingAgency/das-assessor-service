@@ -21,7 +21,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Standards
 
         public async Task<PaginatedList<GetEpaoRegisteredStandardsResponse>> Handle(GetEpaoRegisteredStandardsRequest request, CancellationToken cancellationToken)
         {
-            _logger.LogInformation("Retreiving Epao registered standards");
+            _logger.LogInformation("Retrieving Epao registered standards");
             var result =  await _standardRepository.GetEpaoRegisteredStandards(request.EpaoId, request.PageSize, request.PageIndex);
 
             var epaoRegisteredStandardsResult = result.PageOfResults.Select(o =>
@@ -30,7 +30,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Standards
                     Level = o.Level,
                     StandardCode = o.StandardCode,
                     StandardName = o.StandardName,
-                    ReferenceNumber = o.ReferenceNumber
+                    ReferenceNumber = o.ReferenceNumber,
+                    NewVersionAvailable = o.NewVersionAvailable,
+                    NumberOfVersions = o.NumberOfVersions
                 }).ToList();
 
            return new PaginatedList<GetEpaoRegisteredStandardsResponse>(epaoRegisteredStandardsResult, result.TotalCount, request.PageIndex, request.PageSize);

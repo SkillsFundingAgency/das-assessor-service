@@ -38,7 +38,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.UnitTests.Controllers
         [Test, MoqAutoData]
         public async Task WhenRequestingStandardVersionOptions_And_StandardVersionWithOptionsIsFound_Then_ReturnStandard(string standardReference, string version, StandardOptions standardOptionsResponse)
         {
-            _mockApiClient.Setup(client => client.GetStandardOptionsByStandardReferenceAndVersion(standardReference, version))
+            _mockApiClient.Setup(client => client.GetStandardOptionsByStandardIdAndVersion(standardReference, version))
                 .ReturnsAsync(standardOptionsResponse);
 
             var result = await _controller.GetOptionsForStandardVersion(standardReference, version) as ObjectResult;
@@ -57,7 +57,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.UnitTests.Controllers
                 .With(s => s.CourseOption, new List<string>())
                 .Create();
 
-            _mockApiClient.Setup(client => client.GetStandardOptionsByStandardReferenceAndVersion(standardReference, version))
+            _mockApiClient.Setup(client => client.GetStandardOptionsByStandardIdAndVersion(standardReference, version))
                 .ReturnsAsync(standardOptionsResponse);
 
             var result = await _controller.GetOptionsForStandardVersion(standardReference, version) as NoContentResult;
@@ -68,7 +68,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.UnitTests.Controllers
         [Test, MoqAutoData]
         public async Task WhenRequestingStandardVersionOptions_And_StandardVersionIsNotFound_Then_ReturnNotFound(string standardReference, string version)
         {
-            _mockApiClient.Setup(client => client.GetStandardOptionsByStandardReferenceAndVersion(standardReference, version))
+            _mockApiClient.Setup(client => client.GetStandardOptionsByStandardIdAndVersion(standardReference, version))
                 .ReturnsAsync((StandardOptions)null);
 
             var result = await _controller.GetOptionsForStandardVersion(standardReference, version) as NotFoundResult;

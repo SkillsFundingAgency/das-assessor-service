@@ -13,6 +13,7 @@ namespace SFA.DAS.AssessorService.Web.Infrastructure
         string Get(string key);
         T Get<T>(string key);
         bool Exists(string key);
+        bool TryGet<T>(string key, out T value);
     }
 
     class SessionService : ISessionService
@@ -66,6 +67,18 @@ namespace SFA.DAS.AssessorService.Web.Infrastructure
         public bool Exists(string key)
         {
             return _httpContextAccessor.HttpContext.Session.Keys.Any(k => k == _environment + "_" + key);
+        }
+
+        public bool TryGet<T>(string key, out T value)
+        {
+            if(Exists(key))
+            {
+                value = Get<T>(key);
+                return true;
+            }
+
+            value = default;
+            return false;
         }
     }
 }

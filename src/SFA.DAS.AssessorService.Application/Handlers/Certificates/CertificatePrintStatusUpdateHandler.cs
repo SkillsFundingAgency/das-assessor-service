@@ -14,16 +14,16 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
     public class CertificatePrintStatusUpdateHandler : IRequestHandler<CertificatePrintStatusUpdateRequest, ValidationResponse>
     {
         private readonly ICertificateRepository _certificateRepository;
-        private readonly ICertificateBatchLogRepository _certificateBatchLogRepository;
+        private readonly IBatchLogQueryRepository _batchLogQueryRepository;
         private readonly IMediator _mediator;
         private readonly ILogger<CertificatePrintStatusUpdateHandler> _logger;
 
         public CertificatePrintStatusUpdateHandler(ICertificateRepository certificateRepository, 
-            ICertificateBatchLogRepository certificateBatchLogRepository,
+            IBatchLogQueryRepository batchLogQueryRepository,
             IMediator mediator, ILogger<CertificatePrintStatusUpdateHandler> logger)
         {
             _certificateRepository = certificateRepository;
-            _certificateBatchLogRepository = certificateBatchLogRepository;
+            _batchLogQueryRepository = batchLogQueryRepository;
             _mediator = mediator;
             _logger = logger;
         }
@@ -47,7 +47,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
                     return validationResult;
                 }
 
-                var certificateBatchLog = await _certificateBatchLogRepository.GetCertificateBatchLog(validatedCertificatePrintStatus.CertificateReference, validatedCertificatePrintStatus.BatchNumber);
+                var certificateBatchLog = await _batchLogQueryRepository.GetCertificateBatchLog(validatedCertificatePrintStatus.BatchNumber, validatedCertificatePrintStatus.CertificateReference);
                 if (certificateBatchLog == null)
                 {
                     validationResult.Errors.Add(

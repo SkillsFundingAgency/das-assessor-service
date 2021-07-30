@@ -71,13 +71,14 @@
     <Folder Include="Security" />
     <Folder Include="Security\Roles" />
     <Folder Include="Security\Roles\DatabaseRoles" />
+    <Folder Include="Security\Schemas" />
+    <Folder Include="StoredProcedures\DashboardReporting" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Tables\CertificateLogs.sql" />
     <Build Include="Tables\Certificates.sql" />
     <Build Include="Tables\ContactInvitations.sql" />
     <Build Include="Tables\ContactLogs.sql" />
-    <Build Include="Tables\Contacts.sql" />
     <Build Include="Tables\Organisations.sql" />
     <Build Include="Tables\Ilrs.sql" />
     <Build Include="Tables\EMailTemplates.sql" />
@@ -150,17 +151,25 @@
     <None Include="PostDeploymentScripts\LookupData\DeliveryAreaDelete.sql" />
     <None Include="PostDeploymentScripts\LookupData\EmailTemplatesDelete.sql" />
     <None Include="PostDeploymentScripts\LookupData\EmailTemplatesInsertOrUpdate.sql" />
-    <Build Include="Tables\IlrsImport.sql" />
     <Build Include="Functions\Scalar-valued Functions\ApplyConst.sql" />
     <Build Include="Functions\Table-valued Functions\EPAO_Func_Get_PipelineInfo.sql" />
     <Build Include="StoredProcedures\GetEPAO_Pipelines_Count.sql" />
     <Build Include="StoredProcedures\DatabaseMaintenance.sql" />
     <Build Include="Security\Roles\DatabaseRoles\DatabaseMaintenance.sql" />
     <None Include="PostDeploymentScripts\GrantOrDenyPermissions.sql" />
+    <None Include="PostDeploymentScripts\EPAO_Migration_Part0_Patch.sql" />
+    <Build Include="StoredProcedures\StaffReports_MissingCertificateData.sql" />
     <None Include="PostDeploymentScripts\EPAO_Migration_Part1_Certificates.sql" />
     <None Include="PostDeploymentScripts\EPAO_Migration_Part2_OrganisationStandard.sql" />
     <None Include="PostDeploymentScripts\EPAO_Migration_Part3_OrganisationStandardVersion.sql" />
     <None Include="PostDeploymentScripts\EPAO_Migration_Part4_Apply.sql" />
+    <None Include="PostDeploymentScripts\EPAO_Migration_Part5_Fails.sql" />
+    <Build Include="Tables\StandardOptions.sql" />
+    <None Include="PostDeploymentScripts\CON-3359_Remove_IlrsImport.sql" />
+    <Build Include="Tables\Contacts.sql" />
+    <Build Include="Security\Roles\DatabaseRoles\DashboardReporting.sql" />
+    <Build Include="Security\Schemas\DashboardReporting.sql" />
+    <Build Include="StoredProcedures\DashboardReporting\CertificatePrintSummary.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="SFA.DAS.AssessorService.Database.refactorlog" />

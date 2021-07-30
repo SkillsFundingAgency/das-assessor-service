@@ -1,11 +1,10 @@
 ﻿using AutoMapper;
-using Newtonsoft.Json;
+using SFA.DAS.AssessorService.Api.Types.Models.ExternalApi.Learners;
+using SFA.DAS.AssessorService.Application.Api.External.Extenstions;
 using SFA.DAS.AssessorService.Application.Api.External.Models.Response;
 using SFA.DAS.AssessorService.Application.Api.External.Models.Response.Certificates;
-using SFA.DAS.AssessorService.Application.Api.External.Models.Response.Epa;
 using SFA.DAS.AssessorService.Application.Api.External.Models.Response.Learners;
 using SFA.DAS.AssessorService.Domain.Consts;
-using System;
 
 namespace SFA.DAS.AssessorService.Application.Api.External.AutoMapperProfiles
 {
@@ -26,7 +25,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.AutoMapperProfiles
         {
             CreateMap<AssessorService.Api.Types.Models.ExternalApi.Learners.GetBatchLearnerResponse, GetLearner>()
                 .ForMember(dest => dest.Certificate, opt => opt.MapFrom(source => Mapper.Map<Domain.Entities.Certificate, Certificate>(source.Certificate)))
-                .ForMember(dest => dest.EpaDetails, opt => opt.ResolveUsing(source => Mapper.Map<Domain.JsonData.CertificateData, EpaDetails>(JsonConvert.DeserializeObject<Domain.JsonData.CertificateData>(source.Certificate?.CertificateData ?? ""))))
+                .ForMember(dest => dest.EpaDetails, opt => opt.MapFrom(source => source.EpaDetails))
                 .AfterMap<MapStatusAction>()
                 .AfterMap<MapLearnerDataAction>()
                 .AfterMap<HideCertificateAction>()
@@ -43,9 +42,23 @@ namespace SFA.DAS.AssessorService.Application.Api.External.AutoMapperProfiles
                 {
                     destination.LearnerData = new LearnerData
                     {
-                        Standard = source.Learner.Standard is null ? null : new Standard { StandardCode = source.Learner.Standard.StandardId, StandardReference = source.Learner.Standard.ReferenceNumber, StandardName = source.Learner.Standard.Title, Level = source.Learner.Standard.StandardData?.Level ?? 0 },
-                        Learner = new Learner { Uln = source.Learner.Uln, GivenNames = source.Learner.GivenNames, FamilyName = source.Learner.FamilyName },
-                        LearningDetails = new Models.Response.Learners.LearningDetails { LearnerReferenceNumber = source.Learner.LearnerReferenceNumber, ProviderUkPrn = source.Learner.UkPrn, ProviderName = source.Learner.OrganisationName, LearningStartDate = source.Learner.LearnerStartDate, PlannedEndDate = source.Learner.PlannedEndDate }
+                        Standard = source.Learner.Standard is null ? null : new Standard { StandardCode = source.Learner.Standard.LarsCode, StandardReference = source.Learner.Standard.IFateReferenceNumber, StandardName = source.Learner.Standard.Title, Level = source.Learner.Standard.Level },
+                        Learner = new Learner 
+                        { 
+                            Uln = source.Learner.Uln, 
+                            GivenNames = source.Learner.GivenNames, 
+                            FamilyName = source.Learner.FamilyName
+                        },
+                        LearningDetails = new Models.Response.Learners.LearningDetails 
+                        { 
+                            LearnerReferenceNumber = source.Learner.LearnerReferenceNumber, 
+                            ProviderUkPrn = source.Learner.UkPrn, 
+                            ProviderName = source.Learner.OrganisationName, 
+                            LearningStartDate = source.Learner.LearnerStartDate.DropMilliseconds(), 
+                            PlannedEndDate = source.Learner.PlannedEndDate.DropMilliseconds(),
+                            Version = GetVersionFromGetBatchLearnerResponse(source, destination),
+                            CourseOption = GetCourseOptionFromGetBatchLearnerResponse(source, destination)
+                        }
                     };
                 }
                 else if (destination.Certificate?.CertificateData != null)
@@ -55,9 +68,42 @@ namespace SFA.DAS.AssessorService.Application.Api.External.AutoMapperProfiles
                     {
                         Standard = certData.Standard,
                         Learner = certData.Learner,
-                        LearningDetails = new Models.Response.Learners.LearningDetails { ProviderUkPrn = certData.LearningDetails.ProviderUkPrn, ProviderName = certData.LearningDetails.ProviderName, LearningStartDate = certData.LearningDetails.LearningStartDate}
+                        LearningDetails = new Models.Response.Learners.LearningDetails 
+                        { 
+                            ProviderUkPrn = certData.LearningDetails.ProviderUkPrn, 
+                            ProviderName = certData.LearningDetails.ProviderName, 
+                            LearningStartDate = certData.LearningDetails.LearningStartDate.DropMilliseconds()
+                        }
                     };
                 }
+            }
+
+            private string GetVersionFromGetBatchLearnerResponse(GetBatchLearnerResponse source, GetLearner destination)
+            {
+                if (!string.IsNullOrEmpty(source.Learner.Version))
+                {
+                    return source.Learner.Version;
+                }
+                else if (!string.IsNullOrWhiteSpace(destination.Certificate?.CertificateData?.LearningDetails?.Version))
+                {
+                    return destination.Certificate.CertificateData.LearningDetails.Version;
+                }
+
+                return null;
+            }
+
+            private string GetCourseOptionFromGetBatchLearnerResponse(GetBatchLearnerResponse source, GetLearner destination)
+            {
+                if (!string.IsNullOrEmpty(source.Learner.CourseOption))
+                {
+                    return source.Learner.CourseOption;
+                }
+                else if (!string.IsNullOrWhiteSpace(destination.Certificate?.CertificateData?.LearningDetails?.CourseOption))
+                {
+                    return destination.Certificate.CertificateData.LearningDetails.CourseOption;
+                }
+
+                return null;
             }
         }
 
@@ -111,20 +157,6 @@ namespace SFA.DAS.AssessorService.Application.Api.External.AutoMapperProfiles
                 if (destination.Certificate.Status?.CurrentStatus == CertificateStatus.Deleted)
                 {
                     destination.Certificate = null;
-                }
-                else if (destination.Certificate.Status?.CurrentStatus == CertificateStatus.Draft)
-                {
-                    if (!EpaOutcome.Pass.Equals(destination.EpaDetails?.LatestEpaOutcome, StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        destination.Certificate = null;
-                    }
-                    else if (string.IsNullOrEmpty(destination.Certificate?.CertificateData?.LearningDetails?.OverallGrade)
-                        || destination.Certificate?.CertificateData?.LearningDetails?.AchievementDate is null
-                        || string.IsNullOrEmpty(destination.Certificate?.CertificateData?.PostalContact?.PostCode))
-                    {
-                        // Ensure we have a OverallGrade, AchievementDate and a PostalContact before seeing any Cert details
-                        destination.Certificate = null;
-                    }
                 }
             }
         }

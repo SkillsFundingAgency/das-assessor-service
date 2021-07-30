@@ -32,10 +32,10 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Ge
             _certificateRepository = new Mock<ICertificateRepository>();
             _certificateRepository.Setup(r => r.GetCertificates(It.IsAny<List<string>>())).Returns(Task.FromResult(certificates));
 
-            var getCertificatesHandler =
+            var sut = 
                 new GetCertificatesHandler(_certificateRepository.Object);
 
-            _result = getCertificatesHandler.Handle(new GetCertificatesRequest(), new CancellationToken())
+            _result = sut.Handle(new GetCertificatesRequest(), new CancellationToken())
                 .Result;
         }
 

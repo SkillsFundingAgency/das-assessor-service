@@ -54,6 +54,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         Task<OrganisationResponse> GetOrganisationByName(string name);
         Task<OrganisationResponse> GetOrganisationByUserId(Guid userId);
         Task<List<OrganisationStandardSummary>> GetOrganisationStandardsByOrganisation(string endPointAssessorOrganisationId);
+        Task<IEnumerable<AppliedStandardVersion>> GetAppliedStandardVersionsForEPAO(string endPointAssessorOrganisationId, string standardReference);
         Task<PaginatedList<OrganisationSearchResult>> SearchForOrganisations(string searchTerm, int pageSize, int pageIndex);
 
         Task<bool> IsCompanyActivelyTrading(string companyNumber);
@@ -62,5 +63,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 
         Task<EpaOrganisationResponse> CreateEpaOrganisation(CreateEpaOrganisationRequest epaoOrganisationModel);
         Task<EpaOrganisation> GetEpaOrganisationById(string Id);
+
+        Task<OrganisationStandardVersion> OrganisationStandardVersionOptIn(Guid applicationId, Guid contactId, string endPointAssessorOrganisationId, 
+           string standardReference, decimal? version, string standardUId, string comments);
     }
 }

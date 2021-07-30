@@ -17,9 +17,15 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
         {
             this.standardRepository = standardRepository;
         }
-        public async Task LoadStandards(IEnumerable<GetStandardByIdResponse> standards)
+
+        public async Task DeleteAllStandardsAndOptions()
         {
-            Func<GetStandardByIdResponse, Standard> MapGetStandardsListItemToStandard = source => new Standard
+            await Task.WhenAll(standardRepository.DeleteAllStandards(), standardRepository.DeleteAllOptions());
+        }
+
+        public async Task LoadStandards(IEnumerable<StandardDetailResponse> standards)
+        {
+            Func<StandardDetailResponse, Standard> MapGetStandardsListItemToStandard = source => new Standard
             {
                 StandardUId = source.StandardUId,
                 IfateReferenceNumber = source.IfateReferenceNumber,
@@ -39,19 +45,30 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
                 VersionLatestEndDate = source.VersionDetail.LatestEndDate,
                 VersionLatestStartDate = source.VersionDetail.LatestStartDate,
                 ProposedMaxFunding = source.VersionDetail.ProposedMaxFunding,
-                ProposedTypicalDuration = source.VersionDetail.ProposedTypicalDuration
+                ProposedTypicalDuration = source.VersionDetail.ProposedTypicalDuration,
+                EPAChanged = source.EPAChanged,
+                StandardPageUrl = source.StandardPageUrl
             };
 
-            await standardRepository.DeleteAll();
-
-            var tasks = standards.Select(MapGetStandardsListItemToStandard).Select(standardRepository.Insert);
-
-            await Task.WhenAll(tasks);
+            await standardRepository.InsertStandards(standards.Select(MapGetStandardsListItemToStandard));
         }
 
-        public async Task UpsertStandardCollations(IEnumerable<GetStandardByIdResponse> standards)
+        public async Task LoadOptions(IEnumerable<StandardDetailResponse> standards)
         {
-            Func<GetStandardByIdResponse, StandardCollation> MapGetStandardsListItemToStandardCollation = source => new StandardCollation
+            var standardsWithOptions = standards.Where(s => s.Options != null && s.Options.Any());
+            IEnumerable<StandardOption> optionsToInsert = new List<StandardOption>();
+            foreach(var standard in standardsWithOptions)
+            {
+                // Union to ensure no duplicates.
+                optionsToInsert = optionsToInsert.Union(standard.Options.Select(s => new StandardOption { StandardUId = standard.StandardUId, OptionName = s }));
+            }
+
+            await standardRepository.InsertOptions(optionsToInsert);
+        }
+
+        public async Task UpsertStandardCollations(IEnumerable<StandardDetailResponse> standards)
+        {
+            Func<StandardDetailResponse, StandardCollation> MapGetStandardsListItemToStandardCollation = source => new StandardCollation
             {
                 StandardId = source.LarsCode,
                 ReferenceNumber = source.IfateReferenceNumber,
@@ -89,9 +106,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
             await standardRepository.UpsertApprovedStandards(standardCollations);
         }
 
-        public async Task UpsertStandardNonApprovedCollations(IEnumerable<GetStandardByIdResponse> standards)
+        public async Task UpsertStandardNonApprovedCollations(IEnumerable<StandardDetailResponse> standards)
         {
-            Func<GetStandardByIdResponse, StandardNonApprovedCollation> MapGetStandardsListItemToStandardNonApprovedCollation = source => new StandardNonApprovedCollation
+            Func<StandardDetailResponse, StandardNonApprovedCollation> MapGetStandardsListItemToStandardNonApprovedCollation = source => new StandardNonApprovedCollation
             {
                 ReferenceNumber = source.IfateReferenceNumber,
                 Title = source.Title,

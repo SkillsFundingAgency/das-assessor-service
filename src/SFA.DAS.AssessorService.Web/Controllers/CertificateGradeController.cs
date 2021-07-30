@@ -27,14 +27,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [HttpPost(Name="Grade")]
         public async Task<IActionResult> Grade(CertificateGradeViewModel vm)
         {
-            var certificate = await CertificateApiClient.GetCertificate(vm.Id);
-            if (certificate.IsPrivatelyFunded)
-            {
-                return await SaveViewModel(vm,
-                    returnToIfModelNotValid: "~/Views/Certificate/Grade.cshtml",
-                    nextAction: RedirectToAction("LearnerStartDate", "CertificatePrivateLearnerStartDate"),
-                    action: CertificateActions.Grade);
-            }
             return await SaveViewModel(vm,
                 returnToIfModelNotValid: "~/Views/Certificate/Grade.cshtml",
                 nextAction: RedirectToAction("Date", "CertificateDate"), action: CertificateActions.Grade);

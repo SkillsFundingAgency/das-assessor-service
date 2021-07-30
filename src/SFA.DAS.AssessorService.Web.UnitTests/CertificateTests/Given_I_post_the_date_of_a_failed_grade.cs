@@ -109,7 +109,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
 
             var serialisedCertificateSession = JsonConvert.SerializeObject(certificateSession);
 
-            MockSession.Setup(q => q.Get("CertificateSession")).Returns(serialisedCertificateSession);
+            MockSession.Setup(q => q.Get(nameof(CertificateSession))).Returns(serialisedCertificateSession);
             MockSession.Setup(q => q.Get("EndPointAsessorOrganisationId")).Returns("EPA00001");
 
             return MockSession.Object;

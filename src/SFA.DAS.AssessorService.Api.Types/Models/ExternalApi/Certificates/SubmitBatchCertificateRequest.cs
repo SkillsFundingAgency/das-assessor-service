@@ -13,5 +13,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.ExternalApi.Certificates
         public string CertificateReference { get; set; }
 
         public int UkPrn { get; set; }
+
+        public string GetStandardId() => !string.IsNullOrWhiteSpace(StandardReference) ? StandardReference : StandardCode > 0 ? StandardCode.ToString() : string.Empty;
     }
 }

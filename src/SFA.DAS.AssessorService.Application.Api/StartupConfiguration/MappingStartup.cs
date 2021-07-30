@@ -88,6 +88,8 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                 cfg.AddProfile<OrganisationStandardMapper>();
 
                 cfg.AddProfile<ApplicationResponseProfile>();
+
+                cfg.AddProfile<ApplicationSummaryItemProfile>();
             });
         }
     }

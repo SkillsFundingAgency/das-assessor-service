@@ -59,9 +59,11 @@ namespace SFA.DAS.AssessorService.Web
                 options.RequestCultureProviders.Clear();
             });
             
-            services.AddSingleton<IAuthorizationPolicyProvider, PrivilegePolicyProvider>();
-            services.AddSingleton<IAuthorizationHandler, PrivilegeHandler>();
+            services.AddSingleton<IAuthorizationPolicyProvider, AssessorPolicyProvider>();
             
+            services.AddSingleton<IAuthorizationHandler, ApplicationAuthorizationHandler>();
+            services.AddSingleton<IAuthorizationHandler, PrivilegeAuthorizationHandler>();
+
             services.AddMvc(options => { options.Filters.Add<CheckSessionFilter>();})
                 .AddControllersAsServices()
                 .AddSessionStateTempDataProvider()
@@ -167,6 +169,7 @@ namespace SFA.DAS.AssessorService.Web
                 config.For<IAzureApiClient>().Use<AzureApiClient>().Ctor<string>().Is(Configuration.AzureApiAuthentication.ApiBaseAddress);
 
                 config.For<IStandardServiceClient>().Use<StandardServiceClient>().Ctor<string>().Is(Configuration.AssessorApiAuthentication.ApiBaseAddress);
+                config.For<IStandardVersionClient>().Use<StandardVersionClient>().Ctor<string>().Is(Configuration.AssessorApiAuthentication.ApiBaseAddress);
 
                 config.For<IApiValidationService>().Use<ApiValidationService>();
 

@@ -11,6 +11,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Staff
         public string FamilyName { get; set; }
         public int StandardCode { get; set; }
         public string Standard { get; set; }
+        public string Version { get; set; }
         public int Level { get; set; }
         public int? FundingModel { get; set; }
         public int? CompletionStatus { get; set; }

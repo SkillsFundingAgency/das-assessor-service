@@ -13,10 +13,12 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.ExternalApi.Learners
         public string LearnerReferenceNumber { get; set; }
         public int? CompletionStatus { get; set; }
 
-        public StandardCollation Standard { get; set; }
+        public StandardVersion Standard { get; set; }
         
         public string EndPointAssessorOrganisationId { get; set; }
         public int UkPrn { get; set; }
         public string OrganisationName { get; set; }
+        public string Version { get; set; }
+        public string CourseOption { get; set; }
     }
 }

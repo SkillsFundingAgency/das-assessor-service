@@ -5,6 +5,7 @@ using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Extensions;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -33,7 +34,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi._HelperClasse
             var submittedLogEntry = certificateLogs?.OrderByDescending(l => l.EventTime).FirstOrDefault(l => l.Status == CertificateStatus.Submitted);
 
             // NOTE: THIS IS A DATA FRIG FOR EXTERNAL API AS WE NEED SUBMITTED INFORMATION!
-            if (submittedLogEntry != null)
+            // Amended, don't return submitted info, if the status has returned to draft after a fail.
+            if (submittedLogEntry != null && certificate.Status != CertificateStatus.Draft)
             {
                 var submittedContact = await contactQueryRepository.GetContact(submittedLogEntry.Username);
                 cert.UpdatedAt = submittedLogEntry.EventTime.UtcToTimeZoneTime();
@@ -61,15 +63,15 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi._HelperClasse
             return grades.FirstOrDefault(g => g.Equals(overallGrade, StringComparison.InvariantCultureIgnoreCase)) ?? overallGrade;
         }
 
-        public static string NormalizeCourseOption(StandardCollation standard, string courseOption)
+        public static string NormalizeCourseOption(StandardOptions standardOptions, string courseOption)
         {
-            if (standard.Options is null)
+            if (standardOptions is null || !standardOptions.HasOptions())
             {
                 return courseOption;
             }
             else
             {
-                return standard.Options.FirstOrDefault(g => g.Equals(courseOption, StringComparison.InvariantCultureIgnoreCase)) ?? courseOption;
+                return standardOptions.CourseOption.FirstOrDefault(g => g.Equals(courseOption, StringComparison.InvariantCultureIgnoreCase)) ?? courseOption;
             }
         }
     }

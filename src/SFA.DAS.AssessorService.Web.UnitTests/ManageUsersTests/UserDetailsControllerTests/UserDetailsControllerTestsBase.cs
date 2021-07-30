@@ -30,6 +30,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ManageUsersTests.UserDetailsCont
         [SetUp]
         public void SetUp()
         {
+            Mapper.Reset();
             Mapper.Initialize(cfg =>
             {
                 cfg.CreateMap<ContactResponse, UserViewModel>();

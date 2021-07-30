@@ -12,10 +12,6 @@
 {
     <a class="govuk-back-link" asp-controller="CertificateCheck" asp-action="Check">Back</a>
 }
-else if(Model.IsPrivatelyFunded)
-{
-    <a class="govuk-back-link" asp-controller="CertificatePrivateProviderUkprn" asp-action="Ukprn">Back</a>
-}
 else
 {
     <a class="govuk-back-link" asp-controller="CertificateGrade" asp-action="Grade">Back</a>
@@ -117,19 +113,6 @@ else
                 </div>
 
                 <button type="submit" class="govuk-button">@Localizer["ContinueButton"]</button>
-
-                @*
-                <details class="govuk-details">
-                    <summary class="govuk-details__summary">
-                        <span class="govuk-details__summary-text">
-                            @Localizer["InfoHeader"]
-                        </span>
-                    </summary>
-                    <div class="govuk-details__text">
-                        @Localizer["InfoBody"]
-                    </div>
-                </details>
-                *@
 
             </form>
         </div>

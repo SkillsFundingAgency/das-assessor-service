@@ -29,6 +29,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
                                 .With(cd => cd.AchievementDate = new DateTime(2017, 1, 1).AddHours(-1))
                                 .With(cd => cd.OverallGrade = CertificateGrade.Pass)
                                 .With(cd => cd.CourseOption = "English")
+                                .With(cd => cd.Version = "1.0")
                                 .Build())
                 .Build();
 

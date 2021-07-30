@@ -15,6 +15,7 @@ RETURN
         ap1.Id AS ApplicationId,
         seq.SequenceNo AS SequenceNo,
         org.EndPointAssessorName AS OrganisationName,
+		org.EndPointAssessorOrganisationId AS EndPointAssessorOrganisationId,
         CASE WHEN seq.SequenceNo = [dbo].[ApplyConst_STANDARD_SEQUENCE_NO]() THEN JSON_VALUE(ap1.ApplyData, '$.Apply.StandardName')
 			 WHEN seq.SequenceNo = [dbo].[ApplyConst_STANDARD_WITHDRAWAL_SEQUENCE_NO]() THEN JSON_VALUE(ap1.ApplyData, '$.Apply.StandardName')
 		     ELSE NULL
@@ -53,7 +54,9 @@ RETURN
 		END As SubmissionCount,
         ap1.ApplicationStatus As ApplicationStatus,
         ap1.ReviewStatus As ReviewStatus,
+		ap1.StandardApplicationType as StandardApplicationType,
         ap1.FinancialReviewStatus As FinancialStatus,
+		JSON_QUERY(ap1.ApplyData, '$.Apply.Versions') as Versions,
         JSON_VALUE(ap1.FinancialGrade,'$.SelectedGrade') AS FinancialGrade,		
         seq.Status As SequenceStatus,
 		TotalCount = COUNT(1) OVER()

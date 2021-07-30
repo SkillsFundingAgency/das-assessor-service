@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
-using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Paging;
+using Organisation = SFA.DAS.AssessorService.Domain.Entities.Organisation;
 
 namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 {
@@ -15,6 +15,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
     using SFA.DAS.AssessorService.Api.Types.CharityCommission;
     using SFA.DAS.AssessorService.Api.Types.CompaniesHouse;
     using SFA.DAS.AssessorService.Api.Types.Models.Register;
+    using SFA.DAS.AssessorService.Domain.Consts;
     using System.Net;
 
     public class OrganisationsApiClient : ApiClientBase, IOrganisationsApiClient
@@ -369,6 +370,16 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
+        public async Task<IEnumerable<AppliedStandardVersion>> GetAppliedStandardVersionsForEPAO(string endPointAssessorOrganisationId, string standardReference)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get,
+               $"/api/ao/assessment-organisations/{endPointAssessorOrganisationId}/standardversions/{standardReference}"))
+            {
+                return await RequestAndDeserialiseAsync<IEnumerable<AppliedStandardVersion>>(request,
+                    $"Could not retrieve standard versions for organisation with Id of {endPointAssessorOrganisationId} and standard reference {standardReference}", true);
+            }
+        }
+
         public async Task<PaginatedList<OrganisationSearchResult>> SearchForOrganisations(string searchTerm, int pageSize, int pageIndex)
         {
             try
@@ -442,6 +453,30 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                 {
                     throw;
                 }
+            }
+        }
+
+        public async Task<OrganisationStandardVersion> OrganisationStandardVersionOptIn(Guid applicationId, Guid contactId, string endPointAssessorOrganisationId, 
+            string standardReference, decimal? version, string standardUId, string comments)
+        {
+            var createVersionRequest = new OrganisationStandardVersionOptInRequest
+            {
+                ApplicationId = applicationId,
+                EndPointAssessorOrganisationId = endPointAssessorOrganisationId,
+                StandardReference = standardReference,
+                Version = version,
+                StandardUId = standardUId,
+                EffectiveFrom = DateTime.Today,
+                EffectiveTo = null,
+                DateVersionApproved = null,
+                Comments = comments,
+                Status = OrganisationStatus.Live,
+                SubmittingContactId = contactId
+            };
+
+            using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/v1/organisationstandardversion"))
+            {
+                return await PostPutRequestWithResponse<OrganisationStandardVersionOptInRequest, OrganisationStandardVersion>(request, createVersionRequest);
             }
         }
     }

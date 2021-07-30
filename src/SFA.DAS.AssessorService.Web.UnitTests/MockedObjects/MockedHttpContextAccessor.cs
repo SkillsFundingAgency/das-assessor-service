@@ -11,6 +11,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.MockedObjects
             var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
             {
                 new Claim(ClaimTypes.NameIdentifier, "1"),
+                new Claim("http://schemas.portal.com/ukprn", "12345678"),
                 new Claim("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn", "jcoxhead")
             }));
 

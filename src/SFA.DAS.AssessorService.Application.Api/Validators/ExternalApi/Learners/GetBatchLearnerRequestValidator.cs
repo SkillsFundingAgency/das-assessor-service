@@ -19,9 +19,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Learner
             {
                 RuleFor(m => m.Standard).CustomAsync(async (standard, context, cancellation) =>
                 {
-                    var collatedStandard = int.TryParse(standard, out int standardCode) ? await standardService.GetStandard(standardCode) : await standardService.GetStandard(standard);
+                    var standardVersion = await standardService.GetStandardVersionById(standard);
 
-                    if (collatedStandard is null)
+                    if (standardVersion is null)
                     {
                         context.AddFailure(new ValidationFailure("Standard", "Standard not found"));
                     }
@@ -34,11 +34,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Learner
                 {
                     RuleFor(m => m).CustomAsync(async (m, context, cancellation) =>
                     {
-                        var collatedStandard = int.TryParse(m.Standard, out int standardCode) ? await standardService.GetStandard(standardCode) : await standardService.GetStandard(m.Standard);
+                        var standard = await standardService.GetStandardVersionById(m.Standard);
 
-                        if (collatedStandard != null)
+                        if (standard != null)
                         {
-                            var requestedIlr = await ilrRepository.Get(m.Uln, collatedStandard.StandardId.GetValueOrDefault());
+                            var requestedIlr = await ilrRepository.Get(m.Uln, standard.LarsCode);
                             var sumbittingEpao = await organisationQueryRepository.GetByUkPrn(m.UkPrn);
 
                             if (requestedIlr is null || !string.Equals(requestedIlr.FamilyName, m.FamilyName, StringComparison.InvariantCultureIgnoreCase))
@@ -53,7 +53,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Learner
                             {
                                 var providedStandards = await standardService.GetEpaoRegisteredStandards(sumbittingEpao.EndPointAssessorOrganisationId);
 
-                                if (!providedStandards.Any(s => s.StandardCode == collatedStandard.StandardId.GetValueOrDefault()))
+                                if (!providedStandards.Any(s => s.StandardCode == standard.LarsCode))
                                 {
                                     context.AddFailure(new ValidationFailure("StandardCode", "Your organisation is not approved to assess this Standard"));
                                 }

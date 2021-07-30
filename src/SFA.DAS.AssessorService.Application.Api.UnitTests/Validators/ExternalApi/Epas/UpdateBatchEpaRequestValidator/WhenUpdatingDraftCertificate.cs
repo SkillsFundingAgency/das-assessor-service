@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalApi.Epas.UpdateBatchEpaRequestValidator
 {
-    public class WhenUpdatingDraftCertificate : UpdateBatchEpaRequestValidatorTestBase
+    public class WhenUpdatingDraftCertificateWithNoEpa : UpdateBatchEpaRequestValidatorTestBase
     {
         private ValidationResult _validationResult;
 
@@ -24,10 +24,12 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
                 .Build().ToList();
 
             var request = Builder<UpdateBatchEpaRequest>.CreateNew()
-                .With(i => i.Uln = 1234567890)
-                .With(i => i.StandardCode = 1)
+                .With(i => i.Uln = 9876543210)
+                .With(i => i.StandardCode = 101)
                 .With(i => i.StandardReference = null)
-                .With(i => i.UkPrn = 12345678)
+                .With(i => i.Version = "1.0")
+                .With(i => i.CourseOption = null)
+                .With(i => i.UkPrn = 99999999)
                 .With(i => i.FamilyName = "Test")
                 .With(i => i.EpaDetails = new EpaDetails { Epas = epas, EpaReference = "1234567890-1" })
                 .Build();
@@ -40,6 +42,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
         {
             _validationResult.IsValid.Should().BeFalse();
             _validationResult.Errors.Count.Should().Be(1);
+            _validationResult.Errors.First().ErrorMessage.Should().Be("EPA not found");
         }
     }
 

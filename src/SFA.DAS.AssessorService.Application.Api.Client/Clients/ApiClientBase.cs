@@ -87,7 +87,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                     failedResponse.Content.ReadAsStringAsync().Result));
         }
 
-        protected async Task<T> RequestAndDeserialiseAsync<T>(HttpRequestMessage request, string message = null)
+        protected async Task<T> RequestAndDeserialiseAsync<T>(HttpRequestMessage request, string message = null, bool mapNotFoundToNull = false)
         {
             HttpRequestMessage clonedRequest = null;
 
@@ -107,21 +107,23 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                 var json = await result.Content.ReadAsStringAsync();
                 return await Task.Factory.StartNew<T>(() => JsonConvert.DeserializeObject<T>(json, JsonSettings));
             }
-
-            if (result.StatusCode == HttpStatusCode.NotFound)
+            else if (result.StatusCode == HttpStatusCode.NotFound)
             {
-                if (message == null)
+                if (!mapNotFoundToNull)
                 {
-                    if(!request.RequestUri.IsAbsoluteUri)
-                        message = "Could not find " + request.RequestUri;
-                    else
-                        message = "Could not find " + request.RequestUri.PathAndQuery;
+                    if (message == null)
+                    {
+                        if (!request.RequestUri.IsAbsoluteUri)
+                            message = "Could not find " + request.RequestUri;
+                        else
+                            message = "Could not find " + request.RequestUri.PathAndQuery;
+                    }
+
+                    RaiseResponseError(message, clonedRequest, result);
                 }
-
-                RaiseResponseError(message, clonedRequest, result);
             }
-
-            RaiseResponseError(clonedRequest, result);
+            else 
+                RaiseResponseError(clonedRequest, result);
 
             return default(T);
         }

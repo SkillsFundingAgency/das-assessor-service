@@ -8,6 +8,7 @@ using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -39,10 +40,10 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Epas
             _logger.LogInformation("CreateNewEpa Before Get Certificate from db");
             var certificate = await _certificateRepository.GetCertificate(request.Uln, request.StandardCode);
 
-            if(certificate is null)
-            { 
+            if (certificate is null)
+            {
                 _logger.LogInformation("CreateNewEpa Before StartCertificateRequest");
-                var startCertificateRequest = new StartCertificateRequest { StandardCode = request.StandardCode, UkPrn = request.UkPrn, Uln = request.Uln, Username = ExternalApiConstants.ApiUserName };
+                var startCertificateRequest = new StartCertificateRequest { StandardCode = request.StandardCode, UkPrn = request.UkPrn, Uln = request.Uln, Username = ExternalApiConstants.ApiUserName, CourseOption = request.CourseOption, StandardUId = request.StandardUId };
                 certificate = await _mediator.Send(startCertificateRequest);
             }
             else
@@ -74,11 +75,27 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Epas
             certData.EpaDetails.LatestEpaDate = latestEpaRecord?.EpaDate;
             certData.EpaDetails.LatestEpaOutcome = latestEpaRecord?.EpaOutcome;
 
+            var epaAction = CertificateActions.Epa;
+            if (latestEpaRecord?.EpaOutcome.Equals(EpaOutcome.Fail, StringComparison.InvariantCultureIgnoreCase) == true)
+            {
+                certData.AchievementDate = latestEpaRecord?.EpaDate;
+                certData.OverallGrade = CertificateGrade.Fail;
+                certificate.Status = CertificateStatus.Submitted;
+                epaAction = CertificateActions.Submit;
+            }
+            else
+            {
+                certData.AchievementDate = null;
+                certData.OverallGrade = null;
+                certificate.Status = CertificateStatus.Draft;
+            }
+
             _logger.LogInformation("CreateNewEpa Before Update CertificateData");
             certificate.CertificateData = JsonConvert.SerializeObject(certData);
 
             _logger.LogInformation("CreateNewEpa Before Update Cert in db");
-            await _certificateRepository.Update(certificate, ExternalApiConstants.ApiUserName, CertificateActions.Epa);
+            
+            await _certificateRepository.Update(certificate, ExternalApiConstants.ApiUserName, epaAction);
 
             return certData.EpaDetails;
         }

@@ -27,6 +27,8 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
                 .With(i => i.Uln = 9999999999)
                 .With(i => i.StandardCode = 1)
                 .With(i => i.StandardReference = null)
+                .With(i => i.Version = "1.0")
+                .With(i => i.CourseOption = null)
                 .With(i => i.UkPrn = 99999999)
                 .With(i => i.FamilyName = "Test")
                 .With(i => i.EpaDetails = new EpaDetails { Epas = epas })
@@ -40,6 +42,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
         {
             _validationResult.IsValid.Should().BeFalse();
             _validationResult.Errors.Count.Should().Be(1);
+            _validationResult.Errors.First().ErrorMessage.Should().Be("Certificate already exists, cannot create EPA record");
         }
     }
 }

@@ -3,6 +3,7 @@ using FluentAssertions;
 using FluentValidation.Results;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models.ExternalApi.Certificates;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalApi.Certificates.GetBatchCertificateRequestValidator
@@ -29,7 +30,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
         public void ThenValidationResultShouldBeFalse()
         {
             _validationResult.IsValid.Should().BeFalse();
-            _validationResult.Errors.Count.Should().Be(1);
+            _validationResult.Errors.First().ErrorMessage.Should().Be("Cannot find apprentice with the specified Uln, FamilyName & Standard");
         }
     }
 }

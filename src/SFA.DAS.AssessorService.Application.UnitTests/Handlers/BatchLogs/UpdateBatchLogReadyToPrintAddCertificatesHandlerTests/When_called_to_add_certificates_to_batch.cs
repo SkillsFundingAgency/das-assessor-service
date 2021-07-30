@@ -19,7 +19,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.De
     [TestFixture]
     class When_called_to_add_certificates_to_batch
     {
-        private Mock<ICertificateBatchLogRepository> _mockCertificateBatchLogRepository;
+        private Mock<IBatchLogRepository> _mockBatchLogRepository;
         private Mock<ICertificateRepository> _mockCertificateRepository;
         private Mock<IUnitOfWork> _mockUnitOfWork;
         private Mock<ILogger<UpdateBatchLogReadyToPrintAddCertificatesHandler>> _mockLogger;
@@ -32,7 +32,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.De
         [SetUp]
         public void Arrange()
         {
-            _mockCertificateBatchLogRepository = new Mock<ICertificateBatchLogRepository>();
+            _mockBatchLogRepository = new Mock<IBatchLogRepository>();
             
             _mockCertificateRepository = new Mock<ICertificateRepository>();
             _mockCertificateRepository.Setup(c => c.Delete(It.IsAny<long>(), It.IsAny<int>(), It.IsAny<string>(), CertificateActions.Delete, true, It.IsAny<string>(), It.IsAny<string>()))
@@ -46,7 +46,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.De
             _mockLogger = new Mock<ILogger<UpdateBatchLogReadyToPrintAddCertificatesHandler>>();
 
             _sut = new UpdateBatchLogReadyToPrintAddCertificatesHandler(
-                _mockCertificateBatchLogRepository.Object,
+                _mockBatchLogRepository.Object,
                 _mockCertificateRepository.Object,
                 _mockUnitOfWork.Object,
                 _mockLogger.Object);
@@ -99,7 +99,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.De
             await _sut.Handle(new UpdateBatchLogReadyToPrintAddCertificatesRequest { BatchNumber = _batchNumber, MaxCertificatesToBeAdded = 1 }, new CancellationToken());
 
             // Assert
-            _mockCertificateBatchLogRepository.Verify(v => v.UpsertCertificatesReadyToPrintInBatch(_certificateIds, _batchNumber));
+            _mockBatchLogRepository.Verify(v => v.UpsertCertificatesReadyToPrintInBatch(_batchNumber, _certificateIds));
         }
 
         [Test]

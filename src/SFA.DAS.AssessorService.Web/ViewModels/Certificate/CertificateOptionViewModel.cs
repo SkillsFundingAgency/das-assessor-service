@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
@@ -10,20 +11,18 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
         
         public string Option { get; set; }
         public List<string> Options { get; set; }
-        public bool IsFromStandard { get; set; }
-
         public void FromCertificate(Domain.Entities.Certificate cert, List<string> options)
         {
             base.FromCertificate(cert);
 
             Option = CertificateData.CourseOption;
-            Options = options;
+            Options = options.OrderBy(s => s).ToList();
         }
 
-        public Domain.Entities.Certificate GetCertificateFromViewModel(Domain.Entities.Certificate certificate, CertificateData data)
+        public override Domain.Entities.Certificate GetCertificateFromViewModel(Domain.Entities.Certificate certificate, CertificateData certData)
         {
-            data.CourseOption = Option;
-            certificate.CertificateData = JsonConvert.SerializeObject(data);
+            certData.CourseOption = Option;
+            certificate.CertificateData = JsonConvert.SerializeObject(certData);
 
             return certificate;
         }

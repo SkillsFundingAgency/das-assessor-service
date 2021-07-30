@@ -8,16 +8,16 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
 {
     public class GetCertificatesForBatchNumberHandler : IRequestHandler<GetCertificatesForBatchNumberRequest, CertificatesForBatchNumberResponse>
     {
-        private readonly ICertificateRepository _certificateRepository;
+        private readonly IBatchLogQueryRepository _batchLogQueryRepository;
         
-        public GetCertificatesForBatchNumberHandler(ICertificateRepository certificateRepository)
+        public GetCertificatesForBatchNumberHandler(IBatchLogQueryRepository batchLogQueryRepository)
         {
-            _certificateRepository = certificateRepository;
+            _batchLogQueryRepository = batchLogQueryRepository;
         }
 
         public async Task<CertificatesForBatchNumberResponse> Handle(GetCertificatesForBatchNumberRequest request, CancellationToken cancellationToken)
         {
-            var certificates = await _certificateRepository.GetCertificatesForBatch(request.BatchNumber);
+            var certificates = await _batchLogQueryRepository.GetCertificatesForBatch(request.BatchNumber);
             
             var certificatesToBePrintedResponse = new CertificatesForBatchNumberResponse()
             {

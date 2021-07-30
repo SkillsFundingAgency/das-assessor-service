@@ -1,11 +1,10 @@
-﻿using System;
-using Newtonsoft.Json;
-using SFA.DAS.AssessorService.Domain.Consts;
+﻿using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Domain.JsonData;
+using System;
 
 namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
 {
-    public class CertificateDateViewModel : CertificateBaseViewModel, ICertificateViewModel
+    public class CertificateDateViewModel : CertificateBaseViewModel
     {
         public string SelectedGrade { get; set; }
         public DateTime Date { get; set; }
@@ -19,22 +18,20 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
         {
             base.FromCertificate(cert);
 
-            if (CertificateData.OverallGrade != CertificateGrade.Fail)
-            {
-                Day = CertificateData.AchievementDate?.Day.ToString();
-                Month = CertificateData.AchievementDate?.Month.ToString();
-                Year = CertificateData.AchievementDate?.Year.ToString();
-            }
+            Day = CertificateData.AchievementDate?.Day.ToString();
+            Month = CertificateData.AchievementDate?.Month.ToString();
+            Year = CertificateData.AchievementDate?.Year.ToString();
+            
             StartDate = CertificateData.LearningStartDate;
             SelectedGrade = CertificateData.OverallGrade;
             WarningShown = "false";
         }
 
-        public Domain.Entities.Certificate GetCertificateFromViewModel(Domain.Entities.Certificate certificate, CertificateData data)
+        public override Domain.Entities.Certificate GetCertificateFromViewModel(Domain.Entities.Certificate certificate, CertificateData certData)
         {
-            data.AchievementDate = new DateTime(int.Parse(Year), int.Parse(Month), int.Parse(Day));
+            certData.AchievementDate = new DateTime(int.Parse(Year), int.Parse(Month), int.Parse(Day));
 
-            certificate.CertificateData = JsonConvert.SerializeObject(data);
+            certificate.CertificateData = JsonConvert.SerializeObject(certData);
 
             return certificate;
         }

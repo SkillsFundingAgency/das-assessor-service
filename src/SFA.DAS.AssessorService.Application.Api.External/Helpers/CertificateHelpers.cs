@@ -5,7 +5,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Helpers
 {
     public static class CertificateHelpers
     {
-        public static bool IsDraftCertificateDeemedAsReady(Certificate certificate)
+        public static bool IsDraftCertificateDeemedAsReady(Certificate certificate, bool? hasOptions = null)
         {
             // Note: This allows the caller to know if a Draft Certificate is 'Ready' for submitting
             // It is deemed ready if the mandatory fields have been filled out.
@@ -17,20 +17,28 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Helpers
             {
                 return false;
             }
-            else if (certificate.CertificateData.PostalContact is null 
+            else if (string.IsNullOrEmpty(certificate.CertificateData.LearningDetails.Version))
+            {
+                return false;
+            }
+            else if (certificate.CertificateData.PostalContact is null
                     || string.IsNullOrEmpty(certificate.CertificateData.PostalContact.ContactName)
-                    || string.IsNullOrEmpty(certificate.CertificateData.PostalContact.City) 
+                    || string.IsNullOrEmpty(certificate.CertificateData.PostalContact.City)
                     || string.IsNullOrEmpty(certificate.CertificateData.PostalContact.PostCode))
             {
                 return false;
             }
             else if (certificate.CertificateData.Learner is null || string.IsNullOrEmpty(certificate.CertificateData.Learner.FamilyName)
-                        || certificate.CertificateData.Learner.Uln < 1000000000 || certificate.CertificateData.Learner.Uln > 9999999999)
+                        || certificate.CertificateData.Learner.Uln <= 1000000000 || certificate.CertificateData.Learner.Uln >= 9999999999)
             {
                 return false;
             }
             else if (certificate.CertificateData.LearningDetails is null || string.IsNullOrEmpty(certificate.CertificateData.LearningDetails.OverallGrade)
                         || !certificate.CertificateData.LearningDetails.AchievementDate.HasValue)
+            {
+                return false;
+            }
+            else if (hasOptions.HasValue && hasOptions == true && string.IsNullOrEmpty(certificate.CertificateData.LearningDetails.CourseOption))
             {
                 return false;
             }

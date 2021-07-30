@@ -9,5 +9,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Certificates
         public int StandardCode { get; set; }
         public int UkPrn { get; set; }
         public string Username { get; set; }
+        public string CourseOption { get; set; }
+        public string StandardUId { get; set; }
     }
 }   

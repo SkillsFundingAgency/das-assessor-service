@@ -18,7 +18,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
         protected CertificatePrintStatusUpdateHandler _sut;
 
         protected Mock<ICertificateRepository> _certificateRepository;
-        protected Mock<ICertificateBatchLogRepository> _certificateBatchLogRepository;
+        protected Mock<IBatchLogQueryRepository> _batchLogQueryRepository;
         protected Mock<IMediator> _mediator;
         protected Mock<ILogger<CertificatePrintStatusUpdateHandler>> _logger;
 
@@ -56,7 +56,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
         public void BaseArrange()
         {
             _certificateRepository = new Mock<ICertificateRepository>();
-            _certificateBatchLogRepository = new Mock<ICertificateBatchLogRepository>();
+            _batchLogQueryRepository = new Mock<IBatchLogQueryRepository>();
             _mediator = new Mock<IMediator>();
 
             _certificateRepository.Setup(r => r.GetCertificate(It.IsIn(_certificateReference1)))
@@ -71,8 +71,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
                         ToBePrinted = _batch111SentToPrinterAt
                     }));
 
-            _certificateBatchLogRepository.Setup(r => r.GetCertificateBatchLog(It.IsIn(_certificateReference1), _batch111))
-               .Returns((string certificateReference, int batchNumber) => Task.FromResult(
+            _batchLogQueryRepository.Setup(r => r.GetCertificateBatchLog(_batch111, It.IsIn(_certificateReference1)))
+               .Returns((int batchNumber, string certificateReference) => Task.FromResult(
                     new CertificateBatchLog
                     {
                         Id = Guid.NewGuid(),
@@ -95,8 +95,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
                         ToBePrinted = _batch222SentToPrinterAt
                     }));
 
-            _certificateBatchLogRepository.Setup(r => r.GetCertificateBatchLog(It.IsIn(_certificateReference2, _certificateReference3), _batch222))
-             .Returns((string certificateReference, int batchNumber) => Task.FromResult(
+            _batchLogQueryRepository.Setup(r => r.GetCertificateBatchLog(_batch222, It.IsIn(_certificateReference2, _certificateReference3)))
+             .Returns((int batchNumber, string certificateReference) => Task.FromResult(
                   new CertificateBatchLog
                   {
                       Id = Guid.NewGuid(),
@@ -121,8 +121,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
                       Status = CertificateStatus.Delivered
                   }));
 
-            _certificateBatchLogRepository.Setup(r => r.GetCertificateBatchLog(It.IsIn(_certificateReference5), _batch222))
-              .Returns((string certificateReference, int batchNumber) => Task.FromResult(
+            _batchLogQueryRepository.Setup(r => r.GetCertificateBatchLog(_batch222, It.IsIn(_certificateReference5)))
+              .Returns((int batchNumber, string certificateReference) => Task.FromResult(
                   new CertificateBatchLog
                   {
                       Id = Guid.NewGuid(),
@@ -145,8 +145,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
                         Status = CertificateStatus.Reprint,
                     }));
 
-            _certificateBatchLogRepository.Setup(r => r.GetCertificateBatchLog(It.IsIn(_certificateReferenceReprintedAfterPrinted), _batch111))
-              .Returns((string certificateReference, int batchNumber) => Task.FromResult(
+            _batchLogQueryRepository.Setup(r => r.GetCertificateBatchLog(_batch111, It.IsIn(_certificateReferenceReprintedAfterPrinted)))
+              .Returns((int batchNumber, string certificateReference) => Task.FromResult(
                   new CertificateBatchLog
                   {
                       Id = Guid.NewGuid(),
@@ -157,8 +157,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
                       StatusAt = _batch111SentToPrinterAt
                   }));
 
-            _certificateBatchLogRepository.Setup(r => r.GetCertificateBatchLog(It.IsIn(_certificateReferenceReprintedAfterPrinted), _batch222))
-              .Returns((string certificateReference, int batchNumber) => Task.FromResult(
+            _batchLogQueryRepository.Setup(r => r.GetCertificateBatchLog(_batch222, It.IsIn(_certificateReferenceReprintedAfterPrinted)))
+              .Returns((int batchNumber, string certificateReference) => Task.FromResult(
                   new CertificateBatchLog
                   {
                       Id = Guid.NewGuid(),
@@ -180,8 +180,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
                         Status = CertificateStatus.Deleted
                     }));
 
-            _certificateBatchLogRepository.Setup(r => r.GetCertificateBatchLog(It.IsIn(_certificateReferenceDeletedAfterPrinted), _batch222))
-              .Returns((string certificateReference, int batchNumber) => Task.FromResult(
+            _batchLogQueryRepository.Setup(r => r.GetCertificateBatchLog(_batch222, It.IsIn(_certificateReferenceDeletedAfterPrinted)))
+              .Returns((int batchNumber, string certificateReference) => Task.FromResult(
                   new CertificateBatchLog
                   {
                       Id = Guid.NewGuid(),
@@ -192,8 +192,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
                       StatusAt = _batch222PrintedAt
                   }));
 
-            _certificateBatchLogRepository.Setup(r => r.GetCertificateBatchLog(It.IsIn(_certificateReference5), _batch111))
-              .Returns((string certificateReference, int batchNumber) => Task.FromResult(
+            _batchLogQueryRepository.Setup(r => r.GetCertificateBatchLog(_batch111, It.IsIn(_certificateReference5)))
+              .Returns((int batchNumber, string certificateReference) => Task.FromResult(
                   new CertificateBatchLog
                   {
                       Id = Guid.NewGuid(),
@@ -216,7 +216,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
 
             _logger = new Mock<ILogger<CertificatePrintStatusUpdateHandler>>();
 
-            _sut = new CertificatePrintStatusUpdateHandler(_certificateRepository.Object, _certificateBatchLogRepository.Object, _mediator.Object, _logger.Object);
+            _sut = new CertificatePrintStatusUpdateHandler(_certificateRepository.Object, _batchLogQueryRepository.Object, _mediator.Object, _logger.Object);
         }
     }
 }

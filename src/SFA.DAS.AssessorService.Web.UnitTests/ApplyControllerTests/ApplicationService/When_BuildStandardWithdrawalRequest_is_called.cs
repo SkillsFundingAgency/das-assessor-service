@@ -69,7 +69,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ApplicationServiceTests
                     Id = Guid.NewGuid(),
                     EndPointAssessorOrganisationId = endPointAssessorOrganisationId,
                     EndPointAssessorName = "Organisation Limited"
-                }, standardCode, string.Empty);
+                }, standardCode, string.Empty, string.Empty);
 
             // Assert
             _mockLearnerDetailsApiClient
@@ -91,7 +91,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ApplicationServiceTests
                     Id = Guid.NewGuid(),
                     EndPointAssessorOrganisationId = endPointAssessorOrganisationId,
                     EndPointAssessorName = "Organisation Limited"
-                }, standardCode, string.Empty);
+                }, standardCode, string.Empty, string.Empty);
 
             // Assert
             _mockQnaApiClient
@@ -115,7 +115,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ApplicationServiceTests
                     Id = organisationId,
                     EndPointAssessorOrganisationId = endPointAssessorOrganisationId,
                     EndPointAssessorName = "Organisation Limited"
-                }, standardCode, string.Empty);
+                }, standardCode, string.Empty, string.Empty);
 
             // Assert
             _mockOrganisationsApiClient
@@ -138,7 +138,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ApplicationServiceTests
                     Id = organisationId,
                     EndPointAssessorOrganisationId = endPointAssessorOrganisationId,
                     EndPointAssessorName = "Organisation Limited"
-                }, standardCode, string.Empty);
+                }, standardCode, string.Empty, string.Empty);
 
             // Assert
             _mockQnaApiClient
@@ -161,7 +161,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ApplicationServiceTests
                     Id = Guid.NewGuid(),
                     EndPointAssessorOrganisationId = endPointAssessorOrganisationId,
                     EndPointAssessorName = "Organisation Limited"
-                }, standardCode, string.Empty);
+                }, standardCode, string.Empty, string.Empty);
 
             // Assert
             result.ApplicationType.Should().Be(ApplicationTypes.StandardWithdrawal);

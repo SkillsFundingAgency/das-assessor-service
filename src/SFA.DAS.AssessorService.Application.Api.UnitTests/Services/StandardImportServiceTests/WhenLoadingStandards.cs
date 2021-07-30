@@ -14,13 +14,13 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services.StandardImp
     public class WhenLoadingStandards
     {
         Mock<IStandardRepository> standardRepositoryMock;
-        IEnumerable<GetStandardByIdResponse> standards;
+        IEnumerable<StandardDetailResponse> standards;
 
         [SetUp]
         public async Task Initialize()
         {
             var fixture = new Fixture();
-            standards = fixture.Build<GetStandardByIdResponse>().CreateMany();
+            standards = fixture.Build<StandardDetailResponse>().CreateMany();
             standardRepositoryMock = new Mock<IStandardRepository>();
 
             var sut = new StandardImportService(standardRepositoryMock.Object);
@@ -29,15 +29,9 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services.StandardImp
         }
 
         [Test]
-        public void Then_Deletes_All_From_Standards_Table()
-        {
-            standardRepositoryMock.Verify(r => r.DeleteAll());
-        }
-
-        [Test]
         public void Then_Inserts_Data_Into_Standards_Table()
         {
-            standardRepositoryMock.Verify(r => r.Insert(It.IsAny<Standard>()), Times.Exactly(standards.Count()));
+            standardRepositoryMock.Verify(r => r.InsertStandards(It.IsAny<IEnumerable<Standard>>()), Times.Once);
         }
     }
 }

@@ -1,6 +1,7 @@
-﻿using System;
+﻿using SFA.DAS.AssessorService.Domain.Consts;
+using SFA.DAS.AssessorService.Web.ViewModels.Shared;
 using System.Collections.Generic;
-using SFA.DAS.AssessorService.Api.Types.Models;
+using System.Linq;
 
 namespace SFA.DAS.AssessorService.Web.ViewModels.Search
 {
@@ -8,7 +9,6 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Search
     {
         public string Uln { get; set; }
         public string Surname { get; set; }
-        public bool IsPrivatelyFunded { get; set; }
         public IEnumerable<ResultViewModel> SearchResults { get; set; }
     }
 
@@ -16,6 +16,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Search
     {
         public string StdCode { get; set; }
         public IEnumerable<ResultViewModel> SearchResults { get; set; }
+        public bool AllAssessmentsCompleted => !SearchResults.Any(r => r.CertificateReference == null || r.OverallGrade == CertificateGrade.Fail);
     }
 
     public class SelectedStandardViewModel
@@ -28,6 +29,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Search
         public string OverallGrade { get; set; }
         public string CertificateReference { get; set; }
         public string Level { get; set; }
+        public string Version { get; set; }
         public string SubmittedAt { get; set; }
         public string SubmittedBy { get; set; }
         public string LearnerStartDate { get; set; }
@@ -35,5 +37,9 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Search
         public bool UlnAlreadyExists { get; set; }
         public bool ShowExtraInfo { get; set; }
         public bool IsNoMatchingFamilyName { get; set; }
+        public IEnumerable<StandardVersionViewModel> Versions { get; set; }
+
+        public bool OnlySingleVersion => Versions != null && Versions.Count() == 1;
+        public bool OnlySingleOption => OnlySingleVersion && Versions.Single().Options != null && Versions.Single().Options.Count() == 1;
     }
 }

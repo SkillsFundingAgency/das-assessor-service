@@ -1,0 +1,342 @@
+{
+	"info": {
+		"_postman_id": "df6e0392-7964-4a77-a633-ed2d9eff3e90",
+		"name": "Assessor Service - External Api",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Get Learner",
+			"item": [
+				{
+					"name": "Get Learner",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Ocp-Apim-Subscription-Key",
+								"value": "{{apim-subscription-key}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{external-api-base-url}}api/v1/learner/{uln}/{familyname}/{larscode}",
+							"host": [
+								"{{external-api-base-url}}api"
+							],
+							"path": [
+								"v1",
+								"learner",
+								"{uln}",
+								"{familyname}",
+								"{larscode}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Get Certificate",
+			"item": [
+				{
+					"name": "Get Certificate",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Successful GET Certificate\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([200]);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Ocp-Apim-Subscription-Key",
+								"value": "{{apim-subscription-key}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{external-api-base-url}}api/v1/certificate/{uln}/{familyname}/{standard}",
+							"host": [
+								"{{external-api-base-url}}api"
+							],
+							"path": [
+								"v1",
+								"certificate",
+								"{uln}",
+								"{familyname}",
+								"{standard}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Create Certificate",
+			"item": [
+				{
+					"name": "Create single certificate",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Ocp-Apim-Subscription-Key",
+								"value": "{{apim-subscription-key}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "[{\r\n    \"requestId\" : \"\",\r\n    \"standard\": {\r\n        \"standardCode\":0,\r\n        \"standardReference\":\"\"\r\n    },\r\n    \"learner\":{\r\n        \"uln\":0,\r\n        \"familyName\":\"\"\r\n    },\r\n    \"learningDetails\":{\r\n        \"version\":\"1.0\",\r\n        \"courseOption\":\"\",\r\n        \"overallGrade\":\"Pass\",\r\n        \"achievementDate\":\"2021-06-02\"\r\n    },\r\n    \"postalContact\":{\r\n        \"contactName\":\"Contact name\",\r\n        \"department\":\"\", \r\n        \"organisation\":\"Organisation name\",\r\n        \"addressLine1\":\"Address line 1\",\r\n        \"addressLine2\":\"\", \r\n        \"addressLine3\":\"\", \r\n        \"city\":\"City\",\r\n        \"postCode\":\"CV1 2WT\"\r\n    }\r\n}]",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{external-api-base-url}}api/v1/certificate",
+							"host": [
+								"{{external-api-base-url}}api"
+							],
+							"path": [
+								"v1",
+								"certificate"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Update Certificate",
+			"item": [
+				{
+					"name": "Update single certificate",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Ocp-Apim-Subscription-Key",
+								"value": "{{apim-subscription-key}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "[{\r\n    \"requestId\" : \"\",\r\n    \"certificateReference\":\"\",\r\n    \"standard\": {\r\n        \"standardCode\":0,\r\n        \"standardReference\":\"\"\r\n    },\r\n    \"learner\":{\r\n        \"uln\":0,\r\n        \"familyName\":\"\"\r\n    },\r\n    \"learningDetails\":{\r\n        \"version\":\"1.0\", \r\n        \"courseOption\":\"\",\r\n        \"overallGrade\":\"Pass\",\r\n        \"achievementDate\":\"2021-06-02\"\r\n    },\r\n    \"postalContact\":{\r\n        \"contactName\":\"Contact name\",\r\n        \"department\":\"\",\r\n        \"organisation\":\"Organisation name\",\r\n        \"addressLine1\":\"Address line 1\",\r\n        \"addressLine2\":\"\",\r\n        \"addressLine3\":\"\",\r\n        \"city\":\"City\",\r\n        \"postCode\":\"CV1 2WT\"\r\n    }\r\n}]"
+						},
+						"url": {
+							"raw": "{{external-api-base-url}}api/v1/certificate",
+							"host": [
+								"{{external-api-base-url}}api"
+							],
+							"path": [
+								"v1",
+								"certificate"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Create EPA",
+			"item": [
+				{
+					"name": "Create single EPA",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Ocp-Apim-Subscription-Key",
+								"value": "{{apim-subscription-key}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "[{\r\n    \"requestId\" : \"\",\r\n    \"standard\": {\r\n        \"standardCode\":0,\r\n        \"standardReference\":\"\"\r\n    },\r\n    \"learner\":{\r\n        \"uln\":0,\r\n        \"familyName\":\"\"\r\n    },\r\n    \"learningDetails\":{\r\n        \"version\":\"1.0\",\r\n        \"courseOption\":\"\"\r\n    },\r\n    \"epaDetails\":{\r\n        \"epas\":[{\r\n            \"epaDate\":\"2021-06-02\",\r\n            \"epaOutcome\":\"pass\"\r\n        }]\r\n    }\r\n}]"
+						},
+						"url": {
+							"raw": "{{external-api-base-url}}api/v1/epa",
+							"host": [
+								"{{external-api-base-url}}api"
+							],
+							"path": [
+								"v1",
+								"epa"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Update EPA",
+			"item": [
+				{
+					"name": "Update single EPA",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Ocp-Apim-Subscription-Key",
+								"value": "{{apim-subscription-key}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "[{\r\n    \"requestId\" : \"\",\r\n    \"epaReference\":\"\",\r\n    \"standard\": {\r\n        \"standardCode\":0,\r\n        \"standardReference\":\"\"\r\n    },\r\n    \"learner\":{\r\n        \"uln\":0,\r\n        \"familyName\":\"\"\r\n    },\r\n    \"learningDetails\":{\r\n        \"version\":\"\",\r\n        \"courseOption\":\"\"\r\n    },\r\n    \"epaDetails\":{\r\n        \"epas\":[{\r\n            \"epaDate\":\"\",\r\n            \"epaOutcome\":\"\"\r\n        }]\r\n    }\r\n}]"
+						},
+						"url": {
+							"raw": "{{external-api-base-url}}api/v1/epa",
+							"host": [
+								"{{external-api-base-url}}api"
+							],
+							"path": [
+								"v1",
+								"epa"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Delete EPA Record",
+			"item": [
+				{
+					"name": "Delete EPA record",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Ocp-Apim-Subscription-Key",
+								"value": "{{apim-subscription-key}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{external-api-base-url}}api/v1/epa/{uln}/{familyName}/{standard}/{epaReference}\n",
+							"host": [
+								"{{external-api-base-url}}api"
+							],
+							"path": [
+								"v1",
+								"epa",
+								"{uln}",
+								"{familyName}",
+								"{standard}",
+								"{epaReference}\n"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

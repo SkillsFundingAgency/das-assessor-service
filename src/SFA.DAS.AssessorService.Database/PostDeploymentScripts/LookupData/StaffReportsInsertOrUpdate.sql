@@ -69,6 +69,7 @@ INSERT #StaffReports VALUES (N'e6d6ea08-bc88-46b8-bc6c-ced69f191360', N'Monthly 
 INSERT #StaffReports VALUES (N'4ec6aa79-75ac-4dfe-b277-e2fac7096bda', N'Batch', N'StaffReports_ByBatch', CAST(N'2018-10-24T13:51:17.8200000' AS DateTime2), NULL, NULL, 4, N'ViewOnScreen', NULL)
 INSERT #StaffReports VALUES (N'd8d8aa09-74b1-4dc4-bbc6-f0b6e71a60cc', N'EPAO', N'StaffReports_ByEpao', CAST(N'2018-10-24T13:51:17.8333333' AS DateTime2), NULL, NULL, 5, N'ViewOnScreen', NULL)
 INSERT #StaffReports VALUES (N'ec0b30aa-1a6b-4de4-bebd-fb9aaf1a3331', N'Weekly summary', N'StaffReports_WeeklySummary', CAST(N'2018-10-24T13:51:17.8033333' AS DateTime2), NULL, NULL, 3, N'ViewOnScreen', NULL)
+INSERT #StaffReports VALUES (N'db48b407-6160-426a-9a45-693970d47edc', N'Missing certificate data', N'StaffReports_MissingCertificateData', CAST(N'2021-03-31T00:00:00.0000000' AS DateTime2), NULL, NULL, 15, N'ViewOnScreen', NULL)
 
 MERGE [StaffReports] [Target] USING #StaffReports [Source]
 ON ([Source].[Id] = [Target].[Id])

@@ -20,28 +20,15 @@
                 <form class="apprentice-search-result-form js-disable-on-submit" asp-controller="Certificate" asp-action="Start" method="post">
                     <div class="govuk-form-group">
                         <dl class="govuk-summary-list">
+
+                            @(await Html.PartialAsync($"./_ApprenticeshipBasicInfoListRows.cshtml", Model))
+
                             <div class="govuk-summary-list__row">
-                                <dt class="govuk-summary-list__key">Name:</dt>
-                                <dd class="govuk-summary-list__value">@Model.GivenNames @Model.FamilyName</dd>
-                            </div>
-                            <div class="govuk-summary-list__row">
-                                <dt class="govuk-summary-list__key"><abbr title="Unique learner number">ULN</abbr>:</dt>
-                                <dd class="govuk-summary-list__value">@Model.Uln</dd>
-                            </div>
-                            <div class="govuk-summary-list__row">
-                                <dt class="govuk-summary-list__key">Standard:</dt>
-                                <dd class="govuk-summary-list__value">@Model.Standard</dd>
-                            </div>
-                            <div class="govuk-summary-list__row">
-                                <dt class="govuk-summary-list__key">Level:</dt>
-                                <dd class="govuk-summary-list__value">@Model.Level</dd>
-                            </div>
-                            <div class="govuk-summary-list__row">
-                                <dt class="govuk-summary-list__key">Learner start date:</dt>
+                                <dt class="govuk-summary-list__key">Learner start date</dt>
                                 <dd class="govuk-summary-list__value">@Model.LearnerStartDate</dd>
                             </div>
                         </dl>
-                        <p class="govuk-body">If the name, standard or level is incorrect, you need to agree on the correct details along with the training provider and the employer. The training provider needs to then update the Individualised Learner Record (<abbr title="Individualised Learner Record">ILR</abbr>).</p>
+                        <p class="govuk-body">If the name, standard or level is incorrect, you need to agree on the correct details with the training provider and employer. Once the training provider updates the Individualised Learner Record (<abbr title="Individualised Learner Record">ILR</abbr>), return here and continue.</p>
                     </div>
 
                     @Html.HiddenFor(m => m.Uln)
@@ -58,47 +45,15 @@
                 <form class="apprentice-search-result-form js-disable-on-submit" asp-controller="Certificate" asp-action="Start" method="post">
                     <div class="govuk-form-group">
                         <dl class="govuk-summary-list">
-                            <div class="govuk-summary-list__row">
-                                <dt class="govuk-summary-list__key">Name:</dt>
-                                <dd class="govuk-summary-list__value">@Model.GivenNames @Model.FamilyName</dd>
-                            </div>
-                            <div class="govuk-summary-list__row">
-                                <dt class="govuk-summary-list__key"><abbr title="Unique learner number">ULN</abbr>:</dt>
-                                <dd class="govuk-summary-list__value">@Model.Uln</dd>
-                            </div>
-                            <div class="govuk-summary-list__row">
-                                <dt class="govuk-summary-list__key">Standard:</dt>
-                                <dd class="govuk-summary-list__value">@Model.Standard</dd>
-                            </div>
-                            <div class="govuk-summary-list__row">
-                                <dt class="govuk-summary-list__key">Level:</dt>
-                                <dd class="govuk-summary-list__value">@Model.Level</dd>
-                            </div>
+
+                            @(await Html.PartialAsync($"./_ApprenticeshipBasicInfoListRows.cshtml", Model))
+
                             @if (Model.ShowExtraInfo)
                             {
-                                <div class="govuk-summary-list__row">
-                                    <dt class="govuk-summary-list__key">Learner start date:</dt>
-                                    <dd class="govuk-summary-list__value">@Model.LearnerStartDate</dd>
-                                </div>
-                                <div class="govuk-summary-list__row">
-                                    <dt class="govuk-summary-list__key">Failed date:</dt>
-                                    <dd class="govuk-summary-list__value">@Model.AchievementDate</dd>
-                                </div>
-                                <div class="govuk-summary-list__row">
-                                    <dt class="govuk-summary-list__key">Grade:</dt>
-                                    <dd class="govuk-summary-list__value">@Model.OverallGrade</dd>
-                                </div>
-                                <div class="govuk-summary-list__row">
-                                    <dt class="govuk-summary-list__key">Recorded by:</dt>
-                                    <dd class="govuk-summary-list__value">@Model.SubmittedBy</dd>
-                                </div>
-                                <div class="govuk-summary-list__row">
-                                    <dt class="govuk-summary-list__key">Date recorded:</dt>
-                                    <dd class="govuk-summary-list__value">@Model.SubmittedAt</dd>
-                                </div>
+                                @(await Html.PartialAsync($"./_ApprenticeshipExtraInfoListRows.cshtml", Model))
                             }
                         </dl>
-                        <p class="govuk-body">If the name, standard or level is incorrect, you need to agree on the correct details along with the training provider and the employer. The training provider needs to then update the Individualised Learner Record (<abbr title="Individualised Learner Record">ILR</abbr>).</p>
+                        <p class="govuk-body">If the name, standard or level is incorrect, you need to agree on the correct details with the training provider and employer. Once the training provider updates the Individualised Learner Record (<abbr title="Individualised Learner Record">ILR</abbr>), return here and continue.</p>
                     </div>
 
                     @Html.HiddenFor(m => m.Uln)
@@ -116,7 +71,7 @@
 
                 <dl class="govuk-summary-list">
                     <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key"><abbr title="Unique learner number">ULN</abbr>:</dt>
+                        <dt class="govuk-summary-list__key"><abbr title="Unique learner number">ULN</abbr></dt>
                         <dd class="govuk-summary-list__value">@Model.Uln</dd>
                     </div>
                 </dl>
@@ -129,50 +84,12 @@
             {
                 <h1 class="govuk-heading-xl">An assessment has already been recorded against this apprentice</h1>
                 <dl class="govuk-summary-list">
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">Name:</dt>
-                        <dd class="govuk-summary-list__value">@Model.GivenNames @Model.FamilyName</dd>
-                    </div>
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key"><abbr title="Unique learner number">ULN</abbr>:</dt>
-                        <dd class="govuk-summary-list__value">@Model.Uln</dd>
-                    </div>
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">Standard:</dt>
-                        <dd class="govuk-summary-list__value">@Model.Standard</dd>
-                    </div>
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">Level:</dt>
-                        <dd class="govuk-summary-list__value">@Model.Level</dd>
-                    </div>
+
+                    @(await Html.PartialAsync($"./_ApprenticeshipBasicInfoListRows.cshtml", Model))
 
                     @if (Model.ShowExtraInfo)
                     {
-
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">Certificate number:</dt>
-                            <dd class="govuk-summary-list__value">@Model.CertificateReference</dd>
-                        </div>
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">Learner start date:</dt>
-                            <dd class="govuk-summary-list__value">@Model.LearnerStartDate</dd>
-                        </div>
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">Achievement date:</dt>
-                            <dd class="govuk-summary-list__value">@Model.AchievementDate</dd>
-                        </div>
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">Grade:</dt>
-                            <dd class="govuk-summary-list__value">@Model.OverallGrade</dd>
-                        </div>
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">Recorded by:</dt>
-                            <dd class="govuk-summary-list__value">@Model.SubmittedBy</dd>
-                        </div>
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">Date recorded:</dt>
-                            <dd class="govuk-summary-list__value">@Model.SubmittedAt</dd>
-                        </div>
+                        @(await Html.PartialAsync($"./_ApprenticeshipExtraInfoListRows.cshtml", Model))
                     }
                 </dl>
 

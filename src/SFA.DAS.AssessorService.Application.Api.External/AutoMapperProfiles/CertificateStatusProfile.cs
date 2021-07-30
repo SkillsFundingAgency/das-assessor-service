@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using SFA.DAS.AssessorService.Application.Api.External.Extenstions;
 using SFA.DAS.AssessorService.Application.Api.External.Models.Response.Certificates;
 
 namespace SFA.DAS.AssessorService.Application.Api.External.AutoMapperProfiles
@@ -12,17 +13,17 @@ namespace SFA.DAS.AssessorService.Application.Api.External.AutoMapperProfiles
             .ForAllOtherMembers(dest => dest.Ignore());
 
             CreateMap<Domain.Entities.Certificate, Created>()
-            .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(source => source.CreatedAt))
+            .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(source => source.CreatedAt.DropMilliseconds()))
             .ForMember(dest => dest.CreatedBy, opt => opt.MapFrom(source => source.CreatedBy))
             .ForAllOtherMembers(dest => dest.Ignore());
 
             CreateMap<Domain.Entities.Certificate, Submitted>()
-            .ForMember(dest => dest.SubmittedAt, opt => opt.MapFrom(source => source.UpdatedAt))
+            .ForMember(dest => dest.SubmittedAt, opt => opt.MapFrom(source => source.UpdatedAt.DropMilliseconds()))
             .ForMember(dest => dest.SubmittedBy, opt => opt.MapFrom(source => source.UpdatedBy))
             .ForAllOtherMembers(dest => dest.Ignore());
 
             CreateMap<Domain.Entities.Certificate, Printed>()
-            .ForMember(dest => dest.PrintedAt, opt => opt.MapFrom(source => source.ToBePrinted))
+            .ForMember(dest => dest.PrintedAt, opt => opt.MapFrom(source => source.ToBePrinted.DropMilliseconds()))
             .ForMember(dest => dest.PrintedBatch, opt => opt.MapFrom(source => source.BatchNumber))
             .ForAllOtherMembers(dest => dest.Ignore());            
         }

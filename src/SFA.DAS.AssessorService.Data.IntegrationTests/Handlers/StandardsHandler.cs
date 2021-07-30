@@ -14,6 +14,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
                 "INSERT INTO [dbo].[Standards]" +
                     "([StandardUId]" +
                     ", [IFateReferenceNumber]" +
+                    ", [LarsCode]" +
                     ", [Version]" +
                     ", [Title]" +
                     ", [Level]" +
@@ -22,10 +23,12 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
                     ", [MaxFunding]" +
                     ", [IsActive]" +
                     ", [ProposedTypicalDuration]" +
-                    ", [ProposedMaxFunding])" +
+                    ", [ProposedMaxFunding]" +
+                    ", [EPAChanged])" +
                 "VALUES " +
                     "(@StandardUId" +
                     ", @iFateReferenceNumber" +
+                    ", @larsCode" +
                     ", @version" +
                     ", @title" +
                     ", @level" +
@@ -34,7 +37,8 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
                     ", @maxFunding" +
                     ", @isActive" +
                     ", @proposedTypicalDuration" +
-                    ", @proposedMaxFunding)";
+                    ", @proposedMaxFunding" +
+                    ", @epaChanged)";
 
             DatabaseService.Execute(sqlToInsertStandard, standard);
         }
