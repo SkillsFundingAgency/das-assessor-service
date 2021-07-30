@@ -13,7 +13,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Standards
         {
             StandardUId = standard.StandardUId;
             Title = standard.Title;
-            Version = standard.Version.ToString();
+            Version = standard.Version;
             IFateReferenceNumber = standard.IFateReferenceNumber;
             LarsCode = standard.LarsCode;
             Level = standard.Level;

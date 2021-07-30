@@ -38,7 +38,7 @@ namespace SFA.DAS.AssessorService.Data
             return version;
         }
 
-        public async Task<OrganisationStandardVersion> GetOrganisationStandardVersionByOrganisationStandardIdAndVersion(int organisationStandardId, decimal version)
+        public async Task<OrganisationStandardVersion> GetOrganisationStandardVersionByOrganisationStandardIdAndVersion(int organisationStandardId, string version)
         {
             var sql = @"SELECT StandardUId, Version ,OrganisationStandardId, EffectiveFrom, EffectiveTo, DateVersionApproved, 
                             Comments, Status

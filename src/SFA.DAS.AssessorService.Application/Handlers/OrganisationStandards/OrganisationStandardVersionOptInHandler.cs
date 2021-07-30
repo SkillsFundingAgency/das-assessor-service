@@ -58,7 +58,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
                     Status = request.Status
                 };
 
-                var existingVersion = await _repository.GetOrganisationStandardVersionByOrganisationStandardIdAndVersion(orgStandard.Id, request.Version.Value);
+                var existingVersion = await _repository.GetOrganisationStandardVersionByOrganisationStandardIdAndVersion(orgStandard.Id, request.Version);
                 if (existingVersion != null)
                     throw new InvalidOperationException("OrganisationStandardVersion already exists");
 
@@ -76,7 +76,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
                 application.ApplyData.Apply.StandardCode = standard.LarsCode;
                 application.ApplyData.Apply.StandardReference = request.StandardReference;
                 application.ApplyData.Apply.StandardName = standard.Title;
-                application.ApplyData.Apply.Versions = new List<string>() { request.Version.ToString() };
+                application.ApplyData.Apply.Versions = new List<string>() { request.Version };
 
                 await _applyRepository.SubmitApplicationSequence(application);
 

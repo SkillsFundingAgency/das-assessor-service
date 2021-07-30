@@ -58,7 +58,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Standards
 
             foreach (var s in standards)
             {
-                s.Version = baseVersion;
+                s.Version = baseVersion.ToString();
                 s.VersionLatestStartDate = baseDate;
                 s.LarsCode = larsCode;
 
@@ -67,7 +67,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Standards
             }
 
             var latestStandard = standards.OrderByDescending(s => s.Version).First();
-            var selectedVersion = standards.First(s => s.Version == selectedVersionNumber);
+            var selectedVersion = standards.First(s => s.Version == selectedVersionNumber.ToString());
 
             standardService.Setup(s => s.GetStandardVersionById(request.StandardId, null)).ReturnsAsync(latestStandard);
             standardService.Setup(s => s.GetStandardVersionsByLarsCode(larsCode)).ReturnsAsync(standards);
@@ -100,7 +100,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Standards
             
             foreach (var s in standards)
             {
-                s.Version = baseVersion;
+                s.Version = baseVersion.ToString();
                 s.VersionLatestStartDate = baseDate;
                 s.LarsCode = larsCode;
                 
@@ -142,7 +142,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Standards
 
             foreach (var s in standards)
             {
-                s.Version = baseVersion;
+                s.Version = baseVersion.ToString();
                 s.VersionLatestStartDate = baseDate;
                 s.LarsCode = larsCode;
 

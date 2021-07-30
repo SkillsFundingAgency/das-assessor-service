@@ -143,7 +143,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
                 certData.StandardReference = standardVersion.IfateReferenceNumber;
                 certData.StandardLevel = standardVersion.Level;
                 certData.StandardPublicationDate = standardVersion.EffectiveFrom;
-                certData.Version = standardVersion.Version.VersionToString();
+                certData.Version = standardVersion.Version;
 
                 if (!string.IsNullOrWhiteSpace(request.CourseOption))
                 {

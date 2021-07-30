@@ -242,7 +242,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
                 StandardReference = standard.IfateReferenceNumber,
                 StandardLevel = standard.Level,
                 StandardPublicationDate = standard.EffectiveFrom,
-                Version = standard.Version.VersionToString(),
+                Version = standard.Version,
                 CourseOption = request.CourseOption
             });
         }

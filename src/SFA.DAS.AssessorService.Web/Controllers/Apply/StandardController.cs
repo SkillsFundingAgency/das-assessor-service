@@ -27,7 +27,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         private readonly IApplicationService _applicationService;
         private readonly IWebConfiguration _config;
 
-        public StandardController(IApplicationApiClient apiClient, IOrganisationsApiClient orgApiClient, IQnaApiClient qnaApiClient, IContactsApiClient contactsApiClient, 
+        public StandardController(IApplicationApiClient apiClient, IOrganisationsApiClient orgApiClient, IQnaApiClient qnaApiClient, IContactsApiClient contactsApiClient,
             IStandardVersionClient standardVersionApiClient, IApplicationService applicationService, IHttpContextAccessor httpContextAccessor, IWebConfiguration config)
             : base(apiClient, contactsApiClient, httpContextAccessor)
         {
@@ -104,13 +104,13 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             if (!string.IsNullOrWhiteSpace(version))
             {
                 // specific version selected (from standversion view)
-                var standardViewModel = new StandardVersionViewModel 
-                { 
-                    Id = id, 
+                var standardViewModel = new StandardVersionViewModel
+                {
+                    Id = id,
                     StandardReference = standardReference,
                     FromStandardsVersion = true
                 };
-                standardViewModel.SelectedStandard = (StandardVersion)standardVersions.FirstOrDefault(x => x.Version.ToString() == version);
+                standardViewModel.SelectedStandard = (StandardVersion)standardVersions.FirstOrDefault(x => x.Version == version);
                 standardViewModel.EarliestVersionEffectiveFrom = standardViewModel.SelectedStandard.VersionEarliestStartDate;
                 standardViewModel.Results = new List<StandardVersion>() { standardViewModel.SelectedStandard };
                 standardViewModel.ApplicationStatus = await ApplicationStandardStatus(application, standardReference, new List<string>() { version });
@@ -137,7 +137,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 standardViewModel.SelectedStandard = (StandardVersion)latestStandard;
                 standardViewModel.EarliestVersionEffectiveFrom = earliestStandard.VersionEarliestStartDate;
                 if (standardVersions.Count() == 1)
-                    standardViewModel.ApplicationStatus = await ApplicationStandardStatus(application, standardReference, new List<string>() { standardVersions.First().Version.VersionToString() });
+                    standardViewModel.ApplicationStatus = await ApplicationStandardStatus(application, standardReference, new List<string>() { standardVersions.First().Version });
                 return View("~/Views/Application/Standard/ConfirmStandard.cshtml", standardViewModel);
             }
         }
@@ -162,17 +162,17 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             string applicationStatus = null;
             List<string> versions = null;
 
-            if(string.IsNullOrWhiteSpace(version))
+            if (string.IsNullOrWhiteSpace(version))
             {
                 selectedStandard = standardVersions.LastOrDefault();
-                versions = model.SelectedVersions ?? new List<string> { selectedStandard.Version.VersionToString() }; 
+                versions = model.SelectedVersions ?? new List<string> { selectedStandard.Version };
                 if (model.SelectedVersions != null)
                     applicationStatus = await ApplicationStandardStatus(application, standardReference, model.SelectedVersions);
             }
             else
             {
-                selectedStandard = standardVersions.FirstOrDefault(x => x.Version.ToString() == version);
-                versions = new List<string> { selectedStandard.Version.VersionToString() };
+                selectedStandard = standardVersions.FirstOrDefault(x => x.Version == version);
+                versions = new List<string> { selectedStandard.Version };
             }
 
             // check that the confirm checkbox has been selected
@@ -193,7 +193,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
             if (!ModelState.IsValid || !string.IsNullOrWhiteSpace(applicationStatus))
             {
-                model.Results = string.IsNullOrWhiteSpace(version)? standardVersions.Select(s => (StandardVersion)s).ToList() :
+                model.Results = string.IsNullOrWhiteSpace(version) ? standardVersions.Select(s => (StandardVersion)s).ToList() :
                                     new List<StandardVersion>() { selectedStandard };
                 model.SelectedStandard = (StandardVersion)selectedStandard;
                 model.ApplicationStatus = applicationStatus;
@@ -216,17 +216,17 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
         [HttpGet("standard/{id}/opt-in/{standardReference}/{version}")]
         [ApplicationAuthorize(routeId: "Id")]
-        public async Task<IActionResult> OptIn(Guid id, string standardReference, decimal version)
+        public async Task<IActionResult> OptIn(Guid id, string standardReference, string version)
         {
             var application = await _applicationApiClient.GetApplication(id);
-           
+
             if (!CanUpdateApplicationAsync(application))
             {
                 return RedirectToAction("Applications", "Application");
             }
 
             var standards = await _standardVersionApiClient.GetStandardVersionsByIFateReferenceNumber(standardReference);
-            var stdVersion = standards.First(x => x.Version.Equals(version.ToString(), StringComparison.InvariantCultureIgnoreCase));
+            var stdVersion = standards.First(x => x.Version.Equals(version, StringComparison.InvariantCultureIgnoreCase));
 
             var model = new StandardOptInViewModel()
             {
@@ -242,7 +242,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         }
 
         [HttpPost("standard/{id}/opt-in/{standardReference}/{version}")]
-        public async Task<IActionResult> OptInPost(Guid id, string standardReference, decimal version)
+        public async Task<IActionResult> OptInPost(Guid id, string standardReference, string version)
         {
             var application = await _applicationApiClient.GetApplication(id);
             var contact = await GetUserContact();
@@ -254,7 +254,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
             var org = await _orgApiClient.GetEpaOrganisation(application.OrganisationId.ToString());
             var standards = await _standardVersionApiClient.GetStandardVersionsByIFateReferenceNumber(standardReference);
-            var stdVersion = standards.First(x => x.Version.Equals(version.ToString(), StringComparison.InvariantCultureIgnoreCase));
+            var stdVersion = standards.First(x => x.Version.Equals(version, StringComparison.InvariantCultureIgnoreCase));
 
             await _orgApiClient.OrganisationStandardVersionOptIn(id, contact.Id, org.OrganisationId, standardReference, version, stdVersion.StandardUId, $"Opted in by EPAO by {contact.Username}");
 
@@ -289,7 +289,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             var org = await _orgApiClient.GetEpaOrganisation(application.OrganisationId.ToString());
             var standards = await _orgApiClient.GetAppliedStandardVersionsForEPAO(org?.OrganisationId, iFateReferenceNumber);
             var matchingStandards = standards.Where(x => x.ApplicationId != application.Id &&
-                                                            versions.Contains(x.Version.VersionToString()));
+                                                            versions.Contains(x.Version));
 
             if (matchingStandards.Any(x => x.ApprovedStatus == ApprovedStatus.Approved))
                 return ApplicationStatus.Approved;
@@ -297,7 +297,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             {
                 var inProgressApplications = matchingStandards.Where(x => x.ApprovedStatus == ApprovedStatus.ApplyInProgress &&
                                                 validApplicationStatuses.Contains(x.ApplicationStatus));
-                foreach(var app in inProgressApplications)
+                foreach (var app in inProgressApplications)
                 {
                     var sequence = app.ApplyData.Sequences?.FirstOrDefault(seq => seq.IsActive && seq.SequenceNo == ApplyConst.STANDARD_SEQUENCE_NO);
                     if (sequence != null && validApplicationSequenceStatuses.Contains(sequence.Status))
@@ -337,7 +337,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
                 results.Add(stdVersion);
             }
-        
+
             return results;
         }
 
@@ -346,7 +346,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             string versionStatus = null;
 
             if (version.ApprovedStatus == ApprovedStatus.ApplyInProgress)
-                versionStatus =  VersionStatus.InProgress;
+                versionStatus = VersionStatus.InProgress;
             else if (version.ApprovedStatus == ApprovedStatus.Withdrawn)
                 versionStatus = VersionStatus.Withdrawn;
             else if (version.ApprovedStatus == ApprovedStatus.FeedbackAdded)
