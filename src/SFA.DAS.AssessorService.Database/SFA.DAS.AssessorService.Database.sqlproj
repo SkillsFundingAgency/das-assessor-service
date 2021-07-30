@@ -81,6 +81,7 @@
     <Build Include="Tables\ContactLogs.sql" />
     <Build Include="Tables\Organisations.sql" />
     <Build Include="Tables\Ilrs.sql" />
+    <Build Include="Tables\Learner.sql" />
     <Build Include="Tables\EMailTemplates.sql" />
     <Build Include="Tables\BatchLogs.sql" />
     <Build Include="StoredProcedures\GetPreviousAddresses.sql" />
