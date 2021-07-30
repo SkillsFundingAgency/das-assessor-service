@@ -881,13 +881,15 @@ FROM [Standards] Where [IFateReferenceNumber] = @iFateReferenceNumber";
             dataTable.Columns.Add("ProposedMaxFunding");
             dataTable.Columns.Add("EPAChanged");
             dataTable.Columns.Add("StandardPageUrl");
+            dataTable.Columns.Add("VersionMajor");
+            dataTable.Columns.Add("VersionMinor");
 
             foreach (var standard in standards)
             {
                 dataTable.Rows.Add(standard.StandardUId, standard.IfateReferenceNumber, standard.LarsCode, standard.Title, standard.Version, standard.Level,
                     standard.Status, standard.TypicalDuration, standard.MaxFunding, standard.IsActive, standard.LastDateStarts, standard.EffectiveFrom, standard.EffectiveTo,
                     standard.VersionEarliestStartDate, standard.VersionLatestStartDate, standard.VersionLatestEndDate, standard.VersionApprovedForDelivery,
-                    standard.ProposedTypicalDuration, standard.ProposedMaxFunding, standard.EPAChanged, standard.StandardPageUrl);
+                    standard.ProposedTypicalDuration, standard.ProposedMaxFunding, standard.EPAChanged, standard.StandardPageUrl, standard.VersionMajor, standard.VersionMinor);
             }
 
             return dataTable;

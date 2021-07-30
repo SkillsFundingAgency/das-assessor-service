@@ -23,7 +23,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
             foreach (var searchResult in searchResults)
             {
                 var standards = allStandards.Where(s => s.LarsCode == searchResult.StdCode)
-                    .OrderByDescending(o => o.Version);
+                    .OrderByDescending(o => o.VersionMajor).ThenByDescending(m => m.VersionMinor);
 
                 if(!standards.Any())
                 {

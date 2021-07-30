@@ -157,7 +157,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
                 _logger.LogInformation("CreateNewCertificate Before Get StandardVersions from API");
                 var standardVersions = await _standardService.GetStandardVersionsByLarsCode(ilr.StdCode);
 
-                certData.StandardName = standardVersions.OrderByDescending(s => s.Version).First().Title;
+                certData.StandardName = standardVersions.OrderByDescending(s => s.VersionMajor).ThenByDescending(t => t.VersionMinor).First().Title;
             }
 
             certificate.CertificateData = JsonConvert.SerializeObject(certData);

@@ -159,7 +159,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
                 LearningStartDate = ilrRecord.LearnStartDate,
                 FullName = $"{ilrRecord.GivenNames} {ilrRecord.FamilyName}",
                 ProviderName = organisationSearchResult.ProviderName,
-                StandardName = standards.OrderByDescending(s => s.Version).First().Title
+                StandardName = standards.OrderByDescending(s => s.VersionMajor).ThenByDescending(t => t.VersionMinor).First().Title
             });
         }
 
