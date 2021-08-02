@@ -2,6 +2,7 @@
 AS
 SELECT 
 [Standard Name], 
+[Standard Code],
 [Standard Reference], 
 [Standard Version],
 [Total], 
@@ -16,6 +17,7 @@ SELECT
 FROM (
   SELECT
         TRIM(REPLACE(UPPER(REPLACE(JSON_VALUE(ce.[CertificateData], '$.StandardName'), NCHAR(0x00A0), ' ')), 'Á', ' ')) AS [Standard Name],
+		CONVERT(CHAR(10), ce.[StandardCode]) AS 'Standard Code',
         JSON_VALUE(ce.CertificateData, '$.StandardReference') AS [Standard Reference],
         ISNULL(JSON_VALUE(ce.CertificateData, '$.Version'),'') AS [Standard Version],
 		[dbo].[ExpandedVersion](ISNULL(JSON_VALUE(ce.CertificateData, '$.Version'),''))  AS [orderVersion],
@@ -31,11 +33,12 @@ FROM (
   FROM [dbo].[Certificates] ce
   WHERE JSON_VALUE(ce.CertificateData, '$.StandardReference') IS NOT NULL
   GROUP BY TRIM(REPLACE(UPPER(REPLACE(JSON_VALUE(ce.[CertificateData], '$.StandardName'), NCHAR(0x00A0), ' ')), 'Á', ' ')),
-        JSON_VALUE(ce.CertificateData, '$.StandardReference'),ISNULL(JSON_VALUE(ce.CertificateData, '$.Version'),'') 
+        JSON_VALUE(ce.CertificateData, '$.StandardReference'),ISNULL(JSON_VALUE(ce.CertificateData, '$.Version'),''), ce.StandardCode
 
   UNION 
   SELECT
 		' Summary' AS [Standard Name],
+		''  AS [Standard Code],
 		''  AS [Standard Reference],
 		''  AS [Standard Version],
 		''  AS [orderVersion],
