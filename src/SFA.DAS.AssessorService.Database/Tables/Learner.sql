@@ -16,7 +16,10 @@ CREATE TABLE [dbo].[Learner]
     [AgreedOn] DATETIME NULL, 
     [StopDate] DATE NULL, 
     [PauseDate] DATE NULL, 
-    [StandardReference] NVARCHAR(10) NULL
+    [StandardReference] NVARCHAR(10) NULL,
+    [UKPRN] INT NULL,
+    [LearnRefNumber] NVARCHAR(50) NULL
+    
 )
 GO
 
