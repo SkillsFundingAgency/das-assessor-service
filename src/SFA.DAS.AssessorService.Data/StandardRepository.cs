@@ -883,13 +883,19 @@ FROM [Standards] Where [IFateReferenceNumber] = @iFateReferenceNumber";
             dataTable.Columns.Add("StandardPageUrl");
             dataTable.Columns.Add("TrailBlazerContact");
             dataTable.Columns.Add("Route");
+            dataTable.Columns.Add("IntegratedDegree");
+            dataTable.Columns.Add("EqaProviderName");
+            dataTable.Columns.Add("EqaProviderContactName");
+            dataTable.Columns.Add("EqaProviderContactEmail]");
+            dataTable.Columns.Add("OverviewOfRole]");
 
             foreach (var standard in standards)
             {
                 dataTable.Rows.Add(standard.StandardUId, standard.IfateReferenceNumber, standard.LarsCode, standard.Title, standard.Version, standard.Level,
                     standard.Status, standard.TypicalDuration, standard.MaxFunding, standard.IsActive, standard.LastDateStarts, standard.EffectiveFrom, standard.EffectiveTo,
                     standard.VersionEarliestStartDate, standard.VersionLatestStartDate, standard.VersionLatestEndDate, standard.VersionApprovedForDelivery,
-                    standard.ProposedTypicalDuration, standard.ProposedMaxFunding, standard.EPAChanged, standard.StandardPageUrl, standard.TrailBlazerContact, standard.Route);
+                    standard.ProposedTypicalDuration, standard.ProposedMaxFunding, standard.EPAChanged, standard.StandardPageUrl, standard.TrailBlazerContact, standard.Route,
+                    standard.IntegratedDegree, standard.EqaProviderName, standard.EqaProviderContactName, standard.EqaProviderContactEmail, standard.OverviewOfRole);
             }
 
             return dataTable;

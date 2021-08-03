@@ -22,5 +22,10 @@
 	[EPAChanged] BIT NOT NULL DEFAULT 0,
 	[StandardPageUrl] VARCHAR(500) NULL, 
     [TrailBlazerContact] VARCHAR(500) NULL, 
-    [Route] VARCHAR(500) NULL
+    [Route] VARCHAR(500) NULL,
+	[IntegratedDegree] VARCHAR(500) NULL,
+	[EqaProviderName] VARCHAR(500) NULL,
+    [EqaProviderContactName] VARCHAR(500) NULL,
+    [EqaProviderContactEmail] VARCHAR(500) NULL,
+	[OverviewOfRole] VARCHAR(500)
 )

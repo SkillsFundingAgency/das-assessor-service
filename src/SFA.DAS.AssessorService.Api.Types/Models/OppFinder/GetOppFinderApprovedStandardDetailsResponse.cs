@@ -18,7 +18,6 @@ namespace SFA.DAS.AssessorService.Api.Types.Models
         public string Trailblazer { get; set; }
         public string StandardPageUrl { get; set; }
         public string EqaProvider { get; set; }
-        public string EqaProviderLink { get; set; }
         public List<OppFinderApprovedStandardDetailsRegionResult> RegionResults { get; set; }
         public List<OppFinderApprovedStandardDetailsVersionResult> VersionResults { get; set; }
     }

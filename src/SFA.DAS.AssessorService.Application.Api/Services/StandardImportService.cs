@@ -49,7 +49,12 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
                 EPAChanged = source.EPAChanged,
                 StandardPageUrl = source.StandardPageUrl,
                 TrailBlazerContact = source.TrailBlazerContact,
-                Route = source.Route
+                Route = source.Route,
+                IntegratedDegree = source.IntegratedDegree,
+                EqaProviderName = source.EqaProvider?.Name,
+                EqaProviderContactName = source.EqaProvider?.ContactName,
+                EqaProviderContactEmail = source.EqaProvider?.ContactEmail,
+                OverviewOfRole = source.OverviewOfRole
             };
 
             await standardRepository.InsertStandards(standards.Select(MapGetStandardsListItemToStandard));

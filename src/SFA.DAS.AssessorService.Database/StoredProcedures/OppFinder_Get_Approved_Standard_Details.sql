@@ -6,7 +6,7 @@ BEGIN
 	SELECT
 		ss.StandardCode,
 		ss.StandardName,
-		JSON_VALUE(sc.StandardData, '$.OverviewOfRole') OverviewOfRole,
+		s.OverviewOfRole,
 		ss.StandardLevel,
 		ss.StandardReference,
 		ss.Region,
@@ -16,39 +16,35 @@ BEGIN
 		ss.EndPointAssessors,
 		JSON_QUERY(CASE ISNULL(ss.EndPointAssessorList, '') WHEN '' THEN '{"EPAOS":null}' ELSE ss.EndPointAssessorList END, '$.EPAOS') EndPointAssessorsNames,
 		ss.Sector,
-		JSON_VALUE(sc.StandardData, '$.Duration') TypicalDuration,
-		JSON_VALUE(sc.StandardData, '$.PublishedDate') ApprovedForDelivery,
-		JSON_VALUE(sc.StandardData, '$.MaxFunding') MaxFunding,
-		JSON_VALUE(sc.StandardData, '$.Trailblazer') Trailblazer,
-		JSON_VALUE(sc.StandardData, '$.StandardPageUrl') StandardPageUrl,
-		JSON_VALUE(sc.StandardData, '$.EqaProviderName') EqaProviderName,
-		JSON_VALUE(sc.StandardData, '$.EqaProviderContactName') EqaProviderContactName,
-		JSON_VALUE(sc.StandardData, '$.EqaProviderContactEmail') EqaProviderContactEmail,
-		JSON_VALUE(sc.StandardData, '$.EqaProviderWebLink') EqaProviderWebLink
-
+		s.TypicalDuration,
+		s.VersionApprovedForDelivery AS ApprovedForDelivery,
+		s.MaxFunding,
+		s.TrailBlazerContact AS Trailblazer,
+		s.StandardPageUrl,
+		s.EqaProviderName,
+		s.EqaProviderContactName,
+		s.EqaProviderContactEmail
 	INTO 
 		#Results
 	FROM
 		StandardSummary ss
-			LEFT JOIN StandardCollation sc 
-			ON ss.StandardCode = sc.StandardId
+			LEFT JOIN Standards s ON ss.StandardCode = s.LarsCode
 	WHERE 
 		StandardReference = @StandardReference
-		AND sc.IsLive = 1
 
 	-- there may be duplicates in either the StandardCode or the StandardReference in which case the Standard with the latest ApprovedForDelivery will be returned
 	SELECT TOP 1
 		StandardCode, StandardName, OverviewOfRole, StandardLevel, StandardReference, 
 		SUM(ActiveApprentices) TotalActiveApprentices, 
 		SUM(CompletedAssessments) TotalCompletedAssessments, 
-		Sector, TypicalDuration, ApprovedForDelivery, MaxFunding, Trailblazer, StandardPageUrl, EqaProviderName, EqaProviderContactEmail, EqaProviderWebLink
+		Sector, TypicalDuration, ApprovedForDelivery, MaxFunding, Trailblazer, StandardPageUrl, EqaProviderName, EqaProviderContactEmail
 	INTO
 		#Details
 	FROM 
 		#Results
 	GROUP BY
 		StandardCode, StandardName, OverviewOfRole, StandardLevel, StandardReference, 
-		Sector, TypicalDuration, ApprovedForDelivery, MaxFunding, Trailblazer, StandardPageUrl, EqaProviderName, EqaProviderContactEmail, EqaProviderWebLink
+		Sector, TypicalDuration, ApprovedForDelivery, MaxFunding, Trailblazer, StandardPageUrl, EqaProviderName, EqaProviderContactEmail
 	ORDER BY
 		CONVERT(DATE, ApprovedForDelivery) DESC
 
@@ -56,7 +52,7 @@ BEGIN
 	SELECT
 		StandardCode, StandardName, OverviewOfRole, StandardLevel, StandardReference, 
 		TotalActiveApprentices, TotalCompletedAssessments, 
-		Sector, TypicalDuration, ApprovedForDelivery, MaxFunding, Trailblazer, StandardPageUrl, EqaProviderName, EqaProviderContactEmail, EqaProviderWebLink
+		Sector, TypicalDuration, ApprovedForDelivery, MaxFunding, Trailblazer, StandardPageUrl, EqaProviderName, EqaProviderContactEmail
 	FROM
 		#Details
 

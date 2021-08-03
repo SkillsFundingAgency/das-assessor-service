@@ -59,7 +59,6 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         public string EqaProviderName { get; set; }
         public string EqaProviderContactName { get; set; }
         public string EqaProviderContactEmail { get; set; }
-        public string EqaProviderWebLink { get; set; }
     }
 
     public class OppFinderApprovedStandardRegionResult

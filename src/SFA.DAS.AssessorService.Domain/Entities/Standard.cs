@@ -27,5 +27,10 @@ namespace SFA.DAS.AssessorService.Domain.Entities
         public string StandardPageUrl { get; set; }
         public string TrailBlazerContact { get; set; }
         public string Route { get; set; }
+        public string IntegratedDegree { get; set; }
+        public string EqaProviderName { get; set; }
+        public string EqaProviderContactName { get; set; }
+        public string EqaProviderContactEmail { get; set; }
+        public string OverviewOfRole { get; set; }
     }
 }

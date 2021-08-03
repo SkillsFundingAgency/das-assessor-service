@@ -98,7 +98,6 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.OppFinder
 
             //Assert
             result.EqaProvider.Should().Equals("EMAIL");
-            result.EqaProviderLink.Should().Equals($"mailto:EMAIL");
         }
 
         [Test]

@@ -401,7 +401,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers.OppFinder
                 Trailblazer = standardDetails.Trailblazer?.Trim().Split(" ") ?? new string[] { },
                 StandardPageUrl = standardDetails.StandardPageUrl,
                 EqaProvider = standardDetails.EqaProvider,
-                EqaProviderLink = standardDetails.EqaProviderLink,
                 RegionResults = standardDetails.RegionResults,
                 VersionResults = standardDetails.VersionResults,
             };
