@@ -70,7 +70,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [HttpGet]
         [Route("/[controller]/pipelines")]
         [PrivilegeAuthorize(Privileges.ViewPipeline)]
-        public async Task<IActionResult> Pipeline(int? pageIndex)
+        public async Task<IActionResult> Pipeline(string selectedStandard, string selectedProvider, string selectedEPADate, int? pageIndex)
         {
             OrderedListResultViewModel orderedListResultViewModel;
             try
@@ -85,8 +85,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                     orderBy = _sessionService.Get("orderBy");
                 }
 
-
                 orderedListResultViewModel = await GetPipeline(orderBy, orderDirection, PageSize, pageIndex);
+                orderedListResultViewModel.SelectedStandard = selectedStandard;
+                orderedListResultViewModel.SelectedProvider = selectedProvider;
+                orderedListResultViewModel.SelectedEPADate = selectedEPADate;
+                ApplyFilters(orderedListResultViewModel);
             }
             catch (EntityNotFoundException)
             {
@@ -116,7 +119,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
         [HttpGet]
         [Route("/[controller]/DownloadCsv")]
-        public async Task<FileContentResult> ExportEpaPipelineAsCsv()
+        public async Task<FileContentResult> ExportEpaPipelineAsCsv(string selectedStandard, string selectedProvider, string selectedEPADate)
         {
             _logger.LogInformation("Starting to download Pipeline EPA CSV File");
 
@@ -124,6 +127,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
             var organisation = await _organisationsApiClient.GetEpaOrganisation(epaoid);
             var response = await _standardsApiClient.GetEpaoPipelineStandardsExtract(organisation?.OrganisationId);
+
+            ApplyFilters(ref response, selectedStandard, selectedProvider, selectedEPADate);
 
             string[] columnHeaders = {
                 "Standard Name",
@@ -168,6 +173,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 orderedListResultViewModel.Response =
                     await _standardsApiClient.GetEpaoPipelineStandards(organisation.OrganisationId,
                         orderBy, orderDirection, pageSize, pageIndex ?? 1);
+                InitStandardFilter(orderedListResultViewModel);
+                InitProviderFilter(orderedListResultViewModel);
+                InitEPADateFilter(orderedListResultViewModel);
             }
 
             return orderedListResultViewModel;
@@ -182,6 +190,149 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             _sessionService.Set("orderBy", orderBy);
             return newSortDirection;
         }
-        
+
+        private void InitStandardFilter(OrderedListResultViewModel model)
+        {
+            model.StandardFilter = new List<OrderedListResultViewModel.StandardFilterItem>() { new OrderedListResultViewModel.StandardFilterItem() { Id = "ALL", StandardName = "All standards" }  };
+
+            if(null == model || null == model.Response || null == model.Response.Items || !model.Response.Items.Any())
+            {
+                return;
+            }
+
+            var distinctStandards = model.Response.Items.Select(i => new OrderedListResultViewModel.StandardFilterItem() { Id = i.StandardName, StandardName = i.StandardName }).Distinct();
+            model.StandardFilter.AddRange(distinctStandards);
+        }
+        private void InitProviderFilter(OrderedListResultViewModel model)
+        {
+            model.ProviderFilter = new List<OrderedListResultViewModel.ProviderFilterItem>() { new OrderedListResultViewModel.ProviderFilterItem() { Id = "ALL", ProviderName = "All providers" } };
+
+            if (null == model || null == model.Response || null == model.Response.Items || !model.Response.Items.Any())
+            {
+                return;
+            }
+
+            // @ToDo once the provider names are coming through from the API
+            //var distinctProviders = model.Response.Items.Select(i => new OrderedListResultViewModel.ProviderFilterItem() { Id = i.StandardName, ProviderName = i.StandardName }).Distinct();
+            //model.ProviderFilter.AddRange(distinctProviders);
+        }
+
+        private void InitEPADateFilter(OrderedListResultViewModel model)
+        {
+            model.EPADateFilter = new List<OrderedListResultViewModel.EPADateFilterItem>() { new OrderedListResultViewModel.EPADateFilterItem() { Id = "ALL", EPADate = "All dates" } };
+
+            if (null == model || null == model.Response || null == model.Response.Items || !model.Response.Items.Any())
+            {
+                return;
+            }
+
+            var distinctDates = model.Response.Items.Select(i => i.EstimatedDate).Distinct().Select(d => new OrderedListResultViewModel.EPADateFilterItem() { Id = d, EPADate = d });
+            model.EPADateFilter.AddRange(distinctDates);
+        }
+
+        private void ApplyFilters(OrderedListResultViewModel model)
+        {
+            if (null == model || null == model.Response || null == model.Response.Items || !model.Response.Items.Any())
+            {
+                return;
+            }
+            ApplyStandardFilter(model);
+            ApplyProviderFilter(model);
+            ApplyEPADateFilter(model);
+        }
+
+        private void ApplyStandardFilter(OrderedListResultViewModel model)
+        {
+            if (null == model || null == model.Response || null == model.Response.Items || !model.Response.Items.Any())
+            {
+                return;
+            }
+
+            // @ToDo: once the ILR data is replaced by Learner this should be matching on Standard Reference - matching on name is too brittle.
+            // @ToDo: test that paging is working correctly with filtering.
+            if (!string.IsNullOrWhiteSpace(model.SelectedStandard) && model.SelectedStandard.Trim().ToUpper() != "ALL")
+            {
+                var filteredItems = model.Response.Items.Where(i => i.StandardName == model.SelectedStandard).ToList();
+                model.Response = new PaginatedList<EpaoPipelineStandardsResponse>(filteredItems,filteredItems.Count, 0, model.Response.PageSize);
+                model.FilterApplied = true;
+            }
+        }
+
+        private void ApplyProviderFilter(OrderedListResultViewModel model)
+        {
+            if (null == model || null == model.Response || null == model.Response.Items || !model.Response.Items.Any())
+            {
+                return;
+            }
+
+            // @ToDo: needs the ILR data
+            // @ToDo: test that paging is working correctly with filtering.
+            if (!string.IsNullOrWhiteSpace(model.SelectedProvider) && model.SelectedStandard.Trim().ToUpper() != "ALL")
+            {
+                var filteredItems = model.Response.Items/*.Where(i => )*/.ToList();
+                model.Response = new PaginatedList<EpaoPipelineStandardsResponse>(filteredItems, filteredItems.Count, 0, model.Response.PageSize);
+                model.FilterApplied = true;
+            }
+        }
+
+        private void ApplyEPADateFilter(OrderedListResultViewModel model)
+        {
+            if (null == model || null == model.Response || null == model.Response.Items || !model.Response.Items.Any())
+            {
+                return;
+            }
+
+            // @ToDo: needs the ILR data
+            // @ToDo: test that paging is working correctly with filtering.
+            if (!string.IsNullOrWhiteSpace(model.SelectedEPADate) && model.SelectedEPADate.Trim().ToUpper() != "ALL")
+            {
+                var filteredItems = model.Response.Items/*.Where(i => )*/.ToList();
+                model.Response = new PaginatedList<EpaoPipelineStandardsResponse>(filteredItems, filteredItems.Count, 0, model.Response.PageSize);
+                model.FilterApplied = true;
+            }
+        }
+
+        private void ApplyFilters(ref List<EpaoPipelineStandardsExtractResponse> response, string selectedStandard, string selectedProvider, string selectedEPADate)
+        {
+            if (null == response || !response.Any())
+            {
+                return;
+            }
+            ApplyStandardFilter(ref response, selectedStandard);
+            ApplyProviderFilter(ref response, selectedProvider);
+            ApplyEPADateFilter(ref response, selectedEPADate);
+        }
+
+        private void ApplyStandardFilter(ref List<EpaoPipelineStandardsExtractResponse> response, string selectedStandard)
+        {
+            if (null == response || !response.Any() || string.IsNullOrWhiteSpace(selectedStandard) || selectedStandard.Trim().ToUpper() == "ALL")
+            {
+                return;
+            }
+
+            // @ToDo: once the ILR data is replaced by Learner this should be matching on Standard Reference - matching on name is too brittle.
+            response = response.Where(i => i.StandardName == selectedStandard).ToList();
+        }
+
+        private void ApplyProviderFilter(ref List<EpaoPipelineStandardsExtractResponse> response, string selectedProvider)
+        {
+            if (null == response || !response.Any() || string.IsNullOrWhiteSpace(selectedProvider) || selectedProvider.Trim().ToUpper() == "ALL")
+            {
+                return;
+            }
+
+            // @ToDo: once the ILR data is replaced by Learner this should match provider id
+            //response = response.Where(i => ).ToList();
+        }
+
+        private void ApplyEPADateFilter(ref List<EpaoPipelineStandardsExtractResponse> response, string selectedEPADate)
+        {
+            if (null == response || !response.Any() || string.IsNullOrWhiteSpace(selectedEPADate) || selectedEPADate.Trim().ToUpper() == "ALL")
+            {
+                return;
+            }
+
+            response = response.Where(i => i.EstimatedDate == selectedEPADate).ToList();
+        }
     }
 }

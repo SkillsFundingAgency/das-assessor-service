@@ -1929,3 +1929,12 @@ th[aria-sort="ascending"] a:after {
 .govuk-panel--confirmation {
     background: #00703c;
 }
+
+
+.das-filter-panel {
+    background-color: #f3f2f1;
+}
+
+.das-text-align-right {
+    text-align: right !important;
+}
