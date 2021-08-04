@@ -1,5 +1,7 @@
 ﻿using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Domain.Paging;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace SFA.DAS.AssessorService.Web.ViewModels.OrganisationStandards
 {
@@ -7,8 +9,39 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.OrganisationStandards
     {
         public PaginatedList<EpaoPipelineStandardsResponse> Response { get; set; }
 
+        [Display(Name = "Standard")]
+        public string SelectedStandard { get; set; }
+        public List<StandardFilterItem> StandardFilter { get; set; }
+
+        [Display(Name = "Training provider")]
+        public string SelectedProvider { get; set; }
+        public List<ProviderFilterItem> ProviderFilter { get; set; }
+
+        [Display(Name = "Estimated EPA date")]
+        public string SelectedEPADate { get; set; }
+        public List<EPADateFilterItem> EPADateFilter { get; set; }
+
+        public bool FilterApplied { get; set; }
+
         public string OrderedBy { get; set; }
         public string OrderDirection { get; set; }
       
+        public class StandardFilterItem
+        {
+            public string Id { get; set; }
+            public string StandardName { get; set; }
+        }
+
+        public class ProviderFilterItem
+        {
+            public string Id { get; set; }
+            public string ProviderName { get; set; }
+        }
+
+        public class EPADateFilterItem
+        {
+            public string Id { get; set; }
+            public string EPADate { get; set; }
+        }
     }
 }
