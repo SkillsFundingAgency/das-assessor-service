@@ -5,12 +5,16 @@ AS
 
 BEGIN
 
-select @Count=Count(*)
-from OrganisationStandard os 
-inner join Organisations o on os.EndPointAssessorOrganisationId = o.EndPointAssessorOrganisationId and o.EndPointAssessorOrganisationId = @EPAO
-left outer join StandardCollation sc on os.StandardCode = sc.StandardId
-left outer join Contacts c on os.ContactId = c.Id
-where os.Status = 'Live'
-select @Count 
+SELECT @Count = COUNT(*)
+FROM OrganisationStandard os
+WHERE EXISTS (SELECT 1
+              FROM OrganisationStandardVersion osv
+              WHERE os.Id = osv.OrganisationStandardId 
+					AND osv.Status = 'Live' 
+					AND (osv.EffectiveTo is null OR osv.EffectiveTo > GETDATE()))
+	AND EndPointAssessorOrganisationId = @EPAO
+	AND os.Status = 'Live' 
+	AND (os.EffectiveTo is null OR os.EffectiveTo > GETDATE())
+
 END
 GO
