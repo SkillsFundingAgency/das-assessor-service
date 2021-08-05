@@ -81,6 +81,7 @@
     <Build Include="Tables\ContactLogs.sql" />
     <Build Include="Tables\Organisations.sql" />
     <Build Include="Tables\Ilrs.sql" />
+    <Build Include="Tables\Learner.sql" />
     <Build Include="Tables\EMailTemplates.sql" />
     <Build Include="Tables\BatchLogs.sql" />
     <Build Include="StoredProcedures\GetPreviousAddresses.sql" />
@@ -172,6 +173,9 @@
     <Build Include="StoredProcedures\DashboardReporting\CertificatePrintSummary.sql" />
     <Build Include="Functions\Scalar-valued Functions\ExpandedVersion.sql" />
     <Build Include="Tables\StandardVersionSummary.sql" />
+    <Build Include="Tables\ApprovalsExtract.sql" />
+    <Build Include="StoredProcedures\PopulateLearner.sql" />
+    <Build Include="Providers.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="SFA.DAS.AssessorService.Database.refactorlog" />

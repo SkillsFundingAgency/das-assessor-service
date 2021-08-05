@@ -19,6 +19,10 @@ AppliedVersions AS
 	FROM(
     SELECT ap1.Id ApplyId, ap1.ApplicationStatus, ap1.DeletedAt, ap1.OrganisationId, StandardReference, [dbo].[ExpandedVersion](v1.Version) [Version] FROM Apply ap1
     CROSS APPLY OPENJSON(ApplyData, '$.Apply.Versions') WITH (version VARCHAR(10) '$') v1
+	CROSS APPLY OPENJSON(ApplyData,'$.Sequences') WITH (SequenceNo INT, NotRequired BIT) sequence
+	WHERE 1=1
+	  AND sequence.NotRequired = 0
+      AND sequence.sequenceNo = [dbo].[ApplyConst_STANDARD_SEQUENCE_NO]() 
     ) ab1
     JOIN Organisations og1 on og1.id = ab1.OrganisationId
     WHERE ab1.standardreference IS NOT NULL

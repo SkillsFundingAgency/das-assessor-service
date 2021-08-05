@@ -275,13 +275,17 @@ namespace SFA.DAS.AssessorService.Data
                     (--Apply records for specific versions
                         SELECT ab1.*, og1.EndPointAssessorOrganisationId FROM(
                         SELECT ap1.Id ApplyId, ap1.ApplicationStatus, ap1.DeletedAt, ap1.OrganisationId, StandardReference, StandardReference + '_' + TRIM(version) StandardUId, ap1.ApplyData FROM Apply ap1
-                        CROSS APPLY OPENJSON(ApplyData, '$.Apply.Versions') WITH(version CHAR(10) '$')
+                        CROSS APPLY OPENJSON(ApplyData, '$.Apply.Versions') WITH(version VARCHAR(10) '$')
+                        CROSS APPLY OPENJSON(ApplyData,'$.Sequences') WITH (SequenceNo INT, NotRequired BIT) sequence
+                        WHERE 1=1
+                          AND sequence.NotRequired = 0
+                          AND sequence.sequenceNo = [dbo].[ApplyConst_STANDARD_SEQUENCE_NO]() 
                         ) ab1
                         JOIN Organisations og1 on og1.id = ab1.OrganisationId
                         WHERE ab1.standardreference IS NOT NULL
-							AND og1.EndPointAssessorOrganisationId = @organisationId
-                        AND ab1.ApplicationStatus NOT IN('Approved', 'Declined')
-                        AND ab1.DeletedAt IS NULL
+						  AND og1.EndPointAssessorOrganisationId = @organisationId
+                          AND ab1.ApplicationStatus NOT IN('Approved', 'Declined')
+                          AND ab1.DeletedAt IS NULL
                     )
                     --main query
                     SELECT
