@@ -233,6 +233,26 @@ CREATE TABLE #OrganisationStandardTableSummary
     Standard_58 nvarchar(500),
     Standard_59 nvarchar(500),    
     Standard_60 nvarchar(500),
+    Standard_61 nvarchar(500),
+    Standard_62 nvarchar(500),
+    Standard_63 nvarchar(500),
+    Standard_64 nvarchar(500),
+    Standard_65 nvarchar(500),
+    Standard_66 nvarchar(500),
+    Standard_67 nvarchar(500),
+    Standard_68 nvarchar(500),
+    Standard_69 nvarchar(500),    
+    Standard_70 nvarchar(500),
+    Standard_71 nvarchar(500),
+    Standard_72 nvarchar(500),
+    Standard_73 nvarchar(500),
+    Standard_74 nvarchar(500),
+    Standard_75 nvarchar(500),
+    Standard_76 nvarchar(500),
+    Standard_77 nvarchar(500),
+    Standard_78 nvarchar(500),
+    Standard_79 nvarchar(500),    
+    Standard_80 nvarchar(500),
 )
 
 -- OPERATION 3.2 Create containment table for details and populate table OrganisationStandardTableSummary
@@ -242,7 +262,7 @@ DECLARE @SQLToUpdateStandardDetails varchar(max)
 
 DECLARE @cnt INT = 1;
 
-WHILE @cnt < 61
+WHILE @cnt < 81
 BEGIN
   select @SQLToUpdateStandardDetails ='update osts  set Standard_' + convert(varchar,@cnt) + ' = sas.StandardDetails from #OrganisationStandardTableSummary osts left join #sequencedStandardDetails sas on sas.OrganisationId = osts.OrganisationId and sas.seq =' + convert(varchar,@cnt);
     exec(@SQLToUpdateStandardDetails)
@@ -327,7 +347,27 @@ Standard_2,
     Standard_57,
     Standard_58,
     Standard_59,    
-    Standard_60
+    Standard_60,
+    Standard_61,
+    Standard_62,
+    Standard_63,
+    Standard_64,
+    Standard_65,
+    Standard_66,
+    Standard_67,
+    Standard_68,
+    Standard_69,    
+    Standard_70,
+    Standard_71,
+    Standard_72,
+    Standard_73,
+    Standard_74,
+    Standard_75,
+    Standard_76,
+    Standard_77,
+    Standard_78,
+    Standard_79,    
+    Standard_80
  from Organisations o 
 left outer join #PrimaryOrFirstContact pofc on pofc.OrganisationId = o.EndPointAssessorOrganisationId
 left outer join Contacts c1 on c1.EndPointAssessorOrganisationId = pofc.OrganisationId and c1.Id = pofc.ContactId and c1.DeletedAt is null
