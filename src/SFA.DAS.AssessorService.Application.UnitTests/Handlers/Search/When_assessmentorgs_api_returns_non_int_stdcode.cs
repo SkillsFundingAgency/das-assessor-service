@@ -29,7 +29,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
                     new OrganisationStandardSummary {StandardCode = 14}
                 });
 
-            CertificateRepository.Setup(c => c.GetCompletedCertificatesFor(It.IsAny<long>()))
+            CertificateRepository.Setup(c => c.GetDraftAndCompletedCertificatesFor(It.IsAny<long>()))
                 .ReturnsAsync(new List<Certificate>());
 
             SearchHandler

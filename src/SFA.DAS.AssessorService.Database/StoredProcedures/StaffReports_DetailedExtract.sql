@@ -5,20 +5,22 @@ AS
 	DECLARE @ToTime DATETIME = DATEADD(second, -1, DATEADD(day, 1, CAST(EOMONTH(@FromTime) AS DATETIME)))
 
 	SELECT 
-		CAST(@FromTime AS DATE) 'Month', 
-		[Certificates].[Uln] 'Apprentice ULN',
-		UPPER(JSON_VALUE([Certificates].[CertificateData], '$.FullName')) 'Apprentice Names',
-		CAST(JSON_VALUE([Certificates].[CertificateData], '$.AchievementDate') AS DATE) 'Achievement Date',
-		UPPER(JSON_VALUE([Certificates].[CertificateData], '$.StandardName')) 'Standard Name',
-		[Certificates].[StandardCode] 'Standard Code',
-		[Organisations].[EndPointAssessorOrganisationId] 'EPAO ID',
-		[Organisations].[EndPointAssessorName] 'EPAO Name',
-		[Certificates].[ProviderUkPrn] 'Provider UkPrn',
-		UPPER(JSON_VALUE([Certificates].[CertificateData], '$.ProviderName')) 'Provider Name',
+		CAST(@FromTime AS DATE) [Month], 
+		[Certificates].[Uln] [Apprentice ULN],
+		UPPER(JSON_VALUE([Certificates].[CertificateData], '$.FullName')) [Apprentice Names],
+		CAST(JSON_VALUE([Certificates].[CertificateData], '$.AchievementDate') AS DATE) [Achievement Date],
+		TRIM(UPPER(JSON_VALUE([Certificates].[CertificateData], '$.StandardName'))) [Standard Name],
+		[Certificates].[StandardCode] [Standard Code],
+		UPPER(JSON_VALUE([Certificates].[CertificateData], '$.StandardReference')) [Standard Reference],
+		ISNULL(JSON_VALUE([Certificates].[CertificateData], '$.Version'),'') [Standard Version],
+		[Organisations].[EndPointAssessorOrganisationId] [EPAO ID],
+		[Organisations].[EndPointAssessorName] [EPAO Name],
+		[Certificates].[ProviderUkPrn] [Provider UkPrn],
+		UPPER(JSON_VALUE([Certificates].[CertificateData], '$.ProviderName')) [Provider Name],
 		CASE
 			WHEN [LatestSubmittedPassesBetweenReportDates].[EventTime] IS NULL THEN [Certificates].[Status]
 			ELSE [LatestSubmittedPassesBetweenReportDates].[Status]
-			END AS 'Status'
+			END AS [Status]
 	FROM
 		[Certificates] INNER JOIN [Organisations]
 		ON [Certificates].OrganisationId = [Organisations].Id INNER JOIN
@@ -51,5 +53,5 @@ AS
 		-- any later certificate submission has not been rescinded
 		ISNULL(JSON_VALUE([Certificates].[CertificateData],'$.EpaDetails.LatestEpaOutcome'),'Pass') != 'Fail'
 	ORDER BY
-		'Month', Status, 'Provider Name', Uln, 'Apprentice Names'
+		[Month], [Status], [Provider Name], Uln, [Apprentice Names]
 RETURN 0

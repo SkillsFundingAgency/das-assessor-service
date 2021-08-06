@@ -47,6 +47,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.OrganisationStandards
                 
                 orgStandardVersion.EffectiveFrom = request.EffectiveFrom;
                 orgStandardVersion.EffectiveTo = request.EffectiveTo;
+                orgStandardVersion.DateVersionApproved = DateTime.UtcNow;
 
                 await _repository.UpdateOrganisationStandardVersion(orgStandardVersion);
 

@@ -170,6 +170,7 @@
     <Build Include="Security\Roles\DatabaseRoles\DashboardReporting.sql" />
     <Build Include="Security\Schemas\DashboardReporting.sql" />
     <Build Include="StoredProcedures\DashboardReporting\CertificatePrintSummary.sql" />
+    <Build Include="Functions\Scalar-valued Functions\ExpandedVersion.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="SFA.DAS.AssessorService.Database.refactorlog" />

@@ -1,20 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Threading.Tasks;
-using Dapper;
+﻿using Dapper;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Data.DapperTypeHandlers;
 using SFA.DAS.AssessorService.Domain.Consts;
-using SFA.DAS.AssessorService.Domain.DTOs;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Exceptions;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using SFA.DAS.AssessorService.Domain.Paging;
+using System;
+using System.Collections.Generic;
+using System.Data.SqlClient;
+using System.Linq;
+using System.Threading.Tasks;
 using CertificateStatus = SFA.DAS.AssessorService.Domain.Consts.CertificateStatus;
 
 namespace SFA.DAS.AssessorService.Data
@@ -212,10 +211,10 @@ namespace SFA.DAS.AssessorService.Data
             return (certificateData.AchievementDate == achievementDate && certificateData.LearnerFamilyName == lastName);
         }
 
-        public async Task<List<Certificate>> GetCompletedCertificatesFor(long uln)
+        public async Task<List<Certificate>> GetDraftAndCompletedCertificatesFor(long uln)
         {
-            var completedCertificateStatus = new[] { CertificateStatus.Submitted, CertificateStatus.ToBeApproved }.Concat(CertificateStatus.PrintProcessStatus).ToList();
-            return await _context.Certificates.Where(c => c.Uln == uln && completedCertificateStatus.Contains(c.Status))
+            var statuses = new[] { CertificateStatus.Draft, CertificateStatus.Submitted, CertificateStatus.ToBeApproved }.Concat(CertificateStatus.PrintProcessStatus).ToList();
+            return await _context.Certificates.Where(c => c.Uln == uln && statuses.Contains(c.Status))
                 .ToListAsync();
         }
 

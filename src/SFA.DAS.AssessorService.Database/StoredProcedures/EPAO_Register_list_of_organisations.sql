@@ -133,23 +133,40 @@ drop table #sequencedAreaList
 -- OPERATION 2 COMPLETED
 
 -- OPERATION 3 Gather and pivot Standard title and level
+-- NOTE need to handle left and right of decimal version "number" separately - To be DONE 20/07/21
 -- GAther standard details, excluding those that have expired or expire today
-select os.EndPointAssessorOrganisationId as OrganisationId, Title + ' - Level ' + JSON_Value(StandardData,'$.Level') as StandardDetails 
-    into #StandardDetails
-    from OrganisationStandard os 
-    inner join Organisations o on os.EndPointAssessorOrganisationId = o.EndPointAssessorOrganisationId and o.[Status] = 'Live'
-    inner join StandardCollation sc on os.StandardCode = sc.StandardId 
-    where StandardData is not NULL
-    and (os.EffectiveTo is null OR os.EffectiveTo > GETDATE())
-    and (
-        JSON_Value(StandardData,'$.EffectiveTo') is null OR
-        JSON_Value(StandardData,'$.EffectiveTo') > GETDATE()
-        )
-    AND os.Status = 'Live' 
-    order by os.EndPointAssessorOrganisationId, sc.Title
+select o.EndPointAssessorOrganisationId as OrganisationId, ss2.StandardLevel + ', Version '+STRING_AGG(Version,',') WITHIN GROUP (ORDER BY [dbo].[ExpandedVersion](Version) ASC) StandardDetails
+into #StandardDetails
+from OrganisationStandard os 
+inner join  OrganisationStandardVersion osv on osv.OrganisationStandardId = os.Id and osv.StandardUId like os.StandardReference+'%' AND ( osv.EffectiveTo is null OR osv.EffectiveTo > GETDATE() )
+inner join Organisations o on os.EndPointAssessorOrganisationId = o.EndPointAssessorOrganisationId AND o.status = 'Live'
+inner join 
+(
+select IFateReferenceNumber, Title + ' - Level ' + CAST(ss.Level as varchar)  as StandardLevel
+from (
+  SELECT 
+  MAX(CASE WHEN latestcheck = 1 THEN Title ELSE NULL END) Title 
+, IFateReferenceNumber 
+, MAX(CASE WHEN latestcheck = 1 THEN Level ELSE NULL END) Level 
+FROM (
+SELECT TRIM(IFateReferenceNumber) IFateReferenceNumber,  Title, Level 
+, ROW_NUMBER() OVER (PARTITION BY IFateReferenceNumber ORDER BY [dbo].[ExpandedVersion](Version) DESC) latestcheck  
+FROM Standards 
+WHERE LarsCode != 0
+AND IFateReferenceNumber IS NOT NULL
+AND EffectiveFrom IS NOT NULL
+AND ( EffectiveTo IS NULL OR EffectiveTo > GETDATE() )
+) ab1
+GROUP BY IFateReferenceNumber
+) as ss
+) as ss2 on ss2.IFateReferenceNumber = os.StandardReference
+WHERE ( os.EffectiveTo IS NULL OR os.EffectiveTo > GETDATE() )
+  AND os.Status = 'Live' 
+GROUP BY o.EndPointAssessorOrganisationId, ss2.StandardLevel 
+
 
 select OrganisationId, StandardDetails,
-    row_number() over(partition by OrganisationId order by OrganisationId) seq into #sequencedStandardDetails
+    row_number() over(partition by OrganisationId order by OrganisationId, StandardDetails) seq into #sequencedStandardDetails
   from #StandardDetails
   order by OrganisationId, seq
 
@@ -357,7 +374,7 @@ left outer join Contacts c1 on c1.EndPointAssessorOrganisationId = pofc.Organisa
 left outer join #DeliveryAreaSummary das on o.EndPointAssessorOrganisationId = das.OrganisationId
 left outer join OrganisationType ot on o.OrganisationTypeId = ot.Id 
 join #OrganisationStandardTableSummary osts on osts.OrganisationId = o.EndPointAssessorOrganisationId
-where o.DeletedAt is NULL AND o.EndPointAssessorOrganisationId<>'EPA0000'
+where o.DeletedAt is NULL AND o.EndPointAssessorOrganisationId <> 'EPA0000'
 order by o.EndPointAssessorName
 
 drop table #DeliveryAreaSummary
