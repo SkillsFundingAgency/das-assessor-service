@@ -176,6 +176,8 @@
     <Build Include="StoredProcedures\PopulateLearner.sql" />
     <Build Include="Tables\Providers.sql" />
     <Build Include="Functions\Scalar-valued Functions\GetStandardUidFromLarsCode.sql" />
+    <Build Include="StoredProcedures\GetEPAO_Pipelines_StandardFilter.sql" />
+    <Build Include="StoredProcedures\GetEPAO_Pipelines_ProviderFilter.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="SFA.DAS.AssessorService.Database.refactorlog" />
@@ -198,6 +200,7 @@
     <None Include="PostDeploymentScripts\LookupData\PostCodeRegionDelete.sql" />
     <None Include="PostDeploymentScripts\LookupData\StaffReportsInsertOrUpdate.sql" />
     <None Include="PostDeploymentScripts\LookupData\StaffReportsDelete.sql" />
+    <None Include="StoredProcedures\GetEPAO_Pipelines_EPADateFilter.sql" />
   </ItemGroup>
   <ItemGroup>
     <ArtifactReference Include="$(DacPacRootPath)\Extensions\Microsoft\SQLDB\Extensions\SqlServer\AzureV12\SqlSchemas\master.dacpac">
