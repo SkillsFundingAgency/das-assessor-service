@@ -31,5 +31,5 @@ GO
 
 
 CREATE NONCLUSTERED INDEX IX_APPLY_StandardReference_Status
-ON [dbo].[Apply] ([StandardReference],[ApplicationStatus]) INCLUDE (DeletedAT)
+ON [dbo].[Apply] ([StandardReference],[ApplicationStatus]) INCLUDE (DeletedAt)
 GO
