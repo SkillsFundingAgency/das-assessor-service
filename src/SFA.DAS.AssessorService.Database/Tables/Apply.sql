@@ -28,3 +28,8 @@ ALTER TABLE [Apply]
 ADD CONSTRAINT [FK_Apply_Organisations_OrganisationId] 
 FOREIGN KEY([OrganisationId]) REFERENCES [Organisations] ([Id])
 GO
+
+
+CREATE NONCLUSTERED INDEX IX_APPLY_StandardReference_Status
+ON [dbo].[Apply] ([StandardReference],[ApplicationStatus]) INCLUDE (DeletedAT)
+GO
