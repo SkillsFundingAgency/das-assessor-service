@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Domain.Entities;
@@ -72,5 +73,9 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
     {
         public IEnumerable<EpaoPipelineStandard> PageOfResults { get; set; }
         public int TotalCount { get; set; }
+
+        public IEnumerable<(string, string)> StandardFilterItems { get; set; }
+        public IEnumerable<(string, string)> TrainingProviderFilterItems { get; set; }
+        public IEnumerable<(DateTime, DateTime)> EPADateFilterItems { get; set; }
     }
 }

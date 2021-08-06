@@ -686,6 +686,10 @@ FROM [Standards] Where [IFateReferenceNumber] = @iFateReferenceNumber";
             epaoPipelineStandardsResult.TotalCount = epaoPipelines.Select(x => x.TotalRows).First();
             epaoPipelineStandardsResult.PageOfResults = epaoPipelines;
 
+            epaoPipelineStandardsResult.StandardFilterItems = result.Select(e => (e.StdCode, e.Title)).Distinct();
+            epaoPipelineStandardsResult.TrainingProviderFilterItems = result.Select(e => (e.UKPRN, e.TrainingProvider)).Distinct();
+            epaoPipelineStandardsResult.EPADateFilterItems = result.Select(e => (e.EstimateDate, e.EstimateDate)).Distinct();
+
             return epaoPipelineStandardsResult;
         }
 
