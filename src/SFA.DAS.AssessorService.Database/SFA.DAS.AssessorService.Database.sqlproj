@@ -175,7 +175,8 @@
     <Build Include="Tables\StandardVersionSummary.sql" />
     <Build Include="Tables\ApprovalsExtract.sql" />
     <Build Include="StoredProcedures\PopulateLearner.sql" />
-    <Build Include="Providers.sql" />
+    <Build Include="Tables\Providers.sql" />
+    <Build Include="Functions\Scalar-valued Functions\GetStandardUidFromLarsCode.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="SFA.DAS.AssessorService.Database.refactorlog" />
