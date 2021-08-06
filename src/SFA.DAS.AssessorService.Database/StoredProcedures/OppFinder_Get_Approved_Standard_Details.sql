@@ -28,7 +28,12 @@ BEGIN
 		#Results
 	FROM
 		StandardSummary ss
-			LEFT JOIN Standards s ON ss.StandardCode = s.LarsCode
+			LEFT JOIN 
+				(SELECT [LarsCode], [IFateReferenceNumber], [OverviewOfRole], [TypicalDuration], [VersionApprovedForDelivery],
+				[MaxFunding], [TrailBlazerContact], [StandardPageUrl], [EqaProviderName], [EqaProviderContactName], [EqaProviderContactEmail],
+				ROW_NUMBER() OVER(PARTITION BY [IFateReferenceNumber] ORDER BY [Version] DESC) AS RowNum
+		  FROM [Standards]
+		) s ON ss.StandardCode = s.LarsCode AND s.RowNum = 1
 	WHERE 
 		StandardReference = @StandardReference
 
