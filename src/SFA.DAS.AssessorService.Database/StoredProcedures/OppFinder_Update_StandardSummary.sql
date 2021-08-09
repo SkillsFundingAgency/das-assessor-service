@@ -75,25 +75,23 @@ BEGIN
 	FROM (
 
 		-- Active Learners by Standard and Region
-		SELECT ab1.StdCode StandardCode
+		SELECT ab1.StandardCode
 				,ISNULL(Area,'Other') Region, ISNULL(Ordering,10) Ordering, Learners, 0 Assessments, 0 TotalEPAOs, 0 EndPointAssessors, NULL EndPointAssessorList
 		FROM (
-			SELECT COUNT(*) Learners,  StdCode, ISNULL(pc1.DeliveryAreaId ,0) DeliveryAreaId 
+			SELECT COUNT(*) Learners,  StandardCode, ISNULL(pc1.DeliveryAreaId ,0) DeliveryAreaId 
 			FROM (
-			-- ILR data that is in the future (has not been completed or withdrawn and does not have a cert)
-				SELECT il1.StdCode, il1.DelLocPostCode
-				FROM Ilrs il1 
-				JOIN (SELECT StandardCode, Duration 
-						FROM @StandardsCore 
-				) st1 ON st1.StandardCode = il1.StdCode
-				LEFT JOIN Organisations og1 ON og1.EndPointAssessorOrganisationId = il1.EpaOrgId
-				LEFT JOIN Certificates ce1 ON ce1.StandardCode = il1.StdCode and ce1.Uln = il1.Uln 
+				-- ILR data that is in the future (has not been completed or withdrawn and does not have a cert)
+				SELECT s.LarsCode AS StandardCode, l.DelLocPostCode
+				FROM Learner l 
+				INNER JOIN Standards s ON l.StandardUId = s.StandardUId
+				INNER JOIN @StandardsCore sc ON sc.StandardReference = s.IFateReferenceNumber
+				LEFT JOIN Certificates ce1 ON ce1.StandardUId = l.StandardUId and ce1.Uln = l.Uln 
 				WHERE ce1.Uln IS NULL
-				AND il1.CompletionStatus = 1
-				AND (CASE WHEN il1.PlannedEndDate > GETDATE() THEN EOMONTH(il1.PlannedEndDate) ELSE EOMONTH(DATEADD(month, st1.Duration, il1.LearnStartDate)) END) >= DATEADD(month,-3,GETDATE())
+				AND l.CompletionStatus = 1
+				AND (CASE WHEN l.PlannedEndDate > GETDATE() THEN EOMONTH(l.PlannedEndDate) ELSE EOMONTH(DATEADD(month, sc.Duration, l.LearnStartDate)) END) >= DATEADD(month,-3,GETDATE())
 			) il2
 			LEFT JOIN PostCodeRegion pc1 on pc1.PostCodePrefix = dbo.OppFinder_GetPostCodePrefix(DelLocPostCode)
-			GROUP BY StdCode, ISNULL(pc1.DeliveryAreaId ,0) 
+			GROUP BY StandardCode, ISNULL(pc1.DeliveryAreaId ,0) 
 		) ab1
 		LEFT JOIN DeliveryArea de1 on de1.Id = ab1.DeliveryAreaId
 
@@ -132,11 +130,11 @@ BEGIN
 		SELECT od1.StandardCode
 				,ISNULL(Area,'Other') Region, ISNULL(Ordering,10) Ordering, 0 Learners, COUNT(*) Assessments, 0 TotalEPAOs, 0 EndPointAssessors, NULL EndPointAssessorList
 		FROM (
-			SELECT ce1.StandardCode,  ISNULL(ISNULL(il1.DelLocPostCode, JSON_VALUE(ce1.CertificateData,'$.ContactPostCode')),'ZZ99 9ZZ') DelLocPostCode
+			SELECT s.LarsCode AS StandardCode,  ISNULL(ISNULL(lnr.DelLocPostCode, JSON_VALUE(ce1.CertificateData,'$.ContactPostCode')),'ZZ99 9ZZ') DelLocPostCode
 			FROM [Certificates] ce1
-			LEFT JOIN Ilrs il1 ON il1.StdCode = ce1.StandardCode AND il1.Uln = ce1.Uln
-			WHERE 1=1
-			AND IsPrivatelyFunded = 0
+			INNER JOIN Standards s ON s.StandardUId = ce1.StandardUId
+			LEFT JOIN Learner lnr ON lnr.StdCode = s.LarsCode AND lnr.Uln = ce1.Uln
+			WHERE IsPrivatelyFunded = 0
 			AND ce1.[Status] NOT IN ('Deleted','Draft')
 		) od1
 		LEFT JOIN PostCodeRegion pc1 on pc1.PostCodePrefix = dbo.OppFinder_GetPostCodePrefix(od1.DelLocPostCode)
@@ -174,13 +172,10 @@ BEGIN
 	),
 	activeapprentices AS
 	(
-		SELECT s.[StandardCode], s.[StandardReference], s.[Version], Count(*) AS ActiveApprentices 
-		FROM ilrs i
-			INNER JOIN (SELECT [LarsCode] AS StandardCode, [IFateReferenceNumber] AS StandardReference, MIN([Version]) AS Version
-						FROM Standards
-						GROUP BY [LarsCode], [IFateReferenceNumber]
-						Having Count(*) = 1) s ON s.StandardCode = i.StdCode
-		GROUP BY s.[StandardCode], s.[StandardReference], s.[Version]
+		SELECT s.[LarsCode] AS StandardCode, s.[IFateReferenceNumber] AS StandardReference, s.[Version], Count(*) AS ActiveApprentices 
+		FROM Learner lnr
+			INNER JOIN Standards s ON s.StandardUId = lnr.StandardUId
+		GROUP BY s.[LarsCode], s.[IFateReferenceNumber], s.[Version]
 	)
 	INSERT INTO [StandardVersionSummary]
 	SELECT s.[LarsCode] AS StandardCode, 
