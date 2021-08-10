@@ -1933,6 +1933,8 @@ th[aria-sort="ascending"] a:after {
 
 .das-filter-panel {
     background-color: #f3f2f1;
+    padding: 15px;
+    margin-bottom: 30px;
 }
 
 .das-text-align-right {
