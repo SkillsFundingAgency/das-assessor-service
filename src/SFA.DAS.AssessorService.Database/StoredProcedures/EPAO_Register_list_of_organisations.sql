@@ -133,23 +133,40 @@ drop table #sequencedAreaList
 -- OPERATION 2 COMPLETED
 
 -- OPERATION 3 Gather and pivot Standard title and level
+-- NOTE need to handle left and right of decimal version "number" separately - To be DONE 20/07/21
 -- GAther standard details, excluding those that have expired or expire today
-select os.EndPointAssessorOrganisationId as OrganisationId, Title + ' - Level ' + JSON_Value(StandardData,'$.Level') as StandardDetails 
-    into #StandardDetails
-    from OrganisationStandard os 
-    inner join Organisations o on os.EndPointAssessorOrganisationId = o.EndPointAssessorOrganisationId and o.[Status] = 'Live'
-    inner join StandardCollation sc on os.StandardCode = sc.StandardId 
-    where StandardData is not NULL
-    and (os.EffectiveTo is null OR os.EffectiveTo > GETDATE())
-    and (
-        JSON_Value(StandardData,'$.EffectiveTo') is null OR
-        JSON_Value(StandardData,'$.EffectiveTo') > GETDATE()
-        )
-    AND os.Status = 'Live' 
-    order by os.EndPointAssessorOrganisationId, sc.Title
+select o.EndPointAssessorOrganisationId as OrganisationId, ss2.StandardLevel + ', Version '+STRING_AGG(Version,',') WITHIN GROUP (ORDER BY [dbo].[ExpandedVersion](Version) ASC) StandardDetails
+into #StandardDetails
+from OrganisationStandard os 
+inner join  OrganisationStandardVersion osv on osv.OrganisationStandardId = os.Id and osv.StandardUId like os.StandardReference+'%' AND ( osv.EffectiveTo is null OR osv.EffectiveTo > GETDATE() )
+inner join Organisations o on os.EndPointAssessorOrganisationId = o.EndPointAssessorOrganisationId AND o.status = 'Live'
+inner join 
+(
+select IFateReferenceNumber, Title + ' - Level ' + CAST(ss.Level as varchar)  as StandardLevel
+from (
+  SELECT 
+  MAX(CASE WHEN latestcheck = 1 THEN Title ELSE NULL END) Title 
+, IFateReferenceNumber 
+, MAX(CASE WHEN latestcheck = 1 THEN Level ELSE NULL END) Level 
+FROM (
+SELECT TRIM(IFateReferenceNumber) IFateReferenceNumber,  Title, Level 
+, ROW_NUMBER() OVER (PARTITION BY IFateReferenceNumber ORDER BY [dbo].[ExpandedVersion](Version) DESC) latestcheck  
+FROM Standards 
+WHERE LarsCode != 0
+AND IFateReferenceNumber IS NOT NULL
+AND EffectiveFrom IS NOT NULL
+AND ( EffectiveTo IS NULL OR EffectiveTo > GETDATE() )
+) ab1
+GROUP BY IFateReferenceNumber
+) as ss
+) as ss2 on ss2.IFateReferenceNumber = os.StandardReference
+WHERE ( os.EffectiveTo IS NULL OR os.EffectiveTo > GETDATE() )
+  AND os.Status = 'Live' 
+GROUP BY o.EndPointAssessorOrganisationId, ss2.StandardLevel 
+
 
 select OrganisationId, StandardDetails,
-    row_number() over(partition by OrganisationId order by OrganisationId) seq into #sequencedStandardDetails
+    row_number() over(partition by OrganisationId order by OrganisationId, StandardDetails) seq into #sequencedStandardDetails
   from #StandardDetails
   order by OrganisationId, seq
 
@@ -216,6 +233,26 @@ CREATE TABLE #OrganisationStandardTableSummary
     Standard_58 nvarchar(500),
     Standard_59 nvarchar(500),    
     Standard_60 nvarchar(500),
+    Standard_61 nvarchar(500),
+    Standard_62 nvarchar(500),
+    Standard_63 nvarchar(500),
+    Standard_64 nvarchar(500),
+    Standard_65 nvarchar(500),
+    Standard_66 nvarchar(500),
+    Standard_67 nvarchar(500),
+    Standard_68 nvarchar(500),
+    Standard_69 nvarchar(500),    
+    Standard_70 nvarchar(500),
+    Standard_71 nvarchar(500),
+    Standard_72 nvarchar(500),
+    Standard_73 nvarchar(500),
+    Standard_74 nvarchar(500),
+    Standard_75 nvarchar(500),
+    Standard_76 nvarchar(500),
+    Standard_77 nvarchar(500),
+    Standard_78 nvarchar(500),
+    Standard_79 nvarchar(500),    
+    Standard_80 nvarchar(500),
 )
 
 -- OPERATION 3.2 Create containment table for details and populate table OrganisationStandardTableSummary
@@ -225,7 +262,7 @@ DECLARE @SQLToUpdateStandardDetails varchar(max)
 
 DECLARE @cnt INT = 1;
 
-WHILE @cnt < 61
+WHILE @cnt < 81
 BEGIN
   select @SQLToUpdateStandardDetails ='update osts  set Standard_' + convert(varchar,@cnt) + ' = sas.StandardDetails from #OrganisationStandardTableSummary osts left join #sequencedStandardDetails sas on sas.OrganisationId = osts.OrganisationId and sas.seq =' + convert(varchar,@cnt);
     exec(@SQLToUpdateStandardDetails)
@@ -310,14 +347,34 @@ Standard_2,
     Standard_57,
     Standard_58,
     Standard_59,    
-    Standard_60
+    Standard_60,
+    Standard_61,
+    Standard_62,
+    Standard_63,
+    Standard_64,
+    Standard_65,
+    Standard_66,
+    Standard_67,
+    Standard_68,
+    Standard_69,    
+    Standard_70,
+    Standard_71,
+    Standard_72,
+    Standard_73,
+    Standard_74,
+    Standard_75,
+    Standard_76,
+    Standard_77,
+    Standard_78,
+    Standard_79,    
+    Standard_80
  from Organisations o 
 left outer join #PrimaryOrFirstContact pofc on pofc.OrganisationId = o.EndPointAssessorOrganisationId
 left outer join Contacts c1 on c1.EndPointAssessorOrganisationId = pofc.OrganisationId and c1.Id = pofc.ContactId and c1.DeletedAt is null
 left outer join #DeliveryAreaSummary das on o.EndPointAssessorOrganisationId = das.OrganisationId
 left outer join OrganisationType ot on o.OrganisationTypeId = ot.Id 
 join #OrganisationStandardTableSummary osts on osts.OrganisationId = o.EndPointAssessorOrganisationId
-where o.DeletedAt is NULL AND o.EndPointAssessorOrganisationId<>'EPA0000'
+where o.DeletedAt is NULL AND o.EndPointAssessorOrganisationId <> 'EPA0000'
 order by o.EndPointAssessorName
 
 drop table #DeliveryAreaSummary

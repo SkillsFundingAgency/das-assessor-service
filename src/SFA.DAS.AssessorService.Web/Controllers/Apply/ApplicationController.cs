@@ -129,7 +129,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
             if (existingApplications != null)
             {
-                var existingEmptyApplication = existingApplications.SingleOrDefault(x => x.StandardCode == null);
+                var existingEmptyApplication = existingApplications.FirstOrDefault(x => x.StandardCode == null);
                 if (existingEmptyApplication != null)
                     return RedirectToAction("SequenceSignPost", new { existingEmptyApplication.Id });
             }

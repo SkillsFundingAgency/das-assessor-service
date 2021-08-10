@@ -24,10 +24,10 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ApplyForWithdrawalTests.ApplyFor
     public class When_TypeOfWithdrawal_is_called_to_withdraw_from_standard : ApplyForWithdrawalControllerTestsBase
     {
         [Test]
-        public async Task Then_Redirect_To_ChooseStandardForWithdrawal()
+        public void Then_Redirect_To_ChooseStandardForWithdrawal()
         {
             // Act
-            var result = await _sut.TypeOfWithdrawal(new TypeOfWithdrawalViewModel { TypeOfWithdrawal = ApplicationTypes.StandardWithdrawal }) as RedirectToActionResult;
+            var result = _sut.TypeOfWithdrawal(new TypeOfWithdrawalViewModel { TypeOfWithdrawal = ApplicationTypes.StandardWithdrawal }) as RedirectToActionResult;
 
             // Assert
             result.ActionName.Should().Be(nameof(ApplyForWithdrawalController.ChooseStandardForWithdrawal));

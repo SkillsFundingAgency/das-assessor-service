@@ -51,7 +51,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
             organisationRepository.Setup(r => r.Get("12345")).ReturnsAsync(new Organisation() { EndPointAssessorOrganisationId = "EPA0001"});
 
             var certificateRepository = new Mock<ICertificateRepository>();
-            certificateRepository.Setup(r => r.GetCompletedCertificatesFor(1111111111))
+            certificateRepository.Setup(r => r.GetDraftAndCompletedCertificatesFor(1111111111))
                 .ReturnsAsync(new List<Certificate>());
             
             

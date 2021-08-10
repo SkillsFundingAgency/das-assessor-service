@@ -31,7 +31,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
         public async Task<Domain.Entities.Apply> GetApply(Guid applicationId)
         {
             return await _unitOfWork.Connection.QuerySingleOrDefaultAsync<Domain.Entities.Apply>(
-                @"SELECT * FROM Apply WHERE Id = @applicationId", 
+                @"SELECT * FROM Apply WHERE Id = @applicationId AND DeletedAt IS NULL", 
                 param: new { applicationId },
                 transaction: _unitOfWork.Transaction);
         }
@@ -49,6 +49,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
                         INNER JOIN Contacts c1 ON c1.Id = a.CreatedBy
                         WHERE 
                         a.Id = @applicationId
+                        AND a.DeletedAt IS NULL
                         AND (c.Id = @userId OR @userId IS NULL)
                         GROUP BY 
 	                    a.Id, a.ApplicationId, a.OrganisationId, a.ApplicationStatus, a.ReviewStatus, a.StandardApplicationType,
@@ -76,6 +77,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
                             CROSS APPLY OPENJSON(ApplyData,'$.Sequences') WITH (SequenceNo INT, NotRequired BIT) sequence
                          WHERE c.Id = @userId
                             AND sequence.SequenceNo IN @sequenceNos AND sequence.NotRequired = 0
+                            AND a.ApplicationStatus <> 'Declined'
                             AND a.DeletedAt IS NULL
                          GROUP BY 
                             a.Id, a.ApplicationId, a.OrganisationId, a.ApplicationStatus, a.ReviewStatus, 
@@ -135,6 +137,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
                     CROSS APPLY OPENJSON(a.ApplyData,'$.Sequences') WITH (SequenceNo INT, IsActive BIT, NotRequired BIT, Status VARCHAR(20)) sequence
                     WHERE a.OrganisationId = (SELECT OrganisationId FROM Apply WHERE Id = @applicationId)
                     AND a.CreatedBy <> (SELECT CreatedBy FROM Apply WHERE Id = @applicationId)
+                    AND a.DeletedAt IS NULL
                     AND a.ApplicationStatus NOT IN (@applicationStatusApproved, @applicationStatusApprovedDeclined)
                     AND sequence.NotRequired = 0 AND sequence.SequenceNo = {ApplyConst.ORGANISATION_SEQUENCE_NO}
                     AND sequence.Status IN (@applicationSequenceStatusSubmitted, @applicationSequenceStatusResubmitted)",
@@ -531,6 +534,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
                 @"SELECT * FROM Apply a
                     WHERE a.OrganisationId = (SELECT OrganisationId FROM Apply WHERE Id = @applicationId)
                     AND a.Id <> @applicationId
+                    AND a.DeletedAt IS NULL
                     AND a.ApplicationStatus NOT IN (@approvedStatus, @rejectedStatus)",
                 param: new { applicationId, approvedStatus = ApplicationStatus.Approved, rejectedStatus = ApplicationStatus.Declined },
                 transaction: _unitOfWork.Transaction);
