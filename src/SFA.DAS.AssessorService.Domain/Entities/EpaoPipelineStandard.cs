@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace SFA.DAS.AssessorService.Domain.Entities
 {
@@ -11,15 +9,11 @@ namespace SFA.DAS.AssessorService.Domain.Entities
         public DateTime EstimateDate { get; set; }
         public int TotalRows { get; set; }
 
-
-
-
-
         public string StdCode { get; set; }
         public string StandardVersion { get; set; }
 
         public string UKPRN { get; set; }
-        public string TrainingProvider { get; set; }
+        public string ProviderName { get; set; }
     }
 
     public class EpaoPipelineStandardExtract : EpaoPipelineStandard

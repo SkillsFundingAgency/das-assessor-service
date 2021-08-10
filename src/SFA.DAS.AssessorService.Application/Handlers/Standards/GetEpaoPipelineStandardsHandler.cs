@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
@@ -27,14 +24,18 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Standards
     {
       _logger.LogInformation("Retreiving Epao pipeline information");
       var result =
-          await _standardRepository.GetEpaoPipelineStandards(request.EpaoId, request.OrderBy, request.OrderDirection, request.PageSize,
-              request.PageIndex);
+          await _standardRepository.GetEpaoPipelineStandards(request.EpaoId, request.StandardFilterId, request.ProviderFilterId, request.EPADateFilterId,
+          request.OrderBy, request.OrderDirection, request.PageSize, request.PageIndex);
       var epaoPipelinStandardsResult = result.PageOfResults.Select(o =>
           new EpaoPipelineStandardsResponse
           {
             EstimatedDate = o.EstimateDate.UtcToTimeZoneTime().Date.ToString("MMMM yyyy"),
             Pipeline = o.Pipeline,
-            StandardName = o.Title
+            StandardName = o.Title,
+            StandardCode = o.StdCode,
+            StandardVersion = o.StandardVersion,
+            TrainingProvider = o.ProviderName,
+            UKPRN = o.UKPRN
           }).ToList();
 
       return new PaginatedList<EpaoPipelineStandardsResponse>(epaoPipelinStandardsResult, result.TotalCount, request.PageIndex ?? 1, request.PageSize);

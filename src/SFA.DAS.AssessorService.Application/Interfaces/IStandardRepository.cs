@@ -20,8 +20,11 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
 
         Task<int> GetEpaoStandardsCount(string endPointAssessorOrganisationId);
         Task<EpoRegisteredStandardsResult> GetEpaoRegisteredStandards(string endPointAssessorOrganisationId,int pageSize, int pageIndex);
-        Task<EpaoPipelineStandardsResult> GetEpaoPipelineStandards(string endPointAssessorOrganisationId,
+        Task<EpaoPipelineStandardsResult> GetEpaoPipelineStandards(string endPointAssessorOrganisationId, string standardFilterId, string providerFilterId, string epaDateFilterId,
         string orderBy, string orderDirection, int pageSize, int? pageIndex);
+        Task<IEnumerable<EpaoPipelineStandardFilter>> GetEpaoPipelineStandardsStandardFilter(string endPointAssessorOrganisationId);
+        Task<IEnumerable<EpaoPipelineStandardFilter>> GetEpaoPipelineStandardsProviderFilter(string endPointAssessorOrganisationId);
+        Task<IEnumerable<EpaoPipelineStandardFilter>> GetEpaoPipelineStandardsEPADateFilter(string endPointAssessorOrganisationId);
         Task<List<EpaoPipelineStandardExtract>> GetEpaoPipelineStandardsExtract(string endPointAssessorOrganisationId);
 
         // New Standard Version Methods
@@ -74,8 +77,15 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         public IEnumerable<EpaoPipelineStandard> PageOfResults { get; set; }
         public int TotalCount { get; set; }
 
-        public IEnumerable<(string, string)> StandardFilterItems { get; set; }
-        public IEnumerable<(string, string)> TrainingProviderFilterItems { get; set; }
-        public IEnumerable<(DateTime, DateTime)> EPADateFilterItems { get; set; }
+        public string StandardFilterId { get; set; }
+        public string TrainingProviderFilterId { get; set; }
+        public string EPADateFilterId { get; set; }
+    }
+
+    public class EpaoPipelineStandardsFilterResult
+    {
+        public IEnumerable<EpaoPipelineStandardFilter> StandardFilterItems { get; set; }
+        public IEnumerable<EpaoPipelineStandardFilter> ProviderFilterItems { get; set; }
+        public IEnumerable<EpaoPipelineStandardFilter> EPADateFilterItems { get; set; }
     }
 }

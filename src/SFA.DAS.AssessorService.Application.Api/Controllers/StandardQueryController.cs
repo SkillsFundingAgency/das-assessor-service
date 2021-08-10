@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
-using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
 using SFA.DAS.AssessorService.Application.Handlers.ao.GetEpaOrganisationsByStandard;
@@ -43,11 +42,20 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [HttpGet("pipelines/{epaoId}", Name = "GetEpaoPipelineStandards")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(int))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> GetEpaoPipelineStandards(string epaoId, string orderBy, string orderDirection,int pageSize, int? pageIndex = null)
+        public async Task<IActionResult> GetEpaoPipelineStandards(string epaoId, string standardFilterId, string providerFilterId, string epaDateFilterId, string orderBy, string orderDirection,int pageSize, int? pageIndex = null)
         {
             var normalisedPageIndex = (pageIndex == null || pageIndex == 0) ? 1 : pageIndex;
             _logger.LogInformation($"Received request to retrieve pipeline for standards of the organisation {epaoId}");
-            return Ok(await _mediator.Send(new EpaoPipelineStandardsRequest(epaoId, orderBy, orderDirection,normalisedPageIndex, pageSize)));
+            return Ok(await _mediator.Send(new EpaoPipelineStandardsRequest(epaoId, standardFilterId, providerFilterId, epaDateFilterId, orderBy, orderDirection,normalisedPageIndex, pageSize)));
+        }
+
+        [HttpGet("pipelines/{epaoId}/filters", Name = "GetEpaoPipelineStandardsFilters")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(int))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> GetEpaoPipelineStandardsFilters(string epaoId)
+        {
+            _logger.LogInformation($"Received request to retrieve pipeline filters for organisation {epaoId}");
+            return Ok(await _mediator.Send(new EpaoPipelineStandardsFiltersRequest(epaoId)));
         }
 
         [HttpGet("pipelines/extract/{epaoId}", Name = "GetEpaoPipelineStandardsExtract")]

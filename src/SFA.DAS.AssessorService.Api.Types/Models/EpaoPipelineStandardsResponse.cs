@@ -3,7 +3,7 @@
     public class EpaoPipelineStandardsResponse
     {
         public string StandardName { get; set; }
-        public string StandardReference { get; set; }
+        public string StandardCode { get; set; }
         public string StandardVersion { get; set; }
         public string UKPRN { get; set; }
         public string TrainingProvider { get; set; }
