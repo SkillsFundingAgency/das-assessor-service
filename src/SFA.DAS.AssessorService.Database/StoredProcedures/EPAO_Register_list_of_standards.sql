@@ -7,27 +7,25 @@ SET NOCOUNT ON;
 -- Get all the effective standards for each organisation in a sequenced order
 ------------------------------------------------------------------------------------------------------------------------------------------------------
 SELECT
-	StandardCode, EndPointAssessorName,
-    row_number() over(partition by StandardCode order by StandardCode) Seq 
+	StandardReference, EndPointAssessorName, Versions,
+    row_number() over(partition by StandardReference, Versions order by EndPointAssessorName) Seq 
 INTO 
 	#SequencedOrgStandardDetails
 FROM
 	(
 		SELECT
-			os.StandardCode, EndPointAssessorName
+			os.StandardReference, EndPointAssessorName, STRING_AGG(Version,', ') WITHIN GROUP (ORDER BY [dbo].[ExpandedVersion](Version) ASC) Versions
 		FROM
 			OrganisationStandard os
-			INNER JOIN Organisations o on os.EndPointAssessorOrganisationId = o.EndPointAssessorOrganisationId AND o.[Status] = 'Live'
-			LEFT OUTER JOIN StandardCollation sc on os.StandardCode = sc.StandardId
+			JOIN (SELECT OrganisationStandardId, StandardUId, Version FROM OrganisationStandardVersion WHERE (EffectiveTo is null OR EffectiveTo > GETDATE()) AND [Status] = 'Live' ) osv on osv.OrganisationStandardId = os.Id
+			AND osv.StandardUId LIKE os.StandardReference+'%'
+			JOIN Organisations o on os.EndPointAssessorOrganisationId = o.EndPointAssessorOrganisationId AND o.[Status] = 'Live'
+			JOIN (SELECT DISTINCT TRIM(IFateReferenceNumber) IFateReferenceNumber, EffectiveFrom, EffectiveTo FROM Standards WHERE Larscode != 0 AND (EffectiveTo is null OR EffectiveTo > GETDATE()))  sc on os.StandardReference = sc.IFateReferenceNumber
 		WHERE
 			o.EndPointAssessorOrganisationId <> 'EPA0000'
 			AND (os.EffectiveTo is null OR os.EffectiveTo > GETDATE())
-			AND 
-			(
-				JSON_Value(StandardData,'$.EffectiveTo') is null OR
-				JSON_Value(StandardData,'$.EffectiveTo') > GETDATE()
-			)
 			AND os.[Status] = 'Live'
+		GROUP BY os.StandardReference, EndPointAssessorName
 	) 
 	AS OrgStandards
 
@@ -70,7 +68,7 @@ WITH DistinctEPAAOColumns AS
 	FROM #SequencedOrgStandardDetails
 )
 SELECT 
-	@Dynamic_sql = 'CREATE TABLE ##' + @OrganisationStandardTableSummary + ' (StandardCode INT,' + 
+	@Dynamic_sql = 'CREATE TABLE ##' + @OrganisationStandardTableSummary + ' (StandardReference VARCHAR(10), Versions VARCHAR(400), ' + 
 	(
 		STUFF
 		(
@@ -88,55 +86,59 @@ EXECUTE sp_executesql @Dynamic_sql;
 ------------------------------------------------------------------------------------------------------------------------------------------------------
 -- Populate the pivot table with all the organisations for each standard
 ------------------------------------------------------------------------------------------------------------------------------------------------------
-DECLARE @StandardCode INT
+DECLARE @StandardReference VARCHAR(10)
+DECLARE @StandardVersions VARCHAR(400)
 
-DECLARE DistinctStandardCodesCursor CURSOR  
-FOR SELECT DISTINCT StandardCode FROM #SequencedOrgStandardDetails
-OPEN DistinctStandardCodesCursor  
-FETCH NEXT FROM DistinctStandardCodesCursor INTO @StandardCode
+DECLARE DistinctStandardsCursor CURSOR  
+FOR SELECT StandardReference, Versions FROM #SequencedOrgStandardDetails GROUP BY StandardReference, Versions
+OPEN DistinctStandardsCursor  
+FETCH NEXT FROM DistinctStandardsCursor INTO @StandardReference, @StandardVersions
 	WHILE @@FETCH_STATUS = 0
 	BEGIN
-		WITH DistinctStandardCodesCTE AS
+		WITH DistinctStandardsCTE AS
 		(
-			SELECT DISTINCT StandardCode
+			SELECT StandardReference, Versions
 			FROM #SequencedOrgStandardDetails
+			GROUP BY StandardReference, Versions
 		)
 		SELECT 
 			@Dynamic_sql = 
-			'INSERT INTO ##' + @OrganisationStandardTableSummary + '(StandardCode,' + 
+			'INSERT INTO ##' + @OrganisationStandardTableSummary + '(StandardReference, Versions, ' + 
 			(
 				STUFF
 				(
 					(
 						SELECT ',EP_AAO_' + CAST(seq AS VARCHAR) 
 						FROM #SequencedOrgStandardDetails
-						WHERE StandardCode = DistinctStandardCodesCTE.StandardCode
-						ORDER BY StandardCode, Seq
+						WHERE StandardReference = DistinctStandardsCTE.StandardReference AND Versions = DistinctStandardsCTE.Versions
+						ORDER BY StandardReference, Seq
 						FOR XML PATH(''), TYPE
 					).value('.','varchar(max)'),1,1,''
 				)
 			) + ') VALUES (' +
-			(SELECT CAST(StandardCode AS VARCHAR) + ',' +
+			(SELECT ''''+StandardReference + ''','''+ Versions + ''',' +
 				STUFF
 				(
 					(
 						SELECT ',''' + REPLACE(EndPointAssessorName, '''', '''''') + '''' 
 						FROM #SequencedOrgStandardDetails
-						WHERE StandardCode = DistinctStandardCodesCTE.StandardCode
-						ORDER BY StandardCode, Seq
+						WHERE StandardReference = DistinctStandardsCTE.StandardReference AND Versions = DistinctStandardsCTE.Versions
+						ORDER BY StandardReference, Seq
 						FOR XML PATH(''), TYPE
 					).value('.','varchar(max)'),1,1,''
 				)
 			) + ')'
-			  FROM DistinctStandardCodesCTE
-			WHERE DistinctStandardCodesCTE.StandardCode = @StandardCode
+			  FROM DistinctStandardsCTE
+			WHERE DistinctStandardsCTE.StandardReference = @StandardReference AND DistinctStandardsCTE.Versions = @StandardVersions
+
 
 		EXECUTE sp_executesql @Dynamic_sql;
-		FETCH NEXT FROM DistinctStandardCodesCursor   
-		INTO @StandardCode
+		FETCH NEXT FROM DistinctStandardsCursor   
+		INTO @StandardReference, @StandardVersions
 END   
-CLOSE DistinctStandardCodesCursor;  
-DEALLOCATE DistinctStandardCodesCursor; 
+CLOSE DistinctStandardsCursor;  
+DEALLOCATE DistinctStandardsCursor; 
+
 
 DROP TABLE #SequencedOrgStandardDetails
 
@@ -144,30 +146,42 @@ DROP TABLE #SequencedOrgStandardDetails
 -- Produce the report to list all the effective standards with each organisation which has registered to assess a given standard
 ------------------------------------------------------------------------------------------------------------------------------------------------------
 SELECT @Dynamic_sql = 
-	'
-		SELECT
-			'''' as Trailblazer,
-			isnull(JSON_VALUE(StandardData,''$.Category''),'''') [Industry Sector],
-			Title as Apprentice_standards,
-			StandardId as LARS_Code,
-			ReferenceNumber as IFA_Code,
-			isnull(JSON_VALUE(StandardData,''$.Level''),'''') [Level],' + 
-			@EP_AAO_Columns +
-	'	FROM
-			StandardCollation sc
-			LEFT OUTER JOIN ##' + @OrganisationStandardTableSummary +' sts on sts.StandardCode = sc.StandardId
-		WHERE 
-			ISJSON(StandardData) > 0
-			and ReferenceNumber is not null
-			and JSON_Value(StandardData, ''$.EffectiveFrom'') is not null
-			and 
-			(
-				JSON_Value(StandardData,''$.EffectiveTo'') is null OR
-				JSON_Value(StandardData,''$.EffectiveTo'') > GETDATE()
-			)
+'
+    
+    SELECT '''' Trailblazer
+	, [Industry Sector] 
+	, Apprentice_standards
+	, Larscode [Standard Code]
+	, IFateReferenceNumber [Standard reference]
+	, Level
+	, Versions [Standard version]
+	, ' + @EP_AAO_Columns + '   
+	FROM (
+    SELECT 
+      MAX(CASE WHEN latestcheck = 1 THEN TrailBlazerContact ELSE NULL END) Trailblazer 
+    , MAX(CASE WHEN latestcheck = 1 THEN Route ELSE NULL END) [Industry Sector] 
+    , MAX(CASE WHEN latestcheck = 1 THEN Title ELSE NULL END) Apprentice_standards 
+    , Larscode 
+    , IFateReferenceNumber 
+    , STRING_AGG(Version,'','') WITHIN GROUP (ORDER BY [dbo].[ExpandedVersion](Version) ASC) [Available Versions]
+    , MAX(CASE WHEN latestcheck = 1 THEN Level ELSE NULL END) Level 
+    FROM (
+    SELECT TRIM(IFateReferenceNumber) IFateReferenceNumber, Larscode, Title, Level, Version, TrailBlazerContact, Route 
+    , ROW_NUMBER() OVER (PARTITION BY IFateReferenceNumber, Larscode ORDER BY [dbo].[ExpandedVersion](Version) DESC) latestcheck
+    FROM Standards 
+    WHERE LarsCode != 0 
+    AND IFateReferenceNumber IS NOT NULL
+    AND EffectiveFrom IS NOT NULL
+    AND (EffectiveTo IS NULL OR EffectiveTo > GETDATE() )
+    ) ab1
+    GROUP BY IFateReferenceNumber, Larscode
+    ) ab2
+    LEFT OUTER JOIN ##' + @OrganisationStandardTableSummary +' sts on sts.StandardReference = ab2.IFateReferenceNumber 
 		ORDER BY
-			Title
-	'
+			Apprentice_standards
+'
+
+
 EXECUTE sp_executesql @Dynamic_sql;
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -175,3 +189,5 @@ EXECUTE sp_executesql @Dynamic_sql;
 ------------------------------------------------------------------------------------------------------------------------------------------------------
 SELECT @Dynamic_sql = 'IF OBJECT_ID(''tempdb..##' + @OrganisationStandardTableSummary + ''') IS NOT NULL DROP TABLE ##' + @OrganisationStandardTableSummary
 EXECUTE sp_executesql @Dynamic_sql;
+
+

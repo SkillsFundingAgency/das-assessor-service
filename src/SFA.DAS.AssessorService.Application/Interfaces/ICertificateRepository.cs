@@ -18,7 +18,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<Certificate> GetCertificateByUlnOrgIdLastnameAndStandardCode(long uln, string endpointOrganisationId, string lastName, int standardCode);
         Task<Certificate> GetCertificateByUlnLastname(long uln, string lastName);
         
-        Task<List<Certificate>> GetCompletedCertificatesFor(long uln);
+        Task<List<Certificate>> GetDraftAndCompletedCertificatesFor(long uln);
         
         Task<int> GetCertificatesReadyToPrintCount(string[] excludedOverallGrades, string[] includedStatus);
         Task<Guid[]> GetCertificatesReadyToPrint(int numberOfCertificates, string[] excludedOverallGrades, string[] includedStatus);

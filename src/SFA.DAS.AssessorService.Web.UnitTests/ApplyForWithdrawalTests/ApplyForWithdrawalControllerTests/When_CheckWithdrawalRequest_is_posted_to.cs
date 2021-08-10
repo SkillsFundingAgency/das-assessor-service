@@ -154,6 +154,29 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ApplyForWithdrawalTests.ApplyFor
         }
 
         [Test]
+        public async Task And_Yes_Is_Selected_For_Organisation_Withdrawal_Then_Application_Is_Created()
+        {
+            // Arrange
+            var applicationId = Guid.NewGuid();
+            _mockApplicationApiClient
+                .Setup(r => r.CreateApplication(It.IsAny<CreateApplicationRequest>()))
+                .ReturnsAsync(applicationId);
+
+            var model = new CheckWithdrawalRequestViewModel()
+            {
+                Continue = "yes"
+            };
+
+            // Act
+            var result = await _sut.CheckWithdrawalRequest(null, null, null, model) as RedirectToActionResult;
+
+            // Assert
+            result.ActionName.Should().Be(nameof(ApplicationController.Sequence));
+            result.ControllerName.Should().Be(nameof(ApplicationController).RemoveController());
+            result.RouteValues.GetValueOrDefault("Id").Should().Be(applicationId);
+        }
+
+        [Test]
         public async Task And_No_Is_Selected_Then_Redirected_To_WithdrawalApplications()
         {
             // Arrange

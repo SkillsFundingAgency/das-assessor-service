@@ -19,12 +19,14 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
             // Arrange
             _mockOrgApiClient
                .Setup(r => r.GetAppliedStandardVersionsForEPAO(It.IsAny<string>(), "ST0001"))
-               .ReturnsAsync(new List<AppliedStandardVersion> { 
+               .ReturnsAsync(new List<AppliedStandardVersion> {
                    new AppliedStandardVersion { IFateReferenceNumber = "ST0001", Title = "Title 1", Version = 1.0M, LarsCode = 1, EPAChanged = false, ApprovedStatus = ApprovedStatus.NotYetApplied},
-                   new AppliedStandardVersion { IFateReferenceNumber = "ST0001", Title = "Title 1", Version = 1.1M, LarsCode = 1, EPAChanged = false, ApprovedStatus = ApprovedStatus.Approved},
+                   new AppliedStandardVersion { IFateReferenceNumber = "ST0001", Title = "Title 1", Version = 1.1M, LarsCode = 1, EPAChanged = true, ApprovedStatus = ApprovedStatus.NotYetApplied},
                    new AppliedStandardVersion { IFateReferenceNumber = "ST0001", Title = "Title 1", Version = 1.2M, LarsCode = 1, EPAChanged = false, ApprovedStatus = ApprovedStatus.NotYetApplied},
-                   new AppliedStandardVersion { IFateReferenceNumber = "ST0001", Title = "Title 1", Version = 1.3M, LarsCode = 1, EPAChanged = true, ApprovedStatus = ApprovedStatus.ApplyInProgress},
-                   new AppliedStandardVersion { IFateReferenceNumber = "ST0001", Title = "Title 1", Version = 1.4M, LarsCode = 1, EPAChanged = true, ApprovedStatus = ApprovedStatus.NotYetApplied},
+                   new AppliedStandardVersion { IFateReferenceNumber = "ST0001", Title = "Title 1", Version = 1.3M, LarsCode = 1, EPAChanged = false, ApprovedStatus = ApprovedStatus.Approved},
+                   new AppliedStandardVersion { IFateReferenceNumber = "ST0001", Title = "Title 1", Version = 1.4M, LarsCode = 1, EPAChanged = false, ApprovedStatus = ApprovedStatus.NotYetApplied},
+                   new AppliedStandardVersion { IFateReferenceNumber = "ST0001", Title = "Title 1", Version = 1.5M, LarsCode = 1, EPAChanged = true, ApprovedStatus = ApprovedStatus.ApplyInProgress},
+                   new AppliedStandardVersion { IFateReferenceNumber = "ST0001", Title = "Title 1", Version = 1.6M, LarsCode = 1, EPAChanged = true, ApprovedStatus = ApprovedStatus.NotYetApplied},
                });
 
             // Act
@@ -32,19 +34,52 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
 
             // Assert
             var vm = results.Model as StandardVersionApplicationViewModel;
-            Assert.AreEqual(5, vm.Results.Count);
-            Assert.AreEqual("1.4", vm.Results[0].Version);
+            Assert.AreEqual(7, vm.Results.Count);
+            Assert.AreEqual("1.6", vm.Results[0].Version);
             Assert.AreEqual(VersionStatus.NewVersionChanged, vm.Results[0].VersionStatus);
-            Assert.AreEqual("1.3", vm.Results[1].Version);
+            Assert.AreEqual("1.5", vm.Results[1].Version);
             Assert.AreEqual(VersionStatus.InProgress, vm.Results[1].VersionStatus);
-            Assert.AreEqual("1.2", vm.Results[2].Version);
+            Assert.AreEqual("1.4", vm.Results[2].Version);
             Assert.AreEqual(VersionStatus.NewVersionNoChange, vm.Results[2].VersionStatus);
-            Assert.AreEqual("1.1", vm.Results[3].Version);
+            Assert.AreEqual("1.3", vm.Results[3].Version);
             Assert.AreEqual(VersionStatus.Approved, vm.Results[3].VersionStatus);
-            Assert.AreEqual("1.0", vm.Results[4].Version);
-            Assert.Null(vm.Results[4].VersionStatus);
+            Assert.AreEqual("1.2", vm.Results[4].Version);
+            Assert.AreEqual(VersionStatus.NewVersionNoChange, vm.Results[4].VersionStatus);
+            Assert.AreEqual("1.1", vm.Results[5].Version);
+            Assert.AreEqual(VersionStatus.NewVersionNoChange, vm.Results[5].VersionStatus);
+            Assert.AreEqual("1.0", vm.Results[6].Version);
+            Assert.AreEqual(VersionStatus.NewVersionChanged, vm.Results[6].VersionStatus);
 
             Assert.AreEqual("~/Views/Application/Standard/StandardVersion.cshtml", results.ViewName);
+        }
+
+        [Test]
+        public async Task And_There_Are_Changed_Previous_Versions_Then_All_Versions_For_Standard_Are_Returned()
+        {
+            // Arrange
+            _mockOrgApiClient
+               .Setup(r => r.GetAppliedStandardVersionsForEPAO(It.IsAny<string>(), "ST0001"))
+               .ReturnsAsync(new List<AppliedStandardVersion> {
+                   new AppliedStandardVersion { IFateReferenceNumber = "ST0001", Title = "Title 1", Version = 1.0M, LarsCode = 1, EPAChanged = false, ApprovedStatus = ApprovedStatus.NotYetApplied},
+                   new AppliedStandardVersion { IFateReferenceNumber = "ST0001", Title = "Title 1", Version = 1.1M, LarsCode = 1, EPAChanged = true, ApprovedStatus = ApprovedStatus.NotYetApplied},
+                   new AppliedStandardVersion { IFateReferenceNumber = "ST0001", Title = "Title 1", Version = 1.2M, LarsCode = 1, EPAChanged = false, ApprovedStatus = ApprovedStatus.NotYetApplied},
+                   new AppliedStandardVersion { IFateReferenceNumber = "ST0001", Title = "Title 1", Version = 1.3M, LarsCode = 1, EPAChanged = true, ApprovedStatus = ApprovedStatus.Approved},
+               });
+
+            // Act
+            var results = (await _sut.ConfirmStandard(Guid.NewGuid(), "ST0001", null)) as ViewResult;
+
+            // Assert
+            var vm = results.Model as StandardVersionApplicationViewModel;
+            Assert.AreEqual(4, vm.Results.Count);
+            Assert.AreEqual("1.3", vm.Results[0].Version);
+            Assert.AreEqual(VersionStatus.Approved, vm.Results[0].VersionStatus);
+            Assert.AreEqual("1.2", vm.Results[1].Version);
+            Assert.AreEqual(VersionStatus.NewVersionChanged, vm.Results[1].VersionStatus);
+            Assert.AreEqual("1.1", vm.Results[2].Version);
+            Assert.AreEqual(VersionStatus.NewVersionChanged, vm.Results[2].VersionStatus);
+            Assert.AreEqual("1.0", vm.Results[3].Version);
+            Assert.AreEqual(VersionStatus.NewVersionChanged, vm.Results[3].VersionStatus);
         }
     }
 }

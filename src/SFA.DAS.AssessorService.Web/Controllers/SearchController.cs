@@ -58,7 +58,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
             _sessionService.Set("SearchResults", result);
             
-            if (result.SearchResults.Count() > 1)
+            if (result.SearchResults.Any(r => r.IsPrivatelyFunded && r.CertificateStatus == CertificateStatus.Draft))
+                return RedirectToAction("PrivatelyFundedDraft");
+            else if (result.SearchResults.Count() > 1)
             {
                 GetChooseStandardViewModel(vm);
                 return RedirectToAction("ChooseStandard");
@@ -141,6 +143,13 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             }
 
             return View("ChooseStandard", vm);
+        }
+
+        [HttpGet]
+        [TypeFilter(typeof(MenuFilter), Arguments = new object[] { Pages.RecordAGrade })]
+        public IActionResult PrivatelyFundedDraft()
+        {
+            return View("PrivatelyFundedDraft");
         }
     }
 }
