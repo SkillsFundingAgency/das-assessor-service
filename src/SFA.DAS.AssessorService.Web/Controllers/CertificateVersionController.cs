@@ -53,7 +53,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 return RedirectToAction("Index", "Search");
             }
 
-            var certificate = await CertificateApiClient.GetCertificate(certSession.CertificateId);
+            var certificate = await CertificateApiClient.GetCertificate(certSession.CertificateId, includeLogs: true);
 
             if (certSession.Versions == null || certSession.Versions.Count == 0)
             {

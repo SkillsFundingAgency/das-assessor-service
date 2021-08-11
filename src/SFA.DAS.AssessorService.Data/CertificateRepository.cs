@@ -105,14 +105,17 @@ namespace SFA.DAS.AssessorService.Data
             return certificate;
         }
 
-        public async Task<Certificate> GetCertificate(Guid id, bool includeLogs = true)
+        public async Task<Certificate> GetCertificate(Guid id, bool includeLogs = false)
         {
             if (!includeLogs)
             {
-                return await _context.Certificates.SingleOrDefaultAsync(c => c.Id == id);
+                return await _context.Certificates
+                    .SingleOrDefaultAsync(c => c.Id == id);
             }
 
-            return await _context.Certificates.Include(l => l.CertificateLogs).SingleOrDefaultAsync(c => c.Id == id);
+            return await _context.Certificates
+                .Include(l => l.CertificateLogs)
+                .SingleOrDefaultAsync(c => c.Id == id);
         }
 
         public async Task<Certificate> GetCertificate(long uln, int standardCode)
@@ -216,26 +219,6 @@ namespace SFA.DAS.AssessorService.Data
             var statuses = new[] { CertificateStatus.Draft, CertificateStatus.Submitted, CertificateStatus.ToBeApproved }.Concat(CertificateStatus.PrintProcessStatus).ToList();
             return await _context.Certificates.Where(c => c.Uln == uln && statuses.Contains(c.Status))
                 .ToListAsync();
-        }
-
-        public async Task<List<Certificate>> GetCertificates(List<string> statuses)
-        {
-            if (statuses == null || !statuses.Any())
-            {
-                return await _context.Certificates
-                    .Include(q => q.Organisation)
-                    .Include(q => q.CertificateLogs)
-                    .AsNoTracking()
-                    .ToListAsync();
-            }
-            else 
-            {
-                return await _context.Certificates
-                    .Include(q => q.Organisation)
-                    .Include(q => q.CertificateLogs)
-                    .Where(x => statuses.Contains(x.Status))
-                    .ToListAsync();
-            }
         }
 
         public async Task<int> GetCertificatesReadyToPrintCount(string[] excludedOverallGrades, string[] includedStatus)
@@ -360,11 +343,8 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<Certificate> Update(Certificate certificate, string username, string action, bool updateLog = true, string reasonForChange = null)
         {
-            var cert = updateLog 
-                ? await GetCertificate(certificate.Id) 
-                : await GetCertificate(certificate.Id, includeLogs: false);
-
-            if (cert == null) throw new NotFound();
+            var cert = await GetCertificate(certificate.Id)
+                ?? throw new NotFound();
 
             cert.Uln = certificate.Uln;
             cert.StandardUId = certificate.StandardUId;

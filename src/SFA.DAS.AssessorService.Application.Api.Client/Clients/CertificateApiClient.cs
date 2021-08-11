@@ -28,9 +28,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task<Certificate> GetCertificate(Guid certificateId)
+        public async Task<Certificate> GetCertificate(Guid certificateId, bool includeLogs)
         {
-            using (var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"api/v1/certificates/{certificateId}"))
+            using (var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"api/v1/certificates/{certificateId}?includeLogs={includeLogs}"))
             {
                 return await RequestAndDeserialiseAsync<Certificate>(httpRequest, "Could not get Certificate");
             }
