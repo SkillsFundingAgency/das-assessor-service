@@ -86,10 +86,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 }
 
                 orderedListResultViewModel = await GetPipeline(selectedStandard, selectedProvider, selectedEPADate, orderBy, orderDirection, PageSize, pageIndex);
-                orderedListResultViewModel.SelectedStandard = selectedStandard;
-                orderedListResultViewModel.SelectedProvider = selectedProvider;
-                orderedListResultViewModel.SelectedEPADate = selectedEPADate;
-                //ApplyFilters(orderedListResultViewModel);
             }
             catch (EntityNotFoundException)
             {
@@ -181,6 +177,22 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 InitEPADateFilter(orderedListResultViewModel, filters?.EPADateFilterItems);
             }
 
+            if (!string.IsNullOrWhiteSpace(selectedStandard) && selectedStandard.Trim().ToUpper() != "ALL")
+            {
+                orderedListResultViewModel.SelectedStandard = selectedStandard;
+                orderedListResultViewModel.FilterApplied = true;
+            }
+            if (!string.IsNullOrWhiteSpace(selectedProvider) && selectedProvider.Trim().ToUpper() != "ALL")
+            {
+                orderedListResultViewModel.SelectedProvider = selectedProvider;
+                orderedListResultViewModel.FilterApplied = true;
+            }
+            if (!string.IsNullOrWhiteSpace(selectedEPADate) && selectedEPADate.Trim().ToUpper() != "ALL")
+            {
+                orderedListResultViewModel.SelectedEPADate = selectedEPADate;
+                orderedListResultViewModel.FilterApplied = true;
+            }
+
             return orderedListResultViewModel;
         }
 
@@ -221,68 +233,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             if (null != items && items.Any())
             {
                 model.EPADateFilter.AddRange(items.Select(i => new OrderedListResultViewModel.PipelineFilterItem() { Id = i.Id, Value = i.Value }));
-            }
-        }
-
-        private void ApplyFilters(OrderedListResultViewModel model)
-        {
-            if (null == model || null == model.Response || null == model.Response.Items || !model.Response.Items.Any())
-            {
-                return;
-            }
-            ApplyStandardFilter(model);
-            ApplyProviderFilter(model);
-            ApplyEPADateFilter(model);
-        }
-
-        private void ApplyStandardFilter(OrderedListResultViewModel model)
-        {
-            if (null == model || null == model.Response || null == model.Response.Items || !model.Response.Items.Any())
-            {
-                return;
-            }
-
-            // @ToDo: once the ILR data is replaced by Learner this should be matching on Standard Reference - matching on name is too brittle.
-            // @ToDo: test that paging is working correctly with filtering.
-            if (!string.IsNullOrWhiteSpace(model.SelectedStandard) && model.SelectedStandard.Trim().ToUpper() != "ALL")
-            {
-                var filteredItems = model.Response.Items.Where(i => i.StandardName == model.SelectedStandard).ToList();
-                model.Response = new PaginatedList<EpaoPipelineStandardsResponse>(filteredItems,filteredItems.Count, 0, model.Response.PageSize);
-                model.FilterApplied = true;
-            }
-        }
-
-        private void ApplyProviderFilter(OrderedListResultViewModel model)
-        {
-            if (null == model || null == model.Response || null == model.Response.Items || !model.Response.Items.Any())
-            {
-                return;
-            }
-
-            // @ToDo: needs the ILR data
-            // @ToDo: test that paging is working correctly with filtering.
-            if (!string.IsNullOrWhiteSpace(model.SelectedProvider) && model.SelectedStandard.Trim().ToUpper() != "ALL")
-            {
-                var filteredItems = model.Response.Items/*.Where(i => )*/.ToList();
-                model.Response = new PaginatedList<EpaoPipelineStandardsResponse>(filteredItems, filteredItems.Count, 0, model.Response.PageSize);
-                model.FilterApplied = true;
-            }
-        }
-
-        private void ApplyEPADateFilter(OrderedListResultViewModel model)
-        {
-            if (null == model || null == model.Response || null == model.Response.Items || !model.Response.Items.Any())
-            {
-                return;
-            }
-
-            // @ToDo: needs the ILR data
-            // @ToDo: test that paging is working correctly with filtering.
-            if (!string.IsNullOrWhiteSpace(model.SelectedEPADate) && model.SelectedEPADate.Trim().ToUpper() != "ALL")
-            {
-                var filteredItems = model.Response.Items/*.Where(i => )*/.ToList();
-                model.Response = new PaginatedList<EpaoPipelineStandardsResponse>(filteredItems, filteredItems.Count, 0, model.Response.PageSize);
-                model.FilterApplied = true;
             }
         }
 
