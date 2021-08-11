@@ -20,7 +20,9 @@
     [ProposedTypicalDuration] INT NOT NULL, 
     [ProposedMaxFunding] INT NOT NULL,
 	[EPAChanged] BIT NOT NULL DEFAULT 0,
-	[StandardPageUrl] VARCHAR(500) NULL,
+	[StandardPageUrl] VARCHAR(500) NULL, 
+    [TrailBlazerContact] VARCHAR(500) NULL, 
+    [Route] VARCHAR(500) NULL,
 	[VersionMajor] INT NOT NULL DEFAULT 0,
-	[VersionMinor] INT NOT NULL DEFAULT 0,
+	[VersionMinor] INT NOT NULL DEFAULT 0
 )

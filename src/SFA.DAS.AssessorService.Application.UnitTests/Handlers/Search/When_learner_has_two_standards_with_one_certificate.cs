@@ -19,7 +19,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
         public void Arrange()
         {
             Setup();
-            CertificateRepository.Setup(r => r.GetCompletedCertificatesFor(1111111111))
+            CertificateRepository.Setup(r => r.GetDraftAndCompletedCertificatesFor(1111111111))
                 .ReturnsAsync(new List<Certificate>
                 {
                     new Certificate {CertificateReference = "00010001", StandardCode = 12,

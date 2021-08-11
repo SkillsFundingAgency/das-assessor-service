@@ -34,12 +34,18 @@ else
             @if (Model.InProgressVersionWithdrawals)
             {
                 <div class="govuk-inset-text">
-                    A withdrawal request is already in progress for a version of this standard. 
+                    A withdrawal request is already in progress for a version of this standard.
                     If you continue with this new withdrawal request then the previous request will be deleted and replaced with this one.
                 </div>
             }
 
-            @if (Model.Versions != null)
+            @if (Model.OrganisationName != null)
+            {
+                <p class="govuk-body">
+                    You are about to start a withdrawal request for @Model.OrganisationName
+                </p>
+            }
+            else if (Model.Versions != null)
             {
                 <p class="govuk-body">
                     You are about to start a withdrawal request for @Model.StandardName (Level @Model.Level), @Model.IFateReferenceNumber, Version @Model.Versions
@@ -52,7 +58,7 @@ else
                 </p>
             }
 
-            <form asp-action="CheckWithdrawalRequest" asp-controller="ApplyForWithdrawal" method="post">
+            <form asp-action="CheckWithdrawalRequest" asp-controller="ApplyForWithdrawal" asp-route-backAction="@Model.BackAction" method="post">
                 <div class="govuk-form-group" sfa-validation-for="Continue" sfa-validationerror-class="govuk-form-group--error">
                     <fieldset class="govuk-fieldset">
                         <sfa-validationerror-detail sfa-validation-for="Continue" sfa-validationerror-class="govuk-error-message"></sfa-validationerror-detail>

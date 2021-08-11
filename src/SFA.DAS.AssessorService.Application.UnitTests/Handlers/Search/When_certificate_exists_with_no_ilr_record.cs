@@ -47,7 +47,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
 
             var certificatesResponse = new List<Certificate> { certificate };
 
-            CertificateRepository.Setup(r => r.GetCompletedCertificatesFor(1111111111))
+            CertificateRepository.Setup(r => r.GetDraftAndCompletedCertificatesFor(1111111111))
                 .ReturnsAsync(certificatesResponse);
 
             var certificateLogEntries = Builder<CertificateLog>.CreateListOfSize(2)

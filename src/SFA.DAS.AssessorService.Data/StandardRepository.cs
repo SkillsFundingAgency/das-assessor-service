@@ -130,7 +130,7 @@ namespace SFA.DAS.AssessorService.Data
 [VersionApprovedForDelivery],[ProposedTypicalDuration],[ProposedMaxFunding],[EPAChanged],[StandardPageUrl] 
 FROM 
 (
-	SELECT ROW_NUMBER() OVER(PARTITION BY [IFateReferenceNumber] ORDER BY Version DESC) AS RowNum,
+	SELECT ROW_NUMBER() OVER(PARTITION BY [IFateReferenceNumber] ORDER BY [dbo].[ExpandedVersion](Version) DESC) AS RowNum,
 	[StandardUId],[IFateReferenceNumber],[LarsCode],[Title],[Version],
 	[Level],[Status],[TypicalDuration],[MaxFunding],[IsActive],[LastDateStarts],
 	[EffectiveFrom],[EffectiveTo],[VersionEarliestStartDate],[VersionLatestStartDate],[VersionLatestEndDate],
@@ -243,7 +243,7 @@ FROM [Standards] Where [IFateReferenceNumber] = @iFateReferenceNumber";
                               ,[IfateReferenceNumber]
                               ,[LarsCode]
                               ,[Version],[OptionName] FROM (
-                        SELECT ROW_NUMBER() OVER (PARTITION BY [IfateReferenceNumber] ORDER BY [Version] DESC ) rownumber
+                        SELECT ROW_NUMBER() OVER (PARTITION BY [IfateReferenceNumber] ORDER BY [dbo].[ExpandedVersion](Version) DESC ) rownumber
                         , [StandardUId]
                               ,[IfateReferenceNumber]
                               ,[LarsCode]
@@ -321,7 +321,7 @@ FROM [Standards] Where [IFateReferenceNumber] = @iFateReferenceNumber";
                                      [Level],[Status],[TypicalDuration],[MaxFunding],[IsActive],[LastDateStarts],
                                      [EffectiveFrom],[EffectiveTo],[VersionEarliestStartDate],[VersionLatestStartDate],[VersionLatestEndDate],
                                      [VersionApprovedForDelivery],[ProposedTypicalDuration],[ProposedMaxFunding]  
-                        FROM [Standards] WHERE [LarsCode] = @larsCode ORDER BY [Version] desc";
+                        FROM [Standards] WHERE [LarsCode] = @larsCode ORDER BY [dbo].[ExpandedVersion](Version) desc";
 
             var result = await _unitOfWork.Connection.QueryFirstOrDefaultAsync<Standard>(
                 sql,
@@ -337,7 +337,7 @@ FROM [Standards] Where [IFateReferenceNumber] = @iFateReferenceNumber";
                                      [Level],[Status],[TypicalDuration],[MaxFunding],[IsActive],[LastDateStarts],
                                      [EffectiveFrom],[EffectiveTo],[VersionEarliestStartDate],[VersionLatestStartDate],[VersionLatestEndDate],
                                      [VersionApprovedForDelivery],[ProposedTypicalDuration],[ProposedMaxFunding]
-                        FROM [Standards] WHERE [IfateReferenceNumber] = @iFateReferenceNumber ORDER BY [Version] desc";
+                        FROM [Standards] WHERE [IfateReferenceNumber] = @iFateReferenceNumber ORDER BY [dbo].[ExpandedVersion](Version) desc";
 
             var result = await _unitOfWork.Connection.QueryFirstOrDefaultAsync<Standard>(
                 sql,
@@ -881,6 +881,8 @@ FROM [Standards] Where [IFateReferenceNumber] = @iFateReferenceNumber";
             dataTable.Columns.Add("ProposedMaxFunding");
             dataTable.Columns.Add("EPAChanged");
             dataTable.Columns.Add("StandardPageUrl");
+            dataTable.Columns.Add("TrailBlazerContact");
+            dataTable.Columns.Add("Route");
             dataTable.Columns.Add("VersionMajor");
             dataTable.Columns.Add("VersionMinor");
 
@@ -889,7 +891,7 @@ FROM [Standards] Where [IFateReferenceNumber] = @iFateReferenceNumber";
                 dataTable.Rows.Add(standard.StandardUId, standard.IfateReferenceNumber, standard.LarsCode, standard.Title, standard.Version, standard.Level,
                     standard.Status, standard.TypicalDuration, standard.MaxFunding, standard.IsActive, standard.LastDateStarts, standard.EffectiveFrom, standard.EffectiveTo,
                     standard.VersionEarliestStartDate, standard.VersionLatestStartDate, standard.VersionLatestEndDate, standard.VersionApprovedForDelivery,
-                    standard.ProposedTypicalDuration, standard.ProposedMaxFunding, standard.EPAChanged, standard.StandardPageUrl, standard.VersionMajor, standard.VersionMinor);
+                    standard.ProposedTypicalDuration, standard.ProposedMaxFunding, standard.EPAChanged, standard.StandardPageUrl, standard.TrailBlazerContact, standard.Route, standard.VersionMajor, standard.VersionMinor);
             }
 
             return dataTable;

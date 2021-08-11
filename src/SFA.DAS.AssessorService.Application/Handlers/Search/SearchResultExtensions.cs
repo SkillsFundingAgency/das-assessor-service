@@ -49,24 +49,27 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
         public static List<SearchResult> MatchUpExistingCompletedStandards(this List<SearchResult> searchResults, SearchQuery request, ICertificateRepository certificateRepository, IContactQueryRepository contactRepository, IOrganisationQueryRepository _organisationRepository, ILogger<SearchHandler> logger)
         {
             logger.LogInformation("MatchUpExistingCompletedStandards Before Get Certificates for uln from db");
-            var completedCertificates = certificateRepository.GetCompletedCertificatesFor(request.Uln).Result;
+            var certificates = certificateRepository.GetDraftAndCompletedCertificatesFor(request.Uln).Result;
             logger.LogInformation("MatchUpExistingCompletedStandards After Get Certificates for uln from db");
 
             var searchingEpao = _organisationRepository.Get(request.EpaOrgId).Result;
 
             if (searchResults.Count > 0)
             {
-                foreach (var searchResult in searchResults.Where(r => completedCertificates.Select(s => s.StandardCode).Contains(r.StdCode)))
+                foreach (var searchResult in searchResults)
                 {
-                    var certificate = completedCertificates.Single(s => s.StandardCode == searchResult.StdCode);
-                    
-                    searchResult.PopulateCertificateBasicInformation(certificate);
-                    searchResult.PopulateCertificateExtraInformationDependingOnPermission(request, certificateRepository, contactRepository, certificate, searchingEpao, logger);
+                    var certificate = certificates.SingleOrDefault(s => s.StandardCode == searchResult.StdCode && 
+                                                                    s.Status != CertificateStatus.Draft);
+                    if (certificate != null)
+                    {
+                        searchResult.PopulateCertificateBasicInformation(certificate);
+                        searchResult.PopulateCertificateExtraInformationDependingOnPermission(request, certificateRepository, contactRepository, certificate, searchingEpao, logger);
+                    }
                 }
             }
-            else if (completedCertificates.Count > 0)
+            else if (certificates.Count > 0)
             {
-                foreach (var certificate in completedCertificates)
+                foreach (var certificate in certificates)
                 {
                     var certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
 
@@ -102,6 +105,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
             searchResult.LearnStartDate = certificateData.LearningStartDate;
             searchResult.Version = certificateData.Version;
             searchResult.Option = certificateData.CourseOption;
+            searchResult.IsPrivatelyFunded = certificate.IsPrivatelyFunded;
 
             return searchResult;
         }

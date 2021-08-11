@@ -1,20 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Threading.Tasks;
-using Dapper;
+﻿using Dapper;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Data.DapperTypeHandlers;
 using SFA.DAS.AssessorService.Domain.Consts;
-using SFA.DAS.AssessorService.Domain.DTOs;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Exceptions;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using SFA.DAS.AssessorService.Domain.Paging;
+using System;
+using System.Collections.Generic;
+using System.Data.SqlClient;
+using System.Linq;
+using System.Threading.Tasks;
 using CertificateStatus = SFA.DAS.AssessorService.Domain.Consts.CertificateStatus;
 
 namespace SFA.DAS.AssessorService.Data
@@ -106,14 +105,17 @@ namespace SFA.DAS.AssessorService.Data
             return certificate;
         }
 
-        public async Task<Certificate> GetCertificate(Guid id, bool includeLogs = true)
+        public async Task<Certificate> GetCertificate(Guid id, bool includeLogs = false)
         {
             if (!includeLogs)
             {
-                return await _context.Certificates.SingleOrDefaultAsync(c => c.Id == id);
+                return await _context.Certificates
+                    .SingleOrDefaultAsync(c => c.Id == id);
             }
 
-            return await _context.Certificates.Include(l => l.CertificateLogs).SingleOrDefaultAsync(c => c.Id == id);
+            return await _context.Certificates
+                .Include(l => l.CertificateLogs)
+                .SingleOrDefaultAsync(c => c.Id == id);
         }
 
         public async Task<Certificate> GetCertificate(long uln, int standardCode)
@@ -212,31 +214,11 @@ namespace SFA.DAS.AssessorService.Data
             return (certificateData.AchievementDate == achievementDate && certificateData.LearnerFamilyName == lastName);
         }
 
-        public async Task<List<Certificate>> GetCompletedCertificatesFor(long uln)
+        public async Task<List<Certificate>> GetDraftAndCompletedCertificatesFor(long uln)
         {
-            var completedCertificateStatus = new[] { CertificateStatus.Submitted, CertificateStatus.ToBeApproved }.Concat(CertificateStatus.PrintProcessStatus).ToList();
-            return await _context.Certificates.Where(c => c.Uln == uln && completedCertificateStatus.Contains(c.Status))
+            var statuses = new[] { CertificateStatus.Draft, CertificateStatus.Submitted, CertificateStatus.ToBeApproved }.Concat(CertificateStatus.PrintProcessStatus).ToList();
+            return await _context.Certificates.Where(c => c.Uln == uln && statuses.Contains(c.Status))
                 .ToListAsync();
-        }
-
-        public async Task<List<Certificate>> GetCertificates(List<string> statuses)
-        {
-            if (statuses == null || !statuses.Any())
-            {
-                return await _context.Certificates
-                    .Include(q => q.Organisation)
-                    .Include(q => q.CertificateLogs)
-                    .AsNoTracking()
-                    .ToListAsync();
-            }
-            else 
-            {
-                return await _context.Certificates
-                    .Include(q => q.Organisation)
-                    .Include(q => q.CertificateLogs)
-                    .Where(x => statuses.Contains(x.Status))
-                    .ToListAsync();
-            }
         }
 
         public async Task<int> GetCertificatesReadyToPrintCount(string[] excludedOverallGrades, string[] includedStatus)
@@ -361,11 +343,8 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<Certificate> Update(Certificate certificate, string username, string action, bool updateLog = true, string reasonForChange = null)
         {
-            var cert = updateLog 
-                ? await GetCertificate(certificate.Id) 
-                : await GetCertificate(certificate.Id, includeLogs: false);
-
-            if (cert == null) throw new NotFound();
+            var cert = await GetCertificate(certificate.Id)
+                ?? throw new NotFound();
 
             cert.Uln = certificate.Uln;
             cert.StandardUId = certificate.StandardUId;

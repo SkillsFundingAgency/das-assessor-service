@@ -54,6 +54,7 @@ namespace SFA.DAS.AssessorService.Web.Orchestrators.Search
                     OverallGrade = result.OverallGrade,
                     CertificateReference = result.CertificateReference,
                     CertificateStatus = result.CertificateStatus,
+                    IsPrivatelyFunded = result.IsPrivatelyFunded,
                     Level = Convert.ToString(result.Level),
                     SubmittedAt = result.SubmittedAt,
                     SubmittedBy = result.SubmittedBy,

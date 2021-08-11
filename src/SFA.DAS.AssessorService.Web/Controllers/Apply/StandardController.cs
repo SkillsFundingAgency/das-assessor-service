@@ -72,7 +72,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             var existingApplications = (await _applicationApiClient.GetStandardApplications(contact.Id))?
                 .Where(p => p.ApplicationStatus != ApplicationStatus.Declined);
 
-            var existingEmptyApplication = existingApplications.SingleOrDefault(x => x.StandardCode == null);
+            var existingEmptyApplication = existingApplications.FirstOrDefault(x => x.StandardCode == null);
             if (existingEmptyApplication != null)
                 return RedirectToAction("ConfirmStandard", new { Id = existingEmptyApplication.Id, StandardReference = standardReference });
             else
@@ -338,8 +338,24 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 results.Add(stdVersion);
             }
 
+            // now do it again in reverse order to handle any versions prior to the first approved version
+            var firstApproved = results.OrderBy(s => s.Version).FirstOrDefault(s => s.VersionStatus == VersionStatus.Approved);
+            if (firstApproved != null)
+            { 
+                changed = firstApproved.EPAChanged;
+
+                foreach (var version in results
+                    .Where(s => s.VersionStatus == null)
+                    .OrderByDescending(s => s.Version))
+                {
+                    version.VersionStatus = changed ? VersionStatus.NewVersionChanged : VersionStatus.NewVersionNoChange;
+                    changed = version.EPAChanged || changed;
+                }
+            }
+
             return results;
         }
+
 
         private string MapUnapprovedVersionStatus(AppliedStandardVersion version, bool approved, bool previouslyChanged)
         {
