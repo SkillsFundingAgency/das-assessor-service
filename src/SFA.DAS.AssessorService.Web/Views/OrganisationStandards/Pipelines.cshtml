@@ -100,24 +100,17 @@
                                 @Localizer["UKPRN"]
                             </th>
                             <th class="govuk-table__header" scope="col">
-                                @Localizer["TrainingProvider"]
+                                @Localizer["Training Provider"]
                             </th>
                             @if (Model.Response.Items.Any())
                             {
-                                <th class="govuk-table__header govuk-table__header--numeric" aria-sort="@(Model.OrderDirection)">
-                                    <a class="govuk-link govuk-link--no-visited-state"
-                                       asp-controller="OrganisationStandards"
-                                       asp-action="OrderPipeline"
-                                       asp-route-pageIndex="@(Model.Response.PageIndex)"
-                                       asp-route-orderBy="EstimateDate"
-                                       asp-route-orderDirection="@(Model.OrderDirection)">
-                                        @Localizer["Estimated EPA date"]
-                                    </a>
+                                <th class="govuk-table__header govuk-table__header--numeric das-no-wrap" aria-sort="@(Model.OrderDirection)">
+                                    @Localizer["Estimated EPA date"]
                                 </th>
                             }
                             else
                             {
-                                <th class="govuk-table__header govuk-table__header--numeric" aria-sort="@(Model.OrderDirection)">
+                                <th class="govuk-table__header govuk-table__header--numeric das-no-wrap" aria-sort="@(Model.OrderDirection)">
                                     @Localizer["Estimated Gateway"]
                                 </th>
                             }
@@ -136,7 +129,7 @@
                             <td class="govuk-table__cell govuk-table__cell--numeric" data-label="@Localizer["UKPRN"]">
                                 @Html.DisplayFor(modelItem => item.UKPRN)
                             </td>
-                            <td class="govuk-table__cell das-no-wrap" data-label="@Localizer["TrainingProvider"]">
+                            <td class="govuk-table__cell" data-label="@Localizer["TrainingProvider"]">
                                 @Html.DisplayFor(modelItem => item.TrainingProvider)
                             </td>
                             <td class="govuk-table__cell das-no-wrap govuk-table__cell--numeric govuk-!-font-weight-bold" data-label="@Localizer["EstimatedDate"]" data-sort-value="@Localizer["EstimatedDate"]">
