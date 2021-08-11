@@ -9,8 +9,8 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
 {
     public interface ICertificateRepository
     {
-        Task<Certificate> New(Certificate certificate);        
-        Task<Certificate> GetCertificate(Guid id, bool includeLogs = true);
+        Task<Certificate> New(Certificate certificate);
+        Task<Certificate> GetCertificate(Guid id, bool includeLogs = false);
         Task<Certificate> GetCertificate(long uln, int standardCode);
         Task<Certificate> GetCertificate(long uln, int standardCode, string familyName);
         Task<Certificate> GetCertificate(string certificateReference);
@@ -19,7 +19,6 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<Certificate> GetCertificateByUlnLastname(long uln, string lastName);
         
         Task<List<Certificate>> GetDraftAndCompletedCertificatesFor(long uln);
-        Task<List<Certificate>> GetCertificates(List<string> statuses);
         
         Task<int> GetCertificatesReadyToPrintCount(string[] excludedOverallGrades, string[] includedStatus);
         Task<Guid[]> GetCertificatesReadyToPrint(int numberOfCertificates, string[] excludedOverallGrades, string[] includedStatus);

@@ -20,7 +20,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
             Standard = CertificateData.StandardName;
             Level = CertificateData.StandardLevel;
             Uln = cert.Uln.ToString();
-            StandardUId = cert.StandardUId;            
+            StandardUId = cert.StandardUId;
         }
 
         public Guid Id { get; set; }
