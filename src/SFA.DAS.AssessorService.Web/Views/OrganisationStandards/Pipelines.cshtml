@@ -90,7 +90,7 @@
                             </a>
                         </div>
                     </div>
-                    <table id="pipeline" class="govuk-table govuk-table--small responsive">
+                    <table id="pipeline" class="govuk-table govuk-table--small responsive" aria-label="Pipeline table">
                         <thead class="govuk-table__head">
                             <tr class="govuk-table__row">
                                 <th class="govuk-table__header" scope="col">
@@ -107,13 +107,13 @@
                                 </th>
                                 @if (Model.Response.Items.Any())
                                 {
-                                    <th class="govuk-table__header govuk-table__header--numeric das-no-wrap" aria-sort="@(Model.OrderDirection)">
+                                    <th class="govuk-table__header govuk-table__header--numeric das-no-wrap" scope="col" aria-sort="@(Model.OrderDirection)">
                                         @Localizer["Estimated EPA date"]
                                     </th>
                                 }
                                 else
                                 {
-                                    <th class="govuk-table__header govuk-table__header--numeric das-no-wrap" aria-sort="@(Model.OrderDirection)">
+                                    <th class="govuk-table__header govuk-table__header--numeric das-no-wrap" scope="col" aria-sort="@(Model.OrderDirection)">
                                         @Localizer["Estimated Gateway"]
                                     </th>
                                 }
