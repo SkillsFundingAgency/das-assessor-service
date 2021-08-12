@@ -29,6 +29,6 @@ AS
                 Data_CTE
                 CROSS JOIN Count_CTE
             ORDER BY 
-                Title, EstimateDate
+                Title, EstimateDate, ProviderName
     END
 GO
