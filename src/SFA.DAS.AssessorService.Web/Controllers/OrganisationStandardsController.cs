@@ -233,48 +233,5 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 model.EPADateFilter.AddRange(items.Select(i => new OrderedListResultViewModel.PipelineFilterItem() { Id = i.Id, Value = i.Value }));
             }
         }
-
-        private void ApplyFilters(ref List<EpaoPipelineStandardsExtractResponse> response, string selectedStandard, string selectedProvider, string selectedEPADate)
-        {
-            if (null == response || !response.Any())
-            {
-                return;
-            }
-            ApplyStandardFilter(ref response, selectedStandard);
-            ApplyProviderFilter(ref response, selectedProvider);
-            ApplyEPADateFilter(ref response, selectedEPADate);
-        }
-
-        private void ApplyStandardFilter(ref List<EpaoPipelineStandardsExtractResponse> response, string selectedStandard)
-        {
-            if (null == response || !response.Any() || string.IsNullOrWhiteSpace(selectedStandard) || selectedStandard.Trim().ToUpper() == "ALL")
-            {
-                return;
-            }
-
-            // @ToDo: once the ILR data is replaced by Learner this should be matching on Standard Reference - matching on name is too brittle.
-            response = response.Where(i => i.StandardName == selectedStandard).ToList();
-        }
-
-        private void ApplyProviderFilter(ref List<EpaoPipelineStandardsExtractResponse> response, string selectedProvider)
-        {
-            if (null == response || !response.Any() || string.IsNullOrWhiteSpace(selectedProvider) || selectedProvider.Trim().ToUpper() == "ALL")
-            {
-                return;
-            }
-
-            // @ToDo: once the ILR data is replaced by Learner this should match provider id
-            //response = response.Where(i => ).ToList();
-        }
-
-        private void ApplyEPADateFilter(ref List<EpaoPipelineStandardsExtractResponse> response, string selectedEPADate)
-        {
-            if (null == response || !response.Any() || string.IsNullOrWhiteSpace(selectedEPADate) || selectedEPADate.Trim().ToUpper() == "ALL")
-            {
-                return;
-            }
-
-            response = response.Where(i => i.EstimatedDate == selectedEPADate).ToList();
-        }
-    }
+   }
 }
