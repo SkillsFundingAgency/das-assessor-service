@@ -9,11 +9,11 @@ BEGIN
     AS
     (
         SELECT 
-            StdCode, Title, UkPrn, ProviderName, COUNT(*) Pipeline, EstimateDate
+            StdCode, Title, Version, UkPrn, ProviderName, COUNT(*) Pipeline, EstimateDate
         FROM 
             [dbo].[EPAO_Func_Get_PipelineInfo] (@epaOrgId, NULL)
         GROUP BY 
-            StdCode, UkPrn, ProviderName, EstimateDate, Title
+            StdCode, UkPrn, ProviderName, EstimateDate, Title, Version
     ), 
     Count_CTE 
     AS 

@@ -10,7 +10,7 @@ namespace SFA.DAS.AssessorService.Domain.Entities
         public int TotalRows { get; set; }
 
         public string StdCode { get; set; }
-        public string StandardVersion { get; set; }
+        public string Version { get; set; }
 
         public string UKPRN { get; set; }
         public string ProviderName { get; set; }

@@ -33,7 +33,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Standards
             Pipeline = o.Pipeline,
             StandardName = o.Title,
             StandardCode = o.StdCode,
-            StandardVersion = o.StandardVersion,
+            StandardVersion = o.Version,
             TrainingProvider = o.ProviderName,
             UKPRN = o.UKPRN
           }).ToList();
