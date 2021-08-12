@@ -149,9 +149,41 @@
                 }
                 else
                 {
-                    <div class="info-summary">
-                        <h3 class="govuk-heading-m">Your pipeline is empty.</h3>
-                    </div>
+                <p class="govuk-body">
+                    @{
+                        var standardFilterApplied = !string.IsNullOrWhiteSpace(Model.SelectedStandard) && Model.SelectedStandard != "ALL";
+                        var providerFilterApplied = !string.IsNullOrWhiteSpace(Model.SelectedProvider) && Model.SelectedProvider != "ALL";
+                        var epaDateFilterApplied = !string.IsNullOrWhiteSpace(Model.SelectedEPADate) && Model.SelectedEPADate != "ALL";
+                    }
+                    0 apprentice records matching
+                    @if (standardFilterApplied)
+                    {
+                        <b>@Model.StandardFilter.FirstOrDefault(m => m.Id == Model.SelectedStandard)?.Value</b>
+                    }
+                    @if (providerFilterApplied)
+                    {
+                        if (standardFilterApplied)
+                        {
+                            if (epaDateFilterApplied)
+                            {
+                                <text>,</text>
+                            }
+                            else
+                            {
+                                <text>and</text>
+                            }
+                        }
+                        <b>@Model.ProviderFilter.FirstOrDefault(m => m.Id == Model.SelectedProvider)?.Value</b>
+                    }
+                    @if (epaDateFilterApplied)
+                    {
+                        if (standardFilterApplied || providerFilterApplied)
+                        {
+                            <text>and</text>
+                        }
+                        <b>@Model.EPADateFilter.FirstOrDefault(m => m.Id == Model.SelectedEPADate)?.Value</b>
+                    }
+                </p>
                 }
             </div>
         </div>
