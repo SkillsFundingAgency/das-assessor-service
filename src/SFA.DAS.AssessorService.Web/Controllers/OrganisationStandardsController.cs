@@ -103,7 +103,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             try
             {
                 var newOrderdDirection = NextOrderDirection(orderDirection, orderBy);
-                orderedListResultViewModel = await GetPipeline(null, null, null, orderBy, newOrderdDirection, PageSize, pageIndex);  // @ToDo need filters?
+                orderedListResultViewModel = await GetPipeline(null, null, null, orderBy, newOrderdDirection, PageSize, pageIndex);
             }
             catch (EntityNotFoundException)
             {
@@ -122,9 +122,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             var epaoid = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/epaoid")?.Value;
 
             var organisation = await _organisationsApiClient.GetEpaOrganisation(epaoid);
-            var response = await _standardsApiClient.GetEpaoPipelineStandardsExtract(organisation?.OrganisationId);
-
-            ApplyFilters(ref response, selectedStandard, selectedProvider, selectedEPADate);
+            var response = await _standardsApiClient.GetEpaoPipelineStandardsExtract(organisation?.OrganisationId, selectedStandard, selectedProvider, selectedEPADate);
 
             string[] columnHeaders = {
                 "Standard Name",

@@ -13,6 +13,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 
         Task<EpaoPipelineStandardsFiltersResponse> GetEpaoPipelineStandardsFilters(string epaoId);
 
-        Task<List<EpaoPipelineStandardsExtractResponse>> GetEpaoPipelineStandardsExtract(string epaoId);
+        Task<List<EpaoPipelineStandardsExtractResponse>> GetEpaoPipelineStandardsExtract(string epaoId, string standardFilterId, string providerFilterId, string epaDateFilterId);
     }
 }

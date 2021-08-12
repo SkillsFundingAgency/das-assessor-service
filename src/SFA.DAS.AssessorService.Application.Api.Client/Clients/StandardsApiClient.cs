@@ -45,9 +45,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task<List<EpaoPipelineStandardsExtractResponse>> GetEpaoPipelineStandardsExtract(string epaoId)
+        public async Task<List<EpaoPipelineStandardsExtractResponse>> GetEpaoPipelineStandardsExtract(string epaoId, string standardFilterId, string providerFilterId, string epaDateFilterId)
         {
-            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/standards/pipelines/extract/{epaoId}"))
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/standards/pipelines/extract/{epaoId}?standardFilterId={standardFilterId}&providerFilterId={providerFilterId}&epaDateFilterId={epaDateFilterId}"))
             {
                 return await RequestAndDeserialiseAsync<List<EpaoPipelineStandardsExtractResponse>>(request,
                     $"Could not find the organisation {epaoId}");
