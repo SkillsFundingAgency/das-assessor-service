@@ -158,7 +158,7 @@
                     0 apprentice records matching
                     @if (standardFilterApplied)
                     {
-                        <b>@Model.StandardFilter.FirstOrDefault(m => m.Id == Model.SelectedStandard)?.Value</b>
+                        <strong>@Model.StandardFilter.FirstOrDefault(m => m.Id == Model.SelectedStandard)?.Value</strong>
                     }
                     @if (providerFilterApplied)
                     {
@@ -173,7 +173,7 @@
                                 <text>and</text>
                             }
                         }
-                        <b>@Model.ProviderFilter.FirstOrDefault(m => m.Id == Model.SelectedProvider)?.Value</b>
+                        <strong>@Model.ProviderFilter.FirstOrDefault(m => m.Id == Model.SelectedProvider)?.Value</strong>
                     }
                     @if (epaDateFilterApplied)
                     {
@@ -181,7 +181,7 @@
                         {
                             <text>and</text>
                         }
-                        <b>@Model.EPADateFilter.FirstOrDefault(m => m.Id == Model.SelectedEPADate)?.Value</b>
+                        <strong>@Model.EPADateFilter.FirstOrDefault(m => m.Id == Model.SelectedEPADate)?.Value</strong>
                     }
                 </p>
                 }
