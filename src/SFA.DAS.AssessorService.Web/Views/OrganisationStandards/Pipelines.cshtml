@@ -15,7 +15,7 @@
         </div>
     </div>
 
-    @if (Model.Response.Items.Any())
+    @if (Model.Response.Items.Any() || Model.FilterApplied)
     {
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
@@ -63,86 +63,96 @@
                 </div>
             </div>
         </form>
-        <div class="govuk-grid-row govuk-!-margin-bottom-2">
-            <div class="govuk-grid-column-two-thirds">
-                <p class="govuk-body"></p>
-            </div>
-            <div class="govuk-grid-column-one-third das-text-align-right">
-                <a asp-controller="OrganisationStandards"
-                   asp-action="ExportEpaPipelineAsCsv"
-                   asp-route-selectedStandard="@Model.SelectedStandard"
-                   asp-route-selectedProvider="@Model.SelectedProvider"
-                   asp-route-selectedEPADate="@Model.SelectedEPADate"
-                   class="govuk-body govuk-link" aria-label="Download data as CSV">
-                    @if (Model.FilterApplied)
-                    {
-                        <text>Download filtered data (CSV)</text>
-                    }
-                    else
-                    {
-                        <text>Download all data (CSV)</text>
-                    }
-                </a>
-            </div>
-        </div>
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-full">
-                <table id="pipeline" class="govuk-table govuk-table--small responsive">
-                    <thead class="govuk-table__head">
-                        <tr class="govuk-table__row">
-                            <th class="govuk-table__header" scope="col">
-                                @Localizer["Standard"]
-                            </th>
-                            <th class="govuk-table__header govuk-table__header--numeric" scope="col">
-                                @Localizer["Apprentices"]
-                            </th>
-                            <th class="govuk-table__header govuk-table__header--numeric" scope="col">
-                                @Localizer["UKPRN"]
-                            </th>
-                            <th class="govuk-table__header" scope="col">
-                                @Localizer["Training Provider"]
-                            </th>
-                            @if (Model.Response.Items.Any())
-                            {
-                                <th class="govuk-table__header govuk-table__header--numeric das-no-wrap" aria-sort="@(Model.OrderDirection)">
-                                    @Localizer["Estimated EPA date"]
-                                </th>
-                            }
-                            else
-                            {
-                                <th class="govuk-table__header govuk-table__header--numeric das-no-wrap" aria-sort="@(Model.OrderDirection)">
-                                    @Localizer["Estimated Gateway"]
-                                </th>
-                            }
-                        </tr>
-                    </thead>
-                    <tbody class="govuk-table__body">
-                        @foreach (var item in Model.Response.Items)
-                        {
-                        <tr class="govuk-table__row">
-                            <td class="govuk-table__cell das-no-wrap" data-label="@Localizer["StandardName"]">
-                                @Html.DisplayFor(modelItem => item.StandardName)
-                                @if (!string.IsNullOrWhiteSpace(item.StandardVersion))
+
+                @if (Model.Response.Items.Any())
+                {
+                    <div class="govuk-grid-row govuk-!-margin-bottom-2">
+                        <div class="govuk-grid-column-two-thirds">
+                            <p class="govuk-body"></p>
+                        </div>
+                        <div class="govuk-grid-column-one-third das-text-align-right">
+                            <a asp-controller="OrganisationStandards"
+                               asp-action="ExportEpaPipelineAsCsv"
+                               asp-route-selectedStandard="@Model.SelectedStandard"
+                               asp-route-selectedProvider="@Model.SelectedProvider"
+                               asp-route-selectedEPADate="@Model.SelectedEPADate"
+                               class="govuk-body govuk-link" aria-label="Download data as CSV">
+                                @if (Model.FilterApplied)
                                 {
-                                    <br /><text>Version </text>@Html.DisplayFor(modelItem => item.StandardVersion)
+                                    <text>Download filtered data (CSV)</text>
                                 }
-                            </td>
-                            <td class="govuk-table__cell govuk-table__cell--numeric" data-label="@Localizer["Apprentices"]">
-                                @Html.DisplayFor(modelItem => item.Pipeline)
-                            </td>
-                            <td class="govuk-table__cell govuk-table__cell--numeric" data-label="@Localizer["UKPRN"]">
-                                @Html.DisplayFor(modelItem => item.UKPRN)
-                            </td>
-                            <td class="govuk-table__cell" data-label="@Localizer["TrainingProvider"]">
-                                @Html.DisplayFor(modelItem => item.TrainingProvider)
-                            </td>
-                            <td class="govuk-table__cell das-no-wrap govuk-table__cell--numeric govuk-!-font-weight-bold" data-label="@Localizer["EstimatedDate"]" data-sort-value="@Localizer["EstimatedDate"]">
-                                @Html.DisplayFor(modelItem => item.EstimatedDate)
-                            </td>
-                        </tr>
-                        }
-                    </tbody>
-                </table>
+                                else
+                                {
+                                    <text>Download all data (CSV)</text>
+                                }
+                            </a>
+                        </div>
+                    </div>
+                    <table id="pipeline" class="govuk-table govuk-table--small responsive">
+                        <thead class="govuk-table__head">
+                            <tr class="govuk-table__row">
+                                <th class="govuk-table__header" scope="col">
+                                    @Localizer["Standard"]
+                                </th>
+                                <th class="govuk-table__header govuk-table__header--numeric" scope="col">
+                                    @Localizer["Apprentices"]
+                                </th>
+                                <th class="govuk-table__header govuk-table__header--numeric" scope="col">
+                                    @Localizer["UKPRN"]
+                                </th>
+                                <th class="govuk-table__header" scope="col">
+                                    @Localizer["Training Provider"]
+                                </th>
+                                @if (Model.Response.Items.Any())
+                                {
+                                    <th class="govuk-table__header govuk-table__header--numeric das-no-wrap" aria-sort="@(Model.OrderDirection)">
+                                        @Localizer["Estimated EPA date"]
+                                    </th>
+                                }
+                                else
+                                {
+                                    <th class="govuk-table__header govuk-table__header--numeric das-no-wrap" aria-sort="@(Model.OrderDirection)">
+                                        @Localizer["Estimated Gateway"]
+                                    </th>
+                                }
+                            </tr>
+                        </thead>
+                        <tbody class="govuk-table__body">
+                            @foreach (var item in Model.Response.Items)
+                            {
+                                <tr class="govuk-table__row">
+                                    <td class="govuk-table__cell das-no-wrap" data-label="@Localizer["StandardName"]">
+                                        @Html.DisplayFor(modelItem => item.StandardName)
+                                        @if (!string.IsNullOrWhiteSpace(item.StandardVersion))
+                                        {
+                                            <br /><text>Version </text>@Html.DisplayFor(modelItem => item.StandardVersion)
+                                        }
+                                    </td>
+                                    <td class="govuk-table__cell govuk-table__cell--numeric" data-label="@Localizer["Apprentices"]">
+                                        @Html.DisplayFor(modelItem => item.Pipeline)
+                                    </td>
+                                    <td class="govuk-table__cell govuk-table__cell--numeric" data-label="@Localizer["UKPRN"]">
+                                        @Html.DisplayFor(modelItem => item.UKPRN)
+                                    </td>
+                                    <td class="govuk-table__cell" data-label="@Localizer["TrainingProvider"]">
+                                        @Html.DisplayFor(modelItem => item.TrainingProvider)
+                                    </td>
+                                    <td class="govuk-table__cell das-no-wrap govuk-table__cell--numeric govuk-!-font-weight-bold" data-label="@Localizer["EstimatedDate"]" data-sort-value="@Localizer["EstimatedDate"]">
+                                        @Html.DisplayFor(modelItem => item.EstimatedDate)
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <div class="info-summary">
+                        <h3 class="govuk-heading-m">Your pipeline is empty.</h3>
+                    </div>
+                }
             </div>
         </div>
     }
