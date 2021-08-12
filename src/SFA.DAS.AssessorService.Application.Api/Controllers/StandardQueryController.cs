@@ -61,10 +61,10 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [HttpGet("pipelines/extract/{epaoId}", Name = "GetEpaoPipelineStandardsExtract")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(int))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> GetEpaoPipelineStandardsExtract(string epaoId)
+        public async Task<IActionResult> GetEpaoPipelineStandardsExtract(string epaoId, string standardFilterId, string providerFilterId, string epaDateFilterId)
         {
             _logger.LogInformation($"Received request to extract pipeline for standards of the organisation {epaoId}");
-            return Ok(await _mediator.Send(new EpaoPipelineStandardsExtractRequest(epaoId)));
+            return Ok(await _mediator.Send(new EpaoPipelineStandardsExtractRequest(epaoId, standardFilterId, providerFilterId, epaDateFilterId)));
         }
 
         [HttpGet("{standardCode}/organisations")]

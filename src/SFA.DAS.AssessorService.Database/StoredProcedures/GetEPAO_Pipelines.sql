@@ -2,7 +2,7 @@ CREATE PROCEDURE [GetEPAO_Pipelines]
     @epaOrgId NVARCHAR(12),
     @standardFilterId NVARCHAR(12),
     @providerFilterId NVARCHAR(12),
-    @epaDateFilterId NVARCHAR(12)
+    @epaDateFilterId NVARCHAR(6)
 AS
     BEGIN
         WITH Data_CTE 
@@ -11,7 +11,7 @@ AS
                 SELECT 
                     StdCode, Title, Version, UkPrn, ProviderName, COUNT(*) Pipeline, EstimateDate
                 FROM 
-                    [dbo].[EPAO_Func_Get_PipelineInfo] ('EPA0200', NULL)
+                    [dbo].[EPAO_Func_Get_PipelineInfo] (@epaOrgId, NULL)
 		        WHERE
 			        (StdCode = @standardFilterId OR @standardFilterId IS NULL) AND (UkPrn = @providerFilterId OR @providerFilterId IS NULL)  AND (FORMAT(EstimateDate, 'yyyyMM') = @epaDateFilterId OR @epaDateFilterId IS NULL)
                 GROUP BY 

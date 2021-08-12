@@ -25,7 +25,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<IEnumerable<EpaoPipelineStandardFilter>> GetEpaoPipelineStandardsStandardFilter(string endPointAssessorOrganisationId);
         Task<IEnumerable<EpaoPipelineStandardFilter>> GetEpaoPipelineStandardsProviderFilter(string endPointAssessorOrganisationId);
         Task<IEnumerable<EpaoPipelineStandardFilter>> GetEpaoPipelineStandardsEPADateFilter(string endPointAssessorOrganisationId);
-        Task<List<EpaoPipelineStandardExtract>> GetEpaoPipelineStandardsExtract(string endPointAssessorOrganisationId);
+        Task<List<EpaoPipelineStandardExtract>> GetEpaoPipelineStandardsExtract(string endPointAssessorOrganisationId, string standardFilterId, string providerFilterId, string epaDateFilterId);
 
         // New Standard Version Methods
         Task<IEnumerable<Standard>> GetAllStandards();
