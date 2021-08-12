@@ -122,6 +122,10 @@
                         <tr class="govuk-table__row">
                             <td class="govuk-table__cell das-no-wrap" data-label="@Localizer["StandardName"]">
                                 @Html.DisplayFor(modelItem => item.StandardName)
+                                @if (!string.IsNullOrWhiteSpace(item.StandardVersion))
+                                {
+                                    <br /><text>Version </text>@Html.DisplayFor(modelItem => item.StandardVersion)
+                                }
                             </td>
                             <td class="govuk-table__cell govuk-table__cell--numeric" data-label="@Localizer["Apprentices"]">
                                 @Html.DisplayFor(modelItem => item.Pipeline)
@@ -167,6 +171,9 @@
                         <a asp-action="Pipeline"
                            asp-controller="OrganisationStandards"
                            asp-route-pageIndex="@(Model.Response.PageIndex - 1)"
+                           asp-route-selectedStandard="@Model.SelectedStandard"
+                           asp-route-selectedProvider="@Model.SelectedProvider"
+                           asp-route-selectedEPADate="@Model.SelectedEPADate"
                            class="govuk-link previous">
                             <i class="arrow-button icon-left-open">&#xe800;</i>
                             <span class="description">Previous <span class="hide-mob">page</span></span>
@@ -179,6 +186,9 @@
                         <a asp-controller="OrganisationStandards"
                            asp-action="Pipeline"
                            asp-route-pageIndex="@(Model.Response.PageIndex + 1)"
+                           asp-route-selectedStandard="@Model.SelectedStandard"
+                           asp-route-selectedProvider="@Model.SelectedProvider"
+                           asp-route-selectedEPADate="@Model.SelectedEPADate"
                            class="govuk-link next">
                             <i class="arrow-button icon-right-open">&#xe801;</i>
                             <span class="description">Next <span class="hide-mob">page</span></span>
