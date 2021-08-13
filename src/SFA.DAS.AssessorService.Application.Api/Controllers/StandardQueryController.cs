@@ -44,8 +44,12 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> GetEpaoPipelineStandards(string epaoId, string standardFilterId, string providerFilterId, string epaDateFilterId, string orderBy, string orderDirection,int pageSize, int? pageIndex = null)
         {
-            var normalisedPageIndex = (pageIndex == null || pageIndex == 0) ? 1 : pageIndex;
             _logger.LogInformation($"Received request to retrieve pipeline for standards of the organisation {epaoId}");
+            if (string.IsNullOrWhiteSpace(epaoId))
+            {
+                return BadRequest();
+            }
+            var normalisedPageIndex = (pageIndex == null || pageIndex == 0) ? 1 : pageIndex;
             return Ok(await _mediator.Send(new EpaoPipelineStandardsRequest(epaoId, standardFilterId, providerFilterId, epaDateFilterId, orderBy, orderDirection,normalisedPageIndex, pageSize)));
         }
 
@@ -55,6 +59,10 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         public async Task<IActionResult> GetEpaoPipelineStandardsFilters(string epaoId)
         {
             _logger.LogInformation($"Received request to retrieve pipeline filters for organisation {epaoId}");
+            if (string.IsNullOrWhiteSpace(epaoId))
+            {
+                return BadRequest();
+            }
             return Ok(await _mediator.Send(new EpaoPipelineStandardsFiltersRequest(epaoId)));
         }
 
