@@ -10,17 +10,18 @@ using System.Threading.Tasks;
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
 {
     [TestFixture]
-    public class When_called_dummy_uln : ImportLearnerDetailHandlerTestsBase
+    public class When_called_exist_same_source_diff_ukprn_fund_99 : ImportLearnerDetailHandlerTestsBase
     {
-        public void Arrange(long uln)
+        [SetUp]
+        public void Arrange()
         {
             BaseArrange();
 
             // Arrange
-            ImportLearnerDetail = CreateImportLearnerDetail(LearnerWithCertificate);
-            ImportLearnerDetail.Uln = uln;
+            ImportLearnerDetail = CreateImportLearnerDetail(LearnerWithoutCertificate);
+            ImportLearnerDetail.Ukprn = ImportLearnerDetail.Ukprn + 1;
+            ImportLearnerDetail.FundingModel = 99;
 
-            // Arrange
             Request = new ImportLearnerDetailRequest
             {
                 ImportLearnerDetails = new List<ImportLearnerDetail>
@@ -30,12 +31,9 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
             };
         }
 
-        [TestCaseSource(nameof(TestSource))]
-        public async Task Then_no_learner_records_are_created(long uln)
+        [Test]
+        public async Task Then_learner_records_are_not_created()
         {
-            // Arrange
-            Arrange(uln);
-
             // Act
             Response = await Sut.Handle(Request, new CancellationToken());
 
@@ -43,12 +41,9 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
             IlrRepository.Verify(r => r.Create(It.IsAny<Ilr>()), Times.Never);
         }
 
-        [TestCaseSource(nameof(TestSource))]
-        public async Task Then_no_learner_records_are_updated(long uln)
+        [Test]
+        public async Task Then_learner_records_are_not_updated()
         {
-            // Arrange
-            Arrange(uln);
-
             // Act
             Response = await Sut.Handle(Request, new CancellationToken());
 
@@ -56,27 +51,16 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
             IlrRepository.Verify(r => r.Update(It.IsAny<Ilr>()), Times.Never);
         }
 
-        [TestCaseSource(nameof(TestSource))]
-        public async Task Then_result_is_ignore_dummy_uln(long uln)
-        {
-            // Arrange
-            Arrange(uln);
 
+        [Test]
+        public async Task Then_result_is_ignore_ukprn_changed_for_funding_model_99()
+        {
             // Act
             Response = await Sut.Handle(Request, new CancellationToken());
 
             // Assert
             Response.LearnerDetailResults.Count.Should().Be(1);
-            Response.LearnerDetailResults[0].Outcome.Should().Be("IgnoreUlnDummyValue");
-        }
-
-        static IEnumerable<object[]> TestSource()
-        {
-            return new[]
-            {
-                new object[] { 9999999999 },
-                new object[] { 1000000000 }
-            };
+            Response.LearnerDetailResults[0].Outcome.Should().Be("IgnoreFundingModelChangedTo99WhenPrevioulsyNot99");
         }
     }
 }
