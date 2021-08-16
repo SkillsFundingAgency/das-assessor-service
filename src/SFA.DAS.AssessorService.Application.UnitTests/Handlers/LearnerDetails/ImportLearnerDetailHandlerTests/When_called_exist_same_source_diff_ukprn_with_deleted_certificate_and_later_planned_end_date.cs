@@ -2,6 +2,8 @@
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Domain.Entities;
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -9,7 +11,7 @@ using System.Threading.Tasks;
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
 {
     [TestFixture]
-    public class When_called_exist_same_source_diff_ukprn_remove_learn_act : ImportLearnerDetailHandlerTestsBase
+    public class When_called_exist_same_source_diff_ukprn_with_deleted_certificate_and_later_planned_end_date : ImportLearnerDetailHandlerTestsBase
     {
         [SetUp]
         public void Arrange()
@@ -17,9 +19,15 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
             BaseArrange();
 
             // Arrange
-            ImportLearnerDetail = CreateImportLearnerDetail(LearnerWithoutCertificate);
+            ImportLearnerDetail = CreateImportLearnerDetail(LearnerWithDeletedCertificate);
             ImportLearnerDetail.Ukprn = ImportLearnerDetail.Ukprn + 1;
-            ImportLearnerDetail.LearnActEndDate = null;
+            ImportLearnerDetail.LearnStartDate = ImportLearnerDetail.LearnStartDate.Value.AddDays(500);
+            ImportLearnerDetail.PlannedEndDate = ImportLearnerDetail.PlannedEndDate.Value.AddDays(20);
+            ImportLearnerDetail.LearnActEndDate = ImportLearnerDetail.LearnActEndDate.Value.AddDays(200);
+            ImportLearnerDetail.CompletionStatus = 2;
+            ImportLearnerDetail.Outcome = 1;
+            ImportLearnerDetail.WithdrawReason = null;
+            ImportLearnerDetail.AchDate = DateTime.Now.AddDays(-190);
 
             Request = new ImportLearnerDetailRequest
             {
@@ -28,7 +36,16 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
                     ImportLearnerDetail
                 }
             };
+        }
 
+        [Test]
+        public async Task Then_learner_records_are_not_created()
+        {
+            // Act
+            Response = await Sut.Handle(Request, new CancellationToken());
+
+            // Assert
+            IlrRepository.Verify(r => r.Create(It.IsAny<Ilr>()), Times.Never);
         }
 
         [Test]
@@ -38,8 +55,9 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
             Response = await Sut.Handle(Request, new CancellationToken());
 
             // Assert
-            VerifyIlrReplaced(ImportLearnerDetail, Times.Once);
+            IlrRepository.Verify(r => r.Update(It.IsAny<Ilr>()), Times.Once);
         }
+
 
         [Test]
         public async Task Then_result_is_replace()
