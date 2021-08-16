@@ -39,9 +39,9 @@ BEGIN
 			,CASE WHEN CompletionStatus = 1 AND LastUpdated < DATEADD(month, @lapsedtime, GETDATE()) THEN 1 ELSE 0 END Lapsed
 		   FROM (
 			  SELECT Ilrs.*, ISNULL(UpdatedAt,CreatedAt) LastUpdated
-                      -- if could only be version 1.0, now or at startdate, then this can be assumed
-					  ,CASE WHEN lv1.Version = '1.0' THEN '1.0' WHEN [dbo].[GetVersionFromLarsCode](LearnStartDate,StdCode) = '1.0' THEN '1.0' ELSE null END Version
-					  ,CASE WHEN lv1.Version = '1.0' THEN 1 WHEN [dbo].[GetVersionFromLarsCode](LearnStartDate,StdCode) = '1.0' THEN 1 ELSE 0 END VersionConfirmed
+                      -- if could only be version 1.0 then this can be assumed as confirmed
+					  ,CASE WHEN lv1.Version = '1.0' THEN '1.0' ELSE [dbo].[GetVersionFromLarsCode](LearnStartDate,StdCode) END Version
+					  ,CASE WHEN lv1.Version = '1.0' THEN 1 ELSE 0 END VersionConfirmed
                       -- use StandardUId for version 1.0 (if appropriate) or estimate based on startdate as unknown
 					  ,CASE WHEN lv1.Version = '1.0' THEN lv1.StandardUId ELSE [dbo].[GetStandardUidFromLarsCode](LearnStartDate,StdCode) END StandardUId
 					  ,lv1.StandardReference
