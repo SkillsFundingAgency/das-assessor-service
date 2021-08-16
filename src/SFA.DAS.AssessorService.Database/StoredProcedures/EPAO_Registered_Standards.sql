@@ -15,21 +15,19 @@ AS
 ),
 AppliedVersions AS
 (
-	SELECT ab1.StandardReference, MAX(ab1.[Version]) As MaxVersion
-	FROM(
-    SELECT ap1.Id ApplyId, ap1.ApplicationStatus, ap1.DeletedAt, ap1.OrganisationId, StandardReference, [dbo].[ExpandedVersion](v1.Version) [Version] FROM Apply ap1
-    CROSS APPLY OPENJSON(ApplyData, '$.Apply.Versions') WITH (version VARCHAR(10) '$') v1
+	SELECT StandardReference, MAX([dbo].[ExpandedVersion](v1.Version)) AS MaxVersion
+	FROM Apply ap1
+	CROSS APPLY OPENJSON(ApplyData, '$.Apply.Versions') WITH (version VARCHAR(10) '$') v1
 	CROSS APPLY OPENJSON(ApplyData,'$.Sequences') WITH (SequenceNo INT, NotRequired BIT) sequence
+	JOIN Organisations og1 on og1.id = ap1.OrganisationId
 	WHERE 1=1
 	  AND sequence.NotRequired = 0
-      AND sequence.sequenceNo = [dbo].[ApplyConst_STANDARD_SEQUENCE_NO]() 
-    ) ab1
-    JOIN Organisations og1 on og1.id = ab1.OrganisationId
-    WHERE ab1.standardreference IS NOT NULL
+	  AND sequence.sequenceNo = [dbo].[ApplyConst_STANDARD_SEQUENCE_NO]() 
+	  AND ap1.standardreference IS NOT NULL
+	  AND ap1.ApplicationStatus NOT IN('Approved', 'Declined')
+	  AND ap1.DeletedAt IS NULL
 	  AND og1.EndPointAssessorOrganisationId = @EPAOID
-      AND ab1.ApplicationStatus NOT IN('Approved', 'Declined')
-	  AND ab1.DeletedAt IS NULL
-	GROUP BY ab1.StandardReference
+	GROUP BY StandardReference
 )
 SELECT 
 	lv.Larscode as StandardCode,
@@ -52,6 +50,6 @@ FROM OrganisationStandard os
 	AND (os.EffectiveTo is null OR os.EffectiveTo > GETDATE())
 	ORDER BY lv.Title
 	OFFSET @Skip ROWS 
-    FETCH NEXT @Take ROWS ONLY
+	FETCH NEXT @Take ROWS ONLY
 END
 GO

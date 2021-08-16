@@ -6,10 +6,14 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Certificates
 {
     public class GetCertificateRequest : IRequest<Certificate>
     {
-        public GetCertificateRequest(Guid certificateId)
+        public GetCertificateRequest(Guid certificateId, bool includeLogs)
         {
             CertificateId = certificateId;
+            IncludeLogs = includeLogs;
         }
-        public Guid CertificateId { get; set; }
+        
+        public Guid CertificateId { get; }
+
+        public bool IncludeLogs { get; }
     }
 }

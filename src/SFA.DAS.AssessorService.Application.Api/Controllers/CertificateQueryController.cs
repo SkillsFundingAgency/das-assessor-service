@@ -31,9 +31,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(Certificate))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> GetCertificate(Guid id)
+        public async Task<IActionResult> GetCertificate(Guid id, bool includeLogs = false)
         {
-            return Ok(await _mediator.Send(new GetCertificateRequest(id)));
+            return Ok(await _mediator.Send(new GetCertificateRequest(id, includeLogs)));
         }
 
         [HttpGet("{uln}/{standardCode}", Name = "GetCertificateForUln")]
@@ -43,14 +43,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         public async Task<IActionResult> GetCertificateForUln(long uln, int standardCode)
         {
             return Ok(await _mediator.Send(new GetCertificateForUlnRequest { Uln = uln, StandardCode = standardCode }));
-        }
-
-        [HttpGet(Name = "GetCertificates")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<CertificateResponse>))]
-        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> GetCertificates([FromQuery] List<string> statuses)
-        {
-            return Ok(await _mediator.Send(new GetCertificatesRequest { Statuses = statuses }));
         }
 
         [HttpGet("contact/previousaddress", Name = "GetContactPreviousAddress")]
