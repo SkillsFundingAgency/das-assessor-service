@@ -70,7 +70,7 @@ BEGIN
 		----------------------------------------------------------------------------------------------------------------------
 		INSERT INTO Learner (Id, Uln, GivenNames, FamilyName, UkPrn, StdCode, LearnStartDate, EpaOrgId, FundingModel, ApprenticeshipId, 
 		Source, LearnRefNumber, CompletionStatus, PlannedEndDate, DelLocPostCode, LearnActEndDate, WithdrawReason, 
-		Outcome, AchDate, OutGrade, Version, CourseOption, StandardUId, StandardReference, StandardName, LastUpdated, EstimatedEndDate )
+		Outcome, AchDate, OutGrade, Version, VersionConfirmed, CourseOption, StandardUId, StandardReference, StandardName, LastUpdated, EstimatedEndDate )
 
 		----------------------------------------------------------------------------------------------------------------------
 		-- using Approvals Extract as master, except for some key fields that can be updated via ILR, and full Start&End dates 
