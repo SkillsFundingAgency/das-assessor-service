@@ -1,6 +1,5 @@
 ﻿using MediatR;
 using SFA.DAS.AssessorService.Api.Types.Models;
-using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.Application.Exceptions;
 using SFA.DAS.AssessorService.Application.Interfaces;
@@ -36,7 +35,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.OrganisationStandards
                 {
                     throw new BadRequestException(message);
                 }
-                throw new Exception();
+                throw new BadRequestException();
             }
 
             try
