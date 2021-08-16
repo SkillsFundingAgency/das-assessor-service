@@ -32,7 +32,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.MockedObjects
             var client = mockHttp.ToHttpClient();
             client.BaseAddress = new Uri("http://localhost:59022/");
 
-            mockHttp.When($"http://localhost:59022/api/v1/certificates/{certificate.Id}")
+            mockHttp.When($"http://localhost:59022/api/v1/certificates/{certificate.Id}?includeLogs={false}")
                 .Respond("application/json", JsonConvert.SerializeObject(certificate));
 
             mockHttp.When($"http://localhost:59022/api/v1/organisations/{certificate.OrganisationId}")

@@ -39,8 +39,9 @@ BEGIN
 			,CASE WHEN CompletionStatus = 1 AND LastUpdated < DATEADD(month, @lapsedtime, GETDATE()) THEN 1 ELSE 0 END Lapsed
 		   FROM (
 			  SELECT Ilrs.*, ISNULL(UpdatedAt,CreatedAt) LastUpdated
-                      -- if could only be version 1.0 then this can be assumed
-					  ,CASE WHEN lv1.Version = '1.0' THEN lv1.version ELSE null END Version
+                      -- if could only be version 1.0 then this can be assumed as confirmed
+					  ,CASE WHEN lv1.Version = '1.0' THEN '1.0' ELSE [dbo].[GetVersionFromLarsCode](LearnStartDate,StdCode) END Version
+					  ,CASE WHEN lv1.Version = '1.0' THEN 1 ELSE 0 END VersionConfirmed
                       -- use StandardUId for version 1.0 (if appropriate) or estimate based on startdate as unknown
 					  ,CASE WHEN lv1.Version = '1.0' THEN lv1.StandardUId ELSE [dbo].[GetStandardUidFromLarsCode](LearnStartDate,StdCode) END StandardUId
 					  ,lv1.StandardReference
@@ -60,6 +61,7 @@ BEGIN
 						WHEN CompletionDate IS NOT NULL THEN 2 
 						ELSE 1 END CompletionStatus 
 				  ,CASE WHEN TrainingCourseVersionConfirmed = 1 THEN TrainingCourseVersion ELSE null END Version
+				  ,TrainingCourseVersionConfirmed VersionConfirmed
 				  ,lv1.Title StandardName
 				  ,CASE WHEN EndDate > GETDATE() THEN EOMONTH(EndDate) ELSE EOMONTH(DATEADD(month, lv1.Duration, StartDate)) END EstimatedEndDate
 			FROM ApprovalsExtract Apx JOIN LatestVersions lv1 on lv1.LarsCode = apx.TrainingCode
@@ -68,7 +70,7 @@ BEGIN
 		----------------------------------------------------------------------------------------------------------------------
 		INSERT INTO Learner (Id, Uln, GivenNames, FamilyName, UkPrn, StdCode, LearnStartDate, EpaOrgId, FundingModel, ApprenticeshipId, 
 		Source, LearnRefNumber, CompletionStatus, PlannedEndDate, DelLocPostCode, LearnActEndDate, WithdrawReason, 
-		Outcome, AchDate, OutGrade, Version, CourseOption, StandardUId, StandardReference, StandardName, LastUpdated, EstimatedEndDate )
+		Outcome, AchDate, OutGrade, Version, VersionConfirmed, CourseOption, StandardUId, StandardReference, StandardName, LastUpdated, EstimatedEndDate )
 
 		----------------------------------------------------------------------------------------------------------------------
 		-- using Approvals Extract as master, except for some key fields that can be updated via ILR, and full Start&End dates 
@@ -94,6 +96,7 @@ BEGIN
 				il1.AchDate,
 				il1.OutGrade,	
 				ISNULL(ax1.Version,il1.Version) Version,
+				CASE WHEN ax1.Version IS NOT NULL THEN ax1.VersionConfirmed ELSE il1.VersionConfirmed END VersionConfirmed,
 				ax1.TrainingCourseOption CourseOption,
 				ISNULL(ax1.StandardUId,il1.StandardUId) StandardUid,
 				ISNULL(ax1.StandardReference,il1.StandardReference) StandardReference,
@@ -128,6 +131,7 @@ BEGIN
 				null AchDate,
 				null OutGrade,
 				ax1.Version,
+				ax1.VersionConfirmed,
 				ax1.TrainingCourseOption CourseOption,
 				ISNULL(ax1.StandardUId,[dbo].[GetStandardUidFromLarsCode](ax1.StartDate,ax1.TrainingCode)) StandardUId,
 				ax1.StandardReference, 
@@ -163,6 +167,7 @@ BEGIN
 				il1.AchDate,
 				il1.OutGrade,
 				il1.Version,
+				il1.VersionConfirmed,
 				null CourseOption,
 				il1.StandardUId,
 				il1.StandardReference,

@@ -79,7 +79,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
 
             _certificate = SetupValidCertificate();
 
-            _mockCertificateApiClient.Setup(s => s.GetCertificate(It.IsAny<Guid>())).ReturnsAsync(_certificate);
+            _mockCertificateApiClient.Setup(s => s.GetCertificate(It.IsAny<Guid>(), false)).ReturnsAsync(_certificate);
         }
 
         [Test, MoqAutoData]
