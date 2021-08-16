@@ -1,4 +1,5 @@
 ﻿using SFA.DAS.AssessorService.Domain.Entities;
+using System;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Interfaces
@@ -9,5 +10,6 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<OrganisationStandardVersion> CreateOrganisationStandardVersion(OrganisationStandardVersion version);
         Task<OrganisationStandardVersion> GetOrganisationStandardVersionByOrganisationStandardIdAndVersion(int organisationStandardId, string version);
         Task<OrganisationStandardVersion> UpdateOrganisationStandardVersion(OrganisationStandardVersion orgStandardVersion);
+        Task WithdrawalOrganisation(string endPointAssessorOrganisationId, DateTime withdrawalDate);
     }
 }

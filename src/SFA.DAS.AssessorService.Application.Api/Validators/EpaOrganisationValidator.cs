@@ -654,6 +654,17 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             return validationResult;
         }
 
+        public ValidationResponse ValidatorWithdrawOrganisationRequest(WithdrawOrganisationRequest request)
+        {
+            var validationResult = new ValidationResponse();
+
+            RunValidationCheckAndAppendAnyError("EndPointAssessorOrganisationId",
+               CheckIfOrganisationNotFound(request.EndPointAssessorOrganisationId), validationResult,
+               ValidationStatusCode.BadRequest);
+
+            return validationResult;
+        }
+
         private string FormatErrorMessage(string messageName)
         {
             return $"{_localizer[messageName].Value}; ";
