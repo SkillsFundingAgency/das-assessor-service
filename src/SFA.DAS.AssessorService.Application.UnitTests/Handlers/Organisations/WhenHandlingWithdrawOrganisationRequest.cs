@@ -15,19 +15,23 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Organisations
     [TestFixture]
     public class WhenHandlingWithdrawOrganisationRequest
     {
-        private Mock<IOrganisationStandardRepository> _repository;
+        private Mock<IOrganisationStandardRepository> _orgStandardRepository;
+        private Mock<IApplyRepository> _applyRepository;
         private Mock<IUnitOfWork> _unitOfWork;
         private WithdrawOrganisationHandler _handler;
         private Mock<IEpaOrganisationValidator> _validator;
 
+        private Guid _applicationId = Guid.NewGuid();
+
         [SetUp]
         public void Setup()
         {
-            _repository = new Mock<IOrganisationStandardRepository>();
+            _orgStandardRepository = new Mock<IOrganisationStandardRepository>();
+            _applyRepository = new Mock<IApplyRepository>();
             _validator = new Mock<IEpaOrganisationValidator>();
             _unitOfWork = new Mock<IUnitOfWork>();
 
-            _handler = new WithdrawOrganisationHandler( _validator.Object, _repository.Object, _unitOfWork.Object);
+            _handler = new WithdrawOrganisationHandler( _validator.Object, _orgStandardRepository.Object, _applyRepository.Object, _unitOfWork.Object);
         }
 
         [Test]
@@ -38,15 +42,39 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Organisations
 
             var request = new WithdrawOrganisationRequest()
             {
+                ApplicationId = _applicationId,
                 EndPointAssessorOrganisationId = "EPA0123",
-                WithdrawalDate = withdrawDate
+                WithdrawalDate = withdrawDate,
+                UpdatedBy = "UPDATER"
             };
 
             _validator.Setup(m => m.ValidatorWithdrawOrganisationRequest(request)).Returns(new ValidationResponse());
 
             var result = await _handler.Handle(request, new CancellationToken());
 
-            _repository.Verify(r => r.WithdrawalOrganisation("EPA0123", withdrawDate));
+            _orgStandardRepository.Verify(r => r.WithdrawalOrganisation("EPA0123", withdrawDate));
+            _unitOfWork.Verify(r => r.Commit());
+        }
+
+        [Test]
+        public async Task ThenApplyRepoIsCalled()
+        {
+            // arrange 
+            var withdrawDate = new DateTime(2021, 12, 1);
+
+            var request = new WithdrawOrganisationRequest()
+            {
+                ApplicationId = _applicationId,
+                EndPointAssessorOrganisationId = "EPA0123",
+                WithdrawalDate = withdrawDate,
+                UpdatedBy = "UPDATER"
+            };
+
+            _validator.Setup(m => m.ValidatorWithdrawOrganisationRequest(request)).Returns(new ValidationResponse());
+
+            var result = await _handler.Handle(request, new CancellationToken());
+
+            _applyRepository.Verify(r => r.DeclineAllApplicationsForOrgansiation(_applicationId, "EPA0123", "UPDATER"));
             _unitOfWork.Verify(r => r.Commit());
         }
 
@@ -67,7 +95,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Organisations
 
             Assert.ThrowsAsync<BadRequestException>(() => _handler.Handle(request, new CancellationToken()));
 
-            _repository.Verify(r => r.WithdrawalOrganisation(It.IsAny<string>(), It.IsAny<DateTime>()), Times.Never);
+            _orgStandardRepository.Verify(r => r.WithdrawalOrganisation(It.IsAny<string>(), It.IsAny<DateTime>()), Times.Never);
         }
     }
 }
