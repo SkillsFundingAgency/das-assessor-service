@@ -21,6 +21,7 @@ CREATE TABLE [dbo].[Learner]
     [AchDate] [datetime] NULL,
     [OutGrade] [nvarchar](50) NULL,    
     [Version] NVARCHAR(10) NULL,
+    [VersionConfirmed] BIT NOT NULL DEFAULT 0,
     [CourseOption] NVARCHAR(126) NULL,
     [StandardUId] NVARCHAR(20) NULL,
     [StandardReference] NVARCHAR(10) NULL,

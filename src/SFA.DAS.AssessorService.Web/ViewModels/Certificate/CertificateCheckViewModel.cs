@@ -44,7 +44,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
             FirstName = CertificateData.LearnerGivenNames;
             LearnerStartDate = CertificateData.LearningStartDate;
 
-            AchievementDate = CertificateData.AchievementDate;            
+            AchievementDate = CertificateData.AchievementDate;
             Name = CertificateData.ContactName;
             Dept = CertificateData.Department;
             Employer = CertificateData.ContactOrganisation;

@@ -46,7 +46,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateOptionsTests
             _mockContextAccessor.Setup(s => s.HttpContext.Request.Query).Returns(Mock.Of<IQueryCollection>());
             var certData = new CertificateData();
             var certDataString = JsonConvert.SerializeObject(certData);
-            _mockCertificateApiClient.Setup(s => s.GetCertificate(It.IsAny<Guid>())).ReturnsAsync(
+            _mockCertificateApiClient.Setup(s => s.GetCertificate(It.IsAny<Guid>(), false)).ReturnsAsync(
                 new Certificate
                 {
                     Id = CertificateId,

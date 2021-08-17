@@ -1,40 +1,40 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
-using FluentAssertions;
+﻿using FluentAssertions;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Domain.Entities;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
 {
     [TestFixture]
-    public class When_called_for_existing_learner_having_previous_source : ImportLearnerDetailHandlerTestsBase
+    public class When_called_exist_previous_source : ImportLearnerDetailHandlerTestsBase
     {
         [SetUp]
         public void Arrange()
         {
             BaseArrange();
 
-            ImportLearnerDetail = CreateImportLearnerDetail(LearnerThree);
-            ImportLearnerDetail.Source = "1920"; // cannot revert from 2021 to 1920
-        }
+            // Arrange
+            ImportLearnerDetail = CreateImportLearnerDetail(LearnerWithCertificate);
+            ImportLearnerDetail.Source = "1819"; // cannot revert from 2021 to 1920
 
-        [Test]
-        public async Task Then_learner_records_are_not_created()
-        {
-            ImportLearnerDetailRequest request = new ImportLearnerDetailRequest
+            Request = new ImportLearnerDetailRequest
             {
                 ImportLearnerDetails = new List<ImportLearnerDetail>
                 {
                     ImportLearnerDetail
                 }
             };
+        }
 
+        [Test]
+        public async Task Then_learner_records_are_not_created()
+        {
             // Act
-            Response = await Sut.Handle(request, new CancellationToken());
+            Response = await Sut.Handle(Request, new CancellationToken());
 
             // Assert
             IlrRepository.Verify(r => r.Create(It.IsAny<Ilr>()), Times.Never);
@@ -42,16 +42,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
 
         public async Task Then_learner_records_are_not_updated()
         {
-            ImportLearnerDetailRequest request = new ImportLearnerDetailRequest
-            {
-                ImportLearnerDetails = new List<ImportLearnerDetail>
-                {
-                    ImportLearnerDetail
-                }
-            };
-
             // Act
-            Response = await Sut.Handle(request, new CancellationToken());
+            Response = await Sut.Handle(Request, new CancellationToken());
 
             // Assert
             IlrRepository.Verify(r => r.Update(It.IsAny<Ilr>()), Times.Never);
@@ -60,16 +52,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
         [Test]
         public async Task Then_result_is_ignore_Lower_source()
         {
-            ImportLearnerDetailRequest request = new ImportLearnerDetailRequest
-            {
-                ImportLearnerDetails = new List<ImportLearnerDetail>
-                {
-                    ImportLearnerDetail
-                }
-            };
-
             // Act
-            Response = await Sut.Handle(request, new CancellationToken());
+            Response = await Sut.Handle(Request, new CancellationToken());
 
             // Assert
             Response.LearnerDetailResults.Count.Should().Be(1);

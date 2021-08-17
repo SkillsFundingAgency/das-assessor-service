@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using System.Collections.Generic;
 using System.Threading;
@@ -96,7 +97,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Learner
             {
                 var certificate = await _certificateRepository.GetCertificate(importLearnerDetail.Uln.Value, importLearnerDetail.StdCode.Value);
 
-                if (certificate != null)
+                if (certificate != null && certificate.Status != CertificateStatus.Deleted)
                     return "IgnoreUkprnChangedButCertficateAlreadyExists";
 
                 if (importLearnerDetail.FundingModel == 99 && learner.FundingModel != 99)
@@ -150,7 +151,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Learner
 
             // for an update to certain fields if the request is null then the currrent value will be
             // retained, otherwise the request value will be used
-            await _ilrRepository.Update(new Ilr
+            var updatedIlr = new Ilr
             {
                 Source = importLearnerDetail.Source,
                 UkPrn = importLearnerDetail.Ukprn.Value,
@@ -170,7 +171,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Learner
                 Outcome = RetainCurrentValueForNullUpdate(currentLearner?.Outcome, importLearnerDetail.Outcome, isUpdate),
                 AchDate = RetainCurrentValueForNullUpdate(currentLearner?.AchDate, importLearnerDetail.AchDate, isUpdate),
                 OutGrade = RetainCurrentValueForNullUpdate(currentLearner?.OutGrade, importLearnerDetail.OutGrade, isUpdate)
-            });
+            };
+
+            await _ilrRepository.Update(updatedIlr);
 
             return $"{(isUpdate ? "Updated" : "Replaced")}LearnerDetail";
         }
