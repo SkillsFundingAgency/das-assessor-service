@@ -42,7 +42,7 @@ BEGIN
                       -- if could only be version 1.0 then this can be assumed as confirmed
 					  ,CASE WHEN lv1.Version = '1.0' THEN '1.0' ELSE [dbo].[GetVersionFromLarsCode](LearnStartDate,StdCode) END Version
 					  ,CASE WHEN lv1.Version = '1.0' THEN 1 ELSE 0 END VersionConfirmed
-                      -- use StandardUId for version 1.0 (if appropriate) or estimate based on startdate as unknown
+                      -- use StandardUId for version 1.0 (if appropriate) or estimate based on startdate when unknown
 					  ,CASE WHEN lv1.Version = '1.0' THEN lv1.StandardUId ELSE [dbo].[GetStandardUidFromLarsCode](LearnStartDate,StdCode) END StandardUId
 					  ,lv1.StandardReference
 					  ,lv1.Title StandardName
@@ -60,6 +60,7 @@ BEGIN
 						WHEN PauseDate IS NOT NULL THEN 6
 						WHEN CompletionDate IS NOT NULL THEN 2 
 						ELSE 1 END CompletionStatus 
+				  -- leave version null if not confirmed in Approvals, as will derive from full LearnStartDate in ILRs or EOMonth of StartDate in Approvals
 				  ,CASE WHEN TrainingCourseVersionConfirmed = 1 THEN TrainingCourseVersion ELSE null END Version
 				  ,TrainingCourseVersionConfirmed VersionConfirmed
 				  ,lv1.Title StandardName
@@ -130,10 +131,10 @@ BEGIN
 				null Outcome,
 				null AchDate,
 				null OutGrade,
-				ax1.Version,
+				ISNULL(ax1.Version, [dbo].[GetVersionFromLarsCode](EOMONTH(ax1.StartDate),ax1.TrainingCode) ) Version,
 				ax1.VersionConfirmed,
 				ax1.TrainingCourseOption CourseOption,
-				ISNULL(ax1.StandardUId,[dbo].[GetStandardUidFromLarsCode](ax1.StartDate,ax1.TrainingCode)) StandardUId,
+				ISNULL(ax1.StandardUId, [dbo].[GetStandardUidFromLarsCode](EOMONTH(ax1.StartDate),ax1.TrainingCode) ) StandardUId,
 				ax1.StandardReference, 
 				ax1.StandardName,
 				ax1.LastUpdated,
