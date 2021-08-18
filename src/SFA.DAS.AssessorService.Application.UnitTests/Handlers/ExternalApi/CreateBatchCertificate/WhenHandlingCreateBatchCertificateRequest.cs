@@ -32,6 +32,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ExternalApi.Cre
         private long uln = 12345678L;
         private int stdCode = 123;
         private int ukPrn = 111;
+        private int ilrUkprn = 222;
         private string stdUId = "ST0123_1.0";
         private CreateBatchCertificateRequest _request;
 
@@ -46,7 +47,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ExternalApi.Cre
             _standardService = new Mock<IStandardService>();
             _roatpApiClient = new Mock<IRoatpApiClient>();
 
-            _ilrRepository.Setup(m => m.Get(uln, stdCode)).ReturnsAsync(new Domain.Entities.Ilr() {});
+            _ilrRepository.Setup(m => m.Get(uln, stdCode)).ReturnsAsync(new Domain.Entities.Ilr() { UkPrn = ilrUkprn });
             
             _organisationQueryRepository.Setup(m => m.GetByUkPrn(ukPrn)).ReturnsAsync(new Organisation() { });
             
@@ -55,6 +56,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ExternalApi.Cre
 
             _roatpApiClient.Setup(m => m.GetOrganisationByUkprn(ukPrn)).ReturnsAsync(new OrganisationSearchResult()
             {
+                Ukprn = ukPrn,
                 ProviderName = "PROVIDER"
             });
 
@@ -89,6 +91,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ExternalApi.Cre
 
             result.StandardUId.Should().Equals(stdUId);
             result.Status.Should().Equals(CertificateStatus.Draft);
+            result.ProviderUkPrn.Should().Equals(ukPrn);
         }
 
         [Test]
@@ -112,6 +115,27 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ExternalApi.Cre
             _certificateRepository.Verify(m => m.Update(It.IsAny<Certificate>(), It.IsAny<string>(), It.IsAny<string>(), true, null), Times.Never);
 
             result.Id.Should().Equals(id);
+            result.ProviderUkPrn.Should().Equals(ilrUkprn);
+        }
+
+        [Test]
+        public async Task AndOrganisationDoesNotExistThenReturnsCertificate()
+        {
+            // Arrange
+            _certificateRepository.Setup(m => m.GetCertificate(uln, stdCode)).ReturnsAsync(new Certificate()
+            {
+                CertificateData = @"{}"
+            });
+
+            _roatpApiClient.Setup(m => m.GetOrganisationByUkprn(ukPrn)).ReturnsAsync((OrganisationSearchResult)null);
+
+            // Act
+            var result = await _handler.Handle(_request, CancellationToken.None);
+
+            //Assert
+            result.StandardUId.Should().Equals(stdUId);
+            result.Status.Should().Equals(CertificateStatus.Draft);
+            result.ProviderUkPrn.Should().Equals(ukPrn);
         }
     }
 }
