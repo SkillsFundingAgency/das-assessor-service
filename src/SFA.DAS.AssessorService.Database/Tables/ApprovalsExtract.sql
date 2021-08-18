@@ -13,7 +13,6 @@
     [EndDate] DATETIME NULL, 
     [CreatedOn] DATETIME NULL, 
     [UpdatedOn] DATETIME NULL, 
-    [AgreedOn] DATETIME NULL, 
     [StopDate] DATE NULL, 
     [PauseDate] DATE NULL, 
     [CompletionDate] DATE NULL,
