@@ -79,6 +79,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ExternalApi.Cre
             // Arrange
             _certificateRepository.Setup(m => m.GetCertificate(uln, stdCode)).ReturnsAsync(new Certificate()
             {
+                ProviderUkPrn = ukPrn,
                 CertificateData = @"{}"
             });
 
@@ -89,9 +90,9 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ExternalApi.Cre
             //Assert
             _certificateRepository.Verify(m => m.Update(It.IsAny<Certificate>(), ExternalApiConstants.ApiUserName, CertificateActions.Start, true, null));
 
-            result.StandardUId.Should().Equals(stdUId);
-            result.Status.Should().Equals(CertificateStatus.Draft);
-            result.ProviderUkPrn.Should().Equals(ukPrn);
+            result.StandardUId.Should().Be(stdUId);
+            result.Status.Should().Be(CertificateStatus.Draft);
+            result.ProviderUkPrn.Should().Be(ukPrn);
         }
 
         [Test]
@@ -103,10 +104,11 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ExternalApi.Cre
             _certificateRepository.Setup(m => m.GetCertificate(uln, stdCode)).ReturnsAsync((Certificate)null);
 
             _certificateRepository.Setup(m => m.New(It.Is<Certificate>(c => c.Uln == uln &&
+                       c.ProviderUkPrn == ilrUkprn &&
                        c.StandardCode == stdCode &&
                        c.CreatedBy == ExternalApiConstants.ApiUserName &&
                        c.Status == CertificateStatus.Draft)))
-                .ReturnsAsync(new Certificate() { Id = id });
+                .ReturnsAsync(new Certificate() { Id = id, ProviderUkPrn = ilrUkprn });
 
             // Act
             var result = await _handler.Handle(_request, CancellationToken.None);
@@ -114,8 +116,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ExternalApi.Cre
             //Assert
             _certificateRepository.Verify(m => m.Update(It.IsAny<Certificate>(), It.IsAny<string>(), It.IsAny<string>(), true, null), Times.Never);
 
-            result.Id.Should().Equals(id);
-            result.ProviderUkPrn.Should().Equals(ilrUkprn);
+            result.Id.Should().Be(id);
+            result.ProviderUkPrn.Should().Be(ilrUkprn);
         }
 
         [Test]
@@ -124,6 +126,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ExternalApi.Cre
             // Arrange
             _certificateRepository.Setup(m => m.GetCertificate(uln, stdCode)).ReturnsAsync(new Certificate()
             {
+                ProviderUkPrn = ukPrn,
                 CertificateData = @"{}"
             });
 
@@ -133,9 +136,9 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ExternalApi.Cre
             var result = await _handler.Handle(_request, CancellationToken.None);
 
             //Assert
-            result.StandardUId.Should().Equals(stdUId);
-            result.Status.Should().Equals(CertificateStatus.Draft);
-            result.ProviderUkPrn.Should().Equals(ukPrn);
+            result.StandardUId.Should().Be(stdUId);
+            result.Status.Should().Be(CertificateStatus.Draft);
+            result.ProviderUkPrn.Should().Be(ukPrn);
         }
     }
 }
