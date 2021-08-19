@@ -4,6 +4,7 @@ using Moq;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Handlers.Learner;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using System;
 using System.Threading.Tasks;
@@ -17,15 +18,12 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
         protected Mock<ICertificateRepository> CertificateRepository;
 
         protected ImportLearnerDetailHandler Sut;
-
         protected ImportLearnerDetailResponse Response;
-
-        protected const long LearnerFourUln = 444444444444;
-        protected const int LearnerFourStdCode = 40;
+        protected ImportLearnerDetailRequest Request;
 
         protected Ilr ModifiedIlr = null;
         
-        protected static Ilr LearnerOne = new Ilr
+        protected static Ilr LearnerWithCertificate = new Ilr
         {
             Id = new Guid(),
             Source = "1920",
@@ -53,7 +51,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
             OutGrade = "Pass"
         };
 
-        protected static Ilr LearnerTwo = new Ilr
+        protected static Ilr LearnerWithoutCertificate = new Ilr
         {
             Id = new Guid(),
             Source = "1920",
@@ -81,75 +79,48 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
             OutGrade = "Fail"
         };
 
-        protected static Ilr LearnerThree = new Ilr
+        protected static Ilr LearnerWithDeletedCertificate = new Ilr
         {
             Id = new Guid(),
             Source = "2021",
-            Uln = 333333333333,
+            Uln = 33333333333,
             StdCode = 30,
             GivenNames = "GivenLearnerThree",
             FamilyName = "FamilyLearnerThree",
-            UkPrn = 3333,
-            LearnStartDate = DateTime.Now.AddDays(-200),
-            EpaOrgId = "EPA000333",
+            UkPrn = 33333,
+            LearnStartDate = DateTime.Now.AddDays(-700),
+            EpaOrgId = null,
             FundingModel = 36,
-            ApprenticeshipId = 3333333333,
+            ApprenticeshipId = 333333333,
             EmployerAccountId = 33333333,
             CreatedAt = DateTime.Now.AddDays(-7000),
             UpdatedAt = DateTime.Now.AddDays(-300),
             LearnRefNumber = "33333333",
-            CompletionStatus = 33333,
+            CompletionStatus = 3,
             EventId = 33333,
-            PlannedEndDate = DateTime.Now.AddDays(300),
-            DelLocPostCode = "3333THREE",
-            LearnActEndDate = DateTime.Now.AddDays(-30),
-            WithdrawReason = 33333,
+            PlannedEndDate = DateTime.Now.AddDays(-200),
+            DelLocPostCode = "3333THREE3333",
+            LearnActEndDate = DateTime.Now.AddDays(-400),
+            WithdrawReason = 7,
             Outcome = 3,
-            AchDate = DateTime.Now.AddDays(-30),
-            OutGrade = "Pass"
-        };
-
-        protected static Ilr LearnerFive = new Ilr
-        {
-            Id = new Guid(),
-            Source = "2021",
-            Uln = 5555555555,
-            StdCode = 30,
-            GivenNames = "GivenLearnerFive",
-            FamilyName = "FamilyLearnerFive",
-            UkPrn = 55555,
-            LearnStartDate = DateTime.Now.AddDays(-200),
-            EpaOrgId = null,
-            FundingModel = 36,
-            ApprenticeshipId = 555555555,
-            EmployerAccountId = 55555555,
-            CreatedAt = DateTime.Now.AddDays(-7000),
-            UpdatedAt = DateTime.Now.AddDays(-300),
-            LearnRefNumber = "55555555",
-            CompletionStatus = 55555,
-            EventId = 55555,
-            PlannedEndDate = DateTime.Now.AddDays(300),
-            DelLocPostCode = "5555FIVE5555",
-            LearnActEndDate = DateTime.Now.AddDays(-30),
-            WithdrawReason = null,
-            Outcome = null,
             AchDate = null,
             OutGrade = null
         };
 
-        protected static Certificate LearnerOneCertificate = new Certificate
+        protected static Certificate CertificateForLearner = new Certificate
         {
-            Uln = LearnerOne.Uln,
-            StandardCode = LearnerOne.StdCode
+            Uln = LearnerWithCertificate.Uln,
+            StandardCode = LearnerWithCertificate.StdCode
         };
 
-        protected static Certificate LearnerThreeCertificate = new Certificate
+        protected static Certificate DeletedCertificateForLearner = new Certificate
         {
-            Uln = LearnerThree.Uln,
-            StandardCode = LearnerThree.StdCode
+            Uln = LearnerWithDeletedCertificate.Uln,
+            StandardCode = LearnerWithDeletedCertificate.StdCode,
+            Status = CertificateStatus.Deleted
         };
 
-        protected ImportLearnerDetail CreateImportLearnerDetailRequest(string source, int? ukprn, long? uln, int? stdCode,
+        protected ImportLearnerDetail CreateImportLearnerDetail(string source, int? ukprn, long? uln, int? stdCode,
             int? fundingModel, string givenNames, string familyName, DateTime? learnStartDate, DateTime? plannedEndDate,
             int? completionStatus, string learnRefNumber, string delLocPostCode)
         {
@@ -209,22 +180,28 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
                 FundingModel = ilr.FundingModel,
                 GivenNames = ilr.GivenNames,
                 FamilyName = ilr.FamilyName,
+                EpaOrgId = ilr.EpaOrgId,
                 LearnStartDate = ilr.LearnStartDate,
                 PlannedEndDate = ilr.PlannedEndDate,
                 CompletionStatus = ilr.CompletionStatus,
                 LearnRefNumber = ilr.LearnRefNumber,
-                DelLocPostCode = ilr.DelLocPostCode
+                DelLocPostCode = ilr.DelLocPostCode,
+                LearnActEndDate = ilr.LearnActEndDate,
+                WithdrawReason = ilr.WithdrawReason,
+                Outcome = ilr.Outcome,
+                AchDate = ilr.AchDate,
+                OutGrade = ilr.OutGrade
             };
         }
 
-        protected ImportLearnerDetail CreateImportLearnerDetail(int uknprn)
+        protected ImportLearnerDetail CreateImportLearnerDetail(int ukprn, long uln, int stdCode)
         {
             return new ImportLearnerDetail
             {
                 Source = "2021",
-                Ukprn = uknprn,
-                Uln = uknprn * 11,
-                StdCode = uknprn / 11,
+                Ukprn = ukprn,
+                Uln = uln,
+                StdCode = stdCode,
                 FundingModel = 99,
                 GivenNames = "Other",
                 FamilyName = "Other",
@@ -241,10 +218,9 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
         protected void BaseArrange()
         {
             IlrRepository = new Mock<IIlrRepository>();
-            IlrRepository.Setup(r => r.Get(LearnerOne.Uln, LearnerOne.StdCode)).ReturnsAsync(LearnerOne);
-            IlrRepository.Setup(r => r.Get(LearnerTwo.Uln, LearnerTwo.StdCode)).ReturnsAsync(LearnerTwo);
-            IlrRepository.Setup(r => r.Get(LearnerThree.Uln, LearnerThree.StdCode)).ReturnsAsync(LearnerThree);
-            IlrRepository.Setup(r => r.Get(LearnerFive.Uln, LearnerFive.StdCode)).ReturnsAsync(LearnerFive);
+            IlrRepository.Setup(r => r.Get(LearnerWithCertificate.Uln, LearnerWithCertificate.StdCode)).ReturnsAsync(LearnerWithCertificate);
+            IlrRepository.Setup(r => r.Get(LearnerWithoutCertificate.Uln, LearnerWithoutCertificate.StdCode)).ReturnsAsync(LearnerWithoutCertificate);
+            IlrRepository.Setup(r => r.Get(LearnerWithDeletedCertificate.Uln, LearnerWithDeletedCertificate.StdCode)).ReturnsAsync(LearnerWithDeletedCertificate);
 
             IlrRepository
                 .Setup(c => c.Update(It.IsAny<Ilr>()))
@@ -252,13 +228,12 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
                 .Callback<Ilr>((ilr) => ModifiedIlr = ilr);
 
             CertificateRepository = new Mock<ICertificateRepository>();
-            CertificateRepository.Setup(r => r.GetCertificate(LearnerOne.Uln, LearnerOne.StdCode)).ReturnsAsync(LearnerOneCertificate);
-            CertificateRepository.Setup(r => r.GetCertificate(LearnerTwo.Uln, LearnerTwo.StdCode)).ReturnsAsync((Certificate)null);
-            CertificateRepository.Setup(r => r.GetCertificate(LearnerThree.Uln, LearnerThree.StdCode)).ReturnsAsync(LearnerThreeCertificate);
+            CertificateRepository.Setup(r => r.GetCertificate(LearnerWithCertificate.Uln, LearnerWithCertificate.StdCode)).ReturnsAsync(CertificateForLearner);
+            CertificateRepository.Setup(r => r.GetCertificate(LearnerWithoutCertificate.Uln, LearnerWithoutCertificate.StdCode)).ReturnsAsync((Certificate)null);
+            CertificateRepository.Setup(r => r.GetCertificate(LearnerWithDeletedCertificate.Uln, LearnerWithDeletedCertificate.StdCode)).ReturnsAsync(DeletedCertificateForLearner);
 
             Sut = new ImportLearnerDetailHandler(IlrRepository.Object, CertificateRepository.Object,
                 new Mock<ILogger<ImportLearnerDetailHandler>>().Object);
-
         }
 
         protected void VerifyIlrUpdated(string source, int? ukprn, long? uln, int? stdCode,
