@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -77,6 +78,32 @@ namespace SFA.DAS.AssessorService.Data
                 transaction: _unitOfWork.Transaction);
 
             return orgStandardVersion;
+        }
+
+        public async Task WithdrawalOrganisation(string endPointAssessorOrganisationId, DateTime withdrawalDate)
+        {
+            var sql = @"UPDATE osv
+	                    SET
+		                    [EffectiveTo] = @withdrawalDate
+	                    FROM [OrganisationStandardVersion] osv 
+		                    INNER JOIN [OrganisationStandard] os ON os.[Id] = osv.[OrganisationStandardId]
+	                    WHERE os.[EndPointAssessorOrganisationId] = @endPointAssessorOrganisationId
+		                    AND (osv.[EffectiveTo] IS NULL OR osv.[EffectiveTo] > @withdrawalDate);
+
+                        UPDATE [OrganisationStandard]
+	                    SET
+		                    [EffectiveTo] = @withdrawalDate
+	                    WHERE [EndPointAssessorOrganisationId] = @endPointAssessorOrganisationId
+		                    AND ([EffectiveTo] IS NULL OR [EffectiveTo] > @withdrawalDate)";
+
+            await _unitOfWork.Connection.ExecuteAsync(
+                sql,
+                param: new
+                {
+                    endPointAssessorOrganisationId = endPointAssessorOrganisationId,
+                    withdrawalDate = withdrawalDate
+                },
+                transaction: _unitOfWork.Transaction);
         }
     }
 }

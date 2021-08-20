@@ -245,6 +245,15 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
                 : string.Empty;
         }
 
+        public string CheckUpdatedBy(string updatedBy)
+        {
+            var newUpdatedBy = _cleanserService.CleanseStringForSpecialCharacters(updatedBy);
+            if (string.IsNullOrWhiteSpace(newUpdatedBy))
+                return FormatErrorMessage(EpaOrganisationValidatorMessageName.UpdatedByIsMissing);
+
+            return string.Empty;
+        }
+
         public string CheckIfEmailIsMissing(string emailName)
         {
             return string.IsNullOrEmpty(emailName?.Trim())
@@ -509,6 +518,15 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             return string.Empty;
         }
 
+        public string CheckApplicationdId(Guid applicationId)
+        {
+            if (applicationId == default)
+            {
+                return FormatErrorMessage(EpaOrganisationValidatorMessageName.ApplicationIdIsMissing);
+            }
+            return string.Empty;
+        }
+
         public ValidationResponse ValidatorCreateEpaOrganisationRequest(CreateEpaOrganisationRequest request)
         {
             var validationResult = new ValidationResponse();
@@ -651,6 +669,21 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             RunValidationCheckAndAppendAnyError("EffectiveTo", CheckOrganisationStandardVersionToDateIsWithinStandardDateRanges(request.EffectiveTo, organisationStandard.StandardEffectiveFrom, organisationStandard.StandardEffectiveTo), validationResult, ValidationStatusCode.BadRequest);
             RunValidationCheckAndAppendAnyError("EffectiveFrom", CheckVersionEffectiveFromIsOnOrBeforeEffectiveTo(request.EffectiveFrom, request.EffectiveTo), validationResult, ValidationStatusCode.BadRequest);
             RunValidationCheckAndAppendAnyError("EffectiveTo", CheckVersionEffectiveToIsOnOrAfterEffectiveFrom(request.EffectiveTo, request.EffectiveFrom), validationResult, ValidationStatusCode.BadRequest);
+            return validationResult;
+        }
+
+        public ValidationResponse ValidatorWithdrawOrganisationRequest(WithdrawOrganisationRequest request)
+        {
+            var validationResult = new ValidationResponse();
+
+            RunValidationCheckAndAppendAnyError("EndPointAssessorOrganisationId",
+               CheckIfOrganisationNotFound(request.EndPointAssessorOrganisationId), validationResult,
+               ValidationStatusCode.BadRequest);
+
+            RunValidationCheckAndAppendAnyError("ApplicationId",
+              CheckApplicationdId(request.ApplicationId), validationResult,
+              ValidationStatusCode.BadRequest);
+
             return validationResult;
         }
 
