@@ -136,7 +136,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
             var searchingContact = contactRepository.GetContact(request.Username).Result;
 
             var certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
-            
+
             if (submittingContact != null && searchingContact != null && submittingContact.OrganisationId == searchingContact.OrganisationId)
             {
                 searchResult.ShowExtraInfo = true;
