@@ -137,7 +137,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
 
             var certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
 
-            if (submittingContact.OrganisationId == searchingContact.OrganisationId)
+            if (submittingContact != null && searchingContact != null && submittingContact.OrganisationId == searchingContact.OrganisationId)
             {
                 searchResult.ShowExtraInfo = true;
                 searchResult.OverallGrade = certificateData.OverallGrade;
