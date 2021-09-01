@@ -226,6 +226,7 @@ BEGIN
 		-- rollback Learner Update
 			ROLLBACK TRANSACTION Updatelearner; 
 		END
+        RETURN 1
 	END CATCH
 RETURN 0
 END;
