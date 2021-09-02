@@ -132,7 +132,7 @@ BEGIN
 					  AND NOT (StopDate IS NOT NULL AND EOMONTH(StopDate) = EOMONTH(StartDate) AND PaymentStatus = 3) -- cancelled, not started, effectively deleted
 				) ab2
 			) ab3 WHERE rownumber = 1
-			) Apx  WHERE CompletionStatus != 0  -- ignore where Apprenticeship is "PendingApproval"
+			) Apx 
 		)
 		----------------------------------------------------------------------------------------------------------------------
 		----------------------------------------------------------------------------------------------------------------------
@@ -176,11 +176,12 @@ BEGIN
 				il1.EstimatedEndDate
 		  FROM ax1 
 		  JOIN il1 ON ax1.ULN = il1.ULN  AND il1.StdCode = ax1.TrainingCode	
-		  WHERE NOT ( (ax1.StopDate IS NOT NULL OR ax1.PauseDate IS NOT NULL) AND il1.FundingModel = 99 )
+		  WHERE il1.FundingModel != 99
+            AND ax1.CompletionStatus != 0
 		  
 		----------------------------------------------------------------------------------------------------------------------
 		-- just ILrs (trimmed Expired and Lapsed ILR records!)  
-		-- or FM99 Ilr to override Stopped/Paused Approval as data source
+		-- or FM99 Ilr to override Approval as data source
 		----------------------------------------------------------------------------------------------------------------------
 		UNION ALL
 		SELECT  il1.Id, 
@@ -213,9 +214,9 @@ BEGIN
 				il1.EstimatedEndDate
 		  FROM il1 
 		  LEFT JOIN ax1 ON ax1.ULN = il1.ULN  AND il1.StdCode = ax1.TrainingCode
-		  WHERE (ax1.ULN IS NULL OR ( (ax1.StopDate IS NOT NULL OR ax1.PauseDate IS NOT NULL) AND il1.FundingModel = 99) )
-		  AND Lapsed = 0 
-		  AND Expired = 0
+		  WHERE (il1.FundingModel = 99 OR ax1.ULN IS NULL)
+		    AND Lapsed = 0 
+		    AND Expired = 0
 		  
    
 		COMMIT TRANSACTION 
