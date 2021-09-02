@@ -115,7 +115,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
             Certificate certificate, Organisation searchingEpao, ILogger<SearchHandler> logger)
         {
             var certificateLogs = certificateRepository.GetCertificateLogsFor(certificate.Id).Result;
-            logger.LogInformation("MatchUpExistingCompletedStandards After GetCertificateLogsFor");
+            logger.LogInformation($"MatchUpExistingCompletedStandards After GetCertificateLogsFor CertificateId {certificate.Id}");
             var createdLogEntry = certificateLogs.FirstOrDefault(l => l.Status == CertificateStatus.Draft);
 
             var submittedLogEntry = certificateLogs.FirstOrDefault(l => l.Action == CertificateActions.Submit);
@@ -131,7 +131,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
             var lastUpdatedLogEntry = certificateLogs.Aggregate((i1, i2) => i1.EventTime > i2.EventTime ? i1 : i2) ?? submittedLogEntry;
             var lastUpdatedContact = contactRepository.GetContact(lastUpdatedLogEntry.Username).Result;
 
-            logger.LogInformation("MatchUpExistingCompletedStandards After GetContact");
+            logger.LogInformation($"MatchUpExistingCompletedStandards After GetContact for CertificateId {certificate.Id}");
 
             var searchingContact = contactRepository.GetContact(request.Username).Result;
 
