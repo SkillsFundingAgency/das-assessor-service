@@ -74,13 +74,14 @@ BEGIN
 				  ,StopDate
 				  ,PauseDate
 				  ,CompletionDate
+				  ,PaymentStatus
 				  ,StandardReference
 				  ,UKPRN 
 				  ,LearnRefNumber
 				  ,CompletionStatus
 			FROM (
 				SELECT *
-                    -- apply rules to determine the chronologically latest Apprenticeship record
+					-- apply rules to determine the chronologically latest Apprenticeship record
 					,ROW_NUMBER() OVER (PARTITION BY ULN, TrainingCode ORDER BY 
 					   CASE 
 					   -- if StopDate of previous record is before Startdate of current record then prefer current record
@@ -115,6 +116,7 @@ BEGIN
 					  ,StopDate
 					  ,PauseDate
 					  ,CompletionDate
+					  ,PaymentStatus
 					  ,StandardReference
 					  ,UKPRN
 					  ,LearnRefNumber
@@ -138,7 +140,7 @@ BEGIN
 		----------------------------------------------------------------------------------------------------------------------
 		INSERT INTO Learner (Id, Uln, GivenNames, FamilyName, UkPrn, StdCode, LearnStartDate, EpaOrgId, FundingModel, ApprenticeshipId, 
 		Source, LearnRefNumber, CompletionStatus, PlannedEndDate, DelLocPostCode, LearnActEndDate, WithdrawReason, 
-		Outcome, AchDate, OutGrade, Version, VersionConfirmed, CourseOption, StandardUId, StandardReference, StandardName, LastUpdated, EstimatedEndDate )
+		Outcome, AchDate, OutGrade, Version, VersionConfirmed, CourseOption, StandardUId, StandardReference, StandardName, LastUpdated, EstimatedEndDate, ApprovalsStopDate, ApprovalsPauseDate, ApprovalsCompletionDate, ApprovalsPaymentStatus )
 
 		----------------------------------------------------------------------------------------------------------------------
 		-- using ILR with Approvals Extract for some key fields that can be updated in Approvals 
@@ -173,11 +175,15 @@ BEGIN
 				ISNULL(ax1.StandardReference,il1.StandardReference) StandardReference,
 				il1.StandardName,
 				CASE WHEN ax1.LastUpdated > il1.LastUpdated THEN ax1.LastUpdated ELSE il1.LastUpdated END LastUpdated, 
-				il1.EstimatedEndDate
+				il1.EstimatedEndDate,
+				ax1.StopDate ApprovalsStopDate,
+				ax1.PauseDate ApprovalsPauseDate,
+				ax1.CompletionDate ApprovalsCompletionDate,
+				ax1.PaymentStatus ApprovalsPaymentStatus
 		  FROM ax1 
 		  JOIN il1 ON ax1.ULN = il1.ULN  AND il1.StdCode = ax1.TrainingCode	
 		  WHERE il1.FundingModel != 99
-            AND ax1.CompletionStatus != 0
+			AND ax1.CompletionStatus != 0
 		  
 		----------------------------------------------------------------------------------------------------------------------
 		-- just ILrs (trimmed Expired and Lapsed ILR records!)  
@@ -211,12 +217,16 @@ BEGIN
 				il1.StandardReference,
 				il1.StandardName,
 				il1.LastUpdated,
-				il1.EstimatedEndDate
+				il1.EstimatedEndDate,
+				null ApprovalsStopDate,
+				null ApprovalsPauseDate,
+				null ApprovalsCompletionDate,
+				null ApprovalsPaymentStatus 
 		  FROM il1 
 		  LEFT JOIN ax1 ON ax1.ULN = il1.ULN  AND il1.StdCode = ax1.TrainingCode
 		  WHERE (il1.FundingModel = 99 OR ax1.ULN IS NULL)
-		    AND Lapsed = 0 
-		    AND Expired = 0
+			AND Lapsed = 0 
+			AND Expired = 0
 		  
    
 		COMMIT TRANSACTION 
@@ -227,7 +237,7 @@ BEGIN
 		-- rollback Learner Update
 			ROLLBACK TRANSACTION Updatelearner; 
 		END
-        RETURN 1
+		RETURN 1
 	END CATCH
 RETURN 0
 END;
