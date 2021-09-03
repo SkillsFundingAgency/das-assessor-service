@@ -34,3 +34,6 @@
 
 :r .\EmailTemplatesDelete.sql
 :r .\EmailTemplatesInsertOrUpdate.sql
+
+:r .\PrePopulateProviders.sql
+

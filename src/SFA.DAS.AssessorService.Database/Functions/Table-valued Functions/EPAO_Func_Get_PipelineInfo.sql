@@ -1,6 +1,6 @@
 ﻿-- NOTE limits to filter out of date learner records
 --6 months over-run on lapsed learner data updates
---6 months allowed to overrun beyond estimated end date    
+--6 months allowed to overrun beyond estimated end date	
 CREATE FUNCTION [dbo].[EPAO_Func_Get_PipelineInfo]
 (	
 	@epaOrgId NVARCHAR(12),
@@ -11,56 +11,56 @@ AS
 RETURN 
 (
 	SELECT
-		[PipelineInfo].UkPrn,
+		pv1.UkPrn,
 		StdCode,
 		Title,
 		EstimatedEndDate EstimateDate,
-        pv1.Name ProviderName,
-        Version        
+		pv1.Name ProviderName,
+		Version
 	FROM
 	(
 
-        --Get most up to date data from Learner and Ilrs tables
-        SELECT le2.Ukprn, 
-               le2.StdCode, 
-               le2.StandardReference, 
-               le2.StandardName Title, 
-               le2.Version, 
-               le2.LastUpdated, 
-               le2.EstimatedEndDate
-        FROM 
-            Learner le2
-        INNER JOIN 
-            -- must have at least one live version of a standard for the given EPAO
-               (SELECT DISTINCT StandardCode FROM OrganisationStandard os1
-                  JOIN OrganisationStandardVersion osv ON osv.OrganisationStandardId = os1.id
-                 WHERE os1.Status = 'Live' 
-                    AND (os1.EffectiveTo IS NULL OR os1.EffectiveTo >= GETDATE())
-                    AND osv.Status = 'Live' 
-                    AND (osv.EffectiveTo IS NULL OR osv.EffectiveTo >= GETDATE())
-                    -- only standnard data for the given EPAO
-                    AND os1.EndPointAssessorOrganisationId = @epaOrgId
-                    -- filter by standard code if required
-                    AND ( os1.StandardCode = @stdCode OR @stdCode IS NULL ) 
-                ) os2 on os2.Standardcode = le2.StdCode
-        LEFT JOIN 
-            ( SELECT DISTINCT ULN, StandardCode FROM Certificates ) [ExistingCertificate] ON [ExistingCertificate].ULN = le2.ULN AND [ExistingCertificate].StandardCode = le2.StdCode
-        WHERE 1=1
-            -- exclude already created certificates (by uln and standardcode)
-            AND [ExistingCertificate].Uln IS NULL      -- only include learner data for the given EPAO which is Active, or completed
-            AND EPAORgID = @epaOrgId
-            -- and for continuing or recently completed Apprenticeships
-            AND CompletionStatus IN (1,2)
-            -- limit pipeline to completed, or continuing learning that has not yet lapsed
-            AND (
-                -- Learner has completed 
-                CompletionStatus = 2 
-                -- most recent activity (approval/ILR submission) is no more than 6(?) months ago
-                OR (CompletionStatus = 1 AND LastUpdated >= DATEADD(month, -6, GETDATE()) )
-                )
-            -- limit Pipeline to where the Estimated End Date is no more than 6(?) months in the past.
-            AND EstimatedEndDate >= DATEADD(month, -6 ,GETDATE())
-        ) [PipelineInfo]
-        INNER JOIN Providers pv1 ON pv1.Ukprn = [PipelineInfo].Ukprn 
+		--Get most up to date data from Learner and Ilrs tables
+		SELECT le2.Ukprn, 
+			   le2.StdCode, 
+			   le2.StandardReference, 
+			   le2.StandardName Title, 
+			   le2.Version, 
+			   le2.LastUpdated, 
+			   le2.EstimatedEndDate
+		FROM 
+			Learner le2
+		INNER JOIN 
+			-- must have at least one live version of a standard for the given EPAO
+			   (SELECT DISTINCT StandardCode FROM OrganisationStandard os1
+				  JOIN OrganisationStandardVersion osv ON osv.OrganisationStandardId = os1.id
+				 WHERE os1.Status = 'Live' 
+					AND (os1.EffectiveTo IS NULL OR os1.EffectiveTo >= GETDATE())
+					AND osv.Status = 'Live' 
+					AND (osv.EffectiveTo IS NULL OR osv.EffectiveTo >= GETDATE())
+					-- only standnard data for the given EPAO
+					AND os1.EndPointAssessorOrganisationId = @epaOrgId
+					-- filter by standard code if required
+					AND ( os1.StandardCode = @stdCode OR @stdCode IS NULL ) 
+				) os2 on os2.Standardcode = le2.StdCode
+		LEFT JOIN 
+			( SELECT DISTINCT ULN, StandardCode FROM Certificates ) [ExistingCertificate] ON [ExistingCertificate].ULN = le2.ULN AND [ExistingCertificate].StandardCode = le2.StdCode
+		WHERE 1=1
+			-- exclude already created certificates (by uln and standardcode)
+			AND [ExistingCertificate].Uln IS NULL	  -- only include learner data for the given EPAO which is Active, or completed
+			AND EPAORgID = @epaOrgId
+			-- and for continuing or recently completed Apprenticeships
+			AND CompletionStatus IN (1,2)
+			-- limit pipeline to completed, or continuing learning that has not yet lapsed
+			AND (
+				-- Learner has completed 
+				CompletionStatus = 2 
+				-- most recent activity (approval/ILR submission) is no more than 6(?) months ago
+				OR (CompletionStatus = 1 AND LastUpdated >= DATEADD(month, -6, GETDATE()) )
+				)
+			-- limit Pipeline to where the Estimated End Date is no more than 6(?) months in the past.
+			AND EstimatedEndDate >= DATEADD(month, -6 ,GETDATE())
+		) [PipelineInfo]
+		INNER JOIN Providers pv1 ON pv1.Ukprn = [PipelineInfo].Ukprn 
 
  )
