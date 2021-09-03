@@ -1,11 +1,21 @@
-﻿BEGIN TRANSACTION
+﻿/*
+    Pre-populate the [Providers] table.
+
+    NOTES:
+    1) Inserts Providers as of Aug 2021 - others to be updated by API call
+
+    1) This script uses a temporary table
+*/
+
+BEGIN TRANSACTION
 
 CREATE TABLE #Providers(
     [Ukprn] BIGINT NOT NULL,
-    [Name] NVARCHAR(200) NOT NULL,
+    [Name] NVARCHAR(200) NOT NULL
 ) 
+GO
 
---INSERT_Providers as of Aug 2021 - others to be updated by API call
+
 INSERT INTO #Providers VALUES (10000020,'5 E LTD.')
 INSERT INTO #Providers VALUES (10000028,'WOODSPEEN TRAINING LIMITED')
 INSERT INTO #Providers VALUES (10000029,'A.F.BLAKEMORE AND SON LIMITED')
@@ -3272,6 +3282,9 @@ WHEN NOT MATCHED BY TARGET
     THEN INSERT ([UKPRN], [Name])
     VALUES ([Source].[UKPRN], [Source].[Name]);
 
+
+
 COMMIT TRANSACTION
 
 DROP TABLE #Providers
+GO
