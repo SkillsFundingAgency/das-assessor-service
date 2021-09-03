@@ -18,7 +18,7 @@ CREATE TABLE [dbo].[Learner]
     [LearnActEndDate] DATETIME2 NULL,
     [WithdrawReason] [int] NULL,
     [Outcome] [int] NULL,
-    [AchDate] [datetime] NULL,
+    [AchDate] DATETIME NULL,
     [OutGrade] [nvarchar](50) NULL,    
     [Version] NVARCHAR(10) NULL,
     [VersionConfirmed] BIT NOT NULL DEFAULT 0,
@@ -27,8 +27,11 @@ CREATE TABLE [dbo].[Learner]
     [StandardReference] NVARCHAR(10) NULL,
     [StandardName] NVARCHAR(1000) NULL,
     [LastUpdated] DATE NULL,
-    [EstimatedEndDate] DATE NULL
-    
+    [EstimatedEndDate] DATE NULL,
+    [ApprovalsStopDate] DATE NULL,
+    [ApprovalsPauseDate] DATE NULL,
+    [ApprovalsCompletionDate] DATE NULL,
+    [ApprovalsPaymentStatus] SMALLINT NULL
     
 )
 GO
