@@ -16,7 +16,6 @@
     [StopDate] DATE NULL, 
     [PauseDate] DATE NULL, 
     [CompletionDate] DATE NULL,
-    [StandardReference] NVARCHAR(10) NULL,
     [UKPRN] INT NULL,
     [LearnRefNumber] NVARCHAR(50) NULL,
     [PaymentStatus] SMALLINT NULL

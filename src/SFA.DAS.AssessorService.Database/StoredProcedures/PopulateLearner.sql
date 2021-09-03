@@ -54,7 +54,7 @@ BEGIN
 		 ax1
 		 AS (
 		 SELECT Apx.*, ISNULL(UpdatedOn,CreatedOn) LastUpdated
-				  -- leave version null if not confirmed in Approvals, as will derive from full LearnStartDate in ILRs or EOMonth of StartDate in Approvals
+				  -- leave version null if not confirmed in Approvals, as will derive from full LearnStartDate in ILR
 				  ,CASE WHEN TrainingCourseVersionConfirmed = 1 THEN TrainingCourseVersion ELSE null END Version
 				  ,TrainingCourseVersionConfirmed VersionConfirmed
 			FROM (
@@ -75,7 +75,6 @@ BEGIN
 				  ,PauseDate
 				  ,CompletionDate
 				  ,PaymentStatus
-				  ,StandardReference
 				  ,UKPRN 
 				  ,LearnRefNumber
 				  ,CompletionStatus
@@ -117,7 +116,6 @@ BEGIN
 					  ,PauseDate
 					  ,CompletionDate
 					  ,PaymentStatus
-					  ,StandardReference
 					  ,UKPRN
 					  ,LearnRefNumber
 					  -- map Approvals date to ILR CompletionStatus value
@@ -167,12 +165,14 @@ BEGIN
 				il1.WithdrawReason,
 				il1.Outcome,
 				il1.AchDate,
-				il1.OutGrade,	
+				il1.OutGrade,
+				-- If Version set in Approvals use this, otherwise take from Startdate in ILR
 				ISNULL(ax1.Version,il1.Version) Version,
 				CASE WHEN ax1.Version IS NOT NULL THEN ax1.VersionConfirmed ELSE il1.VersionConfirmed END VersionConfirmed,
 				ax1.TrainingCourseOption CourseOption,
+				-- If StandardUId set in Approvals use this, otherwise take from Startdate in ILR
 				ISNULL(ax1.StandardUId,il1.StandardUId) StandardUid,
-				ISNULL(ax1.StandardReference,il1.StandardReference) StandardReference,
+				il1.StandardReference,
 				il1.StandardName,
 				CASE WHEN ax1.LastUpdated > il1.LastUpdated THEN ax1.LastUpdated ELSE il1.LastUpdated END LastUpdated, 
 				il1.EstimatedEndDate,
