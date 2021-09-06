@@ -38,6 +38,8 @@
         public const string DeliveryAreaNotValid = "DeliveryAreaNotValid";
         public const string SearchStandardsTooShort = "SearchStandardsTooShort";
         public const string OrganisationStandardIdIsRequired = "OrganisationStandardIdIsRequired";
+        public const string UpdatedByIsMissing = "Updated By Is Missing";
+        public const string ApplicationIdIsMissing = "Application Id is Missing";
 
         public const string OrganisationStandardEffectiveFromBeforeStandardEffectiveFrom = "OrganisationStandardEffectiveFromBeforeStandardEffectiveFrom";
         public const string OrganisationStandardEffectiveFromAfterStandardEffectiveTo = "OrganisationStandardEffectiveFromAfterStandardEffectiveTo";

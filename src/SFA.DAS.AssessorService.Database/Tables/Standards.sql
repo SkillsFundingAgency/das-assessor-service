@@ -4,7 +4,7 @@
 	[IFateReferenceNumber] VARCHAR(10) NOT NULL,
 	[LarsCode] INT NULL,
 	[Title] VARCHAR(1000) NOT NULL,
-	[Version] DECIMAL(18,1) NULL,
+	[Version] VARCHAR(20) NULL,
 	[Level] INT NOT NULL,
 	[Status] VARCHAR(100) NOT NULL,
 	[TypicalDuration] INT NOT NULL,
@@ -22,5 +22,7 @@
 	[EPAChanged] BIT NOT NULL DEFAULT 0,
 	[StandardPageUrl] VARCHAR(500) NULL, 
     [TrailBlazerContact] VARCHAR(500) NULL, 
-    [Route] VARCHAR(500) NULL
+    [Route] VARCHAR(500) NULL,
+	[VersionMajor] INT NOT NULL DEFAULT 0,
+	[VersionMinor] INT NOT NULL DEFAULT 0
 )

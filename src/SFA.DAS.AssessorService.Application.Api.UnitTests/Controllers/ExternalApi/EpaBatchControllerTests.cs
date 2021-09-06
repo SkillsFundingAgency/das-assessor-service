@@ -61,7 +61,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.External
             request.StandardReference.Should().NotBe(standard.IfateReferenceNumber);
             request.StandardUId.Should().Be(standard.StandardUId);
             // Making sure the standard doesn't overwrite the version in populate fields.
-            request.Version.Should().NotBe(standard.Version.VersionToString());
+            request.Version.Should().NotBe(standard.Version);
         }
 
         [Test, MoqAutoData]
@@ -80,7 +80,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.External
 
             //Assert
             _mockMediator.Verify(a => a.Send(It.Is<GetCalculatedStandardVersionForApprenticeshipRequest>(b => b.StandardId == request.StandardCode.ToString() && b.Uln == request.Uln), new System.Threading.CancellationToken()), Times.Once);
-            request.Version.Should().Be(standard.Version.VersionToString());
+            request.Version.Should().Be(standard.Version);
             request.StandardUId.Should().Be(standard.StandardUId);
             request.StandardReference.Should().Be(standard.IfateReferenceNumber);
             // Existing field shouldn't be overwritten.
@@ -165,7 +165,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.External
             request.StandardReference.Should().NotBe(standard.IfateReferenceNumber);
             request.StandardUId.Should().Be(standard.StandardUId);
             // Making sure the standard doesn't overwrite the version in populate fields.
-            request.Version.Should().NotBe(standard.Version.VersionToString());
+            request.Version.Should().NotBe(standard.Version);
         }
 
         [Test, MoqAutoData]
@@ -185,7 +185,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.External
 
             //Assert
             _mockMediator.Verify(a => a.Send(It.Is<GetCalculatedStandardVersionForApprenticeshipRequest>(b => b.StandardId == request.StandardCode.ToString() && b.Uln == request.Uln), new System.Threading.CancellationToken()), Times.Once);
-            request.Version.Should().Be(standard.Version.VersionToString());
+            request.Version.Should().Be(standard.Version);
             request.StandardUId.Should().Be(standard.StandardUId);
             request.StandardReference.Should().Be(standard.IfateReferenceNumber);
             // Existing field shouldn't be overwritten.

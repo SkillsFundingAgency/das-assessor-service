@@ -208,6 +208,25 @@ namespace SFA.DAS.AssessorService.Data.Apply
                 transaction: _unitOfWork.Transaction);
         }
 
+        public async Task DeclineAllApplicationsForOrgansiation(Guid currentApplyId, string endPointAssessorOrganisationId, string declinedBy)
+        {
+            await _unitOfWork.Connection.ExecuteAsync(
+                @"UPDATE a
+	                SET a.[ApplicationStatus] = 'Declined', 
+                        a.[ReviewStatus] = 'Declined',
+                        a.[UpdatedBy] = @declinedBy,
+                        a.[UpdatedAt] = GETUTCDATE()
+                FROM Apply a
+	                INNER JOIN Organisations org ON org.[Id] = a.[OrganisationId]
+                WHERE 
+	                org.[EndPointAssessorOrganisationId] = @endPointAssessorOrganisationId
+	                AND a.Id <> @currentApplyId
+                    AND a.[ApplicationStatus] IN ('New', 'In Progress', 'Submitted', 'FeedbackAdded', 'Resubmitted')",
+                param: new { currentApplyId, endPointAssessorOrganisationId, declinedBy },
+                transaction: _unitOfWork.Transaction);
+        }
+
+
         public async Task<bool> ResetApplicatonToStage1(Guid id, Guid userId)
         {
             var application = await GetApply(id);

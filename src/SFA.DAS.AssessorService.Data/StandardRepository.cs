@@ -230,7 +230,7 @@ FROM [Standards] Where [IFateReferenceNumber] = @iFateReferenceNumber";
                 StandardUId = s.StandardUId,
                 StandardCode = s.LarsCode,
                 StandardReference = s.IfateReferenceNumber,
-                Version = s.Version.VersionToString(),
+                Version = s.Version,
                 CourseOption = options.Where(o => o.StandardUId == s.StandardUId).Select(p => p.OptionName)
             });
 
@@ -296,7 +296,7 @@ FROM [Standards] Where [IFateReferenceNumber] = @iFateReferenceNumber";
                 StandardUId = standard.StandardUId,
                 StandardCode = standard.LarsCode,
                 StandardReference = standard.IfateReferenceNumber,
-                Version = standard.Version.GetValueOrDefault(1).ToString("#.0"),
+                Version = standard.Version,
                 CourseOption = options.Select(p => p.OptionName)
             };
 
@@ -944,13 +944,15 @@ FROM [Standards] Where [IFateReferenceNumber] = @iFateReferenceNumber";
             dataTable.Columns.Add("StandardPageUrl");
             dataTable.Columns.Add("TrailBlazerContact");
             dataTable.Columns.Add("Route");
+            dataTable.Columns.Add("VersionMajor");
+            dataTable.Columns.Add("VersionMinor");
 
             foreach (var standard in standards)
             {
                 dataTable.Rows.Add(standard.StandardUId, standard.IfateReferenceNumber, standard.LarsCode, standard.Title, standard.Version, standard.Level,
                     standard.Status, standard.TypicalDuration, standard.MaxFunding, standard.IsActive, standard.LastDateStarts, standard.EffectiveFrom, standard.EffectiveTo,
                     standard.VersionEarliestStartDate, standard.VersionLatestStartDate, standard.VersionLatestEndDate, standard.VersionApprovedForDelivery,
-                    standard.ProposedTypicalDuration, standard.ProposedMaxFunding, standard.EPAChanged, standard.StandardPageUrl, standard.TrailBlazerContact, standard.Route);
+                    standard.ProposedTypicalDuration, standard.ProposedMaxFunding, standard.EPAChanged, standard.StandardPageUrl, standard.TrailBlazerContact, standard.Route, standard.VersionMajor, standard.VersionMinor);
             }
 
             return dataTable;

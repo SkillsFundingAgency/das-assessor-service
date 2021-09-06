@@ -120,16 +120,32 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Extensions
         }
 
         [Test]
+        public void When_PopulatingExtraCertificateInformation_And_CertificateIsSubmittedByApi_Then_ShowSubmittedByApi()
+        {
+            SetUpIlrRecord();
+            SetUpCertificateAndLogEntries(includeSubmitted: true, createByApi: true);
+            _mockContactQueryRepository.Setup(c => c.GetContact(It.IsAny<string>()))
+               .ReturnsAsync((Contact)null);
+
+            _searchResult = _searchResults.FirstOrDefault(r => r.Uln == _searchQuery.Uln);
+
+            PopulateCertificateExtraInformationDependingOnPermission();
+
+            VerifyExtraInformationHasBeenAdded();
+            _searchResult.SubmittedBy.Should().Be("API");
+        }
+
+        [Test]
         public void When_PopulatingExtraCertificateInformation_And_CertificateIsSubmitted_And_SearchingUserIsNotPartOfTheOrganisation_Then_ExtraInformationIsNotShown()
         {
             SetUpIlrRecord();
             SetUpCertificateAndLogEntries(includeSubmitted: true);
             _mockContactQueryRepository.Setup(c => c.GetContact(It.Is<string>(username => username != _searchingContact.Username)))
-                .ReturnsAsync(new Contact());
+                .ReturnsAsync((Contact)null);
 
             _searchResult = _searchResults.FirstOrDefault(r => r.Uln == _searchQuery.Uln);
 
-            PopulateCertificateExtraInformationDependingOnPermission();
+            PopulateCertificateExtraInformationDependingOnPermission(correctOrganisation: false);
 
             VerifyExtraInformationHasNotBeenAdded();
         }
@@ -143,9 +159,17 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Extensions
                             Mock.Of<ILogger<SearchHandler>>());
         }
 
-        private void PopulateCertificateExtraInformationDependingOnPermission()
+        private void PopulateCertificateExtraInformationDependingOnPermission(bool correctOrganisation = true)
         {
-            _searchResult.PopulateCertificateExtraInformationDependingOnPermission(_searchQuery, _mockCertificateRepository.Object, _mockContactQueryRepository.Object, _certificate, new Organisation(), Mock.Of<ILogger<SearchHandler>>());
+            if (correctOrganisation)
+            {
+                _searchResult.PopulateCertificateExtraInformationDependingOnPermission(_searchQuery, _mockCertificateRepository.Object, _mockContactQueryRepository.Object, _certificate, _searchingOrganisation, Mock.Of<ILogger<SearchHandler>>());
+            }
+            else
+            {
+                _searchResult.PopulateCertificateExtraInformationDependingOnPermission(_searchQuery, _mockCertificateRepository.Object, _mockContactQueryRepository.Object, _certificate, new Organisation(), Mock.Of<ILogger<SearchHandler>>());
+
+            }
         }
 
         private void VerifyExtraInformationHasBeenAdded()
@@ -183,13 +207,14 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Extensions
                 .Build().ToList();
         }
 
-        private void SetUpCertificateAndLogEntries(bool includeSubmitted = false)
+        private void SetUpCertificateAndLogEntries(bool includeSubmitted = false, bool createByApi = false)
         {
             _certificateData = Builder<CertificateData>.CreateNew().Build();
 
             _certificate = Builder<Certificate>.CreateNew()
                 .With(x => x.CertificateData = JsonConvert.SerializeObject(_certificateData))
                 .With(r => r.Uln = 1111111111)
+                .With(x => x.CreatedBy = createByApi ? "API" : "username@epao.co.uk")
             .Build();
 
             _certificates = new List<Certificate> { _certificate };
@@ -202,6 +227,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Extensions
                     .With(x => x.CertificateId = _certificate.Id)
                     .With(x => x.Status = CertificateStatus.Draft)
                     .With(x => x.EventTime = DateTime.UtcNow.AddDays(-1))
+                    .With(x => x.Username = createByApi ? "API" : "username@epao.co.uk")
                 .Build().ToList();
              
             if (includeSubmitted)
@@ -209,6 +235,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Extensions
                 certificateLogEntries.Add(Builder<CertificateLog>.CreateNew()
                     .With(x => x.Status = CertificateStatus.Submitted)
                     .With(x => x.Action = CertificateActions.Submit)
+                    .With(x => x.Username = createByApi ? "API" : "username@epao.co.uk")
                     .With(x => x.EventTime = DateTime.UtcNow).Build());
             }
 

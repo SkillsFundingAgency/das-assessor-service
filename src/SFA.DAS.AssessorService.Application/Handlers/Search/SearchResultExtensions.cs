@@ -23,7 +23,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
             foreach (var searchResult in searchResults)
             {
                 var standards = allStandards.Where(s => s.LarsCode == searchResult.StdCode)
-                    .OrderByDescending(o => o.Version);
+                    .OrderByDescending(o => o.VersionMajor).ThenByDescending(m => m.VersionMinor);
 
                 if(!standards.Any())
                 {
@@ -38,7 +38,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
                 {
                     Title = s.Title,
                     StandardUId = s.StandardUId,
-                    Version = s.Version.GetValueOrDefault(1).ToString("#.0"),
+                    Version = s.Version,
                     Options = allOptions.SingleOrDefault(o => o.StandardUId == s.StandardUId)?.CourseOption
                 }).ToList();
             }
@@ -115,7 +115,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
             Certificate certificate, Organisation searchingEpao, ILogger<SearchHandler> logger)
         {
             var certificateLogs = certificateRepository.GetCertificateLogsFor(certificate.Id).Result;
-            logger.LogInformation("MatchUpExistingCompletedStandards After GetCertificateLogsFor");
+            logger.LogInformation($"MatchUpExistingCompletedStandards After GetCertificateLogsFor CertificateId {certificate.Id}");
             var createdLogEntry = certificateLogs.FirstOrDefault(l => l.Status == CertificateStatus.Draft);
 
             var submittedLogEntry = certificateLogs.FirstOrDefault(l => l.Action == CertificateActions.Submit);
@@ -131,13 +131,13 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
             var lastUpdatedLogEntry = certificateLogs.Aggregate((i1, i2) => i1.EventTime > i2.EventTime ? i1 : i2) ?? submittedLogEntry;
             var lastUpdatedContact = contactRepository.GetContact(lastUpdatedLogEntry.Username).Result;
 
-            logger.LogInformation("MatchUpExistingCompletedStandards After GetContact");
+            logger.LogInformation($"MatchUpExistingCompletedStandards After GetContact for CertificateId {certificate.Id}");
 
             var searchingContact = contactRepository.GetContact(request.Username).Result;
 
             var certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
 
-            if (submittingContact.OrganisationId == searchingContact.OrganisationId)
+            if (submittingContact != null && searchingContact != null && submittingContact.OrganisationId == searchingContact.OrganisationId)
             {
                 searchResult.ShowExtraInfo = true;
                 searchResult.OverallGrade = certificateData.OverallGrade;

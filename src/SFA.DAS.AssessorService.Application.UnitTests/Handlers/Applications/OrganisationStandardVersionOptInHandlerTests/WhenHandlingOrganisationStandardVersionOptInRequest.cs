@@ -99,7 +99,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.OrganisationSta
                 EndPointAssessorOrganisationId = "ORG",
                 StandardReference = "ST0001",
                 StandardUId = "ST0001_1_2",
-                Version = 1.2M,
+                Version = "1.2",
                 ApplicationId = _applicationId
             };
 
@@ -110,7 +110,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.OrganisationSta
             _mockRepository.Verify(m => m.CreateOrganisationStandardVersion(It.Is<Domain.Entities.OrganisationStandardVersion>(x =>
                     x.OrganisationStandardId == 123 &&
                     x.StandardUId == "ST0001_1_2" &&
-                    x.Version == 1.2M)));
+                    x.Version == "1.2")));
          }
 
         [Test]
@@ -122,7 +122,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.OrganisationSta
                 EndPointAssessorOrganisationId = "ORG",
                 StandardReference = "ST0001",
                 StandardUId = "ST0001_1_2",
-                Version = 1.2M,
+                Version = "1.2",
                 ApplicationId = _applicationId
             };
 
@@ -146,7 +146,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.OrganisationSta
                 EndPointAssessorOrganisationId = "ORG",
                 StandardReference = "ST0001",
                 StandardUId = "ST0001_1_2",
-                Version = 1.2M,
+                Version = "1.2",
                 ApplicationId = _applicationId
             };
 
@@ -176,7 +176,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.OrganisationSta
                 EndPointAssessorOrganisationId = "ORG",
                 StandardReference = "ST0001",
                 StandardUId = "ST0001_1_3",
-                Version = 1.2M,
+                Version = "1.2",
                 ApplicationId = _applicationId
             };
 

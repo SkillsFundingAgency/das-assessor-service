@@ -266,7 +266,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
 
             var result = await _standardService.GetEPAORegisteredStandardVersions(epaoId, null);
 
-            result.Should().BeEquivalentTo(standards.Select(s => new { StandardUId = s.StandardUId, Version = s.Version.Value.ToString("0.0#") }));
+            result.Should().BeEquivalentTo(standards.Select(s => new { StandardUId = s.StandardUId, Version = s.Version }));
         }
 
         [Test, RecursiveMoqAutoData]
@@ -276,7 +276,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
 
             var result = await _standardService.GetEPAORegisteredStandardVersions(epaoId, larsCode);
 
-            result.Should().BeEquivalentTo(standards.Select(s => new { StandardUId = s.StandardUId, Version = s.Version.Value.ToString("0.0#") }));
+            result.Should().BeEquivalentTo(standards.Select(s => new { StandardUId = s.StandardUId, Version = s.Version }));
         }
 
         [Test, AutoData]
