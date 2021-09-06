@@ -72,7 +72,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
 
     public class OppFinderApprovedStandardVersionResult
     {
-        public decimal Version { get; set; }
+        public string Version { get; set; }
         public int EndPointAssessors { get; set; }
         public int ActiveApprentices { get; set; }
         public int CompletedAssessments { get; set; }

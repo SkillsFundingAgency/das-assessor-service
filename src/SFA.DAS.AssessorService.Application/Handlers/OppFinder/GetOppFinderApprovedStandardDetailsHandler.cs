@@ -86,7 +86,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Standards
                 }),
                 VersionResults = result.VersionResults?.ConvertAll(p => new OppFinderApprovedStandardDetailsVersionResult
                 {
-                    Version = p.Version.VersionToString(),
+                    Version = p.Version,
                     EndPointAssessors = p.EndPointAssessors,
                     ActiveApprentices = p.ActiveApprentices,
                     CompletedAssessments = p.CompletedAssessments

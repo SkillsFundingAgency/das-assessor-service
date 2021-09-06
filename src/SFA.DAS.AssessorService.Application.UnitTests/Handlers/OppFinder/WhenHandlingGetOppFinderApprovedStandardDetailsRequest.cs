@@ -54,11 +54,11 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.OppFinder
                 {
                     new OppFinderApprovedStandardVersionResult()
                     {
-                        Version = 1.0m,
+                        Version = "1.0",
                     },
                     new OppFinderApprovedStandardVersionResult()
                     {
-                        Version = 1.1m,
+                        Version = "1.1",
                     }
 
                 }

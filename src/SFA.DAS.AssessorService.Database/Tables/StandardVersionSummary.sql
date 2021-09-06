@@ -3,7 +3,7 @@
 CREATE TABLE [StandardVersionSummary](
     [StandardCode] INT NULL, 
     [StandardReference] [nvarchar](10) NULL,
-    [Version] DECIMAL(18,1) NULL,
+    [Version] VARCHAR(20) NULL,
     [ActiveApprentices] INT NULL, 
     [CompletedAssessments] INT NULL, 
     [EndPointAssessors] INT NULL, 
