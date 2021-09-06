@@ -71,7 +71,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.External
             request.StandardUId.Should().Be(standard.StandardUId);
             // Making sure the standard doesn't overwrite the version in populate fields.
             // As it is supplied
-            request.CertificateData.Version.Should().NotBe(standard.Version.VersionToString());
+            request.CertificateData.Version.Should().NotBe(standard.Version);
         }
 
         [Test, RecursiveMoqAutoData]
@@ -120,7 +120,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.External
 
             //Assert
             _mockMediator.Verify(a => a.Send(It.Is<GetCalculatedStandardVersionForApprenticeshipRequest>(b => b.StandardId == request.StandardCode.ToString() && b.Uln == request.Uln), new System.Threading.CancellationToken()), Times.Once);
-            request.CertificateData.Version.Should().Be(standard.Version.VersionToString());
+            request.CertificateData.Version.Should().Be(standard.Version);
             request.StandardUId.Should().Be(standard.StandardUId);
             request.StandardReference.Should().Be(standard.IfateReferenceNumber);
             // Existing field shouldn't be overwritten.
@@ -211,7 +211,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.External
             request.StandardUId.Should().Be(standard.StandardUId);
             // Making sure the standard doesn't overwrite the version in populate fields.
             // As it is supplied
-            request.CertificateData.Version.Should().NotBe(standard.Version.VersionToString());
+            request.CertificateData.Version.Should().NotBe(standard.Version);
             request.StandardUId.Should().NotBe(certificate.StandardUId);
         }
 

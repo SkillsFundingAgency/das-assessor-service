@@ -50,6 +50,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
                 StandardPageUrl = source.StandardPageUrl,
                 TrailBlazerContact = source.TrailBlazerContact,
                 Route = source.Route,
+                VersionMajor = source.VersionMajor,
+                VersionMinor = source.VersionMinor,
                 IntegratedDegree = source.IntegratedDegree,
                 EqaProviderName = source.EqaProvider?.Name,
                 EqaProviderContactName = source.EqaProvider?.ContactName,

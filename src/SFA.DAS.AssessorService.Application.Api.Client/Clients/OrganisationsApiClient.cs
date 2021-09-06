@@ -457,7 +457,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         }
 
         public async Task<OrganisationStandardVersion> OrganisationStandardVersionOptIn(Guid applicationId, Guid contactId, string endPointAssessorOrganisationId, 
-            string standardReference, decimal? version, string standardUId, string comments)
+            string standardReference, string version, string standardUId, string comments)
         {
             var createVersionRequest = new OrganisationStandardVersionOptInRequest
             {

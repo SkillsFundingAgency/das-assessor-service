@@ -32,7 +32,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Standards
             
             var versions = await _standardService.GetStandardVersionsByLarsCode(standard.LarsCode);
 
-            foreach (var version in versions.OrderBy(s => s.Version))
+            foreach (var version in versions.OrderBy(s => s.VersionMajor).ThenBy(t => t.VersionMinor))
             {
                 if (ilr.LearnStartDate <= version.VersionLatestStartDate || version.VersionLatestStartDate == null)
                 {
