@@ -25,7 +25,13 @@ namespace SFA.DAS.AssessorService.Application.Infrastructure.OuterApi
         public int Level { get; set; }
 
         [JsonProperty("version")]
-        public decimal Version { get; set; }
+        public string Version { get; set; }
+
+        [JsonProperty("versionMajor")]
+        public int VersionMajor { get; set; }
+        
+        [JsonProperty("versionMinor")]
+        public int VersionMinor { get; set; }
 
         [JsonProperty("overviewOfRole")]
         public string OverviewOfRole { get; set; }

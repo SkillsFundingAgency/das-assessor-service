@@ -20,6 +20,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         
         Task<Guid> CreateApplication(Domain.Entities.Apply apply);
         Task DeleteApplication(Guid id, string deletedBy);
+        Task DeclineAllApplicationsForOrgansiation(Guid currentApplyId, string endPointAssessorOrganisationId, string declinedBy);
         Task<bool> CanSubmitApplication(Guid applicationId);
         Task SubmitApplicationSequence(Domain.Entities.Apply apply);
         Task<int> GetNextAppReferenceSequence();

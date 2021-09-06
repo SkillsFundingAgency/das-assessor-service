@@ -101,6 +101,20 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
             return Ok();
         }
-        
+
+        [HttpPost("withdraw", Name = "WithdrawOrganisation")]
+        [ValidateBadRequest]
+        [SwaggerResponse((int)HttpStatusCode.NoContent)]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> WithdrawalOrganisation(
+           [FromBody] WithdrawOrganisationRequest request)
+        {
+            _logger.LogInformation("Received Withdrawal Organisation Request");
+
+            await _mediator.Send(request);
+
+            return NoContent();
+        }
     }
 }

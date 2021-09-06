@@ -36,6 +36,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ao
 
                 var versions = await _standardService.GetEPAORegisteredStandardVersions(organisationId, orgStandard.StandardCode);
                 orgStandard.StandardVersions = versions.ToList();
+
+                //Query doesn't populate it as it's mismatched on name.
+                orgStandard.OrganisationId = organisationId;
             }
 
             return orgStandards.ToList();

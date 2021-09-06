@@ -25,7 +25,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.AO
                 StandardUId = version.StandardUId,
                 LarsCode = version.LarsCode,
                 IFateReferenceNumber = version.IFateReferenceNumber,
-                Version = version.Version.VersionToString(),
+                Version = version.Version,
                 Title = version.Title,
                 Level = version.Level,
                 OrganisationStandardId = version.OrganisationStandardId,

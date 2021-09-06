@@ -8,7 +8,9 @@ namespace SFA.DAS.AssessorService.Domain.Entities
         public string IfateReferenceNumber { get; set; }
         public int LarsCode { get; set; }
         public string Title { get; set; }
-        public decimal? Version { get; set; }
+        public string Version { get; set; }
+        public int VersionMajor { get; set; }
+        public int VersionMinor { get; set; }
         public int Level { get; set; }
         public string Status { get; set; }
         public int TypicalDuration { get; set; }
