@@ -10,7 +10,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.AO
         public string StandardUId { get; set; }
         public string Title { get; set; }
         public string IFateReferenceNumber { get; set; }
-        public decimal Version { get; set; }
+        public string Version { get; set; }
         public int Level { get; set; }
         public int LarsCode { get; set; }
         public string Status { get; set; }

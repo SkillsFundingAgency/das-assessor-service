@@ -38,10 +38,10 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Applications.Wi
             StandardRepository.Setup(m => m.GetEpaoRegisteredStandardVersions(It.IsAny<string>()))
                 .ReturnsAsync(
                     new List<OrganisationStandardVersion>() {
-                        new OrganisationStandardVersion() { Version = 1.0m },
-                        new OrganisationStandardVersion() { Version = 1.1m },
-                        new OrganisationStandardVersion() { Version = 1.2m },
-                        new OrganisationStandardVersion() { Version = 1.3m },
+                        new OrganisationStandardVersion() { Version = "1.0m" },
+                        new OrganisationStandardVersion() { Version = "1.1m" },
+                        new OrganisationStandardVersion() { Version = "1.2m" },
+                        new OrganisationStandardVersion() { Version = "1.3m" },
                     });
 
             Handler = new WithdrawalApplicationsHandler(ApplyRepository.Object, Logger.Object, StandardRepository.Object);

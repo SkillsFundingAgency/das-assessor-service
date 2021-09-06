@@ -42,7 +42,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Organisations
         [Test, RecursiveMoqAutoData]
         public async Task Then_UpdateOrganisationStandardVersion(OrganisationStandardVersion version)
         {
-            _mockOrganisationStandardRepository.Setup(repository => repository.GetOrganisationStandardVersionByOrganisationStandardIdAndVersion(It.IsAny<int>(), It.IsAny<decimal>()))
+            _mockOrganisationStandardRepository.Setup(repository => repository.GetOrganisationStandardVersionByOrganisationStandardIdAndVersion(It.IsAny<int>(), It.IsAny<string>()))
                .ReturnsAsync(version);
 
             _mockValidator.Setup(v => v.ValidatorUpdateOrganisationStandardVersionRequest(_request))

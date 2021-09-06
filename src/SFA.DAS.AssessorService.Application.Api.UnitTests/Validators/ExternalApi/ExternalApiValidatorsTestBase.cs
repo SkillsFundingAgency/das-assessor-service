@@ -298,7 +298,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
                 .With(i => i.LarsCode = standardCode)
                 .With(i => i.IfateReferenceNumber = $"ST{standardCode}")
                 .With(i => i.Level = standardCode)
-                .With(i => i.Version = 1.0m)
+                .With(i => i.Version = "1.0")
                 .With(i => i.StandardUId = $"ST{standardCode}_{1.0m}").Build();
         }
 

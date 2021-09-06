@@ -8,7 +8,7 @@ namespace SFA.DAS.AssessorService.Domain.Entities
         public string Title { get; set; }
         public int LarsCode { get; set; }
         public string IFateReferenceNumber { get; set; }
-        public decimal? Version { get; set; }
+        public string Version { get; set; }
         public int Level { get; set; }
         public int OrganisationStandardId { get; set; }
 
