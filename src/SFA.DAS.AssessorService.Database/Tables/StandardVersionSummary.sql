@@ -12,6 +12,6 @@ CREATE TABLE [StandardVersionSummary](
 GO
 
 
-CREATE INDEX [IX_StandardVersionSummary] ON [StandardVersionSummary] ([StandardCode])
+CREATE INDEX [IX_StandardVersionSummary] ON [StandardVersionSummary] ([StandardReference])
 GO
 

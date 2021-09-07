@@ -19,6 +19,6 @@ CREATE TABLE [StandardSummary](
 GO
 
 
-CREATE INDEX [IX_StandardSummary] ON [StandardSummary] ([StandardCode])
+CREATE INDEX [IX_StandardSummary] ON [StandardSummary] ([StandardReference],[Ordering])
 GO
 
