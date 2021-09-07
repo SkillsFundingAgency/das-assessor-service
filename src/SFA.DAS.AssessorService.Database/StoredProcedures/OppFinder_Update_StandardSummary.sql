@@ -60,7 +60,7 @@ BEGIN
 		   AND ISNULL(IntegratedDegree, '') <> 'integrated degree'
 		   AND (EffectiveTo IS NULL OR EffectiveTo > GETDATE() )
 		   -- When LARS set LastDateStarts to EffectiveFrom Date this is because there is no EPAO for this standard, so we want EPAOs to see the Opportunity!
-		   AND (LastDateStarts IS NULL OR LastDateStarts != EffectiveFrom)
+		   AND (LastDateStarts IS NULL OR LastDateStarts = EffectiveFrom)
 	) stv 
 	LEFT JOIN @Exclusions ex1 ON ex1.StandardReference = stv.StandardReference
 	WHERE RowNumber = 1
