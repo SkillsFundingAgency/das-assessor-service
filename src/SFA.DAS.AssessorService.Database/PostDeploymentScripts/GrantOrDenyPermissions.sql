@@ -16,3 +16,6 @@ GO
 
 GRANT EXECUTE ON [DashboardReporting].[CertificatePrintSummary] TO [DashboardReporting]
 GO
+
+GRANT EXECUTE ON [DashboardReporting].[IlrImportSummary] TO [DashboardReporting]
+GO
