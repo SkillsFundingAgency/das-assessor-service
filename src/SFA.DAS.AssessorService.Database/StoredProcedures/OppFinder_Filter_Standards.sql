@@ -10,86 +10,58 @@ BEGIN
 	DECLARE @SectorFiltersInternal NVARCHAR(MAX) = ISNULL(@SectorFilters, '')
 	DECLARE @LevelFiltersInternal NVARCHAR(MAX) = ISNULL(@LevelFilters, '')
 
-	-- get sector and standard level from approved standards
-	SELECT 
-		StandardReference, 
-		StandardName, 
-		Sector,
-		CASE StandardLevel WHEN 0 THEN 'To be confirmed' ELSE CONVERT(VARCHAR, StandardLevel) END StandardLevel
-	INTO #ApprovedSearchResults FROM StandardSummary
-	WHERE
-		@SearchTermInternal = '' OR
-		(
-			(StandardName LIKE '%' + @SearchTermInternal + '%' ) OR
-			(StandardReference LIKE '%' + @SearchTermInternal + '%') OR
-			(Sector LIKE '%' + @SearchTermInternal + '%')
-		)
-	GROUP BY 
-		StandardReference, StandardName, Sector, StandardLevel
-	
-	-- there are some specifically excluded non approved Standards
+	-- there are some specifically excluded Standards
 	DECLARE @Exclusions TABLE
 	(
-		[StandardName] nvarchar(500),
-		[StandardReference] nvarchar(10)
+		StandardName nvarchar(500),
+		StandardReference nvarchar(10)
 	) 
 	
 	INSERT INTO @Exclusions(StandardName, StandardReference)
 	EXEC OppFinder_Exclusions 
 
-	-- get the sector and standard level from non approved standards
-	SELECT 
-		ReferenceNumber StandardReference, 
-		Title StandardName,
-		JSON_VALUE(StandardData, '$.Category') Sector,
-		CASE JSON_VALUE(StandardData, '$.Level') WHEN 0 THEN 'To be confirmed' ELSE CONVERT(VARCHAR, JSON_VALUE(StandardData, '$.Level')) END StandardLevel
-	INTO
-		#NonApprovedSearchResults
-	FROM 
-		StandardNonApprovedCollation
-	LEFT JOIN 
-		@Exclusions Exclusions
-		ON Exclusions.StandardReference = StandardNonApprovedCollation.ReferenceNumber
-	WHERE
-		Exclusions.StandardReference IS NULL AND
-		(
-			[dbo].OppFinder_Is_InDevelopment_StandardStatus(StandardData) = 1 OR
-			-- when an Approved standard is in the [StandardNonApprovedCollation] (because it has no StandardId) it is returned in results
-			[dbo].OppFinder_Is_Approved_StandardStatus(StandardData) = 1 OR
-			[dbo].OppFinder_Is_Proposed_StandardStatus(StandardData) = 1
-		)
-		AND 
-		(	@SearchTerm = '' OR
-			(
-				(Title LIKE '%' + @SearchTerm + '%' ) OR
-				(ReferenceNumber LIKE '%' + @SearchTerm + '%') OR
-				(JSON_VALUE(StandardData, '$.Category') LIKE '%' + @SearchTerm + '%')
-			)
-		)
-		AND IsLive = 1
-	GROUP BY 
-		ReferenceNumber, Title, StandardData
+    -- pre-filtered standards 
+	DECLARE @StandardsBase TABLE
+	(
+		 StandardReference nvarchar(10) NOT NULL,
+		 StandardName nvarchar(500) NOT NULL,
+		 StandardLevel varchar(20) NULL,
+		 Sector nvarchar(500) NOT NULL
+	);
 
-	-- combine approved and non approved into a single search result
-	SELECT 
-		StandardReference, 
-		StandardName, 
-		Sector, 
-		StandardLevel
+	INSERT INTO @StandardsBase (StandardReference, StandardName, StandardLevel, Sector)
+	SELECT stv.StandardReference, stv.StandardName
+          ,CASE StandardLevel WHEN 0 THEN 'To be confirmed' ELSE CONVERT(VARCHAR, StandardLevel) END StandardLevel, Sector
+	FROM (
+		SELECT st1.IFateReferenceNumber StandardReference
+			  ,Title StandardName
+			  ,Level StandardLevel
+			  ,Route Sector
+			  ,ROW_NUMBER() OVER(PARTITION BY st1.IFateReferenceNumber ORDER BY VersionMajor DESC, VersionMinor DESC) AS RowNumber
+		FROM Standards st1
+		WHERE 1=1
+		  AND Status IN ('In development','Proposal in development','Approved for delivery' )
+		  AND ISNULL(IntegratedDegree, '') <> 'integrated degree'
+	) stv 
+	LEFT JOIN @Exclusions ex1 ON ex1.StandardReference = stv.StandardReference
+	WHERE RowNumber = 1
+	  AND ex1.StandardName IS NULL
+
+      
+	-- get sector and standard level for approved, in development and proposed standards
+	SELECT StandardReference, StandardName, Sector, StandardLevel
 	INTO
 		#SearchResults
-	FROM
-	(
-		(
-			SELECT StandardReference, StandardName, Sector, StandardLevel
-			FROM #ApprovedSearchResults
-		) 
-		UNION
-		(
-			SELECT StandardReference, StandardName, Sector, StandardLevel
-			FROM #NonApprovedSearchResults
-		) 
-	) [SearchResults]
+	FROM @StandardsBase
+	WHERE 1 = 1
+	  AND 
+		(	@SearchTerm = '' OR
+			(
+				(StandardName LIKE '%' + @SearchTerm + '%' ) OR
+				(StandardReference LIKE '%' + @SearchTerm + '%') OR
+				(Sector LIKE '%' + @SearchTerm + '%')
+			)
+		)
 
 	-- apply a sector level filter to the search results
 	SELECT 
@@ -130,12 +102,7 @@ BEGIN
 			UNION ALL
 			(
 				SELECT Sector, 0 MatchingSectoryFilter 
-				FROM StandardSummary GROUP BY Sector
-			)
-			UNION ALL
-			(
-				SELECT JSON_VALUE(StandardData, '$.Category') Sector, 0 MatchingSectorFilter
-				FROM StandardNonApprovedCollation GROUP BY JSON_VALUE(StandardData, '$.Category')
+				FROM @StandardsBase GROUP BY Sector
 			)
 		) 
 		[AllResults]
@@ -152,13 +119,8 @@ BEGIN
 			)
 			UNION ALL
 			(
-				SELECT CASE StandardLevel WHEN 0 THEN 'To be confirmed' ELSE CONVERT(VARCHAR, StandardLevel) END StandardLevel, 0 MatchingLevelFilter
-				FROM StandardSummary GROUP BY CASE StandardLevel WHEN 0 THEN 'To be confirmed' ELSE CONVERT(VARCHAR, StandardLevel) END
-			)
-			UNION ALL
-			(
-				SELECT CASE JSON_VALUE(StandardData, '$.Level') WHEN 0 THEN 'To be confirmed' ELSE JSON_VALUE(StandardData, '$.Level') END StandardLevel, 0 MatchingLevelFilter
-				FROM StandardNonApprovedCollation GROUP BY CASE JSON_VALUE(StandardData, '$.Level') WHEN 0 THEN 'To be confirmed' ELSE JSON_VALUE(StandardData, '$.Level') END
+				SELECT StandardLevel, 0 MatchingLevelFilter 
+				FROM @StandardsBase GROUP BY StandardLevel
 			)
 		)
 		[AllResults]

@@ -62,8 +62,8 @@ BEGIN
 		   -- When LARS set LastDateStarts to EffectiveFrom Date this is because there is no EPAO for this standard, so we want EPAOs to see the Opportunity!
 		   AND (LastDateStarts IS NULL OR LastDateStarts != EffectiveFrom)
 	) stv 
-    LEFT JOIN @Exclusions ex1 ON ex1.StandardReference = stv.StandardReference
-    WHERE RowNumber = 1
+	LEFT JOIN @Exclusions ex1 ON ex1.StandardReference = stv.StandardReference
+	WHERE RowNumber = 1
 	  AND ex1.StandardName IS NULL;
 
 	BEGIN TRY;
@@ -73,10 +73,10 @@ BEGIN
 	
 	INSERT INTO StandardSummary
 	-- combine results FROM 4 subqueries
-    SELECT ac.StandardCode, ac.StandardReference, ac.StandardName, ac.StandardLevel, ac.Sector, 
-           Total.Region, Total.Ordering, Total.Learners, Total.Assessments, Total.TotalEPAOs, Total.EndPointAssessors, 
-           Total.EndPointAssessorList, GETDATE() UpdatedAt, ac.Versions
-    FROM @StandardsCore ac          
+	SELECT ac.StandardCode, ac.StandardReference, ac.StandardName, ac.StandardLevel, ac.Sector, 
+		   Total.Region, Total.Ordering, Total.Learners, Total.Assessments, Total.TotalEPAOs, Total.EndPointAssessors, 
+		   Total.EndPointAssessorList, GETDATE() UpdatedAt, ac.Versions
+	FROM @StandardsCore ac		  
 	JOIN (
 
 	SELECT StandardReference, Region, Ordering, SUM(Learners) Learners, SUM(Assessments) Assessments, SUM(TotalEPAOs) TotalEPAOs,SUM(EndPointAssessors) EndPointAssessors, 
@@ -97,7 +97,7 @@ BEGIN
 				FROM Learner le1 
 				LEFT JOIN Certificates ce1 ON ce1.StandardCode = le1.StdCode and ce1.Uln = le1.Uln 
 				WHERE ce1.Uln IS NULL
-                AND le1.FundingModel != 99
+				AND le1.FundingModel != 99
 				AND le1.CompletionStatus = 1
 				AND le1.EstimatedEndDate >= DATEADD(month,-6,GETDATE())
 			) il2
@@ -110,7 +110,7 @@ BEGIN
 
 		-- EPAOs by Region
 		SELECT StandardReference, Region, Ordering
-		      ,0 Learners
+			  ,0 Learners
 			  ,0 Assessments
 			  ,TotalEPAOs
 			  ,EndPointAssessors
@@ -118,12 +118,12 @@ BEGIN
 		FROM (
 
 			SELECT os1.StandardReference ,ISNULL(Area,'Other') Region, de1.Ordering, TotalEPAOs, COUNT(*) EndPointAssessors
-					,'{"EPAOS":'+STRING_AGG (CAST('"'+EndPointAssessorName+'"' as NVARCHAR(MAX)), ',') WITHIN GROUP (ORDER BY EndPointAssessorName ASC)+'}' AS EndPointAssessorList 
+					,'{"EPAOS":['+STRING_AGG (CAST('"'+EndPointAssessorName+'"' as NVARCHAR(MAX)), ',') WITHIN GROUP (ORDER BY EndPointAssessorName ASC)+']}' AS EndPointAssessorList 
 			FROM (
 				SELECT COUNT(*) OVER (PARTITION BY os2.StandardReference) TotalEPAOs,os2.* 
 				FROM OrganisationStandard os2 
 				JOIN (SELECT DISTINCT OrganisationStandardId 
-				        FROM OrganisationStandardVersion 
+						FROM OrganisationStandardVersion 
 					   WHERE status = 'Live' AND (EffectiveTo IS NULL OR EffectiveTo > GETDATE() ) 
 					 ) osv ON os2.id = osv.OrganisationStandardId
 				WHERE os2.Status = 'Live' 
@@ -165,24 +165,24 @@ BEGIN
 	WHERE NOT (Region = 'Other' AND Learners = 0)
 	GROUP BY StandardReference, Region, Ordering
 	) Total On Total.StandardReference = ac.StandardReference
-    ORDER BY StandardReference, Ordering
+	ORDER BY StandardReference, Ordering
 
 	
 	-- populate the StandardVersionSummary table
-    
-    INSERT INTO StandardVersionSummary
-    (StandardCode, StandardReference, Version, ActiveApprentices, CompletedAssessments, EndPointAssessors, UpdatedAt)
-    SELECT st1.Larscode StandardCode
-        ,st1.IfateReferenceNumber StandardReference
-        ,st1.Version
-        ,SUM(ActiveApprentices) ActiveApprentices
-        ,SUM(CompletedAssessments) CompletedAssessments
-        ,SUM(EndPointAssessors) EndPointAssessors
-        ,GETDATE() UpdatedAt
-    FROM @StandardsCore ac          
-    JOIN Standards st1 ON ac.StandardReference = st1.IfateReferenceNumber
-    JOIN (
-        -- EPAOs 
+	
+	INSERT INTO StandardVersionSummary
+	(StandardCode, StandardReference, Version, ActiveApprentices, CompletedAssessments, EndPointAssessors, UpdatedAt)
+	SELECT st1.Larscode StandardCode
+		,st1.IfateReferenceNumber StandardReference
+		,st1.Version
+		,SUM(ActiveApprentices) ActiveApprentices
+		,SUM(CompletedAssessments) CompletedAssessments
+		,SUM(EndPointAssessors) EndPointAssessors
+		,GETDATE() UpdatedAt
+	FROM @StandardsCore ac		  
+	JOIN Standards st1 ON ac.StandardReference = st1.IfateReferenceNumber
+	JOIN (
+		-- EPAOs 
 		SELECT osv.StandardUId, COUNT(*) AS EndPointAssessors, 0 CompletedAssessments, 0 ActiveApprentices
 		FROM OrganisationStandardVersion osv
 		INNER JOIN OrganisationStandard os ON osv.OrganisationStandardId = os.Id
@@ -193,7 +193,7 @@ BEGIN
 		GROUP BY osv.StandardUId
 
 		UNION ALL
-        -- Assessments
+		-- Assessments
 		SELECT StandardUId, 0 EndPointAssessors, COUNT(*) AS CompletedAssessments, 0 ActiveApprentices
 		FROM Certificates 
 		WHERE IsPrivatelyFunded = 0
@@ -211,9 +211,16 @@ BEGIN
  		  AND le1.CompletionStatus = 1
 		  AND le1.EstimatedEndDate >= DATEADD(month,-6,GETDATE())
 		GROUP BY le1.StandardUId
-        
-    ) vt1 ON vt1.StandardUId = st1.StandardUId
-    GROUP BY  st1.Larscode, st1.IfateReferenceNumber, st1.Version
+
+		UNION ALL
+
+		-- all versions of all standards
+		SELECT StandardUId, 0 EndPointAssessors, 0 AS CompletedAssessments, 0 AS ActiveApprentices
+		FROM Standards
+		WHERE VersionApprovedForDelivery IS NOT NULL 
+		
+	) vt1 ON vt1.StandardUId = st1.StandardUId
+	GROUP BY  st1.Larscode, st1.IfateReferenceNumber, st1.Version
 
 	END TRY
 	BEGIN CATCH;
