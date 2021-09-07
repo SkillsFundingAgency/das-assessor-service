@@ -38,7 +38,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Extensions
                     if (string.IsNullOrWhiteSpace(request.Version))
                     {
                         // if version is null or empty, set version to the calculated version as a default.
-                        request.Version = standard.Version.VersionToString();
+                        request.Version = standard.Version;
                         request.StandardUId = standard.StandardUId;
                     }
                 }

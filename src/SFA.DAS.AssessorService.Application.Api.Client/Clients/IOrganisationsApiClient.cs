@@ -65,6 +65,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         Task<EpaOrganisation> GetEpaOrganisationById(string Id);
 
         Task<OrganisationStandardVersion> OrganisationStandardVersionOptIn(Guid applicationId, Guid contactId, string endPointAssessorOrganisationId, 
-           string standardReference, decimal? version, string standardUId, string comments);
+           string standardReference, string version, string standardUId, string comments);
     }
 }

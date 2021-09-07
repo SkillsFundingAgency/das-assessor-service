@@ -192,7 +192,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Standard
             {
                 StandardUId = standard.StandardUId,
                 Title = standard.Title,
-                Version = standard.Version.VersionToString(),
+                Version = standard.Version,
                 IFateReferenceNumber = standard.IfateReferenceNumber,
                 LarsCode = standard.LarsCode,
                 Level = standard.Level,

@@ -23,7 +23,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
             foreach (var searchResult in searchResults)
             {
                 var standards = allStandards.Where(s => s.LarsCode == searchResult.StdCode)
-                    .OrderByDescending(o => o.Version);
+                    .OrderByDescending(o => o.VersionMajor).ThenByDescending(m => m.VersionMinor);
 
                 if(!standards.Any())
                 {
@@ -38,7 +38,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
                 {
                     Title = s.Title,
                     StandardUId = s.StandardUId,
-                    Version = s.Version.GetValueOrDefault(1).ToString("#.0"),
+                    Version = s.Version,
                     Options = allOptions.SingleOrDefault(o => o.StandardUId == s.StandardUId)?.CourseOption
                 }).ToList();
             }
