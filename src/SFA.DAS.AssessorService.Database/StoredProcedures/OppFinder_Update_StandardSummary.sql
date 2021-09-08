@@ -161,7 +161,7 @@ BEGIN
 		LEFT JOIN DeliveryArea de1 on de1.Id = pc1.DeliveryAreaId
 		GROUP BY od1.StandardReference, ISNULL(Area,'Other'), ISNULL(Ordering,10) 
 	) ab1
-	WHERE NOT (Region = 'Other' AND Learners = 0)
+	WHERE NOT (Region = 'Other' AND Learners = 0 AND Assessments = 0)
 	GROUP BY StandardReference, Region, Ordering
 	) Total On Total.StandardReference = ac.StandardReference
 	ORDER BY StandardReference, Ordering
