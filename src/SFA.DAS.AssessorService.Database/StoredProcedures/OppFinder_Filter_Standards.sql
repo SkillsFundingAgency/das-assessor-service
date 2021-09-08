@@ -20,7 +20,7 @@ BEGIN
 	INSERT INTO @Exclusions(StandardName, StandardReference)
 	EXEC OppFinder_Exclusions 
 
-    -- pre-filtered standards 
+	-- pre-filtered standards 
 	DECLARE @StandardsBase TABLE
 	(
 		 StandardReference nvarchar(10) NOT NULL,
@@ -31,7 +31,7 @@ BEGIN
 
 	INSERT INTO @StandardsBase (StandardReference, StandardName, StandardLevel, Sector)
 	SELECT stv.StandardReference, stv.StandardName
-          ,CASE StandardLevel WHEN 0 THEN 'To be confirmed' ELSE CONVERT(VARCHAR, StandardLevel) END StandardLevel, Sector
+		  ,CASE StandardLevel WHEN 0 THEN 'To be confirmed' ELSE CONVERT(VARCHAR, StandardLevel) END StandardLevel, Sector
 	FROM (
 		SELECT st1.IFateReferenceNumber StandardReference
 			  ,Title StandardName
@@ -47,7 +47,7 @@ BEGIN
 	WHERE RowNumber = 1
 	  AND ex1.StandardName IS NULL
 
-      
+	  
 	-- get sector and standard level for approved, in development and proposed standards
 	SELECT StandardReference, StandardName, Sector, StandardLevel
 	INTO
