@@ -68,7 +68,7 @@ BEGIN
 
 	BEGIN TRY;
 	
-	DELETE FROM StandardSummary;
+	DELETE FROM StandardSummary WHERE 1=1;
 	
 	INSERT INTO StandardSummary
 	-- combine results FROM 4 subqueries
@@ -168,7 +168,7 @@ BEGIN
 	
 	
 	-- populate the StandardVersionSummary table
-	DELETE FROM StandardVersionSummary;
+	DELETE FROM StandardVersionSummary WHERE 1=1;
 	
 	INSERT INTO StandardVersionSummary
 	(StandardCode, StandardReference, Version, ActiveApprentices, CompletedAssessments, EndPointAssessors, UpdatedAt)
