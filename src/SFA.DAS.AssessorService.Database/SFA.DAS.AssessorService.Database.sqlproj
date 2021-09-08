@@ -179,6 +179,7 @@
     <Build Include="StoredProcedures\GetEPAO_Pipelines_StandardFilter.sql" />
     <Build Include="StoredProcedures\GetEPAO_Pipelines_ProviderFilter.sql" />
     <Build Include="Functions\Scalar-valued Functions\GetVersionFromLarsCode.sql" />
+    <Build Include="StoredProcedures\DashboardReporting\IlrImportSummary.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="SFA.DAS.AssessorService.Database.refactorlog" />
