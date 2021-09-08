@@ -55,7 +55,7 @@ BEGIN
 			   WHERE VersionApprovedForDelivery IS NOT NULL
 			   GROUP BY IFateReferenceNumber ) sv1 ON sv1.IFateReferenceNumber = st1.IFateReferenceNumber
 		 WHERE 1=1
-		 -- only one version of a Standard should be "Approved for delivery" at any one time, and it should be the latest, but ¯\_(ツ)_/¯
+		 -- only one version of a Standard should be "Approved for delivery" at any one time, and it should be the latest, but 
 		   AND ISNULL(Status, '') = 'Approved for delivery' 
 		   AND ISNULL(IntegratedDegree, '') <> 'integrated degree'
 		   AND (EffectiveTo IS NULL OR EffectiveTo > GETDATE() )
@@ -69,7 +69,6 @@ BEGIN
 	BEGIN TRY;
 	
 	DELETE FROM StandardSummary;
-	DELETE FROM StandardVersionSummary;
 	
 	INSERT INTO StandardSummary
 	-- combine results FROM 4 subqueries
@@ -166,62 +165,71 @@ BEGIN
 	GROUP BY StandardReference, Region, Ordering
 	) Total On Total.StandardReference = ac.StandardReference
 	ORDER BY StandardReference, Ordering
-
+	
 	
 	-- populate the StandardVersionSummary table
+	DELETE FROM StandardVersionSummary;
 	
 	INSERT INTO StandardVersionSummary
 	(StandardCode, StandardReference, Version, ActiveApprentices, CompletedAssessments, EndPointAssessors, UpdatedAt)
 	SELECT st1.Larscode StandardCode
 		,st1.IfateReferenceNumber StandardReference
 		,st1.Version
-		,SUM(ActiveApprentices) ActiveApprentices
-		,SUM(CompletedAssessments) CompletedAssessments
-		,SUM(EndPointAssessors) EndPointAssessors
+		,ActiveApprentices
+		,CompletedAssessments
+		,EndPointAssessors
 		,GETDATE() UpdatedAt
-	FROM @StandardsCore ac		  
-	JOIN Standards st1 ON ac.StandardReference = st1.IfateReferenceNumber
+	FROM Standards st1 
+	JOIN @StandardsCore ac ON ac.StandardReference = st1.IfateReferenceNumber
 	JOIN (
-		-- EPAOs 
-		SELECT osv.StandardUId, COUNT(*) AS EndPointAssessors, 0 CompletedAssessments, 0 ActiveApprentices
-		FROM OrganisationStandardVersion osv
-		INNER JOIN OrganisationStandard os ON osv.OrganisationStandardId = os.Id
-		WHERE os.Status = 'Live' 
-		  AND osv.Status = 'Live'
-		  AND (os.EffectiveTo IS NULL OR os.EffectiveTo > GETDATE()) 
-		  AND (osv.EffectiveTo IS NULL OR osv.EffectiveTo > GETDATE())
-		GROUP BY osv.StandardUId
+		SELECT StandardUId
+			  ,MAX(ActiveApprentices) ActiveApprentices
+			  ,MAX(CompletedAssessments) CompletedAssessments
+			  ,MAX(EndPointAssessors) EndPointAssessors
+		FROM (	
+			-- EPAOs 
+			SELECT osv.StandardUId, COUNT(DISTINCT EndPointAssessorOrganisationId) AS EndPointAssessors, 0 CompletedAssessments, 0 ActiveApprentices
+			FROM OrganisationStandardVersion osv
+			INNER JOIN OrganisationStandard os ON osv.OrganisationStandardId = os.Id
+			WHERE os.Status = 'Live' 
+			  AND osv.Status = 'Live'
+			  AND (os.EffectiveTo IS NULL OR os.EffectiveTo > GETDATE()) 
+			  AND (osv.EffectiveTo IS NULL OR osv.EffectiveTo > GETDATE())
+			GROUP BY osv.StandardUId
 
-		UNION ALL
-		-- Assessments
-		SELECT StandardUId, 0 EndPointAssessors, COUNT(*) AS CompletedAssessments, 0 ActiveApprentices
-		FROM Certificates 
-		WHERE IsPrivatelyFunded = 0
-		  AND Status NOT IN ('Deleted','Draft')
-		GROUP BY StandardUId
+			UNION ALL
+			
+			-- Assessments
+			SELECT StandardUId, 0 EndPointAssessors, COUNT(*) AS CompletedAssessments, 0 ActiveApprentices
+			FROM Certificates 
+			WHERE IsPrivatelyFunded = 0
+			  AND Status NOT IN ('Deleted','Draft')
+			GROUP BY StandardUId
+			
+			UNION ALL
+
+			-- learner data that is in the future (has not been completed or withdrawn and does not have a cert)
+			SELECT le1.StandardUId, 0 EndPointAssessors, 0 AS CompletedAssessments, COUNT(*) AS ActiveApprentices
+			FROM Learner le1
+			LEFT JOIN Certificates ce1 ON ce1.StandardCode = le1.StdCode and ce1.Uln = le1.Uln 
+			WHERE ce1.Uln IS NULL
+			  AND le1.FundingModel != 99
+			  AND le1.CompletionStatus = 1
+			  AND le1.EstimatedEndDate >= DATEADD(month,-6,GETDATE())
+			GROUP BY le1.StandardUId
+
+			UNION ALL
+
+			-- all versions of all standards
+			SELECT StandardUId, 0 EndPointAssessors, 0 AS CompletedAssessments, 0 AS ActiveApprentices
+			FROM Standards
+			WHERE VersionApprovedForDelivery IS NOT NULL 
 		
-		UNION ALL
-
-		-- learner data that is in the future (has not been completed or withdrawn and does not have a cert)
-		SELECT le1.StandardUId, 0 EndPointAssessors, 0 AS CompletedAssessments, COUNT(*) AS ActiveApprentices
-		FROM Learner le1
-		LEFT JOIN Certificates ce1 ON ce1.StandardCode = le1.StdCode and ce1.Uln = le1.Uln 
-		WHERE ce1.Uln IS NULL
-		  AND le1.FundingModel != 99
- 		  AND le1.CompletionStatus = 1
-		  AND le1.EstimatedEndDate >= DATEADD(month,-6,GETDATE())
-		GROUP BY le1.StandardUId
-
-		UNION ALL
-
-		-- all versions of all standards
-		SELECT StandardUId, 0 EndPointAssessors, 0 AS CompletedAssessments, 0 AS ActiveApprentices
-		FROM Standards
-		WHERE VersionApprovedForDelivery IS NOT NULL 
+		) ct1 GROUP BY StandardUid
 		
 	) vt1 ON vt1.StandardUId = st1.StandardUId
-	GROUP BY  st1.Larscode, st1.IfateReferenceNumber, st1.Version
-
+	
+  
 	END TRY
 	BEGIN CATCH;
 		-- Some basic error handling
