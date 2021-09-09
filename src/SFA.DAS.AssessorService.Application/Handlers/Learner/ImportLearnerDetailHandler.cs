@@ -97,7 +97,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Learner
             {
                 var certificate = await _certificateRepository.GetCertificate(importLearnerDetail.Uln.Value, importLearnerDetail.StdCode.Value);
 
-                if (certificate != null && certificate.Status != CertificateStatus.Deleted)
+                if (certificate != null && certificate.Status != CertificateStatus.Deleted && certificate.Status != CertificateStatus.Draft)
                     return "IgnoreUkprnChangedButCertficateAlreadyExists";
 
                 if (importLearnerDetail.FundingModel == 99 && learner.FundingModel != 99)
@@ -110,7 +110,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Learner
                     return await UpdateIlrRecord(importLearnerDetail, false);
 
                 if (importLearnerDetail.LearnStartDate > learner.LearnStartDate)
-                    return await UpdateIlrRecord(importLearnerDetail, false);    
+                    return await UpdateIlrRecord(importLearnerDetail, false);
             }
 
             return "IgnoreOutOfDate";
