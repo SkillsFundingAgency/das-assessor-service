@@ -25,22 +25,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ao
 
         public async Task<List<OrganisationStandardSummary>> Handle(GetStandardsByOrganisationRequest request, CancellationToken cancellationToken)
         {
-            var organisationId = request.OrganisationId;
-            _logger.LogInformation($@"Handling OrganisationStandards Request for OrganisationId [{organisationId}]");
-            var orgStandards = await _registerQueryRepository.GetOrganisationStandardByOrganisationId(organisationId);
-
-            foreach (var orgStandard in orgStandards)
-            {
-                var deliveryAreas = await _registerQueryRepository.GetDeliveryAreaIdsByOrganisationStandardId(orgStandard.Id);
-                orgStandard.DeliveryAreas = deliveryAreas.ToList();
-
-                var versions = await _standardService.GetEPAORegisteredStandardVersions(organisationId, orgStandard.StandardCode);
-                orgStandard.StandardVersions = versions.ToList();
-
-                //Query doesn't populate it as it's mismatched on name.
-                orgStandard.OrganisationId = organisationId;
-            }
-
+            _logger.LogInformation($@"Handling OrganisationStandards Request for OrganisationId [{request.OrganisationId}]");
+            var orgStandards = await _registerQueryRepository.GetOrganisationStandardByOrganisationId(request.OrganisationId);
             return orgStandards.ToList();
         }
     } 
