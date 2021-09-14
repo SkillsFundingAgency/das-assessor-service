@@ -1,9 +1,11 @@
 ﻿using MediatR;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.AssessorService.Domain.JsonData;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -96,9 +98,26 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Learner
             else
             {
                 var certificate = await _certificateRepository.GetCertificate(importLearnerDetail.Uln.Value, importLearnerDetail.StdCode.Value);
+                if (certificate != null)
+                {
+                    var ignore = true;
 
-                if (certificate != null && certificate.Status != CertificateStatus.Deleted && certificate.Status != CertificateStatus.Draft)
-                    return "IgnoreUkprnChangedButCertficateAlreadyExists";
+                    if (certificate.Status == CertificateStatus.Deleted || certificate.Status == CertificateStatus.Draft)
+                    {
+                        ignore = false;
+                    }
+                    else
+                    {
+                        var certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
+                        if (certificate.Status == CertificateStatus.Submitted && certificateData.OverallGrade == CertificateGrade.Fail)
+                        {
+                            ignore = false;
+                        }
+                    }
+
+                    if(ignore)
+                        return "IgnoreUkprnChangedButCertficateAlreadyExists";
+                }
 
                 if (importLearnerDetail.FundingModel == 99 && learner.FundingModel != 99)
                     return "IgnoreFundingModelChangedTo99WhenPrevioulsyNot99";
