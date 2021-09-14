@@ -23,7 +23,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
     public class OrganisationSearchController : Controller
     {
         private readonly ILogger<OrganisationSearchController> _logger;
-        private readonly RoatpApiClient _roatpApiClient;
+        private readonly IRoatpApiClient _roatpApiClient;
         private readonly ReferenceDataApiClient _referenceDataApiClient;
         private readonly CompaniesHouseApiClient _companiesHouseApiClient;
         private readonly CharityCommissionApiClient _charityCommissionApiClient;
