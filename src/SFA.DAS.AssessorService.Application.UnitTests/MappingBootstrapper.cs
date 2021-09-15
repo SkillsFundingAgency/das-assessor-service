@@ -23,7 +23,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests
                 cfg.CreateMap<UpdateOrganisationRequest, Organisation>();
                 cfg.CreateMap<CreateContactRequest, Contact>().ReverseMap();
                 cfg.CreateMap<Contact, ContactResponse>();
-                cfg.CreateMap<Ilr, SearchResult>();
+                cfg.CreateMap<Learner, SearchResult>();
                 cfg.CreateMap<Certificate, CertificateResponse>()
                     .ForMember(q => q.EndPointAssessorOrganisationId,
                         opts => { opts.MapFrom(q => q.Organisation.EndPointAssessorOrganisationId); });

@@ -73,7 +73,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
                 {
                     var certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
 
-                    // Create a new search result as it would be when returned by the ILR record
+                    // Create a new search result as it would be when returned by the Learner record
                     var searchResult = new SearchResult
                     {
                         Uln = certificate.Uln,

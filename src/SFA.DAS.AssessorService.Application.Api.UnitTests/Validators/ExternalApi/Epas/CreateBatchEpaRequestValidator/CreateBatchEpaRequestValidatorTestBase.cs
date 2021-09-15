@@ -11,7 +11,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
         {
             var stringLocalizerMock = new Mock<IStringLocalizer<Api.Validators.ExternalApi.Epas.BatchEpaRequestValidator>>();
 
-            Validator = new Api.Validators.ExternalApi.Epas.CreateBatchEpaRequestValidator(stringLocalizerMock.Object, OrganisationQueryRepositoryMock.Object, IlrRepositoryMock.Object, CertificateRepositoryMock.Object, StandardServiceMock.Object);
+            Validator = new Api.Validators.ExternalApi.Epas.CreateBatchEpaRequestValidator(stringLocalizerMock.Object, OrganisationQueryRepositoryMock.Object, LearnerRepositoryMock.Object, CertificateRepositoryMock.Object, StandardServiceMock.Object);
         }
     }
 }

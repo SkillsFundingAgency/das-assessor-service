@@ -21,17 +21,17 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
     {
         private readonly IStaffCertificateRepository _staffCertificateRepository;
         private readonly ILogger<SearchHandler> _logger;
-        private readonly IStaffIlrRepository _staffIlrRepository;
+        private readonly IStaffLearnerRepository _staffLearnerRepository;
         private readonly IStandardService _standardService;
 
         public StaffSearchHandler(IStaffCertificateRepository staffCertificateRepository,
             ILogger<SearchHandler> logger,
-            IStaffIlrRepository staffIlrRepository, 
+            IStaffLearnerRepository staffLearnerRepository, 
             IStandardService staffService)
         {
             _staffCertificateRepository = staffCertificateRepository;
             _logger = logger;
-            _staffIlrRepository = staffIlrRepository;
+            _staffLearnerRepository = staffLearnerRepository;
             _standardService = staffService;
         }
 
@@ -53,8 +53,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
             var displayEpao = false;
             if (searchResult.TotalCount == 0)
             {
-                totalRecordCount = await _staffIlrRepository.SearchForLearnerByNameCount(request.SearchQuery);
-                searchResult.PageOfResults = await _staffIlrRepository.SearchForLearnerByName(request.SearchQuery, request.Page, pageSize);
+                totalRecordCount = await _staffLearnerRepository.SearchForLearnerByNameCount(request.SearchQuery);
+                searchResult.PageOfResults = await _staffLearnerRepository.SearchForLearnerByName(request.SearchQuery, request.Page, pageSize);
             }
             else
             {
@@ -80,7 +80,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
         {
             if (SearchStringIsAnEpaOrgId(request))
             {                
-                var sr = await _staffIlrRepository.SearchForLearnerByEpaOrgId(request);
+                var sr = await _staffLearnerRepository.SearchForLearnerByEpaOrgId(request);
                 sr.DisplayEpao = true;
                 return sr;
             }
@@ -90,8 +90,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
             {
                 var sr = new StaffReposSearchResult
                 {
-                    PageOfResults = await _staffIlrRepository.SearchForLearnerByUln(uln, request.Page, pageSize),
-                    TotalCount = await _staffIlrRepository.SearchForLearnerByUlnCount(uln)
+                    PageOfResults = await _staffLearnerRepository.SearchForLearnerByUln(uln, request.Page, pageSize),
+                    TotalCount = await _staffLearnerRepository.SearchForLearnerByUlnCount(uln)
                 };
                 return sr;
             }
@@ -101,13 +101,13 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
                 var sr = new StaffReposSearchResult
                 {
                     DisplayEpao = true,
-                    PageOfResults = await _staffIlrRepository.SearchForLearnerByCertificateReference(request.SearchQuery)
+                    PageOfResults = await _staffLearnerRepository.SearchForLearnerByCertificateReference(request.SearchQuery)
                 };
                 sr.TotalCount = sr.PageOfResults.Count();
                 return sr;
             }
 
-            return new StaffReposSearchResult() { PageOfResults = new List<Ilr>(), TotalCount = 0 };
+            return new StaffReposSearchResult() { PageOfResults = new List<Domain.Entities.Learner>(), TotalCount = 0 };
         }
 
         private static bool SearchStringIsAnEpaOrgId(StaffSearchRequest request)

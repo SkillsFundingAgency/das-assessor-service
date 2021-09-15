@@ -14,34 +14,34 @@ using SFA.DAS.AssessorService.Domain.JsonData;
 
 namespace SFA.DAS.AssessorService.Data.Staff
 {
-    public class StaffIlrRepository : IStaffIlrRepository
+    public class StaffLearnerRepository : IStaffLearnerRepository
     {
         private readonly AssessorDbContext _context;
-        private readonly IIlrRepository _ilrRepository;
+        private readonly ILearnerRepository _learnerRepository;
         private readonly IDbConnection _connection;
 
-        public StaffIlrRepository(AssessorDbContext context, IIlrRepository ilrRepository, IDbConnection connection)
+        public StaffLearnerRepository(AssessorDbContext context, ILearnerRepository learnerRepository, IDbConnection connection)
         {
             _context = context;
-            _ilrRepository = ilrRepository;
+            _learnerRepository = learnerRepository;
             _connection = connection;
         }
 
-        public async Task<IEnumerable<Ilr>> SearchForLearnerByCertificateReference(string certRef)
+        public async Task<IEnumerable<Learner>> SearchForLearnerByCertificateReference(string certRef)
         {
-            var results = new List<Ilr>();
+            var results = new List<Learner>();
             
             var cert = await _context.Certificates.Include(q => q.Organisation).FirstOrDefaultAsync(c => c.CertificateReference == certRef);
 
             if(cert != null)
             {
-                var ilr = await _ilrRepository.Get(cert.Uln, cert.StandardCode);
+                var learner = await _learnerRepository.Get(cert.Uln, cert.StandardCode);
 
-                if (ilr is null)
+                if (learner is null)
                 {
                     var certData = JsonConvert.DeserializeObject<CertificateData>(cert.CertificateData);
 
-                    ilr = new Ilr
+                    learner = new Learner
                     {
                         Uln = cert.Uln,
                         GivenNames = certData.LearnerGivenNames,
@@ -54,16 +54,16 @@ namespace SFA.DAS.AssessorService.Data.Staff
                     };
                 }
 
-                results.Add(ilr);
+                results.Add(learner);
             }
 
             return results;
         }
 
-        public async Task<IEnumerable<Ilr>> SearchForLearnerByUln(long uln, int page, int pageSize)
+        public async Task<IEnumerable<Learner>> SearchForLearnerByUln(long uln, int page, int pageSize)
         {
-            /* get rows from Certificates and/or Ilrs  - there must be a better way! - and it does not need paging as there will never be as many as 10 rows*/
-            return (await _connection.QueryAsync<Ilr>(
+            /* get rows from Certificates and/or Learner - there must be a better way! - and it does not need paging as there will never be as many as 10 rows*/
+            return (await _connection.QueryAsync<Learner>(
                             @"SELECT [Id] ,[Uln] ,[GivenNames] ,[FamilyName] ,[UkPrn] ,[StdCode] ,[LearnStartDate] ,[EpaOrgId] ,[FundingModel] ,[ApprenticeshipId] ,
                                      [EmployerAccountId] ,[Source] ,[CreatedAt] ,[UpdatedAt] ,[LearnRefNumber] ,[CompletionStatus] ,[EventId] ,[PlannedEndDate]
                             FROM (
@@ -100,7 +100,7 @@ namespace SFA.DAS.AssessorService.Data.Staff
                             UNION
                             SELECT [Id] ,[Uln] ,[GivenNames] ,[FamilyName] ,[UkPrn] ,[StdCode] ,[LearnStartDate] ,[EpaOrgId] ,[FundingModel] ,[ApprenticeshipId] ,
                                   [EmployerAccountId] ,[Source] ,[CreatedAt] ,[UpdatedAt] ,[LearnRefNumber] ,[CompletionStatus] ,[EventId] ,[PlannedEndDate], 4 choice
-                            FROM [Ilrs] 
+                            FROM [Learner] 
                             WHERE [Uln] = @uln 
                             ) ab2 
                             ) ab3 WHERE rownumber2 = 1 
@@ -127,7 +127,7 @@ namespace SFA.DAS.AssessorService.Data.Staff
                                     ) ab1 WHERE rownumber = 1
                                     UNION
                                     SELECT [Id] ,[Uln], [StdCode], 4 choice
-                                    FROM [Ilrs] 
+                                    FROM [Learner] 
                                     WHERE [Uln] = @uln 
                                     ) ab2 
                                 ) ab3 WHERE rownumber2 = 1",
@@ -135,9 +135,9 @@ namespace SFA.DAS.AssessorService.Data.Staff
             return result;
         }
 
-        public async Task<IEnumerable<Ilr>> SearchForLearnerByName(string learnerName, int page, int pageSize)
+        public async Task<IEnumerable<Learner>> SearchForLearnerByName(string learnerName, int page, int pageSize)
         {
-            var result = await _connection.QueryAsync<Ilr>("StaffSearchCertificates",
+            var result = await _connection.QueryAsync<Learner>("StaffSearchCertificates",
                 new { Search = learnerName, Skip = (page - 1) * pageSize, Take = pageSize },
                 commandType: CommandType.StoredProcedure);
             return result;
@@ -155,7 +155,7 @@ namespace SFA.DAS.AssessorService.Data.Staff
         {
             var searchResult = new StaffReposSearchResult
             {
-                PageOfResults = (await _connection.QueryAsync<Ilr>(
+                PageOfResults = (await _connection.QueryAsync<Learner>(
                         @"SELECT org.EndPointAssessorOrganisationId, cert.Uln, JSON_VALUE(CertificateData, '$.LearnerGivenNames') AS GivenNames, JSON_VALUE(CertificateData, '$.LearnerFamilyName') AS FamilyName, cert.StandardCode AS StdCode, cert.UpdatedAt 
                             FROM Certificates cert
                             INNER JOIN Organisations org ON org.Id = cert.OrganisationId

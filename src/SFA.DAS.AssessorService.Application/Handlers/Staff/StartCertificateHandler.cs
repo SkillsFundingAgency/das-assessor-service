@@ -23,18 +23,18 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
     public class StartCertificateHandler : IRequestHandler<StartCertificateRequest, Certificate>
     {
         private readonly ICertificateRepository _certificateRepository;
-        private readonly IIlrRepository _ilrRepository;
+        private readonly ILearnerRepository _learnerRepository;
         private readonly IRoatpApiClient _roatpApiClient;
         private readonly IOrganisationQueryRepository _organisationQueryRepository;
         private readonly ILogger<StartCertificateHandler> _logger;
         private readonly IStandardService _standardService;
         private readonly int PrivateFundingModelNumber = 99;
 
-        public StartCertificateHandler(ICertificateRepository certificateRepository, IIlrRepository ilrRepository, IRoatpApiClient roatpApiClient,
+        public StartCertificateHandler(ICertificateRepository certificateRepository, ILearnerRepository learnerRepository, IRoatpApiClient roatpApiClient,
             IOrganisationQueryRepository organisationQueryRepository, ILogger<StartCertificateHandler> logger, IStandardService standardService)
         {
             _certificateRepository = certificateRepository;
-            _ilrRepository = ilrRepository;
+            _learnerRepository = learnerRepository;
             _roatpApiClient = roatpApiClient;
             _organisationQueryRepository = organisationQueryRepository;
             _logger = logger;
@@ -54,22 +54,22 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
             else
             {
                 var certData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
-                var ilr = await _ilrRepository.Get(request.Uln, request.StandardCode);
+                var learner = await _learnerRepository.Get(request.Uln, request.StandardCode);
 
                 // when re-using an existing certificate ensure that the organistion matches the Ukprn for
                 // the latest organisation which is assessing the learner
                 certificate.OrganisationId = organisation.Id;
 
-                if (certificate.Status == CertificateStatus.Deleted && ilr != null)
+                if (certificate.Status == CertificateStatus.Deleted && learner != null)
                 {
                     _logger.LogInformation($"Recreating deleted certificate for ULN: {certificate.Uln}, Standard: {certificate.StandardCode}");
 
-                    certData.LearnerGivenNames = ilr.GivenNames;
-                    certData.LearnerFamilyName = ilr.FamilyName;
-                    certData.LearningStartDate = ilr.LearnStartDate;
-                    certData.FullName = $"{ilr.GivenNames} {ilr.FamilyName}";
+                    certData.LearnerGivenNames = learner.GivenNames;
+                    certData.LearnerFamilyName = learner.FamilyName;
+                    certData.LearningStartDate = learner.LearnStartDate;
+                    certData.FullName = $"{learner.GivenNames} {learner.FamilyName}";
                     certificate.CertificateData = JsonConvert.SerializeObject(certData);
-                    certificate.IsPrivatelyFunded = ilr?.FundingModel == PrivateFundingModelNumber;
+                    certificate.IsPrivatelyFunded = learner?.FundingModel == PrivateFundingModelNumber;
                     await _certificateRepository.Update(certificate, request.Username, null);
                 }
                 else if (certificate.Status == CertificateStatus.Submitted && certData.OverallGrade == CertificateGrade.Fail)
@@ -78,17 +78,17 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
 
                     certData.AchievementDate = null;
                     certData.OverallGrade = null;
-                    certificate.IsPrivatelyFunded = ilr?.FundingModel == PrivateFundingModelNumber;
+                    certificate.IsPrivatelyFunded = learner?.FundingModel == PrivateFundingModelNumber;
                     certificate.CertificateData = JsonConvert.SerializeObject(certData);
                     certificate.Status = CertificateStatus.Draft;
 
                     await _certificateRepository.Update(certificate, request.Username, CertificateActions.Restart, updateLog: true);
                 }
-                else if (ilr != null)
+                else if (learner != null)
                 {
-                    // If ILR not null, and certificate exists, reset privately funded
-                    // In case it's an old draft privately funded with a new ILR record 
-                    certificate.IsPrivatelyFunded = ilr?.FundingModel == PrivateFundingModelNumber;
+                    // If Learner not null, and certificate exists, reset privately funded
+                    // In case it's an old draft privately funded with a new Learner record 
+                    certificate.IsPrivatelyFunded = learner?.FundingModel == PrivateFundingModelNumber;
                     await _certificateRepository.Update(certificate, request.Username, null);
                 }
             }
@@ -98,17 +98,17 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
 
         private async Task<Certificate> CreateNewCertificate(StartCertificateRequest request, Organisation organisation)
         {
-            _logger.LogInformation("CreateNewCertificate Before Get Ilr from db");
-            var ilr = await _ilrRepository.Get(request.Uln, request.StandardCode);
+            _logger.LogInformation("CreateNewCertificate Before Get Learner from db");
+            var learner = await _learnerRepository.Get(request.Uln, request.StandardCode);
             _logger.LogInformation("CreateNewCertificate Before Get Provider from API");
-            var provider = await GetProviderFromUkprn(ilr.UkPrn);
+            var provider = await GetProviderFromUkprn(learner.UkPrn);
 
             var certData = new CertificateData()
             {
-                LearnerGivenNames = ilr.GivenNames,
-                LearnerFamilyName = ilr.FamilyName,
-                LearningStartDate = ilr.LearnStartDate,
-                FullName = $"{ilr.GivenNames} {ilr.FamilyName}",
+                LearnerGivenNames = learner.GivenNames,
+                LearnerFamilyName = learner.FamilyName,
+                LearningStartDate = learner.LearnStartDate,
+                FullName = $"{learner.GivenNames} {learner.FamilyName}",
                 ProviderName = provider.ProviderName,
                 EpaDetails = new EpaDetails { Epas = new List<EpaRecord>() }
             };
@@ -117,15 +117,15 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
             {
                 Uln = request.Uln,
                 StandardCode = request.StandardCode,
-                ProviderUkPrn = ilr.UkPrn,
+                ProviderUkPrn = learner.UkPrn,
                 OrganisationId = organisation.Id,
                 CreatedBy = request.Username,
                 CertificateData = JsonConvert.SerializeObject(certData),
                 Status = CertificateStatus.Draft,
                 CertificateReference = string.Empty,
-                LearnRefNumber = ilr.LearnRefNumber,
+                LearnRefNumber = learner.LearnRefNumber,
                 CreateDay = DateTime.UtcNow.Date,
-                IsPrivatelyFunded = ilr?.FundingModel == PrivateFundingModelNumber,
+                IsPrivatelyFunded = learner?.FundingModel == PrivateFundingModelNumber,
             };
 
             // Only one StandardUid Available, fill out fields
@@ -155,7 +155,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
             else
             {
                 _logger.LogInformation("CreateNewCertificate Before Get StandardVersions from API");
-                var standardVersions = await _standardService.GetStandardVersionsByLarsCode(ilr.StdCode);
+                var standardVersions = await _standardService.GetStandardVersionsByLarsCode(learner.StdCode);
 
                 certData.StandardName = standardVersions.OrderByDescending(s => s.VersionMajor).ThenByDescending(t => t.VersionMinor).First().Title;
             }

@@ -18,14 +18,14 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
     {
         public Mock<ICertificateRepository> CertificateRepositoryMock { get; }
         public Mock<IOrganisationQueryRepository> OrganisationQueryRepositoryMock { get; }
-        public Mock<IIlrRepository> IlrRepositoryMock { get; }
+        public Mock<ILearnerRepository> LearnerRepositoryMock { get; }
         public Mock<IStandardService> StandardServiceMock { get; }
 
         public ExternalApiValidatorsTestBase()
         {
             CertificateRepositoryMock = SetupCertificateRepositoryMock();
             OrganisationQueryRepositoryMock = SetupOrganisationQueryRepositoryMock();
-            IlrRepositoryMock = SetupIlrRepositoryMock();
+            LearnerRepositoryMock = SetupLearnerRepositoryMock();
             StandardServiceMock = SetupStandardServiceMock();
         }
 
@@ -49,7 +49,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
             certificateRepositoryMock.Setup(q => q.GetCertificate(9876543210, 101)).ReturnsAsync(GenerateEpaCertificate(9876543210, 101, "test", new Guid("99999999999999999999999999999999"), false));
             certificateRepositoryMock.Setup(q => q.GetCertificate(9876543211, 101)).ReturnsAsync(GenerateEpaCertificate(9876543211, 101, "test", new Guid("99999999999999999999999999999999"), false, overallGrade: "Pass"));
 
-            // This allows us to test, retrieving by ilr data if the calling organisation was not the one that created it
+            // This allows us to test, retrieving by ilr/learner data if the calling organisation was not the one that created it
             certificateRepositoryMock.Setup(q => q.GetCertificateByUlnOrgIdLastnameAndStandardCode(1234567890, "99999999", "Test", 1))
                 .ReturnsAsync((Certificate)null);
             certificateRepositoryMock.Setup(q => q.GetCertificateByUlnOrgIdLastnameAndStandardCode(1234567890, "12345678", "Test", 1))
@@ -136,27 +136,27 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
             return standardServiceMock;
         }
 
-        private static Mock<IIlrRepository> SetupIlrRepositoryMock()
+        private static Mock<ILearnerRepository> SetupLearnerRepositoryMock()
         {
-            var ilrRepositoryMock = new Mock<IIlrRepository>();
+            var learnerRepositoryMock = new Mock<ILearnerRepository>();
 
-            ilrRepositoryMock.Setup(q => q.Get(1234567890, 1)).ReturnsAsync(GenerateIlr(1234567890, 1, "Test", "12345678", CompletionStatus.Complete));
-            ilrRepositoryMock.Setup(q => q.Get(1234567890, 98)).ReturnsAsync(GenerateIlr(1234567890, 98, "Test", "12345678", CompletionStatus.Complete));
-            ilrRepositoryMock.Setup(q => q.Get(1234567890, 99)).ReturnsAsync(GenerateIlr(1234567890, 99, "Test", "12345678", CompletionStatus.Complete));
-            ilrRepositoryMock.Setup(q => q.Get(1234567890, 101)).ReturnsAsync(GenerateIlr(1234567890, 101, "Test", "12345678", CompletionStatus.Complete));
-            ilrRepositoryMock.Setup(q => q.Get(9999999999, 1)).ReturnsAsync(GenerateIlr(9999999999, 1, "Test", "99999999", CompletionStatus.Complete));
-            ilrRepositoryMock.Setup(q => q.Get(9999999999, 99)).ReturnsAsync(GenerateIlr(9999999999, 99, "Test", "99999999", CompletionStatus.Complete));
-            ilrRepositoryMock.Setup(q => q.Get(9999999999, 101)).ReturnsAsync(GenerateIlr(9999999999, 101, "Test", "99999999", CompletionStatus.Complete));
-            ilrRepositoryMock.Setup(q => q.Get(9876543210, 101)).ReturnsAsync(GenerateIlr(9876543210, 101, "Test", "99999999", CompletionStatus.Complete));
-            ilrRepositoryMock.Setup(q => q.Get(9876543211, 101)).ReturnsAsync(GenerateIlr(9876543211, 101, "Test", "99999999", CompletionStatus.Complete));
+            learnerRepositoryMock.Setup(q => q.Get(1234567890, 1)).ReturnsAsync(GenerateLearner(1234567890, 1, "Test", "12345678", CompletionStatus.Complete));
+            learnerRepositoryMock.Setup(q => q.Get(1234567890, 98)).ReturnsAsync(GenerateLearner(1234567890, 98, "Test", "12345678", CompletionStatus.Complete));
+            learnerRepositoryMock.Setup(q => q.Get(1234567890, 99)).ReturnsAsync(GenerateLearner(1234567890, 99, "Test", "12345678", CompletionStatus.Complete));
+            learnerRepositoryMock.Setup(q => q.Get(1234567890, 101)).ReturnsAsync(GenerateLearner(1234567890, 101, "Test", "12345678", CompletionStatus.Complete));
+            learnerRepositoryMock.Setup(q => q.Get(9999999999, 1)).ReturnsAsync(GenerateLearner(9999999999, 1, "Test", "99999999", CompletionStatus.Complete));
+            learnerRepositoryMock.Setup(q => q.Get(9999999999, 99)).ReturnsAsync(GenerateLearner(9999999999, 99, "Test", "99999999", CompletionStatus.Complete));
+            learnerRepositoryMock.Setup(q => q.Get(9999999999, 101)).ReturnsAsync(GenerateLearner(9999999999, 101, "Test", "99999999", CompletionStatus.Complete));
+            learnerRepositoryMock.Setup(q => q.Get(9876543210, 101)).ReturnsAsync(GenerateLearner(9876543210, 101, "Test", "99999999", CompletionStatus.Complete));
+            learnerRepositoryMock.Setup(q => q.Get(9876543211, 101)).ReturnsAsync(GenerateLearner(9876543211, 101, "Test", "99999999", CompletionStatus.Complete));
 
-            // Leave this ILR without a EPA or a Certificate!
-            ilrRepositoryMock.Setup(q => q.Get(5555555555, 1)).ReturnsAsync(GenerateIlr(5555555555, 1, "Test", "12345678", CompletionStatus.Complete));
+            // Leave this ILR/Learner without a EPA or a Certificate!
+            learnerRepositoryMock.Setup(q => q.Get(5555555555, 1)).ReturnsAsync(GenerateLearner(5555555555, 1, "Test", "12345678", CompletionStatus.Complete));
 
-            ilrRepositoryMock.Setup(q => q.Get(1234567891, 1)).ReturnsAsync(GenerateIlr(1234567891, 1, "Test", "12345678", CompletionStatus.Withdrawn));
-            ilrRepositoryMock.Setup(q => q.Get(1234567892, 1)).ReturnsAsync(GenerateIlr(1234567892, 1, "Test", "12345678", CompletionStatus.TemporarilyWithdrawn));
+            learnerRepositoryMock.Setup(q => q.Get(1234567891, 1)).ReturnsAsync(GenerateLearner(1234567891, 1, "Test", "12345678", CompletionStatus.Withdrawn));
+            learnerRepositoryMock.Setup(q => q.Get(1234567892, 1)).ReturnsAsync(GenerateLearner(1234567892, 1, "Test", "12345678", CompletionStatus.TemporarilyWithdrawn));
 
-            return ilrRepositoryMock;
+            return learnerRepositoryMock;
         }
 
         private static Certificate GenerateCertificate(long uln, int standardCode, string familyName, string status, Guid organisationId)
@@ -321,9 +321,9 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
                 .Build();
         }
 
-        private static Ilr GenerateIlr(long uln, int standardCode, string familyName, string epaOrgId, CompletionStatus completionStatus)
+        private static Learner GenerateLearner(long uln, int standardCode, string familyName, string epaOrgId, CompletionStatus completionStatus)
         {
-            return Builder<Ilr>.CreateNew()
+            return Builder<Learner>.CreateNew()
                 .With(i => i.Uln = uln)
                 .With(i => i.StdCode = standardCode)
                 .With(i => i.FamilyName = familyName)
