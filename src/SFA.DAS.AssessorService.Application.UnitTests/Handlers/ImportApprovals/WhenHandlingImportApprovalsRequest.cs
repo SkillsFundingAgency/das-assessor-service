@@ -1,10 +1,12 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using AutoMapper;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Handlers.Approvals;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -26,11 +28,27 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ImportApprovals
             _approvalsExtractRepoMock = new Mock<IApprovalsExtractRepository>();
             _settingRepositoryMock = new Mock<ISettingRepository>();
             _outerApiServiceMock = new Mock<IOuterApiService>();
+            _outerApiServiceMock.Setup(m => m.GetAllLearners(It.IsAny<DateTime?>(), It.IsAny<int>(), It.IsAny<int>()))
+                                .ReturnsAsync(new Application.Infrastructure.OuterApi.GetAllLearnersResponse()
+                                {
+                                    BatchNumber = 1,
+                                    BatchSize = 1,
+                                    TotalNumberOfBatches = 1,
+                                    Learners = new System.Collections.Generic.List<Application.Infrastructure.OuterApi.Learner>()
+                                    {
+                                        new Application.Infrastructure.OuterApi.Learner() { ApprenticeshipId = 1, FirstName = "Test", LastName = "Test1" }
+                                    }
+                                });
+            Mapper.Reset();
+            Mapper.Initialize(cfg =>
+            {
+                cfg.CreateMap<List<Application.Infrastructure.OuterApi.Learner>, List<Domain.Entities.ApprovalsExtract>>();
+            });
+
             _sut = new ImportApprovalsHandler(_loggerMock.Object, _approvalsExtractRepoMock.Object, _settingRepositoryMock.Object, _outerApiServiceMock.Object);
         }
 
         [Test]
-        [Ignore("Dev in progress")]
         public async Task Then_Get_Date_Of_Latest_Record_In_ApprovalsExtract()
         {
             // Arrange.
@@ -41,11 +59,10 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ImportApprovals
 
             // Assert.
 
-            _approvalsExtractRepoMock.Verify(o => o.GetLatestExtractTimestamp());            
+            _approvalsExtractRepoMock.Verify(m => m.GetLatestExtractTimestamp());            
         }
 
         [Test]
-        [Ignore("Dev in progress")]
         public async Task Then_Get_Tolerance_Config_From_Settings()
         {
             // Arrange.
@@ -60,24 +77,14 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ImportApprovals
 
             // Assert.
 
-            _settingRepositoryMock.Verify(o => o.GetSetting(ImportApprovalsHandler.TOLERANCE_SETTING_NAME));
+            _settingRepositoryMock.Verify(m => m.GetSetting(ImportApprovalsHandler.TOLERANCE_SETTING_NAME));
         }
 
         [Test]
-        [Ignore("Dev in progress")]
         public async Task Then_Get_BatchSize_Config_From_Settings()
         {
             // Arrange.
 
-            _outerApiServiceMock.Setup(m => m.GetAllLearners(It.IsAny<DateTime?>(), It.IsAny<int>(), It.IsAny<int>()))
-                .ReturnsAsync(new Application.Infrastructure.OuterApi.GetAllLearnersResponse() 
-                { 
-                    BatchNumber = 1, BatchSize = 1, TotalNumberOfBatches = 1, 
-                    Learners = new System.Collections.Generic.List<Application.Infrastructure.OuterApi.Learner>() 
-                    { 
-                        new Application.Infrastructure.OuterApi.Learner() { ApprenticeshipId = 1, FirstName = "Test", LastName = "Test1" } 
-                    } 
-                });
 
             // Act.
 
@@ -85,11 +92,10 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ImportApprovals
 
             // Assert.
 
-            _settingRepositoryMock.Verify(o => o.GetSetting(ImportApprovalsHandler.BATCHSIZE_SETTING_NAME));
+            _settingRepositoryMock.Verify(m => m.GetSetting(ImportApprovalsHandler.BATCHSIZE_SETTING_NAME));
         }
 
         [Test]
-        [Ignore("Dev in progress")]
         public async Task Then_Get_Learners_Batches_From_AssessorsOuterApi()
         {
             // Arrange.
@@ -100,16 +106,38 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ImportApprovals
             await _sut.Handle(new ImportApprovalsRequest(), new CancellationToken());
 
             // Assert.
+
+            _outerApiServiceMock.Verify(m => m.GetAllLearners(It.IsAny<DateTime?>(), It.IsAny<int>(), It.IsAny<int>()));
         }
 
         [Test]
-        public void Then_Insert_Learners_Batches_Into_ApprovalsExtractTable()
+        public async Task Then_Upsert_Learners_Batches_Into_ApprovalsExtractTable()
         {
+            // Arrange.
+
+
+            // Act.
+
+            await _sut.Handle(new ImportApprovalsRequest(), new CancellationToken());
+
+            // Assert.
+
+            _approvalsExtractRepoMock.Verify(m => m.UpsertApprovalsExtract(It.IsAny<List<Domain.Entities.ApprovalsExtract>>()));
         }
 
         [Test]
-        public void Then_Execute_PopulateLearner_Stored_Procedure()
+        public async Task Then_Execute_PopulateLearner_Stored_Procedure()
         {
+            // Arrange.
+
+
+            // Act.
+
+            await _sut.Handle(new ImportApprovalsRequest(), new CancellationToken());
+
+            // Assert.
+
+            _approvalsExtractRepoMock.Verify(m => m.PopulateLearner());
         }
     }
 }
