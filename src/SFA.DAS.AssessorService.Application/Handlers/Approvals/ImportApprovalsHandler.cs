@@ -74,9 +74,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Approvals
 
                 // 4. Run Populate Learner
 
-                await _approvalsExtractRepository.PopulateLearner();
+                var learnerCount = await _approvalsExtractRepository.PopulateLearner();
 
-                _logger.LogInformation($"Approvals import completed successfully. {count} record(s) imported.");
+                _logger.LogInformation($"Approvals import completed successfully. {count} record(s) read from outer api, {learnerCount} records inserted to Learner table.");
             }
             catch (Exception ex)
             {

@@ -42,7 +42,7 @@ namespace SFA.DAS.AssessorService.Data
             }
         }
 
-        public async Task PopulateLearner()
+        public async Task<int> PopulateLearner()
         {
             try
             {
@@ -51,6 +51,8 @@ namespace SFA.DAS.AssessorService.Data
                 {
                     throw new Exception("Stored procedure PopulateLearner failed to complete successfully.");
                 }
+                int rowCount = await _unitOfWork.Connection.ExecuteScalarAsync<int>("SELECT COUNT(1) FROM Learner");
+                return rowCount;
             }
             catch (Exception ex)
             {
