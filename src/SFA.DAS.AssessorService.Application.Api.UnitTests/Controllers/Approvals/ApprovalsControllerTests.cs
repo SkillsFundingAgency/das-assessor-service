@@ -26,7 +26,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Approval
 
             // Act.
 
-            var controllerResult = await cut.GatherAndStoreApprovals(importApprovalsRequest) as ObjectResult;
+            var controllerResult = await cut.GatherAndStoreApprovals() as ObjectResult;
 
             // Assert.
 
@@ -44,7 +44,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Approval
 
             // Act.
 
-            var controllerResult = await cut.GatherAndStoreApprovals(importApprovalsRequest) as ObjectResult;
+            var controllerResult = await cut.GatherAndStoreApprovals() as ObjectResult;
 
             // Assert.
 
