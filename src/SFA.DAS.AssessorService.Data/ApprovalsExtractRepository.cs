@@ -46,7 +46,7 @@ namespace SFA.DAS.AssessorService.Data
         {
             try
             {
-                var result = await _unitOfWork.Connection.ExecuteAsync("PopulateLearner", commandType: CommandType.StoredProcedure);
+                var result = await _unitOfWork.Connection.ExecuteScalarAsync<int>("PopulateLearner", commandType: CommandType.StoredProcedure);
                 if (0 != result)
                 {
                     throw new Exception("Stored procedure PopulateLearner failed to complete successfully.");
