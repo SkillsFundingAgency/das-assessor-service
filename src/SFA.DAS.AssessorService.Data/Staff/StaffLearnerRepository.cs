@@ -65,14 +65,14 @@ namespace SFA.DAS.AssessorService.Data.Staff
             /* get rows from Certificates and/or Learner - there must be a better way! - and it does not need paging as there will never be as many as 10 rows*/
             return (await _connection.QueryAsync<Learner>(
                             @"SELECT [Id] ,[Uln] ,[GivenNames] ,[FamilyName] ,[UkPrn] ,[StdCode] ,[LearnStartDate] ,[EpaOrgId] ,[FundingModel] ,[ApprenticeshipId] ,
-                                     [EmployerAccountId] ,[Source] ,[CreatedAt] ,[UpdatedAt] ,[LearnRefNumber] ,[CompletionStatus] ,[EventId] ,[PlannedEndDate]
+                                     [Source] ,[CreatedAt] ,[UpdatedAt] ,[LearnRefNumber] ,[CompletionStatus] ,[PlannedEndDate]
                             FROM (
                             SELECT [Id] ,[Uln] ,[GivenNames] ,[FamilyName] ,[UkPrn] ,[StdCode] ,[LearnStartDate] ,[EpaOrgId] ,[FundingModel] ,[ApprenticeshipId] ,
-                                   [EmployerAccountId] ,[Source] ,[CreatedAt] ,[UpdatedAt] ,[LearnRefNumber] ,[CompletionStatus] ,[EventId] ,[PlannedEndDate],
+                                   [Source] ,[CreatedAt] ,[UpdatedAt] ,[LearnRefNumber] ,[CompletionStatus] ,[PlannedEndDate],
                              row_number() OVER (PARTITION BY uln,Stdcode ORDER BY choice) rownumber2
                             FROM (
                             SELECT [Id] ,[Uln] ,[GivenNames] ,[FamilyName] ,[UkPrn] ,[StdCode] ,[LearnStartDate] ,[EpaOrgId] ,[FundingModel] ,[ApprenticeshipId] ,
-                                  [EmployerAccountId] ,[Source] ,[CreatedAt] ,[UpdatedAt] ,[LearnRefNumber] ,[CompletionStatus] ,[EventId] ,[PlannedEndDate], 2 choice
+                                  [Source] ,[CreatedAt] ,[UpdatedAt] ,[LearnRefNumber] ,[CompletionStatus] ,[PlannedEndDate], 2 choice
                             FROM (
                             SELECT Row_number() OVER (ORDER BY certificatereferenceid DESC) rownumber, 
                             ce.id,Uln,
@@ -84,13 +84,11 @@ namespace SFA.DAS.AssessorService.Data.Staff
                             og.EndPointAssessorOrganisationId EPAOrgId,
                             NULL FundingModel,
                             NULL ApprenticeshipId,
-                            NULL EmployerAccountId,
                             NULL [Source],
                             ce.CreatedAt,
                             ce.UpdatedAt,
                             [LearnRefNumber],
                             1 [CompletionStatus],
-                            NULL [EventId],
                             NULL [PlannedEndDate]
                             FROM [Certificates] ce 
                             JOIN [Organisations] og ON ce.OrganisationId = og.Id
@@ -99,7 +97,7 @@ namespace SFA.DAS.AssessorService.Data.Staff
                             ) ab1 WHERE rownumber = 1
                             UNION
                             SELECT [Id] ,[Uln] ,[GivenNames] ,[FamilyName] ,[UkPrn] ,[StdCode] ,[LearnStartDate] ,[EpaOrgId] ,[FundingModel] ,[ApprenticeshipId] ,
-                                  [EmployerAccountId] ,[Source] ,[CreatedAt] ,[UpdatedAt] ,[LearnRefNumber] ,[CompletionStatus] ,[EventId] ,[PlannedEndDate], 4 choice
+                                  [Source] ,NULL [CreatedAt] ,NULL [UpdatedAt] ,[LearnRefNumber] ,[CompletionStatus] ,[PlannedEndDate], 4 choice
                             FROM [Learner] 
                             WHERE [Uln] = @uln 
                             ) ab2 
@@ -156,7 +154,7 @@ namespace SFA.DAS.AssessorService.Data.Staff
             var searchResult = new StaffReposSearchResult
             {
                 PageOfResults = (await _connection.QueryAsync<Learner>(
-                        @"SELECT org.EndPointAssessorOrganisationId, cert.Uln, JSON_VALUE(CertificateData, '$.LearnerGivenNames') AS GivenNames, JSON_VALUE(CertificateData, '$.LearnerFamilyName') AS FamilyName, cert.StandardCode AS StdCode, cert.UpdatedAt 
+                        @"SELECT org.EndPointAssessorOrganisationId, cert.Uln, JSON_VALUE(CertificateData, '$.LearnerGivenNames') AS GivenNames, JSON_VALUE(CertificateData, '$.LearnerFamilyName') AS FamilyName, cert.StandardCode AS StdCode, cert.UpdatedAt as LastUpdatedAt 
                             FROM Certificates cert
                             INNER JOIN Organisations org ON org.Id = cert.OrganisationId
                             WHERE org.EndPointAssessorOrganisationId = @epaOrgId
