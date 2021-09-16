@@ -22,7 +22,6 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Approval
 
             var mockMediator = new Mock<IMediator>();
             var cut = new ApprovalsController(Mock.Of<ILogger<ApprovalsController>>(), mockMediator.Object);
-            var importApprovalsRequest = new ImportApprovalsRequest();
 
             // Act.
 
@@ -30,7 +29,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Approval
 
             // Assert.
 
-            mockMediator.Verify(m => m.Send(importApprovalsRequest, It.IsAny<CancellationToken>()), Times.Once);
+            mockMediator.Verify(m => m.Send(It.IsAny<ImportApprovalsRequest>(), It.IsAny<CancellationToken>()), Times.Once);
         }
 
         [Test]
