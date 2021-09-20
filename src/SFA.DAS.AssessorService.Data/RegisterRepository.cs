@@ -14,78 +14,57 @@ using SFA.DAS.AssessorService.Data.DapperTypeHandlers;
 
 namespace SFA.DAS.AssessorService.Data
 {
-    public class RegisterRepository : IRegisterRepository
+    public class RegisterRepository : Repository, IRegisterRepository
     {
-
-        private readonly IWebConfiguration _configuration;
         private readonly ILogger<RegisterRepository> _logger;
 
-        public RegisterRepository(IWebConfiguration configuration, ILogger<RegisterRepository> logger)
+        public RegisterRepository(IUnitOfWork unitOfWork, ILogger<RegisterRepository> logger)
+            : base(unitOfWork)
         {
-            _configuration = configuration;
             _logger = logger;
-            SqlMapper.AddTypeHandler(typeof(Api.Types.Models.AO.OrganisationData), new OrganisationDataHandler());
+            
+            SqlMapper.AddTypeHandler(typeof(OrganisationData), new OrganisationDataHandler());
             SqlMapper.AddTypeHandler(typeof(OrganisationStandardData), new OrganisationStandardDataHandler());
         }
 
         public async Task<string> CreateEpaOrganisation(EpaOrganisation org)
         {
-            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
-            {
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
-
-                var orgData = JsonConvert.SerializeObject(org.OrganisationData);
-                connection.Execute(
-                    "INSERT INTO [Organisations] ([Id],[CreatedAt],[EndPointAssessorName],[EndPointAssessorOrganisationId], " +
+            var orgData = JsonConvert.SerializeObject(org.OrganisationData);
+            await _unitOfWork.Connection.ExecuteAsync(
+                "INSERT INTO [Organisations] ([Id],[CreatedAt],[EndPointAssessorName],[EndPointAssessorOrganisationId], " +
                     "[EndPointAssessorUkprn],[Status],[OrganisationTypeId],[OrganisationData]) " +
                     $@"VALUES (@id, GetUtcDate(), @name, @organisationId, @ukprn, @status, @organisationTypeId,  @orgData)",
                     new {org.Id, org.Name, org.OrganisationId, org.Ukprn, org.Status, org.OrganisationTypeId, orgData}
                 );
 
-                return org.OrganisationId;
-
-            }
+            return org.OrganisationId;
         }
 
         public async Task<string> UpdateEpaOrganisation(EpaOrganisation org)
         {
-            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
-            {
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
-
-                var orgData = JsonConvert.SerializeObject(org.OrganisationData);
-
-                connection.Execute(
-                    "UPDATE [Organisations] SET [UpdatedAt] = GetUtcDate(), [EndPointAssessorName] = @Name, " +
+            var orgData = JsonConvert.SerializeObject(org.OrganisationData);
+            await _unitOfWork.Connection.ExecuteAsync(
+                "UPDATE [Organisations] SET [UpdatedAt] = GetUtcDate(), [EndPointAssessorName] = @Name, " +
                     "[EndPointAssessorUkprn] = @ukprn, [OrganisationTypeId] = @organisationTypeId, " +
                     "[OrganisationData] = @orgData, Status = @status WHERE [EndPointAssessorOrganisationId] = @organisationId",
-                    new {org.Name, org.Ukprn, org.OrganisationTypeId, orgData, org.Status, org.OrganisationId});
-       
-                _logger.LogInformation($"Updated EPAO Organisation {org.OrganisationId} with status = {org.Status}");
-                
-                return org.OrganisationId;
-            }
+                    new { org.Name, org.Ukprn, org.OrganisationTypeId, orgData, org.Status, org.OrganisationId});
+
+            _logger.LogInformation($"Updated EPAO Organisation {org.OrganisationId} with status = {org.Status}");
+
+            return org.OrganisationId;
         }
 
-        public async Task<string>CreateEpaOrganisationStandard(EpaOrganisationStandard organisationStandard, List<int> deliveryAreas)
+        public async Task<string> CreateEpaOrganisationStandard(EpaOrganisationStandard organisationStandard, List<int> deliveryAreas)
         {
-           
-            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
-            {
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
-
-                var sqlToSelectExisting =
-                    "select Id FROM [OrganisationStandard] " +
+            var sqlToSelectExisting =
+                "select Id FROM [OrganisationStandard] " +
                     "WHERE EndPointAssessorOrganisationId = @organisationId and standardCode = @standardCode";
-                var orgStandardId = await connection.ExecuteScalarAsync<int>(sqlToSelectExisting, new { organisationId = organisationStandard.OrganisationId, standardCode = organisationStandard.StandardCode });
+            var orgStandardId = await _unitOfWork.Connection.ExecuteScalarAsync<int>(sqlToSelectExisting, new { organisationId = organisationStandard.OrganisationId, standardCode = organisationStandard.StandardCode });
 
-                if(default(int) == orgStandardId)
-                {
-                    orgStandardId = connection.Query<int>(
-                        "INSERT INTO [dbo].[OrganisationStandard] ([EndPointAssessorOrganisationId],[StandardCode],[EffectiveFrom],[EffectiveTo],[DateStandardApprovedOnRegister] ,[Comments],[Status], [ContactId], [OrganisationStandardData], StandardReference) VALUES (" +
+            if (default(int) == orgStandardId)
+            {
+                orgStandardId = (await _unitOfWork.Connection.QueryAsync<int>(
+                    "INSERT INTO [dbo].[OrganisationStandard] ([EndPointAssessorOrganisationId],[StandardCode],[EffectiveFrom],[EffectiveTo],[DateStandardApprovedOnRegister] ,[Comments],[Status], [ContactId], [OrganisationStandardData], StandardReference) VALUES (" +
                         "@organisationId, @standardCode, @effectiveFrom, @effectiveTo, getutcdate(), @comments, 'Live', @ContactId,  @OrganisationStandardData, @StandardReference); SELECT CAST(SCOPE_IDENTITY() as varchar); ",
                         new
                         {
@@ -98,34 +77,36 @@ namespace SFA.DAS.AssessorService.Data
                             organisationStandard.ContactId,
                             organisationStandard.OrganisationStandardData,
                             organisationStandard.StandardReference
-                        }).Single();
+                        })).Single();
 
-                    foreach (var deliveryAreaId in deliveryAreas.Distinct())
-                    {
-                        connection.Execute("INSERT INTO OrganisationStandardDeliveryArea ([OrganisationStandardId],DeliveryAreaId, Status) VALUES " +
-                                            "(@osdaId, @deliveryAreaId,'Live'); ",
-                                        new { osdaId = orgStandardId, deliveryAreaId }
-                                        );
-                    }
-                }
-                else
+                foreach (var deliveryAreaId in deliveryAreas.Distinct())
                 {
-                    // Fix StandardReference on the existing record
-                    connection.Execute("UPDATE [dbo].[OrganisationStandard] SET StandardReference = @standardReference WHERE Id = @id",
-                        new 
-                        {
-                            standardReference = organisationStandard.StandardReference,
-                            id = orgStandardId
-                        });
+                    await _unitOfWork.Connection.ExecuteAsync(
+                        "INSERT INTO OrganisationStandardDeliveryArea ([OrganisationStandardId],DeliveryAreaId, Status) VALUES " +
+                        "(@osdaId, @deliveryAreaId,'Live'); ",
+                        new { osdaId = orgStandardId, deliveryAreaId });
                 }
-
-                if(null != organisationStandard.StandardVersions)
-                {
-                    foreach (var version in organisationStandard.StandardVersions)
+            }
+            else
+            {
+                // Fix StandardReference on the existing record
+                await _unitOfWork.Connection.ExecuteAsync(
+                    "UPDATE [dbo].[OrganisationStandard] SET StandardReference = @standardReference WHERE Id = @id",
+                    new
                     {
-                        var standardUid = $"{organisationStandard.StandardReference.Trim()}_{version.Trim()}";
+                        standardReference = organisationStandard.StandardReference,
+                        id = orgStandardId
+                    });
+            }
 
-                        connection.Execute("INSERT INTO OrganisationStandardVersion (StandardUid, Version, OrganisationStandardId, EffectiveFrom, EffectiveTo, DateVersionApproved, Comments, Status) " +
+            if (null != organisationStandard.StandardVersions)
+            {
+                foreach (var version in organisationStandard.StandardVersions)
+                {
+                    var standardUid = $"{organisationStandard.StandardReference.Trim()}_{version.Trim()}";
+
+                    await _unitOfWork.Connection.ExecuteAsync(
+                        "INSERT INTO OrganisationStandardVersion (StandardUid, Version, OrganisationStandardId, EffectiveFrom, EffectiveTo, DateVersionApproved, Comments, Status) " +
                             "VALUES(@StandardUid, @Version, @OrganisationStandardId, @EffectiveFrom, @EffectiveTo, @DateVersionApproved, @Comments, 'Live')",
                             new
                             {
@@ -137,24 +118,17 @@ namespace SFA.DAS.AssessorService.Data
                                 DateVersionApproved = organisationStandard.DateStandardApprovedOnRegister,
                                 organisationStandard.Comments
                             });
-                    }
                 }
+            }
 
-                return orgStandardId.ToString();
-            }            
+            return orgStandardId.ToString();
         }
 
         public async Task<string> UpdateEpaOrganisationStandardAndOrganisationStandardVersions(EpaOrganisationStandard orgStandard,
             List<int> deliveryAreas)
         {
-
-            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
-            {
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
-
-                var osdaId = connection.Query<string>(
-                    "UPDATE [OrganisationStandard] SET [EffectiveFrom] = @effectiveFrom, [EffectiveTo] = @EffectiveTo, " +
+            var osdaId = (await _unitOfWork.Connection.QueryAsync<string>(
+                "UPDATE [OrganisationStandard] SET [EffectiveFrom] = @effectiveFrom, [EffectiveTo] = @EffectiveTo, " +
                     "[Comments] = @comments, [ContactId] = @contactId, [OrganisationStandardData] = @organisationStandardData, [Status]='Live' " +
                     "WHERE [EndPointAssessorOrganisationId] = @organisationId and [StandardCode] = @standardCode; SELECT top 1 id from [organisationStandard] where  [EndPointAssessorOrganisationId] = @organisationId and [StandardCode] = @standardCode;",
                     new
@@ -166,56 +140,45 @@ namespace SFA.DAS.AssessorService.Data
                         orgStandard.OrganisationId,
                         orgStandard.StandardCode,
                         orgStandard.OrganisationStandardData
-                    }).Single();
+                    })).Single();
 
-                connection.Execute(
-                    "Delete from OrganisationStandardDeliveryArea where OrganisationStandardId = @osdaId and DeliveryAreaId not in @deliveryAreas",
-                    new {osdaId, deliveryAreas});
+            await _unitOfWork.Connection.ExecuteAsync(
+                "Delete from OrganisationStandardDeliveryArea where OrganisationStandardId = @osdaId and DeliveryAreaId not in @deliveryAreas",
+                new {osdaId, deliveryAreas});
 
-                foreach (var deliveryAreaId in deliveryAreas.Distinct())
-                {
-                    connection.Execute(
-                        "IF NOT EXISTS (select * from OrganisationStandardDeliveryArea where OrganisationStandardId = @osdaId and DeliveryAreaId = @DeliveryAreaId) " +
+            foreach (var deliveryAreaId in deliveryAreas.Distinct())
+            {
+                await _unitOfWork.Connection.ExecuteAsync(
+                    "IF NOT EXISTS (select * from OrganisationStandardDeliveryArea where OrganisationStandardId = @osdaId and DeliveryAreaId = @DeliveryAreaId) " +
                         "INSERT INTO OrganisationStandardDeliveryArea ([OrganisationStandardId],DeliveryAreaId, Status) VALUES " +
                         "(@osdaId, @deliveryAreaId,'Live'); ",
-                        new {osdaId, deliveryAreaId}
-                    );
-                }
+                        new {osdaId, deliveryAreaId});
+            }
 
-                connection.Execute(
-                    "UPDATE [OrganisationStandard] SET [DateStandardApprovedOnRegister] = getutcdate() where Id = @osdaId and [DateStandardApprovedOnRegister] is null",
-                    new { osdaId }
-                );
+            await _unitOfWork.Connection.ExecuteAsync(
+                "UPDATE [OrganisationStandard] SET [DateStandardApprovedOnRegister] = getutcdate() where Id = @osdaId and [DateStandardApprovedOnRegister] is null",
+                    new { osdaId });
 
-                connection.Execute(
-                    @"UPDATE [OrganisationStandardVersion] 
+            await _unitOfWork.Connection.ExecuteAsync(
+                @"UPDATE [OrganisationStandardVersion] 
                         SET [EffectiveFrom] = @effectiveFrom,
                             [EffectiveTo] = @effectiveTo
                         WHERE
                             [OrganisationStandardId] = @id",
-                    new 
-                    {
-                        orgStandard.EffectiveFrom,
-                        orgStandard.EffectiveTo,
-                        orgStandard.Id
-                    }
-                );
+                new
+                {
+                    orgStandard.EffectiveFrom,
+                    orgStandard.EffectiveTo,
+                    orgStandard.Id
+                });
 
-              
-                return osdaId;
-            }
+            return osdaId;
         }
 
         public async Task<string> CreateEpaOrganisationContact(EpaContact contact)
         {
-            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
-            {
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
-
-
-                connection.Execute(
-                    $@"INSERT INTO [dbo].[Contacts] ([Id],[CreatedAt],[DisplayName],[Email],[EndPointAssessorOrganisationId],[OrganisationId],[Status],[Username],[PhoneNumber], [GivenNames], [FamilyName], [SigninId], [SigninType]) " +
+            await _unitOfWork.Connection.ExecuteAsync(
+                $@"INSERT INTO [dbo].[Contacts] ([Id],[CreatedAt],[DisplayName],[Email],[EndPointAssessorOrganisationId],[OrganisationId],[Status],[Username],[PhoneNumber], [GivenNames], [FamilyName], [SigninId], [SigninType]) " +
                     $@"VALUES (@id,getutcdate(), @displayName, @email, @endPointAssessorOrganisationId," +
                     $@"(select id from organisations where EndPointAssessorOrganisationId=@endPointAssessorOrganisationId), " +
                     $@"'Live', @username, @PhoneNumber, @FirstName, @LastName, @SigninId, @SigninType);",
@@ -227,30 +190,27 @@ namespace SFA.DAS.AssessorService.Data
                         contact.EndPointAssessorOrganisationId,
                         contact.Username,
                         contact.PhoneNumber,
-                        firstName = string.IsNullOrEmpty(contact.FirstName)?" ": contact.FirstName,
+                        firstName = string.IsNullOrEmpty(contact.FirstName) ? " " : contact.FirstName,
                         lastName = string.IsNullOrEmpty(contact.LastName) ? " " : contact.LastName,
                         contact.SigninId,
                         contact.SigninType
                     });
 
-                connection.Execute("UPDATE [dbo].[Organisations] set PrimaryContact=@username WHERE EndPointAssessorOrganisationId = @endPointAssessorOrganisationId and PrimaryContact is null",
+            await _unitOfWork.Connection.ExecuteAsync(
+                "UPDATE [dbo].[Organisations] set PrimaryContact=@username WHERE EndPointAssessorOrganisationId = @endPointAssessorOrganisationId and PrimaryContact is null",
                     new
                     {
-                        contact.EndPointAssessorOrganisationId, contact.Username
+                        contact.EndPointAssessorOrganisationId,
+                        contact.Username
                     });
-                return contact.Id.ToString();
-            }
+
+            return contact.Id.ToString();
         }
 
         public async Task<string> AssociateAllPrivilegesWithContact(EpaContact contact)
         {
-            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
-            {
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
-
-                connection.Execute(
-                    @" insert into[ContactsPrivileges]" +
+            await _unitOfWork.Connection.ExecuteAsync(
+                @" insert into[ContactsPrivileges]" +
                     @" select co1.id, pr1.id from Contacts co1 cross join[Privileges] pr1" +
                     @"  where co1.status = 'Live'  and co1.username not like 'unknown%' and co1.username != 'manual' and co1.Id = @Id" +
                     @"  AND NOT EXISTS(SELECT NULL FROM [ContactsPrivileges] WHERE ContactId = co1.id AND PrivilegeId = pr1.id)",
@@ -259,97 +219,83 @@ namespace SFA.DAS.AssessorService.Data
                         contact.Id,
                     });
 
-
-                return contact.Id.ToString();
-            }
+            return contact.Id.ToString();
         }
 
         //Fix for ON-2047
         public async Task<string> AssociateDefaultPrivilegesWithContact(EpaContact contact)
         {
-            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
-            {
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
-
-                connection.Execute(
-                    @" INSERT INTO[ContactsPrivileges](contactid, PrivilegeId)" +
+            await _unitOfWork.Connection.ExecuteAsync(
+                @" INSERT INTO[ContactsPrivileges](contactid, PrivilegeId)" +
                     @" SELECT contactid, PrivilegeId FROM (select co1.id contactid, pr1.id PrivilegeId from Contacts co1 cross join[Privileges] pr1" +
                     @" where MustBeAtLeastOneUserAssigned = 1 and co1.username not like 'unknown%' and co1.username != 'manual' and co1.Id = @Id" +
                     @" and co1.Status = 'Live') ab1" +
-                    @" WHERE NOT EXISTS(SELECT NULL FROM[ContactsPrivileges] WHERE ContactId = ab1.ContactId AND PrivilegeId = ab1.PrivilegeId)" ,
+                    @" WHERE NOT EXISTS(SELECT NULL FROM[ContactsPrivileges] WHERE ContactId = ab1.ContactId AND PrivilegeId = ab1.PrivilegeId)",
                     new
                     {
                         contact.Id,
                     });
 
-
-                return contact.Id.ToString();
-            }
+            return contact.Id.ToString();
         }
 
         public async Task<string> UpdateEpaOrganisationContact(EpaContact contact, string actionChoice)
         {
-            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
-            {
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
-
-
-                connection.Execute(
-                    "UPDATE [Contacts] SET [DisplayName] = @displayName, [Email] = @email, " +
+            await _unitOfWork.Connection.ExecuteAsync(
+                "UPDATE [Contacts] SET [DisplayName] = @displayName, [Email] = @email, " +
                     "[GivenNames] = @firstName, [FamilyName] = @lastName, " +
                     "[PhoneNumber] = @phoneNumber, [updatedAt] = getUtcDate() " +
                     "WHERE [Id] = @Id ",
-                    new { contact.DisplayName, contact.Email, firstName = string.IsNullOrEmpty(contact.FirstName) ? " " : contact.FirstName,
-                        lastName = string.IsNullOrEmpty(contact.LastName) ? " " : contact.LastName, contact.PhoneNumber, contact.Id});
+                    new
+                    {
+                        contact.DisplayName,
+                        contact.Email,
+                        firstName = string.IsNullOrEmpty(contact.FirstName) ? " " : contact.FirstName,
+                        lastName = string.IsNullOrEmpty(contact.LastName) ? " " : contact.LastName,
+                        contact.PhoneNumber,
+                        contact.Id
+                    });
 
-                if (actionChoice == "MakePrimaryContact")
-                    connection.Execute("update o set PrimaryContact = c.Username from organisations o " +
+            if (actionChoice == "MakePrimaryContact")
+            {
+                await _unitOfWork.Connection.ExecuteAsync(
+                    "update o set PrimaryContact = c.Username from organisations o " +
                                        "inner join contacts c on o.EndPointAssessorOrganisationId = c.EndPointAssessorOrganisationId " +
                                        "Where c.id = @Id",
-                        new {contact.Id});
-
-                return contact.Id.ToString();
+                        new { contact.Id });
             }
+
+            return contact.Id.ToString();
         }
 
         public async Task<string> AssociateOrganisationWithContact(Guid contactId, EpaOrganisation org, string status, string actionChoice)
         {
-            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
-            {
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
-
-
-                connection.Execute(
-                    "UPDATE [Contacts] SET [EndPointAssessorOrganisationId] = @OrganisationId, [OrganisationId] = @Id, " +
+            await _unitOfWork.Connection.ExecuteAsync(
+                "UPDATE [Contacts] SET [EndPointAssessorOrganisationId] = @OrganisationId, [OrganisationId] = @Id, " +
                     "[Status] = @status, [updatedAt] = getUtcDate() " +
                     "WHERE [Id] = @contactId ",
-                    new { org.OrganisationId, org.Id, contactId,  status });
+                    new { org.OrganisationId, org.Id, contactId, status });
 
-                if (actionChoice == "MakePrimaryContact")
-                    connection.Execute("update o set PrimaryContact = c.Username from organisations o " +
+            if (actionChoice == "MakePrimaryContact")
+            {
+                await _unitOfWork.Connection.ExecuteAsync(
+                    "update o set PrimaryContact = c.Username from organisations o " +
                                        "inner join contacts c on o.EndPointAssessorOrganisationId = c.EndPointAssessorOrganisationId " +
                                        "Where c.id = @contactId",
                         new { contactId });
-
-                return contactId.ToString();
             }
+
+            return contactId.ToString();
         }
 
         public async Task UpdateEpaOrganisationPrimaryContact(Guid contactId, string contactUsername)
         {
-            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
-            {
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
-
-                    connection.Execute("update o set PrimaryContact = c.Username from organisations o " +
+            await _unitOfWork.Connection.ExecuteAsync(
+                "update o set PrimaryContact = c.Username from organisations o " +
                                        "inner join contacts c on o.EndPointAssessorOrganisationId = c.EndPointAssessorOrganisationId " +
                                        "Where c.id = @contactId And o.PrimaryContact = @contactUsername",
                         new { contactId, contactUsername });
-            }
+
         }
     }
 }

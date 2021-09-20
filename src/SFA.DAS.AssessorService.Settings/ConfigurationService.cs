@@ -32,6 +32,7 @@ namespace SFA.DAS.AssessorService.Settings
             var data = dynResult.Properties["Data"].StringValue;
 
             var webConfig = JsonConvert.DeserializeObject<WebConfiguration>(data);
+            webConfig.Environment = environment;
 
             return webConfig;
         }

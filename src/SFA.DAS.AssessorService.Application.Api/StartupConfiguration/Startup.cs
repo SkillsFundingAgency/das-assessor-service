@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.Mvc.Razor;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -20,7 +19,6 @@ using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Services;
 using SFA.DAS.AssessorService.Application.Infrastructure;
 using SFA.DAS.AssessorService.Application.Infrastructure.OuterApi;
-using SFA.DAS.AssessorService.Data;
 using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.Http;
 using SFA.DAS.Http.TokenGenerators;
@@ -29,8 +27,6 @@ using StructureMap;
 using Swashbuckle.AspNetCore.Filters;
 using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Data.SqlClient;
 using System.Globalization;
 using System.IO;
 using System.Net.Http;
@@ -50,7 +46,9 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
         {
             _env = env;
             _logger = logger;
+
             _logger.LogInformation("In startup constructor.  Before GetConfig");
+            
             Configuration = ConfigurationService
                 .GetConfig(config["EnvironmentName"], config["ConfigurationStorageConnectionString"], Version, ServiceName).Result;
 
@@ -195,7 +193,6 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
             {
                 config.Scan(_ =>
                 {
-                    //_.AssemblyContainingType(typeof(Startup));
                     _.AssembliesFromApplicationBaseDirectory(c => c.FullName.StartsWith("SFA"));
                     _.WithDefaultConventions();
 
@@ -212,12 +209,7 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                 config.For<ISignInService>().Use<SignInService>();
               
                 var sqlConnectionString = UseSandbox ? Configuration.SandboxSqlConnectionString : Configuration.SqlConnectionString;
-                var option = new DbContextOptionsBuilder<AssessorDbContext>();
-                option.UseSqlServer(sqlConnectionString, options => options.EnableRetryOnFailure(3));
-
-                config.For<AssessorDbContext>().Use(c => new AssessorDbContext(option.Options));
-                config.For<IDbConnection>().Use(c => new SqlConnection(sqlConnectionString));
-
+                config.AddDatabaseRegistration(Configuration.Environment, sqlConnectionString);
 
                 config.For<INotificationsApi>().Use<NotificationsApi>().Ctor<HttpClient>().Is(string.IsNullOrWhiteSpace(NotificationConfiguration().ClientId)
                     ? new HttpClientBuilder().WithBearerAuthorisationHeader(new JwtBearerTokenGenerator(NotificationConfiguration())).Build()

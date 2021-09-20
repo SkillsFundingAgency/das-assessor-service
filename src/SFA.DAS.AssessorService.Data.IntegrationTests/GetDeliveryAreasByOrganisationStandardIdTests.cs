@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
@@ -28,8 +29,12 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         [OneTimeSetUp]
         public void SetupOrganisationTests()
         {
+            var databaseConnection = new SqlConnection(_databaseService.WebConfiguration.SqlConnectionString);
+            var unitOfWork = new UnitOfWork(databaseConnection);
+
+            _repository = new RegisterQueryRepository(unitOfWork);
+            
             _organisationIdCreated = "EPA0987";
-            _repository = new RegisterQueryRepository(_databaseService.WebConfiguration);
             _organisationId1 = "EPA0987"; 
             _organisation1 = new OrganisationModel
             {

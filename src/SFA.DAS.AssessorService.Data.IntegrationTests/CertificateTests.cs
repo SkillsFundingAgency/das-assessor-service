@@ -1,19 +1,17 @@
-﻿using NUnit.Framework;
-using SFA.DAS.AssessorService.Application.Interfaces;
-using System.Collections.Generic;
-using System.Linq;
+﻿using FluentAssertions;
+using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
+using NUnit.Framework;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Handlers;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Models;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Services;
-using Microsoft.EntityFrameworkCore;
-using System.Data.SqlClient;
-using System;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
-using System.Threading.Tasks;
 using SFA.DAS.AssessorService.Domain.JsonData;
-using Newtonsoft.Json;
-using FluentAssertions;
+using System;
+using System.Collections.Generic;
+using System.Data.SqlClient;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Data.IntegrationTests
 {
@@ -36,11 +34,10 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         public async Task SetupCertificateTests()
         {
             var option = new DbContextOptionsBuilder<AssessorDbContext>();
-            option.UseSqlServer(_databaseService.WebConfiguration.SqlConnectionString, options => options.EnableRetryOnFailure(3));    
-            
-            _context = new AssessorDbContext(option.Options);
-            _unitOfWork = new UnitOfWork(new SqlConnection(_databaseService.WebConfiguration.SqlConnectionString));
-            
+            var sqlConnection = new SqlConnection(_databaseService.WebConfiguration.SqlConnectionString);
+            _context = new AssessorDbContext(sqlConnection, option.Options);
+            _unitOfWork = new UnitOfWork(sqlConnection);
+
             _repository = new CertificateRepository(_unitOfWork, _context);
 
             OrganisationTypeHandler.InsertRecord(
