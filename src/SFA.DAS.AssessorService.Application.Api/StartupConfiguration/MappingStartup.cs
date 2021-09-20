@@ -90,6 +90,8 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                 cfg.AddProfile<ApplicationResponseProfile>();
 
                 cfg.AddProfile<ApplicationSummaryItemProfile>();
+
+                cfg.AddProfile<LearnerSearchResultProfile>();
             });
         }
     }
