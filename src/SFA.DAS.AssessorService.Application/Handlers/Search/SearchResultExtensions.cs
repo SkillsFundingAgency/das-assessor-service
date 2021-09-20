@@ -22,28 +22,77 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
 
             foreach (var searchResult in searchResults)
             {
+                // If the learner contains version and option, then it's come from commitments
+                // Therefore we don't want to give the UI the impression that a choice is needed
+                // So we enforce a single version and option selection so it displays on the results page.
+                if (searchResult.VersionConfirmed && !string.IsNullOrWhiteSpace(searchResult.StandardUId))
+                {
+                    var learnerStandard = allStandards.FirstOrDefault(s => s.StandardUId == searchResult.StandardUId);
+
+                    if (learnerStandard == null)
+                    {
+                        logger.LogInformation($"Failed to get standard for {searchResult.StandardUId}");
+                    }
+                    else
+                    {
+                        PopulateSingleVersionResult(learnerStandard, allOptions, searchResult);
+                    }
+                    continue;
+                }
+
+                // Otherwise, we fall back to traditional processing populating versions.
                 var standards = allStandards.Where(s => s.LarsCode == searchResult.StdCode)
                     .OrderByDescending(o => o.VersionMajor).ThenByDescending(m => m.VersionMinor);
 
-                if(!standards.Any())
+                if (!standards.Any())
                 {
                     logger.LogInformation($"Failed to get standard for {searchResult.StdCode}");
                     continue;
                 }
-                                
-                var firstStandard = standards.First();
-                searchResult.Standard = firstStandard.Title;
-                searchResult.Level = firstStandard.Level;
-                searchResult.Versions = standards.Select(s => new StandardVersion
-                {
-                    Title = s.Title,
-                    StandardUId = s.StandardUId,
-                    Version = s.Version,
-                    Options = allOptions.SingleOrDefault(o => o.StandardUId == s.StandardUId)?.CourseOption
-                }).ToList();
+
+                PopulateMultipleVersionResults(allOptions, searchResult, standards);
             }
 
             return searchResults;
+        }
+
+        private static void PopulateMultipleVersionResults(IEnumerable<StandardOptions> allOptions, SearchResult searchResult, IOrderedEnumerable<Standard> standards)
+        {
+            var firstStandard = standards.First();
+            searchResult.Standard = firstStandard.Title;
+            searchResult.Level = firstStandard.Level;
+            searchResult.Versions = standards.Select(s => new StandardVersion
+            {
+                Title = s.Title,
+                StandardUId = s.StandardUId,
+                Version = s.Version,
+                Options = allOptions.SingleOrDefault(o => o.StandardUId == s.StandardUId)?.CourseOption
+            }).ToList();
+        }
+
+        private static void PopulateSingleVersionResult(Standard learnerStandard, IEnumerable<StandardOptions> allOptions, SearchResult searchResult)
+        {
+            bool optionValid = false;
+
+            if (!string.IsNullOrWhiteSpace(searchResult.Option))
+            {
+                var standardOptions = allOptions.SingleOrDefault(o => o.StandardUId == learnerStandard.StandardUId)?.CourseOption;
+                if (standardOptions.Contains(searchResult.Option, StringComparer.InvariantCultureIgnoreCase))
+                {
+                    optionValid = true;
+                }
+            }
+
+            searchResult.Standard = learnerStandard.Title;
+            searchResult.Level = learnerStandard.Level;
+            searchResult.Versions = new List<StandardVersion> { new StandardVersion
+                    {
+                        Title = learnerStandard.Title,
+                        StandardUId = learnerStandard.StandardUId,
+                        Version = learnerStandard.Version,
+                        Options = optionValid ? new List<string>{searchResult.Option} : allOptions.SingleOrDefault(o => o.StandardUId == searchResult.StandardUId)?.CourseOption
+                    }};
+
         }
 
         public static List<SearchResult> MatchUpExistingCompletedStandards(this List<SearchResult> searchResults, SearchQuery request, ICertificateRepository certificateRepository, IContactQueryRepository contactRepository, IOrganisationQueryRepository _organisationRepository, ILogger<SearchHandler> logger)
@@ -58,7 +107,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
             {
                 foreach (var searchResult in searchResults)
                 {
-                    var certificate = certificates.SingleOrDefault(s => s.StandardCode == searchResult.StdCode && 
+                    var certificate = certificates.SingleOrDefault(s => s.StandardCode == searchResult.StdCode &&
                                                                     s.Status != CertificateStatus.Draft);
                     if (certificate != null)
                     {
@@ -91,7 +140,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
                     searchResults.Add(searchResult);
                 }
             }
-           
+
             return searchResults;
         }
 
@@ -110,7 +159,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
             return searchResult;
         }
 
-        public static SearchResult PopulateCertificateExtraInformationDependingOnPermission(this SearchResult searchResult, 
+        public static SearchResult PopulateCertificateExtraInformationDependingOnPermission(this SearchResult searchResult,
             SearchQuery request, ICertificateRepository certificateRepository, IContactQueryRepository contactRepository,
             Certificate certificate, Organisation searchingEpao, ILogger<SearchHandler> logger)
         {
@@ -178,7 +227,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
                 searchResult.UpdatedBy = null;
                 searchResult.UpdatedAt = null;
             }
-            
+
             return searchResult;
         }
     }

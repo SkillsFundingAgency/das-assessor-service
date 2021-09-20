@@ -30,6 +30,9 @@ namespace SFA.DAS.AssessorService.Application.UnitTests
 
                 cfg.CreateMap<string, CertificateDataResponse>()
                     .ConvertUsing<JsonMappingConverter<CertificateDataResponse>>();
+                cfg.CreateMap<Learner, SearchResult>()
+                    .ForMember(dest => dest.Option, source => source.MapFrom(learner => learner.CourseOption))
+                    .ForMember(dest => dest.UpdatedAt, source => source.MapFrom(learner => learner.LastUpdated));
             });
         }
     }
