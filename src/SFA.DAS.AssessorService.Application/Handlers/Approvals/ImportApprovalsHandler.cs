@@ -53,6 +53,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Approvals
 
                 int batchSize = await GetSettingAsInt(BATCHSIZE_SETTING_NAME);
                 int batchNumber = 0;
+                int count = 0;
                 GetAllLearnersResponse learnersBatch = null;
 
                 do
@@ -67,19 +68,19 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Approvals
                     // 3. Upsert ApprovalsExtract batch.
 
                     UpsertApprovalsExtract(learnersBatch.Learners);
+                    count += learnersBatch.Learners.Count;
 
                 } while (batchNumber < learnersBatch.TotalNumberOfBatches);
 
                 // 4. Run Populate Learner
 
+                var learnerCount = await _approvalsExtractRepository.PopulateLearner();
 
-
-
-                _logger.LogInformation("Approvals import completed successfully.");
+                _logger.LogInformation($"Approvals import completed successfully. {count} record(s) read from outer api, {learnerCount} records inserted to Learner table.");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Failed to import approvals.");
+                _logger.LogError(ex, "Approvals import failed to complete successfully.");
                 throw;
             }
 

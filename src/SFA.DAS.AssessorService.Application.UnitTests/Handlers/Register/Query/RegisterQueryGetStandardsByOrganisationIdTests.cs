@@ -57,13 +57,14 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
             _expectedTitle1 = "Standard 1";
             _expectedTitle2 = "Standard 2";
             _expectedTitle3 = "Standard 3";
-
+            _expectedDeliveryAreas = new List<int> { 1, 2 };
+            
             RegisterQueryRepository = new Mock<IRegisterQueryRepository>();
             
             _standardService = new Mock<IStandardService>();
-            _standard1 = new OrganisationStandardSummary { Id = _id1, OrganisationId = _organisationId, StandardCode = _standardCode1, EffectiveFrom = effectiveFrom1, StandardCollation = new StandardCollation { StandardId = _id1, Title = _expectedTitle1 } };
-            _standard2 = new OrganisationStandardSummary { Id = _id2, OrganisationId = _organisationId, StandardCode = _standardCode2, EffectiveFrom = effectiveFrom2, EffectiveTo = effectiveTo2, StandardCollation = new StandardCollation { StandardId = _id2, Title = _expectedTitle2 } };
-            _standard3 = new OrganisationStandardSummary { Id = _id3, OrganisationId = _organisationId, StandardCode = _standardCode3, EffectiveFrom = effectiveFrom3, StandardCollation = new StandardCollation { StandardId = _id3, Title = _expectedTitle3 } };
+            _standard1 = new OrganisationStandardSummary { Id = _id1, OrganisationId = _organisationId, DeliveryAreas = _expectedDeliveryAreas, StandardCode = _standardCode1, EffectiveFrom = effectiveFrom1, StandardCollation = new StandardCollation { StandardId = _id1, Title = _expectedTitle1 } };
+            _standard2 = new OrganisationStandardSummary { Id = _id2, OrganisationId = _organisationId, DeliveryAreas = _expectedDeliveryAreas, StandardCode = _standardCode2, EffectiveFrom = effectiveFrom2, EffectiveTo = effectiveTo2, StandardCollation = new StandardCollation { StandardId = _id2, Title = _expectedTitle2 } };
+            _standard3 = new OrganisationStandardSummary { Id = _id3, OrganisationId = _organisationId, DeliveryAreas = _expectedDeliveryAreas, StandardCode = _standardCode3, EffectiveFrom = effectiveFrom3, StandardCollation = new StandardCollation { StandardId = _id3, Title = _expectedTitle3 } };
 
             _expectedStandards = new List<OrganisationStandardSummary>
             {
@@ -72,17 +73,12 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
                 _standard3
             };
 
-            _expectedDeliveryAreas = new List<int>{1,2};
-            
             _request = new GetStandardsByOrganisationRequest { OrganisationId = _organisationId };
 
             Logger = new Mock<ILogger<GetStandardsByAssessmentOrganisationHandler>>();
 
             RegisterQueryRepository.Setup(r => r.GetOrganisationStandardByOrganisationId(_organisationId))
                 .Returns(Task.FromResult(_expectedStandards.AsEnumerable()));
-
-            RegisterQueryRepository.Setup(r => r.GetDeliveryAreaIdsByOrganisationStandardId(_id1))
-                .Returns(Task.FromResult(_expectedDeliveryAreas.AsEnumerable()));
             
             GetStandardsByAssessmentOrganisationHandler =
                 new GetStandardsByAssessmentOrganisationHandler(RegisterQueryRepository.Object, _standardService.Object,Logger.Object);
@@ -93,7 +89,6 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
         {
             GetStandardsByAssessmentOrganisationHandler.Handle(_request, new CancellationToken()).Wait();
             RegisterQueryRepository.Verify(r => r.GetOrganisationStandardByOrganisationId(_organisationId));
-            RegisterQueryRepository.Verify(r => r.GetDeliveryAreaIdsByOrganisationStandardId(_id1));
         }
 
         [Test]
@@ -110,7 +105,6 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
             var standard = standards.First(s => s.OrganisationId == _organisationId && s.StandardCode == _standardCode1);
             Assert.AreEqual(effectiveFrom1, standard.EffectiveFrom);
             Assert.AreEqual(null, standard.EffectiveTo);
-            Assert.AreEqual(_expectedDeliveryAreas, standard.DeliveryAreas);
             Assert.AreEqual(_expectedTitle1, standard.StandardCollation.Title);
         }
 
