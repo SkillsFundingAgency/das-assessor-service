@@ -93,15 +93,6 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
             
         }
 
-        [Test]
-        public void RunGetDeliveryAreasFromOrganisationStandardIdAndCheckAllDetailsExpectedAreReturned()
-        {
-            var deliveryAreasReturned = _repository.GetDeliveryAreaIdsByOrganisationStandardId(_orgStandardId).Result.ToList();
-            Assert.AreEqual(2, deliveryAreasReturned.Count, $@"Expected 2 Delivery Areas back but got {deliveryAreasReturned.Count()}");
-            Assert.AreEqual(1, deliveryAreasReturned.Count(x => x == _deliveryArea1.Id), "Delivery Area 1 Id was not found");
-            Assert.AreEqual(1, deliveryAreasReturned.Count(x => x == _deliveryArea2.Id), "Delivery Area 2 Id was not found");
-        }
-
         [OneTimeTearDown]
         public void TearDownOrganisationTests()
         {

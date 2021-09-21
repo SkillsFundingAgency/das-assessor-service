@@ -6,6 +6,7 @@ using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.Data.DapperTypeHandlers;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Data
@@ -162,20 +163,67 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<IEnumerable<OrganisationStandardSummary>> GetOrganisationStandardByOrganisationId(string organisationId)
         {
-            var sql =
-                @"SELECT distinct os.*, sc.*
-                FROM [OrganisationStandard] os
-                    INNER JOIN StandardCollation sc ON sc.StandardId = os.StandardCode 
-                WHERE EndPointAssessorOrganisationId = @organisationId";
+            IEnumerable<OrganisationStandardSummary> organisationStandardSummaries;
 
-            var standard = await _unitOfWork.Connection.QueryAsync<OrganisationStandardSummary, StandardCollation, OrganisationStandardSummary>(
-                sql, (summary, collation) =>
+            var query = 
+                @"SELECT 
+	                os.Id, EndPointAssessorOrganisationId AS OrganisationId, StandardCode, EffectiveFrom, EffectiveTo, DateStandardApprovedOnRegister, Comments, ContactId, OrganisationStandardData, StandardReference
+                  FROM 
+	                [OrganisationStandard] os 
+                  WHERE 
+	                EndPointAssessorOrganisationId = @organisationId
+
+                  SELECT
+	                sc.Id, StandardId, ReferenceNumber, Title, StandardData, DateAdded, DateUpdated, DateRemoved, IsLive
+                  FROM 
+	                [OrganisationStandard] os 
+	                INNER JOIN [StandardCollation] sc ON os.StandardCode = sc.StandardId
+                  WHERE 
+	                EndPointAssessorOrganisationId = @organisationId
+
+                  SELECT StandardCode, osda.DeliveryAreaId 
+                  FROM 
+	                [OrganisationStandard] os 
+	                INNER JOIN [OrganisationStandardDeliveryArea] osda on os.Id = osda.OrganisationStandardId 
+                  WHERE
+	                EndPointAssessorOrganisationId = @organisationId 
+                  
+                  SELECT 
+	                osv.StandardUId, os.StandardCode as LarsCode, s.Title, s.Level, s.IFateReferenceNumber, s.Version, osv.EffectiveFrom, osv.EffectiveTo, osv.DateVersionApproved, osv.Status
+                  FROM 
+	                [dbo].[OrganisationStandardVersion] osv
+	                INNER JOIN [dbo].[OrganisationStandard] os on osv.OrganisationStandardId = os.Id
+	                INNER JOIN [dbo].[Organisations] o on os.EndPointAssessorOrganisationId = o.EndPointAssessorOrganisationId 
+                        AND o.EndPointAssessorOrganisationId = @organisationId
+	                INNER JOIN [dbo].[Standards] s on osv.StandardUId = s.StandardUId
+                  WHERE 
+	                osv.Status = 'Live' AND os.status = 'Live' 
+	                AND (os.EffectiveTo IS NULL OR os.EffectiveTo > GETDATE())
+	                AND (osv.EffectiveTo IS NULL OR osv.EffectiveTo > GETDATE())";
+
+            using (var multi = await _unitOfWork.Connection.QueryMultipleAsync(query, new { organisationId }))
+            {
+                organisationStandardSummaries = multi.Read<OrganisationStandardSummary>();
+                var standardCollations = multi.Read<StandardCollation>()?.ToDictionary(a => a.StandardId);
+                var deliveryAreas = multi.Read().Select(a => new { a.StandardCode, a.DeliveryAreaId })?.GroupBy(a => a.StandardCode);
+                var organisationStandardVersions = multi.Read<OrganisationStandardVersion>()?.GroupBy(a => a.LarsCode);
+
+                foreach (var organisationStandardSummary in organisationStandardSummaries)
                 {
-                    summary.StandardCollation = collation;
-                    return summary;
-                }, new { organisationId });
+                    organisationStandardSummary.StandardCollation = standardCollations[organisationStandardSummary.StandardCode];
 
-            return standard;
+                    organisationStandardSummary.DeliveryAreas = deliveryAreas?
+                        .SingleOrDefault(a => a.Key == organisationStandardSummary.StandardCode)?
+                        .Select(a => (int)a.DeliveryAreaId)
+                        .ToList() ?? new List<int>();
+
+                    organisationStandardSummary.StandardVersions = organisationStandardVersions?
+                        .SingleOrDefault(a => a.Key == organisationStandardSummary.StandardCode)?
+                        .ToList() ?? new List<OrganisationStandardVersion>();
+                }
+            }
+
+            return organisationStandardSummaries;
         }
 
         public async Task<OrganisationStandard> GetOrganisationStandardFromOrganisationStandardId(int organisationStandardId)
@@ -301,15 +349,6 @@ namespace SFA.DAS.AssessorService.Data
                     + "OR replace(JSON_VALUE(o.[OrganisationData], '$.CharityNumber'), ' ','') like @searchString ";
 
             return await _unitOfWork.Connection.QueryAsync<AssessmentOrganisationSummary>(sql, new { searchString = $"%{searchString.Replace(" ", "")}%" });
-        }
-
-        public async Task<IEnumerable<int>> GetDeliveryAreaIdsByOrganisationStandardId(int organisationStandardId)
-        {
-            var sql =
-                "select DeliveryAreaId from organisationStandardDeliveryArea" +
-                    " where OrganisationStandardId = @organisationStandardId";
-
-            return await _unitOfWork.Connection.QueryAsync<int>(sql, new { organisationStandardId });
         }
 
         public async Task<EpaContact> GetContactByContactId(Guid contactId)
