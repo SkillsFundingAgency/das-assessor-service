@@ -10,7 +10,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
         public GetBatchLearnerRequestValidatorTestBase() : base()
         {
             var stringLocalizerMock = new Mock<IStringLocalizer<Api.Validators.ExternalApi.Learners.GetBatchLearnerRequestValidator>>();
-            Validator = new Api.Validators.ExternalApi.Learners.GetBatchLearnerRequestValidator(stringLocalizerMock.Object, OrganisationQueryRepositoryMock.Object, IlrRepositoryMock.Object, CertificateRepositoryMock.Object, StandardServiceMock.Object);
+            Validator = new Api.Validators.ExternalApi.Learners.GetBatchLearnerRequestValidator(stringLocalizerMock.Object, OrganisationQueryRepositoryMock.Object, LearnerRepositoryMock.Object, CertificateRepositoryMock.Object, StandardServiceMock.Object);
         }
     }
 }

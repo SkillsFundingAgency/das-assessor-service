@@ -15,45 +15,45 @@ ce1.CertificateReference,
 ce1.Status, 
 JSON_VALUE(CertificateData, '$.LearningStartDate') LearnStartDate, 
 org.[EndPointAssessorOrganisationId]  EPAOrgID,
-il1.FundingModel,
-il1.ApprenticeshipId,
-il1.EmployerAccountId,
-il1.Source,
+learner1.FundingModel,
+learner1.ApprenticeshipId,
+--learner1.EmployerAccountId,
+learner1.Source,
 ce1.CreatedAt,
 ce1.UpdatedAt,
-il1.EventId,
-il1.LearnRefNumber,
+--learner1.EventId,
+learner1.LearnRefNumber,
 JSON_VALUE(CertificateData, '$.LearnerFamilyName') AS CertFamilyName	
 FROM Certificates ce1 
 JOIN Organisations org ON ce1.OrganisationId = org.Id
-LEFT JOIN Ilrs il1 ON ce1.StandardCode = il1.StdCode AND ce1.Uln = il1.Uln
+LEFT JOIN Learner learner1 ON ce1.StandardCode = learner1.StdCode AND ce1.Uln = learner1.Uln
 WHERE JSON_VALUE(CertificateData, '$.LearnerFamilyName') = @Search
    OR JSON_VALUE(CertificateData, '$.LearnerGivenNames') = @Search
    OR REPLACE(JSON_VALUE(CertificateData, '$.LearnerGivenNames'),' ','') + REPLACE(JSON_VALUE(CertificateData, '$.LearnerFamilyName'),' ','') = REPLACE(@Search, ' ','') 
 UNION ALL
 SELECT 
 REPLACE(GivenNames,' ','') + REPLACE(FamilyName,' ','') AS x,
-il1.Uln ,
-il1.FamilyName, 
-il1.GivenNames, 
-il1.StdCode,
+learner1.Uln ,
+learner1.FamilyName, 
+learner1.GivenNames, 
+learner1.StdCode,
 sc.Title AS StandardName,
 NULL CertificateReference, 
 NULL Status,
-il1.LearnStartDate,
-il1.EpaOrgId,
-il1.FundingModel,
-il1.ApprenticeshipId,
-il1.EmployerAccountId,
-il1.Source,
-il1.CreatedAt,
-il1.UpdatedAt,
-il1.EventId,
-il1.LearnRefNumber,
+learner1.LearnStartDate,
+learner1.EpaOrgId,
+learner1.FundingModel,
+learner1.ApprenticeshipId,
+--learner1.EmployerAccountId,
+learner1.Source,
+--learner1.CreatedAt,
+--learner1.UpdatedAt,
+--learner1.EventId,
+learner1.LearnRefNumber,
 NULL CertFamilyName	
-FROM Ilrs il1
-JOIN StandardCollation sc ON il1.StdCode = sc.StandardId
-LEFT JOIN Certificates ce1 ON ce1.StandardCode = il1.StdCode AND ce1.Uln = il1.Uln
+FROM Learner learner1
+JOIN StandardCollation sc ON learner1.StdCode = sc.StandardId
+LEFT JOIN Certificates ce1 ON ce1.StandardCode = learner1.StdCode AND ce1.Uln = learner1.Uln
 WHERE 
 ce1.Uln IS  NULL
 AND(FamilyName = @Search 

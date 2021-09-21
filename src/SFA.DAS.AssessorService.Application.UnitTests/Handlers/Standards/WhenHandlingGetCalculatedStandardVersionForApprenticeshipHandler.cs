@@ -21,15 +21,15 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Standards
     public class WhenHandlingGetCalculatedStandardVersionForApprenticeshipHandler
     {
         [Test, MoqAutoData]
-        public async Task ThenReturnsNullWhenNoILRRecord(
+        public async Task ThenReturnsNullWhenNoLearnerRecord(
             [Frozen] Mock<IStandardService> standardService,
-            [Frozen] Mock<IIlrRepository> ilrRepository,
+            [Frozen] Mock<ILearnerRepository> learnerRepository,
             Standard latestStandard,
             GetCalculatedStandardVersionForApprenticeshipRequest request,
             GetCalculatedStandardVersionForApprenticeshipHandler sut)
         {
             standardService.Setup(s => s.GetStandardVersionById(request.StandardId, null)).ReturnsAsync(latestStandard);
-            ilrRepository.Setup(s => s.Get(request.Uln, latestStandard.LarsCode)).ReturnsAsync((Ilr)null);
+            learnerRepository.Setup(s => s.Get(request.Uln, latestStandard.LarsCode)).ReturnsAsync((Domain.Entities.Learner)null);
 
             //Act
             var result = await sut.Handle(request, new CancellationToken());
@@ -39,21 +39,21 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Standards
         }
 
         [Test, MoqAutoData]
-        public async Task ThenSelectsCorrectVersionBasedOnILRLearnerStartDate(
+        public async Task ThenSelectsCorrectVersionBasedOnLearnerStartDate(
             [Frozen] Mock<IStandardService> standardService,
-            [Frozen] Mock<IIlrRepository> ilrRepository,
+            [Frozen] Mock<ILearnerRepository> learnerRepository,
             GetCalculatedStandardVersionForApprenticeshipRequest request,
             IEnumerable<Standard> standards,
             DateTime baseDate,
             int baseVersion,
             int larsCode,
-            Ilr ilrRecord,
+            Domain.Entities.Learner learnerRecord,
             GetCalculatedStandardVersionForApprenticeshipHandler sut)
         {
             //Arrange
             //List defaults to 3 records in autofixture
             // Set learner date for middle version
-            ilrRecord.LearnStartDate = baseDate.AddYears(1);
+            learnerRecord.LearnStartDate = baseDate.AddYears(1);
             var selectedVersionNumber = baseVersion + 1;
 
             foreach (var s in standards)
@@ -71,7 +71,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Standards
 
             standardService.Setup(s => s.GetStandardVersionById(request.StandardId, null)).ReturnsAsync(latestStandard);
             standardService.Setup(s => s.GetStandardVersionsByLarsCode(larsCode)).ReturnsAsync(standards);
-            ilrRepository.Setup(s => s.Get(request.Uln, larsCode)).ReturnsAsync(ilrRecord);
+            learnerRepository.Setup(s => s.Get(request.Uln, larsCode)).ReturnsAsync(learnerRecord);
 
             //Act
             var result = await sut.Handle(request, new CancellationToken());
@@ -82,21 +82,21 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Standards
         }
 
         [Test, MoqAutoData]
-        public async Task ThenSelectsCorrectVersionBasedOnILRLearnerStartDate_WhenLatestVersionStartDateIsNull(
+        public async Task ThenSelectsCorrectVersionBasedOnLearnerStartDate_WhenLatestVersionStartDateIsNull(
             [Frozen] Mock<IStandardService> standardService,
-            [Frozen] Mock<IIlrRepository> ilrRepository,
+            [Frozen] Mock<ILearnerRepository> learnerRepository,
             GetCalculatedStandardVersionForApprenticeshipRequest request,
             IEnumerable<Standard> standards,
             DateTime baseDate,
             int baseVersion,
             int larsCode,
-            Ilr ilrRecord,
+            Domain.Entities.Learner learnerRecord,
             GetCalculatedStandardVersionForApprenticeshipHandler sut)
         {
             //Arrange
             //List defaults to 3 records in autofixture
             // Set learner date for last version
-            ilrRecord.LearnStartDate = baseDate.AddYears(2);
+            learnerRecord.LearnStartDate = baseDate.AddYears(2);
             
             foreach (var s in standards)
             {
@@ -114,7 +114,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Standards
 
             standardService.Setup(s => s.GetStandardVersionById(request.StandardId, null)).ReturnsAsync(latestVersion);
             standardService.Setup(s => s.GetStandardVersionsByLarsCode(larsCode)).ReturnsAsync(standards);
-            ilrRepository.Setup(s => s.Get(request.Uln, larsCode)).ReturnsAsync(ilrRecord);
+            learnerRepository.Setup(s => s.Get(request.Uln, larsCode)).ReturnsAsync(learnerRecord);
 
             //Act
             var result = await sut.Handle(request, new CancellationToken());
@@ -124,21 +124,21 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Standards
         }
 
         [Test, MoqAutoData]
-        public async Task ThenSelectsLatestVersion_BasedOnILRLearnerStartDateNotMatchingAnyVersion(
+        public async Task ThenSelectsLatestVersion_BasedOnLearnerStartDateNotMatchingAnyVersion(
             [Frozen] Mock<IStandardService> standardService,
-            [Frozen] Mock<IIlrRepository> ilrRepository,
+            [Frozen] Mock<ILearnerRepository> learnerRepository,
             GetCalculatedStandardVersionForApprenticeshipRequest request,
             IEnumerable<Standard> standards,
             DateTime baseDate,
             int baseVersion,
             int larsCode,
-            Ilr ilrRecord,
+            Domain.Entities.Learner learnerRecord,
             GetCalculatedStandardVersionForApprenticeshipHandler sut)
         {
             //Arrange
             //List defaults to 3 records in autofixture
             // Set learner date for last version
-            ilrRecord.LearnStartDate = baseDate.AddYears(25);
+            learnerRecord.LearnStartDate = baseDate.AddYears(25);
 
             foreach (var s in standards)
             {
@@ -154,7 +154,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Standards
             
             standardService.Setup(s => s.GetStandardVersionById(request.StandardId, null)).ReturnsAsync(latestVersion);
             standardService.Setup(s => s.GetStandardVersionsByLarsCode(larsCode)).ReturnsAsync(standards);
-            ilrRepository.Setup(s => s.Get(request.Uln, larsCode)).ReturnsAsync(ilrRecord);
+            learnerRepository.Setup(s => s.Get(request.Uln, larsCode)).ReturnsAsync(learnerRecord);
 
             //Act
             var result = await sut.Handle(request, new CancellationToken());

@@ -201,6 +201,7 @@
     <None Include="PostDeploymentScripts\LookupData\StaffReportsInsertOrUpdate.sql" />
     <None Include="PostDeploymentScripts\LookupData\StaffReportsDelete.sql" />
     <None Include="PostDeploymentScripts\LookupData\PrePopulateProviders.sql" />
+    <None Include="PostDeploymentScripts\InsertApprovalsExtractSettingsIfNotExists.sql" />
   </ItemGroup>
   <ItemGroup>
     <ArtifactReference Include="$(DacPacRootPath)\Extensions\Microsoft\SQLDB\Extensions\SqlServer\AzureV12\SqlSchemas\master.dacpac">
