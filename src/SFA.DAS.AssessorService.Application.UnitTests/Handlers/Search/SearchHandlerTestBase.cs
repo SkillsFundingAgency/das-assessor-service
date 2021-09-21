@@ -28,8 +28,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
             StandardService = new Mock<IStandardService>();
 
             StandardService.Setup(c => c.GetAllStandardVersions())
-                .ReturnsAsync(new List<Standard> { new Standard{LarsCode = 12, Title = "Standard Name 12", Level = 2},
-                    new Standard{LarsCode = 13, Title = "Standard Name 13", Level=3}});
+                .ReturnsAsync(new List<Standard> { new Standard{LarsCode = 12, Title = "Standard Name 12", Level = 2, StandardUId = "ST012_1.0", Version = "1.0"},
+                    new Standard{LarsCode = 13, Title = "Standard Name 13", Level=3, StandardUId = "ST013_1.0", Version = "1.0"}});
 
             StandardService.Setup(s => s.GetEPAORegisteredStandardVersions(It.IsAny<string>(), null))
                 .ReturnsAsync(new List<OrganisationStandardVersion> { new OrganisationStandardVersion { Title = "Standard 12", Version = "1.0", LarsCode = 12 },

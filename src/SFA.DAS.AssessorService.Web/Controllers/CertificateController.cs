@@ -45,47 +45,70 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             var ukprn = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/ukprn")?.Value;
             var username = _contextAccessor.HttpContext.User
                 .FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
-
-            string singleVersionStandardUid = null;
-            string singleOption = null;
-            List<string> options = null;
-            var versions = await _standardVersionClient.GetStandardVersionsByLarsCode(vm.StdCode);
-
-            if (versions.Count() == 1)
+            List<string> options = new List<string>();
+            var singleOption = string.Empty;
+            IEnumerable<StandardVersion> versions = new List<StandardVersion>();
+            
+            var startCertificateRequest = new StartCertificateRequest()
             {
-                singleVersionStandardUid = versions.Single().StandardUId;
-                var optionsResult = await _standardVersionClient.GetStandardOptions(singleVersionStandardUid);
+                UkPrn = int.Parse(ukprn),
+                StandardCode = vm.StdCode,
+                Uln = vm.Uln,
+                Username = username,
+                StandardUId = vm.StandardUId,
+                CourseOption = vm.Option
+            };
+
+            async Task RetrieveAndPopulateStandardOptions(string standardUId)
+            {
+                var optionsResult = await _standardVersionClient.GetStandardOptions(standardUId);
 
                 if (optionsResult != null && optionsResult.HasOptions())
                 {
                     if (optionsResult.OnlyOneOption())
                     {
                         singleOption = optionsResult.CourseOption.Single();
+                        startCertificateRequest.CourseOption = singleOption;
                     }
 
                     options = optionsResult.CourseOption.ToList();
                 }
             }
 
+            // StandardUid empty, need to navigate EPAO through version/option if applicable
+            if (string.IsNullOrWhiteSpace(vm.StandardUId))
+            {
+                versions = await _standardVersionClient.GetStandardVersionsByLarsCode(vm.StdCode);
+
+                if (versions.Count() == 1)
+                {
+                    var standardUId = versions.Single().StandardUId;
+                    startCertificateRequest.StandardUId = standardUId;
+                    await RetrieveAndPopulateStandardOptions(standardUId);
+                }
+            }
+            //StandardUId popualted, but option empty, check if options are required.
+            else if(string.IsNullOrWhiteSpace(vm.Option))
+            {
+                // We have a version, which is confirmed, but we don't have an option
+                // This could be a scenario where either the standard only has one version so is confirmed
+                // But has no option which requires it ( could occurr from populate learner )
+                // Or in commitments, the option was never specified "TBC" and now we need to set it
+                // This is now on the EPAO to set.
+                await RetrieveAndPopulateStandardOptions(vm.StandardUId);
+            }
+
             _logger.LogInformation(
                 $"Start of Certificate Start for ULN {vm.Uln} and Standard Code: {vm.StdCode} by user {username}");
 
-            var cert = await _certificateApiClient.Start(new StartCertificateRequest()
-            {
-                UkPrn = int.Parse(ukprn),
-                StandardCode = vm.StdCode,
-                Uln = vm.Uln,
-                Username = username,
-                StandardUId = singleVersionStandardUid,
-                CourseOption = singleOption
-            });
+            var cert = await _certificateApiClient.Start(startCertificateRequest);
 
             var certificateSession = new CertificateSession()
             {
                 CertificateId = cert.Id,
                 Uln = vm.Uln,
                 StandardCode = vm.StdCode,
-                StandardUId = singleVersionStandardUid,
+                StandardUId = startCertificateRequest.StandardUId,
                 Versions = Mapper.Map<List<StandardVersionViewModel>>(versions),
                 Options = options
             };
@@ -101,7 +124,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             {
                 return RedirectToAction("Declare", "CertificateDeclaration");
             }
-            else if (options != null)
+            else if (options.Count > 1)
             {
                 return RedirectToAction("Option", "CertificateOption");
             }
