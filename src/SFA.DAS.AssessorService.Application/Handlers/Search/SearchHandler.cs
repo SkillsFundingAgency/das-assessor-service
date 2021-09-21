@@ -18,18 +18,18 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
     public class SearchHandler : IRequestHandler<SearchQuery, List<SearchResult>>
     {
         private readonly IOrganisationQueryRepository _organisationRepository;
-        private readonly IIlrRepository _ilrRepository;
+        private readonly ILearnerRepository _learnerRepository;
         private readonly ICertificateRepository _certificateRepository;
         private readonly ILogger<SearchHandler> _logger;
         private readonly IContactQueryRepository _contactRepository;
         private readonly IStandardService _standardService;
         private Dictionary<char, char[]> _alternates;
 
-        public SearchHandler(IOrganisationQueryRepository organisationRepository, 
-            IIlrRepository ilrRepository, ICertificateRepository certificateRepository, ILogger<SearchHandler> logger, IContactQueryRepository contactRepository, IStandardService standardService)
+        public SearchHandler(IOrganisationQueryRepository organisationRepository,
+            ILearnerRepository learnerRepository, ICertificateRepository certificateRepository, ILogger<SearchHandler> logger, IContactQueryRepository contactRepository, IStandardService standardService)
         {
             _organisationRepository = organisationRepository;
-            _ilrRepository = ilrRepository;
+            _learnerRepository = learnerRepository;
             _certificateRepository = certificateRepository;
             _logger = logger;
             _contactRepository = contactRepository;
@@ -56,7 +56,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
         {
             var searchResults = await Search(request, cancellationToken);
 
-            await _ilrRepository.StoreSearchLog(new SearchLog()
+            await _learnerRepository.StoreSearchLog(new SearchLog()
             {
                 NumberOfResults = searchResults.Count,
                 SearchTime = DateTime.UtcNow,
@@ -82,21 +82,21 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
 
             var approvedStandards = await GetEpaoApprovedStandardsWithAtLeastOneVersion(thisEpao);
 
-            var ilrResults = await _ilrRepository.SearchForLearnerByUln(request.Uln);
+            var learnerResults = await _learnerRepository.SearchForLearnerByUln(request.Uln);
 
             var likedSurname = request.Surname.Replace(" ", "");
 
-            var listOfIlrResults = ilrResults?.ToList();
+            var listOfLearnerResults = learnerResults?.ToList();
 
-            likedSurname = DealWithSpecialCharactersAndSpaces(request, likedSurname, listOfIlrResults);
+            likedSurname = DealWithSpecialCharactersAndSpaces(request, likedSurname, listOfLearnerResults);
 
-            ilrResults = listOfIlrResults?.Where(r => approvedStandards.Contains(r.StdCode) &&
+            learnerResults = listOfLearnerResults?.Where(r => approvedStandards.Contains(r.StdCode) &&
                 string.Equals(r.FamilyNameForSearch.Trim(), likedSurname.Trim(), StringComparison.CurrentCultureIgnoreCase))
                 .ToList();
 
-            _logger.LogInformation((ilrResults != null && ilrResults.Any())? LoggingConstants.SearchSuccess : LoggingConstants.SearchFailure);
+            _logger.LogInformation((learnerResults != null && learnerResults.Any())? LoggingConstants.SearchSuccess : LoggingConstants.SearchFailure);
 
-            var searchResults = Mapper.Map<List<SearchResult>>(ilrResults)
+            var searchResults = Mapper.Map<List<SearchResult>>(learnerResults)
                 .MatchUpExistingCompletedStandards(request, _certificateRepository, _contactRepository, _organisationRepository, _logger)
                 .PopulateStandards(_standardService, _logger);
 
@@ -112,11 +112,11 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
             return approvedStandardCodes;
         }
 
-        private string DealWithSpecialCharactersAndSpaces(SearchQuery request, string likedSurname, IEnumerable<Ilr> ilrResults)
+        private string DealWithSpecialCharactersAndSpaces(SearchQuery request, string likedSurname, IEnumerable<Domain.Entities.Learner> learnerResults)
         {
-            foreach (var ilrResult in ilrResults)
+            foreach (var learnerResult in learnerResults)
             {
-                ilrResult.FamilyNameForSearch = ilrResult.FamilyName.Replace(" ", "");
+                learnerResult.FamilyNameForSearch = learnerResult.FamilyName.Replace(" ", "");
             }
 
             var specialCharacters = SpecialCharactersInSurname(request.Surname);
@@ -127,13 +127,13 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
                     likedSurname = likedSurname.Replace(specialCharacter.ToString(), "");
                 }
 
-                foreach (var ilrResult in ilrResults)
+                foreach (var learnerResult in learnerResults)
                 {
                     foreach (var specialCharacter in specialCharacters)
                     {
                         foreach (var alternate in _alternates[specialCharacter])
                         {
-                            ilrResult.FamilyNameForSearch = ilrResult.FamilyNameForSearch.Replace(alternate.ToString(), "");
+                            learnerResult.FamilyNameForSearch = learnerResult.FamilyNameForSearch.Replace(alternate.ToString(), "");
                         }
                     }
                 }
