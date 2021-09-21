@@ -9,5 +9,6 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
     {
         Task<DateTime?> GetLatestExtractTimestamp();
         void UpsertApprovalsExtract(List<ApprovalsExtract> approvalsExtract);
+        Task<int> PopulateLearner();
     }
 }

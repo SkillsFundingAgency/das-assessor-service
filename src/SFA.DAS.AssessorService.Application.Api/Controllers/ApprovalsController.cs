@@ -27,11 +27,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
         [HttpPost("update-approvals", Name = "update-approvals/GatherAndStoreApprovals")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(ApiResponse))]
-        //[SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(ApiResponse))]
-        //[SwaggerResponse((int)HttpStatusCode.Conflict, Type = typeof(ApiResponse))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(ApiResponse))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> GatherAndStoreApprovals([FromBody] ImportApprovalsRequest request)
+        public async Task<IActionResult> GatherAndStoreApprovals()
         {
+            var request = new ImportApprovalsRequest();
             return Ok(await _mediator.Send(request));
         }
     }

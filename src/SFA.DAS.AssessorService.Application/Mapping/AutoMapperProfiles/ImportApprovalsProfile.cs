@@ -6,9 +6,7 @@ namespace SFA.DAS.AssessorService.Application.Mapping.AutoMapperProfiles
     {
         public ImportApprovalsProfile()
         {
-            CreateMap<Infrastructure.OuterApi.Learner, Domain.Entities.ApprovalsExtract>()
-                //.ForMember(dst => dst.ULN, opt => opt.MapFrom(src => src.ULN))
-            ;
+            CreateMap<Infrastructure.OuterApi.Learner, Domain.Entities.ApprovalsExtract>();
         }
     }
 }
