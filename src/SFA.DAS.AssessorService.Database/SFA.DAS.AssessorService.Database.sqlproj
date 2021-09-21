@@ -81,6 +81,7 @@
     <Build Include="Tables\ContactLogs.sql" />
     <Build Include="Tables\Organisations.sql" />
     <Build Include="Tables\Ilrs.sql" />
+    <Build Include="Tables\Learner.sql" />
     <Build Include="Tables\EMailTemplates.sql" />
     <Build Include="Tables\BatchLogs.sql" />
     <Build Include="StoredProcedures\GetPreviousAddresses.sql" />
@@ -171,6 +172,11 @@
     <Build Include="Security\Schemas\DashboardReporting.sql" />
     <Build Include="StoredProcedures\DashboardReporting\CertificatePrintSummary.sql" />
     <Build Include="Functions\Scalar-valued Functions\ExpandedVersion.sql" />
+    <Build Include="Tables\ApprovalsExtract.sql" />
+    <Build Include="StoredProcedures\PopulateLearner.sql" />
+    <Build Include="Tables\Providers.sql" />
+    <Build Include="Functions\Scalar-valued Functions\GetStandardUidFromLarsCode.sql" />
+    <Build Include="Functions\Scalar-valued Functions\GetVersionFromLarsCode.sql" />
     <Build Include="StoredProcedures\DashboardReporting\IlrImportSummary.sql" />
   </ItemGroup>
   <ItemGroup>
@@ -194,6 +200,7 @@
     <None Include="PostDeploymentScripts\LookupData\PostCodeRegionDelete.sql" />
     <None Include="PostDeploymentScripts\LookupData\StaffReportsInsertOrUpdate.sql" />
     <None Include="PostDeploymentScripts\LookupData\StaffReportsDelete.sql" />
+    <None Include="PostDeploymentScripts\LookupData\PrePopulateProviders.sql" />
   </ItemGroup>
   <ItemGroup>
     <ArtifactReference Include="$(DacPacRootPath)\Extensions\Microsoft\SQLDB\Extensions\SqlServer\AzureV12\SqlSchemas\master.dacpac">
