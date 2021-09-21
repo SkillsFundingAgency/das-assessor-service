@@ -103,6 +103,10 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
             _logger.LogInformation("CreateNewCertificate Before Get Provider from API");
             var provider = await GetProviderFromUkprn(ilr.UkPrn);
 
+            var standardVersions = await _standardService.GetStandardVersionsByLarsCode(ilr.StdCode);
+            string standardRef = standardVersions.OrderByDescending(s => s.VersionMajor).ThenByDescending(t => t.VersionMinor).First().IfateReferenceNumber;
+            string standardName = standardVersions.OrderByDescending(s => s.VersionMajor).ThenByDescending(t => t.VersionMinor).First().Title;
+
             var certData = new CertificateData()
             {
                 LearnerGivenNames = ilr.GivenNames,
@@ -110,6 +114,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
                 LearningStartDate = ilr.LearnStartDate,
                 FullName = $"{ilr.GivenNames} {ilr.FamilyName}",
                 ProviderName = provider.ProviderName,
+                StandardReference = standardRef,
                 EpaDetails = new EpaDetails { Epas = new List<EpaRecord>() }
             };
 
@@ -155,9 +160,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
             else
             {
                 _logger.LogInformation("CreateNewCertificate Before Get StandardVersions from API");
-                var standardVersions = await _standardService.GetStandardVersionsByLarsCode(ilr.StdCode);
 
-                certData.StandardName = standardVersions.OrderByDescending(s => s.VersionMajor).ThenByDescending(t => t.VersionMinor).First().Title;
+                certData.StandardName = standardName;
             }
 
             certificate.CertificateData = JsonConvert.SerializeObject(certData);
