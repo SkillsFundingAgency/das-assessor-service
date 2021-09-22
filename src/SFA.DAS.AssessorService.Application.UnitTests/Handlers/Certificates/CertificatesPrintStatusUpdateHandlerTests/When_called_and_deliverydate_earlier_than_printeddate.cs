@@ -1,39 +1,44 @@
 ﻿using FluentAssertions;
-using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.Domain.Consts;
-using SFA.DAS.AssessorService.Domain.Entities;
 using System;
-using System.Collections.Generic;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.UpdateCertificatesPrintStatusHandlerTests
 {
+    [TestFixture]
     public class When_called_and_deliverydate_earlier_than_printeddate : UpdateCertificatesPrintStatusHandlerTestsBase
     {
+        private CertificatePrintStatusUpdateHandlerTestsFixture _fixture;
         private ValidationResponse _response;
-        private static DateTime _deliveredAtEarlierThanPrintedAt = _batch222PrintedAt.AddHours(-6);
+        
+        private const string CertificateReference = "00123456";
+        private const int BatchNumber = 222;
+
+        private static readonly DateTime PrintedAt = DateTime.Now;
+        private static readonly DateTime DeliveredAt = PrintedAt.AddMinutes(-30);
 
         [SetUp]
         public async Task Arrange()
         {
             // Arrange
-            base.BaseArrange();
+            _fixture = new CertificatePrintStatusUpdateHandlerTestsFixture()
+                .WithCertificate(CertificateReference, CertificateStatus.Printed, PrintedAt, BatchNumber, PrintedAt.AddMinutes(-5))
+                .WithCertificateBatchLog(BatchNumber, CertificateReference, CertificateStatus.Printed, PrintedAt, null, PrintedAt.AddMinutes(5))
+                .WithBatchLog(BatchNumber);
 
-            var certificatePrintStatusUpdateRequest = new CertificatePrintStatusUpdateRequest
+            var request = new CertificatePrintStatusUpdateRequest
             {
-                BatchNumber = _batch222,
-                CertificateReference = _certificateReference3,
+                BatchNumber = BatchNumber,
+                CertificateReference = CertificateReference,
                 Status = CertificateStatus.Delivered,
-                StatusAt = _deliveredAtEarlierThanPrintedAt
+                StatusAt = DeliveredAt
             };
 
             // Act
-            _response = await _sut.Handle(certificatePrintStatusUpdateRequest,
-                new CancellationToken());
+            _response = await _fixture.Handle(request);
         }
 
 
@@ -46,12 +51,12 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
         }
 
         [Test]
-        public void Then_repository_update_print_status_is_called()
-        {          
+        public void Then_repository_update_print_status_should_not_be_called()
+        {
             // Assert
-            _certificateRepository.Verify(r => r.UpdatePrintStatus(
-                It.Is<Certificate>(c => c.CertificateReference == _certificateReference3), _batch222, CertificateStatus.Delivered, _deliveredAtEarlierThanPrintedAt, null, false),
-                Times.Once);
+            _fixture.VerifyUpdatePrintStatusNotCalled(
+                CertificateReference,
+                BatchNumber);
         }
     }
 }
