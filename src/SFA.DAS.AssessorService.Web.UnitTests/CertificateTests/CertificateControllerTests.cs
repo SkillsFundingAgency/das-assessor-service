@@ -196,9 +196,11 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
         }
 
         [Test, MoqAutoData]
-        public async Task WhenStartingANewCertificate_WithVersionAndOptionSetFromApprovals_GoesToDeclarationPage(CertificateStartViewModel model)
+        public async Task WhenStartingANewCertificate_WithVersionAndOptionSetFromApprovals_GoesToDeclarationPage(CertificateStartViewModel model, StandardVersion standard)
         {
             CertificateSession setSession = new CertificateSession();
+            standard.StandardUId = model.StandardUId;
+            _mockStandardVersionClient.Setup(s => s.GetStandardVersionById(standard.StandardUId)).ReturnsAsync(standard);
             _mockSessionService.Setup(c => c.Set(nameof(CertificateSession), It.IsAny<object>()))
                 .Callback<string, object>((key, session) =>
                 {
@@ -217,8 +219,8 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
             setSession.CertificateId.Should().Be(CertificateId);
             setSession.Uln.Should().Be(model.Uln);
             setSession.StandardCode.Should().Be(model.StdCode);
-            setSession.Options.Should().BeEmpty();
-            setSession.Versions.Should().BeEmpty();
+            setSession.Options.Should().BeEquivalentTo(new List<string> { model.Option });
+            setSession.Versions.Should().BeEquivalentTo(new List<StandardVersionViewModel> { Mapper.Map<StandardVersionViewModel>(standard) });
 
             result.ControllerName.Should().Be("CertificateDeclaration");
             result.ActionName.Should().Be("Declare");
