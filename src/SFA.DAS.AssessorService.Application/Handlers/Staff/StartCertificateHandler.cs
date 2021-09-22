@@ -105,7 +105,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
 
             var standardVersions = await _standardService.GetStandardVersionsByLarsCode(ilr.StdCode);
             string standardRef = standardVersions.OrderByDescending(s => s.VersionMajor).ThenByDescending(t => t.VersionMinor).First().IfateReferenceNumber;
-            string standardName = standardVersions.OrderByDescending(s => s.VersionMajor).ThenByDescending(t => t.VersionMinor).First().Title;
 
             var certData = new CertificateData()
             {
@@ -161,6 +160,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
             {
                 _logger.LogInformation("CreateNewCertificate Before Get StandardVersions from API");
 
+                string standardName = standardVersions.OrderByDescending(s => s.VersionMajor).ThenByDescending(t => t.VersionMinor).First().Title;
                 certData.StandardName = standardName;
             }
 
