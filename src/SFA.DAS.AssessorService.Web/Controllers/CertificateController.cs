@@ -96,6 +96,12 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 // Or in commitments, the option was never specified "TBC" and now we need to set it
                 // This is now on the EPAO to set.
                 await RetrieveAndPopulateStandardOptions(vm.StandardUId);
+            } else
+            {
+                // StandardUId is populated AND Option is populated
+                var standardVersion = await _standardVersionClient.GetStandardVersionById(vm.StandardUId);
+                options = new List<string> { vm.Option };
+                versions = new List<StandardVersion> { standardVersion };
             }
 
             _logger.LogInformation(
