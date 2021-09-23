@@ -55,6 +55,10 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
             certificateRepositoryMock.Setup(q => q.GetCertificateByUlnOrgIdLastnameAndStandardCode(1234567890, "12345678", "Test", 1))
                 .ReturnsAsync(GenerateCertificate(1234567890, 1, "Test", CertificateStatus.Draft, new Guid("12345678123456781234567812345678")));
 
+            // This is for SV-1255 testing standard and option validation on updates 
+            certificateRepositoryMock.Setup(q => q.GetCertificate(5555555555, 55)).ReturnsAsync(GenerateCertificate(5555555555, 55, "Test", CertificateStatus.Draft, new Guid("55555555555555555555555555555555")));
+            certificateRepositoryMock.Setup(q => q.GetCertificate(5555555556, 55)).ReturnsAsync(GenerateCertificate(5555555556, 55, "Test", CertificateStatus.Draft, new Guid("55555555555555555555555555555555")));
+
             return certificateRepositoryMock;
         }
 
@@ -64,6 +68,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
 
             organisationQueryRepositoryMock.Setup(r => r.GetByUkPrn(12345678)).ReturnsAsync(GenerateOrganisation(12345678, new Guid("12345678123456781234567812345678")));
             organisationQueryRepositoryMock.Setup(r => r.GetByUkPrn(99999999)).ReturnsAsync(GenerateOrganisation(99999999, new Guid("99999999999999999999999999999999")));
+            organisationQueryRepositoryMock.Setup(r => r.GetByUkPrn(55555555)).ReturnsAsync(GenerateOrganisation(55555555, new Guid("55555555555555555555555555555555")));
 
             return organisationQueryRepositoryMock;
         }
@@ -87,10 +92,16 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
                     GenerateEPORegisteredStandard(101)
                 });
 
+            standardServiceMock.Setup(c => c.GetEpaoRegisteredStandards("55555555"))
+                .ReturnsAsync(new List<EPORegisteredStandards> {
+                    GenerateEPORegisteredStandard(55),
+                });
+
             var standard1 = GenerateStandard(1);
             var standard98 = GenerateStandard(98);
             var standard99 = GenerateStandard(99);
             var standard101 = GenerateStandard(101);
+            var standard55 = GenerateStandard(55);
 
             standardServiceMock.Setup(c => c.GetAllStandardVersions())
                 .ReturnsAsync(new List<Standard>
@@ -98,15 +109,20 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
                     standard1,
                     standard98,
                     standard99,
-                    standard101
+                    standard101,
+                    standard55
                 });
 
             standardServiceMock.Setup(c => c.GetStandardVersionById("1", It.IsAny<string>())).ReturnsAsync(standard1);
             standardServiceMock.Setup(c => c.GetStandardVersionById("98", It.IsAny<string>())).ReturnsAsync(standard98);
             standardServiceMock.Setup(c => c.GetStandardVersionById("99", It.IsAny<string>())).ReturnsAsync(standard99);
             standardServiceMock.Setup(c => c.GetStandardVersionById("101", It.IsAny<string>())).ReturnsAsync(standard101);
+            standardServiceMock.Setup(c => c.GetStandardVersionById("55", It.IsAny<string>())).ReturnsAsync(standard55);
 
             standardServiceMock.Setup(c => c.GetStandardOptionsByStandardId(standard99.StandardUId)).
+                ReturnsAsync(GenerateStandardOptions(new List<string> { "English", "French" }));
+
+            standardServiceMock.Setup(c => c.GetStandardOptionsByStandardId(standard55.StandardUId)).
                 ReturnsAsync(GenerateStandardOptions(new List<string> { "English", "French" }));
 
             standardServiceMock.Setup(c => c.GetStandardOptionsByStandardId(standard98.StandardUId)).
@@ -133,6 +149,9 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
             standardServiceMock.Setup(c => c.GetEPAORegisteredStandardVersions("99999999", 101))
                 .ReturnsAsync(new List<OrganisationStandardVersion> { GenerateEPORegisteredStandardVersion(101) });
 
+            standardServiceMock.Setup(c => c.GetEPAORegisteredStandardVersions("55555555", 55))
+                .ReturnsAsync(new List<OrganisationStandardVersion> { GenerateEPORegisteredStandardVersion(55), GenerateEPORegisteredStandardVersion(55, "1.1") });
+
             return standardServiceMock;
         }
 
@@ -155,6 +174,10 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
 
             learnerRepositoryMock.Setup(q => q.Get(1234567891, 1)).ReturnsAsync(GenerateLearner(1234567891, 1, "Test", "12345678", CompletionStatus.Withdrawn));
             learnerRepositoryMock.Setup(q => q.Get(1234567892, 1)).ReturnsAsync(GenerateLearner(1234567892, 1, "Test", "12345678", CompletionStatus.TemporarilyWithdrawn));
+
+            // Learner for testing version and option update validation
+            learnerRepositoryMock.Setup(q => q.Get(5555555555, 55)).ReturnsAsync(GenerateLearner(5555555555, 55, "Test", "55555555", CompletionStatus.Complete));
+            learnerRepositoryMock.Setup(q => q.Get(5555555556, 55)).ReturnsAsync(GenerateLearner(5555555556, 55, "Test", "55555555", CompletionStatus.Complete, "Italian"));
 
             return learnerRepositoryMock;
         }
