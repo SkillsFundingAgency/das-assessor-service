@@ -93,7 +93,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
                     {
                         await _certificateRepository.UpdatePrintStatus(
                             certificate,
-                            certificateBatchLog,
+                            certificateBatchLog.BatchNumber,
                             validatedCertificatePrintStatus.Status,
                             validatedCertificatePrintStatus.StatusAt,
                             validatedCertificatePrintStatus.ReasonForChange,

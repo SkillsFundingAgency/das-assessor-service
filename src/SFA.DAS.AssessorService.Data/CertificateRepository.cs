@@ -428,15 +428,15 @@ namespace SFA.DAS.AssessorService.Data
             return certificate;
         }
 
-        public async Task UpdatePrintStatus(Certificate certificate, CertificateBatchLog certificateBatchLog,
-            string printStatus, DateTime statusAt, string reasonForChange,
+        public async Task UpdatePrintStatus(Certificate certificate, int batchNumber, string printStatus, DateTime statusAt, string reasonForChange,
             bool updateCertificate, bool updateCertificateBatchLog)
         {
-            if (certificateBatchLog == null)
-                throw new ArgumentNullException("certificate");
+            var certificateBatchLog =
+                await _context.CertificateBatchLogs.FirstOrDefaultAsync(
+                    q => q.CertificateReference == certificate.CertificateReference && q.BatchNumber == batchNumber);
 
-            if (certificateBatchLog == null)
-                throw new ArgumentNullException("certificateBatchLog");
+            if(certificateBatchLog == null)
+                throw new ArgumentException($"Certificate {certificate.CertificateReference} not found in batch {batchNumber}.");
 
             if (updateCertificate)
             {

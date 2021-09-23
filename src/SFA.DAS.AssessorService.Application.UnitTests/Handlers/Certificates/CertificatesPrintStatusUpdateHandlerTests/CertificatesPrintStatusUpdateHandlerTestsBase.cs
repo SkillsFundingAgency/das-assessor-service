@@ -92,7 +92,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
             {
                 _certificateRepository.Verify(r => r.UpdatePrintStatus(
                     It.Is<Certificate>(c => c.CertificateReference == certificateReference), 
-                    It.Is<CertificateBatchLog>(c => c.BatchNumber == batchNumber), 
+                    batchNumber, 
                     status, statusAt, reasonForChange, updateCertificate, updateCertificateLog),
                     Times.Once);
             }
@@ -101,7 +101,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
             {
                 _certificateRepository.Verify(r => r.UpdatePrintStatus(
                     It.Is<Certificate>(c => c.CertificateReference == certificateReference),
-                    It.Is<CertificateBatchLog>(c => c.BatchNumber == batchNumber),
+                    batchNumber,
                     It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<bool>()),
                     Times.Never);
             }
