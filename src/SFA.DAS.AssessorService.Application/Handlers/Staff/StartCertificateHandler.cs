@@ -144,7 +144,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
                 }
 
                 certData.StandardName = standardVersion.Title;
-                certData.StandardReference = standardVersion.IfateReferenceNumber;
                 certData.StandardLevel = standardVersion.Level;
                 certData.StandardPublicationDate = standardVersion.EffectiveFrom;
                 certData.Version = standardVersion.Version;
