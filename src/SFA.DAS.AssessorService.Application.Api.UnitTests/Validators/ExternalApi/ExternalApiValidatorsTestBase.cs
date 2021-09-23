@@ -140,7 +140,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
         {
             var learnerRepositoryMock = new Mock<ILearnerRepository>();
 
-            learnerRepositoryMock.Setup(q => q.Get(1234567890, 1)).ReturnsAsync(GenerateLearner(1234567890, 1, "Test", "12345678", CompletionStatus.Complete));
+            learnerRepositoryMock.Setup(q => q.Get(1234567890, 1)).ReturnsAsync(GenerateLearner(1234567890, 1, "Test", "12345678", CompletionStatus.Complete, "English"));
             learnerRepositoryMock.Setup(q => q.Get(1234567890, 98)).ReturnsAsync(GenerateLearner(1234567890, 98, "Test", "12345678", CompletionStatus.Complete));
             learnerRepositoryMock.Setup(q => q.Get(1234567890, 99)).ReturnsAsync(GenerateLearner(1234567890, 99, "Test", "12345678", CompletionStatus.Complete));
             learnerRepositoryMock.Setup(q => q.Get(1234567890, 101)).ReturnsAsync(GenerateLearner(1234567890, 101, "Test", "12345678", CompletionStatus.Complete));
@@ -321,7 +321,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
                 .Build();
         }
 
-        private static Learner GenerateLearner(long uln, int standardCode, string familyName, string epaOrgId, CompletionStatus completionStatus)
+        private static Learner GenerateLearner(long uln, int standardCode, string familyName, string epaOrgId, CompletionStatus completionStatus, string courseOption = null, bool versionConfirmed = true)
         {
             return Builder<Learner>.CreateNew()
                 .With(i => i.Uln = uln)
@@ -329,6 +329,8 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
                 .With(i => i.FamilyName = familyName)
                 .With(i => i.EpaOrgId = epaOrgId)
                 .With(i => i.CompletionStatus = (int)completionStatus)
+                .With(i => i.VersionConfirmed = versionConfirmed)
+                .With(i => i.CourseOption = courseOption)
                 .Build();
         }
 
