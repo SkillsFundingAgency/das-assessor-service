@@ -122,7 +122,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
                 .ReturnsAsync(new List<OrganisationStandardVersion> { GenerateEPORegisteredStandardVersion(99) });
 
             standardServiceMock.Setup(c => c.GetEPAORegisteredStandardVersions("12345678", 101))
-                .ReturnsAsync(new List<OrganisationStandardVersion> { GenerateEPORegisteredStandardVersion(101) });
+                .ReturnsAsync(new List<OrganisationStandardVersion> { GenerateEPORegisteredStandardVersion(101), GenerateEPORegisteredStandardVersion(101, "1.1") });
 
             standardServiceMock.Setup(c => c.GetEPAORegisteredStandardVersions("99999999", 1))
                 .ReturnsAsync(new List<OrganisationStandardVersion> { GenerateEPORegisteredStandardVersion(1) });
@@ -140,12 +140,12 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
         {
             var learnerRepositoryMock = new Mock<ILearnerRepository>();
 
-            learnerRepositoryMock.Setup(q => q.Get(1234567890, 1)).ReturnsAsync(GenerateLearner(1234567890, 1, "Test", "12345678", CompletionStatus.Complete, "English"));
+            learnerRepositoryMock.Setup(q => q.Get(1234567890, 1)).ReturnsAsync(GenerateLearner(1234567890, 1, "Test", "12345678", CompletionStatus.Complete));
             learnerRepositoryMock.Setup(q => q.Get(1234567890, 98)).ReturnsAsync(GenerateLearner(1234567890, 98, "Test", "12345678", CompletionStatus.Complete));
             learnerRepositoryMock.Setup(q => q.Get(1234567890, 99)).ReturnsAsync(GenerateLearner(1234567890, 99, "Test", "12345678", CompletionStatus.Complete));
             learnerRepositoryMock.Setup(q => q.Get(1234567890, 101)).ReturnsAsync(GenerateLearner(1234567890, 101, "Test", "12345678", CompletionStatus.Complete));
             learnerRepositoryMock.Setup(q => q.Get(9999999999, 1)).ReturnsAsync(GenerateLearner(9999999999, 1, "Test", "99999999", CompletionStatus.Complete));
-            learnerRepositoryMock.Setup(q => q.Get(9999999999, 99)).ReturnsAsync(GenerateLearner(9999999999, 99, "Test", "99999999", CompletionStatus.Complete));
+            learnerRepositoryMock.Setup(q => q.Get(9999999999, 99)).ReturnsAsync(GenerateLearner(9999999999, 99, "Test", "99999999", CompletionStatus.Complete, "English"));
             learnerRepositoryMock.Setup(q => q.Get(9999999999, 101)).ReturnsAsync(GenerateLearner(9999999999, 101, "Test", "99999999", CompletionStatus.Complete));
             learnerRepositoryMock.Setup(q => q.Get(9876543210, 101)).ReturnsAsync(GenerateLearner(9876543210, 101, "Test", "99999999", CompletionStatus.Complete));
             learnerRepositoryMock.Setup(q => q.Get(9876543211, 101)).ReturnsAsync(GenerateLearner(9876543211, 101, "Test", "99999999", CompletionStatus.Complete));
@@ -302,13 +302,13 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
                 .With(i => i.StandardUId = $"ST{standardCode}_{1.0m}").Build();
         }
 
-        private static OrganisationStandardVersion GenerateEPORegisteredStandardVersion(int standardCode)
+        private static OrganisationStandardVersion GenerateEPORegisteredStandardVersion(int standardCode, string standardVersion = "1.0")
         {
             return Builder<OrganisationStandardVersion>.CreateNew()
                 .With(i => i.Title = $"{standardCode}")
                 .With(i => i.LarsCode = standardCode)
                 .With(i => i.Level = standardCode)
-                .With(i => i.Version = "1.0")
+                .With(i => i.Version = standardVersion)
                 .Build();
         }
 
@@ -330,6 +330,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
                 .With(i => i.EpaOrgId = epaOrgId)
                 .With(i => i.CompletionStatus = (int)completionStatus)
                 .With(i => i.VersionConfirmed = versionConfirmed)
+                .With(i => i.Version = "1.0")
                 .With(i => i.CourseOption = courseOption)
                 .Build();
         }
