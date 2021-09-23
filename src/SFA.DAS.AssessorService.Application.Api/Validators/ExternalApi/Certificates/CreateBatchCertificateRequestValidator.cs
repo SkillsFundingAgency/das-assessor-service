@@ -64,6 +64,22 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Certifi
                         {
                             context.AddFailure(new ValidationFailure("LearnerDetails", "Cannot find the apprentice details"));
                         }
+
+                        // SV-1253 additional validation to check version and option
+                        if(learnerDetails.VersionConfirmed && !string.IsNullOrWhiteSpace(learnerDetails.Version) && !string.IsNullOrWhiteSpace(m.CertificateData.Version))
+                        {
+                            if(learnerDetails.Version != m.CertificateData.Version)
+                            {
+                                context.AddFailure(new ValidationFailure("LearnerDetails", "Incorrect version for learner"));
+                            }
+                        }
+                        if(!string.IsNullOrWhiteSpace(learnerDetails.CourseOption) && !string.IsNullOrWhiteSpace(m.CertificateData.CourseOption))
+                        {
+                            if(learnerDetails.CourseOption != m.CertificateData.CourseOption)
+                            {
+                                context.AddFailure(new ValidationFailure("LearnerDetails", "Incorrect course option for learner"));
+                            }
+                        }
                     }
                     else
                     {
