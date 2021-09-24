@@ -8,27 +8,27 @@ using SFA.DAS.AssessorService.Domain.JsonData;
 using System;
 using System.Threading.Tasks;
 
-namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalApi.Certificates.UpdateBatchCertificateRequestValidator
+namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalApi.Certificates.CreateBatchCertificateRequestValidator
 {
-    public class WhenUpdatedOptionIsDifferentToLearner : UpdateBatchCertificateRequestValidatorTestBase
+    public class WhenLearnerHasCourseOption : CreateBatchCertificateRequestValidatorTestBase
     {
         private ValidationResult _validationResult;
 
         [SetUp]
         public async Task Arrange()
         {
-            UpdateBatchCertificateRequest request = Builder<UpdateBatchCertificateRequest>.CreateNew()
-                .With(i => i.Uln = 5555555556)  // learners course option is "French" which doesn't match the certificate course option
-                .With(i => i.StandardCode = 55)
+            CreateBatchCertificateRequest request = Builder<CreateBatchCertificateRequest>.CreateNew()
+                .With(i => i.Uln = 9999999999)
+                .With(i => i.StandardCode = 99)
                 .With(i => i.StandardReference = null)
-                .With(i => i.UkPrn = 55555555)
+                .With(i => i.UkPrn = 99999999)
                 .With(i => i.FamilyName = "Test")
-                .With(i => i.CertificateReference = "5555555556-55")
+                .With(i => i.CertificateReference = null)
                 .With(i => i.CertificateData = Builder<CertificateData>.CreateNew()
                                 .With(cd => cd.ContactPostCode = "AA11AA")
                                 .With(cd => cd.AchievementDate = DateTime.UtcNow)
                                 .With(cd => cd.OverallGrade = CertificateGrade.Pass)
-                                .With(cd => cd.CourseOption = "English")
+                                .With(cd => cd.CourseOption = null) // should not cause validation error because Learner course option is "English"
                                 .With(cd => cd.Version = "1.0")
                                 .Build())
                 .Build();
@@ -37,11 +37,9 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
         }
 
         [Test]
-        public void ThenValidationResultShouldBeFalse()
+        public void ThenUseLearnerCourseOption()
         {
-            _validationResult.IsValid.Should().BeFalse();
-            _validationResult.Errors.Should().HaveCount(1);
-            _validationResult.Errors[0].ErrorMessage.Should().Be("Incorrect course option for learner");
+            _validationResult.IsValid.Should().BeTrue();
         }
     }
 }

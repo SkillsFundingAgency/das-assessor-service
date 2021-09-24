@@ -177,7 +177,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
 
             // Learner for testing version and option update validation
             learnerRepositoryMock.Setup(q => q.Get(5555555555, 55)).ReturnsAsync(GenerateLearner(5555555555, 55, "Test", "55555555", CompletionStatus.Complete));
-            learnerRepositoryMock.Setup(q => q.Get(5555555556, 55)).ReturnsAsync(GenerateLearner(5555555556, 55, "Test", "55555555", CompletionStatus.Complete, "Italian"));
+            learnerRepositoryMock.Setup(q => q.Get(5555555556, 55)).ReturnsAsync(GenerateLearner(5555555556, 55, "Test", "55555555", CompletionStatus.Complete, "French"));
 
             return learnerRepositoryMock;
         }
