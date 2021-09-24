@@ -1,20 +1,21 @@
 ﻿-- Populates Learner by merging ApprovalsExtract with ILRs
+
 CREATE PROCEDURE [dbo].[PopulateLearner]
 AS
-BEGIN
+BEGIN 
    DECLARE 
 		@expiretime int = -12,  -- months to allow for overrun after planned/estimated end date before EPA should have been done
-		@lapsedtime int = -14;  -- months to allow for delay in submitting ILRs (should not be greater than 14)
+		@lapsedtime int = -14,  -- months to allow for delay in submitting ILRs (should not be greater than 14)
+		@overlaptime int = -30; -- days to allow for an overlap on ILR submisisons and Approvals changes
 		
-   BEGIN TRANSACTION;
-   SAVE TRANSACTION Updatelearner;
-   
-   BEGIN TRY
-   
-		-- clear learner data in a transaction 
-		DELETE FROM Learner WHERE Id IS NOT NULL;
-		
-		-- re-populate
+	BEGIN TRANSACTION;
+	SAVE TRANSACTION Updatelearner;
+
+	BEGIN TRY
+
+		----------------------------------------------------------------------------------------------------------------------
+		----------------------------------------------------------------------------------------------------------------------
+		-- Populate Learner with latest changes from ILR or Approvals
 		----------------------------------------------------------------------------------------------------------------------
 		----------------------------------------------------------------------------------------------------------------------
 		WITH LatestVersions
@@ -29,6 +30,18 @@ BEGIN
 		)
 		,
 		----------------------------------------------------------------------------------------------------------------------
+		LearnerMods
+		AS
+		(
+		-- find the recently changed learners from either data source, with an overlap to allow for missed ILR submissions
+			SELECT Uln, StdCode FROM Ilrs 
+			WHERE ISNULL(UpdatedAt,CreatedAt) >= (SELECT ISNULL(DATEADD(day,@overlaptime,MAX(LatestIlrs)), '01-Jan-2017') FROM Learner)
+			UNION
+			SELECT Uln, TrainingCode FROM ApprovalsExtract 
+			WHERE ISNULL(UpdatedOn,CreatedOn) >= (SELECT ISNULL(DATEADD(day,@overlaptime,MAX(LatestApprovals)), '01-Jan-2017') FROM Learner)
+		)
+		----------------------------------------------------------------------------------------------------------------------
+		,
 		il1
 		AS (
 			SELECT *
@@ -39,14 +52,16 @@ BEGIN
 			FROM (
 				SELECT Ilrs.*, ISNULL(UpdatedAt,CreatedAt) LastUpdated
 					  -- if could only be version 1.0 then this can be assumed as confirmed
-					  ,CASE WHEN lv1.Version = '1.0' THEN '1.0' ELSE [dbo].[GetVersionFromLarsCode](LearnStartDate,StdCode) END Version
+					  ,CASE WHEN lv1.Version = '1.0' THEN '1.0' ELSE [dbo].[GetVersionFromLarsCode](LearnStartDate,Ilrs.StdCode) END Version
 					  ,CASE WHEN lv1.Version = '1.0' THEN 1 ELSE 0 END VersionConfirmed
 					  -- use StandardUId for version 1.0 (if appropriate) or estimate based on startdate when unknown
-					  ,CASE WHEN lv1.Version = '1.0' THEN lv1.StandardUId ELSE [dbo].[GetStandardUidFromLarsCode](LearnStartDate,StdCode) END StandardUId
+					  ,CASE WHEN lv1.Version = '1.0' THEN lv1.StandardUId ELSE [dbo].[GetStandardUidFromLarsCode](LearnStartDate,Ilrs.StdCode) END StandardUId
 					  ,lv1.StandardReference
 					  ,lv1.Title StandardName
 					  ,CASE WHEN PlannedEndDate > GETDATE() THEN EOMONTH(PlannedEndDate) ELSE EOMONTH(DATEADD(month, lv1.Duration, LearnStartDate)) END EstimatedEndDate
-			   FROM Ilrs JOIN LatestVersions lv1 on lv1.LarsCode = Ilrs.StdCode
+			   FROM Ilrs 
+			   JOIN LatestVersions lv1 on lv1.LarsCode = Ilrs.StdCode
+			   JOIN LearnerMods ls1 on ls1.Uln = Ilrs.Uln AND ls1.StdCode = Ilrs.StdCode  -- only include changed learners
 			) il2
 		)
 		 ,
@@ -102,7 +117,7 @@ BEGIN
 					SELECT ApprenticeshipId
 					  ,FirstName
 					  ,LastName
-					  ,ULN
+					  ,ap1.ULN
 					  ,TrainingCode
 					  ,TrainingCourseVersion
 					  ,TrainingCourseVersionConfirmed
@@ -123,11 +138,12 @@ BEGIN
 							WHEN PauseDate IS NOT NULL THEN 6
 							WHEN CompletionDate IS NOT NULL THEN 2 
 							ELSE (CASE WHEN PaymentStatus = 1 THEN 1 ELSE 0 END) END CompletionStatus 
-					  ,LAG(UKPRN, 1,0) OVER (PARTITION BY ULN, TrainingCode ORDER BY CreatedOn ) AS UKPRN_1
-					  ,LAG(StartDate, 1,0) OVER (PARTITION BY ULN, TrainingCode ORDER BY CreatedOn ) AS StartDate_1
-					  ,LAG(EndDate, 1,0) OVER (PARTITION BY ULN, TrainingCode ORDER BY CreatedOn ) AS EndDate_1
-					  ,LAG(CONVERT(datetime,StopDate), 1,0) OVER (PARTITION BY ULN, TrainingCode ORDER BY CreatedOn ) AS StopDate_1
+					  ,LAG(UKPRN, 1,0) OVER (PARTITION BY ap1.ULN, TrainingCode ORDER BY CreatedOn ) AS UKPRN_1
+					  ,LAG(StartDate, 1,0) OVER (PARTITION BY ap1.ULN, TrainingCode ORDER BY CreatedOn ) AS StartDate_1
+					  ,LAG(EndDate, 1,0) OVER (PARTITION BY ap1.ULN, TrainingCode ORDER BY CreatedOn ) AS EndDate_1
+					  ,LAG(CONVERT(datetime,StopDate), 1,0) OVER (PARTITION BY ap1.ULN, TrainingCode ORDER BY CreatedOn ) AS StopDate_1
 					FROM ApprovalsExtract ap1
+ 					JOIN LearnerMods ls1 on ls1.Uln = ap1.Uln AND ls1.StdCode = ap1.TrainingCode  -- only include changed learners
 					WHERE 1=1
 					  AND NOT (StopDate IS NOT NULL AND EOMONTH(StopDate) = EOMONTH(StartDate) AND PaymentStatus = 3) -- cancelled, not started, effectively deleted
 				) ab2
@@ -136,10 +152,10 @@ BEGIN
 		)
 		----------------------------------------------------------------------------------------------------------------------
 		----------------------------------------------------------------------------------------------------------------------
-		INSERT INTO Learner (Id, Uln, GivenNames, FamilyName, UkPrn, StdCode, LearnStartDate, EpaOrgId, FundingModel, ApprenticeshipId, 
-		Source, LearnRefNumber, CompletionStatus, PlannedEndDate, DelLocPostCode, LearnActEndDate, WithdrawReason, 
-		Outcome, AchDate, OutGrade, Version, VersionConfirmed, CourseOption, StandardUId, StandardReference, StandardName, LastUpdated, EstimatedEndDate, ApprovalsStopDate, ApprovalsPauseDate, ApprovalsCompletionDate, ApprovalsPaymentStatus )
 
+		MERGE INTO Learner lm1
+		USING 
+		(
 		----------------------------------------------------------------------------------------------------------------------
 		-- using ILR with Approvals Extract for some key fields that can be updated in Approvals 
 		----------------------------------------------------------------------------------------------------------------------
@@ -179,7 +195,9 @@ BEGIN
 				ax1.StopDate ApprovalsStopDate,
 				ax1.PauseDate ApprovalsPauseDate,
 				ax1.CompletionDate ApprovalsCompletionDate,
-				ax1.PaymentStatus ApprovalsPaymentStatus
+				ax1.PaymentStatus ApprovalsPaymentStatus,
+				il1.LastUpdated LatestIlrs,
+				ax1.LastUpdated LatestApprovals
 		  FROM ax1 
 		  JOIN il1 ON ax1.ULN = il1.ULN  AND il1.StdCode = ax1.TrainingCode	
 		  WHERE il1.FundingModel != 99
@@ -221,14 +239,74 @@ BEGIN
 				null ApprovalsStopDate,
 				null ApprovalsPauseDate,
 				null ApprovalsCompletionDate,
-				null ApprovalsPaymentStatus 
+				null ApprovalsPaymentStatus, 
+				il1.LastUpdated LatestIlrs,
+				null LatestApprovals
 		  FROM il1 
 		  LEFT JOIN ax1 ON ax1.ULN = il1.ULN  AND il1.StdCode = ax1.TrainingCode
 		  WHERE (il1.FundingModel = 99 OR ax1.ULN IS NULL)
 			AND Lapsed = 0 
 			AND Expired = 0
-		  
-   
+		) upd
+		ON (lm1.uln = upd.uln AND lm1.StdCode = upd.StdCode)
+
+		WHEN MATCHED THEN UPDATE
+		SET 
+			 lm1.GivenNames = upd.GivenNames,
+			 lm1.FamilyName = upd.FamilyName,
+			 lm1.UkPrn = upd.UkPrn,
+			 lm1.LearnStartDate = upd.LearnStartDate,
+			 lm1.EpaOrgId = upd.EpaOrgId,
+			 lm1.FundingModel = upd.FundingModel,
+			 lm1.ApprenticeshipId = upd.ApprenticeshipId,
+			 lm1.Source = upd.Source,
+			 lm1.LearnRefNumber = upd.LearnRefNumber,
+			 lm1.CompletionStatus = upd.CompletionStatus,
+			 lm1.PlannedEndDate = upd.PlannedEndDate,
+			 lm1.DelLocPostCode = upd.DelLocPostCode,
+			 lm1.LearnActEndDate = upd.LearnActEndDate,
+			 lm1.WithdrawReason = upd.WithdrawReason,
+			 lm1.Outcome = upd.Outcome,
+			 lm1.AchDate = upd.AchDate,
+			 lm1.OutGrade = upd.OutGrade,
+			 lm1.Version = upd.Version,
+			 lm1.VersionConfirmed = upd.VersionConfirmed,
+			 lm1.CourseOption = upd.CourseOption,
+			 lm1.StandardUId = upd.StandardUId,
+			 lm1.StandardReference = upd.StandardReference,
+			 lm1.StandardName = upd.StandardName,
+			 lm1.LastUpdated = upd.LastUpdated,
+			 lm1.EstimatedEndDate = upd.EstimatedEndDate,
+			 lm1.ApprovalsStopDate = upd.ApprovalsStopDate,
+			 lm1.ApprovalsPauseDate = upd.ApprovalsPauseDate,
+			 lm1.ApprovalsCompletionDate = upd.ApprovalsCompletionDate,
+			 lm1.LatestIlrs = upd.LatestIlrs,
+			 lm1.LatestApprovals = upd.LatestApprovals
+
+		WHEN NOT MATCHED THEN
+		INSERT (Id, Uln, GivenNames, FamilyName, UkPrn, StdCode, LearnStartDate, EpaOrgId, FundingModel, ApprenticeshipId, 
+				Source, LearnRefNumber, CompletionStatus, PlannedEndDate, DelLocPostCode, LearnActEndDate, WithdrawReason, 
+				Outcome, AchDate, OutGrade, Version, VersionConfirmed, CourseOption, StandardUId, StandardReference, StandardName, 
+				LastUpdated, EstimatedEndDate, ApprovalsStopDate, ApprovalsPauseDate, ApprovalsCompletionDate, ApprovalsPaymentStatus,
+				LatestIlrs, LatestApprovals)
+		VALUES (upd.Id, upd.Uln, upd.GivenNames, upd.FamilyName, upd.UkPrn, upd.StdCode, upd.LearnStartDate, upd.EpaOrgId, upd.FundingModel, upd.ApprenticeshipId,
+				upd.Source, upd.LearnRefNumber, upd.CompletionStatus, upd.PlannedEndDate, upd.DelLocPostCode, upd.LearnActEndDate, upd.WithdrawReason,
+				upd.Outcome, upd.AchDate, upd.OutGrade, upd.Version, upd.VersionConfirmed, upd.CourseOption, upd.StandardUId, upd.StandardReference, upd.StandardName,
+				upd.LastUpdated, upd.EstimatedEndDate, upd.ApprovalsStopDate, upd.ApprovalsPauseDate, upd.ApprovalsCompletionDate, upd.ApprovalsPaymentStatus,
+				upd.LatestIlrs, upd.LatestApprovals)
+;
+
+		-- Remove Lapased or Expired learner records (where only have ILR record)
+		DELETE FROM Learner
+		WHERE Source NOT LIKE '%App' AND (
+		-- check for ILR records that are for Apprenticeships that have significantly overrun the end date
+			EstimatedEndDate < dateadd(month, @expiretime, GETDATE())  -- Expired
+		OR
+		-- check for "Continuing" ILR records that have not been updated for a long time - they should be updated every month.
+		   (CompletionStatus = 1 AND LastUpdated < DATEADD(month, @lapsedtime, GETDATE())) -- Lapsed
+		)
+
+
 		COMMIT TRANSACTION 
 	END TRY
 	BEGIN CATCH
