@@ -89,17 +89,14 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
 
                     var updateCertificateBatchLog = validatedCertificatePrintStatus.StatusAt >= certificateBatchLog.StatusAt;
 
-                    if (updateCertificate || updateCertificateBatchLog)
-                    {
-                        await _certificateRepository.UpdatePrintStatus(
-                            certificate,
-                            certificateBatchLog.BatchNumber,
-                            validatedCertificatePrintStatus.Status,
-                            validatedCertificatePrintStatus.StatusAt,
-                            validatedCertificatePrintStatus.ReasonForChange,
-                            updateCertificate,
-                            updateCertificateBatchLog);
-                    }
+                    await _certificateRepository.UpdatePrintStatus(
+                        certificate,
+                        certificateBatchLog.BatchNumber,
+                        validatedCertificatePrintStatus.Status,
+                        validatedCertificatePrintStatus.StatusAt,
+                        validatedCertificatePrintStatus.ReasonForChange,
+                        updateCertificate,
+                        updateCertificateBatchLog);
 
                     if (updateCertificate)
                     {

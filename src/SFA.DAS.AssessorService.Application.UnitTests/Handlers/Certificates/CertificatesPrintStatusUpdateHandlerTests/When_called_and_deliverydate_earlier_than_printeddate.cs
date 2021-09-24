@@ -51,12 +51,12 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
         }
 
         [Test]
-        public void Then_repository_update_print_status_should_not_be_called()
+        public void Then_repository_update_print_status_should_be_called_to_log_only()
         {
             // Assert
-            _fixture.VerifyUpdatePrintStatusNotCalled(
+            _fixture.VerifyUpdatePrintStatusCalled(
                 CertificateReference,
-                BatchNumber);
+                BatchNumber, CertificateStatus.Delivered, DeliveredAt, null, false, false);
         }
     }
 }

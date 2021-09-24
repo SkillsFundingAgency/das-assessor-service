@@ -435,7 +435,7 @@ namespace SFA.DAS.AssessorService.Data
                 await _context.CertificateBatchLogs.FirstOrDefaultAsync(
                     q => q.CertificateReference == certificate.CertificateReference && q.BatchNumber == batchNumber);
 
-            if(certificateBatchLog == null)
+            if (certificateBatchLog == null)
                 throw new ArgumentException($"Certificate {certificate.CertificateReference} not found in batch {batchNumber}.");
 
             if (updateCertificate)
@@ -457,16 +457,13 @@ namespace SFA.DAS.AssessorService.Data
                 certificateBatchLog.UpdatedBy = SystemUsers.PrintFunction;
             }
 
-            if (updateCertificate || updateCertificateBatchLog)
-            {
-                var action = (printStatus == CertificateStatus.Printed ? CertificateActions.Printed : CertificateActions.Status);
+            var action = (printStatus == CertificateStatus.Printed ? CertificateActions.Printed : CertificateActions.Status);
 
-                await AddSingleCertificateLog(certificate.Id, action, printStatus, statusAt,
-                    certificateBatchLog.CertificateData, SystemUsers.PrintFunction,
-                    certificateBatchLog.BatchNumber, reasonForChange);
+            await AddSingleCertificateLog(certificate.Id, action, printStatus, statusAt,
+                certificateBatchLog.CertificateData, SystemUsers.PrintFunction,
+                certificateBatchLog.BatchNumber, reasonForChange);
 
-                await _context.SaveChangesAsync();
-            }
+            await _context.SaveChangesAsync();
         }
 
         public async Task<List<CertificateLog>> GetCertificateLogsFor(Guid certificateId)
