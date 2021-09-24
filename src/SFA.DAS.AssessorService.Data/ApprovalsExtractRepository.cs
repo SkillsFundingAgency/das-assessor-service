@@ -35,7 +35,7 @@ namespace SFA.DAS.AssessorService.Data
                 _unitOfWork.Transaction.BulkMerge(approvalsExtract);
                 _unitOfWork.Commit();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _unitOfWork.Rollback();
                 throw ex;
@@ -46,7 +46,7 @@ namespace SFA.DAS.AssessorService.Data
         {
             try
             {
-                var result = await _unitOfWork.Connection.ExecuteScalarAsync<int>("PopulateLearner", commandType: CommandType.StoredProcedure);
+                var result = await _unitOfWork.Connection.ExecuteScalarAsync<int>("PopulateLearner", commandType: CommandType.StoredProcedure, commandTimeout: 300);
                 if (0 != result)
                 {
                     throw new Exception("Stored procedure PopulateLearner failed to complete successfully.");
@@ -59,5 +59,5 @@ namespace SFA.DAS.AssessorService.Data
                 throw ex;
             }
         }
-    }    
+    }
 }
