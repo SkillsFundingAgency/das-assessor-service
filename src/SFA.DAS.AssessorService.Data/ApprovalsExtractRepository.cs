@@ -46,12 +46,12 @@ namespace SFA.DAS.AssessorService.Data
         {
             try
             {
-                var result = await _unitOfWork.Connection.ExecuteScalarAsync<int>("PopulateLearner", commandType: CommandType.StoredProcedure);
+                var result = await _unitOfWork.Connection.ExecuteScalarAsync<int>("PopulateLearner", commandType: CommandType.StoredProcedure, commandTimeout: 300);
                 if (0 != result)
                 {
                     throw new Exception("Stored procedure PopulateLearner failed to complete successfully.");
                 }
-                int rowCount = await _unitOfWork.Connection.ExecuteScalarAsync<int>("SELECT COUNT(1) FROM Learner", commandTimeout: 300);
+                int rowCount = await _unitOfWork.Connection.ExecuteScalarAsync<int>("SELECT COUNT(1) FROM Learner");
                 return rowCount;
             }
             catch (Exception ex)
