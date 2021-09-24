@@ -31,7 +31,9 @@ CREATE TABLE [dbo].[Learner]
     [ApprovalsStopDate] DATE NULL,
     [ApprovalsPauseDate] DATE NULL,
     [ApprovalsCompletionDate] DATE NULL,
-    [ApprovalsPaymentStatus] SMALLINT NULL
+    [ApprovalsPaymentStatus] SMALLINT NULL,
+    [LatestIlrs] DATETIME NULL,
+    [LatestApprovals] DATETIME NULL
     
 )
 GO
@@ -46,4 +48,7 @@ CREATE NONCLUSTERED INDEX [IX_Learner_EpaOrgId_StdCode_Uln] ON [Learner] ([EpaOr
 GO
 
 CREATE NONCLUSTERED INDEX [IX_Learner_CompletionStatus_StdCode] ON [Learner] ([CompletionStatus], [StdCode]) INCLUDE ([DelLocPostCode], [LearnStartDate], [PlannedEndDate], [Uln])
+GO
+
+CREATE NONCLUSTERED INDEX [IX_Learner_Updated] ON [Learner] ([Uln], [StdCode], [LatestIlrs], [LatestApprovals])
 GO
