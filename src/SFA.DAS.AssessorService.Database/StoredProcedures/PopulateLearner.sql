@@ -8,11 +8,11 @@ BEGIN
 		@lapsedtime int = -14,  -- months to allow for delay in submitting ILRs (should not be greater than 14)
 		@overlaptime int = -30; -- days to allow for an overlap on ILR submisisons and Approvals changes
 		
-   BEGIN TRANSACTION;
-   SAVE TRANSACTION Updatelearner;
-   
-   BEGIN TRY
-  
+	BEGIN TRANSACTION;
+	SAVE TRANSACTION Updatelearner;
+
+	BEGIN TRY
+
 		----------------------------------------------------------------------------------------------------------------------
 		----------------------------------------------------------------------------------------------------------------------
 		-- Populate Learner with latest changes from ILR or Approvals
@@ -143,7 +143,7 @@ BEGIN
 					  ,LAG(EndDate, 1,0) OVER (PARTITION BY ap1.ULN, TrainingCode ORDER BY CreatedOn ) AS EndDate_1
 					  ,LAG(CONVERT(datetime,StopDate), 1,0) OVER (PARTITION BY ap1.ULN, TrainingCode ORDER BY CreatedOn ) AS StopDate_1
 					FROM ApprovalsExtract ap1
- 				    JOIN LearnerMods ls1 on ls1.Uln = ap1.Uln AND ls1.StdCode = ap1.TrainingCode  -- only include changed learners
+ 					JOIN LearnerMods ls1 on ls1.Uln = ap1.Uln AND ls1.StdCode = ap1.TrainingCode  -- only include changed learners
 					WHERE 1=1
 					  AND NOT (StopDate IS NOT NULL AND EOMONTH(StopDate) = EOMONTH(StartDate) AND PaymentStatus = 3) -- cancelled, not started, effectively deleted
 				) ab2
@@ -296,16 +296,17 @@ BEGIN
 				upd.LatestIlrs, upd.LatestApprovals)
 ;
 
-		-- Remove Lapased or Expired learner records
+		-- Remove Lapased or Expired learner records (where only have ILR record)
 		DELETE FROM Learner
-		WHERE
-		-- check for ILR records that are for Apprenticeships that have significantly overrun the end date	
+		WHERE Source NOT LIKE '%App' AND (
+		-- check for ILR records that are for Apprenticeships that have significantly overrun the end date
 			EstimatedEndDate < dateadd(month, @expiretime, GETDATE())  -- Expired
 		OR
 		-- check for "Continuing" ILR records that have not been updated for a long time - they should be updated every month.
 		   (CompletionStatus = 1 AND LastUpdated < DATEADD(month, @lapsedtime, GETDATE())) -- Lapsed
+		)
 
-   
+
 		COMMIT TRANSACTION 
 	END TRY
 	BEGIN CATCH
