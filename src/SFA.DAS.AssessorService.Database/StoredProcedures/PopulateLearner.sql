@@ -8,11 +8,7 @@ BEGIN
 		@lapsedtime int = -14,  -- months to allow for delay in submitting ILRs (should not be greater than 14)
 		@overlaptime int = -30; -- days to allow for an overlap on ILR submisisons and Approvals changes
 		
-	BEGIN TRANSACTION;
-	SAVE TRANSACTION Updatelearner;
-
-	BEGIN TRY
-
+	BEGIN 
 		----------------------------------------------------------------------------------------------------------------------
 		----------------------------------------------------------------------------------------------------------------------
 		-- Populate Learner with latest changes from ILR or Approvals
@@ -35,10 +31,10 @@ BEGIN
 		(
 		-- find the recently changed learners from either data source, with an overlap to allow for missed ILR submissions
 			SELECT Uln, StdCode FROM Ilrs 
-			WHERE ISNULL(UpdatedAt,CreatedAt) >= (SELECT ISNULL(DATEADD(day,@overlaptime,MAX(LatestIlrs)), '01-Jan-2017') FROM Learner)
+			WHERE LastUpdated >= (SELECT ISNULL(DATEADD(day,@overlaptime,MAX(LatestIlrs)), '01-Jan-2017') FROM Learner)
 			UNION
 			SELECT Uln, TrainingCode FROM ApprovalsExtract 
-			WHERE ISNULL(UpdatedOn,CreatedOn) >= (SELECT ISNULL(DATEADD(day,@overlaptime,MAX(LatestApprovals)), '01-Jan-2017') FROM Learner)
+			WHERE LastUpdated >= (SELECT ISNULL(DATEADD(day,@overlaptime,MAX(LatestApprovals)), '01-Jan-2017') FROM Learner)
 		)
 		----------------------------------------------------------------------------------------------------------------------
 		,
@@ -50,12 +46,12 @@ BEGIN
 			-- check for "Continuing" ILR records that have not been updated for a long time - they should be updated every month.
 			,CASE WHEN CompletionStatus = 1 AND LastUpdated < DATEADD(month, @lapsedtime, GETDATE()) THEN 1 ELSE 0 END Lapsed
 			FROM (
-				SELECT Ilrs.*, ISNULL(UpdatedAt,CreatedAt) LastUpdated
+				SELECT Ilrs.*
 					  -- if could only be version 1.0 then this can be assumed as confirmed
 					  ,CASE WHEN lv1.Version = '1.0' THEN '1.0' ELSE [dbo].[GetVersionFromLarsCode](LearnStartDate,Ilrs.StdCode) END Version
 					  ,CASE WHEN lv1.Version = '1.0' THEN 1 ELSE 0 END VersionConfirmed
 					  -- use StandardUId for version 1.0 (if appropriate) or estimate based on startdate when unknown
-					  ,CASE WHEN lv1.Version = '1.0' THEN lv1.StandardUId ELSE [dbo].[GetStandardUidFromLarsCode](LearnStartDate,Ilrs.StdCode) END StandardUId
+					  ,CASE WHEN lv1.Version = '1.0' THEN lv1.StandardUId ELSE [dbo].[GetStandardUIdFromLarsCode](LearnStartDate,Ilrs.StdCode) END StandardUId
 					  ,lv1.StandardReference
 					  ,lv1.Title StandardName
 					  ,CASE WHEN PlannedEndDate > GETDATE() THEN EOMONTH(PlannedEndDate) ELSE EOMONTH(DATEADD(month, lv1.Duration, LearnStartDate)) END EstimatedEndDate
@@ -68,7 +64,7 @@ BEGIN
 		----------------------------------------------------------------------------------------------------------------------
 		 ax1
 		 AS (
-		 SELECT Apx.*, ISNULL(UpdatedOn,CreatedOn) LastUpdated
+		 SELECT Apx.*
 				  -- leave version null if not confirmed in Approvals, as will derive from full LearnStartDate in ILR
 				  ,CASE WHEN TrainingCourseVersionConfirmed = 1 THEN TrainingCourseVersion ELSE null END Version
 				  ,TrainingCourseVersionConfirmed VersionConfirmed
@@ -86,6 +82,7 @@ BEGIN
 				  ,EndDate
 				  ,CreatedOn
 				  ,UpdatedOn
+				  ,LastUpdated
 				  ,StopDate
 				  ,PauseDate
 				  ,CompletionDate
@@ -127,6 +124,7 @@ BEGIN
 					  ,EndDate
 					  ,CreatedOn
 					  ,UpdatedOn
+					  ,LastUpdated
 					  ,StopDate
 					  ,PauseDate
 					  ,CompletionDate
@@ -293,8 +291,7 @@ BEGIN
 				upd.Source, upd.LearnRefNumber, upd.CompletionStatus, upd.PlannedEndDate, upd.DelLocPostCode, upd.LearnActEndDate, upd.WithdrawReason,
 				upd.Outcome, upd.AchDate, upd.OutGrade, upd.Version, upd.VersionConfirmed, upd.CourseOption, upd.StandardUId, upd.StandardReference, upd.StandardName,
 				upd.LastUpdated, upd.EstimatedEndDate, upd.ApprovalsStopDate, upd.ApprovalsPauseDate, upd.ApprovalsCompletionDate, upd.ApprovalsPaymentStatus,
-				upd.LatestIlrs, upd.LatestApprovals)
-;
+				upd.LatestIlrs, upd.LatestApprovals);
 
 		-- Remove Lapased or Expired learner records (where only have ILR record)
 		DELETE FROM Learner
@@ -307,16 +304,7 @@ BEGIN
 		)
 
 
-		COMMIT TRANSACTION 
-	END TRY
-	BEGIN CATCH
-		IF @@TRANCOUNT > 0
-		BEGIN
-		-- rollback Learner Update
-			ROLLBACK TRANSACTION Updatelearner; 
-		END
-		RETURN 1
-	END CATCH
+	END
 RETURN 0
 END;
 GO   

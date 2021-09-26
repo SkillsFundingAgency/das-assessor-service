@@ -23,7 +23,8 @@
 	[WithdrawReason] [int] NULL,
 	[Outcome] [int] NULL,
 	[AchDate] [datetime] NULL,
-	[OutGrade] [nvarchar](50) NULL	
+	[OutGrade] [nvarchar](50) NULL,
+    [LastUpdated] AS ISNULL([UpdatedAt],[CreatedAt])
 )
 
 GO
@@ -38,4 +39,7 @@ CREATE NONCLUSTERED INDEX [IX_Ilrs_EpaOrgId_StdCode_Uln] ON [Ilrs] ([EpaOrgId], 
 GO
 
 CREATE NONCLUSTERED INDEX [IX_Ilrs_CompletionStatus_StdCode] ON [Ilrs] ([CompletionStatus], [StdCode]) INCLUDE ([DelLocPostCode], [LearnStartDate], [PlannedEndDate], [Uln])
+GO
+
+CREATE NONCLUSTERED INDEX [IX_Ilrs_LastUpdated] ON [Ilrs] ([LastUpdated]) INCLUDE ([Uln], [StdCode]) 
 GO
