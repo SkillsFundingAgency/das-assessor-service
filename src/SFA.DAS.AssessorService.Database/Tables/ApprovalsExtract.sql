@@ -18,14 +18,19 @@
     [CompletionDate] DATE NULL,
     [UKPRN] INT NULL,
     [LearnRefNumber] NVARCHAR(50) NULL,
-    [PaymentStatus] SMALLINT NULL
+    [PaymentStatus] SMALLINT NULL,
+    [LastUpdated] AS ISNULL([UpdatedOn],[CreatedOn])
     
 )
 GO
 
-CREATE INDEX [IX_ApprovalsExtract_Uln_StandardCode] ON [ApprovalsExtract] ([Uln], [TrainingCode]) 
+
+CREATE INDEX [IX_ApprovalsExtract_TrainingCode_ULN] ON [ApprovalsExtract] ([TrainingCode], [Uln], [StartDate], [PaymentStatus] ,[StopDate]) 
+INCLUDE ([ApprenticeshipId] ,[FirstName] ,[LastName] ,[TrainingCourseVersion] ,[TrainingCourseVersionConfirmed] ,[TrainingCourseOption] ,
+         [StandardUId] ,[EndDate] ,[CreatedOn] ,[UpdatedOn] ,[PauseDate] ,[CompletionDate] ,[UKPRN] ,[LearnRefNumber] ,[LastUpdated])
+      
 GO
 
-CREATE INDEX [IX_ApprovalsExtract_StandardCode_ULN] ON [ApprovalsExtract] ([TrainingCode], [Uln])
-INCLUDE ([StartDate],[CreatedOn],[UpdatedOn],[CompletionDate],[EndDate],[StopDate],[PauseDate],[PaymentStatus])
+
+CREATE NONCLUSTERED INDEX [IX_ApprovalsExtract_LastUpdated] ON [ApprovalsExtract] ([LastUpdated]) INCLUDE ([TrainingCode], [Uln] )
 GO
