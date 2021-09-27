@@ -81,7 +81,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
             }
             else
             {
-                certificate = await PopulateCertificateData(certificate, certData, request, organisation);
                 certificate = await _certificateRepository.Update(certificate, request.Username, null);
             }
             
