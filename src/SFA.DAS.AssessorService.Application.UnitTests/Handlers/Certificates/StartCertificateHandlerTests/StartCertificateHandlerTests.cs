@@ -267,11 +267,19 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
             _mockLearnerRepository.Setup(s => s.Get(request.Uln, request.StandardCode)).ReturnsAsync(learnerRecord);
             _mockRoatpApiClient.Setup(s => s.GetOrganisationByUkprn(learnerRecord.UkPrn)).ReturnsAsync(organisationSearchResult);
 
+            Certificate updatedCertficate = null;
+            _mockCertificateRepository.Setup(s => s.Update(It.IsAny<Certificate>(), It.IsAny<string>(), It.IsAny<string>(), true, null))
+                .Callback<Certificate, string, string, bool, string>((cert, username, action, updateLogs, reason) =>
+                {
+                    updatedCertficate = cert;
+                }).ReturnsAsync(updatedCertficate);
+
+
             // Act
             var response = await _sut.Handle(request, new CancellationToken());
 
             // Assertions
-            response.Status.Should().Be(CertificateStatus.Draft);
+            updatedCertficate.Status.Should().Be(CertificateStatus.Draft);
             _mockCertificateRepository.Verify(s => s.Update(existingCertificate, request.Username, CertificateActions.Restart, true, null), Times.Once);
         }
 
@@ -283,7 +291,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
             Domain.Entities.Learner learnerRecord,
             CertificateData certificateData,
             Standard standard,
-            OrganisationSearchResult organisationSearchResult)
+            OrganisationSearchResult organisationSearchResult,
+            Certificate stubCertificate)
         {
             // Arrange
             learnerRecord.FundingModel = 81;
@@ -295,13 +304,20 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
             _mockStandardService.Setup(s => s.GetStandardVersionById(request.StandardUId, null)).ReturnsAsync(standard);
             _mockRoatpApiClient.Setup(s => s.GetOrganisationByUkprn(learnerRecord.UkPrn)).ReturnsAsync(organisationSearchResult);
 
+            Certificate updatedCertficate = null;
+            _mockCertificateRepository.Setup(s => s.Update(It.IsAny<Certificate>(), It.IsAny<string>(), It.IsAny<string>(), true, null))
+                .Callback<Certificate, string, string, bool, string>((cert, username, action, updateLogs, reason) =>
+                    {
+                        updatedCertficate = cert;
+                    }).ReturnsAsync(stubCertificate);
+
             // Act
             var response = await _sut.Handle(request, new CancellationToken());
 
             // Assertions
-            response.IsPrivatelyFunded.Should().BeFalse();
+            updatedCertficate.IsPrivatelyFunded.Should().BeFalse();
 
-            var responseCertData = JsonConvert.DeserializeObject<CertificateData>(response.CertificateData);
+            var responseCertData = JsonConvert.DeserializeObject<CertificateData>(updatedCertficate.CertificateData);
             responseCertData.LearnerGivenNames.Should().Be(learnerRecord.GivenNames);
             responseCertData.LearnerFamilyName.Should().Be(learnerRecord.FamilyName);
             responseCertData.LearningStartDate.Should().Be(learnerRecord.LearnStartDate);
