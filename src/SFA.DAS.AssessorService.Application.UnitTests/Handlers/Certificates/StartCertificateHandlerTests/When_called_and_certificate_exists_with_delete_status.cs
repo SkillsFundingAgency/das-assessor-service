@@ -67,9 +67,10 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
                 UkPrn = 12345678
             });
 
+            var standardService = new Mock<IStandardService>();
+            standardService.Setup(s => s.GetStandardVersionsByLarsCode(30)).ReturnsAsync(new[] { new Standard { Title = "Standard Title" } });
 
             var roatpApiClientMock = new Mock<IRoatpApiClient>();
-            var standardService = new Mock<IStandardService>();
 
             _startCertificateHandler = new StartCertificateHandler(_certificateRepository.Object,
                 learnerRepository.Object, roatpApiClientMock.Object,
