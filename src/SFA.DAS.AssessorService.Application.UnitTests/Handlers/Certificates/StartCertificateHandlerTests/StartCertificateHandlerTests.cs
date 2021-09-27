@@ -241,7 +241,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
                 StandardName = standard.Title,
                 StandardReference = standard.IfateReferenceNumber,
                 StandardLevel = standard.Level,
-                StandardPublicationDate = standard.EffectiveFrom,
+                StandardPublicationDate = standard.VersionApprovedForDelivery,
                 Version = standard.Version,
                 CourseOption = request.CourseOption
             });
@@ -253,7 +253,9 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
             Organisation organisationRecord,
             Certificate existingCertificate,
             CertificateData certificateData,
-            Standard standard)
+            Standard standard,
+            OrganisationSearchResult organisationSearchResult,
+            Domain.Entities.Learner learnerRecord)
         {
             // Arrange
             existingCertificate.Status = CertificateStatus.Submitted;
@@ -262,6 +264,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
             _mockOrganisationQueryRepository.Setup(s => s.GetByUkPrn(request.UkPrn)).ReturnsAsync(organisationRecord);
             _mockCertificateRepository.Setup(s => s.GetCertificate(request.Uln, request.StandardCode)).ReturnsAsync(existingCertificate);
             _mockStandardService.Setup(s => s.GetStandardVersionById(request.StandardUId, null)).ReturnsAsync(standard);
+            _mockLearnerRepository.Setup(s => s.Get(request.Uln, request.StandardCode)).ReturnsAsync(learnerRecord);
+            _mockRoatpApiClient.Setup(s => s.GetOrganisationByUkprn(learnerRecord.UkPrn)).ReturnsAsync(organisationSearchResult);
 
             // Act
             var response = await _sut.Handle(request, new CancellationToken());
@@ -278,7 +282,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
             Certificate existingCertificate,
             Domain.Entities.Learner learnerRecord,
             CertificateData certificateData,
-            Standard standard)
+            Standard standard,
+            OrganisationSearchResult organisationSearchResult)
         {
             // Arrange
             learnerRecord.FundingModel = 81;
@@ -288,6 +293,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
             _mockCertificateRepository.Setup(s => s.GetCertificate(request.Uln, request.StandardCode)).ReturnsAsync(existingCertificate);
             _mockLearnerRepository.Setup(s => s.Get(request.Uln, request.StandardCode)).ReturnsAsync(learnerRecord);
             _mockStandardService.Setup(s => s.GetStandardVersionById(request.StandardUId, null)).ReturnsAsync(standard);
+            _mockRoatpApiClient.Setup(s => s.GetOrganisationByUkprn(learnerRecord.UkPrn)).ReturnsAsync(organisationSearchResult);
 
             // Act
             var response = await _sut.Handle(request, new CancellationToken());
