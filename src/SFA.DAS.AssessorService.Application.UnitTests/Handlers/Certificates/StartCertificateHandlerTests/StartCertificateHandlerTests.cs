@@ -182,7 +182,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
             // Act
             Func<Task> act = async () => { await _sut.Handle(request, new CancellationToken()); };
 
-            act.Should().Throw<InvalidOperationException>().WithMessage("StandardUId Provided not recognised, unable to start certificate request");
+            act.Should().Throw<InvalidOperationException>().WithMessage("StandardUId Provided not recognised, unable to populate certificate data");
         }
 
         [Test, RecursiveMoqAutoData]
@@ -252,7 +252,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
             StartCertificateRequest request,
             Organisation organisationRecord,
             Certificate existingCertificate,
-            CertificateData certificateData)
+            CertificateData certificateData,
+            Standard standard)
         {
             // Arrange
             existingCertificate.Status = CertificateStatus.Submitted;
@@ -260,6 +261,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
             existingCertificate.CertificateData = JsonConvert.SerializeObject(certificateData);
             _mockOrganisationQueryRepository.Setup(s => s.GetByUkPrn(request.UkPrn)).ReturnsAsync(organisationRecord);
             _mockCertificateRepository.Setup(s => s.GetCertificate(request.Uln, request.StandardCode)).ReturnsAsync(existingCertificate);
+            _mockStandardService.Setup(s => s.GetStandardVersionById(request.StandardUId, null)).ReturnsAsync(standard);
 
             // Act
             var response = await _sut.Handle(request, new CancellationToken());
@@ -275,7 +277,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
             Organisation organisationRecord,
             Certificate existingCertificate,
             Domain.Entities.Learner learnerRecord,
-            CertificateData certificateData)
+            CertificateData certificateData,
+            Standard standard)
         {
             // Arrange
             learnerRecord.FundingModel = 81;
@@ -284,6 +287,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
             _mockOrganisationQueryRepository.Setup(s => s.GetByUkPrn(request.UkPrn)).ReturnsAsync(organisationRecord);
             _mockCertificateRepository.Setup(s => s.GetCertificate(request.Uln, request.StandardCode)).ReturnsAsync(existingCertificate);
             _mockLearnerRepository.Setup(s => s.Get(request.Uln, request.StandardCode)).ReturnsAsync(learnerRecord);
+            _mockStandardService.Setup(s => s.GetStandardVersionById(request.StandardUId, null)).ReturnsAsync(standard);
 
             // Act
             var response = await _sut.Handle(request, new CancellationToken());
