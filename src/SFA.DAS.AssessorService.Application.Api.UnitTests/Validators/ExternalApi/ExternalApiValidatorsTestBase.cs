@@ -58,6 +58,9 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
             // This is for SV-1255 testing standard and option validation on updates 
             certificateRepositoryMock.Setup(q => q.GetCertificate(5555555555, 55)).ReturnsAsync(GenerateCertificate(5555555555, 55, "Test", CertificateStatus.Draft, new Guid("55555555555555555555555555555555")));
             certificateRepositoryMock.Setup(q => q.GetCertificate(5555555556, 55)).ReturnsAsync(GenerateCertificate(5555555556, 55, "Test", CertificateStatus.Draft, new Guid("55555555555555555555555555555555")));
+            // SV-1260
+            certificateRepositoryMock.Setup(q => q.GetCertificate(3333333333, 1)).ReturnsAsync(GenerateCertificate(3333333333, 1, "test", CertificateStatus.Draft, new Guid("12345678123456781234567812345678")));
+            certificateRepositoryMock.Setup(q => q.GetCertificate(4343434343, 1)).ReturnsAsync(GenerateCertificate(4343434343, 1, "test", CertificateStatus.Draft, new Guid("12345678123456781234567812345678")));
 
             return certificateRepositoryMock;
         }
@@ -179,10 +182,15 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
             learnerRepositoryMock.Setup(q => q.Get(5555555555, 55)).ReturnsAsync(GenerateLearner(5555555555, 55, "Test", "55555555", CompletionStatus.Complete));
             learnerRepositoryMock.Setup(q => q.Get(5555555556, 55)).ReturnsAsync(GenerateLearner(5555555556, 55, "Test", "55555555", CompletionStatus.Complete, "French"));
 
+            // This is for SV-1260 testing option changed on learner record
+            learnerRepositoryMock.Setup(q => q.Get(3333333333, 1)).ReturnsAsync(GenerateLearner(3333333333, 1, "Test", "12345678", CompletionStatus.Complete, "French"));
+            // This is fir SV-1260 testing version changed on learner record
+            learnerRepositoryMock.Setup(q => q.Get(4343434343, 1)).ReturnsAsync(GenerateLearner(4343434343, 1, "Test", "12345678", CompletionStatus.Complete, version: "1.1"));
+
             return learnerRepositoryMock;
         }
 
-        private static Certificate GenerateCertificate(long uln, int standardCode, string familyName, string status, Guid organisationId)
+        private static Certificate GenerateCertificate(long uln, int standardCode, string familyName, string status, Guid organisationId, string version = "1.0")
         {
             var reference = $"{uln}-{standardCode}";
 
@@ -209,6 +217,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
                                 .With(cd => cd.LearnerFamilyName = familyName)
                                 .With(cd => cd.OverallGrade = CertificateGrade.Pass)
                                 .With(cd => cd.EpaDetails = epaDetails)
+                                .With(cd => cd.Version = "1.0")
                                 .Build()))
                 .Build();
         }
@@ -344,7 +353,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
                 .Build();
         }
 
-        private static Learner GenerateLearner(long uln, int standardCode, string familyName, string epaOrgId, CompletionStatus completionStatus, string courseOption = null, bool versionConfirmed = true)
+        private static Learner GenerateLearner(long uln, int standardCode, string familyName, string epaOrgId, CompletionStatus completionStatus, string courseOption = null, bool versionConfirmed = true, string version = "1.0")
         {
             return Builder<Learner>.CreateNew()
                 .With(i => i.Uln = uln)
@@ -353,7 +362,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
                 .With(i => i.EpaOrgId = epaOrgId)
                 .With(i => i.CompletionStatus = (int)completionStatus)
                 .With(i => i.VersionConfirmed = versionConfirmed)
-                .With(i => i.Version = "1.0")
+                .With(i => i.Version = version)
                 .With(i => i.CourseOption = courseOption)
                 .Build();
         }
