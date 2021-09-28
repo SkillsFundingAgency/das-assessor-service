@@ -104,6 +104,10 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                         await RetrieveAndPopulateStandardOptions(searchStandardVersion.StandardUId);
                     }
                 }
+                else
+                {
+                    versions = await _standardVersionClient.GetStandardVersionsByLarsCode(vm.StdCode);
+                }
             }
             else if (string.IsNullOrWhiteSpace(vm.StandardUId))
             {
