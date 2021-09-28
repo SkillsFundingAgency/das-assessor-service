@@ -10,6 +10,7 @@ using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Web.Infrastructure;
+using SFA.DAS.AssessorService.Web.Orchestrators.Search;
 using SFA.DAS.AssessorService.Web.ViewModels.Certificate;
 using SFA.DAS.AssessorService.Web.ViewModels.Shared;
 
@@ -25,17 +26,20 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         private readonly ICertificateApiClient _certificateApiClient;
         private readonly IStandardVersionClient _standardVersionClient;
         private readonly ISessionService _sessionService;
+        private readonly ISearchOrchestrator _searchOrchestrator;
 
         public CertificateController(ILogger<CertificateController> logger, IHttpContextAccessor contextAccessor,
             ICertificateApiClient certificateApiClient,
             IStandardVersionClient standardVersionClient,
-            ISessionService sessionService)
+            ISessionService sessionService,
+            ISearchOrchestrator searchOrchestrator)
         {
             _logger = logger;
             _contextAccessor = contextAccessor;
             _certificateApiClient = certificateApiClient;
             _standardVersionClient = standardVersionClient;
             _sessionService = sessionService;
+            _searchOrchestrator = searchOrchestrator;
         }
 
         [HttpPost]
@@ -48,7 +52,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             List<string> options = new List<string>();
             var singleOption = string.Empty;
             IEnumerable<StandardVersion> versions = new List<StandardVersion>();
-            
+
             var startCertificateRequest = new StartCertificateRequest()
             {
                 UkPrn = int.Parse(ukprn),
@@ -75,9 +79,35 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 }
             }
 
-            // StandardUid empty, need to navigate EPAO through version/option if applicable
-            if (string.IsNullOrWhiteSpace(vm.StandardUId))
+            if (!string.IsNullOrWhiteSpace(vm.FamilyName))
             {
+                //This has come from the multiple standard choice selection page. Only the ULN and STD code are supplied.
+                //Need to re-search for the apprenticeship, to determine of approvals data is available and if there is no need to show an option.
+                var result = await _searchOrchestrator.Search(new ViewModels.Search.SearchRequestViewModel { Surname = vm.FamilyName, Uln = vm.Uln.ToString() });
+                var relevantStandard = result.SearchResults.FirstOrDefault(s => s.StdCode == vm.StdCode.ToString());
+                if(relevantStandard.Versions != null && relevantStandard.Versions.Count() == 1)
+                {
+                    var searchStandardVersion = relevantStandard.Versions.First();
+                    startCertificateRequest.StandardUId = searchStandardVersion.StandardUId;
+
+                    var standardVersion = await _standardVersionClient.GetStandardVersionById(searchStandardVersion.StandardUId);
+                    versions = new List<StandardVersion> { standardVersion };
+
+                    if (searchStandardVersion.Options != null && searchStandardVersion.Options.Count() == 1)
+                    {
+                        var option = searchStandardVersion.Options.First();
+                        startCertificateRequest.CourseOption = option;
+                        options = new List<string> { option };
+                    }
+                    else
+                    {
+                        await RetrieveAndPopulateStandardOptions(searchStandardVersion.StandardUId);
+                    }
+                }
+            }
+            else if (string.IsNullOrWhiteSpace(vm.StandardUId))
+            {
+                // StandardUid empty, need to navigate EPAO through version/option if applicable
                 versions = await _standardVersionClient.GetStandardVersionsByLarsCode(vm.StdCode);
 
                 if (versions.Count() == 1)
@@ -88,7 +118,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 }
             }
             //StandardUId popualted, but option empty, check if options are required.
-            else if(string.IsNullOrWhiteSpace(vm.Option))
+            else if (string.IsNullOrWhiteSpace(vm.Option))
             {
                 // We have a version, which is confirmed, but we don't have an option
                 // This could be a scenario where either the standard only has one version so is confirmed
@@ -96,7 +126,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 // Or in commitments, the option was never specified "TBC" and now we need to set it
                 // This is now on the EPAO to set.
                 await RetrieveAndPopulateStandardOptions(vm.StandardUId);
-            } else
+            }
+            else
             {
                 // StandardUId is populated AND Option is populated
                 var standardVersion = await _standardVersionClient.GetStandardVersionById(vm.StandardUId);

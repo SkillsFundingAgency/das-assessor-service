@@ -6,5 +6,6 @@
         public int StdCode { get; set; }
         public string StandardUId { get; set; }
         public string Option { get; set; }
+        public string FamilyName { get; set; }
     }
 }
