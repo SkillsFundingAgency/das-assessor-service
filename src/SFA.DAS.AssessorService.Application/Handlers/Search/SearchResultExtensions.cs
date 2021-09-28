@@ -152,8 +152,20 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
             searchResult.CertificateId = certificate.Id;
             searchResult.CertificateStatus = certificate.Status;
             searchResult.LearnStartDate = certificateData.LearningStartDate;
-            searchResult.Version = certificateData.Version;
-            searchResult.Option = certificateData.CourseOption;
+            
+            // If the Certificate was a fail, maintain the original details of the certificate version and option
+            // even if Learner has changed under the hood
+            // Otherwise prioritise Learner information which takes precedence
+            if(certificate.Status == CertificateStatus.Submitted && certificateData.OverallGrade == CertificateGrade.Fail)
+            {
+                searchResult.Version = certificateData.Version;
+                searchResult.Option = certificateData.CourseOption;
+            } else
+            {
+                searchResult.Version = string.IsNullOrWhiteSpace(searchResult.Version) ? certificateData.Version : searchResult.Version;
+                searchResult.Option = string.IsNullOrWhiteSpace(searchResult.Option) ? certificateData.CourseOption : searchResult.Option;
+            }
+
             searchResult.IsPrivatelyFunded = certificate.IsPrivatelyFunded;
 
             return searchResult;

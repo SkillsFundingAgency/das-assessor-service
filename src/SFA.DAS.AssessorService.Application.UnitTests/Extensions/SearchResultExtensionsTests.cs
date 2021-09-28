@@ -82,6 +82,12 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Extensions
 
             var certificate = _certificates.FirstOrDefault(c => c.Uln == _searchResults.First().Uln);
             var certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
+            
+            // Rework such that certificate data is populatedwhen it's a fail for option and version
+            certificateData.OverallGrade = CertificateGrade.Fail;
+            certificate.Status = CertificateStatus.Submitted;
+            certificate.CertificateData = JsonConvert.SerializeObject(certificateData);
+            // End
 
             _searchResult = _searchResults.FirstOrDefault();
 
