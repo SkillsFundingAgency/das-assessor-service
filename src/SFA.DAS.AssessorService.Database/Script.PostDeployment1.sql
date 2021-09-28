@@ -28,7 +28,7 @@
 :r .\PostDeploymentScripts\CON-3359_Remove_IlrsImport.sql
 
 -- SV-1249
-:r .\PostDeploymentScripts\AlterTableOrgStandardVersionToVarchar.sql
+:r .\PostDeploymentScripts\RecreateStandardVersion.sql
 
 -- ON-613 Patch Certificates with STxxxx StandardReference, where it is not yet included. 
 -- AB 11/03/19 Keep this active for new deployments, for now
