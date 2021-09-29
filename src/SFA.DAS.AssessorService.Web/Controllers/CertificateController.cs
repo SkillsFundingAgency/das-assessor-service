@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
+using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.Orchestrators.Search;
 using SFA.DAS.AssessorService.Web.ViewModels.Certificate;
@@ -62,7 +63,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 StandardUId = vm.StandardUId,
                 CourseOption = vm.Option
             };
-
+            
             async Task RetrieveAndPopulateStandardOptions(string standardUId)
             {
                 var optionsResult = await _standardVersionClient.GetStandardOptions(standardUId);
@@ -85,14 +86,15 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 //Need to re-search for the apprenticeship, to determine of approvals data is available and if there is no need to show an option.
                 var result = await _searchOrchestrator.Search(new ViewModels.Search.SearchRequestViewModel { Surname = vm.FamilyName, Uln = vm.Uln.ToString() });
                 var relevantStandard = result.SearchResults.FirstOrDefault(s => s.StdCode == vm.StdCode.ToString());
-                if(relevantStandard.Versions != null && relevantStandard.Versions.Count() == 1)
+                var isAFail = relevantStandard.OverallGrade == CertificateGrade.Fail && relevantStandard.SubmittedAt != null;
+                if (relevantStandard.Versions != null && relevantStandard.Versions.Count() == 1 && !isAFail)
                 {
                     var searchStandardVersion = relevantStandard.Versions.First();
                     startCertificateRequest.StandardUId = searchStandardVersion.StandardUId;
 
                     var standardVersion = await _standardVersionClient.GetStandardVersionById(searchStandardVersion.StandardUId);
                     versions = new List<StandardVersion> { standardVersion };
-
+                    
                     if (searchStandardVersion.Options != null && searchStandardVersion.Options.Count() == 1)
                     {
                         var option = searchStandardVersion.Options.First();
@@ -109,7 +111,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                     versions = await _standardVersionClient.GetStandardVersionsByLarsCode(vm.StdCode);
                 }
             }
-            else if (string.IsNullOrWhiteSpace(vm.StandardUId))
+            else if (string.IsNullOrWhiteSpace(vm.StandardUId) || vm.SubmittedFail)
             {
                 // StandardUid empty, need to navigate EPAO through version/option if applicable
                 versions = await _standardVersionClient.GetStandardVersionsByLarsCode(vm.StdCode);
@@ -121,7 +123,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                     await RetrieveAndPopulateStandardOptions(standardUId);
                 }
             }
-            //StandardUId popualted, but option empty, check if options are required.
+            //StandardUId populated, but option empty, check if options are required.
             else if (string.IsNullOrWhiteSpace(vm.Option))
             {
                 // We have a version, which is confirmed, but we don't have an option
