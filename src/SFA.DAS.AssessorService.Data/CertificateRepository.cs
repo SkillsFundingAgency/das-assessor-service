@@ -354,6 +354,8 @@ namespace SFA.DAS.AssessorService.Data
             cert.StandardCode = certificate.StandardCode;
             cert.UpdatedBy = username;
             cert.UpdatedAt = DateTime.UtcNow;
+            cert.IsPrivatelyFunded = certificate.IsPrivatelyFunded;
+            cert.StandardUId = certificate.StandardUId;
 
             if (cert.IsPrivatelyFunded)
             {

@@ -11,7 +11,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Epas
 {
     public class BatchEpaRequestValidator : AbstractValidator<BatchEpaRequest>
     {
-        public BatchEpaRequestValidator(IStringLocalizer<BatchEpaRequestValidator> localiser, IOrganisationQueryRepository organisationQueryRepository, IIlrRepository ilrRepository, IStandardService standardService)
+        public BatchEpaRequestValidator(IStringLocalizer<BatchEpaRequestValidator> localiser, IOrganisationQueryRepository organisationQueryRepository, ILearnerRepository learnerRepository, IStandardService standardService)
         {
             var invalidVersionOrStandardMismatch = false;
             RuleFor(m => m.UkPrn).InclusiveBetween(10000000, 99999999).WithMessage("The UKPRN should contain exactly 8 numbers");
@@ -72,10 +72,10 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Epas
                 {
                     RuleFor(m => m).CustomAsync(async (m, context, canellation) =>
                     {
-                        var requestedIlr = await ilrRepository.Get(m.Uln, m.StandardCode);
+                        var requestedLearner = await learnerRepository.Get(m.Uln, m.StandardCode);
                         var submittingEpao = await organisationQueryRepository.GetByUkPrn(m.UkPrn);
 
-                        if (requestedIlr is null || !string.Equals(requestedIlr.FamilyName, m.FamilyName, StringComparison.InvariantCultureIgnoreCase))
+                        if (requestedLearner is null || !string.Equals(requestedLearner.FamilyName, m.FamilyName, StringComparison.InvariantCultureIgnoreCase))
                         {
                             context.AddFailure(new ValidationFailure("Uln", "ULN, FamilyName and Standard not found."));
                         }
@@ -83,11 +83,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Epas
                         {
                             context.AddFailure(new ValidationFailure("UkPrn", "Specified UKPRN not found"));
                         }
-                        else if (requestedIlr.CompletionStatus == (int)CompletionStatus.Withdrawn)
+                        else if (requestedLearner.CompletionStatus == (int)CompletionStatus.Withdrawn)
                         {
                             context.AddFailure(new ValidationFailure("LearnerDetails", "Cannot find the apprentice details"));
                         }
-                        else if (requestedIlr.CompletionStatus == (int)CompletionStatus.TemporarilyWithdrawn)
+                        else if (requestedLearner.CompletionStatus == (int)CompletionStatus.TemporarilyWithdrawn)
                         {
                             context.AddFailure(new ValidationFailure("LearnerDetails", "Cannot find the apprentice details"));
                         }

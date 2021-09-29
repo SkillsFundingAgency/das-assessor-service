@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalApi.Learners.GetBatchLearnerRequestValidator
 {
-    public class WhenInvalidFamilyNameForIlr : GetBatchLearnerRequestValidatorTestBase
+    public class WhenInvalidFamilyNameForLearner : GetBatchLearnerRequestValidatorTestBase
     {
         private ValidationResult _validationResult;
 

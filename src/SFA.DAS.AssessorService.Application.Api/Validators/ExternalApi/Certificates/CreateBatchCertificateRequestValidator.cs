@@ -15,11 +15,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Certifi
         public CreateBatchCertificateRequestValidator(
             IStringLocalizer<BatchCertificateRequestValidator> localiser,
             IOrganisationQueryRepository organisationQueryRepository,
-            IIlrRepository ilrRepository,
+            ILearnerRepository learnerRepository,
             ICertificateRepository certificateRepository,
             IStandardService standardService)
         {
-            Include(new BatchCertificateRequestValidator(localiser, organisationQueryRepository, ilrRepository, standardService));
+            Include(new BatchCertificateRequestValidator(localiser, organisationQueryRepository, learnerRepository, standardService));
 
             RuleFor(m => m.CertificateReference).Empty().WithMessage("Certificate reference must be empty").DependentRules(() =>
             {
@@ -27,7 +27,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Certifi
                 {
                     var existingCertificate = await certificateRepository.GetCertificate(m.Uln, m.StandardCode);
                     var sumbittingEpao = await organisationQueryRepository.GetByUkPrn(m.UkPrn);
-                    var learnerDetails = await ilrRepository.Get(m.Uln, m.StandardCode);
+                    var learnerDetails = await learnerRepository.Get(m.Uln, m.StandardCode);
 
                     if (existingCertificate != null && existingCertificate.Status != CertificateStatus.Deleted)
                     {
