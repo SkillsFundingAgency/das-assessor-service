@@ -76,7 +76,7 @@ namespace SFA.DAS.AssessorService.Data
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseSqlServer(_connection as DbConnection, options =>
-                 options.EnableRetryOnFailure(3));
+                 options.EnableRetryOnFailure(3).CommandTimeout(300));
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
