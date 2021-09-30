@@ -109,6 +109,12 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 else
                 {
                     versions = await _standardVersionClient.GetStandardVersionsByLarsCode(vm.StdCode);
+                    if (versions.Count() == 1)
+                    {
+                        var standardUId = versions.Single().StandardUId;
+                        startCertificateRequest.StandardUId = standardUId;
+                        await RetrieveAndPopulateStandardOptions(standardUId);
+                    }
                 }
             }
             else if (string.IsNullOrWhiteSpace(vm.StandardUId) || vm.SubmittedFail)
