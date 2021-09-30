@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalApi.Certificates.BatchCertificateRequestValidator
 {
-    public class WhenInvalidFamilyNameForIlr : BatchCertificateRequestValidatorTestBase
+    public class WhenInvalidFamilyNameForLearner : BatchCertificateRequestValidatorTestBase
     {
         private ValidationResult _validationResult;
 

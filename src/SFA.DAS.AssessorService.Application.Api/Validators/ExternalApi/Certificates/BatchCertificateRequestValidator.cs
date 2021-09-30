@@ -14,7 +14,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Certifi
         public BatchCertificateRequestValidator(
             IStringLocalizer<BatchCertificateRequestValidator> localiser,
             IOrganisationQueryRepository organisationQueryRepository,
-            IIlrRepository ilrRepository,
+            ILearnerRepository learnerRepository,
             IStandardService standardService)
         {
             bool invalidVersionOrStandardMismatch = false;
@@ -74,10 +74,10 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Certifi
               {
                   RuleFor(m => m).CustomAsync(async (m, context, canellation) =>
                   {
-                      var requestedIlr = await ilrRepository.Get(m.Uln, m.StandardCode);
+                      var requestedLearner = await learnerRepository.Get(m.Uln, m.StandardCode);
                       var submittingEpao = await organisationQueryRepository.GetByUkPrn(m.UkPrn);
 
-                      if (requestedIlr is null || !string.Equals(requestedIlr.FamilyName, m.FamilyName, StringComparison.InvariantCultureIgnoreCase))
+                      if (requestedLearner is null || !string.Equals(requestedLearner.FamilyName, m.FamilyName, StringComparison.InvariantCultureIgnoreCase))
                       {
                           context.AddFailure(new ValidationFailure("Uln", "ULN, FamilyName and Standard not found."));
                       }

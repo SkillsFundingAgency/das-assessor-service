@@ -13,7 +13,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Certifi
 {
     public class GetBatchCertificateRequestValidator : AbstractValidator<GetBatchCertificateRequest>
     {
-        public GetBatchCertificateRequestValidator(IStringLocalizer<GetBatchCertificateRequestValidator> localiser, IOrganisationQueryRepository organisationQueryRepository, IIlrRepository ilrRepository, ICertificateRepository certificateRepository, IStandardService standardService)
+        public GetBatchCertificateRequestValidator(IStringLocalizer<GetBatchCertificateRequestValidator> localiser, IOrganisationQueryRepository organisationQueryRepository, ILearnerRepository learnerRepository, ICertificateRepository certificateRepository, IStandardService standardService)
         {
             RuleFor(m => m.UkPrn).InclusiveBetween(10000000, 99999999).WithMessage("The UKPRN should contain exactly 8 numbers");
 
@@ -26,7 +26,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Certifi
                 {
                     RuleFor(m => m).CustomAsync(async (m, context, cancellation) =>
                     {
-                        // NOTE: Currently we're making the Certificate & ILR record both mandatory - this is wrong fixing it!
+                        // NOTE: Currently we're making the Certificate & Learner/ILR record both mandatory - this is wrong fixing it!
                         var submittingEpao = await organisationQueryRepository.GetByUkPrn(m.UkPrn);
                        
                         if (submittingEpao is null)
@@ -39,7 +39,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Certifi
 
                             if (existingCertificateCreatedByCallingEpao == null)
                             {
-                                var requestedIlr = await ilrRepository.Get(m.Uln, m.StandardCode);
+                                var requestedLearner = await learnerRepository.Get(m.Uln, m.StandardCode);
                                 var existingCertificate = await certificateRepository.GetCertificate(m.Uln, m.StandardCode);
                                 var providedStandards = await standardService.GetEpaoRegisteredStandards(submittingEpao.EndPointAssessorOrganisationId);
 
@@ -61,7 +61,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Certifi
                                         context.AddFailure(new ValidationFailure("Uln", $"Cannot find certificate with the specified Uln, FamilyName & Standard"));
                                     }
                                 }
-                                else if (requestedIlr is null || !string.Equals(requestedIlr.FamilyName, m.FamilyName, StringComparison.InvariantCultureIgnoreCase) )
+                                else if (requestedLearner is null || !string.Equals(requestedLearner.FamilyName, m.FamilyName, StringComparison.InvariantCultureIgnoreCase) )
                                 {
                                     context.AddFailure(new ValidationFailure("Uln", "Cannot find apprentice with the specified Uln, FamilyName & Standard"));
                                 }

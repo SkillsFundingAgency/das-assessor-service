@@ -11,22 +11,22 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Standards
     public class GetCalculatedStandardVersionForApprenticeshipHandler : IRequestHandler<GetCalculatedStandardVersionForApprenticeshipRequest, Standard>
     {
         private readonly IStandardService _standardService;
-        private readonly IIlrRepository _ilrRepository;
+        private readonly ILearnerRepository _learnerRepository;
 
-        public GetCalculatedStandardVersionForApprenticeshipHandler(IStandardService standardService, IIlrRepository ilrRepository)
+        public GetCalculatedStandardVersionForApprenticeshipHandler(IStandardService standardService, ILearnerRepository learnerRepository)
         {
             _standardService = standardService;
-            _ilrRepository = ilrRepository;
+            _learnerRepository = learnerRepository;
         }
         public async Task<Standard> Handle(GetCalculatedStandardVersionForApprenticeshipRequest request, CancellationToken cancellationToken)
         {
             //request.StandardId will be IFateRef or LarsCode, this will get latest version of the standard
             var standard = await _standardService.GetStandardVersionById(request.StandardId);
-            var ilr = await _ilrRepository.Get(request.Uln, standard.LarsCode);
+            var learner = await _learnerRepository.Get(request.Uln, standard.LarsCode);
             
-            if(ilr == null)
+            if(learner == null)
             {
-                // Can't calculate if no ILR record.
+                // Can't calculate if no Learner/ILR record.
                 return null;
             }
             
@@ -34,7 +34,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Standards
 
             foreach (var version in versions.OrderBy(s => s.VersionMajor).ThenBy(t => t.VersionMinor))
             {
-                if (ilr.LearnStartDate <= version.VersionLatestStartDate || version.VersionLatestStartDate == null)
+                if (learner.LearnStartDate <= version.VersionLatestStartDate || version.VersionLatestStartDate == null)
                 {
                     return version;
                 }

@@ -10,7 +10,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Learner
 {
     public class GetBatchLearnerRequestValidator : AbstractValidator<GetBatchLearnerRequest>
     {
-        public GetBatchLearnerRequestValidator(IStringLocalizer<GetBatchLearnerRequestValidator> localiser, IOrganisationQueryRepository organisationQueryRepository, IIlrRepository ilrRepository, ICertificateRepository certificateRepository, IStandardService standardService)
+        public GetBatchLearnerRequestValidator(IStringLocalizer<GetBatchLearnerRequestValidator> localiser, IOrganisationQueryRepository organisationQueryRepository, ILearnerRepository learnerRepository, ICertificateRepository certificateRepository, IStandardService standardService)
         {
             RuleFor(m => m.UkPrn).InclusiveBetween(10000000, 99999999).WithMessage("The UKPRN should contain exactly 8 numbers");
 
@@ -38,10 +38,10 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Learner
 
                         if (standard != null)
                         {
-                            var requestedIlr = await ilrRepository.Get(m.Uln, standard.LarsCode);
+                            var requestedLearner = await learnerRepository.Get(m.Uln, standard.LarsCode);
                             var sumbittingEpao = await organisationQueryRepository.GetByUkPrn(m.UkPrn);
 
-                            if (requestedIlr is null || !string.Equals(requestedIlr.FamilyName, m.FamilyName, StringComparison.InvariantCultureIgnoreCase))
+                            if (requestedLearner is null || !string.Equals(requestedLearner.FamilyName, m.FamilyName, StringComparison.InvariantCultureIgnoreCase))
                             {
                                 context.AddFailure(new ValidationFailure("Uln", "ULN, FamilyName and Standard not found"));
                             }

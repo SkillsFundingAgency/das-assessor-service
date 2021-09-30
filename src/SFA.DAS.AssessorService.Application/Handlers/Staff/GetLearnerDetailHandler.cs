@@ -18,17 +18,17 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
 {
     public class GetLearnerDetailHandler : IRequestHandler<GetLearnerDetailRequest, LearnerDetailResult>
     {
-        private readonly IIlrRepository _ilrRepository;
+        private readonly ILearnerRepository _learnerRepository;
         private readonly ICertificateRepository _certificateRepository;
         private readonly IStaffCertificateRepository _staffCertificateRepository;
         private readonly ILogger<GetLearnerDetailHandler> _logger;
         private readonly IOrganisationQueryRepository _organisationRepository;
         private readonly IStandardRepository _standardRepository;
 
-        public GetLearnerDetailHandler(IIlrRepository ilrRepository, ICertificateRepository certificateRepository,
+        public GetLearnerDetailHandler(ILearnerRepository learnerRepository, ICertificateRepository certificateRepository,
             IStaffCertificateRepository staffCertificateRepository, ILogger<GetLearnerDetailHandler> logger, IOrganisationQueryRepository organisationRepository, IStandardRepository standardRepository)
         {
-            _ilrRepository = ilrRepository;
+            _learnerRepository = learnerRepository;
             _certificateRepository = certificateRepository;
             _staffCertificateRepository = staffCertificateRepository;
             _logger = logger;
@@ -39,7 +39,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
         public async Task<LearnerDetailResult> Handle(GetLearnerDetailRequest request,
             CancellationToken cancellationToken)
         {
-            var learner = await _ilrRepository.Get(request.Uln, request.StdCode);            
+            var learner = await _learnerRepository.Get(request.Uln, request.StdCode);            
             var certificate = await _certificateRepository.GetCertificate(request.Uln, request.StdCode);
 
             var logs = new List<CertificateLogSummary>();
@@ -87,13 +87,13 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
                 LearnStartDate = certificateData.LearningStartDate.HasValue ? certificateData.LearningStartDate : learner?.LearnStartDate,
                 StandardCode = (certificate?.StandardCode).HasValue ? certificate.StandardCode : standard?.LarsCode ?? 0,
                 Standard = !string.IsNullOrEmpty(certificateData.StandardName) ? certificateData.StandardName : standard?.Title,
-                Version = certificateData.Version,
+                Version = !string.IsNullOrEmpty(certificateData.Version) ? certificateData.Version : learner?.Version,
                 Level = certificateData.StandardLevel > 0 ? certificateData.StandardLevel : standard?.Level ?? 0,
                 CertificateReference = certificate?.CertificateReference,
                 CertificateStatus = certificate?.Status,
                 OverallGrade = certificateData.OverallGrade,
                 AchievementDate = certificateData.AchievementDate, //?.UtcToTimeZoneTime(),
-                Option = certificateData.CourseOption,
+                Option = !string.IsNullOrEmpty(certificateData.CourseOption) ? certificateData.CourseOption : learner?.CourseOption,
                 OrganisationName = epao.EndPointAssessorName,
                 OrganisationId = epao.EndPointAssessorOrganisationId,
                 CertificateLogs = logs,

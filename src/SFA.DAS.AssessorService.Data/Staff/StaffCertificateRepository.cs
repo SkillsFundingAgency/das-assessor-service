@@ -127,7 +127,7 @@ namespace SFA.DAS.AssessorService.Data.Staff
                 ORDER BY 
                     EventTime DESC";
 
-            var result = await _unitOfWork.Connection.QueryFirstAsync<CertificateLogSummary>(
+            var result = await _unitOfWork.Connection.QueryFirstOrDefaultAsync<CertificateLogSummary>(
                 sql,
                 param: new { certificateId },
                 transaction: _unitOfWork.Transaction);

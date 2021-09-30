@@ -58,9 +58,9 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Extensions
         }
 
         [Test]
-        public void When_MatchingExistingCompletedStandard_And_ResultsFoundByIlr_Then_ReturnResults()
+        public void When_MatchingExistingCompletedStandard_And_ResultsFoundByLearner_Then_ReturnResults()
         {
-            SetUpIlrRecord();
+            SetUpLearnerRecord();
 
             MatchUpExistingCompletedStandards();
 
@@ -78,10 +78,16 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Extensions
         [Test]
         public void When_PopulatingBasicCertificateInformation_Then_BasicCertificateInformationShouldBeMapped()
         {
-            SetUpIlrRecord();
+            SetUpLearnerRecord();
 
             var certificate = _certificates.FirstOrDefault(c => c.Uln == _searchResults.First().Uln);
             var certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
+            
+            // Rework such that certificate data is populatedwhen it's a fail for option and version
+            certificateData.OverallGrade = CertificateGrade.Fail;
+            certificate.Status = CertificateStatus.Submitted;
+            certificate.CertificateData = JsonConvert.SerializeObject(certificateData);
+            // End
 
             _searchResult = _searchResults.FirstOrDefault();
 
@@ -98,7 +104,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Extensions
         [Test]
         public void When_PopulatingExtraCertificateInformation_And_CertificateIsNotSubmitted_Then_ReturnSearchResultsAsIs()
         {
-            SetUpIlrRecord();
+            SetUpLearnerRecord();
             _searchResult = _searchResults.FirstOrDefault(r => r.Uln == _searchQuery.Uln);
 
             PopulateCertificateExtraInformationDependingOnPermission();
@@ -109,7 +115,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Extensions
         [Test]
         public void When_PopulatingExtraCertificateInformation_And_CertificateIsSubmitted_And_SearchingUserIsPartOfOrganisation()
         {
-            SetUpIlrRecord();
+            SetUpLearnerRecord();
             SetUpCertificateAndLogEntries(includeSubmitted: true);
 
             _searchResult = _searchResults.FirstOrDefault(r => r.Uln == _searchQuery.Uln);
@@ -122,7 +128,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Extensions
         [Test]
         public void When_PopulatingExtraCertificateInformation_And_CertificateIsSubmittedByApi_Then_ShowSubmittedByApi()
         {
-            SetUpIlrRecord();
+            SetUpLearnerRecord();
             SetUpCertificateAndLogEntries(includeSubmitted: true, createByApi: true);
             _mockContactQueryRepository.Setup(c => c.GetContact(It.IsAny<string>()))
                .ReturnsAsync((Contact)null);
@@ -138,7 +144,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Extensions
         [Test]
         public void When_PopulatingExtraCertificateInformation_And_CertificateIsSubmitted_And_SearchingUserIsNotPartOfTheOrganisation_Then_ExtraInformationIsNotShown()
         {
-            SetUpIlrRecord();
+            SetUpLearnerRecord();
             SetUpCertificateAndLogEntries(includeSubmitted: true);
             _mockContactQueryRepository.Setup(c => c.GetContact(It.Is<string>(username => username != _searchingContact.Username)))
                 .ReturnsAsync((Contact)null);
@@ -191,7 +197,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Extensions
             _searchResult.UpdatedAt.Should().BeNull();
         }
 
-        private void SetUpIlrRecord()
+        private void SetUpLearnerRecord()
         {
             _searchResults = Builder<SearchResult>.CreateListOfSize(1)
                 .All()

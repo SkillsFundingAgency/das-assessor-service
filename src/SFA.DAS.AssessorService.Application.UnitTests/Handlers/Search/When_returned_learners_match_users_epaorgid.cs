@@ -23,17 +23,17 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
         public void Then_those_learners_are_returned()
         {
             Mapper.Reset();
-            Mapper.Initialize(m => m.CreateMap<Ilr, SearchResult>());
+            Mapper.Initialize(m => m.CreateMap<Domain.Entities.Learner, SearchResult>());
             
             
-            var ilrRepository = new Mock<IIlrRepository>();
+            var learnerRepository = new Mock<ILearnerRepository>();
 
-            ilrRepository.Setup(r => r.SearchForLearnerByUln(It.IsAny<long>()))
-                .ReturnsAsync(new List<Ilr>
+            learnerRepository.Setup(r => r.SearchForLearnerByUln(It.IsAny<long>()))
+                .ReturnsAsync(new List<Domain.Entities.Learner>
                 {
-                    new Ilr{ EpaOrgId = "EPA0001", StdCode = 1, FamilyName = "James"},
-                    new Ilr{ EpaOrgId = "EPA0001", StdCode = 2, FamilyName = "James"},
-                    new Ilr{ EpaOrgId = "EPA0001", StdCode = 3, FamilyName = "James"}
+                    new Domain.Entities.Learner{ EpaOrgId = "EPA0001", StdCode = 1, FamilyName = "James"},
+                    new Domain.Entities.Learner{ EpaOrgId = "EPA0001", StdCode = 2, FamilyName = "James"},
+                    new Domain.Entities.Learner{ EpaOrgId = "EPA0001", StdCode = 3, FamilyName = "James"}
                 });
 
             var standardService = new Mock<IStandardService>();
@@ -55,7 +55,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
                 .ReturnsAsync(new List<Certificate>());
             
             
-            var handler = new SearchHandler(organisationRepository.Object, ilrRepository.Object,
+            var handler = new SearchHandler(organisationRepository.Object, learnerRepository.Object,
                 certificateRepository.Object, new Mock<ILogger<SearchHandler>>().Object, new Mock<IContactQueryRepository>().Object, standardService.Object);
 
             var result = handler.Handle(new SearchQuery{ Surname = "James", Uln = 1111111111, EpaOrgId = "12345", Username = "user@name"}, new CancellationToken()).Result;

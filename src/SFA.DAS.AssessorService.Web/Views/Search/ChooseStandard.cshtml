@@ -170,6 +170,7 @@
                     </div>
 
                     @Html.HiddenFor(m => m.SearchResults.First().Uln)
+                    @Html.HiddenFor(m => m.SearchResults.First().FamilyName)
                     <button class="govuk-button" type="submit">@Localizer["SelectStandardButton"]</button>
                 </form>
             }
