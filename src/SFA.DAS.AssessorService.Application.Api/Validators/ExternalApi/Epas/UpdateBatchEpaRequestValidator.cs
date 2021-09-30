@@ -12,9 +12,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Epas
 {
     public class UpdateBatchEpaRequestValidator : AbstractValidator<UpdateBatchEpaRequest>
     {
-        public UpdateBatchEpaRequestValidator(IStringLocalizer<BatchEpaRequestValidator> localiser, IOrganisationQueryRepository organisationQueryRepository, IIlrRepository ilrRepository, ICertificateRepository certificateRepository, IStandardService standardService)
+        public UpdateBatchEpaRequestValidator(IStringLocalizer<BatchEpaRequestValidator> localiser, IOrganisationQueryRepository organisationQueryRepository, ILearnerRepository learnerRepository, ICertificateRepository certificateRepository, IStandardService standardService)
         {
-            Include(new BatchEpaRequestValidator(localiser, organisationQueryRepository, ilrRepository, standardService));
+            Include(new BatchEpaRequestValidator(localiser, organisationQueryRepository, learnerRepository, standardService));
 
             RuleFor(m => m.EpaDetails.EpaReference).NotEmpty().WithMessage("Provide EPA reference").DependentRules(() =>
             {

@@ -36,7 +36,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
         [Test]
         public void Then_GetLearner_GetCertificate_GetEpaoStandards_AreCalledOnce()
         {
-            IlrRepositoryMock.Verify(repo => repo.Get(_request.Uln, _request.StandardCode), Times.Once());
+            LearnerRepositoryMock.Verify(repo => repo.Get(_request.Uln, _request.StandardCode), Times.Once());
             CertificateRepositoryMock.Verify(repo => repo.GetCertificate(_request.Uln, _request.StandardCode), Times.Once());
             StandardServiceMock.Verify(service => service.GetEpaoRegisteredStandards("99999999"), Times.Once());
         }

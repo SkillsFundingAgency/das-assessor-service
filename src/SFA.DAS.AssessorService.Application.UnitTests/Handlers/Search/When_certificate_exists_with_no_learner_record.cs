@@ -15,15 +15,15 @@ using System.Threading;
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
 {
     [TestFixture]
-    public class When_certificate_exists_with_no_ilr_record : SearchHandlerTestBase
+    public class When_certificate_exists_with_no_learner_record : SearchHandlerTestBase
     {
         [SetUp]
         public void Arrange()
         {
             Setup();
 
-            IlrRepository.Setup(r => r.SearchForLearnerByUln(It.IsAny<long>()))
-                .ReturnsAsync(new List<Ilr>());
+            LearnerRepository.Setup(r => r.SearchForLearnerByUln(It.IsAny<long>()))
+                .ReturnsAsync(new List<Domain.Entities.Learner>());
         }
 
         [Test]

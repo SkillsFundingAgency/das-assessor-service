@@ -5,19 +5,19 @@ using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Application.Interfaces
 {
-    public interface IStaffIlrRepository
+    public interface IStaffLearnerRepository
     {
-        Task<IEnumerable<Ilr>> SearchForLearnerByCertificateReference(string certRef);
-        Task<IEnumerable<Ilr>> SearchForLearnerByName(string learnerName, int page, int pageSize);
+        Task<IEnumerable<Learner>> SearchForLearnerByCertificateReference(string certRef);
+        Task<IEnumerable<Learner>> SearchForLearnerByName(string learnerName, int page, int pageSize);
         Task<int> SearchForLearnerByNameCount(string learnerName);
         Task<StaffReposSearchResult> SearchForLearnerByEpaOrgId(StaffSearchRequest searchRequest);
-        Task<IEnumerable<Ilr>> SearchForLearnerByUln(long uln, int page, int pageSize);
+        Task<IEnumerable<Learner>> SearchForLearnerByUln(long uln, int page, int pageSize);
         Task<int> SearchForLearnerByUlnCount(long uln);
     }
 
     public class StaffReposSearchResult
     {
-        public IEnumerable<Ilr> PageOfResults { get; set; }
+        public IEnumerable<Learner> PageOfResults { get; set; }
         public bool DisplayEpao { get; set; }
         public int TotalCount { get; set; }
     }

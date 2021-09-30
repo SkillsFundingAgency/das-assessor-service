@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalApi.Learners.GetBatchLearnerRequestValidator
 {
-    public class WhenIlrNotFound : GetBatchLearnerRequestValidatorTestBase
+    public class WhenLearnerNotFound : GetBatchLearnerRequestValidatorTestBase
     {
         private ValidationResult _validationResult;
 

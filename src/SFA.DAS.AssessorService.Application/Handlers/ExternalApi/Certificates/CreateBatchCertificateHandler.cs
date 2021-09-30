@@ -23,18 +23,18 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
     public class CreateBatchCertificateHandler : IRequestHandler<CreateBatchCertificateRequest, Certificate>
     {
         private readonly ICertificateRepository _certificateRepository;
-        private readonly IIlrRepository _ilrRepository;
+        private readonly ILearnerRepository _learnerRepository;
         private readonly IOrganisationQueryRepository _organisationQueryRepository;
         private readonly IContactQueryRepository _contactQueryRepository;
         private readonly ILogger<CreateBatchCertificateHandler> _logger;
         private readonly IStandardService _standardService;
         private readonly IRoatpApiClient _roatpApiClient;
 
-        public CreateBatchCertificateHandler(ICertificateRepository certificateRepository, IIlrRepository ilrRepository,
+        public CreateBatchCertificateHandler(ICertificateRepository certificateRepository, ILearnerRepository learnerRepository,
             IOrganisationQueryRepository organisationQueryRepository, IContactQueryRepository contactQueryRepository, ILogger<CreateBatchCertificateHandler> logger, IStandardService standardService, IRoatpApiClient roatpApiClient)
         {
             _certificateRepository = certificateRepository;
-            _ilrRepository = ilrRepository;
+            _learnerRepository = learnerRepository;
             _organisationQueryRepository = organisationQueryRepository;
             _contactQueryRepository = contactQueryRepository;
             _logger = logger;
@@ -49,12 +49,12 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
 
         private async Task<Certificate> CreateNewCertificate(CreateBatchCertificateRequest request)
         {
-            _logger.LogInformation("CreateNewCertificate Before Get Ilr from db");
-            var ilr = await _ilrRepository.Get(request.Uln, request.StandardCode);
+            _logger.LogInformation("CreateNewCertificate Before Get Learner from db");
+            var learner = await _learnerRepository.Get(request.Uln, request.StandardCode);
 
-            if (ilr is null)
+            if (learner is null)
             {
-                _logger.LogWarning($"CreateNewCertificate Did not find ILR for Uln {request.Uln} and StandardCode {request.StandardCode}");
+                _logger.LogWarning($"CreateNewCertificate Did not find Learner for Uln {request.Uln} and StandardCode {request.StandardCode}");
                 return null;
             }
 
@@ -65,14 +65,14 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
             var standard = await _standardService.GetStandardVersionById(request.StandardUId);
 
             _logger.LogInformation("CreateNewCertificate Before Get Provider from API");
-            var provider = await GetProviderFromUkprn(ilr.UkPrn);
+            var provider = await GetProviderFromUkprn(learner.UkPrn);
 
             _logger.LogInformation("CreateNewCertificate Before Get StandardOptions from API");
             var options = await _standardService.GetStandardOptionsByStandardId(request.StandardUId);
 
             var certificate = await _certificateRepository.GetCertificate(request.Uln, request.StandardCode);
 
-            var certData = CombineCertificateData(request.CertificateData, ilr, standard, provider, options, certificate);
+            var certData = CombineCertificateData(request.CertificateData, learner, standard, provider, options, certificate);
 
             if (certificate == null)
             {
@@ -83,13 +83,13 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
                        Uln = request.Uln,
                        StandardCode = request.StandardCode,
                        StandardUId = request.StandardUId,
-                       ProviderUkPrn = ilr.UkPrn,
+                       ProviderUkPrn = learner.UkPrn,
                        OrganisationId = organisation.Id,
                        CreatedBy = ExternalApiConstants.ApiUserName,
                        CertificateData = JsonConvert.SerializeObject(certData),
                        Status = CertificateStatus.Draft, // NOTE: Web & Staff always creates Draft first
                         CertificateReference = string.Empty,
-                       LearnRefNumber = ilr.LearnRefNumber,
+                       LearnRefNumber = learner.LearnRefNumber,
                        CreateDay = DateTime.UtcNow.Date
                    });
             }
@@ -146,7 +146,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
             return provider;
         }
 
-        private CertificateData CombineCertificateData(CertificateData data, Ilr ilr, Standard standard, Provider provider, StandardOptions options, Certificate certificate)
+        private CertificateData CombineCertificateData(CertificateData data, Domain.Entities.Learner learner, Standard standard, Provider provider, StandardOptions options, Certificate certificate)
         {
             var epaDetails = new EpaDetails();
             if (certificate != null)
@@ -174,14 +174,14 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
 
             return new CertificateData()
             {
-                LearnerGivenNames = ilr.GivenNames,
-                LearnerFamilyName = ilr.FamilyName,
-                LearningStartDate = ilr.LearnStartDate,
+                LearnerGivenNames = learner.GivenNames,
+                LearnerFamilyName = learner.FamilyName,
+                LearningStartDate = learner.LearnStartDate,
                 StandardReference = standard.IfateReferenceNumber,
                 StandardName = standard.Title,
                 StandardLevel = standard.Level,
                 StandardPublicationDate = standard.EffectiveFrom,
-                FullName = $"{ilr.GivenNames} {ilr.FamilyName}",
+                FullName = $"{learner.GivenNames} {learner.FamilyName}",
                 ProviderName = provider.ProviderName,
 
                 ContactName = data.ContactName,

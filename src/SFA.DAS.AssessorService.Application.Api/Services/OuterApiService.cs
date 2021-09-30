@@ -36,5 +36,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
             var response = await outerApiClient.Get<GetStandardsListResponse>(new GetDraftStandardsRequest());
             return response.Standards;
         }
+
+        public async Task<GetAllLearnersResponse> GetAllLearners(DateTime? sinceTime, int batchNumber, int batchSize)
+        {
+            var response = await outerApiClient.Get<GetAllLearnersResponse>(new GetAllLearnersRequest(sinceTime, batchNumber, batchSize));
+            return response;
+        }
     }
 }
