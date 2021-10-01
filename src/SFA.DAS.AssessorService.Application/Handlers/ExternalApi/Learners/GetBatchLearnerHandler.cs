@@ -16,16 +16,16 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Learners
     {
         private readonly IMediator _mediator;
         private readonly ILogger<GetBatchLearnerHandler> _logger;
-        private readonly IIlrRepository _ilrRepository;
+        private readonly ILearnerRepository _learnerRepository;
         private readonly IOrganisationQueryRepository _organisationRepository;
         private readonly IStandardService _standardService;
         private readonly ICertificateRepository _certificateRepository;
 
-        public GetBatchLearnerHandler(IMediator mediator, ILogger<GetBatchLearnerHandler> logger, IIlrRepository ilrRepository, IOrganisationQueryRepository organisationRepository, IStandardService standardService, ICertificateRepository certificateRepository)
+        public GetBatchLearnerHandler(IMediator mediator, ILogger<GetBatchLearnerHandler> logger, ILearnerRepository learnerRepository, IOrganisationQueryRepository organisationRepository, IStandardService standardService, ICertificateRepository certificateRepository)
         {
             _mediator = mediator;
             _logger = logger;
-            _ilrRepository = ilrRepository;
+            _learnerRepository = learnerRepository;
             _organisationRepository = organisationRepository;
             _standardService = standardService;
             _certificateRepository = certificateRepository;
@@ -61,7 +61,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Learners
 
             if (standard != null)
             {
-                var learner = await _ilrRepository.Get(request.Uln, standard.LarsCode);
+                var learner = await _learnerRepository.Get(request.Uln, standard.LarsCode);
 
                 if (learner != null)
                 {

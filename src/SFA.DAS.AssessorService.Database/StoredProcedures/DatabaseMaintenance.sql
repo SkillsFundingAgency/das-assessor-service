@@ -35,5 +35,16 @@ BEGIN
 
 	INSERT @Results VALUES('Rebuild ALL Indexes [Ilrs] : ' + CONVERT(VARCHAR, DATEDIFF(minute, @Start, GETUTCDATE())) + ' minutes')
 
+	SET @Start = GETUTCDATE()
+
+	ALTER INDEX ALL ON [dbo].[Learner]
+	REBUILD WITH
+	(
+	    FILLFACTOR = 80,
+	    ONLINE = ON
+	);
+
+	INSERT @Results VALUES('Rebuild ALL Indexes [Learner] : ' + CONVERT(VARCHAR, DATEDIFF(minute, @Start, GETUTCDATE())) + ' minutes')
+
 	SELECT * FROM @Results
 END

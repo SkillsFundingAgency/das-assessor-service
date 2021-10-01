@@ -19,6 +19,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Search
         public bool IsPrivatelyFunded { get; set; }
         public string Level { get; set; }
         public string Version { get; set; }
+        public bool VersionConfirmed { get; set; }
         public DateTime? SubmittedAt { get; set; }
         public string SubmittedBy { get; set; }
         public DateTime? AchDate { get; set; }

@@ -18,6 +18,8 @@ namespace SFA.DAS.AssessorService.Api.Types.Models
         public int? FundingModel { get; set; }
         public int UkPrn { get; set; }
         public string Version { get; set; }
+        public bool VersionConfirmed { get; set; }
+        public string StandardUId { get; set; }
         public string Option { get; set; }
         public DateTime? LearnStartDate { get; set; }
         public string OverallGrade { get; set; }
