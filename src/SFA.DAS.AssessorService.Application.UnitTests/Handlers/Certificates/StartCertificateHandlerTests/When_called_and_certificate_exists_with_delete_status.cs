@@ -57,8 +57,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
                 CertificateData = JsonConvert.SerializeObject(_certificateData)
             });
 
-            var ilrRepository = new Mock<IIlrRepository>();
-            ilrRepository.Setup(r => r.Get(1111111111, 30)).ReturnsAsync(new Ilr()
+            var learnerRepository = new Mock<ILearnerRepository>();
+            learnerRepository.Setup(r => r.Get(1111111111, 30)).ReturnsAsync(new Domain.Entities.Learner()
             {
                 GivenNames = "Dave",
                 FamilyName = "Smith",
@@ -67,12 +67,13 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
                 UkPrn = 12345678
             });
 
+            var standardService = new Mock<IStandardService>();
+            standardService.Setup(s => s.GetStandardVersionsByLarsCode(30)).ReturnsAsync(new[] { new Standard { Title = "Standard Title" } });
 
             var roatpApiClientMock = new Mock<IRoatpApiClient>();
-            var standardService = new Mock<IStandardService>();
 
             _startCertificateHandler = new StartCertificateHandler(_certificateRepository.Object,
-                ilrRepository.Object, roatpApiClientMock.Object,
+                learnerRepository.Object, roatpApiClientMock.Object,
                 organisationQueryRepository.Object, new Mock<ILogger<StartCertificateHandler>>().Object, standardService.Object);
 
             _returnedCertificate = _startCertificateHandler

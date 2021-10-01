@@ -21,14 +21,14 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ExternalApi.Get
         private GetBatchLearnerRequest _request;
 
         private Mock<IMediator> _mockMediator;
-        private Mock<IIlrRepository> _mockIlrRepository;
+        private Mock<ILearnerRepository> _mockLearnerRepository;
         private Mock<IOrganisationQueryRepository> _mockOrgQueryRepository;
         private Mock<IStandardService> _mockStandardService;
         private Mock<ICertificateRepository> _mockCertificateRepoistory;
 
         private CertificateData _certificateData;
         private Standard _standardResponse;
-        private Ilr _ilrResponse;
+        private Domain.Entities.Learner _learnerResponse;
         private Organisation _epaoResponse;
         private Certificate _certificateResponse;
 
@@ -42,7 +42,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ExternalApi.Get
 
             _certificateData = Builder<CertificateData>.CreateNew().Build();
 
-            _ilrResponse = Builder<Ilr>.CreateNew().Build();
+            _learnerResponse = Builder<Domain.Entities.Learner>.CreateNew().Build();
             _epaoResponse = Builder<Organisation>.CreateNew().Build();
             _certificateResponse = Builder<Certificate>.CreateNew()
                 .With(cr => cr.CertificateData = JsonConvert.SerializeObject(_certificateData))
@@ -50,7 +50,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ExternalApi.Get
             _standardResponse = Builder<Standard>.CreateNew().Build();
 
             _mockMediator = new Mock<IMediator>();
-            _mockIlrRepository = new Mock<IIlrRepository>();
+            _mockLearnerRepository = new Mock<ILearnerRepository>();
             _mockOrgQueryRepository = new Mock<IOrganisationQueryRepository>();
             _mockStandardService = new Mock<IStandardService>();
             _mockCertificateRepoistory = new Mock<ICertificateRepository>();
@@ -58,8 +58,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ExternalApi.Get
             _mockStandardService.Setup(ss => ss.GetStandardVersionById(_request.Standard, null))
                 .ReturnsAsync(_standardResponse);
 
-            _mockIlrRepository.Setup(ilr => ilr.Get(_request.Uln, It.IsAny<int>()))
-                .ReturnsAsync(_ilrResponse);
+            _mockLearnerRepository.Setup(learner => learner.Get(_request.Uln, It.IsAny<int>()))
+                .ReturnsAsync(_learnerResponse);
 
             _mockOrgQueryRepository.Setup(org => org.GetByUkPrn(It.IsAny<long>()))
                 .ReturnsAsync(_epaoResponse);
@@ -72,7 +72,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ExternalApi.Get
 
             _handler = new GetBatchLearnerHandler(_mockMediator.Object, 
                 Mock.Of<ILogger<GetBatchLearnerHandler>>(),
-                _mockIlrRepository.Object, 
+                _mockLearnerRepository.Object, 
                 _mockOrgQueryRepository.Object, 
                 _mockStandardService.Object,
                 _mockCertificateRepoistory.Object);
@@ -109,10 +109,10 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ExternalApi.Get
         }
 
         [Test]
-        public async Task And_IlrNotFound_Then_ReturnNull()
+        public async Task And_LearnerNotFound_Then_ReturnNull()
         {
-            _mockIlrRepository.Setup(ilr => ilr.Get(_request.Uln, It.IsAny<int>()))
-                .ReturnsAsync((Ilr)null);
+            _mockLearnerRepository.Setup(ilr => ilr.Get(_request.Uln, It.IsAny<int>()))
+                .ReturnsAsync((Domain.Entities.Learner)null);
 
             var result = await _handler.Handle(_request, CancellationToken.None);
 

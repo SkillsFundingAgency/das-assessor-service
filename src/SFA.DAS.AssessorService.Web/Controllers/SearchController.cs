@@ -94,6 +94,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 OverallGrade = resultViewModel.OverallGrade,
                 Level = resultViewModel.Level,
                 Version = resultViewModel.Version,
+                VersionConfirmed = resultViewModel.VersionConfirmed,
                 SubmittedAt = GetSubmittedAtString(resultViewModel.SubmittedAt),
                 SubmittedBy = resultViewModel.SubmittedBy,
                 LearnerStartDate = resultViewModel.LearnStartDate.GetValueOrDefault().ToString("d MMMM yyyy"),
