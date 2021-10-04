@@ -1,14 +1,10 @@
 ﻿using NUnit.Framework;
-using SFA.DAS.AssessorService.Application.Interfaces;
 using System.Collections.Generic;
 using System.Linq;
-using SFA.DAS.AssessorService.Data.IntegrationTests.Handlers;
-using SFA.DAS.AssessorService.Data.IntegrationTests.Models;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Services;
 using Microsoft.EntityFrameworkCore;
 using System.Data.SqlClient;
 using SFA.DAS.AssessorService.Domain.Entities;
-using System.Threading.Tasks;
 using FluentAssertions;
 using System;
 
@@ -22,7 +18,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         private ApprovalsExtractRepository _repository;
 
         [OneTimeSetUp]
-        public async Task Setup()
+        public void SetupApprovalsExtractTests()
         {
             var option = new DbContextOptionsBuilder<AssessorDbContext>();
             option.UseSqlServer(_databaseService.WebConfiguration.SqlConnectionString, options => options.EnableRetryOnFailure(3));
