@@ -50,7 +50,7 @@ BEGIN
 			  ,AllVersions Versions
 			  ,ROW_NUMBER() OVER(PARTITION BY st1.IFateReferenceNumber ORDER BY VersionMajor DESC, VersionMinor DESC) AS RowNumber
 		FROM Standards st1
-		JOIN ( SELECT IFateReferenceNumber, STRING_AGG(CAST(Version AS VARCHAR(500)), ',') WITHIN GROUP (ORDER BY VersionMajor , VersionMinor) AS AllVersions 
+		JOIN ( SELECT IFateReferenceNumber, STRING_AGG(CAST(Version AS VARCHAR(500)), ', ') WITHIN GROUP (ORDER BY VersionMajor , VersionMinor) AS AllVersions 
 			   FROM Standards 
 			   WHERE VersionApprovedForDelivery IS NOT NULL
 			   GROUP BY IFateReferenceNumber ) sv1 ON sv1.IFateReferenceNumber = st1.IFateReferenceNumber
