@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
-using Z.Dapper.Plus;
 
 namespace SFA.DAS.AssessorService.Data
 {
@@ -28,11 +27,29 @@ namespace SFA.DAS.AssessorService.Data
 
         public void UpsertApprovalsExtract(List<ApprovalsExtract> approvalsExtract)
         {
+            if (null == approvalsExtract || !approvalsExtract.Any()) return;
+
             try
             {
-                DapperPlusManager.Entity<ApprovalsExtract>().Table("ApprovalsExtract");
                 _unitOfWork.Begin();
-                _unitOfWork.Transaction.BulkMerge(approvalsExtract);
+
+                var querySQL = "SELECT * FROM ApprovalsExtract WHERE ApprenticeshipId = @ApprenticeshipId;";
+                var insertSQL = @"INSERT INTO ApprovalsExtract (FirstName, LastName, Uln, TrainingCode, TrainingCourseVersion, TrainingCourseVersionConfirmed, TrainingCourseOption, StandardUid, StartDate, EndDate, CreatedOn, UpdatedOn, StopDate, PauseDate, CompletionDate, UKPRN, LearnRefNumber, PaymentStatus) " +
+                                "VALUES (@FirstName, @LastName, @Uln, @TrainingCode, @TrainingCourseVersion, @TrainingCourseVersionConfirmed, @TrainingCourseOption, @StandardUid, @StartDate, @EndDate, @CreatedOn, @UpdatedOn, @StopDate, @PauseDate, @CompletionDate, @UKPRN, @LearnRefNumber, @PaymentStatus);";
+                var updateSQL = "UPDATE ApprovalsExtract SET (FirstName = @FirstName, LastName = @LastName, Uln = @Uln, TrainingCode = @TrainingCode, TrainingCourseVersion = @TrainingCourseVersion, TrainingCourseVersionConfirmed = @TrainingCourseVersionConfirmed, TrainingCourseOption = @TrainingCourseOption, StandardUid = @StandardUid, StartDate = @StartDate, EndDate = @EndDate, CreatedOn = @CreatedOn, UpdatedOn = @UpdatedOn, StopDate = @StopDate, PauseDate = @PauseDate, CompletionDate = @CompletionDate, UKPRN = @UKPRN, LearnRefNumber = @LearnRefNumber, PaymentStatus = @PaymentStatus) WHERE ApprenticeshipId = @ApprenticeshipId;";
+                foreach (var ae in approvalsExtract)
+                {
+                    var existingExtract = _unitOfWork.Connection.QueryFirstOrDefault<ApprovalsExtract>(querySQL, new { ApprenticeshipId = ae.ApprenticeshipId });
+                    if(null == existingExtract)
+                    {
+                        _unitOfWork.Connection.Execute(insertSQL, ae);
+                    }
+                    else
+                    {
+                        _unitOfWork.Connection.Execute(updateSQL, ae);
+                    }
+                }
+
                 _unitOfWork.Commit();
             }
             catch (Exception ex)
