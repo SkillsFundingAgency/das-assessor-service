@@ -34,19 +34,19 @@ namespace SFA.DAS.AssessorService.Data
                 _unitOfWork.Begin();
 
                 var querySQL = "SELECT * FROM ApprovalsExtract WHERE ApprenticeshipId = @ApprenticeshipId;";
-                var insertSQL = @"INSERT INTO ApprovalsExtract (FirstName, LastName, Uln, TrainingCode, TrainingCourseVersion, TrainingCourseVersionConfirmed, TrainingCourseOption, StandardUid, StartDate, EndDate, CreatedOn, UpdatedOn, StopDate, PauseDate, CompletionDate, UKPRN, LearnRefNumber, PaymentStatus) " +
-                                "VALUES (@FirstName, @LastName, @Uln, @TrainingCode, @TrainingCourseVersion, @TrainingCourseVersionConfirmed, @TrainingCourseOption, @StandardUid, @StartDate, @EndDate, @CreatedOn, @UpdatedOn, @StopDate, @PauseDate, @CompletionDate, @UKPRN, @LearnRefNumber, @PaymentStatus);";
+                var insertSQL = @"INSERT INTO ApprovalsExtract (ApprenticeshipId, FirstName, LastName, Uln, TrainingCode, TrainingCourseVersion, TrainingCourseVersionConfirmed, TrainingCourseOption, StandardUid, StartDate, EndDate, CreatedOn, UpdatedOn, StopDate, PauseDate, CompletionDate, UKPRN, LearnRefNumber, PaymentStatus) " +
+                                "VALUES (@ApprenticeshipId, @FirstName, @LastName, @Uln, @TrainingCode, @TrainingCourseVersion, @TrainingCourseVersionConfirmed, @TrainingCourseOption, @StandardUid, @StartDate, @EndDate, @CreatedOn, @UpdatedOn, @StopDate, @PauseDate, @CompletionDate, @UKPRN, @LearnRefNumber, @PaymentStatus);";
                 var updateSQL = "UPDATE ApprovalsExtract SET (FirstName = @FirstName, LastName = @LastName, Uln = @Uln, TrainingCode = @TrainingCode, TrainingCourseVersion = @TrainingCourseVersion, TrainingCourseVersionConfirmed = @TrainingCourseVersionConfirmed, TrainingCourseOption = @TrainingCourseOption, StandardUid = @StandardUid, StartDate = @StartDate, EndDate = @EndDate, CreatedOn = @CreatedOn, UpdatedOn = @UpdatedOn, StopDate = @StopDate, PauseDate = @PauseDate, CompletionDate = @CompletionDate, UKPRN = @UKPRN, LearnRefNumber = @LearnRefNumber, PaymentStatus = @PaymentStatus) WHERE ApprenticeshipId = @ApprenticeshipId;";
                 foreach (var ae in approvalsExtract)
                 {
-                    var existingExtract = _unitOfWork.Connection.QueryFirstOrDefault<ApprovalsExtract>(querySQL, new { ApprenticeshipId = ae.ApprenticeshipId });
+                    var existingExtract = _unitOfWork.Connection.QueryFirstOrDefault<ApprovalsExtract>(querySQL, new { ApprenticeshipId = ae.ApprenticeshipId }, _unitOfWork.Transaction);
                     if(null == existingExtract)
                     {
-                        _unitOfWork.Connection.Execute(insertSQL, ae);
+                        _unitOfWork.Connection.Execute(insertSQL, ae, _unitOfWork.Transaction);
                     }
                     else
                     {
-                        _unitOfWork.Connection.Execute(updateSQL, ae);
+                        _unitOfWork.Connection.Execute(updateSQL, ae, _unitOfWork.Transaction);
                     }
                 }
 
