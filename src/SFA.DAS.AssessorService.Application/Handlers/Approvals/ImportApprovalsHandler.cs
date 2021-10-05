@@ -67,7 +67,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Approvals
 
                     // 3. Upsert ApprovalsExtract batch.
 
-                    UpsertApprovalsExtract(learnersBatch.Learners);
+                    await UpsertApprovalsExtract(learnersBatch.Learners);
                     count += learnersBatch.Learners.Count;
 
                 } while (batchNumber < learnersBatch.TotalNumberOfBatches);
@@ -111,10 +111,10 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Approvals
             return value;
         }
 
-        private void UpsertApprovalsExtract(List<Infrastructure.OuterApi.Learner> learners)
+        private async Task UpsertApprovalsExtract(List<Infrastructure.OuterApi.Learner> learners)
         {
             var approvalsExtract = Mapper.Map<List<Infrastructure.OuterApi.Learner>, List<Domain.Entities.ApprovalsExtract>>(learners);
-            _approvalsExtractRepository.UpsertApprovalsExtract(approvalsExtract);
+            await _approvalsExtractRepository.UpsertApprovalsExtract(approvalsExtract);
         }
     }
 }

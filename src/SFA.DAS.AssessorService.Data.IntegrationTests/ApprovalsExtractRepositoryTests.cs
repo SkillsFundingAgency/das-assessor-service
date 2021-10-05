@@ -7,6 +7,7 @@ using System.Data.SqlClient;
 using SFA.DAS.AssessorService.Domain.Entities;
 using FluentAssertions;
 using System;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Data.IntegrationTests
 {
@@ -29,7 +30,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         }
 
         [Test]
-        public void When_Empty_Then_NewExtractIsInserted()
+        public async Task When_Empty_Then_NewExtractIsInserted()
         {
             // Arrange
 
@@ -41,7 +42,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
 
             // Act
 
-            _repository.UpsertApprovalsExtract(approvalsExtractInput);
+            await _repository.UpsertApprovalsExtract(approvalsExtractInput);
 
             // Assert
 
@@ -51,7 +52,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         }
 
         [Test]
-        public void When_NotEmpty_Then_ExistingExtractIsUpdated()
+        public async Task When_NotEmpty_Then_ExistingExtractIsUpdated()
         {
             // Arrange
 
@@ -64,7 +65,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
 
             // Act
 
-            _repository.UpsertApprovalsExtract(approvalsExtractInput);
+            await _repository.UpsertApprovalsExtract(approvalsExtractInput);
 
             // Assert
 
@@ -75,7 +76,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         }
 
         [Test]
-        public void When_NotEmpty_Then_NewIsInsertedAndExistingIsUpdated()
+        public async Task When_NotEmpty_Then_NewIsInsertedAndExistingIsUpdated()
         {
             // Arrange
 
@@ -89,7 +90,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
 
             // Act
 
-            _repository.UpsertApprovalsExtract(approvalsExtractInput);
+            await _repository.UpsertApprovalsExtract(approvalsExtractInput);
 
             // Assert
 
@@ -100,7 +101,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         }
 
         [Test]
-        public void When_ExtractHasAllFieldsPopulated_Then_AllFieldsAreInserted()
+        public async Task When_ExtractHasAllFieldsPopulated_Then_AllFieldsAreInserted()
         {
             // Arrange
 
@@ -134,7 +135,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
 
             // Act
 
-            _repository.UpsertApprovalsExtract(approvalsExtractInput);
+            await _repository.UpsertApprovalsExtract(approvalsExtractInput);
 
             // Assert
 

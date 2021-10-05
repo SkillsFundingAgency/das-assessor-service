@@ -8,7 +8,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
     public interface IApprovalsExtractRepository
     {
         Task<DateTime?> GetLatestExtractTimestamp();
-        void UpsertApprovalsExtract(List<ApprovalsExtract> approvalsExtract);
+        Task UpsertApprovalsExtract(List<ApprovalsExtract> approvalsExtract);
         Task<int> PopulateLearner();
     }
 }
