@@ -32,21 +32,22 @@ namespace SFA.DAS.AssessorService.Data
 
             try
             {
-                _unitOfWork.Begin();
-
-                var existingIds = await _unitOfWork.Connection.QueryAsync<int>(
-                "SELECT DISTINCT ApprenticeshipId FROM ApprovalsExtract;", 
-                transaction: _unitOfWork.Transaction);
-
+                // Incoming batch should be no more than 1000 ids
                 var uniqueIncomingIds = approvalsExtract.Select(ae => ae.ApprenticeshipId).Distinct();
-                var newIds = uniqueIncomingIds.Where(u => existingIds.All(e => e != u));
 
-                var approvalsExtractToUpdate = approvalsExtract.Where(ae => existingIds.Contains(ae.ApprenticeshipId));
-                await UpdateApprovalsExtract(approvalsExtractToUpdate);
+                _unitOfWork.Begin();
+                var query = "SELECT ApprenticeshipId FROM ApprovalsExtract WHERE ApprenticeshipId in @ids";
+                var existingIds = await _unitOfWork.Connection.QueryAsync<int>(
+                    query, uniqueIncomingIds.ToArray(), _unitOfWork.Transaction);
+
+                var newIds = uniqueIncomingIds.Except(existingIds);
 
                 var approvalsExtractToInsert = approvalsExtract.Where(ae => newIds.Contains(ae.ApprenticeshipId));
                 await BulkInsertApprovalsExtract(approvalsExtractToInsert);
 
+                var approvalsExtractToUpdate = approvalsExtract.Where(ae => existingIds.Contains(ae.ApprenticeshipId));
+                await UpdateApprovalsExtract(approvalsExtractToUpdate);
+                                
                 _unitOfWork.Commit();
             }
             catch (Exception ex)
@@ -58,7 +59,7 @@ namespace SFA.DAS.AssessorService.Data
 
         private async Task BulkInsertApprovalsExtract(IEnumerable<ApprovalsExtract> approvalsExtract)
         {
-            var bulkCopyOptions = SqlBulkCopyOptions.TableLock;
+            var bulkCopyOptions = SqlBulkCopyOptions.Default;
             var dataTable = ConstructApprovalsExtractDataTable(approvalsExtract);
 
             using (var bulkCopy = new SqlBulkCopy(_unitOfWork.Connection as SqlConnection, bulkCopyOptions, _unitOfWork.Transaction as SqlTransaction))
@@ -106,47 +107,8 @@ namespace SFA.DAS.AssessorService.Data
         private async Task UpdateApprovalsExtract(IEnumerable<ApprovalsExtract> approvalsExtract)
         {
             var updateSQL = "UPDATE ApprovalsExtract SET FirstName = @FirstName, LastName = @LastName, Uln = @Uln, TrainingCode = @TrainingCode, TrainingCourseVersion = @TrainingCourseVersion, TrainingCourseVersionConfirmed = @TrainingCourseVersionConfirmed, TrainingCourseOption = @TrainingCourseOption, StandardUid = @StandardUid, StartDate = @StartDate, EndDate = @EndDate, CreatedOn = @CreatedOn, UpdatedOn = @UpdatedOn, StopDate = @StopDate, PauseDate = @PauseDate, CompletionDate = @CompletionDate, UKPRN = @UKPRN, LearnRefNumber = @LearnRefNumber, PaymentStatus = @PaymentStatus WHERE ApprenticeshipId = @ApprenticeshipId;";
-            foreach (var ae in approvalsExtract)
-            {
-                await _unitOfWork.Connection.ExecuteAsync(updateSQL, ae, _unitOfWork.Transaction);
-            }
+            await _unitOfWork.Connection.ExecuteAsync(updateSQL, approvalsExtract, _unitOfWork.Transaction);
         }
-
-        /*
-        public void UpsertApprovalsExtractDapper(List<ApprovalsExtract> approvalsExtract)
-        {
-            if (null == approvalsExtract || !approvalsExtract.Any()) return;
-
-            try
-            {
-                _unitOfWork.Begin();
-
-                var querySQL = "SELECT * FROM ApprovalsExtract WHERE ApprenticeshipId = @ApprenticeshipId;";
-                var insertSQL = @"INSERT INTO ApprovalsExtract (ApprenticeshipId, FirstName, LastName, Uln, TrainingCode, TrainingCourseVersion, TrainingCourseVersionConfirmed, TrainingCourseOption, StandardUid, StartDate, EndDate, CreatedOn, UpdatedOn, StopDate, PauseDate, CompletionDate, UKPRN, LearnRefNumber, PaymentStatus) " +
-                                "VALUES (@ApprenticeshipId, @FirstName, @LastName, @Uln, @TrainingCode, @TrainingCourseVersion, @TrainingCourseVersionConfirmed, @TrainingCourseOption, @StandardUid, @StartDate, @EndDate, @CreatedOn, @UpdatedOn, @StopDate, @PauseDate, @CompletionDate, @UKPRN, @LearnRefNumber, @PaymentStatus);";
-                var updateSQL = "UPDATE ApprovalsExtract SET FirstName = @FirstName, LastName = @LastName, Uln = @Uln, TrainingCode = @TrainingCode, TrainingCourseVersion = @TrainingCourseVersion, TrainingCourseVersionConfirmed = @TrainingCourseVersionConfirmed, TrainingCourseOption = @TrainingCourseOption, StandardUid = @StandardUid, StartDate = @StartDate, EndDate = @EndDate, CreatedOn = @CreatedOn, UpdatedOn = @UpdatedOn, StopDate = @StopDate, PauseDate = @PauseDate, CompletionDate = @CompletionDate, UKPRN = @UKPRN, LearnRefNumber = @LearnRefNumber, PaymentStatus = @PaymentStatus WHERE ApprenticeshipId = @ApprenticeshipId;";
-                foreach (var ae in approvalsExtract)
-                {
-                    var existingExtract = _unitOfWork.Connection.QueryFirstOrDefault<ApprovalsExtract>(querySQL, new { ApprenticeshipId = ae.ApprenticeshipId }, _unitOfWork.Transaction);
-                    if (null == existingExtract)
-                    {
-                        _unitOfWork.Connection.Execute(insertSQL, ae, _unitOfWork.Transaction);
-                    }
-                    else
-                    {
-                        _unitOfWork.Connection.Execute(updateSQL, ae, _unitOfWork.Transaction);
-                    }
-                }
-
-                _unitOfWork.Commit();
-            }
-            catch (Exception ex)
-            {
-                _unitOfWork.Rollback();
-                throw ex;
-            }
-        }
-        */
 
         public async Task<int> PopulateLearner()
         {
