@@ -172,6 +172,7 @@
     <Build Include="Functions\Scalar-valued Functions\GetStandardUidFromLarsCode.sql" />
     <Build Include="StoredProcedures\GetEPAO_Pipelines_StandardFilter.sql" />
     <Build Include="StoredProcedures\GetEPAO_Pipelines_ProviderFilter.sql" />
+    <Build Include="StoredProcedures\GetEPAO_Pipelines_EPADateFilter.sql" />
     <Build Include="Functions\Scalar-valued Functions\GetVersionFromLarsCode.sql" />
     <Build Include="StoredProcedures\DashboardReporting\IlrImportSummary.sql" />
   </ItemGroup>
@@ -196,7 +197,6 @@
     <None Include="PostDeploymentScripts\LookupData\PostCodeRegionDelete.sql" />
     <None Include="PostDeploymentScripts\LookupData\StaffReportsInsertOrUpdate.sql" />
     <None Include="PostDeploymentScripts\LookupData\StaffReportsDelete.sql" />
-    <None Include="StoredProcedures\GetEPAO_Pipelines_EPADateFilter.sql" />
     <None Include="PostDeploymentScripts\LookupData\PrePopulateProviders.sql" />
     <None Include="PostDeploymentScripts\InsertApprovalsExtractSettingsIfNotExists.sql" />
   </ItemGroup>
