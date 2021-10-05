@@ -14,16 +14,16 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.LearnerDetails.
     public class When_called
     {
         private GetPipelinesCountHandler _sut;
-        private Mock<IIlrRepository> _mockIlrRepository;
+        private Mock<ILearnerRepository> _mockLearnerRepository;
         private Mock<ILogger<GetPipelinesCountHandler>> _mockLogger;
 
         [SetUp]
         public void Arrange()
         {
-            _mockIlrRepository = new Mock<IIlrRepository>();
+            _mockLearnerRepository = new Mock<ILearnerRepository>();
             _mockLogger = new Mock<ILogger<GetPipelinesCountHandler>>();
 
-            _sut = new GetPipelinesCountHandler(_mockIlrRepository.Object, _mockLogger.Object); 
+            _sut = new GetPipelinesCountHandler(_mockLearnerRepository.Object, _mockLogger.Object); 
         }
 
         [TestCase("EPA0200", 287, 5)]
@@ -31,7 +31,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.LearnerDetails.
         public async Task Then_epao_pipelines_count_is_returned(string epaoId, int? stdCode, int count)
         {
             // Arrange
-            _mockIlrRepository
+            _mockLearnerRepository
                 .Setup(r => r.GetEpaoPipelinesCount(epaoId, stdCode))
                 .ReturnsAsync(count);
 
@@ -39,7 +39,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.LearnerDetails.
             var result = await _sut.Handle(new GetPipelinesCountRequest(epaoId, stdCode), new CancellationToken());
 
             // Assert
-            _mockIlrRepository
+            _mockLearnerRepository
                 .Verify(r => r.GetEpaoPipelinesCount(epaoId, stdCode), Times.Once);
 
             result.Should().Be(count);

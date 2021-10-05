@@ -22,17 +22,17 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
         public void Then_non_matching_are_not_returned_if_not_valid_for_epao()
         {
             Mapper.Reset();
-            Mapper.Initialize(m => m.CreateMap<Ilr, SearchResult>());
-            
-            
-            var ilrRepository = new Mock<IIlrRepository>();
+            Mapper.Initialize(m => m.CreateMap<Domain.Entities.Learner, SearchResult>());
 
-            ilrRepository.Setup(r => r.SearchForLearnerByUln(It.IsAny<long>()))
-                .ReturnsAsync(new List<Ilr>
+
+            var learnerRepository = new Mock<ILearnerRepository>();
+
+            learnerRepository.Setup(r => r.SearchForLearnerByUln(It.IsAny<long>()))
+                .ReturnsAsync(new List<Domain.Entities.Learner>
                 {
-                    new Ilr{ EpaOrgId = "EPA0001", StdCode = 1, FamilyName = "James"},
-                    new Ilr{ EpaOrgId = "EPA0002", StdCode = 2, FamilyName = "James"},
-                    new Ilr{ EpaOrgId = "EPA0001", StdCode = 3, FamilyName = "James"}
+                    new Domain.Entities.Learner{ EpaOrgId = "EPA0001", StdCode = 1, FamilyName = "James"},
+                    new Domain.Entities.Learner{ EpaOrgId = "EPA0002", StdCode = 2, FamilyName = "James"},
+                    new Domain.Entities.Learner{ EpaOrgId = "EPA0001", StdCode = 3, FamilyName = "James"}
                 });
 
             var standardService = new Mock<IStandardService>();
@@ -40,66 +40,66 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
                 .ReturnsAsync(new List<OrganisationStandardVersion> { new OrganisationStandardVersion { Title = "Standard One", Version = "1.0", LarsCode = 1 },
                                                             new OrganisationStandardVersion { Title = "Standard Two", Version = "1.0", LarsCode = 2 } });
             standardService.Setup(c => c.GetStandard(It.IsAny<int>()))
-                .ReturnsAsync(new StandardCollation {Title = "Standard Title", StandardData = new StandardData{ Level = 2}});
-            
-            
+                .ReturnsAsync(new StandardCollation { Title = "Standard Title", StandardData = new StandardData { Level = 2 } });
+
+
             var organisationRepository = new Mock<IOrganisationQueryRepository>();
-            organisationRepository.Setup(r => r.Get("12345")).ReturnsAsync(new Organisation() { EndPointAssessorOrganisationId = "EPA0001"});
+            organisationRepository.Setup(r => r.Get("12345")).ReturnsAsync(new Organisation() { EndPointAssessorOrganisationId = "EPA0001" });
 
             var certificateRepository = new Mock<ICertificateRepository>();
             certificateRepository.Setup(r => r.GetDraftAndCompletedCertificatesFor(1111111111))
                 .ReturnsAsync(new List<Certificate>());
-            
-            
-            var handler = new SearchHandler(organisationRepository.Object, ilrRepository.Object,
+
+
+            var handler = new SearchHandler(organisationRepository.Object, learnerRepository.Object,
                 certificateRepository.Object, new Mock<ILogger<SearchHandler>>().Object, new Mock<IContactQueryRepository>().Object, standardService.Object);
 
-            var result = handler.Handle(new SearchQuery{ Surname = "James", Uln = 1111111111, EpaOrgId = "12345", Username = "user@name"}, new CancellationToken()).Result;
+            var result = handler.Handle(new SearchQuery { Surname = "James", Uln = 1111111111, EpaOrgId = "12345", Username = "user@name" }, new CancellationToken()).Result;
 
             result.Count.Should().Be(2);
         }
-        
+
         [Test]
         public void Then_non_matching_are_returned_if_valid_for_epao()
         {
             Mapper.Reset();
-            Mapper.Initialize(m => m.CreateMap<Ilr, SearchResult>());
-            
-            
-            var ilrRepository = new Mock<IIlrRepository>();
+            Mapper.Initialize(m => m.CreateMap<Domain.Entities.Learner, SearchResult>());
 
-            ilrRepository.Setup(r => r.SearchForLearnerByUln(It.IsAny<long>()))
-                .ReturnsAsync(new List<Ilr>
+
+            var learnerRepository = new Mock<ILearnerRepository>();
+
+            learnerRepository.Setup(r => r.SearchForLearnerByUln(It.IsAny<long>()))
+                .ReturnsAsync(new List<Domain.Entities.Learner>
                 {
-                    new Ilr{ EpaOrgId = "EPA0001", StdCode = 1, FamilyName = "James"},
-                    new Ilr{ EpaOrgId = "EPA0002", StdCode = 2, FamilyName = "James"},
-                    new Ilr{ EpaOrgId = "EPA0001", StdCode = 3, FamilyName = "James"}
+                    new Domain.Entities.Learner{ EpaOrgId = "EPA0001", StdCode = 1, FamilyName = "James"},
+                    new Domain.Entities.Learner{ EpaOrgId = "EPA0002", StdCode = 2, FamilyName = "James"},
+                    new Domain.Entities.Learner{ EpaOrgId = "EPA0001", StdCode = 3, FamilyName = "James"}
                 });
 
             var assessmentOrgsApiClient = new Mock<IRegisterQueryRepository>();
             var standardService = new Mock<IStandardService>();
-           
+
             standardService.Setup(c => c.GetEPAORegisteredStandardVersions(It.IsAny<string>(), null))
                 .ReturnsAsync(new List<OrganisationStandardVersion> { new OrganisationStandardVersion { Title = "Standard One", Version = "1.0", LarsCode = 1 },
                                                           new OrganisationStandardVersion { Title = "Standard Two", Version = "1.0", LarsCode = 2 },
                                                           new OrganisationStandardVersion { Title = "Standard Three", Version = "1.0", LarsCode = 3 }});
 
             standardService.Setup(c => c.GetStandard(It.IsAny<int>()))
-                .ReturnsAsync(new StandardCollation {Title = "Standard Title", StandardData = new StandardData{ Level = 2}});
-            
-            
+                .ReturnsAsync(new StandardCollation { Title = "Standard Title", StandardData = new StandardData { Level = 2 } });
+
+
             var organisationRepository = new Mock<IOrganisationQueryRepository>();
-            organisationRepository.Setup(r => r.Get("12345")).ReturnsAsync(new Organisation() { EndPointAssessorOrganisationId = "EPA0001"});
+            organisationRepository.Setup(r => r.Get("12345")).ReturnsAsync(new Organisation() { EndPointAssessorOrganisationId = "EPA0001" });
 
             var certificateRepository = new Mock<ICertificateRepository>();
             certificateRepository.Setup(r => r.GetDraftAndCompletedCertificatesFor(1111111111))
                 .ReturnsAsync(new List<Certificate>());
-            
-            
-            var handler = new SearchHandler(organisationRepository.Object, ilrRepository.Object,
+
+
+            var handler = new SearchHandler(organisationRepository.Object, learnerRepository.Object,
                 certificateRepository.Object, new Mock<ILogger<SearchHandler>>().Object, new Mock<IContactQueryRepository>().Object, standardService.Object);
 
-            var result = handler.Handle(new SearchQuery{ Surname = "James", Uln = 1111111111, EpaOrgId = "12345", Username = "user@name"}, new CancellationToken()).Result;
+            var result = handler.Handle(new SearchQuery { Surname = "James", Uln = 1111111111, EpaOrgId = "12345", Username = "user@name" }, new CancellationToken()).Result;
 
             result.Count.Should().Be(3);
         }

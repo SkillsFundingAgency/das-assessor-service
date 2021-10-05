@@ -49,8 +49,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
             ContactRepository.Setup(cr => cr.GetContact("username"))
                 .ReturnsAsync(new Contact() {DisplayName = "EPAO User from this EAPOrg", OrganisationId = searchingEpaoOrgId});
 
-            IlrRepository.Setup(r => r.SearchForLearnerByUln(It.IsAny<long>()))
-                .ReturnsAsync(new List<Ilr> {new Ilr() {StdCode = 12, FamilyName = "Lamora"}});
+            LearnerRepository.Setup(r => r.SearchForLearnerByUln(It.IsAny<long>()))
+                .ReturnsAsync(new List<Domain.Entities.Learner> {new Domain.Entities.Learner() {StdCode = 12, FamilyName = "Lamora"}});
         }                                                           
 
         [Test]
@@ -71,7 +71,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
                     new SearchQuery() {Surname = "Lamora", EpaOrgId= "12345", Uln = 1111111111, Username = "username"},
                     new CancellationToken()).Wait();
 
-            IlrRepository.Verify(r => r.StoreSearchLog(It.Is<SearchLog>(l =>
+            LearnerRepository.Verify(r => r.StoreSearchLog(It.Is<SearchLog>(l =>
                 l.Username == "username" && 
                 l.NumberOfResults == 1 && 
                 l.Surname == "Lamora" && 

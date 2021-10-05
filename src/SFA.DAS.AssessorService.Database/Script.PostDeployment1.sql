@@ -45,3 +45,5 @@ SELECT ce1.[Id],JSON_MODIFY([CertificateData],'$.StandardReference',st1.Referenc
 ON (ma1.id = up1.id)
 WHEN MATCHED THEN UPDATE SET ma1.[CertificateData] = up1.[newData];
 
+--SV-429 Updating Import Settings
+:r .\PostDeploymentScripts\InsertApprovalsExtractSettingsIfNotExists.sql

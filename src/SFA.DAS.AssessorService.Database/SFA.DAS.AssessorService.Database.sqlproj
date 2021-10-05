@@ -81,6 +81,7 @@
     <Build Include="Tables\ContactLogs.sql" />
     <Build Include="Tables\Organisations.sql" />
     <Build Include="Tables\Ilrs.sql" />
+    <Build Include="Tables\Learner.sql" />
     <Build Include="Tables\EMailTemplates.sql" />
     <Build Include="Tables\BatchLogs.sql" />
     <Build Include="StoredProcedures\GetPreviousAddresses.sql" />
@@ -157,13 +158,7 @@
     <Build Include="StoredProcedures\DatabaseMaintenance.sql" />
     <Build Include="Security\Roles\DatabaseRoles\DatabaseMaintenance.sql" />
     <None Include="PostDeploymentScripts\GrantOrDenyPermissions.sql" />
-    <None Include="PostDeploymentScripts\EPAO_Migration_Part0_Patch.sql" />
     <Build Include="StoredProcedures\StaffReports_MissingCertificateData.sql" />
-    <None Include="PostDeploymentScripts\EPAO_Migration_Part1_Certificates.sql" />
-    <None Include="PostDeploymentScripts\EPAO_Migration_Part2_OrganisationStandard.sql" />
-    <None Include="PostDeploymentScripts\EPAO_Migration_Part3_OrganisationStandardVersion.sql" />
-    <None Include="PostDeploymentScripts\EPAO_Migration_Part4_Apply.sql" />
-    <None Include="PostDeploymentScripts\EPAO_Migration_Part5_Fails.sql" />
     <Build Include="Tables\StandardOptions.sql" />
     <None Include="PostDeploymentScripts\CON-3359_Remove_IlrsImport.sql" />
     <Build Include="Tables\Contacts.sql" />
@@ -171,6 +166,11 @@
     <Build Include="Security\Schemas\DashboardReporting.sql" />
     <Build Include="StoredProcedures\DashboardReporting\CertificatePrintSummary.sql" />
     <Build Include="Functions\Scalar-valued Functions\ExpandedVersion.sql" />
+    <Build Include="Tables\ApprovalsExtract.sql" />
+    <Build Include="StoredProcedures\PopulateLearner.sql" />
+    <Build Include="Tables\Providers.sql" />
+    <Build Include="Functions\Scalar-valued Functions\GetStandardUidFromLarsCode.sql" />
+    <Build Include="Functions\Scalar-valued Functions\GetVersionFromLarsCode.sql" />
     <Build Include="StoredProcedures\DashboardReporting\IlrImportSummary.sql" />
     <None Include="PostDeploymentScripts\RecreateStandardVersion.sql" />
     <None Include="PreDeploymentScripts\ClearOrgStandardVersionColumn.sql" />
@@ -196,6 +196,8 @@
     <None Include="PostDeploymentScripts\LookupData\PostCodeRegionDelete.sql" />
     <None Include="PostDeploymentScripts\LookupData\StaffReportsInsertOrUpdate.sql" />
     <None Include="PostDeploymentScripts\LookupData\StaffReportsDelete.sql" />
+    <None Include="PostDeploymentScripts\LookupData\PrePopulateProviders.sql" />
+    <None Include="PostDeploymentScripts\InsertApprovalsExtractSettingsIfNotExists.sql" />
   </ItemGroup>
   <ItemGroup>
     <ArtifactReference Include="$(DacPacRootPath)\Extensions\Microsoft\SQLDB\Extensions\SqlServer\AzureV12\SqlSchemas\master.dacpac">

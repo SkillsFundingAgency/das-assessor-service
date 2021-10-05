@@ -20,7 +20,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ExternalApi.Cre
     public class WhenHandlingCreateBatchCertificateRequest
     {
         private Mock<ICertificateRepository> _certificateRepository;
-        private Mock<IIlrRepository> _ilrRepository;
+        private Mock<ILearnerRepository> _learnerRepository;
         private Mock<IOrganisationQueryRepository> _organisationQueryRepository;
         private Mock<IContactQueryRepository> _contactQueryRepository;
         private Mock<ILogger<CreateBatchCertificateHandler>> _logger;
@@ -32,7 +32,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ExternalApi.Cre
         private long uln = 12345678L;
         private int stdCode = 123;
         private int ukPrn = 111;
-        private int ilrUkprn = 222;
+        private int learnerUkprn = 222;
         private string stdUId = "ST0123_1.0";
         private CreateBatchCertificateRequest _request;
 
@@ -40,14 +40,14 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ExternalApi.Cre
         public void SetUp()
         {
             _certificateRepository = new Mock<ICertificateRepository>();
-            _ilrRepository = new Mock<IIlrRepository>();
+            _learnerRepository = new Mock<ILearnerRepository>();
             _organisationQueryRepository = new Mock<IOrganisationQueryRepository>();
             _contactQueryRepository = new Mock<IContactQueryRepository>();
             _logger = new Mock<ILogger<CreateBatchCertificateHandler>>();
             _standardService = new Mock<IStandardService>();
             _roatpApiClient = new Mock<IRoatpApiClient>();
 
-            _ilrRepository.Setup(m => m.Get(uln, stdCode)).ReturnsAsync(new Domain.Entities.Ilr() { UkPrn = ilrUkprn });
+            _learnerRepository.Setup(m => m.Get(uln, stdCode)).ReturnsAsync(new Domain.Entities.Learner() { UkPrn = learnerUkprn });
             
             _organisationQueryRepository.Setup(m => m.GetByUkPrn(ukPrn)).ReturnsAsync(new Organisation() { });
             
@@ -69,7 +69,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ExternalApi.Cre
                 CertificateData = new Domain.JsonData.CertificateData()
             };
 
-            _handler = new CreateBatchCertificateHandler(_certificateRepository.Object, _ilrRepository.Object, _organisationQueryRepository.Object,
+            _handler = new CreateBatchCertificateHandler(_certificateRepository.Object, _learnerRepository.Object, _organisationQueryRepository.Object,
                 _contactQueryRepository.Object, _logger.Object, _standardService.Object, _roatpApiClient.Object);
         }
 
@@ -104,11 +104,11 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ExternalApi.Cre
             _certificateRepository.Setup(m => m.GetCertificate(uln, stdCode)).ReturnsAsync((Certificate)null);
 
             _certificateRepository.Setup(m => m.New(It.Is<Certificate>(c => c.Uln == uln &&
-                       c.ProviderUkPrn == ilrUkprn &&
+                       c.ProviderUkPrn == learnerUkprn &&
                        c.StandardCode == stdCode &&
                        c.CreatedBy == ExternalApiConstants.ApiUserName &&
                        c.Status == CertificateStatus.Draft)))
-                .ReturnsAsync(new Certificate() { Id = id, ProviderUkPrn = ilrUkprn });
+                .ReturnsAsync(new Certificate() { Id = id, ProviderUkPrn = learnerUkprn });
 
             // Act
             var result = await _handler.Handle(_request, CancellationToken.None);
@@ -117,7 +117,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ExternalApi.Cre
             _certificateRepository.Verify(m => m.Update(It.IsAny<Certificate>(), It.IsAny<string>(), It.IsAny<string>(), true, null), Times.Never);
 
             result.Id.Should().Be(id);
-            result.ProviderUkPrn.Should().Be(ilrUkprn);
+            result.ProviderUkPrn.Should().Be(learnerUkprn);
         }
 
         [Test]

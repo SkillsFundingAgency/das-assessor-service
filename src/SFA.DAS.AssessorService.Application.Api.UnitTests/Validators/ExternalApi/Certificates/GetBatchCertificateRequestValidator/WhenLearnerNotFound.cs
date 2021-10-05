@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalApi.Certificates.GetBatchCertificateRequestValidator
 {
-    public class WhenLearnerIlrNotFound : GetBatchCertificateRequestValidatorTestBase
+    public class WhenLearnerNotFound : GetBatchCertificateRequestValidatorTestBase
     {
         private ValidationResult _validationResult;
 
