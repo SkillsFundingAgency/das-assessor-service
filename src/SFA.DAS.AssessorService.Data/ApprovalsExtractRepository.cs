@@ -98,7 +98,7 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task ClearApprovalsExtractStaging()
         {
-            await _unitOfWork.Connection.ExecuteAsync("TRUNCATE TABLE [dbo].ApprovalsExtract_Staging");
+            await _unitOfWork.Connection.ExecuteAsync("DELETE FROM [dbo].ApprovalsExtract_Staging");
         }
 
         /// <summary>
