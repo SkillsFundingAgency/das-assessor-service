@@ -34,15 +34,17 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         {
             // Arrange
 
+            _databaseService.Execute("TRUNCATE TABLE ApprovalsExtract_Staging;");
             _databaseService.Execute("TRUNCATE TABLE ApprovalsExtract;");
             var approvalsExtractInput = new List<ApprovalsExtract>()
             {
                 new ApprovalsExtract() { ApprenticeshipId = 123 }
             };
 
+            await _repository.UpsertApprovalsExtractToStaging(approvalsExtractInput);
             // Act
 
-            await _repository.UpsertApprovalsExtract(approvalsExtractInput);
+            await _repository.PopulateApprovalsExtract();
 
             // Assert
 
@@ -55,7 +57,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         public async Task When_NotEmpty_Then_ExistingExtractIsUpdated()
         {
             // Arrange
-
+            _databaseService.Execute("TRUNCATE TABLE ApprovalsExtract_Staging;");
             _databaseService.Execute("TRUNCATE TABLE ApprovalsExtract;");
             _databaseService.Execute("INSERT INTO ApprovalsExtract (ApprenticeshipId, FirstName) VALUES (123, 'TestName');");
             var approvalsExtractInput = new List<ApprovalsExtract>()
@@ -63,9 +65,10 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
                 new ApprovalsExtract() { ApprenticeshipId = 123, FirstName = "TestNameUpdated" }
             };
 
-            // Act
+            await _repository.UpsertApprovalsExtractToStaging(approvalsExtractInput);
 
-            await _repository.UpsertApprovalsExtract(approvalsExtractInput);
+            // Act
+            await _repository.PopulateApprovalsExtract();
 
             // Assert
 
@@ -79,7 +82,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         public async Task When_NotEmpty_Then_NewIsInsertedAndExistingIsUpdated()
         {
             // Arrange
-
+            _databaseService.Execute("TRUNCATE TABLE ApprovalsExtract_Staging;");
             _databaseService.Execute("TRUNCATE TABLE ApprovalsExtract;");
             _databaseService.Execute("INSERT INTO ApprovalsExtract (ApprenticeshipId, FirstName) VALUES (123, 'TestName');");
             var approvalsExtractInput = new List<ApprovalsExtract>()
@@ -88,9 +91,11 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
                 new ApprovalsExtract() { ApprenticeshipId = 456, FirstName = "SecondTestName" }
             };
 
+            await _repository.UpsertApprovalsExtractToStaging(approvalsExtractInput);
+            
             // Act
+            await _repository.PopulateApprovalsExtract();
 
-            await _repository.UpsertApprovalsExtract(approvalsExtractInput);
 
             // Assert
 
@@ -101,10 +106,10 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         }
 
         [Test]
-        public async Task When_ExtractHasAllFieldsPopulated_Then_AllFieldsAreInserted()
+        public async Task When_ExtractHasAllFieldsPopulated_Then_AllFieldsAreInserted_IntoStaging()
         {
             // Arrange
-
+            _databaseService.Execute("TRUNCATE TABLE ApprovalsExtract_Staging;");
             _databaseService.Execute("TRUNCATE TABLE ApprovalsExtract;");
             var approvalExtractInput = new ApprovalsExtract()
             {
@@ -135,11 +140,11 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
 
             // Act
 
-            await _repository.UpsertApprovalsExtract(approvalsExtractInput);
+            await _repository.UpsertApprovalsExtractToStaging(approvalsExtractInput);
 
             // Assert
 
-            var approvalsExtractOutput = _databaseService.GetList<ApprovalsExtract>("SELECT * FROM ApprovalsExtract;");
+            var approvalsExtractOutput = _databaseService.GetList<ApprovalsExtract>("SELECT * FROM ApprovalsExtract_Staging;");
             approvalsExtractOutput.Should().NotBeNullOrEmpty();
             approvalsExtractOutput.Should().HaveCount(1);
             approvalsExtractOutput.ElementAt(0).Should().BeEquivalentTo(approvalExtractInput);

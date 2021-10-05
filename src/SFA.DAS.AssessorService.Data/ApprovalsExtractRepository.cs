@@ -26,7 +26,7 @@ namespace SFA.DAS.AssessorService.Data
             return latestDate.FirstOrDefault();
         }
 
-        public async Task UpsertApprovalsExtract(List<ApprovalsExtract> approvalsExtract)
+        public async Task UpsertApprovalsExtractToStaging(List<ApprovalsExtract> approvalsExtract)
         {
             if (null == approvalsExtract || !approvalsExtract.Any()) return;
 
@@ -34,18 +34,7 @@ namespace SFA.DAS.AssessorService.Data
             {
                 _unitOfWork.Begin();
 
-                var existingIds = await _unitOfWork.Connection.QueryAsync<int>(
-                "SELECT DISTINCT ApprenticeshipId FROM ApprovalsExtract;", 
-                transaction: _unitOfWork.Transaction);
-
-                var uniqueIncomingIds = approvalsExtract.Select(ae => ae.ApprenticeshipId).Distinct();
-                var newIds = uniqueIncomingIds.Where(u => existingIds.All(e => e != u));
-
-                var approvalsExtractToUpdate = approvalsExtract.Where(ae => existingIds.Contains(ae.ApprenticeshipId));
-                await UpdateApprovalsExtract(approvalsExtractToUpdate);
-
-                var approvalsExtractToInsert = approvalsExtract.Where(ae => newIds.Contains(ae.ApprenticeshipId));
-                await BulkInsertApprovalsExtract(approvalsExtractToInsert);
+                await BulkInsertApprovalsExtractStaging(approvalsExtract);
 
                 _unitOfWork.Commit();
             }
@@ -56,14 +45,19 @@ namespace SFA.DAS.AssessorService.Data
             }
         }
 
-        private async Task BulkInsertApprovalsExtract(IEnumerable<ApprovalsExtract> approvalsExtract)
+        /// <summary>
+        /// Copy All records retrieved from Approvals into the staging table
+        /// </summary>
+        /// <param name="approvalsExtract"></param>
+        /// <returns></returns>
+        private async Task BulkInsertApprovalsExtractStaging(IEnumerable<ApprovalsExtract> approvalsExtract)
         {
             var bulkCopyOptions = SqlBulkCopyOptions.TableLock;
             var dataTable = ConstructApprovalsExtractDataTable(approvalsExtract);
 
             using (var bulkCopy = new SqlBulkCopy(_unitOfWork.Connection as SqlConnection, bulkCopyOptions, _unitOfWork.Transaction as SqlTransaction))
             {
-                bulkCopy.DestinationTableName = "ApprovalsExtract";
+                bulkCopy.DestinationTableName = "ApprovalsExtract_Staging";
                 await bulkCopy.WriteToServerAsync(dataTable);
             }
         }
@@ -102,51 +96,31 @@ namespace SFA.DAS.AssessorService.Data
             return dataTable;
         }
 
-
-        private async Task UpdateApprovalsExtract(IEnumerable<ApprovalsExtract> approvalsExtract)
+        public async Task ClearApprovalsExtractStaging()
         {
-            var updateSQL = "UPDATE ApprovalsExtract SET FirstName = @FirstName, LastName = @LastName, Uln = @Uln, TrainingCode = @TrainingCode, TrainingCourseVersion = @TrainingCourseVersion, TrainingCourseVersionConfirmed = @TrainingCourseVersionConfirmed, TrainingCourseOption = @TrainingCourseOption, StandardUid = @StandardUid, StartDate = @StartDate, EndDate = @EndDate, CreatedOn = @CreatedOn, UpdatedOn = @UpdatedOn, StopDate = @StopDate, PauseDate = @PauseDate, CompletionDate = @CompletionDate, UKPRN = @UKPRN, LearnRefNumber = @LearnRefNumber, PaymentStatus = @PaymentStatus WHERE ApprenticeshipId = @ApprenticeshipId;";
-            foreach (var ae in approvalsExtract)
-            {
-                await _unitOfWork.Connection.ExecuteAsync(updateSQL, ae, _unitOfWork.Transaction);
-            }
+            await _unitOfWork.Connection.ExecuteAsync("DELETE FROM [dbo].ApprovalsExtract_Staging");
         }
 
-        /*
-        public void UpsertApprovalsExtractDapper(List<ApprovalsExtract> approvalsExtract)
+        /// <summary>
+        /// Execute the Insert/Update Stored Procedure then clear down the table for staging for future batches.
+        /// </summary>
+        /// <returns></returns>
+        public async Task PopulateApprovalsExtract()
         {
-            if (null == approvalsExtract || !approvalsExtract.Any()) return;
-
             try
             {
-                _unitOfWork.Begin();
+                var result = await _unitOfWork.Connection.ExecuteScalarAsync<int>("ImportIntoApprovalsExtract_FromApprovalsExtract_Staging", transaction: _unitOfWork.Transaction, commandType: CommandType.StoredProcedure, commandTimeout: 300);
 
-                var querySQL = "SELECT * FROM ApprovalsExtract WHERE ApprenticeshipId = @ApprenticeshipId;";
-                var insertSQL = @"INSERT INTO ApprovalsExtract (ApprenticeshipId, FirstName, LastName, Uln, TrainingCode, TrainingCourseVersion, TrainingCourseVersionConfirmed, TrainingCourseOption, StandardUid, StartDate, EndDate, CreatedOn, UpdatedOn, StopDate, PauseDate, CompletionDate, UKPRN, LearnRefNumber, PaymentStatus) " +
-                                "VALUES (@ApprenticeshipId, @FirstName, @LastName, @Uln, @TrainingCode, @TrainingCourseVersion, @TrainingCourseVersionConfirmed, @TrainingCourseOption, @StandardUid, @StartDate, @EndDate, @CreatedOn, @UpdatedOn, @StopDate, @PauseDate, @CompletionDate, @UKPRN, @LearnRefNumber, @PaymentStatus);";
-                var updateSQL = "UPDATE ApprovalsExtract SET FirstName = @FirstName, LastName = @LastName, Uln = @Uln, TrainingCode = @TrainingCode, TrainingCourseVersion = @TrainingCourseVersion, TrainingCourseVersionConfirmed = @TrainingCourseVersionConfirmed, TrainingCourseOption = @TrainingCourseOption, StandardUid = @StandardUid, StartDate = @StartDate, EndDate = @EndDate, CreatedOn = @CreatedOn, UpdatedOn = @UpdatedOn, StopDate = @StopDate, PauseDate = @PauseDate, CompletionDate = @CompletionDate, UKPRN = @UKPRN, LearnRefNumber = @LearnRefNumber, PaymentStatus = @PaymentStatus WHERE ApprenticeshipId = @ApprenticeshipId;";
-                foreach (var ae in approvalsExtract)
+                if (result != 0)
                 {
-                    var existingExtract = _unitOfWork.Connection.QueryFirstOrDefault<ApprovalsExtract>(querySQL, new { ApprenticeshipId = ae.ApprenticeshipId }, _unitOfWork.Transaction);
-                    if (null == existingExtract)
-                    {
-                        _unitOfWork.Connection.Execute(insertSQL, ae, _unitOfWork.Transaction);
-                    }
-                    else
-                    {
-                        _unitOfWork.Connection.Execute(updateSQL, ae, _unitOfWork.Transaction);
-                    }
+                    throw new Exception("Stored procedure ImportIntoApprovalsExtract_FromApprovalsExtract_Staging failed to complete successfully.");
                 }
-
-                _unitOfWork.Commit();
             }
             catch (Exception ex)
             {
-                _unitOfWork.Rollback();
                 throw ex;
             }
         }
-        */
 
         public async Task<int> PopulateLearner()
         {

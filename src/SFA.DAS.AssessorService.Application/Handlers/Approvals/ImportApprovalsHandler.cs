@@ -56,6 +56,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Approvals
                 int count = 0;
                 GetAllLearnersResponse learnersBatch = null;
 
+                // 3. Reset Staging Table
+                await _approvalsExtractRepository.ClearApprovalsExtractStaging();
+
                 do
                 {
                     batchNumber++;
@@ -65,14 +68,17 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Approvals
                         throw new Exception($"Failed to get learners batch: sinceTime={extractStartTime?.ToString("o", System.Globalization.CultureInfo.InvariantCulture)} batchNumber={batchNumber} batchSize={batchSize}");
                     }
 
-                    // 3. Upsert ApprovalsExtract batch.
+                    // 4. Upsert Batch to ApprovalsExtract_Staging.
 
-                    await UpsertApprovalsExtract(learnersBatch.Learners);
+                    await UpsertApprovalsExtractToStaging(learnersBatch.Learners);
                     count += learnersBatch.Learners.Count;
 
                 } while (batchNumber < learnersBatch.TotalNumberOfBatches);
 
-                // 4. Run Populate Learner
+                // 5. Run Populate ApprovalsExtract From Staging
+                await _approvalsExtractRepository.PopulateApprovalsExtract();
+
+                // 6. Run Populate Learner
 
                 var learnerCount = await _approvalsExtractRepository.PopulateLearner();
 
@@ -111,10 +117,10 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Approvals
             return value;
         }
 
-        private async Task UpsertApprovalsExtract(List<Infrastructure.OuterApi.Learner> learners)
+        private async Task UpsertApprovalsExtractToStaging(List<Infrastructure.OuterApi.Learner> learners)
         {
             var approvalsExtract = Mapper.Map<List<Infrastructure.OuterApi.Learner>, List<Domain.Entities.ApprovalsExtract>>(learners);
-            await _approvalsExtractRepository.UpsertApprovalsExtract(approvalsExtract);
+            await _approvalsExtractRepository.UpsertApprovalsExtractToStaging(approvalsExtract);
         }
     }
 }
