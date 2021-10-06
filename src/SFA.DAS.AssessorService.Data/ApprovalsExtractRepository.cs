@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using SFA.DAS.AssessorService.Application.Infrastructure;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
 using System;
@@ -12,9 +13,12 @@ namespace SFA.DAS.AssessorService.Data
 {
     public class ApprovalsExtractRepository : Repository, IApprovalsExtractRepository
     {
-        public ApprovalsExtractRepository(IUnitOfWork unitOfWork)
+        private readonly IRoatpApiClient _roatpApiClient;
+
+        public ApprovalsExtractRepository(IUnitOfWork unitOfWork, IRoatpApiClient roatpApiClient)
             : base(unitOfWork)
         {
+            _roatpApiClient = roatpApiClient;
         }
 
         public async Task<DateTime?> GetLatestExtractTimestamp()
@@ -138,6 +142,38 @@ namespace SFA.DAS.AssessorService.Data
             {
                 throw ex;
             }
+        }
+
+        public async Task UpsertProvidersFromApprovalsExtract()
+        {
+            // Find UKPRNs in ApprovalsExtract that are not in Providers.
+
+            var missingUkprns = await UkprnsInExtractNotInProviders();
+
+            // Get the provider name from RoATP and update Providers table.
+
+            foreach (var ukprn in missingUkprns)
+            {
+                var name = await GetProviderName(ukprn);
+                await _unitOfWork.Connection.ExecuteAsync("INSERT INTO Providers (Ukprn, Name) VALUES (@Ukprn, @Name)", new { Ukprn = ukprn, Name = name });
+            }
+        }
+
+        private async Task<IEnumerable<int>> UkprnsInExtractNotInProviders()
+        {
+            var ukprns = await _unitOfWork.Connection.QueryAsync<int>("SELECT DISTINCT Ukprn FROM ApprovalsExtract WHERE Ukprn NOT IN (SELECT DISTINCT Ukprn FROM Providers)");
+            return ukprns;
+        }
+
+        private async Task<string> GetProviderName(int ukprn)
+        {
+            var provider = (await _roatpApiClient.SearchOrganisationByUkprn(ukprn)).FirstOrDefault();
+            if (provider == null)
+            {
+                throw new Exception($"Training provider {ukprn} not found in RoATP.");
+            }
+
+            return provider.ProviderName;
         }
     }
 }
