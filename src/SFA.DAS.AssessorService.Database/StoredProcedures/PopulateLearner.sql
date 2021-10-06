@@ -19,7 +19,7 @@ BEGIN
 			SELECT IFateReferenceNumber StandardReference, Title, Version, StandardUId, Larscode, Duration
 			  FROM (
 			   SELECT IFateReferenceNumber, Title, Version, Level, StandardUId, Larscode, ProposedTypicalDuration Duration, 
-					  ROW_NUMBER() OVER (PARTITION BY IFateReferenceNumber ORDER BY dbo.ExpandedVersion(Version) DESC) rownumber 
+					  ROW_NUMBER() OVER (PARTITION BY IFateReferenceNumber ORDER BY VersionMajor DESC, VersionMinor DESC) rownumber 
 				 FROM Standards
 				WHERE VersionApprovedForDelivery IS NOT NULL
 			) sv1 WHERE rownumber = 1
@@ -168,7 +168,7 @@ BEGIN
 				il1.FundingModel,
 				ax1.ApprenticeshipId, 
 				Source+'+App' Source,
-				CASE WHEN ax1.LastUpdated < il1.LastUpdated THEN il1.LearnRefNumber ELSE ax1.LearnRefNumber END LearnRefNumber, 
+				il1.LearnRefNumber, 
 				-- Approval Stop or Pause to overridde Active ILR - otherwise use ILR
 				CASE WHEN (ax1.StopDate IS NOT NULL OR ax1.PauseDate IS NOT NULL) AND il1.CompletionStatus = 1 
 					 THEN ax1.CompletionStatus 
