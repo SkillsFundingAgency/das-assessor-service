@@ -11,7 +11,7 @@ CREATE TABLE [dbo].[Learner]
     [FundingModel] INT NULL,
     [ApprenticeshipId] BIGINT NULL,
     [Source] NVARCHAR(10) NULL, 
-    [LearnRefNumber] NVARCHAR(12) NULL,
+    [LearnRefNumber] NVARCHAR(50) NULL,
     [CompletionStatus] [int] NULL,
     [PlannedEndDate] DATETIME2 NULL,
     [DelLocPostCode] [nvarchar](50) NULL,
