@@ -9,6 +9,7 @@ using Dapper;
 using System.Collections.Generic;
 using System.Linq;
 using FluentAssertions;
+using SFA.DAS.AssessorService.Application.Interfaces;
 
 namespace SFA.DAS.AssessorService.Data.IntegrationTests
 {
@@ -19,7 +20,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
 
         private SqlConnection _databaseConnection;
         private UnitOfWork _unitOfWork;
-        private ApprovalsExtractRepository _repository;
+        private IApprovalsExtractRepository _repository;
         private Mock<IRoatpApiClient> _roatpApiClientMock;
 
         [OneTimeSetUp]

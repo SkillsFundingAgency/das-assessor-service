@@ -12,5 +12,6 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task UpsertApprovalsExtractToStaging(List<ApprovalsExtract> approvalsExtract);
         Task<int> PopulateLearner();
         Task PopulateApprovalsExtract();
+        Task UpsertProvidersFromApprovalsExtract();
     }
 }
