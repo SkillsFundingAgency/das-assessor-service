@@ -18,19 +18,16 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
     public class GetCertificatesToBeApprovedHandler : IRequestHandler<GetToBeApprovedCertificatesRequest, PaginatedList<CertificateSummaryResponse>>
     {
         private readonly ICertificateRepository _certificateRepository;
-        private readonly IRoatpApiClient _roatpApiClient;
         private readonly IContactQueryRepository _contactQueryRepository;
         private readonly ILogger<GetCertificatesToBeApprovedHandler> _logger;
         private readonly IProvidersRepository _providersRepository;
 
         public GetCertificatesToBeApprovedHandler(ICertificateRepository certificateRepository,
-            IRoatpApiClient roatpApiClient,
             IContactQueryRepository contactQueryRepository,
             ILogger<GetCertificatesToBeApprovedHandler> logger,
             IProvidersRepository providersRepository)
         {
             _certificateRepository = certificateRepository;
-            _roatpApiClient = roatpApiClient;
             _contactQueryRepository = contactQueryRepository;
             _logger = logger;
             _providersRepository = providersRepository;
