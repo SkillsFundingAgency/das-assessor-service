@@ -146,22 +146,50 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task UpsertProvidersFromApprovalsExtract()
         {
-            // Find UKPRNs in ApprovalsExtract that are not in Providers.
-
             var missingUkprns = await UkprnsInExtractNotInProviders();
+            await RefreshProviders(missingUkprns);
+        }
 
+        public async Task UpsertProvidersFromLearners()
+        {
+            var missingUkprns = await UkprnsInLearnersNotInProviders();
+            await RefreshProviders(missingUkprns);
+        }
+
+        private async Task RefreshProviders(IEnumerable<int> ukprns)
+        {
             // Get the provider name from RoATP and update Providers table.
 
-            foreach (var ukprn in missingUkprns)
+            foreach (var ukprn in ukprns)
             {
                 var name = await GetProviderName(ukprn);
-                await _unitOfWork.Connection.ExecuteAsync("INSERT INTO Providers (Ukprn, Name) VALUES (@Ukprn, @Name)", new { Ukprn = ukprn, Name = name });
+                if(!string.IsNullOrWhiteSpace(name))
+                {
+                    var existingName = await _unitOfWork.Connection.ExecuteScalarAsync<string>("SELECT Name FROM Providers WHERE Ukprn = @Ukprn;", new { Ukprn = ukprn });
+                    if(string.IsNullOrWhiteSpace(existingName))
+                    {
+                        await _unitOfWork.Connection.ExecuteAsync("INSERT INTO Providers (Ukprn, Name) VALUES (@Ukprn, @Name)", new { Ukprn = ukprn, Name = name });
+                    }
+                    else
+                    {
+                        if(name != existingName)
+                        {
+                            await _unitOfWork.Connection.ExecuteAsync("UPDATE Providers SET Name = @Name WHERE Ukprn = @Ukprn", new { Ukprn = ukprn, Name = name });
+                        }
+                    }
+                }
             }
         }
 
         private async Task<IEnumerable<int>> UkprnsInExtractNotInProviders()
         {
             var ukprns = await _unitOfWork.Connection.QueryAsync<int>("SELECT DISTINCT Ukprn FROM ApprovalsExtract WHERE Ukprn NOT IN (SELECT DISTINCT Ukprn FROM Providers)");
+            return ukprns;
+        }
+
+        private async Task<IEnumerable<int>> UkprnsInLearnersNotInProviders()
+        {
+            var ukprns = await _unitOfWork.Connection.QueryAsync<int>("SELECT DISTINCT Ukprn FROM Learner WHERE Ukprn NOT IN (SELECT DISTINCT Ukprn FROM Providers)");
             return ukprns;
         }
 
