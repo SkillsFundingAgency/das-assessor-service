@@ -1,4 +1,5 @@
-﻿using System.Data;
+﻿using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using Dapper;
@@ -81,6 +82,18 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Services
                 connection.Close();
                 return result.FirstOrDefault();
             }    
+        }
+
+        public IEnumerable<T> GetList<T>(string sql)
+        {
+            using (var connection = new SqlConnection(Configuration.GetConnectionString("SqlConnectionStringTest")))
+            {
+                if (connection.State != ConnectionState.Open)
+                    connection.Open();
+                var result = connection.Query<T>(sql);
+                connection.Close();
+                return result;
+            }
         }
 
         public object ExecuteScalar(string sql)

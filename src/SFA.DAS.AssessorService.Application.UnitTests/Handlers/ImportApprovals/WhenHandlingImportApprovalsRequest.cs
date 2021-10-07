@@ -122,7 +122,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ImportApprovals
 
             // Assert.
 
-            _approvalsExtractRepoMock.Verify(m => m.UpsertApprovalsExtract(It.IsAny<List<Domain.Entities.ApprovalsExtract>>()));
+            _approvalsExtractRepoMock.Verify(m => m.UpsertApprovalsExtractToStaging(It.IsAny<List<Domain.Entities.ApprovalsExtract>>()));
         }
 
         [Test]
