@@ -1,3 +1,4 @@
+-- Rework without standard collation and non approved collation tables
 CREATE PROCEDURE [StaffReports_ExpressionsOfInterest]
 
 AS

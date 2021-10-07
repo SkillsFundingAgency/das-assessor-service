@@ -35,32 +35,5 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         {
             return Ok(await _mediator.Send(request));
         }
-
-        [HttpGet("assessment-organisations/collated-standards", Name = "GetCollatedStandards")]
-        [SwaggerResponse((int) HttpStatusCode.OK, Type = typeof(List<StandardCollation>))]
-        [SwaggerResponse((int) HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
-        [SwaggerResponse((int) HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> GetCollatedStandards()
-        {
-            return Ok(await _mediator.Send(new GetCollatedStandardsRequest()));
-        }
-
-        [HttpGet("assessment-organisations/collated-standards/{standardId}", Name = "GetCollatedStandard")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(StandardCollation))]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
-        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> GetCollatedStandard(int standardId)
-        {
-            return Ok(await _mediator.Send(new GetCollatedStandardRequest {StandardId = standardId}));
-        }
-
-        [HttpGet("assessment-organisations/collated-standards/by-reference/{*referenceNumber}", Name = "GetCollatedStandardByReferenceNumber")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(StandardCollation))]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
-        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> GetCollatedStandardByReferenceNumber(string referenceNumber)
-        {
-            return Ok(await _mediator.Send(new GetCollatedStandardRequest { ReferenceNumber = referenceNumber }));
-        }
     }
 }

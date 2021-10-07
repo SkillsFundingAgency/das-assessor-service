@@ -18,7 +18,7 @@ RETURN
 			[Ilrs].UkPrn,
 			[Ilrs].StdCode,
 			[StandardInfo].Title,
-			CASE WHEN PlannedEndDate > GETDATE() THEN EOMONTH(PlannedEndDate) ELSE EOMONTH(DATEADD(month, [StandardInfo].Duration, LearnStartDate)) END EstimateDate
+			CASE WHEN PlannedEndDate > GETDATE() THEN EOMONTH(PlannedEndDate) ELSE EOMONTH(DATEADD(month, [StandardInfo].TypicalDuration, LearnStartDate)) END EstimateDate
 		FROM 
 			[Ilrs]
 			-- ignore standards that have been deleted, are expired or have been withdrawn
@@ -28,8 +28,8 @@ RETURN
 				AND ([OrganisationStandard].[EffectiveTo] IS NULL OR [OrganisationStandard].[EffectiveTo] >= GETDATE())
 			INNER JOIN 
 			(
-				SELECT StandardId, Title, CONVERT(numeric,JSON_VALUE([StandardData],'$.Duration')) Duration FROM [dbo].[StandardCollation]
-			) [StandardInfo] ON [StandardInfo].StandardId = [Ilrs].StdCode
+				SELECT LarsCode, Title, TypicalDuration FROM [dbo].[Standards]
+			) [StandardInfo] ON [StandardInfo].LarsCode = [Ilrs].StdCode
 			LEFT JOIN 
 			(
 				SELECT DISTINCT Uln, StandardCode FROM [Certificates] c1 
