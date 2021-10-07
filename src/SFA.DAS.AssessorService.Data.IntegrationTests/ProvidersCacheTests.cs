@@ -33,7 +33,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         }
 
         [Test]
-        public async Task When_ProviderNotExist_Then_InsertProvider()
+        public async Task When_ProviderNotExist_Then_ProviderInserted()
         {
             // Arrange
 
