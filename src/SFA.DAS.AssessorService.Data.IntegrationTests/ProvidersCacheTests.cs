@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using FluentAssertions;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using Microsoft.Extensions.Logging;
 
 namespace SFA.DAS.AssessorService.Data.IntegrationTests
 {
@@ -29,7 +30,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
             _databaseConnection = new SqlConnection(_databaseService.WebConfiguration.SqlConnectionString);
             _unitOfWork = new UnitOfWork(_databaseConnection);
             _roatpApiClientMock = new Mock<IRoatpApiClient>();
-            _repository = new ApprovalsExtractRepository(_unitOfWork, _roatpApiClientMock.Object);
+            _repository = new ApprovalsExtractRepository(_unitOfWork, _roatpApiClientMock.Object, new Mock<ILogger<ApprovalsExtractRepository>>().Object);
         }
 
         [Test]
