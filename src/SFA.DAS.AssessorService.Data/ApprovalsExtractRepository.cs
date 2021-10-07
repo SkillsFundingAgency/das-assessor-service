@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Application.Infrastructure;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
@@ -14,11 +15,13 @@ namespace SFA.DAS.AssessorService.Data
     public class ApprovalsExtractRepository : Repository, IApprovalsExtractRepository
     {
         private readonly IRoatpApiClient _roatpApiClient;
+        private readonly ILogger<ApprovalsExtractRepository> _logger;
 
-        public ApprovalsExtractRepository(IUnitOfWork unitOfWork, IRoatpApiClient roatpApiClient)
+        public ApprovalsExtractRepository(IUnitOfWork unitOfWork, IRoatpApiClient roatpApiClient, ILogger<ApprovalsExtractRepository> logger)
             : base(unitOfWork)
         {
             _roatpApiClient = roatpApiClient;
+            _logger = logger;
         }
 
         public async Task<DateTime?> GetLatestExtractTimestamp()
@@ -163,16 +166,17 @@ namespace SFA.DAS.AssessorService.Data
             foreach (var ukprn in ukprns)
             {
                 var name = await GetProviderName(ukprn);
+
                 if(!string.IsNullOrWhiteSpace(name))
                 {
                     var existingName = await _unitOfWork.Connection.ExecuteScalarAsync<string>("SELECT Name FROM Providers WHERE Ukprn = @Ukprn;", new { Ukprn = ukprn });
-                    if(string.IsNullOrWhiteSpace(existingName))
+                    if (string.IsNullOrWhiteSpace(existingName))
                     {
                         await _unitOfWork.Connection.ExecuteAsync("INSERT INTO Providers (Ukprn, Name) VALUES (@Ukprn, @Name)", new { Ukprn = ukprn, Name = name });
                     }
                     else
                     {
-                        if(name != existingName)
+                        if (name != existingName)
                         {
                             await _unitOfWork.Connection.ExecuteAsync("UPDATE Providers SET Name = @Name WHERE Ukprn = @Ukprn", new { Ukprn = ukprn, Name = name });
                         }
@@ -198,10 +202,10 @@ namespace SFA.DAS.AssessorService.Data
             var provider = (await _roatpApiClient.SearchOrganisationByUkprn(ukprn)).FirstOrDefault();
             if (provider == null)
             {
-                throw new Exception($"Training provider {ukprn} not found in RoATP.");
+                _logger.LogError($"Training provider {ukprn} not found in RoATP.");
             }
 
-            return provider.ProviderName;
+            return provider?.ProviderName;
         }
     }
 }
