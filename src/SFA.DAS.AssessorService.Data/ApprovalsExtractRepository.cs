@@ -40,9 +40,7 @@ namespace SFA.DAS.AssessorService.Data
             try
             {
                 _unitOfWork.Begin();
-
                 await BulkInsertApprovalsExtractStaging(approvalsExtract);
-
                 _unitOfWork.Commit();
             }
             catch (Exception ex)
