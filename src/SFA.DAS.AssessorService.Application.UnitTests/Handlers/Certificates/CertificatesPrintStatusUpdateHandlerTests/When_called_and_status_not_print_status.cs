@@ -1,23 +1,32 @@
 ﻿using FluentAssertions;
-using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
-using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.AssessorService.Domain.Consts;
 using System;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.UpdateCertificatesPrintStatusHandlerTests
 {
+    [TestFixture]
     public class When_called_and_status_not_print_status : UpdateCertificatesPrintStatusHandlerTestsBase
     {
+        private CertificatePrintStatusUpdateHandlerTestsFixture _fixture;
         private ValidationResponse _response;
-        
+
+        private const string CertificateReference = "00123456";
+        private const int BatchNumber = 111;
+       
+        private static readonly DateTime SentToPrinterAt = DateTime.UtcNow.AddHours(-1);
+      
         [SetUp]
-        public async Task Arrange()
+        public void Arrange()
         {
-            base.BaseArrange();
+            // Arrange
+            _fixture = new CertificatePrintStatusUpdateHandlerTestsFixture()
+                .WithCertificate(CertificateReference, CertificateStatus.SentToPrinter, SentToPrinterAt, BatchNumber, SentToPrinterAt.AddMinutes(-5))
+                .WithCertificateBatchLog(BatchNumber, CertificateReference, CertificateStatus.SentToPrinter, SentToPrinterAt, null, SentToPrinterAt.AddMinutes(5))
+                .WithBatchLog(BatchNumber);
         }
 
         [TestCase("Approved")]
@@ -32,17 +41,16 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
         public async Task Then_validation_response_is_valid_false(string invalidPrintStatus)
         {
             // Arrange
-            var invalidCertificatePrintStatusUpdateRequest = new CertificatePrintStatusUpdateRequest
+            var request = new CertificatePrintStatusUpdateRequest
             {
-                BatchNumber = _batch111,
-                CertificateReference = _certificateReference1,
+                BatchNumber = BatchNumber,
+                CertificateReference = CertificateReference,
                 Status = invalidPrintStatus,
                 StatusAt = DateTime.UtcNow
             };
-            
+
             // Act
-            _response = await _sut.Handle(invalidCertificatePrintStatusUpdateRequest, 
-                new CancellationToken());
+            _response = await _fixture.Handle(request);
 
             // Assert
             _response.IsValid.Should().Be(false);
@@ -65,22 +73,19 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
         public async Task Then_repository_update_print_status_is_not_called(string invalidPrintStatus)
         {
             // Arrange
-            var invalidCertificatePrintStatusUpdateRequest = new CertificatePrintStatusUpdateRequest
+            var request = new CertificatePrintStatusUpdateRequest
             {
-                BatchNumber = _batch111,
-                CertificateReference = _certificateReference1,
+                BatchNumber = BatchNumber,
+                CertificateReference = CertificateReference,
                 Status = invalidPrintStatus,
                 StatusAt = DateTime.UtcNow
             };
 
             // Act
-            _response = await _sut.Handle(invalidCertificatePrintStatusUpdateRequest,
-                new CancellationToken());
+            _response = await _fixture.Handle(request);
 
             // Assert
-            _certificateRepository.Verify(r => r.UpdatePrintStatus(
-                It.IsAny<Certificate>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<string>(), It.IsAny<bool>()), 
-                Times.Never());
+            _fixture.VerifyUpdatePrintStatusNotCalled(CertificateReference, BatchNumber);
         }
     }
 }
