@@ -178,8 +178,8 @@
     <Build Include="StoredProcedures\DashboardReporting\IlrImportSummary.sql" />
     <Build Include="Tables\ApprovalsExtract_Staging.sql" />
     <Build Include="StoredProcedures\ImportIntoApprovalsExtract_FromApprovalsExtract_Staging.sql" />
-    <Build Include="PostDeploymentScripts\RecreateStandardVersion.sql" />
-    <Build Include="PreDeploymentScripts\ClearOrgStandardVersionColumn.sql" />
+    <None Include="PostDeploymentScripts\RecreateStandardVersion.sql" />
+    <None Include="PreDeploymentScripts\ClearOrgStandardVersionColumn.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="SFA.DAS.AssessorService.Database.refactorlog" />
