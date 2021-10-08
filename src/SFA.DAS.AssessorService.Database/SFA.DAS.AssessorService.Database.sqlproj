@@ -170,6 +170,9 @@
     <Build Include="StoredProcedures\PopulateLearner.sql" />
     <Build Include="Tables\Providers.sql" />
     <Build Include="Functions\Scalar-valued Functions\GetStandardUidFromLarsCode.sql" />
+    <Build Include="StoredProcedures\GetEPAO_Pipelines_StandardFilter.sql" />
+    <Build Include="StoredProcedures\GetEPAO_Pipelines_ProviderFilter.sql" />
+    <Build Include="StoredProcedures\GetEPAO_Pipelines_EPADateFilter.sql" />
     <Build Include="Functions\Scalar-valued Functions\GetVersionFromLarsCode.sql" />
     <Build Include="StoredProcedures\DashboardReporting\IlrImportSummary.sql" />
     <Build Include="Tables\ApprovalsExtract_Staging.sql" />
