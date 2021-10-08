@@ -171,10 +171,15 @@
     <Build Include="StoredProcedures\PopulateLearner.sql" />
     <Build Include="Tables\Providers.sql" />
     <Build Include="Functions\Scalar-valued Functions\GetStandardUidFromLarsCode.sql" />
+    <Build Include="StoredProcedures\GetEPAO_Pipelines_StandardFilter.sql" />
+    <Build Include="StoredProcedures\GetEPAO_Pipelines_ProviderFilter.sql" />
+    <Build Include="StoredProcedures\GetEPAO_Pipelines_EPADateFilter.sql" />
     <Build Include="Functions\Scalar-valued Functions\GetVersionFromLarsCode.sql" />
     <Build Include="StoredProcedures\DashboardReporting\IlrImportSummary.sql" />
     <Build Include="Tables\ApprovalsExtract_Staging.sql" />
     <Build Include="StoredProcedures\ImportIntoApprovalsExtract_FromApprovalsExtract_Staging.sql" />
+    <Build Include="PostDeploymentScripts\RecreateStandardVersion.sql" />
+    <Build Include="PreDeploymentScripts\ClearOrgStandardVersionColumn.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="SFA.DAS.AssessorService.Database.refactorlog" />

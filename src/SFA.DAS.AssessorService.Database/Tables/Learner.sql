@@ -50,5 +50,11 @@ GO
 CREATE NONCLUSTERED INDEX [IX_Learner_LatestApprovals] ON [Learner] ([LatestApprovals], [Uln], [StdCode]) 
 GO
 
+CREATE NONCLUSTERED INDEX [IX_Learner_LatestIlrs] ON [Learner] ([LatestIlrs], [Uln], [StdCode]) 
+GO
+
+CREATE NONCLUSTERED INDEX [IX_Learner_LatestApprovals] ON [Learner] ([LatestApprovals], [Uln], [StdCode]) 
+GO
+
 CREATE NONCLUSTERED INDEX [IX_Learner_Source] ON [Learner] ([Source], [EstimatedEndDate], [CompletionStatus], [LastUpdated]) 
 GO
