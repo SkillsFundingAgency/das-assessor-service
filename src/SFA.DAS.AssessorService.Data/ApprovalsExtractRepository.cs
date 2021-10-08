@@ -157,6 +157,12 @@ namespace SFA.DAS.AssessorService.Data
             await RefreshProviders(missingUkprns);
         }
 
+        public async Task RefreshProviders()
+        {
+            var allUkprns = await UkprnsInProviders();
+            await RefreshProviders(allUkprns);
+        }
+
         private async Task RefreshProviders(IEnumerable<int> ukprns)
         {
             // Get the provider name from RoATP and update Providers table.
@@ -192,6 +198,12 @@ namespace SFA.DAS.AssessorService.Data
         private async Task<IEnumerable<int>> UkprnsInLearnersNotInProviders()
         {
             var ukprns = await _unitOfWork.Connection.QueryAsync<int>("SELECT DISTINCT Ukprn FROM Learner WHERE Ukprn NOT IN (SELECT DISTINCT Ukprn FROM Providers)");
+            return ukprns;
+        }
+
+        private async Task<IEnumerable<int>> UkprnsInProviders()
+        {
+            var ukprns = await _unitOfWork.Connection.QueryAsync<int>("SELECT DISTINCT Ukprn FROM Providers");
             return ukprns;
         }
 
