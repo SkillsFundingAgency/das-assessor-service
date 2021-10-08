@@ -4,38 +4,51 @@ using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.Domain.Consts;
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.UpdateCertificatesPrintStatusHandlerTests
 {
+    [TestFixture]
     public class When_called_and_batch_does_not_exist : UpdateCertificatesPrintStatusHandlerTestsBase
     {
+        private CertificatePrintStatusUpdateHandlerTestsFixture _fixture;
         private ValidationResponse _response;
 
+        private const string CertificateReference = "00123456";
+        private const int BatchNumber = 111;
+
+        private static readonly DateTime SentToPrinterAt = DateTime.UtcNow.AddHours(-1);
+
         [SetUp]
-        public async Task Arrange()
+        public void Arrange()
         {
-            base.BaseArrange();
-            
-            _response = await _sut.Handle(new CertificatePrintStatusUpdateRequest
-            {
-                BatchNumber = _batch111 + 999,
-                CertificateReference = _certificateReference1,
-                Status = CertificateStatus.Delivered,
-                StatusAt = DateTime.UtcNow
-            }, new CancellationToken());
+            // Arrange
+            _fixture = new CertificatePrintStatusUpdateHandlerTestsFixture()
+                .WithCertificate(CertificateReference, CertificateStatus.SentToPrinter, SentToPrinterAt, BatchNumber, SentToPrinterAt.AddMinutes(-5))
+                .WithCertificateBatchLog(BatchNumber, CertificateReference, CertificateStatus.SentToPrinter, SentToPrinterAt, null, SentToPrinterAt.AddMinutes(5))
+                .WithBatchLog(BatchNumber);
         }
 
         [Test]
-        public void Then_validation_response_is_valid_false()
+        public async Task Then_validation_response_is_valid_false()
         {
+            // Arrange
+            var request = new CertificatePrintStatusUpdateRequest
+            {
+                BatchNumber = BatchNumber + 999,
+                CertificateReference = CertificateReference,
+                Status = CertificateStatus.Printed,
+                StatusAt = DateTime.UtcNow
+            };
+
+            // Act
+            _response = await _fixture.Handle(request);
+
             _response.IsValid.Should().Be(false);
             _response.Errors.Count.Should().Be(1);
-            _response.Errors[0].Field.Should().Be("CertificatePrintStatuses");
-            _response.Errors[0].ErrorMessage.Contains("BatchNumber");
+
+            _response.Errors[0].Field.Should().Be("BatchNumber");
+            _response.Errors[0].ErrorMessage.Should().Contain(request.BatchNumber.ToString());
         }
     }
 }
