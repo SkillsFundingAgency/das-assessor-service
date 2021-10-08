@@ -166,6 +166,7 @@
     <Build Include="Security\Schemas\DashboardReporting.sql" />
     <Build Include="StoredProcedures\DashboardReporting\CertificatePrintSummary.sql" />
     <Build Include="Functions\Scalar-valued Functions\ExpandedVersion.sql" />
+    <Build Include="Tables\StandardVersionSummary.sql" />
     <Build Include="Tables\ApprovalsExtract.sql" />
     <Build Include="StoredProcedures\PopulateLearner.sql" />
     <Build Include="Tables\Providers.sql" />
@@ -177,8 +178,8 @@
     <Build Include="StoredProcedures\DashboardReporting\IlrImportSummary.sql" />
     <Build Include="Tables\ApprovalsExtract_Staging.sql" />
     <Build Include="StoredProcedures\ImportIntoApprovalsExtract_FromApprovalsExtract_Staging.sql" />
-    <None Include="PostDeploymentScripts\RecreateStandardVersion.sql" />
-    <None Include="PreDeploymentScripts\ClearOrgStandardVersionColumn.sql" />
+    <Build Include="PostDeploymentScripts\RecreateStandardVersion.sql" />
+    <Build Include="PreDeploymentScripts\ClearOrgStandardVersionColumn.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="SFA.DAS.AssessorService.Database.refactorlog" />
