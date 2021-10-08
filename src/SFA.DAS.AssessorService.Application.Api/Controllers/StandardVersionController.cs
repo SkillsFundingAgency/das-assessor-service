@@ -18,10 +18,10 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
     [ValidateBadRequest]
     public class StandardVersionController : Controller
     {
-        private readonly ILogger<StandardServiceController> _logger;
+        private readonly ILogger<StandardController> _logger;
         private readonly IStandardService _standardService;
 
-        public StandardVersionController(ILogger<StandardServiceController> logger, IStandardService standardService)
+        public StandardVersionController(ILogger<StandardController> logger, IStandardService standardService)
         {
             _logger = logger;
             _standardService = standardService;

@@ -24,22 +24,22 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Standards
         public async Task<GetOppFinderNonApprovedStandardDetailsResponse> Handle(GetOppFinderNonApprovedStandardDetailsRequest request, CancellationToken cancellationToken)
         {
             _logger.LogInformation($"Retreiving non approved standard details: {request.StandardReference}");
-            var result = await _standardRepository.GetStandardNonApprovedCollationByReferenceNumber(request.StandardReference);
+            //var result = await _standardRepository.GetStandardNonApprovedCollationByReferenceNumber(request.StandardReference);
 
-            if (result == null)
+            //if (result == null)
                 return null;
 
-            return new GetOppFinderNonApprovedStandardDetailsResponse
-            {
-                Title = result.Title,
-                OverviewOfRole = result.StandardData.OverviewOfRole,
-                StandardLevel = (result.StandardData?.Level > 0 ? result.StandardData?.Level.ToString() : "To be confirmed"),
-                StandardReference = result.ReferenceNumber,
-                Sector = result.StandardData.Category,
-                TypicalDuration = result.StandardData?.Duration ?? 0,
-                Trailblazer = result.StandardData.Trailblazer,
-                StandardPageUrl = result.StandardData.StandardPageUrl
-            };
+            //return new GetOppFinderNonApprovedStandardDetailsResponse
+            //{
+            //    Title = result.Title,
+            //    OverviewOfRole = result.StandardData.OverviewOfRole,
+            //    StandardLevel = (result.StandardData?.Level > 0 ? result.StandardData?.Level.ToString() : "To be confirmed"),
+            //    StandardReference = result.ReferenceNumber,
+            //    Sector = result.StandardData.Category,
+            //    TypicalDuration = result.StandardData?.Duration ?? 0,
+            //    Trailblazer = result.StandardData.Trailblazer,
+            //    StandardPageUrl = result.StandardData.StandardPageUrl
+            //};
         }
     }
 }
