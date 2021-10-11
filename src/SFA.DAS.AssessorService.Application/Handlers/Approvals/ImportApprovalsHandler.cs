@@ -69,9 +69,11 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Approvals
                     }
 
                     // 4. Upsert Batch to ApprovalsExtract_Staging.
+                    _logger.LogTrace($"Approvals batch import loop. Starting batch {batchNumber} of {learnersBatch.TotalNumberOfBatches}");
 
                     await UpsertApprovalsExtractToStaging(learnersBatch.Learners);
                     count += learnersBatch.Learners.Count;
+                    _logger.LogTrace($"Approvals batch import loop. Batch Completed {batchNumber} of {learnersBatch.TotalNumberOfBatches}. Total Inserted: {count}");
 
                 } while (batchNumber < learnersBatch.TotalNumberOfBatches);
 

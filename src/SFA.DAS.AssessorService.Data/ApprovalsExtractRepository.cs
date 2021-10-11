@@ -20,7 +20,7 @@ namespace SFA.DAS.AssessorService.Data
         public async Task<DateTime?> GetLatestExtractTimestamp()
         {
             var latestDate = await _unitOfWork.Connection.QueryAsync<DateTime?>(
-                @"SELECT MAX(CASE WHEN ISNULL(CreatedOn, 0) > ISNULL(UpdatedOn, 0) THEN CreatedOn ELSE UpdatedOn END) AS MaxDate FROM ApprovalsExtract",
+                @"SELECT MAX(LastUpdated) AS MaxDate FROM ApprovalsExtract",
                 transaction: _unitOfWork.Transaction);
 
             return latestDate.FirstOrDefault();
@@ -32,15 +32,10 @@ namespace SFA.DAS.AssessorService.Data
 
             try
             {
-                _unitOfWork.Begin();
-
                 await BulkInsertApprovalsExtractStaging(approvalsExtract);
-
-                _unitOfWork.Commit();
             }
             catch (Exception ex)
             {
-                _unitOfWork.Rollback();
                 throw ex;
             }
         }
@@ -52,10 +47,9 @@ namespace SFA.DAS.AssessorService.Data
         /// <returns></returns>
         private async Task BulkInsertApprovalsExtractStaging(IEnumerable<ApprovalsExtract> approvalsExtract)
         {
-            var bulkCopyOptions = SqlBulkCopyOptions.TableLock;
             var dataTable = ConstructApprovalsExtractDataTable(approvalsExtract);
 
-            using (var bulkCopy = new SqlBulkCopy(_unitOfWork.Connection as SqlConnection, bulkCopyOptions, _unitOfWork.Transaction as SqlTransaction))
+            using (var bulkCopy = new SqlBulkCopy(_unitOfWork.Connection as SqlConnection))
             {
                 bulkCopy.DestinationTableName = "ApprovalsExtract_Staging";
                 await bulkCopy.WriteToServerAsync(dataTable);
