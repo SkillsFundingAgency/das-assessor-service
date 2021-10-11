@@ -278,6 +278,7 @@ BEGIN
 			 lm1.ApprovalsStopDate = upd.ApprovalsStopDate,
 			 lm1.ApprovalsPauseDate = upd.ApprovalsPauseDate,
 			 lm1.ApprovalsCompletionDate = upd.ApprovalsCompletionDate,
+             lm1.ApprovalsPaymentStatus = upd.ApprovalsPaymentStatus,
 			 lm1.LatestIlrs = upd.LatestIlrs,
 			 lm1.LatestApprovals = upd.LatestApprovals
 
