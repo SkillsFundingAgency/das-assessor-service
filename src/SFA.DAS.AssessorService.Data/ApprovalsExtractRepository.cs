@@ -176,13 +176,13 @@ namespace SFA.DAS.AssessorService.Data
                     var existingName = await _unitOfWork.Connection.ExecuteScalarAsync<string>("SELECT Name FROM Providers WHERE Ukprn = @Ukprn;", new { Ukprn = ukprn });
                     if (string.IsNullOrWhiteSpace(existingName))
                     {
-                        await _unitOfWork.Connection.ExecuteAsync("INSERT INTO Providers (Ukprn, Name) VALUES (@Ukprn, @Name)", new { Ukprn = ukprn, Name = name });
+                        await _unitOfWork.Connection.ExecuteAsync("INSERT INTO Providers (Ukprn, Name, UpdatedOn) VALUES (@Ukprn, @Name, @UpdatedOn)", new { Ukprn = ukprn, Name = name, UpdatedOn = DateTime.UtcNow });
                     }
                     else
                     {
                         if (name != existingName)
                         {
-                            await _unitOfWork.Connection.ExecuteAsync("UPDATE Providers SET Name = @Name WHERE Ukprn = @Ukprn", new { Ukprn = ukprn, Name = name });
+                            await _unitOfWork.Connection.ExecuteAsync("UPDATE Providers SET Name = @Name, UpdatedOn = @UpdatedOn WHERE Ukprn = @Ukprn", new { Ukprn = ukprn, Name = name, UpdatedOn = DateTime.UtcNow });
                         }
                     }
                 }
