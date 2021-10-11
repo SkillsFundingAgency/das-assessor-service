@@ -6,7 +6,8 @@ BEGIN
    DECLARE 
 		@expiretime int = -12,  -- months to allow for overrun after planned/estimated end date before EPA should have been done
 		@lapsedtime int = -14,  -- months to allow for delay in submitting ILRs (should not be greater than 14)
-		@overlaptime int = -30; -- days to allow for an overlap on ILR submisisons and Approvals changes
+		@overlaptime int = -30, -- days to allow for an overlap on ILR submisisons and Approvals changes
+		@upserted int = 0;
 		
 	BEGIN 
 		----------------------------------------------------------------------------------------------------------------------
@@ -294,6 +295,8 @@ BEGIN
 				upd.LastUpdated, upd.EstimatedEndDate, upd.ApprovalsStopDate, upd.ApprovalsPauseDate, upd.ApprovalsCompletionDate, upd.ApprovalsPaymentStatus,
 				upd.LatestIlrs, upd.LatestApprovals);
 
+		SET @upserted = (SELECT @@ROWCOUNT);
+
 		-- Remove Lapased or Expired learner records (where only have ILR record)
 		DELETE FROM Learner
 		WHERE Source NOT LIKE '%App' AND (
@@ -306,6 +309,6 @@ BEGIN
 
 
 	END
-RETURN 0
+RETURN @upserted
 END;
-GO   
+GO
