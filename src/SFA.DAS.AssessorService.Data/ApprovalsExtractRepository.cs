@@ -32,11 +32,19 @@ namespace SFA.DAS.AssessorService.Data
 
             try
             {
+                if (_unitOfWork.Connection.State != ConnectionState.Open)
+                    _unitOfWork.Connection.Open();
+
                 await BulkInsertApprovalsExtractStaging(approvalsExtract);
             }
             catch (Exception ex)
             {
                 throw ex;
+            }
+            finally
+            {
+                if (_unitOfWork.Connection.State != ConnectionState.Closed)
+                    _unitOfWork.Connection.Close();
             }
         }
 
@@ -48,7 +56,6 @@ namespace SFA.DAS.AssessorService.Data
         private async Task BulkInsertApprovalsExtractStaging(IEnumerable<ApprovalsExtract> approvalsExtract)
         {
             var dataTable = ConstructApprovalsExtractDataTable(approvalsExtract);
-
             using (var bulkCopy = new SqlBulkCopy(_unitOfWork.Connection as SqlConnection))
             {
                 bulkCopy.DestinationTableName = "ApprovalsExtract_Staging";
