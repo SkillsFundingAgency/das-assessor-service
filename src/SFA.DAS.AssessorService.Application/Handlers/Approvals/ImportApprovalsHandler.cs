@@ -43,10 +43,12 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Approvals
                 // 1. Figure out extract start time.
 
                 DateTime? extractStartTime = null;
+                _logger.LogInformation($"Calculating Approvals changed date, initially set to null.");
                 DateTime? latestApprovalsExtractTimestamp = await _approvalsExtractRepository.GetLatestExtractTimestamp();
                 if(null != latestApprovalsExtractTimestamp && latestApprovalsExtractTimestamp.HasValue)
                 {
                     extractStartTime = latestApprovalsExtractTimestamp.Value.AddSeconds(- await GetSettingAsInt(TOLERANCE_SETTING_NAME));
+                    _logger.LogInformation($"Pulling Approvals changed since: {extractStartTime}");
                 }
 
                 // 2. Request the extract in batches.
@@ -69,11 +71,11 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Approvals
                     }
 
                     // 4. Upsert Batch to ApprovalsExtract_Staging.
-                    _logger.LogTrace($"Approvals batch import loop. Starting batch {batchNumber} of {learnersBatch.TotalNumberOfBatches}");
+                    _logger.LogInformation($"Approvals batch import loop. Starting batch {batchNumber} of {learnersBatch.TotalNumberOfBatches}");
 
                     await UpsertApprovalsExtractToStaging(learnersBatch.Learners);
                     count += learnersBatch.Learners.Count;
-                    _logger.LogTrace($"Approvals batch import loop. Batch Completed {batchNumber} of {learnersBatch.TotalNumberOfBatches}. Total Inserted: {count}");
+                    _logger.LogInformation($"Approvals batch import loop. Batch Completed {batchNumber} of {learnersBatch.TotalNumberOfBatches}. Total Inserted: {count}");
 
                 } while (batchNumber < learnersBatch.TotalNumberOfBatches);
 

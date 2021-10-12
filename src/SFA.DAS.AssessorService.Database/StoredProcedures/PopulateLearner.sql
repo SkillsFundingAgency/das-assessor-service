@@ -309,6 +309,6 @@ BEGIN
 
 
 	END
-RETURN @upserted
+SELECT @upserted
 END;
 GO
