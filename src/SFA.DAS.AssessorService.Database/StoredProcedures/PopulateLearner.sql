@@ -295,7 +295,7 @@ BEGIN
 				upd.LastUpdated, upd.EstimatedEndDate, upd.ApprovalsStopDate, upd.ApprovalsPauseDate, upd.ApprovalsCompletionDate, upd.ApprovalsPaymentStatus,
 				upd.LatestIlrs, upd.LatestApprovals);
 
-		SET @upserted = (SELECT @@ROWCOUNT);
+		SET @upserted = @@ROWCOUNT;
 
 		-- Remove Lapased or Expired learner records (where only have ILR record)
 		DELETE FROM Learner
