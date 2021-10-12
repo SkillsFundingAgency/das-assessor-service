@@ -4,7 +4,8 @@ CREATE PROCEDURE [dbo].[PopulateLearner]
 AS
 BEGIN 
    DECLARE 
-		@overlaptime int = -30, -- days to allow for an overlap on ILR submisisons and Approvals changes
+		@overlaptimeIlr int = -30, -- days to allow for an overlap on ILR submissions changes
+		@overlaptimeApx int = -5,  -- days to allow for an overlap on Approvals changes
 		@upserted int = 0;
 		
 	BEGIN 
@@ -32,7 +33,7 @@ BEGIN
 			SELECT ilrs.Uln, ilrs.StdCode FROM Ilrs 
 			-- Only interested if the latest Ilrs hasn't been used already to create/updated Learner.
 			LEFT JOIN Learner le2 ON le2.Uln = Ilrs.Uln AND le2.StdCode = Ilrs.StdCode 
-			WHERE ilrs.LastUpdated >= (SELECT ISNULL(DATEADD(day,@overlaptime,MAX(LatestIlrs)), '01-Jan-2017') FROM Learner)
+			WHERE ilrs.LastUpdated >= (SELECT ISNULL(DATEADD(day,@overlaptimeIlr,MAX(LatestIlrs)), '01-Jan-2017') FROM Learner)
 			  AND (le2.Id IS NULL OR le2.LatestIlrs < CONVERT(datetime,Ilrs.Lastupdated))
 			
 			UNION
@@ -40,7 +41,7 @@ BEGIN
 			-- Only interested if the latest ApprovalsExtract hasn't been used already to create/updated Learner.
 			SELECT ax1.Uln, TrainingCode FROM ApprovalsExtract ax1
 			LEFT JOIN Learner le3 ON le3.Uln = ax1.Uln AND le3.StdCode = ax1.TrainingCode 
-			WHERE ax1.LastUpdated >= (SELECT ISNULL(DATEADD(day,@overlaptime,MAX(LatestApprovals)), '01-Jan-2017') FROM Learner)
+			WHERE ax1.LastUpdated >= (SELECT ISNULL(DATEADD(day,@overlaptimeApx,MAX(LatestApprovals)), '01-Jan-2017') FROM Learner)
 			  AND (le3.Id IS NULL OR le3.LatestApprovals < ax1.Lastupdated)
 		)
 		----------------------------------------------------------------------------------------------------------------------
