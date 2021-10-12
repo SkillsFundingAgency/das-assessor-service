@@ -30,13 +30,14 @@ BEGIN
 		(
 		-- find the recently changed learners from either data source, with an overlap to allow for missed ILR submissions
 			SELECT ilrs.Uln, ilrs.StdCode FROM Ilrs 
-			-- Only interested if the latest Ilrs hasn't been used already to create/updadet learner.
+			-- Only interested if the latest Ilrs hasn't been used already to create/updated Learner.
 			LEFT JOIN Learner le2 ON le2.Uln = Ilrs.Uln AND le2.StdCode = Ilrs.StdCode 
 			WHERE ilrs.LastUpdated >= (SELECT ISNULL(DATEADD(day,@overlaptime,MAX(LatestIlrs)), '01-Jan-2017') FROM Learner)
 			  AND (le2.Id IS NULL OR le2.LatestIlrs < CONVERT(datetime,Ilrs.Lastupdated))
 			
 			UNION
 			
+			-- Only interested if the latest ApprovalsExtract hasn't been used already to create/updated Learner.
 			SELECT ax1.Uln, TrainingCode FROM ApprovalsExtract ax1
 			LEFT JOIN Learner le3 ON le3.Uln = ax1.Uln AND le3.StdCode = ax1.TrainingCode 
 			WHERE ax1.LastUpdated >= (SELECT ISNULL(DATEADD(day,@overlaptime,MAX(LatestApprovals)), '01-Jan-2017') FROM Learner)
@@ -46,18 +47,18 @@ BEGIN
 		,
 		il1
 		AS (
-            SELECT Ilrs.*
-                  -- if could only be version 1.0 then this can be assumed as confirmed
-                  ,CASE WHEN lv1.Version = '1.0' THEN '1.0' ELSE [dbo].[GetVersionFromLarsCode](LearnStartDate,Ilrs.StdCode) END Version
-                  ,CASE WHEN lv1.Version = '1.0' THEN 1 ELSE 0 END VersionConfirmed
-                  -- use StandardUId for version 1.0 (if appropriate) or estimate based on startdate when unknown
-                  ,CASE WHEN lv1.Version = '1.0' THEN lv1.StandardUId ELSE [dbo].[GetStandardUIdFromLarsCode](LearnStartDate,Ilrs.StdCode) END StandardUId
-                  ,lv1.StandardReference
-                  ,lv1.Title StandardName
-                  ,CASE WHEN PlannedEndDate > GETDATE() THEN EOMONTH(PlannedEndDate) ELSE EOMONTH(DATEADD(month, lv1.Duration, LearnStartDate)) END EstimatedEndDate
-           FROM Ilrs 
-           JOIN LatestVersions lv1 on lv1.LarsCode = Ilrs.StdCode
-           JOIN LearnerMods ls1 on ls1.Uln = Ilrs.Uln AND ls1.StdCode = Ilrs.StdCode  -- only include changed learners
+			SELECT Ilrs.*
+				  -- if could only be version 1.0 then this can be assumed as confirmed
+				  ,CASE WHEN lv1.Version = '1.0' THEN '1.0' ELSE [dbo].[GetVersionFromLarsCode](LearnStartDate,Ilrs.StdCode) END Version
+				  ,CASE WHEN lv1.Version = '1.0' THEN 1 ELSE 0 END VersionConfirmed
+				  -- use StandardUId for version 1.0 (if appropriate) or estimate based on startdate when unknown
+				  ,CASE WHEN lv1.Version = '1.0' THEN lv1.StandardUId ELSE [dbo].[GetStandardUIdFromLarsCode](LearnStartDate,Ilrs.StdCode) END StandardUId
+				  ,lv1.StandardReference
+				  ,lv1.Title StandardName
+				  ,CASE WHEN PlannedEndDate > GETDATE() THEN EOMONTH(PlannedEndDate) ELSE EOMONTH(DATEADD(month, lv1.Duration, LearnStartDate)) END EstimatedEndDate
+		   FROM Ilrs 
+		   JOIN LatestVersions lv1 on lv1.LarsCode = Ilrs.StdCode
+		   JOIN LearnerMods ls1 on ls1.Uln = Ilrs.Uln AND ls1.StdCode = Ilrs.StdCode  -- only include changed learners
 		)
 		 ,
 		----------------------------------------------------------------------------------------------------------------------
