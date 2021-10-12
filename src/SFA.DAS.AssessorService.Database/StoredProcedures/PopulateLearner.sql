@@ -4,8 +4,6 @@ CREATE PROCEDURE [dbo].[PopulateLearner]
 AS
 BEGIN 
    DECLARE 
-		@expiretime int = -12,  -- months to allow for overrun after planned/estimated end date before EPA should have been done
-		@lapsedtime int = -14,  -- months to allow for delay in submitting ILRs (should not be greater than 14)
 		@overlaptime int = -30, -- days to allow for an overlap on ILR submisisons and Approvals changes
 		@upserted int = 0;
 		
@@ -35,38 +33,31 @@ BEGIN
 			-- Only interested if the latest Ilrs hasn't been used already to create/updadet learner.
 			LEFT JOIN Learner le2 ON le2.Uln = Ilrs.Uln AND le2.StdCode = Ilrs.StdCode 
 			WHERE ilrs.LastUpdated >= (SELECT ISNULL(DATEADD(day,@overlaptime,MAX(LatestIlrs)), '01-Jan-2017') FROM Learner)
-			AND (le2.Id IS NULL OR le2.LatestIlrs < CONVERT(datetime,Ilrs.Lastupdated))
+			  AND (le2.Id IS NULL OR le2.LatestIlrs < CONVERT(datetime,Ilrs.Lastupdated))
 			
 			UNION
 			
 			SELECT ax1.Uln, TrainingCode FROM ApprovalsExtract ax1
 			LEFT JOIN Learner le3 ON le3.Uln = ax1.Uln AND le3.StdCode = ax1.TrainingCode 
 			WHERE ax1.LastUpdated >= (SELECT ISNULL(DATEADD(day,@overlaptime,MAX(LatestApprovals)), '01-Jan-2017') FROM Learner)
-			AND (le3.Id IS NULL OR le3.LatestApprovals < ax1.Lastupdated)
+			  AND (le3.Id IS NULL OR le3.LatestApprovals < ax1.Lastupdated)
 		)
 		----------------------------------------------------------------------------------------------------------------------
 		,
 		il1
 		AS (
-			SELECT *
-			-- check for ILR records that are for Apprenticeships that have significantly overrun the end date
-			,CASE WHEN EstimatedEndDate < dateadd(month, @expiretime, GETDATE()) THEN 1 ELSE 0 END Expired
-			-- check for "Continuing" ILR records that have not been updated for a long time - they should be updated every month.
-			,CASE WHEN CompletionStatus = 1 AND LastUpdated < DATEADD(month, @lapsedtime, GETDATE()) THEN 1 ELSE 0 END Lapsed
-			FROM (
-				SELECT Ilrs.*
-					  -- if could only be version 1.0 then this can be assumed as confirmed
-					  ,CASE WHEN lv1.Version = '1.0' THEN '1.0' ELSE [dbo].[GetVersionFromLarsCode](LearnStartDate,Ilrs.StdCode) END Version
-					  ,CASE WHEN lv1.Version = '1.0' THEN 1 ELSE 0 END VersionConfirmed
-					  -- use StandardUId for version 1.0 (if appropriate) or estimate based on startdate when unknown
-					  ,CASE WHEN lv1.Version = '1.0' THEN lv1.StandardUId ELSE [dbo].[GetStandardUIdFromLarsCode](LearnStartDate,Ilrs.StdCode) END StandardUId
-					  ,lv1.StandardReference
-					  ,lv1.Title StandardName
-					  ,CASE WHEN PlannedEndDate > GETDATE() THEN EOMONTH(PlannedEndDate) ELSE EOMONTH(DATEADD(month, lv1.Duration, LearnStartDate)) END EstimatedEndDate
-			   FROM Ilrs 
-			   JOIN LatestVersions lv1 on lv1.LarsCode = Ilrs.StdCode
-			   JOIN LearnerMods ls1 on ls1.Uln = Ilrs.Uln AND ls1.StdCode = Ilrs.StdCode  -- only include changed learners
-			) il2
+            SELECT Ilrs.*
+                  -- if could only be version 1.0 then this can be assumed as confirmed
+                  ,CASE WHEN lv1.Version = '1.0' THEN '1.0' ELSE [dbo].[GetVersionFromLarsCode](LearnStartDate,Ilrs.StdCode) END Version
+                  ,CASE WHEN lv1.Version = '1.0' THEN 1 ELSE 0 END VersionConfirmed
+                  -- use StandardUId for version 1.0 (if appropriate) or estimate based on startdate when unknown
+                  ,CASE WHEN lv1.Version = '1.0' THEN lv1.StandardUId ELSE [dbo].[GetStandardUIdFromLarsCode](LearnStartDate,Ilrs.StdCode) END StandardUId
+                  ,lv1.StandardReference
+                  ,lv1.Title StandardName
+                  ,CASE WHEN PlannedEndDate > GETDATE() THEN EOMONTH(PlannedEndDate) ELSE EOMONTH(DATEADD(month, lv1.Duration, LearnStartDate)) END EstimatedEndDate
+           FROM Ilrs 
+           JOIN LatestVersions lv1 on lv1.LarsCode = Ilrs.StdCode
+           JOIN LearnerMods ls1 on ls1.Uln = Ilrs.Uln AND ls1.StdCode = Ilrs.StdCode  -- only include changed learners
 		)
 		 ,
 		----------------------------------------------------------------------------------------------------------------------
@@ -251,8 +242,6 @@ BEGIN
 		  FROM il1 
 		  LEFT JOIN ax1 ON ax1.ULN = il1.ULN  AND il1.StdCode = ax1.TrainingCode
 		  WHERE (il1.FundingModel = 99 OR ax1.ULN IS NULL)
-			AND Lapsed = 0 
-			AND Expired = 0
 		) upd
 		ON (lm1.uln = upd.uln AND lm1.StdCode = upd.StdCode)
 
