@@ -80,11 +80,14 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Approvals
                 } while (batchNumber < learnersBatch.TotalNumberOfBatches);
 
                 // 5. Run Populate ApprovalsExtract From Staging
+                _logger.LogInformation($"Begin Populating Approvals Extract");
                 await _approvalsExtractRepository.PopulateApprovalsExtract();
+                _logger.LogInformation($"Finished Populating Approvals Extract");
 
                 // 6. Run Populate Learner
-
+                _logger.LogInformation($"Begin Running Populate Learner");
                 var learnerCount = await _approvalsExtractRepository.PopulateLearner();
+                _logger.LogInformation($"Finished Running Populate Learner");
 
                 _logger.LogInformation($"Approvals import completed successfully. {count} record(s) read from outer api, {learnerCount} records inserted to Learner table.");
             }
