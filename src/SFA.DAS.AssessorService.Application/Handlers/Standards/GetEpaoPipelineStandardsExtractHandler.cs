@@ -23,14 +23,14 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Standards
     public async Task<List<EpaoPipelineStandardsExtractResponse>> Handle(EpaoPipelineStandardsExtractRequest request, CancellationToken cancellationToken)
     {
       _logger.LogInformation("Extracting Epao pipeline information");
-      var result = await _standardRepository.GetEpaoPipelineStandardsExtract(request.EpaoId);
+      var result = await _standardRepository.GetEpaoPipelineStandardsExtract(request.EpaoId, request.StandardFilterId, request.ProviderFilterId, request.EPADateFilterId);
 
       var response = result.Select(o =>
           new EpaoPipelineStandardsExtractResponse
           {
             EstimatedDate = o.EstimateDate.UtcToTimeZoneTime().Date.ToString("MMMM yyyy"),
             Pipeline = o.Pipeline,
-            StandardName = o.Title,
+            StandardName = o.Title.Replace(","," ").Trim(),
             ProviderUkPrn = o.ProviderUkPrn
           }).ToList();
 
