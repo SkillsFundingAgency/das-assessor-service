@@ -31,8 +31,19 @@ BEGIN
 		AS
 		(
 		-- find the recently changed learners from either data source, with an overlap to allow for missed ILR submissions
-			SELECT Uln, StdCode FROM Ilrs 
-			WHERE LastUpdated >= (SELECT ISNULL(DATEADD(day,@overlaptime,MAX(LatestIlrs)), '01-Jan-2017') FROM Learner)
+			SELECT ilrs.Uln, ilrs.StdCode FROM Ilrs 
+            -- Only interested if the latest Ilrs hasn't been used already to create/updadet learner.
+			LEFT JOIN Learner le2 ON le2.Uln = Ilrs.Uln AND le2.StdCode = Ilrs.StdCode 
+			WHERE ilrs.LastUpdated >= (SELECT ISNULL(DATEADD(day,@overlaptime,MAX(LatestIlrs)), '01-Jan-2017') FROM Learner)
+			AND (le2.Id IS NULL OR le2.LatestIlrs < CONVERT(datetime,Ilrs.Lastupdated))
+            -- Filter out possible deleted
+			AND NOT
+			(-- check for ILR records that are for Apprenticeships that have significantly overrun the end date
+                ilrs.PlannedEndDate < dateadd(month, @expiretime, GETDATE())  -- Expired
+                OR
+			-- check for "Continuing" ILR records that have not been updated for a long time - they should be updated every month.
+			   (ilrs.CompletionStatus = 1 AND ilrs.LastUpdated < DATEADD(month, @lapsedtime, GETDATE())) -- Lapsed
+			)             
 			UNION
 			SELECT Uln, TrainingCode FROM ApprovalsExtract 
 			WHERE LastUpdated >= (SELECT ISNULL(DATEADD(day,@overlaptime,MAX(LatestApprovals)), '01-Jan-2017') FROM Learner)
