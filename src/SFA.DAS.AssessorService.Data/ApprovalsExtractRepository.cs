@@ -157,6 +157,12 @@ namespace SFA.DAS.AssessorService.Data
             await RefreshProviders(missingUkprns);
         }
 
+        public async Task RefreshProviders()
+        {
+            var allUkprns = await UkprnsInProviders();
+            await RefreshProviders(allUkprns);
+        }
+
         private async Task RefreshProviders(IEnumerable<int> ukprns)
         {
             // Get the provider name from RoATP and update Providers table.
@@ -170,13 +176,13 @@ namespace SFA.DAS.AssessorService.Data
                     var existingName = await _unitOfWork.Connection.ExecuteScalarAsync<string>("SELECT Name FROM Providers WHERE Ukprn = @Ukprn;", new { Ukprn = ukprn });
                     if (string.IsNullOrWhiteSpace(existingName))
                     {
-                        await _unitOfWork.Connection.ExecuteAsync("INSERT INTO Providers (Ukprn, Name) VALUES (@Ukprn, @Name)", new { Ukprn = ukprn, Name = name });
+                        await _unitOfWork.Connection.ExecuteAsync("INSERT INTO Providers (Ukprn, Name, UpdatedOn) VALUES (@Ukprn, @Name, @UpdatedOn)", new { Ukprn = ukprn, Name = name, UpdatedOn = DateTime.UtcNow });
                     }
                     else
                     {
                         if (name != existingName)
                         {
-                            await _unitOfWork.Connection.ExecuteAsync("UPDATE Providers SET Name = @Name WHERE Ukprn = @Ukprn", new { Ukprn = ukprn, Name = name });
+                            await _unitOfWork.Connection.ExecuteAsync("UPDATE Providers SET Name = @Name, UpdatedOn = @UpdatedOn WHERE Ukprn = @Ukprn", new { Ukprn = ukprn, Name = name, UpdatedOn = DateTime.UtcNow });
                         }
                     }
                 }
@@ -192,6 +198,12 @@ namespace SFA.DAS.AssessorService.Data
         private async Task<IEnumerable<int>> UkprnsInLearnersNotInProviders()
         {
             var ukprns = await _unitOfWork.Connection.QueryAsync<int>("SELECT DISTINCT Ukprn FROM Learner WHERE Ukprn NOT IN (SELECT DISTINCT Ukprn FROM Providers)");
+            return ukprns;
+        }
+
+        private async Task<IEnumerable<int>> UkprnsInProviders()
+        {
+            var ukprns = await _unitOfWork.Connection.QueryAsync<int>("SELECT DISTINCT Ukprn FROM Providers");
             return ukprns;
         }
 

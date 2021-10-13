@@ -14,5 +14,6 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task PopulateApprovalsExtract();
         Task UpsertProvidersFromApprovalsExtract();
         Task UpsertProvidersFromLearners();
+        Task RefreshProviders();
     }
 }
