@@ -205,7 +205,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         }
 
         [HttpGet("assessment-organisations/standards/search/{*searchstring}", Name = "SearchStandards")]
-        [SwaggerResponse((int) HttpStatusCode.OK, Type = typeof(List<StandardCollation>))]
+        [SwaggerResponse((int) HttpStatusCode.OK, Type = typeof(List<StandardVersion>))]
         [SwaggerResponse((int) HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int) HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> SearchStandards(string searchstring)
