@@ -43,10 +43,12 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Approvals
                 // 1. Figure out extract start time.
 
                 DateTime? extractStartTime = null;
+                _logger.LogInformation($"Calculating Approvals changed date, initially set to null.");
                 DateTime? latestApprovalsExtractTimestamp = await _approvalsExtractRepository.GetLatestExtractTimestamp();
                 if(null != latestApprovalsExtractTimestamp && latestApprovalsExtractTimestamp.HasValue)
                 {
                     extractStartTime = latestApprovalsExtractTimestamp.Value.AddSeconds(- await GetSettingAsInt(TOLERANCE_SETTING_NAME));
+                    _logger.LogInformation($"Pulling Approvals changed since: {extractStartTime}");
                 }
 
                 // 2. Request the extract in batches.
@@ -69,18 +71,23 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Approvals
                     }
 
                     // 4. Upsert Batch to ApprovalsExtract_Staging.
+                    _logger.LogInformation($"Approvals batch import loop. Starting batch {batchNumber} of {learnersBatch.TotalNumberOfBatches}");
 
                     await UpsertApprovalsExtractToStaging(learnersBatch.Learners);
                     count += learnersBatch.Learners.Count;
+                    _logger.LogInformation($"Approvals batch import loop. Batch Completed {batchNumber} of {learnersBatch.TotalNumberOfBatches}. Total Inserted: {count}");
 
                 } while (batchNumber < learnersBatch.TotalNumberOfBatches);
 
                 // 5. Run Populate ApprovalsExtract From Staging
+                _logger.LogInformation($"Begin Populating Approvals Extract");
                 await _approvalsExtractRepository.PopulateApprovalsExtract();
+                _logger.LogInformation($"Finished Populating Approvals Extract");
 
                 // 6. Run Populate Learner
-
+                _logger.LogInformation($"Begin Running Populate Learner");
                 var learnerCount = await _approvalsExtractRepository.PopulateLearner();
+                _logger.LogInformation($"Finished Running Populate Learner");
 
                 _logger.LogInformation($"Approvals import completed successfully. {count} record(s) read from outer api, {learnerCount} records inserted to Learner table.");
             }
