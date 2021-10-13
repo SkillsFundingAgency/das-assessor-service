@@ -30,10 +30,10 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Standards
           {
             EstimatedDate = o.EstimateDate.UtcToTimeZoneTime().Date.ToString("MMMM yyyy"),
             Pipeline = o.Pipeline,
-            StandardName = o.Title.Replace(","," ").Trim(),
+            StandardName = o.Title,
             StandardVersion = o.Version,
             ProviderUkPrn = o.ProviderUkPrn,
-            ProviderName = o.ProviderName
+            ProviderName = o.ProviderName.Replace("\"", "\"\"")
           }).ToList();
 
       return response;
