@@ -28,8 +28,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Providers
             {
                 switch(request.UpdateType)
                 {
-                    case ProvidersCacheUpdateType.UpdateProvidersFromLearners:
-                        await _approvalsExtractRepository.UpsertProvidersFromLearners();
+                    case ProvidersCacheUpdateType.InsertProvidersFromApprovalsExtract:
+                        await _approvalsExtractRepository.InsertProvidersFromApprovalsExtract();
                         break;
                     default:
                         await _approvalsExtractRepository.RefreshProviders();

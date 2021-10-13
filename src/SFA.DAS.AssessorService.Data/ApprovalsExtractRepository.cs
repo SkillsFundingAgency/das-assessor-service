@@ -145,15 +145,9 @@ namespace SFA.DAS.AssessorService.Data
             }
         }
 
-        public async Task UpsertProvidersFromApprovalsExtract()
+        public async Task InsertProvidersFromApprovalsExtract()
         {
             var missingUkprns = await UkprnsInExtractNotInProviders();
-            await RefreshProviders(missingUkprns);
-        }
-
-        public async Task UpsertProvidersFromLearners()
-        {
-            var missingUkprns = await UkprnsInLearnersNotInProviders();
             await RefreshProviders(missingUkprns);
         }
 

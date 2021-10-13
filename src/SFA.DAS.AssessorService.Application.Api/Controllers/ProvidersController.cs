@@ -22,19 +22,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             _mediator = mediator;
         }
 
-        [HttpPost("update-providers", Name = "update-providers/UpdateProvidersCache")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(ApiResponse))]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(ApiResponse))]
-        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> UpdateProvidersCache()
-        {
-            var request = new UpdateProvidersCacheRequest()
-            {
-                UpdateType = ProvidersCacheUpdateType.UpdateProvidersFromLearners
-            };
-            return Ok(await _mediator.Send(request));
-        }
-
         [HttpPost("refresh-providers", Name = "update-providers/RefreshProvidersCache")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(ApiResponse))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(ApiResponse))]
@@ -43,7 +30,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         {
             var request = new UpdateProvidersCacheRequest()
             {
-                UpdateType = ProvidersCacheUpdateType.UpdateExistingProviders
+                UpdateType = ProvidersCacheUpdateType.RefreshExistingProviders
             };
             return Ok(await _mediator.Send(request));
         }

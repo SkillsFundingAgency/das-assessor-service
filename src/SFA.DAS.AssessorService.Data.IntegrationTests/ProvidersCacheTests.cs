@@ -45,7 +45,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         
             // Act
 
-            await _repository.UpsertProvidersFromApprovalsExtract();
+            await _repository.InsertProvidersFromApprovalsExtract();
 
             // Assert
 

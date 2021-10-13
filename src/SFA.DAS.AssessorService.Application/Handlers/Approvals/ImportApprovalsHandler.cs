@@ -84,7 +84,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Approvals
 
                 // 7. Update providers cache
 
-                await _approvalsExtractRepository.UpsertProvidersFromApprovalsExtract();
+                await _approvalsExtractRepository.InsertProvidersFromApprovalsExtract();
 
                 _logger.LogInformation($"Approvals import completed successfully. {count} record(s) read from outer api, {learnerCount} records inserted to Learner table.");
             }

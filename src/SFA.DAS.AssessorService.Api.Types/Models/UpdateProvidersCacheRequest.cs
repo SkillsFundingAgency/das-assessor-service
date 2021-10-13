@@ -4,8 +4,8 @@ namespace SFA.DAS.AssessorService.Api.Types.Models
 {
     public enum ProvidersCacheUpdateType
     {
-        UpdateProvidersFromLearners = 1,
-        UpdateExistingProviders = 2
+        InsertProvidersFromApprovalsExtract = 1,
+        RefreshExistingProviders = 2
     }
 
     public class UpdateProvidersCacheRequest : IRequest
