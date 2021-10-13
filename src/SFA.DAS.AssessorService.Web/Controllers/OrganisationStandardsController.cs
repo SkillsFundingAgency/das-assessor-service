@@ -128,16 +128,18 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 "Standard Name",
                 "Apprentices",
                 "UKPRN",
-                "Estimated EPA date"
+                "Estimated EPA date",
+                "Provider Name"
             };
 
             var piplelineRecords = (from pipeline in response
                 select new object[]
                 {
-                    $"{pipeline.StandardName}",
+                    $"\"{pipeline.StandardName}, {pipeline.StandardVersion}\"",
                     $"\"{pipeline.Pipeline}\"",
                     $"\"{pipeline.ProviderUkPrn}\"",
                     $"\"{pipeline.EstimatedDate}\"",
+                    $"\"{pipeline.ProviderName}\"",
                 }).ToList();
 
             var pipelineCsv = new StringBuilder();
