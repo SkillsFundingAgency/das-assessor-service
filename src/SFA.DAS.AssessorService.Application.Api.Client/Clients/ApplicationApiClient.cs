@@ -126,14 +126,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task<List<StandardCollation>> GetStandards()
-        {
-            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/ao/assessment-organisations/collated-standards"))
-            {
-                return (await RequestAndDeserialiseAsync<List<StandardCollation>>(request, $"Could not retrieve collated standards"));
-            }
-        }
-
         public async Task<List<DeliveryArea>> GetQuestionDataFedOptions()
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get, $"api/ao/delivery-areas"))

@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -20,6 +21,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Standard
     public class StandardVersionControllerTests
     {
         private Mock<IStandardService> _mockStandardService;
+        private Mock<IMediator> _mockMediator;
 
         private StandardVersionController _standardVersionController;
 
@@ -27,8 +29,9 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Standard
         public void SetUp()
         {
             _mockStandardService = new Mock<IStandardService>();
+            _mockMediator = new Mock<IMediator>();
 
-            _standardVersionController = new StandardVersionController(Mock.Of<ILogger<StandardServiceController>>(), _mockStandardService.Object);
+            _standardVersionController = new StandardVersionController(Mock.Of<ILogger<StandardVersionController>>(), _mockStandardService.Object, _mockMediator.Object);
         }
 
         [Test, MoqAutoData]
@@ -199,6 +202,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Standard
                 EffectiveFrom = standard.EffectiveFrom,
                 EffectiveTo = standard.EffectiveTo,
                 VersionEarliestStartDate = standard.VersionEarliestStartDate,
+                VersionLatestStartDate = standard.VersionLatestStartDate,
                 VersionLatestEndDate = standard.VersionLatestEndDate,
                 EPAChanged = standard.EPAChanged,
                 StandardPageUrl = standard.StandardPageUrl
