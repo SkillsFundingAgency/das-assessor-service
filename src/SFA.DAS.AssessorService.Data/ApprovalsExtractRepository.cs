@@ -189,12 +189,6 @@ namespace SFA.DAS.AssessorService.Data
             return ukprns;
         }
 
-        private async Task<IEnumerable<int>> UkprnsInLearnersNotInProviders()
-        {
-            var ukprns = await _unitOfWork.Connection.QueryAsync<int>("SELECT DISTINCT Ukprn FROM Learner WHERE Ukprn NOT IN (SELECT DISTINCT Ukprn FROM Providers)");
-            return ukprns;
-        }
-
         private async Task<IEnumerable<int>> UkprnsInProviders()
         {
             var ukprns = await _unitOfWork.Connection.QueryAsync<int>("SELECT DISTINCT Ukprn FROM Providers");
