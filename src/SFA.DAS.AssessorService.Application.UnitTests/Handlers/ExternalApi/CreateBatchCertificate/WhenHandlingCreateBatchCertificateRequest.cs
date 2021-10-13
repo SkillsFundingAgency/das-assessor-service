@@ -2,12 +2,10 @@
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
-using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.ExternalApi.Certificates;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Handlers.ExternalApi._HelperClasses;
 using SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates;
-using SFA.DAS.AssessorService.Application.Infrastructure;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
@@ -25,7 +23,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ExternalApi.Cre
         private Mock<IContactQueryRepository> _contactQueryRepository;
         private Mock<ILogger<CreateBatchCertificateHandler>> _logger;
         private Mock<IStandardService> _standardService;
-        private Mock<IRoatpApiClient> _roatpApiClient;
+        private Mock<IProvidersRepository> _mockProvidersRepository;
 
         private CreateBatchCertificateHandler _handler;
 
@@ -45,7 +43,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ExternalApi.Cre
             _contactQueryRepository = new Mock<IContactQueryRepository>();
             _logger = new Mock<ILogger<CreateBatchCertificateHandler>>();
             _standardService = new Mock<IStandardService>();
-            _roatpApiClient = new Mock<IRoatpApiClient>();
+            _mockProvidersRepository = new Mock<IProvidersRepository>();
 
             _learnerRepository.Setup(m => m.Get(uln, stdCode)).ReturnsAsync(new Domain.Entities.Learner() { UkPrn = learnerUkprn });
             
@@ -54,10 +52,10 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ExternalApi.Cre
             _standardService.Setup(m => m.GetStandardVersionById(stdUId, null)).ReturnsAsync(new Standard() { });
             _standardService.Setup(m => m.GetStandardOptionsByStandardId(stdUId)).ReturnsAsync(new StandardOptions());
 
-            _roatpApiClient.Setup(m => m.GetOrganisationByUkprn(ukPrn)).ReturnsAsync(new OrganisationSearchResult()
+            _mockProvidersRepository.Setup(m => m.GetProvider(learnerUkprn)).ReturnsAsync(new Provider()
             {
                 Ukprn = ukPrn,
-                ProviderName = "PROVIDER"
+                Name = "PROVIDER"
             });
 
             _request = new CreateBatchCertificateRequest()
@@ -70,7 +68,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ExternalApi.Cre
             };
 
             _handler = new CreateBatchCertificateHandler(_certificateRepository.Object, _learnerRepository.Object, _organisationQueryRepository.Object,
-                _contactQueryRepository.Object, _logger.Object, _standardService.Object, _roatpApiClient.Object);
+                _contactQueryRepository.Object, _logger.Object, _standardService.Object, _mockProvidersRepository.Object);
         }
 
         [Test]
@@ -130,7 +128,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ExternalApi.Cre
                 CertificateData = @"{}"
             });
 
-            _roatpApiClient.Setup(m => m.GetOrganisationByUkprn(ukPrn)).ReturnsAsync((OrganisationSearchResult)null);
+            _mockProvidersRepository.Setup(m => m.GetProvider(ukPrn)).ReturnsAsync((Provider)null);
 
             // Act
             var result = await _handler.Handle(_request, CancellationToken.None);
