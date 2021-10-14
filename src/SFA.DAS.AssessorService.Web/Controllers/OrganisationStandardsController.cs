@@ -70,7 +70,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [HttpGet]
         [Route("/[controller]/pipelines")]
         [PrivilegeAuthorize(Privileges.ViewPipeline)]
-        public async Task<IActionResult> Pipeline(int? pageIndex)
+        public async Task<IActionResult> Pipeline(string selectedStandard, string selectedProvider, string selectedEPADate, int? pageIndex)
         {
             OrderedListResultViewModel orderedListResultViewModel;
             try
@@ -85,8 +85,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                     orderBy = _sessionService.Get("orderBy");
                 }
 
-
-                orderedListResultViewModel = await GetPipeline(orderBy, orderDirection, PageSize, pageIndex);
+                orderedListResultViewModel = await GetPipeline(selectedStandard, selectedProvider, selectedEPADate, orderBy, orderDirection, PageSize, pageIndex);
             }
             catch (EntityNotFoundException)
             {
@@ -104,7 +103,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             try
             {
                 var newOrderdDirection = NextOrderDirection(orderDirection, orderBy);
-                orderedListResultViewModel = await GetPipeline(orderBy, newOrderdDirection, PageSize, pageIndex);
+                orderedListResultViewModel = await GetPipeline(null, null, null, orderBy, newOrderdDirection, PageSize, pageIndex);
             }
             catch (EntityNotFoundException)
             {
@@ -116,29 +115,31 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
         [HttpGet]
         [Route("/[controller]/DownloadCsv")]
-        public async Task<FileContentResult> ExportEpaPipelineAsCsv()
+        public async Task<FileContentResult> ExportEpaPipelineAsCsv(string selectedStandard, string selectedProvider, string selectedEPADate)
         {
             _logger.LogInformation("Starting to download Pipeline EPA CSV File");
 
             var epaoid = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/epaoid")?.Value;
 
             var organisation = await _organisationsApiClient.GetEpaOrganisation(epaoid);
-            var response = await _standardsApiClient.GetEpaoPipelineStandardsExtract(organisation?.OrganisationId);
+            var response = await _standardsApiClient.GetEpaoPipelineStandardsExtract(organisation?.OrganisationId, selectedStandard, selectedProvider, selectedEPADate);
 
             string[] columnHeaders = {
                 "Standard Name",
                 "Apprentices",
                 "UKPRN",
-                "Estimated EPA date"
+                "Estimated EPA date",
+                "Provider Name"
             };
 
             var piplelineRecords = (from pipeline in response
                 select new object[]
                 {
-                    $"{pipeline.StandardName}",
+                    $"\"{pipeline.StandardName}, {pipeline.StandardVersion}\"",
                     $"\"{pipeline.Pipeline}\"",
                     $"\"{pipeline.ProviderUkPrn}\"",
                     $"\"{pipeline.EstimatedDate}\"",
+                    $"\"{pipeline.ProviderName}\"",
                 }).ToList();
 
             var pipelineCsv = new StringBuilder();
@@ -151,7 +152,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             return File(buffer, "text/csv", $"EpaPipeline.csv");
         }
 
-        private async Task<OrderedListResultViewModel> GetPipeline(string orderBy, string orderDirection,int pageSize, int? pageIndex)
+        private async Task<OrderedListResultViewModel> GetPipeline(string selectedStandard, string selectedProvider, string selectedEPADate, string orderBy, string orderDirection,int pageSize, int? pageIndex)
         {
             var orderedListResultViewModel = new OrderedListResultViewModel
             {
@@ -165,9 +166,31 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             var organisation = await _organisationsApiClient.GetEpaOrganisation(epaoid);
             if (organisation != null)
             {
+                var filters = await _standardsApiClient.GetEpaoPipelineStandardsFilters(organisation.OrganisationId);
+
                 orderedListResultViewModel.Response =
-                    await _standardsApiClient.GetEpaoPipelineStandards(organisation.OrganisationId,
+                    await _standardsApiClient.GetEpaoPipelineStandards(organisation.OrganisationId, selectedStandard, selectedProvider, selectedEPADate,
                         orderBy, orderDirection, pageSize, pageIndex ?? 1);
+
+                InitStandardFilter(orderedListResultViewModel, filters?.StandardFilterItems);
+                InitProviderFilter(orderedListResultViewModel, filters?.ProviderFilterItems);
+                InitEPADateFilter(orderedListResultViewModel, filters?.EPADateFilterItems);
+            }
+
+            if (!string.IsNullOrWhiteSpace(selectedStandard) && selectedStandard.Trim().ToUpper() != "ALL")
+            {
+                orderedListResultViewModel.SelectedStandard = selectedStandard;
+                orderedListResultViewModel.FilterApplied = true;
+            }
+            if (!string.IsNullOrWhiteSpace(selectedProvider) && selectedProvider.Trim().ToUpper() != "ALL")
+            {
+                orderedListResultViewModel.SelectedProvider = selectedProvider;
+                orderedListResultViewModel.FilterApplied = true;
+            }
+            if (!string.IsNullOrWhiteSpace(selectedEPADate) && selectedEPADate.Trim().ToUpper() != "ALL")
+            {
+                orderedListResultViewModel.SelectedEPADate = selectedEPADate;
+                orderedListResultViewModel.FilterApplied = true;
             }
 
             return orderedListResultViewModel;
@@ -182,6 +205,35 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             _sessionService.Set("orderBy", orderBy);
             return newSortDirection;
         }
-        
-    }
+
+        private void InitStandardFilter(OrderedListResultViewModel model, IEnumerable<Domain.Entities.EpaoPipelineStandardFilter> items)
+        {
+            model.StandardFilter = new List<OrderedListResultViewModel.PipelineFilterItem>() { new OrderedListResultViewModel.PipelineFilterItem() { Id = "ALL", Value = "All standards" }  };
+
+            if(null != items && items.Any())
+            {
+                model.StandardFilter.AddRange(items.Select(i => new OrderedListResultViewModel.PipelineFilterItem() { Id = i.Id, Value = i.Value }));
+            }
+        }
+
+        private void InitProviderFilter(OrderedListResultViewModel model, IEnumerable<Domain.Entities.EpaoPipelineStandardFilter> items)
+        {
+            model.ProviderFilter = new List<OrderedListResultViewModel.PipelineFilterItem>() { new OrderedListResultViewModel.PipelineFilterItem() { Id = "ALL", Value = "All providers" } };
+
+            if (null != items && items.Any())
+            {
+                model.ProviderFilter.AddRange(items.Select(i => new OrderedListResultViewModel.PipelineFilterItem() { Id = i.Id, Value = i.Value }));
+            }
+        }
+
+        private void InitEPADateFilter(OrderedListResultViewModel model, IEnumerable<Domain.Entities.EpaoPipelineStandardFilter> items)
+        {
+            model.EPADateFilter = new List<OrderedListResultViewModel.PipelineFilterItem>() { new OrderedListResultViewModel.PipelineFilterItem() { Id = "ALL", Value = "All dates" } };
+
+            if (null != items && items.Any())
+            {
+                model.EPADateFilter.AddRange(items.Select(i => new OrderedListResultViewModel.PipelineFilterItem() { Id = i.Id, Value = i.Value }));
+            }
+        }
+   }
 }

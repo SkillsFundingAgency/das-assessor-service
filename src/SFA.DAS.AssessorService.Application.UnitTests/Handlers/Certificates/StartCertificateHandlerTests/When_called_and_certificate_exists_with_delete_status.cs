@@ -67,12 +67,14 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
                 UkPrn = 12345678
             });
 
-
-            var roatpApiClientMock = new Mock<IRoatpApiClient>();
             var standardService = new Mock<IStandardService>();
+            standardService.Setup(s => s.GetStandardVersionsByLarsCode(30)).ReturnsAsync(new[] { new Standard { Title = "Standard Title" } });
+
+            var mockProvidersRepository = new Mock<IProvidersRepository>();
+            mockProvidersRepository.Setup(m => m.GetProvider(12345678)).ReturnsAsync(new Provider() { Ukprn = 12345678, Name = "Test Provider Name" });
 
             _startCertificateHandler = new StartCertificateHandler(_certificateRepository.Object,
-                learnerRepository.Object, roatpApiClientMock.Object,
+                learnerRepository.Object, mockProvidersRepository.Object,
                 organisationQueryRepository.Object, new Mock<ILogger<StartCertificateHandler>>().Object, standardService.Object);
 
             _returnedCertificate = _startCertificateHandler

@@ -164,7 +164,7 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                     })
                     .SetHandlerLifetime(TimeSpan.FromMinutes(5));
 
-                services.AddHttpClient<RoatpApiClient>("RoatpApiClient", config =>
+                services.AddHttpClient<IRoatpApiClient, RoatpApiClient>("RoatpApiClient", config =>
                     {
                         config.BaseAddress = new Uri(Configuration.RoatpApiAuthentication.ApiBaseAddress); //  "https://at-providers-api.apprenticeships.education.gov.uk"
                         config.DefaultRequestHeaders.Add("Accept", "Application/json");
@@ -213,7 +213,7 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
               
                 var sqlConnectionString = UseSandbox ? Configuration.SandboxSqlConnectionString : Configuration.SqlConnectionString;
                 var option = new DbContextOptionsBuilder<AssessorDbContext>();
-                option.UseSqlServer(sqlConnectionString, options => options.EnableRetryOnFailure(3));
+                option.UseSqlServer(sqlConnectionString, options => options.EnableRetryOnFailure(3).CommandTimeout(300));
 
                 config.For<AssessorDbContext>().Use(c => new AssessorDbContext(option.Options));
                 config.For<IDbConnection>().Use(c => new SqlConnection(sqlConnectionString));

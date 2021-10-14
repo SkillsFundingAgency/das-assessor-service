@@ -36,6 +36,7 @@ namespace SFA.DAS.AssessorService.Data
         public virtual DbSet<ContactsPrivilege> ContactsPrivileges { get; set; }
         public virtual DbSet<Privilege> Privileges { get; set; }
         public virtual DbSet<ContactInvitation> ContactInvitations { get; set; }
+        public virtual DbSet<Provider> Providers { get; set; }
 
         public override int SaveChanges()
         {
@@ -129,7 +130,10 @@ namespace SFA.DAS.AssessorService.Data
             modelBuilder.Entity<DeliveryArea>()
                 .ToTable("DeliveryArea");
 
-            
+            modelBuilder.Entity<Provider>()
+                .ToTable("Providers")
+                .HasKey(c => new { c.Ukprn });
+
             SetUpJsonToEntityTypeHandlers(modelBuilder);
         }
 

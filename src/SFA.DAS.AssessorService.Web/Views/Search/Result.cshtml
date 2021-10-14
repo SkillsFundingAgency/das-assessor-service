@@ -41,6 +41,7 @@
                     {
                         @Html.Hidden("Option", Model.Versions.First().Options.First())
                     }
+                    @Html.Hidden("SubmittedFail", Model.OverallGrade == CertificateGrade.Fail && Model.SubmittedAt != null)
 
                     <button class="govuk-button" type="submit">Confirm and continue</button>
                 </form>
@@ -66,7 +67,15 @@
 
                     @Html.HiddenFor(m => m.Uln)
                     @Html.HiddenFor(m => m.StdCode)
-
+                    @if (Model.OnlySingleVersion)
+                    {
+                        @Html.Hidden("StandardUId", Model.Versions.First().StandardUId);
+                    }
+                    @if (Model.OnlySingleOption)
+                    {
+                        @Html.Hidden("Option", Model.Versions.First().Options.First())
+                    }
+                    @Html.Hidden("SubmittedFail", Model.OverallGrade == CertificateGrade.Fail && Model.SubmittedAt != null)
                     <button class="govuk-button" type="submit">Confirm and continue</button>
 
                 </form>
