@@ -26,12 +26,12 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             _mediator = mediator;
         }
 
-        [HttpGet("{query}", Name = "SearchLocations")]
+        [HttpGet("", Name = "SearchLocations")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<AddressResponse>))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.NotFound, Type = typeof(string))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> SearchLocations(string query)
+        public async Task<IActionResult> SearchLocations([FromQuery] string query)
         {
             _logger.LogInformation($"Searching for any locations matching {query}");
 

@@ -2,13 +2,14 @@
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
+using MediatR;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Addresses
 {
-    public class GetAddressesHandler
+    public class GetAddressesHandler : IRequestHandler<GetAddressesRequest, List<AddressResponse>>
     {
         private readonly ILogger<GetAddressesHandler> _logger;
         private readonly IOuterApiService _outerApiService;

@@ -8,6 +8,6 @@
             Query = query;
         }
 
-        public string GetUrl => $"locations/{Query}";
+        public string GetUrl => $"locations?query={Query}";
     }
 }
