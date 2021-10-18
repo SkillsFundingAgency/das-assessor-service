@@ -99,9 +99,6 @@
       autoFocus: true,
       minLength: 1,
       delay: 100
-    })
-    .focus(function() {
-      searchContext = "";
     });
     
   function populateAddress(address) {

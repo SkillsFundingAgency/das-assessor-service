@@ -96,7 +96,6 @@
                 populateAddress(item);
             },
             focus: function (_, ui) {
-                searchContext = "";
                 $("#address-lookup")
                     .find(".ui-helper-hidden-accessible")
                     .text("To select " + ui.item.label + ", press enter");
