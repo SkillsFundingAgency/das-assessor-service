@@ -42,11 +42,8 @@
         public const string ApplicationIdIsMissing = "Application Id is Missing";
 
         public const string OrganisationStandardEffectiveFromBeforeStandardEffectiveFrom = "OrganisationStandardEffectiveFromBeforeStandardEffectiveFrom";
-        public const string OrganisationStandardEffectiveFromAfterStandardEffectiveTo = "OrganisationStandardEffectiveFromAfterStandardEffectiveTo";
-        public const string OrganisationStandardEffectiveFromAfterStandardLastDayForNewStarts = "OrganisationStandardEffectiveFromAfterStandardLastDayForNewStarts";
-
+        
         public const string OrganisationStandardEffectiveToBeforeStandardEffectiveFrom = "OrganisationStandardEffectiveToBeforeStandardEffectiveFrom";
-        public const string OrganisationStandardEffectiveToAfterStandardEffectiveTo = "OrganisationStandardEffectiveToAfterStandardEffectiveTo";
         public const string OrganisationStandardEffectiveFromAfterEffectiveTo = "OrganisationStandardEffectiveFromAfterEffectiveTo";
 
         public const string OrganisationStandardVersionEffectiveToBeforeStandardEffectiveFrom = "OrganisationStandardVersionEffectiveToBeforeStandardEffectiveFrom";
