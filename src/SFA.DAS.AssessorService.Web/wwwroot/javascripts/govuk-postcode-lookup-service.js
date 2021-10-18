@@ -2,7 +2,6 @@
 // town or city, county and postcode which are recommended by the gov uk style guidelines
 // see https://design-system.service.gov.uk/patterns/addresses/
 (function ($) {
-    var searchContext = "";
     var findAddressVal = $("#postcode-search").val();
 
     var hasAddressValidationErrors = ($("div.govuk-form-group--error").length > 0);
@@ -43,13 +42,10 @@
             source: function (request, response) {
                 $.ajax({
                     url:
-                        "//services.postcodeanywhere.co.uk/CapturePlus/Interactive/Find/v2.10/json3.ws",
-                    dataType: "jsonp",
+                        "/locations",
+                    dataType: "json",
                     data: {
-                        key: "JY37-NM56-JA37-WT99",
-                        country: "GB",
-                        searchTerm: request.term,
-                        lastId: searchContext
+                        query: request.term
                     },
                     timeout: 5000,
                     success: function (data) {
@@ -63,9 +59,9 @@
                         });
 
                         response(
-                            $.map(data.Items, function (suggestion) {
+                            $.map(data, function (suggestion) {
                                 return {
-                                    label: suggestion.Text,
+                                    label: suggestion.text,
                                     value: "",
                                     data: suggestion
                                 };
@@ -97,29 +93,7 @@
             },
             select: function (event, ui) {
                 var item = ui.item.data;
-
-                if (item.Next === "Retrieve") {
-                    //retrieve the address
-                    retrieveAddress(item.Id);
-                    searchContext = "";
-                } else {
-                    var field = $(this);
-                    searchContext = item.Id;
-
-                    $("#addressLoading").show();
-                    $("#enterAddressManually").hide();
-                    $("#postcodeServiceUnavailable").hide();
-
-                    if (searchContext === "GBR|") {
-                        window.setTimeout(function () {
-                            field.autocomplete("search", item.Text);
-                        });
-                    } else {
-                        window.setTimeout(function () {
-                            field.autocomplete("search", item.Id);
-                        });
-                    }
-                }
+                populateAddress(item);
             },
             focus: function (_, ui) {
                 searchContext = "";
@@ -132,46 +106,13 @@
             delay: 100
         });
 
-    function retrieveAddress(id) {
-        $("#addressLoading").show();
-        $("#enterAddressManually").hide();
-        $("#postcodeServiceUnavailable").hide();
-        $("#address-details").addClass("js-hidden");
-
-        $.ajax({
-            url:
-                "//services.postcodeanywhere.co.uk/CapturePlus/Interactive/Retrieve/v2.10/json3.ws",
-            dataType: "jsonp",
-            data: {
-                key: "JY37-NM56-JA37-WT99",
-                id: id
-            },
-            timeout: 5000,
-            success: function (data) {
-                if (data.Items.length) {
-                    $("#addressLoading").hide();
-                    $(".js-select-previous-address").hide();
-                    $("#enterAddressManually").show();
-                    $("#addressManualWrapper").unbind("click");
-                    populateAddress(data.Items[0]);
-                }
-            },
-            error: function () {
-                $("#postcodeServiceUnavailable").show();
-                $("#enterAddressManually").hide();
-                $("#addressLoading").hide();
-                $("#address-details").removeClass("js-hidden");
-            }
-        });
-    }
-
     function populateAddress(address) {
         var addressFields = {
-            '.address-manual-input-address-line-1': address.Line1,
-            '.address-manual-input-address-line-2': address.Line2,
-            '.address-manual-input-address-line-3': address.City,
-            '.address-manual-input-address-line-4': address.Province,
-            '.address-manual-input-postcode': address.PostalCode
+            '.address-manual-input-address-line-1': address.house + ' ' + address.street,
+            '.address-manual-input-address-line-2': address.locality,
+            '.address-manual-input-address-line-3': address.town,
+            '.address-manual-input-address-line-4': address.county,
+            '.address-manual-input-postcode': address.postcode
         };
 
         $(".js-address-panel").removeClass("hidden");

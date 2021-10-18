@@ -42,7 +42,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
         public async Task<GetAddressesResponse> GetAddresses(string query)
         {
             var response = await _outerApiClient.Get<GetAddressesResponse>(new GetAddressesRequest(query));
-            return response;
+            return response ?? new GetAddressesResponse();
         }
     }
 }

@@ -5,6 +5,11 @@ namespace SFA.DAS.AssessorService.Application.Infrastructure.OuterApi
 {
     public class GetAddressesResponse
     {
+        public GetAddressesResponse()
+        {
+            Addresses = new List<GetAddressResponse>();
+        }
+
         [JsonProperty("addresses")]
         public IEnumerable<GetAddressResponse> Addresses { get; set; }
     }
@@ -20,11 +25,14 @@ namespace SFA.DAS.AssessorService.Application.Infrastructure.OuterApi
         [JsonProperty("street")]
         public string Street { get; set; }
 
+        [JsonProperty("organisation")]
+        public string Organisation { get; set; }
+
         [JsonProperty("locality")]
         public string Locality { get; set; }
 
         [JsonProperty("posttown")]
-        public string PostTown { get; set; }
+        public string Town { get; set; }
 
         [JsonProperty("county")]
         public string County { get; set; }
