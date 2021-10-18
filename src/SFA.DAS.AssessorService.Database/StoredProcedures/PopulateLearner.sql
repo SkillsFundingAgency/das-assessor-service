@@ -4,7 +4,7 @@ CREATE PROCEDURE [dbo].[PopulateLearner]
 AS
 BEGIN 
    DECLARE 
-		@overlaptimeIlr int = -30, -- days to allow for an overlap on ILR submissions changes
+		@overlaptimeIlr int = -5,  -- days to allow for an overlap on ILR updates 
 		@overlaptimeApx int = -5,  -- days to allow for an overlap on Approvals changes
 		@upserted int = 0;
 		
@@ -29,7 +29,7 @@ BEGIN
 		LearnerMods
 		AS
 		(
-		-- find the recently changed learners from either data source, with an overlap to allow for missed ILR submissions
+		-- find the recently changed learners from either data source, with an overlap to allow for ILR updates
 			SELECT ilrs.Uln, ilrs.StdCode FROM Ilrs 
 			-- Only interested if the latest Ilrs hasn't been used already to create/updated Learner.
 			LEFT JOIN Learner le2 ON le2.Uln = Ilrs.Uln AND le2.StdCode = Ilrs.StdCode 
