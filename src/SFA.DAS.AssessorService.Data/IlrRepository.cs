@@ -64,7 +64,24 @@ namespace SFA.DAS.AssessorService.Data
                                     [DelLocPostCode] = @delLocPostCode, [LearnActEndDate] = @learnActEndDate, [WithdrawReason] = @withdrawReason, 
                                     [Outcome] = @outcome, [AchDate] = @achDate, [OutGrade] = @outGrade
                                 WHERE
-                                    [Uln] = @uln AND [StdCode] = @stdCode",
+                                    [Uln] = @uln AND [StdCode] = @stdCode
+                                AND NOT (  [GivenNames] = @givenNames
+                                       AND [FamilyName] = @familyName
+                                       AND [UkPrn] = @ukprn
+                                       AND [LearnStartDate] = @learnStartDate
+                                       AND [EpaOrgId] = @epaOrgId
+                                       AND [FundingModel] = @fundingModel
+                                       AND [Source] = @source
+                                       AND [LearnRefNumber] = @learnRefNumber
+                                       AND [CompletionStatus] = @completionStatus
+                                       AND [PlannedEndDate] = @plannedEndDate
+                                       AND [DelLocPostCode] = @delLocPostCode
+                                       AND [LearnActEndDate] = @learnActEndDate
+                                       AND [WithdrawReason] = @withdrawReason
+                                       AND [Outcome] = @outcome
+                                       AND [AchDate] = @achDate
+                                       AND [OutGrade] = @outGrade )
+                 ",
                   param: new
                   {
                       ilr.Uln,
