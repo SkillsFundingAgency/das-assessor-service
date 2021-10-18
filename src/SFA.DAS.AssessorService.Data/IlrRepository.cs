@@ -57,31 +57,25 @@ namespace SFA.DAS.AssessorService.Data
         public async Task Update(Ilr ilr)
         {
             await _unitOfWork.Connection.ExecuteAsync(
-                @"UPDATE [Ilrs] SET [GivenNames] = @givenNames, [FamilyName] = @familyName, [UkPrn] = @ukprn, 
-                                    [LearnStartDate] = @learnStartDate, [EpaOrgId] = @epaOrgId, [FundingModel] = @fundingModel,
-                                    [ApprenticeshipId] = null, [EmployerAccountId] = null, [Source] = @source, [CreatedAt] = [CreatedAt], [UpdatedAt] = @updatedAt,
-                                    [LearnRefNumber] = @learnRefNumber, [CompletionStatus] = @completionStatus, [EventId] = null, [PlannedEndDate] = @plannedEndDate, 
-                                    [DelLocPostCode] = @delLocPostCode, [LearnActEndDate] = @learnActEndDate, [WithdrawReason] = @withdrawReason, 
-                                    [Outcome] = @outcome, [AchDate] = @achDate, [OutGrade] = @outGrade
-                                WHERE
-                                    [Uln] = @uln AND [StdCode] = @stdCode
-                                AND NOT (  [GivenNames] = @givenNames
-                                       AND [FamilyName] = @familyName
-                                       AND [UkPrn] = @ukprn
-                                       AND [LearnStartDate] = @learnStartDate
-                                       AND [EpaOrgId] = @epaOrgId
-                                       AND [FundingModel] = @fundingModel
-                                       AND [Source] = @source
-                                       AND [LearnRefNumber] = @learnRefNumber
-                                       AND [CompletionStatus] = @completionStatus
-                                       AND [PlannedEndDate] = @plannedEndDate
-                                       AND [DelLocPostCode] = @delLocPostCode
-                                       AND [LearnActEndDate] = @learnActEndDate
-                                       AND [WithdrawReason] = @withdrawReason
-                                       AND [Outcome] = @outcome
-                                       AND [AchDate] = @achDate
-                                       AND [OutGrade] = @outGrade )
-                 ",
+                @"MERGE INTO Ilrs  
+                  USING (
+                  -- only need to update when the data values have changed
+                  SELECT [Uln], [StdCode], [GivenNames], [FamilyName], [UkPrn], [LearnStartDate], [EpaOrgId], [FundingModel], [Source], [LearnRefNumber], 
+                         [CompletionStatus], [PlannedEndDate], [DelLocPostCode], [LearnActEndDate], [WithdrawReason] , [Outcome], [AchDate], [OutGrade]
+                    FROM Ilrs
+                   WHERE [Uln] = @Uln AND [StdCode] = @StdCode
+                  EXCEPT
+                  SELECT @Uln, @StdCode, @GivenNames, @FamilyName, @UkPrn, @LearnStartDate, @EpaOrgId, @FundingModel, @Source, @LearnRefNumber, 
+                         @CompletionStatus, @PlannedEndDate, @DelLocPostCode, @LearnActEndDate, @WithdrawReason , @Outcome, @AchDate, @OutGrade
+                        ) upd     
+                  ON ( Ilrs.[Uln] = upd.[Uln] AND Ilrs.[StdCode] = upd.[StdCode] )
+                WHEN MATCHED THEN
+                UPDATE SET [GivenNames] = @givenNames, [FamilyName] = @familyName, [UkPrn] = @ukprn, 
+                           [LearnStartDate] = @learnStartDate, [EpaOrgId] = @epaOrgId, [FundingModel] = @fundingModel,
+                           [ApprenticeshipId] = null, [EmployerAccountId] = null, [Source] = @source, [UpdatedAt] = @updatedAt,
+                           [LearnRefNumber] = @learnRefNumber, [CompletionStatus] = @completionStatus, [EventId] = null, [PlannedEndDate] = @plannedEndDate, 
+                           [DelLocPostCode] = @delLocPostCode, [LearnActEndDate] = @learnActEndDate, [WithdrawReason] = @withdrawReason, 
+                           [Outcome] = @outcome, [AchDate] = @achDate, [OutGrade] = @outGrade ;",
                   param: new
                   {
                       ilr.Uln,
