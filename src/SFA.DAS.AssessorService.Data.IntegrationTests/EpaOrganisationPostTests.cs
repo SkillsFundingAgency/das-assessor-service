@@ -32,7 +32,6 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
             _queryRepository = new RegisterQueryRepository(_databaseService.WebConfiguration);
             _organisationIdCreated = "EPA0205";
             _ukprnCreated = 123321;
-            var org2IdCreated = "EPA0654";
             _organisationTypeId = 5;
             OrganisationTypeHandler.InsertRecord(new OrganisationTypeModel { Id = _organisationTypeId, Status = "new", Type = "organisation type 1" });
             _id = Guid.NewGuid();
@@ -59,15 +58,6 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
                     Postcode = "postcode"
                 }
             };
-
-            _organisation2 = new EpaOrganisation
-            {
-                Id = Guid.NewGuid(),
-                Name = "name 1",
-                OrganisationId = org2IdCreated,
-                Status = OrganisationStatus.New,
-                OrganisationTypeId = null
-            };
         }
 
         [Test]
@@ -77,16 +67,15 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
 
             var isOrgByOrgIdPresentBeforeInsert = _validationRepository.EpaOrganisationExistsWithOrganisationId(_organisationIdCreated).Result;
             var isOrgByUkprnPresentBeforeInsert = _validationRepository.EpaOrganisationExistsWithUkprn(_ukprnCreated).Result;
+            
             var returnedOrganisationId = _repository.CreateEpaOrganisation(_organisation).Result;
-            var org2 = _repository.CreateEpaOrganisation(_organisation2).Result;
+
             var isOrgByOrgIdPresentAfterInsert = _validationRepository.EpaOrganisationExistsWithOrganisationId(_organisationIdCreated).Result;
             var isOrgByUkprnPresentAfterInsert = _validationRepository.EpaOrganisationExistsWithUkprn(_ukprnCreated).Result;
             var returnedOrganisationByGetById = _queryRepository.GetEpaOrganisationById(_id).Result;
-            var returnedOrganisationByGetByOrganisationId =
-                _queryRepository.GetEpaOrganisationByOrganisationId(_organisationIdCreated).Result;
+            var returnedOrganisationByGetByOrganisationId = _queryRepository.GetEpaOrganisationByOrganisationId(_organisationIdCreated).Result;
             var maxOrgWithData = _queryRepository.EpaOrganisationIdCurrentMaximum().Result;
 
-            Assert.IsNull(maxOrgWithNoData);
             Assert.IsFalse(isOrgByOrgIdPresentBeforeInsert);
             Assert.IsFalse(isOrgByUkprnPresentBeforeInsert);
 
@@ -103,7 +92,6 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         public void TearDownOrganisationTests()
         {
             OrganisationHandler.DeleteRecordByEndPointAssessorOrganisationId(_organisationIdCreated);
-            OrganisationHandler.DeleteRecordByEndPointAssessorOrganisationId(_organisation2.OrganisationId);
             OrganisationTypeHandler.DeleteRecord(_organisationTypeId);
         }
     }

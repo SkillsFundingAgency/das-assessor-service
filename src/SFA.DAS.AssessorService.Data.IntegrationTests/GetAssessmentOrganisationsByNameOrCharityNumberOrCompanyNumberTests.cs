@@ -99,9 +99,9 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
             OrganisationHandler.InsertRecords(new List<OrganisationModel> { _organisation1, _organisation2, _organisation3, _organisation4 });
         }
 
-        [TestCase("name", 4)]
+        [TestCase("name", 2)]
         [TestCase("stuff", 0)]
-        [TestCase("name 1", 3)]
+        [TestCase("name 1", 1)]
         [TestCase("companyNumber 3", 1)]
         [TestCase("charity 4", 1)]
         public void RunGetAllOrganisationsAndCheckAllOrganisationsExpectedAreReturned(string name, int expectedCount)
