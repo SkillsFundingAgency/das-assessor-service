@@ -30,9 +30,9 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
             _repository = new RegisterRepository(_databaseService.WebConfiguration, new Mock<ILogger<RegisterRepository>>().Object);
             _validationRepository = new RegisterValidationRepository(_databaseService.WebConfiguration);
             _queryRepository = new RegisterQueryRepository(_databaseService.WebConfiguration);
-            _organisationIdCreated = "EPA0987";
+            _organisationIdCreated = "EPA0205";
             _ukprnCreated = 123321;
-            var org2IdCreated = "EPA0001";
+            var org2IdCreated = "EPA0654";
             _organisationTypeId = 5;
             OrganisationTypeHandler.InsertRecord(new OrganisationTypeModel { Id = _organisationTypeId, Status = "new", Type = "organisation type 1" });
             _id = Guid.NewGuid();
@@ -103,6 +103,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         public void TearDownOrganisationTests()
         {
             OrganisationHandler.DeleteRecordByEndPointAssessorOrganisationId(_organisationIdCreated);
+            OrganisationHandler.DeleteRecordByEndPointAssessorOrganisationId(_organisation2.OrganisationId);
             OrganisationTypeHandler.DeleteRecord(_organisationTypeId);
         }
     }

@@ -26,8 +26,8 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         public void SetupOrganisationTests()
         {
             _repository = new RegisterQueryRepository(_databaseService.WebConfiguration);
-            _organisationId1 = "EPA0001";
-            _organisationId2 = "EPA005";
+            _organisationId1 = "EPA0300";
+            _organisationId2 = "EPA0005";
             _ukprn1 = 876544;
             _organisation1 = new OrganisationModel
             {

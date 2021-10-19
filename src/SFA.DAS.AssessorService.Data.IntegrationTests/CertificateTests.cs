@@ -26,8 +26,9 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         
         private CertificateRepository _repository;
         
-        private static int _organisationTypeId = 1;
+        private static int _organisationTypeId = 20;
         private static Guid _organisationId = Guid.NewGuid();
+
         private OrganisationModel _organisation;
 
         private Certificate _createdCertificate;
@@ -44,11 +45,11 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
             _repository = new CertificateRepository(_unitOfWork, _context);
 
             OrganisationTypeHandler.InsertRecord(
-                new OrganisationTypeModel 
-                { 
-                    Id = _organisationTypeId, 
+                new OrganisationTypeModel
+                {
+                    Id = _organisationTypeId,
                     Status = "Live",
-                    Type = "Organisation Type A" 
+                    Type = "Organisation Type A"
                 });
 
             _organisation = new OrganisationModel
@@ -56,7 +57,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
                 Id = _organisationId,
                 CreatedAt = DateTime.Now,
                 EndPointAssessorName = "Epao Name 1",
-                EndPointAssessorOrganisationId = "EPA0200",
+                EndPointAssessorOrganisationId = "EPA0300",
                 EndPointAssessorUkprn = 1234567890,
                 PrimaryContact = null,
                 OrganisationTypeId = _organisationTypeId,

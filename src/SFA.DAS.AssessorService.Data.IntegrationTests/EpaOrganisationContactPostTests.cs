@@ -34,7 +34,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
             _validationRepository = new RegisterValidationRepository(_databaseService.WebConfiguration);
             _organisationIdCreated = "EPA0987";
             _ukprnCreated = 123321;
-            _org2IdCreated = "EPA0001";
+            _org2IdCreated = "EPA654";
             _organisationTypeId = 5;
             OrganisationTypeHandler.InsertRecord(new OrganisationTypeModel { Id = _organisationTypeId, Status = "new", Type = "organisation type 1" });
             _id = Guid.NewGuid();
