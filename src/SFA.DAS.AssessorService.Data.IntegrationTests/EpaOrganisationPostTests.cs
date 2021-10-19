@@ -22,7 +22,6 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         private EpaOrganisation _organisation;
         private int _organisationTypeId;
         private Guid _id;
-        private EpaOrganisation _organisation2;
 
         [OneTimeSetUp]
         public void SetUpOrganisationTests()
