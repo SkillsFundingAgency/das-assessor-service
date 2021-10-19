@@ -30,7 +30,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
             _repository = new RegisterRepository(_databaseService.WebConfiguration, new Mock<ILogger<RegisterRepository>>().Object);
             _validationRepository = new RegisterValidationRepository(_databaseService.WebConfiguration);
             _queryRepository = new RegisterQueryRepository(_databaseService.WebConfiguration);
-            _organisationIdCreated = "EPA0205";
+            _organisationIdCreated = "EPA0987";
             _ukprnCreated = 123321;
             _organisationTypeId = 5;
             OrganisationTypeHandler.InsertRecord(new OrganisationTypeModel { Id = _organisationTypeId, Status = "new", Type = "organisation type 1" });
