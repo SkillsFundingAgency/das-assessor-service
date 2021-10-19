@@ -57,7 +57,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
                 Id = _organisationId,
                 CreatedAt = DateTime.Now,
                 EndPointAssessorName = "Epao Name 1",
-                EndPointAssessorOrganisationId = "EPA0300",
+                EndPointAssessorOrganisationId = "EPA0200",
                 EndPointAssessorUkprn = 1234567890,
                 PrimaryContact = null,
                 OrganisationTypeId = _organisationTypeId,
@@ -125,6 +125,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         [OneTimeTearDown]
         public void TearDownCertificateTests()
         {
+            CertificateLogsHandler.DeleteRecord(_createdCertificate.Id);
             CertificateHandler.DeleteRecord(_createdCertificate.Id);
             OrganisationHandler.DeleteRecordByEndPointAssessorOrganisationId("EPA0200");
             OrganisationTypeHandler.DeleteRecord(_organisationTypeId);

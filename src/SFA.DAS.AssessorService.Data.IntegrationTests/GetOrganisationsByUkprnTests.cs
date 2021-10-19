@@ -71,8 +71,6 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
             Assert.AreEqual(expectedCount, organisationsReturned.Count(), $@"Expected {expectedCount} organisations back but got {organisationsReturned.Count()}");
         }
 
-       
-
         [OneTimeTearDown]
         public void TearDownOrganisationTests()
         {
