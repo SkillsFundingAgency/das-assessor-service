@@ -12,7 +12,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
 
         public OuterApiService(IOuterApiClient outerApiClient)
         {
-            this._outerApiClient = outerApiClient;
+            _outerApiClient = outerApiClient;
         }
 
         public async Task<IEnumerable<GetStandardsListItem>> GetActiveStandards()
