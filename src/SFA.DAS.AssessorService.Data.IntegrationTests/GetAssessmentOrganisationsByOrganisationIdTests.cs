@@ -26,7 +26,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         public void SetupOrganisationTests()
         {
             _repository = new RegisterQueryRepository(_databaseService.WebConfiguration);
-            _organisationId1 = "EPA0010";
+            _organisationId1 = "EPA0001";
             _organisationId2 = "EPA005";
             _ukprn1 = 876544;
             _organisation1 = new OrganisationModel
@@ -62,7 +62,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
             OrganisationHandler.InsertRecords(new List<OrganisationModel> { _organisation1, _organisation2 });
         }
 
-        [TestCase("EPA0010", 1)]
+        [TestCase("EPA0001", 1)]
         [TestCase("EPA9999", 0)]
         [TestCase("test", 0)]
         public void RunGetAllOrganisationsAndCheckAllOrganisationsExpectedAreReturned(string orgId, int expectedCount)

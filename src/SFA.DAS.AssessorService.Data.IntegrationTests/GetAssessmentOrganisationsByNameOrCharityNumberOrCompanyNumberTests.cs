@@ -96,6 +96,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
                 OrganisationData = "{\"LegalName\":\"City and Guilds(London / ILM)\",\"CompanyNumber\":\"1234\",\"CharityNumber\":\"charity 4\"}"
             };
 
+            OrganisationHandler.DeleteAllRecords();
             OrganisationHandler.InsertRecords(new List<OrganisationModel> { _organisation1, _organisation2, _organisation3, _organisation4 });
         }
 
