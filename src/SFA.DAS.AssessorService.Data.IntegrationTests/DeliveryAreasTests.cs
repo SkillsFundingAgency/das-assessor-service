@@ -32,7 +32,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
 
             var deliveryAreasReturned = _repository.GetDeliveryAreas().Result.ToArray();
 
-            Assert.AreEqual(2, deliveryAreasReturned.Count(), $@"Expected 2 delivery Areas back but got {deliveryAreasReturned.Count()}");
+            Assert.AreEqual(11, deliveryAreasReturned.Count(), $@"Expected 11 delivery Areas back but got {deliveryAreasReturned.Count()}");
             Assert.AreEqual(1, deliveryAreasReturned.Count(x => x.Id == _deliveryArea1.Id), "Delivery Area 1 Id was not found");
             Assert.AreEqual(1, deliveryAreasReturned.Count(x => x.Id == _deliveryArea2.Id), "Delivery Area 2 Id was not found");
         }

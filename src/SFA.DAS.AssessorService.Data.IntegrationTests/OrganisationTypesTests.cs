@@ -19,8 +19,8 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         public void SetupOrganisationTypesTests()
         {
             _repository = new RegisterQueryRepository(_databaseService.WebConfiguration);
-            _organisationType1 = new OrganisationTypeModel {Id = 10, Status = "Live", Type = "Award Organisation"};
-            _organisationType2 = new OrganisationTypeModel {Id = 20, Status = "New", Type = "Some Other"};
+            _organisationType1 = new OrganisationTypeModel {Id = 20, Status = "Live", Type = "Award Organisation"};
+            _organisationType2 = new OrganisationTypeModel {Id = 21, Status = "New", Type = "Some Other"};
             var organisationTypes = new List<OrganisationTypeModel> {_organisationType1, _organisationType2};
 
             OrganisationTypeHandler.InsertRecords(organisationTypes);
@@ -32,7 +32,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
 
             var orgTypesReturned = _repository.GetOrganisationTypes().Result.ToArray();
 
-            Assert.AreEqual(2, orgTypesReturned.Count(), $@"Expected 2 organisation types back but got {orgTypesReturned.Count()}");
+            Assert.AreEqual(9, orgTypesReturned.Count(), $@"Expected 9 organisation types back but got {orgTypesReturned.Count()}");
             Assert.AreEqual(1, orgTypesReturned.Count(x => x.Id == _organisationType1.Id), "Organisation Type 1 Id was not found");
             Assert.AreEqual(1, orgTypesReturned.Count(x => x.Id == _organisationType2.Id), "Organisation Type 2 Id was not found");
         }
