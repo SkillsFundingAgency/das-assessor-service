@@ -32,7 +32,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
 
             var orgTypesReturned = _repository.GetOrganisationTypes().Result.ToArray();
 
-            Assert.AreEqual(9, orgTypesReturned.Count(), $@"Expected 9 organisation types back but got {orgTypesReturned.Count()}");
+            Assert.AreEqual(2, orgTypesReturned.Count(), $@"Expected 2 organisation types back but got {orgTypesReturned.Count()}");
             Assert.AreEqual(1, orgTypesReturned.Count(x => x.Id == _organisationType1.Id), "Organisation Type 1 Id was not found");
             Assert.AreEqual(1, orgTypesReturned.Count(x => x.Id == _organisationType2.Id), "Organisation Type 2 Id was not found");
         }
