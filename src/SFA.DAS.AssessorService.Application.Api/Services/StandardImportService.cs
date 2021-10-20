@@ -51,7 +51,12 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
                 TrailBlazerContact = source.TrailBlazerContact,
                 Route = source.Route,
                 VersionMajor = source.VersionMajor,
-                VersionMinor = source.VersionMinor
+                VersionMinor = source.VersionMinor,
+                IntegratedDegree = source.IntegratedDegree,
+                EqaProviderName = source.EqaProvider?.Name,
+                EqaProviderContactName = source.EqaProvider?.ContactName,
+                EqaProviderContactEmail = source.EqaProvider?.ContactEmail,
+                OverviewOfRole = source.OverviewOfRole
             };
 
             await standardRepository.InsertStandards(standards.Select(MapGetStandardsListItemToStandard));
@@ -68,71 +73,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
             }
 
             await standardRepository.InsertOptions(optionsToInsert);
-        }
-
-        public async Task UpsertStandardCollations(IEnumerable<StandardDetailResponse> standards)
-        {
-            Func<StandardDetailResponse, StandardCollation> MapGetStandardsListItemToStandardCollation = source => new StandardCollation
-            {
-                StandardId = source.LarsCode,
-                ReferenceNumber = source.IfateReferenceNumber,
-                Title = source.Title,
-                Options = source.Options,
-                StandardData = new StandardData
-                {
-                    Category = source.Route,
-                    IfaStatus = source.Status,
-                    EqaProviderName = source.EqaProvider?.Name,
-                    EqaProviderContactName = source.EqaProvider?.ContactName,
-                    EqaProviderContactEmail = source.EqaProvider?.ContactEmail,
-                    EqaProviderWebLink = source.EqaProvider?.WebLink,
-                    IntegratedDegree = source.IntegratedDegree,
-                    EffectiveFrom = source.StandardDates.EffectiveFrom,
-                    EffectiveTo = source.StandardDates.EffectiveTo,
-                    Level = source.Level,
-                    LastDateForNewStarts = source.StandardDates.LastDateStarts,
-                    IfaOnly = source.LarsCode == 0,
-                    Duration = source.TypicalDuration,
-                    MaxFunding = source.MaxFunding,
-                    Trailblazer = source.TrailBlazerContact,
-                    PublishedDate = source.VersionDetail.ApprovedForDelivery,
-                    IsPublished = source.LarsCode > 0,
-                    Ssa2 = source.SectorSubjectAreaTier2Description,
-                    OverviewOfRole = source.OverviewOfRole,
-                    IsActiveStandardInWin = source.IsActive,
-                    AssessmentPlanUrl = source.AssessmentPlanUrl,
-                    StandardPageUrl = source.StandardPageUrl
-                }
-            };
-
-            var standardCollations = standards.Select(MapGetStandardsListItemToStandardCollation).ToList();
-
-            await standardRepository.UpsertApprovedStandards(standardCollations);
-        }
-
-        public async Task UpsertStandardNonApprovedCollations(IEnumerable<StandardDetailResponse> standards)
-        {
-            Func<StandardDetailResponse, StandardNonApprovedCollation> MapGetStandardsListItemToStandardNonApprovedCollation = source => new StandardNonApprovedCollation
-            {
-                ReferenceNumber = source.IfateReferenceNumber,
-                Title = source.Title,
-                StandardData = new StandardNonApprovedData
-                {
-                    Level = source.Level,
-                    Category = source.Route,
-                    IfaStatus = source.Status,
-                    IntegratedDegree = source.IntegratedDegree,
-                    Duration = source.TypicalDuration,
-                    MaxFunding = source.MaxFunding,
-                    Trailblazer = source.TrailBlazerContact,
-                    OverviewOfRole = source.OverviewOfRole,
-                    StandardPageUrl = source.StandardPageUrl
-                }
-            };
-
-            var standardNonApprovedCollations = standards.Select(MapGetStandardsListItemToStandardNonApprovedCollation).ToList();
-
-            await standardRepository.UpsertNonApprovedStandards(standardNonApprovedCollations);
         }
     }
 }

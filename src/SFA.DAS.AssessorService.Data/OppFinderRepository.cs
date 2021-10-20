@@ -34,10 +34,9 @@ namespace SFA.DAS.AssessorService.Data
             return (rowAffected > 0);
         }
 
-        public async Task<OppFinderApprovedStandardDetailsResult> GetOppFinderApprovedStandardDetails(int? standardCode, string standardReference)
+        public async Task<OppFinderApprovedStandardDetailsResult> GetOppFinderApprovedStandardDetails(string standardReference)
         {
             var @params = new DynamicParameters();
-            @params.Add("standardCode", standardCode);
             @params.Add("standardReference", standardReference);
 
             var filterResults = (await _unitOfWork.Connection.QueryMultipleAsync(
@@ -49,7 +48,8 @@ namespace SFA.DAS.AssessorService.Data
             var filterStandardsResult = new OppFinderApprovedStandardDetailsResult
             {
                 OverviewResult = filterResults.Read<OppFinderApprovedStandardOverviewResult>().FirstOrDefault(),
-                RegionResults = filterResults.Read<OppFinderApprovedStandardRegionResult>()?.ToList()
+                RegionResults = filterResults.Read<OppFinderApprovedStandardRegionResult>()?.ToList(),
+                VersionResults = filterResults.Read<OppFinderApprovedStandardVersionResult>()?.ToList()
             };
 
             return filterStandardsResult;
@@ -132,6 +132,21 @@ namespace SFA.DAS.AssessorService.Data
             };
 
             return nonApprovedStandardsResult;
+        }
+
+        public async Task<OppFinderNonApprovedStandardDetailsResult> GetOppFinderNonApprovedStandardDetails(string standardReference)
+        {
+            var sql = @"SELECT [Title], [Status], [OverviewOfRole], [Level], [IFateReferenceNumber], [Route], [TypicalDuration], 
+                            [TrailblazerContact], [StandardPageUrl]
+                        FROM [dbo].[Standards] 
+                        WHERE IFateReferenceNumber = @standardReference";
+
+            var nonApprovedStandard = await _unitOfWork.Connection.QueryAsync<OppFinderNonApprovedStandardDetailsResult>(
+                sql,
+                param: new { standardReference },
+                transaction: _unitOfWork.Transaction);
+
+            return nonApprovedStandard.FirstOrDefault();
         }
 
         public async Task UpdateStandardSummary()

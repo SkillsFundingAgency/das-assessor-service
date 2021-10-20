@@ -75,8 +75,10 @@ else
                                 class="govuk-link"
                                 asp-action="ShowApprovedStandardDetails" 
                                 asp-controller="OppFinder" 
-                                asp-route-standardCode="@approvedStandard.StandardCode">@approvedStandard.StandardName
+                                asp-route-standardReference="@approvedStandard.StandardReference">@approvedStandard.StandardName
                             </a>
+                            <br/>
+                            Version @approvedStandard.Versions
                         </td>
                         <td class="govuk-table__cell govuk-table__cell--numeric">@approvedStandard.ActiveApprentices</td>
                         <td class="govuk-table__cell govuk-table__cell--numeric">@approvedStandard.RegisteredEPAOs</td>

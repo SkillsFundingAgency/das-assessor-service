@@ -54,10 +54,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Standards
 
                 await standardImportService.LoadOptions(allStandards);
 
-                await standardImportService.UpsertStandardCollations(activeStandardDetails);
-
-                await standardImportService.UpsertStandardNonApprovedCollations(draftStandardDetails);
-
                 unitOfWork.Commit();
             }
             catch (Exception ex)

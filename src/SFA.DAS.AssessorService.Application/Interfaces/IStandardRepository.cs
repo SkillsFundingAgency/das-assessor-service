@@ -6,22 +6,15 @@ using SFA.DAS.AssessorService.Domain.Entities;
 namespace SFA.DAS.AssessorService.Application.Interfaces
 {
     public interface IStandardRepository
-    {        
-        Task<string> UpsertApprovedStandards(List<StandardCollation> standards);
-        Task<string> UpsertNonApprovedStandards(List<StandardNonApprovedCollation> standards);
-
-        Task<List<StandardCollation>> GetStandardCollations();
-        Task<StandardCollation> GetStandardCollationByStandardId(int standardId);
-        Task<StandardCollation> GetStandardCollationByReferenceNumber(string referenceNumber);
-        
-        Task<List<StandardNonApprovedCollation>> GetStandardNonApprovedCollations();
-        Task<StandardNonApprovedCollation> GetStandardNonApprovedCollationByReferenceNumber(string referenceNumber);
-
+    {      
         Task<int> GetEpaoStandardsCount(string endPointAssessorOrganisationId);
         Task<EpoRegisteredStandardsResult> GetEpaoRegisteredStandards(string endPointAssessorOrganisationId,int pageSize, int pageIndex);
-        Task<EpaoPipelineStandardsResult> GetEpaoPipelineStandards(string endPointAssessorOrganisationId,
+        Task<EpaoPipelineStandardsResult> GetEpaoPipelineStandards(string endPointAssessorOrganisationId, string standardFilterId, string providerFilterId, string epaDateFilterId,
         string orderBy, string orderDirection, int pageSize, int? pageIndex);
-        Task<List<EpaoPipelineStandardExtract>> GetEpaoPipelineStandardsExtract(string endPointAssessorOrganisationId);
+        Task<IEnumerable<EpaoPipelineStandardFilter>> GetEpaoPipelineStandardsStandardFilter(string endPointAssessorOrganisationId);
+        Task<IEnumerable<EpaoPipelineStandardFilter>> GetEpaoPipelineStandardsProviderFilter(string endPointAssessorOrganisationId);
+        Task<IEnumerable<EpaoPipelineStandardFilter>> GetEpaoPipelineStandardsEPADateFilter(string endPointAssessorOrganisationId);
+        Task<List<EpaoPipelineStandardExtract>> GetEpaoPipelineStandardsExtract(string endPointAssessorOrganisationId, string standardFilterId, string providerFilterId, string epaDateFilterId);
 
         // New Standard Version Methods
         Task<IEnumerable<Standard>> GetAllStandards();
@@ -72,5 +65,16 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
     {
         public IEnumerable<EpaoPipelineStandard> PageOfResults { get; set; }
         public int TotalCount { get; set; }
+
+        public string StandardFilterId { get; set; }
+        public string TrainingProviderFilterId { get; set; }
+        public string EPADateFilterId { get; set; }
+    }
+
+    public class EpaoPipelineStandardsFilterResult
+    {
+        public IEnumerable<EpaoPipelineStandardFilter> StandardFilterItems { get; set; }
+        public IEnumerable<EpaoPipelineStandardFilter> ProviderFilterItems { get; set; }
+        public IEnumerable<EpaoPipelineStandardFilter> EPADateFilterItems { get; set; }
     }
 }
