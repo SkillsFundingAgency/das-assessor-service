@@ -20,7 +20,7 @@ namespace SFA.DAS.AssessorService.Data
         public async Task<DateTime?> GetLatestExtractTimestamp()
         {
             var latestDate = await _unitOfWork.Connection.QueryAsync<DateTime?>(
-                @"SELECT MAX(CASE WHEN ISNULL(CreatedOn, 0) > ISNULL(UpdatedOn, 0) THEN CreatedOn ELSE UpdatedOn END) AS MaxDate FROM ApprovalsExtract",
+                @"SELECT MAX(LastUpdated) AS MaxDate FROM ApprovalsExtract",
                 transaction: _unitOfWork.Transaction);
 
             return latestDate.FirstOrDefault();
@@ -32,16 +32,19 @@ namespace SFA.DAS.AssessorService.Data
 
             try
             {
-                _unitOfWork.Begin();
+                if (_unitOfWork.Connection.State != ConnectionState.Open)
+                    _unitOfWork.Connection.Open();
 
                 await BulkInsertApprovalsExtractStaging(approvalsExtract);
-
-                _unitOfWork.Commit();
             }
             catch (Exception ex)
             {
-                _unitOfWork.Rollback();
                 throw ex;
+            }
+            finally
+            {
+                if (_unitOfWork.Connection.State != ConnectionState.Closed)
+                    _unitOfWork.Connection.Close();
             }
         }
 
@@ -52,10 +55,8 @@ namespace SFA.DAS.AssessorService.Data
         /// <returns></returns>
         private async Task BulkInsertApprovalsExtractStaging(IEnumerable<ApprovalsExtract> approvalsExtract)
         {
-            var bulkCopyOptions = SqlBulkCopyOptions.TableLock;
             var dataTable = ConstructApprovalsExtractDataTable(approvalsExtract);
-
-            using (var bulkCopy = new SqlBulkCopy(_unitOfWork.Connection as SqlConnection, bulkCopyOptions, _unitOfWork.Transaction as SqlTransaction))
+            using (var bulkCopy = new SqlBulkCopy(_unitOfWork.Connection as SqlConnection))
             {
                 bulkCopy.DestinationTableName = "ApprovalsExtract_Staging";
                 await bulkCopy.WriteToServerAsync(dataTable);
@@ -98,7 +99,7 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task ClearApprovalsExtractStaging()
         {
-            await _unitOfWork.Connection.ExecuteAsync("DELETE FROM [dbo].ApprovalsExtract_Staging");
+            await _unitOfWork.Connection.ExecuteAsync("DELETE FROM [dbo].ApprovalsExtract_Staging", commandTimeout: 0);
         }
 
         /// <summary>
@@ -109,7 +110,7 @@ namespace SFA.DAS.AssessorService.Data
         {
             try
             {
-                var result = await _unitOfWork.Connection.ExecuteScalarAsync<int>("ImportIntoApprovalsExtract_FromApprovalsExtract_Staging", transaction: _unitOfWork.Transaction, commandType: CommandType.StoredProcedure, commandTimeout: 300);
+                var result = await _unitOfWork.Connection.ExecuteScalarAsync<int>("ImportIntoApprovalsExtract_FromApprovalsExtract_Staging", transaction: _unitOfWork.Transaction, commandType: CommandType.StoredProcedure, commandTimeout: 0);
 
                 if (result != 0)
                 {
@@ -126,13 +127,8 @@ namespace SFA.DAS.AssessorService.Data
         {
             try
             {
-                var result = await _unitOfWork.Connection.ExecuteScalarAsync<int>("PopulateLearner", commandType: CommandType.StoredProcedure, commandTimeout: 300);
-                if (0 != result)
-                {
-                    throw new Exception("Stored procedure PopulateLearner failed to complete successfully.");
-                }
-                int rowCount = await _unitOfWork.Connection.ExecuteScalarAsync<int>("SELECT COUNT(1) FROM Learner");
-                return rowCount;
+                var upsertedCount = await _unitOfWork.Connection.ExecuteScalarAsync<int>("PopulateLearner", commandType: CommandType.StoredProcedure, commandTimeout: 0);
+                return upsertedCount;
             }
             catch (Exception ex)
             {

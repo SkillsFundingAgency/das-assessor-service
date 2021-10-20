@@ -1,56 +1,74 @@
 ﻿using FluentAssertions;
-using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.Domain.Consts;
-using SFA.DAS.AssessorService.Domain.Entities;
 using System;
-using System.Collections.Generic;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.UpdateCertificatesPrintStatusHandlerTests
 {
+    [TestFixture]
     public class When_called_and_certificate_does_not_exist_in_the_batch : UpdateCertificatesPrintStatusHandlerTestsBase
     {
+        private CertificatePrintStatusUpdateHandlerTestsFixture _fixture;
         private ValidationResponse _response;
-        private static DateTime _statusChangedAt = _deliveredAt;
+
+        private const string CertificateReferenceExists = "00123456";
+        private const string CertificateReferenceNotExists = "00123457";
+        private const int BatchNumber = 111;
+
+        private static readonly DateTime SentToPrinterAt = DateTime.UtcNow.AddHours(-1);
 
         [SetUp]
-        public async Task Arrange()
+        public void Arrange()
         {
             // Arrange
-            base.BaseArrange();
+            _fixture = new CertificatePrintStatusUpdateHandlerTestsFixture()
+                .WithCertificate(CertificateReferenceExists, CertificateStatus.SentToPrinter, SentToPrinterAt, BatchNumber, SentToPrinterAt.AddMinutes(-5))
+                .WithCertificateBatchLog(BatchNumber, CertificateReferenceExists, CertificateStatus.SentToPrinter, SentToPrinterAt, null, SentToPrinterAt.AddMinutes(5))
+                .WithBatchLog(BatchNumber);
+        }
 
-            var certificatePrintStatusUpdateRequest = new CertificatePrintStatusUpdateRequest
+        [Test]
+        public async Task Then_validation_response_is_valid_false()
+        {
+            // Arrange
+            var request = new CertificatePrintStatusUpdateRequest
             {
-                BatchNumber = _batch222,
-                CertificateReference = _certificateReference4,
-                Status = CertificateStatus.NotDelivered,
-                StatusAt = _statusChangedAt
+                BatchNumber = BatchNumber,
+                CertificateReference = CertificateReferenceNotExists,
+                Status = CertificateStatus.Printed,
+                StatusAt = DateTime.UtcNow
             };
 
             // Act
-            _response = await _sut.Handle(certificatePrintStatusUpdateRequest,
-                new CancellationToken());
-        }
+            _response = await _fixture.Handle(request);
 
-        [Test]
-        public void Then_validation_response_is_valid_false()
-        {
-            // Assert
             _response.IsValid.Should().Be(false);
+            _response.Errors.Count.Should().Be(1);
+
+            _response.Errors[0].Field.Should().Be("CertificateReference");
+            _response.Errors[0].ErrorMessage.Should().Contain(CertificateReferenceNotExists);
         }
 
         [Test]
-        public void Then_repository_update_print_status_is_not_called()
+        public async Task Then_repository_update_print_status_is_not_called()
         {
+            // Arrange
+            var request = new CertificatePrintStatusUpdateRequest
+            {
+                BatchNumber = BatchNumber,
+                CertificateReference = CertificateReferenceNotExists,
+                Status = CertificateStatus.Printed,
+                StatusAt = DateTime.UtcNow
+            };
+
+            // Act
+            _response = await _fixture.Handle(request);
+
             // Assert
-            _certificateRepository.Verify(r => r.UpdatePrintStatus(
-                It.IsAny<Certificate>(), It.IsAny<int>(), 
-                It.IsAny<string>(), It.IsAny<DateTime>(), 
-                It.IsAny<string>(), It.IsAny<bool>()), Times.Never);
+            _fixture.VerifyUpdatePrintStatusNotCalled(CertificateReferenceNotExists, BatchNumber);
         }
     }
 }

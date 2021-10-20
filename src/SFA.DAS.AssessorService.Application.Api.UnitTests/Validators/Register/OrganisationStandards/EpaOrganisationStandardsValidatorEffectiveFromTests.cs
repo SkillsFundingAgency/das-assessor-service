@@ -23,11 +23,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register.
             _localizer = new Mock<IStringLocalizer<EpaOrganisationValidator>>();
             _localizer.Setup(l => l[EpaOrganisationValidatorMessageName.OrganisationStandardEffectiveFromBeforeStandardEffectiveFrom])
                 .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.OrganisationStandardEffectiveFromBeforeStandardEffectiveFrom, "fail"));
-            _localizer.Setup(l => l[EpaOrganisationValidatorMessageName.OrganisationStandardEffectiveFromAfterStandardEffectiveTo])
-                .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.OrganisationStandardEffectiveFromAfterStandardEffectiveTo, "fail"));
-            _localizer.Setup(l => l[EpaOrganisationValidatorMessageName.OrganisationStandardEffectiveFromAfterStandardLastDayForNewStarts])
-                .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.OrganisationStandardEffectiveFromAfterStandardLastDayForNewStarts, "fail"));
-
+            
             _standardService = new Mock<IStandardService>();
             _validator = new EpaOrganisationValidator(Mock.Of<IRegisterValidationRepository>(),Mock.Of<IRegisterQueryRepository>(),Mock.Of<ISpecialCharacterCleanserService>(),_localizer.Object, _standardService.Object);
         }
@@ -94,7 +90,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register.
                 StandardEffectiveFrom = DateTime.Today,
                 StandardEffectiveTo = DateTime.Today.AddDays(10),
                 StandardLastDateForNewStarts = null,
-                IsValid = false
+                IsValid = true
             },
             new TestDataForEffectiveFrom
             {
@@ -102,11 +98,9 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register.
                 StandardEffectiveFrom = DateTime.Today,
                 StandardEffectiveTo = DateTime.Today.AddDays(10),
                 StandardLastDateForNewStarts = DateTime.Today.AddDays(-9),
-                IsValid = false
+                IsValid = true
             }
 
         };
-
-
     }
 }
