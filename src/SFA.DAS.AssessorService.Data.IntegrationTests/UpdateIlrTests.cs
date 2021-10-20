@@ -47,7 +47,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
             var result = await _ilrRepository.Get(_originalIlr.Uln, _originalIlr.StdCode);
 
             AssertEqual(_originalIlr, result);
-            Assert.That(_originalIlr.UpdatedAt, Is.EqualTo(result.UpdatedAt).Within(10).Milliseconds);
+            Assert.That(result.UpdatedAt, Is.EqualTo(_originalIlr.UpdatedAt).Within(10).Milliseconds);
         }
 
         [Test]
@@ -63,7 +63,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
             var result = await _ilrRepository.Get(_originalIlr.Uln, _originalIlr.StdCode);
 
             AssertEqual(ilrWithUpdates, result);
-            Assert.That(DateTime.UtcNow, Is.EqualTo(result.UpdatedAt).Within(1).Seconds);
+            Assert.That(result.UpdatedAt, Is.EqualTo(DateTime.UtcNow).Within(1).Seconds);
         }
 
         private void AssertEqual(Ilr expected, Ilr result)
