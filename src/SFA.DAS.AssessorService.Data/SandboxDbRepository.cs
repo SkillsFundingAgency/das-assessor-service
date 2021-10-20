@@ -238,6 +238,8 @@ namespace SFA.DAS.AssessorService.Data
                     commandSourceData.Parameters.AddWithValue("@sqlQuery", string.Empty);
                     commandSourceData.Parameters.AddWithValue("@sort_column", string.Empty);
 
+                    if (!_unitOfWork.Connection.State.HasFlag(ConnectionState.Open)) _unitOfWork.Connection.Open();
+
                     using (var reader = commandSourceData.ExecuteReader())
                     {
                         using (var bulkCopy = new SqlBulkCopy(transaction.Connection, _bulkCopyOptions, transaction))
