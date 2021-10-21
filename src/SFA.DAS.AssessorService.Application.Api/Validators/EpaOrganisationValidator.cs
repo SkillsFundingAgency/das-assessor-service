@@ -318,38 +318,26 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             return validationResults.IsValid ? string.Empty : FormatErrorMessage(validationResults.Errors.First().ErrorMessage);
         }
 
-        public string CheckOrganisationStandardFromDateIsWithinStandardDateRanges(DateTime? effectiveFrom, DateTime? standardEffectiveFrom,
+        public string CheckOrganisationStandardFromDateIsWithinStandardDateRanges(DateTime? organisationStandardEffectiveFrom, DateTime? standardEffectiveFrom,
             DateTime? standardEffectiveTo, DateTime? lastDateForNewStarts)
         {
-            if (effectiveFrom == null || standardEffectiveFrom == null)
+            if (organisationStandardEffectiveFrom == null || standardEffectiveFrom == null)
                 return string.Empty;
 
-            if (effectiveFrom < standardEffectiveFrom)
+            if (organisationStandardEffectiveFrom < standardEffectiveFrom)
                 return FormatErrorMessage(EpaOrganisationValidatorMessageName.OrganisationStandardEffectiveFromBeforeStandardEffectiveFrom);
-
-
-            if (standardEffectiveTo.HasValue && effectiveFrom > standardEffectiveTo)
-                return FormatErrorMessage(EpaOrganisationValidatorMessageName.OrganisationStandardEffectiveFromAfterStandardEffectiveTo);
-
-
-            if (lastDateForNewStarts.HasValue && effectiveFrom > lastDateForNewStarts)
-                return
-                    FormatErrorMessage(EpaOrganisationValidatorMessageName.OrganisationStandardEffectiveFromAfterStandardLastDayForNewStarts);
 
             return string.Empty;
         }
 
 
-        public string CheckOrganisationStandardToDateIsWithinStandardDateRanges(DateTime? effectiveTo, DateTime? standardEffectiveFrom, DateTime? standardEffectiveTo)
+        public string CheckOrganisationStandardToDateIsWithinStandardDateRanges(DateTime? organisationStandardEffectiveTo, DateTime? standardEffectiveFrom, DateTime? standardEffectiveTo)
         {
-            if (effectiveTo == null)
+            if (organisationStandardEffectiveTo == null)
                 return string.Empty;
 
-            if (effectiveTo < standardEffectiveFrom)
+            if (organisationStandardEffectiveTo < standardEffectiveFrom)
                 return FormatErrorMessage(EpaOrganisationValidatorMessageName.OrganisationStandardEffectiveToBeforeStandardEffectiveFrom);
-
-            if (standardEffectiveTo.HasValue && effectiveTo > standardEffectiveTo)
-               return FormatErrorMessage(EpaOrganisationValidatorMessageName.OrganisationStandardEffectiveToAfterStandardEffectiveTo);
 
             return string.Empty;
         }

@@ -30,6 +30,7 @@ AS
 		TARGET.ULN				= SOURCE.ULN,
 		TARGET.TrainingCode		= SOURCE.TrainingCode,
 		TARGET.StandardUId		= SOURCE.StandardUId,
+		TARGET.StartDate		= SOURCE.StartDate,
 		TARGET.EndDate			= SOURCE.EndDate,
 		TARGET.CreatedOn		= SOURCE.CreatedOn,
 		TARGET.UpdatedOn		= SOURCE.UpdatedOn,
