@@ -7,5 +7,5 @@ IF (EXISTS (SELECT *
             WHERE TABLE_SCHEMA = 'dbo' 
             AND  TABLE_NAME = 'OrganisationStandardVersion'))
 BEGIN
-    UPDATE [dbo].[OrganisationStandardVersion] SET [Version] = RIGHT([StandardUId],3)
+    UPDATE [dbo].[OrganisationStandardVersion] SET [Version] = RIGHT([StandardUId],3) WHERE [Version] IS NULL
 END
