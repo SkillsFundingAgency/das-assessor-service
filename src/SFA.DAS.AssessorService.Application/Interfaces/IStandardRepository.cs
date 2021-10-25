@@ -20,11 +20,11 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<int> GetEpaoStandardsCount(string endPointAssessorOrganisationId);
         Task<EpoRegisteredStandardsResult> GetEpaoRegisteredStandards(string endPointAssessorOrganisationId,int pageSize, int pageIndex);
         Task<EpaoPipelineStandardsResult> GetEpaoPipelineStandards(string endPointAssessorOrganisationId, string standardFilterId, string providerFilterId, string epaDateFilterId,
-        string orderBy, string orderDirection, int pageSize, int? pageIndex);
+        string orderBy, string orderDirection, int pageSize, int? pageIndex, int pipelineCutoff);
         Task<IEnumerable<EpaoPipelineStandardFilter>> GetEpaoPipelineStandardsStandardFilter(string endPointAssessorOrganisationId);
         Task<IEnumerable<EpaoPipelineStandardFilter>> GetEpaoPipelineStandardsProviderFilter(string endPointAssessorOrganisationId);
         Task<IEnumerable<EpaoPipelineStandardFilter>> GetEpaoPipelineStandardsEPADateFilter(string endPointAssessorOrganisationId);
-        Task<List<EpaoPipelineStandardExtract>> GetEpaoPipelineStandardsExtract(string endPointAssessorOrganisationId, string standardFilterId, string providerFilterId, string epaDateFilterId);
+        Task<List<EpaoPipelineStandardExtract>> GetEpaoPipelineStandardsExtract(string endPointAssessorOrganisationId, string standardFilterId, string providerFilterId, string epaDateFilterId, int pipelineCutoff);
 
         // New Standard Version Methods
         Task<IEnumerable<Standard>> GetAllStandards();

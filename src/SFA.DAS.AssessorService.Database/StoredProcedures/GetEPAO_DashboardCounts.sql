@@ -1,12 +1,13 @@
 CREATE PROCEDURE [GetEPAO_DashboardCounts]
-      @epaOrgId NVARCHAR(12)
+      @epaOrgId NVARCHAR(12),
+	  @pipelineCutOff INT
 AS
 BEGIN
 	SELECT SUM(Standards) Standards, SUM(Pipeline) Pipeline, SUM(Assessments) Assessments
 	FROM (
 		-- The active records from ilr
 		SELECT 0 Assessments, COUNT(*) Pipeline, 0 Standards
-		FROM [dbo].[EPAO_Func_Get_PipelineInfo] (@epaOrgId, NULL)
+		FROM [dbo].[EPAO_Func_Get_PipelineInfo] (@epaOrgId, NULL, @pipelineCutoff)
 		-- 
 		UNION ALL
 		-- add in the created certificates (by epaOrgId)

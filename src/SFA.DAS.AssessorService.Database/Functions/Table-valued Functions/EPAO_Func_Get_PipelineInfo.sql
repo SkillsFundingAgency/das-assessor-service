@@ -4,7 +4,8 @@
 CREATE FUNCTION [dbo].[EPAO_Func_Get_PipelineInfo]
 (	
 	@epaOrgId NVARCHAR(12),
-	@stdCode INT
+	@stdCode INT,
+	@pipelineCutOff INT
 )
 RETURNS TABLE 
 AS
@@ -58,8 +59,8 @@ RETURN
 				-- most recent activity (approval/ILR submission) is no more than 6(?) months ago
 				OR (CompletionStatus = 1 AND LastUpdated >= DATEADD(month, -6, GETDATE()) )
 				)
-			-- limit Pipeline to where the Estimated End Date is no more than 6(?) months in the past.
-			AND EstimatedEndDate >= DATEADD(month, -6 ,GETDATE())
+			-- limit Pipeline to the Estimated End Date is no more than the configurable pipeline cut off.
+			AND EstimatedEndDate >= DATEADD(month, -@pipelineCutOff, GETDATE())
 		) [PipelineInfo]
 		INNER JOIN Providers pv1 ON pv1.Ukprn = [PipelineInfo].Ukprn 
 
