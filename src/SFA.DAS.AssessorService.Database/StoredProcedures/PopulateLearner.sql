@@ -34,8 +34,7 @@ BEGIN
 			-- Only interested if the latest Ilrs hasn't been used already to create/updated Learner.
 			LEFT JOIN Learner le2 ON le2.Uln = Ilrs.Uln AND le2.StdCode = Ilrs.StdCode 
 			WHERE ilrs.LastUpdated >= (SELECT ISNULL(DATEADD(day,@overlaptimeIlr,MAX(LatestIlrs)), '01-Jan-2017') FROM Learner)
-			  AND (le2.Id IS NULL OR le2.LatestIlrs < CONVERT(datetime,Ilrs.
-              ))
+			  AND (le2.Id IS NULL OR le2.LatestIlrs < CONVERT(datetime,Ilrs.Lastupdated))
 			
 			UNION
 			
