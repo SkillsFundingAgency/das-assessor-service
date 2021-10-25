@@ -1,5 +1,6 @@
 CREATE PROCEDURE [GetEPAO_Pipelines]
-    @epaOrgId NVARCHAR(12)
+    @epaOrgId NVARCHAR(12),
+    @pipelineCutOff INT
 AS
 BEGIN
     WITH Data_CTE 
@@ -8,7 +9,7 @@ BEGIN
         SELECT 
             StdCode, Title, COUNT(*) Pipeline, EstimateDate
         FROM 
-            [dbo].[EPAO_Func_Get_PipelineInfo] (@epaOrgId, NULL)
+            [dbo].[EPAO_Func_Get_PipelineInfo] (@epaOrgId, NULL, @pipelineCutOff)
         GROUP BY 
             StdCode, EstimateDate, Title
     ), 

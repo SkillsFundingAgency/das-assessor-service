@@ -15,11 +15,12 @@ namespace SFA.DAS.AssessorService.Data
             _connection = connection;
         }
 
-        public async Task<EpaoDashboardResult> GetEpaoDashboard(string endPointAssessorOrganisationId)
+        public async Task<EpaoDashboardResult> GetEpaoDashboard(string endPointAssessorOrganisationId, int pipelineCutoff)
         {
             var result = await _connection.QuerySingleAsync<EpaoDashboardResult>("GetEPAO_DashboardCounts", new
             {
-                epaOrgId = endPointAssessorOrganisationId
+                epaOrgId = endPointAssessorOrganisationId,
+                pipelineCutoff = pipelineCutoff
             }, commandType: CommandType.StoredProcedure);
 
             return result;

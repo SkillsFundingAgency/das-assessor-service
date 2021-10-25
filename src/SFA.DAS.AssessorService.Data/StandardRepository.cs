@@ -643,7 +643,7 @@ FROM [Standards] Where [IFateReferenceNumber] = @iFateReferenceNumber";
             return results;
         }
 
-        public async Task<EpaoPipelineStandardsResult> GetEpaoPipelineStandards(string endPointAssessorOrganisationId, string orderBy, string orderDirection, int pageSize, int? pageIndex)
+        public async Task<EpaoPipelineStandardsResult> GetEpaoPipelineStandards(string endPointAssessorOrganisationId, int pipelineCutoff, string orderBy, string orderDirection, int pageSize, int? pageIndex)
         {
             IEnumerable<EpaoPipelineStandard> epaoPipelines;
             var epaoPipelineStandardsResult = new EpaoPipelineStandardsResult
@@ -657,7 +657,8 @@ FROM [Standards] Where [IFateReferenceNumber] = @iFateReferenceNumber";
                 "GetEPAO_Pipelines",
                 param: new
                 {
-                    epaOrgId = endPointAssessorOrganisationId
+                    epaOrgId = endPointAssessorOrganisationId,
+                    pipelineCutoff
                 },
                 transaction: _unitOfWork.Transaction,
                 commandType: CommandType.StoredProcedure);
@@ -689,13 +690,14 @@ FROM [Standards] Where [IFateReferenceNumber] = @iFateReferenceNumber";
             return epaoPipelineStandardsResult;
         }
 
-        public async Task<List<EpaoPipelineStandardExtract>> GetEpaoPipelineStandardsExtract(string endPointAssessorOrganisationId)
+        public async Task<List<EpaoPipelineStandardExtract>> GetEpaoPipelineStandardsExtract(string endPointAssessorOrganisationId, int pipelineCutoff)
         {
             var result = await _unitOfWork.Connection.QueryAsync<EpaoPipelineStandardExtract>(
                 "GetEPAO_Pipelines_Extract",
                 param: new
                 {
-                    epaOrgId = endPointAssessorOrganisationId
+                    epaOrgId = endPointAssessorOrganisationId,
+                    pipelineCutoff
                 },
                 transaction: _unitOfWork.Transaction,
                 commandType: CommandType.StoredProcedure);

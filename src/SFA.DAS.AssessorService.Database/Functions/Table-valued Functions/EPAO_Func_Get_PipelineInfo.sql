@@ -1,7 +1,8 @@
 ﻿CREATE FUNCTION [dbo].[EPAO_Func_Get_PipelineInfo]
 (	
 	@epaOrgId NVARCHAR(12),
-	@stdCode INT
+	@stdCode INT,
+	@pipelineCutOff INT
 )
 RETURNS TABLE 
 AS
@@ -41,10 +42,11 @@ RETURN
 			(
 				[OrganisationStandard].StandardCode = @stdCode OR @stdCode IS NULL
 			)
-			-- limit Pipeline to where Ilr is completed or most recent active submission is no more than 6 months ago
 			AND 
 			( 
 				(
+					-- remove Ilrs for funding model 36 (Apprenticeships) which are Continuing 
+					-- if the most recent active submission is greater than 6 months ago
 					FundingModel = 36 
 					AND CompletionStatus = 1 
 					AND ISNULL([Ilrs].UpdatedAt, [Ilrs].CreatedAt) >= DATEADD(month, -6, GETDATE())
@@ -52,9 +54,10 @@ RETURN
 				OR CompletionStatus = 2 
 				OR FundingModel != 36
 			) 
-			-- exclude already created certificates (by uln and standardcode)
+			-- remove Ilrs which already have certificates (by uln and standardcode)
 			AND [ExistingCertificate].Uln IS NULL
 	) [PipelineInfo]
 	WHERE
-		EstimateDate >= DATEADD(month,-3,GETDATE())
+		-- remove Ilrs for which the estimated date of completion has passed the cutoff
+		EstimateDate >= DATEADD(month, -@pipelineCutOff, GETDATE())
 )
