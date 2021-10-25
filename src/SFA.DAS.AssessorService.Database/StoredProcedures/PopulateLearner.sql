@@ -4,8 +4,8 @@ CREATE PROCEDURE [dbo].[PopulateLearner]
 AS
 BEGIN 
    DECLARE 
-		@overlaptimeIlr int = -30, -- days to allow for an overlap on ILR submissions changes
-		@overlaptimeApx int = -5,  -- days to allow for an overlap on Approvals changes
+		@overlaptimeIlr int = -15, -- days to allow for an overlap on ILR submissions changes
+		@overlaptimeApx int = -15, -- days to allow for an overlap on Approvals changes
 		@upserted int = 0;
 		
 	BEGIN 
@@ -34,7 +34,8 @@ BEGIN
 			-- Only interested if the latest Ilrs hasn't been used already to create/updated Learner.
 			LEFT JOIN Learner le2 ON le2.Uln = Ilrs.Uln AND le2.StdCode = Ilrs.StdCode 
 			WHERE ilrs.LastUpdated >= (SELECT ISNULL(DATEADD(day,@overlaptimeIlr,MAX(LatestIlrs)), '01-Jan-2017') FROM Learner)
-			  AND (le2.Id IS NULL OR le2.LatestIlrs < CONVERT(datetime,Ilrs.Lastupdated))
+			  AND (le2.Id IS NULL OR le2.LatestIlrs < CONVERT(datetime,Ilrs.
+              ))
 			
 			UNION
 			
