@@ -24,8 +24,8 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
 
             _repository = new RegisterQueryRepository(unitOfWork);
 
-            _organisationType1 = new OrganisationTypeModel {Id = 10, Status = "Live", Type = "Award Organisation"};
-            _organisationType2 = new OrganisationTypeModel {Id = 20, Status = "New", Type = "Some Other"};
+            _organisationType1 = new OrganisationTypeModel { Id = 20, Status = "Live", Type = "Award Organisation" };
+            _organisationType2 = new OrganisationTypeModel { Id = 21, Status = "New", Type = "Some Other" };
             var organisationTypes = new List<OrganisationTypeModel> {_organisationType1, _organisationType2};
 
             OrganisationTypeHandler.InsertRecords(organisationTypes);

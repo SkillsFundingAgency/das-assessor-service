@@ -30,8 +30,8 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
 
             _repository = new RegisterQueryRepository(unitOfWork);
 
-            _organisationId1 = "EPA0001";
-            _organisationId2 = "EPA005";
+            _organisationId1 = "EPA0300";
+            _organisationId2 = "EPA0005";
             _ukprn1 = 876544;
             _organisation1 = new OrganisationModel
             {
@@ -74,8 +74,6 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
             var organisationsReturned = _repository.GetAssessmentOrganisationsByUkprn(ukprn).Result.ToList();
             Assert.AreEqual(expectedCount, organisationsReturned.Count(), $@"Expected {expectedCount} organisations back but got {organisationsReturned.Count()}");
         }
-
-       
 
         [OneTimeTearDown]
         public void TearDownOrganisationTests()

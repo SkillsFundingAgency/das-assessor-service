@@ -24,8 +24,9 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         
         private CertificateRepository _repository;
         
-        private static int _organisationTypeId = 1;
+        private static int _organisationTypeId = 20;
         private static Guid _organisationId = Guid.NewGuid();
+
         private OrganisationModel _organisation;
 
         private Certificate _createdCertificate;
@@ -41,11 +42,11 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
             _repository = new CertificateRepository(_unitOfWork, _context);
 
             OrganisationTypeHandler.InsertRecord(
-                new OrganisationTypeModel 
-                { 
-                    Id = _organisationTypeId, 
+                new OrganisationTypeModel
+                {
+                    Id = _organisationTypeId,
                     Status = "Live",
-                    Type = "Organisation Type A" 
+                    Type = "Organisation Type A"
                 });
 
             _organisation = new OrganisationModel
@@ -121,6 +122,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         [OneTimeTearDown]
         public void TearDownCertificateTests()
         {
+            CertificateLogsHandler.DeleteRecord(_createdCertificate.Id);
             CertificateHandler.DeleteRecord(_createdCertificate.Id);
             OrganisationHandler.DeleteRecordByEndPointAssessorOrganisationId("EPA0200");
             OrganisationTypeHandler.DeleteRecord(_organisationTypeId);
