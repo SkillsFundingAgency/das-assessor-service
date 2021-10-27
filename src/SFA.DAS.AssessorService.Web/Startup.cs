@@ -33,8 +33,8 @@ namespace SFA.DAS.AssessorService.Web
         private readonly IConfiguration _config;
         private readonly ILogger<Startup> _logger;
         private readonly IWebHostEnvironment _env;
-        private const string ServiceName = "SFA.DAS.AssessorService";
-        private const string Version = "1.0";
+        private const string SERVICE_NAME = "SFA.DAS.AssessorService";
+        private const string VERSION = "1.0";
 
         public Startup(IConfiguration config, ILogger<Startup> logger, IWebHostEnvironment env)
         {
@@ -47,7 +47,7 @@ namespace SFA.DAS.AssessorService.Web
 
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
-            Configuration = ConfigurationService.GetConfig(_config["EnvironmentName"], _config["ConfigurationStorageConnectionString"], Version, ServiceName).Result;
+            Configuration = ConfigurationService.GetConfig(_config["EnvironmentName"], _config["ConfigurationStorageConnectionString"], VERSION, SERVICE_NAME).Result;
 
             //services.AddApplicationInsightsTelemetry();
 
