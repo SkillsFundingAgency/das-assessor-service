@@ -36,11 +36,11 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
 {
     public class Startup
     {
-        private const string ServiceName = "SFA.DAS.AssessorService";
-        private const string Version = "1.0";
+        private const string SERVICE_NAME = "SFA.DAS.AssessorService";
+        private const string VERSION = "1.0";
         private readonly IHostingEnvironment _env;
         private readonly ILogger<Startup> _logger;
-        private readonly bool UseSandbox;
+        private readonly bool _useSandbox;
 
         public Startup(IHostingEnvironment env, IConfiguration config, ILogger<Startup> logger)
         {
@@ -50,14 +50,14 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
             _logger.LogInformation("In startup constructor.  Before GetConfig");
             
             Configuration = ConfigurationService
-                .GetConfig(config["EnvironmentName"], config["ConfigurationStorageConnectionString"], Version, ServiceName).Result;
+                .GetConfig(config["EnvironmentName"], config["ConfigurationStorageConnectionString"], VERSION, SERVICE_NAME).Result;
 
-            if (!bool.TryParse(config["UseSandboxServices"], out UseSandbox))
+            if (!bool.TryParse(config["UseSandboxServices"], out _useSandbox))
             {
-                UseSandbox = "yes".Equals(config["UseSandboxServices"], StringComparison.InvariantCultureIgnoreCase);
+                _useSandbox = "yes".Equals(config["UseSandboxServices"], StringComparison.InvariantCultureIgnoreCase);
             }
 
-            _logger.LogInformation($"UseSandbox is: {UseSandbox.ToString()}");
+            _logger.LogInformation($"UseSandbox is: {_useSandbox.ToString()}");
             _logger.LogInformation("In startup constructor.  After GetConfig");
         }
 
@@ -76,7 +76,7 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                     {
                         var validAudiences = new List<string>();
 
-                        if (UseSandbox)
+                        if (_useSandbox)
                         {
                             validAudiences.Add(Configuration.SandboxApiAuthentication.Audience);
                             validAudiences.Add(Configuration.SandboxApiAuthentication.ClientId);
@@ -208,8 +208,9 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                 config.For<IDateTimeProvider>().Use<UtcDateTimeProvider>();
                 config.For<ISignInService>().Use<SignInService>();
               
-                var sqlConnectionString = UseSandbox ? Configuration.SandboxSqlConnectionString : Configuration.SqlConnectionString;
-                config.AddDatabaseRegistration(Configuration.Environment, sqlConnectionString);
+                var sqlConnectionString = _useSandbox ? Configuration.SandboxSqlConnectionString : Configuration.SqlConnectionString;
+                var option = new DbContextOptionsBuilder<AssessorDbContext>();
+                option.UseSqlServer(sqlConnectionString, options => options.EnableRetryOnFailure(3).CommandTimeout(300));
 
                 config.For<INotificationsApi>().Use<NotificationsApi>().Ctor<HttpClient>().Is(string.IsNullOrWhiteSpace(NotificationConfiguration().ClientId)
                     ? new HttpClientBuilder().WithBearerAuthorisationHeader(new JwtBearerTokenGenerator(NotificationConfiguration())).Build()
