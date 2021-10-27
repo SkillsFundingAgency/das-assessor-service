@@ -19,15 +19,15 @@ AS
     ON TARGET.ApprenticeshipId = SOURCE.ApprenticeshipId
     
 	WHEN NOT MATCHED BY TARGET
-        THEN INSERT (ApprenticeshipId, FirstName, LastName, ULN, TrainingCode, TrainingCourseVersion, TrainingCourseVersionConfirmed, TrainingCourseOption,
+        THEN INSERT (ApprenticeshipId, FirstName, LastName, Uln, TrainingCode, TrainingCourseVersion, TrainingCourseVersionConfirmed, TrainingCourseOption,
 		StandardUId, StartDate, EndDate, CreatedOn, UpdatedOn, StopDate, PauseDate, CompletionDate, UKPRN, LearnRefNumber, PaymentStatus)
-    VALUES (SOURCE.ApprenticeshipId, SOURCE.FirstName, SOURCE.LastName,SOURCE.ULN, SOURCE.TrainingCode, SOURCE.TrainingCourseVersion, SOURCE.TrainingCourseVersionConfirmed,
+    VALUES (SOURCE.ApprenticeshipId, SOURCE.FirstName, SOURCE.LastName,SOURCE.Uln, SOURCE.TrainingCode, SOURCE.TrainingCourseVersion, SOURCE.TrainingCourseVersionConfirmed,
 			SOURCE.TrainingCourseOption, SOURCE.StandardUId, SOURCE.StartDate, SOURCE.EndDate, SOURCE.CreatedOn, SOURCE.UpdatedOn, SOURCE.StopDate, SOURCE.PauseDate,
 			SOURCE.CompletionDate, SOURCE.UKPRN, SOURCE.LearnRefNumber, SOURCE.PaymentStatus)
 	WHEN MATCHED THEN UPDATE SET
         TARGET.FirstName		= SOURCE.FirstName,
 		TARGET.LastName			= SOURCE.LastName,
-		TARGET.ULN				= SOURCE.ULN,
+		TARGET.Uln				= SOURCE.Uln,
 		TARGET.TrainingCode		= SOURCE.TrainingCode,
 		TARGET.StandardUId		= SOURCE.StandardUId,
 		TARGET.StartDate		= SOURCE.StartDate,

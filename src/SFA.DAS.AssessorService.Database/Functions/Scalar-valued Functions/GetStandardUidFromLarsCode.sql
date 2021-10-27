@@ -8,8 +8,8 @@ AS
 BEGIN
 DECLARE @Result NVARCHAR(12) 
 SET @Result = (
-SELECT StandardUid FROM (
-SELECT row_number() OVER (PARTITION BY Ifatereferencenumber ORDER BY VersionMajor, VersionMinor) seq, * FROM Standards WHERE  larscode = @StdCode 
+SELECT StandardUId FROM (
+SELECT row_number() OVER (PARTITION BY IFateReferenceNumber ORDER BY VersionMajor, VersionMinor) seq, * FROM Standards WHERE  LarsCode = @StdCode 
 AND (VersionLatestStartDate IS NULL OR VersionLatestStartDate >= @StartDate)
 ) st1 WHERE seq = 1)
 RETURN @Result

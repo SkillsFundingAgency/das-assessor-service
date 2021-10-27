@@ -3,7 +3,7 @@
     [ApprenticeshipId] BIGINT NOT NULL PRIMARY KEY, 
     [FirstName] NVARCHAR(100) NULL, 
     [LastName] NVARCHAR(100) NULL, 
-    [ULN] BIGINT NULL, 
+    [Uln] BIGINT NULL, 
     [TrainingCode] INT NULL, 
     [TrainingCourseVersion] NVARCHAR(10) NULL,
     [TrainingCourseVersionConfirmed] BIT NOT NULL DEFAULT 0,
