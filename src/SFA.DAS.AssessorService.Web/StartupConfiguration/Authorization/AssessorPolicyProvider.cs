@@ -1,4 +1,4 @@
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
 
@@ -38,5 +38,13 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
 
         public Task<AuthorizationPolicy> GetDefaultPolicyAsync()=> 
             Task.FromResult(new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build());
+
+        public Task<AuthorizationPolicy> GetFallbackPolicyAsync()
+        {
+            // @ToDo: GetFallbackPolicyAsync is a new interface method as a result of the .Net Core 3.1 migration.
+            // Leave unimplemented for now to get the code to build, come back to it before testing.
+
+            throw new System.NotImplementedException();
+        }
     }
 }
