@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Net;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using NLog.Web;
@@ -27,7 +26,7 @@ namespace SFA.DAS.AssessorService.Web
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args)
         {
-            IHostingEnvironment hostingEnvironment = null;
+            IWebHostEnvironment hostingEnvironment = null;
 
             return WebHost.CreateDefaultBuilder(args)
                 .UseApplicationInsights()
@@ -35,8 +34,8 @@ namespace SFA.DAS.AssessorService.Web
                     services =>
                     {
                         hostingEnvironment = services
-                            .Where(x => x.ServiceType == typeof(IHostingEnvironment))
-                            .Select(x => (IHostingEnvironment) x.ImplementationInstance)
+                            .Where(x => x.ServiceType == typeof(IWebHostEnvironment))
+                            .Select(x => (IWebHostEnvironment) x.ImplementationInstance)
                             .First();
                     })
                 .UseStartup<Startup>()
