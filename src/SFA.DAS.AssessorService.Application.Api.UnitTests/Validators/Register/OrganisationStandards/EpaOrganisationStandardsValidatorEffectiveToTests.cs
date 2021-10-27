@@ -23,9 +23,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register.
             _localizer = new Mock<IStringLocalizer<EpaOrganisationValidator>>();
             _localizer.Setup(l => l[EpaOrganisationValidatorMessageName.OrganisationStandardEffectiveToBeforeStandardEffectiveFrom])
                 .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.OrganisationStandardEffectiveToBeforeStandardEffectiveFrom, "fail"));
-            _localizer.Setup(l => l[EpaOrganisationValidatorMessageName.OrganisationStandardEffectiveToAfterStandardEffectiveTo])
-                .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.OrganisationStandardEffectiveToAfterStandardEffectiveTo, "fail"));
-
+            
             _standardService = new Mock<IStandardService>();
             _validator = new EpaOrganisationValidator(Mock.Of<IRegisterValidationRepository>(), Mock.Of<IRegisterQueryRepository>(), Mock.Of<ISpecialCharacterCleanserService>(), _localizer.Object, _standardService.Object);
         }
@@ -85,7 +83,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register.
                 OrgStandardEffectiveTo = DateTime.Today.AddDays(11),
                 StandardEffectiveFrom = DateTime.Today,
                 StandardEffectiveTo = DateTime.Today.AddDays(10),
-                IsValid = false
+                IsValid = true
             },
             new TestDataForEffectiveTo
             {
