@@ -205,6 +205,8 @@ namespace SFA.DAS.AssessorService.Web
                 .UseAuthentication()
                 .UseRequestLocalization()
                 .UseHealthChecks("/health")
+                /*
+                 * // During .Net Core 2.1 => 3.1 migration - warning that UseMVC with routes is not compatible with endpoint routing
                 .UseMvc(routes =>
                 {
                     routes.MapRoute(
@@ -213,7 +215,8 @@ namespace SFA.DAS.AssessorService.Web
                         defaults: new { controller = "Home", action = "Index" }
                         //,constraints: new { controller = new NotEqualRouteContraint("find-an-assessment-opportunity") }
                         );
-                });
+                })
+                */;
         }        
     }
 }
