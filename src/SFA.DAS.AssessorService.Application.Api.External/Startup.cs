@@ -201,7 +201,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External
                 app.UseMiddleware<GetHeadersMiddleware>();
 
                 app.UseHttpsRedirection();
-                app.UseSecurityHeaders().UseMvc();
+                app.UseSecurityHeaders();
             }
             catch (Exception e)
             {
